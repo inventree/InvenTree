@@ -113,7 +113,7 @@ django-sql-utils==0.6.1
     # via -r requirements.in
 django-sslserver==0.22
     # via -r requirements.in
-django-stdimage==6.0.1
+django-stdimage==5.3.0
     # via -r requirements.in
 django-user-sessions==1.7.1
     # via -r requirements.in

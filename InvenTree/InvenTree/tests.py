@@ -20,12 +20,12 @@ from djmoney.money import Money
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
-from stock.models import StockLocation
+from part.models import Part, PartCategory
+from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, status, version
-from .models import ReferenceIndexingMixin
-from .validators import (validate_overage, validate_part_name,
-                         validate_reference_pattern)
+from .tasks import offload_task
+from .validators import validate_overage, validate_part_name
 
 
 class ValidatorTest(TestCase):
@@ -58,98 +58,6 @@ class ValidatorTest(TestCase):
 
         with self.assertRaises(django_exceptions.ValidationError):
             validate_overage("aaaa")
-
-    def test_reference_pattern(self):
-        """Tests for the reference pattern validator"""
-
-        # Valid tests must pass
-        valid_values = [
-            'BO-#####',
-            'BO-%d%m%y-#####',
-            'BO-*',
-            '######',
-            '??#####??',
-            "BO-%d%m%y-#####",
-        ]
-
-        for value in valid_values:
-            validate_reference_pattern(value)
-
-        # Invalid due to illegal characters or combos
-        invalid_values = [
-            'BO-#####-$',
-            '^^^',
-            'ABC-123-&###',
-            '||',
-            'BO-#####-####',
-            '####-####',
-            '#.#.#.#',
-            '##-BO-##',
-            'BO-1234-%5'
-        ]
-
-        for value in invalid_values:
-            with self.assertRaises(ValidationError):
-                validate_reference_pattern(value)
-
-    def test_reference_regex(self):
-        """Test that a 'reference pattern' is correctly converted to a regex"""
-
-        class TestClass(ReferenceIndexingMixin):
-            """Test class used only for unit testing"""
-
-            REFERENCE_PATTERN_SETTING = 'TEST_REFERENCE_PATTERN'
-
-        cls = TestClass()
-
-        # Check that the 'pattern' string is correctly compiled to a valid regex
-
-        examples = {
-            'ABC.???-#####': r'^ABC\....\-(\d+)$',
-            '*-12345-*': r'^.+\-12345\-.+$',
-            'PO-%Y-####': r'^PO\-%Y\-(\d+)$'
-        }
-
-        for pattern, regex in examples.items():
-            InvenTreeSetting.set_setting('TEST_REFERENCE_PATTERN', pattern, None)
-
-            self.assertEqual(cls.get_reference_pattern(), pattern)
-            self.assertEqual(cls.get_reference_regex(), regex)
-
-        # Construct a pattern to test validation against
-        pattern = 'AB?-[XYZ]-%Y.%d-#####'
-        InvenTreeSetting.set_setting('TEST_REFERENCE_PATTERN', pattern, None)
-
-        # The following reference values should all work
-        for ref in [
-            'ABC-X-2022.21-11111',
-            'ABQ-Y-1999.21-23',
-            'AB1-Z-1999.02-12345',
-            'ABD-X-1448.10-9999'
-        ]:
-            cls.reference = ref
-            cls.validate_reference_field()
-
-        # The following reference values will *not* work, and will raise a ValidationError
-        for ref in [
-            'ABC-Q-2022.21-11111',
-            'AB-X-1999.21-23',
-            'AB1-Z.1999.02-12345',
-            'ABD-X-1448.10-9999-',
-            '_ABC-Q-2022.21-11111',
-        ]:
-            cls.reference = ref
-            with self.assertRaises(ValidationError):
-                cls.validate_reference_field()
-
-        # The following reference values will also fail, due to illegal characters
-        for ref in [
-            'AB$-Z-2022.21-11111',
-            'AB+-Z-2022.21-11111',
-        ]:
-            cls.reference = ref
-            with self.assertRaises(ValidationError):
-                cls.validate_reference_field()
 
 
 class TestHelpers(TestCase):
@@ -712,3 +620,48 @@ class TestInstanceName(helpers.InvenTreeTestCase):
         # The site should also be changed
         site_obj = Site.objects.all().order_by('id').first()
         self.assertEqual(site_obj.domain, 'http://127.1.2.3')
+
+
+class TestOffloadTask(helpers.InvenTreeTestCase):
+    """Tests for offloading tasks to the background worker"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'stock',
+    ]
+
+    def test_offload_tasks(self):
+        """Test that we can offload various tasks to the background worker thread.
+
+        This set of tests also ensures that various types of objects
+        can be encoded by the django-q serialization layer!
+
+        Note that as the background worker is not actually running for the tests,
+        the call to 'offload_task' won't really *do* anything!
+
+        However, it serves as a validation that object serialization works!
+
+        Ref: https://github.com/inventree/InvenTree/pull/3273
+        """
+
+        offload_task(
+            'dummy_tasks.parts',
+            part=Part.objects.get(pk=1),
+            cat=PartCategory.objects.get(pk=1),
+            force_async=True
+        )
+
+        offload_task(
+            'dummy_tasks.stock',
+            item=StockItem.objects.get(pk=1),
+            loc=StockLocation.objects.get(pk=1),
+            force_async=True
+        )
+
+        offload_task(
+            'dummy_task.numbers',
+            1, 2, 3, 4, 5,
+            force_async=True
+        )

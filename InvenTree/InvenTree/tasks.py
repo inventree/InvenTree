@@ -61,7 +61,7 @@ def raise_warning(msg):
         warnings.warn(msg)
 
 
-def offload_task(taskname, *args, force_sync=False, **kwargs):
+def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs):
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
     If workers are not running or force_sync flag
@@ -79,7 +79,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
     except (OperationalError, ProgrammingError):  # pragma: no cover
         raise_warning(f"Could not offload task '{taskname}' - database not ready")
 
-    if is_worker_running() and not force_sync:  # pragma: no cover
+    if force_async or (is_worker_running() and not force_sync):
         # Running as asynchronous task
         try:
             task = AsyncTask(taskname, *args, **kwargs)

@@ -476,6 +476,22 @@ class BuildCancelSerializer(serializers.Serializer):
 class BuildCompleteSerializer(serializers.Serializer):
     """DRF serializer for marking a BuildOrder as complete."""
 
+    accept_overallocated = serializers.BooleanField(
+        label=_('Accept Overallocated'),
+        help_text=_('Accept stock items which have been overallocated to this build order'),
+        required=False,
+        default=False,
+    )
+
+    def validate_accept_overallocated(self, value):
+        """Check if the 'accept_overallocated' field is required"""
+        build = self.context['build']
+
+        if build.has_overallocated_parts(output=None) and not value:
+            raise ValidationError(_('Some stock items have been overallocated'))
+
+        return value
+
     accept_unallocated = serializers.BooleanField(
         label=_('Accept Unallocated'),
         help_text=_('Accept that stock items have not been fully allocated to this build order'),

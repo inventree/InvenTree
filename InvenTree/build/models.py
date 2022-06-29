@@ -1022,6 +1022,20 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         """Returns True if the un-tracked parts are fully allocated for this BuildOrder."""
         return self.is_fully_allocated(None)
 
+    def has_overallocated_parts(self, output):
+        """Check if parts have been 'over-allocated' against the specified output.
+
+        Note: If output=None, test un-tracked parts
+        """
+
+        bom_items = self.tracked_bom_items if output else self.untracked_bom_items
+
+        for bom_item in bom_items:
+            if self.allocated_quantity(bom_item, output) > self.required_quantity(bom_item, output):
+                return True
+
+        return False
+
     def unallocated_bom_items(self, output):
         """Return a list of bom items which have *not* been fully allocated against a particular output."""
         unallocated = []

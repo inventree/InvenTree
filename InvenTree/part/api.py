@@ -866,7 +866,8 @@ class PartFilter(rest_filters.FilterSet):
     def filter_in_bom(self, queryset, name, part):
         """Limit queryset to parts in the BOM for the specified part"""
 
-        queryset = queryset.filter(id__in=part.get_parts_in_bom())
+        bom_parts = part.get_parts_in_bom()
+        queryset = queryset.filter(id__in=[p.pk for p in bom_parts])
         return queryset
 
     is_template = rest_filters.BooleanFilter()
