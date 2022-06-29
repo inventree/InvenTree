@@ -400,6 +400,21 @@ class PartAPITest(InvenTreeAPITestCase):
         for part in response.data:
             self.assertEqual(part['category'], 2)
 
+    def test_filter_by_in_bom(self):
+        """Test that we can filter part list by the 'in_bom_for' parameter"""
+
+        url = reverse('api-part-list')
+
+        response = self.get(
+            url,
+            {
+                'in_bom_for': 100,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 4)
+
     def test_filter_by_related(self):
         """Test that we can filter by the 'related' status"""
         url = reverse('api-part-list')
