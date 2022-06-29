@@ -174,6 +174,7 @@ function completeBuildOrder(build_id, options={}) {
 
     var fields = {
         accept_unallocated: {},
+        accept_overallocated: {},
         accept_incomplete: {},
     };
 
