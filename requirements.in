@@ -18,7 +18,7 @@ django-redis>=5.0.0                     # Redis integration
 django-q                                # Background task scheduling
 django-sql-utils                        # Advanced query annotation / aggregation
 django-sslserver                        # Secure HTTP development server
-django-stdimage<6.0.0                   # Advanced ImageField management  # Note: 6.0.0 breaks serialization for django-q
+django-stdimage<6.0.0                   # Advanced ImageField management  # FIXED 2022-06-29 6.0.0 breaks serialization for django-q
 django-user-sessions                    # user sessions in DB
 django-weasyprint                       # django weasyprint integration
 djangorestframework                     # DRF framework
