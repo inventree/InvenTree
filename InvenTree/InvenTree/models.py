@@ -3,6 +3,7 @@
 import logging
 import os
 import re
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -15,7 +16,6 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from datetime_matcher import DatetimeMatcher
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
@@ -23,6 +23,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 import InvenTree.helpers
 from common.models import InvenTreeSetting
 from InvenTree.fields import InvenTreeURLField
+from InvenTree.format import parse_format_string
 from InvenTree.validators import validate_tree_name
 
 logger = logging.getLogger('inventree')
@@ -131,63 +132,51 @@ class ReferenceIndexingMixin(models.Model):
         return InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
 
     @classmethod
-    def get_reference_regex(cls, enforce_width=False, enforce_endings=True):
-        """Convert the reference field to a regular expression which can be matched against the input
+    def get_reference_context(cls):
+        """Generate context data for generating the 'reference' field for this class.
 
-        Instead of Python's re module, we use DatetimeMatcher which handles datetime formatting
+        - Returns a python dict object which contains the context data for formatting the reference string.
+        - The default implementation provides some default context information
         """
 
-        pattern = cls.get_reference_pattern()
+        return {
+            'ref': cls.get_next_reference(),
+            'date': datetime.now(),
+        }
 
-        # Find and replace any characters which have special regex meaning
-        for char in '.-+':
-            pattern = pattern.replace(char, f"\\{char}")
+    @classmethod
+    def get_next_reference(cls):
+        """Return the next available reference value for this particular class."""
 
-        # Find and replace any ? characters with a .
-        pattern = pattern.replace('?', '.')
+        # Default implementation, useful only for testing
+        return 1
 
-        # Find and replace any * characters
-        pattern = pattern.replace("*", ".+")
+    @classmethod
+    def validate_reference_pattern(cls, pattern):
+        """Ensure that the provided pattern is valid"""
 
-        # Find and replace any groups of '#' characters with a regex string
-        matches = re.findall('(#+)', pattern)
+        ctx = cls.get_reference_context()
 
-        for match in matches:
-            if enforce_width:
-                w = len(match)
-                pattern = pattern.replace(match, f"(\d{{{w}}})")
-            else:
-                pattern = pattern.replace(match, r'(\d+)')
+        try:
+            info = parse_format_string(pattern)
+        except Exception:
+            raise ValidationError({
+                "value": _("Improperly formatted pattern"),
+            })
 
-        if enforce_endings:
-            pattern = '^' + pattern + '$'
-
-        return pattern
+        # Check that only 'allowed' keys are provided
+        for key in info.keys():
+            if key not in ctx.keys():
+                raise ValidationError({
+                    "value": _(f"Unknown format key specified: {key}")
+                })
 
     @classmethod
     def validate_reference_field(cls, value):
         """Check that the provided 'reference' value matches the requisite pattern"""
 
-        # Prevent illegal chars being included in the final value
-        for char in '$@^&|/\\~+':
-            if char in value:
-                raise ValidationError(_(f"Illegal character in reference field: {char}"))
-
-        pattern = cls.get_reference_pattern()
-
-        # No pattern specified - no error!
-        if not pattern:
-            return
-
-        # Construct a regex to match the required pattern
-        regex = cls.get_reference_regex()
-
-        matcher = DatetimeMatcher()
-
-        match = matcher.match(regex, value)
-
-        if match is None:
-            raise ValidationError(_(f"Reference does not match required pattern: {pattern}"))
+        # TODO: How can we validate against a python format string?
+        ...
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""

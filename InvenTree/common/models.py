@@ -36,6 +36,7 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
+import build.validators
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.ready
@@ -1136,7 +1137,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Build Order Reference Pattern'),
             'description': _('Pattern for generating build order reference field'),
             'default': 'BO####',
-            'validator': InvenTree.validators.validate_reference_pattern,
+            'validator': build.validators.validate_build_reference_pattern,
         },
 
         'BUILDORDER_REFERENCE_PREFIX': {
