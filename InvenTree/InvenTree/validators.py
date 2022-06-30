@@ -1,7 +1,6 @@
 """Custom field validators for InvenTree."""
 
 import re
-from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
