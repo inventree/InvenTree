@@ -148,8 +148,22 @@ class ReferenceIndexingMixin(models.Model):
     def get_next_reference(cls):
         """Return the next available reference value for this particular class."""
 
-        # Default implementation, useful only for testing
-        return 1
+        # Default implementation looks for the highest 'reference_int' value
+        query = cls.objects.all().order_by('-reference_int')
+
+        if query.exists():
+            return query.first().reference_int + 1
+        else:
+            return 1
+
+    @classmethod
+    def generate_reference(cls):
+        """Generate the next 'refernce' field based on specified pattern"""
+
+        fmt = cls.get_reference_pattern()
+        ctx = cls.get_reference_context()
+
+        return fmt.format(**ctx)
 
     @classmethod
     def validate_reference_pattern(cls, pattern):
