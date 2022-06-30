@@ -41,6 +41,7 @@ def construct_format_regex(fmt_string: str) -> str:
     This function also provides support for wildcard characters:
 
     - '?' provides single character matching; is converted to a '.' (period) for regex
+    - '#' provides single digit matching; is converted to '\d'
 
     Args:
         fmt_string: A typical format string e.g. "PO-???-{ref:04d}"
@@ -55,18 +56,27 @@ def construct_format_regex(fmt_string: str) -> str:
         prefix = group[0]
         format = group[1]
 
+        rep = [
+            '+', '-',
+            '{', '}', '(', ')',
+            '^', '$', '~', '!', '@', ':', ';', '|', '\'', '"',
+        ]
+
         # Escape any special regex characters
-        for ch in '+-.*^$%()!\'\":;|\{\}':
-            prefix = prefix.replace(ch, f'\\{ch}')
+        for ch in rep:
+            prefix = prefix.replace(ch, '\\' + ch)
 
         # Replace ? with single-character match
         prefix = prefix.replace('?', '.')
+
+        # Replace # with single-digit match
+        prefix = prefix.replace('#', r'\d')
 
         pattern += prefix
 
         # Add a named capture group for the format entry
         if format:
-            pattern += f"(?P<{format}>.*)"
+            pattern += f"(?P<{format}>.+)"
 
     pattern += "$"
 
@@ -93,7 +103,7 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
     info = parse_format_string(fmt_string)
 
     if name not in info.keys():
-        raise ValueError(_(f"Value '{name}' does not appear in pattern format"))
+        raise NameError(_(f"Value '{name}' does not appear in pattern format"))
 
     # Construct a regular expression for matching against the provided format string
     # Note: This will raise a ValueError if 'fmt_string' is incorrectly specified
