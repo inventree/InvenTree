@@ -48,6 +48,9 @@ def construct_format_regex(fmt_string: str) -> str:
 
     Returns:
         str: A regular expression pattern e.g. ^PO\-...\-(?P<ref>.*)$
+
+    Raises:
+        ValueError: Format string is invalid
     """
 
     pattern = "^"
@@ -57,7 +60,7 @@ def construct_format_regex(fmt_string: str) -> str:
         format = group[1]
 
         rep = [
-            '+', '-',
+            '+', '-', '.',
             '{', '}', '(', ')',
             '^', '$', '~', '!', '@', ':', ';', '|', '\'', '"',
         ]
@@ -81,6 +84,27 @@ def construct_format_regex(fmt_string: str) -> str:
     pattern += "$"
 
     return pattern
+
+
+def validate_string(value: str, fmt_string: str) -> str:
+    """Validate that the provided string matches the specified format.
+
+    Args:
+        value: The string to be tested e.g. 'SO-1234-ABC',
+        fmt_string: The required format e.g. 'SO-{ref}-???',
+
+    Returns:
+        bool: True if the value matches the required format, else False
+
+    Raises:
+        ValueError: The provided format string is invalid
+    """
+
+    pattern = construct_format_regex(fmt_string)
+
+    result = re.match(pattern, value)
+
+    return result is not None
 
 
 def extract_named_group(name: str, value: str, fmt_string: str) -> str:

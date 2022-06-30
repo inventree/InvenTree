@@ -20,10 +20,10 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
+import InvenTree.format
 import InvenTree.helpers
 from common.models import InvenTreeSetting
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.format import parse_format_string
 from InvenTree.validators import validate_tree_name
 
 logger = logging.getLogger('inventree')
@@ -158,7 +158,7 @@ class ReferenceIndexingMixin(models.Model):
         ctx = cls.get_reference_context()
 
         try:
-            info = parse_format_string(pattern)
+            info = InvenTree.format.parse_format_string(pattern)
         except Exception:
             raise ValidationError({
                 "value": _("Improperly formatted pattern"),
@@ -175,8 +175,19 @@ class ReferenceIndexingMixin(models.Model):
     def validate_reference_field(cls, value):
         """Check that the provided 'reference' value matches the requisite pattern"""
 
-        # TODO: How can we validate against a python format string?
-        ...
+        pattern = cls.get_reference_pattern()
+
+        value = value.strip()
+
+        if len(value) == 0:
+            raise ValidationError(_("Reference field cannot be empty"))
+
+        # An 'empty' pattern means no further validation is required
+        if not pattern:
+            return
+
+        if not InvenTree.format.validate_string(value, pattern):
+            raise ValidationError(_("Does not match required pattern") + ": " + pattern)
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""

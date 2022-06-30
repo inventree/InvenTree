@@ -99,6 +99,25 @@ class FormatTest(TestCase):
         for fmt, reg in tests.items():
             self.assertEqual(InvenTree.format.construct_format_regex(fmt), reg)
 
+    def test_validate_format(self):
+        """Test that string validation works as expected"""
+
+        # These tests should pass
+        for value, pattern in {
+            "ABC-hello-123": "???-{q}-###",
+            "BO-1234": "BO-{ref}",
+            "111.222.fred.china": "???.###.{name}.{place}",
+        }.items():
+            self.assertTrue(InvenTree.format.validate_string(value, pattern))
+
+        # These tests should fail
+        for value, pattern in {
+            "ABC-hello-123": "###-{q}-???",
+            "BO-1234": "BO.{ref}",
+            "BO-####": "BO-{pattern}-{next}"
+        }.items():
+            self.assertFalse(InvenTree.format.validate_string(value, pattern))
+
     def test_extract_value(self):
         """Test that we can extract named values based on a format string"""
 
