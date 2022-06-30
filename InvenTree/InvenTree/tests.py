@@ -107,6 +107,7 @@ class FormatTest(TestCase):
             "ABC-hello-123": "???-{q}-###",
             "BO-1234": "BO-{ref}",
             "111.222.fred.china": "???.###.{name}.{place}",
+            "PO-1234": "PO-{ref:04d}"
         }.items():
             self.assertTrue(InvenTree.format.validate_string(value, pattern))
 
@@ -114,7 +115,8 @@ class FormatTest(TestCase):
         for value, pattern in {
             "ABC-hello-123": "###-{q}-???",
             "BO-1234": "BO.{ref}",
-            "BO-####": "BO-{pattern}-{next}"
+            "BO-####": "BO-{pattern}-{next}",
+            "BO-123d": "BO-{ref:04d}"
         }.items():
             self.assertFalse(InvenTree.format.validate_string(value, pattern))
 
@@ -127,11 +129,21 @@ class FormatTest(TestCase):
         tests = {
             "123": "PO-123-123",
             "456": "PO-123-456",
-            "xyz": "PO-123-xyz",
+            "789": "PO-123-789",
         }
 
         for k, v in tests.items():
             self.assertEqual(InvenTree.format.extract_named_group('ref', v, fmt), k)
+
+        # However these ones should fail
+        tests = {
+            'abc': 'PO-123-abc',
+            'xyz': 'PO-123-xyz',
+        }
+
+        for v in tests.values():
+            with self.assertRaises(ValueError):
+                InvenTree.format.extract_named_group('ref', v, fmt)
 
         # More complex tests
         fmt = "PO-{date}-{test}-???-{ref}-###"
