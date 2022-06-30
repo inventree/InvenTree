@@ -168,8 +168,14 @@ class ReferenceIndexingMixin(models.Model):
         for key in info.keys():
             if key not in ctx.keys():
                 raise ValidationError({
-                    "value": _(f"Unknown format key specified: {key}")
+                    "value": _("Unknown format key specified") + f": '{key}'"
                 })
+
+        # Check that the 'ref' variable is specified
+        if 'ref' not in info.keys():
+            raise ValidationError({
+                'value': _("Missing required format key") + ": 'ref'"
+            })
 
     @classmethod
     def validate_reference_field(cls, value):
