@@ -24,7 +24,8 @@ from rest_framework import serializers
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
-from InvenTree.validators import validate_build_order_reference
+
+from build.validators import validate_build_order_reference
 
 import InvenTree.fields
 import InvenTree.helpers
