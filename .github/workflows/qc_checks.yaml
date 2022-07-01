@@ -220,6 +220,7 @@ jobs:
         with:
           apt-dependency: gettext poppler-utils libpq-dev
           pip-dependency: psycopg2 django-redis>=5.0.0
+          dev-install: true
           update: true
       - name: Run Tests
         run: invoke test
@@ -263,6 +264,7 @@ jobs:
         with:
           apt-dependency: gettext poppler-utils libmysqlclient-dev
           pip-dependency: mysqlclient
+          dev-install: true
           update: true
       - name: Run Tests
         run: invoke test
