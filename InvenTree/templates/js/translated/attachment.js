@@ -284,6 +284,7 @@ function loadAttachmentTable(url, options) {
             },
             {
                 field: 'upload_date',
+                sortable: true,
                 title: '{% trans "Upload Date" %}',
                 formatter: function(value, row) {
                     var html = renderDate(value);
