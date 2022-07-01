@@ -365,6 +365,7 @@ class SupplierPartList(generics.ListCreateAPIView):
         'part__IPN',
         'part__name',
         'part__description',
+        'part__keywords',
     ]
 
 
