@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-29 05:01+0000\n"
-"PO-Revision-Date: 2022-06-29 18:04\n"
+"POT-Creation-Date: 2022-07-01 02:01+0000\n"
+"PO-Revision-Date: 2022-07-01 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -7705,15 +7705,15 @@ msgstr "Nie znaleziono załączników"
 msgid "Edit Attachment"
 msgstr "Edytuj załącznik"
 
-#: templates/js/translated/attachment.js:287
+#: templates/js/translated/attachment.js:288
 msgid "Upload Date"
 msgstr "Data przesłania"
 
-#: templates/js/translated/attachment.js:310
+#: templates/js/translated/attachment.js:311
 msgid "Edit attachment"
 msgstr "Edytuj załącznik"
 
-#: templates/js/translated/attachment.js:319
+#: templates/js/translated/attachment.js:320
 msgid "Delete attachment"
 msgstr "Usuń załącznik"
 
@@ -10070,61 +10070,61 @@ msgstr "Eksportuj dane tabeli"
 msgid "Select File Format"
 msgstr "Wybierz format pliku"
 
-#: templates/js/translated/tables.js:534
+#: templates/js/translated/tables.js:539
 msgid "Loading data"
 msgstr "Wczytywanie danych"
 
-#: templates/js/translated/tables.js:537
+#: templates/js/translated/tables.js:542
 msgid "rows per page"
 msgstr "wierszy na stronę"
 
-#: templates/js/translated/tables.js:542
+#: templates/js/translated/tables.js:547
 msgid "Showing all rows"
 msgstr "Pokaż wszystkie wiersze"
 
-#: templates/js/translated/tables.js:544
+#: templates/js/translated/tables.js:549
 msgid "Showing"
 msgstr "Pokazywane"
 
-#: templates/js/translated/tables.js:544
+#: templates/js/translated/tables.js:549
 msgid "to"
 msgstr "do"
 
-#: templates/js/translated/tables.js:544
+#: templates/js/translated/tables.js:549
 msgid "of"
 msgstr "z"
 
-#: templates/js/translated/tables.js:544
+#: templates/js/translated/tables.js:549
 msgid "rows"
 msgstr "wierszy"
 
-#: templates/js/translated/tables.js:548 templates/navbar.html:102
+#: templates/js/translated/tables.js:553 templates/navbar.html:102
 #: templates/search.html:8 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
 msgstr "Szukaj"
 
-#: templates/js/translated/tables.js:551
+#: templates/js/translated/tables.js:556
 msgid "No matching results"
 msgstr "Brak pasujących wyników"
 
-#: templates/js/translated/tables.js:554
+#: templates/js/translated/tables.js:559
 msgid "Hide/Show pagination"
 msgstr "Ukryj/Pokaż stronicowanie"
 
-#: templates/js/translated/tables.js:557
+#: templates/js/translated/tables.js:562
 msgid "Refresh"
 msgstr "Odśwież"
 
-#: templates/js/translated/tables.js:560
+#: templates/js/translated/tables.js:565
 msgid "Toggle"
 msgstr "Przełącz"
 
-#: templates/js/translated/tables.js:563
+#: templates/js/translated/tables.js:568
 msgid "Columns"
 msgstr "Kolumny"
 
-#: templates/js/translated/tables.js:566
+#: templates/js/translated/tables.js:571
 msgid "All"
 msgstr "Wszystkie"
 
