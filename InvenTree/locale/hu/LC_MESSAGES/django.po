@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-29 05:01+0000\n"
-"PO-Revision-Date: 2022-06-29 18:04\n"
+"POT-Creation-Date: 2022-07-01 02:01+0000\n"
+"PO-Revision-Date: 2022-07-01 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -7703,15 +7703,15 @@ msgstr "Nem találhatók mellékletek"
 msgid "Edit Attachment"
 msgstr "Melléklet szerkesztése"
 
-#: templates/js/translated/attachment.js:287
+#: templates/js/translated/attachment.js:288
 msgid "Upload Date"
 msgstr "Feltöltés dátuma"
 
-#: templates/js/translated/attachment.js:310
+#: templates/js/translated/attachment.js:311
 msgid "Edit attachment"
 msgstr "Melléklet szerkesztése"
 
-#: templates/js/translated/attachment.js:319
+#: templates/js/translated/attachment.js:320
 msgid "Delete attachment"
 msgstr "Melléklet törlése"
 
@@ -10068,61 +10068,61 @@ msgstr "Táblázat exportálása"
 msgid "Select File Format"
 msgstr "Fájlfomátum kiválasztása"
 
-#: templates/js/translated/tables.js:534
+#: templates/js/translated/tables.js:539
 msgid "Loading data"
 msgstr "Adatok betöltése"
 
-#: templates/js/translated/tables.js:537
+#: templates/js/translated/tables.js:542
 msgid "rows per page"
 msgstr "sor oldalanként"
 
-#: templates/js/translated/tables.js:542
+#: templates/js/translated/tables.js:547
 msgid "Showing all rows"
 msgstr "Összes sor mutatása"
 
-#: templates/js/translated/tables.js:544
+#: templates/js/translated/tables.js:549
 msgid "Showing"
 msgstr "Látható"
 
-#: templates/js/translated/tables.js:544
+#: templates/js/translated/tables.js:549
 msgid "to"
 msgstr "-"
 
-#: templates/js/translated/tables.js:544
+#: templates/js/translated/tables.js:549
 msgid "of"
 msgstr "a"
 
-#: templates/js/translated/tables.js:544
+#: templates/js/translated/tables.js:549
 msgid "rows"
 msgstr "sorból,"
 
-#: templates/js/translated/tables.js:548 templates/navbar.html:102
+#: templates/js/translated/tables.js:553 templates/navbar.html:102
 #: templates/search.html:8 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
 msgstr "Keresés"
 
-#: templates/js/translated/tables.js:551
+#: templates/js/translated/tables.js:556
 msgid "No matching results"
 msgstr "Nincs egyező eredmény"
 
-#: templates/js/translated/tables.js:554
+#: templates/js/translated/tables.js:559
 msgid "Hide/Show pagination"
 msgstr "Lapozó elrejtése/megjelenítése"
 
-#: templates/js/translated/tables.js:557
+#: templates/js/translated/tables.js:562
 msgid "Refresh"
 msgstr "Frissítés"
 
-#: templates/js/translated/tables.js:560
+#: templates/js/translated/tables.js:565
 msgid "Toggle"
 msgstr "Átváltás"
 
-#: templates/js/translated/tables.js:563
+#: templates/js/translated/tables.js:568
 msgid "Columns"
 msgstr "Oszlopok"
 
-#: templates/js/translated/tables.js:566
+#: templates/js/translated/tables.js:571
 msgid "All"
 msgstr "Összes"
 
