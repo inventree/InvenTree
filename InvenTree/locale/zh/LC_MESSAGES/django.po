@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-07-01 02:01+0000\n"
-"PO-Revision-Date: 2022-07-01 02:18\n"
+"PO-Revision-Date: 2022-07-02 02:34\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1097,15 +1097,15 @@ msgstr "删除所有未完成的生产产出"
 
 #: build/serializers.py:470
 msgid "Accept Overallocated"
-msgstr ""
+msgstr "接受过度分配"
 
 #: build/serializers.py:471
 msgid "Accept stock items which have been overallocated to this build order"
-msgstr ""
+msgstr "接受已经被过度分配至此生产订单的库存项"
 
 #: build/serializers.py:481
 msgid "Some stock items have been overallocated"
-msgstr ""
+msgstr "一些库存项已被过度分配"
 
 #: build/serializers.py:486
 msgid "Accept Unallocated"
@@ -1167,19 +1167,19 @@ msgstr "可用量 ({q}) 超出了限制"
 
 #: build/serializers.py:689
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr ""
+msgstr "对于被追踪的部件的分配，必须指定生产产出"
 
 #: build/serializers.py:696
 msgid "Build output cannot be specified for allocation of untracked parts"
-msgstr ""
+msgstr "对于未被追踪的部件，无法指定生产产出"
 
 #: build/serializers.py:701
 msgid "This stock item has already been allocated to this build output"
-msgstr ""
+msgstr "此库存项已被分配至此生产产出"
 
 #: build/serializers.py:724 order/serializers.py:1300
 msgid "Allocation items must be provided"
-msgstr ""
+msgstr "必须提供分配的项"
 
 #: build/serializers.py:775
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
