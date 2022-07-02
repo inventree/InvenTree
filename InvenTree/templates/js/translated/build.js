@@ -174,6 +174,7 @@ function completeBuildOrder(build_id, options={}) {
 
     var fields = {
         accept_unallocated: {},
+        accept_overallocated: {},
         accept_incomplete: {},
     };
 
@@ -2540,7 +2541,7 @@ function loadBuildTable(table, options) {
                     if (value) {
                         return row.responsible_detail.name;
                     } else {
-                        return '{% trans "No information" %}';
+                        return '-';
                     }
                 }
             },

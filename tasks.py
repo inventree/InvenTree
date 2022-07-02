@@ -111,10 +111,10 @@ def install(c):
 @task
 def setup_dev(c):
     """Sets up everything needed for the dev enviroment."""
-    print("Installing required python packages from 'requirements.txt'")
+    print("Installing required python packages from 'requirements-dev.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install -U -r requirements.txt')
+    c.run('pip3 install -U -r requirements-dev.txt')
 
     # Install pre-commit hook
     c.run('pre-commit install')

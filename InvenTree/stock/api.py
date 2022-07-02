@@ -74,7 +74,6 @@ class StockDetail(RetrieveUpdateDestroyAPI):
         kwargs['part_detail'] = True
         kwargs['location_detail'] = True
         kwargs['supplier_part_detail'] = True
-        kwargs['test_detail'] = True
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
@@ -284,7 +283,7 @@ class StockLocationList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
 
     search_fields = [
@@ -1065,7 +1064,7 @@ class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         filters.SearchFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'stock_item',
     ]
 
@@ -1096,7 +1095,7 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'test',
         'user',
         'result',
@@ -1303,7 +1302,7 @@ class StockTrackingList(ListAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'item',
         'user',
     ]

@@ -14,7 +14,7 @@
             <h4>{% trans "Supplier Parts" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.purchase_order.add %}
+                {% if roles.purchase_order.add and not part.virtual %}
                     <button class="btn btn-success" id='supplier-part-create' title='{% trans "Create new supplier part" %}'>
                         <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
                     </button>
@@ -61,7 +61,7 @@
             <h4>{% trans "Manufacturer Parts" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.purchase_order.add %}
+                {% if roles.purchase_order.add and not part.virtual %}
                     <button type="button" class="btn btn-success" id='manufacturer-part-create' title='{% trans "Create new manufacturer part" %}'>
                         <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
                     </button>

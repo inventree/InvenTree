@@ -63,27 +63,7 @@ main {
     background-color: #EEEEF5;
 }
 
-.markdownx .row {
-    margin: 5px;
-    padding: 5px;
-    border: 1px solid #cce;
-    border-radius: 4px;
-}
-
-.markdownx-editor {
-    width: 100%;
-    border: 1px solid #cce;
-    border-radius: 3px;
-    padding: 10px;
-}
-
 .panel-content {
-    padding: 10px;
-}
-
-.markdownx-preview {
-    border: 1px solid #cce;
-    border-radius: 3px;
     padding: 10px;
 }
 
@@ -470,8 +450,8 @@ main {
 }
 
 .part-thumb {
-    width: 200px;
-    height: 200px;
+    width: 256px;
+    height: 256px;
     margin: 2px;
     padding: 3px;
     object-fit: contain;

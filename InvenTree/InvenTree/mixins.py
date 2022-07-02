@@ -35,7 +35,7 @@ class CleanMixin():
         return Response(serializer.data)
 
     def clean_data(self, data: dict) -> dict:
-        """Clean / snatize data.
+        """Clean / sanitize data.
 
         This uses mozillas bleach under the hood to disable certain html tags by
         encoding them - this leads to script tags etc. to not work.

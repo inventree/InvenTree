@@ -291,10 +291,17 @@ class InvenTreeNotificationBodies:
     NewOrder = NotificationBody(
         name=_("New {verbose_name}"),
         slug='{app_label}.new_{model_name}',
-        message=_("A new {verbose_name} has been created and ,assigned to you"),
+        message=_("A new order has been created and assigned to you"),
         template='email/new_order_assigned.html',
     )
     """Send when a new order (build, sale or purchase) was created."""
+
+    ItemsReceived = NotificationBody(
+        name=_("Items Received"),
+        slug='purchase_order.items_received',
+        message=_('Items have been received against a purchase order'),
+        template='email/purchase_order_received.html',
+    )
 
 
 def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
@@ -344,8 +351,10 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
 
     if targets:
         for target in targets:
+            if target is None:
+                continue
             # User instance is provided
-            if isinstance(target, get_user_model()):
+            elif isinstance(target, get_user_model()):
                 if target not in target_exclude:
                     target_users.add(target)
             # Group instance is provided

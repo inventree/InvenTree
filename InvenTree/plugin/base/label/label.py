@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 import pdf2image
 
 import common.notifications
+from common.models import InvenTreeSetting
 from InvenTree.exceptions import log_error
 from plugin.registry import registry
 
@@ -36,9 +37,10 @@ def print_label(plugin_slug: str, pdf_data, filename=None, label_instance=None, 
         return
 
     # In addition to providing a .pdf image, we'll also provide a .png file
+    dpi = InvenTreeSetting.get_setting('LABEL_DPI', 300)
     png_file = pdf2image.convert_from_bytes(
         pdf_data,
-        dpi=300,
+        dpi=dpi,
     )[0]
 
     try:

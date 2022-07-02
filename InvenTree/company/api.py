@@ -46,7 +46,7 @@ class CompanyList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'is_customer',
         'is_manufacturer',
         'is_supplier',
@@ -169,7 +169,7 @@ class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'manufacturer_part',
     ]
 
@@ -233,7 +233,7 @@ class ManufacturerPartParameterList(ListCreateDestroyAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'name',
         'value',
         'units',
@@ -333,7 +333,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
 
     search_fields = [
@@ -345,6 +345,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'part__IPN',
         'part__name',
         'part__description',
+        'part__keywords',
     ]
 
 
@@ -377,7 +378,7 @@ class SupplierPriceBreakList(ListCreateAPI):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 

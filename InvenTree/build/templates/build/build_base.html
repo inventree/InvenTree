@@ -17,7 +17,7 @@
 {% block thumbnail %}
 <img class="part-thumb"
 {% if build.part.image %}
-src="{{ build.part.image.url }}"
+src="{{ build.part.image.preview.url }}"
 {% else %}
 src="{% static 'img/blank_image.png' %}"
 {% endif %}/>

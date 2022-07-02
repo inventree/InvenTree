@@ -15,6 +15,7 @@ from allauth.account.forms import SignupForm, set_form_field_order
 from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
+from allauth_2fa.forms import TOTPDeviceRemoveForm
 from allauth_2fa.utils import user_has_valid_totp_device
 from crispy_forms.bootstrap import (AppendedText, PrependedAppendedText,
                                     PrependedText)
@@ -124,21 +125,31 @@ class EditUserForm(HelperForm):
 class SetPasswordForm(HelperForm):
     """Form for setting user password."""
 
-    enter_password = forms.CharField(max_length=100,
-                                     min_length=8,
-                                     required=True,
-                                     initial='',
-                                     widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
-                                     label=_('Enter password'),
-                                     help_text=_('Enter new password'))
+    enter_password = forms.CharField(
+        max_length=100,
+        min_length=8,
+        required=True,
+        initial='',
+        widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+        label=_('Enter password'),
+        help_text=_('Enter new password')
+    )
 
-    confirm_password = forms.CharField(max_length=100,
-                                       min_length=8,
-                                       required=True,
-                                       initial='',
-                                       widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
-                                       label=_('Confirm password'),
-                                       help_text=_('Confirm new password'))
+    confirm_password = forms.CharField(
+        max_length=100,
+        min_length=8,
+        required=True,
+        initial='',
+        widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+        label=_('Confirm password'),
+        help_text=_('Confirm new password')
+    )
+
+    old_password = forms.CharField(
+        label=_("Old password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'autofocus': True}),
+    )
 
     class Meta:
         """Metaclass options."""
@@ -146,7 +157,8 @@ class SetPasswordForm(HelperForm):
         model = User
         fields = [
             'enter_password',
-            'confirm_password'
+            'confirm_password',
+            'old_password',
         ]
 
 
@@ -258,3 +270,36 @@ class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
 
         # Otherwise defer to the original allauth adapter.
         return super().login(request, user)
+
+
+# Temporary fix for django-allauth-2fa # TODO remove
+# See https://github.com/inventree/InvenTree/security/advisories/GHSA-8j76-mm54-52xq
+
+class CustomTOTPDeviceRemoveForm(TOTPDeviceRemoveForm):
+    """Custom  Form to ensure a token is provided before removing MFA"""
+    # User must input a valid token so 2FA can be removed
+    token = forms.CharField(
+        label=_('Token'),
+    )
+
+    def __init__(self, user, **kwargs):
+        """Add token field."""
+        super().__init__(user, **kwargs)
+        self.fields['token'].widget.attrs.update(
+            {
+                'autofocus': 'autofocus',
+                'autocomplete': 'off',
+            }
+        )
+
+    def clean_token(self):
+        """Ensure at least one valid token is provided."""
+        # Ensure that the user has provided a valid token
+        token = self.cleaned_data.get('token')
+
+        # Verify that the user has provided a valid token
+        for device in self.user.totpdevice_set.filter(confirmed=True):
+            if device.verify_token(token):
+                return token
+
+        raise forms.ValidationError(_("The entered token is not valid"))

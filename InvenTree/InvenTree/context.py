@@ -6,7 +6,7 @@ import InvenTree.status
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus, StockHistoryCode,
                                     StockStatus)
-from users.models import RuleSet
+from users.models import RuleSet, check_user_role
 
 
 def health_status(request):
@@ -83,31 +83,13 @@ def user_roles(request):
     roles = {
     }
 
-    if user.is_superuser:
-        for ruleset in RuleSet.RULESET_MODELS.keys():  # pragma: no cover
-            roles[ruleset] = {
-                'view': True,
-                'add': True,
-                'change': True,
-                'delete': True,
-            }
-    else:
-        for group in user.groups.all():
-            for rule in group.rule_sets.all():
+    for role in RuleSet.RULESET_MODELS.keys():
 
-                # Ensure the role name is in the dict
-                if rule.name not in roles:
-                    roles[rule.name] = {
-                        'view': user.is_superuser,
-                        'add': user.is_superuser,
-                        'change': user.is_superuser,
-                        'delete': user.is_superuser
-                    }
+        permissions = {}
 
-                # Roles are additive across groups
-                roles[rule.name]['view'] |= rule.can_view
-                roles[rule.name]['add'] |= rule.can_add
-                roles[rule.name]['change'] |= rule.can_change
-                roles[rule.name]['delete'] |= rule.can_delete
+        for perm in ['view', 'add', 'change', 'delete']:
+            permissions[perm] = user.is_superuser or check_user_role(user, role, perm)
+
+        roles[role] = permissions
 
     return {'roles': roles}

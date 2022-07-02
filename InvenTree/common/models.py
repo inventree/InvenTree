@@ -21,6 +21,7 @@ from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import MinValueValidator, URLValidator
@@ -37,6 +38,7 @@ from rest_framework.exceptions import PermissionDenied
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.ready
 import InvenTree.validators
 
 logger = logging.getLogger('inventree')
@@ -80,6 +82,14 @@ class BaseInvenTreeSetting(models.Model):
             self.save_to_cache()
 
         super().save()
+
+        # Get after_save action
+        setting = self.get_setting_definition(self.key, *args, **kwargs)
+        after_save = setting.get('after_save', None)
+
+        # Execute if callable
+        if callable(after_save):
+            after_save(self)
 
     @property
     def cache_key(self):
@@ -734,6 +744,20 @@ def settings_group_options():
     return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
 
 
+def update_instance_url(setting):
+    """Update the first site objects domain to url."""
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.domain = setting.value
+    site_obj.save()
+
+
+def update_instance_name(setting):
+    """Update the first site objects name to instance name."""
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.name = setting.value
+    site_obj.save()
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -748,7 +772,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         """
         super().save()
 
-        if self.requires_restart():
+        if self.requires_restart() and not InvenTree.ready.isImportingData():
             InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
 
     """
@@ -781,6 +805,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Server Instance Name'),
             'default': 'InvenTree',
             'description': _('String descriptor for the server instance'),
+            'after_save': update_instance_name,
         },
 
         'INVENTREE_INSTANCE_TITLE': {
@@ -808,6 +833,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Base URL for server instance'),
             'validator': EmptyURLValidator(),
             'default': '',
+            'after_save': update_instance_url,
         },
 
         'INVENTREE_DEFAULT_CURRENCY': {
@@ -1006,6 +1032,23 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
                        "{{ part.revision if part.revision }}",
             'validator': InvenTree.validators.validate_part_name_format
+        },
+
+        'LABEL_ENABLE': {
+            'name': _('Enable label printing'),
+            'description': _('Enable label printing from the web interface'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'LABEL_DPI': {
+            'name': _('Label Image DPI'),
+            'description': _('DPI resolution when generating image files to supply to label printing plugins'),
+            'default': 300,
+            'validator': [
+                int,
+                MinValueValidator(100),
+            ]
         },
 
         'REPORT_ENABLE': {
@@ -1386,12 +1429,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         'HOMEPAGE_SO_OVERDUE': {
             'name': _('Show overdue SOs'),
             'description': _('Show overdue SOs on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'LABEL_ENABLE': {
-            'name': _('Enable label printing'),
-            'description': _('Enable label printing from the web interface'),
             'default': True,
             'validator': bool,
         },

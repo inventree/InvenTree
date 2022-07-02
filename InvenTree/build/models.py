@@ -16,8 +16,6 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from markdownx.models import MarkdownxField
-
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
 
@@ -34,6 +32,7 @@ import InvenTree.tasks
 
 from plugin.events import trigger_event
 
+import common.notifications
 from part import models as PartModels
 from stock import models as StockModels
 from users import models as UserModels
@@ -320,9 +319,8 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         blank=True, help_text=_('Link to external URL')
     )
 
-    notes = MarkdownxField(
-        verbose_name=_('Notes'),
-        blank=True, help_text=_('Extra build notes')
+    notes = InvenTree.fields.InvenTreeNotesField(
+        help_text=_('Extra build notes')
     )
 
     def sub_builds(self, cascade=True):
@@ -537,11 +535,50 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         self.subtract_allocated_stock(user)
 
         # Ensure that there are no longer any BuildItem objects
-        # which point to thisFcan Build Order
+        # which point to this Build Order
         self.allocated_stock.all().delete()
 
         # Register an event
         trigger_event('build.completed', id=self.pk)
+
+        # Notify users that this build has been completed
+        targets = [
+            self.issued_by,
+            self.responsible,
+        ]
+
+        # Notify those users interested in the parent build
+        if self.parent:
+            targets.append(self.parent.issued_by)
+            targets.append(self.parent.responsible)
+
+        # Notify users if this build points to a sales order
+        if self.sales_order:
+            targets.append(self.sales_order.created_by)
+            targets.append(self.sales_order.responsible)
+
+        build = self
+        name = _(f'Build order {build} has been completed')
+
+        context = {
+            'build': build,
+            'name': name,
+            'slug': 'build.completed',
+            'message': _('A build order has been completed'),
+            'link': InvenTree.helpers.construct_absolute_url(self.get_absolute_url()),
+            'template': {
+                'html': 'email/build_order_completed.html',
+                'subject': name,
+            }
+        }
+
+        common.notifications.trigger_notification(
+            build,
+            'build.completed',
+            targets=targets,
+            context=context,
+            target_exclude=[user],
+        )
 
     @transaction.atomic
     def cancel_build(self, user, **kwargs):
@@ -980,6 +1017,20 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     def are_untracked_parts_allocated(self):
         """Returns True if the un-tracked parts are fully allocated for this BuildOrder."""
         return self.is_fully_allocated(None)
+
+    def has_overallocated_parts(self, output):
+        """Check if parts have been 'over-allocated' against the specified output.
+
+        Note: If output=None, test un-tracked parts
+        """
+
+        bom_items = self.tracked_bom_items if output else self.untracked_bom_items
+
+        for bom_item in bom_items:
+            if self.allocated_quantity(bom_item, output) > self.required_quantity(bom_item, output):
+                return True
+
+        return False
 
     def unallocated_bom_items(self, output):
         """Return a list of bom items which have *not* been fully allocated against a particular output."""

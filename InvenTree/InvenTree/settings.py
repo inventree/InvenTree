@@ -15,7 +15,6 @@ import random
 import socket
 import string
 import sys
-from datetime import datetime
 
 import django.conf.locale
 from django.core.files.storage import default_storage
@@ -219,18 +218,6 @@ logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
 
 INSTALLED_APPS = [
 
-    # Core django modules
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'user_sessions',                # db user sessions
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-
-    # Maintenance
-    'maintenance_mode',
-
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
@@ -244,6 +231,18 @@ INSTALLED_APPS = [
     'plugin.apps.PluginAppConfig',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
+    # Core django modules
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'user_sessions',                # db user sessions
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    # Maintenance
+    'maintenance_mode',
+
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
     'rest_framework',                       # DRF (Django Rest Framework)
@@ -253,9 +252,7 @@ INSTALLED_APPS = [
     'import_export',                        # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',    # Automatically delete orphaned MEDIA files
     'mptt',                                 # Modified Preorder Tree Traversal
-    'markdownx',                            # Markdown editing
     'markdownify',                          # Markdown template rendering
-    'django_admin_shell',                   # Python shell for the admin interface
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
@@ -308,6 +305,11 @@ if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
     logger.info("Running with DEBUG_TOOLBAR enabled")
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+
+    DEBUG_TOOLBAR_CONFIG = {
+        'RESULTS_CACHE_SIZE': 100,
+        'OBSERVE_REQUEST_CALLBACK': lambda x: False,
+    }
 
 # Internal IP addresses allowed to see the debug toolbar
 INTERNAL_IPS = [
@@ -386,8 +388,15 @@ REST_FRAMEWORK = {
         'InvenTree.permissions.RolePermission',
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-    'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata'
+    'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
 }
+
+if DEBUG:
+    # Enable browsable API if in DEBUG mode
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
@@ -522,7 +531,7 @@ if "postgres" in db_engine:  # pragma: no cover
     # https://docs.djangoproject.com/en/3.2/ref/databases/#isolation-level
     if "isolation_level" not in db_options:
         serializable = _is_true(
-            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
+            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "false")
         )
         db_options["isolation_level"] = (
             ISOLATION_LEVEL_SERIALIZABLE
@@ -836,12 +845,13 @@ for app in SOCIAL_BACKENDS:
 
 SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
 
+SOCIALACCOUNT_STORE_TOKENS = True
+
 # settings for allauth
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', CONFIG.get('login_confirm_days', 3))
-
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', CONFIG.get('login_attempts', 5))
-
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+ACCOUNT_PREVENT_ENUMERATION = True
 
 # override forms / adapters
 ACCOUNT_FORMS = {
@@ -861,10 +871,6 @@ ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 # login settings
 REMOTE_LOGIN = get_setting('INVENTREE_REMOTE_LOGIN', CONFIG.get('remote_login', False))
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', CONFIG.get('remote_login_header', 'REMOTE_USER'))
-
-# Markdownx configuration
-# Ref: https://neutronx.github.io/django-markdownx/customization/
-MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
@@ -897,11 +903,13 @@ MARKDOWNIFY_BLEACH = False
 SENTRY_ENABLED = get_setting('INVENTREE_SENTRY_ENABLED', CONFIG.get('sentry_enabled', False))
 SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', CONFIG.get('sentry_dsn', INVENTREE_DSN))
 
+SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', CONFIG.get('sentry_sample_rate', 0.1)))
+
 if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration(), ],
-        traces_sample_rate=1.0 if DEBUG else 0.15,
+        traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
         send_default_pii=True
     )
     inventree_tags = {

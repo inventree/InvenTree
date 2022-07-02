@@ -79,6 +79,21 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     - Includes serialization for the item location
     """
 
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        many=False, allow_null=False,
+        help_text=_("Base Part"),
+        label=_("Part"),
+    )
+
+    def validate_part(self, part):
+        """Ensure the provided Part instance is valid"""
+
+        if part.virtual:
+            raise ValidationError(_("Stock item cannot be created for virtual parts"))
+
+        return part
+
     def update(self, instance, validated_data):
         """Custom update method to pass the user information through to the instance."""
         instance._user = self.context['user']
@@ -88,6 +103,12 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     @staticmethod
     def annotate_queryset(queryset):
         """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
+
+        queryset = queryset.prefetch_related(
+            'sales_order',
+            'purchase_order',
+        )
+
         # Annotate the queryset with the total allocated to sales orders
         queryset = queryset.annotate(
             allocated=Coalesce(
@@ -136,19 +157,13 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
 
-    tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True, required=False)
-
     quantity = InvenTreeDecimalField()
 
-    allocated = serializers.FloatField(source='allocation_count', required=False)
-
+    # Annotated fields
+    tracking_items = serializers.IntegerField(read_only=True, required=False)
+    allocated = serializers.FloatField(required=False)
     expired = serializers.BooleanField(required=False, read_only=True)
-
     stale = serializers.BooleanField(required=False, read_only=True)
-
-    # serial = serializers.CharField(required=False)
-
-    required_tests = serializers.IntegerField(source='required_test_count', read_only=True, required=False)
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
@@ -168,10 +183,13 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     def get_purchase_price_string(self, obj):
         """Return purchase price as string."""
-        return str(obj.purchase_price) if obj.purchase_price else '-'
+        if obj.purchase_price:
+            obj.purchase_price.decimal_places_display = 4
+            return str(obj.purchase_price)
+
+        return '-'
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
-
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
 
     def __init__(self, *args, **kwargs):
@@ -179,7 +197,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         part_detail = kwargs.pop('part_detail', False)
         location_detail = kwargs.pop('location_detail', False)
         supplier_part_detail = kwargs.pop('supplier_part_detail', False)
-        test_detail = kwargs.pop('test_detail', False)
 
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
@@ -191,9 +208,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         if supplier_part_detail is not True:
             self.fields.pop('supplier_part_detail')
-
-        if test_detail is not True:
-            self.fields.pop('required_tests')
 
     class Meta:
         """Metaclass options."""
@@ -208,7 +222,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'delete_on_deplete',
             'expired',
             'expiry_date',
-            'in_stock',
             'is_building',
             'link',
             'location',
@@ -222,7 +235,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'purchase_order_reference',
             'pk',
             'quantity',
-            'required_tests',
             'sales_order',
             'sales_order_reference',
             'serial',
@@ -249,7 +261,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'stocktake_date',
             'stocktake_user',
             'updated',
-            'in_stock'
         ]
 
 
