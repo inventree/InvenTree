@@ -6,6 +6,7 @@ import os
 import pathlib
 import warnings
 from datetime import datetime
+from importlib.metadata import metadata
 
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
@@ -273,9 +274,20 @@ class InvenTreePlugin(MixinBase, MetaBase):
         """Get last git commit for the plugin."""
         return get_git_log(self.def_path)
 
-    def _get_package_metadata(self):
+    @classmethod
+    def _get_package_metadata(cls):
         """Get package metadata for plugin."""
-        return {}  # pragma: no cover  # TODO add usage for package metadata
+        modlue_name = cls.__name__
+        meta = metadata(modlue_name)
+
+        # Set class meta
+        cls.AUTHOR = meta['Author-email']
+        cls.DESCRIPTION = meta['Summary']
+        cls.VERSION = meta['Version']
+        cls.WEBSITE = meta['Project-URL']
+        cls.LICENSE = meta['License']
+
+        return {}
 
     def define_package(self):
         """Add package info of the plugin into plugins context."""
