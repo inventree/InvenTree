@@ -298,16 +298,3 @@ class InvenTreePlugin(MixinBase, MetaBase):
         self.package = package
         self.sign_state = sign_state
     # endregion
-
-
-class IntegrationPluginBase(InvenTreePlugin):
-    """Legacy base class for plugins.
-
-    Do not use!
-    """
-
-    def __init__(self, *args, **kwargs):
-        """Send warning about using this reference."""
-        # TODO remove in 0.8.0
-        warnings.warn("This import is deprecated - use InvenTreePlugin", DeprecationWarning)
-        super().__init__(*args, **kwargs)
