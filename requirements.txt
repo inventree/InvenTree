@@ -30,8 +30,10 @@ coreapi==2.3.3
     # via -r requirements.in
 coreschema==0.0.4
     # via coreapi
-cryptography==37.0.2
-    # via pyjwt
+cryptography==3.4.8
+    # via
+    #   -r requirements.in
+    #   pyjwt
 cssselect2==0.6.0
     # via weasyprint
 defusedxml==0.7.1

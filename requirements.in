@@ -1,6 +1,7 @@
 # Please keep this list sorted - if you pin a version provide a reason
 Django<4                                # Django package
 coreapi                                 # API documentation for djangorestframework
+cryptography==3.4.8                     # Core cryptographic functionality
 django-allauth                          # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
