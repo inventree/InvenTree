@@ -283,7 +283,7 @@ class StockLocationList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
 
     search_fields = [
@@ -1064,7 +1064,7 @@ class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         filters.SearchFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'stock_item',
     ]
 
@@ -1095,7 +1095,7 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'test',
         'user',
         'result',
@@ -1302,7 +1302,7 @@ class StockTrackingList(ListAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'item',
         'user',
     ]

@@ -135,7 +135,7 @@ class CategoryList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
 
     ordering_fields = [
@@ -281,7 +281,7 @@ class PartSalePriceList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -304,7 +304,7 @@ class PartInternalPriceList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -319,7 +319,7 @@ class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -866,7 +866,8 @@ class PartFilter(rest_filters.FilterSet):
     def filter_in_bom(self, queryset, name, part):
         """Limit queryset to parts in the BOM for the specified part"""
 
-        queryset = queryset.filter(id__in=part.get_parts_in_bom())
+        bom_parts = part.get_parts_in_bom()
+        queryset = queryset.filter(id__in=[p.pk for p in bom_parts])
         return queryset
 
     is_template = rest_filters.BooleanFilter()
@@ -1412,7 +1413,7 @@ class PartParameterTemplateList(ListCreateAPI):
         filters.SearchFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'name',
     ]
 
@@ -1477,7 +1478,7 @@ class PartParameterList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
         'template',
     ]
@@ -1758,7 +1759,7 @@ class BomList(ListCreateDestroyAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
 
 
@@ -1857,7 +1858,7 @@ class BomItemSubstituteList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
         'bom_item',
     ]

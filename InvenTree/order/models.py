@@ -24,6 +24,7 @@ from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
 import InvenTree.ready
+from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.exceptions import log_error
@@ -560,6 +561,14 @@ class PurchaseOrder(Order):
             self.received_by = user
             self.complete_order()  # This will save the model
 
+        # Issue a notification to interested parties, that this order has been "updated"
+        notify_responsible(
+            self,
+            PurchaseOrder,
+            exclude=user,
+            content=InvenTreeNotificationBodies.ItemsReceived,
+        )
+
 
 @receiver(post_save, sender=PurchaseOrder, dispatch_uid='purchase_order_post_save')
 def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **kwargs):
@@ -1094,6 +1103,22 @@ class SalesOrderLineItem(OrderLineItem):
         """Return the API URL associated with the SalesOrderLineItem model"""
         return reverse('api-so-line-list')
 
+    def clean(self):
+        """Perform extra validation steps for this SalesOrderLineItem instance"""
+
+        super().clean()
+
+        if self.part:
+            if self.part.virtual:
+                raise ValidationError({
+                    'part': _("Virtual part cannot be assigned to a sales order")
+                })
+
+            if not self.part.salable:
+                raise ValidationError({
+                    'part': _("Only salable parts can be assigned to a sales order")
+                })
+
     order = models.ForeignKey(
         SalesOrder,
         on_delete=models.CASCADE,
@@ -1102,7 +1127,16 @@ class SalesOrderLineItem(OrderLineItem):
         help_text=_('Sales Order')
     )
 
-    part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, verbose_name=_('Part'), help_text=_('Part'), limit_choices_to={'salable': True})
+    part = models.ForeignKey(
+        'part.Part', on_delete=models.SET_NULL,
+        related_name='sales_order_line_items',
+        null=True,
+        verbose_name=_('Part'),
+        help_text=_('Part'),
+        limit_choices_to={
+            'salable': True,
+            'virtual': False,
+        })
 
     sale_price = InvenTreeModelMoneyField(
         max_digits=19,
@@ -1400,6 +1434,7 @@ class SalesOrderAllocation(models.Model):
         related_name='sales_order_allocations',
         limit_choices_to={
             'part__salable': True,
+            'part__virtual': False,
             'belongs_to': None,
             'sales_order': None,
         },

@@ -9,6 +9,7 @@ from unittest import mock
 import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
@@ -19,9 +20,11 @@ from djmoney.money import Money
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
-from stock.models import StockLocation
+from part.models import Part, PartCategory
+from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, status, version
+from .tasks import offload_task
 from .validators import validate_overage, validate_part_name
 
 
@@ -604,3 +607,61 @@ class TestInstanceName(helpers.InvenTreeTestCase):
         InvenTreeSetting.set_setting("INVENTREE_INSTANCE", "Testing title", self.user)
 
         self.assertEqual(version.inventreeInstanceTitle(), 'Testing title')
+
+        # The site should also be changed
+        site_obj = Site.objects.all().order_by('id').first()
+        self.assertEqual(site_obj.name, 'Testing title')
+
+    def test_instance_url(self):
+        """Test instance url settings."""
+        # Set up required setting
+        InvenTreeSetting.set_setting("INVENTREE_BASE_URL", "http://127.1.2.3", self.user)
+
+        # The site should also be changed
+        site_obj = Site.objects.all().order_by('id').first()
+        self.assertEqual(site_obj.domain, 'http://127.1.2.3')
+
+
+class TestOffloadTask(helpers.InvenTreeTestCase):
+    """Tests for offloading tasks to the background worker"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'stock',
+    ]
+
+    def test_offload_tasks(self):
+        """Test that we can offload various tasks to the background worker thread.
+
+        This set of tests also ensures that various types of objects
+        can be encoded by the django-q serialization layer!
+
+        Note that as the background worker is not actually running for the tests,
+        the call to 'offload_task' won't really *do* anything!
+
+        However, it serves as a validation that object serialization works!
+
+        Ref: https://github.com/inventree/InvenTree/pull/3273
+        """
+
+        offload_task(
+            'dummy_tasks.parts',
+            part=Part.objects.get(pk=1),
+            cat=PartCategory.objects.get(pk=1),
+            force_async=True
+        )
+
+        offload_task(
+            'dummy_tasks.stock',
+            item=StockItem.objects.get(pk=1),
+            loc=StockLocation.objects.get(pk=1),
+            force_async=True
+        )
+
+        offload_task(
+            'dummy_task.numbers',
+            1, 2, 3, 4, 5,
+            force_async=True
+        )

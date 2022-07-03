@@ -79,6 +79,21 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     - Includes serialization for the item location
     """
 
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        many=False, allow_null=False,
+        help_text=_("Base Part"),
+        label=_("Part"),
+    )
+
+    def validate_part(self, part):
+        """Ensure the provided Part instance is valid"""
+
+        if part.virtual:
+            raise ValidationError(_("Stock item cannot be created for virtual parts"))
+
+        return part
+
     def update(self, instance, validated_data):
         """Custom update method to pass the user information through to the instance."""
         instance._user = self.context['user']
@@ -168,7 +183,11 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     def get_purchase_price_string(self, obj):
         """Return purchase price as string."""
-        return str(obj.purchase_price) if obj.purchase_price else '-'
+        if obj.purchase_price:
+            obj.purchase_price.decimal_places_display = 4
+            return str(obj.purchase_price)
+
+        return '-'
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
