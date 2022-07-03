@@ -875,29 +875,31 @@ REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', CONFIG.get('r
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
 
-MARKDOWNIFY_WHITELIST_TAGS = [
-    'a',
-    'abbr',
-    'b',
-    'blockquote',
-    'em',
-    'h1', 'h2', 'h3',
-    'i',
-    'img',
-    'li',
-    'ol',
-    'p',
-    'strong',
-    'ul'
-]
-
-MARKDOWNIFY_WHITELIST_ATTRS = [
-    'href',
-    'src',
-    'alt',
-]
-
-MARKDOWNIFY_BLEACH = False
+MARKDOWNIFY = {
+    'default': {
+        'BLEACH': True,
+        'WHITELIST_ATTRS': [
+            'href',
+            'src',
+            'alt',
+        ],
+        'WHITELIST_TAGS': [
+            'a',
+            'abbr',
+            'b',
+            'blockquote',
+            'em',
+            'h1', 'h2', 'h3',
+            'i',
+            'img',
+            'li',
+            'ol',
+            'p',
+            'strong',
+            'ul'
+        ],
+    }
+}
 
 # Error reporting
 SENTRY_ENABLED = get_setting('INVENTREE_SENTRY_ENABLED', CONFIG.get('sentry_enabled', False))
