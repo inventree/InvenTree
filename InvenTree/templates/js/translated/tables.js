@@ -375,10 +375,6 @@ $.fn.inventreeTable = function(options) {
         options.totalField = 'count';
         options.dataField = 'results';
 
-        if (options.sidePagination == null) {
-            options.sidePagination = 'server';
-        }
-
     } else {
         options.pagination = false;
     }
