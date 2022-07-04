@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-01 02:01+0000\n"
+"POT-Creation-Date: 2022-07-04 02:07+0000\n"
 "PO-Revision-Date: 2022-07-01 02:18\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
@@ -140,7 +140,7 @@ msgstr ""
 
 #: InvenTree/models.py:191 stock/models.py:2096
 #: templates/js/translated/attachment.js:103
-#: templates/js/translated/attachment.js:239
+#: templates/js/translated/attachment.js:240
 msgid "Attachment"
 msgstr ""
 
@@ -164,7 +164,7 @@ msgid "Link to external URL"
 msgstr ""
 
 #: InvenTree/models.py:202 templates/js/translated/attachment.js:104
-#: templates/js/translated/attachment.js:283
+#: templates/js/translated/attachment.js:284
 msgid "Comment"
 msgstr ""
 
@@ -6819,7 +6819,7 @@ msgid "Plugin Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:16
-msgid "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage."
+msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:34
@@ -7386,14 +7386,16 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7698,19 +7700,19 @@ msgstr ""
 msgid "No attachments found"
 msgstr ""
 
-#: templates/js/translated/attachment.js:218
+#: templates/js/translated/attachment.js:219
 msgid "Edit Attachment"
 msgstr ""
 
-#: templates/js/translated/attachment.js:288
+#: templates/js/translated/attachment.js:289
 msgid "Upload Date"
 msgstr ""
 
-#: templates/js/translated/attachment.js:311
+#: templates/js/translated/attachment.js:312
 msgid "Edit attachment"
 msgstr ""
 
-#: templates/js/translated/attachment.js:320
+#: templates/js/translated/attachment.js:321
 msgid "Delete attachment"
 msgstr ""
 
@@ -10067,61 +10069,61 @@ msgstr ""
 msgid "Select File Format"
 msgstr ""
 
-#: templates/js/translated/tables.js:539
+#: templates/js/translated/tables.js:535
 msgid "Loading data"
 msgstr ""
 
-#: templates/js/translated/tables.js:542
+#: templates/js/translated/tables.js:538
 msgid "rows per page"
 msgstr ""
 
-#: templates/js/translated/tables.js:547
+#: templates/js/translated/tables.js:543
 msgid "Showing all rows"
 msgstr ""
 
-#: templates/js/translated/tables.js:549
+#: templates/js/translated/tables.js:545
 msgid "Showing"
 msgstr ""
 
-#: templates/js/translated/tables.js:549
+#: templates/js/translated/tables.js:545
 msgid "to"
 msgstr ""
 
-#: templates/js/translated/tables.js:549
+#: templates/js/translated/tables.js:545
 msgid "of"
 msgstr ""
 
-#: templates/js/translated/tables.js:549
+#: templates/js/translated/tables.js:545
 msgid "rows"
 msgstr ""
 
-#: templates/js/translated/tables.js:553 templates/navbar.html:102
+#: templates/js/translated/tables.js:549 templates/navbar.html:102
 #: templates/search.html:8 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
 msgstr ""
 
-#: templates/js/translated/tables.js:556
+#: templates/js/translated/tables.js:552
 msgid "No matching results"
 msgstr ""
 
-#: templates/js/translated/tables.js:559
+#: templates/js/translated/tables.js:555
 msgid "Hide/Show pagination"
 msgstr ""
 
-#: templates/js/translated/tables.js:562
+#: templates/js/translated/tables.js:558
 msgid "Refresh"
 msgstr ""
 
-#: templates/js/translated/tables.js:565
+#: templates/js/translated/tables.js:561
 msgid "Toggle"
 msgstr ""
 
-#: templates/js/translated/tables.js:568
+#: templates/js/translated/tables.js:564
 msgid "Columns"
 msgstr ""
 
-#: templates/js/translated/tables.js:571
+#: templates/js/translated/tables.js:567
 msgid "All"
 msgstr ""
 
@@ -10368,4 +10370,3 @@ msgstr ""
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr ""
-

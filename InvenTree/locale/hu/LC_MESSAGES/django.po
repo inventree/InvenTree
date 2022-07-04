@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-01 02:01+0000\n"
+"POT-Creation-Date: 2022-07-04 02:07+0000\n"
 "PO-Revision-Date: 2022-07-01 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -140,7 +140,7 @@ msgstr "Hiányzó külső link"
 
 #: InvenTree/models.py:191 stock/models.py:2096
 #: templates/js/translated/attachment.js:103
-#: templates/js/translated/attachment.js:239
+#: templates/js/translated/attachment.js:240
 msgid "Attachment"
 msgstr "Melléklet"
 
@@ -164,7 +164,7 @@ msgid "Link to external URL"
 msgstr "Link külső URL-re"
 
 #: InvenTree/models.py:202 templates/js/translated/attachment.js:104
-#: templates/js/translated/attachment.js:283
+#: templates/js/translated/attachment.js:284
 msgid "Comment"
 msgstr "Megjegyzés"
 
@@ -1077,7 +1077,8 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:370
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr ""
+"Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:439
@@ -6820,7 +6821,9 @@ msgid "Plugin Settings"
 msgstr "Plugin beállítások"
 
 #: templates/InvenTree/settings/plugin.html:16
-msgid "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage."
+#, fuzzy
+#| msgid "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage."
+msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 msgstr "Az alábbi beállítások módosításához a kiszolgáló azonnali újraindítása szükséges. Aktív használat közben ne változtass ezeken."
 
 #: templates/InvenTree/settings/plugin.html:34
@@ -7387,14 +7390,16 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -7699,19 +7704,19 @@ msgstr "Az összes kijelölt melléklet törlésre kerül"
 msgid "No attachments found"
 msgstr "Nem találhatók mellékletek"
 
-#: templates/js/translated/attachment.js:218
+#: templates/js/translated/attachment.js:219
 msgid "Edit Attachment"
 msgstr "Melléklet szerkesztése"
 
-#: templates/js/translated/attachment.js:288
+#: templates/js/translated/attachment.js:289
 msgid "Upload Date"
 msgstr "Feltöltés dátuma"
 
-#: templates/js/translated/attachment.js:311
+#: templates/js/translated/attachment.js:312
 msgid "Edit attachment"
 msgstr "Melléklet szerkesztése"
 
-#: templates/js/translated/attachment.js:320
+#: templates/js/translated/attachment.js:321
 msgid "Delete attachment"
 msgstr "Melléklet törlése"
 
@@ -10068,61 +10073,61 @@ msgstr "Táblázat exportálása"
 msgid "Select File Format"
 msgstr "Fájlfomátum kiválasztása"
 
-#: templates/js/translated/tables.js:539
+#: templates/js/translated/tables.js:535
 msgid "Loading data"
 msgstr "Adatok betöltése"
 
-#: templates/js/translated/tables.js:542
+#: templates/js/translated/tables.js:538
 msgid "rows per page"
 msgstr "sor oldalanként"
 
-#: templates/js/translated/tables.js:547
+#: templates/js/translated/tables.js:543
 msgid "Showing all rows"
 msgstr "Összes sor mutatása"
 
-#: templates/js/translated/tables.js:549
+#: templates/js/translated/tables.js:545
 msgid "Showing"
 msgstr "Látható"
 
-#: templates/js/translated/tables.js:549
+#: templates/js/translated/tables.js:545
 msgid "to"
 msgstr "-"
 
-#: templates/js/translated/tables.js:549
+#: templates/js/translated/tables.js:545
 msgid "of"
 msgstr "a"
 
-#: templates/js/translated/tables.js:549
+#: templates/js/translated/tables.js:545
 msgid "rows"
 msgstr "sorból,"
 
-#: templates/js/translated/tables.js:553 templates/navbar.html:102
+#: templates/js/translated/tables.js:549 templates/navbar.html:102
 #: templates/search.html:8 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
 msgstr "Keresés"
 
-#: templates/js/translated/tables.js:556
+#: templates/js/translated/tables.js:552
 msgid "No matching results"
 msgstr "Nincs egyező eredmény"
 
-#: templates/js/translated/tables.js:559
+#: templates/js/translated/tables.js:555
 msgid "Hide/Show pagination"
 msgstr "Lapozó elrejtése/megjelenítése"
 
-#: templates/js/translated/tables.js:562
+#: templates/js/translated/tables.js:558
 msgid "Refresh"
 msgstr "Frissítés"
 
-#: templates/js/translated/tables.js:565
+#: templates/js/translated/tables.js:561
 msgid "Toggle"
 msgstr "Átváltás"
 
-#: templates/js/translated/tables.js:568
+#: templates/js/translated/tables.js:564
 msgid "Columns"
 msgstr "Oszlopok"
 
-#: templates/js/translated/tables.js:571
+#: templates/js/translated/tables.js:567
 msgid "All"
 msgstr "Összes"
 
@@ -10369,4 +10374,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
-
