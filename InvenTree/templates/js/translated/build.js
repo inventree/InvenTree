@@ -211,6 +211,10 @@ function completeBuildOrder(build_id, options={}) {
         delete fields.accept_incomplete;
     }
 
+    if (!options.overallocated) {
+        delete fields.accept_overallocated;
+    }
+
     constructForm(url, {
         fields: fields,
         reload: true,
