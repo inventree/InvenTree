@@ -1771,6 +1771,16 @@ class BomList(ListCreateDestroyAPIView):
         'sub_part__category__name',
     ]
 
+    ordering_fields = [
+        'quantity',
+        'sub_part',
+        'available_stock',
+    ]
+
+    ordering_field_aliases = [
+        'sub_part': 'sub_part__name',
+    ]
+
 
 class BomImportUpload(CreateAPI):
     """API endpoint for uploading a complete Bill of Materials.
