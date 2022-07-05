@@ -1777,9 +1777,9 @@ class BomList(ListCreateDestroyAPIView):
         'available_stock',
     ]
 
-    ordering_field_aliases = [
+    ordering_field_aliases = {
         'sub_part': 'sub_part__name',
-    ]
+    }
 
 
 class BomImportUpload(CreateAPI):

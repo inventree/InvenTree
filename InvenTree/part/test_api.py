@@ -1647,6 +1647,57 @@ class BomItemTest(InvenTreeAPITestCase):
             for key in ['available_stock', 'available_substitute_stock']:
                 self.assertTrue(key in el)
 
+    def test_bom_list_search(self):
+        """Test that we can search the BOM list API endpoint"""
+
+        url = reverse('api-bom-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 6)
+
+        # Limit the results with a search term
+        response = self.get(
+            url,
+            {
+                'search': '0805',
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 3)
+
+    def test_bom_list_ordering(self):
+        """Test that the BOM list results can be ordered"""
+
+        url = reverse('api-bom-list')
+
+        # Order by increasing quantity
+        response = self.get(
+            url,
+            {
+                'ordering': '+quantity',
+            },
+            expected_code=200
+        )
+
+        q1 = response.data[0]['quantity']
+        q2 = response.data[-1]['quantity']
+
+        self.assertTrue(q1 < q2)
+
+        # Order by decreasing quantity
+        response = self.get(
+            url,
+            {
+                'ordering': '-quantity',
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(q1, response.data[-1]['quantity'])
+        self.assertEqual(q2, response.data[0]['quantity'])
+
     def test_get_bom_detail(self):
         """Get the detail view for a single BomItem object."""
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
