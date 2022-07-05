@@ -1762,6 +1762,15 @@ class BomList(ListCreateDestroyAPIView):
     filterset_fields = [
     ]
 
+    search_fields = [
+        'sub_part__name',
+        'sub_part__description',
+        'sub_part__IPN',
+        'sub_part__revision',
+        'sub_part__keywords',
+        'sub_part__category__name',
+    ]
+
 
 class BomImportUpload(CreateAPI):
     """API endpoint for uploading a complete Bill of Materials.
