@@ -1667,6 +1667,30 @@ class BomItemTest(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), 3)
 
+        # Search by 'reference' field
+        for q in ['ABCDE', 'LMNOP', 'VWXYZ']:
+            response = self.get(
+                url,
+                {
+                    'search': q,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(len(response.data), 1)
+            self.assertEqual(response.data[0]['reference'], q)
+
+        # Search by nonsense data
+        response = self.get(
+            url,
+            {
+                'search': 'xxxxxxxxxxxxxxxxx',
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 0)
+
     def test_bom_list_ordering(self):
         """Test that the BOM list results can be ordered"""
 
@@ -1674,12 +1698,11 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # Order by increasing quantity
         response = self.get(
-            url,
-            {
-                'ordering': '+quantity',
-            },
+            f"{url}?ordering=+quantity",
             expected_code=200
         )
+
+        self.assertEqual(len(response.data), 6)
 
         q1 = response.data[0]['quantity']
         q2 = response.data[-1]['quantity']
@@ -1688,15 +1711,37 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # Order by decreasing quantity
         response = self.get(
-            url,
-            {
-                'ordering': '-quantity',
-            },
+            f"{url}?ordering=-quantity",
             expected_code=200,
         )
 
         self.assertEqual(q1, response.data[-1]['quantity'])
         self.assertEqual(q2, response.data[0]['quantity'])
+
+        # Now test ordering by 'sub_part' (which is actually 'sub_part__name')
+        response = self.get(
+            url,
+            {
+                'ordering': 'sub_part',
+                'sub_part_detail': True,
+            },
+            expected_code=200,
+        )
+
+        n1 = response.data[0]['sub_part_detail']['name']
+        n2 = response.data[-1]['sub_part_detail']['name']
+
+        response = self.get(
+            url,
+            {
+                'ordering': '-sub_part',
+                'sub_part_detail': True,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(n1, response.data[-1]['sub_part_detail']['name'])
+        self.assertEqual(n2, response.data[0]['sub_part_detail']['name'])
 
     def test_get_bom_detail(self):
         """Get the detail view for a single BomItem object."""
