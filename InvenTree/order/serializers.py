@@ -741,7 +741,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         """Initialization routine for the serializer"""
         order_detail = kwargs.pop('order_detail', False)
         part_detail = kwargs.pop('part_detail', True)
-        item_detail = kwargs.pop('item_detail', False)
+        item_detail = kwargs.pop('item_detail', True)
         location_detail = kwargs.pop('location_detail', False)
         customer_detail = kwargs.pop('customer_detail', False)
 
