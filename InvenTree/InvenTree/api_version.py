@@ -7,8 +7,12 @@ INVENTREE_API_VERSION = 61
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
+v63 -> 2022-07-06 : https://github.com/inventree/InvenTree/pull/3301
+    - Allow BOM List API endpoint to be filtered by "available_stock" paramater
+
 v62 -> 2022-07-05 : https://github.com/inventree/InvenTree/pull/3296
     - Allows search on BOM List API endpoint
+    - Allows ordering on BOM List API endpoint
 
 v61 -> 2022-06-12 : https://github.com/inventree/InvenTree/pull/3183
     - Migrate the "Convert Stock Item" form class to use the API
