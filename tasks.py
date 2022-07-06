@@ -79,8 +79,9 @@ def manage(c, cmd, pty: bool = False):
         cmd: Django command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
     """
-    c.run('cd "{path}" && python3 manage.py {cmd}'.format(
+    c.run('cd "{path}" && {python} manage.py {cmd}'.format(
         path=managePyDir(),
+        python=sys.executable,
         cmd=cmd
     ), pty=pty)
 
@@ -96,7 +97,7 @@ def plugins(c):
     print(f"Installing plugin packages from '{plugin_file}'")
 
     # Install the plugins
-    c.run(f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
+    c.run(f"{sys.executable} -m pip install --disable-pip-version-check -U -r '{plugin_file}'")
 
 
 @task(post=[plugins])
@@ -105,7 +106,7 @@ def install(c):
     print("Installing required python packages from 'requirements.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
+    c.run(f'{sys.executable} -m pip install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
 
 
 @task
@@ -114,7 +115,7 @@ def setup_dev(c):
     print("Installing required python packages from 'requirements-dev.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install -U -r requirements-dev.txt')
+    c.run(f'{sys.executable} -m pip install -U -r requirements-dev.txt')
 
     # Install pre-commit hook
     c.run('pre-commit install')
@@ -171,7 +172,7 @@ def translate_stats(c):
     The file generated from this is needed for the UI.
     """
     path = os.path.join('InvenTree', 'script', 'translation_stats.py')
-    c.run(f'python3 {path}')
+    c.run(f'{sys.executable} {path}')
 
 
 @task(post=[translate_stats, static])
