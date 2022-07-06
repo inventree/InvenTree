@@ -1542,7 +1542,7 @@ class BomFilter(rest_filters.FilterSet):
             queryset = queryset.filter(available_stock__gt=0)
         else:
             queryset = queryset.filter(available_stock=0)
-        
+
         return queryset
 
 
