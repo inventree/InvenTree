@@ -15,7 +15,6 @@ from allauth.account.forms import SignupForm, set_form_field_order
 from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
-from allauth_2fa.forms import TOTPDeviceRemoveForm
 from allauth_2fa.utils import user_has_valid_totp_device
 from crispy_forms.bootstrap import (AppendedText, PrependedAppendedText,
                                     PrependedText)
@@ -270,36 +269,3 @@ class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
 
         # Otherwise defer to the original allauth adapter.
         return super().login(request, user)
-
-
-# Temporary fix for django-allauth-2fa # TODO remove
-# See https://github.com/inventree/InvenTree/security/advisories/GHSA-8j76-mm54-52xq
-
-class CustomTOTPDeviceRemoveForm(TOTPDeviceRemoveForm):
-    """Custom  Form to ensure a token is provided before removing MFA"""
-    # User must input a valid token so 2FA can be removed
-    token = forms.CharField(
-        label=_('Token'),
-    )
-
-    def __init__(self, user, **kwargs):
-        """Add token field."""
-        super().__init__(user, **kwargs)
-        self.fields['token'].widget.attrs.update(
-            {
-                'autofocus': 'autofocus',
-                'autocomplete': 'off',
-            }
-        )
-
-    def clean_token(self):
-        """Ensure at least one valid token is provided."""
-        # Ensure that the user has provided a valid token
-        token = self.cleaned_data.get('token')
-
-        # Verify that the user has provided a valid token
-        for device in self.user.totpdevice_set.filter(confirmed=True):
-            if device.verify_token(token):
-                return token
-
-        raise forms.ValidationError(_("The entered token is not valid"))
