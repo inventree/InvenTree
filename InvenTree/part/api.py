@@ -1531,6 +1531,20 @@ class BomFilter(rest_filters.FilterSet):
 
         return queryset
 
+    available_stock = rest_filters.BooleanFilter(label="Has available stock", method="filter_available_stock")
+
+    def filter_available_stock(self, queryset, name, value):
+        """Filter the queryset based on whether each line item has any available stock"""
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(available_stock__gt=0)
+        else:
+            queryset = queryset.filter(available_stock=0)
+
+        return queryset
+
 
 class BomList(ListCreateDestroyAPIView):
     """API endpoint for accessing a list of BomItem objects.
