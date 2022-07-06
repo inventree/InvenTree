@@ -3236,10 +3236,12 @@ function showAllocationSubTable(index, row, element, options) {
                 formatter: function(value, row, index, field) {
                     var text = '';
 
-                    if (row.serial != null && row.quantity == 1) {
-                        text = `{% trans "Serial Number" %}: ${row.serial}`;
-                    } else {
-                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                    var item = row.item_detail;
+
+                    var text = `{% trans "Quantity" %}: ${row.quantity}`;
+
+                    if (item && item.serial != null && row.quantity == 1) {
+                        text = `{% trans "Serial Number" %}: ${item.serial}`;
                     }
 
                     return renderLink(text, `/stock/item/${row.item}/`);
