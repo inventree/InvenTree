@@ -59,6 +59,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Assembled Part" %}',
             },
+            available_stock: {
+                type: 'bool',
+                title: '{% trans "Has Available Stock" %}',
+            },
             validated: {
                 type: 'bool',
                 title: '{% trans "Validated" %}',
