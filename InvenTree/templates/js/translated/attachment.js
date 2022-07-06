@@ -196,6 +196,7 @@ function loadAttachmentTable(url, options) {
         search: true,
         queryParams: options.filters || {},
         uniqueId: 'pk',
+        sidePagination: 'server',
         onPostBody: function() {
 
             // Add callback for 'edit' button
@@ -284,6 +285,7 @@ function loadAttachmentTable(url, options) {
             },
             {
                 field: 'upload_date',
+                sortable: true,
                 title: '{% trans "Upload Date" %}',
                 formatter: function(value, row) {
                     var html = renderDate(value);

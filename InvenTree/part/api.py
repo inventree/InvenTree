@@ -24,6 +24,7 @@ from common.models import InvenTreeSetting
 from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
+from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import DownloadFile, increment, isNull, str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
@@ -1530,6 +1531,20 @@ class BomFilter(rest_filters.FilterSet):
 
         return queryset
 
+    available_stock = rest_filters.BooleanFilter(label="Has available stock", method="filter_available_stock")
+
+    def filter_available_stock(self, queryset, name, value):
+        """Filter the queryset based on whether each line item has any available stock"""
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(available_stock__gt=0)
+        else:
+            queryset = queryset.filter(available_stock=0)
+
+        return queryset
+
 
 class BomList(ListCreateDestroyAPIView):
     """API endpoint for accessing a list of BomItem objects.
@@ -1756,11 +1771,31 @@ class BomList(ListCreateDestroyAPIView):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
     filterset_fields = [
     ]
+
+    search_fields = [
+        'reference',
+        'sub_part__name',
+        'sub_part__description',
+        'sub_part__IPN',
+        'sub_part__revision',
+        'sub_part__keywords',
+        'sub_part__category__name',
+    ]
+
+    ordering_fields = [
+        'quantity',
+        'sub_part',
+        'available_stock',
+    ]
+
+    ordering_field_aliases = {
+        'sub_part': 'sub_part__name',
+    }
 
 
 class BomImportUpload(CreateAPI):

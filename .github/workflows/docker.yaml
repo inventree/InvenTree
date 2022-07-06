@@ -45,6 +45,7 @@ jobs:
       - name: Run Unit Tests
         run: |
           docker-compose run inventree-dev-server invoke update
+          docker-compose run inventree-dev-server invoke setup-dev
           docker-compose up -d
           docker-compose run inventree-dev-server invoke wait
           docker-compose run inventree-dev-server invoke test
