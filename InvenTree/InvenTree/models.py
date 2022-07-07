@@ -244,7 +244,7 @@ class ReferenceIndexingMixin(models.Model):
 
         abstract = True
 
-    def rebuild_reference_field(self):
+    def rebuild_reference_field(self, validate=False):
         """Extract integer out of reference for sorting.
 
         If the 'integer' portion is buried somewhere 'within' the reference,
@@ -257,7 +257,11 @@ class ReferenceIndexingMixin(models.Model):
 
         If we cannot extract using the pattern for some reason, fallback to the entire reference
         """
+
         reference = getattr(self, 'reference', '')
+
+        if validate:
+            self.validate_reference_field(reference)
 
         try:
             # Extract named group based on provided pattern

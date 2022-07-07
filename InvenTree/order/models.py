@@ -24,6 +24,7 @@ from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
 import InvenTree.ready
+import order.validators
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
@@ -63,32 +64,6 @@ def get_next_po_number():
             return reference
 
         if PurchaseOrder.objects.filter(reference=reference).exists():
-            attempts.add(reference)
-        else:
-            break
-
-    return reference
-
-
-def get_next_so_number():
-    """Returns the next available SalesOrder reference number."""
-    if SalesOrder.objects.count() == 0:
-        return '0001'
-
-    order = SalesOrder.objects.exclude(reference=None).last()
-
-    attempts = {order.reference}
-
-    reference = order.reference
-
-    while 1:
-        reference = increment(reference)
-
-        if reference in attempts:
-            # Escape infinite recursion
-            return reference
-
-        if SalesOrder.objects.filter(reference=reference).exists():
             attempts.add(reference)
         else:
             break
@@ -595,7 +570,19 @@ class SalesOrder(Order):
         """Return the API URL associated with the SalesOrder model"""
         return reverse('api-so-list')
 
+    @classmethod
+    def api_defaults(cls, request):
+        """Return default values for this model when issuing an API OPTIONS request"""
+        defaults = {
+            'reference': order.validators.generate_next_sales_order_reference(),
+        }
+
+        return defaults
+
     OVERDUE_FILTER = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+
+    # Global setting for specifying reference pattern
+    REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -648,7 +635,10 @@ class SalesOrder(Order):
         blank=False,
         verbose_name=_('Reference'),
         help_text=_('Order reference'),
-        default=get_next_so_number,
+        default=order.validators.generate_next_sales_order_reference,
+        validators=[
+            order.validators.validate_sales_order_reference,
+        ]
     )
 
     customer = models.ForeignKey(

@@ -77,7 +77,7 @@ class BuildSerializer(InvenTreeModelSerializer):
     reference = serializers.CharField(required=True)
 
     def validate_reference(self, reference):
-        """Custom validation for the Build serializer"""
+        """Custom validation for the Build reference field"""
 
         # Ensure the reference matches the required pattern
         Build.validate_reference_field(reference)

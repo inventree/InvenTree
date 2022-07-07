@@ -866,14 +866,29 @@ class SalesOrderTest(OrderTest):
         """Test that we can create a new SalesOrder via the API."""
         self.assignRole('sales_order.add')
 
-        self.post(
-            reverse('api-so-list'),
+        url = reverse('api-so-list')
+
+        # Will fail due to invalid reference field
+        response = self.post(
+            url,
             {
                 'reference': '1234566778',
                 'customer': 4,
                 'description': 'A test sales order',
             },
-            expected_code=201
+            expected_code=400,
+        )
+
+        self.assertIn('Reference must match required pattern', str(response.data['reference']))
+
+        self.post(
+            url,
+            {
+                'reference': 'SO-12345',
+                'customer': 4,
+                'description': 'A better test sales order',
+            },
+            expected_code=201,
         )
 
     def test_so_cancel(self):

@@ -2,6 +2,7 @@
 
 from django.db import migrations, models
 import order.models
+import order.validators
 
 
 class Migration(migrations.Migration):
@@ -19,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='salesorder',
             name='reference',
-            field=models.CharField(default=order.models.get_next_so_number, help_text='Order reference', max_length=64, unique=True, verbose_name='Reference'),
+            field=models.CharField(default=order.validators.generate_next_sales_order_reference, help_text='Order reference', max_length=64, unique=True, verbose_name='Reference'),
         ),
     ]

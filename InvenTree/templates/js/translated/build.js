@@ -4,7 +4,6 @@
 /* globals
     buildStatusDisplay,
     constructForm,
-    global_settings,
     imageHoverIcon,
     inventreeGet,
     launchModalForm,

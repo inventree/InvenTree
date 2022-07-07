@@ -682,6 +682,14 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
 
     reference = serializers.CharField(required=True)
 
+    def validate_reference(self, reference):
+        """Custom validation for the reference field"""
+
+        # Ensure that the reference matches the required pattern
+        order.models.SalesOrder.validate_reference_field(reference)
+
+        return reference
+
     class Meta:
         """Metaclass options."""
 

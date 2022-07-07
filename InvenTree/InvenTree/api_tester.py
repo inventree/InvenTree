@@ -138,7 +138,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
                 if hasattr(response, 'data'):
                     print(response.data)
                 else:
-                    print(f"(responese object {type(response)} has no 'data' attribute")
+                    print(f"(response object {type(response)} has no 'data' attribute")
 
             self.assertEqual(response.status_code, expected_code)
 
