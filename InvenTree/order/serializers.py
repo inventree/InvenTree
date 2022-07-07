@@ -23,8 +23,7 @@ from InvenTree.helpers import extract_serial_numbers, normalize
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer,
-                                   ReferenceIndexingSerializerMixin)
+                                   InvenTreeMoneySerializer)
 from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
                                     StockStatus)
 from part.serializers import PartBriefSerializer
@@ -86,7 +85,7 @@ class AbstractExtraLineMeta:
     ]
 
 
-class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     """Serializer for a PurchaseOrder object."""
 
     def __init__(self, *args, **kwargs):
@@ -639,7 +638,7 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
         ]
 
 
-class SalesOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     """Serializers for the SalesOrder object."""
 
     def __init__(self, *args, **kwargs):

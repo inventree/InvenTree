@@ -99,9 +99,6 @@ class DataImportMixin(object):
 class ReferenceIndexingMixin(models.Model):
     """A mixin for keeping track of numerical copies of the "reference" field.
 
-    !!DANGER!! always add `ReferenceIndexingSerializerMixin`to all your models serializers to
-    ensure the reference field is not too big
-
     Here, we attempt to convert a "reference" field value (char) to an integer,
     for performing fast natural sorting.
 
@@ -215,15 +212,33 @@ class ReferenceIndexingMixin(models.Model):
         abstract = True
 
     def rebuild_reference_field(self):
-        """Extract integer out of reference for sorting."""
+        """Extract integer out of reference for sorting.
+
+        If the 'integer' portion is buried somewhere 'within' the reference,
+        we can first try to extract it using the pattern.
+
+        Example:
+        reference - BO-123-ABC
+        pattern - BO-{ref}-???
+        extracted - 123
+
+        If we cannot extract using the pattern for some reason, fallback to the entire reference
+        """
         reference = getattr(self, 'reference', '')
+
+        try:
+            # Extract named group based on provided pattern
+            reference = InvenTree.format.extract_named_group('ref', reference, self.get_reference_pattern())
+        except Exception:
+            pass
+
         self.reference_int = extract_int(reference)
 
     reference_int = models.BigIntegerField(default=0)
 
 
 def extract_int(reference, clip=0x7fffffff):
-    """Extract integer out of reference."""
+    """Extract an integer out of reference."""
     # Default value if we cannot convert to an integer
     ref_int = 0
 
@@ -236,6 +251,16 @@ def extract_int(reference, clip=0x7fffffff):
             ref_int = int(ref)
         except Exception:
             ref_int = 0
+    else:
+        # Look at the "end" of the string
+        result = re.search(r'.*(\d+)$', reference)
+
+        if result and len(result.groups()) == 1:
+            ref = result.groups()[0]
+            try:
+                ref_int = int(ref)
+            except Exception:
+                ref_int = 0
 
     # Ensure that the returned values are within the range that can be stored in an IntegerField
     # Note: This will result in large values being "clipped"

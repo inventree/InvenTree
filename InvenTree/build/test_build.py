@@ -133,20 +133,29 @@ class BuildTest(BuildTestBase):
     def test_ref_int(self):
         """Test the "integer reference" field used for natural sorting"""
 
-        for ii in range(10):
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref}-???', change_user=None)
+
+        refs = {
+            'BO-123-456': 123,
+            'BO-456-123': 456,
+            'BO-999-ABC': 999,
+            'BO-123ABC-ABC': 123,
+            'BO-ABC123-ABC': 123,
+        }
+
+        for ref, ref_int in refs.items():
             build = Build(
-                reference=f"{ii}_abcde",
+                reference=ref,
                 quantity=1,
                 part=self.assembly,
-                title="Making some parts"
+                title='Making some parts',
             )
 
+            print(ref, '->', ref_int)
+
             self.assertEqual(build.reference_int, 0)
-
             build.save()
-
-            # After saving, the integer reference should have been updated
-            self.assertEqual(build.reference_int, ii)
+            self.assertEqual(build.reference_int, ref_int)
 
     def test_ref_validation(self):
         """Test that the reference field validation works as expected"""

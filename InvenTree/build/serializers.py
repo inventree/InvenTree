@@ -11,7 +11,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import ReferenceIndexingSerializerMixin, UserSerializer
+from InvenTree.serializers import UserSerializer
 
 import InvenTree.helpers
 from InvenTree.helpers import extract_serial_numbers
@@ -28,7 +28,7 @@ from users.serializers import OwnerSerializer
 from .models import Build, BuildItem, BuildOrderAttachment
 
 
-class BuildSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class BuildSerializer(InvenTreeModelSerializer):
     """Serializes a Build object."""
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
