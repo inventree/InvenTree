@@ -146,10 +146,18 @@ class ReferenceIndexingMixin(models.Model):
         """Return the next available reference value for this particular class."""
 
         # Default implementation looks for the highest 'reference_int' value
-        query = cls.objects.exclude(reference_int=None).order_by('-reference_int')
+        query = cls.objects.exclude(reference_int=None).order_by('-reference_int').order_by('-pk')
 
         if query.exists():
-            return query.first().reference_int + 1
+            reference = query.first().reference
+
+            try:
+                reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
+            except Exception:
+                pass
+
+            # Attempt to perform 'intelligent' incrementing of the reference field
+            return InvenTree.helpers.increment(reference)
         else:
             return 1
 
