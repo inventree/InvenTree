@@ -148,6 +148,59 @@ class BuildTest(BuildTestBase):
             # After saving, the integer reference should have been updated
             self.assertEqual(build.reference_int, ii)
 
+    def test_ref_validation(self):
+        """Test that the reference field validation works as expected"""
+
+        # Default reference pattern = 'BO-{ref:04d}
+
+        # These patterns should fail
+        for ref in [
+            'BO-1234x',
+            'BO1234',
+            'OB-1234',
+            'BO--1234'
+        ]:
+            with self.assertRaises(ValidationError):
+                Build.objects.create(
+                    part=self.assembly,
+                    quantity=10,
+                    reference=ref,
+                    title='Invalid reference',
+                )
+
+        for ref in [
+            'BO-1234',
+            'BO-9999',
+            'BO-123'
+        ]:
+            Build.objects.create(
+                part=self.assembly,
+                quantity=10,
+                reference=ref,
+                title='Valid reference',
+            )
+
+        # Try a new validator pattern
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', '{ref}-BO', change_user=None)
+
+        for ref in [
+            '1234-BO',
+            '9999-BO'
+        ]:
+            Build.objects.create(
+                part=self.assembly,
+                quantity=10,
+                reference=ref,
+                title='Valid reference',
+            )
+
+    def test_next_ref(self):
+        """Test that the next reference is automatically generated"""
+
+        # TODO: Ensure that the reference integer values are correctly extracted
+
+        ...
+
     def test_init(self):
         """Perform some basic tests before we start the ball rolling"""
 
