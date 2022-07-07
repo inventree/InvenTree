@@ -204,9 +204,24 @@ class BuildTest(BuildTestBase):
     def test_next_ref(self):
         """Test that the next reference is automatically generated"""
 
-        # TODO: Ensure that the reference integer values are correctly extracted
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'XYZ-{ref:06d}', change_user=None)
 
-        ...
+        Build.objects.create(
+            part=self.assembly,
+            quantity=5,
+            reference='XYZ-987',
+            title='Some thing',
+        )
+
+        # Now create one *without* specifying the reference
+        build = Build.objects.create(
+            part=self.assembly,
+            quantity=1,
+            title='Some new title',
+        )
+
+        self.assertEqual(build.reference, 'XYZ-000988')
+        self.assertEqual(build.reference_int, 988)
 
     def test_init(self):
         """Perform some basic tests before we start the ball rolling"""
