@@ -1136,7 +1136,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _('Pattern for generating build order reference field'),
-            'default': 'BO####',
+            'default': 'BO-{ref:04d}',
             'validator': build.validators.validate_build_reference_pattern,
         },
 
@@ -1144,11 +1144,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Build Order Reference Prefix'),
             'description': _('Prefix value for build order reference'),
             'default': 'BO',
-        },
-
-        'BUILDORDER_REFERENCE_REGEX': {
-            'name': _('Build Order Reference Regex'),
-            'description': _('Regular expression pattern for matching build order reference')
         },
 
         'SALESORDER_REFERENCE_PREFIX': {
