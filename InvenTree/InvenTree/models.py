@@ -142,24 +142,43 @@ class ReferenceIndexingMixin(models.Model):
         }
 
     @classmethod
+    def get_last_reference(cls):
+        """Return the 'most recent' reference value available for this particular class"""
+
+        # Default implementation looks for the highest 'reference_int' value, with PK as second priority
+        query = cls.objects.all().order_by('-reference_int').order_by('-pk')
+
+        result = query.first()
+
+        if result:
+            return result.reference
+        else:
+            return ''
+
+    @classmethod
     def get_next_reference(cls):
         """Return the next available reference value for this particular class."""
 
-        # Default implementation looks for the highest 'reference_int' value
-        query = cls.objects.exclude(reference_int=None).order_by('-reference_int').order_by('-pk')
+        reference = cls.get_last_reference().strip()
 
-        if query.exists():
-            reference = query.first().reference
+        # Fallback if there are no existing reference fields
+        if not reference:
+            reference = '0'
 
-            try:
-                reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
-            except Exception:
-                pass
+        try:
+            reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
+        except Exception:
+            pass
 
-            # Attempt to perform 'intelligent' incrementing of the reference field
-            return InvenTree.helpers.increment(reference)
-        else:
-            return 1
+        # Attempt to perform 'intelligent' incrementing of the reference field
+        incremented = InvenTree.helpers.increment(reference)
+
+        try:
+            incremented = int(incremented)
+        except ValueError:
+            pass
+
+        return incremented
 
     @classmethod
     def generate_reference(cls):
@@ -168,7 +187,13 @@ class ReferenceIndexingMixin(models.Model):
         fmt = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
 
-        return fmt.format(**ctx)
+        try:
+            ref = fmt.format(**ctx)
+        except Exception:
+            # If anything goes wrong, return the most recent reference
+            ref = cls.get_last_reference()
+
+        return ref
 
     @classmethod
     def validate_reference_pattern(cls, pattern):
@@ -212,7 +237,7 @@ class ReferenceIndexingMixin(models.Model):
             return
 
         if not InvenTree.format.validate_string(value, pattern):
-            raise ValidationError(_("Does not match required pattern") + ": " + pattern)
+            raise ValidationError(_("Reference must match required pattern") + ": " + pattern)
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
