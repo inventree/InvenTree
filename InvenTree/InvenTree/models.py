@@ -237,7 +237,7 @@ class ReferenceIndexingMixin(models.Model):
     reference_int = models.BigIntegerField(default=0)
 
 
-def extract_int(reference, clip=0x7fffffff):
+def extract_int(reference, clip=0x7fffffff, allow_negative=False):
     """Extract an integer out of reference."""
     # Default value if we cannot convert to an integer
     ref_int = 0
@@ -253,7 +253,7 @@ def extract_int(reference, clip=0x7fffffff):
             ref_int = 0
     else:
         # Look at the "end" of the string
-        result = re.search(r'.*(\d+)$', reference)
+        result = re.search(r'(\d+)$', reference)
 
         if result and len(result.groups()) == 1:
             ref = result.groups()[0]
@@ -269,6 +269,9 @@ def extract_int(reference, clip=0x7fffffff):
             ref_int = clip
         elif ref_int < -clip:
             ref_int = -clip
+
+    if not allow_negative and ref_int < 0:
+        ref_int = abs(ref_int)
 
     return ref_int
 

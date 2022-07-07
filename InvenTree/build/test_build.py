@@ -151,8 +151,6 @@ class BuildTest(BuildTestBase):
                 title='Making some parts',
             )
 
-            print(ref, '->', ref_int)
-
             self.assertEqual(build.reference_int, 0)
             build.save()
             self.assertEqual(build.reference_int, ref_int)

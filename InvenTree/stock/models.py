@@ -30,8 +30,7 @@ import report.models
 from company import models as CompanyModels
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               InvenTreeURLField)
-from InvenTree.models import InvenTreeAttachment, InvenTreeTree
-from InvenTree.serializers import extract_int
+from InvenTree.models import InvenTreeAttachment, InvenTreeTree, extract_int
 from InvenTree.status_codes import StockHistoryCode, StockStatus
 from part import models as PartModels
 from plugin.events import trigger_event
