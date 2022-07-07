@@ -149,7 +149,7 @@ class ReferenceIndexingMixin(models.Model):
         """Return the next available reference value for this particular class."""
 
         # Default implementation looks for the highest 'reference_int' value
-        query = cls.objects.all().order_by('-reference_int')
+        query = cls.objects.exclude(reference_int=None).order_by('-reference_int')
 
         if query.exists():
             return query.first().reference_int + 1

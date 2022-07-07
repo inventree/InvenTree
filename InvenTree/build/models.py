@@ -25,7 +25,7 @@ from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 
-from build.validators import validate_build_order_reference
+from build.validators import generate_next_build_reference, validate_build_order_reference
 
 import InvenTree.fields
 import InvenTree.helpers
@@ -37,32 +37,6 @@ import common.notifications
 from part import models as PartModels
 from stock import models as StockModels
 from users import models as UserModels
-
-
-def get_next_build_number():
-    """Returns the next available BuildOrder reference number."""
-    if Build.objects.count() == 0:
-        return '0001'
-
-    build = Build.objects.exclude(reference=None).last()
-
-    attempts = {build.reference}
-
-    reference = build.reference
-
-    while 1:
-        reference = increment(reference)
-
-        if reference in attempts:
-            # Escape infinite recursion
-            return reference
-
-        if Build.objects.filter(reference=reference).exists():
-            attempts.add(reference)
-        else:
-            break
-
-    return reference
 
 
 class Build(MPTTModel, ReferenceIndexingMixin):
@@ -110,7 +84,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     def api_defaults(cls, request):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
-            'reference': get_next_build_number(),
+            'reference': generate_next_build_reference(),
         }
 
         if request and request.user:
@@ -191,9 +165,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         blank=False,
         help_text=_('Build Order Reference'),
         verbose_name=_('Reference'),
-        default=get_next_build_number,
+        default=generate_next_build_reference,
         validators=[
-            validate_build_order_reference
+            validate_build_order_reference,
         ]
     )
 
@@ -204,7 +178,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         help_text=_('Brief description of the build')
     )
 
-    # TODO - Perhaps delete the build "tree"
     parent = TreeForeignKey(
         'self',
         on_delete=models.SET_NULL,

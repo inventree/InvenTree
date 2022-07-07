@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='build',
             name='reference',
-            field=models.CharField(default=build.models.get_next_build_number, help_text='Build Order Reference', max_length=64, unique=True, validators=[build.validators.validate_build_order_reference], verbose_name='Reference'),
+            field=models.CharField(default=build.validators.generate_next_build_reference, help_text='Build Order Reference', max_length=64, unique=True, validators=[build.validators.validate_build_order_reference], verbose_name='Reference'),
         ),
     ]

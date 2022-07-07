@@ -1,6 +1,14 @@
 """Validation methods for the build app"""
 
 
+def generate_next_build_reference():
+    """Generate the next available BuildOrder reference"""
+
+    from build.models import Build
+
+    return Build.generate_reference()
+
+
 def validate_build_reference_pattern(pattern):
     """Validate the BuildOrder reference 'pattern' setting"""
 
@@ -10,7 +18,8 @@ def validate_build_reference_pattern(pattern):
 
 
 def validate_build_order_reference(value):
-    """Validate the the build order reference value is correct"""
+    """Validate that the BuildOrder reference field matches the required pattern"""
 
-    # TODO
-    ...
+    from build.models import Build
+
+    Build.validate_reference_field(value)

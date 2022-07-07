@@ -12,7 +12,7 @@ from InvenTree import status_codes as status
 
 import common.models
 import build.tasks
-from build.models import Build, BuildItem, get_next_build_number
+from build.models import Build, BuildItem, generate_next_build_reference
 from part.models import Part, BomItem, BomItemSubstitute
 from stock.models import StockItem
 from users.models import Owner
@@ -88,7 +88,7 @@ class BuildTestBase(TestCase):
             quantity=2
         )
 
-        ref = get_next_build_number()
+        ref = generate_next_build_reference()
 
         # Create a "Build" object to make 10x objects
         self.build = Build.objects.create(
