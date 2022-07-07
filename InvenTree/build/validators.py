@@ -9,7 +9,7 @@ def generate_next_build_reference():
     return Build.generate_reference()
 
 
-def validate_build_reference_pattern(pattern):
+def validate_build_order_reference_pattern(pattern):
     """Validate the BuildOrder reference 'pattern' setting"""
 
     from build.models import Build

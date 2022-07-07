@@ -35,7 +35,9 @@
 
 function buildFormFields() {
     return {
-        reference: {},
+        reference: {
+            icon: 'fa-hashtag',
+        },
         part: {
             filters: {
                 assembly: true,

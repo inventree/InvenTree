@@ -41,6 +41,7 @@ import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.validators
+import order.validators
 
 logger = logging.getLogger('inventree')
 
@@ -1135,9 +1136,16 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
-            'description': _('Pattern for generating build order reference field'),
+            'description': _('Required pattern for generating Build Order reference field'),
             'default': 'BO-{ref:04d}',
-            'validator': build.validators.validate_build_reference_pattern,
+            'validator': build.validators.validate_build_order_reference_pattern,
+        },
+
+        'SALESORDER_REFERENCE_PATTERN': {
+            'name': _('Sales Order Reference Pattern'),
+            'description': _('Required pattern for generating Sales Order reference field'),
+            'default': 'SO-{ref:04d}',
+            'validator': order.validators.validate_sales_order_reference_pattern,
         },
 
         'SALESORDER_REFERENCE_PREFIX': {
