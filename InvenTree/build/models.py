@@ -22,7 +22,7 @@ from mptt.exceptions import InvalidMove
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode, notify_responsible
+from InvenTree.helpers import increment, normalize, MakeBarcode, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
@@ -151,9 +151,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     def __str__(self):
         """String representation of a BuildOrder"""
-        prefix = getSetting("BUILDORDER_REFERENCE_PREFIX")
-
-        return f"{prefix}{self.reference}"
+        return self.reference
 
     def get_absolute_url(self):
         """Return the web URL associated with this BuildOrder"""

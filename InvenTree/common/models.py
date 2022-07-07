@@ -1140,12 +1140,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': build.validators.validate_build_reference_pattern,
         },
 
-        'BUILDORDER_REFERENCE_PREFIX': {
-            'name': _('Build Order Reference Prefix'),
-            'description': _('Prefix value for build order reference'),
-            'default': 'BO',
-        },
-
         'SALESORDER_REFERENCE_PREFIX': {
             'name': _('Sales Order Reference Prefix'),
             'description': _('Prefix value for sales order reference'),
