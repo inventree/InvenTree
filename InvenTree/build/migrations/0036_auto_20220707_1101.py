@@ -21,9 +21,6 @@ def update_build_reference(apps, schema_editor):
     except Exception:
         prefix = 'BO-'
 
-    if not prefix.endswith('-'):
-        prefix += '-'
-
     # Construct a reference pattern
     pattern = prefix + '{ref:04d}'
 
