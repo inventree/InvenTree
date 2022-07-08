@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-07-06 05:29+0000\n"
-"PO-Revision-Date: 2022-07-07 02:44\n"
+"PO-Revision-Date: 2022-07-08 02:49\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -303,7 +303,7 @@ msgstr "Nessun colonna trovata nel file"
 
 #: InvenTree/serializers.py:373
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Nessuna riga di dati trovata nel file"
 
 #: InvenTree/serializers.py:496
 msgid "No data rows provided"
@@ -488,7 +488,7 @@ msgstr "Respinto"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
-msgstr ""
+msgstr "In quarantena"
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
@@ -782,7 +782,7 @@ msgstr ""
 
 #: build/models.py:266
 msgid "Build Status"
-msgstr ""
+msgstr "Stato Build"
 
 #: build/models.py:270
 msgid "Build status code"
