@@ -1545,6 +1545,20 @@ class BomFilter(rest_filters.FilterSet):
 
         return queryset
 
+    on_order = rest_filters.BooleanFilter(label="On order", method="filter_on_order")
+
+    def filter_on_order(self, queryset, name, value):
+        """Filter the queryset based on whether each line item has any stock on order"""
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(on_order__gt=0)
+        else:
+            queryset = queryset.filter(on_order=0)
+
+        return queryset
+
 
 class BomList(ListCreateDestroyAPIView):
     """API endpoint for accessing a list of BomItem objects.

@@ -942,8 +942,8 @@ function loadBomTable(table, options={}) {
                 }
             }
 
-            if (row.ordering && row.ordering > 0) {
-                text += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.ordering}'></span>`;
+            if (row.on_order && row.on_order > 0) {
+                text += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
             }
 
             return renderLink(text, url);
