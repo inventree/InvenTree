@@ -524,6 +524,8 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     purchase_price_range = serializers.SerializerMethodField()
 
+    ordering = serializers.FloatField(read_only=True)
+
     # Annotated fields for available stock
     available_stock = serializers.FloatField(read_only=True)
     available_substitute_stock = serializers.FloatField(read_only=True)
@@ -592,6 +594,11 @@ class BomItemSerializer(InvenTreeModelSerializer):
         """
 
         ref = 'sub_part__'
+
+        # Annotate with the total "on order" amount for the sub-part
+        queryset = queryset.annotate(
+            ordering=part.filters.annotate_on_order_quantity(ref),
+        )
 
         # Calculate "total stock" for the referenced sub_part
         # Calculate the "build_order_allocations" for the sub_part
@@ -719,6 +726,8 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'available_substitute_stock',
             'available_variant_stock',
 
+            # Annotated field describing quantity on order
+            'ordering',
         ]
 
 
