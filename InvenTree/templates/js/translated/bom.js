@@ -881,8 +881,11 @@ function loadBomTable(table, options={}) {
         },
         footerFormatter: function(data) {
 
-            var top_total = 0;  // Top-level BOM count
-            var all_total = 0;  // Total BOM count
+            // Top-level BOM count
+            var top_total = 0;
+
+            // Total BOM count
+            var all_total = 0;
 
             data.forEach(function(row) {
                 var q = +row['quantity'] || 0;
