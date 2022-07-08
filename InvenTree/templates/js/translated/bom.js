@@ -880,11 +880,27 @@ function loadBomTable(table, options={}) {
             return text;
         },
         footerFormatter: function(data) {
-            return data.map(function(row) {
-                return +row['quantity'] || 0;
-            }).reduce(function(sum, i) {
-                return sum + i;
-            }, 0);
+
+            var top_total = 0;  // Top-level BOM count
+            var all_total = 0;  // Total BOM count
+
+            data.forEach(function(row) {
+                var q = +row['quantity'] || 0;
+
+                all_total += q;
+
+                if (row.part == options.parent_id) {
+                    top_total += q;
+                }
+            });
+
+            var total = `${top_total}`;
+
+            if (top_total != all_total) {
+                total += ` / ${all_total}`;
+            }
+
+            return total;
         }
     });
 
