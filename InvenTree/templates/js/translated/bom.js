@@ -651,9 +651,10 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 }
 
 
+/*
+ * Delete the selected BOM items from the database
+ */
 function deleteBomItems(items, options={}) {
-    /* Delete the selected BOM items from the database
-     */
 
     function renderItem(item, opts={}) {
 
@@ -696,6 +697,7 @@ function deleteBomItems(items, options={}) {
 
     constructForm('{% url "api-bom-list"  %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete selected BOM items?" %}',
         form_data: {
             items: ids,

@@ -109,6 +109,7 @@ function deleteAttachments(attachments, url, options={}) {
 
     constructForm(url, {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete Attachments" %}',
         preFormContent: html,
         form_data: {
