@@ -1043,7 +1043,17 @@ function loadBomTable(table, options={}) {
                     can_build = available / row.quantity;
                 }
 
-                return formatDecimal(can_build, 2);
+                var text = formatDecimal(can_build, 2);
+
+                // Take "on order" quantity into account
+                if (row.on_order && row.on_order > 0 && row.quantity > 0) {
+                    available += row.on_order;
+                    can_build = available / row.quantity;
+
+                    text += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Including On Order" %}: ${can_build}'></span>`;
+                }
+
+                return text;
             },
             footerFormatter: function(data) {
                 var can_build = null;
