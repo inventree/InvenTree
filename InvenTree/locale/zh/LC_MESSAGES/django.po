@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-07-06 05:29+0000\n"
-"PO-Revision-Date: 2022-07-07 02:44\n"
+"PO-Revision-Date: 2022-07-08 02:49\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1183,35 +1183,35 @@ msgstr "必须提供分配的项"
 
 #: build/serializers.py:775
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr ""
+msgstr "部件来源的仓储地点(留空则可来源于任何仓储地点)"
 
 #: build/serializers.py:783
 msgid "Exclude Location"
-msgstr ""
+msgstr "排除地点"
 
 #: build/serializers.py:784
 msgid "Exclude stock items from this selected location"
-msgstr ""
+msgstr "从该选定的仓储地点排除库存项"
 
 #: build/serializers.py:789
 msgid "Interchangeable Stock"
-msgstr ""
+msgstr "可互换的库存"
 
 #: build/serializers.py:790
 msgid "Stock items in multiple locations can be used interchangeably"
-msgstr ""
+msgstr "多处地点的库存项可以互换使用"
 
 #: build/serializers.py:795
 msgid "Substitute Stock"
-msgstr ""
+msgstr "可替换的库存"
 
 #: build/serializers.py:796
 msgid "Allow allocation of substitute parts"
-msgstr ""
+msgstr "允许分配可替换的部件"
 
 #: build/tasks.py:100
 msgid "Stock required for build order"
-msgstr ""
+msgstr "生产订单所需的库存"
 
 #: build/tasks.py:118
 msgid "Overdue Build Order"
