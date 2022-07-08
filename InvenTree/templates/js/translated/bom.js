@@ -879,6 +879,13 @@ function loadBomTable(table, options={}) {
 
             return text;
         },
+        footerFormatter: function(data) {
+            return data.map(function(row) {
+                return +row['quantity'] || 0;
+            }).reduce(function(sum, i) {
+                return sum + i;
+            }, 0);
+        }
     });
 
     cols.push({
@@ -1014,6 +1021,25 @@ function loadBomTable(table, options={}) {
 
                 return formatDecimal(can_build, 2);
             },
+            footerFormatter: function(data) {
+                var can_build = null;
+
+                data.forEach(function(row) {
+                    if (row.part == options.parent_id && row.quantity > 0) {
+                        var cb = availableQuantity(row) / row.quantity;
+
+                        if (can_build == null || cb < can_build) {
+                            can_build = cb;
+                        }
+                    }
+                });
+
+                if (can_build == null) {
+                    can_build = '-';
+                }
+
+                return can_build;
+            },
             sorter: function(valA, valB, rowA, rowB) {
                 // Function to sort the "can build" quantity
                 var cb_a = 0;
@@ -1133,6 +1159,7 @@ function loadBomTable(table, options={}) {
         parentIdField: 'parentId',
         treeShowField: 'sub_part',
         showColumns: true,
+        showFooter: true,
         name: 'bom',
         sortable: true,
         search: true,
