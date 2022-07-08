@@ -651,9 +651,10 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 }
 
 
+/*
+ * Delete the selected BOM items from the database
+ */
 function deleteBomItems(items, options={}) {
-    /* Delete the selected BOM items from the database
-     */
 
     function renderItem(item, opts={}) {
 
@@ -696,6 +697,7 @@ function deleteBomItems(items, options={}) {
 
     constructForm('{% url "api-bom-list"  %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete selected BOM items?" %}',
         form_data: {
             items: ids,
@@ -877,6 +879,32 @@ function loadBomTable(table, options={}) {
 
             return text;
         },
+        footerFormatter: function(data) {
+
+            // Top-level BOM count
+            var top_total = 0;
+
+            // Total BOM count
+            var all_total = 0;
+
+            data.forEach(function(row) {
+                var q = +row['quantity'] || 0;
+
+                all_total += q;
+
+                if (row.part == options.parent_id) {
+                    top_total += q;
+                }
+            });
+
+            var total = `${top_total}`;
+
+            if (top_total != all_total) {
+                total += ` / ${all_total}`;
+            }
+
+            return total;
+        }
     });
 
     cols.push({
@@ -897,9 +925,10 @@ function loadBomTable(table, options={}) {
             var text = `${available_stock}`;
 
             if (available_stock <= 0) {
-                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "No Stock Available" %}'></span>`;
             } else {
                 var extra = '';
+
                 if ((substitute_stock > 0) && (variant_stock > 0)) {
                     extra = '{% trans "Includes variant and substitute stock" %}';
                 } else if (variant_stock > 0) {
@@ -911,6 +940,10 @@ function loadBomTable(table, options={}) {
                 if (extra) {
                     text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
                 }
+            }
+
+            if (row.on_order && row.on_order > 0) {
+                text += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
             }
 
             return renderLink(text, url);
@@ -1010,7 +1043,36 @@ function loadBomTable(table, options={}) {
                     can_build = available / row.quantity;
                 }
 
-                return formatDecimal(can_build, 2);
+                var text = formatDecimal(can_build, 2);
+
+                // Take "on order" quantity into account
+                if (row.on_order && row.on_order > 0 && row.quantity > 0) {
+                    available += row.on_order;
+                    can_build = available / row.quantity;
+
+                    text += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Including On Order" %}: ${can_build}'></span>`;
+                }
+
+                return text;
+            },
+            footerFormatter: function(data) {
+                var can_build = null;
+
+                data.forEach(function(row) {
+                    if (row.part == options.parent_id && row.quantity > 0) {
+                        var cb = availableQuantity(row) / row.quantity;
+
+                        if (can_build == null || cb < can_build) {
+                            can_build = cb;
+                        }
+                    }
+                });
+
+                if (can_build == null) {
+                    can_build = '-';
+                }
+
+                return can_build;
             },
             sorter: function(valA, valB, rowA, rowB) {
                 // Function to sort the "can build" quantity
@@ -1131,6 +1193,7 @@ function loadBomTable(table, options={}) {
         parentIdField: 'parentId',
         treeShowField: 'sub_part',
         showColumns: true,
+        showFooter: true,
         name: 'bom',
         sortable: true,
         search: true,
