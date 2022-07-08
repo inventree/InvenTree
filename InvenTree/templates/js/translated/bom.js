@@ -899,20 +899,20 @@ function loadBomTable(table, options={}) {
             var text = `${available_stock}`;
 
             if (available_stock <= 0) {
-                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "No Stock Available" %}'></span>`;
             } else {
-                var extra = '';
-                if ((substitute_stock > 0) && (variant_stock > 0)) {
-                    extra = '{% trans "Includes variant and substitute stock" %}';
-                } else if (variant_stock > 0) {
-                    extra = '{% trans "Includes variant stock" %}';
-                } else if (substitute_stock > 0) {
-                    extra = '{% trans "Includes substitute stock" %}';
-                }
+            var extra = '';
+            if ((substitute_stock > 0) && (variant_stock > 0)) {
+                extra = '{% trans "Includes variant and substitute stock" %}';
+            } else if (variant_stock > 0) {
+                extra = '{% trans "Includes variant stock" %}';
+            } else if (substitute_stock > 0) {
+                extra = '{% trans "Includes substitute stock" %}';
+            }
 
-                if (extra) {
-                    text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
-                }
+            if (extra) {
+                text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
+            }
             }
 
             return renderLink(text, url);
