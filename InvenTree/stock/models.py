@@ -1707,8 +1707,7 @@ class StockItem(MetadataMixin, MPTTModel):
             s += ' @ {loc}'.format(loc=self.location.name)
 
         if self.purchase_order:
-            s += " ({pre}{po})".format(
-                pre=InvenTree.helpers.getSetting("PURCHASEORDER_REFERENCE_PREFIX"),
+            s += " ({po})".format(
                 po=self.purchase_order,
             )
 

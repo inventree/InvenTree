@@ -230,9 +230,8 @@ class PurchaseOrder(Order):
 
     def __str__(self):
         """Render a string representation of this PurchaseOrder"""
-        prefix = getSetting('PURCHASEORDER_REFERENCE_PREFIX')
 
-        return f"{prefix}{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
+        return f"{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
 
     reference = models.CharField(
         unique=True,

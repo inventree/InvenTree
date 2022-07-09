@@ -425,7 +425,6 @@ class PurchaseOrderReport(ReportTemplateBase):
             'order': order,
             'reference': order.reference,
             'supplier': order.supplier,
-            'prefix': common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_PREFIX'),
             'title': str(order),
         }
 

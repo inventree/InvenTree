@@ -497,7 +497,7 @@ function createPurchaseOrder(options={}) {
         method: 'POST',
         fields: {
             reference: {
-                prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
+                icon: 'fa-hashtag',
             },
             supplier: {
                 icon: 'fa-building',
@@ -1081,9 +1081,7 @@ function newPurchaseOrderFromOrderWizard(e) {
                 },
                 {
                     success: function(response) {
-                        var text = global_settings.PURCHASEORDER_REFERENCE_PREFIX || '';
-
-                        text += response.reference;
+                        var text = response.reference;
 
                         if (response.supplier_detail) {
                             text += ` ${response.supplier_detail.name}`;
@@ -1545,8 +1543,6 @@ function loadPurchaseOrderTable(table, options) {
             filters,
             {
                 success: function(response) {
-                    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-
                     for (var idx = 0; idx < response.length; idx++) {
 
                         var order = response[idx];
@@ -1559,7 +1555,7 @@ function loadPurchaseOrderTable(table, options) {
                             date = order.target_date;
                         }
 
-                        var title = `${prefix}${order.reference} - ${order.supplier_detail.name}`;
+                        var title = `${order.reference} - ${order.supplier_detail.name}`;
 
                         var color = '#4c68f5';
 
@@ -1622,12 +1618,6 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 switchable: false,
                 formatter: function(value, row) {
-
-                    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-
-                    if (prefix) {
-                        value = `${prefix}${value}`;
-                    }
 
                     var html = renderLink(value, `/order/purchase-order/${row.pk}/`);
 

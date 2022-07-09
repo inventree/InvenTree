@@ -255,8 +255,7 @@ function renderOwner(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderPurchaseOrder(name, data, parameters={}, options={}) {
 
-    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-    var html = `<span>${prefix}${data.reference}</span>`;
+    var html = `<span>${data.reference}</span>`;
 
     var thumbnail = null;
 

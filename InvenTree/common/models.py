@@ -1168,12 +1168,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': order.validators.validate_purchase_order_reference_pattern,
         },
 
-        'PURCHASEORDER_REFERENCE_PREFIX': {
-            'name': _('Purchase Order Reference Prefix'),
-            'description': _('Prefix value for purchase order reference'),
-            'default': 'PO',
-        },
-
         # login / SSO
         'LOGIN_ENABLE_PWD_FORGOT': {
             'name': _('Enable password forgot'),
