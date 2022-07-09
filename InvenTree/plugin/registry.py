@@ -208,6 +208,7 @@ class PluginsRegistry:
                 try:
                     plugin = entry.load()
                     plugin.is_package = True
+                    plugin._get_package_metadata()
                     self.plugin_modules.append(plugin)
                 except Exception as error:
                     handle_error(error, do_raise=False, log_name='discovery')
