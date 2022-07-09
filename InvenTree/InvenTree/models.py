@@ -187,13 +187,30 @@ class ReferenceIndexingMixin(models.Model):
         fmt = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
 
-        try:
-            ref = fmt.format(**ctx)
-        except Exception:
-            # If anything goes wrong, return the most recent reference
-            ref = cls.get_last_reference()
+        reference = None
 
-        return ref
+        attempts = set()
+
+        while reference is None:
+            try:
+                ref = fmt.format(**ctx)
+
+                if ref in attempts:
+                    # We are stuck in a loop!
+                    reference = ref
+                else:
+
+                    attempts.add(ref)
+
+                    # Handle case where we have duplicated an existing reference
+                    if cls.objects.filter(reference=ref).exists():
+                        ctx['ref'] = InvenTree.helpers.increment(ctx['ref'])
+
+            except Exception:
+                # If anything goes wrong, return the most recent reference
+                reference = cls.get_last_reference()
+
+        return reference
 
     @classmethod
     def validate_reference_pattern(cls, pattern):
@@ -227,7 +244,7 @@ class ReferenceIndexingMixin(models.Model):
 
         pattern = cls.get_reference_pattern()
 
-        value = value.strip()
+        value = str(value).strip()
 
         if len(value) == 0:
             raise ValidationError(_("Reference field cannot be empty"))
@@ -273,7 +290,7 @@ class ReferenceIndexingMixin(models.Model):
         if validate:
             if reference_int > models.BigIntegerField.MAX_BIGINT:
                 raise ValidationError({
-                    "reference": _("Refernce number is too large")
+                    "reference": _("Reference number is too large")
                 })
 
         return reference_int

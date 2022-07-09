@@ -67,7 +67,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
         Ensures that the reference field is rebuilt whenever the instance is saved.
         """
-        self.reference = self.rebuild_reference_field(self.reference)
+        self.reference_int = self.rebuild_reference_field(self.reference)
 
         if not self.creation_date:
             self.creation_date = datetime.now().date()

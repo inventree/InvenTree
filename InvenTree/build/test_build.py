@@ -206,12 +206,14 @@ class BuildTest(BuildTestBase):
 
         common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'XYZ-{ref:06d}', change_user=None)
 
-        Build.objects.create(
+        build = Build.objects.create(
             part=self.assembly,
             quantity=5,
             reference='XYZ-987',
             title='Some thing',
         )
+
+        self.assertEqual(build.reference_int, 987)
 
         # Now create one *without* specifying the reference
         build = Build.objects.create(
@@ -479,7 +481,7 @@ class BuildTest(BuildTestBase):
         """Test that a notification is sent when a new build is created"""
 
         Build.objects.create(
-            reference='IIIII',
+            reference='BO-9999',
             title='Some new build',
             part=self.assembly,
             quantity=5,
