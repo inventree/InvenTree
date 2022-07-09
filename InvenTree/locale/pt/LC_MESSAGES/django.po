@@ -5,29 +5,29 @@ msgstr ""
 "POT-Creation-Date: 2022-07-09 00:30+0000\n"
 "PO-Revision-Date: 2022-07-09 02:45\n"
 "Last-Translator: \n"
-"Language-Team: Portuguese\n"
-"Language: pt_PT\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: pt-PT\n"
+"X-Crowdin-Language: pt-BR\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
 #: InvenTree/api.py:52
 msgid "API endpoint not found"
-msgstr ""
+msgstr "API endpoint não encontrado"
 
 #: InvenTree/exceptions.py:62
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "Detalhes do erro podem ser encontrados no painel de administrador"
 
 #: InvenTree/fields.py:99
 msgid "Enter date"
-msgstr ""
+msgstr "Insira uma Data"
 
 #: InvenTree/fields.py:176 build/serializers.py:374
 #: build/templates/build/sidebar.html:21 company/models.py:523
@@ -50,35 +50,35 @@ msgstr ""
 
 #: InvenTree/forms.py:134
 msgid "Enter password"
-msgstr ""
+msgstr "Digite a senha"
 
 #: InvenTree/forms.py:135
 msgid "Enter new password"
-msgstr ""
+msgstr "Insira uma nova senha"
 
 #: InvenTree/forms.py:144
 msgid "Confirm password"
-msgstr ""
+msgstr "Confirmar senha"
 
 #: InvenTree/forms.py:145
 msgid "Confirm new password"
-msgstr ""
+msgstr "Confirmar nova senha"
 
 #: InvenTree/forms.py:149
 msgid "Old password"
-msgstr ""
+msgstr "Senha atual"
 
 #: InvenTree/forms.py:178
 msgid "Email (again)"
-msgstr ""
+msgstr "E-mail (novamente)"
 
 #: InvenTree/forms.py:182
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Confirmação do endereço de email"
 
 #: InvenTree/forms.py:203
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Voce precisa digital o mesmo email."
 
 #: InvenTree/forms.py:282 common/models.py:1850
 msgid "Token"
@@ -91,62 +91,62 @@ msgstr ""
 #: InvenTree/helpers.py:404
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Numero serial duplicado: {sn}"
 
 #: InvenTree/helpers.py:411 order/models.py:357 order/models.py:509
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Quantidade invalida"
 
 #: InvenTree/helpers.py:414
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Numero serial em branco"
 
 #: InvenTree/helpers.py:446
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "Numero de grupo invalido:{g}"
 
 #: InvenTree/helpers.py:449
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Grupo invalido:{g}"
 
 #: InvenTree/helpers.py:477
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "Sequencia de grupo invalida:{g}"
 
 #: InvenTree/helpers.py:485
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Invalido/sem grupo {group}"
 
 #: InvenTree/helpers.py:491
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Nenhum numero serial encontrado"
 
 #: InvenTree/helpers.py:495
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Numero de numeros seriais ({s}) precisa bater com quantidade ({q})"
 
 #: InvenTree/models.py:178
 msgid "Missing file"
-msgstr ""
+msgstr "Arquivo nao encontrado"
 
 #: InvenTree/models.py:179
 msgid "Missing external link"
-msgstr ""
+msgstr "Link externo nao encontrado"
 
 #: InvenTree/models.py:191 stock/models.py:2096
 #: templates/js/translated/attachment.js:103
 #: templates/js/translated/attachment.js:241
 msgid "Attachment"
-msgstr ""
+msgstr "Anexo"
 
 #: InvenTree/models.py:192
 msgid "Select file to attach"
-msgstr ""
+msgstr "Selecione arquivo para anexar"
 
 #: InvenTree/models.py:198 company/models.py:124 company/models.py:276
 #: company/models.py:510 order/models.py:136 order/models.py:1268
@@ -156,21 +156,21 @@ msgstr ""
 #: templates/js/translated/company.js:936 templates/js/translated/order.js:2687
 #: templates/js/translated/part.js:1510
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: InvenTree/models.py:199 build/models.py:319 part/models.py:796
 #: stock/models.py:651
 msgid "Link to external URL"
-msgstr ""
+msgstr "Link para URL externa"
 
 #: InvenTree/models.py:202 templates/js/translated/attachment.js:104
 #: templates/js/translated/attachment.js:285
 msgid "Comment"
-msgstr ""
+msgstr "Comentario"
 
 #: InvenTree/models.py:202
 msgid "File comment"
-msgstr ""
+msgstr "Comentario sobre arquivo"
 
 #: InvenTree/models.py:208 InvenTree/models.py:209 common/models.py:1619
 #: common/models.py:1620 common/models.py:1843 common/models.py:1844
@@ -179,40 +179,40 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2576
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #: InvenTree/models.py:212
 msgid "upload date"
-msgstr ""
+msgstr "data de upload"
 
 #: InvenTree/models.py:234
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Nome do arquivo nao pode estar vazio"
 
 #: InvenTree/models.py:257
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Diretorio para anexo invalido"
 
 #: InvenTree/models.py:267
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Arquivo contem characteres ilegais '{c}'"
 
 #: InvenTree/models.py:270
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Arquivo sem extensao"
 
 #: InvenTree/models.py:277
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Anexo ja existe"
 
 #: InvenTree/models.py:284
 msgid "Error renaming file"
-msgstr ""
+msgstr "Erro renomeando o arquivo"
 
 #: InvenTree/models.py:318
 msgid "Invalid choice"
-msgstr ""
+msgstr "Escolha invalida"
 
 #: InvenTree/models.py:337 InvenTree/models.py:338 common/models.py:1829
 #: company/models.py:358 label/models.py:101 part/models.py:739
@@ -228,7 +228,7 @@ msgstr ""
 #: templates/js/translated/part.js:684 templates/js/translated/part.js:836
 #: templates/js/translated/part.js:1857 templates/js/translated/stock.js:2346
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: InvenTree/models.py:344 build/models.py:196
 #: build/templates/build/detail.html:24 company/models.py:282
@@ -251,27 +251,27 @@ msgstr ""
 #: templates/js/translated/part.js:1945 templates/js/translated/stock.js:1739
 #: templates/js/translated/stock.js:2358 templates/js/translated/stock.js:2413
 msgid "Description"
-msgstr ""
+msgstr "Descricao"
 
 #: InvenTree/models.py:345
 msgid "Description (optional)"
-msgstr ""
+msgstr "Descricao (opicional)"
 
 #: InvenTree/models.py:353
 msgid "parent"
-msgstr ""
+msgstr "parent"
 
 #: InvenTree/models.py:466
 msgid "Server Error"
-msgstr ""
+msgstr "Erro de servidor"
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Log de erro salvo pelo servidor."
 
 #: InvenTree/serializers.py:53 part/models.py:2692
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Preicsa ser um numero valido"
 
 #: InvenTree/serializers.py:264
 msgid "Filename"
@@ -5502,11 +5502,11 @@ msgstr ""
 
 #: plugin/base/action/api.py:27
 msgid "No action specified"
-msgstr ""
+msgstr "Nenhuma ação especificada"
 
 #: plugin/base/action/api.py:38
 msgid "No matching action found"
-msgstr ""
+msgstr "Nenhuma ação correspondente encontrada"
 
 #: plugin/base/barcodes/api.py:52 plugin/base/barcodes/api.py:154
 msgid "Must provide barcode_data parameter"
@@ -7381,7 +7381,7 @@ msgstr ""
 
 #: templates/account/email_confirm.html:22 templates/js/translated/forms.js:644
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmar"
 
 #: templates/account/email_confirm.html:30
 #, python-format
