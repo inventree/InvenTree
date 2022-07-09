@@ -850,6 +850,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
         },
 
+        'INVENTREE_REQUIRE_CONFIRM': {
+            'name': _('Require confirm'),
+            'description': _('Require explicit user confirmation for certain action.'),
+            'validator': bool,
+            'default': True,
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),

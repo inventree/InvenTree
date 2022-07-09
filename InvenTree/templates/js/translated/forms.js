@@ -6,6 +6,7 @@
     inventreeFormDataUpload,
     inventreeGet,
     inventreePut,
+    global_settings,
     modalEnable,
     modalShowSubmitButton,
     renderBuild,
@@ -575,7 +576,7 @@ function constructFormBody(fields, options) {
     $(modal).find('#modal-footer-buttons').html('');
 
     // Insert "confirm" button (if required)
-    if (options.confirm) {
+    if (options.confirm && global_settings.INVENTREE_REQUIRE_CONFIRM) {
         insertConfirmButton(options);
     }
 
