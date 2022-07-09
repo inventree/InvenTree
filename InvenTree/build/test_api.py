@@ -748,6 +748,7 @@ class BuildListTest(BuildAPITest):
 
         Build.objects.create(
             part=part,
+            reference="BO-0006",
             quantity=10,
             title='Just some thing',
             status=BuildStatus.PRODUCTION,

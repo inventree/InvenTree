@@ -202,13 +202,17 @@ class ReferenceIndexingMixin(models.Model):
                 if ref in attempts:
                     # We are stuck in a loop!
                     reference = ref
+                    break
                 else:
-
                     attempts.add(ref)
 
-                    # Handle case where we have duplicated an existing reference
                     if cls.objects.filter(reference=ref).exists():
+                        # Handle case where we have duplicated an existing reference
                         ctx['ref'] = InvenTree.helpers.increment(ctx['ref'])
+                    else:
+                        # We have found an 'unused' reference
+                        reference = ref
+                        break
 
             except Exception:
                 # If anything goes wrong, return the most recent reference
