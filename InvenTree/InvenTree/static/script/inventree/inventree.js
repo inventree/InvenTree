@@ -40,8 +40,7 @@ function attachClipboard(selector, containerselector, textElement) {
     }
 
     // create Clipboard
-    // eslint-disable-next-line no-unused-vars
-    var cis = new ClipboardJS(selector, {
+    new ClipboardJS(selector, {
         text: text,
         container: containerselector
     });
