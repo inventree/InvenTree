@@ -609,9 +609,8 @@ class SalesOrder(Order):
 
     def __str__(self):
         """Render a string representation of this SalesOrder"""
-        prefix = getSetting('SALESORDER_REFERENCE_PREFIX')
 
-        return f"{prefix}{self.reference} - {self.customer.name if self.customer else _('deleted')}"
+        return f"{self.reference} - {self.customer.name if self.customer else _('deleted')}"
 
     def get_absolute_url(self):
         """Return the web URL for the detail view of this order"""

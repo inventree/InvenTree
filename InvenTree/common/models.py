@@ -1148,12 +1148,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': order.validators.validate_sales_order_reference_pattern,
         },
 
-        'SALESORDER_REFERENCE_PREFIX': {
-            'name': _('Sales Order Reference Prefix'),
-            'description': _('Prefix value for sales order reference'),
-            'default': 'SO',
-        },
-
         'SALESORDER_DEFAULT_SHIPMENT': {
             'name': _('Sales Order Default Shipment'),
             'description': _('Enable creation of default shipment with sales orders'),

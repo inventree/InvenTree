@@ -280,8 +280,7 @@ function renderPurchaseOrder(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderSalesOrder(name, data, parameters={}, options={}) {
 
-    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-    var html = `<span>${prefix}${data.reference}</span>`;
+    var html = `<span>${data.reference}</span>`;
 
     var thumbnail = null;
 
@@ -306,10 +305,8 @@ function renderSalesOrder(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderSalesOrderShipment(name, data, parameters={}, options={}) {
 
-    var so_prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-
     var html = `
-    <span>${so_prefix}${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
+    <span>${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
     <span class='float-right'>
         <small>{% trans "Shipment ID" %}: ${data.pk}</small>
     </span>
