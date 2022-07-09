@@ -292,8 +292,8 @@ function exportBom(part_id, options={}) {
                 choices: exportFormatOptions(),
             },
             cascade: {
-                label: '{% trans "Cascading" %}',
-                help_text: '{% trans "Download cascading / multi-level BOM" %}',
+                label: '{% trans "Multi Level BOM" %}',
+                help_text: '{% trans "Include BOM data for subassemblies" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-cascading', true),
             },
@@ -302,6 +302,7 @@ function exportBom(part_id, options={}) {
                 help_text: '{% trans "Select maximum number of BOM levels to export (0 = all levels)" %}',
                 type: 'integer',
                 value: 0,
+                required: true,
                 min_value: 0,
             },
             parameter_data: {

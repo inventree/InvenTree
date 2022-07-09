@@ -94,22 +94,27 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(data['description'], 'Ordering some screws')
 
     def test_po_reference(self):
-        """Test that a reference with a too big / small reference is not possible."""
+        """Test that a reference with a too big / small reference is handled correctly."""
         # get permissions
         self.assignRole('purchase_order.add')
 
         url = reverse('api-po-list')
-        huge_number = 9223372036854775808
+        huge_number = "PO-92233720368547758089999999999999999"
 
-        self.post(
+        response = self.post(
             url,
             {
                 'supplier': 1,
                 'reference': huge_number,
-                'description': 'PO not created via the API',
+                'description': 'PO created via the API',
             },
             expected_code=201,
         )
+
+        order = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+
+        self.assertEqual(order.reference, 'PO-92233720368547758089999999999999999')
+        self.assertEqual(order.reference_int, 9223372036854775807)
 
     def test_po_attachments(self):
         """Test the list endpoint for the PurchaseOrderAttachment model"""
@@ -149,7 +154,7 @@ class PurchaseOrderTest(OrderTest):
             url,
             {
                 'supplier': 1,
-                'reference': '123456789-xyz',
+                'reference': 'PO-123456789',
                 'description': 'PO created via the API',
             },
             expected_code=201
@@ -177,19 +182,19 @@ class PurchaseOrderTest(OrderTest):
         # Get detail info!
         response = self.get(url)
         self.assertEqual(response.data['pk'], pk)
-        self.assertEqual(response.data['reference'], '123456789-xyz')
+        self.assertEqual(response.data['reference'], 'PO-123456789')
 
         # Try to alter (edit) the PurchaseOrder
         response = self.patch(
             url,
             {
-                'reference': '12345-abc',
+                'reference': 'PO-12345',
             },
             expected_code=200
         )
 
         # Reference should have changed
-        self.assertEqual(response.data['reference'], '12345-abc')
+        self.assertEqual(response.data['reference'], 'PO-12345')
 
         # Now, let's try to delete it!
         # Initially, we do *not* have the required permission!
@@ -213,7 +218,7 @@ class PurchaseOrderTest(OrderTest):
         self.post(
             reverse('api-po-list'),
             {
-                'reference': '12345678',
+                'reference': 'PO-12345678',
                 'supplier': 1,
                 'description': 'A test purchase order',
             },
@@ -824,7 +829,7 @@ class SalesOrderTest(OrderTest):
             url,
             {
                 'customer': 4,
-                'reference': '12345',
+                'reference': 'SO-12345',
                 'description': 'Another sales order',
             },
             expected_code=400
@@ -834,19 +839,28 @@ class SalesOrderTest(OrderTest):
 
         # Extract detail info for the SalesOrder
         response = self.get(url)
-        self.assertEqual(response.data['reference'], '12345')
+        self.assertEqual(response.data['reference'], 'SO-12345')
 
         # Try to alter (edit) the SalesOrder
+        # Initially try with an invalid reference field value
         response = self.patch(
             url,
             {
-                'reference': '12345-a',
+                'reference': 'SO-12345-a',
+            },
+            expected_code=400
+        )
+
+        response = self.patch(
+            url,
+            {
+                'reference': 'SO-12346',
             },
             expected_code=200
         )
 
         # Reference should have changed
-        self.assertEqual(response.data['reference'], '12345-a')
+        self.assertEqual(response.data['reference'], 'SO-12346')
 
         # Now, let's try to delete this SalesOrder
         # Initially, we do not have the required permission
