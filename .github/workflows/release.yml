@@ -1,0 +1,29 @@
+# Runs on releases
+
+name: Publish release notes
+on:
+  release:
+    types: [published]
+
+jobs:
+  tweet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ethomson/send-tweet-action@v1
+        with:
+          status: "Hi, this is a test for the release bot."
+          consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+          consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
+          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+
+  test:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: bluwy/release-for-reddit-action@v1
+          with:
+            username: ${{ secrets.REDDIT_USERNAME }}
+            password: ${{ secrets.REDDIT_PASSWORD }}
+            app-id: ${{ secrets.REDDIT_APP_ID }}
+            app-secret: ${{ secrets.REDDIT_APP_SECRET }}
+            subreddit: test # Submit to /r/test
