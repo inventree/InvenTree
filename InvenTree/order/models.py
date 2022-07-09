@@ -957,6 +957,7 @@ class OrderExtraLine(OrderLineItem):
         max_digits=19,
         decimal_places=4,
         null=True, blank=True,
+        allow_negative=True,
         verbose_name=_('Price'),
         help_text=_('Unit price'),
     )
