@@ -27,5 +27,5 @@ jobs:
             app-id: ${{ secrets.REDDIT_APP_ID }}
             app-secret: ${{ secrets.REDDIT_APP_SECRET }}
             subreddit: InvenTree
-            title: InvenTree version ${{ github.event.release.tag_name }} released
-            comment: ${{ github.event.release.body }}
+            title: "InvenTree version ${{ github.event.release.tag_name }} released"
+            comment: "${{ github.event.release.body }}"
