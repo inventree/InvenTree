@@ -17,7 +17,7 @@ jobs:
           access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
 
-  test:
+  reddit:
       runs-on: ubuntu-latest
       steps:
         - uses: bluwy/release-for-reddit-action@v1
@@ -26,4 +26,6 @@ jobs:
             password: ${{ secrets.REDDIT_PASSWORD }}
             app-id: ${{ secrets.REDDIT_APP_ID }}
             app-secret: ${{ secrets.REDDIT_APP_SECRET }}
-            subreddit: test # Submit to /r/test
+            subreddit: InvenTree
+            title: InvenTree version ${{ github.event.release.tag_name }} released
+            comment: ${{ github.event.release.body }}
