@@ -142,33 +142,37 @@ class ReferenceIndexingMixin(models.Model):
         }
 
     @classmethod
-    def get_last_reference(cls):
-        """Return the 'most recent' reference value available for this particular class"""
+    def get_most_recent_item(cls):
+        """Return the item which is 'most recent'
 
-        # Default implementation looks for the highest 'reference_int' value, with PK as second priority
-        query = cls.objects.all().order_by('-reference_int').order_by('-pk')
+        In practice, this means the item with the highest reference value
+        """
 
-        result = query.first()
+        query = cls.objects.all().order_by('-reference_int', '-pk')
 
-        if result:
-            return result.reference
+        if query.exists():
+            return query.first()
         else:
-            return ''
+            return None
 
     @classmethod
     def get_next_reference(cls):
         """Return the next available reference value for this particular class."""
 
-        reference = cls.get_last_reference().strip()
+        # Find the "most recent" item
+        latest = cls.get_most_recent_item()
 
-        # Fallback if there are no existing reference fields
-        if not reference:
-            reference = '0'
+        if not latest:
+            # No existing items
+            return 1
+
+        reference = latest.reference.strip
 
         try:
             reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
         except Exception:
-            pass
+            # If reference cannot be extracted using the pattern, try just the integer value
+            reference = str(latest.reference_int)
 
         # Attempt to perform 'intelligent' incrementing of the reference field
         incremented = InvenTree.helpers.increment(reference)
@@ -208,7 +212,11 @@ class ReferenceIndexingMixin(models.Model):
 
             except Exception:
                 # If anything goes wrong, return the most recent reference
-                reference = cls.get_last_reference()
+                recent = cls.get_most_recent_item()
+                if recent:
+                    reference = recent.reference
+                else:
+                    reference = ""
 
         return reference
 
