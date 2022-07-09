@@ -807,7 +807,7 @@ class SalesOrderTest(OrderTest):
             url,
             {
                 'customer': 4,
-                'reference': '12345',
+                'reference': 'SO-12345',
                 'description': 'Sales order',
             },
             expected_code=201

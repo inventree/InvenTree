@@ -48,7 +48,7 @@ def update_salesorder_reference(apps, schema_editor):
     n = update_order_references(SalesOrder, prefix)
 
     if n > 0:
-        print(f"Updates reference field for {n} SalesOrder objects")
+        print(f"Updated reference field for {n} SalesOrder objects")
 
 
 def update_purchaseorder_reference(apps, schema_editor):
@@ -81,7 +81,7 @@ def update_purchaseorder_reference(apps, schema_editor):
     n = update_order_references(PurchaseOrder, prefix)
 
     if n > 0:
-        print(f"Updates reference field for {n} PurchaseOrder objects")
+        print(f"Updated reference field for {n} PurchaseOrder objects")
 
 
 def nop(apps, schema_editor):
