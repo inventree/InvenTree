@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-07-09 00:30+0000\n"
-"PO-Revision-Date: 2022-07-07 02:44\n"
+"PO-Revision-Date: 2022-07-09 02:45\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -1674,10 +1674,8 @@ msgid "Allow download of remote images and files from external URL"
 msgstr "Permitir la descarga de imágenes y archivos remotos desde la URL externa"
 
 #: common/models.py:854
-#, fuzzy
-#| msgid "Required For"
 msgid "Require confirm"
-msgstr "Requerido para"
+msgstr ""
 
 #: common/models.py:855
 msgid "Require explicit user confirmation for certain action."
@@ -7397,22 +7395,18 @@ msgstr "Ingresar"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
-"Por favor, inicia sesión con una\n"
+msgstr "Por favor, inicia sesión con una\n"
 "de tus cuentas de terceros existentes o  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">regístrate</a>\n"
 " e inicia sesión a continuación:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
-"Si aún no has creado una cuenta, por favor\n"
+msgstr "Si aún no has creado una cuenta, por favor\n"
 "<a href=\"%(signup_url)s\">regístrate</a> primero."
 
 #: templates/account/login.html:47
@@ -7987,10 +7981,8 @@ msgid "View BOM"
 msgstr "Ver BOM"
 
 #: templates/js/translated/bom.js:1053
-#, fuzzy
-#| msgid "On Order"
 msgid "Including On Order"
-msgstr "En pedido"
+msgstr ""
 
 #: templates/js/translated/bom.js:1117
 msgid "Validate BOM Item"
@@ -10396,3 +10388,4 @@ msgstr "Permisos para editar elementos"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Permiso para eliminar elementos"
+
