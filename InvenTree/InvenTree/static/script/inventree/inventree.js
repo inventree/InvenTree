@@ -110,6 +110,9 @@ function inventreeDocReady() {
     $('#launch-about').click(function() {
         launchModalForm(`/about/`, {
             no_post: true,
+            after_render: function() {
+                attachClipboard('.clip-btn', 'modal-form');
+            }
         });
     });
 
