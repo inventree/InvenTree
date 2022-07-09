@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: ethomson/send-tweet-action@v1
         with:
-          status: "Hi, this is a test for the release bot."
+          status: "InvenTree release ${{ github.event.release.tag_name }} is out. Release notes: ${{ github.event.release.html_url }}"
           consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
           consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
           access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
