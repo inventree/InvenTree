@@ -239,12 +239,16 @@ class ReferenceIndexingMixin(models.Model):
         if not InvenTree.format.validate_string(value, pattern):
             raise ValidationError(_("Reference must match required pattern") + ": " + pattern)
 
+        # Check that the reference field can be rebuild
+        cls.rebuild_reference_field(value, validate=True)
+
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
 
         abstract = True
 
-    def rebuild_reference_field(self, validate=False):
+    @classmethod
+    def rebuild_reference_field(cls, reference, validate=False):
         """Extract integer out of reference for sorting.
 
         If the 'integer' portion is buried somewhere 'within' the reference,
@@ -258,26 +262,39 @@ class ReferenceIndexingMixin(models.Model):
         If we cannot extract using the pattern for some reason, fallback to the entire reference
         """
 
-        reference = getattr(self, 'reference', '')
-
-        if validate:
-            self.validate_reference_field(reference)
-
         try:
             # Extract named group based on provided pattern
-            reference = InvenTree.format.extract_named_group('ref', reference, self.get_reference_pattern())
+            reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
         except Exception:
             pass
 
-        self.reference_int = extract_int(reference)
+        reference_int = extract_int(reference)
+
+        if validate:
+            if reference_int > models.BigIntegerField.MAX_BIGINT:
+                raise ValidationError({
+                    "reference": _("Refernce number is too large")
+                })
+
+        return reference_int
 
     reference_int = models.BigIntegerField(default=0)
 
 
-def extract_int(reference, clip=0x7fffffff, allow_negative=False):
+def extract_int(reference, clip=None, allow_negative=False):
     """Extract an integer out of reference."""
+
+    if clip is None:
+        clip = models.BigIntegerField.MAX_BIGINT
+
     # Default value if we cannot convert to an integer
     ref_int = 0
+
+    reference = str(reference).strip()
+
+    # Ignore empty string
+    if len(reference) == 0:
+        return 0
 
     # Look at the start of the string - can it be "integerized"?
     result = re.match(r"^(\d+)", reference)

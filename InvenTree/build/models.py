@@ -95,7 +95,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     def save(self, *args, **kwargs):
         """Custom save method for the BuildOrder model"""
         self.validate_reference_field(self.reference)
-        self.rebuild_reference_field()
+        self.reference = self.rebuild_reference_field(self.reference)
 
         try:
             super().save(*args, **kwargs)
