@@ -196,11 +196,26 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
         self.define_package()
 
+    def _get_value(self, meta_name: str, package_name: str) -> str:
+        """Extract values from class meta or package info.
+
+        Args:
+            meta_name (str): Name of the class meta to use.
+            package_name (str): Name of the package data to use.
+
+        Returns:
+            str: Extracted value, None if nothing found.
+        """
+        val = getattr(self, meta_name, None)
+        if not val:
+            val = self.package.get(package_name, None)
+        return val
+
     # region properties
     @property
     def description(self):
         """Description of plugin."""
-        description = getattr(self, 'DESCRIPTION', None)
+        description = self._get_value('DESCRIPTION', 'description')
         if not description:
             description = self.plugin_name()
         return description
@@ -208,9 +223,7 @@ class InvenTreePlugin(MixinBase, MetaBase):
     @property
     def author(self):
         """Author of plugin - either from plugin settings or git."""
-        author = getattr(self, 'AUTHOR', None)
-        if not author:
-            author = self.package.get('author')
+        author = self._get_value('AUTHOR', 'author')
         if not author:
             author = _('No author found')  # pragma: no cover
         return author
@@ -230,19 +243,19 @@ class InvenTreePlugin(MixinBase, MetaBase):
     @property
     def version(self):
         """Version of plugin."""
-        version = getattr(self, 'VERSION', None)
+        version = self._get_value('VERSION', 'version')
         return version
 
     @property
     def website(self):
         """Website of plugin - if set else None."""
-        website = getattr(self, 'WEBSITE', None)
+        website = self._get_value('WEBSITE', 'website')
         return website
 
     @property
     def license(self):
         """License of plugin."""
-        lic = getattr(self, 'LICENSE', None)
+        lic = self._get_value('LICENSE', 'license')
         return lic
     # endregion
 
@@ -277,17 +290,15 @@ class InvenTreePlugin(MixinBase, MetaBase):
     @classmethod
     def _get_package_metadata(cls):
         """Get package metadata for plugin."""
-        modlue_name = cls.__name__
-        meta = metadata(modlue_name)
+        meta = metadata(cls.__name__)
 
-        # Set class meta
-        cls.AUTHOR = meta['Author-email']
-        cls.DESCRIPTION = meta['Summary']
-        cls.VERSION = meta['Version']
-        cls.WEBSITE = meta['Project-URL']
-        cls.LICENSE = meta['License']
-
-        return {}
+        return {
+            'author': meta['Author-email'],
+            'description': meta['Summary'],
+            'version': meta['Version'],
+            'website': meta['Project-URL'],
+            'license': meta['License']
+        }
 
     def define_package(self):
         """Add package info of the plugin into plugins context."""
