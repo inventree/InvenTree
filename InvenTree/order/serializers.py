@@ -129,6 +129,14 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
 
     reference = serializers.CharField(required=True)
 
+    def validate_reference(self, reference):
+        """Custom validation for the reference field"""
+
+        # Ensure that the reference matches the required pattern
+        order.models.PurchaseOrder.validate_reference_field(reference)
+
+        return reference
+
     responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
 
     class Meta:

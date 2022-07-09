@@ -31,8 +31,7 @@ from company.models import Company, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               RoundingDecimalField)
-from InvenTree.helpers import (decimal2string, getSetting, increment,
-                               notify_responsible)
+from InvenTree.helpers import decimal2string, getSetting, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
@@ -43,32 +42,6 @@ from stock import models as stock_models
 from users import models as UserModels
 
 logger = logging.getLogger('inventree')
-
-
-def get_next_po_number():
-    """Returns the next available PurchaseOrder reference number."""
-    if PurchaseOrder.objects.count() == 0:
-        return '0001'
-
-    order = PurchaseOrder.objects.exclude(reference=None).last()
-
-    attempts = {order.reference}
-
-    reference = order.reference
-
-    while 1:
-        reference = increment(reference)
-
-        if reference in attempts:
-            # Escape infinite recursion
-            return reference
-
-        if PurchaseOrder.objects.filter(reference=reference).exists():
-            attempts.add(reference)
-        else:
-            break
-
-    return reference
 
 
 class Order(MetadataMixin, ReferenceIndexingMixin):
@@ -205,7 +178,20 @@ class PurchaseOrder(Order):
         """Return the API URL associated with the PurchaseOrder model"""
         return reverse('api-po-list')
 
+    @classmethod
+    def api_defaults(cls, request):
+        """Return default values for thsi model when issuing an API OPTIONS request"""
+
+        defaults = {
+            'reference': order.validators.generate_next_purchase_order_reference(),
+        }
+
+        return defaults
+
     OVERDUE_FILTER = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+
+    # Global setting for specifying reference pattern
+    REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -254,7 +240,10 @@ class PurchaseOrder(Order):
         blank=False,
         verbose_name=_('Reference'),
         help_text=_('Order reference'),
-        default=get_next_po_number,
+        default=order.validators.generate_next_purchase_order_reference,
+        validators=[
+            order.validators.validate_purchase_order_reference,
+        ]
     )
 
     status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),

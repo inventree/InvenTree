@@ -182,7 +182,7 @@ class ReferenceIndexingMixin(models.Model):
 
     @classmethod
     def generate_reference(cls):
-        """Generate the next 'refernce' field based on specified pattern"""
+        """Generate the next 'reference' field based on specified pattern"""
 
         fmt = cls.get_reference_pattern()
         ctx = cls.get_reference_context()

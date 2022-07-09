@@ -1161,6 +1161,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'PURCHASEORDER_REFERENCE_PATTERN': {
+            'name': _('Purchase Order Reference Pattern'),
+            'description': _('Required pattern for generating Purchase Order reference field'),
+            'default': 'PO-{ref:04d}',
+            'validator': order.validators.validate_purchase_order_reference_pattern,
+        },
+
         'PURCHASEORDER_REFERENCE_PREFIX': {
             'name': _('Purchase Order Reference Prefix'),
             'description': _('Prefix value for purchase order reference'),

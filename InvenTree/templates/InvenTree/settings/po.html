@@ -10,6 +10,7 @@
 {% block content %}
 <table class='table table-striped table-condensed'>
     <tbody>
+        {% include "InvenTree/settings/setting.html" with key="PURCHASEORDER_REFERENCE_PATTERN" %}
         {% include "InvenTree/settings/setting.html" with key="PURCHASEORDER_REFERENCE_PREFIX" %}
     </tbody>
 </table>
