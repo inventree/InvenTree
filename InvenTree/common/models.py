@@ -343,6 +343,10 @@ class BaseInvenTreeSetting(models.Model):
             # Unless otherwise specified, attempt to create the setting
             create = kwargs.get('create', True)
 
+            # Prevent creation of new settings objects when importing data
+            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+                create = False
+
             if create:
                 # Attempt to create a new settings object
                 setting = cls(
