@@ -28,6 +28,7 @@ from allauth.account.models import EmailAddress
 from allauth.account.views import EmailView, PasswordResetFromKeyView
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
+from allauth_2fa.views import TwoFactorRemove
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
@@ -761,3 +762,10 @@ class NotificationsView(TemplateView):
     """View for showing notifications."""
 
     template_name = "InvenTree/notifications/notifications.html"
+
+
+# Custom 2FA removal form to allow custom redirect URL
+
+class CustomTwoFactorRemove(TwoFactorRemove):
+    """Specify custom URL redirect."""
+    success_url = reverse_lazy("settings")
