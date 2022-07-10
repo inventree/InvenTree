@@ -310,11 +310,8 @@ class ReferenceIndexingMixin(models.Model):
     reference_int = models.BigIntegerField(default=0)
 
 
-def extract_int(reference, clip=None, allow_negative=False):
+def extract_int(reference, clip=0x7fffffff, allow_negative=False):
     """Extract an integer out of reference."""
-
-    if clip is None:
-        clip = models.BigIntegerField.MAX_BIGINT
 
     # Default value if we cannot convert to an integer
     ref_int = 0
