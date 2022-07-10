@@ -17,6 +17,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 
+import InvenTree.format
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
@@ -58,6 +59,137 @@ class ValidatorTest(TestCase):
 
         with self.assertRaises(django_exceptions.ValidationError):
             validate_overage("aaaa")
+
+
+class FormatTest(TestCase):
+    """Unit tests for custom string formatting functionality"""
+
+    def test_parse(self):
+        """Tests for the 'parse_format_string' function"""
+
+        # Extract data from a valid format string
+        fmt = "PO-{abc:02f}-{ref:04d}-{date}-???"
+
+        info = InvenTree.format.parse_format_string(fmt)
+
+        self.assertIn('abc', info)
+        self.assertIn('ref', info)
+        self.assertIn('date', info)
+
+        # Try with invalid strings
+        for fmt in [
+            'PO-{{xyz}',
+            'PO-{xyz}}',
+            'PO-{xyz}-{',
+        ]:
+
+            with self.assertRaises(ValueError):
+                InvenTree.format.parse_format_string(fmt)
+
+    def test_create_regex(self):
+        """Test function for creating a regex from a format string"""
+
+        tests = {
+            "PO-123-{ref:04f}": r"^PO\-123\-(?P<ref>.+)$",
+            "{PO}-???-{ref}-{date}-22": r"^(?P<PO>.+)\-...\-(?P<ref>.+)\-(?P<date>.+)\-22$",
+            "ABC-123-###-{ref}": r"^ABC\-123\-\d\d\d\-(?P<ref>.+)$",
+            "ABC-123": r"^ABC\-123$",
+        }
+
+        for fmt, reg in tests.items():
+            self.assertEqual(InvenTree.format.construct_format_regex(fmt), reg)
+
+    def test_validate_format(self):
+        """Test that string validation works as expected"""
+
+        # These tests should pass
+        for value, pattern in {
+            "ABC-hello-123": "???-{q}-###",
+            "BO-1234": "BO-{ref}",
+            "111.222.fred.china": "???.###.{name}.{place}",
+            "PO-1234": "PO-{ref:04d}"
+        }.items():
+            self.assertTrue(InvenTree.format.validate_string(value, pattern))
+
+        # These tests should fail
+        for value, pattern in {
+            "ABC-hello-123": "###-{q}-???",
+            "BO-1234": "BO.{ref}",
+            "BO-####": "BO-{pattern}-{next}",
+            "BO-123d": "BO-{ref:04d}"
+        }.items():
+            self.assertFalse(InvenTree.format.validate_string(value, pattern))
+
+    def test_extract_value(self):
+        """Test that we can extract named values based on a format string"""
+
+        # Simple tests based on a straight-forward format string
+        fmt = "PO-###-{ref:04d}"
+
+        tests = {
+            "123": "PO-123-123",
+            "456": "PO-123-456",
+            "789": "PO-123-789",
+        }
+
+        for k, v in tests.items():
+            self.assertEqual(InvenTree.format.extract_named_group('ref', v, fmt), k)
+
+        # However these ones should fail
+        tests = {
+            'abc': 'PO-123-abc',
+            'xyz': 'PO-123-xyz',
+        }
+
+        for v in tests.values():
+            with self.assertRaises(ValueError):
+                InvenTree.format.extract_named_group('ref', v, fmt)
+
+        # More complex tests
+        fmt = "PO-{date}-{test}-???-{ref}-###"
+        val = "PO-2022-02-01-hello-ABC-12345-222"
+
+        data = {
+            'date': '2022-02-01',
+            'test': 'hello',
+            'ref': '12345',
+        }
+
+        for k, v in data.items():
+            self.assertEqual(InvenTree.format.extract_named_group(k, val, fmt), v)
+
+        # Test for error conditions
+
+        # Raises a ValueError as the format string is bad
+        with self.assertRaises(ValueError):
+            InvenTree.format.extract_named_group(
+                "test",
+                "PO-1234-5",
+                "PO-{test}-{"
+            )
+
+        # Raises a NameError as the named group does not exist in the format string
+        with self.assertRaises(NameError):
+            InvenTree.format.extract_named_group(
+                "missing",
+                "PO-12345",
+                "PO-{test}",
+            )
+
+        # Raises a ValueError as the value does not match the format string
+        with self.assertRaises(ValueError):
+            InvenTree.format.extract_named_group(
+                "test",
+                "PO-1234",
+                "PO-{test}-1234",
+            )
+
+        with self.assertRaises(ValueError):
+            InvenTree.format.extract_named_group(
+                "test",
+                "PO-ABC-xyz",
+                "PO-###-{test}",
+            )
 
 
 class TestHelpers(TestCase):

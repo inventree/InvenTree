@@ -7,7 +7,6 @@ from decimal import Decimal
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 import tablib
@@ -19,8 +18,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
-
-from .models import extract_int
 
 
 class InvenTreeMoneySerializer(MoneyField):
@@ -209,16 +206,6 @@ class UserSerializer(InvenTreeModelSerializer):
             'last_name',
             'email'
         ]
-
-
-class ReferenceIndexingSerializerMixin():
-    """This serializer mixin ensures the the reference is not to big / small for the BigIntegerField."""
-
-    def validate_reference(self, value):
-        """Ensures the reference is not to big / small for the BigIntegerField."""
-        if extract_int(value) > models.BigIntegerField.MAX_BIGINT:
-            raise serializers.ValidationError('reference is to to big')
-        return value
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):

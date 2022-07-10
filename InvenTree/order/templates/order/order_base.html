@@ -82,7 +82,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}{{ order.reference }}{% include "clip.html"%}</td>
+        <td>{{ order.reference }}{% include "clip.html"%}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info-circle'></span></td>
@@ -222,7 +222,7 @@ $("#edit-order").click(function() {
     constructForm('{% url "api-po-detail" order.pk %}', {
         fields: {
             reference: {
-                prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
+                icon: 'fa-hashtag',
             },
             {% if order.lines.count == 0 and order.status == PurchaseOrderStatus.PENDING %}
             supplier: {

@@ -4,7 +4,6 @@
 /* globals
     buildStatusDisplay,
     constructForm,
-    global_settings,
     imageHoverIcon,
     inventreeGet,
     launchModalForm,
@@ -36,7 +35,7 @@
 function buildFormFields() {
     return {
         reference: {
-            prefix: global_settings.BUILDORDER_REFERENCE_PREFIX,
+            icon: 'fa-hashtag',
         },
         part: {
             filters: {
@@ -731,9 +730,8 @@ function loadBuildOrderAllocationTable(table, options={}) {
                 switchable: false,
                 title: '{% trans "Build Order" %}',
                 formatter: function(value, row) {
-                    var prefix = global_settings.BUILDORDER_REFERENCE_PREFIX;
 
-                    var ref = `${prefix}${row.build_detail.reference}`;
+                    var ref = `${row.build_detail.reference}`;
 
                     return renderLink(ref, `/build/${row.build}/`);
                 }
@@ -2372,7 +2370,6 @@ function loadBuildTable(table, options) {
             filters,
             {
                 success: function(response) {
-                    var prefix = global_settings.BUILDORDER_REFERENCE_PREFIX;
 
                     for (var idx = 0; idx < response.length; idx++) {
 
@@ -2386,7 +2383,7 @@ function loadBuildTable(table, options) {
                             date = order.target_date;
                         }
 
-                        var title = `${prefix}${order.reference}`;
+                        var title = `${order.reference}`;
 
                         var color = '#4c68f5';
 
@@ -2459,12 +2456,6 @@ function loadBuildTable(table, options) {
                 sortable: true,
                 switchable: true,
                 formatter: function(value, row) {
-
-                    var prefix = global_settings.BUILDORDER_REFERENCE_PREFIX;
-
-                    if (prefix) {
-                        value = `${prefix}${value}`;
-                    }
 
                     var html = renderLink(value, '/build/' + row.pk + '/');
 

@@ -36,10 +36,12 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
+import build.validators
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.validators
+import order.validators
 
 logger = logging.getLogger('inventree')
 
@@ -1139,21 +1141,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'BUILDORDER_REFERENCE_PREFIX': {
-            'name': _('Build Order Reference Prefix'),
-            'description': _('Prefix value for build order reference'),
-            'default': 'BO',
+        'BUILDORDER_REFERENCE_PATTERN': {
+            'name': _('Build Order Reference Pattern'),
+            'description': _('Required pattern for generating Build Order reference field'),
+            'default': 'BO-{ref:04d}',
+            'validator': build.validators.validate_build_order_reference_pattern,
         },
 
-        'BUILDORDER_REFERENCE_REGEX': {
-            'name': _('Build Order Reference Regex'),
-            'description': _('Regular expression pattern for matching build order reference')
-        },
-
-        'SALESORDER_REFERENCE_PREFIX': {
-            'name': _('Sales Order Reference Prefix'),
-            'description': _('Prefix value for sales order reference'),
-            'default': 'SO',
+        'SALESORDER_REFERENCE_PATTERN': {
+            'name': _('Sales Order Reference Pattern'),
+            'description': _('Required pattern for generating Sales Order reference field'),
+            'default': 'SO-{ref:04d}',
+            'validator': order.validators.validate_sales_order_reference_pattern,
         },
 
         'SALESORDER_DEFAULT_SHIPMENT': {
@@ -1163,10 +1162,11 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'PURCHASEORDER_REFERENCE_PREFIX': {
-            'name': _('Purchase Order Reference Prefix'),
-            'description': _('Prefix value for purchase order reference'),
-            'default': 'PO',
+        'PURCHASEORDER_REFERENCE_PATTERN': {
+            'name': _('Purchase Order Reference Pattern'),
+            'description': _('Required pattern for generating Purchase Order reference field'),
+            'default': 'PO-{ref:04d}',
+            'validator': order.validators.validate_purchase_order_reference_pattern,
         },
 
         # login / SSO
