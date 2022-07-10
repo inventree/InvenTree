@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-09 00:30+0000\n"
-"PO-Revision-Date: 2022-07-09 02:45\n"
+"POT-Creation-Date: 2022-07-09 07:08+0000\n"
+"PO-Revision-Date: 2022-07-10 02:46\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -5610,11 +5610,11 @@ msgstr ""
 msgid "Method"
 msgstr ""
 
-#: plugin/plugin.py:214
+#: plugin/plugin.py:228
 msgid "No author found"
 msgstr ""
 
-#: plugin/plugin.py:226
+#: plugin/plugin.py:240
 msgid "No date found"
 msgstr ""
 
