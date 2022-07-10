@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-09 00:30+0000\n"
-"PO-Revision-Date: 2022-07-09 02:45\n"
+"POT-Creation-Date: 2022-07-09 07:08+0000\n"
+"PO-Revision-Date: 2022-07-10 02:46\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -66,7 +66,7 @@ msgstr "Új jelszó megerősítése"
 
 #: InvenTree/forms.py:149
 msgid "Old password"
-msgstr ""
+msgstr "Régi jelszó"
 
 #: InvenTree/forms.py:178
 msgid "Email (again)"
@@ -86,7 +86,7 @@ msgstr "Token"
 
 #: InvenTree/forms.py:305
 msgid "The entered token is not valid"
-msgstr ""
+msgstr "A megadott oken érvénytelen"
 
 #: InvenTree/helpers.py:404
 #, python-brace-format
@@ -632,7 +632,7 @@ msgstr "A jelszavaknak egyeznie kell"
 
 #: InvenTree/views.py:562
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Rossz jelszó lett megadva"
 
 #: InvenTree/views.py:751 templates/navbar.html:152
 msgid "System Information"
@@ -855,11 +855,11 @@ msgstr "Extra gyártási megjegyzések"
 #: build/models.py:561
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "A {build} gyártási utasítás elkészült"
 
 #: build/models.py:567
 msgid "A build order has been completed"
-msgstr ""
+msgstr "Gyártási utasítás elkészült"
 
 #: build/models.py:748
 msgid "No build output specified"
@@ -1098,15 +1098,15 @@ msgstr "A nem befejezett gyártási kimenetek törlése"
 
 #: build/serializers.py:470
 msgid "Accept Overallocated"
-msgstr ""
+msgstr "Túlfoglaltak elfogadása"
 
 #: build/serializers.py:471
 msgid "Accept stock items which have been overallocated to this build order"
-msgstr ""
+msgstr "Túlfoglalt készlet tételek elfogadása ehhez a gyártáshoz"
 
 #: build/serializers.py:481
 msgid "Some stock items have been overallocated"
-msgstr ""
+msgstr "Pár készlet tétel túl lett foglalva"
 
 #: build/serializers.py:486
 msgid "Accept Unallocated"
@@ -1676,11 +1676,11 @@ msgstr "Képek és fájlok letöltésének engedélyezése külső URL-ről"
 
 #: common/models.py:854
 msgid "Require confirm"
-msgstr ""
+msgstr "Megerősítés igénylése"
 
 #: common/models.py:855
 msgid "Require explicit user confirmation for certain action."
-msgstr ""
+msgstr "Kérjen felhasználói megerősítést bizonyos műveletekhez"
 
 #: common/models.py:861 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
@@ -1904,11 +1904,11 @@ msgstr "Címke nyomtatás engedélyezése a web felületről"
 
 #: common/models.py:1052
 msgid "Label Image DPI"
-msgstr ""
+msgstr "Címke kép DPI"
 
 #: common/models.py:1053
 msgid "DPI resolution when generating image files to supply to label printing plugins"
-msgstr ""
+msgstr "Képek felbontása amik átadásra kerülnek címkenyomtató pluginoknak"
 
 #: common/models.py:1062
 msgid "Enable Reports"
@@ -2579,15 +2579,15 @@ msgstr "Új {verbose_name}"
 
 #: common/notifications.py:294
 msgid "A new order has been created and assigned to you"
-msgstr ""
+msgstr "Egy új megrendelés létrehozva, és hozzád rendelve"
 
 #: common/notifications.py:300
 msgid "Items Received"
-msgstr ""
+msgstr "Készlet érkezett"
 
 #: common/notifications.py:302
 msgid "Items have been received against a purchase order"
-msgstr ""
+msgstr "Készlet érkezett egy beszerzési megrendeléshez"
 
 #: common/views.py:87 order/templates/order/purchase_order_detail.html:23
 #: order/views.py:102 part/views.py:116
@@ -3630,11 +3630,11 @@ msgstr "Mit szeretne a vevő hol tároljuk ezt az alkatrészt?"
 
 #: order/models.py:1115
 msgid "Virtual part cannot be assigned to a sales order"
-msgstr ""
+msgstr "Virtuális alkatrészt nem lehet vevői rendeléshez adni"
 
 #: order/models.py:1120
 msgid "Only salable parts can be assigned to a sales order"
-msgstr ""
+msgstr "Csak értékesíthető alkatrészeket lehet vevői rendeléshez adni"
 
 #: order/models.py:1146 part/templates/part/part_pricing.html:115
 #: part/templates/part/prices.html:121 part/templates/part/prices.html:290
@@ -4414,7 +4414,7 @@ msgstr "Ez egy virtuális nem megfogható alkatrész, pl. szoftver vagy licenc?"
 
 #: part/models.py:922
 msgid "Part notes"
-msgstr ""
+msgstr "Alkatrész megjegyzések"
 
 #: part/models.py:924
 msgid "BOM checksum"
@@ -5611,11 +5611,11 @@ msgstr "Plugin"
 msgid "Method"
 msgstr "Módszer"
 
-#: plugin/plugin.py:214
+#: plugin/plugin.py:228
 msgid "No author found"
 msgstr "Nincs szerző"
 
-#: plugin/plugin.py:226
+#: plugin/plugin.py:240
 msgid "No date found"
 msgstr "Nincs dátum"
 
@@ -5869,7 +5869,7 @@ msgstr "Létezik már készlet tétel ilyen a sorozatszámmal"
 
 #: stock/models.py:468 stock/serializers.py:93
 msgid "Stock item cannot be created for virtual parts"
-msgstr ""
+msgstr "Virtuális alkatrészből nem lehet készletet létrehozni"
 
 #: stock/models.py:485
 #, python-brace-format
@@ -6147,11 +6147,11 @@ msgstr "Tranzakció megjegyzés hozzáadása (opcionális)"
 
 #: stock/serializers.py:491
 msgid "Select part to convert stock item into"
-msgstr ""
+msgstr "Válassz alkatrészt amire konvertáljuk a készletet"
 
 #: stock/serializers.py:502
 msgid "Selected part is not a valid option for conversion"
-msgstr ""
+msgstr "A kiválasztott alkatrész nem megfelelő a konverzióhoz"
 
 #: stock/serializers.py:533
 msgid "Destination location for returned item"
@@ -6463,7 +6463,7 @@ msgstr "Készlet állapot szerkesztése"
 
 #: stock/templates/stock/item_base.html:594
 msgid "Select one of the part variants listed below."
-msgstr ""
+msgstr "Válassz a lenti alkatrész változatok közül"
 
 #: stock/templates/stock/item_base.html:597
 msgid "Warning"
@@ -6579,11 +6579,11 @@ msgstr "Nincs jogosultságod az oldal megtekintéséhez."
 
 #: templates/403_csrf.html:11
 msgid "Authentication Failure"
-msgstr ""
+msgstr "Hitelesítési hiba"
 
 #: templates/403_csrf.html:14
 msgid "You have been logged out from InvenTree."
-msgstr ""
+msgstr "Kijelentkeztél az InvenTreeből."
 
 #: templates/403_csrf.html:19 templates/navbar.html:142
 msgid "Login"
@@ -6830,7 +6830,7 @@ msgstr "Plugin beállítások"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
-msgstr ""
+msgstr "Az alábbi beállítások módosításához a kiszolgáló azonnali újraindítása szükséges. Aktív használat közben ne változtass ezeken."
 
 #: templates/InvenTree/settings/plugin.html:34
 msgid "Plugins"
@@ -7161,7 +7161,7 @@ msgstr "Fiókodba a következő harmadik fél fiókjainak bármelyikével bejele
 
 #: templates/InvenTree/settings/user.html:158
 msgid "There are no social network accounts connected to this account."
-msgstr ""
+msgstr "Jelenleg nincs ehhez a fiókhoz kapcsolódó közösségi fiókod."
 
 #: templates/InvenTree/settings/user.html:164
 msgid "Add a 3rd Party Account"
@@ -7185,7 +7185,7 @@ msgstr "Statikus"
 
 #: templates/InvenTree/settings/user.html:204
 msgid "Multifactor authentication is not configured for your account"
-msgstr ""
+msgstr "Többfaktoros autentikáció nincs beállítva a fiókodhoz"
 
 #: templates/InvenTree/settings/user.html:211
 msgid "Change factors"
@@ -7300,11 +7300,11 @@ msgstr "Segítsd a fordítási munkát!"
 
 #: templates/InvenTree/settings/user_display.html:105
 msgid "Native language translation of the web application is community contributed via crowdin. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "A nyelvi fordításai a web alkalmazásnak közösségiek a crowdin-en. A közreműködéseket szívesen fogadjuk és bátorítjuk."
 
 #: templates/InvenTree/settings/user_display.html:106
 msgid "InvenTree Translation Project"
-msgstr ""
+msgstr "InvenTree fordítási projekt"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -7427,7 +7427,7 @@ msgstr "Biztosan ki akarsz jelentkezni?"
 #: templates/account/logout.html:27 templates/allauth_2fa/backup_tokens.html:35
 #: templates/allauth_2fa/remove.html:24 templates/allauth_2fa/setup.html:44
 msgid "Return to Site"
-msgstr ""
+msgstr "Vissza az alkalmazáshoz"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
@@ -7498,11 +7498,11 @@ msgstr "Tartalék tokenek lettek előállítva, de biztonsági okokból itt nem 
 
 #: templates/allauth_2fa/backup_tokens.html:20
 msgid "No backup tokens are available. Press the button below to generate some."
-msgstr ""
+msgstr "Nincsenek másodlagos tokenek. Nyomd meg a lenti gombot a létrehozásukhoz."
 
 #: templates/allauth_2fa/backup_tokens.html:28
 msgid "Generate Tokens"
-msgstr ""
+msgstr "Tokenek generálása"
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
@@ -7514,7 +7514,7 @@ msgstr "Biztos vagy benne?"
 
 #: templates/allauth_2fa/remove.html:17
 msgid "Disable 2FA"
-msgstr ""
+msgstr "Többfaktoros autentikáció kikapcsolása"
 
 #: templates/allauth_2fa/setup.html:6
 msgid "Setup Two-Factor Authentication"
@@ -7570,7 +7570,7 @@ msgstr "Vedd fel a kapcsolatot a rendszergazdával további információkért"
 
 #: templates/collapse_rows.html:3
 msgid "Collapse all rows"
-msgstr ""
+msgstr "Sorok becsukása"
 
 #: templates/email/build_order_completed.html:9
 #: templates/email/new_order_assigned.html:9
@@ -7618,7 +7618,7 @@ msgstr "Minimum mennyiség"
 
 #: templates/expand_rows.html:3
 msgid "Expand all rows"
-msgstr ""
+msgstr "Sorok kinyitása"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
@@ -7980,7 +7980,7 @@ msgstr "Alkatrészjegyzék megtekintése"
 
 #: templates/js/translated/bom.js:1053
 msgid "Including On Order"
-msgstr ""
+msgstr "Rendelés allattival együtt"
 
 #: templates/js/translated/bom.js:1117
 msgid "Validate BOM Item"
@@ -9146,11 +9146,11 @@ msgstr "Biztos hogy törölni szeretnéd ezt az alkatrész kategóriát?"
 
 #: templates/js/translated/part.js:333
 msgid "Any child categories will be moved to the parent of this category"
-msgstr ""
+msgstr "A lentebbi kategóriák a szülő kategóriába lesznek mozgatva"
 
 #: templates/js/translated/part.js:334
 msgid "Any parts in this category will be moved to the parent of this category"
-msgstr ""
+msgstr "A kategória alkatrészei a szülő kategóriába lesznek mozgatva"
 
 #: templates/js/translated/part.js:339
 msgid "Delete Part Category"
@@ -9478,11 +9478,11 @@ msgstr "Biztosan törölni szeretnéd ezt a készlet helyet?"
 
 #: templates/js/translated/stock.js:171
 msgid "Any child locations will be moved to the parent of this location"
-msgstr ""
+msgstr "A lentebbi helyek a szülő helybe lesznek mozgatva"
 
 #: templates/js/translated/stock.js:172
 msgid "Any stock items in this location will be moved to the parent of this location"
-msgstr ""
+msgstr "A hely készlete a szülő helyre lesz mozgatva"
 
 #: templates/js/translated/stock.js:178
 msgid "Delete Stock Location"
@@ -9843,7 +9843,7 @@ msgstr "Gyártmány alkatrész"
 
 #: templates/js/translated/table_filters.js:64
 msgid "Has Available Stock"
-msgstr ""
+msgstr "Van elérhető készlete"
 
 #: templates/js/translated/table_filters.js:72
 msgid "Validated"
