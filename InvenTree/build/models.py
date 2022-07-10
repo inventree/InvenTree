@@ -29,6 +29,7 @@ from build.validators import generate_next_build_reference, validate_build_order
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.ready
 import InvenTree.tasks
 
 from plugin.events import trigger_event
@@ -1068,6 +1069,10 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 @receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')
 def after_save_build(sender, instance: Build, created: bool, **kwargs):
     """Callback function to be executed after a Build instance is saved."""
+    # Escape if we are importing data
+    if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        return
+
     from . import tasks as build_tasks
 
     if created:
