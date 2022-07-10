@@ -114,7 +114,7 @@ class PurchaseOrderTest(OrderTest):
         order = models.PurchaseOrder.objects.get(pk=response.data['pk'])
 
         self.assertEqual(order.reference, 'PO-92233720368547758089999999999999999')
-        self.assertEqual(order.reference_int, 9223372036854775807)
+        self.assertEqual(order.reference_int, 0x7fffffff)
 
     def test_po_attachments(self):
         """Test the list endpoint for the PurchaseOrderAttachment model"""
