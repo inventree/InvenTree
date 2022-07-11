@@ -37,7 +37,7 @@ from common.settings import currency_code_default, currency_codes
 from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
-from .forms import CustomTOTPDeviceRemoveForm, EditUserForm, SetPasswordForm
+from .forms import EditUserForm, SetPasswordForm
 
 
 def auth_request(request):
@@ -764,10 +764,8 @@ class NotificationsView(TemplateView):
     template_name = "InvenTree/notifications/notifications.html"
 
 
-# Temporary fix for django-allauth-2fa # TODO remove
-# See https://github.com/inventree/InvenTree/security/advisories/GHSA-8j76-mm54-52xq
+# Custom 2FA removal form to allow custom redirect URL
 
 class CustomTwoFactorRemove(TwoFactorRemove):
-    """Use custom form."""
-    form_class = CustomTOTPDeviceRemoveForm
+    """Specify custom URL redirect."""
     success_url = reverse_lazy("settings")

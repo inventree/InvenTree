@@ -104,3 +104,57 @@ class TestReferenceMigration(MigratorTestCase):
         # Check that the build reference is properly assigned
         for build in Build.objects.all():
             self.assertEqual(str(build.reference), str(build.pk))
+
+
+class TestReferencePatternMigration(MigratorTestCase):
+    """Unit test for data migration which converts reference to new format.
+
+    Ref: https://github.com/inventree/InvenTree/pull/3267
+    """
+
+    migrate_from = ('build', '0019_auto_20201019_1302')
+    migrate_to = ('build', helpers.getNewestMigrationFile('build'))
+
+    def prepare(self):
+        """Create some initial data prior to migration"""
+
+        Setting = self.old_state.apps.get_model('common', 'inventreesetting')
+
+        # Create a custom existing prefix so we can confirm the operation is working
+        Setting.objects.create(
+            key='BUILDORDER_REFERENCE_PREFIX',
+            value='BuildOrder-',
+        )
+
+        Part = self.old_state.apps.get_model('part', 'part')
+
+        assembly = Part.objects.create(
+            name='Assy 1',
+            description='An assembly',
+            level=0, lft=0, rght=0, tree_id=0,
+        )
+
+        Build = self.old_state.apps.get_model('build', 'build')
+
+        for idx in range(1, 11):
+            Build.objects.create(
+                part=assembly,
+                title=f"Build {idx}",
+                quantity=idx,
+                reference=f"{idx + 100}",
+                level=0, lft=0, rght=0, tree_id=0,
+            )
+
+    def test_reference_migration(self):
+        """Test that the reference fields have been correctly updated"""
+
+        Build = self.new_state.apps.get_model('build', 'build')
+
+        for build in Build.objects.all():
+            self.assertTrue(build.reference.startswith('BuildOrder-'))
+
+        Setting = self.new_state.apps.get_model('common', 'inventreesetting')
+
+        pattern = Setting.objects.get(key='BUILDORDER_REFERENCE_PATTERN')
+
+        self.assertEqual(pattern.value, 'BuildOrder-{ref:04d}')

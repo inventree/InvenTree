@@ -23,8 +23,7 @@ from InvenTree.helpers import extract_serial_numbers, normalize
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer,
-                                   ReferenceIndexingSerializerMixin)
+                                   InvenTreeMoneySerializer)
 from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
                                     StockStatus)
 from part.serializers import PartBriefSerializer
@@ -86,7 +85,7 @@ class AbstractExtraLineMeta:
     ]
 
 
-class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     """Serializer for a PurchaseOrder object."""
 
     def __init__(self, *args, **kwargs):
@@ -129,6 +128,14 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializ
     overdue = serializers.BooleanField(required=False, read_only=True)
 
     reference = serializers.CharField(required=True)
+
+    def validate_reference(self, reference):
+        """Custom validation for the reference field"""
+
+        # Ensure that the reference matches the required pattern
+        order.models.PurchaseOrder.validate_reference_field(reference)
+
+        return reference
 
     responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
 
@@ -639,7 +646,7 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
         ]
 
 
-class SalesOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     """Serializers for the SalesOrder object."""
 
     def __init__(self, *args, **kwargs):
@@ -682,6 +689,14 @@ class SalesOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerM
     overdue = serializers.BooleanField(required=False, read_only=True)
 
     reference = serializers.CharField(required=True)
+
+    def validate_reference(self, reference):
+        """Custom validation for the reference field"""
+
+        # Ensure that the reference matches the required pattern
+        order.models.SalesOrder.validate_reference_field(reference)
+
+        return reference
 
     class Meta:
         """Metaclass options."""

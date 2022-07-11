@@ -72,6 +72,7 @@ $('#history-delete').click(function() {
         '{% url "api-notifications-list" %}',
         {
             method: 'DELETE',
+            multi_delete: true,
             preFormContent: html,
             title: '{% trans "Delete Notifications" %}',
             onSuccess: function() {

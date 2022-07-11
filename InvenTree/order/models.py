@@ -24,14 +24,14 @@ from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
 import InvenTree.ready
+import order.validators
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               RoundingDecimalField)
-from InvenTree.helpers import (decimal2string, getSetting, increment,
-                               notify_responsible)
+from InvenTree.helpers import decimal2string, getSetting, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
@@ -42,58 +42,6 @@ from stock import models as stock_models
 from users import models as UserModels
 
 logger = logging.getLogger('inventree')
-
-
-def get_next_po_number():
-    """Returns the next available PurchaseOrder reference number."""
-    if PurchaseOrder.objects.count() == 0:
-        return '0001'
-
-    order = PurchaseOrder.objects.exclude(reference=None).last()
-
-    attempts = {order.reference}
-
-    reference = order.reference
-
-    while 1:
-        reference = increment(reference)
-
-        if reference in attempts:
-            # Escape infinite recursion
-            return reference
-
-        if PurchaseOrder.objects.filter(reference=reference).exists():
-            attempts.add(reference)
-        else:
-            break
-
-    return reference
-
-
-def get_next_so_number():
-    """Returns the next available SalesOrder reference number."""
-    if SalesOrder.objects.count() == 0:
-        return '0001'
-
-    order = SalesOrder.objects.exclude(reference=None).last()
-
-    attempts = {order.reference}
-
-    reference = order.reference
-
-    while 1:
-        reference = increment(reference)
-
-        if reference in attempts:
-            # Escape infinite recursion
-            return reference
-
-        if SalesOrder.objects.filter(reference=reference).exists():
-            attempts.add(reference)
-        else:
-            break
-
-    return reference
 
 
 class Order(MetadataMixin, ReferenceIndexingMixin):
@@ -119,7 +67,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
         Ensures that the reference field is rebuilt whenever the instance is saved.
         """
-        self.rebuild_reference_field()
+        self.reference_int = self.rebuild_reference_field(self.reference)
 
         if not self.creation_date:
             self.creation_date = datetime.now().date()
@@ -230,7 +178,20 @@ class PurchaseOrder(Order):
         """Return the API URL associated with the PurchaseOrder model"""
         return reverse('api-po-list')
 
+    @classmethod
+    def api_defaults(cls, request):
+        """Return default values for thsi model when issuing an API OPTIONS request"""
+
+        defaults = {
+            'reference': order.validators.generate_next_purchase_order_reference(),
+        }
+
+        return defaults
+
     OVERDUE_FILTER = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+
+    # Global setting for specifying reference pattern
+    REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -269,9 +230,8 @@ class PurchaseOrder(Order):
 
     def __str__(self):
         """Render a string representation of this PurchaseOrder"""
-        prefix = getSetting('PURCHASEORDER_REFERENCE_PREFIX')
 
-        return f"{prefix}{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
+        return f"{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
 
     reference = models.CharField(
         unique=True,
@@ -279,7 +239,10 @@ class PurchaseOrder(Order):
         blank=False,
         verbose_name=_('Reference'),
         help_text=_('Order reference'),
-        default=get_next_po_number,
+        default=order.validators.generate_next_purchase_order_reference,
+        validators=[
+            order.validators.validate_purchase_order_reference,
+        ]
     )
 
     status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),
@@ -595,7 +558,19 @@ class SalesOrder(Order):
         """Return the API URL associated with the SalesOrder model"""
         return reverse('api-so-list')
 
+    @classmethod
+    def api_defaults(cls, request):
+        """Return default values for this model when issuing an API OPTIONS request"""
+        defaults = {
+            'reference': order.validators.generate_next_sales_order_reference(),
+        }
+
+        return defaults
+
     OVERDUE_FILTER = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+
+    # Global setting for specifying reference pattern
+    REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -634,9 +609,8 @@ class SalesOrder(Order):
 
     def __str__(self):
         """Render a string representation of this SalesOrder"""
-        prefix = getSetting('SALESORDER_REFERENCE_PREFIX')
 
-        return f"{prefix}{self.reference} - {self.customer.name if self.customer else _('deleted')}"
+        return f"{self.reference} - {self.customer.name if self.customer else _('deleted')}"
 
     def get_absolute_url(self):
         """Return the web URL for the detail view of this order"""
@@ -648,7 +622,10 @@ class SalesOrder(Order):
         blank=False,
         verbose_name=_('Reference'),
         help_text=_('Order reference'),
-        default=get_next_so_number,
+        default=order.validators.generate_next_sales_order_reference,
+        validators=[
+            order.validators.validate_sales_order_reference,
+        ]
     )
 
     customer = models.ForeignKey(
@@ -957,6 +934,7 @@ class OrderExtraLine(OrderLineItem):
         max_digits=19,
         decimal_places=4,
         null=True, blank=True,
+        allow_negative=True,
         verbose_name=_('Price'),
         help_text=_('Unit price'),
     )

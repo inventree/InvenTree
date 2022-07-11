@@ -12,7 +12,7 @@ from InvenTree import status_codes as status
 
 import common.models
 import build.tasks
-from build.models import Build, BuildItem, get_next_build_number
+from build.models import Build, BuildItem, generate_next_build_reference
 from part.models import Part, BomItem, BomItemSubstitute
 from stock.models import StockItem
 from users.models import Owner
@@ -88,7 +88,7 @@ class BuildTestBase(TestCase):
             quantity=2
         )
 
-        ref = get_next_build_number()
+        ref = generate_next_build_reference()
 
         # Create a "Build" object to make 10x objects
         self.build = Build.objects.create(
@@ -133,20 +133,97 @@ class BuildTest(BuildTestBase):
     def test_ref_int(self):
         """Test the "integer reference" field used for natural sorting"""
 
-        for ii in range(10):
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref}-???', change_user=None)
+
+        refs = {
+            'BO-123-456': 123,
+            'BO-456-123': 456,
+            'BO-999-ABC': 999,
+            'BO-123ABC-ABC': 123,
+            'BO-ABC123-ABC': 123,
+        }
+
+        for ref, ref_int in refs.items():
             build = Build(
-                reference=f"{ii}_abcde",
+                reference=ref,
                 quantity=1,
                 part=self.assembly,
-                title="Making some parts"
+                title='Making some parts',
             )
 
             self.assertEqual(build.reference_int, 0)
-
             build.save()
+            self.assertEqual(build.reference_int, ref_int)
 
-            # After saving, the integer reference should have been updated
-            self.assertEqual(build.reference_int, ii)
+    def test_ref_validation(self):
+        """Test that the reference field validation works as expected"""
+
+        # Default reference pattern = 'BO-{ref:04d}
+
+        # These patterns should fail
+        for ref in [
+            'BO-1234x',
+            'BO1234',
+            'OB-1234',
+            'BO--1234'
+        ]:
+            with self.assertRaises(ValidationError):
+                Build.objects.create(
+                    part=self.assembly,
+                    quantity=10,
+                    reference=ref,
+                    title='Invalid reference',
+                )
+
+        for ref in [
+            'BO-1234',
+            'BO-9999',
+            'BO-123'
+        ]:
+            Build.objects.create(
+                part=self.assembly,
+                quantity=10,
+                reference=ref,
+                title='Valid reference',
+            )
+
+        # Try a new validator pattern
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', '{ref}-BO', change_user=None)
+
+        for ref in [
+            '1234-BO',
+            '9999-BO'
+        ]:
+            Build.objects.create(
+                part=self.assembly,
+                quantity=10,
+                reference=ref,
+                title='Valid reference',
+            )
+
+    def test_next_ref(self):
+        """Test that the next reference is automatically generated"""
+
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'XYZ-{ref:06d}', change_user=None)
+
+        build = Build.objects.create(
+            part=self.assembly,
+            quantity=5,
+            reference='XYZ-987',
+            title='Some thing',
+        )
+
+        self.assertEqual(build.reference_int, 987)
+
+        # Now create one *without* specifying the reference
+        build = Build.objects.create(
+            part=self.assembly,
+            quantity=1,
+            title='Some new title',
+        )
+
+        self.assertEqual(build.reference, 'XYZ-000988')
+        self.assertEqual(build.reference_int, 988)
 
     def test_init(self):
         """Perform some basic tests before we start the ball rolling"""
@@ -404,7 +481,7 @@ class BuildTest(BuildTestBase):
         """Test that a notification is sent when a new build is created"""
 
         Build.objects.create(
-            reference='IIIII',
+            reference='BO-9999',
             title='Some new build',
             part=self.assembly,
             quantity=5,

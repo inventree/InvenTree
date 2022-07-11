@@ -71,7 +71,7 @@ django-allauth==0.51.0
     # via
     #   -r requirements.in
     #   django-allauth-2fa
-django-allauth-2fa==0.9
+django-allauth-2fa==0.10.0
     # via -r requirements.in
 django-cleanup==6.0.0
     # via -r requirements.in

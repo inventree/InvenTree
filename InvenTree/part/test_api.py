@@ -1514,6 +1514,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
             part=Part.objects.get(pk=101),
             quantity=10,
             title='Making some assemblies',
+            reference='BO-9999',
             status=BuildStatus.PRODUCTION,
         )
 

@@ -974,9 +974,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                         return '-';
                     }
 
-                    var ref = global_settings.PURCHASEORDER_REFERENCE_PREFIX + order.reference;
-
-                    var html = renderLink(ref, `/order/purchase-order/${order.pk}/`);
+                    var html = renderLink(order.reference, `/order/purchase-order/${order.pk}/`);
 
                     html += purchaseOrderStatusDisplay(
                         order.status,

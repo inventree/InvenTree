@@ -2,10 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 61
+INVENTREE_API_VERSION = 64
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v64 -> 2022-07-08 : https://github.com/inventree/InvenTree/pull/3310
+    - Annotate 'on_order' quantity to BOM list API
+    - Allow BOM List API endpoint to be filtered by "on_order" parameter
 
 v63 -> 2022-07-06 : https://github.com/inventree/InvenTree/pull/3301
     - Allow BOM List API endpoint to be filtered by "available_stock" paramater
