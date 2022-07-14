@@ -173,6 +173,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
     def setUp(self):
         """Setup for all tests."""
+
         class MixinCls(APICallMixin, SettingsMixin, InvenTreePlugin):
             NAME = "Sample API Caller"
 
@@ -184,23 +185,32 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
                 'API_URL': {
                     'name': 'External URL',
                     'description': 'Where is your API located?',
-                    'default': 'reqres.in',
+                    'default': 'https://api.github.com',
                 },
             }
+
             API_URL_SETTING = 'API_URL'
             API_TOKEN_SETTING = 'API_TOKEN'
 
+            @property
+            def api_url(self):
+                """Override API URL for this test"""
+                return "https://api.github.com"
+
             def get_external_url(self, simple: bool = True):
                 """Returns data from the sample endpoint."""
-                return self.api_call('api/users/2', simple_response=simple)
+                return self.api_call('orgs/inventree', simple_response=simple)
+
         self.mixin = MixinCls()
 
         class WrongCLS(APICallMixin, InvenTreePlugin):
             pass
+
         self.mixin_wrong = WrongCLS()
 
         class WrongCLS2(APICallMixin, InvenTreePlugin):
             API_URL_SETTING = 'test'
+
         self.mixin_wrong2 = WrongCLS2()
 
     def test_base_setup(self):
@@ -208,7 +218,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # check init
         self.assertTrue(self.mixin.has_api_call)
         # api_url
-        self.assertEqual('https://reqres.in', self.mixin.api_url)
+        self.assertEqual('https://api.github.com', self.mixin.api_url)
 
         # api_headers
         headers = self.mixin.api_headers
@@ -232,7 +242,9 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # api_call
         result = self.mixin.get_external_url()
         self.assertTrue(result)
-        self.assertIn('data', result,)
+
+        for key in ['login', 'email', 'name', 'twitter_username']:
+            self.assertIn(key, result)
 
         # api_call without json conversion
         result = self.mixin.get_external_url(False)
@@ -240,22 +252,22 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(result.reason, 'OK')
 
         # api_call with full url
-        result = self.mixin.api_call('https://reqres.in/api/users/2', endpoint_is_url=True)
+        result = self.mixin.api_call('https://api.github.com/orgs/inventree', endpoint_is_url=True)
         self.assertTrue(result)
 
         # api_call with post and data
         result = self.mixin.api_call(
-            'api/users/',
-            data={"name": "morpheus", "job": "leader"},
-            method='POST'
+            'repos/inventree/InvenTree',
+            method='GET'
         )
+
         self.assertTrue(result)
-        self.assertEqual(result['name'], 'morpheus')
+        self.assertEqual(result['name'], 'InvenTree')
+        self.assertEqual(result['html_url'], 'https://github.com/inventree/InvenTree')
 
         # api_call with filter
-        result = self.mixin.api_call('api/users', url_args={'page': '2'})
+        result = self.mixin.api_call('repos/inventree/InvenTree/stargazers', url_args={'page': '2'})
         self.assertTrue(result)
-        self.assertEqual(result['page'], 2)
 
     def test_function_errors(self):
         """Test function errors."""
