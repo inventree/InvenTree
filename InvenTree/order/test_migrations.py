@@ -49,6 +49,19 @@ class TestRefIntMigrations(MigratorTestCase):
             with self.assertRaises(AttributeError):
                 print(sales_order.reference_int)
 
+        # Create orders with very large reference values
+        self.po_pk = PurchaseOrder.objects.create(
+            supplier=supplier,
+            reference='999999999999999999999999999999999',
+            description='Big reference field',
+        ).pk
+
+        self.so_pk = SalesOrder.objects.create(
+            customer=supplier,
+            reference='999999999999999999999999999999999',
+            description='Big reference field',
+        ).pk
+
     def test_ref_field(self):
         """Test that the 'reference_int' field has been created and is filled out correctly."""
         PurchaseOrder = self.new_state.apps.get_model('order', 'purchaseorder')
@@ -62,6 +75,15 @@ class TestRefIntMigrations(MigratorTestCase):
             # The integer reference field must have been correctly updated
             self.assertEqual(po.reference_int, ii)
             self.assertEqual(so.reference_int, ii)
+
+        # Tests for orders with overly large reference values
+        po = PurchaseOrder.objects.get(pk=self.po_pk)
+        self.assertEqual(po.reference, '999999999999999999999999999999999')
+        self.assertEqual(po.reference_int, 0x7fffffff)
+
+        so = SalesOrder.objects.get(pk=self.so_pk)
+        self.assertEqual(so.reference, '999999999999999999999999999999999')
+        self.assertEqual(so.reference_int, 0x7fffffff)
 
 
 class TestShipmentMigration(MigratorTestCase):
