@@ -522,7 +522,7 @@ if "mysql" in db_engine:  # pragma: no cover
     # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
     if "isolation_level" not in db_options:
         serializable = _is_true(
-            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
+            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "false")
         )
         db_options["isolation_level"] = (
             "serializable" if serializable else "read committed"

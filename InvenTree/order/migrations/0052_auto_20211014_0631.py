@@ -23,6 +23,10 @@ def build_refs(apps, schema_editor):
             except:  # pragma: no cover
                 ref = 0
 
+        # Clip integer value to ensure it does not overflow database field
+        if ref > 0x7fffffff:
+            ref = 0x7fffffff
+
         order.reference_int = ref
         order.save()
 
@@ -39,6 +43,10 @@ def build_refs(apps, schema_editor):
                 ref = int(result.groups()[0])
             except:  # pragma: no cover
                 ref = 0
+
+        # Clip integer value to ensure it does not overflow database field
+        if ref > 0x7fffffff:
+            ref = 0x7fffffff
 
         order.reference_int = ref
         order.save()
