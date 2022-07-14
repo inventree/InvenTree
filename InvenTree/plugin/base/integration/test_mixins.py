@@ -192,6 +192,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             API_URL_SETTING = 'API_URL'
             API_TOKEN_SETTING = 'API_TOKEN'
 
+            @property
+            def api_url(self):
+                """Override API URL for this test"""
+                return "https://api.github.com"
+
             def get_external_url(self, simple: bool = True):
                 """Returns data from the sample endpoint."""
                 return self.api_call('orgs/inventree', simple_response=simple)
