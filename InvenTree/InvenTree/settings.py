@@ -573,7 +573,6 @@ db_config['OPTIONS'] = db_options
 # Set testing options for the database
 db_config['TEST'] = {
     'CHARSET': 'utf8',
-    'NAME': f'test_{db_name}'
 }
 
 # Set collation option for mysql test database
