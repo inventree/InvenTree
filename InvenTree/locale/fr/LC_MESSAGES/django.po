@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-07-11 00:27+0000\n"
-"PO-Revision-Date: 2022-07-11 02:48\n"
+"PO-Revision-Date: 2022-07-14 18:13\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -51,11 +51,11 @@ msgstr "Notes"
 #: InvenTree/format.py:142
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "La valeur '{name}' n'apparaît pas dans le format du modèle"
 
 #: InvenTree/format.py:152
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "La valeur fournie ne correspond pas au modèle requis : "
 
 #: InvenTree/forms.py:133
 msgid "Enter password"
@@ -75,7 +75,7 @@ msgstr "Confirmer le nouveau mot de passe"
 
 #: InvenTree/forms.py:148
 msgid "Old password"
-msgstr ""
+msgstr "Ancien mot de passe"
 
 #: InvenTree/forms.py:177
 msgid "Email (again)"
@@ -129,31 +129,31 @@ msgstr "Aucun numéro de série trouvé"
 #: InvenTree/helpers.py:495
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Le nombre de numéros de série uniques ({s}) doit correspondre à la quantité ({q})"
 
 #: InvenTree/models.py:237
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Modèle mal formaté"
 
 #: InvenTree/models.py:244
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "Clé de format spécifiée inconnue"
 
 #: InvenTree/models.py:250
 msgid "Missing required format key"
-msgstr ""
+msgstr "Clé de format requise manquante"
 
 #: InvenTree/models.py:262
 msgid "Reference field cannot be empty"
-msgstr ""
+msgstr "Le champ de référence ne peut pas être vide"
 
 #: InvenTree/models.py:269
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "La référence doit correspondre au modèle requis"
 
 #: InvenTree/models.py:305
 msgid "Reference number is too large"
-msgstr ""
+msgstr "Le numéro de référence est trop grand"
 
 #: InvenTree/models.py:383
 msgid "Missing file"
@@ -288,11 +288,11 @@ msgstr "parent"
 
 #: InvenTree/models.py:671
 msgid "Server Error"
-msgstr ""
+msgstr "Erreur serveur"
 
 #: InvenTree/models.py:672
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Une erreur a été enregistrée par le serveur."
 
 #: InvenTree/serializers.py:50 part/models.py:2692
 msgid "Must be a valid number"
@@ -513,7 +513,7 @@ msgstr "Rejeté"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
-msgstr ""
+msgstr "En quarantaine"
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
