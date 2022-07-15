@@ -744,7 +744,7 @@ if get_setting('TEST_TRANSLATIONS', False):  # pragma: no cover
 CURRENCIES = CONFIG.get(
     'currencies',
     [
-        'AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
+        'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
     ],
 )
 
