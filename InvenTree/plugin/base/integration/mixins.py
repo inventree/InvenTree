@@ -467,6 +467,10 @@ class APICallMixin:
         if endpoint_is_url:
             url = endpoint
         else:
+
+            if endpoint.startswith('/'):
+                endpoint = endpoint[1:]
+
             url = f'{self.api_url}/{endpoint}'
 
         # build kwargs for call
@@ -474,6 +478,7 @@ class APICallMixin:
             'url': url,
             'headers': headers,
         }
+
         if data:
             kwargs['data'] = json.dumps(data)
 

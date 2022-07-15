@@ -24,6 +24,10 @@ def build_refs(apps, schema_editor):
             except:  # pragma: no cover
                 ref = 0
 
+        # Clip integer value to ensure it does not overflow database field
+        if ref > 0x7fffffff:
+            ref = 0x7fffffff
+
         build.reference_int = ref
         build.save()
 
