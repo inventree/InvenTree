@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
+import part.filters
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeDecimalField,
@@ -199,6 +200,9 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
 class SupplierPartSerializer(InvenTreeModelSerializer):
     """Serializer for SupplierPart object."""
 
+    # Annotated field showing total in-stock quantity
+    in_stock = serializers.FloatField(read_only=True)
+
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
@@ -249,6 +253,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'available',
             'availability_updated',
             'description',
+            'in_stock',
             'link',
             'manufacturer',
             'manufacturer_detail',
@@ -269,6 +274,20 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         read_only_fields = [
             'availability_updated',
         ]
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the SupplierPart queryset with extra fields:
+
+        Fields:
+            in_stock: Current stock quantity for each SupplierPart
+        """
+
+        queryset = queryset.annotate(
+            in_stock=part.filters.annotate_total_stock(reference='part__')
+        )
+
+        return queryset
 
     def update(self, supplier_part, data):
         """Custom update functionality for the serializer"""

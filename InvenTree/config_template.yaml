@@ -61,6 +61,7 @@ base_currency: USD
 currencies:
   - AUD
   - CAD
+  - CNY
   - EUR
   - GBP
   - JPY

@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 64
+INVENTREE_API_VERSION = 65
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v65 -> 2022-07-15 : https://github.com/inventree/InvenTree/pull/3335
+    - Annotates 'in_stock' quantity to the SupplierPart API
 
 v64 -> 2022-07-08 : https://github.com/inventree/InvenTree/pull/3310
     - Annotate 'on_order' quantity to BOM list API

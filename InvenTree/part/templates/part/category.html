@@ -206,6 +206,12 @@
         <h4>{% trans "Part Parameters" %}</h4>
     </div>
     <div class='panel-content'>
+        <div id='param-button-toolbar'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="parameters" %}
+            </div>
+        </div>
+
         <table class='table table-striped table-condensed' data-toolbar='#param-button-toolbar' id='parametric-part-table'>
         </table>
     </div>
