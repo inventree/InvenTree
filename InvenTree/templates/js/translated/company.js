@@ -840,6 +840,7 @@ function loadSupplierPartTable(table, url, options) {
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
+        sortable: true,
         formatNoMatches: function() {
             return '{% trans "No supplier parts found" %}';
         },
@@ -956,6 +957,11 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'packaging',
                 title: '{% trans "Packaging" %}',
                 sortable: false,
+            },
+            {
+                field: 'in_stock',
+                title: '{% trans "In Stock" %}',
+                sortable: true,
             },
             {
                 field: 'available',

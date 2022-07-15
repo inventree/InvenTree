@@ -263,6 +263,13 @@ class SupplierPartList(ListCreateDestroyAPIView):
 
     queryset = SupplierPart.objects.all()
 
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryest object for the SupplierPart list"""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = SupplierPartSerializer.annotate_queryset(queryset)
+
+        return queryset
+
     def filter_queryset(self, queryset):
         """Custom filtering for the queryset."""
         queryset = super().filter_queryset(queryset)
