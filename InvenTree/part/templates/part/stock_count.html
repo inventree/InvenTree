@@ -3,8 +3,10 @@
 
 {% decimal total_stock %}
 
+{% if not part.is_template %}
 {% if total_stock == 0 %}
 <span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>
 {% elif total_stock < part.minimum_stock %}
 <span class='badge badge-right rounded-pill bg-warning'>{% trans "Low Stock" %}</span>
+{% endif %}
 {% endif %}

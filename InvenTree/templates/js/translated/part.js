@@ -578,7 +578,7 @@ function partStockLabel(part, options={}) {
         // There IS stock available for this part
 
         // Is stock "low" (below the 'minimum_stock' quantity)?
-        if ((part.minimum_stock > 0) && (part.minimum_stock > part.in_stock)) {
+        if ((part.minimum_stock > 0) && (part.minimum_stock > part.in_stock) && !part.is_template) {
             return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Low stock" %}: ${part.in_stock}${part.units}</span>`;
         } else if (part.unallocated_stock == 0) {
             if (part.ordering) {
@@ -607,7 +607,7 @@ function partStockLabel(part, options={}) {
         } else if (part.building) {
             // There is no stock, but stock is being built
             return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building}${part.units}</span>`;
-        } else {
+        } else if (!part.is_template) {
             // There is no stock
             return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
         }
@@ -1286,7 +1286,7 @@ function partGridTile(part) {
 
     var stock = `${part.in_stock}`;
 
-    if (!part.in_stock) {
+    if (!part.in_stock && !part.is_template) {
         stock = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
     } else if (!part.unallocated_stock) {
         stock = `<span class='badge rounded-pill bg-warning'>{% trans "Not available" %}</span>`;
@@ -1462,7 +1462,7 @@ function loadPartTable(table, url, options={}) {
                 // There IS stock available for this part
 
                 // Is stock "low" (below the 'minimum_stock' quantity)?
-                if (row.minimum_stock && row.minimum_stock > row.in_stock) {
+                if (row.minimum_stock && row.minimum_stock > row.in_stock && !row.is_template) {
                     value += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Low stock" %}</span>`;
                 } else if (value == 0) {
                     if (row.ordering) {
@@ -1489,7 +1489,7 @@ function loadPartTable(table, url, options={}) {
                     // There is no stock, but stock is being built
                     value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
                     link = '?display=build-orders';
-                } else {
+                } else if (!row.is_template) {
                     // There is no stock
                     value = `0<span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
                 }
