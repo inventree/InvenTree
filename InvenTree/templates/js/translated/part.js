@@ -1198,6 +1198,8 @@ function loadRelatedPartsTable(table, part_id, options={}) {
  */
 function loadParametricPartTable(table, options={}) {
 
+    setupFilterList('parameters', $(table), '#filter-list-parameters');
+
     var columns = [
         {
             field: 'name',
