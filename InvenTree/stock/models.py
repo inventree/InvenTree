@@ -598,7 +598,8 @@ class StockItem(MetadataMixin, MPTTModel):
     supplier_part = models.ForeignKey(
         'company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
         verbose_name=_('Supplier Part'),
-        help_text=_('Select a matching supplier part for this stock item')
+        help_text=_('Select a matching supplier part for this stock item'),
+        related_name='stock_items',
     )
 
     # Note: When a StockLocation is deleted, stock items are updated via a signal

@@ -284,7 +284,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         """
 
         queryset = queryset.annotate(
-            in_stock=part.filters.annotate_total_stock(reference='part__')
+            in_stock=part.filters.annotate_total_stock()
         )
 
         return queryset
