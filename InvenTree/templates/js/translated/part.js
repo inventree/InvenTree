@@ -974,9 +974,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                         return '-';
                     }
 
-                    var ref = global_settings.PURCHASEORDER_REFERENCE_PREFIX + order.reference;
-
-                    var html = renderLink(ref, `/order/purchase-order/${order.pk}/`);
+                    var html = renderLink(order.reference, `/order/purchase-order/${order.pk}/`);
 
                     html += purchaseOrderStatusDisplay(
                         order.status,
@@ -1199,6 +1197,8 @@ function loadRelatedPartsTable(table, part_id, options={}) {
 /* Load parametric table for part parameters
  */
 function loadParametricPartTable(table, options={}) {
+
+    setupFilterList('parameters', $(table), '#filter-list-parameters');
 
     var columns = [
         {

@@ -20,7 +20,8 @@ import InvenTree.serializers
 import part.models as part_models
 from common.settings import currency_code_default, currency_code_mappings
 from company.serializers import SupplierPartSerializer
-from InvenTree.serializers import InvenTreeDecimalField, extract_int
+from InvenTree.models import extract_int
+from InvenTree.serializers import InvenTreeDecimalField
 from part.serializers import PartBriefSerializer
 
 from .models import (StockItem, StockItemAttachment, StockItemTestResult,
@@ -67,8 +68,8 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
 
     def validate_serial(self, value):
         """Make sure serial is not to big."""
-        if extract_int(value) > 2147483647:
-            raise serializers.ValidationError('serial is to to big')
+        if abs(extract_int(value)) > 0x7fffffff:
+            raise serializers.ValidationError(_("Serial number is too large"))
         return value
 
 
@@ -78,6 +79,21 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     - Includes serialization for the linked part
     - Includes serialization for the item location
     """
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        many=False, allow_null=False,
+        help_text=_("Base Part"),
+        label=_("Part"),
+    )
+
+    def validate_part(self, part):
+        """Ensure the provided Part instance is valid"""
+
+        if part.virtual:
+            raise ValidationError(_("Stock item cannot be created for virtual parts"))
+
+        return part
 
     def update(self, instance, validated_data):
         """Custom update method to pass the user information through to the instance."""
@@ -168,7 +184,11 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     def get_purchase_price_string(self, obj):
         """Return purchase price as string."""
-        return str(obj.purchase_price) if obj.purchase_price else '-'
+        if obj.purchase_price:
+            obj.purchase_price.decimal_places_display = 4
+            return str(obj.purchase_price)
+
+        return '-'
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)

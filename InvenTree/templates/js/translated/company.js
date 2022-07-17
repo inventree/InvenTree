@@ -263,6 +263,7 @@ function deleteSupplierParts(parts, options={}) {
 
     constructForm('{% url "api-supplier-part-list" %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete Supplier Parts" %}',
         preFormContent: html,
         form_data: {
@@ -491,6 +492,7 @@ function deleteManufacturerParts(selections, options={}) {
 
     constructForm('{% url "api-manufacturer-part-list" %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete Manufacturer Parts" %}',
         preFormContent: html,
         form_data: {
@@ -538,6 +540,7 @@ function deleteManufacturerPartParameters(selections, options={}) {
 
     constructForm('{% url "api-manufacturer-part-parameter-list" %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete Parameters" %}',
         preFormContent: html,
         form_data: {
@@ -837,6 +840,7 @@ function loadSupplierPartTable(table, url, options) {
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
+        sortable: true,
         formatNoMatches: function() {
             return '{% trans "No supplier parts found" %}';
         },
@@ -953,6 +957,11 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'packaging',
                 title: '{% trans "Packaging" %}',
                 sortable: false,
+            },
+            {
+                field: 'in_stock',
+                title: '{% trans "In Stock" %}',
+                sortable: true,
             },
             {
                 field: 'available',

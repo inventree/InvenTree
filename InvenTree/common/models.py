@@ -21,6 +21,7 @@ from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import MinValueValidator, URLValidator
@@ -35,10 +36,12 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
+import build.validators
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.validators
+import order.validators
 
 logger = logging.getLogger('inventree')
 
@@ -81,6 +84,14 @@ class BaseInvenTreeSetting(models.Model):
             self.save_to_cache()
 
         super().save()
+
+        # Get after_save action
+        setting = self.get_setting_definition(self.key, *args, **kwargs)
+        after_save = setting.get('after_save', None)
+
+        # Execute if callable
+        if callable(after_save):
+            after_save(self)
 
     @property
     def cache_key(self):
@@ -331,6 +342,10 @@ class BaseInvenTreeSetting(models.Model):
 
             # Unless otherwise specified, attempt to create the setting
             create = kwargs.get('create', True)
+
+            # Prevent creation of new settings objects when importing data
+            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+                create = False
 
             if create:
                 # Attempt to create a new settings object
@@ -735,6 +750,20 @@ def settings_group_options():
     return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
 
 
+def update_instance_url(setting):
+    """Update the first site objects domain to url."""
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.domain = setting.value
+    site_obj.save()
+
+
+def update_instance_name(setting):
+    """Update the first site objects name to instance name."""
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.name = setting.value
+    site_obj.save()
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -782,6 +811,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Server Instance Name'),
             'default': 'InvenTree',
             'description': _('String descriptor for the server instance'),
+            'after_save': update_instance_name,
         },
 
         'INVENTREE_INSTANCE_TITLE': {
@@ -809,6 +839,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Base URL for server instance'),
             'validator': EmptyURLValidator(),
             'default': '',
+            'after_save': update_instance_url,
         },
 
         'INVENTREE_DEFAULT_CURRENCY': {
@@ -823,6 +854,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Allow download of remote images and files from external URL'),
             'validator': bool,
             'default': False,
+        },
+
+        'INVENTREE_REQUIRE_CONFIRM': {
+            'name': _('Require confirm'),
+            'description': _('Require explicit user confirmation for certain action.'),
+            'validator': bool,
+            'default': True,
         },
 
         'BARCODE_ENABLE': {
@@ -1107,21 +1145,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'BUILDORDER_REFERENCE_PREFIX': {
-            'name': _('Build Order Reference Prefix'),
-            'description': _('Prefix value for build order reference'),
-            'default': 'BO',
+        'BUILDORDER_REFERENCE_PATTERN': {
+            'name': _('Build Order Reference Pattern'),
+            'description': _('Required pattern for generating Build Order reference field'),
+            'default': 'BO-{ref:04d}',
+            'validator': build.validators.validate_build_order_reference_pattern,
         },
 
-        'BUILDORDER_REFERENCE_REGEX': {
-            'name': _('Build Order Reference Regex'),
-            'description': _('Regular expression pattern for matching build order reference')
-        },
-
-        'SALESORDER_REFERENCE_PREFIX': {
-            'name': _('Sales Order Reference Prefix'),
-            'description': _('Prefix value for sales order reference'),
-            'default': 'SO',
+        'SALESORDER_REFERENCE_PATTERN': {
+            'name': _('Sales Order Reference Pattern'),
+            'description': _('Required pattern for generating Sales Order reference field'),
+            'default': 'SO-{ref:04d}',
+            'validator': order.validators.validate_sales_order_reference_pattern,
         },
 
         'SALESORDER_DEFAULT_SHIPMENT': {
@@ -1131,10 +1166,11 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'PURCHASEORDER_REFERENCE_PREFIX': {
-            'name': _('Purchase Order Reference Prefix'),
-            'description': _('Prefix value for purchase order reference'),
-            'default': 'PO',
+        'PURCHASEORDER_REFERENCE_PATTERN': {
+            'name': _('Purchase Order Reference Pattern'),
+            'description': _('Required pattern for generating Purchase Order reference field'),
+            'default': 'PO-{ref:04d}',
+            'validator': order.validators.validate_purchase_order_reference_pattern,
         },
 
         # login / SSO

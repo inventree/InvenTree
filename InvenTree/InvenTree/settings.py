@@ -253,7 +253,6 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',    # Automatically delete orphaned MEDIA files
     'mptt',                                 # Modified Preorder Tree Traversal
     'markdownify',                          # Markdown template rendering
-    'django_admin_shell',                   # Python shell for the admin interface
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
@@ -532,7 +531,7 @@ if "postgres" in db_engine:  # pragma: no cover
     # https://docs.djangoproject.com/en/3.2/ref/databases/#isolation-level
     if "isolation_level" not in db_options:
         serializable = _is_true(
-            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
+            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "false")
         )
         db_options["isolation_level"] = (
             ISOLATION_LEVEL_SERIALIZABLE
@@ -552,7 +551,7 @@ if "mysql" in db_engine:  # pragma: no cover
     # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
     if "isolation_level" not in db_options:
         serializable = _is_true(
-            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
+            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "false")
         )
         db_options["isolation_level"] = (
             "serializable" if serializable else "read committed"
@@ -745,7 +744,7 @@ if get_setting('TEST_TRANSLATIONS', False):  # pragma: no cover
 CURRENCIES = CONFIG.get(
     'currencies',
     [
-        'AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
+        'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
     ],
 )
 
@@ -876,39 +875,43 @@ REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', CONFIG.get('r
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
 
-MARKDOWNIFY_WHITELIST_TAGS = [
-    'a',
-    'abbr',
-    'b',
-    'blockquote',
-    'em',
-    'h1', 'h2', 'h3',
-    'i',
-    'img',
-    'li',
-    'ol',
-    'p',
-    'strong',
-    'ul'
-]
-
-MARKDOWNIFY_WHITELIST_ATTRS = [
-    'href',
-    'src',
-    'alt',
-]
-
-MARKDOWNIFY_BLEACH = False
+MARKDOWNIFY = {
+    'default': {
+        'BLEACH': True,
+        'WHITELIST_ATTRS': [
+            'href',
+            'src',
+            'alt',
+        ],
+        'WHITELIST_TAGS': [
+            'a',
+            'abbr',
+            'b',
+            'blockquote',
+            'em',
+            'h1', 'h2', 'h3',
+            'i',
+            'img',
+            'li',
+            'ol',
+            'p',
+            'strong',
+            'ul'
+        ],
+    }
+}
 
 # Error reporting
 SENTRY_ENABLED = get_setting('INVENTREE_SENTRY_ENABLED', CONFIG.get('sentry_enabled', False))
 SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', CONFIG.get('sentry_dsn', INVENTREE_DSN))
 
+SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', CONFIG.get('sentry_sample_rate', 0.1)))
+
 if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration(), ],
-        traces_sample_rate=1.0 if DEBUG else 0.15,
+        traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
         send_default_pii=True
     )
     inventree_tags = {

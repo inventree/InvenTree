@@ -24,6 +24,7 @@ from common.models import InvenTreeSetting
 from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
+from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import DownloadFile, increment, isNull, str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
@@ -135,7 +136,7 @@ class CategoryList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
 
     ordering_fields = [
@@ -281,7 +282,7 @@ class PartSalePriceList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -304,7 +305,7 @@ class PartInternalPriceList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -319,7 +320,7 @@ class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -866,7 +867,8 @@ class PartFilter(rest_filters.FilterSet):
     def filter_in_bom(self, queryset, name, part):
         """Limit queryset to parts in the BOM for the specified part"""
 
-        queryset = queryset.filter(id__in=part.get_parts_in_bom())
+        bom_parts = part.get_parts_in_bom()
+        queryset = queryset.filter(id__in=[p.pk for p in bom_parts])
         return queryset
 
     is_template = rest_filters.BooleanFilter()
@@ -1412,7 +1414,7 @@ class PartParameterTemplateList(ListCreateAPI):
         filters.SearchFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'name',
     ]
 
@@ -1477,7 +1479,7 @@ class PartParameterList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
         'template',
     ]
@@ -1526,6 +1528,34 @@ class BomFilter(rest_filters.FilterSet):
             queryset = queryset.filter(pk__in=pks)
         else:
             queryset = queryset.exclude(pk__in=pks)
+
+        return queryset
+
+    available_stock = rest_filters.BooleanFilter(label="Has available stock", method="filter_available_stock")
+
+    def filter_available_stock(self, queryset, name, value):
+        """Filter the queryset based on whether each line item has any available stock"""
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(available_stock__gt=0)
+        else:
+            queryset = queryset.filter(available_stock=0)
+
+        return queryset
+
+    on_order = rest_filters.BooleanFilter(label="On order", method="filter_on_order")
+
+    def filter_on_order(self, queryset, name, value):
+        """Filter the queryset based on whether each line item has any stock on order"""
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(on_order__gt=0)
+        else:
+            queryset = queryset.filter(on_order=0)
 
         return queryset
 
@@ -1755,11 +1785,31 @@ class BomList(ListCreateDestroyAPIView):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
+
+    search_fields = [
+        'reference',
+        'sub_part__name',
+        'sub_part__description',
+        'sub_part__IPN',
+        'sub_part__revision',
+        'sub_part__keywords',
+        'sub_part__category__name',
+    ]
+
+    ordering_fields = [
+        'quantity',
+        'sub_part',
+        'available_stock',
+    ]
+
+    ordering_field_aliases = {
+        'sub_part': 'sub_part__name',
+    }
 
 
 class BomImportUpload(CreateAPI):
@@ -1857,7 +1907,7 @@ class BomItemSubstituteList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
         'bom_item',
     ]

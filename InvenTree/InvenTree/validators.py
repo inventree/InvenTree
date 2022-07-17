@@ -57,17 +57,6 @@ def validate_part_ipn(value):
             raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
 
 
-def validate_build_order_reference(value):
-    """Validate the 'reference' field of a BuildOrder."""
-    pattern = common.models.InvenTreeSetting.get_setting('BUILDORDER_REFERENCE_REGEX')
-
-    if pattern:
-        match = re.search(pattern, value)
-
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
-
-
 def validate_purchase_order_reference(value):
     """Validate the 'reference' field of a PurchaseOrder."""
     pattern = common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_REGEX')

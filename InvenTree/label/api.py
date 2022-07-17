@@ -31,7 +31,7 @@ class LabelListView(ListAPI):
         filters.SearchFilter
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'enabled',
     ]
 

@@ -133,8 +133,12 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         if expected_code is not None:
 
             if response.status_code != expected_code:
-                print(f"Unexpected response at '{url}':")
-                print(response.data)
+                print(f"Unexpected response at '{url}': status code = {response.status_code}")
+
+                if hasattr(response, 'data'):
+                    print(response.data)
+                else:
+                    print(f"(response object {type(response)} has no 'data' attribute")
 
             self.assertEqual(response.status_code, expected_code)
 

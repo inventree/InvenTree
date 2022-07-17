@@ -30,8 +30,7 @@ import report.models
 from company import models as CompanyModels
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               InvenTreeURLField)
-from InvenTree.models import InvenTreeAttachment, InvenTreeTree
-from InvenTree.serializers import extract_int
+from InvenTree.models import InvenTreeAttachment, InvenTreeTree, extract_int
 from InvenTree.status_codes import StockHistoryCode, StockStatus
 from part import models as PartModels
 from plugin.events import trigger_event
@@ -342,6 +341,7 @@ class StockItem(MetadataMixin, MPTTModel):
         - Unique serial number requirement
         - Adds a transaction note when the item is first created.
         """
+
         self.validate_unique()
         self.clean()
 
@@ -439,6 +439,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
         The following validation checks are performed:
         - The 'part' and 'supplier_part.part' fields cannot point to the same Part object
+        - The 'part' is not virtual
         - The 'part' does not belong to itself
         - Quantity must be 1 if the StockItem has a serial number
         """
@@ -453,12 +454,18 @@ class StockItem(MetadataMixin, MPTTModel):
             self.batch = self.batch.strip()
 
         try:
+            # Trackable parts must have integer values for quantity field!
             if self.part.trackable:
-                # Trackable parts must have integer values for quantity field!
                 if self.quantity != int(self.quantity):
                     raise ValidationError({
                         'quantity': _('Quantity must be integer value for trackable parts')
                     })
+
+            # Virtual parts cannot have stock items created against them
+            if self.part.virtual:
+                raise ValidationError({
+                    'part': _("Stock item cannot be created for virtual parts"),
+                })
         except PartModels.Part.DoesNotExist:
             # For some reason the 'clean' process sometimes throws errors because self.part does not exist
             # It *seems* that this only occurs in unit testing, though.
@@ -582,7 +589,8 @@ class StockItem(MetadataMixin, MPTTModel):
     part = models.ForeignKey(
         'part.Part', on_delete=models.CASCADE,
         verbose_name=_('Base Part'),
-        related_name='stock_items', help_text=_('Base part'),
+        related_name='stock_items',
+        help_text=_('Base part'),
         limit_choices_to={
             'virtual': False
         })
@@ -590,7 +598,8 @@ class StockItem(MetadataMixin, MPTTModel):
     supplier_part = models.ForeignKey(
         'company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
         verbose_name=_('Supplier Part'),
-        help_text=_('Select a matching supplier part for this stock item')
+        help_text=_('Select a matching supplier part for this stock item'),
+        related_name='stock_items',
     )
 
     # Note: When a StockLocation is deleted, stock items are updated via a signal
@@ -1699,8 +1708,7 @@ class StockItem(MetadataMixin, MPTTModel):
             s += ' @ {loc}'.format(loc=self.location.name)
 
         if self.purchase_order:
-            s += " ({pre}{po})".format(
-                pre=InvenTree.helpers.getSetting("PURCHASEORDER_REFERENCE_PREFIX"),
+            s += " ({po})".format(
                 po=self.purchase_order,
             )
 
