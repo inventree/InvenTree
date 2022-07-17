@@ -74,7 +74,7 @@ services:
     inventree-server:
         container_name: inventree-server
         # If you wish to specify a particular InvenTree version, do so here
-        image: inventree/inventree:stable
+        image: inventree/inventree:${INVENTREE_TAG:-stable}
         expose:
             - 8000
         depends_on:
@@ -91,7 +91,7 @@ services:
     inventree-worker:
         container_name: inventree-worker
         # If you wish to specify a particular InvenTree version, do so here
-        image: inventree/inventree:stable
+        image: inventree/inventree:${INVENTREE_TAG:-stable}
         command: invoke worker
         depends_on:
             - inventree-server
