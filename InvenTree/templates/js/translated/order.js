@@ -431,7 +431,7 @@ function createSalesOrderShipment(options={}) {
                 var fields = salesOrderShipmentFields(options);
 
                 fields.reference.value = ref;
-                fields.reference.prefix = global_settings.SALESORDER_REFERENCE_PREFIX + options.reference;
+                fields.reference.prefix = options.reference;
 
                 constructForm('{% url "api-so-shipment-list" %}', {
                     method: 'POST',
@@ -456,7 +456,7 @@ function createSalesOrder(options={}) {
         method: 'POST',
         fields: {
             reference: {
-                prefix: global_settings.SALESORDER_REFERENCE_PREFIX,
+                icon: 'fa-hashtag',
             },
             customer: {
                 value: options.customer,
@@ -497,7 +497,7 @@ function createPurchaseOrder(options={}) {
         method: 'POST',
         fields: {
             reference: {
-                prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
+                icon: 'fa-hashtag',
             },
             supplier: {
                 icon: 'fa-building',
@@ -1081,9 +1081,7 @@ function newPurchaseOrderFromOrderWizard(e) {
                 },
                 {
                     success: function(response) {
-                        var text = global_settings.PURCHASEORDER_REFERENCE_PREFIX || '';
-
-                        text += response.reference;
+                        var text = response.reference;
 
                         if (response.supplier_detail) {
                             text += ` ${response.supplier_detail.name}`;
@@ -1545,8 +1543,6 @@ function loadPurchaseOrderTable(table, options) {
             filters,
             {
                 success: function(response) {
-                    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-
                     for (var idx = 0; idx < response.length; idx++) {
 
                         var order = response[idx];
@@ -1559,7 +1555,7 @@ function loadPurchaseOrderTable(table, options) {
                             date = order.target_date;
                         }
 
-                        var title = `${prefix}${order.reference} - ${order.supplier_detail.name}`;
+                        var title = `${order.reference} - ${order.supplier_detail.name}`;
 
                         var color = '#4c68f5';
 
@@ -1622,12 +1618,6 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 switchable: false,
                 formatter: function(value, row) {
-
-                    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-
-                    if (prefix) {
-                        value = `${prefix}${value}`;
-                    }
 
                     var html = renderLink(value, `/order/purchase-order/${row.pk}/`);
 
@@ -2336,8 +2326,6 @@ function loadSalesOrderTable(table, options) {
             {
                 success: function(response) {
 
-                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-
                     for (var idx = 0; idx < response.length; idx++) {
                         var order = response[idx];
 
@@ -2349,7 +2337,7 @@ function loadSalesOrderTable(table, options) {
                             date = order.target_date;
                         }
 
-                        var title = `${prefix}${order.reference} - ${order.customer_detail.name}`;
+                        var title = `${order.reference} - ${order.customer_detail.name}`;
 
                         // Default color is blue
                         var color = '#4c68f5';
@@ -2435,13 +2423,6 @@ function loadSalesOrderTable(table, options) {
                 field: 'reference',
                 title: '{% trans "Sales Order" %}',
                 formatter: function(value, row) {
-
-                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-
-                    if (prefix) {
-                        value = `${prefix}${value}`;
-                    }
-
                     var html = renderLink(value, `/order/sales-order/${row.pk}/`);
 
                     if (row.overdue) {
@@ -2539,6 +2520,17 @@ function loadSalesOrderShipmentTable(table, options={}) {
     }
 
     setupFilterList('salesordershipment', $(table), options.filter_target);
+
+    // Add callbacks for expand / collapse buttons
+    var prefix = options.shipped ? 'completed' : 'pending';
+
+    $(`#${prefix}-shipments-expand`).click(function() {
+        $(table).bootstrapTable('expandAllRows');
+    });
+
+    $(`#${prefix}-shipments-collapse`).click(function() {
+        $(table).bootstrapTable('collapseAllRows');
+    });
 
     function makeShipmentActions(row) {
         // Construct "actions" for the given shipment row
@@ -2880,7 +2872,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                         var fields = salesOrderShipmentFields(options);
 
                         fields.reference.value = ref;
-                        fields.reference.prefix = global_settings.SALESORDER_REFERENCE_PREFIX + options.reference;
+                        fields.reference.prefix = options.reference;
 
                         return fields;
                     }
@@ -3112,9 +3104,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
                 title: '{% trans "Order" %}',
                 formatter: function(value, row) {
 
-                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-
-                    var ref = `${prefix}${row.order_detail.reference}`;
+                    var ref = `${row.order_detail.reference}`;
 
                     return renderLink(ref, `/order/sales-order/${row.order}/`);
                 }
@@ -3225,10 +3215,12 @@ function showAllocationSubTable(index, row, element, options) {
                 formatter: function(value, row, index, field) {
                     var text = '';
 
-                    if (row.serial != null && row.quantity == 1) {
-                        text = `{% trans "Serial Number" %}: ${row.serial}`;
-                    } else {
-                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                    var item = row.item_detail;
+
+                    var text = `{% trans "Quantity" %}: ${row.quantity}`;
+
+                    if (item && item.serial != null && row.quantity == 1) {
+                        text = `{% trans "Serial Number" %}: ${item.serial}`;
                     }
 
                     return renderLink(text, `/stock/item/${row.item}/`);
@@ -3416,6 +3408,15 @@ function loadSalesOrderLineItemTable(table, options={}) {
     // Show detail view if the PurchaseOrder is PENDING or SHIPPED
     var show_detail = pending || shipped;
 
+    // Add callbacks for expand / collapse buttons
+    $('#sales-lines-expand').click(function() {
+        $(table).bootstrapTable('expandAllRows');
+    });
+
+    $('#sales-lines-collapse').click(function() {
+        $(table).bootstrapTable('collapseAllRows');
+    });
+
     // Table columns to display
     var columns = [
         /*
@@ -3543,29 +3544,26 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 title: '{% trans "Available Stock" %}',
                 formatter: function(value, row) {
                     var available = row.available_stock;
-                    var total = row.part_detail.stock;
                     var required = Math.max(row.quantity - row.allocated - row.shipped, 0);
 
                     var html = '';
 
-                    if (total > 0) {
+                    if (available > 0) {
                         var url = `/part/${row.part}/?display=part-stock`;
 
                         var text = available;
-
-                        if (total != available) {
-                            text += ` / ${total}`;
-                        }
 
                         html = renderLink(text, url);
                     } else {
                         html += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                     }
 
-                    if (available >= required) {
-                        html += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
-                    } else {
-                        html += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                    if (required > 0) {
+                        if (available >= required) {
+                            html += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                        } else {
+                            html += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                        }
                     }
 
                     return html;

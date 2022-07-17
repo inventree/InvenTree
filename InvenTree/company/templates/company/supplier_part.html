@@ -30,25 +30,39 @@
 {% url 'admin:company_supplierpart_change' part.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
-{% if roles.purchase_order.add %}
-<button type='button' class='btn btn-outline-secondary' id='order-part' title='{% trans "Order part" %}'>
-    <span class='fas fa-shopping-cart'></span>
-</button>
-{% endif %}
-<button type='button' class='btn btn-outline-secondary' id='edit-part' title='{% trans "Edit supplier part" %}'>
-    <span class='fas fa-edit icon-green'/>
-</button>
-{% if roles.purchase_order.delete %}
-<button type='button' class='btn btn-outline-secondary' id='delete-part' title='{% trans "Delete supplier part" %}'>
-    <span class='fas fa-trash-alt icon-red'/>
-</button>
+{% if roles.purchase_order.change or roles.purchase_order.add or roles.purchase_order.delete %}
+<div class='btn-group'>
+    <button id='supplier-part-actions' title='{% trans "Supplier part actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-tools'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu'>
+        {% if roles.purchase_order.add %}
+        <li><a class='dropdown-item' href='#' id='order-part' title='{% trans "Order Part" %}'>
+            <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}
+        </a></li>
+        {% endif %}
+        {% if roles.purchase_order.change %}
+        <li><a class='dropdown-item' href='#' id='update-part-availability' title='{% trans "Update Availability" %}'>
+            <span class='fas fa-building'></span> {% trans "Update Availability" %}
+        </a></li>
+        <li><a class='dropdown-item' href='#' id='edit-part' title='{% trans "Edit Supplier Part" %}'>
+            <span class='fas fa-edit icon-green'></span> {% trans "Edit Supplier Part" %}
+        </a></li>
+        {% endif %}
+        {% if roles.purchase_order.delete %}
+        <li><a class='dropdown-item' href='#' id='delete-part' title='{% trans "Delete Supplier Part" %}'>
+            <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Supplier  Part" %}
+        </a></li>
+        {% endif %}
+    </ul>
+</div>
 {% endif %}
 {% endblock actions %}
 
 {% block thumbnail %}
 <img class='part-thumb'
 {% if part.part.image %}
-src='{{ part.part.image.url }}'
+src='{{ part.part.image.preview.url }}'
 {% else %}
 src="{% static 'img/blank_image.png' %}"
 {% endif %}/>
@@ -72,6 +86,13 @@ src="{% static 'img/blank_image.png' %}"
         <td></td>
         <td>{% trans "Description" %}</td>
         <td>{{ part.description }}{% include "clip.html"%}</td>
+    </tr>
+    {% endif %}
+    {% if part.availability_updated %}
+    <tr>
+        <td></td>
+        <td>{% trans "Available" %}</td>
+        <td>{% decimal part.available %}<span class='badge bg-dark rounded-pill float-right'>{% render_date part.availability_updated %}</span></td>
     </tr>
     {% endif %}
 </table>
@@ -351,6 +372,20 @@ $('#order-part, #order-part2').click(function() {
     );
 });
 
+{% if roles.purchase_order.change %}
+
+$('#update-part-availability').click(function() {
+    editSupplierPart({{ part.pk }}, {
+        fields: {
+            available: {},
+        },
+        title: '{% trans "Update Part Availability" %}',
+        onSuccess: function() {
+            location.reload();
+        }
+    });
+});
+
 $('#edit-part').click(function () {
 
     editSupplierPart({{ part.pk }}, {
@@ -359,6 +394,8 @@ $('#edit-part').click(function () {
         }
     });
 });
+
+{% endif %}
 
 $('#delete-part').click(function() {
     inventreeGet(

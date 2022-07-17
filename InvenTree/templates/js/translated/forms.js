@@ -6,6 +6,7 @@
     inventreeFormDataUpload,
     inventreeGet,
     inventreePut,
+    global_settings,
     modalEnable,
     modalShowSubmitButton,
     renderBuild,
@@ -204,6 +205,9 @@ function constructChangeForm(fields, options) {
         },
         success: function(data) {
 
+            // Ensure the data are fully sanitized before we operate on it
+            data = sanitizeData(data);
+
             // An optional function can be provided to process the returned results,
             // before they are rendered to the form
             if (options.processResults) {
@@ -247,30 +251,40 @@ function constructChangeForm(fields, options) {
  */
 function constructDeleteForm(fields, options) {
 
-    // Request existing data from the API endpoint
-    // This data can be used to render some information on the form
-    $.ajax({
-        url: options.url,
-        type: 'GET',
-        contentType: 'application/json',
-        dataType: 'json',
-        accepts: {
-            json: 'application/json',
-        },
-        success: function(data) {
+    // If we are deleting a specific "instance" (i.e. a single object)
+    // then we request the instance information first
 
-            // Store the instance data
-            options.instance = data;
+    // However we may be performing a "multi-delete" (against a list endpoint),
+    // in which case we do not want to perform such a request!
 
-            constructFormBody(fields, options);
-        },
-        error: function(xhr) {
-            // TODO: Handle error here
-            console.error(`Error in constructDeleteForm at '${options.url}`);
+    if (options.multi_delete) {
+        constructFormBody(fields, options);
+    } else {
+        // Request existing data from the API endpoint
+        // This data can be used to render some information on the form
+        $.ajax({
+            url: options.url,
+            type: 'GET',
+            contentType: 'application/json',
+            dataType: 'json',
+            accepts: {
+                json: 'application/json',
+            },
+            success: function(data) {
 
-            showApiError(xhr, options.url);
-        }
-    });
+                // Store the instance data
+                options.instance = data;
+
+                constructFormBody(fields, options);
+            },
+            error: function(xhr) {
+                // TODO: Handle error here
+                console.error(`Error in constructDeleteForm at '${options.url}`);
+
+                showApiError(xhr, options.url);
+            }
+        });
+    }
 }
 
 
@@ -562,7 +576,7 @@ function constructFormBody(fields, options) {
     $(modal).find('#modal-footer-buttons').html('');
 
     // Insert "confirm" button (if required)
-    if (options.confirm) {
+    if (options.confirm && global_settings.INVENTREE_REQUIRE_CONFIRM) {
         insertConfirmButton(options);
     }
 
@@ -935,7 +949,7 @@ function getFormFieldElement(name, options) {
 /*
  * Check that a "numerical" input field has a valid number in it.
  * An invalid number is expunged at the client side by the getFormFieldValue() function,
- * which means that an empty string '' is sent to the server if the number is not valud.
+ * which means that an empty string '' is sent to the server if the number is not valid.
  * This can result in confusing error messages displayed under the form field.
  *
  * So, we can invalid numbers and display errors *before* the form is submitted!
@@ -944,7 +958,8 @@ function validateFormField(name, options) {
 
     if (getFormFieldElement(name, options)) {
 
-        var el = document.getElementById(`id_${name}`);
+        var field_name = getFieldName(name, options);
+        var el = document.getElementById(`id_${field_name}`);
 
         if (el.validity.valueMissing) {
             // Accept empty strings (server will validate)

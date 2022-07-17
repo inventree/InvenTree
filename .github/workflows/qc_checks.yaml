@@ -34,7 +34,7 @@ jobs:
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
-          install: true
+          dev-install: true
       - name: Run flake8
         run: flake8 InvenTree --extend-ignore=D
 
@@ -57,8 +57,8 @@ jobs:
           python3 check_js_templates.py
       - name: Lint Javascript Files
         run: |
-          invoke render-js-files
-          npx eslint js_tmp/*.js
+          python InvenTree/manage.py prerender
+          npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
 
   html:
     name: Style [HTML]
@@ -119,6 +119,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
+          dev-install: true
           update: true
       - name: Download Python Code For `${{ env.wrapper_name }}`
         run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
@@ -168,6 +169,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
+          dev-install: true
           update: true
       - name: Coverage Tests
         run: invoke coverage
@@ -218,6 +220,7 @@ jobs:
         with:
           apt-dependency: gettext poppler-utils libpq-dev
           pip-dependency: psycopg2 django-redis>=5.0.0
+          dev-install: true
           update: true
       - name: Run Tests
         run: invoke test
@@ -261,6 +264,7 @@ jobs:
         with:
           apt-dependency: gettext poppler-utils libmysqlclient-dev
           pip-dependency: mysqlclient
+          dev-install: true
           update: true
       - name: Run Tests
         run: invoke test

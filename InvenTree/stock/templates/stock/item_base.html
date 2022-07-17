@@ -136,7 +136,7 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
+<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.preview.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
 {% endblock thumbnail %}
 
 {% block details %}
@@ -581,24 +581,42 @@ $('#stock-add').click(function() {
 });
 
 $("#stock-delete").click(function () {
-    launchModalForm(
-        "{% url 'stock-item-delete' item.id %}",
-        {
-            redirect: "{% url 'part-detail' item.part.id %}"
-        }
-    );
+    deleteStockItem({{ item.pk }}, {
+        redirect: '{% url "part-detail" item.part.pk %}',
+    });
 });
 
 {% if item.part.can_convert %}
 $("#stock-convert").click(function() {
-    launchModalForm("{% url 'stock-item-convert' item.id %}",
+
+    var html = `
+    <div class='alert alert-block alert-info'>
+        {% trans "Select one of the part variants listed below." %}
+    </div>
+    <div class='alert alert-block alert-warning'>
+        <strong>{% trans "Warning" %}</strong>
+        {% trans "This action cannot be easily undone" %}
+    </div>
+    `;
+
+    constructForm(
+        '{% url "api-stock-item-convert" item.pk %}',
         {
+            method: 'POST',
+            title: '{% trans "Convert Stock Item" %}',
+            preFormContent: html,
             reload: true,
+            fields: {
+                part: {
+                    filters: {
+                        convert_from: {{ item.part.pk }}
+                    }
+                },
+            }
         }
     );
 });
 {% endif %}
-
 
 {% if item.in_stock %}
 $("#stock-assign-to-customer").click(function() {

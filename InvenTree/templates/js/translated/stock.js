@@ -39,6 +39,8 @@
     assignStockToCustomer,
     createNewStockItem,
     createStockLocation,
+    deleteStockItem,
+    deleteStockLocation,
     duplicateStockItem,
     editStockItem,
     editStockLocation,
@@ -154,6 +156,34 @@ function createStockLocation(options={}) {
 
     constructForm(url, options);
 }
+
+
+/*
+ * Launch an API form to delete a StockLocation
+ */
+function deleteStockLocation(pk, options={}) {
+    var url = `/api/stock/location/${pk}/`;
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this stock location?" %}
+    <ul>
+        <li>{% trans "Any child locations will be moved to the parent of this location" %}</li>
+        <li>{% trans "Any stock items in this location will be moved to the parent of this location" %}</li>
+    </ul>
+    </div>
+    `;
+
+    constructForm(url, {
+        title: '{% trans "Delete Stock Location" %}',
+        method: 'DELETE',
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
 
 
 function stockItemFields(options={}) {
@@ -323,6 +353,28 @@ function duplicateStockItem(pk, options) {
             options.title = '{% trans "Duplicate Stock Item" %}';
 
             constructForm('{% url "api-stock-list" %}', options);
+        }
+    });
+}
+
+
+/*
+ * Launch a modal form to delete a given StockItem
+ */
+function deleteStockItem(pk, options={}) {
+    var url = `/api/stock/${pk}/`;
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this stock item?" %}
+    </div>`;
+
+    constructForm(url, {
+        method: 'DELETE',
+        title: '{% trans "Delete Stock Item" %}',
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
         }
     });
 }
@@ -1191,7 +1243,7 @@ function noResultBadge() {
 
 function formatDate(row) {
     // Function for formatting date field
-    var html = row.date;
+    var html = renderDate(row.date);
 
     if (row.user_detail) {
         html += `<span class='badge badge-right rounded-pill bg-secondary'>${row.user_detail.username}</span>`;
@@ -1306,7 +1358,8 @@ function loadStockTestResultsTable(table, options) {
                     var html = value;
 
                     if (row.attachment) {
-                        html += `<a href='${row.attachment}'><span class='fas fa-file-alt float-right'></span></a>`;
+                        var text = `<span class='fas fa-file-alt float-right'></span>`;
+                        html += renderLink(text, row.attachment, {download: true});
                     }
 
                     return html;
@@ -1707,13 +1760,13 @@ function loadStockTable(table, options) {
                 val = '# ' + row.serial;
             } else if (row.quantity != available) {
                 // Some quantity is available, show available *and* quantity
-                var ava = +parseFloat(available).toFixed(5);
-                var tot = +parseFloat(row.quantity).toFixed(5);
+                var ava = formatDecimal(available);
+                var tot = formatDecimal(row.quantity);
 
                 val = `${ava} / ${tot}`;
             } else {
                 // Format floating point numbers with this one weird trick
-                val = +parseFloat(value).toFixed(5);
+                val = formatDecimal(value);
             }
 
             var html = renderLink(val, `/stock/item/${row.pk}/`);
@@ -1863,10 +1916,7 @@ function loadStockTable(table, options) {
             var text = `${row.purchase_order}`;
 
             if (row.purchase_order_reference) {
-
-                var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-
-                text = prefix + row.purchase_order_reference;
+                text = row.purchase_order_reference;
             }
 
             return renderLink(text, link);

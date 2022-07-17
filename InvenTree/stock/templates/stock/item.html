@@ -147,9 +147,11 @@
             <h4>{% trans "Installed Stock Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
+                {% if roles.stock.add %}
                 <button type='button' class='btn btn-success' id='stock-item-install'>
                     <span class='fas fa-plus-circle'></span> {% trans "Install Stock Item" %}
                 </button>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -295,6 +297,7 @@
                                 stock_item: {{ item.pk }},
                             }
                         },
+                        multi_delete: true,
                         method: 'DELETE',
                         title: '{% trans "Delete Test Data" %}',
                         preFormContent: html,

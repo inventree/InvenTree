@@ -5,8 +5,8 @@ from django.contrib import admin
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-from import_export.resources import ModelResource
 
+from InvenTree.admin import InvenTreeResource
 from part.models import Part
 
 from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
@@ -14,7 +14,7 @@ from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
                      SupplierPriceBreak)
 
 
-class CompanyResource(ModelResource):
+class CompanyResource(InvenTreeResource):
     """Class for managing Company data import/export."""
 
     class Meta:
@@ -38,7 +38,7 @@ class CompanyAdmin(ImportExportModelAdmin):
     ]
 
 
-class SupplierPartResource(ModelResource):
+class SupplierPartResource(InvenTreeResource):
     """Class for managing SupplierPart data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
@@ -74,7 +74,7 @@ class SupplierPartAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('part', 'supplier', 'manufacturer_part',)
 
 
-class ManufacturerPartResource(ModelResource):
+class ManufacturerPartResource(InvenTreeResource):
     """Class for managing ManufacturerPart data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
@@ -117,7 +117,7 @@ class ManufacturerPartAttachmentAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('manufacturer_part',)
 
 
-class ManufacturerPartParameterResource(ModelResource):
+class ManufacturerPartParameterResource(InvenTreeResource):
     """Class for managing ManufacturerPartParameter data import/export."""
 
     class Meta:
@@ -144,7 +144,7 @@ class ManufacturerPartParameterAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('manufacturer_part',)
 
 
-class SupplierPriceBreakResource(ModelResource):
+class SupplierPriceBreakResource(InvenTreeResource):
     """Class for managing SupplierPriceBreak data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(SupplierPart))

@@ -11,7 +11,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import ReferenceIndexingSerializerMixin, UserSerializer
+from InvenTree.serializers import UserSerializer
 
 import InvenTree.helpers
 from InvenTree.helpers import extract_serial_numbers
@@ -28,7 +28,7 @@ from users.serializers import OwnerSerializer
 from .models import Build, BuildItem, BuildOrderAttachment
 
 
-class BuildSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class BuildSerializer(InvenTreeModelSerializer):
     """Serializes a Build object."""
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -73,6 +73,16 @@ class BuildSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer
 
         if part_detail is not True:
             self.fields.pop('part_detail')
+
+    reference = serializers.CharField(required=True)
+
+    def validate_reference(self, reference):
+        """Custom validation for the Build reference field"""
+
+        # Ensure the reference matches the required pattern
+        Build.validate_reference_field(reference)
+
+        return reference
 
     class Meta:
         """Serializer metaclass"""
@@ -465,6 +475,22 @@ class BuildCancelSerializer(serializers.Serializer):
 
 class BuildCompleteSerializer(serializers.Serializer):
     """DRF serializer for marking a BuildOrder as complete."""
+
+    accept_overallocated = serializers.BooleanField(
+        label=_('Accept Overallocated'),
+        help_text=_('Accept stock items which have been overallocated to this build order'),
+        required=False,
+        default=False,
+    )
+
+    def validate_accept_overallocated(self, value):
+        """Check if the 'accept_overallocated' field is required"""
+        build = self.context['build']
+
+        if build.has_overallocated_parts(output=None) and not value:
+            raise ValidationError(_('Some stock items have been overallocated'))
+
+        return value
 
     accept_unallocated = serializers.BooleanField(
         label=_('Accept Unallocated'),

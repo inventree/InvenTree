@@ -21,7 +21,9 @@ from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.core.exceptions import ValidationError
+from django.contrib.sites.models import Site
+from django.core.cache import cache
+from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import MinValueValidator, URLValidator
 from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
@@ -34,9 +36,12 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
+import build.validators
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.ready
 import InvenTree.validators
+import order.validators
 
 logger = logging.getLogger('inventree')
 
@@ -69,10 +74,63 @@ class BaseInvenTreeSetting(models.Model):
         """Enforce validation and clean before saving."""
         self.key = str(self.key).upper()
 
+        do_cache = kwargs.pop('cache', True)
+
         self.clean(**kwargs)
         self.validate_unique(**kwargs)
 
+        # Update this setting in the cache
+        if do_cache:
+            self.save_to_cache()
+
         super().save()
+
+        # Get after_save action
+        setting = self.get_setting_definition(self.key, *args, **kwargs)
+        after_save = setting.get('after_save', None)
+
+        # Execute if callable
+        if callable(after_save):
+            after_save(self)
+
+    @property
+    def cache_key(self):
+        """Generate a unique cache key for this settings object"""
+        return self.__class__.create_cache_key(self.key, **self.get_kwargs())
+
+    def save_to_cache(self):
+        """Save this setting object to cache"""
+
+        ckey = self.cache_key
+
+        logger.debug(f"Saving setting '{ckey}' to cache")
+
+        try:
+            cache.set(
+                ckey,
+                self,
+                timeout=3600
+            )
+        except TypeError:
+            # Some characters cause issues with caching; ignore and move on
+            pass
+
+    @classmethod
+    def create_cache_key(cls, setting_key, **kwargs):
+        """Create a unique cache key for a particular setting object.
+
+        The cache key uses the following elements to ensure the key is 'unique':
+        - The name of the class
+        - The unique KEY string
+        - Any key:value kwargs associated with the particular setting type (e.g. user-id)
+        """
+
+        key = f"{str(cls.__name__)}:{setting_key}"
+
+        for k, v in kwargs.items():
+            key += f"_{k}:{v}"
+
+        return key
 
     @classmethod
     def allValues(cls, user=None, exclude_hidden=False):
@@ -220,10 +278,11 @@ class BaseInvenTreeSetting(models.Model):
 
         - Key is case-insensitive
         - Returns None if no match is made
+
+        First checks the cache to see if this object has recently been accessed,
+        and returns the cached version if so.
         """
         key = str(key).strip().upper()
-
-        settings = cls.objects.all()
 
         filters = {
             'key__iexact': key,
@@ -253,7 +312,25 @@ class BaseInvenTreeSetting(models.Model):
         if method is not None:
             filters['method'] = method
 
+        # Perform cache lookup by default
+        do_cache = kwargs.pop('cache', True)
+
+        ckey = cls.create_cache_key(key, **kwargs)
+
+        if do_cache:
+            try:
+                # First attempt to find the setting object in the cache
+                cached_setting = cache.get(ckey)
+
+                if cached_setting is not None:
+                    return cached_setting
+
+            except AppRegistryNotReady:
+                # Cache is not ready yet
+                do_cache = False
+
         try:
+            settings = cls.objects.all()
             setting = settings.filter(**filters).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
@@ -265,6 +342,10 @@ class BaseInvenTreeSetting(models.Model):
 
             # Unless otherwise specified, attempt to create the setting
             create = kwargs.get('create', True)
+
+            # Prevent creation of new settings objects when importing data
+            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+                create = False
 
             if create:
                 # Attempt to create a new settings object
@@ -281,6 +362,10 @@ class BaseInvenTreeSetting(models.Model):
                 except (IntegrityError, OperationalError):
                     # It might be the case that the database isn't created yet
                     pass
+
+        if setting and do_cache:
+            # Cache this setting object
+            setting.save_to_cache()
 
         return setting
 
@@ -665,6 +750,20 @@ def settings_group_options():
     return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
 
 
+def update_instance_url(setting):
+    """Update the first site objects domain to url."""
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.domain = setting.value
+    site_obj.save()
+
+
+def update_instance_name(setting):
+    """Update the first site objects name to instance name."""
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.name = setting.value
+    site_obj.save()
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -679,7 +778,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         """
         super().save()
 
-        if self.requires_restart():
+        if self.requires_restart() and not InvenTree.ready.isImportingData():
             InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
 
     """
@@ -712,6 +811,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Server Instance Name'),
             'default': 'InvenTree',
             'description': _('String descriptor for the server instance'),
+            'after_save': update_instance_name,
         },
 
         'INVENTREE_INSTANCE_TITLE': {
@@ -739,6 +839,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Base URL for server instance'),
             'validator': EmptyURLValidator(),
             'default': '',
+            'after_save': update_instance_url,
         },
 
         'INVENTREE_DEFAULT_CURRENCY': {
@@ -753,6 +854,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Allow download of remote images and files from external URL'),
             'validator': bool,
             'default': False,
+        },
+
+        'INVENTREE_REQUIRE_CONFIRM': {
+            'name': _('Require confirm'),
+            'description': _('Require explicit user confirmation for certain action.'),
+            'validator': bool,
+            'default': True,
         },
 
         'BARCODE_ENABLE': {
@@ -939,6 +1047,23 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': InvenTree.validators.validate_part_name_format
         },
 
+        'LABEL_ENABLE': {
+            'name': _('Enable label printing'),
+            'description': _('Enable label printing from the web interface'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'LABEL_DPI': {
+            'name': _('Label Image DPI'),
+            'description': _('DPI resolution when generating image files to supply to label printing plugins'),
+            'default': 300,
+            'validator': [
+                int,
+                MinValueValidator(100),
+            ]
+        },
+
         'REPORT_ENABLE': {
             'name': _('Enable Reports'),
             'description': _('Enable generation of reports'),
@@ -1020,21 +1145,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'BUILDORDER_REFERENCE_PREFIX': {
-            'name': _('Build Order Reference Prefix'),
-            'description': _('Prefix value for build order reference'),
-            'default': 'BO',
+        'BUILDORDER_REFERENCE_PATTERN': {
+            'name': _('Build Order Reference Pattern'),
+            'description': _('Required pattern for generating Build Order reference field'),
+            'default': 'BO-{ref:04d}',
+            'validator': build.validators.validate_build_order_reference_pattern,
         },
 
-        'BUILDORDER_REFERENCE_REGEX': {
-            'name': _('Build Order Reference Regex'),
-            'description': _('Regular expression pattern for matching build order reference')
-        },
-
-        'SALESORDER_REFERENCE_PREFIX': {
-            'name': _('Sales Order Reference Prefix'),
-            'description': _('Prefix value for sales order reference'),
-            'default': 'SO',
+        'SALESORDER_REFERENCE_PATTERN': {
+            'name': _('Sales Order Reference Pattern'),
+            'description': _('Required pattern for generating Sales Order reference field'),
+            'default': 'SO-{ref:04d}',
+            'validator': order.validators.validate_sales_order_reference_pattern,
         },
 
         'SALESORDER_DEFAULT_SHIPMENT': {
@@ -1044,10 +1166,11 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'PURCHASEORDER_REFERENCE_PREFIX': {
-            'name': _('Purchase Order Reference Prefix'),
-            'description': _('Prefix value for purchase order reference'),
-            'default': 'PO',
+        'PURCHASEORDER_REFERENCE_PATTERN': {
+            'name': _('Purchase Order Reference Pattern'),
+            'description': _('Required pattern for generating Purchase Order reference field'),
+            'default': 'PO-{ref:04d}',
+            'validator': order.validators.validate_purchase_order_reference_pattern,
         },
 
         # login / SSO
@@ -1320,12 +1443,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
-        'LABEL_ENABLE': {
-            'name': _('Enable label printing'),
-            'description': _('Enable label printing from the web interface'),
-            'default': True,
-            'validator': bool,
-        },
 
         "LABEL_INLINE": {
             'name': _('Inline label display'),
@@ -1506,11 +1623,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         verbose_name=_('User'),
         help_text=_('User'),
     )
-
-    @classmethod
-    def get_setting_object(cls, key, user=None):
-        """Return setting object for provided user."""
-        return super().get_setting_object(key, user=user)
 
     def validate_unique(self, exclude=None, **kwargs):
         """Return if the setting (including key) is unique."""

@@ -4,12 +4,14 @@ from django.conf import settings
 from django.urls import include, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, permissions, status
+from rest_framework import filters, permissions, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
+from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
+                              RetrieveUpdateDestroyAPI)
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
@@ -17,7 +19,7 @@ from plugin.models import PluginConfig, PluginSetting
 from plugin.registry import registry
 
 
-class PluginList(generics.ListAPIView):
+class PluginList(ListAPI):
     """API endpoint for list of PluginConfig objects.
 
     - GET: Return a list of all PluginConfig objects
@@ -60,7 +62,7 @@ class PluginList(generics.ListAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'active',
     ]
 
@@ -80,7 +82,7 @@ class PluginList(generics.ListAPIView):
     ]
 
 
-class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
+class PluginDetail(RetrieveUpdateDestroyAPI):
     """API detail endpoint for PluginConfig object.
 
     get:
@@ -97,7 +99,7 @@ class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PluginSerializers.PluginConfigSerializer
 
 
-class PluginInstall(generics.CreateAPIView):
+class PluginInstall(CreateAPI):
     """Endpoint for installing a new plugin."""
 
     queryset = PluginConfig.objects.none()
@@ -105,7 +107,10 @@ class PluginInstall(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         """Install a plugin via the API"""
-        serializer = self.get_serializer(data=request.data)
+        # Clean up input data
+        data = self.clean_data(request.data)
+
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         result = self.perform_create(serializer)
         result['input'] = serializer.data
@@ -117,7 +122,7 @@ class PluginInstall(generics.CreateAPIView):
         return serializer.save()
 
 
-class PluginSettingList(generics.ListAPIView):
+class PluginSettingList(ListAPI):
     """List endpoint for all plugin related settings.
 
     - read only
@@ -135,13 +140,13 @@ class PluginSettingList(generics.ListAPIView):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'plugin__active',
         'plugin__key',
     ]
 
 
-class PluginSettingDetail(generics.RetrieveUpdateAPIView):
+class PluginSettingDetail(RetrieveUpdateAPI):
     """Detail endpoint for a plugin-specific setting.
 
     Note that these cannot be created or deleted via the API

@@ -17,7 +17,7 @@
 {% block thumbnail %}
 <img class="part-thumb"
 {% if build.part.image %}
-src="{{ build.part.image.url }}"
+src="{{ build.part.image.preview.url }}"
 {% else %}
 src="{% static 'img/blank_image.png' %}"
 {% endif %}/>
@@ -236,6 +236,7 @@ src="{% static 'img/blank_image.png' %}"
         {% else %}
 
         completeBuildOrder({{ build.pk }}, {
+            overallocated: {% if build.has_overallocated_parts %}true{% else %}false{% endif %},
             allocated: {% if build.are_untracked_parts_allocated %}true{% else %}false{% endif %},
             completed: {% if build.remaining == 0 %}true{% else %}false{% endif %},
         });

@@ -63,10 +63,15 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         # Set a minimum value validator
         validators = kwargs.get('validators', [])
 
+        allow_negative = kwargs.pop('allow_negative', False)
+
+        # If no validators are provided, add some "standard" ones
         if len(validators) == 0:
-            validators.append(
-                MinMoneyValidator(0),
-            )
+
+            if not allow_negative:
+                validators.append(
+                    MinMoneyValidator(0),
+                )
 
         kwargs['validators'] = validators
 
@@ -157,3 +162,19 @@ class RoundingDecimalField(models.DecimalField):
         defaults.update(kwargs)
 
         return super().formfield(**kwargs)
+
+
+class InvenTreeNotesField(models.TextField):
+    """Custom implementation of a 'notes' field"""
+
+    # Maximum character limit for the various 'notes' fields
+    NOTES_MAX_LENGTH = 50000
+
+    def __init__(self, **kwargs):
+        """Configure default initial values for this field"""
+        kwargs['max_length'] = self.NOTES_MAX_LENGTH
+        kwargs['verbose_name'] = _('Notes')
+        kwargs['blank'] = True
+        kwargs['null'] = True
+
+        super().__init__(**kwargs)

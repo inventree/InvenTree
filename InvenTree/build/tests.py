@@ -35,7 +35,7 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertEqual(b.batch, 'B2')
         self.assertEqual(b.quantity, 21)
 
-        self.assertEqual(str(b), 'BO0002')
+        self.assertEqual(str(b), 'BO-0002')
 
     def test_url(self):
         """Test URL lookup"""
@@ -74,11 +74,6 @@ class BuildTestSimple(InvenTreeTestCase):
 
         self.assertEqual(b1.is_active, True)
         self.assertEqual(b2.is_active, False)
-
-    def test_required_parts(self):
-        """Test set of required BOM items for the build"""
-        # TODO: Generate BOM for test part
-        ...
 
     def test_cancel_build(self):
         """Test build cancellation function."""

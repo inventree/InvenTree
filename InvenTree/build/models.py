@@ -16,53 +16,28 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from markdownx.models import MarkdownxField
-
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
 
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode, notify_responsible
+from InvenTree.helpers import increment, normalize, MakeBarcode, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
-from InvenTree.validators import validate_build_order_reference
+
+from build.validators import generate_next_build_reference, validate_build_order_reference
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.ready
 import InvenTree.tasks
 
 from plugin.events import trigger_event
 
+import common.notifications
 from part import models as PartModels
 from stock import models as StockModels
 from users import models as UserModels
-
-
-def get_next_build_number():
-    """Returns the next available BuildOrder reference number."""
-    if Build.objects.count() == 0:
-        return '0001'
-
-    build = Build.objects.exclude(reference=None).last()
-
-    attempts = {build.reference}
-
-    reference = build.reference
-
-    while 1:
-        reference = increment(reference)
-
-        if reference in attempts:
-            # Escape infinite recursion
-            return reference
-
-        if Build.objects.filter(reference=reference).exists():
-            attempts.add(reference)
-        else:
-            break
-
-    return reference
 
 
 class Build(MPTTModel, ReferenceIndexingMixin):
@@ -90,6 +65,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
+    # Global setting for specifying reference pattern
+    REFERENCE_PATTERN_SETTING = 'BUILDORDER_REFERENCE_PATTERN'
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the BuildOrder model"""
@@ -107,7 +85,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     def api_defaults(cls, request):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
-            'reference': get_next_build_number(),
+            'reference': generate_next_build_reference(),
         }
 
         if request and request.user:
@@ -117,7 +95,8 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     def save(self, *args, **kwargs):
         """Custom save method for the BuildOrder model"""
-        self.rebuild_reference_field()
+        self.validate_reference_field(self.reference)
+        self.reference_int = self.rebuild_reference_field(self.reference)
 
         try:
             super().save(*args, **kwargs)
@@ -173,9 +152,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     def __str__(self):
         """String representation of a BuildOrder"""
-        prefix = getSetting("BUILDORDER_REFERENCE_PREFIX")
-
-        return f"{prefix}{self.reference}"
+        return self.reference
 
     def get_absolute_url(self):
         """Return the web URL associated with this BuildOrder"""
@@ -187,9 +164,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         blank=False,
         help_text=_('Build Order Reference'),
         verbose_name=_('Reference'),
-        default=get_next_build_number,
+        default=generate_next_build_reference,
         validators=[
-            validate_build_order_reference
+            validate_build_order_reference,
         ]
     )
 
@@ -200,7 +177,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         help_text=_('Brief description of the build')
     )
 
-    # TODO - Perhaps delete the build "tree"
     parent = TreeForeignKey(
         'self',
         on_delete=models.SET_NULL,
@@ -320,9 +296,8 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         blank=True, help_text=_('Link to external URL')
     )
 
-    notes = MarkdownxField(
-        verbose_name=_('Notes'),
-        blank=True, help_text=_('Extra build notes')
+    notes = InvenTree.fields.InvenTreeNotesField(
+        help_text=_('Extra build notes')
     )
 
     def sub_builds(self, cascade=True):
@@ -537,11 +512,50 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         self.subtract_allocated_stock(user)
 
         # Ensure that there are no longer any BuildItem objects
-        # which point to thisFcan Build Order
+        # which point to this Build Order
         self.allocated_stock.all().delete()
 
         # Register an event
         trigger_event('build.completed', id=self.pk)
+
+        # Notify users that this build has been completed
+        targets = [
+            self.issued_by,
+            self.responsible,
+        ]
+
+        # Notify those users interested in the parent build
+        if self.parent:
+            targets.append(self.parent.issued_by)
+            targets.append(self.parent.responsible)
+
+        # Notify users if this build points to a sales order
+        if self.sales_order:
+            targets.append(self.sales_order.created_by)
+            targets.append(self.sales_order.responsible)
+
+        build = self
+        name = _(f'Build order {build} has been completed')
+
+        context = {
+            'build': build,
+            'name': name,
+            'slug': 'build.completed',
+            'message': _('A build order has been completed'),
+            'link': InvenTree.helpers.construct_absolute_url(self.get_absolute_url()),
+            'template': {
+                'html': 'email/build_order_completed.html',
+                'subject': name,
+            }
+        }
+
+        common.notifications.trigger_notification(
+            build,
+            'build.completed',
+            targets=targets,
+            context=context,
+            target_exclude=[user],
+        )
 
     @transaction.atomic
     def cancel_build(self, user, **kwargs):
@@ -981,6 +995,20 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         """Returns True if the un-tracked parts are fully allocated for this BuildOrder."""
         return self.is_fully_allocated(None)
 
+    def has_overallocated_parts(self, output=None):
+        """Check if parts have been 'over-allocated' against the specified output.
+
+        Note: If output=None, test un-tracked parts
+        """
+
+        bom_items = self.tracked_bom_items if output else self.untracked_bom_items
+
+        for bom_item in bom_items:
+            if self.allocated_quantity(bom_item, output) > self.required_quantity(bom_item, output):
+                return True
+
+        return False
+
     def unallocated_bom_items(self, output):
         """Return a list of bom items which have *not* been fully allocated against a particular output."""
         unallocated = []
@@ -1041,6 +1069,10 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 @receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')
 def after_save_build(sender, instance: Build, created: bool, **kwargs):
     """Callback function to be executed after a Build instance is saved."""
+    # Escape if we are importing data
+    if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        return
+
     from . import tasks as build_tasks
 
     if created:

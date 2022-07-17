@@ -15,6 +15,10 @@ inputs:
         required: false
         description: 'Install the InvenTree requirements?'
         default: 'false'
+    dev-install:
+        required: false
+        description: 'Install the InvenTree development requirements?'
+        default: 'false'
     update:
         required: false
         description: 'Should a full update cycle be run?'
@@ -72,6 +76,10 @@ runs:
           sudo apt-get install ${{ inputs.apt-dependency }}
 
       # Invoke commands
+      - name: Install dev requirements
+        if: ${{ inputs.dev-install == 'true' ||inputs.install == 'true' }}
+        shell: bash
+        run: pip install -r requirements-dev.txt
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash

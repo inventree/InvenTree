@@ -33,11 +33,7 @@ category_urls = [
     re_path(r'^subcategory/', views.PartIndex.as_view(template_name='part/subcategory.html'), name='category-index-subcategory'),
 
     # Category detail views
-    re_path(r'(?P<pk>\d+)/', include([
-        re_path(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
-        # Anything else
-        re_path(r'^.*$', views.CategoryDetail.as_view(), name='category-detail'),
-    ]))
+    re_path(r'(?P<pk>\d+)/', views.CategoryDetail.as_view(), name='category-detail'),
 ]
 
 # URL list for part web interface

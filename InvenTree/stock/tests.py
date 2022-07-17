@@ -87,7 +87,7 @@ class StockTest(InvenTreeTestCase):
         # And there should be *no* items being build
         self.assertEqual(part.quantity_being_built, 0)
 
-        build = Build.objects.create(reference='12345', part=part, title='A test build', quantity=1)
+        build = Build.objects.create(reference='BO-4444', part=part, title='A test build', quantity=1)
 
         # Add some stock items which are "building"
         for _ in range(10):
@@ -395,13 +395,14 @@ class StockTest(InvenTreeTestCase):
         item.serial = "-123"
         item.save()
 
-        # Negative number should map to zero
-        self.assertEqual(item.serial_int, 0)
+        # Negative number should map to positive value
+        self.assertEqual(item.serial_int, 123)
 
         # Test a very very large value
         item.serial = '99999999999999999999999999999999999999999999999999999'
         item.save()
 
+        # The 'integer' portion has been clipped to a maximum value
         self.assertEqual(item.serial_int, 0x7fffffff)
 
         # Non-numeric values should encode to zero

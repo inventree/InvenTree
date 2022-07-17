@@ -6,11 +6,12 @@ from django.http import HttpResponse, JsonResponse
 from django.urls import include, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics
+from rest_framework import filters
 from rest_framework.exceptions import NotFound
 
 import common.models
 import InvenTree.helpers
+from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from InvenTree.tasks import offload_task
 from part.models import Part
 from plugin.base.label import label as plugin_label
@@ -22,7 +23,7 @@ from .serializers import (PartLabelSerializer, StockItemLabelSerializer,
                           StockLocationLabelSerializer)
 
 
-class LabelListView(generics.ListAPIView):
+class LabelListView(ListAPI):
     """Generic API class for label templates."""
 
     filter_backends = [
@@ -30,7 +31,7 @@ class LabelListView(generics.ListAPIView):
         filters.SearchFilter
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'enabled',
     ]
 
@@ -275,14 +276,14 @@ class StockItemLabelList(LabelListView, StockItemLabelMixin):
         return queryset
 
 
-class StockItemLabelDetail(generics.RetrieveUpdateDestroyAPIView):
+class StockItemLabelDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single StockItemLabel object."""
 
     queryset = StockItemLabel.objects.all()
     serializer_class = StockItemLabelSerializer
 
 
-class StockItemLabelPrint(generics.RetrieveAPIView, StockItemLabelMixin, LabelPrintMixin):
+class StockItemLabelPrint(RetrieveAPI, StockItemLabelMixin, LabelPrintMixin):
     """API endpoint for printing a StockItemLabel object."""
 
     queryset = StockItemLabel.objects.all()
@@ -391,14 +392,14 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
         return queryset
 
 
-class StockLocationLabelDetail(generics.RetrieveUpdateDestroyAPIView):
+class StockLocationLabelDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single StockLocationLabel object."""
 
     queryset = StockLocationLabel.objects.all()
     serializer_class = StockLocationLabelSerializer
 
 
-class StockLocationLabelPrint(generics.RetrieveAPIView, StockLocationLabelMixin, LabelPrintMixin):
+class StockLocationLabelPrint(RetrieveAPI, StockLocationLabelMixin, LabelPrintMixin):
     """API endpoint for printing a StockLocationLabel object."""
 
     queryset = StockLocationLabel.objects.all()
@@ -483,14 +484,14 @@ class PartLabelList(LabelListView, PartLabelMixin):
         return queryset
 
 
-class PartLabelDetail(generics.RetrieveUpdateDestroyAPIView):
+class PartLabelDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single PartLabel object."""
 
     queryset = PartLabel.objects.all()
     serializer_class = PartLabelSerializer
 
 
-class PartLabelPrint(generics.RetrieveAPIView, PartLabelMixin, LabelPrintMixin):
+class PartLabelPrint(RetrieveAPI, PartLabelMixin, LabelPrintMixin):
     """API endpoint for printing a PartLabel object."""
 
     queryset = PartLabel.objects.all()

@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
-from rest_framework import filters, generics, permissions, serializers
+from rest_framework import filters, permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,6 +18,8 @@ import common.models
 import common.serializers
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.helpers import inheritors
+from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveAPI,
+                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 
@@ -97,7 +99,7 @@ class WebhookView(CsrfExemptMixin, APIView):
             raise NotFound()
 
 
-class SettingsList(generics.ListAPIView):
+class SettingsList(ListAPI):
     """Generic ListView for settings.
 
     This is inheritted by all list views for settings.
@@ -145,7 +147,7 @@ class GlobalSettingsPermissions(permissions.BasePermission):
             return False
 
 
-class GlobalSettingsDetail(generics.RetrieveUpdateAPIView):
+class GlobalSettingsDetail(RetrieveUpdateAPI):
     """Detail view for an individual "global setting" object.
 
     - User must have 'staff' status to view / edit
@@ -203,7 +205,7 @@ class UserSettingsPermissions(permissions.BasePermission):
         return user == obj.user
 
 
-class UserSettingsDetail(generics.RetrieveUpdateAPIView):
+class UserSettingsDetail(RetrieveUpdateAPI):
     """Detail view for an individual "user setting" object.
 
     - User can only view / edit settings their own settings objects
@@ -245,7 +247,7 @@ class NotificationUserSettingsList(SettingsList):
         return queryset
 
 
-class NotificationUserSettingsDetail(generics.RetrieveUpdateAPIView):
+class NotificationUserSettingsDetail(RetrieveUpdateAPI):
     """Detail view for an individual "notification user setting" object.
 
     - User can only view / edit settings their own settings objects
@@ -259,7 +261,7 @@ class NotificationUserSettingsDetail(generics.RetrieveUpdateAPIView):
     ]
 
 
-class NotificationList(BulkDeleteMixin, generics.ListAPIView):
+class NotificationList(BulkDeleteMixin, ListAPI):
     """List view for all notifications of the current user."""
 
     queryset = common.models.NotificationMessage.objects.all()
@@ -287,7 +289,7 @@ class NotificationList(BulkDeleteMixin, generics.ListAPIView):
         'message',
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'category',
         'read',
     ]
@@ -310,7 +312,7 @@ class NotificationList(BulkDeleteMixin, generics.ListAPIView):
         return queryset
 
 
-class NotificationDetail(generics.RetrieveUpdateDestroyAPIView):
+class NotificationDetail(RetrieveUpdateDestroyAPI):
     """Detail view for an individual notification object.
 
     - User can only view / delete their own notification objects
@@ -323,7 +325,7 @@ class NotificationDetail(generics.RetrieveUpdateDestroyAPIView):
     ]
 
 
-class NotificationReadEdit(generics.CreateAPIView):
+class NotificationReadEdit(CreateAPI):
     """General API endpoint to manipulate read state of a notification."""
 
     queryset = common.models.NotificationMessage.objects.all()
@@ -360,7 +362,7 @@ class NotificationUnread(NotificationReadEdit):
     target = False
 
 
-class NotificationReadAll(generics.RetrieveAPIView):
+class NotificationReadAll(RetrieveAPI):
     """API endpoint to mark all notifications as read."""
 
     queryset = common.models.NotificationMessage.objects.all()

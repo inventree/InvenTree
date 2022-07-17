@@ -5,7 +5,7 @@ from datetime import datetime
 from django.test import TestCase
 
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import IntegrationPluginBase, InvenTreePlugin, registry
+from plugin import InvenTreePlugin, registry
 from plugin.samples.integration.another_sample import (NoIntegrationPlugin,
                                                        WrongIntegrationPlugin)
 from plugin.samples.integration.sample import SampleIntegrationPlugin
@@ -162,11 +162,3 @@ class InvenTreePluginTests(TestCase):
             self.assertEqual(self.plugin_old.slug, 'old')
             # check default value is used
             self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
-
-        # check usage of the old class fires
-        class OldPlugin(IntegrationPluginBase):
-            pass
-
-        with self.assertWarns(DeprecationWarning):
-            plg = OldPlugin()
-            self.assertIsInstance(plg, InvenTreePlugin)

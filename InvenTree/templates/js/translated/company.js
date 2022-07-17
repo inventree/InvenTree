@@ -189,14 +189,16 @@ function createSupplierPart(options={}) {
 
 function editSupplierPart(part, options={}) {
 
-    var fields = supplierPartFields();
+    var fields = options.fields || supplierPartFields();
 
     // Hide the "part" field
-    fields.part.hidden = true;
+    if (fields.part) {
+        fields.part.hidden = true;
+    }
 
     constructForm(`/api/company/part/${part}/`, {
         fields: fields,
-        title: '{% trans "Edit Supplier Part" %}',
+        title: options.title || '{% trans "Edit Supplier Part" %}',
         onSuccess: options.onSuccess
     });
 }
@@ -261,6 +263,7 @@ function deleteSupplierParts(parts, options={}) {
 
     constructForm('{% url "api-supplier-part-list" %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete Supplier Parts" %}',
         preFormContent: html,
         form_data: {
@@ -489,6 +492,7 @@ function deleteManufacturerParts(selections, options={}) {
 
     constructForm('{% url "api-manufacturer-part-list" %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete Manufacturer Parts" %}',
         preFormContent: html,
         form_data: {
@@ -536,6 +540,7 @@ function deleteManufacturerPartParameters(selections, options={}) {
 
     constructForm('{% url "api-manufacturer-part-parameter-list" %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete Parameters" %}',
         preFormContent: html,
         form_data: {
@@ -835,6 +840,7 @@ function loadSupplierPartTable(table, url, options) {
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
+        sortable: true,
         formatNoMatches: function() {
             return '{% trans "No supplier parts found" %}';
         },
@@ -951,6 +957,26 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'packaging',
                 title: '{% trans "Packaging" %}',
                 sortable: false,
+            },
+            {
+                field: 'in_stock',
+                title: '{% trans "In Stock" %}',
+                sortable: true,
+            },
+            {
+                field: 'available',
+                title: '{% trans "Available" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    if (row.availability_updated) {
+                        var html = formatDecimal(value);
+                        var date = renderDate(row.availability_updated, {showTime: true});
+                        html += `<span class='fas fa-info-circle float-right' title='{% trans "Last Updated" %}: ${date}'></span>`;
+                        return html;
+                    } else {
+                        return '-';
+                    }
+                }
             },
             {
                 field: 'actions',

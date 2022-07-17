@@ -15,15 +15,15 @@ import random
 import socket
 import string
 import sys
-from datetime import datetime
 
 import django.conf.locale
-from django.contrib.messages import constants as messages
 from django.core.files.storage import default_storage
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
+import sentry_sdk
 import yaml
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
 
@@ -32,6 +32,9 @@ def _is_true(x):
     # Shortcut function to determine if a value "looks" like a boolean
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true']
 
+
+# Default Sentry DSN (can be overriden if user wants custom sentry integration)
+INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
@@ -215,18 +218,6 @@ logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
 
 INSTALLED_APPS = [
 
-    # Core django modules
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'user_sessions',                # db user sessions
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-
-    # Maintenance
-    'maintenance_mode',
-
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
@@ -241,6 +232,18 @@ INSTALLED_APPS = [
     'plugin.apps.PluginAppConfig',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
+    # Core django modules
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'user_sessions',                # db user sessions
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    # Maintenance
+    'maintenance_mode',
+
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
     'rest_framework',                       # DRF (Django Rest Framework)
@@ -250,9 +253,7 @@ INSTALLED_APPS = [
     'import_export',                        # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',    # Automatically delete orphaned MEDIA files
     'mptt',                                 # Modified Preorder Tree Traversal
-    'markdownx',                            # Markdown editing
     'markdownify',                          # Markdown template rendering
-    'django_admin_shell',                   # Python shell for the admin interface
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
@@ -298,11 +299,28 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
+DEBUG_TOOLBAR_ENABLED = DEBUG and CONFIG.get('debug_toolbar', False)
+
 # If the debug toolbar is enabled, add the modules
-if DEBUG and CONFIG.get('debug_toolbar', False):  # pragma: no cover
+if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
     logger.info("Running with DEBUG_TOOLBAR enabled")
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+
+    DEBUG_TOOLBAR_CONFIG = {
+        'RESULTS_CACHE_SIZE': 100,
+        'OBSERVE_REQUEST_CALLBACK': lambda x: False,
+    }
+
+# Internal IP addresses allowed to see the debug toolbar
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
+if DOCKER:
+    # Internal IP addresses are different when running under docker
+    hostname, ___, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
 # Allow secure http developer server in debug mode
 if DEBUG:
@@ -350,6 +368,12 @@ TEMPLATES = [
     },
 ]
 
+if DEBUG_TOOLBAR_ENABLED:
+    # Note that the APP_DIRS value must be set when using debug_toolbar
+    # But this will kill template loading for plugins
+    TEMPLATES[0]['APP_DIRS'] = True
+    del TEMPLATES[0]['OPTIONS']['loaders']
+
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
@@ -365,8 +389,15 @@ REST_FRAMEWORK = {
         'InvenTree.permissions.RolePermission',
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-    'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata'
+    'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
 }
+
+if DEBUG:
+    # Enable browsable API if in DEBUG mode
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
@@ -501,7 +532,7 @@ if "postgres" in db_engine:  # pragma: no cover
     # https://docs.djangoproject.com/en/3.2/ref/databases/#isolation-level
     if "isolation_level" not in db_options:
         serializable = _is_true(
-            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
+            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "false")
         )
         db_options["isolation_level"] = (
             ISOLATION_LEVEL_SERIALIZABLE
@@ -521,7 +552,7 @@ if "mysql" in db_engine:  # pragma: no cover
     # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
     if "isolation_level" not in db_options:
         serializable = _is_true(
-            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
+            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "false")
         )
         db_options["isolation_level"] = (
             "serializable" if serializable else "read committed"
@@ -547,7 +578,7 @@ db_config['TEST'] = {
 
 # Set collation option for mysql test database
 if 'mysql' in db_engine:
-    db_config['TEST']['COLLATION'] = 'utf8_general_ci'
+    db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
 
 DATABASES = {
     'default': db_config
@@ -714,7 +745,7 @@ if get_setting('TEST_TRANSLATIONS', False):  # pragma: no cover
 CURRENCIES = CONFIG.get(
     'currencies',
     [
-        'AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
+        'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
     ],
 )
 
@@ -806,17 +837,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-# Internal IP addresses allowed to see the debug toolbar
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
-
-MESSAGE_TAGS = {
-    messages.SUCCESS: 'alert alert-block alert-success',
-    messages.ERROR: 'alert alert-block alert-danger',
-    messages.INFO: 'alert alert-block alert-info',
-}
-
 SITE_ID = 1
 
 # Load the allauth social backends
@@ -826,12 +846,13 @@ for app in SOCIAL_BACKENDS:
 
 SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
 
+SOCIALACCOUNT_STORE_TOKENS = True
+
 # settings for allauth
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', CONFIG.get('login_confirm_days', 3))
-
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', CONFIG.get('login_attempts', 5))
-
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+ACCOUNT_PREVENT_ENUMERATION = True
 
 # override forms / adapters
 ACCOUNT_FORMS = {
@@ -852,36 +873,56 @@ ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 REMOTE_LOGIN = get_setting('INVENTREE_REMOTE_LOGIN', CONFIG.get('remote_login', False))
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', CONFIG.get('remote_login_header', 'REMOTE_USER'))
 
-# Markdownx configuration
-# Ref: https://neutronx.github.io/django-markdownx/customization/
-MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
-
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
 
-MARKDOWNIFY_WHITELIST_TAGS = [
-    'a',
-    'abbr',
-    'b',
-    'blockquote',
-    'em',
-    'h1', 'h2', 'h3',
-    'i',
-    'img',
-    'li',
-    'ol',
-    'p',
-    'strong',
-    'ul'
-]
+MARKDOWNIFY = {
+    'default': {
+        'BLEACH': True,
+        'WHITELIST_ATTRS': [
+            'href',
+            'src',
+            'alt',
+        ],
+        'WHITELIST_TAGS': [
+            'a',
+            'abbr',
+            'b',
+            'blockquote',
+            'em',
+            'h1', 'h2', 'h3',
+            'i',
+            'img',
+            'li',
+            'ol',
+            'p',
+            'strong',
+            'ul'
+        ],
+    }
+}
 
-MARKDOWNIFY_WHITELIST_ATTRS = [
-    'href',
-    'src',
-    'alt',
-]
+# Error reporting
+SENTRY_ENABLED = get_setting('INVENTREE_SENTRY_ENABLED', CONFIG.get('sentry_enabled', False))
+SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', CONFIG.get('sentry_dsn', INVENTREE_DSN))
 
-MARKDOWNIFY_BLEACH = False
+SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', CONFIG.get('sentry_sample_rate', 0.1)))
+
+if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), ],
+        traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
+        send_default_pii=True
+    )
+    inventree_tags = {
+        'testing': TESTING,
+        'docker': DOCKER,
+        'debug': DEBUG,
+        'remote': REMOTE_LOGIN,
+    }
+    for key, val in inventree_tags.items():
+        sentry_sdk.set_tag(f'inventree_{key}', val)
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60
@@ -926,6 +967,6 @@ CUSTOM_LOGO = get_setting(
 )
 
 # check that the logo-file exsists in media
-if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):
+if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):  # pragma: no cover
     CUSTOM_LOGO = False
     logger.warning("The custom logo file could not be found in the default media storage")

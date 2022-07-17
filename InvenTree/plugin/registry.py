@@ -208,6 +208,7 @@ class PluginsRegistry:
                 try:
                     plugin = entry.load()
                     plugin.is_package = True
+                    plugin._get_package_metadata()
                     self.plugin_modules.append(plugin)
                 except Exception as error:
                     handle_error(error, do_raise=False, log_name='discovery')
@@ -226,6 +227,9 @@ class PluginsRegistry:
             output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
         except subprocess.CalledProcessError as error:  # pragma: no cover
             logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
+            return False
+        except FileNotFoundError:  # pragma: no cover
+            # System most likely does not have 'git' installed
             return False
 
         logger.info(f'plugin requirements were run\n{output}')

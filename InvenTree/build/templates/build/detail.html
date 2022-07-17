@@ -172,7 +172,7 @@
             <h4>{% trans "Allocate Stock to Build" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if build.active and build.has_untracked_bom_items %}
+                {% if roles.build.add and build.active and build.has_untracked_bom_items %}
                 <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
                     <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
                 </button>
@@ -229,7 +229,7 @@
             <h4>{% trans "Incomplete Build Outputs" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if build.active %}
+                {% if roles.build.add and build.active %}
                 <button class='btn btn-success' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Build Output" %}
                 </button>
@@ -249,12 +249,16 @@
                             <span class='fas fa-tools'></span> <span class='caret'></span>
                         </button>
                         <ul class='dropdown-menu'>
+                            {% if roles.build.add %}
                             <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected build outputs" %}'>
                                 <span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}
                             </a></li>
+                            {% endif %}
+                            {% if roles.build.delete %}
                             <li><a class='dropdown-item' href='#' id='multi-output-delete' title='{% trans "Delete selected build outputs" %}'>
                                 <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete outputs" %}
                             </a></li>
+                            {% endif %}
                         </ul>
                     </div>
 
@@ -271,13 +275,8 @@
                     </div>
 
                     {% if build.has_tracked_bom_items %}
-                    <button id='outputs-expand' class='btn btn-outline-secondary' type='button' title='{% trans "Expand all build output rows" %}'>
-                        <span class='fas fa-expand'></span>
-                    </button>
-
-                    <button id='outputs-collapse' class='btn btn-outline-secondary' type='button' title='{% trans "Collapse all build output rows" %}'>
-                        <span class='fas fa-compress'></span>
-                    </button>
+                    {% include "expand_rows.html" with label="outputs" %}
+                    {% include "collapse_rows.html" with label="outputs" %}
                     {% endif %}
 
                     {% include "filter_list.html" with id='incompletebuilditems' %}

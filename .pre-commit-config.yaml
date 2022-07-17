@@ -7,7 +7,7 @@ exclude: |
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.2.0
+    rev: v4.3.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -28,3 +28,14 @@ repos:
     rev: '5.10.1'
     hooks:
     -   id: isort
+-   repo: https://github.com/jazzband/pip-tools
+    rev: 6.6.2
+    hooks:
+      - id: pip-compile
+        name: pip-compile requirements-dev.in
+        args: [--generate-hashes, requirements-dev.in, -o, requirements-dev.txt]
+        files: ^requirements-dev\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [requirements.in, -o, requirements.txt]
+        files: ^requirements\.(in|txt)$

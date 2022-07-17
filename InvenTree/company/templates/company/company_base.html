@@ -47,7 +47,7 @@
 <div class='dropzone part-thumb-container' id='company-thumb'>
     <img class="part-thumb" id='company-image'
     {% if company.image %}
-    src="{{ company.image.url }}"
+    src="{{ company.image.preview.url }}"
     {% else %}
     src="{% static 'img/blank_image.png' %}"
     {% endif %}/>

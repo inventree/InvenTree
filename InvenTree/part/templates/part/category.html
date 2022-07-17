@@ -206,6 +206,12 @@
         <h4>{% trans "Part Parameters" %}</h4>
     </div>
     <div class='panel-content'>
+        <div id='param-button-toolbar'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="parameters" %}
+            </div>
+        </div>
+
         <table class='table table-striped table-condensed' data-toolbar='#param-button-toolbar' id='parametric-part-table'>
         </table>
     </div>
@@ -347,23 +353,18 @@
 
     {% if category %}
     $("#cat-edit").click(function () {
-
         editCategory({{ category.pk }});
     });
 
-    {% if category.parent %}
-    var redirect = "{% url 'category-detail' category.parent.id %}";
-    {% else %}
-    var redirect = "{% url 'part-index' %}";
-    {% endif %}
 
     $('#cat-delete').click(function() {
-        launchModalForm(
-            "{% url 'category-delete' category.id %}",
-            {
-                redirect: redirect
-            }
-        );
+        deletePartCategory({{ category.pk }}, {
+            {% if category.parent %}
+            redirect: "{% url 'category-detail' category.parent.id %}",
+            {% else %}
+            redirect: "{% url 'part-index' %}",
+            {% endif %}
+        });
     });
 
     {% endif %}

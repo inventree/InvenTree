@@ -184,6 +184,13 @@ function renderLink(text, url, options={}) {
 
     var max_length = options.max_length || -1;
 
+    var extra = '';
+
+    if (options.download) {
+        var fn = url.split('/').at(-1);
+        extra += ` download='${fn}'`;
+    }
+
     // Shorten the displayed length if required
     if ((max_length > 0) && (text.length > max_length)) {
         var slice_length = (max_length - 3) / 2;
@@ -194,7 +201,7 @@ function renderLink(text, url, options={}) {
         text = `${text_start}...${text_end}`;
     }
 
-    return '<a href="' + url + '">' + text + '</a>';
+    return `<a href='${url}'${extra}>${text}</a>`;
 }
 
 
@@ -367,12 +374,15 @@ $.fn.inventreeTable = function(options) {
         options.pageList = [25, 50, 100, 250, 'all'];
         options.totalField = 'count';
         options.dataField = 'results';
+
     } else {
         options.pagination = false;
     }
 
     // Extract query params
     var filters = options.queryParams || options.filters || {};
+
+    options.escape = true;
 
     // Store the total set of query params
     options.query_params = filters;
@@ -559,6 +569,49 @@ function customGroupSorter(sortName, sortOrder, sortData) {
     };
 
     $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['en-US-custom']);
+
+    // Enable HTML escaping by default
+    $.fn.bootstrapTable.escape = true;
+
+    // Override the 'calculateObjectValue' function at bootstrap-table.js:3525
+    // Allows us to escape any nasty HTML tags which are rendered to the DOM
+    $.fn.bootstrapTable.utils._calculateObjectValue = $.fn.bootstrapTable.utils.calculateObjectValue;
+
+    $.fn.bootstrapTable.utils.calculateObjectValue = function escapeCellValue(self, name, args, defaultValue) {
+
+        var args_list = [];
+
+        if (args) {
+
+            args_list.push(args[0]);
+
+            if (name && typeof(name) === 'function' && name.name == 'formatter') {
+                /* This is a custom "formatter" function for a particular cell,
+                * which may side-step regular HTML escaping, and inject malicious code into the DOM.
+                *
+                * Here we have access to the 'args' supplied to the custom 'formatter' function,
+                * which are in the order:
+                * args = [value, row, index, field]
+                *
+                * 'row' is the one we are interested in
+                */
+
+                var row = Object.assign({}, args[1]);
+
+                args_list.push(sanitizeData(row));
+            } else {
+                args_list.push(args[1]);
+            }
+
+            for (var ii = 2; ii < args.length; ii++) {
+                args_list.push(args[ii]);
+            }
+        }
+
+        var value = $.fn.bootstrapTable.utils._calculateObjectValue(self, name, args_list, defaultValue);
+
+        return value;
+    };
 
 })(jQuery);
 

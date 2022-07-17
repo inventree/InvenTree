@@ -31,6 +31,18 @@
  */
 
 
+/*
+ * Trim the supplied string to ensure the string length is limited to the provided value
+ */
+function trim(data, max_length=100) {
+    if (data.length > max_length) {
+        data = data.slice(0, max_length - 3) + '...';
+    }
+
+    return data;
+}
+
+
 // Should the ID be rendered for this string
 function renderId(title, pk, parameters={}) {
 
@@ -55,7 +67,7 @@ function renderCompany(name, data, parameters={}, options={}) {
 
     var html = select2Thumbnail(data.image);
 
-    html += `<span><b>${data.name}</b></span> - <i>${data.description}</i>`;
+    html += `<span><b>${data.name}</b></span> - <i>${trim(data.description)}</i>`;
 
     html += renderId('{% trans "Company ID" %}', data.pk, parameters);
 
@@ -141,7 +153,7 @@ function renderStockLocation(name, data, parameters={}, options={}) {
     }
 
     if (render_description && data.description) {
-        html += ` - <i>${data.description}</i>`;
+        html += ` - <i>${trim(data.description)}</i>`;
     }
 
     html += renderId('{% trans "Location ID" %}', data.pk, parameters);
@@ -177,7 +189,7 @@ function renderPart(name, data, parameters={}, options={}) {
     html += ` <span>${data.full_name || data.name}</span>`;
 
     if (data.description) {
-        html += ` - <i><small>${data.description}</small></i>`;
+        html += ` - <i><small>${trim(data.description)}</small></i>`;
     }
 
     var stock_data = '';
@@ -243,8 +255,7 @@ function renderOwner(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderPurchaseOrder(name, data, parameters={}, options={}) {
 
-    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-    var html = `<span>${prefix}${data.reference}</span>`;
+    var html = `<span>${data.reference}</span>`;
 
     var thumbnail = null;
 
@@ -256,7 +267,7 @@ function renderPurchaseOrder(name, data, parameters={}, options={}) {
     }
 
     if (data.description) {
-        html += ` - <em>${data.description}</em>`;
+        html += ` - <em>${trim(data.description)}</em>`;
     }
 
     html += renderId('{% trans "Order ID" %}', data.pk, parameters);
@@ -269,8 +280,7 @@ function renderPurchaseOrder(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderSalesOrder(name, data, parameters={}, options={}) {
 
-    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-    var html = `<span>${prefix}${data.reference}</span>`;
+    var html = `<span>${data.reference}</span>`;
 
     var thumbnail = null;
 
@@ -282,7 +292,7 @@ function renderSalesOrder(name, data, parameters={}, options={}) {
     }
 
     if (data.description) {
-        html += ` - <em>${data.description}</em>`;
+        html += ` - <em>${trim(data.description)}</em>`;
     }
 
     html += renderId('{% trans "Order ID" %}', data.pk, parameters);
@@ -295,10 +305,8 @@ function renderSalesOrder(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderSalesOrderShipment(name, data, parameters={}, options={}) {
 
-    var so_prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-
     var html = `
-    <span>${so_prefix}${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
+    <span>${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
     <span class='float-right'>
         <small>{% trans "Shipment ID" %}: ${data.pk}</small>
     </span>
@@ -319,7 +327,7 @@ function renderPartCategory(name, data, parameters={}, options={}) {
     var html = `<span>${level}${data.pathstring}</span>`;
 
     if (data.description) {
-        html += ` - <i>${data.description}</i>`;
+        html += ` - <i>${trim(data.description)}</i>`;
     }
 
     html += renderId('{% trans "Category ID" %}', data.pk, parameters);

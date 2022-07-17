@@ -148,6 +148,37 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # There should not be any templates left at this point
         self.assertEqual(PartCategoryParameterTemplate.objects.count(), 0)
 
+    def test_bleach(self):
+        """Test that the data cleaning functionality is working"""
+
+        url = reverse('api-part-category-detail', kwargs={'pk': 1})
+
+        self.patch(
+            url,
+            {
+                'description': '<img src=# onerror=alert("pwned")>',
+            },
+            expected_code=200
+        )
+
+        cat = PartCategory.objects.get(pk=1)
+
+        # Image tags have been stripped
+        self.assertEqual(cat.description, '&lt;img src=# onerror=alert("pwned")&gt;')
+
+        self.patch(
+            url,
+            {
+                'description': '<a href="www.google.com">LINK</a><script>alert("h4x0r")</script>',
+            },
+            expected_code=200,
+        )
+
+        # Tags must have been bleached out
+        cat.refresh_from_db()
+
+        self.assertEqual(cat.description, '<a href="www.google.com">LINK</a>&lt;script&gt;alert("h4x0r")&lt;/script&gt;')
+
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
     """Tests for the various OPTIONS endpoints in the /part/ API.
@@ -369,6 +400,21 @@ class PartAPITest(InvenTreeAPITestCase):
         for part in response.data:
             self.assertEqual(part['category'], 2)
 
+    def test_filter_by_in_bom(self):
+        """Test that we can filter part list by the 'in_bom_for' parameter"""
+
+        url = reverse('api-part-list')
+
+        response = self.get(
+            url,
+            {
+                'in_bom_for': 100,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 4)
+
     def test_filter_by_related(self):
         """Test that we can filter by the 'related' status"""
         url = reverse('api-part-list')
@@ -390,6 +436,64 @@ class PartAPITest(InvenTreeAPITestCase):
 
         response = self.get(url, {'related': 1}, expected_code=200)
         self.assertEqual(len(response.data), 2)
+
+    def test_filter_by_convert(self):
+        """Test that we can correctly filter the Part list by conversion options"""
+
+        category = PartCategory.objects.get(pk=3)
+
+        # First, construct a set of template / variant parts
+        master_part = Part.objects.create(
+            name='Master', description='Master part',
+            category=category,
+            is_template=True,
+        )
+
+        # Construct a set of variant parts
+        variants = []
+
+        for color in ['Red', 'Green', 'Blue', 'Yellow', 'Pink', 'Black']:
+            variants.append(Part.objects.create(
+                name=f"{color} Variant", description="Variant part with a specific color",
+                variant_of=master_part,
+                category=category,
+            ))
+
+        url = reverse('api-part-list')
+
+        # An invalid part ID will return an error
+        response = self.get(
+            url,
+            {
+                'convert_from': 999999,
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Select a valid choice', str(response.data['convert_from']))
+
+        for variant in variants:
+            response = self.get(
+                url,
+                {
+                    'convert_from': variant.pk,
+                },
+                expected_code=200
+            )
+
+            # There should be the same number of results for each request
+            self.assertEqual(len(response.data), 6)
+
+            id_values = [p['pk'] for p in response.data]
+
+            self.assertIn(master_part.pk, id_values)
+
+            for v in variants:
+                # Check that all *other* variants are included also
+                if v == variant:
+                    continue
+
+                self.assertIn(v.pk, id_values)
 
     def test_include_children(self):
         """Test the special 'include_child_categories' flag.
@@ -1216,6 +1320,22 @@ class PartDetailTests(InvenTreeAPITestCase):
         self.assertFalse('hello' in part.metadata)
         self.assertEqual(part.metadata['x'], 'y')
 
+    def test_part_notes(self):
+        """Unit tests for the part 'notes' field"""
+
+        # Ensure that we cannot upload a very long piece of text
+        url = reverse('api-part-detail', kwargs={'pk': 1})
+
+        response = self.patch(
+            url,
+            {
+                'notes': 'abcde' * 10001
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Ensure this field has no more than 50000 characters', str(response.data['notes']))
+
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """Tests to ensure that the various aggregation annotations are working correctly..."""
@@ -1394,6 +1514,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
             part=Part.objects.get(pk=101),
             quantity=10,
             title='Making some assemblies',
+            reference='BO-9999',
             status=BuildStatus.PRODUCTION,
         )
 
@@ -1526,6 +1647,102 @@ class BomItemTest(InvenTreeAPITestCase):
 
             for key in ['available_stock', 'available_substitute_stock']:
                 self.assertTrue(key in el)
+
+    def test_bom_list_search(self):
+        """Test that we can search the BOM list API endpoint"""
+
+        url = reverse('api-bom-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 6)
+
+        # Limit the results with a search term
+        response = self.get(
+            url,
+            {
+                'search': '0805',
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 3)
+
+        # Search by 'reference' field
+        for q in ['ABCDE', 'LMNOP', 'VWXYZ']:
+            response = self.get(
+                url,
+                {
+                    'search': q,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(len(response.data), 1)
+            self.assertEqual(response.data[0]['reference'], q)
+
+        # Search by nonsense data
+        response = self.get(
+            url,
+            {
+                'search': 'xxxxxxxxxxxxxxxxx',
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 0)
+
+    def test_bom_list_ordering(self):
+        """Test that the BOM list results can be ordered"""
+
+        url = reverse('api-bom-list')
+
+        # Order by increasing quantity
+        response = self.get(
+            f"{url}?ordering=+quantity",
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 6)
+
+        q1 = response.data[0]['quantity']
+        q2 = response.data[-1]['quantity']
+
+        self.assertTrue(q1 < q2)
+
+        # Order by decreasing quantity
+        response = self.get(
+            f"{url}?ordering=-quantity",
+            expected_code=200,
+        )
+
+        self.assertEqual(q1, response.data[-1]['quantity'])
+        self.assertEqual(q2, response.data[0]['quantity'])
+
+        # Now test ordering by 'sub_part' (which is actually 'sub_part__name')
+        response = self.get(
+            url,
+            {
+                'ordering': 'sub_part',
+                'sub_part_detail': True,
+            },
+            expected_code=200,
+        )
+
+        n1 = response.data[0]['sub_part_detail']['name']
+        n2 = response.data[-1]['sub_part_detail']['name']
+
+        response = self.get(
+            url,
+            {
+                'ordering': '-sub_part',
+                'sub_part_detail': True,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(n1, response.data[-1]['sub_part_detail']['name'])
+        self.assertEqual(n2, response.data[0]['sub_part_detail']['name'])
 
     def test_get_bom_detail(self):
         """Get the detail view for a single BomItem object."""

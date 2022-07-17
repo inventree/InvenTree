@@ -8,8 +8,10 @@ import json
 import os
 
 from django.conf import settings
+from django.contrib.auth import password_validation
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -26,6 +28,7 @@ from allauth.account.models import EmailAddress
 from allauth.account.views import EmailView, PasswordResetFromKeyView
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
+from allauth_2fa.views import TwoFactorRemove
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
@@ -34,8 +37,7 @@ from common.settings import currency_code_default, currency_codes
 from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
-from .forms import DeleteForm, EditUserForm, SetPasswordForm
-from .helpers import str2bool
+from .forms import EditUserForm, SetPasswordForm
 
 
 def auth_request(request):
@@ -510,74 +512,6 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class AjaxDeleteView(AjaxMixin, UpdateView):
-    """An 'AJAXified DeleteView for removing an object from the DB.
-
-    - Returns a HTML object (not a form!) in JSON format (for delivery to a modal window)
-    - Handles deletion
-    """
-
-    form_class = DeleteForm
-    ajax_form_title = _("Delete Item")
-    ajax_template_name = "modal_delete_form.html"
-    context_object_name = 'item'
-
-    def get_object(self):
-        """Return object matched to the model of the calling class."""
-        try:
-            self.object = self.model.objects.get(pk=self.kwargs['pk'])
-        except Exception:
-            return None
-        return self.object
-
-    def get_form(self):
-        """Returns a form instance for the form_class of the calling class."""
-        return self.form_class(self.get_form_kwargs())
-
-    def get(self, request, *args, **kwargs):
-        """Respond to GET request.
-
-        - Render a DELETE confirmation form to JSON
-        - Return rendered form to client
-        """
-        super(UpdateView, self).get(request, *args, **kwargs)
-
-        form = self.get_form()
-
-        context = self.get_context_data()
-
-        context[self.context_object_name] = self.get_object()
-
-        return self.renderJsonResponse(request, form, context=context)
-
-    def post(self, request, *args, **kwargs):
-        """Respond to POST request.
-
-        - DELETE the object
-        - Render success message to JSON and return to client
-        """
-        obj = self.get_object()
-        pk = obj.id
-
-        form = self.get_form()
-
-        confirmed = str2bool(request.POST.get('confirm_delete', False))
-        context = self.get_context_data()
-
-        if confirmed:
-            obj.delete()
-        else:
-            form.add_error('confirm_delete', _('Check box to confirm item deletion'))
-            context[self.context_object_name] = self.get_object()
-
-        data = {
-            'id': pk,
-            'form_valid': confirmed
-        }
-
-        return self.renderJsonResponse(request, form, data=data, context=context)
-
-
 class EditUserView(AjaxUpdateView):
     """View for editing user information."""
 
@@ -609,6 +543,8 @@ class SetPasswordView(AjaxUpdateView):
 
         p1 = request.POST.get('enter_password', '')
         p2 = request.POST.get('confirm_password', '')
+        old_password = request.POST.get('old_password', '')
+        user = self.request.user
 
         if valid:
             # Passwords must match
@@ -617,20 +553,28 @@ class SetPasswordView(AjaxUpdateView):
                 error = _('Password fields must match')
                 form.add_error('enter_password', error)
                 form.add_error('confirm_password', error)
-
                 valid = False
 
-        data = {
-            'form_valid': valid
-        }
+        if valid:
+            # Old password must be correct
+
+            if not user.check_password(old_password):
+                form.add_error('old_password', _('Wrong password provided'))
+                valid = False
 
         if valid:
-            user = self.request.user
+            try:
+                # Validate password
+                password_validation.validate_password(p1, user)
 
-            user.set_password(p1)
-            user.save()
+                # Update the user
+                user.set_password(p1)
+                user.save()
+            except ValidationError as error:
+                form.add_error('confirm_password', str(error))
+                valid = False
 
-        return self.renderJsonResponse(request, form, data=data)
+        return self.renderJsonResponse(request, form, data={'form_valid': valid})
 
 
 class IndexView(TemplateView):
@@ -807,7 +751,21 @@ class DatabaseStatsView(AjaxView):
     ajax_form_title = _("System Information")
 
 
+class AboutView(AjaxView):
+    """A view for displaying InvenTree version information"""
+
+    ajax_template_name = "about.html"
+    ajax_form_title = _("About InvenTree")
+
+
 class NotificationsView(TemplateView):
     """View for showing notifications."""
 
     template_name = "InvenTree/notifications/notifications.html"
+
+
+# Custom 2FA removal form to allow custom redirect URL
+
+class CustomTwoFactorRemove(TwoFactorRemove):
+    """Specify custom URL redirect."""
+    success_url = reverse_lazy("settings")
