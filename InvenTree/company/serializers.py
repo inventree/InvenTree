@@ -203,6 +203,9 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(read_only=True)
 
+    # Annotated field showing the last update time
+    last_updated = serializers.DateTimeField(read_only=True)
+
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
@@ -250,29 +253,31 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
         model = SupplierPart
         fields = [
-            'available',
             'availability_updated',
+            'available',
             'description',
             'in_stock',
+            'last_updated',
             'link',
-            'manufacturer',
             'manufacturer_detail',
-            'manufacturer_part',
             'manufacturer_part_detail',
+            'manufacturer_part',
+            'manufacturer',
             'MPN',
             'note',
-            'pk',
             'packaging',
-            'part',
             'part_detail',
+            'part',
+            'pk',
             'pretty_name',
             'SKU',
-            'supplier',
             'supplier_detail',
+            'supplier',
         ]
 
         read_only_fields = [
             'availability_updated',
+            'last_updated',
         ]
 
     @staticmethod
@@ -284,7 +289,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         """
 
         queryset = queryset.annotate(
-            in_stock=part.filters.annotate_total_stock()
+            in_stock=part.filters.annotate_total_stock(),
+            last_updated=part.filters.annotate_last_updated(),
         )
 
         return queryset

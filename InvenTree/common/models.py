@@ -1664,6 +1664,10 @@ class PriceBreak(models.Model):
         help_text=_('Unit price at specified quantity'),
     )
 
+    updated = models.DateTimeField(
+        auto_now=True, verbose_name=_("last updated")
+    )
+
     def convert_to(self, currency_code):
         """Convert the unit-price at this price break to the specified currency code.
 

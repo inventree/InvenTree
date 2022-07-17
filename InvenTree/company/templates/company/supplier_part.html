@@ -118,6 +118,11 @@ src="{% static 'img/blank_image.png' %}"
             <td>{% trans "SKU" %}</td>
             <td>{{ part.SKU }}{% include "clip.html"%}</tr>
         </tr>
+        <tr>
+            <td><span class='fas fa-calendar'></span></td>
+            <td>{% trans "Last Updated" %}</td>
+            <td>{{ part.last_updated }}</td>
+        </tr>
         {% if part.manufacturer_part.manufacturer %}
         <tr>
             <td><span class='fas fa-industry'></span></td>

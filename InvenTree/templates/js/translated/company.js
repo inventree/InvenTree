@@ -959,6 +959,11 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: false,
             },
             {
+                field: 'last_updated',
+                title: '{% trans "Last Updated" %}',
+                sortable: true,
+            },
+            {
                 field: 'in_stock',
                 title: '{% trans "In Stock" %}',
                 sortable: true,

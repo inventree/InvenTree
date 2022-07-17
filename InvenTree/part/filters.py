@@ -71,6 +71,22 @@ def annotate_total_stock(reference: str = ''):
     )
 
 
+def annotate_last_updated(reference: str = ''):
+    """Annotate the last updated date for each supplier part in a queryset
+
+    - Include supplier part's updated field
+    - Include supplier part's availability_updated field
+    - Include supplier part's price breaks
+    """
+
+    return models.Max(
+        F('updated'),
+        F('availability_updated'),
+        # TODO Add price breaks
+        output_field=models.DateTimeField()
+    )
+
+
 def annotate_build_order_allocations(reference: str = ''):
     """Annotate the total quantity of each part allocated to build orders:
 

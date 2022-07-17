@@ -392,20 +392,26 @@ class SupplierPartManager(models.Manager):
 
 
 class SupplierPart(models.Model):
-    """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
+    """Represents a unique part as provided by a Supplier.
+
+    Each SupplierPart is identified by a SKU (Supplier Part Number).
+    Each SupplierPart is also linked to a Part or ManufacturerPart object.
+    A Part may be available from multiple suppliers.
 
     Attributes:
+        base_cost: Base charge added to order independent of quantity
+            e.g. "Reeling Fee"
+        description: Descriptive notes field
+        lead_time: Supplier lead time
+        link: Link to external website for this supplier part
+        multiple: Multiple that the part is provided in
+        note: Longer form note field
+        packaging: packaging that the part is supplied in, e.g. "Reel"
         part: Link to the master Part (Obsolete)
+        SKU: Stock keeping unit (supplier part number)
         source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
-        SKU: Stock keeping unit (supplier part number)
-        link: Link to external website for this supplier part
-        description: Descriptive notes field
-        note: Longer form note field
-        base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
-        multiple: Multiple that the part is provided in
-        lead_time: Supplier lead time
-        packaging: packaging that the part is supplied in, e.g. "Reel"
+        updated: Auto DateTime to show last time the this object was updated
     """
 
     objects = SupplierPartManager()
@@ -532,6 +538,10 @@ class SupplierPart(models.Model):
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
     # lead_time = models.DurationField(blank=True, null=True)
 
+    updated = models.DateTimeField(
+        auto_now=True, verbose_name=_("last updated")
+    )
+
     available = models.DecimalField(
         max_digits=10, decimal_places=3, default=0,
         validators=[MinValueValidator(0)],
@@ -646,6 +656,19 @@ class SupplierPart(models.Model):
             s = s + ' | ' + self.manufacturer_string
 
         return s
+
+    # @property
+    # def last_updated(self) -> datetime:
+    #     """Return the most recent update date for this Supplier Part.
+
+    #     Includes SupplierPriceBreak"""
+    #     ret = self.updated
+    #     if self.availability_updated:
+    #         ret = max(ret, self.availability_updated)
+    #     for price_break in self.price_breaks.all():
+    #         if price_break.updated:
+    #             ret = max(ret, price_break.updated)
+    #     return ret
 
 
 class SupplierPriceBreak(common.models.PriceBreak):
