@@ -867,7 +867,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
             This ensures that allocation priority is first given to "direct" parts
             """
-            available_stock = sorted(available_stock, key=lambda item: stock_sort(item, bom_item, variant_parts))
+            available_stock = sorted(available_stock, key=lambda item, b=bom_item, v=variant_parts: stock_sort(item, b, v))
 
             if len(available_stock) == 0:
                 # No stock items are available
