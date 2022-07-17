@@ -252,7 +252,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(result.reason, 'OK')
 
         # api_call with full url
-        result = self.mixin.api_call('https://api.github.com/orgs/inventree', endpoint_is_url=True)
+        result = self.mixin.api_call('orgs/inventree')
         self.assertTrue(result)
 
         # api_call with post and data
