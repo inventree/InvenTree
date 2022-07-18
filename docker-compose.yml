@@ -55,6 +55,7 @@ services:
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - inventree_src:/home/inventree
+            - inventree_plugins:/home/inventree/InvenTree/plugins
         env_file:
             - .env
         restart: unless-stopped
@@ -69,6 +70,7 @@ services:
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - inventree_src:/home/inventree
+            - inventree_plugins:/home/inventree/InvenTree/plugins
         env_file:
             - .env
         restart: unless-stopped
@@ -102,3 +104,10 @@ volumes:
             # This directory specified where InvenTree source code is stored "outside" the docker containers
             # By default, this directory is one level above the "docker" directory
             device: ${INVENTREE_EXT_VOLUME:-./}
+    inventree_plugins:
+        driver: local
+        driver_opts:
+          type: none
+          o: bind
+          # This directory specified where the optional local plugin directory is stored "outside" the docker containers
+          device: ${INVENTREE_EXT_PLUGINS:-../InvenTree/plugins}
