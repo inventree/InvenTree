@@ -45,7 +45,7 @@ services:
     inventree-db:
         container_name: inventree-db
         image: postgres:13
-        ports:
+        expose:
             - ${INVENTREE_DB_PORT:-5432}/tcp
         environment:
             - PGDATA=/var/lib/postgresql/data/pgdb
@@ -65,9 +65,9 @@ services:
             - inventree-db
         env_file:
             - .env
-        ports:
-            - ${INVENTREE_CACHE_PORT:-6379}:6379
-        restart: unless-stopped
+        expose:
+            - ${INVENTREE_CACHE_PORT:-6379}
+        restart: always
 
     # InvenTree web server services
     # Uses gunicorn as the web server
@@ -126,7 +126,6 @@ services:
         restart: unless-stopped
 
 volumes:
-    # NOTE: Change /path/to/data to a directory on your local machine
     # Persistent data, stored external to the container(s)
     inventree_data:
         driver: local
