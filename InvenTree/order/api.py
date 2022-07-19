@@ -523,7 +523,7 @@ class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
     search_fields = [
         'part__part__name',
         'part__part__description',
-        'part__MPN',
+        'part__manufacturer_part__MPN',
         'part__SKU',
         'reference',
     ]
