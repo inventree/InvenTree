@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-07-15 10:31+0000\n"
-"PO-Revision-Date: 2022-07-17 19:19\n"
+"PO-Revision-Date: 2022-07-19 19:14\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -23,11 +23,11 @@ msgstr "Endpoint da API não encontrado"
 
 #: InvenTree/exceptions.py:62
 msgid "Error details can be found in the admin panel"
-msgstr "Detalhes do erro podem ser encontrados no painel de administração"
+msgstr "Os detalhes do erro podem ser consultados no painel de administração"
 
 #: InvenTree/fields.py:99
 msgid "Enter date"
-msgstr "Insira a data"
+msgstr "Inserir data"
 
 #: InvenTree/fields.py:176 build/serializers.py:384
 #: build/templates/build/sidebar.html:21 company/models.py:523
@@ -59,7 +59,7 @@ msgstr "O valor fornecido não corresponde ao padrão exigido: "
 
 #: InvenTree/forms.py:133
 msgid "Enter password"
-msgstr "Introduza a palavra-passe"
+msgstr "Introduzir palavra-passe"
 
 #: InvenTree/forms.py:134
 msgid "Enter new password"
@@ -67,15 +67,15 @@ msgstr "Introduza a nova palavra-passe"
 
 #: InvenTree/forms.py:143
 msgid "Confirm password"
-msgstr "Confirme a palavra-passe"
+msgstr "Confirmar palavra-passe"
 
 #: InvenTree/forms.py:144
 msgid "Confirm new password"
-msgstr "Confirme a nova palavra-passe"
+msgstr "Confirmar nova palavra-passe"
 
 #: InvenTree/forms.py:148
 msgid "Old password"
-msgstr "Palavra-passe antiga"
+msgstr "Palavra-passe anterior"
 
 #: InvenTree/forms.py:177
 msgid "Email (again)"
@@ -87,12 +87,12 @@ msgstr "Confirmação do endereço de email"
 
 #: InvenTree/forms.py:202
 msgid "You must type the same email each time."
-msgstr "Deve introduzir o mesmo endereço de email."
+msgstr "Deve ser introduzido o mesmo endereço de email."
 
 #: InvenTree/helpers.py:404
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr "Número de série duplicado: {sn}"
+msgstr "Número de série em duplicado: {sn}"
 
 #: InvenTree/helpers.py:411 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
@@ -124,7 +124,7 @@ msgstr "Inválido/sem grupo {group}"
 
 #: InvenTree/helpers.py:491
 msgid "No serial numbers found"
-msgstr "Números de série não encontrados"
+msgstr "Não foram encontrados números de série"
 
 #: InvenTree/helpers.py:495
 #, python-brace-format
@@ -145,7 +145,7 @@ msgstr "Chave de formato exigida em falta"
 
 #: InvenTree/models.py:262
 msgid "Reference field cannot be empty"
-msgstr "Campo de referência não pode estar vazio"
+msgstr "Campo de referência não pode estar em branco"
 
 #: InvenTree/models.py:269
 msgid "Reference must match required pattern"
@@ -171,7 +171,7 @@ msgstr "Anexo"
 
 #: InvenTree/models.py:397
 msgid "Select file to attach"
-msgstr "Selecione ficheiro a anexar"
+msgstr "Selecionar ficheiro a anexar"
 
 #: InvenTree/models.py:403 company/models.py:124 company/models.py:276
 #: company/models.py:510 order/models.py:84 order/models.py:1245
@@ -212,7 +212,7 @@ msgstr "data de upload"
 
 #: InvenTree/models.py:439
 msgid "Filename must not be empty"
-msgstr "O nome do ficheiro não pode estar vazio"
+msgstr "O nome do ficheiro não pode estar em branco"
 
 #: InvenTree/models.py:462
 msgid "Invalid attachment directory"
@@ -229,11 +229,11 @@ msgstr "Extensão em falta no nome do ficheiro"
 
 #: InvenTree/models.py:482
 msgid "Attachment with this filename already exists"
-msgstr "Anexo com este nome de ficheiro já existe"
+msgstr "Já existe um anexo com este nome"
 
 #: InvenTree/models.py:489
 msgid "Error renaming file"
-msgstr "Erro ao renomear ficheiro"
+msgstr "Erro a renomear ficheiro"
 
 #: InvenTree/models.py:523
 msgid "Invalid choice"
@@ -312,7 +312,7 @@ msgstr "Ficheiros de Dados"
 
 #: InvenTree/serializers.py:309
 msgid "Select data file for upload"
-msgstr "Selecione o ficheiro a enviar"
+msgstr "Selecionar ficheiro a enviar"
 
 #: InvenTree/serializers.py:330
 msgid "Unsupported file type"
@@ -573,7 +573,7 @@ msgstr "Separar elemento descendente"
 
 #: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2080
 msgid "Merged stock items"
-msgstr "Itens de stock combinados"
+msgstr "Itens de stock fundidos"
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
@@ -668,11 +668,11 @@ msgstr "Sobre o InvenTree"
 
 #: build/api.py:217
 msgid "Build must be cancelled before it can be deleted"
-msgstr "A Montagem deve ser cancelada antes de poder ser excluída"
+msgstr "A Construção deve ser cancelada antes de poder ser excluída"
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
-msgstr "Escolha inválida para montagem ascendente"
+msgstr "Escolha inválida para construção ascendente"
 
 #: build/models.py:110 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -681,7 +681,7 @@ msgstr "Escolha inválida para montagem ascendente"
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:731
 msgid "Build Order"
-msgstr "Pedido de Montagem"
+msgstr "Pedido de Construção"
 
 #: build/models.py:111 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -691,7 +691,7 @@ msgstr "Pedido de Montagem"
 #: templates/InvenTree/search.html:139
 #: templates/InvenTree/settings/sidebar.html:47 users/models.py:41
 msgid "Build Orders"
-msgstr "Ordens de Montagem"
+msgstr "Pedidos de Construção"
 
 #: build/models.py:165
 msgid "Build Order Reference"
@@ -711,16 +711,16 @@ msgstr "Referência"
 
 #: build/models.py:177
 msgid "Brief description of the build"
-msgstr "Breve descrição da montagem"
+msgstr "Breve descrição da construção"
 
 #: build/models.py:185 build/templates/build/build_base.html:169
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr "Montagem ascendente"
+msgstr "Construção ascendente"
 
 #: build/models.py:186
 msgid "BuildOrder to which this build is allocated"
-msgstr "Pedido de Montagem a que esta montagem está alocada"
+msgstr "Pedido de Construção a que esta montagem está alocada"
 
 #: build/models.py:191 build/templates/build/build_base.html:77
 #: build/templates/build/detail.html:29 company/models.py:670
@@ -761,7 +761,7 @@ msgstr "Peça"
 
 #: build/models.py:199
 msgid "Select part to build"
-msgstr "Selecione peça para montar"
+msgstr "Selecionar peça a montar"
 
 #: build/models.py:204
 msgid "Sales Order Reference"
@@ -769,7 +769,7 @@ msgstr "Referência de Pedido de Venda"
 
 #: build/models.py:208
 msgid "SalesOrder to which this build is allocated"
-msgstr "Pedido de Venda ao qual está montagem está associada"
+msgstr "Pedido de Venda ao qual esta construção está associada"
 
 #: build/models.py:213 build/serializers.py:784
 #: templates/js/translated/build.js:2073 templates/js/translated/order.js:2799
@@ -778,7 +778,7 @@ msgstr "Localização de Origem"
 
 #: build/models.py:217
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr "Escolha a localização de onde pretende retirar o stock para esta montagem (deixe em branco para retirar de qualquer localização)"
+msgstr "Escolher localização de onde deve ser retirado o stock para esta construção (deixar em branco para retirar de qualquer localização)"
 
 #: build/models.py:222
 msgid "Destination Location"
@@ -786,7 +786,7 @@ msgstr "Local de destino"
 
 #: build/models.py:226
 msgid "Select location where the completed items will be stored"
-msgstr "Escolha o local onde os elementos completos serão armazenados"
+msgstr "Escolher o local onde os elementos completos serão armazenados"
 
 #: build/models.py:230
 msgid "Build Quantity"
@@ -794,11 +794,11 @@ msgstr "Quantidade da Montagem"
 
 #: build/models.py:233
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Número de unidades de stock a construir"
 
 #: build/models.py:237
 msgid "Completed items"
-msgstr ""
+msgstr "Unidades concluídas"
 
 #: build/models.py:239
 msgid "Number of stock items which have been completed"
@@ -806,11 +806,11 @@ msgstr ""
 
 #: build/models.py:243
 msgid "Build Status"
-msgstr "Estado da Montagem"
+msgstr "Estado da Construção"
 
 #: build/models.py:247
 msgid "Build status code"
-msgstr "Código de estado da Montagem"
+msgstr "Código de estado da Construção"
 
 #: build/models.py:251 build/serializers.py:225 order/serializers.py:447
 #: stock/models.py:655 templates/js/translated/order.js:1173
@@ -819,7 +819,7 @@ msgstr "Código de lote"
 
 #: build/models.py:255 build/serializers.py:226
 msgid "Batch code for this build output"
-msgstr "Código de lote para este resultado da montagem"
+msgstr "Código de lote para este resultado da construção"
 
 #: build/models.py:258 order/models.py:86 part/models.py:931
 #: part/templates/part/part_base.html:305 templates/js/translated/order.js:2470
