@@ -1,8 +1,11 @@
 """Views for OOBE."""
 
+from importlib import import_module
+
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from common.views import NamedMultiStepFormView
 from oobe.registry import setups
@@ -85,7 +88,23 @@ class SetupWizard(NamedMultiStepFormView):
 
     def done(self, form_list, **kwargs):
         """Final action with data."""
-        # TODO take actions
+
+        try:
+            # Run function if provided
+            if self.setup_context.done_function:
+                # Split up name path and load
+                *mdl_str, fnc_str = self.setup_context.done_function.split('.')
+                mdl = import_module('.'.join(mdl_str))
+                fnc = getattr(mdl, fnc_str)
+
+                # Run function - pass context
+                fnc(
+                    data=self.storage.data,
+                    setup=self.setup_context,
+                    request=self.request
+                )
+        except Exception:
+            raise Http404(_('A problem occured while processing the setup data.'))
 
         return render(self.request, 'oobe/done.html', {
             'form_data': [form.cleaned_data for form in form_list],

@@ -188,8 +188,7 @@ class SetupRegistry:
                 is_done = last_page.get('is_done', None)
                 if is_done:
                     done = last_page.get('title', None)
-                    if isinstance(done, str):
-                        done_function = done
+                    done_function = is_done
 
             # Convert pages
             if pages:

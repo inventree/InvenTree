@@ -24,4 +24,4 @@ pages:
 
   fine:
     title: We are done for now
-    is_done: 'setups/initial/function.py/done'
+    is_done: 'oobe.templates.setups.initial.function.done'
