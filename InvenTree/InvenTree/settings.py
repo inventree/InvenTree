@@ -941,7 +941,7 @@ PLUGIN_DIRS = ['plugin.builtin', ]
 CUSTOM_PLUGIN_DIRS = os.getenv('INVENTREE_PLUGIN_DIR', None)
 
 if not TESTING:
-    # load local deploy directory in prod
+    # load local plugin directory
     PLUGIN_DIRS.append('plugins')  # pragma: no cover
 
     # optionally load custom plugin directory
@@ -950,7 +950,7 @@ if not TESTING:
         for pd in CUSTOM_PLUGIN_DIRS.split(','):
             pd = pd.strip()
 
-            # Attempt to create the directory if it does not alreadyd exist
+            # Attempt to create the directory if it does not already exist
             if not os.path.exists(pd):
                 try:
                     os.makedirs(pd, exist_ok=True)
