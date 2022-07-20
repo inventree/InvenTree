@@ -268,7 +268,7 @@ function renderPurchaseOrder(name, data, parameters={}, options={}) {
     var thumbnail = null;
 
     if (data.supplier_detail) {
-        html +=  ` - <span>${data.supplier_detail.name}</span>`;
+        html += ` - <span>${data.supplier_detail.name}</span>`;
     }
 
     if (data.description) {
