@@ -691,7 +691,7 @@ class TestSettings(helpers.InvenTreeTestCase):
 
         valid = [
             'inventree/config.yaml',
-            'inventree/dev/config.yaml',
+            'inventree/data/config.yaml',
         ]
 
         self.assertTrue(any([opt in config.get_config_file().lower() for opt in valid]))
@@ -706,7 +706,7 @@ class TestSettings(helpers.InvenTreeTestCase):
 
         valid = [
             'inventree/plugins.txt',
-            'inventree/dev/plugins.txt',
+            'inventree/data/plugins.txt',
         ]
 
         self.assertTrue(any([opt in config.get_plugin_file().lower() for opt in valid]))
