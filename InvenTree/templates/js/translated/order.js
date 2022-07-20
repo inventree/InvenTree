@@ -16,6 +16,7 @@
     renderLink,
     salesOrderStatusDisplay,
     setupFilterList,
+    supplierPartFields,
 */
 
 /* exported
@@ -25,6 +26,8 @@
     completePurchaseOrder,
     completeShipment,
     completePendingShipments,
+    createPurchaseOrder,
+    createPurchaseOrderLineItem,
     createSalesOrder,
     createSalesOrderShipment,
     editPurchaseOrderLineItem,
@@ -539,6 +542,26 @@ function createPurchaseOrder(options={}) {
 }
 
 
+// Create a new PurchaseOrderLineItem
+function createPurchaseOrderLineItem(order, options={}) {
+
+    var fields = poLineItemFields({
+        order: order,
+        supplier: options.supplier,
+        currency: options.currency,
+    });
+
+    constructForm('{% url "api-po-line-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Line Item" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
 /* Construct a set of fields for the SalesOrderLineItem form */
 function soLineItemFields(options={}) {
 
@@ -590,13 +613,40 @@ function poLineItemFields(options={}) {
 
     var fields = {
         order: {
-            hidden: true,
+            filters: {
+                supplier_detail: true,
+            }
         },
         part: {
             filters: {
                 part_detail: true,
                 supplier_detail: true,
                 supplier: options.supplier,
+            },
+            secondary: {
+                method: 'POST',
+                title: '{% trans "Add Supplier Part" %}',
+                fields: function(data) {
+                    var fields = supplierPartFields({
+                        part: data.part,
+                    });
+
+                    fields.supplier.value = options.supplier;
+
+                    // Adjust manufacturer part query based on selected part
+                    fields.manufacturer_part.adjustFilters = function(query, opts) {
+
+                        var part = getFormFieldValue('part', {}, opts);
+
+                        if (part) {
+                            query.part = part;
+                        }
+
+                        return query;
+                    };
+
+                    return fields;
+                }
             }
         },
         quantity: {},
@@ -610,6 +660,7 @@ function poLineItemFields(options={}) {
 
     if (options.order) {
         fields.order.value = options.order;
+        fields.order.hidden = true;
     }
 
     if (options.currency) {

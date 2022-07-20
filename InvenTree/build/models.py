@@ -813,6 +813,14 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         interchangeable = kwargs.get('interchangeable', False)
         substitutes = kwargs.get('substitutes', True)
 
+        def stock_sort(item, bom_item, variant_parts):
+            if item.part == bom_item.sub_part:
+                return 1
+            elif item.part in variant_parts:
+                return 2
+            else:
+                return 3
+
         # Get a list of all 'untracked' BOM items
         for bom_item in self.untracked_bom_items:
 
@@ -859,15 +867,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
             This ensures that allocation priority is first given to "direct" parts
             """
-            def stock_sort(item):
-                if item.part == bom_item.sub_part:
-                    return 1
-                elif item.part in variant_parts:
-                    return 2
-                else:
-                    return 3
-
-            available_stock = sorted(available_stock, key=stock_sort)
+            available_stock = sorted(available_stock, key=lambda item, b=bom_item, v=variant_parts: stock_sort(item, b, v))
 
             if len(available_stock) == 0:
                 # No stock items are available

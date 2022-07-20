@@ -26,7 +26,8 @@ jobs:
   # Build the docker image
   build:
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -56,13 +57,22 @@ jobs:
       - name: Set up Docker Buildx
         if: github.event_name != 'pull_request'
         uses: docker/setup-buildx-action@v1
+      - name: Set up cosign
+        uses: sigstore/cosign-installer@48866aa521d8bf870604709cd43ec2f602d03ff2
       - name: Login to Dockerhub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a
+        with:
+          images: |
+            inventree/inventree
       - name: Build and Push
+        id: build-and-push
         if: github.event_name != 'pull_request'
         uses: docker/build-push-action@v2
         with:
@@ -74,6 +84,10 @@ jobs:
           build-args: |
             commit_hash=${{ env.git_commit_hash }}
             commit_date=${{ env.git_commit_date }}
+      - name: Sign the published image
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+        run: cosign sign ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
       - name: Push to Stable Branch
         uses: ad-m/github-push-action@master
         if: env.stable_release == 'true'
