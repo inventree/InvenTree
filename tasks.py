@@ -406,19 +406,19 @@ def import_fixtures(c):
 
 
 # Execution tasks
-@task(help={'address': 'Server address:port (default=127.0.0.1:8000)'})
+@task
+def wait(c):
+    """Wait until the database connection is ready."""
+    return manage(c, "wait_for_db")
+
+
+@task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})
 def server(c, address="127.0.0.1:8000"):
     """Launch a (deveopment) server using Django's in-built webserver.
 
     Note: This is *not* sufficient for a production installation.
     """
     manage(c, "runserver {address}".format(address=address), pty=True)
-
-
-@task
-def wait(c):
-    """Wait until the database connection is ready."""
-    return manage(c, "wait_for_db")
 
 
 @task(pre=[wait])
