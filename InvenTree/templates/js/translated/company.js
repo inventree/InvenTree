@@ -102,10 +102,14 @@ function editManufacturerPart(part, options={}) {
 }
 
 
-function supplierPartFields() {
+function supplierPartFields(options={}) {
 
-    return {
-        part: {},
+    var fields = {
+        part: {
+            filters: {
+                purchaseable: true,
+            }
+        },
         manufacturer_part: {
             filters: {
                 part_detail: true,
@@ -128,6 +132,12 @@ function supplierPartFields() {
             icon: 'fa-box',
         }
     };
+
+    if (options.part) {
+        fields.manufacturer_part.filters.part = options.part;
+    }
+
+    return fields;
 }
 
 /*
@@ -135,10 +145,11 @@ function supplierPartFields() {
  */
 function createSupplierPart(options={}) {
 
-    var fields = supplierPartFields();
+    var fields = supplierPartFields({
+        part: options.part,
+    });
 
     if (options.part) {
-        fields.manufacturer_part.filters.part = options.part;
         fields.part.hidden = true;
         fields.part.value = options.part;
     }
