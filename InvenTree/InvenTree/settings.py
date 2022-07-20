@@ -938,9 +938,43 @@ PLUGIN_FILE = get_plugin_file()
 # Plugin Directories (local plugins will be loaded from these directories)
 PLUGIN_DIRS = ['plugin.builtin', ]
 
+CUSTOM_PLUGIN_DIRS = os.getenv('INVENTREE_PLUGIN_DIR', None)
+
 if not TESTING:
     # load local deploy directory in prod
     PLUGIN_DIRS.append('plugins')  # pragma: no cover
+
+    # optionally load custom plugin directory
+    if CUSTOM_PLUGIN_DIRS is not None:
+        # Allow multiple plugin directories to be specified
+        for pd in CUSTOM_PLUGIN_DIRS.split(','):
+            pd = pd.strip()
+
+            # Attempt to create the directory if it does not alreadyd exist
+            if not os.path.exists(pd):
+                try:
+                    os.makedirs(pd, exist_ok=True)
+                except Exception:
+                    logger.error(f"Could not create plugin directory '{pd}'")
+                    continue
+
+            # Ensure the directory has an __init__.py file
+            init_filename = os.path.join(pd, '__init__.py')
+
+            if not os.path.exists(init_filename):
+                try:
+                    with open(init_filename, 'w') as init_file:
+                        init_file.write("# InvenTree plugin directory\n")
+                except Exception:
+                    logger.error(f"Could not create file '{init_filename}'")
+                    continue
+
+            if os.path.exists(pd) and os.path.isdir(pd):
+                # By this point, we have confirmed that the directory at least exists
+                pd = os.path.abspath(pd)
+
+                logger.info(f"Added plugin directory: '{pd}'")
+                PLUGIN_DIRS.append(pd)
 
 if DEBUG or TESTING:
     # load samples in debug mode
