@@ -255,15 +255,20 @@ function renderOwner(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderPurchaseOrder(name, data, parameters={}, options={}) {
 
-    var html = `<span>${data.reference}</span>`;
-
-    var thumbnail = null;
+    var html = '';
 
     if (data.supplier_detail) {
         thumbnail = data.supplier_detail.thumbnail || data.supplier_detail.image;
 
-        html += ' - ' + select2Thumbnail(thumbnail);
-        html += `<span>${data.supplier_detail.name}</span>`;
+        html += select2Thumbnail(thumbnail);
+    }
+
+    html += `<span>${data.reference}</span>`;
+
+    var thumbnail = null;
+
+    if (data.supplier_detail) {
+        html += ` - <span>${data.supplier_detail.name}</span>`;
     }
 
     if (data.description) {

@@ -114,9 +114,9 @@ C) Look for default key file "secret_key.txt"
 d) Create "secret_key.txt" if it does not exist
 """
 
-if os.getenv("INVENTREE_SECRET_KEY"):
+if secret_key := os.getenv("INVENTREE_SECRET_KEY"):
     # Secret key passed in directly
-    SECRET_KEY = os.getenv("INVENTREE_SECRET_KEY").strip()  # pragma: no cover
+    SECRET_KEY = secret_key.strip()  # pragma: no cover
     logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover
 else:
     # Secret key passed in by file location

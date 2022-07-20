@@ -252,18 +252,19 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(result.reason, 'OK')
 
         # api_call with full url
-        result = self.mixin.api_call('https://api.github.com/orgs/inventree', endpoint_is_url=True)
+        result = self.mixin.api_call('orgs/inventree')
         self.assertTrue(result)
 
         # api_call with post and data
         result = self.mixin.api_call(
-            'repos/inventree/InvenTree',
-            method='GET'
+            'https://reqres.in/api/users/',
+            data={"name": "morpheus", "job": "leader"},
+            method='POST',
+            endpoint_is_url=True,
         )
 
         self.assertTrue(result)
-        self.assertEqual(result['name'], 'InvenTree')
-        self.assertEqual(result['html_url'], 'https://github.com/inventree/InvenTree')
+        self.assertEqual(result['name'], 'morpheus')
 
         # api_call with filter
         result = self.mixin.api_call('repos/inventree/InvenTree/stargazers', url_args={'page': '2'})

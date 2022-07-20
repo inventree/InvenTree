@@ -22,7 +22,7 @@ services:
     inventree-dev-db:
         container_name: inventree-dev-db
         image: postgres:13
-        ports:
+        expose:
             - ${INVENTREE_DB_PORT:-5432}/tcp
         environment:
             - PGDATA=/var/lib/postgresql/data/dev/pgdb
