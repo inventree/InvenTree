@@ -307,7 +307,11 @@ class InvenTreePlugin(MixinBase, MetaBase):
         """
         if self._is_package:
             return self.__module__  # pragma: no cover
-        return pathlib.Path(self.def_path).relative_to(settings.BASE_DIR)
+
+        try:
+            return pathlib.Path(self.def_path).relative_to(settings.BASE_DIR)
+        except ValueError:
+            return pathlib.Path(self.def_path)
 
     @property
     def settings_url(self):
