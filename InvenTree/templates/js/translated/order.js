@@ -16,6 +16,7 @@
     renderLink,
     salesOrderStatusDisplay,
     setupFilterList,
+    supplierPartFields,
 */
 
 /* exported
@@ -621,6 +622,31 @@ function poLineItemFields(options={}) {
                 part_detail: true,
                 supplier_detail: true,
                 supplier: options.supplier,
+            },
+            secondary: {
+                method: 'POST',
+                title: '{% trans "Add Supplier Part" %}',
+                fields: function(data) {
+                    var fields = supplierPartFields({
+                        part: data.part,
+                    });
+
+                    fields.supplier.value = options.supplier;
+
+                    // Adjust manufacturer part query based on selected part
+                    fields.manufacturer_part.adjustFilters = function(query, opts) {
+
+                        var part = getFormFieldValue('part', {}, opts);
+
+                        if (part) {
+                            query.part = part;
+                        }
+
+                        return query;
+                    };
+
+                    return fields;
+                }
             }
         },
         quantity: {},
