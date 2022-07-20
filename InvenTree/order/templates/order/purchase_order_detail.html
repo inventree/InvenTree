@@ -168,23 +168,16 @@
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $('#new-po-line').click(function() {
 
-    var fields = poLineItemFields({
-        order: {{ order.pk }},
+    createPurchaseOrderLineItem({{ order.pk }}, {
         {% if order.supplier %}
         supplier: {{ order.supplier.pk }},
         {% if order.supplier.currency %}
         currency: '{{ order.supplier.currency }}',
         {% endif %}
         {% endif %}
-    });
-
-    constructForm('{% url "api-po-line-list" %}', {
-        fields: fields,
-        method: 'POST',
-        title: '{% trans "Add Line Item" %}',
         onSuccess: function() {
             $('#po-line-table').bootstrapTable('refresh');
-        },
+        }
     });
 });
 
