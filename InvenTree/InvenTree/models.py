@@ -24,7 +24,6 @@ import InvenTree.format
 import InvenTree.helpers
 from common.models import InvenTreeSetting
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.validators import validate_tree_name
 
 logger = logging.getLogger('inventree')
 
@@ -538,7 +537,6 @@ class InvenTreeTree(MPTTModel):
     name = models.CharField(
         blank=False,
         max_length=100,
-        validators=[validate_tree_name],
         verbose_name=_("Name"),
         help_text=_("Name"),
     )
