@@ -79,7 +79,7 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
 
 {% block header_content %}
     <!-- TODO - Make the company logo asset generic -->
-    <img class='logo' src="{% asset 'company_logo.png' %}" alt="logo" width="150">
+    <img class='logo' src="{% company_logo %}" alt="logo" width="150">
 
     <div class='header-right'>
         <h3>

@@ -7,6 +7,7 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 
 import InvenTree.helpers
+import report.models
 from common.models import InvenTreeSetting
 from company.models import Company
 from part.models import Part
@@ -40,7 +41,7 @@ def asset(filename):
 
 
 @register.simple_tag()
-def uploaded_image(filename, replace_missing=True):
+def uploaded_image(filename, replace_missing=True, replacement_file='blank_image.png'):
     """Return a fully-qualified path for an 'uploaded' image.
 
     Arguments:
@@ -55,12 +56,15 @@ def uploaded_image(filename, replace_missing=True):
     debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
     # Check if the file exists
-    try:
-        full_path = os.path.join(settings.MEDIA_ROOT, filename)
-        full_path = os.path.abspath(full_path)
-        exists = os.path.exists(full_path) and os.path.isfile(full_path)
-    except Exception:
+    if not filename:
         exists = False
+    else:
+        try:
+            full_path = os.path.join(settings.MEDIA_ROOT, filename)
+            full_path = os.path.abspath(full_path)
+            exists = os.path.exists(full_path) and os.path.isfile(full_path)
+        except Exception:
+            exists = False
 
     if not exists and not replace_missing:
         raise FileNotFoundError(f"Image file '{filename}' not found")
@@ -70,14 +74,14 @@ def uploaded_image(filename, replace_missing=True):
         if exists:
             return os.path.join(settings.MEDIA_URL, filename)
         else:
-            return os.path.join(settings.STATIC_URL, 'img', 'blank_image.png')
+            return os.path.join(settings.STATIC_URL, 'img', replacement_file)
     else:
         # Return file path
         if exists:
             path = os.path.join(settings.MEDIA_ROOT, filename)
             path = os.path.abspath(path)
         else:
-            path = os.path.join(settings.STATIC_ROOT, 'img', 'blank_image.png')
+            path = os.path.join(settings.STATIC_ROOT, 'img', replacement_file)
             path = os.path.abspath(path)
 
         return f"file://{path}"
@@ -120,6 +124,25 @@ def company_image(company):
         raise TypeError("company_image tag requires a Company instance")
 
     return uploaded_image(img)
+
+
+@register.simple_tag()
+def company_logo():
+    """Return a fully-qualified path for an uploaded company logo.
+
+    - Expects an 'asset' to be uploaded with the description 'Company Logo'
+    - Note: 2022-07-21 : This is a 'hack' to ensure backwards compatibility of unit testing
+    - If no 'company logo' is available, return a default image
+    - This will be refactored in the future!
+    """
+
+    try:
+        asset = report.models.ReportAsset.objects.get(description="Company Logo")
+        img = asset.asset.name
+    except report.models.ReportAsset.DoesNotExist:
+        img = None
+
+    return uploaded_image(img, replacement_file='blank_company_logo.png')
 
 
 @register.simple_tag()

@@ -95,6 +95,14 @@ class ReportTagTest(TestCase):
         with self.assertRaises(TypeError):
             report_tags.company_image(None)
 
+    def test_company_logo(self):
+        """Unit tests for the 'company_logo' tag"""
+
+        for b in [True, False]:
+            self.debug_mode(b)
+            logo = report_tags.company_logo()
+            self.assertIn('blank_company_logo.png', logo)
+
 
 class BarcodeTagTest(TestCase):
     """Unit tests for the barcode template tags"""
