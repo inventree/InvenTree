@@ -95,13 +95,14 @@ class ReportTagTest(TestCase):
         with self.assertRaises(TypeError):
             report_tags.company_image(None)
 
-    def test_company_logo(self):
-        """Unit tests for the 'company_logo' tag"""
+    def test_logo_image(self):
+        """Unit tests for the 'logo_image' tag"""
 
+        # By default, should return the core InvenTree logo
         for b in [True, False]:
             self.debug_mode(b)
-            logo = report_tags.company_logo()
-            self.assertIn('blank_company_logo.png', logo)
+            logo = report_tags.logo_image()
+            self.assertIn('inventree.png', logo)
 
 
 class BarcodeTagTest(TestCase):

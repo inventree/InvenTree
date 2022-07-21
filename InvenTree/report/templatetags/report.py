@@ -7,7 +7,6 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 
 import InvenTree.helpers
-import report.models
 from common.models import InvenTreeSetting
 from company.models import Company
 from part.models import Part
@@ -127,22 +126,17 @@ def company_image(company):
 
 
 @register.simple_tag()
-def company_logo():
-    """Return a fully-qualified path for an uploaded company logo.
+def logo_image():
+    """Return a fully-qualified path for the logo image.
 
-    - Expects an 'asset' to be uploaded with the description 'Company Logo'
-    - Note: 2022-07-21 : This is a 'hack' to ensure backwards compatibility of unit testing
-    - If no 'company logo' is available, return a default image
-    - This will be refactored in the future!
+    - If a custom logo has been provided, return a path to that logo
+    - Otherwise, return a path to the default InvenTree logo
     """
 
-    try:
-        asset = report.models.ReportAsset.objects.get(description="Company Logo")
-        img = asset.asset.name
-    except report.models.ReportAsset.DoesNotExist:
-        img = None
+    # If in debug mode, return URL to the image, not a local file
+    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
-    return uploaded_image(img, replacement_file='blank_company_logo.png')
+    return InvenTree.helpers.getLogoImage(as_file=not debug_mode)
 
 
 @register.simple_tag()
