@@ -17,7 +17,7 @@ from report.templatetags import report as report_tags
 from stock.models import StockItem, StockItemAttachment
 
 
-class TemplateTagTest(TestCase):
+class ReportTagTest(TestCase):
     """Unit tests for the report template tags"""
 
     def debug_mode(self, value: bool):
@@ -49,6 +49,38 @@ class TemplateTagTest(TestCase):
         self.debug_mode(False)
         asset = report_tags.asset('test.txt')
         self.assertEqual(asset, f'file://{asset_dir}/test.txt')
+
+    def test_uploaded_image(self):
+        """Tests for retrieving uploaded images"""
+
+        # Test for a missing image
+        for b in [True, False]:
+            self.debug_mode(b)
+
+            with self.assertRaises(FileNotFoundError):
+                report_tags.uploaded_image('/part/something/test.png', replace_missing=False)
+
+            img = report_tags.uploaded_image('/part/something/other.png')
+            self.assertTrue('blank_image.png' in img)
+
+        # Create a dummy image
+        img_path = 'part/images/'
+        img_path = os.path.join(settings.MEDIA_ROOT, img_path)
+        img_file = os.path.join(img_path, 'test.jpg')
+
+        os.makedirs(img_path, exist_ok=True)
+
+        with open(img_file, 'w') as f:
+            f.write("dummy data")
+
+        # Test in debug mode
+        self.debug_mode(True)
+        img = report_tags.uploaded_image('part/images/test.jpg')
+        self.assertEqual(img, '/media/part/images/test.jpg')
+
+        self.debug_mode(False)
+        img = report_tags.uploaded_image('part/images/test.jpg')
+        self.assertEqual(img, f'file://{img_path}test.jpg')
 
 
 class ReportTest(InvenTreeAPITestCase):

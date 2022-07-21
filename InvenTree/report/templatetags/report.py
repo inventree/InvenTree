@@ -62,6 +62,9 @@ def uploaded_image(filename, replace_missing=True):
     except Exception:
         exists = False
 
+    if not exists and not replace_missing:
+        raise FileNotFoundError(f"Image file '{filename}' not found")
+
     if debug_mode:
         # In debug mode, return a web path
         if exists:
