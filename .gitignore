@@ -48,6 +48,7 @@ docs/_build
 inventree_media
 inventree_static
 static_i18n
+inventree-data
 
 # Local config file
 config.yaml
