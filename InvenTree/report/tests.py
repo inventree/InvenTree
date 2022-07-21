@@ -13,6 +13,7 @@ import report.models as report_models
 from build.models import Build
 from common.models import InvenTreeSetting, InvenTreeUserSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
+from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
 from stock.models import StockItem, StockItemAttachment
 
@@ -93,6 +94,23 @@ class ReportTagTest(TestCase):
 
         with self.assertRaises(TypeError):
             report_tags.company_image(None)
+
+
+class BarcodeTagTest(TestCase):
+    """Unit tests for the barcode template tags"""
+
+    def test_barcode(self):
+        """Test the barcode generation tag"""
+
+        barcode = barcode_tags.barcode("12345")
+
+        self.assertTrue(type(barcode) == str)
+        self.assertTrue(barcode.startswith('data:image/png;'))
+
+        # Try with a different format
+        barcode = barcode_tags.barcode('99999', format='BMP')
+        self.assertTrue(type(barcode) == str)
+        self.assertTrue(barcode.startswith('data:image/bmp;'))
 
 
 class ReportTest(InvenTreeAPITestCase):
