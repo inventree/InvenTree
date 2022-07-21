@@ -10,33 +10,42 @@ import InvenTree.helpers
 from common.models import InvenTreeSetting
 from company.models import Company
 from part.models import Part
-from stock.models import StockItem
 
 register = template.Library()
 
 
 @register.simple_tag()
 def asset(filename):
-    """Return fully-qualified path for an upload report asset file."""
+    """Return fully-qualified path for an upload report asset file.
+
+    Arguments:
+        filename: Asset filename (relative to the 'assets' media directory)
+
+    Raises:
+        FileNotFoundError if file does not exist
+    """
     # If in debug mode, return URL to the image, not a local file
     debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
+    # Test if the file actually exists
+    full_path = os.path.join(settings.MEDIA_ROOT, 'report', 'assets', filename)
+
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        raise FileNotFoundError(f"Asset file '{filename}' does not exist")
+
     if debug_mode:
-        path = os.path.join(settings.MEDIA_URL, 'report', 'assets', filename)
+        return os.path.join(settings.MEDIA_URL, 'report', 'assets', filename)
     else:
-
-        path = os.path.join(settings.MEDIA_ROOT, 'report', 'assets', filename)
-        path = os.path.abspath(path)
-
-        return f"file://{path}"
+        return f"file://{full_path}"
 
 
 @register.simple_tag()
-def uploaded_image(filename):
+def uploaded_image(filename, replace_missing=True):
     """Return a fully-qualified path for an 'uploaded' image.
 
     Arguments:
         filename: The filename of the image relative to the MEDIA_ROOT directory
+        replace_missing: Optionally return a placeholder image if the provided filename does not exist
 
     Returns:
         A fully qualified path to the image
@@ -73,25 +82,39 @@ def uploaded_image(filename):
 
 @register.simple_tag()
 def part_image(part):
-    """Return a fully-qualified path for a part image."""
+    """Return a fully-qualified path for a part image.
+
+    Arguments:
+        part: a Part model instance
+
+    Raises:
+        TypeError if provided part is not a Part instance
+    """
 
     if type(part) is Part:
         img = part.image.name
 
-    elif type(part) is StockItem:
-        img = part.part.image.name
+    else:
+        raise TypeError("part_image tag requires a Part instance")
 
     return uploaded_image(img)
 
 
 @register.simple_tag()
 def company_image(company):
-    """Return a fully-qualified path for a company image."""
+    """Return a fully-qualified path for a company image.
+
+    Arguments:
+        company: a Company model instance
+
+    Raises:
+        TypeError if provided company is not a Company instance
+    """
 
     if type(company) is Company:
         img = company.image.name
     else:
-        img = ''
+        raise TypeError("company_image tag requires a Company instance")
 
     return uploaded_image(img)
 

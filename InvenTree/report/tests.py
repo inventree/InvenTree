@@ -6,13 +6,49 @@ import shutil
 from django.conf import settings
 from django.core.cache import cache
 from django.http.response import StreamingHttpResponse
+from django.test import TestCase
 from django.urls import reverse
 
 import report.models as report_models
 from build.models import Build
 from common.models import InvenTreeSetting, InvenTreeUserSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
+from report.templatetags import report as report_tags
 from stock.models import StockItem, StockItemAttachment
+
+
+class TemplateTagTest(TestCase):
+    """Unit tests for the report template tags"""
+
+    def debug_mode(self, value: bool):
+        """Enable or disable debug mode for reports"""
+        InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', value, change_user=None)
+
+    def test_asset(self):
+        """Tests for asset files"""
+
+        # Test that an error is raised if the file does not exist
+        for b in [True, False]:
+            self.debug_mode(b)
+
+            with self.assertRaises(FileNotFoundError):
+                report_tags.asset("bad_file.txt")
+
+        # Create an asset file
+        asset_dir = os.path.join(settings.MEDIA_ROOT, 'report', 'assets')
+        os.makedirs(asset_dir, exist_ok=True)
+        asset_path = os.path.join(asset_dir, 'test.txt')
+
+        with open(asset_path, 'w') as f:
+            f.write("dummy data")
+
+        self.debug_mode(True)
+        asset = report_tags.asset('test.txt')
+        self.assertEqual(asset, '/media/report/assets/test.txt')
+
+        self.debug_mode(False)
+        asset = report_tags.asset('test.txt')
+        self.assertEqual(asset, f'file://{asset_dir}/test.txt')
 
 
 class ReportTest(InvenTreeAPITestCase):
