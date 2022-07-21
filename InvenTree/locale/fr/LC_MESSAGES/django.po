@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-20 02:54+0000\n"
-"PO-Revision-Date: 2022-07-20 19:24\n"
+"POT-Creation-Date: 2022-07-21 12:11+0000\n"
+"PO-Revision-Date: 2022-07-21 19:56\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -131,49 +131,49 @@ msgstr "Aucun numéro de série trouvé"
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "Le nombre de numéros de série uniques ({s}) doit correspondre à la quantité ({q})"
 
-#: InvenTree/models.py:237
+#: InvenTree/models.py:236
 msgid "Improperly formatted pattern"
 msgstr "Modèle mal formaté"
 
-#: InvenTree/models.py:244
+#: InvenTree/models.py:243
 msgid "Unknown format key specified"
 msgstr "Clé de format spécifiée inconnue"
 
-#: InvenTree/models.py:250
+#: InvenTree/models.py:249
 msgid "Missing required format key"
 msgstr "Clé de format requise manquante"
 
-#: InvenTree/models.py:262
+#: InvenTree/models.py:261
 msgid "Reference field cannot be empty"
 msgstr "Le champ de référence ne peut pas être vide"
 
-#: InvenTree/models.py:269
+#: InvenTree/models.py:268
 msgid "Reference must match required pattern"
 msgstr "La référence doit correspondre au modèle requis"
 
-#: InvenTree/models.py:305
+#: InvenTree/models.py:304
 msgid "Reference number is too large"
 msgstr "Le numéro de référence est trop grand"
 
-#: InvenTree/models.py:383
+#: InvenTree/models.py:382
 msgid "Missing file"
 msgstr "Fichier manquant"
 
-#: InvenTree/models.py:384
+#: InvenTree/models.py:383
 msgid "Missing external link"
 msgstr "Lien externe manquant"
 
-#: InvenTree/models.py:396 stock/models.py:2095
+#: InvenTree/models.py:395 stock/models.py:2095
 #: templates/js/translated/attachment.js:103
 #: templates/js/translated/attachment.js:241
 msgid "Attachment"
 msgstr "Pièce jointe"
 
-#: InvenTree/models.py:397
+#: InvenTree/models.py:396
 msgid "Select file to attach"
 msgstr "Sélectionnez un fichier à joindre"
 
-#: InvenTree/models.py:403 company/models.py:124 company/models.py:276
+#: InvenTree/models.py:402 company/models.py:124 company/models.py:276
 #: company/models.py:510 order/models.py:84 order/models.py:1245
 #: part/models.py:795
 #: report/templates/report/inventree_build_order_base.html:165
@@ -183,21 +183,21 @@ msgstr "Sélectionnez un fichier à joindre"
 msgid "Link"
 msgstr "Lien"
 
-#: InvenTree/models.py:404 build/models.py:296 part/models.py:796
+#: InvenTree/models.py:403 build/models.py:296 part/models.py:796
 #: stock/models.py:651
 msgid "Link to external URL"
 msgstr "Lien vers une url externe"
 
-#: InvenTree/models.py:407 templates/js/translated/attachment.js:104
+#: InvenTree/models.py:406 templates/js/translated/attachment.js:104
 #: templates/js/translated/attachment.js:285
 msgid "Comment"
 msgstr "Commentaire"
 
-#: InvenTree/models.py:407
+#: InvenTree/models.py:406
 msgid "File comment"
 msgstr "Commentaire du fichier"
 
-#: InvenTree/models.py:413 InvenTree/models.py:414 common/models.py:1623
+#: InvenTree/models.py:412 InvenTree/models.py:413 common/models.py:1623
 #: common/models.py:1624 common/models.py:1847 common/models.py:1848
 #: common/models.py:2110 common/models.py:2111 part/models.py:2193
 #: part/models.py:2213 plugin/models.py:238 plugin/models.py:239
@@ -206,40 +206,40 @@ msgstr "Commentaire du fichier"
 msgid "User"
 msgstr "Utilisateur"
 
-#: InvenTree/models.py:417
+#: InvenTree/models.py:416
 msgid "upload date"
 msgstr "date de chargement"
 
-#: InvenTree/models.py:439
+#: InvenTree/models.py:438
 msgid "Filename must not be empty"
 msgstr "Le nom de fichier ne doit pas être vide"
 
-#: InvenTree/models.py:462
+#: InvenTree/models.py:461
 msgid "Invalid attachment directory"
 msgstr "Répertoire de pièce jointe invalide"
 
-#: InvenTree/models.py:472
+#: InvenTree/models.py:471
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
 msgstr "Le nom de fichier contient le caractère illégal '{c}'"
 
-#: InvenTree/models.py:475
+#: InvenTree/models.py:474
 msgid "Filename missing extension"
 msgstr "Extension manquante du nom de fichier"
 
-#: InvenTree/models.py:482
+#: InvenTree/models.py:481
 msgid "Attachment with this filename already exists"
 msgstr "Une pièce jointe avec ce nom de fichier existe déjà"
 
-#: InvenTree/models.py:489
+#: InvenTree/models.py:488
 msgid "Error renaming file"
 msgstr "Erreur lors du renommage du fichier"
 
-#: InvenTree/models.py:523
+#: InvenTree/models.py:522
 msgid "Invalid choice"
 msgstr "Choix invalide"
 
-#: InvenTree/models.py:542 InvenTree/models.py:543 common/models.py:1833
+#: InvenTree/models.py:540 InvenTree/models.py:541 common/models.py:1833
 #: company/models.py:358 label/models.py:101 part/models.py:739
 #: part/models.py:2371 plugin/models.py:93 report/models.py:151
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -255,7 +255,7 @@ msgstr "Choix invalide"
 msgid "Name"
 msgstr "Nom"
 
-#: InvenTree/models.py:549 build/models.py:174
+#: InvenTree/models.py:547 build/models.py:174
 #: build/templates/build/detail.html:24 company/models.py:282
 #: company/models.py:516 company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
@@ -278,19 +278,19 @@ msgstr "Nom"
 msgid "Description"
 msgstr "Description"
 
-#: InvenTree/models.py:550
+#: InvenTree/models.py:548
 msgid "Description (optional)"
 msgstr "Description (facultative)"
 
-#: InvenTree/models.py:558
+#: InvenTree/models.py:556
 msgid "parent"
 msgstr "parent"
 
-#: InvenTree/models.py:671
+#: InvenTree/models.py:669
 msgid "Server Error"
 msgstr "Erreur serveur"
 
-#: InvenTree/models.py:672
+#: InvenTree/models.py:670
 msgid "An error has been logged by the server."
 msgstr "Une erreur a été enregistrée par le serveur."
 
@@ -625,20 +625,15 @@ msgstr "L'IPN doit correspondre au modèle de regex {pat}"
 msgid "Reference must match pattern {pattern}"
 msgstr "La référence doit correspondre au modèle {pattern}"
 
-#: InvenTree/validators.py:86
-#, python-brace-format
-msgid "Illegal character in name ({x})"
-msgstr "Caractère invalide dans le nom ({x})"
-
-#: InvenTree/validators.py:105 InvenTree/validators.py:121
+#: InvenTree/validators.py:102 InvenTree/validators.py:118
 msgid "Overage value must not be negative"
 msgstr "La valeur de surplus ne doit pas être négative"
 
-#: InvenTree/validators.py:123
+#: InvenTree/validators.py:120
 msgid "Overage must not exceed 100%"
 msgstr "Le surplus ne doit pas dépasser 100%"
 
-#: InvenTree/validators.py:130
+#: InvenTree/validators.py:127
 msgid "Invalid value for overage"
 msgstr "Valeur invalide pour le dépassement"
 
@@ -932,8 +927,8 @@ msgstr "Assemblage"
 msgid "Build to allocate parts"
 msgstr "Construction à laquelle allouer des pièces"
 
-#: build/models.py:1317 build/serializers.py:629 order/serializers.py:1011
-#: order/serializers.py:1032 stock/serializers.py:395 stock/serializers.py:742
+#: build/models.py:1317 build/serializers.py:629 order/serializers.py:1015
+#: order/serializers.py:1036 stock/serializers.py:395 stock/serializers.py:742
 #: stock/serializers.py:868 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
 #: stock/templates/stock/item_base.html:199
@@ -955,7 +950,7 @@ msgstr "Stock d'origine de l'article"
 #: build/templates/build/build_base.html:82
 #: build/templates/build/detail.html:34 common/models.py:1655
 #: company/forms.py:36 company/templates/company/supplier_part.html:279
-#: order/models.py:897 order/models.py:1423 order/serializers.py:1151
+#: order/models.py:897 order/models.py:1423 order/serializers.py:1155
 #: order/templates/order/order_wizard/match_parts.html:30 part/forms.py:59
 #: part/forms.py:74 part/forms.py:89 part/models.py:2601
 #: part/templates/part/detail.html:937 part/templates/part/detail.html:1023
@@ -1040,7 +1035,7 @@ msgstr "Quantité entière requise pour les pièces à suivre"
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Quantité entière requise, car la facture de matériaux contient des pièces à puce"
 
-#: build/serializers.py:232 order/serializers.py:455 order/serializers.py:1155
+#: build/serializers.py:232 order/serializers.py:455 order/serializers.py:1159
 #: stock/serializers.py:310 templates/js/translated/order.js:1235
 #: templates/js/translated/stock.js:267 templates/js/translated/stock.js:455
 msgid "Serial Numbers"
@@ -1184,7 +1179,7 @@ msgstr "bom_item.part doit pointer sur la même pièce que l'ordre de constructi
 msgid "Item must be in stock"
 msgstr "L'article doit être en stock"
 
-#: build/serializers.py:693 order/serializers.py:1069
+#: build/serializers.py:693 order/serializers.py:1073
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Quantité disponible ({q}) dépassée"
@@ -1201,7 +1196,7 @@ msgstr "La sortie de la compilation ne peut pas être spécifiée pour l'allocat
 msgid "This stock item has already been allocated to this build output"
 msgstr "Cet article de stock a déjà été alloué à cette sortie de construction"
 
-#: build/serializers.py:734 order/serializers.py:1315
+#: build/serializers.py:734 order/serializers.py:1319
 msgid "Allocation items must be provided"
 msgstr "Les éléments d'allocation doivent être fournis"
 
@@ -3680,6 +3675,11 @@ msgstr ""
 msgid "User who checked this shipment"
 msgstr ""
 
+#: order/models.py:1220 order/models.py:1405 order/serializers.py:1170
+#: order/serializers.py:1294 templates/js/translated/model_renderers.js:314
+msgid "Shipment"
+msgstr "Envoi"
+
 #: order/models.py:1221
 msgid "Shipment number"
 msgstr ""
@@ -3732,7 +3732,7 @@ msgstr ""
 msgid "StockItem is over-allocated"
 msgstr ""
 
-#: order/models.py:1385 order/serializers.py:1062
+#: order/models.py:1385 order/serializers.py:1066
 msgid "Quantity must be 1 for serialized stock item"
 msgstr ""
 
@@ -3747,11 +3747,6 @@ msgstr ""
 #: order/models.py:1397
 msgid "Line"
 msgstr "Ligne"
-
-#: order/models.py:1405 order/serializers.py:1166 order/serializers.py:1290
-#: templates/js/translated/model_renderers.js:314
-msgid "Shipment"
-msgstr "Envoi"
 
 #: order/models.py:1406
 msgid "Sales order shipment reference"
@@ -3801,7 +3796,7 @@ msgstr ""
 msgid "Purchase order must match supplier"
 msgstr ""
 
-#: order/serializers.py:413 order/serializers.py:1134
+#: order/serializers.py:413 order/serializers.py:1138
 msgid "Line Item"
 msgstr ""
 
@@ -3857,31 +3852,31 @@ msgstr ""
 msgid "No shipment details provided"
 msgstr ""
 
-#: order/serializers.py:1023 order/serializers.py:1143
+#: order/serializers.py:1027 order/serializers.py:1147
 msgid "Line item is not associated with this order"
 msgstr ""
 
-#: order/serializers.py:1045
+#: order/serializers.py:1049
 msgid "Quantity must be positive"
 msgstr ""
 
-#: order/serializers.py:1156
+#: order/serializers.py:1160
 msgid "Enter serial numbers to allocate"
 msgstr "Entrez les numéros de série à allouer"
 
-#: order/serializers.py:1178 order/serializers.py:1298
+#: order/serializers.py:1182 order/serializers.py:1302
 msgid "Shipment has already been shipped"
 msgstr ""
 
-#: order/serializers.py:1181 order/serializers.py:1301
+#: order/serializers.py:1185 order/serializers.py:1305
 msgid "Shipment is not associated with this order"
 msgstr ""
 
-#: order/serializers.py:1231
+#: order/serializers.py:1235
 msgid "No match found for the following serial numbers"
 msgstr "Aucune correspondance trouvée pour les numéros de série suivants"
 
-#: order/serializers.py:1241
+#: order/serializers.py:1245
 msgid "The following serial numbers are already allocated"
 msgstr "Les numéros de série suivants sont déjà alloués"
 
