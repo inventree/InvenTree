@@ -555,11 +555,3 @@ class ReportAsset(models.Model):
         verbose_name=_('Description'),
         help_text=_("Asset file description")
     )
-
-    # Unique key used for identifying particular assets
-    # Not normally seen by the user
-    key = models.CharField(
-        max_length=50,
-        blank=True, null=True,
-        unique=True
-    )
