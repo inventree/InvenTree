@@ -982,8 +982,8 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         # Extract shipping date (defaults to today's date)
         shipment_date = data.get('shipment_date', datetime.now())
         if shipment_date is None:
-            # Shipment date can be None; check above does not cover
-            # this case
+            # Shipment date should not be None - check above only
+            # checks if shipment_date exists in data
             shipment_date = datetime.now()
 
         shipment.complete_shipment(
