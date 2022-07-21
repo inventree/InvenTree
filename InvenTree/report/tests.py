@@ -112,6 +112,26 @@ class BarcodeTagTest(TestCase):
         self.assertTrue(type(barcode) == str)
         self.assertTrue(barcode.startswith('data:image/bmp;'))
 
+    def test_qrcode(self):
+        """Test the qrcode generation tag"""
+
+        # Test with default settings
+        qrcode = barcode_tags.qrcode("hello world")
+        self.assertTrue(type(qrcode) == str)
+        self.assertTrue(qrcode.startswith('data:image/png;'))
+        self.assertEqual(len(qrcode), 700)
+
+        # Generate a much larger qrcode
+        qrcode = barcode_tags.qrcode(
+            "hello_world",
+            version=2,
+            box_size=50,
+            format='BMP',
+        )
+        self.assertTrue(type(qrcode) == str)
+        self.assertTrue(qrcode.startswith('data:image/bmp;'))
+        self.assertEqual(len(qrcode), 309720)
+
 
 class ReportTest(InvenTreeAPITestCase):
     """Base class for unit testing reporting models"""

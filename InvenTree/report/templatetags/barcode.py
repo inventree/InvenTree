@@ -31,6 +31,7 @@ def qrcode(data, **kwargs):
     kwargs:
         fill_color: Fill color (default = black)
         back_color: Background color (default = white)
+        version: Default = 1
         box_size: Default = 20
         border: Default = 1
 
@@ -42,6 +43,7 @@ def qrcode(data, **kwargs):
     params = dict(
         box_size=20,
         border=1,
+        version=1,
     )
 
     fill_color = kwargs.pop('fill_color', 'black')
