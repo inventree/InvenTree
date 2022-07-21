@@ -82,6 +82,18 @@ class ReportTagTest(TestCase):
         img = report_tags.uploaded_image('part/images/test.jpg')
         self.assertEqual(img, f'file://{img_path}test.jpg')
 
+    def test_part_image(self):
+        """Unit tests for the 'part_image' tag"""
+
+        with self.assertRaises(TypeError):
+            report_tags.part_image(None)
+
+    def test_company_image(self):
+        """Unit tests for the 'company_image' tag"""
+
+        with self.assertRaises(TypeError):
+            report_tags.company_image(None)
+
 
 class ReportTest(InvenTreeAPITestCase):
     """Base class for unit testing reporting models"""
