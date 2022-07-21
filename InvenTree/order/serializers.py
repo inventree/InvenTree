@@ -912,7 +912,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
 class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
     """Serializer for the SalesOrderShipment class."""
 
-    allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
+    allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True, order_detail=True)
 
     order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
 
