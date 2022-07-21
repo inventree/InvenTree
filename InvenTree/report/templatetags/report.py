@@ -32,33 +32,39 @@ def asset(filename):
 
 
 @register.simple_tag()
-def part_image(part):
-    """Return a fully-qualified path for a part image."""
+def uploaded_image(filename):
+    """Return a fully-qualified path for an 'uploaded' image.
+
+    Arguments:
+        filename: The filename of the image relative to the MEDIA_ROOT directory
+
+    Returns:
+        A fully qualified path to the image
+    """
+
     # If in debug mode, return URL to the image, not a local file
     debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
-    if type(part) is Part:
-        img = part.image.name
-
-    elif type(part) is StockItem:
-        img = part.part.image.name
-
-    else:
-        img = ''
+    # Check if the file exists
+    try:
+        full_path = os.path.join(settings.MEDIA_ROOT, filename)
+        full_path = os.path.abspath(full_path)
+        exists = os.path.exists(full_path) and os.path.isfile(full_path)
+    except Exception:
+        exists = False
 
     if debug_mode:
-        if img:
-            return os.path.join(settings.MEDIA_URL, img)
+        # In debug mode, return a web path
+        if exists:
+            return os.path.join(settings.MEDIA_URL, filename)
         else:
             return os.path.join(settings.STATIC_URL, 'img', 'blank_image.png')
-
     else:
-        path = os.path.join(settings.MEDIA_ROOT, img)
-        path = os.path.abspath(path)
-
-        if not os.path.exists(path) or not os.path.isfile(path):
-            # Image does not exist
-            # Return the 'blank' image
+        # Return file path
+        if exists:
+            path = os.path.join(settings.MEDIA_ROOT, filename)
+            path = os.path.abspath(path)
+        else:
             path = os.path.join(settings.STATIC_ROOT, 'img', 'blank_image.png')
             path = os.path.abspath(path)
 
@@ -66,33 +72,28 @@ def part_image(part):
 
 
 @register.simple_tag()
+def part_image(part):
+    """Return a fully-qualified path for a part image."""
+
+    if type(part) is Part:
+        img = part.image.name
+
+    elif type(part) is StockItem:
+        img = part.part.image.name
+
+    return uploaded_image(img)
+
+
+@register.simple_tag()
 def company_image(company):
     """Return a fully-qualified path for a company image."""
-    # If in debug mode, return the URL to the image, not a local file
-    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
     if type(company) is Company:
         img = company.image.name
     else:
         img = ''
 
-    if debug_mode:
-        if img:
-            return os.path.join(settings.MEDIA_URL, img)
-        else:
-            return os.path.join(settings.STATIC_URL, 'img', 'blank_image.png')
-
-    else:
-        path = os.path.join(settings.MEDIA_ROOT, img)
-        path = os.path.abspath(path)
-
-        if not os.path.exists(path) or not os.path.isfile(path):
-            # Image does not exist
-            # Return the 'blank' image
-            path = os.path.join(settings.STATIC_ROOT, 'img', 'blank_image.png')
-            path = os.path.abspath(path)
-
-        return f"file://{path}"
+    return uploaded_image(img)
 
 
 @register.simple_tag()
