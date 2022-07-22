@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-21 12:11+0000\n"
-"PO-Revision-Date: 2022-07-21 19:56\n"
+"POT-Creation-Date: 2022-07-22 07:34+0000\n"
+"PO-Revision-Date: 2022-07-22 19:58\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -35,7 +35,7 @@ msgstr "Zadejte datum"
 #: order/templates/order/po_sidebar.html:11
 #: order/templates/order/so_sidebar.html:17
 #: part/templates/part/part_sidebar.html:59
-#: report/templates/report/inventree_build_order_base.html:173
+#: report/templates/report/inventree_build_order_base.html:172
 #: stock/models.py:1993 stock/models.py:2101 stock/serializers.py:328
 #: stock/serializers.py:457 stock/serializers.py:538 stock/serializers.py:811
 #: stock/serializers.py:910 stock/serializers.py:1042
@@ -89,44 +89,44 @@ msgstr "Potvrzení emailové adresy"
 msgid "You must type the same email each time."
 msgstr "Pokaždé musíte zadat stejný email."
 
-#: InvenTree/helpers.py:404
+#: InvenTree/helpers.py:428
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
 msgstr "Duplicitní výrobní číslo: {sn}"
 
-#: InvenTree/helpers.py:411 order/models.py:320 order/models.py:472
+#: InvenTree/helpers.py:435 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
 msgstr "Vyplněno neplatné množství"
 
-#: InvenTree/helpers.py:414
+#: InvenTree/helpers.py:438
 msgid "Empty serial number string"
 msgstr "Nevyplněné výrobní číslo"
 
-#: InvenTree/helpers.py:446
+#: InvenTree/helpers.py:470
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:449
+#: InvenTree/helpers.py:473
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Neplatná skupina: {g}"
 
-#: InvenTree/helpers.py:477
+#: InvenTree/helpers.py:501
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:485
+#: InvenTree/helpers.py:509
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr "Neplatná/nevyplněná skupina {group}"
 
-#: InvenTree/helpers.py:491
+#: InvenTree/helpers.py:515
 msgid "No serial numbers found"
 msgstr "Nenalezena žádná výrobní čísla"
 
-#: InvenTree/helpers.py:495
+#: InvenTree/helpers.py:519
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr ""
@@ -176,7 +176,7 @@ msgstr "Vyberte soubor k přiložení"
 #: InvenTree/models.py:402 company/models.py:124 company/models.py:276
 #: company/models.py:510 order/models.py:84 order/models.py:1245
 #: part/models.py:795
-#: report/templates/report/inventree_build_order_base.html:165
+#: report/templates/report/inventree_build_order_base.html:164
 #: templates/js/translated/company.js:656
 #: templates/js/translated/company.js:948 templates/js/translated/order.js:2719
 #: templates/js/translated/part.js:1510
@@ -262,8 +262,8 @@ msgstr "Název"
 #: company/templates/company/supplier_part.html:87 label/models.py:108
 #: order/models.py:82 part/models.py:762 part/templates/part/category.html:74
 #: part/templates/part/part_base.html:167 report/models.py:164
-#: report/models.py:507 report/models.py:548
-#: report/templates/report/inventree_build_order_base.html:118
+#: report/models.py:507 report/models.py:552
+#: report/templates/report/inventree_build_order_base.html:117
 #: stock/templates/stock/location.html:103
 #: templates/InvenTree/settings/plugin_settings.html:33
 #: templates/js/translated/bom.js:554 templates/js/translated/bom.js:848
@@ -671,7 +671,7 @@ msgstr ""
 
 #: build/models.py:110 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
-#: report/templates/report/inventree_build_order_base.html:106
+#: report/templates/report/inventree_build_order_base.html:105
 #: templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:731
@@ -727,7 +727,7 @@ msgstr ""
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
-#: report/templates/report/inventree_build_order_base.html:110
+#: report/templates/report/inventree_build_order_base.html:109
 #: report/templates/report/inventree_po_report.html:89
 #: report/templates/report/inventree_so_report.html:90 stock/serializers.py:87
 #: stock/serializers.py:491 templates/InvenTree/search.html:80
@@ -850,7 +850,7 @@ msgstr ""
 #: build/templates/build/detail.html:115 order/models.py:100
 #: order/templates/order/order_base.html:176
 #: order/templates/order/sales_order_base.html:183 part/models.py:935
-#: report/templates/report/inventree_build_order_base.html:159
+#: report/templates/report/inventree_build_order_base.html:158
 #: templates/js/translated/build.js:2533 templates/js/translated/order.js:1731
 msgid "Responsible"
 msgstr ""
@@ -956,7 +956,7 @@ msgstr ""
 #: part/templates/part/detail.html:937 part/templates/part/detail.html:1023
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
-#: report/templates/report/inventree_build_order_base.html:114
+#: report/templates/report/inventree_build_order_base.html:113
 #: report/templates/report/inventree_po_report.html:90
 #: report/templates/report/inventree_so_report.html:91
 #: report/templates/report/inventree_test_report_base.html:81
@@ -1306,7 +1306,7 @@ msgstr ""
 #: build/templates/build/detail.html:131 order/models.py:910
 #: order/templates/order/order_base.html:162
 #: order/templates/order/sales_order_base.html:164
-#: report/templates/report/inventree_build_order_base.html:126
+#: report/templates/report/inventree_build_order_base.html:125
 #: templates/js/translated/build.js:2545 templates/js/translated/order.js:1718
 #: templates/js/translated/order.js:2028 templates/js/translated/order.js:2529
 #: templates/js/translated/order.js:3569 templates/js/translated/part.js:1038
@@ -1340,7 +1340,7 @@ msgstr ""
 #: order/models.py:1199 order/models.py:1330
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
-#: report/templates/report/inventree_build_order_base.html:136
+#: report/templates/report/inventree_build_order_base.html:135
 #: report/templates/report/inventree_so_report.html:77
 #: stock/templates/stock/item_base.html:370
 #: templates/email/overdue_sales_order.html:15
@@ -1350,7 +1350,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:108
-#: report/templates/report/inventree_build_order_base.html:153
+#: report/templates/report/inventree_build_order_base.html:152
 msgid "Issued By"
 msgstr ""
 
@@ -3975,7 +3975,7 @@ msgid "Incomplete"
 msgstr ""
 
 #: order/templates/order/order_base.html:155
-#: report/templates/report/inventree_build_order_base.html:122
+#: report/templates/report/inventree_build_order_base.html:121
 msgid "Issued"
 msgstr ""
 
@@ -5475,11 +5475,11 @@ msgstr ""
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:158
+#: part/templatetags/inventree_extras.py:157
 msgid "Unknown database"
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:193
+#: part/templatetags/inventree_extras.py:202
 #, python-brace-format
 msgid "{title} v{version}"
 msgstr ""
@@ -5783,19 +5783,19 @@ msgstr ""
 msgid "Snippet file description"
 msgstr ""
 
-#: report/models.py:544
+#: report/models.py:545
 msgid "Asset"
 msgstr ""
 
-#: report/models.py:545
+#: report/models.py:546
 msgid "Report asset file"
 msgstr ""
 
-#: report/models.py:548
+#: report/models.py:553
 msgid "Asset file description"
 msgstr ""
 
-#: report/templates/report/inventree_build_order_base.html:147
+#: report/templates/report/inventree_build_order_base.html:146
 msgid "Required For"
 msgstr ""
 
