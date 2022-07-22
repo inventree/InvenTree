@@ -17,10 +17,10 @@ from stdimage.models import StdImageField
 import common.models
 import common.settings
 import InvenTree.fields
+import InvenTree.helpers
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import getBlankImage, getBlankThumbnail, getMediaUrl
 from InvenTree.models import InvenTreeAttachment
 from InvenTree.status_codes import PurchaseOrderStatus
 
@@ -177,16 +177,16 @@ class Company(models.Model):
     def get_image_url(self):
         """Return the URL of the image for this company."""
         if self.image:
-            return getMediaUrl(self.image.url)
+            return InvenTree.helpers.getMediaUrl(self.image.url)
         else:
-            return getBlankImage()
+            return InvenTree.helpers.getBlankImage()
 
     def get_thumbnail_url(self):
         """Return the URL for the thumbnail image for this Company."""
         if self.image:
-            return getMediaUrl(self.image.thumbnail.url)
+            return InvenTree.helpers.getMediaUrl(self.image.thumbnail.url)
         else:
-            return getBlankThumbnail()
+            return InvenTree.helpers.getBlankThumbnail()
 
     @property
     def parts(self):

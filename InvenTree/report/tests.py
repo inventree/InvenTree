@@ -6,13 +6,140 @@ import shutil
 from django.conf import settings
 from django.core.cache import cache
 from django.http.response import StreamingHttpResponse
+from django.test import TestCase
 from django.urls import reverse
 
 import report.models as report_models
 from build.models import Build
 from common.models import InvenTreeSetting, InvenTreeUserSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
+from report.templatetags import barcode as barcode_tags
+from report.templatetags import report as report_tags
 from stock.models import StockItem, StockItemAttachment
+
+
+class ReportTagTest(TestCase):
+    """Unit tests for the report template tags"""
+
+    def debug_mode(self, value: bool):
+        """Enable or disable debug mode for reports"""
+        InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', value, change_user=None)
+
+    def test_asset(self):
+        """Tests for asset files"""
+
+        # Test that an error is raised if the file does not exist
+        for b in [True, False]:
+            self.debug_mode(b)
+
+            with self.assertRaises(FileNotFoundError):
+                report_tags.asset("bad_file.txt")
+
+        # Create an asset file
+        asset_dir = os.path.join(settings.MEDIA_ROOT, 'report', 'assets')
+        os.makedirs(asset_dir, exist_ok=True)
+        asset_path = os.path.join(asset_dir, 'test.txt')
+
+        with open(asset_path, 'w') as f:
+            f.write("dummy data")
+
+        self.debug_mode(True)
+        asset = report_tags.asset('test.txt')
+        self.assertEqual(asset, '/media/report/assets/test.txt')
+
+        self.debug_mode(False)
+        asset = report_tags.asset('test.txt')
+        self.assertEqual(asset, f'file://{asset_dir}/test.txt')
+
+    def test_uploaded_image(self):
+        """Tests for retrieving uploaded images"""
+
+        # Test for a missing image
+        for b in [True, False]:
+            self.debug_mode(b)
+
+            with self.assertRaises(FileNotFoundError):
+                report_tags.uploaded_image('/part/something/test.png', replace_missing=False)
+
+            img = report_tags.uploaded_image('/part/something/other.png')
+            self.assertTrue('blank_image.png' in img)
+
+        # Create a dummy image
+        img_path = 'part/images/'
+        img_path = os.path.join(settings.MEDIA_ROOT, img_path)
+        img_file = os.path.join(img_path, 'test.jpg')
+
+        os.makedirs(img_path, exist_ok=True)
+
+        with open(img_file, 'w') as f:
+            f.write("dummy data")
+
+        # Test in debug mode
+        self.debug_mode(True)
+        img = report_tags.uploaded_image('part/images/test.jpg')
+        self.assertEqual(img, '/media/part/images/test.jpg')
+
+        self.debug_mode(False)
+        img = report_tags.uploaded_image('part/images/test.jpg')
+        self.assertEqual(img, f'file://{img_path}test.jpg')
+
+    def test_part_image(self):
+        """Unit tests for the 'part_image' tag"""
+
+        with self.assertRaises(TypeError):
+            report_tags.part_image(None)
+
+    def test_company_image(self):
+        """Unit tests for the 'company_image' tag"""
+
+        with self.assertRaises(TypeError):
+            report_tags.company_image(None)
+
+    def test_logo_image(self):
+        """Unit tests for the 'logo_image' tag"""
+
+        # By default, should return the core InvenTree logo
+        for b in [True, False]:
+            self.debug_mode(b)
+            logo = report_tags.logo_image()
+            self.assertIn('inventree.png', logo)
+
+
+class BarcodeTagTest(TestCase):
+    """Unit tests for the barcode template tags"""
+
+    def test_barcode(self):
+        """Test the barcode generation tag"""
+
+        barcode = barcode_tags.barcode("12345")
+
+        self.assertTrue(type(barcode) == str)
+        self.assertTrue(barcode.startswith('data:image/png;'))
+
+        # Try with a different format
+        barcode = barcode_tags.barcode('99999', format='BMP')
+        self.assertTrue(type(barcode) == str)
+        self.assertTrue(barcode.startswith('data:image/bmp;'))
+
+    def test_qrcode(self):
+        """Test the qrcode generation tag"""
+
+        # Test with default settings
+        qrcode = barcode_tags.qrcode("hello world")
+        self.assertTrue(type(qrcode) == str)
+        self.assertTrue(qrcode.startswith('data:image/png;'))
+        self.assertEqual(len(qrcode), 700)
+
+        # Generate a much larger qrcode
+        qrcode = barcode_tags.qrcode(
+            "hello_world",
+            version=2,
+            box_size=50,
+            format='BMP',
+        )
+        self.assertTrue(type(qrcode) == str)
+        self.assertTrue(qrcode.startswith('data:image/bmp;'))
+        self.assertEqual(len(qrcode), 309720)
 
 
 class ReportTest(InvenTreeAPITestCase):
