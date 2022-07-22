@@ -134,7 +134,7 @@ def company_image(company):
 
 
 @register.simple_tag()
-def logo_image():
+def logo_image(**kwargs):
     """Return a fully-qualified path for the logo image.
 
     - If a custom logo has been provided, return a path to that logo
@@ -144,7 +144,7 @@ def logo_image():
     # If in debug mode, return URL to the image, not a local file
     debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
-    return InvenTree.helpers.getLogoImage(as_file=not debug_mode)
+    return InvenTree.helpers.getLogoImage(as_file=not debug_mode, **kwargs)
 
 
 @register.simple_tag()
