@@ -9,13 +9,14 @@ jobs:
   tweet:
     runs-on: ubuntu-latest
     steps:
-      - uses: ethomson/send-tweet-action@v1
+      - uses: Eomm/why-don-t-you-tweet@v1
         with:
-          status: "InvenTree release ${{ github.event.release.tag_name }} is out now! Release notes: ${{ github.event.release.html_url }} #opensource #inventree"
-          consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
-          consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
-          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
-          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          tweet-message: "InvenTree release ${{ github.event.release.tag_name }} is out now! Release notes: ${{ github.event.release.html_url }} #opensource #inventree"
+        env:
+          TWITTER_CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+          TWITTER_CONSUMER_API_SECRET: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
 
   reddit:
       runs-on: ubuntu-latest
