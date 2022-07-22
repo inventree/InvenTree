@@ -535,9 +535,6 @@ class ReportAsset(models.Model):
     and can be loaded in a template using the {% report_asset <filename> %} tag.
     """
 
-    # String keys used for uniquely indentifying particular assets
-    ASSET_COMPANY_LOGO = "COMPANY_LOGO"
-
     def __str__(self):
         """String representation of a ReportAsset instance"""
         return os.path.basename(self.asset.name)

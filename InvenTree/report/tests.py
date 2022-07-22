@@ -9,6 +9,8 @@ from django.http.response import StreamingHttpResponse
 from django.test import TestCase
 from django.urls import reverse
 
+from PIL import Image
+
 import report.models as report_models
 from build.models import Build
 from common.models import InvenTreeSetting, InvenTreeUserSetting
@@ -74,8 +76,16 @@ class ReportTagTest(TestCase):
         with open(img_file, 'w') as f:
             f.write("dummy data")
 
-        # Test in debug mode
+        # Test in debug mode. Returns blank image as dummy file is not a valid image
         self.debug_mode(True)
+        img = report_tags.uploaded_image('part/images/test.jpg')
+        self.assertEqual(img, '/static/img/blank_image.png')
+
+        # Now, let's create a proper image
+        img = Image.new('RGB', (128, 128), color='RED')
+        img.save(img_file)
+
+        # Try again
         img = report_tags.uploaded_image('part/images/test.jpg')
         self.assertEqual(img, '/media/part/images/test.jpg')
 

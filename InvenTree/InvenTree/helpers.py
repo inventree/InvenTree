@@ -106,11 +106,11 @@ def getBlankThumbnail():
     return getStaticUrl("img/blank_image.thumbnail.png")
 
 
-def getLogoImage(as_file=False):
+def getLogoImage(as_file=False, custom=True):
     """Return the InvenTree logo image, or a custom logo if available."""
 
     """Return the path to the logo-file."""
-    if settings.CUSTOM_LOGO:
+    if custom and settings.CUSTOM_LOGO:
 
         if as_file:
             return f"file://{default_storage.path(settings.CUSTOM_LOGO)}"
