@@ -16,6 +16,8 @@ from django_ical.views import ICalFeed
 
 from common.files import FileManager
 from common.forms import MatchFieldForm, UploadFileForm
+from common.models import InvenTreeSetting
+from common.settings import settings
 from common.views import FileManagementFormView
 from company.models import SupplierPart  # ManufacturerPart
 from InvenTree.helpers import DownloadFile
@@ -414,8 +416,14 @@ class PurchaseOrderCalendarExport(ICalFeed):
     -
     """
 
+    # Parameters for the whole calendar
+    title = f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} Purchase Orders'
+    product_id = f'//{InvenTreeSetting.get_setting("INVENTREE_BASE_URL").replace("http://","").replace("https://","")}//{title}//EN'
+    timezone = settings.TIME_ZONE
+
     def __init__(self, *args, **kwargs):
         """Initialization routine for the calendar exporter"""
+
         # Send to ICalFeed without arguments
         super().__init__()
 
@@ -446,3 +454,11 @@ class PurchaseOrderCalendarExport(ICalFeed):
     def item_created(self, item):
         """Use creation date of PO as creation date of event."""
         return item.creation_date
+
+    def item_class(self, item):
+        """Set item class to PUBLIC"""
+        return 'PUBLIC'
+
+    def item_guid(self, item):
+        """Return globally unique UID for event"""
+        return f'po_{item.pk}_{item.reference.replace(" ","-")}@{InvenTreeSetting.get_setting("INVENTREE_BASE_URL").replace("http://","").replace("https://","")}'
