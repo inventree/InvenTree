@@ -1,5 +1,6 @@
 """Custom template tags for report generation."""
 
+import logging
 import os
 
 from django import template
@@ -12,6 +13,9 @@ from company.models import Company
 from part.models import Part
 
 register = template.Library()
+
+
+logger = logging.getLogger('inventree')
 
 
 @register.simple_tag()
@@ -64,6 +68,10 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
             exists = os.path.exists(full_path) and os.path.isfile(full_path)
         except Exception:
             exists = False
+
+    if exists and not InvenTree.helpers.TestIfImage(full_path):
+        logger.warning(f"File '{filename}' is not a valid image")
+        exists = False
 
     if not exists and not replace_missing:
         raise FileNotFoundError(f"Image file '{filename}' not found")
