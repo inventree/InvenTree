@@ -969,5 +969,5 @@ CUSTOM_LOGO = get_setting(
 
 # check that the logo-file exsists in media
 if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):  # pragma: no cover
+    logger.warning(f"The custom logo file '{CUSTOM_LOGO}' could not be found in the default media storage")
     CUSTOM_LOGO = False
-    logger.warning("The custom logo file could not be found in the default media storage")

@@ -2,13 +2,16 @@
 
 import io
 import json
+import logging
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
 from wsgiref.util import FileWrapper
 
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.exceptions import FieldError, ValidationError
+from django.core.files.storage import default_storage
 from django.http import StreamingHttpResponse
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
@@ -24,6 +27,8 @@ from common.settings import currency_code_default
 
 from .api_tester import UserMixin
 from .settings import MEDIA_URL, STATIC_URL
+
+logger = logging.getLogger('inventree')
 
 
 def getSetting(key, backup_value=None):
@@ -82,6 +87,15 @@ def construct_absolute_url(*arg):
     return url
 
 
+def TestIfImage(img):
+    """Test if an image file is indeed an image."""
+    try:
+        Image.open(img).verify()
+        return True
+    except Exception:
+        return False
+
+
 def getBlankImage():
     """Return the qualified path for the 'blank image' placeholder."""
     return getStaticUrl("img/blank_image.png")
@@ -92,13 +106,23 @@ def getBlankThumbnail():
     return getStaticUrl("img/blank_image.thumbnail.png")
 
 
-def TestIfImage(img):
-    """Test if an image file is indeed an image."""
-    try:
-        Image.open(img).verify()
-        return True
-    except Exception:
-        return False
+def getLogoImage(as_file=False, custom=True):
+    """Return the InvenTree logo image, or a custom logo if available."""
+
+    """Return the path to the logo-file."""
+    if custom and settings.CUSTOM_LOGO:
+
+        if as_file:
+            return f"file://{default_storage.path(settings.CUSTOM_LOGO)}"
+        else:
+            return default_storage.url(settings.CUSTOM_LOGO)
+
+    else:
+        if as_file:
+            path = os.path.join(settings.STATIC_ROOT, 'img/inventree.png')
+            return f"file://{path}"
+        else:
+            return getStaticUrl('img/inventree.png')
 
 
 def TestIfImageURL(url):
