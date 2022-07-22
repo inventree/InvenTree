@@ -12,6 +12,8 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
+from django_ical.views import ICalFeed
+
 from common.files import FileManager
 from common.forms import MatchFieldForm, UploadFileForm
 from common.views import FileManagementFormView
@@ -403,3 +405,44 @@ class LineItemPricing(PartPricing):
 
         # let the normal pricing view run
         return super().post(request, *args, **kwargs)
+
+
+class PurchaseOrderCalendarExport(ICalFeed):
+    """Calendar export for Purchase Orders
+
+    Optional parameters:
+    -
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the calendar exporter"""
+        # Send to ICalFeed without arguments
+        super().__init__()
+
+    def items(self):
+        """Return a list of PurchaseOrders.
+
+        Filters:
+        - Only return those which have a target_date set
+        """
+        return PurchaseOrder.objects.filter(target_date__isnull=False)
+
+    def item_title(self, item):
+        """Set the event title to the purchase order reference"""
+        return item.reference
+
+    def item_description(self, item):
+        """Set the event description"""
+        return item.description
+
+    def item_start_datetime(self, item):
+        """Set event start to target date. Goal is all-day event."""
+        return item.target_date
+
+    def item_end_datetime(self, item):
+        """Set event end to target date. Goal is all-day event."""
+        return item.target_date
+
+    def item_created(self, item):
+        """Use creation date of PO as creation date of event."""
+        return item.creation_date
