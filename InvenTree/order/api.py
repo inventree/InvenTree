@@ -934,6 +934,7 @@ class SalesOrderAllocationList(ListAPI):
             kwargs['order_detail'] = str2bool(params.get('order_detail', False))
             kwargs['location_detail'] = str2bool(params.get('location_detail', False))
             kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
+            kwargs['line_detail'] = str2bool(params.get('line_detail', False))
         except AttributeError:
             pass
 

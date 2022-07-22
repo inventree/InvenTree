@@ -731,6 +731,44 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
         ]
 
 
+class SalesOrderLineItemMinimalSerializer(InvenTreeModelSerializer):
+    """Serializer for a SalesOrderLineItem object, minimal version."""
+
+    def __init__(self, *args, **kwargs):
+        """Initializion routine for the serializer"""
+
+        super().__init__(*args, **kwargs)
+
+    # Annotated fields
+    quantity = InvenTreeDecimalField()
+
+    sale_price = InvenTreeMoneySerializer(
+        allow_null=True
+    )
+
+    sale_price_string = serializers.CharField(source='sale_price', read_only=True)
+
+    sale_price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        help_text=_('Sale price currency'),
+    )
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.SalesOrderLineItem
+
+        fields = [
+            'pk',
+            'quantity',
+            'reference',
+            'notes',
+            'sale_price',
+            'sale_price_currency',
+            'sale_price_string',
+        ]
+
+
 class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     """Serializer for the SalesOrderAllocation model.
 
@@ -749,7 +787,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     item_detail = stock.serializers.StockItemSerializer(source='item', many=False, read_only=True)
     location_detail = stock.serializers.LocationSerializer(source='item.location', many=False, read_only=True)
     customer_detail = CompanyBriefSerializer(source='line.order.customer', many=False, read_only=True)
-
+    line_detail = SalesOrderLineItemMinimalSerializer(source='line', read_only=True, many=False)
     shipment_date = serializers.DateField(source='shipment.shipment_date', read_only=True)
 
     def __init__(self, *args, **kwargs):
@@ -759,6 +797,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         item_detail = kwargs.pop('item_detail', True)
         location_detail = kwargs.pop('location_detail', False)
         customer_detail = kwargs.pop('customer_detail', False)
+        line_detail = kwargs.pop('line_detail', False)
 
         super().__init__(*args, **kwargs)
 
@@ -777,6 +816,9 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         if not customer_detail:
             self.fields.pop('customer_detail')
 
+        if not line_detail:
+            self.fields.pop('line_detail')
+
     class Meta:
         """Metaclass options."""
 
@@ -785,6 +827,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'line',
+            'line_detail',
             'customer_detail',
             'serial',
             'quantity',
@@ -912,7 +955,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
 class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
     """Serializer for the SalesOrderShipment class."""
 
-    allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True, order_detail=True)
+    allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True, line_detail=True)
 
     order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
 
@@ -981,6 +1024,10 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
 
         # Extract shipping date (defaults to today's date)
         shipment_date = data.get('shipment_date', datetime.now())
+        if shipment_date is None:
+            # Shipment date should not be None - check above only
+            # checks if shipment_date exists in data
+            shipment_date = datetime.now()
 
         shipment.complete_shipment(
             user,
