@@ -511,6 +511,19 @@ def test(c, database=None):
     manage(c, 'test', pty=True)
 
 
+@task(pre=[update])
+def setup_test(c):
+    """Setup a testing enviroment."""
+    # Remove old data directory
+    c.run('rm inventree-data -r')
+
+    # Get test data
+    c.run('git clone https://github.com/inventree/demo-dataset inventree-data')
+
+    # Load data
+    import_records(c, filename='inventree-data/inventree_data.json', clear=True)
+
+
 @task
 def coverage(c):
     """Run code-coverage of the InvenTree codebase, using the 'coverage' code-analysis tools.

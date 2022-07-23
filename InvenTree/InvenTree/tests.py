@@ -240,6 +240,17 @@ class TestHelpers(TestCase):
         self.assertEqual(helpers.decimal2string(Decimal('1.2345000')), '1.2345')
         self.assertEqual(helpers.decimal2string('test'), 'test')
 
+    def test_logo_image(self):
+        """Test for retrieving logo image"""
+
+        # By default, there is no custom logo provided
+
+        logo = helpers.getLogoImage()
+        self.assertEqual(logo, '/static/img/inventree.png')
+
+        logo = helpers.getLogoImage(as_file=True)
+        self.assertEqual(logo, f'file://{settings.STATIC_ROOT}/img/inventree.png')
+
 
 class TestQuoteWrap(TestCase):
     """Tests for string wrapping."""

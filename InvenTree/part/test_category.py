@@ -1,6 +1,5 @@
 """Unit tests for the PartCategory model"""
 
-from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from .models import Part, PartCategory, PartParameter, PartParameterTemplate
@@ -108,19 +107,6 @@ class CategoryTest(TestCase):
                 for item in part_infos:
                     part_parameter.pop(item)
                 self.assertEqual(len(part_parameter), 1)
-
-    def test_invalid_name(self):
-        """Test that an illegal character is prohibited in a category name"""
-        cat = PartCategory(name='test/with/illegal/chars', description='Test category', parent=None)
-
-        with self.assertRaises(ValidationError) as err:
-            cat.full_clean()
-            cat.save()  # pragma: no cover
-
-        self.assertIn('Illegal character in name', str(err.exception.error_dict.get('name')))
-
-        cat.name = 'good name'
-        cat.save()
 
     def test_delete(self):
         """Test that category deletion moves the children properly."""
