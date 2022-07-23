@@ -199,18 +199,12 @@ class PluginsRegistry:
         for plugin in settings.PLUGIN_DIRS:
 
             parent_path = None
+            parent_obj = pathlib.Path(plugin)
 
             # If a "path" is provided, some special handling is required
-            if os.path.sep in plugin:
-                path_split = [el for el in plugin.split(os.path.sep)]
-
-                if len(path_split) > 0:
-                    parent_path = os.path.sep.join(path_split[:-1])
-
-                    if not parent_path.endswith(os.path.sep):
-                        parent_path += os.path.sep
-
-                    plugin = path_split[-1]
+            if parent_obj.name is not plugin and len(parent_obj.parts) > 1:
+                parent_path = parent_obj.parent
+                plugin = parent_obj.name
 
             modules = get_plugins(importlib.import_module(plugin), InvenTreePlugin, path=parent_path)
 

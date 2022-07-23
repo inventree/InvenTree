@@ -15,6 +15,7 @@ import random
 import socket
 import string
 import sys
+from pathlib import Path
 
 import django.conf.locale
 from django.core.files.storage import default_storage
@@ -947,32 +948,29 @@ if not TESTING:
     # optionally load custom plugin directory
     if CUSTOM_PLUGIN_DIRS is not None:
         # Allow multiple plugin directories to be specified
-        for pd in CUSTOM_PLUGIN_DIRS.split(','):
-            pd = pd.strip()
+        for pd_text in CUSTOM_PLUGIN_DIRS.split(','):
+            pd = Path(pd_text.strip()).absolute()
 
             # Attempt to create the directory if it does not already exist
-            if not os.path.exists(pd):
+            if not pd.exists():
                 try:
-                    os.makedirs(pd, exist_ok=True)
+                    pd.mkdir(exist_ok=True)
                 except Exception:
                     logger.error(f"Could not create plugin directory '{pd}'")
                     continue
 
             # Ensure the directory has an __init__.py file
-            init_filename = os.path.join(pd, '__init__.py')
+            init_filename = pd.joinpath('__init__.py')
 
-            if not os.path.exists(init_filename):
+            if not init_filename.exists():
                 try:
-                    with open(init_filename, 'w') as init_file:
-                        init_file.write("# InvenTree plugin directory\n")
+                    init_filename.write_text("# InvenTree plugin directory\n")
                 except Exception:
                     logger.error(f"Could not create file '{init_filename}'")
                     continue
 
-            if os.path.exists(pd) and os.path.isdir(pd):
+            if pd.exists() and pd.is_dir():
                 # By this point, we have confirmed that the directory at least exists
-                pd = os.path.abspath(pd)
-
                 logger.info(f"Added plugin directory: '{pd}'")
                 PLUGIN_DIRS.append(pd)
 
