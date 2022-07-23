@@ -15,7 +15,6 @@ import random
 import socket
 import string
 import sys
-from pathlib import Path
 
 import django.conf.locale
 from django.core.files.storage import default_storage
@@ -935,48 +934,6 @@ PLUGINS_ENABLED = _is_true(get_setting(
 ))
 
 PLUGIN_FILE = get_plugin_file()
-
-# Plugin Directories (local plugins will be loaded from these directories)
-PLUGIN_DIRS = ['plugin.builtin', ]
-
-CUSTOM_PLUGIN_DIRS = os.getenv('INVENTREE_PLUGIN_DIR', None)
-
-if not TESTING:
-    # load local plugin directory
-    PLUGIN_DIRS.append('plugins')  # pragma: no cover
-
-    # optionally load custom plugin directory
-    if CUSTOM_PLUGIN_DIRS is not None:
-        # Allow multiple plugin directories to be specified
-        for pd_text in CUSTOM_PLUGIN_DIRS.split(','):
-            pd = Path(pd_text.strip()).absolute()
-
-            # Attempt to create the directory if it does not already exist
-            if not pd.exists():
-                try:
-                    pd.mkdir(exist_ok=True)
-                except Exception:
-                    logger.error(f"Could not create plugin directory '{pd}'")
-                    continue
-
-            # Ensure the directory has an __init__.py file
-            init_filename = pd.joinpath('__init__.py')
-
-            if not init_filename.exists():
-                try:
-                    init_filename.write_text("# InvenTree plugin directory\n")
-                except Exception:
-                    logger.error(f"Could not create file '{init_filename}'")
-                    continue
-
-            if pd.exists() and pd.is_dir():
-                # By this point, we have confirmed that the directory at least exists
-                logger.info(f"Added plugin directory: '{pd}'")
-                PLUGIN_DIRS.append(pd)
-
-if DEBUG or TESTING:
-    # load samples in debug mode
-    PLUGIN_DIRS.append('plugin.samples')
 
 # Plugin test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
