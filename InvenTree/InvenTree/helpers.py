@@ -5,6 +5,7 @@ import json
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 from wsgiref.util import FileWrapper
 
 from django.contrib.auth.models import Permission
@@ -571,11 +572,8 @@ def addUserPermissions(user, permissions):
 
 def getMigrationFileNames(app):
     """Return a list of all migration filenames for provided app."""
-    local_dir = os.path.dirname(os.path.abspath(__file__))
-
-    migration_dir = os.path.join(local_dir, '..', app, 'migrations')
-
-    files = os.listdir(migration_dir)
+    local_dir = Path(__file__).parent
+    files = local_dir.joinpath('..', app, 'migrations').iterdir()
 
     # Regex pattern for migration files
     pattern = r"^[\d]+_.*\.py$"

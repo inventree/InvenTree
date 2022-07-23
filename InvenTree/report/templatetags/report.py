@@ -25,8 +25,7 @@ def asset(filename):
         path = os.path.join(settings.MEDIA_URL, 'report', 'assets', filename)
     else:
 
-        path = os.path.join(settings.MEDIA_ROOT, 'report', 'assets', filename)
-        path = os.path.abspath(path)
+        path = settings.MEDIA_ROOT.joinpath('report', 'assets', filename).absolute()
 
         return f"file://{path}"
 
@@ -53,14 +52,12 @@ def part_image(part):
             return os.path.join(settings.STATIC_URL, 'img', 'blank_image.png')
 
     else:
-        path = os.path.join(settings.MEDIA_ROOT, img)
-        path = os.path.abspath(path)
+        path = settings.MEDIA_ROOT.joinpath(img).absolute()
 
-        if not os.path.exists(path) or not os.path.isfile(path):
+        if not path.exists() or not path.is_file():
             # Image does not exist
             # Return the 'blank' image
-            path = os.path.join(settings.STATIC_ROOT, 'img', 'blank_image.png')
-            path = os.path.abspath(path)
+            path = settings.STATIC_ROOT.joinpath('img', 'blank_image.png').absolute()
 
         return f"file://{path}"
 
@@ -83,14 +80,12 @@ def company_image(company):
             return os.path.join(settings.STATIC_URL, 'img', 'blank_image.png')
 
     else:
-        path = os.path.join(settings.MEDIA_ROOT, img)
-        path = os.path.abspath(path)
+        path = settings.MEDIA_ROOT.joinpath(img).absolute()
 
-        if not os.path.exists(path) or not os.path.isfile(path):
+        if not path.exists() or not path.is_file():
             # Image does not exist
             # Return the 'blank' image
-            path = os.path.join(settings.STATIC_ROOT, 'img', 'blank_image.png')
-            path = os.path.abspath(path)
+            path = settings.STATIC_ROOT.joinpath('img', 'blank_image.png').absolute()
 
         return f"file://{path}"
 

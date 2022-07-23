@@ -5,6 +5,7 @@ import logging
 import os
 import shutil
 import warnings
+from pathlib import Path
 
 from django.apps import AppConfig
 from django.conf import settings
@@ -55,23 +56,21 @@ class LabelConfig(AppConfig):
         """Create database entries for the default StockItemLabel templates, if they do not already exist."""
         from .models import StockItemLabel
 
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
+        src_dir = Path(__file__).parent.joinpath(
             'templates',
             'label',
             'stockitem',
         )
 
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
+        dst_dir = settings.MEDIA_ROOT.joinpath(
             'label',
             'inventree',
             'stockitem',
         )
 
-        if not os.path.exists(dst_dir):
+        if not dst_dir.exists():
             logger.info(f"Creating required directory: '{dst_dir}'")
-            os.makedirs(dst_dir, exist_ok=True)
+            dst_dir.mkdir(exist_ok=True)
 
         labels = [
             {
@@ -93,12 +92,12 @@ class LabelConfig(AppConfig):
             )
 
             # Check if the file exists in the media directory
-            src_file = os.path.join(src_dir, label['file'])
-            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
+            src_file = src_dir.joinpath(label['file'])
+            dst_file = settings.MEDIA_ROOT.joinpath(filename)
 
             to_copy = False
 
-            if os.path.exists(dst_file):
+            if dst_file.exists():
                 # File already exists - let's see if it is the "same",
                 # or if we need to overwrite it with a newer copy!
 
@@ -134,23 +133,21 @@ class LabelConfig(AppConfig):
         """Create database entries for the default StockItemLocation templates, if they do not already exist."""
         from .models import StockLocationLabel
 
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
+        src_dir = Path(__file__).parent.joinpath(
             'templates',
             'label',
             'stocklocation',
         )
 
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
+        dst_dir = settings.MEDIA_ROOT.joinpath(
             'label',
             'inventree',
             'stocklocation',
         )
 
-        if not os.path.exists(dst_dir):
+        if dst_dir.exists():
             logger.info(f"Creating required directory: '{dst_dir}'")
-            os.makedirs(dst_dir, exist_ok=True)
+            dst_dir.mkdir(exist_ok=True)
 
         labels = [
             {
@@ -179,12 +176,12 @@ class LabelConfig(AppConfig):
             )
 
             # Check if the file exists in the media directory
-            src_file = os.path.join(src_dir, label['file'])
-            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
+            src_file = src_dir.joinpath(label['file'])
+            dst_file = settings.MEDIA_ROOT.joinpath(filename)
 
             to_copy = False
 
-            if os.path.exists(dst_file):
+            if dst_file.exists():
                 # File already exists - let's see if it is the "same",
                 # or if we need to overwrite it with a newer copy!
 
@@ -220,23 +217,21 @@ class LabelConfig(AppConfig):
         """Create database entries for the default PartLabel templates, if they do not already exist."""
         from .models import PartLabel
 
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
+        src_dir = Path(__file__).parent.joinpath(
             'templates',
             'label',
             'part',
         )
 
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
+        dst_dir = settings.MEDIA_ROOT.joinpath(
             'label',
             'inventree',
             'part',
         )
 
-        if not os.path.exists(dst_dir):
+        if not dst_dir.exists():
             logger.info(f"Creating required directory: '{dst_dir}'")
-            os.makedirs(dst_dir, exist_ok=True)
+            dst_dir.mkdir(exist_ok=True)
 
         labels = [
             {
@@ -264,12 +259,12 @@ class LabelConfig(AppConfig):
                 label['file']
             )
 
-            src_file = os.path.join(src_dir, label['file'])
-            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
+            src_file = src_dir.joinpath(label['file'])
+            dst_file = settings.MEDIA_ROOT.joinpath(filename)
 
             to_copy = False
 
-            if os.path.exists(dst_file):
+            if dst_file.exists():
                 # File already exists - let's see if it is the "same"
 
                 if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover

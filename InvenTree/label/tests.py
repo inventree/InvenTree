@@ -1,7 +1,5 @@
 """Tests for labels"""
 
-import os
-
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -42,26 +40,22 @@ class LabelTest(InvenTreeAPITestCase):
 
     def test_default_files(self):
         """Test that label files exist in the MEDIA directory."""
-        item_dir = os.path.join(
-            settings.MEDIA_ROOT,
+        item_dir = settings.MEDIA_ROOT.joinpath(
             'label',
             'inventree',
             'stockitem',
         )
 
-        files = os.listdir(item_dir)
-
+        files = item_dir.iterdir()
         self.assertTrue(len(files) > 0)
 
-        loc_dir = os.path.join(
-            settings.MEDIA_ROOT,
+        loc_dir = settings.MEDIA_ROOT.joinpath(
             'label',
             'inventree',
             'stocklocation',
         )
 
-        files = os.listdir(loc_dir)
-
+        files = loc_dir.iterdir()
         self.assertTrue(len(files) > 0)
 
     def test_filters(self):

@@ -3,6 +3,7 @@
 import logging
 import os
 import shutil
+from pathlib import Path
 
 from django.apps import AppConfig
 from django.conf import settings
@@ -25,23 +26,21 @@ class ReportConfig(AppConfig):
     def create_default_reports(self, model, reports):
         """Copy defualt report files across to the media directory."""
         # Source directory for report templates
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
+        src_dir = Path(__file__).parent.joinpath(
             'templates',
             'report',
         )
 
         # Destination directory
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
+        dst_dir = settings.MEDIA_ROOT.joinpath(
             'report',
             'inventree',
             model.getSubdir(),
         )
 
-        if not os.path.exists(dst_dir):
+        if not dst_dir.exists():
             logger.info(f"Creating missing directory: '{dst_dir}'")
-            os.makedirs(dst_dir, exist_ok=True)
+            dst_dir.mkdir(exist_ok=True)
 
         # Copy each report template across (if required)
         for report in reports:
@@ -54,10 +53,10 @@ class ReportConfig(AppConfig):
                 report['file'],
             )
 
-            src_file = os.path.join(src_dir, report['file'])
-            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
+            src_file = src_dir.joinpath(report['file'])
+            dst_file = settings.MEDIA_ROOT.joinpath(filename)
 
-            if not os.path.exists(dst_file):
+            if not dst_file.exists():
                 logger.info(f"Copying test report template '{dst_file}'")
                 shutil.copyfile(src_file, dst_file)
 
