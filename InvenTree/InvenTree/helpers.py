@@ -600,13 +600,13 @@ def getMigrationFileNames(app):
     files = local_dir.joinpath('..', app, 'migrations').iterdir()
 
     # Regex pattern for migration files
-    pattern = r"^[\d]+_.*\.py$"
+    regex = re.compile(r"^[\d]+_.*\.py$")
 
     migration_files = []
 
     for f in files:
-        if re.match(pattern, str(f)):
-            migration_files.append(f)
+        if regex.match(f.name):
+            migration_files.append(f.name)
 
     return migration_files
 
