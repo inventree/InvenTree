@@ -724,7 +724,7 @@ class TestSettings(helpers.InvenTreeTestCase):
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
-            self.assertIn('my_special_plugins.txt', config.get_plugin_file())
+            self.assertIn('my_special_plugins.txt', str(config.get_plugin_file()))
 
     def test_helpers_setting(self):
         """Test get_setting."""
