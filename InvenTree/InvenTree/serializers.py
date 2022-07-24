@@ -19,6 +19,7 @@ from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 
+from common.models import InvenTreeSetting
 from InvenTree.helpers import download_image_from_url
 
 
@@ -601,6 +602,9 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         - Attempt to download the image and store it against this object instance
         - Catches and re-throws any errors
         """
+
+        if not InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL'):
+            raise ValidationError(_("Downloading images from remote URL is not enabled"))
 
         try:
             self.remote_image_file = download_image_from_url(url)
