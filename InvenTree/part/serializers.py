@@ -463,6 +463,8 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
                 ContentFile(buffer.getvalue()),
             )
 
+        return self.instance
+
 
 class PartRelationSerializer(InvenTreeModelSerializer):
     """Serializer for a PartRelated model."""

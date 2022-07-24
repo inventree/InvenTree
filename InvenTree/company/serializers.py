@@ -123,6 +123,8 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
                 ContentFile(buffer.getvalue()),
             )
 
+        return self.instance
+
 
 class ManufacturerPartSerializer(InvenTreeModelSerializer):
     """Serializer for ManufacturerPart object."""
