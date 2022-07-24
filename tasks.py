@@ -5,6 +5,7 @@ import os
 import pathlib
 import re
 import sys
+from pathlib import Path
 
 from invoke import task
 
@@ -52,23 +53,23 @@ def content_excludes():
     return output
 
 
-def localDir():
+def localDir() -> Path:
     """Returns the directory of *THIS* file.
 
     Used to ensure that the various scripts always run
     in the correct directory.
     """
-    return os.path.dirname(os.path.abspath(__file__))
+    return Path(__file__).parent.resolve()
 
 
 def managePyDir():
     """Returns the directory of the manage.py file."""
-    return os.path.join(localDir(), 'InvenTree')
+    return localDir().joinpath('InvenTree')
 
 
 def managePyPath():
     """Return the path of the manage.py file."""
-    return os.path.join(managePyDir(), 'manage.py')
+    return managePyDir().joinpath('manage.py')
 
 
 def manage(c, cmd, pty: bool = False):
@@ -170,7 +171,7 @@ def translate_stats(c):
 
     The file generated from this is needed for the UI.
     """
-    path = os.path.join('InvenTree', 'script', 'translation_stats.py')
+    path = Path('InvenTree', 'script', 'translation_stats.py')
     c.run(f'python3 {path}')
 
 
@@ -251,12 +252,11 @@ def export_records(c, filename='data.json', overwrite=False, include_permissions
     """
     # Get an absolute path to the file
     if not os.path.isabs(filename):
-        filename = os.path.join(localDir(), filename)
-        filename = os.path.abspath(filename)
+        filename = localDir().joinpath(filename).resolve()
 
     print(f"Exporting database records to file '{filename}'")
 
-    if os.path.exists(filename) and overwrite is False:
+    if filename.exists() and overwrite is False:
         response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
         response = str(response).strip().lower()
 
@@ -305,7 +305,7 @@ def import_records(c, filename='data.json', clear=False):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
     if not os.path.isabs(filename):
-        filename = os.path.join(localDir(), filename)
+        filename = localDir().joinpath(filename)
 
     if not os.path.exists(filename):
         print(f"Error: File '{filename}' does not exist")
@@ -441,7 +441,7 @@ def test_translations(c):
     from django.conf import settings
 
     # setup django
-    base_path = os.getcwd()
+    base_path = Path.cwd()
     new_base_path = pathlib.Path('InvenTree').resolve()
     sys.path.append(str(new_base_path))
     os.chdir(new_base_path)
@@ -486,8 +486,8 @@ def test_translations(c):
                     file_new.write(line)
 
     # change out translation files
-    os.rename(file_path, str(file_path) + '_old')
-    os.rename(new_file_path, file_path)
+    file_path.rename(str(file_path) + '_old')
+    new_file_path.rename(file_path)
 
     # compile languages
     print("Compile languages ...")
