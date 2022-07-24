@@ -71,7 +71,7 @@ class ReportTagTest(TestCase):
         img_path = settings.MEDIA_ROOT.joinpath(img_path)
         img_file = img_path.joinpath('test.jpg')
 
-        img_path.mkdir(exist_ok=True)
+        img_path.mkdir(parents=True, exist_ok=True)
         img_file.write_text("dummy data")
 
         # Test in debug mode. Returns blank image as dummy file is not a valid image
@@ -190,7 +190,7 @@ class ReportTest(InvenTreeAPITestCase):
         dst_dir = settings.MEDIA_ROOT.joinpath(template_dir)
 
         if not dst_dir.exists():  # pragma: no cover
-            dst_dir.mkdir(exist_ok=True)
+            dst_dir.mkdir(parents=True, exist_ok=True)
 
         src_file = src_dir.joinpath(filename)
         dst_file = dst_dir.joinpath(filename)
