@@ -23,10 +23,10 @@ def get_config_file() -> Path:
     cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
 
     if cfg_filename:
-        cfg_filename = Path(cfg_filename.strip())
+        cfg_filename = Path(cfg_filename.strip()).resolve()
     else:
         # Config file is *not* specified - use the default
-        cfg_filename = base_dir.joinpath('config.yaml')
+        cfg_filename = base_dir.joinpath('config.yaml').resolve()
 
     if not cfg_filename.exists():
         print("InvenTree configuration file 'config.yaml' not found - creating default file")
