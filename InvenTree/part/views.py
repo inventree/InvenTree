@@ -21,9 +21,9 @@ from common.files import FileManager
 from common.models import InvenTreeSetting
 from common.views import FileManagementAjaxView, FileManagementFormView
 from company.models import SupplierPart
-from InvenTree.helpers import download_image_from_url, str2bool
-from InvenTree.views import (AjaxUpdateView, AjaxView, InvenTreeRoleMixin,
-                             QRCodeView)
+from InvenTree.helpers import str2bool
+from InvenTree.views import (AjaxUpdateView, AjaxView, ImageDownloadView,
+                             InvenTreeRoleMixin, QRCodeView)
 from order.models import PurchaseOrderLineItem
 from plugin.views import InvenTreePluginViewMixin
 from stock.models import StockItem, StockLocation
@@ -489,34 +489,11 @@ class PartQRCode(QRCodeView):
             return None
 
 
-class PartImageDownloadFromURL(AjaxUpdateView):
+class PartImageDownloadFromURL(ImageDownloadView):
     """View for downloading an image from a provided URL."""
 
     model = Part
-
-    ajax_template_name = 'image_download.html'
     form_class = part_forms.PartImageDownloadForm
-    ajax_form_title = _('Download Image')
-
-    def validate(self, part, form):
-        """Validate that the image data are correct.
-
-        - Try to download the image!
-        """
-        # First ensure that the normal validation routines pass
-        if not form.is_valid():
-            return
-
-        # We can now extract a valid URL from the form data
-        url = form.cleaned_data.get('url', None)
-
-        try:
-            self.image = download_image_from_url(url)
-        except Exception as exc:
-            form.add_error(
-                'url',
-                str(exc)
-            )
 
     def save(self, part, form, **kwargs):
         """Save the downloaded image to the part."""

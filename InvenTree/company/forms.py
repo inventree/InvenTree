@@ -3,10 +3,9 @@
 import django.forms
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.forms import HelperForm
 
-from .models import Company, SupplierPriceBreak
+from .models import Company
 
 
 class CompanyImageDownloadForm(HelperForm):
@@ -24,25 +23,4 @@ class CompanyImageDownloadForm(HelperForm):
         model = Company
         fields = [
             'url',
-        ]
-
-
-class EditPriceBreakForm(HelperForm):
-    """Form for creating / editing a supplier price break."""
-
-    quantity = RoundingDecimalFormField(
-        max_digits=10,
-        decimal_places=5,
-        label=_('Quantity'),
-        help_text=_('Price break quantity'),
-    )
-
-    class Meta:
-        """Metaclass options."""
-
-        model = SupplierPriceBreak
-        fields = [
-            'part',
-            'quantity',
-            'price',
         ]

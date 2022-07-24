@@ -7,8 +7,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-from InvenTree.helpers import download_image_from_url
-from InvenTree.views import AjaxUpdateView, InvenTreeRoleMixin
+from InvenTree.views import ImageDownloadView, InvenTreeRoleMixin
 from plugin.views import InvenTreePluginViewMixin
 
 from .forms import CompanyImageDownloadForm
@@ -101,30 +100,11 @@ class CompanyDetail(InvenTreePluginViewMixin, DetailView):
     permission_required = 'company.view_company'
 
 
-class CompanyImageDownloadFromURL(AjaxUpdateView):
+class CompanyImageDownloadFromURL(ImageDownloadView):
     """View for downloading an image from a provided URL."""
 
     model = Company
-    ajax_template_name = 'image_download.html'
     form_class = CompanyImageDownloadForm
-    ajax_form_title = _('Download Image')
-
-    def validate(self, company, form):
-        """Validate that the image data are correct."""
-        # First ensure that the normal validation routines pass
-        if not form.is_valid():
-            return
-
-        # We can now extract a valid URL from the form data
-        url = form.cleaned_data.get('url', None)
-
-        try:
-            self.image = download_image_from_url(url)
-        except Exception as exc:
-            form.add_error(
-                'url',
-                str(exc)
-            )
 
     def save(self, company, form, **kwargs):
         """Save the downloaded image to the company."""

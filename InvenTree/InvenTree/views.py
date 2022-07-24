@@ -34,6 +34,7 @@ from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
 from common.models import ColorTheme, InvenTreeSetting
 from common.settings import currency_code_default, currency_codes
+from InvenTree.helpers import download_image_from_url
 from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
@@ -764,8 +765,31 @@ class NotificationsView(TemplateView):
     template_name = "InvenTree/notifications/notifications.html"
 
 
-# Custom 2FA removal form to allow custom redirect URL
+class ImageDownloadView(AjaxUpdateView):
+    """Generic view class for downloading an image from a remote URL"""
 
+    ajax_template_name = "image_download.html"
+    ajax_form_title = _("Download Image")
+
+    def validate(self, instance, form):
+        """Validate that the image data are correct."""
+        # First ensure that the normal validation routines pass
+        if not form.is_valid():
+            return
+
+        # We can now extract a valid URL from the form data
+        url = form.cleaned_data.get('url', None)
+
+        try:
+            self.image = download_image_from_url(url)
+        except Exception as exc:
+            form.add_error(
+                'url',
+                str(exc)
+            )
+
+
+# Custom 2FA removal form to allow custom redirect URL
 class CustomTwoFactorRemove(TwoFactorRemove):
     """Specify custom URL redirect."""
     success_url = reverse_lazy("settings")
