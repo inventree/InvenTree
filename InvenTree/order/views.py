@@ -419,7 +419,7 @@ class PurchaseOrderCalendarExport(ICalFeed):
     """
 
     # Parameters for the whole calendar
-    title = f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} Purchase Orders'
+    title = f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {_("Purchase Orders")}'
     product_id = f'//{InvenTreeSetting.get_setting("INVENTREE_BASE_URL").replace("http://","").replace("https://","")}//{title}//EN'
     timezone = settings.TIME_ZONE
     file_name = "calendar.ics"
