@@ -40,7 +40,7 @@ class ReportTagTest(TestCase):
 
         # Create an asset file
         asset_dir = settings.MEDIA_ROOT.joinpath('report', 'assets')
-        asset_dir.mkdirs(exist_ok=True)
+        asset_dir.mkdir(parents=True, exist_ok=True)
         asset_path = asset_dir.joinpath('test.txt')
 
         asset_path.write_text("dummy data")
