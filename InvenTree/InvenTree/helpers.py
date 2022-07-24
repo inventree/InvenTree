@@ -605,7 +605,7 @@ def getMigrationFileNames(app):
     migration_files = []
 
     for f in files:
-        if re.match(pattern, f):
+        if re.match(pattern, str(f)):
             migration_files.append(f)
 
     return migration_files
