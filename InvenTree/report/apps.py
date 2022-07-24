@@ -40,7 +40,7 @@ class ReportConfig(AppConfig):
 
         if not dst_dir.exists():
             logger.info(f"Creating missing directory: '{dst_dir}'")
-            dst_dir.mkdir(exist_ok=True)
+            dst_dir.mkdir(parents=True, exist_ok=True)
 
         # Copy each report template across (if required)
         for report in reports:

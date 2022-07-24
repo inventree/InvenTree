@@ -70,7 +70,7 @@ class LabelConfig(AppConfig):
 
         if not dst_dir.exists():
             logger.info(f"Creating required directory: '{dst_dir}'")
-            dst_dir.mkdir(exist_ok=True)
+            dst_dir.mkdir(parents=True, exist_ok=True)
 
         labels = [
             {
@@ -147,7 +147,7 @@ class LabelConfig(AppConfig):
 
         if dst_dir.exists():
             logger.info(f"Creating required directory: '{dst_dir}'")
-            dst_dir.mkdir(exist_ok=True)
+            dst_dir.mkdir(parents=True, exist_ok=True)
 
         labels = [
             {
@@ -231,7 +231,7 @@ class LabelConfig(AppConfig):
 
         if not dst_dir.exists():
             logger.info(f"Creating required directory: '{dst_dir}'")
-            dst_dir.mkdir(exist_ok=True)
+            dst_dir.mkdir(parents=True, exist_ok=True)
 
         labels = [
             {
