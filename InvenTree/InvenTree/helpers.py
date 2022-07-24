@@ -3,6 +3,7 @@
 import io
 import json
 import logging
+import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
@@ -16,6 +17,7 @@ from django.http import StreamingHttpResponse
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 
+import requests
 from djmoney.money import Money
 from PIL import Image
 
@@ -85,6 +87,79 @@ def construct_absolute_url(*arg):
     url = f"{base}/{url}"
 
     return url
+
+
+def download_image_from_url(remote_url, timeout=2.5):
+    """Download an image file from a remote URL.
+
+    This is a potentially dangerous operation, so we must perform some checks:
+
+    - The remote URL is available
+    - The Content-Length is provided, and is not too large
+    - The file is a valid image file
+
+    Arguments:
+        remote_url: The remote URL to retrieve image
+        max_size: Maximum allowed image size (default = 1MB)
+        timeout: Connection timeout in seconds (default = 5)
+
+    Returns:
+        An in-memory PIL image file, if the download was successful
+
+    Raises:
+        requests.exceptions.ConnectionError: Connection could not be established
+        requests.exceptions.Timeout: Connection timed out
+        requests.exceptions.HTTPError: Server responded with invalid response code
+        ValueError: Server responded with invalid 'Content-Length' value
+    """
+
+    max_size = int(InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
+
+    try:
+        response = requests.get(
+            remote_url,
+            timeout=timeout,
+            allow_redirects=False,
+            stream=True,
+        )
+        # Throw an error if anything goes wrong
+        response.raise_for_status()
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
+        logger.error(_("Connection Error") + f": {type(exc)}")
+        raise exc
+    except requests.exceptions.HTTPError:
+        raise Exception(_("Server responded with invalid status code") + f": {response.status_code}")
+
+    try:
+        content_length = int(response.headers.get('Content-Length', 0))
+    except ValueError:
+        raise ValueError(_("Server responded with invalid Content-Length value"))
+
+    if content_length > max_size:
+        raise ValueError(_("Image size is too large"))
+
+    # Download the file, ensuring we do not exceed the reported size
+    fo = io.BytesIO()
+
+    dl_size = 0
+    chunk_size = 64 * 1024
+
+    for chunk in response.iter_content(chunk_size=chunk_size):
+        fo.write(chunk)
+        dl_size += chunk_size
+
+        if dl_size > max_size:
+            raise ValueError(_("Image download exceeded maximum size"))
+
+    # Now, attempt to convert the downloaded data to a valid image file
+    # img.verify() will throw an exception if the image is not valid
+    try:
+        img = Image.open(fo).convert()
+        img.verify()
+    except Exception:
+        raise Exception(_("Supplied URL is not a valid image file"))
+
+    return img
 
 
 def TestIfImage(img):
