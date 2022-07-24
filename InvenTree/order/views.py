@@ -466,3 +466,7 @@ class PurchaseOrderCalendarExport(ICalFeed):
     def item_guid(self, item):
         """Return globally unique UID for event"""
         return f'po_{item.pk}_{item.reference.replace(" ","-")}@{self.instance_url}'
+
+    def item_link(self, item):
+        """Set the item link."""
+        return item.get_absolute_url()
