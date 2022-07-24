@@ -442,7 +442,7 @@ def test_translations(c):
 
     # setup django
     base_path = os.getcwd()
-    new_base_path = pathlib.Path('InvenTree').absolute()
+    new_base_path = pathlib.Path('InvenTree').resolve()
     sys.path.append(str(new_base_path))
     os.chdir(new_base_path)
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InvenTree.settings')

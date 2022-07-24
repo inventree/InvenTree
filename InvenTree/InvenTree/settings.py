@@ -124,10 +124,10 @@ else:
     key_file = os.getenv("INVENTREE_SECRET_KEY_FILE")
 
     if key_file:
-        key_file = Path(key_file).absolute()  # pragma: no cover
+        key_file = Path(key_file).resolve()  # pragma: no cover
     else:
         # default secret key location
-        key_file = BASE_DIR.joinpath("secret_key.txt").absolute()
+        key_file = BASE_DIR.joinpath("secret_key.txt").resolve()
 
     if not key_file.exists():  # pragma: no cover
         logger.info(f"Generating random key file at '{key_file}'")
@@ -150,7 +150,7 @@ STATIC_ROOT = Path(
         'INVENTREE_STATIC_ROOT',
         CONFIG.get('static_root', None)
     )
-).absolute()
+).resolve()
 
 if STATIC_ROOT is None:  # pragma: no cover
     print("ERROR: INVENTREE_STATIC_ROOT directory not defined")
@@ -162,7 +162,7 @@ MEDIA_ROOT = Path(
         'INVENTREE_MEDIA_ROOT',
         CONFIG.get('media_root', None)
     )
-).absolute()
+).resolve()
 
 if MEDIA_ROOT is None:  # pragma: no cover
     print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")

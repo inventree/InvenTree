@@ -63,7 +63,7 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         exists = False
     else:
         try:
-            full_path = settings.MEDIA_ROOT.joinpath(filename).absolute()
+            full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
             exists = full_path.exists() and full_path.is_file()
         except Exception:
             exists = False
@@ -84,9 +84,9 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
     else:
         # Return file path
         if exists:
-            path = settings.MEDIA_ROOT.joinpath(filename).absolute()
+            path = settings.MEDIA_ROOT.joinpath(filename).resolve()
         else:
-            path = settings.STATIC_ROOT.joinpath('img', replacement_file).absolute()
+            path = settings.STATIC_ROOT.joinpath('img', replacement_file).resolve()
 
         return f"file://{path}"
 

@@ -10,7 +10,7 @@ logger = logging.getLogger('inventree')
 
 def get_base_dir() -> Path:
     """Returns the base (top-level) InvenTree directory."""
-    return Path(__file__).parent.parent.absolute()
+    return Path(__file__).parent.parent.resolve()
 
 
 def get_config_file() -> Path:
