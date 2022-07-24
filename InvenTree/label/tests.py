@@ -45,18 +45,14 @@ class LabelTest(InvenTreeAPITestCase):
             'inventree',
             'stockitem',
         )
-
-        files = item_dir.iterdir()
-        self.assertTrue(len(files) > 0)
+        self.assertTrue(len([item_dir.iterdir()]) > 0)
 
         loc_dir = settings.MEDIA_ROOT.joinpath(
             'label',
             'inventree',
             'stocklocation',
         )
-
-        files = loc_dir.iterdir()
-        self.assertTrue(len(files) > 0)
+        self.assertTrue(len([loc_dir.iterdir()]) > 0)
 
     def test_filters(self):
         """Test the label filters."""
