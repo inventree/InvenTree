@@ -19,7 +19,7 @@ purchase_order_detail_urls = [
 purchase_order_urls = [
 
     # Export calendar in ICS format
-    re_path(r'^calendar.ics', views.PurchaseOrderCalendarExport(), name='po-calendar'),
+    re_path(r'^calendar.ics', views.so_calender_view, name='po-calendar'),
 
     re_path(r'^pricing/', views.LineItemPricing.as_view(), name='line-pricing'),
 

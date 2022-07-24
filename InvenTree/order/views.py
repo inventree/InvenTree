@@ -471,3 +471,6 @@ class PurchaseOrderCalendarExport(ICalFeed):
         """Set the item link."""
         site_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL")
         return f'{site_url}{item.get_absolute_url()}'
+
+
+so_calender_view = permission_required('orders.view')(PurchaseOrderCalendarExport())
