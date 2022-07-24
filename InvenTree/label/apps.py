@@ -153,6 +153,10 @@ class LabelConfig(AppConfig):
 
         if to_copy:
             logger.info(f"Copying label template '{dst_file}'")
+            # Ensure destionation dir exists
+            dst_file.parent.mkdir(parents=True, exist_ok=True)
+
+            # Copy file
             shutil.copyfile(src_file, dst_file)
 
         # Check if a label matching the template already exists
