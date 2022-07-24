@@ -120,7 +120,7 @@ def getLogoImage(as_file=False, custom=True):
 
     else:
         if as_file:
-            path = os.path.join(settings.STATIC_ROOT, 'img/inventree.png')
+            path = settings.STATIC_ROOT.joinpath('img/inventree.png')
             return f"file://{path}"
         else:
             return getStaticUrl('img/inventree.png')

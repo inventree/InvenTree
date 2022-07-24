@@ -111,14 +111,13 @@ class ReportBase(models.Model):
 
         path = os.path.join('report', 'report_template', self.getSubdir(), filename)
 
-        fullpath = os.path.join(settings.MEDIA_ROOT, path)
-        fullpath = os.path.abspath(fullpath)
+        fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
         # If the report file is the *same* filename as the one being uploaded,
         # remove the original one from the media directory
         if str(filename) == str(self.template):
 
-            if os.path.exists(fullpath):
+            if fullpath.exists():
                 logger.info(f"Deleting existing report template: '{filename}'")
                 os.remove(fullpath)
 
@@ -139,10 +138,12 @@ class ReportBase(models.Model):
         Required for passing the file to an external process
         """
         template = self.template.name
+
+        # TODO @matmair change to using new file objects
         template = template.replace('/', os.path.sep)
         template = template.replace('\\', os.path.sep)
 
-        template = os.path.join(settings.MEDIA_ROOT, template)
+        template = settings.MEDIA_ROOT.joinpath(template)
 
         return template
 
@@ -474,14 +475,13 @@ def rename_snippet(instance, filename):
 
     path = os.path.join('report', 'snippets', filename)
 
-    fullpath = os.path.join(settings.MEDIA_ROOT, path)
-    fullpath = os.path.abspath(fullpath)
+    fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
     # If the snippet file is the *same* filename as the one being uploaded,
     # delete the original one from the media directory
     if str(filename) == str(instance.snippet):
 
-        if os.path.exists(fullpath):
+        if fullpath.exists():
             logger.info(f"Deleting existing snippet file: '{filename}'")
             os.remove(fullpath)
 
@@ -517,10 +517,9 @@ def rename_asset(instance, filename):
     # If the asset file is the *same* filename as the one being uploaded,
     # delete the original one from the media directory
     if str(filename) == str(instance.asset):
-        fullpath = os.path.join(settings.MEDIA_ROOT, path)
-        fullpath = os.path.abspath(fullpath)
+        fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
-        if os.path.exists(fullpath):
+        if fullpath.exists():
             logger.info(f"Deleting existing asset file: '{filename}'")
             os.remove(fullpath)
 
