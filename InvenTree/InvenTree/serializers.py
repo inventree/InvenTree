@@ -590,7 +590,6 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
     remote_image = serializers.URLField(
         required=False,
         allow_blank=False,
-        default=None,
         write_only=True,
         label=_("URL"),
         help_text=_("URL of remote image file"),
@@ -602,6 +601,9 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         - Attempt to download the image and store it against this object instance
         - Catches and re-throws any errors
         """
+
+        if not url:
+            return
 
         if not InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL'):
             raise ValidationError(_("Downloading images from remote URL is not enabled"))
