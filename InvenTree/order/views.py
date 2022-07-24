@@ -420,7 +420,8 @@ class PurchaseOrderCalendarExport(ICalFeed):
 
     # Parameters for the whole calendar
     title = f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {_("Purchase Orders")}'
-    product_id = f'//{InvenTreeSetting.get_setting("INVENTREE_BASE_URL").replace("http://","").replace("https://","")}//{title}//EN'
+    instance_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL").replace("http://", "").replace("https://", "")
+    product_id = f'//{instance_url}//{title}//EN'
     timezone = settings.TIME_ZONE
     file_name = "calendar.ics"
 
@@ -464,4 +465,4 @@ class PurchaseOrderCalendarExport(ICalFeed):
 
     def item_guid(self, item):
         """Return globally unique UID for event"""
-        return f'po_{item.pk}_{item.reference.replace(" ","-")}@{InvenTreeSetting.get_setting("INVENTREE_BASE_URL").replace("http://","").replace("https://","")}'
+        return f'po_{item.pk}_{item.reference.replace(" ","-")}@{self.instance_url}'
