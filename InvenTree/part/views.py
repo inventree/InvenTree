@@ -1,13 +1,11 @@
 """Django views for interacting with Part app."""
 
-import io
 import os
 from decimal import Decimal
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
 from django.shortcuts import HttpResponseRedirect, get_object_or_404
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -22,8 +20,8 @@ from common.models import InvenTreeSetting
 from common.views import FileManagementAjaxView, FileManagementFormView
 from company.models import SupplierPart
 from InvenTree.helpers import str2bool
-from InvenTree.views import (AjaxUpdateView, AjaxView, ImageDownloadView,
-                             InvenTreeRoleMixin, QRCodeView)
+from InvenTree.views import (AjaxUpdateView, AjaxView, InvenTreeRoleMixin,
+                             QRCodeView)
 from order.models import PurchaseOrderLineItem
 from plugin.views import InvenTreePluginViewMixin
 from stock.models import StockItem, StockLocation
@@ -487,32 +485,6 @@ class PartQRCode(QRCodeView):
             return part.format_barcode()
         except Part.DoesNotExist:
             return None
-
-
-class PartImageDownloadFromURL(ImageDownloadView):
-    """View for downloading an image from a provided URL."""
-
-    model = Part
-    form_class = part_forms.PartImageDownloadForm
-
-    def save(self, part, form, **kwargs):
-        """Save the downloaded image to the part."""
-        fmt = self.image.format
-
-        if not fmt:
-            fmt = 'PNG'
-
-        buffer = io.BytesIO()
-
-        self.image.save(buffer, format=fmt)
-
-        # Construct a simplified name for the image
-        filename = f"part_{part.pk}_image.{fmt.lower()}"
-
-        part.image.save(
-            filename,
-            ContentFile(buffer.getvalue()),
-        )
 
 
 class PartImageSelect(AjaxUpdateView):

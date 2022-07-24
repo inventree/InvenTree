@@ -1,16 +1,12 @@
 """Django views for interacting with Company app."""
 
-import io
-
-from django.core.files.base import ContentFile
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-from InvenTree.views import ImageDownloadView, InvenTreeRoleMixin
+from InvenTree.views import InvenTreeRoleMixin
 from plugin.views import InvenTreePluginViewMixin
 
-from .forms import CompanyImageDownloadForm
 from .models import Company, ManufacturerPart, SupplierPart
 
 
@@ -98,32 +94,6 @@ class CompanyDetail(InvenTreePluginViewMixin, DetailView):
     queryset = Company.objects.all()
     model = Company
     permission_required = 'company.view_company'
-
-
-class CompanyImageDownloadFromURL(ImageDownloadView):
-    """View for downloading an image from a provided URL."""
-
-    model = Company
-    form_class = CompanyImageDownloadForm
-
-    def save(self, company, form, **kwargs):
-        """Save the downloaded image to the company."""
-        fmt = self.image.format
-
-        if not fmt:
-            fmt = 'PNG'
-
-        buffer = io.BytesIO()
-
-        self.image.save(buffer, format=fmt)
-
-        # Construct a simplified name for the image
-        filename = f"company_{company.pk}_image.{fmt.lower()}"
-
-        company.image.save(
-            filename,
-            ContentFile(buffer.getvalue()),
-        )
 
 
 class ManufacturerPartDetail(InvenTreePluginViewMixin, DetailView):

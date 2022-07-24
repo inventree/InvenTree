@@ -4,27 +4,9 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from common.forms import MatchItemForm
-from InvenTree.forms import HelperForm
 from InvenTree.helpers import clean_decimal
 
 from .models import Part
-
-
-class PartImageDownloadForm(HelperForm):
-    """Form for downloading an image from a URL."""
-
-    url = forms.URLField(
-        label=_('URL'),
-        help_text=_('Image URL'),
-        required=True,
-    )
-
-    class Meta:
-        """Metaclass defines fields for this form"""
-        model = Part
-        fields = [
-            'url',
-        ]
 
 
 class BomMatchItemForm(MatchItemForm):

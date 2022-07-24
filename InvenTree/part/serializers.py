@@ -1,8 +1,10 @@
 """DRF data serializers for Part app."""
 
 import imghdr
+import io
 from decimal import Decimal
 
+from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, FloatField, Q
 from django.db.models.functions import Coalesce
@@ -22,7 +24,7 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer)
+                                   InvenTreeMoneySerializer, RemoteImageMixin)
 from InvenTree.status_codes import BuildStatus
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
@@ -273,7 +275,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
-class PartSerializer(InvenTreeModelSerializer):
+class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for complete detail information of a part.
 
     Used when displaying all details of a single component.
@@ -424,6 +426,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'parameters',
             'pk',
             'purchaseable',
+            'remote_image',
             'revision',
             'salable',
             'starred',
@@ -436,6 +439,29 @@ class PartSerializer(InvenTreeModelSerializer):
             'variant_of',
             'virtual',
         ]
+
+    def save(self):
+        """Save the Part instance"""
+
+        super().save()
+
+        part = self.instance
+
+        # Check if an image was downloaded from a remote URL
+        remote_img = getattr(self, 'remote_image_file', None)
+
+        if remote_img and part:
+            fmt = remote_img.format or 'PNG'
+            buffer = io.BytesIO()
+            remote_img.save(buffer, format=fmt)
+
+            # Construct a simplified name for the image
+            filename = f"part_{part.pk}_image.{fmt.lower()}"
+
+            part.image.save(
+                filename,
+                ContentFile(buffer.getvalue()),
+            )
 
 
 class PartRelationSerializer(InvenTreeModelSerializer):

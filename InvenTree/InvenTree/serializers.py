@@ -19,6 +19,8 @@ from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 
+from InvenTree.helpers import download_image_from_url
+
 
 class InvenTreeMoneySerializer(MoneyField):
     """Custom serializer for 'MoneyField', which ensures that passed values are numerically valid.
@@ -576,3 +578,34 @@ class DataFileExtractSerializer(serializers.Serializer):
     def save(self):
         """No "save" action for this serializer."""
         pass
+
+
+class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
+    """Mixin class which allows downloading an 'image' from a remote URL.
+
+    Adds the optional, write-only `remote_image` field to the serializer
+    """
+
+    remote_image = serializers.URLField(
+        required=False,
+        allow_blank=False,
+        default=None,
+        write_only=True,
+        label=_("URL"),
+        help_text=_("URL of remote image file"),
+    )
+
+    def validate_remote_image(self, url):
+        """Perform custom validation for the remote image URL.
+
+        - Attempt to download the image and store it against this object instance
+        - Catches and re-throws any errors
+        """
+
+        try:
+            self.remote_image_file = download_image_from_url(url)
+        except Exception as exc:
+            self.remote_image_file = None
+            raise ValidationError(str(exc))
+
+        return url
