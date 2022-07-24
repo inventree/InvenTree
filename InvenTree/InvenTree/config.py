@@ -44,12 +44,15 @@ def get_plugin_file():
     Note: It will be created if it does not already exist!
     """
     # Check if the plugin.txt file (specifying required plugins) is specified
-    PLUGIN_FILE = Path(os.getenv('INVENTREE_PLUGIN_FILE'))
+    PLUGIN_FILE = os.getenv('INVENTREE_PLUGIN_FILE')
 
     if not PLUGIN_FILE:
         # If not specified, look in the same directory as the configuration file
         config_dir = get_config_file().parent
         PLUGIN_FILE = config_dir.joinpath('plugins.txt')
+    else:
+        # Make sure we are using a modern Path object
+        PLUGIN_FILE = Path(PLUGIN_FILE)
 
     if not PLUGIN_FILE.exists():
         logger.warning("Plugin configuration file does not exist")
