@@ -40,19 +40,17 @@ class LabelTest(InvenTreeAPITestCase):
 
     def test_default_files(self):
         """Test that label files exist in the MEDIA directory."""
-        item_dir = settings.MEDIA_ROOT.joinpath(
-            'label',
-            'inventree',
-            'stockitem',
-        )
-        self.assertTrue(len([item_dir.iterdir()]) > 0)
+        def test_subdir(ref_name):
+            item_dir = settings.MEDIA_ROOT.joinpath(
+                'label',
+                'inventree',
+                ref_name,
+            )
+            self.assertTrue(len([item_dir.iterdir()]) > 0)
 
-        loc_dir = settings.MEDIA_ROOT.joinpath(
-            'label',
-            'inventree',
-            'stocklocation',
-        )
-        self.assertTrue(len([loc_dir.iterdir()]) > 0)
+        test_subdir('stockitem')
+        test_subdir('stocklocation')
+        test_subdir('part')
 
     def test_filters(self):
         """Test the label filters."""
