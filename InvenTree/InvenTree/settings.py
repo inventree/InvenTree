@@ -155,6 +155,9 @@ STATIC_ROOT = Path(
 if STATIC_ROOT is None:  # pragma: no cover
     print("ERROR: INVENTREE_STATIC_ROOT directory not defined")
     sys.exit(1)
+else:
+    # Ensure the root really is availalble
+    STATIC_ROOT.mkdir(parents=True, exist_ok=True)
 
 # The filesystem location for served static files
 MEDIA_ROOT = Path(
@@ -167,6 +170,9 @@ MEDIA_ROOT = Path(
 if MEDIA_ROOT is None:  # pragma: no cover
     print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
     sys.exit(1)
+else:
+    # Ensure the root really is availalble
+    MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
