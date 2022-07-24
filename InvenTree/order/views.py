@@ -469,4 +469,5 @@ class PurchaseOrderCalendarExport(ICalFeed):
 
     def item_link(self, item):
         """Set the item link."""
-        return item.get_absolute_url()
+        site_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL")
+        return f'{site_url}{item.get_absolute_url()}'
