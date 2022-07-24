@@ -102,7 +102,7 @@ def get_git_log(path):
 
     output = None
     if registry.git_is_modern:
-        path = path.replace(settings.BASE_DIR.parent, '')[1:]
+        path = str(path).replace(settings.BASE_DIR.parent, '')[1:]
         command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
         try:
             output = str(subprocess.check_output(command, cwd=settings.BASE_DIR.parent), 'utf-8')[1:-1]
