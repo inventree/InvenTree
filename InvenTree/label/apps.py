@@ -41,87 +41,71 @@ class LabelConfig(AppConfig):
         """Create all default templates."""
         # Test if models are ready
         try:
-            from .models import StockLocationLabel
+            from .models import PartLabel, StockItemLabel, StockLocationLabel
             assert bool(StockLocationLabel is not None)
         except AppRegistryNotReady:  # pragma: no cover
             # Database might not yet be ready
             warnings.warn('Database was not ready for creating labels')
             return
 
-        self.create_stock_item_labels()
-        self.create_stock_location_labels()
-        self.create_part_labels()
+        # Create the categories
+        self.create_labels_category(
+            StockItemLabel,
+            'stockitem',
+            [
+                {
+                    'file': 'qr.html',
+                    'name': 'QR Code',
+                    'description': 'Simple QR code label',
+                    'width': 24,
+                    'height': 24,
+                },
+            ],
+        )
+        self.create_labels_category(
+            StockLocationLabel,
+            'stocklocation',
+            [
+                {
+                    'file': 'qr.html',
+                    'name': 'QR Code',
+                    'description': 'Simple QR code label',
+                    'width': 24,
+                    'height': 24,
+                },
+                {
+                    'file': 'qr_and_text.html',
+                    'name': 'QR and text',
+                    'description': 'Label with QR code and name of location',
+                    'width': 50,
+                    'height': 24,
+                }
+            ]
+        )
+        self.create_labels_category(
+            PartLabel,
+            'part',
+            [
+                {
+                    'file': 'part_label.html',
+                    'name': 'Part Label',
+                    'description': 'Simple part label',
+                    'width': 70,
+                    'height': 24,
+                },
+                {
+                    'file': 'part_label_code128.html',
+                    'name': 'Barcode Part Label',
+                    'description': 'Simple part label with Code128 barcode',
+                    'width': 70,
+                    'height': 24,
+                },
+            ]
+        )
 
-    def create_stock_item_labels(self):
-        """Create database entries for the default StockItemLabel templates, if they do not already exist."""
-        from .models import StockItemLabel
-
-        labels = [
-            {
-                'file': 'qr.html',
-                'name': 'QR Code',
-                'description': 'Simple QR code label',
-                'width': 24,
-                'height': 24,
-            },
-        ]
-
-        src_dir = self.create_template_dir('stockitem')
-        for label in labels:
-            self.create_template_label(StockItemLabel, src_dir, 'stockitem', label)
-
-    def create_stock_location_labels(self):
-        """Create database entries for the default StockItemLocation templates, if they do not already exist."""
-        from .models import StockLocationLabel
-
-        labels = [
-            {
-                'file': 'qr.html',
-                'name': 'QR Code',
-                'description': 'Simple QR code label',
-                'width': 24,
-                'height': 24,
-            },
-            {
-                'file': 'qr_and_text.html',
-                'name': 'QR and text',
-                'description': 'Label with QR code and name of location',
-                'width': 50,
-                'height': 24,
-            }
-        ]
-
-        src_dir = self.create_template_dir('stocklocation')
-        for label in labels:
-            self.create_template_label(StockLocationLabel, src_dir, 'stocklocation', label)
-
-    def create_part_labels(self):
-        """Create database entries for the default PartLabel templates, if they do not already exist."""
-        from .models import PartLabel
-
-        labels = [
-            {
-                'file': 'part_label.html',
-                'name': 'Part Label',
-                'description': 'Simple part label',
-                'width': 70,
-                'height': 24,
-            },
-            {
-                'file': 'part_label_code128.html',
-                'name': 'Barcode Part Label',
-                'description': 'Simple part label with Code128 barcode',
-                'width': 70,
-                'height': 24,
-            },
-        ]
-
-        src_dir = self.create_template_dir('part')
-        for label in labels:
-            self.create_template_label(PartLabel, src_dir, 'part', label)
-
-    def create_template_dir(self, ref_name):
-        """Ensure the directory for a label exsists."""
+    def create_labels_category(self, model, ref_name, labels):
+        """Create folder and database entries for the default templates, if they do not already exist."""
+        # Create root dir for templates
         src_dir = Path(__file__).parent.joinpath(
             'templates',
             'label',
@@ -137,10 +121,13 @@ class LabelConfig(AppConfig):
         if not dst_dir.exists():
             logger.info(f"Creating required directory: '{dst_dir}'")
             dst_dir.mkdir(parents=True, exist_ok=True)
-        return src_dir
+
+        # Create lables
+        for label in labels:
+            self.create_template_label(model, src_dir, ref_name, label)
 
     def create_template_label(self, model, src_dir, ref_name, label):
-        """Ensure a label template exsists."""
+        """Ensure a label template is in place."""
         filename = os.path.join(
             'label',
             'inventree',
