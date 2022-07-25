@@ -21,7 +21,6 @@ part_detail_urls = [
 
     # Normal thumbnail with form
     re_path(r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'),
-    re_path(r'^thumb-download/', views.PartImageDownloadFromURL.as_view(), name='part-image-download'),
 
     # Any other URLs go to the part detail page
     re_path(r'^.*$', views.PartDetail.as_view(), name='part-detail'),

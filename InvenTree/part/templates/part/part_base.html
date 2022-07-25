@@ -511,11 +511,17 @@
     {% if roles.part.change %}
 
     if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
+
         $("#part-image-url").click(function() {
-            launchModalForm(
-                '{% url "part-image-download" part.id %}',
+            constructForm(
+                '{% url "api-part-detail" part.pk %}',
                 {
-                    reload: true,
+                    method: 'PATCH',
+                    title: '{% trans "Download Image" %}',
+                    fields: {
+                        remote_image: {},
+                    },
+                    onSuccess: onSelectImage,
                 }
             );
         });
