@@ -13,6 +13,7 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
+import requests
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -250,6 +251,45 @@ class TestHelpers(TestCase):
 
         logo = helpers.getLogoImage(as_file=True)
         self.assertEqual(logo, f'file://{settings.STATIC_ROOT}/img/inventree.png')
+
+    def test_download_image(self):
+        """Test function for downloading image from remote URL"""
+
+        # Run check with a sequency of bad URLs
+        for url in [
+            "blog",
+            "htp://test.com/?",
+            "google",
+            "\\invalid-url"
+        ]:
+            with self.assertRaises(django_exceptions.ValidationError):
+                helpers.download_image_from_url(url)
+
+        # Attempt to download an image which throws a 404
+        with self.assertRaises(requests.exceptions.HTTPError):
+            helpers.download_image_from_url("https://httpstat.us/404")
+
+        # Attempt to download, but timeout
+        with self.assertRaises(requests.exceptions.Timeout):
+            helpers.download_image_from_url("https://httpstat.us/200?sleep=5000")
+
+        # Attempt to download, but not a valid image
+        with self.assertRaises(TypeError):
+            helpers.download_image_from_url("https://httpstat.us/200")
+
+        large_img = "https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg"
+
+        InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 1, change_user=None)
+
+        # Attempt to download an image which is too large
+        with self.assertRaises(ValueError):
+            helpers.download_image_from_url(large_img)
+
+        # Increase allowable download size
+        InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None)
+
+        # Download a valid image (should not throw an error)
+        helpers.download_image_from_url(large_img)
 
 
 class TestQuoteWrap(TestCase):

@@ -216,12 +216,19 @@
     if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
 
         $('#company-image-url').click(function() {
-            launchModalForm(
-                '{% url "company-image-download" company.id %}',
+            constructForm(
+                '{% url "api-company-detail" company.pk %}',
                 {
-                    reload: true,
+                    method: 'PATCH',
+                    title: '{% trans "Download Image" %}',
+                    fields: {
+                        remote_image: {},
+                    },
+                    onSuccess: function(data) {
+                        reloadImage(data);
+                    }
                 }
-            )
+            );
         });
     }
 

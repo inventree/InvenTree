@@ -95,6 +95,7 @@ class LabelPrintMixin:
         label_name = "label.pdf"
 
         label_names = []
+        label_instances = []
 
         # Merge one or more PDF files into a single download
         for item in items_to_print:
@@ -104,6 +105,7 @@ class LabelPrintMixin:
             label_name = label.generate_filename(request)
 
             label_names.append(label_name)
+            label_instances.append(label)
 
             if debug_mode:
                 outputs.append(label.render_as_string(request))
@@ -123,9 +125,6 @@ class LabelPrintMixin:
             - Return a JSON response indicating that the printing has been offloaded
             """
 
-            # Label instance
-            label_instance = self.get_object()
-
             for idx, output in enumerate(outputs):
                 """For each output, we generate a temporary image file, which will then get sent to the printer."""
 
@@ -138,7 +137,7 @@ class LabelPrintMixin:
                     plugin.plugin_slug(),
                     pdf,
                     filename=label_names[idx],
-                    label_instance=label_instance,
+                    label_instance=label_instances[idx],
                     user=request.user,
                 )
 

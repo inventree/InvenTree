@@ -2,10 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 65
+INVENTREE_API_VERSION = 66
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v66 -> 2022-07-24 : https://github.com/inventree/InvenTree/pull/3393
+    - Part images can now be downloaded from a remote URL via the API
+    - Company images can now be downloaded from a remote URL via the API
 
 v65 -> 2022-07-15 : https://github.com/inventree/InvenTree/pull/3335
     - Annotates 'in_stock' quantity to the SupplierPart API
