@@ -172,10 +172,16 @@ class GitStatus:
 
 
 # region plugin finders
-def get_modules(pkg):
+def get_modules(pkg, path=None):
     """Get all modules in a package."""
     context = {}
-    for loader, name, _ in pkgutil.walk_packages(pkg.__path__):
+
+    if path is None:
+        path = pkg.__path__
+    elif type(path) is not list:
+        path = [path]
+
+    for loader, name, _ in pkgutil.walk_packages(path):
         try:
             module = loader.find_module(name).load_module(name)
             pkg_names = getattr(module, '__all__', None)
@@ -199,7 +205,7 @@ def get_classes(module):
     return inspect.getmembers(module, inspect.isclass)
 
 
-def get_plugins(pkg, baseclass):
+def get_plugins(pkg, baseclass, path=None):
     """Return a list of all modules under a given package.
 
     - Modules must be a subclass of the provided 'baseclass'
@@ -207,7 +213,7 @@ def get_plugins(pkg, baseclass):
     """
     plugins = []
 
-    modules = get_modules(pkg)
+    modules = get_modules(pkg, path=path)
 
     # Iterate through each module in the package
     for mod in modules:
