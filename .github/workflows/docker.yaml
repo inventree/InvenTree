@@ -56,6 +56,7 @@ jobs:
         run: |
           test -d data
           test -d data/env
+          test -d data/pgdb
           test -d data/media
           test -d data/static
           test -d data/plugins
