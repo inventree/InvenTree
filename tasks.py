@@ -108,7 +108,7 @@ def install(c):
     c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
 
 
-@task
+@task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
     """Sets up everything needed for the dev enviroment."""
     print("Installing required python packages from 'requirements-dev.txt'")
@@ -517,7 +517,7 @@ def test(c, database=None):
     manage(c, 'test', pty=True)
 
 
-@task(pre=[update])
+@task(pre=[update], help={'dev': 'Set up development enviroment at the end'})
 def setup_test(c, dev=False):
     """Setup a testing enviroment."""
     # Remove old data directory
