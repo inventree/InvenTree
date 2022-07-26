@@ -515,17 +515,23 @@ def test(c, database=None):
 def setup_test(c):
     """Setup a testing enviroment."""
     # Remove old data directory
+    print("Removing old data ...")
     c.run('rm inventree-data -r')
 
     # Get test data
+    print("Starting to clone demo dataset ...")
     c.run('git clone https://github.com/inventree/demo-dataset inventree-data')
+    print("========================================")
 
     # Make sure migrations are done - might have just deleted sqlite database
+    print("Running migrations ...")
     migrate(c)
 
     # Load data
+    print("Loading data ...")
     import_records(c, filename='inventree-data/inventree_data.json', clear=True)
-
+    print("Done setting up test enviroment...")
+    print("========================================")
 
 @task
 def coverage(c):
