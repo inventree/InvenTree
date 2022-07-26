@@ -94,6 +94,7 @@ def install(c):
     print("Installing required python packages from 'requirements.txt'")
 
     # Install required Python packages with PIP
+    c.run('pip3 install --upgrade pip')
     c.run('pip3 install -U -r requirements.txt')
 
 
@@ -554,9 +555,9 @@ def test_translations(c):
 
     # complie regex
     reg = re.compile(
-        r"[a-zA-Z0-9]{1}"+  # match any single letter and number
-        r"(?![^{\(\<]*[}\)\>])"+  # that is not inside curly brackets, brackets or a tag
-        r"(?<![^\%][^\(][)][a-z])"+  # that is not a specially formatted variable with singles
+        r"[a-zA-Z0-9]{1}" +  # match any single letter and number
+        r"(?![^{\(\<]*[}\)\>])" +  # that is not inside curly brackets, brackets or a tag
+        r"(?<![^\%][^\(][)][a-z])" +  # that is not a specially formatted variable with singles
         r"(?![^\\][\n])"  # that is not a newline
     )
     last_string = ''
