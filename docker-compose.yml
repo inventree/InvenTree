@@ -25,17 +25,17 @@ services:
         expose:
             - ${INVENTREE_DB_PORT:-5432}/tcp
         environment:
-            - PGDATA=/var/lib/postgresql/data/dev/pgdb
+            - PGDATA=/var/lib/postgresql/data/pgdb
             - POSTGRES_USER=${INVENTREE_DB_USER:?You must provide the 'INVENTREE_DB_USER' variable in the .env file}
             - POSTGRES_PASSWORD=${INVENTREE_DB_PASSWORD:?You must provide the 'INVENTREE_DB_PASSWORD' variable in the .env file}
             - POSTGRES_DB=${INVENTREE_DB_NAME:?You must provide the 'INVENTREE_DB_NAME' variable in the .env file}
         volumes:
           # Map 'data' volume such that postgres database is stored externally
-          - inventree_src:/var/lib/postgresql/data
+          - ./data:/var/lib/postgresql/data
         restart: unless-stopped
 
-    # InvenTree web server services
-    # Uses gunicorn as the web server
+    # InvenTree web server service
+    # Runs the django built-in webserver application
     inventree-dev-server:
         container_name: inventree-dev-server
         depends_on:
@@ -53,8 +53,8 @@ services:
         #expose:
         #    - 8000
         volumes:
-            # Ensure you specify the location of the 'src' directory at the end of this file
-            - inventree_src:/home/inventree
+            # Mount local source directory to /home/inventree
+            - ./:/home/inventree
         env_file:
             - .env
         restart: unless-stopped
@@ -67,38 +67,8 @@ services:
         depends_on:
             - inventree-dev-server
         volumes:
-            # Ensure you specify the location of the 'src' directory at the end of this file
-            - inventree_src:/home/inventree
+            # Mount local source directory to /home/inventree
+            - ./:/home/inventree
         env_file:
             - .env
         restart: unless-stopped
-
-    ### Optional: Serve static and media files using nginx
-    ### Uncomment the following lines to enable nginx proxy for testing
-    ### Note: If enabling the proxy, change "ports" to "expose" for the inventree-dev-server container (above)
-    #inventree-dev-proxy:
-    #    container_name: inventree-dev-proxy
-    #    image: nginx:stable
-    #    depends_on:
-    #        - inventree-dev-server
-    #    ports:
-    #        # Change "8000" to the port that you want InvenTree web server to be available on
-    #        - 8000:80
-    #    volumes:
-    #        # Provide ./nginx.dev.conf file to the container
-    #        # Refer to the provided example file as a starting point
-    #        - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
-    #        # nginx proxy needs access to static and media files
-    #        - inventree_src:/var/www
-    #    restart: unless-stopped
-
-volumes:
-    # Persistent data, stored external to the container(s)
-    inventree_src:
-        driver: local
-        driver_opts:
-            type: none
-            o: bind
-            # This directory specified where InvenTree source code is stored "outside" the docker containers
-            # By default, this directory is one level above the "docker" directory
-            device: ${INVENTREE_EXT_VOLUME:-./}
