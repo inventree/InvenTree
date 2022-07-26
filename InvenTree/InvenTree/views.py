@@ -764,7 +764,6 @@ class NotificationsView(TemplateView):
 
 
 # Custom 2FA removal form to allow custom redirect URL
-
 class CustomTwoFactorRemove(TwoFactorRemove):
     """Specify custom URL redirect."""
     success_url = reverse_lazy("settings")

@@ -1,22 +1,18 @@
 """Django views for interacting with Part app."""
 
-import io
 import os
 from decimal import Decimal
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
 from django.shortcuts import HttpResponseRedirect, get_object_or_404
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-import requests
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
-from PIL import Image
 
 import common.settings as inventree_settings
 from common.files import FileManager
@@ -489,82 +485,6 @@ class PartQRCode(QRCodeView):
             return part.format_barcode()
         except Part.DoesNotExist:
             return None
-
-
-class PartImageDownloadFromURL(AjaxUpdateView):
-    """View for downloading an image from a provided URL."""
-
-    model = Part
-
-    ajax_template_name = 'image_download.html'
-    form_class = part_forms.PartImageDownloadForm
-    ajax_form_title = _('Download Image')
-
-    def validate(self, part, form):
-        """Validate that the image data are correct.
-
-        - Try to download the image!
-        """
-        # First ensure that the normal validation routines pass
-        if not form.is_valid():
-            return
-
-        # We can now extract a valid URL from the form data
-        url = form.cleaned_data.get('url', None)
-
-        # Download the file
-        response = requests.get(url, stream=True)
-
-        # Look at response header, reject if too large
-        content_length = response.headers.get('Content-Length', '0')
-
-        try:
-            content_length = int(content_length)
-        except (ValueError):
-            # If we cannot extract meaningful length, just assume it's "small enough"
-            content_length = 0
-
-        # TODO: Factor this out into a configurable setting
-        MAX_IMG_LENGTH = 10 * 1024 * 1024
-
-        if content_length > MAX_IMG_LENGTH:
-            form.add_error('url', _('Image size exceeds maximum allowable size for download'))
-            return
-
-        self.response = response
-
-        # Check for valid response code
-        if response.status_code != 200:
-            form.add_error('url', _('Invalid response: {code}').format(code=response.status_code))
-            return
-
-        response.raw.decode_content = True
-
-        try:
-            self.image = Image.open(response.raw).convert()
-            self.image.verify()
-        except Exception:
-            form.add_error('url', _("Supplied URL is not a valid image file"))
-            return
-
-    def save(self, part, form, **kwargs):
-        """Save the downloaded image to the part."""
-        fmt = self.image.format
-
-        if not fmt:
-            fmt = 'PNG'
-
-        buffer = io.BytesIO()
-
-        self.image.save(buffer, format=fmt)
-
-        # Construct a simplified name for the image
-        filename = f"part_{part.pk}_image.{fmt.lower()}"
-
-        part.image.save(
-            filename,
-            ContentFile(buffer.getvalue()),
-        )
 
 
 class PartImageSelect(AjaxUpdateView):
