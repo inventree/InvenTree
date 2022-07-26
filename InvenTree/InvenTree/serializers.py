@@ -5,9 +5,9 @@ from collections import OrderedDict
 from decimal import Decimal
 
 from django.conf import settings
-from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 import tablib
@@ -19,9 +19,9 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
-from InvenTree.fields import InvenTreeRestURLField
 
 from common.models import InvenTreeSetting
+from InvenTree.fields import InvenTreeRestURLField
 from InvenTree.helpers import download_image_from_url
 
 

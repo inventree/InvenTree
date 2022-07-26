@@ -12,7 +12,6 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.forms.fields import MoneyField
 from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.models.validators import MinMoneyValidator
-
 from rest_framework.fields import URLField as RestURLField
 
 import InvenTree.helpers
