@@ -568,7 +568,7 @@ class PartScheduling(RetrieveAPI):
 
 
 class PartRequirements(RetrieveAPI):
-    """API endpoint detailing 'requirements' information for aa particular part.
+    """API endpoint detailing 'requirements' information for a particular part.
 
     This endpoint returns information on upcoming requirements for:
 

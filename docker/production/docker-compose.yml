@@ -69,7 +69,7 @@ services:
             - ${INVENTREE_CACHE_PORT:-6379}
         restart: always
 
-    # InvenTree web server services
+    # InvenTree web server service
     # Uses gunicorn as the web server
     inventree-server:
         container_name: inventree-server
@@ -85,7 +85,6 @@ services:
         volumes:
             # Data volume must map to /home/inventree/data
             - inventree_data:/home/inventree/data
-            - inventree_plugins:/home/inventree/InvenTree/plugins
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -101,7 +100,6 @@ services:
         volumes:
             # Data volume must map to /home/inventree/data
             - inventree_data:/home/inventree/data
-            - inventree_plugins:/home/inventree/InvenTree/plugins
         restart: unless-stopped
 
     # nginx acts as a reverse proxy
@@ -136,10 +134,3 @@ volumes:
             o: bind
             # This directory specified where InvenTree data are stored "outside" the docker containers
             device: ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}
-    inventree_plugins:
-        driver: local
-        driver_opts:
-          type: none
-          o: bind
-          # This directory specified where the optional local plugin directory is stored "outside" the docker containers
-          device: ${INVENTREE_EXT_PLUGINS:-./}
