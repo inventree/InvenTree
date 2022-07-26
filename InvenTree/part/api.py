@@ -567,6 +567,40 @@ class PartScheduling(RetrieveAPI):
         return Response(schedule)
 
 
+class PartRequirements(RetrieveAPI):
+    """API endpoint detailing 'requirements' information for aa particular part.
+
+    This endpoint returns information on upcoming requirements for:
+
+    - Sales Orders
+    - Build Orders
+    - Total requirements
+
+    As this data is somewhat complex to calculate, is it not included in the default API
+    """
+
+    queryset = Part.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        """Construct a response detailing Part requirements"""
+
+        part = self.get_object()
+
+        data = {
+            "available_stock": part.available_stock,
+            "on_order": part.on_order,
+            "required_build_order_quantity": part.required_build_order_quantity(),
+            "allocated_build_order_quantity": part.build_order_allocation_count(),
+            "required_sales_order_quantity": part.required_sales_order_quantity(),
+            "allocated_sales_order_quantity": part.sales_order_allocation_count(pending=True),
+        }
+
+        data["allocated"] = data["allocated_build_order_quantity"] + data["allocated_sales_order_quantity"]
+        data["required"] = data["required_build_order_quantity"] + data["required_sales_order_quantity"]
+
+        return Response(data)
+
+
 class PartMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating Part metadata."""
 
@@ -1996,6 +2030,8 @@ part_api_urls = [
 
         # Endpoint for future scheduling information
         re_path(r'^scheduling/', PartScheduling.as_view(), name='api-part-scheduling'),
+
+        re_path(r'^requirements/', PartRequirements.as_view(), name='api-part-requirements'),
 
         # Endpoint for duplicating a BOM for the specific Part
         re_path(r'^bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),
