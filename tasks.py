@@ -518,7 +518,7 @@ def test(c, database=None):
 
 
 @task(pre=[update])
-def setup_test(c):
+def setup_test(c, dev=False):
     """Setup a testing enviroment."""
     # Remove old data directory
     print("Removing old data ...")
@@ -538,6 +538,10 @@ def setup_test(c):
     import_records(c, filename='inventree-data/inventree_data.json', clear=True)
     print("Done setting up test enviroment...")
     print("========================================")
+
+    # Set up development setup if flag is set
+    if dev:
+        setup_dev(c)
 
 
 @task
