@@ -20,11 +20,12 @@ import InvenTree.helpers
 from .validators import allowable_url_schemes
 
 
-class InvenTreeURLRest(RestURLField):
+class InvenTreeRestURLField(RestURLField):
     """Custom field for DRF with custom scheme vaildators."""
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.validators[-1].schemes = allowable_url_schemes()
+
 
 class InvenTreeURLFormField(FormURLField):
     """Custom URL form field with custom scheme validators."""

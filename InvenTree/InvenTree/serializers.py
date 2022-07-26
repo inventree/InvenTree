@@ -19,7 +19,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
-from InvenTree.fields import InvenTreeURLFormField, InvenTreeURLRest
+from InvenTree.fields import InvenTreeRestURLField
 
 from common.models import InvenTreeSetting
 from InvenTree.helpers import download_image_from_url
@@ -69,7 +69,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
     # Switch out URLField mapping
     serializer_field_mapping = {
         **serializers.ModelSerializer.serializer_field_mapping,
-        models.URLField: InvenTreeURLRest,
+        models.URLField: InvenTreeRestURLField,
     }
 
     def __init__(self, instance=None, data=empty, **kwargs):
