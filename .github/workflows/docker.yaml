@@ -41,6 +41,7 @@ jobs:
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Build Docker Image
+        # Build the development docker image (using docker-compose.yml)
         run: |
           docker-compose build
       - name: Run Unit Tests
@@ -51,6 +52,18 @@ jobs:
           docker-compose run inventree-dev-server invoke wait
           docker-compose run inventree-dev-server invoke test
           docker-compose down
+      - name: Check Data Directory
+        # The following file structure should have been created by the docker image
+        run: |
+          test -d data
+          test -d data/env
+          test -d data/pgdb
+          test -d data/media
+          test -d data/static
+          test -d data/plugins
+          test -f data/config.yaml
+          test -f data/plugins.txt
+          test -f data/secret_key.txt
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
         uses: docker/setup-qemu-action@v1
@@ -58,6 +71,7 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: docker/setup-buildx-action@v1
       - name: Set up cosign
+        if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@48866aa521d8bf870604709cd43ec2f602d03ff2
       - name: Login to Dockerhub
         if: github.event_name != 'pull_request'
@@ -66,6 +80,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Extract Docker metadata
+        if: github.event_name != 'pull_request'
         id: meta
         uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a
         with:
@@ -85,12 +100,13 @@ jobs:
             commit_hash=${{ env.git_commit_hash }}
             commit_date=${{ env.git_commit_date }}
       - name: Sign the published image
+        if: github.event_name != 'pull_request'
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: cosign sign ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
       - name: Push to Stable Branch
         uses: ad-m/github-push-action@master
-        if: env.stable_release == 'true'
+        if: env.stable_release == 'true' && github.event_name != 'pull_request'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: stable

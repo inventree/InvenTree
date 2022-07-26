@@ -245,14 +245,13 @@ class PluginsRegistry:
         # Collect plugins from paths
         for plugin in self.plugin_dirs():
 
-            print(f"Loading plugins from directory '{plugin}'")
+            logger.info(f"Loading plugins from directory '{plugin}'")
 
             parent_path = None
             parent_obj = Path(plugin)
 
             # If a "path" is provided, some special handling is required
             if parent_obj.name is not plugin and len(parent_obj.parts) > 1:
-                print("loading from a qualified path:", plugin)
                 parent_path = parent_obj.parent
                 plugin = parent_obj.name
 
