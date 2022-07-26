@@ -2,7 +2,17 @@ Please read the contribution guidelines below, before submitting your first pull
 
 ## Setup
 
-Please run `invoke setup-dev` in the root directory of your InvenTree code base to set up your development setup before starting to contribute. This will install and set up pre-commit to run some checks before each commit and help reduce the style errors.
+Run the following command to set up all toolsets for development.
+```bash
+invoke setup-dev
+```
+
+With the flag `test` set to true the database will be populated with the [offical](https://github.com/inventree/demo-dataset) test dataset.
+```bash
+invoke setup-dev -test=True
+```
+
+Run either command to set up your development setup before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.
 
 ## Branches and Versioning
 
