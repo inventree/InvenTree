@@ -28,20 +28,28 @@ def image_data(img, fmt='PNG'):
 def qrcode(data, **kwargs):
     """Return a byte-encoded QR code image.
 
-    Optional kwargs
-    ---------------
+    kwargs:
+        fill_color: Fill color (default = black)
+        back_color: Background color (default = white)
+        version: Default = 1
+        box_size: Default = 20
+        border: Default = 1
 
-    fill_color: Fill color (default = black)
-    back_color: Background color (default = white)
+    Returns:
+        base64 encoded image data
+
     """
     # Construct "default" values
     params = dict(
         box_size=20,
         border=1,
+        version=1,
     )
 
     fill_color = kwargs.pop('fill_color', 'black')
     back_color = kwargs.pop('back_color', 'white')
+
+    format = kwargs.pop('format', 'PNG')
 
     params.update(**kwargs)
 
@@ -50,15 +58,21 @@ def qrcode(data, **kwargs):
     qr.add_data(data, optimize=20)
     qr.make(fit=True)
 
-    qri = qr.make_image(fill_color=fill_color, back_color=back_color)
+    qri = qr.make_image(
+        fill_color=fill_color,
+        back_color=back_color
+    )
 
-    return image_data(qri)
+    # Render to byte-encoded image
+    return image_data(qri, fmt=format)
 
 
 @register.simple_tag()
 def barcode(data, barcode_class='code128', **kwargs):
     """Render a barcode."""
     constructor = python_barcode.get_barcode_class(barcode_class)
+
+    format = kwargs.pop('format', 'PNG')
 
     data = str(data).zfill(constructor.digits)
 
@@ -68,5 +82,5 @@ def barcode(data, barcode_class='code128', **kwargs):
 
     image = barcode_image.render(writer_options=kwargs)
 
-    # Render to byte-encoded PNG
-    return image_data(image)
+    # Render to byte-encoded image
+    return image_data(image, fmt=format)

@@ -1217,7 +1217,7 @@ class SalesOrderShipment(models.Model):
     reference = models.CharField(
         max_length=100,
         blank=False,
-        verbose_name=('Shipment'),
+        verbose_name=_('Shipment'),
         help_text=_('Shipment number'),
         default='1',
     )

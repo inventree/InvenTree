@@ -114,9 +114,9 @@ C) Look for default key file "secret_key.txt"
 d) Create "secret_key.txt" if it does not exist
 """
 
-if os.getenv("INVENTREE_SECRET_KEY"):
+if secret_key := os.getenv("INVENTREE_SECRET_KEY"):
     # Secret key passed in directly
-    SECRET_KEY = os.getenv("INVENTREE_SECRET_KEY").strip()  # pragma: no cover
+    SECRET_KEY = secret_key.strip()  # pragma: no cover
     logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover
 else:
     # Secret key passed in by file location
@@ -935,17 +935,6 @@ PLUGINS_ENABLED = _is_true(get_setting(
 
 PLUGIN_FILE = get_plugin_file()
 
-# Plugin Directories (local plugins will be loaded from these directories)
-PLUGIN_DIRS = ['plugin.builtin', ]
-
-if not TESTING:
-    # load local deploy directory in prod
-    PLUGIN_DIRS.append('plugins')  # pragma: no cover
-
-if DEBUG or TESTING:
-    # load samples in debug mode
-    PLUGIN_DIRS.append('plugin.samples')
-
 # Plugin test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
 PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
@@ -967,5 +956,5 @@ CUSTOM_LOGO = get_setting(
 
 # check that the logo-file exsists in media
 if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):  # pragma: no cover
+    logger.warning(f"The custom logo file '{CUSTOM_LOGO}' could not be found in the default media storage")
     CUSTOM_LOGO = False
-    logger.warning("The custom logo file could not be found in the default media storage")

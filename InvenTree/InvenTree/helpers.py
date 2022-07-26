@@ -2,17 +2,23 @@
 
 import io
 import json
+import logging
+import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
 from wsgiref.util import FileWrapper
 
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.exceptions import FieldError, ValidationError
+from django.core.files.storage import default_storage
+from django.core.validators import URLValidator
 from django.http import StreamingHttpResponse
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 
+import requests
 from djmoney.money import Money
 from PIL import Image
 
@@ -24,6 +30,8 @@ from common.settings import currency_code_default
 
 from .api_tester import UserMixin
 from .settings import MEDIA_URL, STATIC_URL
+
+logger = logging.getLogger('inventree')
 
 
 def getSetting(key, backup_value=None):
@@ -82,6 +90,104 @@ def construct_absolute_url(*arg):
     return url
 
 
+def download_image_from_url(remote_url, timeout=2.5):
+    """Download an image file from a remote URL.
+
+    This is a potentially dangerous operation, so we must perform some checks:
+
+    - The remote URL is available
+    - The Content-Length is provided, and is not too large
+    - The file is a valid image file
+
+    Arguments:
+        remote_url: The remote URL to retrieve image
+        max_size: Maximum allowed image size (default = 1MB)
+        timeout: Connection timeout in seconds (default = 5)
+
+    Returns:
+        An in-memory PIL image file, if the download was successful
+
+    Raises:
+        requests.exceptions.ConnectionError: Connection could not be established
+        requests.exceptions.Timeout: Connection timed out
+        requests.exceptions.HTTPError: Server responded with invalid response code
+        ValueError: Server responded with invalid 'Content-Length' value
+        TypeError: Response is not a valid image
+    """
+
+    # Check that the provided URL at least looks valid
+    validator = URLValidator()
+    validator(remote_url)
+
+    # Calculate maximum allowable image size (in bytes)
+    max_size = int(InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
+
+    try:
+        response = requests.get(
+            remote_url,
+            timeout=timeout,
+            allow_redirects=True,
+            stream=True,
+        )
+        # Throw an error if anything goes wrong
+        response.raise_for_status()
+    except requests.exceptions.ConnectionError as exc:
+        raise Exception(_("Connection error") + f": {str(exc)}")
+    except requests.exceptions.Timeout as exc:
+        raise exc
+    except requests.exceptions.HTTPError:
+        raise requests.exceptions.HTTPError(_("Server responded with invalid status code") + f": {response.status_code}")
+    except Exception as exc:
+        raise Exception(_("Exception occurred") + f": {str(exc)}")
+
+    if response.status_code != 200:
+        raise Exception(_("Server responded with invalid status code") + f": {response.status_code}")
+
+    try:
+        content_length = int(response.headers.get('Content-Length', 0))
+    except ValueError:
+        raise ValueError(_("Server responded with invalid Content-Length value"))
+
+    if content_length > max_size:
+        raise ValueError(_("Image size is too large"))
+
+    # Download the file, ensuring we do not exceed the reported size
+    fo = io.BytesIO()
+
+    dl_size = 0
+    chunk_size = 64 * 1024
+
+    for chunk in response.iter_content(chunk_size=chunk_size):
+        dl_size += len(chunk)
+
+        if dl_size > max_size:
+            raise ValueError(_("Image download exceeded maximum size"))
+
+        fo.write(chunk)
+
+    if dl_size == 0:
+        raise ValueError(_("Remote server returned empty response"))
+
+    # Now, attempt to convert the downloaded data to a valid image file
+    # img.verify() will throw an exception if the image is not valid
+    try:
+        img = Image.open(fo).convert()
+        img.verify()
+    except Exception:
+        raise TypeError(_("Supplied URL is not a valid image file"))
+
+    return img
+
+
+def TestIfImage(img):
+    """Test if an image file is indeed an image."""
+    try:
+        Image.open(img).verify()
+        return True
+    except Exception:
+        return False
+
+
 def getBlankImage():
     """Return the qualified path for the 'blank image' placeholder."""
     return getStaticUrl("img/blank_image.png")
@@ -92,13 +198,23 @@ def getBlankThumbnail():
     return getStaticUrl("img/blank_image.thumbnail.png")
 
 
-def TestIfImage(img):
-    """Test if an image file is indeed an image."""
-    try:
-        Image.open(img).verify()
-        return True
-    except Exception:
-        return False
+def getLogoImage(as_file=False, custom=True):
+    """Return the InvenTree logo image, or a custom logo if available."""
+
+    """Return the path to the logo-file."""
+    if custom and settings.CUSTOM_LOGO:
+
+        if as_file:
+            return f"file://{default_storage.path(settings.CUSTOM_LOGO)}"
+        else:
+            return default_storage.url(settings.CUSTOM_LOGO)
+
+    else:
+        if as_file:
+            path = os.path.join(settings.STATIC_ROOT, 'img/inventree.png')
+            return f"file://{path}"
+        else:
+            return getStaticUrl('img/inventree.png')
 
 
 def TestIfImageURL(url):

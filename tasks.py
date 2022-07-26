@@ -105,6 +105,7 @@ def install(c):
     print("Installing required python packages from 'requirements.txt'")
 
     # Install required Python packages with PIP
+    c.run('pip3 install --upgrade pip')
     c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
 
 
@@ -406,19 +407,19 @@ def import_fixtures(c):
 
 
 # Execution tasks
-@task(help={'address': 'Server address:port (default=127.0.0.1:8000)'})
+@task
+def wait(c):
+    """Wait until the database connection is ready."""
+    return manage(c, "wait_for_db")
+
+
+@task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})
 def server(c, address="127.0.0.1:8000"):
     """Launch a (deveopment) server using Django's in-built webserver.
 
     Note: This is *not* sufficient for a production installation.
     """
     manage(c, "runserver {address}".format(address=address), pty=True)
-
-
-@task
-def wait(c):
-    """Wait until the database connection is ready."""
-    return manage(c, "wait_for_db")
 
 
 @task(pre=[wait])
@@ -509,6 +510,19 @@ def test(c, database=None):
 
     # Run coverage tests
     manage(c, 'test', pty=True)
+
+
+@task(pre=[update])
+def setup_test(c):
+    """Setup a testing enviroment."""
+    # Remove old data directory
+    c.run('rm inventree-data -r')
+
+    # Get test data
+    c.run('git clone https://github.com/inventree/demo-dataset inventree-data')
+
+    # Load data
+    import_records(c, filename='inventree-data/inventree_data.json', clear=True)
 
 
 @task
