@@ -89,7 +89,7 @@ class ReportTagTest(TestCase):
 
         self.debug_mode(False)
         img = report_tags.uploaded_image('part/images/test.jpg')
-        self.assertEqual(img, f'file://{img_path}test.jpg')
+        self.assertEqual(img, f'file://{img_path.joinpath("test.jpg")}')
 
     def test_part_image(self):
         """Unit tests for the 'part_image' tag"""
