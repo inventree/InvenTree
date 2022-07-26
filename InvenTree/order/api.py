@@ -326,7 +326,7 @@ class PurchaseOrderComplete(PurchaseOrderContextMixin, CreateAPI):
 
 
 class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'complete' a purchase order."""
+    """API endpoint to 'issue' (send) a purchase order."""
 
     queryset = models.PurchaseOrder.objects.all()
 
