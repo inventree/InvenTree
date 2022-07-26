@@ -520,6 +520,9 @@ def setup_test(c):
     # Get test data
     c.run('git clone https://github.com/inventree/demo-dataset inventree-data')
 
+    # Make sure migrations are done - might have just deleted sqlite database
+    migrate(c)
+
     # Load data
     import_records(c, filename='inventree-data/inventree_data.json', clear=True)
 
