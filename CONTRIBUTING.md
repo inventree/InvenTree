@@ -7,9 +7,9 @@ Run the following command to set up all toolsets for development.
 invoke setup-dev
 ```
 
-With the flag `test` set to true the database will be populated with the [offical](https://github.com/inventree/demo-dataset) test dataset.
+With the flag `tests` the database will additionally be populated with the [offical](https://github.com/inventree/demo-dataset) test dataset.
 ```bash
-invoke setup-dev -test=True
+invoke setup-dev --tests
 ```
 
 Run either command to set up your development setup before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.
