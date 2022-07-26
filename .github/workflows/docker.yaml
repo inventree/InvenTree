@@ -51,6 +51,17 @@ jobs:
           docker-compose run inventree-dev-server invoke wait
           docker-compose run inventree-dev-server invoke test
           docker-compose down
+      - name: Check Data Directory
+        # The following file structure should have been created by the docker image
+        run: |
+          test -d data
+          test -d data/env
+          test -d data/media
+          test -d data/static
+          test -d data/plugins
+          test -f data/config.yaml
+          test -f data/plugins.txt
+          test -f data/secret_key.txt
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
         uses: docker/setup-qemu-action@v1

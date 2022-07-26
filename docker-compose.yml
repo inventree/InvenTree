@@ -48,10 +48,6 @@ services:
         ports:
             # Expose web server on port 8000
             - 8000:8000
-        # Note: If using the inventree-dev-proxy container (see below),
-        # comment out the "ports" directive (above) and uncomment the "expose" directive
-        #expose:
-        #    - 8000
         volumes:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree
