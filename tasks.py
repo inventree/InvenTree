@@ -109,7 +109,7 @@ def install(c):
 
 
 @task
-def setup_dev(c):
+def setup_dev(c, test=False):
     """Sets up everything needed for the dev enviroment."""
     print("Installing required python packages from 'requirements-dev.txt'")
 
@@ -123,6 +123,10 @@ def setup_dev(c):
     # Update all the hooks
     c.run('pre-commit autoupdate')
     print("pre-commit set up is done...")
+
+    # Set up test-data if flag is set
+    if test:
+        setup_test(c)
 
 
 # Setup / maintenance tasks
