@@ -24,7 +24,8 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.exceptions import AppRegistryNotReady, ValidationError
-from django.core.validators import MinValueValidator, URLValidator
+from django.core.validators import (MaxValueValidator, MinValueValidator,
+                                    URLValidator)
 from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
 from django.urls import reverse
@@ -854,6 +855,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Allow download of remote images and files from external URL'),
             'validator': bool,
             'default': False,
+        },
+
+        'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE': {
+            'name': _('Download Size Limit'),
+            'description': _('Maximum allowable download size for remote image'),
+            'units': 'MB',
+            'default': 1,
+            'validator': [
+                int,
+                MinValueValidator(1),
+                MaxValueValidator(25),
+            ]
         },
 
         'INVENTREE_REQUIRE_CONFIRM': {

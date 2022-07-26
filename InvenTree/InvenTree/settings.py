@@ -936,17 +936,6 @@ PLUGINS_ENABLED = _is_true(get_setting(
 
 PLUGIN_FILE = get_plugin_file()
 
-# Plugin Directories (local plugins will be loaded from these directories)
-PLUGIN_DIRS = ['plugin.builtin', ]
-
-if not TESTING:
-    # load local deploy directory in prod
-    PLUGIN_DIRS.append('plugins')  # pragma: no cover
-
-if DEBUG or TESTING:
-    # load samples in debug mode
-    PLUGIN_DIRS.append('plugin.samples')
-
 # Plugin test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
 PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
@@ -968,5 +957,5 @@ CUSTOM_LOGO = get_setting(
 
 # check that the logo-file exsists in media
 if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):  # pragma: no cover
+    logger.warning(f"The custom logo file '{CUSTOM_LOGO}' could not be found in the default media storage")
     CUSTOM_LOGO = False
-    logger.warning("The custom logo file could not be found in the default media storage")

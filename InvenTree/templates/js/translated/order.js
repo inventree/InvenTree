@@ -817,7 +817,7 @@ function orderParts(parts_list, options={}) {
 
         var thumb = thumbnailImage(part.thumbnail || part.image);
 
-        // The "quantity" field should have been provided for each part
+        // Default quantity value
         var quantity = part.quantity || 1;
 
         if (quantity < 0) {
@@ -1017,6 +1017,29 @@ function orderParts(parts_list, options={}) {
                         return '{% trans "No matching purchase orders" %}';
                     }
                 }, null, opts);
+
+                // Request 'requirements' information for each part
+                inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
+                    success: function(response) {
+                        var required = response.required || 0;
+                        var allocated = response.allocated || 0;
+                        var available = response.available_stock || 0;
+
+                        // Based on what we currently 'have' on hand, what do we need to order?
+                        var deficit = Math.max(required - allocated, 0);
+
+                        if (available < deficit) {
+                            var q = deficit - available;
+
+                            updateFieldValue(
+                                `quantity_${part.pk}`,
+                                q,
+                                {},
+                                opts
+                            );
+                        }
+                    }
+                });
             });
 
             // Add callback for "add to purchase order" button

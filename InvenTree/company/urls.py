@@ -4,18 +4,12 @@ from django.urls import include, re_path
 
 from . import views
 
-company_detail_urls = [
-
-    re_path(r'^thumb-download/', views.CompanyImageDownloadFromURL.as_view(), name='company-image-download'),
-
-    # Any other URL
-    re_path(r'^.*$', views.CompanyDetail.as_view(), name='company-detail'),
-]
-
-
 company_urls = [
 
-    re_path(r'^(?P<pk>\d+)/', include(company_detail_urls)),
+    # Detail URLs for a specific Company instance
+    re_path(r'^(?P<pk>\d+)/', include([
+        re_path(r'^.*$', views.CompanyDetail.as_view(), name='company-detail'),
+    ])),
 
     re_path(r'suppliers/', views.CompanyIndex.as_view(), name='supplier-index'),
     re_path(r'manufacturers/', views.CompanyIndex.as_view(), name='manufacturer-index'),

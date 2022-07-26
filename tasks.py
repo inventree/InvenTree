@@ -105,6 +105,7 @@ def install(c):
     print("Installing required python packages from 'requirements.txt'")
 
     # Install required Python packages with PIP
+    c.run('pip3 install --upgrade pip')
     c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
 
 
@@ -509,6 +510,19 @@ def test(c, database=None):
 
     # Run coverage tests
     manage(c, 'test', pty=True)
+
+
+@task(pre=[update])
+def setup_test(c):
+    """Setup a testing enviroment."""
+    # Remove old data directory
+    c.run('rm inventree-data -r')
+
+    # Get test data
+    c.run('git clone https://github.com/inventree/demo-dataset inventree-data')
+
+    # Load data
+    import_records(c, filename='inventree-data/inventree_data.json', clear=True)
 
 
 @task

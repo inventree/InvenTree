@@ -539,10 +539,16 @@ class ReportAsset(models.Model):
         """String representation of a ReportAsset instance"""
         return os.path.basename(self.asset.name)
 
+    # Asset file
     asset = models.FileField(
         upload_to=rename_asset,
         verbose_name=_('Asset'),
         help_text=_("Report asset file"),
     )
 
-    description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_("Asset file description"))
+    # Asset description (user facing string, not used internally)
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_("Asset file description")
+    )
