@@ -1,6 +1,14 @@
 Hi there, thank you for your intrest in contributing!
 Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
 
+Up an running in 3 LOC:
+```bash
+git clone https://github.com/inventree/InvenTree.git && cd InvenTree
+python3 -m venv env && source env/bin/activate
+pip install invoke && invoke setup-dev --tests
+```
+
+
 ## Setup
 
 Run the following command to set up all toolsets for development.
