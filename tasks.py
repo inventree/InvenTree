@@ -117,10 +117,12 @@ def setup_dev(c):
     c.run('pip3 install -U -r requirements-dev.txt')
 
     # Install pre-commit hook
+    print("Installing pre-commit for checks before git commits...")
     c.run('pre-commit install')
 
     # Update all the hooks
     c.run('pre-commit autoupdate')
+    print("pre-commit set up is done...")
 
 
 # Setup / maintenance tasks
@@ -532,6 +534,7 @@ def setup_test(c):
     import_records(c, filename='inventree-data/inventree_data.json', clear=True)
     print("Done setting up test enviroment...")
     print("========================================")
+
 
 @task
 def coverage(c):
