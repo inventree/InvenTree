@@ -1,3 +1,4 @@
+Hi there, thank you for your intrest in contributing!
 Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
 
 ## Setup
