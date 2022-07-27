@@ -437,26 +437,12 @@ class InvenTreeAttachment(models.Model):
         if len(fn) == 0:
             raise ValidationError(_('Filename must not be empty'))
 
-        attachment_dir = os.path.join(
-            settings.MEDIA_ROOT,
-            self.getSubdir()
-        )
-
-        old_file = os.path.join(
-            settings.MEDIA_ROOT,
-            self.attachment.name
-        )
-
-        new_file = os.path.join(
-            settings.MEDIA_ROOT,
-            self.getSubdir(),
-            fn
-        )
-
-        new_file = os.path.abspath(new_file)
+        attachment_dir = settings.MEDIA_ROOT.joinpath(self.getSubdir())
+        old_file = settings.MEDIA_ROOT.joinpath(self.attachment.name)
+        new_file = settings.MEDIA_ROOT.joinpath(self.getSubdir(), fn).resolve()
 
         # Check that there are no directory tricks going on...
-        if os.path.dirname(new_file) != attachment_dir:
+        if new_file.parent != attachment_dir:
             logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
             raise ValidationError(_("Invalid attachment directory"))
 
@@ -473,11 +459,11 @@ class InvenTreeAttachment(models.Model):
         if len(fn.split('.')) < 2:
             raise ValidationError(_("Filename missing extension"))
 
-        if not os.path.exists(old_file):
+        if not old_file.exists():
             logger.error(f"Trying to rename attachment '{old_file}' which does not exist")
             return
 
-        if os.path.exists(new_file):
+        if new_file.exists():
             raise ValidationError(_("Attachment with this filename already exists"))
 
         try:

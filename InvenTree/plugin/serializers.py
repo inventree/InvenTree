@@ -1,6 +1,5 @@
 """JSON serializers for plugin app."""
 
-import os
 import subprocess
 
 from django.conf import settings
@@ -144,7 +143,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         success = False
         # execute pypi
         try:
-            result = subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR))
+            result = subprocess.check_output(command, cwd=settings.BASE_DIR.parent)
             ret['result'] = str(result, 'utf-8')
             ret['success'] = True
             success = True

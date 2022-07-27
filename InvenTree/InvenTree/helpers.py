@@ -7,6 +7,7 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
@@ -211,7 +212,7 @@ def getLogoImage(as_file=False, custom=True):
 
     else:
         if as_file:
-            path = os.path.join(settings.STATIC_ROOT, 'img/inventree.png')
+            path = settings.STATIC_ROOT.joinpath('img/inventree.png')
             return f"file://{path}"
         else:
             return getStaticUrl('img/inventree.png')
@@ -687,20 +688,17 @@ def addUserPermissions(user, permissions):
 
 def getMigrationFileNames(app):
     """Return a list of all migration filenames for provided app."""
-    local_dir = os.path.dirname(os.path.abspath(__file__))
-
-    migration_dir = os.path.join(local_dir, '..', app, 'migrations')
-
-    files = os.listdir(migration_dir)
+    local_dir = Path(__file__).parent
+    files = local_dir.joinpath('..', app, 'migrations').iterdir()
 
     # Regex pattern for migration files
-    pattern = r"^[\d]+_.*\.py$"
+    regex = re.compile(r"^[\d]+_.*\.py$")
 
     migration_files = []
 
     for f in files:
-        if re.match(pattern, f):
-            migration_files.append(f)
+        if regex.match(f.name):
+            migration_files.append(f.name)
 
     return migration_files
 

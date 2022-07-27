@@ -15,6 +15,7 @@ import random
 import socket
 import string
 import sys
+from pathlib import Path
 
 import django.conf.locale
 from django.core.files.storage import default_storage
@@ -44,7 +45,7 @@ TESTING_ENV = False
 # New requirement for django 3.2+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# Build paths inside the project like this: BASE_DIR.joinpath(...)
 BASE_DIR = get_base_dir()
 
 cfg_filename = get_config_file()
@@ -53,7 +54,7 @@ with open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
 
 # We will place any config files in the same directory as the config file
-config_dir = os.path.dirname(cfg_filename)
+config_dir = cfg_filename.parent
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -123,19 +124,17 @@ else:
     key_file = os.getenv("INVENTREE_SECRET_KEY_FILE")
 
     if key_file:
-        key_file = os.path.abspath(key_file)  # pragma: no cover
+        key_file = Path(key_file).resolve()  # pragma: no cover
     else:
         # default secret key location
-        key_file = os.path.join(BASE_DIR, "secret_key.txt")
-        key_file = os.path.abspath(key_file)
+        key_file = BASE_DIR.joinpath("secret_key.txt").resolve()
 
-    if not os.path.exists(key_file):  # pragma: no cover
+    if not key_file.exists():  # pragma: no cover
         logger.info(f"Generating random key file at '{key_file}'")
         # Create a random key file
-        with open(key_file, 'w') as f:
-            options = string.digits + string.ascii_letters + string.punctuation
-            key = ''.join([random.choice(options) for i in range(100)])
-            f.write(key)
+        options = string.digits + string.ascii_letters + string.punctuation
+        key = ''.join([random.choice(options) for i in range(100)])
+        key_file.write_text(key)
 
     logger.info(f"Loading SECRET_KEY from '{key_file}'")
 
@@ -146,28 +145,34 @@ else:
         sys.exit(-1)
 
 # The filesystem location for served static files
-STATIC_ROOT = os.path.abspath(
+STATIC_ROOT = Path(
     get_setting(
         'INVENTREE_STATIC_ROOT',
         CONFIG.get('static_root', None)
     )
-)
+).resolve()
 
 if STATIC_ROOT is None:  # pragma: no cover
     print("ERROR: INVENTREE_STATIC_ROOT directory not defined")
     sys.exit(1)
+else:
+    # Ensure the root really is availalble
+    STATIC_ROOT.mkdir(parents=True, exist_ok=True)
 
 # The filesystem location for served static files
-MEDIA_ROOT = os.path.abspath(
+MEDIA_ROOT = Path(
     get_setting(
         'INVENTREE_MEDIA_ROOT',
         CONFIG.get('media_root', None)
     )
-)
+).resolve()
 
 if MEDIA_ROOT is None:  # pragma: no cover
     print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
     sys.exit(1)
+else:
+    # Ensure the root really is availalble
+    MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
@@ -193,17 +198,17 @@ STATICFILES_DIRS = []
 
 # Translated Template settings
 STATICFILES_I18_PREFIX = 'i18n'
-STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js', 'translated')
-STATICFILES_I18_TRG = os.path.join(BASE_DIR, 'InvenTree', 'static_i18n')
+STATICFILES_I18_SRC = BASE_DIR.joinpath('templates', 'js', 'translated')
+STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
-STATICFILES_I18_TRG = os.path.join(STATICFILES_I18_TRG, STATICFILES_I18_PREFIX)
+STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
 
 STATFILES_I18_PROCESSORS = [
     'InvenTree.context.status_codes',
 ]
 
 # Color Themes Directory
-STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
+STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes')
 
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
@@ -339,10 +344,10 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),
+            BASE_DIR.joinpath('templates'),
             # Allow templates in the reporting directory to be accessed
-            os.path.join(MEDIA_ROOT, 'report'),
-            os.path.join(MEDIA_ROOT, 'label'),
+            MEDIA_ROOT.joinpath('report'),
+            MEDIA_ROOT.joinpath('label'),
         ],
         'OPTIONS': {
             'context_processors': [
@@ -809,7 +814,7 @@ EMAIL_USE_SSL = get_setting(
 EMAIL_TIMEOUT = 60
 
 LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'locale/'),
+    BASE_DIR.joinpath('locale/'),
 )
 
 TIME_ZONE = get_setting(
@@ -934,17 +939,6 @@ PLUGINS_ENABLED = _is_true(get_setting(
 ))
 
 PLUGIN_FILE = get_plugin_file()
-
-# Plugin Directories (local plugins will be loaded from these directories)
-PLUGIN_DIRS = ['plugin.builtin', ]
-
-if not TESTING:
-    # load local deploy directory in prod
-    PLUGIN_DIRS.append('plugins')  # pragma: no cover
-
-if DEBUG or TESTING:
-    # load samples in debug mode
-    PLUGIN_DIRS.append('plugin.samples')
 
 # Plugin test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?

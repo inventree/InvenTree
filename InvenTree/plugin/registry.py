@@ -7,9 +7,9 @@
 import importlib
 import logging
 import os
-import pathlib
 import subprocess
 from importlib import metadata, reload
+from pathlib import Path
 from typing import OrderedDict
 
 from django.apps import apps
@@ -187,6 +187,53 @@ class PluginsRegistry:
 
         logger.info('Finished reloading plugins')
 
+    def plugin_dirs(self):
+        """Construct a list of directories from where plugins can be loaded"""
+
+        dirs = ['plugin.builtin', ]
+
+        if settings.TESTING or settings.DEBUG:
+            # If in TEST or DEBUG mode, load plugins from the 'samples' directory
+            dirs.append('plugin.samples')
+
+        if settings.TESTING:
+            custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
+        else:
+            custom_dirs = os.getenv('INVENTREE_PLUGIN_DIR', None)
+
+            # Load from user specified directories (unless in testing mode)
+            dirs.append('plugins')
+
+        if custom_dirs is not None:
+            # Allow multiple plugin directories to be specified
+            for pd_text in custom_dirs.split(','):
+                pd = Path(pd_text.strip()).absolute()
+
+                # Attempt to create the directory if it does not already exist
+                if not pd.exists():
+                    try:
+                        pd.mkdir(exist_ok=True)
+                    except Exception:
+                        logger.error(f"Could not create plugin directory '{pd}'")
+                        continue
+
+                # Ensure the directory has an __init__.py file
+                init_filename = pd.joinpath('__init__.py')
+
+                if not init_filename.exists():
+                    try:
+                        init_filename.write_text("# InvenTree plugin directory\n")
+                    except Exception:
+                        logger.error(f"Could not create file '{init_filename}'")
+                        continue
+
+                if pd.exists() and pd.is_dir():
+                    # By this point, we have confirmed that the directory at least exists
+                    logger.info(f"Added plugin directory: '{pd}'")
+                    dirs.append(pd)
+
+        return dirs
+
     def collect_plugins(self):
         """Collect plugins from all possible ways of loading."""
         if not settings.PLUGINS_ENABLED:
@@ -196,8 +243,20 @@ class PluginsRegistry:
         self.plugin_modules = []  # clear
 
         # Collect plugins from paths
-        for plugin in settings.PLUGIN_DIRS:
-            modules = get_plugins(importlib.import_module(plugin), InvenTreePlugin)
+        for plugin in self.plugin_dirs():
+
+            logger.info(f"Loading plugins from directory '{plugin}'")
+
+            parent_path = None
+            parent_obj = Path(plugin)
+
+            # If a "path" is provided, some special handling is required
+            if parent_obj.name is not plugin and len(parent_obj.parts) > 1:
+                parent_path = parent_obj.parent
+                plugin = parent_obj.name
+
+            modules = get_plugins(importlib.import_module(plugin), InvenTreePlugin, path=parent_path)
+
             if modules:
                 [self.plugin_modules.append(item) for item in modules]
 
@@ -224,7 +283,7 @@ class PluginsRegistry:
             return True
 
         try:
-            output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
+            output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=settings.BASE_DIR.parent), 'utf-8')
         except subprocess.CalledProcessError as error:  # pragma: no cover
             logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
             return False
@@ -506,7 +565,7 @@ class PluginsRegistry:
         """
         try:
             # for local path plugins
-            plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
+            plugin_path = '.'.join(Path(plugin.path).relative_to(settings.BASE_DIR).parts)
         except ValueError:  # pragma: no cover
             # plugin is shipped as package
             plugin_path = plugin.NAME

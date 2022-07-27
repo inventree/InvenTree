@@ -248,7 +248,11 @@
         {% for object in session_list %}
             <tr {% if object.session_key == session_key %}class="active"{% endif %}>
             <td>{{ object.ip }}</td>
+            {% if object.user_agent or object.device %}
             <td>{{ object.user_agent|device|default_if_none:unknown_on_unknown|safe }}</td>
+            {% else %}
+            <td>{{ unknown_on_unknown }}</td>
+            {% endif %}
             <td>
                 {% if object.session_key == session_key %}
                 {% blocktrans with time=object.last_activity|timesince %}{{ time }} ago (this session){% endblocktrans %}

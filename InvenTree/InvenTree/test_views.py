@@ -2,6 +2,7 @@
 
 import os
 
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from InvenTree.helpers import InvenTreeTestCase
@@ -41,3 +42,80 @@ class ViewTests(InvenTreeTestCase):
         self.assertIn("<div id='detail-panels'>", content)
 
         # TODO: In future, run the javascript and ensure that the panels get created!
+
+    def test_settings_page(self):
+        """Test that the 'settings' page loads correctly"""
+
+        # Settings page loads
+        url = reverse('settings')
+
+        # Attempt without login
+        self.client.logout()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+
+        # Login with default client
+        self.client.login(username=self.username, password=self.password)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode()
+
+        user_panels = [
+            'account',
+            'user-display',
+            'user-home',
+            'user-reports',
+        ]
+
+        staff_panels = [
+            'server',
+            'login',
+            'barcodes',
+            'currencies',
+            'parts',
+            'stock',
+        ]
+
+        plugin_panels = [
+            'plugin',
+        ]
+
+        # Default user has staff access, so all panels will be present
+        for panel in user_panels + staff_panels + plugin_panels:
+            self.assertIn(f"select-{panel}", content)
+            self.assertIn(f"panel-{panel}", content)
+
+        # Now create a user who does not have staff access
+        pleb_user = get_user_model().objects.create_user(
+            username='pleb',
+            password='notstaff',
+        )
+
+        pleb_user.groups.add(self.group)
+        pleb_user.is_superuser = False
+        pleb_user.is_staff = False
+        pleb_user.save()
+
+        self.client.logout()
+
+        result = self.client.login(
+            username='pleb',
+            password='notstaff',
+        )
+
+        self.assertTrue(result)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode()
+
+        # Normal user still has access to user-specific panels
+        for panel in user_panels:
+            self.assertIn(f"select-{panel}", content)
+            self.assertIn(f"panel-{panel}", content)
+
+        # Normal user does NOT have access to global or plugin settings
+        for panel in staff_panels + plugin_panels:
+            self.assertNotIn(f"select-{panel}", content)
+            self.assertNotIn(f"panel-{panel}", content)
