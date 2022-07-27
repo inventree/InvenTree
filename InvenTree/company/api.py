@@ -270,6 +270,9 @@ class SupplierPartFilter(rest_filters.FilterSet):
     # Filter by 'active' status of linked part
     active = rest_filters.BooleanFilter(field_name='part__active')
 
+    # Filter by the 'MPN' of linked manufacturer part
+    MPN = rest_filters.CharFilter(label='Manufacturer Part Number', field_name='manufacturer_part__MPN', lookup_expr='iexact')
+
 
 class SupplierPartList(ListCreateDestroyAPIView):
     """API endpoint for list view of SupplierPart object.
