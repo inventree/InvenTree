@@ -252,7 +252,8 @@ class PluginsRegistry:
 
             # If a "path" is provided, some special handling is required
             if parent_obj.name is not plugin and len(parent_obj.parts) > 1:
-                parent_path = parent_obj.parent
+                # Ensure PosixPath object is converted to a string, before passing to get_plugins
+                parent_path = str(parent_obj.parent)
                 plugin = parent_obj.name
 
             modules = get_plugins(importlib.import_module(plugin), InvenTreePlugin, path=parent_path)
