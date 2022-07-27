@@ -9,6 +9,7 @@ Increment this API version number whenever there is a significant change to the 
 
 v68 -> 2022-07-27 : https://github.com/inventree/InvenTree/pull/3417
     - Allows SupplierPart list to be filtered by SKU value
+    - Allows SupplierPart list to be filtered by MPN value
 
 v67 -> 2022-07-25 : https://github.com/inventree/InvenTree/pull/3395
     - Adds a 'requirements' endpoint for Part instance
