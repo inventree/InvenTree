@@ -637,7 +637,8 @@ class SettingsView(TemplateView):
             ctx["rates_updated"] = None
 
         # load locale stats
-        STAT_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').abolute()
+        STAT_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').absolute()
+
         try:
             ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
         except Exception:
