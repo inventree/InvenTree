@@ -4,11 +4,15 @@ from django.db.models import F, Q
 from django.urls import include, path, re_path
 
 from django_filters import rest_framework as rest_filters
+from django_ical.views import ICalFeed
 from rest_framework import filters, status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 import order.models as models
 import order.serializers as serializers
+from common.models import InvenTreeSetting
+from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
@@ -1081,6 +1085,75 @@ class PurchaseOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = serializers.PurchaseOrderAttachmentSerializer
 
 
+class PurchaseOrderCalendarExport(ICalFeed, APIView):
+    """Calendar export for Purchase Orders
+
+    Optional parameters:
+    -
+    """
+
+    role_required = "purchase_order"
+    permission_class = "view"
+
+    # Parameters for the whole calendar
+    instance_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL").replace("http://", "").replace("https://", "")
+    timezone = settings.TIME_ZONE
+    file_name = "calendar.ics"
+
+    def get_object(self, request, *args, **kwargs):
+        """Get specific parameters for this request, check for authentication."""
+        return f"Username: {str(request.user)}, logged in ({request.user.is_authenticated})"
+
+    def title(self, obj):
+        """Return calendar title."""
+        return f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {"PurchaseOrders"} {obj}'
+
+    def product_id(self, obj):
+        """Return calendar product id."""
+        return f'//{self.instance_url}//{self.title(obj)}//EN'
+
+    def items(self):
+        """Return a list of PurchaseOrders.
+
+        Filters:
+        - Only return those which have a target_date set
+        """
+        return models.PurchaseOrder.objects.filter(target_date__isnull=False)
+
+    def item_title(self, item):
+        """Set the event title to the purchase order reference"""
+        return item.reference
+
+    def item_description(self, item):
+        """Set the event description"""
+        return item.description
+
+    def item_start_datetime(self, item):
+        """Set event start to target date. Goal is all-day event."""
+        return item.target_date
+
+    def item_end_datetime(self, item):
+        """Set event end to target date. Goal is all-day event."""
+        return item.target_date
+
+    def item_created(self, item):
+        """Use creation date of PO as creation date of event."""
+        return item.creation_date
+
+    def item_class(self, item):
+        """Set item class to PUBLIC"""
+        return 'PUBLIC'
+
+    def item_guid(self, item):
+        """Return globally unique UID for event"""
+        return f'po_{item.pk}_{item.reference.replace(" ","-")}@{self.instance_url}'
+
+    def item_link(self, item):
+        """Set the item link."""
+        site_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL")
+        return f'{site_url}{item.get_absolute_url()}'
+
+
 order_api_urls = [
 
     # API endpoints for purchase orders
@@ -1091,6 +1164,9 @@ order_api_urls = [
             path('<int:pk>/', PurchaseOrderAttachmentDetail.as_view(), name='api-po-attachment-detail'),
             re_path(r'^.*$', PurchaseOrderAttachmentList.as_view(), name='api-po-attachment-list'),
         ])),
+
+        # Calendar view
+        re_path(r'^calendar.ics', PurchaseOrderCalendarExport(), name='po-calendar'),
 
         # Individual purchase order detail URLs
         re_path(r'^(?P<pk>\d+)/', include([
