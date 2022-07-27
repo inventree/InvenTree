@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-27 00:43+0000\n"
+"POT-Creation-Date: 2022-07-27 22:07+0000\n"
 "PO-Revision-Date: 2022-07-27 02:18\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
@@ -698,11 +698,11 @@ msgstr ""
 msgid "Wrong password provided"
 msgstr ""
 
-#: InvenTree/views.py:750 templates/navbar.html:152
+#: InvenTree/views.py:751 templates/navbar.html:152
 msgid "System Information"
 msgstr "システム情報"
 
-#: InvenTree/views.py:757 templates/navbar.html:163
+#: InvenTree/views.py:758 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr ""
 
@@ -7282,17 +7282,17 @@ msgstr ""
 msgid "Last Activity"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:254
+#: templates/InvenTree/settings/user.html:258
 #, python-format
 msgid "%(time)s ago (this session)"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:256
+#: templates/InvenTree/settings/user.html:260
 #, python-format
 msgid "%(time)s ago"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:268
+#: templates/InvenTree/settings/user.html:272
 msgid "Do you really want to remove the selected email address?"
 msgstr ""
 
@@ -7447,14 +7447,16 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10421,4 +10423,3 @@ msgstr ""
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr ""
-
