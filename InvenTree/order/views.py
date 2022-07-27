@@ -3,7 +3,6 @@
 import logging
 from decimal import Decimal, InvalidOperation
 
-from django.contrib.auth.decorators import permission_required
 from django.db.utils import IntegrityError
 from django.forms import HiddenInput, IntegerField
 from django.http import HttpResponseRedirect
@@ -410,7 +409,6 @@ class LineItemPricing(PartPricing):
         return super().post(request, *args, **kwargs)
 
 
-@permission_required('orders.view')
 class PurchaseOrderCalendarExport(ICalFeed):
     """Calendar export for Purchase Orders
 
