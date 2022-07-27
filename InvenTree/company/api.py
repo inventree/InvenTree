@@ -264,6 +264,7 @@ class SupplierPartFilter(rest_filters.FilterSet):
         fields = [
             'supplier',
             'part',
+            'manufacturer_part',
             'SKU',
         ]
 
@@ -308,12 +309,6 @@ class SupplierPartList(ListCreateDestroyAPIView):
 
         if company is not None:
             queryset = queryset.filter(Q(manufacturer_part__manufacturer=company) | Q(supplier=company))
-
-        # Filter by manufacturer part?
-        manufacturer_part = params.get('manufacturer_part', None)
-
-        if manufacturer_part is not None:
-            queryset = queryset.filter(manufacturer_part=manufacturer_part)
 
         return queryset
 
