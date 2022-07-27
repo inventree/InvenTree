@@ -7,6 +7,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 import tablib
@@ -20,6 +21,7 @@ from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 
 from common.models import InvenTreeSetting
+from InvenTree.fields import InvenTreeRestURLField
 from InvenTree.helpers import download_image_from_url
 
 
@@ -63,6 +65,12 @@ class InvenTreeMoneySerializer(MoneyField):
 
 class InvenTreeModelSerializer(serializers.ModelSerializer):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
+
+    # Switch out URLField mapping
+    serializer_field_mapping = {
+        **serializers.ModelSerializer.serializer_field_mapping,
+        models.URLField: InvenTreeRestURLField,
+    }
 
     def __init__(self, instance=None, data=empty, **kwargs):
         """Custom __init__ routine to ensure that *default* values (as specified in the ORM) are used by the DRF serializers, *if* the values are not provided by the user."""

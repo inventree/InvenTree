@@ -12,10 +12,19 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.forms.fields import MoneyField
 from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.models.validators import MinMoneyValidator
+from rest_framework.fields import URLField as RestURLField
 
 import InvenTree.helpers
 
 from .validators import allowable_url_schemes
+
+
+class InvenTreeRestURLField(RestURLField):
+    """Custom field for DRF with custom scheme vaildators."""
+    def __init__(self, **kwargs):
+        """Update schemes."""
+        super().__init__(**kwargs)
+        self.validators[-1].schemes = allowable_url_schemes()
 
 
 class InvenTreeURLFormField(FormURLField):
@@ -27,7 +36,7 @@ class InvenTreeURLFormField(FormURLField):
 class InvenTreeURLField(models.URLField):
     """Custom URL field which has custom scheme validators."""
 
-    default_validators = [validators.URLValidator(schemes=allowable_url_schemes())]
+    validators = [validators.URLValidator(schemes=allowable_url_schemes())]
 
     def formfield(self, **kwargs):
         """Return a Field instance for this field."""
