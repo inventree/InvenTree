@@ -1,7 +1,5 @@
 """Django views for interacting with common models."""
 
-import os
-
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.utils.translation import gettext_lazy as _
@@ -37,9 +35,9 @@ class MultiStepFormView(SessionWizardView):
     def process_media_folder(self):
         """Process media folder."""
         if self.media_folder:
-            media_folder_abs = os.path.join(settings.MEDIA_ROOT, self.media_folder)
-            if not os.path.exists(media_folder_abs):
-                os.mkdir(media_folder_abs)
+            media_folder_abs = settings.MEDIA_ROOT.joinpath(self.media_folder)
+            if not media_folder_abs.exists():
+                media_folder_abs.mkdir(parents=True, exist_ok=True)
             self.file_storage = FileSystemStorage(location=media_folder_abs)
 
     def get_template_names(self):

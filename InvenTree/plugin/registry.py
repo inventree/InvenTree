@@ -7,9 +7,9 @@
 import importlib
 import logging
 import os
-import pathlib
 import subprocess
 from importlib import metadata, reload
+from pathlib import Path
 from typing import OrderedDict
 
 from django.apps import apps
@@ -207,7 +207,7 @@ class PluginsRegistry:
         if custom_dirs is not None:
             # Allow multiple plugin directories to be specified
             for pd_text in custom_dirs.split(','):
-                pd = pathlib.Path(pd_text.strip()).absolute()
+                pd = Path(pd_text.strip()).absolute()
 
                 # Attempt to create the directory if it does not already exist
                 if not pd.exists():
@@ -248,7 +248,7 @@ class PluginsRegistry:
             logger.info(f"Loading plugins from directory '{plugin}'")
 
             parent_path = None
-            parent_obj = pathlib.Path(plugin)
+            parent_obj = Path(plugin)
 
             # If a "path" is provided, some special handling is required
             if parent_obj.name is not plugin and len(parent_obj.parts) > 1:
@@ -283,7 +283,7 @@ class PluginsRegistry:
             return True
 
         try:
-            output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
+            output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=settings.BASE_DIR.parent), 'utf-8')
         except subprocess.CalledProcessError as error:  # pragma: no cover
             logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
             return False
@@ -565,7 +565,7 @@ class PluginsRegistry:
         """
         try:
             # for local path plugins
-            plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
+            plugin_path = '.'.join(Path(plugin.path).relative_to(settings.BASE_DIR).parts)
         except ValueError:  # pragma: no cover
             # plugin is shipped as package
             plugin_path = plugin.NAME

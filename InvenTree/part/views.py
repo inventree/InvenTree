@@ -510,7 +510,7 @@ class PartImageSelect(AjaxUpdateView):
         data = {}
 
         if img:
-            img_path = os.path.join(settings.MEDIA_ROOT, 'part_images', img)
+            img_path = settings.MEDIA_ROOT.joinpath('part_images', img)
 
             # Ensure that the image already exists
             if os.path.exists(img_path):

@@ -5,7 +5,6 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
 
 import json
-import os
 
 from django.conf import settings
 from django.contrib.auth import password_validation
@@ -638,7 +637,7 @@ class SettingsView(TemplateView):
             ctx["rates_updated"] = None
 
         # load locale stats
-        STAT_FILE = os.path.abspath(os.path.join(settings.BASE_DIR, 'InvenTree/locale_stats.json'))
+        STAT_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').abolute()
         try:
             ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
         except Exception:

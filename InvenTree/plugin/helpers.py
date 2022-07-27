@@ -2,7 +2,6 @@
 
 import inspect
 import logging
-import os
 import pathlib
 import pkgutil
 import subprocess
@@ -103,10 +102,10 @@ def get_git_log(path):
 
     output = None
     if registry.git_is_modern:
-        path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
+        path = path.replace(str(settings.BASE_DIR.parent), '')[1:]
         command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
         try:
-            output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')[1:-1]
+            output = str(subprocess.check_output(command, cwd=settings.BASE_DIR.parent), 'utf-8')[1:-1]
             if output:
                 output = output.split('\n')
         except subprocess.CalledProcessError:  # pragma: no cover
@@ -125,7 +124,7 @@ def check_git_version():
     """Returns if the current git version supports modern features."""
     # get version string
     try:
-        output = str(subprocess.check_output(['git', '--version'], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
+        output = str(subprocess.check_output(['git', '--version'], cwd=settings.BASE_DIR.parent), 'utf-8')
     except subprocess.CalledProcessError:  # pragma: no cover
         return False
     except FileNotFoundError:  # pragma: no cover

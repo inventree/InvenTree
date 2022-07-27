@@ -7,11 +7,12 @@ tasks:
       export INVENTREE_STATIC_ROOT='/workspace/InvenTree/dev/static'
       export PIP_USER='no'
 
+      sudo apt install gettext
       python3 -m venv venv
       source venv/bin/activate
       pip install invoke
       mkdir dev
-      inv test-setup
+      inv setup-test
       gp sync-done start_server
 
  - name: Start server
@@ -23,6 +24,7 @@ tasks:
       export INVENTREE_MEDIA_ROOT='/workspace/InvenTree/inventree-data/media'
       export INVENTREE_STATIC_ROOT='/workspace/InvenTree/dev/static'
 
+      source venv/bin/activate
       inv server
 
 ports:
