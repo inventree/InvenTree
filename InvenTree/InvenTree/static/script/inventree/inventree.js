@@ -110,7 +110,7 @@ function inventreeDocReady() {
         launchModalForm(`/about/`, {
             no_post: true,
             after_render: function() {
-                attachClipboard('.clip-btn', 'modal-form');
+                attachClipboard('.clip-btn', 'modal-form', 'about-copy-text');
             }
         });
     });
@@ -121,9 +121,6 @@ function inventreeDocReady() {
             no_post: true,
         });
     });
-
-    // Initialize clipboard-buttons
-    attachClipboard('.clip-btn');
 
     // Generate brand-icons
     $('.brand-icon').each(function(i, obj) {
