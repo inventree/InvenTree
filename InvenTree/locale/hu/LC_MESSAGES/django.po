@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-25 03:01+0000\n"
-"PO-Revision-Date: 2022-07-26 02:00\n"
+"POT-Creation-Date: 2022-07-27 00:43+0000\n"
+"PO-Revision-Date: 2022-07-27 02:18\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -25,11 +25,11 @@ msgstr "API funkciót nem találom"
 msgid "Error details can be found in the admin panel"
 msgstr "A hiba részleteit megtalálod az admin panelen"
 
-#: InvenTree/fields.py:99
+#: InvenTree/fields.py:108
 msgid "Enter date"
 msgstr "Dátum megadása"
 
-#: InvenTree/fields.py:176 build/serializers.py:384
+#: InvenTree/fields.py:185 build/serializers.py:384
 #: build/templates/build/sidebar.html:21 company/models.py:523
 #: company/templates/company/sidebar.html:25 order/models.py:906
 #: order/templates/order/po_sidebar.html:11
@@ -51,11 +51,11 @@ msgstr "Megjegyzések"
 #: InvenTree/format.py:142
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "A(z) '{name}' érték nem a szükséges minta szerinti"
 
 #: InvenTree/format.py:152
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "A megadott érték nem felel meg a szükséges mintának: "
 
 #: InvenTree/forms.py:133
 msgid "Enter password"
@@ -89,103 +89,103 @@ msgstr "Email cím megerősítés"
 msgid "You must type the same email each time."
 msgstr "Mindig ugyanazt az email címet kell beírni."
 
-#: InvenTree/helpers.py:135
+#: InvenTree/helpers.py:136
 msgid "Connection error"
-msgstr ""
+msgstr "Csatlakozási hiba"
 
-#: InvenTree/helpers.py:139 InvenTree/helpers.py:144
+#: InvenTree/helpers.py:140 InvenTree/helpers.py:145
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "A kiszolgáló érvénytelen státuszkóddal válaszolt"
 
-#: InvenTree/helpers.py:141
+#: InvenTree/helpers.py:142
 msgid "Exception occurred"
-msgstr ""
+msgstr "Kivétel történt"
 
-#: InvenTree/helpers.py:149
+#: InvenTree/helpers.py:150
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "A kiszolgáló érvénytelen Content-Length értéket adott"
 
-#: InvenTree/helpers.py:152
+#: InvenTree/helpers.py:153
 msgid "Image size is too large"
-msgstr ""
+msgstr "A kép mérete túl nagy"
 
-#: InvenTree/helpers.py:164
+#: InvenTree/helpers.py:165
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "A kép letöltés meghaladja a maximális méretet"
 
-#: InvenTree/helpers.py:169
+#: InvenTree/helpers.py:170
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "A kiszolgáló üres választ adott"
 
-#: InvenTree/helpers.py:177
+#: InvenTree/helpers.py:178
 msgid "Supplied URL is not a valid image file"
 msgstr "A megadott URL nem egy érvényes kép fájl"
 
-#: InvenTree/helpers.py:520
+#: InvenTree/helpers.py:521
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
 msgstr "Duplikált sorozatszám: {sn}"
 
-#: InvenTree/helpers.py:527 order/models.py:320 order/models.py:472
+#: InvenTree/helpers.py:528 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
 msgstr "Nem megfelelő mennyiség"
 
-#: InvenTree/helpers.py:530
+#: InvenTree/helpers.py:531
 msgid "Empty serial number string"
 msgstr "Üres sorozatszám"
 
-#: InvenTree/helpers.py:562
+#: InvenTree/helpers.py:563
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "Érvénytelen csoport tartomány: {g}"
 
-#: InvenTree/helpers.py:565
+#: InvenTree/helpers.py:566
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Érvénytelen csoport: {g}"
 
-#: InvenTree/helpers.py:593
+#: InvenTree/helpers.py:594
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr "Érvénytelen csoport szekvencia: {g}"
 
-#: InvenTree/helpers.py:601
+#: InvenTree/helpers.py:602
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr "Érvénytelen vagy nemlétező csoport {group}"
 
-#: InvenTree/helpers.py:607
+#: InvenTree/helpers.py:608
 msgid "No serial numbers found"
 msgstr "Nem található sorozatszám"
 
-#: InvenTree/helpers.py:611
+#: InvenTree/helpers.py:612
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "A megadott számú egyedi sorozatszám ({s}) meg kell egyezzen a darabszámmal ({q})"
 
 #: InvenTree/models.py:236
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Helytelenül formázott minta"
 
 #: InvenTree/models.py:243
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "Ismeretlen formátum kulcs lett megadva"
 
 #: InvenTree/models.py:249
 msgid "Missing required format key"
-msgstr ""
+msgstr "Hiányzó formátum kulcs"
 
 #: InvenTree/models.py:261
 msgid "Reference field cannot be empty"
-msgstr ""
+msgstr "Az azonosító mező nem lehet üres"
 
 #: InvenTree/models.py:268
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "Az azonosítónak egyeznie kell a mintával"
 
 #: InvenTree/models.py:304
 msgid "Reference number is too large"
-msgstr ""
+msgstr "Azonosító szám túl nagy"
 
 #: InvenTree/models.py:382
 msgid "Missing file"
@@ -246,34 +246,34 @@ msgstr "feltöltés dátuma"
 msgid "Filename must not be empty"
 msgstr "A fájlnév nem lehet üres"
 
-#: InvenTree/models.py:461
+#: InvenTree/models.py:447
 msgid "Invalid attachment directory"
 msgstr "Érvénytelen melléklet mappa"
 
-#: InvenTree/models.py:471
+#: InvenTree/models.py:457
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
 msgstr "Fájlnévben érvénytelen karakter van '{c}'"
 
-#: InvenTree/models.py:474
+#: InvenTree/models.py:460
 msgid "Filename missing extension"
 msgstr "Fájlnév kiterjesztése hiányzik"
 
-#: InvenTree/models.py:481
+#: InvenTree/models.py:467
 msgid "Attachment with this filename already exists"
 msgstr "Ilyen fájlnévvel már létezik melléklet"
 
-#: InvenTree/models.py:488
+#: InvenTree/models.py:474
 msgid "Error renaming file"
 msgstr "Hiba a fájl átnevezésekor"
 
-#: InvenTree/models.py:522
+#: InvenTree/models.py:508
 msgid "Invalid choice"
 msgstr "Érvénytelen választás"
 
-#: InvenTree/models.py:540 InvenTree/models.py:541 common/models.py:1846
+#: InvenTree/models.py:526 InvenTree/models.py:527 common/models.py:1846
 #: company/models.py:358 label/models.py:101 part/models.py:739
-#: part/models.py:2371 plugin/models.py:93 report/models.py:151
+#: part/models.py:2371 plugin/models.py:93 report/models.py:152
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/plugin.html:49
 #: templates/InvenTree/settings/plugin.html:132
@@ -287,14 +287,14 @@ msgstr "Érvénytelen választás"
 msgid "Name"
 msgstr "Név"
 
-#: InvenTree/models.py:547 build/models.py:174
+#: InvenTree/models.py:533 build/models.py:174
 #: build/templates/build/detail.html:24 company/models.py:282
 #: company/models.py:516 company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:87 label/models.py:108
 #: order/models.py:82 part/models.py:762 part/templates/part/category.html:74
-#: part/templates/part/part_base.html:167 report/models.py:164
-#: report/models.py:507 report/models.py:552
+#: part/templates/part/part_base.html:167 report/models.py:165
+#: report/models.py:507 report/models.py:551
 #: report/templates/report/inventree_build_order_base.html:117
 #: stock/templates/stock/location.html:103
 #: templates/InvenTree/settings/plugin_settings.html:33
@@ -310,182 +310,182 @@ msgstr "Név"
 msgid "Description"
 msgstr "Leírás"
 
-#: InvenTree/models.py:548
+#: InvenTree/models.py:534
 msgid "Description (optional)"
 msgstr "Leírás (opcionális)"
 
-#: InvenTree/models.py:556
+#: InvenTree/models.py:542
 msgid "parent"
 msgstr "szülő"
 
-#: InvenTree/models.py:669
+#: InvenTree/models.py:655
 msgid "Server Error"
 msgstr "Kiszolgálóhiba"
 
-#: InvenTree/models.py:670
+#: InvenTree/models.py:656
 msgid "An error has been logged by the server."
 msgstr "A kiszolgáló egy hibaüzenetet rögzített."
 
-#: InvenTree/serializers.py:53 part/models.py:2692
+#: InvenTree/serializers.py:55 part/models.py:2692
 msgid "Must be a valid number"
 msgstr "Érvényes számnak kell lennie"
 
-#: InvenTree/serializers.py:254
+#: InvenTree/serializers.py:262
 msgid "Filename"
 msgstr "Fájlnév"
 
-#: InvenTree/serializers.py:289
+#: InvenTree/serializers.py:297
 msgid "Invalid value"
 msgstr "Érvénytelen érték"
 
-#: InvenTree/serializers.py:311
+#: InvenTree/serializers.py:319
 msgid "Data File"
 msgstr "Adat fájl"
 
-#: InvenTree/serializers.py:312
+#: InvenTree/serializers.py:320
 msgid "Select data file for upload"
 msgstr "Fájl kiválasztása feltöltéshez"
 
-#: InvenTree/serializers.py:333
+#: InvenTree/serializers.py:341
 msgid "Unsupported file type"
 msgstr "Nem támogatott fájltípus"
 
-#: InvenTree/serializers.py:339
+#: InvenTree/serializers.py:347
 msgid "File is too large"
 msgstr "Fájl túl nagy"
 
-#: InvenTree/serializers.py:360
+#: InvenTree/serializers.py:368
 msgid "No columns found in file"
 msgstr "Nem találhatók oszlopok a fájlban"
 
-#: InvenTree/serializers.py:363
+#: InvenTree/serializers.py:371
 msgid "No data rows found in file"
 msgstr "Nincsenek adatsorok a fájlban"
 
-#: InvenTree/serializers.py:486
+#: InvenTree/serializers.py:494
 msgid "No data rows provided"
 msgstr "Nincs adatsor megadva"
 
-#: InvenTree/serializers.py:489
+#: InvenTree/serializers.py:497
 msgid "No data columns supplied"
 msgstr "Nincs adat oszlop megadva"
 
-#: InvenTree/serializers.py:566
+#: InvenTree/serializers.py:574
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "Szükséges oszlop hiányzik: '{name}'"
 
-#: InvenTree/serializers.py:575
+#: InvenTree/serializers.py:583
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Duplikált oszlop: '{col}'"
 
-#: InvenTree/serializers.py:594
+#: InvenTree/serializers.py:602
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
 msgstr "URL"
 
-#: InvenTree/serializers.py:595
+#: InvenTree/serializers.py:603
 msgid "URL of remote image file"
-msgstr ""
+msgstr "A távoli kép URL-je"
 
-#: InvenTree/serializers.py:609
+#: InvenTree/serializers.py:617
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "Képek letöltése távoli URL-ről nem engedélyezett"
 
-#: InvenTree/settings.py:698
+#: InvenTree/settings.py:703
 msgid "Czech"
 msgstr "Cseh"
 
-#: InvenTree/settings.py:699
+#: InvenTree/settings.py:704
 msgid "German"
 msgstr "Német"
 
-#: InvenTree/settings.py:700
+#: InvenTree/settings.py:705
 msgid "Greek"
 msgstr "Görög"
 
-#: InvenTree/settings.py:701
+#: InvenTree/settings.py:706
 msgid "English"
 msgstr "Angol"
 
-#: InvenTree/settings.py:702
+#: InvenTree/settings.py:707
 msgid "Spanish"
 msgstr "Spanyol"
 
-#: InvenTree/settings.py:703
+#: InvenTree/settings.py:708
 msgid "Spanish (Mexican)"
 msgstr "Spanyol (Mexikói)"
 
-#: InvenTree/settings.py:704
+#: InvenTree/settings.py:709
 msgid "Farsi / Persian"
 msgstr "Fárszi/Perzsa"
 
-#: InvenTree/settings.py:705
+#: InvenTree/settings.py:710
 msgid "French"
 msgstr "Francia"
 
-#: InvenTree/settings.py:706
+#: InvenTree/settings.py:711
 msgid "Hebrew"
 msgstr "Héber"
 
-#: InvenTree/settings.py:707
+#: InvenTree/settings.py:712
 msgid "Hungarian"
 msgstr "Magyar"
 
-#: InvenTree/settings.py:708
+#: InvenTree/settings.py:713
 msgid "Italian"
 msgstr "Olasz"
 
-#: InvenTree/settings.py:709
+#: InvenTree/settings.py:714
 msgid "Japanese"
 msgstr "Japán"
 
-#: InvenTree/settings.py:710
+#: InvenTree/settings.py:715
 msgid "Korean"
 msgstr "Koreai"
 
-#: InvenTree/settings.py:711
+#: InvenTree/settings.py:716
 msgid "Dutch"
 msgstr "Holland"
 
-#: InvenTree/settings.py:712
+#: InvenTree/settings.py:717
 msgid "Norwegian"
 msgstr "Norvég"
 
-#: InvenTree/settings.py:713
+#: InvenTree/settings.py:718
 msgid "Polish"
 msgstr "Lengyel"
 
-#: InvenTree/settings.py:714
+#: InvenTree/settings.py:719
 msgid "Portuguese"
 msgstr "Portugál"
 
-#: InvenTree/settings.py:715
+#: InvenTree/settings.py:720
 msgid "Portuguese (Brazilian)"
 msgstr "Portugál (Brazíliai)"
 
-#: InvenTree/settings.py:716
+#: InvenTree/settings.py:721
 msgid "Russian"
 msgstr "Orosz"
 
-#: InvenTree/settings.py:717
+#: InvenTree/settings.py:722
 msgid "Swedish"
 msgstr "Svéd"
 
-#: InvenTree/settings.py:718
+#: InvenTree/settings.py:723
 msgid "Thai"
 msgstr "Tháj"
 
-#: InvenTree/settings.py:719
+#: InvenTree/settings.py:724
 msgid "Turkish"
 msgstr "Török"
 
-#: InvenTree/settings.py:720
+#: InvenTree/settings.py:725
 msgid "Vietnamese"
 msgstr "Vietnámi"
 
-#: InvenTree/settings.py:721
+#: InvenTree/settings.py:726
 msgid "Chinese"
 msgstr "Kínai"
 
@@ -682,27 +682,27 @@ msgstr "Túlszállítás nem lehet több mint 100%"
 msgid "Invalid value for overage"
 msgstr "Érvénytelen érték a túlszállításra"
 
-#: InvenTree/views.py:519 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:518 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr "Felhasználói információ módosítása"
 
-#: InvenTree/views.py:531 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:530 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "Jelszó beállítása"
 
-#: InvenTree/views.py:553
+#: InvenTree/views.py:552
 msgid "Password fields must match"
 msgstr "A jelszavaknak egyeznie kell"
 
-#: InvenTree/views.py:562
+#: InvenTree/views.py:561
 msgid "Wrong password provided"
 msgstr "Rossz jelszó lett megadva"
 
-#: InvenTree/views.py:751 templates/navbar.html:152
+#: InvenTree/views.py:750 templates/navbar.html:152
 msgid "System Information"
 msgstr "Rendszerinformáció"
 
-#: InvenTree/views.py:758 templates/navbar.html:163
+#: InvenTree/views.py:757 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "Verzió információk"
 
@@ -1740,11 +1740,11 @@ msgstr "Képek és fájlok letöltésének engedélyezése külső URL-ről"
 
 #: common/models.py:861
 msgid "Download Size Limit"
-msgstr ""
+msgstr "Letöltési méret korlát"
 
 #: common/models.py:862
 msgid "Maximum allowable download size for remote image"
-msgstr ""
+msgstr "Maximum megengedett letöltési mérete a távoli képeknek"
 
 #: common/models.py:873
 msgid "Require confirm"
@@ -1826,7 +1826,7 @@ msgstr "Kategória paraméter sablonok másolása"
 msgid "Copy category parameter templates when creating a part"
 msgstr "Kategória paraméter sablonok másolása alkatrész létrehozásakor"
 
-#: common/models.py:941 part/models.py:2412 report/models.py:157
+#: common/models.py:941 part/models.py:2412 report/models.py:158
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:484
 msgid "Template"
@@ -2076,19 +2076,19 @@ msgstr "Tuajdonosok kezelésének engedélyezése a készlet helyekre és tétel
 
 #: common/models.py:1162
 msgid "Build Order Reference Pattern"
-msgstr ""
+msgstr "Gyártási utasítás azonosító minta"
 
 #: common/models.py:1163
 msgid "Required pattern for generating Build Order reference field"
-msgstr ""
+msgstr "Szükséges minta a gyártási utasítás azonosító mező előállításához"
 
 #: common/models.py:1169
 msgid "Sales Order Reference Pattern"
-msgstr ""
+msgstr "Vevői rendelés azonosító minta"
 
 #: common/models.py:1170
 msgid "Required pattern for generating Sales Order reference field"
-msgstr ""
+msgstr "Szükséges minta a vevői rendelés azonosító mező előállításához"
 
 #: common/models.py:1176
 msgid "Sales Order Default Shipment"
@@ -2100,11 +2100,11 @@ msgstr "Szállítmány automatikus létrehozása az új vevő rendelésekhez"
 
 #: common/models.py:1183
 msgid "Purchase Order Reference Pattern"
-msgstr ""
+msgstr "Beszerzési rendelés azonosító minta"
 
 #: common/models.py:1184
 msgid "Required pattern for generating Purchase Order reference field"
-msgstr ""
+msgstr "Szükséges minta a beszerzési rendelés azonosító mező előállításához"
 
 #: common/models.py:1191
 msgid "Enable password forgot"
@@ -2657,31 +2657,31 @@ msgstr "Készlet érkezett"
 msgid "Items have been received against a purchase order"
 msgstr "Készlet érkezett egy beszerzési megrendeléshez"
 
-#: common/views.py:87 order/templates/order/purchase_order_detail.html:23
+#: common/views.py:85 order/templates/order/purchase_order_detail.html:23
 #: order/views.py:102 part/views.py:112
 #: templates/patterns/wizard/upload.html:37
 msgid "Upload File"
 msgstr "Fájl feltöltése"
 
-#: common/views.py:88 order/views.py:103
+#: common/views.py:86 order/views.py:103
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
 #: part/views.py:113 templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
 msgstr "Mezők egyeztetése"
 
-#: common/views.py:89
+#: common/views.py:87
 msgid "Match Items"
 msgstr "Tételek egyeztetése"
 
-#: common/views.py:422
+#: common/views.py:420
 msgid "Fields matching failed"
 msgstr "Mezők egyeztetése sikertelen"
 
-#: common/views.py:483
+#: common/views.py:481
 msgid "Parts imported"
 msgstr "Importált alkatrészek"
 
-#: common/views.py:511 order/templates/order/order_wizard/match_parts.html:19
+#: common/views.py:509 order/templates/order/order_wizard/match_parts.html:19
 #: part/templates/part/import_wizard/match_references.html:19
 #: templates/patterns/wizard/match_fields.html:26
 #: templates/patterns/wizard/upload.html:35
@@ -3429,7 +3429,7 @@ msgstr "Címke"
 msgid "Label template file"
 msgstr "Címke sablon fájl"
 
-#: label/models.py:123 report/models.py:253
+#: label/models.py:123 report/models.py:254
 msgid "Enabled"
 msgstr "Engedélyezve"
 
@@ -3453,7 +3453,7 @@ msgstr "Magasság [mm]"
 msgid "Label height, specified in mm"
 msgstr "Címke magassága, mm-ben"
 
-#: label/models.py:143 report/models.py:246
+#: label/models.py:143 report/models.py:247
 msgid "Filename Pattern"
 msgstr "Fájlnév minta"
 
@@ -3466,7 +3466,7 @@ msgid "Query filters (comma-separated list of key=value pairs),"
 msgstr "Lekérdezés szűrők (vesszővel elválasztott kulcs=érték párok),"
 
 #: label/models.py:234 label/models.py:274 label/models.py:302
-#: report/models.py:279 report/models.py:410 report/models.py:448
+#: report/models.py:280 report/models.py:411 report/models.py:449
 msgid "Filters"
 msgstr "Szűrők"
 
@@ -4395,7 +4395,7 @@ msgid "Part revision or version number"
 msgstr "Alkatrész változat vagy verziószám (pl. szín, hossz, revízió, stb.)"
 
 #: part/models.py:790 part/templates/part/part_base.html:273
-#: report/models.py:170 templates/js/translated/part.js:739
+#: report/models.py:171 templates/js/translated/part.js:739
 msgid "Revision"
 msgstr "Változat"
 
@@ -5699,35 +5699,35 @@ msgstr "Választás beállításai"
 msgid "A setting with multiple choices"
 msgstr "Egy beállítás több választási lehetőséggel"
 
-#: plugin/serializers.py:73
+#: plugin/serializers.py:72
 msgid "Source URL"
 msgstr "Forrás URL"
 
-#: plugin/serializers.py:74
+#: plugin/serializers.py:73
 msgid "Source for the package - this can be a custom registry or a VCS path"
 msgstr "Csomag forrása - ez lehet egy registry vagy VCS útvonal"
 
-#: plugin/serializers.py:79
+#: plugin/serializers.py:78
 msgid "Package Name"
 msgstr "Csomag neve"
 
-#: plugin/serializers.py:80
+#: plugin/serializers.py:79
 msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr "Plugin csomag neve - verzió megjelölést is tartalmazhat"
 
-#: plugin/serializers.py:83
+#: plugin/serializers.py:82
 msgid "Confirm plugin installation"
 msgstr "Bővítmény telepítésének megerősítése"
 
-#: plugin/serializers.py:84
+#: plugin/serializers.py:83
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
 msgstr "Ez telepíti ezt a plugint az aktuális példányra. A példány karbantartási módba megy."
 
-#: plugin/serializers.py:104
+#: plugin/serializers.py:103
 msgid "Installation not confirmed"
 msgstr "Tlepítés nincs megerősítve"
 
-#: plugin/serializers.py:106
+#: plugin/serializers.py:105
 msgid "Either packagename of URL must be provided"
 msgstr "Vagy csomag nevet vagy URL-t meg kell adni"
 
@@ -5744,63 +5744,63 @@ msgstr "A '{template}' sablon fájl hiányzik vagy nem érhető el"
 msgid "Test report"
 msgstr "Teszt riport"
 
-#: report/models.py:152
+#: report/models.py:153
 msgid "Template name"
 msgstr "Sablon neve"
 
-#: report/models.py:158
+#: report/models.py:159
 msgid "Report template file"
 msgstr "Riport sablon fájl"
 
-#: report/models.py:165
+#: report/models.py:166
 msgid "Report template description"
 msgstr "Riport sablon leírása"
 
-#: report/models.py:171
+#: report/models.py:172
 msgid "Report revision number (auto-increments)"
 msgstr "Riport verziószáma (automatikusan nő)"
 
-#: report/models.py:247
+#: report/models.py:248
 msgid "Pattern for generating report filenames"
 msgstr "Minta a riport fájlnevek előállításához"
 
-#: report/models.py:254
+#: report/models.py:255
 msgid "Report template is enabled"
 msgstr "Riport sablon engedélyezve"
 
-#: report/models.py:280
+#: report/models.py:281
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
 msgstr "Készlet lekérdezés szűrők (vesszővel elválasztott kulcs=érték párok)"
 
-#: report/models.py:288
+#: report/models.py:289
 msgid "Include Installed Tests"
 msgstr "Beépített tesztekkel együtt"
 
-#: report/models.py:289
+#: report/models.py:290
 msgid "Include test results for stock items installed inside assembled item"
 msgstr "Gyártmányba beépített készlet tételek teszt eredményeivel együtt"
 
-#: report/models.py:336
+#: report/models.py:337
 msgid "Build Filters"
 msgstr "Gyártás szűrők"
 
-#: report/models.py:337
+#: report/models.py:338
 msgid "Build query filters (comma-separated list of key=value pairs"
 msgstr "Gyártás lekérdezés szűrők (vesszővel elválasztott kulcs=érték párok"
 
-#: report/models.py:376
+#: report/models.py:377
 msgid "Part Filters"
 msgstr "Alkatrész szűrők"
 
-#: report/models.py:377
+#: report/models.py:378
 msgid "Part query filters (comma-separated list of key=value pairs"
 msgstr "Alkatrész lekérdezés szűrők (vesszővel elválasztott kulcs=érték párok"
 
-#: report/models.py:411
+#: report/models.py:412
 msgid "Purchase order query filters"
 msgstr "Megrendelés lekérdezés szűrők"
 
-#: report/models.py:449
+#: report/models.py:450
 msgid "Sales order query filters"
 msgstr "Vevő rendelés lekérdezés szűrők"
 
@@ -5816,15 +5816,15 @@ msgstr "Riport részlet fájl"
 msgid "Snippet file description"
 msgstr "Részlet fájl leírása"
 
-#: report/models.py:545
+#: report/models.py:544
 msgid "Asset"
 msgstr "Eszköz"
 
-#: report/models.py:546
+#: report/models.py:545
 msgid "Report asset file"
 msgstr "Riport asset fájl"
 
-#: report/models.py:553
+#: report/models.py:552
 msgid "Asset file description"
 msgstr "Asset fájl leírása"
 
@@ -6142,7 +6142,7 @@ msgstr "Tesztek megjegyzései"
 
 #: stock/serializers.py:72
 msgid "Serial number is too large"
-msgstr ""
+msgstr "Szériaszám túl nagy"
 
 #: stock/serializers.py:173
 msgid "Purchase price of this stock item"
@@ -7890,11 +7890,11 @@ msgstr "Fájlfomátum kiválasztása"
 
 #: templates/js/translated/bom.js:295
 msgid "Multi Level BOM"
-msgstr ""
+msgstr "Többszintű alkatrészlista"
 
 #: templates/js/translated/bom.js:296
 msgid "Include BOM data for subassemblies"
-msgstr ""
+msgstr "Alszerelvények alkatrészlistáinak felhasználása"
 
 #: templates/js/translated/bom.js:301
 msgid "Levels"
