@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-25 03:01+0000\n"
-"PO-Revision-Date: 2022-07-26 02:00\n"
+"POT-Creation-Date: 2022-07-27 00:43+0000\n"
+"PO-Revision-Date: 2022-07-27 02:18\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -25,11 +25,11 @@ msgstr "API endepunkt ikke funnet"
 msgid "Error details can be found in the admin panel"
 msgstr ""
 
-#: InvenTree/fields.py:99
+#: InvenTree/fields.py:108
 msgid "Enter date"
 msgstr "Oppgi dato"
 
-#: InvenTree/fields.py:176 build/serializers.py:384
+#: InvenTree/fields.py:185 build/serializers.py:384
 #: build/templates/build/sidebar.html:21 company/models.py:523
 #: company/templates/company/sidebar.html:25 order/models.py:906
 #: order/templates/order/po_sidebar.html:11
@@ -89,76 +89,76 @@ msgstr "Bekreftelsen på e-postaddresse"
 msgid "You must type the same email each time."
 msgstr "Du må angi samme e-post hver gang."
 
-#: InvenTree/helpers.py:135
+#: InvenTree/helpers.py:136
 msgid "Connection error"
 msgstr ""
 
-#: InvenTree/helpers.py:139 InvenTree/helpers.py:144
+#: InvenTree/helpers.py:140 InvenTree/helpers.py:145
 msgid "Server responded with invalid status code"
 msgstr ""
 
-#: InvenTree/helpers.py:141
+#: InvenTree/helpers.py:142
 msgid "Exception occurred"
 msgstr ""
 
-#: InvenTree/helpers.py:149
+#: InvenTree/helpers.py:150
 msgid "Server responded with invalid Content-Length value"
 msgstr ""
 
-#: InvenTree/helpers.py:152
+#: InvenTree/helpers.py:153
 msgid "Image size is too large"
 msgstr ""
 
-#: InvenTree/helpers.py:164
+#: InvenTree/helpers.py:165
 msgid "Image download exceeded maximum size"
 msgstr ""
 
-#: InvenTree/helpers.py:169
+#: InvenTree/helpers.py:170
 msgid "Remote server returned empty response"
 msgstr ""
 
-#: InvenTree/helpers.py:177
+#: InvenTree/helpers.py:178
 msgid "Supplied URL is not a valid image file"
 msgstr ""
 
-#: InvenTree/helpers.py:520
+#: InvenTree/helpers.py:521
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
 msgstr "Dupliser serie: {sn}"
 
-#: InvenTree/helpers.py:527 order/models.py:320 order/models.py:472
+#: InvenTree/helpers.py:528 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
 msgstr "Ugyldig mengde oppgitt"
 
-#: InvenTree/helpers.py:530
+#: InvenTree/helpers.py:531
 msgid "Empty serial number string"
 msgstr "Tom serienummerstreng"
 
-#: InvenTree/helpers.py:562
+#: InvenTree/helpers.py:563
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:565
+#: InvenTree/helpers.py:566
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Ugyldig gruppe: {g}"
 
-#: InvenTree/helpers.py:593
+#: InvenTree/helpers.py:594
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:601
+#: InvenTree/helpers.py:602
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr "Ugyldig/ingen gruppe {group}"
 
-#: InvenTree/helpers.py:607
+#: InvenTree/helpers.py:608
 msgid "No serial numbers found"
 msgstr "Ingen serienummer funnet"
 
-#: InvenTree/helpers.py:611
+#: InvenTree/helpers.py:612
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr ""
@@ -246,34 +246,34 @@ msgstr "opplastet dato"
 msgid "Filename must not be empty"
 msgstr "Filnavn må ikke være tom"
 
-#: InvenTree/models.py:461
+#: InvenTree/models.py:447
 msgid "Invalid attachment directory"
 msgstr "Ugyldig vedleggskatalog"
 
-#: InvenTree/models.py:471
+#: InvenTree/models.py:457
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
 msgstr "Filnavn inneholder ugyldig tegn '{c}'"
 
-#: InvenTree/models.py:474
+#: InvenTree/models.py:460
 msgid "Filename missing extension"
 msgstr "Filnavn mangler filtype"
 
-#: InvenTree/models.py:481
+#: InvenTree/models.py:467
 msgid "Attachment with this filename already exists"
 msgstr "Vedlegg med dette filnavnet finnes allerede"
 
-#: InvenTree/models.py:488
+#: InvenTree/models.py:474
 msgid "Error renaming file"
 msgstr "Feil ved endring av navn"
 
-#: InvenTree/models.py:522
+#: InvenTree/models.py:508
 msgid "Invalid choice"
 msgstr "Ugyldig valg"
 
-#: InvenTree/models.py:540 InvenTree/models.py:541 common/models.py:1846
+#: InvenTree/models.py:526 InvenTree/models.py:527 common/models.py:1846
 #: company/models.py:358 label/models.py:101 part/models.py:739
-#: part/models.py:2371 plugin/models.py:93 report/models.py:151
+#: part/models.py:2371 plugin/models.py:93 report/models.py:152
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/plugin.html:49
 #: templates/InvenTree/settings/plugin.html:132
@@ -287,14 +287,14 @@ msgstr "Ugyldig valg"
 msgid "Name"
 msgstr "Navn"
 
-#: InvenTree/models.py:547 build/models.py:174
+#: InvenTree/models.py:533 build/models.py:174
 #: build/templates/build/detail.html:24 company/models.py:282
 #: company/models.py:516 company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:87 label/models.py:108
 #: order/models.py:82 part/models.py:762 part/templates/part/category.html:74
-#: part/templates/part/part_base.html:167 report/models.py:164
-#: report/models.py:507 report/models.py:552
+#: part/templates/part/part_base.html:167 report/models.py:165
+#: report/models.py:507 report/models.py:551
 #: report/templates/report/inventree_build_order_base.html:117
 #: stock/templates/stock/location.html:103
 #: templates/InvenTree/settings/plugin_settings.html:33
@@ -310,182 +310,182 @@ msgstr "Navn"
 msgid "Description"
 msgstr "Beskrivelse"
 
-#: InvenTree/models.py:548
+#: InvenTree/models.py:534
 msgid "Description (optional)"
 msgstr "Beskrivelse (valgfritt)"
 
-#: InvenTree/models.py:556
+#: InvenTree/models.py:542
 msgid "parent"
 msgstr "overkategori"
 
-#: InvenTree/models.py:669
+#: InvenTree/models.py:655
 msgid "Server Error"
 msgstr ""
 
-#: InvenTree/models.py:670
+#: InvenTree/models.py:656
 msgid "An error has been logged by the server."
 msgstr ""
 
-#: InvenTree/serializers.py:53 part/models.py:2692
+#: InvenTree/serializers.py:55 part/models.py:2692
 msgid "Must be a valid number"
 msgstr "Nummer må være gyldig"
 
-#: InvenTree/serializers.py:254
+#: InvenTree/serializers.py:262
 msgid "Filename"
 msgstr "Filnavn"
 
-#: InvenTree/serializers.py:289
+#: InvenTree/serializers.py:297
 msgid "Invalid value"
 msgstr "Ugyldig verdi"
 
-#: InvenTree/serializers.py:311
+#: InvenTree/serializers.py:319
 msgid "Data File"
 msgstr "Data fil"
 
-#: InvenTree/serializers.py:312
+#: InvenTree/serializers.py:320
 msgid "Select data file for upload"
 msgstr "Velg datafil for opplasting"
 
-#: InvenTree/serializers.py:333
+#: InvenTree/serializers.py:341
 msgid "Unsupported file type"
 msgstr "Filtypen støttes ikke"
 
-#: InvenTree/serializers.py:339
+#: InvenTree/serializers.py:347
 msgid "File is too large"
 msgstr "Filen er for stor"
 
-#: InvenTree/serializers.py:360
+#: InvenTree/serializers.py:368
 msgid "No columns found in file"
 msgstr "Ingen kolonner funnet i filen"
 
-#: InvenTree/serializers.py:363
+#: InvenTree/serializers.py:371
 msgid "No data rows found in file"
 msgstr "Ingen datalader funnet i fil"
 
-#: InvenTree/serializers.py:486
+#: InvenTree/serializers.py:494
 msgid "No data rows provided"
 msgstr "Ingen datalader oppgitt"
 
-#: InvenTree/serializers.py:489
+#: InvenTree/serializers.py:497
 msgid "No data columns supplied"
 msgstr "Ingen datakolonner angitt"
 
-#: InvenTree/serializers.py:566
+#: InvenTree/serializers.py:574
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "Mangler påkrevd kolonne: '{name}'"
 
-#: InvenTree/serializers.py:575
+#: InvenTree/serializers.py:583
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Dupliser kolonne: '{col}'"
 
-#: InvenTree/serializers.py:594
+#: InvenTree/serializers.py:602
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
 msgstr ""
 
-#: InvenTree/serializers.py:595
+#: InvenTree/serializers.py:603
 msgid "URL of remote image file"
 msgstr ""
 
-#: InvenTree/serializers.py:609
+#: InvenTree/serializers.py:617
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/settings.py:698
+#: InvenTree/settings.py:703
 msgid "Czech"
 msgstr "Tsjekkisk"
 
-#: InvenTree/settings.py:699
+#: InvenTree/settings.py:704
 msgid "German"
 msgstr "Tysk"
 
-#: InvenTree/settings.py:700
+#: InvenTree/settings.py:705
 msgid "Greek"
 msgstr "Gresk"
 
-#: InvenTree/settings.py:701
+#: InvenTree/settings.py:706
 msgid "English"
 msgstr "Engelsk"
 
-#: InvenTree/settings.py:702
+#: InvenTree/settings.py:707
 msgid "Spanish"
 msgstr "Spansk"
 
-#: InvenTree/settings.py:703
+#: InvenTree/settings.py:708
 msgid "Spanish (Mexican)"
 msgstr "Spansk (Meksikansk)"
 
-#: InvenTree/settings.py:704
+#: InvenTree/settings.py:709
 msgid "Farsi / Persian"
 msgstr "Farsi / Persisk"
 
-#: InvenTree/settings.py:705
+#: InvenTree/settings.py:710
 msgid "French"
 msgstr "Fransk"
 
-#: InvenTree/settings.py:706
+#: InvenTree/settings.py:711
 msgid "Hebrew"
 msgstr "Hebraisk"
 
-#: InvenTree/settings.py:707
+#: InvenTree/settings.py:712
 msgid "Hungarian"
 msgstr "Ungarsk"
 
-#: InvenTree/settings.py:708
+#: InvenTree/settings.py:713
 msgid "Italian"
 msgstr "Italiensk"
 
-#: InvenTree/settings.py:709
+#: InvenTree/settings.py:714
 msgid "Japanese"
 msgstr "Japansk"
 
-#: InvenTree/settings.py:710
+#: InvenTree/settings.py:715
 msgid "Korean"
 msgstr "Koreansk"
 
-#: InvenTree/settings.py:711
+#: InvenTree/settings.py:716
 msgid "Dutch"
 msgstr "Nederlandsk"
 
-#: InvenTree/settings.py:712
+#: InvenTree/settings.py:717
 msgid "Norwegian"
 msgstr "Norsk"
 
-#: InvenTree/settings.py:713
+#: InvenTree/settings.py:718
 msgid "Polish"
 msgstr "Polsk"
 
-#: InvenTree/settings.py:714
+#: InvenTree/settings.py:719
 msgid "Portuguese"
 msgstr "Portugisisk"
 
-#: InvenTree/settings.py:715
+#: InvenTree/settings.py:720
 msgid "Portuguese (Brazilian)"
 msgstr "Portugisisk (Brasilian)"
 
-#: InvenTree/settings.py:716
+#: InvenTree/settings.py:721
 msgid "Russian"
 msgstr "Russisk"
 
-#: InvenTree/settings.py:717
+#: InvenTree/settings.py:722
 msgid "Swedish"
 msgstr "Svensk"
 
-#: InvenTree/settings.py:718
+#: InvenTree/settings.py:723
 msgid "Thai"
 msgstr "Thailandsk"
 
-#: InvenTree/settings.py:719
+#: InvenTree/settings.py:724
 msgid "Turkish"
 msgstr "Tyrkisk"
 
-#: InvenTree/settings.py:720
+#: InvenTree/settings.py:725
 msgid "Vietnamese"
 msgstr "Vietnamesisk"
 
-#: InvenTree/settings.py:721
+#: InvenTree/settings.py:726
 msgid "Chinese"
 msgstr "Kinesisk"
 
@@ -682,27 +682,27 @@ msgstr "Overde må ikke overstige 100%"
 msgid "Invalid value for overage"
 msgstr ""
 
-#: InvenTree/views.py:519 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:518 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr "Rediger brukerinformasjon"
 
-#: InvenTree/views.py:531 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:530 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "Velg passord"
 
-#: InvenTree/views.py:553
+#: InvenTree/views.py:552
 msgid "Password fields must match"
 msgstr "Passordfeltene må samsvare"
 
-#: InvenTree/views.py:562
+#: InvenTree/views.py:561
 msgid "Wrong password provided"
 msgstr ""
 
-#: InvenTree/views.py:751 templates/navbar.html:152
+#: InvenTree/views.py:750 templates/navbar.html:152
 msgid "System Information"
 msgstr "Systeminformasjon"
 
-#: InvenTree/views.py:758 templates/navbar.html:163
+#: InvenTree/views.py:757 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr ""
 
@@ -1825,7 +1825,7 @@ msgstr ""
 msgid "Copy category parameter templates when creating a part"
 msgstr "Kopier kategori parametermaler ved oppretting av en del"
 
-#: common/models.py:941 part/models.py:2412 report/models.py:157
+#: common/models.py:941 part/models.py:2412 report/models.py:158
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:484
 msgid "Template"
@@ -2656,31 +2656,31 @@ msgstr ""
 msgid "Items have been received against a purchase order"
 msgstr ""
 
-#: common/views.py:87 order/templates/order/purchase_order_detail.html:23
+#: common/views.py:85 order/templates/order/purchase_order_detail.html:23
 #: order/views.py:102 part/views.py:112
 #: templates/patterns/wizard/upload.html:37
 msgid "Upload File"
 msgstr "Last opp fil"
 
-#: common/views.py:88 order/views.py:103
+#: common/views.py:86 order/views.py:103
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
 #: part/views.py:113 templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
 msgstr "Sammelign felter"
 
-#: common/views.py:89
+#: common/views.py:87
 msgid "Match Items"
 msgstr "Sammenlign varer"
 
-#: common/views.py:422
+#: common/views.py:420
 msgid "Fields matching failed"
 msgstr ""
 
-#: common/views.py:483
+#: common/views.py:481
 msgid "Parts imported"
 msgstr "Deler importert"
 
-#: common/views.py:511 order/templates/order/order_wizard/match_parts.html:19
+#: common/views.py:509 order/templates/order/order_wizard/match_parts.html:19
 #: part/templates/part/import_wizard/match_references.html:19
 #: templates/patterns/wizard/match_fields.html:26
 #: templates/patterns/wizard/upload.html:35
@@ -3428,7 +3428,7 @@ msgstr ""
 msgid "Label template file"
 msgstr ""
 
-#: label/models.py:123 report/models.py:253
+#: label/models.py:123 report/models.py:254
 msgid "Enabled"
 msgstr ""
 
@@ -3452,7 +3452,7 @@ msgstr ""
 msgid "Label height, specified in mm"
 msgstr ""
 
-#: label/models.py:143 report/models.py:246
+#: label/models.py:143 report/models.py:247
 msgid "Filename Pattern"
 msgstr ""
 
@@ -3465,7 +3465,7 @@ msgid "Query filters (comma-separated list of key=value pairs),"
 msgstr "Spørrefilter (kommaseparert liste over nøkkel=verdiparer),"
 
 #: label/models.py:234 label/models.py:274 label/models.py:302
-#: report/models.py:279 report/models.py:410 report/models.py:448
+#: report/models.py:280 report/models.py:411 report/models.py:449
 msgid "Filters"
 msgstr "Filtre"
 
@@ -4394,7 +4394,7 @@ msgid "Part revision or version number"
 msgstr ""
 
 #: part/models.py:790 part/templates/part/part_base.html:273
-#: report/models.py:170 templates/js/translated/part.js:739
+#: report/models.py:171 templates/js/translated/part.js:739
 msgid "Revision"
 msgstr ""
 
@@ -5698,35 +5698,35 @@ msgstr ""
 msgid "A setting with multiple choices"
 msgstr ""
 
-#: plugin/serializers.py:73
+#: plugin/serializers.py:72
 msgid "Source URL"
 msgstr ""
 
-#: plugin/serializers.py:74
+#: plugin/serializers.py:73
 msgid "Source for the package - this can be a custom registry or a VCS path"
 msgstr ""
 
-#: plugin/serializers.py:79
+#: plugin/serializers.py:78
 msgid "Package Name"
 msgstr ""
 
-#: plugin/serializers.py:80
+#: plugin/serializers.py:79
 msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr ""
 
-#: plugin/serializers.py:83
+#: plugin/serializers.py:82
 msgid "Confirm plugin installation"
 msgstr ""
 
-#: plugin/serializers.py:84
+#: plugin/serializers.py:83
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
 msgstr ""
 
-#: plugin/serializers.py:104
+#: plugin/serializers.py:103
 msgid "Installation not confirmed"
 msgstr ""
 
-#: plugin/serializers.py:106
+#: plugin/serializers.py:105
 msgid "Either packagename of URL must be provided"
 msgstr ""
 
@@ -5743,63 +5743,63 @@ msgstr ""
 msgid "Test report"
 msgstr ""
 
-#: report/models.py:152
+#: report/models.py:153
 msgid "Template name"
 msgstr ""
 
-#: report/models.py:158
+#: report/models.py:159
 msgid "Report template file"
 msgstr ""
 
-#: report/models.py:165
+#: report/models.py:166
 msgid "Report template description"
 msgstr ""
 
-#: report/models.py:171
+#: report/models.py:172
 msgid "Report revision number (auto-increments)"
 msgstr ""
 
-#: report/models.py:247
+#: report/models.py:248
 msgid "Pattern for generating report filenames"
 msgstr ""
 
-#: report/models.py:254
+#: report/models.py:255
 msgid "Report template is enabled"
 msgstr ""
 
-#: report/models.py:280
+#: report/models.py:281
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
-#: report/models.py:288
+#: report/models.py:289
 msgid "Include Installed Tests"
 msgstr ""
 
-#: report/models.py:289
+#: report/models.py:290
 msgid "Include test results for stock items installed inside assembled item"
 msgstr ""
 
-#: report/models.py:336
+#: report/models.py:337
 msgid "Build Filters"
 msgstr ""
 
-#: report/models.py:337
+#: report/models.py:338
 msgid "Build query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: report/models.py:376
+#: report/models.py:377
 msgid "Part Filters"
 msgstr ""
 
-#: report/models.py:377
+#: report/models.py:378
 msgid "Part query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: report/models.py:411
+#: report/models.py:412
 msgid "Purchase order query filters"
 msgstr ""
 
-#: report/models.py:449
+#: report/models.py:450
 msgid "Sales order query filters"
 msgstr ""
 
@@ -5815,15 +5815,15 @@ msgstr ""
 msgid "Snippet file description"
 msgstr ""
 
-#: report/models.py:545
+#: report/models.py:544
 msgid "Asset"
 msgstr ""
 
-#: report/models.py:546
+#: report/models.py:545
 msgid "Report asset file"
 msgstr ""
 
-#: report/models.py:553
+#: report/models.py:552
 msgid "Asset file description"
 msgstr ""
 
