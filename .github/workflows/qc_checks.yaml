@@ -132,7 +132,7 @@ jobs:
       - name: Run Tests For `${{ env.wrapper_name }}`
         run: |
           cd ${{ env.wrapper_name }}
-          invoke check-server
+          invoke check-server --debug
           coverage run -m unittest discover -s test/
 
   docstyle:
