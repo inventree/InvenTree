@@ -1,8 +1,27 @@
+Hi there, thank you for your intrest in contributing!
 Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
+
+Up an running in 3 LOC:
+```bash
+git clone https://github.com/inventree/InvenTree.git && cd InvenTree
+python3 -m venv env && source env/bin/activate
+pip install invoke && invoke setup-dev --tests
+```
+
 
 ## Setup
 
-Please run `invoke setup-dev` in the root directory of your InvenTree code base to set up your development setup before starting to contribute. This will install and set up pre-commit to run some checks before each commit and help reduce the style errors.
+Run the following command to set up all toolsets for development.
+```bash
+invoke setup-dev
+```
+
+With the flag `tests` the database will additionally be populated with the [offical](https://github.com/inventree/demo-dataset) test dataset.
+```bash
+invoke setup-dev --tests
+```
+
+Run either command to set up your development setup before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.
 
 ## Branches and Versioning
 
