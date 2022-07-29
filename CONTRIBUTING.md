@@ -1,15 +1,29 @@
 Hi there, thank you for your intrest in contributing!
 Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
 
-Up an running in 3 LOC:
+## Quickstart
+
+The following commands will get you quickly setup with a development environment, complete with a demo dataset to work with:
+
+### Bare Metal
+
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 python3 -m venv env && source env/bin/activate
 pip install invoke && invoke setup-dev --tests
 ```
 
+### Docker
 
-## Setup
+```bash
+git clone https://github.com/inventree/InvenTree.git && cd InvenTree
+docker compose run inventree-dev-server invoke setup-test
+docker compose up -d
+```
+
+Read the [InvenTree setup documentation](https://inventree.readthedocs.io/en/latest/start/intro/) for a complete installation reference guide.
+
+## Extended Setup
 
 Run the following command to set up all toolsets for development.
 ```bash
