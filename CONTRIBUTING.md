@@ -3,13 +3,14 @@ Please read the contribution guidelines below, before submitting your first pull
 
 ## Quickstart
 
-The following commands will get you quickly setup with a development environment, complete with a demo dataset to work with:
+The following commands will get you quickly configure and run a development server, complete with a demo dataset to work with:
 
 ### Bare Metal
 
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 python3 -m venv env && source env/bin/activate
+pip install invoke && invoke
 pip install invoke && invoke setup-dev --tests
 ```
 
@@ -23,19 +24,15 @@ docker compose up -d
 
 Read the [InvenTree setup documentation](https://inventree.readthedocs.io/en/latest/start/intro/) for a complete installation reference guide.
 
-## Extended Setup
+### Setup Devtools
 
 Run the following command to set up all toolsets for development.
+
 ```bash
 invoke setup-dev
 ```
 
-With the flag `tests` the database will additionally be populated with the [offical](https://github.com/inventree/demo-dataset) test dataset.
-```bash
-invoke setup-dev --tests
-```
-
-Run either command to set up your development setup before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.
+*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.*
 
 ## Branches and Versioning
 
