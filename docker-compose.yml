@@ -24,11 +24,13 @@ services:
         image: postgres:13
         expose:
             - ${INVENTREE_DB_PORT:-5432}/tcp
+        env_file:
+            - docker.dev.env
         environment:
             - PGDATA=/var/lib/postgresql/data/pgdb
-            - POSTGRES_USER=${INVENTREE_DB_USER:?You must provide the 'INVENTREE_DB_USER' variable in the .env file}
-            - POSTGRES_PASSWORD=${INVENTREE_DB_PASSWORD:?You must provide the 'INVENTREE_DB_PASSWORD' variable in the .env file}
-            - POSTGRES_DB=${INVENTREE_DB_NAME:?You must provide the 'INVENTREE_DB_NAME' variable in the .env file}
+            - POSTGRES_USER=$${INVENTREE_DB_USER}
+            - POSTGRES_PASSWORD=$${INVENTREE_DB_PASSWORD}
+            - POSTGRES_DB=$${INVENTREE_DB_NAME}
         volumes:
           # Map 'data' volume such that postgres database is stored externally
           - ./data:/var/lib/postgresql/data
@@ -52,7 +54,7 @@ services:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree
         env_file:
-            - .env
+            - docker.dev.env
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -66,5 +68,5 @@ services:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree
         env_file:
-            - .env
+            - docker.dev.env
         restart: unless-stopped
