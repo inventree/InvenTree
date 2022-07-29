@@ -295,7 +295,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
 ])
 
 # Error reporting middleware
-MIDDLEWARE.append('error_report.middleware.ExceptionProcessor')
+MIDDLEWARE.append('InvenTree.middleware.InvenTreeExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'django.contrib.auth.backends.RemoteUserBackend',           # proxy login

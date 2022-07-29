@@ -1,6 +1,7 @@
 """Middleware for InvenTree."""
 
 import logging
+import sys
 
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
@@ -10,9 +11,11 @@ from django.urls import Resolver404, include, re_path, reverse_lazy
 
 from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
                                     BaseRequire2FAMiddleware)
+from error_report.middleware import ExceptionProcessor
 from rest_framework.authtoken.models import Token
 
 from common.models import InvenTreeSetting
+from InvenTree.exceptions import IGNORRED_ERRORS
 from InvenTree.urls import frontendpatterns
 
 logger = logging.getLogger("inventree")
@@ -145,3 +148,17 @@ class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
             return
 
         return super().process_request(request)
+
+
+class InvenTreeExceptionProcessor(ExceptionProcessor):
+    """Custom exception processor that respects blocked errors."""
+
+    def process_exception(self, request, exception):
+        """Check if kind is ignored before procesing."""
+        kind, info, data = sys.exc_info()
+
+        # Check if the eror is on the ignore list
+        if kind in IGNORRED_ERRORS:
+            return
+
+        return super().process_exception(request, exception)
