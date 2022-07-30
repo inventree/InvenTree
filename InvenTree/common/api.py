@@ -11,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
 from rest_framework import filters, permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -380,6 +381,37 @@ class NotificationReadAll(RetrieveAPI):
             raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
 
 
+class FeedEntryList(BulkDeleteMixin, ListAPI):
+    """List view for all news items."""
+
+    queryset = common.models.FeedEntry.objects.all()
+    serializer_class = common.serializers.FeedEntrySerializer
+    permission_classes = [IsAdminUser, ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        'published',
+        'author',
+        'read',
+    ]
+
+    filterset_fields = [
+        'read',
+    ]
+
+
+class FeedEntryDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for an individual news feed object."""
+
+    queryset = common.models.FeedEntry.objects.all()
+    serializer_class = common.serializers.FeedEntrySerializer
+    permission_classes = [IsAdminUser, ]
+
+
 settings_api_urls = [
     # User settings
     re_path(r'^user/', include([
@@ -426,6 +458,15 @@ common_api_urls = [
 
         # Notification messages list
         re_path(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
+    ])),
+
+    # News
+    re_path(r'^news/', include([
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^read/', NotificationRead.as_view(), name='api-news-read'),
+            re_path(r'.*$', FeedEntryDetail.as_view(), name='api-news-detail'),
+        ])),
+        re_path(r'^.*$', FeedEntryList.as_view(), name='api-news-list'),
     ])),
 
 ]

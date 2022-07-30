@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from common.models import (InvenTreeSetting, InvenTreeUserSetting,
+from common.models import (FeedEntry, InvenTreeSetting, InvenTreeUserSetting,
                            NotificationMessage)
 from InvenTree.helpers import get_objectreference
 from InvenTree.serializers import InvenTreeModelSerializer
@@ -190,3 +190,24 @@ class NotificationReadSerializer(NotificationMessageSerializer):
         self.instance = self.context['instance']  # set instance that should be returned
         self._validated_data = True
         return True
+
+
+class FeedEntrySerializer(InvenTreeModelSerializer):
+    """Serializer for the FeedEntry model."""
+
+    read = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        """Meta options for FeedEntrySerializer."""
+
+        model = FeedEntry
+        fields = [
+            'pk',
+            'feed_id',
+            'title',
+            'link',
+            'published',
+            'author',
+            'summary',
+            'read',
+        ]
