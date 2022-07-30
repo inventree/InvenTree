@@ -1,5 +1,7 @@
 version: "3.8"
 
+name: "inventree-development"
+
 # Docker compose recipe for InvenTree development server
 # - Runs PostgreSQL as the database backend
 # - Uses built-in django webserver
@@ -23,12 +25,12 @@ services:
         container_name: inventree-dev-db
         image: postgres:13
         expose:
-            - ${INVENTREE_DB_PORT:-5432}/tcp
+            - 5432/tcp
         environment:
             - PGDATA=/var/lib/postgresql/data/pgdb
-            - POSTGRES_USER=${INVENTREE_DB_USER:?You must provide the 'INVENTREE_DB_USER' variable in the .env file}
-            - POSTGRES_PASSWORD=${INVENTREE_DB_PASSWORD:?You must provide the 'INVENTREE_DB_PASSWORD' variable in the .env file}
-            - POSTGRES_DB=${INVENTREE_DB_NAME:?You must provide the 'INVENTREE_DB_NAME' variable in the .env file}
+            - POSTGRES_USER=pguser
+            - POSTGRES_PASSWORD=pgpassword
+            - POSTGRES_DB=inventree
         volumes:
           # Map 'data' volume such that postgres database is stored externally
           - ./data:/var/lib/postgresql/data
@@ -52,7 +54,7 @@ services:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree
         env_file:
-            - .env
+            - docker.dev.env
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -66,5 +68,5 @@ services:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree
         env_file:
-            - .env
+            - docker.dev.env
         restart: unless-stopped
