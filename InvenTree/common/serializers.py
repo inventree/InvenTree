@@ -2,8 +2,8 @@
 
 from rest_framework import serializers
 
-from common.models import (FeedEntry, InvenTreeSetting, InvenTreeUserSetting,
-                           NotificationMessage)
+from common.models import (InvenTreeSetting, InvenTreeUserSetting,
+                           NewsFeedEntry, NotificationMessage)
 from InvenTree.helpers import get_objectreference
 from InvenTree.serializers import InvenTreeModelSerializer
 
@@ -192,15 +192,15 @@ class NotificationReadSerializer(NotificationMessageSerializer):
         return True
 
 
-class FeedEntrySerializer(InvenTreeModelSerializer):
-    """Serializer for the FeedEntry model."""
+class NewsFeedEntrySerializer(InvenTreeModelSerializer):
+    """Serializer for the NewsFeedEntry model."""
 
     read = serializers.BooleanField(read_only=True)
 
     class Meta:
-        """Meta options for FeedEntrySerializer."""
+        """Meta options for NewsFeedEntrySerializer."""
 
-        model = FeedEntry
+        model = NewsFeedEntry
         fields = [
             'pk',
             'feed_id',

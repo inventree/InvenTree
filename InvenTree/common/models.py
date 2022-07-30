@@ -2165,10 +2165,8 @@ class NotificationMessage(models.Model):
         return naturaltime(self.creation)
 
 
-class FeedEntry(models.Model):
-    """A NotificationEntry records the last time a particular notifaction was sent out.
-
-    It is recorded to ensure that notifications are not sent out "too often" to users.
+class NewsFeedEntry(models.Model):
+    """A NewsFeedEntry represents an entry on the RSS/Atom feed that is generated for InvenTree news.
 
     Attributes:
     - feed_id: Unique id for the news item

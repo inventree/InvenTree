@@ -31,7 +31,7 @@ def delete_old_notifications():
 def update_news_feed():
     """Update the newsfeed."""
     try:
-        from common.models import FeedEntry
+        from common.models import NewsFeedEntry
     except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not perform 'update_news_feed' - App registry not ready")
         return
@@ -44,7 +44,7 @@ def update_news_feed():
         return
 
     # Get a reference list
-    id_list = [a.feed_id for a in FeedEntry.objects.all()]
+    id_list = [a.feed_id for a in NewsFeedEntry.objects.all()]
 
     # Iterate over entries
     for entry in d.entries:
@@ -53,7 +53,7 @@ def update_news_feed():
             continue
 
         # Create entry
-        FeedEntry.objects.create(
+        NewsFeedEntry.objects.create(
             feed_id=entry.id,
             title=entry.title,
             link=entry.link,
