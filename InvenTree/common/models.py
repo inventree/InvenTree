@@ -2171,7 +2171,7 @@ class FeedEntry(models.Model):
     It is recorded to ensure that notifications are not sent out "too often" to users.
 
     Attributes:
-    - id: Unique id for the news item
+    - feed_id: Unique id for the news item
     - title: Title for the news item
     - link: Link to the news item
     - published: Date of publishing of the news item
