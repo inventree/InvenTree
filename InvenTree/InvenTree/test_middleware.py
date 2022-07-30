@@ -2,6 +2,8 @@
 
 from django.urls import reverse
 
+from error_report.models import Error
+
 from InvenTree.helpers import InvenTreeTestCase
 
 
@@ -58,3 +60,15 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # should still fail without token
         self.check_path(reverse('settings.js'), 401)
+
+    def test_error_exceptions(self):
+        """Test that ignored errors are not logged."""
+        def check():
+            # Check that errors are empty
+            errors = Error.objects.all()
+            self.assertEqual(len(errors), 0)
+
+        check()
+        response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
+        self.assertEqual(response.status_code, 404)
+        check()
