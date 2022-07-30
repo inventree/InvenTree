@@ -13,6 +13,7 @@ import math
 import os
 import uuid
 from datetime import datetime, timedelta
+from enum import Enum
 from secrets import compare_digest
 
 from django.apps import apps
@@ -1805,9 +1806,8 @@ class ColorTheme(models.Model):
         return False
 
 
-class VerificationMethod:
+class VerificationMethod(Enum):
     """Class to hold method references."""
-
     NONE = 0
     TOKEN = 1
     HMAC = 2
