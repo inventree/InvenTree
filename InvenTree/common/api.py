@@ -256,21 +256,20 @@ class NotificationUserSettingsDetail(RetrieveUpdateAPI):
 
     queryset = NotificationUserSetting.objects.all()
     serializer_class = NotificationUserSettingSerializer
-
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
+    permission_classes = [UserSettingsPermissions, ]
 
 
-class NotificationList(BulkDeleteMixin, ListAPI):
-    """List view for all notifications of the current user."""
-
+class NotificationMessageMixin:
+    """Generic mixin for NotificationMessage."""
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
+    permission_classes = [UserSettingsPermissions, ]
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+
+class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
+    """List view for all notifications of the current user."""
+
+    permission_classes = [permissions.IsAuthenticated, ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -313,28 +312,15 @@ class NotificationList(BulkDeleteMixin, ListAPI):
         return queryset
 
 
-class NotificationDetail(RetrieveUpdateDestroyAPI):
+class NotificationDetail(NotificationMessageMixin, RetrieveUpdateDestroyAPI):
     """Detail view for an individual notification object.
 
     - User can only view / delete their own notification objects
     """
 
-    queryset = common.models.NotificationMessage.objects.all()
-    serializer_class = common.serializers.NotificationMessageSerializer
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
 
-
-class NotificationReadEdit(CreateAPI):
+class NotificationReadEdit(NotificationMessageMixin, CreateAPI):
     """General API endpoint to manipulate read state of a notification."""
-
-    queryset = common.models.NotificationMessage.objects.all()
-    serializer_class = common.serializers.NotificationReadSerializer
-
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
 
     def get_serializer_context(self):
         """Add instance to context so it can be accessed in the serializer."""
@@ -363,14 +349,8 @@ class NotificationUnread(NotificationReadEdit):
     target = False
 
 
-class NotificationReadAll(RetrieveAPI):
+class NotificationReadAll(NotificationMessageMixin, RetrieveAPI):
     """API endpoint to mark all notifications as read."""
-
-    queryset = common.models.NotificationMessage.objects.all()
-
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
 
     def get(self, request, *args, **kwargs):
         """Set all messages for the current user as read."""
