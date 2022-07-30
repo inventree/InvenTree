@@ -19,6 +19,7 @@ from pathlib import Path
 
 import django.conf.locale
 from django.core.files.storage import default_storage
+from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
@@ -292,10 +293,8 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'InvenTree.middleware.AuthRequiredMiddleware',
     'InvenTree.middleware.Check2FAMiddleware',                  # Check if the user should be forced to use MFA
     'maintenance_mode.middleware.MaintenanceModeMiddleware',
+    'InvenTree.middleware.InvenTreeExceptionProcessor',         # Error reporting
 ])
-
-# Error reporting middleware
-MIDDLEWARE.append('InvenTree.middleware.InvenTreeExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
@@ -466,6 +465,10 @@ if db_engine in ['sqlite3', 'postgresql', 'mysql']:
 
 db_name = db_config['NAME']
 db_host = db_config.get('HOST', "''")
+
+if 'sqlite' in db_engine:
+    db_name = str(Path(db_name).resolve())
+    db_config['NAME'] = db_name
 
 logger.info(f"DB_ENGINE: {db_engine}")
 logger.info(f"DB_NAME: {db_name}")
@@ -927,6 +930,11 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
     }
     for key, val in inventree_tags.items():
         sentry_sdk.set_tag(f'inventree_{key}', val)
+
+# In-database error logging
+IGNORRED_ERRORS = [
+    Http404
+]
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60

@@ -15,7 +15,6 @@ from error_report.middleware import ExceptionProcessor
 from rest_framework.authtoken.models import Token
 
 from common.models import InvenTreeSetting
-from InvenTree.exceptions import IGNORRED_ERRORS
 from InvenTree.urls import frontendpatterns
 
 logger = logging.getLogger("inventree")
@@ -158,7 +157,7 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         kind, info, data = sys.exc_info()
 
         # Check if the eror is on the ignore list
-        if kind in IGNORRED_ERRORS:
+        if kind in settings.IGNORRED_ERRORS:
             return
 
         return super().process_exception(request, exception)

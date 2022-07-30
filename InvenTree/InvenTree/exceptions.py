@@ -8,7 +8,6 @@ import traceback
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 import rest_framework.views as drfviews
@@ -16,10 +15,6 @@ from error_report.models import Error
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
-
-IGNORRED_ERRORS = [
-    Http404
-]
 
 
 def log_error(path):
@@ -34,7 +29,7 @@ def log_error(path):
     kind, info, data = sys.exc_info()
 
     # Check if the eror is on the ignore list
-    if kind in IGNORRED_ERRORS:
+    if kind in settings.IGNORRED_ERRORS:
         return
 
     Error.objects.create(
