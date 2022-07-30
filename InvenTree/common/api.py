@@ -412,6 +412,16 @@ class NewsFeedEntryDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsAdminUser, ]
 
 
+class NewsFeedEntryRead(NotificationReadEdit):
+    """API endpoint to mark a news item as read."""
+
+    queryset = common.models.NewsFeedEntry.objects.all()
+    serializer_class = common.serializers.NewsFeedEntrySerializer
+    permission_classes = [IsAdminUser, ]
+
+    target = True
+
+
 settings_api_urls = [
     # User settings
     re_path(r'^user/', include([
@@ -463,7 +473,7 @@ common_api_urls = [
     # News
     re_path(r'^news/', include([
         re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'^read/', NotificationRead.as_view(), name='api-news-read'),
+            re_path(r'^read/', NewsFeedEntryRead.as_view(), name='api-news-read'),
             re_path(r'.*$', NewsFeedEntryDetail.as_view(), name='api-news-detail'),
         ])),
         re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),
