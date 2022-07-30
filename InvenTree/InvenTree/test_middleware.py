@@ -1,5 +1,6 @@
 """Tests for middleware functions."""
 
+from django.conf import settings
 from django.urls import reverse
 
 from error_report.models import Error
@@ -63,12 +64,19 @@ class MiddlewareTests(InvenTreeTestCase):
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""
-        def check():
+        def check(excpected_nbr=0):
             # Check that errors are empty
             errors = Error.objects.all()
-            self.assertEqual(len(errors), 0)
+            self.assertEqual(len(errors), excpected_nbr)
 
+        # Test normal setup
         check()
         response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
         self.assertEqual(response.status_code, 404)
         check()
+
+        # Test setup without ignored errors
+        settings.IGNORRED_ERRORS = []
+        response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
+        self.assertEqual(response.status_code, 404)
+        check(1)
