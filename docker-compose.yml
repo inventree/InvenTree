@@ -1,7 +1,5 @@
 version: "3.8"
 
-name: "inventree-development"
-
 # Docker compose recipe for InvenTree development server
 # - Runs PostgreSQL as the database backend
 # - Uses built-in django webserver
