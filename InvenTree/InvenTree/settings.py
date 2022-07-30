@@ -321,7 +321,7 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-if DOCKER:
+if DOCKER:  # pragma: no cover
     # Internal IP addresses are different when running under docker
     hostname, ___, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
@@ -372,7 +372,7 @@ TEMPLATES = [
     },
 ]
 
-if DEBUG_TOOLBAR_ENABLED:
+if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
     # Note that the APP_DIRS value must be set when using debug_toolbar
     # But this will kill template loading for plugins
     TEMPLATES[0]['APP_DIRS'] = True
