@@ -36,6 +36,8 @@ def _is_true(x):
 
 # Default Sentry DSN (can be overriden if user wants custom sentry integration)
 INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
+# Default news site
+INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv

@@ -24,6 +24,7 @@ django-user-sessions                    # user sessions in DB
 django-weasyprint                       # django weasyprint integration
 djangorestframework                     # DRF framework
 django-xforwardedfor-middleware         # IP forwarding metadata
+feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation

@@ -121,6 +121,8 @@ djangorestframework==3.13.1
     # via -r requirements.in
 et-xmlfile==1.1.0
     # via openpyxl
+feedparser==6.0.10
+    # via -r requirements.in
 fonttools[woff]==4.33.3
     # via weasyprint
 gunicorn==20.1.0
@@ -203,6 +205,8 @@ requests-oauthlib==1.3.1
     # via django-allauth
 sentry-sdk==1.6.0
     # via -r requirements.in
+sgmllib3k==1.0.0
+    # via feedparser
 six==1.16.0
     # via
     #   bleach

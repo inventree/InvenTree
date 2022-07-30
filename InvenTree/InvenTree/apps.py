@@ -99,6 +99,12 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
+        # Update news feed
+        InvenTree.tasks.schedule_task(
+            'common.tasks.update_news_feed',
+            schedule_type=Schedule.DAILY,
+        )
+
         # Check for overdue purchase orders
         InvenTree.tasks.schedule_task(
             'order.tasks.check_overdue_purchase_orders',
