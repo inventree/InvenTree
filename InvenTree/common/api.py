@@ -381,13 +381,15 @@ class NotificationReadAll(RetrieveAPI):
             raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
 
 
-class NewsFeedEntryList(BulkDeleteMixin, ListAPI):
-    """List view for all news items."""
-
+class NewsFeedMixin:
+    """Generic mixin for NewsFeedEntry."""
     queryset = common.models.NewsFeedEntry.objects.all()
     serializer_class = common.serializers.NewsFeedEntrySerializer
     permission_classes = [IsAdminUser, ]
 
+
+class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
+    """List view for all news items."""
     filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter,
@@ -404,21 +406,12 @@ class NewsFeedEntryList(BulkDeleteMixin, ListAPI):
     ]
 
 
-class NewsFeedEntryDetail(RetrieveUpdateDestroyAPI):
+class NewsFeedEntryDetail(NewsFeedMixin, RetrieveUpdateDestroyAPI):
     """Detail view for an individual news feed object."""
 
-    queryset = common.models.NewsFeedEntry.objects.all()
-    serializer_class = common.serializers.NewsFeedEntrySerializer
-    permission_classes = [IsAdminUser, ]
 
-
-class NewsFeedEntryRead(NotificationReadEdit):
+class NewsFeedEntryRead(NewsFeedMixin, NotificationReadEdit):
     """API endpoint to mark a news item as read."""
-
-    queryset = common.models.NewsFeedEntry.objects.all()
-    serializer_class = common.serializers.NewsFeedEntrySerializer
-    permission_classes = [IsAdminUser, ]
-
     target = True
 
 
