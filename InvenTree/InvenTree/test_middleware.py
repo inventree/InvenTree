@@ -1,10 +1,12 @@
 """Tests for middleware functions."""
 
 from django.conf import settings
+from django.http import Http404
 from django.urls import reverse
 
 from error_report.models import Error
 
+from InvenTree.exceptions import log_error
 from InvenTree.helpers import InvenTreeTestCase
 
 
@@ -75,8 +77,21 @@ class MiddlewareTests(InvenTreeTestCase):
         self.assertEqual(response.status_code, 404)
         check()
 
+        # Test manual logging
+        try:
+            raise Http404
+        except Http404:
+            log_error('testpath')
+
         # Test setup without ignored errors
         settings.IGNORRED_ERRORS = []
         response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
         self.assertEqual(response.status_code, 404)
         check(1)
+
+        # Test manual logging
+        try:
+            raise Http404
+        except Http404:
+            log_error('testpath')
+        check(2)
