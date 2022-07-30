@@ -329,15 +329,33 @@ function deletePartCategory(pk, options={}) {
     var html = `
     <div class='alert alert-block alert-danger'>
     {% trans "Are you sure you want to delete this part category?" %}
-    <ul>
-        <li>{% trans "Any child categories will be moved to the parent of this category" %}</li>
-        <li>{% trans "Any parts in this category will be moved to the parent of this category" %}</li>
-    </ul>
     </div>`;
+    var subChoices = [
+        {
+            value: 0,
+            display_name: '{% trans "Move them under the parent category" %}',
+        },
+        {
+            value: 1,
+            display_name: '{% trans "Delete them" %}',
+        }
+    ];
 
     constructForm(url, {
         title: '{% trans "Delete Part Category" %}',
         method: 'DELETE',
+        fields: {
+            'delete_parts': {
+                label: '{% trans "What to do with the parts associated to this category:" %}',
+                choices: subChoices,
+                type: 'choice'
+            },
+            'delete_child_categories': {
+                label: '{% trans "What to do with the child categories (and parts associated to them):" %}',
+                choices: subChoices,
+                type: 'choice'
+            },
+        },
         preFormContent: html,
         onSuccess: function(response) {
             handleFormSuccess(response, options);

@@ -65,31 +65,55 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
-
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
-        with transaction.atomic():
+
+        rebuild = kwargs.get('rebuild', True)
+        try:
+            # when doing recursive category tree delete the atomic transaction needs to be started once
+            if rebuild:
+                transaction.atomic()
 
             parent = self.parent
             tree_id = self.tree_id
 
-            # Update each part in this category to point to the parent category
-            for p in self.parts.all():
-                p.category = self.parent
-                p.save()
-
-            # Update each child category
-            for child in self.children.all():
-                child.parent = self.parent
-                child.save()
-
-            super().delete(*args, **kwargs)
-
-            if parent is not None:
-                # Partially rebuild the tree (cheaper than a complete rebuild)
-                PartCategory.objects.partial_rebuild(tree_id)
+            if kwargs.get('delete_parts', False):
+                # Delete each part in this category if user wants to do that
+                self.parts.delete()
             else:
-                PartCategory.objects.rebuild()
+                # Update each part in this category to point to the parent category
+                for p in self.parts.all():
+                    if kwargs.get('parent_category') is None:
+                        p.category = self.parent
+                    else:
+                        p.category = kwargs.get('parent_category')
+                    p.save()
+
+            if kwargs.get('delete_child_categories', False):
+                # Recursively delete all child category if used wanted this
+                for child in self.children.all():
+                    child.delete(**dict(child_categories_action='delete',
+                                        rebuild=False,
+                                        parent_category=self.parent))
+            else:
+                # Update each child category
+                for child in self.children.all():
+                    child.parent = self.parent
+                    child.save()
+
+            super().delete(*args, **dict())
+
+            if rebuild:
+                if parent is not None:
+                    # Partially rebuild the tree (cheaper than a complete rebuild)
+                    PartCategory.objects.partial_rebuild(tree_id)
+                else:
+                    PartCategory.objects.rebuild()
+        except:
+            pass
+        finally:
+            if rebuild:
+                transaction.commit()
 
     default_location = TreeForeignKey(
         'stock.StockLocation', related_name="default_categories",
