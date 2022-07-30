@@ -13,6 +13,7 @@ import math
 import os
 import uuid
 from datetime import datetime, timedelta
+from enum import Enum
 from secrets import compare_digest
 
 from django.apps import apps
@@ -1805,9 +1806,8 @@ class ColorTheme(models.Model):
         return False
 
 
-class VerificationMethod:
+class VerificationMethod(Enum):
     """Class to hold method references."""
-
     NONE = 0
     TOKEN = 1
     HMAC = 2
@@ -2163,3 +2163,56 @@ class NotificationMessage(models.Model):
     def age_human(self):
         """Humanized age."""
         return naturaltime(self.creation)
+
+
+class FeedEntry(models.Model):
+    """A NotificationEntry records the last time a particular notifaction was sent out.
+
+    It is recorded to ensure that notifications are not sent out "too often" to users.
+
+    Attributes:
+    - id: Unique id for the news item
+    - title: Title for the news item
+    - link: Link to the news item
+    - published: Date of publishing of the news item
+    - author: Author of news item
+    - summary: Summary of the news items content
+    - read: Was this iteam already by a superuser?
+    """
+
+    feed_id = models.CharField(
+        verbose_name=_('Id'),
+        unique=True,
+        max_length=250,
+    )
+
+    title = models.CharField(
+        verbose_name=_('Title'),
+        max_length=250,
+    )
+
+    link = models.URLField(
+        verbose_name=_('Link'),
+        max_length=250,
+    )
+
+    published = models.DateTimeField(
+        verbose_name=_('Published'),
+        max_length=250,
+    )
+
+    author = models.CharField(
+        verbose_name=_('Author'),
+        max_length=250,
+    )
+
+    summary = models.CharField(
+        verbose_name=_('Summary'),
+        max_length=250,
+    )
+
+    read = models.BooleanField(
+        verbose_name=_('Read'),
+        help_text=_('Was this news item read?'),
+        default=False
+    )
