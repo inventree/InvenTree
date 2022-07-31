@@ -22,7 +22,6 @@ from django.utils.translation import gettext_lazy as _
 
 import moneyed
 import sentry_sdk
-import yaml
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from . import config
@@ -40,16 +39,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Build paths inside the project like this: BASE_DIR.joinpath(...)
 BASE_DIR = config.get_base_dir()
 
-cfg_filename = config.get_config_file()
-
 # Load configuration data
 CONFIG = config.load_config_data()
-
-with open(cfg_filename, 'r') as cfg:
-    CONFIG = yaml.safe_load(cfg)
-
-# We will place any config files in the same directory as the config file
-config_dir = cfg_filename.parent
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -431,7 +422,7 @@ if "postgres" in db_engine:  # pragma: no cover
         # long to connect to the database server
         # # seconds, 2 is minium allowed by libpq
         db_options["connect_timeout"] = int(
-            os.getenv("INVENTREE_DB_TIMEOUT", 2)
+            get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 2)
         )
 
     # Setup TCP keepalive
@@ -442,23 +433,27 @@ if "postgres" in db_engine:  # pragma: no cover
     # # 0 - TCP Keepalives disabled; 1 - enabled
     if "keepalives" not in db_options:
         db_options["keepalives"] = int(
-            os.getenv("INVENTREE_DB_TCP_KEEPALIVES", "1")
+            get_setting('INVENTREE_DB_TCP_KEEPALIVES', 'database.tcp_keepalives', 1)
         )
-    # # Seconds after connection is idle to send keep alive
+
+    # Seconds after connection is idle to send keep alive
     if "keepalives_idle" not in db_options:
         db_options["keepalives_idle"] = int(
-            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_IDLE", "1")
+            get_setting('INVENTREE_DB_TCP_KEEPALIVES_IDLE', 'database.tcp_keepalives_idle', 1)
         )
-    # # Seconds after missing ACK to send another keep alive
+
+    # Seconds after missing ACK to send another keep alive
     if "keepalives_interval" not in db_options:
         db_options["keepalives_interval"] = int(
-            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_INTERVAL", "1")
+            get_setting("INVENTREE_DB_TCP_KEEPALIVES_INTERVAL", "database.tcp_keepalives_internal", "1")
         )
-    # # Number of missing ACKs before we close the connection
+
+    # Number of missing ACKs before we close the connection
     if "keepalives_count" not in db_options:
         db_options["keepalives_count"] = int(
-            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_COUNT", "5")
+            get_setting("INVENTREE_DB_TCP_KEEPALIVES_COUNT", "database.tcp_keepalives_count", "5")
         )
+
     # # Milliseconds for how long pending data should remain unacked
     # by the remote server
     # TODO: Supported starting in PSQL 11
@@ -471,17 +466,12 @@ if "postgres" in db_engine:  # pragma: no cover
     # https://www.postgresql.org/docs/devel/transaction-iso.html
     # https://docs.djangoproject.com/en/3.2/ref/databases/#isolation-level
     if "isolation_level" not in db_options:
-        serializable = config.is_true(
-            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "false")
-        )
-        db_options["isolation_level"] = (
-            ISOLATION_LEVEL_SERIALIZABLE
-            if serializable
-            else ISOLATION_LEVEL_READ_COMMITTED
-        )
+        serializable = get_boolean_setting('INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False)
+
+        db_options["isolation_level"] = ISOLATION_LEVEL_SERIALIZABLE if serializable else ISOLATION_LEVEL_READ_COMMITTED
 
 # Specific options for MySql / MariaDB backend
-if "mysql" in db_engine:  # pragma: no cover
+elif "mysql" in db_engine:  # pragma: no cover
     # TODO TCP time outs and keepalives
 
     # MariaDB's default isolation level is Repeatable Read which is
@@ -491,15 +481,12 @@ if "mysql" in db_engine:  # pragma: no cover
     # https://mariadb.com/kb/en/mariadb-transactions-and-isolation-levels-for-sql-server-users/#changing-the-isolation-level
     # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
     if "isolation_level" not in db_options:
-        serializable = config.is_true(
-            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "false")
-        )
-        db_options["isolation_level"] = (
-            "serializable" if serializable else "read committed"
-        )
+        db_options["isolation_level"] = ISOLATION_LEVEL_SERIALIZABLE if serializable else ISOLATION_LEVEL_READ_COMMITTED
+
+        db_options["isolation_level"] = "serializable" if serializable else "read committed"
 
 # Specific options for sqlite backend
-if "sqlite" in db_engine:
+elif "sqlite" in db_engine:
     # TODO: Verify timeouts are not an issue because no network is involved for SQLite
 
     # SQLite's default isolation level is Serializable due to SQLite's
@@ -570,19 +557,7 @@ else:
         },
     }
 
-# Number of background workers to run for django-q
-q_background_works = int(get_setting(
-    'INVENTREE_BACKGROUND_WORKERS',
-    4
-))
-
-try:
-    # 4 background workers seems like a sensible default
-    background_workers = int(os.environ.get('INVENTREE_BACKGROUND_WORKERS', 4))
-except ValueError:  # pragma: no cover
-    background_workers = 4
-
-# django-q configuration
+# django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
