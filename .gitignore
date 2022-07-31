@@ -50,7 +50,6 @@ docs/_build
 inventree_media
 inventree_static
 static_i18n
-inventree-data
 
 # Local config file
 config.yaml
@@ -79,6 +78,8 @@ js_tmp/
 
 # Development files
 dev/
+data/
+env/
 
 # Locale stats file
 locale_stats.json
