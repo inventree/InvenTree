@@ -33,15 +33,6 @@ function loadNewsFeedTable(table, options={}, enableDelete=false) {
                 switchable: false,
             },
             {
-                field: 'published',
-                title: '{% trans "Published" %}',
-                sortable: 'true',
-            },
-            {
-                field: 'author',
-                title: '{% trans "Author" %}',
-            },
-            {
                 field: 'title',
                 title: '{% trans "Title" %}',
                 sortable: 'true',
@@ -49,6 +40,15 @@ function loadNewsFeedTable(table, options={}, enableDelete=false) {
             {
                 field: 'summary',
                 title: '{% trans "Summary" %}',
+            },
+            {
+                field: 'author',
+                title: '{% trans "Author" %}',
+            },
+            {
+                field: 'published',
+                title: '{% trans "Published" %}',
+                sortable: 'true',
             },
         ]
     });
