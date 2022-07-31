@@ -85,16 +85,8 @@ SECRET_KEY = config.get_secret_key()
 # The filesystem location for served static files
 STATIC_ROOT = config.get_static_dir()
 
-if STATIC_ROOT is None:  # pragma: no cover
-    logger.critical("INVENTREE_STATIC_ROOT directory not defined")
-    sys.exit(1)
-
 # The filesystem location for uploaded meadia files
 MEDIA_ROOT = config.get_media_dir()
-
-if MEDIA_ROOT is None:  # pragma: no cover
-    logger.critical("INVENTREE_MEDIA_ROOT directory is not defined")
-    sys.exit(1)
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = get_setting(

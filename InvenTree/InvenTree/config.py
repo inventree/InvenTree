@@ -58,45 +58,6 @@ def load_config_data() -> map:
     return data
 
 
-def get_secret_key():
-    """Return the secret key value which will be used by django.
-
-    Following options are tested, in descending order of preference:
-
-    A) Check for environment variable INVENTREE_SECRET_KEY => Use raw key data
-    B) Check for environment variable INVENTREE_SECRET_KEY_FILE => Load key data from file
-    C) Look for default key file "secret_key.txt"
-    D) Create "secret_key.txt" if it does not exist
-    """
-
-    # Look for environment variable
-    if secret_key := os.getenv('INVENTREE_SECRET_KEY'):
-        logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover
-        return secret_key
-
-    # Look for secret key file
-    if secret_key_file := os.getenv('INVENTREE_SECRET_KEY_FILE'):
-        secret_key_file = Path(secret_key_file).resolve()
-    else:
-        # Default location for secret key file
-        secret_key_file = get_base_dir().joinpath("secret_key.txt").resolve()
-
-    if not secret_key_file.exists():
-        logger.info(f"Generating random key file at '{secret_key_file}'")
-
-        # Create a random key file
-        options = string.digits + string.ascii_letters + string.punctuation
-        key = ''.join([random.choice(options) for i in range(100)])
-        secret_key_file.write_text(key)
-
-    logger.info(f"Loading SECRET_KEY from '{secret_key_file}'")
-
-    with open(secret_key_file, 'r') as f:
-        key_data = f.read().strip()
-
-    return key_data
-
-
 def get_setting(env_var=None, config_key=None, default_value=None):
     """Helper function for retrieving a configuration setting value.
 
@@ -207,3 +168,42 @@ def get_plugin_file():
         plugin_file.write_text("# InvenTree Plugins (uses PIP framework to install)\n\n")
 
     return plugin_file
+
+
+def get_secret_key():
+    """Return the secret key value which will be used by django.
+
+    Following options are tested, in descending order of preference:
+
+    A) Check for environment variable INVENTREE_SECRET_KEY => Use raw key data
+    B) Check for environment variable INVENTREE_SECRET_KEY_FILE => Load key data from file
+    C) Look for default key file "secret_key.txt"
+    D) Create "secret_key.txt" if it does not exist
+    """
+
+    # Look for environment variable
+    if secret_key := get_setting('INVENTREE_SECRET_KEY', 'secret_key'):
+        logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover
+        return secret_key
+
+    # Look for secret key file
+    if secret_key_file := get_setting('INVENTREE_SECRET_KEY_FILE', 'secret_key_file'):
+        secret_key_file = Path(secret_key_file).resolve()
+    else:
+        # Default location for secret key file
+        secret_key_file = get_base_dir().joinpath("secret_key.txt").resolve()
+
+    if not secret_key_file.exists():
+        logger.info(f"Generating random key file at '{secret_key_file}'")
+
+        # Create a random key file
+        options = string.digits + string.ascii_letters + string.punctuation
+        key = ''.join([random.choice(options) for i in range(100)])
+        secret_key_file.write_text(key)
+
+    logger.info(f"Loading SECRET_KEY from '{secret_key_file}'")
+
+    with open(secret_key_file, 'r') as f:
+        key_data = f.read().strip()
+
+    return key_data
