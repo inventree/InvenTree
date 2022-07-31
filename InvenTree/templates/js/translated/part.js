@@ -1778,6 +1778,7 @@ function loadPartCategoryTable(table, options) {
         name: 'category',
         original: original,
         showColumns: true,
+        sortable: true,
         buttons: options.allowTreeView ? [
             {
                 icon: 'fas fa-bars',
@@ -1885,10 +1886,10 @@ function loadPartCategoryTable(table, options) {
                 sortable: false,
             },
             {
-                field: 'parts',
+                field: 'part_count',
                 title: '{% trans "Parts" %}',
                 switchable: true,
-                sortable: false,
+                sortable: true,
             }
         ]
     });
