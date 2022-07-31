@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-30 23:22+0000\n"
+"POT-Creation-Date: 2022-07-31 13:38+0000\n"
 "PO-Revision-Date: 2022-07-30 23:33\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "API endpoint not found"
 msgstr "API funkciót nem találom"
 
-#: InvenTree/exceptions.py:62
+#: InvenTree/exceptions.py:68
 msgid "Error details can be found in the admin panel"
 msgstr "A hiba részleteit megtalálod az admin panelen"
 
@@ -318,11 +318,11 @@ msgstr "Leírás (opcionális)"
 msgid "parent"
 msgstr "szülő"
 
-#: InvenTree/models.py:655
+#: InvenTree/models.py:659
 msgid "Server Error"
 msgstr "Kiszolgálóhiba"
 
-#: InvenTree/models.py:656
+#: InvenTree/models.py:660
 msgid "An error has been logged by the server."
 msgstr "A kiszolgáló egy hibaüzenetet rögzített."
 
@@ -393,99 +393,99 @@ msgstr "A távoli kép URL-je"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Képek letöltése távoli URL-ről nem engedélyezett"
 
-#: InvenTree/settings.py:703
+#: InvenTree/settings.py:607
 msgid "Czech"
 msgstr "Cseh"
 
-#: InvenTree/settings.py:704
+#: InvenTree/settings.py:608
 msgid "German"
 msgstr "Német"
 
-#: InvenTree/settings.py:705
+#: InvenTree/settings.py:609
 msgid "Greek"
 msgstr "Görög"
 
-#: InvenTree/settings.py:706
+#: InvenTree/settings.py:610
 msgid "English"
 msgstr "Angol"
 
-#: InvenTree/settings.py:707
+#: InvenTree/settings.py:611
 msgid "Spanish"
 msgstr "Spanyol"
 
-#: InvenTree/settings.py:708
+#: InvenTree/settings.py:612
 msgid "Spanish (Mexican)"
 msgstr "Spanyol (Mexikói)"
 
-#: InvenTree/settings.py:709
+#: InvenTree/settings.py:613
 msgid "Farsi / Persian"
 msgstr "Fárszi/Perzsa"
 
-#: InvenTree/settings.py:710
+#: InvenTree/settings.py:614
 msgid "French"
 msgstr "Francia"
 
-#: InvenTree/settings.py:711
+#: InvenTree/settings.py:615
 msgid "Hebrew"
 msgstr "Héber"
 
-#: InvenTree/settings.py:712
+#: InvenTree/settings.py:616
 msgid "Hungarian"
 msgstr "Magyar"
 
-#: InvenTree/settings.py:713
+#: InvenTree/settings.py:617
 msgid "Italian"
 msgstr "Olasz"
 
-#: InvenTree/settings.py:714
+#: InvenTree/settings.py:618
 msgid "Japanese"
 msgstr "Japán"
 
-#: InvenTree/settings.py:715
+#: InvenTree/settings.py:619
 msgid "Korean"
 msgstr "Koreai"
 
-#: InvenTree/settings.py:716
+#: InvenTree/settings.py:620
 msgid "Dutch"
 msgstr "Holland"
 
-#: InvenTree/settings.py:717
+#: InvenTree/settings.py:621
 msgid "Norwegian"
 msgstr "Norvég"
 
-#: InvenTree/settings.py:718
+#: InvenTree/settings.py:622
 msgid "Polish"
 msgstr "Lengyel"
 
-#: InvenTree/settings.py:719
+#: InvenTree/settings.py:623
 msgid "Portuguese"
 msgstr "Portugál"
 
-#: InvenTree/settings.py:720
+#: InvenTree/settings.py:624
 msgid "Portuguese (Brazilian)"
 msgstr "Portugál (Brazíliai)"
 
-#: InvenTree/settings.py:721
+#: InvenTree/settings.py:625
 msgid "Russian"
 msgstr "Orosz"
 
-#: InvenTree/settings.py:722
+#: InvenTree/settings.py:626
 msgid "Swedish"
 msgstr "Svéd"
 
-#: InvenTree/settings.py:723
+#: InvenTree/settings.py:627
 msgid "Thai"
 msgstr "Tháj"
 
-#: InvenTree/settings.py:724
+#: InvenTree/settings.py:628
 msgid "Turkish"
 msgstr "Török"
 
-#: InvenTree/settings.py:725
+#: InvenTree/settings.py:629
 msgid "Vietnamese"
 msgstr "Vietnámi"
 
-#: InvenTree/settings.py:726
+#: InvenTree/settings.py:630
 msgid "Chinese"
 msgstr "Kínai"
 
@@ -1141,7 +1141,8 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:380
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr ""
+"Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:449
@@ -7448,14 +7449,16 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -10422,4 +10425,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
-
