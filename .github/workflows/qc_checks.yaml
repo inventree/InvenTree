@@ -21,8 +21,8 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
   INVENTREE_DB_NAME: inventree
-  INVENTREE_MEDIA_ROOT: test_inventree_media
-  INVENTREE_STATIC_ROOT: test_inventree_static
+  INVENTREE_MEDIA_ROOT: ../test_inventree_media
+  INVENTREE_STATIC_ROOT: ../test_inventree_static
 
 jobs:
   pep_style:
