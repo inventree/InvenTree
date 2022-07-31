@@ -25,7 +25,13 @@ def log_error(path):
     Arguments:
         path: The 'path' (most likely a URL) associated with this error (optional)
     """
+
     kind, info, data = sys.exc_info()
+
+    # Check if the eror is on the ignore list
+    if kind in settings.IGNORED_ERRORS:
+        return
+
     Error.objects.create(
         kind=kind.__name__,
         info=info,

@@ -22,6 +22,8 @@ from django.utils.text import slugify
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
+from InvenTree.config import get_setting
+
 from .helpers import (IntegrationPluginError, get_plugins, handle_error,
                       log_error)
 from .plugin import InvenTreePlugin
@@ -199,7 +201,7 @@ class PluginsRegistry:
         if settings.TESTING:
             custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
         else:
-            custom_dirs = os.getenv('INVENTREE_PLUGIN_DIR', None)
+            custom_dirs = get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
             # Load from user specified directories (unless in testing mode)
             dirs.append('plugins')
