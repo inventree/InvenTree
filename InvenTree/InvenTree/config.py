@@ -150,9 +150,10 @@ def get_setting(env_var=None, config_key=None, default_value=None):
 
         result = None
 
-        # Hack to allow 'path traversal' in configuration
+        # Hack to allow 'path traversal' in configuration file
         for key in config_key.strip().split('.'):
-            if key not in cfg_data:
+
+            if type(cfg_data) is not dict or key not in cfg_data:
                 result = None
                 break
 
