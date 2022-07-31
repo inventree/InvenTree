@@ -98,17 +98,15 @@ email:
 
 # Set sentry_enabled to True to report errors back to the maintainers
 # Set sentry,dsn to your custom DSN if you want to use your own instance for error reporting
-sentry:
-  enabled: False
-  sample_rate: 0.1
-  # dsn: https://custom@custom.ingest.sentry.io/custom
+sentry_enabled: False
+#sentry_sample_rate: 0.1
+#sentry_dsn: https://custom@custom.ingest.sentry.io/custom
 
 # Set this variable to True to enable InvenTree Plugins
 # Alternatively, use the environment variable INVENTREE_PLUGINS_ENABLED
-plugins:
-  enabled: False
-  # plugin_file: /path/to/plugins.txt
-  # plugin_dir: /path/to/plugins/
+plugins_enabled: False
+#plugin_file: /path/to/plugins.txt
+#plugin_dir: /path/to/plugins/
 
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
@@ -147,21 +145,14 @@ background:
 #  - ssh
 
 # Login configuration
-# How long do confirmation mail last?
-login:
-  # Use environment variable INVENTREE_LOGIN_CONFIRM_DAYS
-  confirm_days: 3
-  # Use environment variable INVENTREE_LOGIN_ATTEMPTS
-  attempts: 5
+login_confirm_days: 3
+login_attempts: 5
 
 # Remote / proxy login
 # These settings can introduce security problems if configured incorrectly. Please read
 # https://docs.djangoproject.com/en/4.0/howto/auth-remote-user/ for more details
-remote_login:
-  # Use environment variable INVENTREE_REMOTE_LOGIN
-  enabled: False
-  # Use environment variable INVENTREE_REMOTE_LOGIN_HEADER
-  header: REMOTE_USER
+remote_login_enabled: False
+remote_login_header: REMOTE_USER
 
 # Permit custom authentication backends
 #authentication_backends:

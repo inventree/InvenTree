@@ -147,7 +147,7 @@ def get_plugin_file():
     """
 
     # Check if the plugin.txt file (specifying required plugins) is specified
-    plugin_file = get_setting('INVENTREE_PLUGIN_FILE', 'plugins.plugin_file')
+    plugin_file = get_setting('INVENTREE_PLUGIN_FILE', 'plugin_file')
 
     if not plugin_file:
         # If not specified, look in the same directory as the configuration file
