@@ -200,7 +200,6 @@ def get_secret_key():
 
     logger.info(f"Loading SECRET_KEY from '{secret_key_file}'")
 
-    with open(secret_key_file, 'r') as f:
-        key_data = f.read().strip()
+    key_data = secret_key_file.read_text().strip()
 
     return key_data
