@@ -116,7 +116,7 @@ def get_media_dir(create=True):
     if not md:
         raise FileNotFoundError('INVENTREE_MEDIA_ROOT not specified')
 
-    md = Path(md)
+    md = Path(md).resolve()
 
     if create:
         md.mkdir(parents=True, exist_ok=True)
@@ -135,7 +135,7 @@ def get_static_dir(cfg_data=None, create=True):
     if not sd:
         raise FileNotFoundError('INVENTREE_STATIC_ROOT not specified')
 
-    sd = Path(sd)
+    sd = Path(sd).resolve()
 
     if create:
         sd.mkdir(parents=True, exist_ok=True)
