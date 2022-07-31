@@ -109,7 +109,10 @@ sentry:
 
 # Set this variable to True to enable InvenTree Plugins
 # Alternatively, use the environment variable INVENTREE_PLUGINS_ENABLED
-plugins_enabled: False
+plugins:
+  enabled: False
+  # plugin_file: /path/to/plugins.txt
+  # plugin_dir: /path/to/plugins/
 
 # Configure the system logging level
 # Use environment variable INVENTREE_LOG_LEVEL
