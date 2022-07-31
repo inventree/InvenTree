@@ -53,6 +53,13 @@ class CategoryList(ListCreateAPI):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
 
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the CategoryList endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
+        return queryset
+
     def get_serializer_context(self):
         """Add extra context data to the serializer for the PartCategoryList endpoint"""
         ctx = super().get_serializer_context()
@@ -144,6 +151,7 @@ class CategoryList(ListCreateAPI):
         'level',
         'tree_id',
         'lft',
+        'part_count',
     ]
 
     # Use hierarchical ordering by default

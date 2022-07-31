@@ -24,6 +24,7 @@ from django.db.models.functions import Coalesce
 
 from sql_util.utils import SubquerySum
 
+import part.models
 import stock.models
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
@@ -157,4 +158,29 @@ def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
         ),
         0,
         output_field=FloatField(),
+    )
+
+
+def annotate_category_parts():
+    """Construct a queryset annotation which returns the number of parts in a particular category.
+
+    - Includes parts in subcategories also
+    - Requires subquery to perform annotation
+    """
+
+    # Construct a subquery to provide all parts in this category and any subcategories:
+    subquery = part.models.Part.objects.filter(
+        category__tree_id=OuterRef('tree_id'),
+        category__lft__gte=OuterRef('lft'),
+        category__rght__lte=OuterRef('rght'),
+    )
+
+    return Coalesce(
+        Subquery(
+            subquery.annotate(
+                total=Func(F('pk'), function='COUNT', output_field=FloatField())
+            ).values('total'),
+        ),
+        0,
+        output_field=FloatField()
     )
