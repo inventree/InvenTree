@@ -124,11 +124,8 @@ def get_media_dir(create=True):
     return md
 
 
-def get_static_dir(cfg_data=None, create=True):
+def get_static_dir(create=True):
     """Return the absolute path for the 'static' directory (where static files are stored)"""
-
-    if not cfg_data:
-        cfg_data = load_config_data()
 
     sd = get_setting('INVENTREE_STATIC_ROOT', 'static_root')
 
