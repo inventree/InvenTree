@@ -43,6 +43,15 @@ database:
   # ENGINE: sqlite3
   # NAME: '/home/inventree/database.sqlite3'
 
+# Set debug to False to run in production mode
+# Use the environment variable INVENTREE_DEBUG
+debug: True
+
+# Configure the system logging level
+# Use environment variable INVENTREE_LOG_LEVEL
+# Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
+log_level: WARNING
+
 # Select default system language (default is 'en-us')
 # Use the environment variable INVENTREE_LANGUAGE
 language: en-us
@@ -53,6 +62,11 @@ timezone: UTC
 
 # Base currency code (or use env var INVENTREE_BASE_CURRENCY)
 base_currency: USD
+
+# Add new user on first startup
+#admin_user: admin
+#admin_email: info@example.com
+#admin_password: inventree
 
 # List of currencies supported by default. Add other currencies here to allow use in InvenTree
 currencies:
@@ -67,15 +81,6 @@ currencies:
 
 # Email backend configuration
 # Ref: https://docs.djangoproject.com/en/dev/topics/email/
-# Available options:
-# host: Email server host address
-# port: Email port
-# username: Account username
-# password: Account password
-# prefix: Email subject prefix
-# tls: Enable TLS support
-# ssl: Enable SSL support
-
 # Alternatively, these options can all be set using environment variables,
 # with the INVENTREE_EMAIL_ prefix:
 # e.g. INVENTREE_EMAIL_HOST / INVENTREE_EMAIL_PORT / INVENTREE_EMAIL_USERNAME
@@ -91,15 +96,6 @@ email:
   tls: False
   ssl: False
 
-# Set debug to False to run in production mode
-# Use the environment variable INVENTREE_DEBUG
-debug: True
-
-# Set debug_toolbar to True to enable a debugging toolbar for InvenTree
-# Note: This will only be displayed if DEBUG mode is enabled,
-#       and only if InvenTree is accessed from a local IP (127.0.0.1)
-debug_toolbar: False
-
 # Set sentry_enabled to True to report errors back to the maintainers
 # Set sentry,dsn to your custom DSN if you want to use your own instance for error reporting
 sentry:
@@ -113,11 +109,6 @@ plugins:
   enabled: False
   # plugin_file: /path/to/plugins.txt
   # plugin_dir: /path/to/plugins/
-
-# Configure the system logging level
-# Use environment variable INVENTREE_LOG_LEVEL
-# Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
-log_level: WARNING
 
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
@@ -171,11 +162,6 @@ remote_login:
   enabled: False
   # Use environment variable INVENTREE_REMOTE_LOGIN_HEADER
   header: REMOTE_USER
-
-# Add new user on first startup
-#admin_user: admin
-#admin_email: info@example.com
-#admin_password: inventree
 
 # Permit custom authentication backends
 #authentication_backends:

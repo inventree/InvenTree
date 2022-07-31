@@ -200,7 +200,7 @@ def get_plugin_file():
         plugin_file = Path(plugin_file)
 
     if not plugin_file.exists():
-        logger.warning("Plugin configuration file does not exist")
+        logger.warning("Plugin configuration file does not exist - creating default file")
         logger.info(f"Creating plugin file at '{plugin_file}'")
 
         # If opening the file fails (no write permission, for example), then this will throw an error
