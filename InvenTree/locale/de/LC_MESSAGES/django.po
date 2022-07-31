@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-31 13:38+0000\n"
-"PO-Revision-Date: 2022-07-30 23:33\n"
+"POT-Creation-Date: 2022-07-31 13:18+0000\n"
+"PO-Revision-Date: 2022-07-31 23:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -91,15 +91,15 @@ msgstr "E-Mail Adressen müssen übereinstimmen."
 
 #: InvenTree/helpers.py:136
 msgid "Connection error"
-msgstr ""
+msgstr "Verbindungsfehler"
 
 #: InvenTree/helpers.py:140 InvenTree/helpers.py:145
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "Server antwortete mit ungültigem Statuscode"
 
 #: InvenTree/helpers.py:142
 msgid "Exception occurred"
-msgstr ""
+msgstr "Ausnahme aufgetreten"
 
 #: InvenTree/helpers.py:150
 msgid "Server responded with invalid Content-Length value"
@@ -107,15 +107,15 @@ msgstr ""
 
 #: InvenTree/helpers.py:153
 msgid "Image size is too large"
-msgstr ""
+msgstr "Bild ist zu groß"
 
 #: InvenTree/helpers.py:165
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "Bilddownload überschreitet maximale Größe"
 
 #: InvenTree/helpers.py:170
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "Remote-Server gab leere Antwort zurück"
 
 #: InvenTree/helpers.py:178
 msgid "Supplied URL is not a valid image file"
@@ -165,7 +165,7 @@ msgstr "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) üb
 
 #: InvenTree/models.py:236
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Falsch formatiertes Muster"
 
 #: InvenTree/models.py:243
 msgid "Unknown format key specified"
@@ -185,7 +185,7 @@ msgstr ""
 
 #: InvenTree/models.py:304
 msgid "Reference number is too large"
-msgstr ""
+msgstr "Referenznummer ist zu groß"
 
 #: InvenTree/models.py:382
 msgid "Missing file"
@@ -387,11 +387,11 @@ msgstr "URL"
 
 #: InvenTree/serializers.py:603
 msgid "URL of remote image file"
-msgstr ""
+msgstr "URL der Remote-Bilddatei"
 
 #: InvenTree/serializers.py:617
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "Das Herunterladen von Bildern von Remote-URLs ist nicht aktiviert"
 
 #: InvenTree/settings.py:607
 msgid "Czech"
@@ -1739,7 +1739,7 @@ msgstr "Herunterladen von externen Bildern und Dateien von URLs erlaubt"
 
 #: common/models.py:862
 msgid "Download Size Limit"
-msgstr ""
+msgstr "Download-Größenlimit"
 
 #: common/models.py:863
 msgid "Maximum allowable download size for remote image"
@@ -1747,11 +1747,11 @@ msgstr ""
 
 #: common/models.py:874
 msgid "Require confirm"
-msgstr ""
+msgstr "Bestätigung verpflichtend"
 
 #: common/models.py:875
 msgid "Require explicit user confirmation for certain action."
-msgstr ""
+msgstr "Eine ausdrückliche Benutzerbestätigung für bestimmte Aktionen erfordern."
 
 #: common/models.py:881 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
@@ -1975,7 +1975,7 @@ msgstr "Labeldruck über die Website aktivieren"
 
 #: common/models.py:1072
 msgid "Label Image DPI"
-msgstr ""
+msgstr "Label Bild DPI"
 
 #: common/models.py:1073
 msgid "DPI resolution when generating image files to supply to label printing plugins"
@@ -4460,7 +4460,7 @@ msgstr "Ist dieses Teil virtuell, wie zum Beispiel eine Software oder Lizenz?"
 
 #: part/models.py:922
 msgid "Part notes"
-msgstr ""
+msgstr "Teile-Notizen"
 
 #: part/models.py:924
 msgid "BOM checksum"
@@ -6141,7 +6141,7 @@ msgstr "Test Notizen"
 
 #: stock/serializers.py:72
 msgid "Serial number is too large"
-msgstr ""
+msgstr "Seriennummer ist zu lang"
 
 #: stock/serializers.py:173
 msgid "Purchase price of this stock item"
@@ -6630,11 +6630,11 @@ msgstr "Keine Berechtigung zum Anzeigen dieser Seite."
 
 #: templates/403_csrf.html:11
 msgid "Authentication Failure"
-msgstr ""
+msgstr "Authentifizierungsfehler"
 
 #: templates/403_csrf.html:14
 msgid "You have been logged out from InvenTree."
-msgstr ""
+msgstr "Sie wurden von InvenTree abgemeldet."
 
 #: templates/403_csrf.html:19 templates/navbar.html:142
 msgid "Login"
@@ -6881,7 +6881,7 @@ msgstr "Plugin-Einstellungen"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
-msgstr ""
+msgstr "Wenn Sie die folgenden Einstellungen ändern, müssen Sie InvenTree sofort neu starten. Ändern Sie dies nicht während der aktiven Nutzung."
 
 #: templates/InvenTree/settings/plugin.html:34
 msgid "Plugins"
@@ -7447,16 +7447,14 @@ msgstr "Einloggen"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
@@ -7891,11 +7889,11 @@ msgstr "Dateiformat auswählen"
 
 #: templates/js/translated/bom.js:295
 msgid "Multi Level BOM"
-msgstr ""
+msgstr "Multilevel Stückliste"
 
 #: templates/js/translated/bom.js:296
 msgid "Include BOM data for subassemblies"
-msgstr ""
+msgstr "Stücklisten-Daten für Untergruppen einbeziehen"
 
 #: templates/js/translated/bom.js:301
 msgid "Levels"
@@ -10423,3 +10421,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
