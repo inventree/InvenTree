@@ -18,6 +18,7 @@ pip install invoke && invoke setup-dev --tests
 
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
+docker compose run inventree-dev-server invoke install
 docker compose run inventree-dev-server invoke setup-test
 docker compose up -d
 ```
