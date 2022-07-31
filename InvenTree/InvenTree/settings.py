@@ -816,7 +816,7 @@ PLUGIN_RETRY = CONFIG.get('PLUGIN_RETRY', 5)  # how often should plugin loading 
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
 
 # User interface customization values
-CUSTOMIZE = CONFIG.get('customize', {})
+CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
 
 CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', None)
 
