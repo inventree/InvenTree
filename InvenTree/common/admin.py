@@ -55,9 +55,16 @@ class NotificationMessageAdmin(admin.ModelAdmin):
     search_fields = ('name', 'category', 'message', )
 
 
+class NewsFeedEntryAdmin(admin.ModelAdmin):
+    """Admin settings for NewsFeedEntry."""
+
+    list_display = ('title', 'author', 'published', 'summary', )
+
+
 admin.site.register(common.models.InvenTreeSetting, SettingsAdmin)
 admin.site.register(common.models.InvenTreeUserSetting, UserSettingsAdmin)
 admin.site.register(common.models.WebhookEndpoint, WebhookAdmin)
 admin.site.register(common.models.WebhookMessage, ImportExportModelAdmin)
 admin.site.register(common.models.NotificationEntry, NotificationEntryAdmin)
 admin.site.register(common.models.NotificationMessage, NotificationMessageAdmin)
+admin.site.register(common.models.NewsFeedEntry, NewsFeedEntryAdmin)
