@@ -110,8 +110,8 @@ def install(c):
     c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
 
 
-@task
-def setup_dev(c):
+@task(help={'tests': 'Set up test dataset at the end'})
+def setup_dev(c, tests=False):
     """Sets up everything needed for the dev enviroment."""
     print("Installing required python packages from 'requirements-dev.txt'")
 
@@ -119,10 +119,16 @@ def setup_dev(c):
     c.run('pip3 install -U -r requirements-dev.txt')
 
     # Install pre-commit hook
+    print("Installing pre-commit for checks before git commits...")
     c.run('pre-commit install')
 
     # Update all the hooks
     c.run('pre-commit autoupdate')
+    print("pre-commit set up is done...")
+
+    # Set up test-data if flag is set
+    if tests:
+        setup_test(c)
 
 
 # Setup / maintenance tasks
@@ -512,17 +518,36 @@ def test(c, database=None):
     manage(c, 'test', pty=True)
 
 
-@task(pre=[update])
-def setup_test(c):
+@task(help={'dev': 'Set up development enviroment at the end'})
+def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
     """Setup a testing enviroment."""
+
+    if not ignore_update:
+        update(c)
+
     # Remove old data directory
-    c.run('rm inventree-data -r')
+    if os.path.exists(path):
+        print("Removing old data ...")
+        c.run(f'rm {path} -r')
 
     # Get test data
-    c.run('git clone https://github.com/inventree/demo-dataset inventree-data')
+    print("Cloning demo dataset ...")
+    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v')
+    print("========================================")
+
+    # Make sure migrations are done - might have just deleted sqlite database
+    if not ignore_update:
+        migrate(c)
 
     # Load data
-    import_records(c, filename='inventree-data/inventree_data.json', clear=True)
+    print("Loading data ...")
+    import_records(c, filename=f'{path}/inventree_data.json', clear=True)
+    print("Done setting up test enviroment...")
+    print("========================================")
+
+    # Set up development setup if flag is set
+    if dev:
+        setup_dev(c)
 
 
 @task

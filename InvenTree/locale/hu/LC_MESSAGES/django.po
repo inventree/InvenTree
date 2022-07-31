@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-27 00:43+0000\n"
-"PO-Revision-Date: 2022-07-27 02:18\n"
+"POT-Creation-Date: 2022-07-27 07:45+0000\n"
+"PO-Revision-Date: 2022-07-28 02:20\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -698,11 +698,11 @@ msgstr "A jelszavaknak egyeznie kell"
 msgid "Wrong password provided"
 msgstr "Rossz jelszó lett megadva"
 
-#: InvenTree/views.py:750 templates/navbar.html:152
+#: InvenTree/views.py:751 templates/navbar.html:152
 msgid "System Information"
 msgstr "Rendszerinformáció"
 
-#: InvenTree/views.py:757 templates/navbar.html:163
+#: InvenTree/views.py:758 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "Verzió információk"
 
@@ -7283,17 +7283,17 @@ msgstr "Eszköz"
 msgid "Last Activity"
 msgstr "Legutóbbi tevékenységek"
 
-#: templates/InvenTree/settings/user.html:254
+#: templates/InvenTree/settings/user.html:258
 #, python-format
 msgid "%(time)s ago (this session)"
 msgstr "%(time)s óta (ez a munkamenet)"
 
-#: templates/InvenTree/settings/user.html:256
+#: templates/InvenTree/settings/user.html:260
 #, python-format
 msgid "%(time)s ago"
 msgstr "%(time)s óta"
 
-#: templates/InvenTree/settings/user.html:268
+#: templates/InvenTree/settings/user.html:272
 msgid "Do you really want to remove the selected email address?"
 msgstr "Biztosan törölni szeretnéd a kiválasztott email címet?"
 
