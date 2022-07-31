@@ -9,9 +9,6 @@
  * Load notification table
  */
 function loadNewsFeedTable(table, options={}, enableDelete=false) {
-
-    var params = options.params || {};
-
     setupFilterList('news', table);
 
     $(table).inventreeTable({
