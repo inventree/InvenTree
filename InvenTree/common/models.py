@@ -1458,6 +1458,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'HOMEPAGE_NEWS': {
+            'name': _('Show News'),
+            'description': _('Show news on the homepage'),
+            'default': False,
+            'validator': bool,
+        },
+
         "LABEL_INLINE": {
             'name': _('Inline label display'),
             'description': _('Display PDF labels in the browser, instead of downloading as a file'),
