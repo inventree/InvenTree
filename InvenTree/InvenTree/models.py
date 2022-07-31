@@ -650,13 +650,15 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
             users = get_user_model().objects.filter(is_staff=True)
 
+            link = InvenTree.helpers.construct_absolute_url(
+                reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
+            )
+
             context = {
                 'error': instance,
                 'name': _('Server Error'),
                 'message': _('An error has been logged by the server.'),
-                'link': InvenTree.helpers.construct_absolute_url(
-                    reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
-                )
+                'link': link
             }
 
             common.notifications.trigger_notification(
