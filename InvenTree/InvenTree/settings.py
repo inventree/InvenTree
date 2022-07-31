@@ -551,7 +551,7 @@ else:
 Q_CLUSTER = {
     'name': 'InvenTree',
     'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
-    'timeout': int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 4)),
+    'timeout': int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)),
     'retry': 120,
     'queue_limit': 50,
     'bulk': 10,
