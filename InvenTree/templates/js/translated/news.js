@@ -49,6 +49,9 @@ function loadNewsFeedTable(table, options={}, enableDelete=false) {
                 field: 'published',
                 title: '{% trans "Published" %}',
                 sortable: 'true',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
         ]
     });
