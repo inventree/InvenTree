@@ -6,8 +6,6 @@ from rest_framework import serializers
 
 from common.models import (InvenTreeSetting, InvenTreeUserSetting,
                            NewsFeedEntry, NotificationMessage)
-from InvenTree.helpers import get_objectreference
-                           NotificationMessage)
 from InvenTree.helpers import construct_absolute_url, get_objectreference
 from InvenTree.serializers import InvenTreeModelSerializer
 

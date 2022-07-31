@@ -27,7 +27,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from . import config
 from .config import get_boolean_setting, get_setting
 
-
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
