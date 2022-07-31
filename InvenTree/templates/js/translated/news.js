@@ -36,6 +36,9 @@ function loadNewsFeedTable(table, options={}, enableDelete=false) {
                 field: 'title',
                 title: '{% trans "Title" %}',
                 sortable: 'true',
+                formatter: function(value, row) {
+                    return `<a href="` + row.link + `">` + value + `</a>`;
+                }
             },
             {
                 field: 'summary',
