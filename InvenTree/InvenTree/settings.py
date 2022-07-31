@@ -830,7 +830,7 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
         sentry_sdk.set_tag(f'inventree_{key}', val)
 
 # In-database error logging
-IGNORRED_ERRORS = [
+IGNORED_ERRORS = [
     Http404
 ]
 
