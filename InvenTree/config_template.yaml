@@ -49,15 +49,12 @@ language: en-us
 
 # System time-zone (default is UTC)
 # Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-# Select an option from the "TZ database name" column
-# Use the environment variable INVENTREE_TIMEZONE
 timezone: UTC
 
-# Base currency code
+# Base currency code (or use env var INVENTREE_BASE_CURRENCY)
 base_currency: USD
 
-# List of currencies supported by default.
-# Add other currencies here to allow use in InvenTree
+# List of currencies supported by default. Add other currencies here to allow use in InvenTree
 currencies:
   - AUD
   - CAD
