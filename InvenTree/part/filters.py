@@ -1,4 +1,4 @@
-"""Custom query filters for the Part model
+"""Custom query filters for the Part models
 
 The code here makes heavy use of subquery annotations!
 
@@ -19,7 +19,8 @@ Relevant PRs:
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import F, FloatField, Func, OuterRef, Q, Subquery
+from django.db.models import (F, FloatField, Func, IntegerField, OuterRef, Q,
+                              Subquery)
 from django.db.models.functions import Coalesce
 
 from sql_util.utils import SubquerySum
@@ -169,18 +170,19 @@ def annotate_category_parts():
     """
 
     # Construct a subquery to provide all parts in this category and any subcategories:
-    subquery = part.models.Part.objects.filter(
+    subquery = part.models.Part.objects.exclude(category=None).filter(
         category__tree_id=OuterRef('tree_id'),
         category__lft__gte=OuterRef('lft'),
         category__rght__lte=OuterRef('rght'),
+        category__level__gte=OuterRef('level'),
     )
 
     return Coalesce(
         Subquery(
             subquery.annotate(
-                total=Func(F('pk'), function='COUNT', output_field=FloatField())
+                total=Func(F('pk'), function='COUNT', output_field=IntegerField())
             ).values('total'),
         ),
         0,
-        output_field=FloatField()
+        output_field=IntegerField()
     )

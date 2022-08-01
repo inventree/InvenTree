@@ -46,7 +46,6 @@ class CategorySerializer(InvenTreeModelSerializer):
         """Annotate extra information to the queryset"""
 
         # Annotate the number of 'parts' which exist in each category (including subcategories!)
-
         queryset = queryset.annotate(
             part_count=part.filters.annotate_category_parts()
         )

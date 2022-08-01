@@ -173,6 +173,13 @@ class CategoryDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
 
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the CategoryDetail endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
+        return queryset
+
     def get_serializer_context(self):
         """Add extra context to the serializer for the CategoryDetail endpoint"""
         ctx = super().get_serializer_context()
