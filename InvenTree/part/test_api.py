@@ -77,6 +77,76 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), 5)
 
+        # Check that the required fields are present
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'default_location',
+            'level',
+            'parent',
+            'part_count',
+            'pathstring',
+            'url'
+        ]
+
+        for result in response.data:
+            for f in fields:
+                self.assertIn(f, result)
+
+    def test_part_count(self):
+        """Test that the 'part_count' field is annotated correctly"""
+
+        url = reverse('api-part-category-list')
+
+        # Create a parent category
+        cat = PartCategory.objects.create(
+            name='Parent Cat',
+            description='Some name',
+            parent=None
+        )
+
+        # Create child categories
+        for ii in range(10):
+            child = PartCategory.objects.create(
+                name=f"Child cat {ii}",
+                description="A child category",
+                parent=cat
+            )
+
+            # Create parts in this category
+            for jj in range(10):
+                Part.objects.create(
+                    name=f"Part xyz {jj}",
+                    description="A test part",
+                    category=child
+                )
+
+        # Filter by parent category
+        response = self.get(
+            url,
+            {
+                'parent': cat.pk,
+            },
+            expected_code=200
+        )
+
+        # 10 child categories
+        self.assertEqual(len(response.data), 10)
+
+        for result in response.data:
+            self.assertEqual(result['parent'], cat.pk)
+            self.assertEqual(result['part_count'], 10)
+
+        # Detail view for parent category
+        response = self.get(
+            f'/api/part/category/{cat.pk}/',
+            expected_code=200
+        )
+
+        # Annotation should include parts from all sub-categories
+        self.assertEqual(response.data['part_count'], 100)
+
     def test_category_metadata(self):
         """Test metadata endpoint for the PartCategory."""
         cat = PartCategory.objects.get(pk=1)
