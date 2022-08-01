@@ -500,23 +500,24 @@ class InvenTreeTree(MPTTModel):
         }
 
     def save(self, *args, **kwargs):
-        """Provide better error for invalid moves."""
+        """Custom save method for InvenTreeTree abstract model"""
 
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
+            # Provide better error for parent selection
             raise ValidationError({
                 'parent': _("Invalid choice"),
             })
 
         # Re-calculate the 'pathstring' field
-        new_pathstring = InvenTree.helpers.constructPathString(
+        pathstring = InvenTree.helpers.constructPathString(
             [item.name for item in self.path]
         )
 
-        if new_pathstring != self.pathstring:
-            self.pathstring = new_pathstring
-            super().save(*args, **kwargs)
+        if pathstring != self.pathstring:
+            self.pathstring = pathstring
+            super().save(force_update=True)
 
     class Meta:
         """Metaclass defines extra model properties."""
