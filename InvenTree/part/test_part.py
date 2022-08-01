@@ -220,6 +220,7 @@ class PartTest(TestCase):
 
     def test_category(self):
         """Test PartCategory path"""
+        self.c1.save()
         self.assertEqual(str(self.c1.category), 'Electronics/Capacitors - Capacitors')
 
         orphan = Part.objects.get(name='Orphan')
