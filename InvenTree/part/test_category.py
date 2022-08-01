@@ -1,5 +1,6 @@
 """Unit tests for the PartCategory model"""
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from .models import Part, PartCategory, PartParameter, PartParameterTemplate
@@ -63,8 +64,68 @@ class CategoryTest(TestCase):
 
     def test_path_string(self):
         """Test that the category path string works correctly."""
+
+        # Note that due to data migrations, these fields need to be saved first
+        self.resistors.save()
+        self.transceivers.save()
+
         self.assertEqual(str(self.resistors), 'Electronics/Resistors - Resistors')
         self.assertEqual(str(self.transceivers.pathstring), 'Electronics/IC/Transceivers')
+
+        # Create a new subcategory
+        subcat = PartCategory.objects.create(
+            name='Subcategory',
+            description='My little sub category',
+            parent=self.transceivers
+        )
+
+        # Pathstring should have been updated correctly
+        self.assertEqual(subcat.pathstring, 'Electronics/IC/Transceivers/Subcategory')
+        self.assertEqual(len(subcat.path), 4)
+
+        # Move to a new parent location
+        subcat.parent = self.resistors
+        subcat.save()
+        self.assertEqual(subcat.pathstring, 'Electronics/Resistors/Subcategory')
+        self.assertEqual(len(subcat.path), 3)
+
+        # Move to top-level
+        subcat.parent = None
+        subcat.save()
+        self.assertEqual(subcat.pathstring, 'Subcategory')
+        self.assertEqual(len(subcat.path), 1)
+
+        # Construct a very long pathstring and ensure it gets updated correctly
+        cat = PartCategory.objects.create(
+            name='Cat',
+            description='A long running category',
+            parent=None
+        )
+
+        parent = cat
+
+        for idx in range(26):
+            letter = chr(ord('A') + idx)
+
+            child = PartCategory.objects.create(
+                name=letter * 10,
+                description=f"Subcategory {letter}",
+                parent=parent
+            )
+
+            parent = child
+
+        self.assertTrue(len(child.path), 26)
+        self.assertEqual(
+            child.pathstring,
+            "Cat/AAAAAAAAAA/BBBBBBBBBB/CCCCCCCCCC/DDDDDDDDDD/EEEEEEEEEE/FFFFFFFFFF/GGGGGGGGGG/HHHHHHHHHH/IIIIIIIIII/JJJJJJJJJJ/.../OOOOOOOOOO/PPPPPPPPPP/QQQQQQQQQQ/RRRRRRRRRR/SSSSSSSSSS/TTTTTTTTTT/UUUUUUUUUU/VVVVVVVVVV/WWWWWWWWWW/XXXXXXXXXX/YYYYYYYYYY/ZZZZZZZZZZ"
+        )
+        self.assertTrue(len(child.pathstring) <= 250)
+
+        # Attempt an invalid move
+        with self.assertRaises(ValidationError):
+            cat.parent = child
+            cat.save()
 
     def test_url(self):
         """Test that the PartCategory URL works."""
