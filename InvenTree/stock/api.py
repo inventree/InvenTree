@@ -224,6 +224,13 @@ class StockLocationList(ListCreateAPI):
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the StockLocationList endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
+        return queryset
+
     def filter_queryset(self, queryset):
         """Custom filtering: - Allow filtering by "null" parent to retrieve top-level stock locations."""
         queryset = super().filter_queryset(queryset)
@@ -293,6 +300,7 @@ class StockLocationList(ListCreateAPI):
 
     ordering_fields = [
         'name',
+        'pathstring',
         'items',
         'level',
         'tree_id',
@@ -1339,6 +1347,13 @@ class LocationDetail(RetrieveUpdateDestroyAPI):
 
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the StockLocationList endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
+        return queryset
 
 
 stock_api_urls = [

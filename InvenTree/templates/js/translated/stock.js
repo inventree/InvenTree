@@ -2264,6 +2264,7 @@ function loadStockLocationTable(table, options) {
         queryParams: filters,
         name: 'location',
         original: original,
+        sortable: true,
         showColumns: true,
         onPostBody: function() {
 
@@ -2360,14 +2361,13 @@ function loadStockLocationTable(table, options) {
                 field: 'pathstring',
                 title: '{% trans "Path" %}',
                 switchable: true,
-                sortable: false,
+                sortable: true,
             },
             {
                 field: 'items',
                 title: '{% trans "Stock Items" %}',
                 switchable: true,
-                sortable: false,
-                sortName: 'item_count',
+                sortable: true,
             }
         ]
     });
