@@ -148,6 +148,7 @@ class CategoryList(ListCreateAPI):
 
     ordering_fields = [
         'name',
+        'pathstring',
         'level',
         'tree_id',
         'lft',

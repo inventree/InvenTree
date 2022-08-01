@@ -300,6 +300,7 @@ class StockLocationList(ListCreateAPI):
 
     ordering_fields = [
         'name',
+        'pathstring',
         'items',
         'level',
         'tree_id',
