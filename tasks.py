@@ -4,6 +4,7 @@ import json
 import os
 import pathlib
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -518,25 +519,40 @@ def test(c, database=None):
     manage(c, 'test', pty=True)
 
 
-@task(pre=[update], help={'dev': 'Set up development enviroment at the end'})
-def setup_test(c, dev=False):
+@task(help={'dev': 'Set up development enviroment at the end'})
+def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
     """Setup a testing enviroment."""
+
+    from InvenTree.InvenTree.config import get_media_dir
+
+    if not ignore_update:
+        update(c)
+
     # Remove old data directory
-    print("Removing old data ...")
-    c.run('rm inventree-data -r')
+    if os.path.exists(path):
+        print("Removing old data ...")
+        c.run(f'rm {path} -r')
 
     # Get test data
-    print("Starting to clone demo dataset ...")
-    c.run('git clone https://github.com/inventree/demo-dataset inventree-data')
+    print("Cloning demo dataset ...")
+    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v')
     print("========================================")
 
     # Make sure migrations are done - might have just deleted sqlite database
-    print("Running migrations ...")
-    migrate(c)
+    if not ignore_update:
+        migrate(c)
 
     # Load data
-    print("Loading data ...")
-    import_records(c, filename='inventree-data/inventree_data.json', clear=True)
+    print("Loading database records ...")
+    import_records(c, filename=f'{path}/inventree_data.json', clear=True)
+
+    # Copy media files
+    print("Copying media files ...")
+    src = Path(path).joinpath('media').resolve()
+    dst = get_media_dir()
+
+    shutil.copytree(src, dst, dirs_exist_ok=True)
+
     print("Done setting up test enviroment...")
     print("========================================")
 

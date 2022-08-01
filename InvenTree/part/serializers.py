@@ -41,9 +41,20 @@ class CategorySerializer(InvenTreeModelSerializer):
         """Return True if the category is directly "starred" by the current user."""
         return category in self.context.get('starred_categories', [])
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate extra information to the queryset"""
+
+        # Annotate the number of 'parts' which exist in each category (including subcategories!)
+        queryset = queryset.annotate(
+            part_count=part.filters.annotate_category_parts()
+        )
+
+        return queryset
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    parts = serializers.IntegerField(source='item_count', read_only=True)
+    part_count = serializers.IntegerField(read_only=True)
 
     level = serializers.IntegerField(read_only=True)
 
@@ -60,7 +71,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'default_keywords',
             'level',
             'parent',
-            'parts',
+            'part_count',
             'pathstring',
             'starred',
             'url',

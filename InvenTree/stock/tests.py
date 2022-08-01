@@ -125,6 +125,10 @@ class StockTest(InvenTreeTestCase):
 
     def test_parent_locations(self):
         """Test parent."""
+
+        # Ensure pathstring gets updated
+        self.drawer3.save()
+
         self.assertEqual(self.office.parent, None)
         self.assertEqual(self.drawer1.parent, self.office)
         self.assertEqual(self.drawer2.parent, self.office)

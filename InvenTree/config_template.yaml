@@ -1,7 +1,6 @@
 
 # Database backend selection - Configure backend database settings
-# Ref: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-DATABASES
-# Specify database parameters below as they appear in the Django docs
+# Documentation: https://inventree.readthedocs.io/en/latest/start/config/
 
 # Note: Database configuration options can also be specified from environmental variables,
 #       with the prefix INVENTREE_DB_
@@ -44,20 +43,32 @@ database:
   # ENGINE: sqlite3
   # NAME: '/home/inventree/database.sqlite3'
 
+# Set debug to False to run in production mode
+# Use the environment variable INVENTREE_DEBUG
+debug: True
+
+# Configure the system logging level
+# Use environment variable INVENTREE_LOG_LEVEL
+# Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
+log_level: WARNING
+
 # Select default system language (default is 'en-us')
+# Use the environment variable INVENTREE_LANGUAGE
 language: en-us
 
 # System time-zone (default is UTC)
 # Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-# Select an option from the "TZ database name" column
-# Use the environment variable INVENTREE_TIMEZONE
 timezone: UTC
 
-# Base currency code
+# Base currency code (or use env var INVENTREE_BASE_CURRENCY)
 base_currency: USD
 
-# List of currencies supported by default.
-# Add other currencies here to allow use in InvenTree
+# Add new user on first startup
+#admin_user: admin
+#admin_email: info@example.com
+#admin_password: inventree
+
+# List of currencies supported by default. Add other currencies here to allow use in InvenTree
 currencies:
   - AUD
   - CAD
@@ -70,15 +81,6 @@ currencies:
 
 # Email backend configuration
 # Ref: https://docs.djangoproject.com/en/dev/topics/email/
-# Available options:
-# host: Email server host address
-# port: Email port
-# username: Account username
-# password: Account password
-# prefix: Email subject prefix
-# tls: Enable TLS support
-# ssl: Enable SSL support
-
 # Alternatively, these options can all be set using environment variables,
 # with the INVENTREE_EMAIL_ prefix:
 # e.g. INVENTREE_EMAIL_HOST / INVENTREE_EMAIL_PORT / INVENTREE_EMAIL_USERNAME
@@ -94,31 +96,17 @@ email:
   tls: False
   ssl: False
 
-# Set debug to False to run in production mode
-# Use the environment variable INVENTREE_DEBUG
-debug: True
-
-# Set debug_toolbar to True to enable a debugging toolbar for InvenTree
-# Note: This will only be displayed if DEBUG mode is enabled,
-#       and only if InvenTree is accessed from a local IP (127.0.0.1)
-debug_toolbar: False
-
 # Set sentry_enabled to True to report errors back to the maintainers
-# Use the environment variable INVENTREE_SENTRY_ENABLED
-# sentry_enabled: True
-
-# Set sentry_dsn to your custom DSN if you want to use your own instance for error reporting
-# Use the environment variable INVENTREE_SENTRY_DSN
-# sentry_dsn: https://custom@custom.ingest.sentry.io/custom
+# Set sentry,dsn to your custom DSN if you want to use your own instance for error reporting
+sentry_enabled: False
+#sentry_sample_rate: 0.1
+#sentry_dsn: https://custom@custom.ingest.sentry.io/custom
 
 # Set this variable to True to enable InvenTree Plugins
 # Alternatively, use the environment variable INVENTREE_PLUGINS_ENABLED
 plugins_enabled: False
-
-# Configure the system logging level
-# Use environment variable INVENTREE_LOG_LEVEL
-# Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
-log_level: WARNING
+#plugin_file: /path/to/plugins.txt
+#plugin_dir: /path/to/plugins/
 
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
@@ -138,14 +126,15 @@ cors:
   # - https://sub.example.com
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
-# By default, it is stored under /home/inventree/data/media
-# Use environment variable INVENTREE_MEDIA_ROOT
-media_root: '/home/inventree/data/media'
+# media_root: '/home/inventree/data/media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
-# By default, it is stored under /home/inventree/data/static
-# Use environment variable INVENTREE_STATIC_ROOT
-static_root: '/home/inventree/data/static'
+# static_root: '/home/inventree/data/static'
+
+# Background worker options
+background:
+  workers: 4
+  timeout: 90
 
 # Optional URL schemes to allow in URL fields
 # By default, only the following schemes are allowed: ['http', 'https', 'ftp', 'ftps']
@@ -156,25 +145,14 @@ static_root: '/home/inventree/data/static'
 #  - ssh
 
 # Login configuration
-# How long do confirmation mail last?
-# Use environment variable INVENTREE_LOGIN_CONFIRM_DAYS
-#login_confirm_days: 3
-# How many wrong login attempts are permitted?
-# Use environment variable INVENTREE_LOGIN_ATTEMPTS
-#login_attempts: 5
+login_confirm_days: 3
+login_attempts: 5
 
 # Remote / proxy login
 # These settings can introduce security problems if configured incorrectly. Please read
 # https://docs.djangoproject.com/en/4.0/howto/auth-remote-user/ for more details
-# Use environment variable INVENTREE_REMOTE_LOGIN
-# remote_login: True
-# Use environment variable INVENTREE_REMOTE_LOGIN_HEADER
-# remote_login_header: REMOTE_USER
-
-# Add new user on first startup
-#admin_user: admin
-#admin_email: info@example.com
-#admin_password: inventree
+remote_login_enabled: False
+remote_login_header: REMOTE_USER
 
 # Permit custom authentication backends
 #authentication_backends:

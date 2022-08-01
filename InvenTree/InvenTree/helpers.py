@@ -54,6 +54,42 @@ def generateTestKey(test_name):
     return key
 
 
+def constructPathString(path, max_chars=250):
+    """Construct a 'path string' for the given path.
+
+    Arguments:
+        path: A list of strings e.g. ['path', 'to', 'location']
+        max_chars: Maximum number of characters
+    """
+
+    pathstring = '/'.join(path)
+
+    idx = 0
+
+    # Replace middle elements to limit the pathstring
+    if len(pathstring) > max_chars:
+        mid = len(path) // 2
+        path_l = path[0:mid]
+        path_r = path[mid:]
+
+        # Ensure the pathstring length is limited
+        while len(pathstring) > max_chars:
+
+            # Remove an element from the list
+            if idx % 2 == 0:
+                path_l = path_l[:-1]
+            else:
+                path_r = path_r[1:]
+
+            subpath = path_l + ['...'] + path_r
+
+            pathstring = '/'.join(subpath)
+
+            idx += 1
+
+    return pathstring
+
+
 def getMediaUrl(filename):
     """Return the qualified access path for the given file, under the media directory."""
     return os.path.join(MEDIA_URL, str(filename))
