@@ -162,7 +162,7 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
         if target and 'link' not in target:
-            # Check if objekt has an absolute_url function
+            # Check if object has an absolute_url function
             if hasattr(obj.target_object, 'get_absolute_url'):
                 target['link'] = obj.target_object.get_absolute_url()
             else:
