@@ -44,7 +44,7 @@ def get_existing_release_tags():
     return tags
 
 
-def check_version_number(version_string):
+def check_version_number(version_string, allow_duplicate=False):
     """Check the provided version number.
 
     Returns True if the provided version is the 'newest' InvenTree release
@@ -67,7 +67,7 @@ def check_version_number(version_string):
     highest_release = True
 
     for release in existing:
-        if release == version_tuple:
+        if release == version_tuple and not allow_duplicate:
             raise ValueError(f"Duplicate release '{version_string}' exists!")
 
         if release > version_tuple:
@@ -108,7 +108,9 @@ if __name__ == '__main__':
 
     print(f"InvenTree Version: '{version}'")
 
-    highest_release = check_version_number(version)
+    # Check version number and look for existing versions
+    # Note that on a 'tag' (release) we *must* allow duplicate versions, as this *is* the version that has just been released
+    highest_release = check_version_number(version, allow_duplicate=GITHUB_REF_TYPE == 'tag')
 
     # Determine which docker tag we are going to use
     docker_tags = None
