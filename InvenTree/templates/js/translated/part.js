@@ -1883,7 +1883,7 @@ function loadPartCategoryTable(table, options) {
                 title: '{% trans "Path" %}',
                 switchable: !tree_view,
                 visible: !tree_view,
-                sortable: false,
+                sortable: true,
             },
             {
                 field: 'part_count',
