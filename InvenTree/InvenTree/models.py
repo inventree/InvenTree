@@ -510,7 +510,9 @@ class InvenTreeTree(MPTTModel):
             })
 
         # Re-calculate the 'pathstring' field
-        new_pathstring = self.construct_pathstring()
+        new_pathstring = InvenTree.helpers.constructPathString(
+            [item.name for item in self.path]
+        )
 
         if new_pathstring != self.pathstring:
             self.pathstring = new_pathstring
@@ -557,29 +559,6 @@ class InvenTreeTree(MPTTModel):
         verbose_name=_('Path'),
         help_text=_('Path')
     )
-
-    def construct_pathstring(self):
-        """Construct the 'pathstring' for this tree item"""
-
-        path = [item.name for item in self.path]
-
-        pathstring = '/'.join(path)
-
-        n = 1
-
-        # Ensure the pathstring length is limited
-        while len(pathstring > 250):
-
-            # Remove the middle element
-            mid = len(path) // 2
-
-            subpath = path[0:mid - n] + ['...'] + path[mid + n:]
-
-            pathstring = '.'.join(subpath)
-
-            n += 1
-
-        return pathstring
 
     @property
     def item_count(self):
