@@ -161,7 +161,7 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
         """Function to resolve generic object reference to target."""
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
-        if 'link' not in target:
+        if target and 'link' not in target:
             # Check if objekt has an absolute_url function
             if hasattr(obj.target_object, 'get_absolute_url'):
                 target['link'] = obj.target_object.get_absolute_url()
@@ -174,6 +174,7 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
                         f'admin:{meta.db_table}_change',
                         kwargs={'object_id': obj.target_object_id}
                     ))
+
         return target
 
     def get_source(self, obj):
