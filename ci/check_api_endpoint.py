@@ -11,7 +11,7 @@ print("Testing InvenTree API endpoint")
 
 response = requests.get(url)
 
-assert(response.status_code == 200)
+assert response.status_code == 200
 
 print("- Response 200 OK")
 
@@ -25,11 +25,11 @@ required_keys = [
 ]
 
 for key in required_keys:
-    assert(key in data)
+    assert key in data
     print(f"- Found key '{key}'")
 
 # Check that the worker is running
-assert(data['worker_running'])
+assert data['worker_running']
 
 print("- Background worker is operational")
 
