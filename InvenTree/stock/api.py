@@ -241,6 +241,8 @@ class StockLocationList(ListCreateAPI):
 
         cascade = str2bool(params.get('cascade', False))
 
+        depth = params.get("depth", None)
+
         # Do not filter by location
         if loc_id is None:
             pass
@@ -250,6 +252,9 @@ class StockLocationList(ListCreateAPI):
             # If we allow "cascade" at the top-level, this essentially means *all* locations
             if not cascade:
                 queryset = queryset.filter(parent=None)
+                
+            if depth != None:
+                queryset = queryset.filter(level__lte=int(depth))
 
         else:
 
@@ -259,6 +264,9 @@ class StockLocationList(ListCreateAPI):
                 # All sub-locations to be returned too?
                 if cascade:
                     parents = location.get_descendants(include_self=True)
+                    if depth != None:
+                        parents = parents.filter(level__lte=location.level + int(depth))
+                        
                     parent_ids = [p.id for p in parents]
                     queryset = queryset.filter(parent__in=parent_ids)
 
