@@ -191,7 +191,9 @@ class CategoryTest(TestCase):
 
     def test_default_locations(self):
         """Test traversal for default locations."""
-        self.fasteners.save()
+
+        self.assertIsNotNone(self.fasteners.default_location)
+        self.fasteners.default_location.save()
         self.assertEqual(str(self.fasteners.default_location), 'Office/Drawer_1 - In my desk')
 
         # Any part under electronics should default to 'Home'
