@@ -157,7 +157,7 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         kind, info, data = sys.exc_info()
 
         # Check if the eror is on the ignore list
-        if kind in settings.IGNORRED_ERRORS:
+        if kind in settings.IGNORED_ERRORS:
             return
 
         return super().process_exception(request, exception)

@@ -84,7 +84,7 @@ class MiddlewareTests(InvenTreeTestCase):
             log_error('testpath')
 
         # Test setup without ignored errors
-        settings.IGNORRED_ERRORS = []
+        settings.IGNORED_ERRORS = []
         response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
         self.assertEqual(response.status_code, 404)
         check(1)

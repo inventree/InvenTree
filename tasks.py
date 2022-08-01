@@ -4,6 +4,7 @@ import json
 import os
 import pathlib
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -522,6 +523,8 @@ def test(c, database=None):
 def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
     """Setup a testing enviroment."""
 
+    from InvenTree.InvenTree.config import get_media_dir
+
     if not ignore_update:
         update(c)
 
@@ -540,8 +543,16 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
         migrate(c)
 
     # Load data
-    print("Loading data ...")
+    print("Loading database records ...")
     import_records(c, filename=f'{path}/inventree_data.json', clear=True)
+
+    # Copy media files
+    print("Copying media files ...")
+    src = Path(path).joinpath('media').resolve()
+    dst = get_media_dir()
+
+    shutil.copytree(src, dst, dirs_exist_ok=True)
+
     print("Done setting up test enviroment...")
     print("========================================")
 
