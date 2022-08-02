@@ -2389,14 +2389,14 @@ function loadStockLocationTable(table, options) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    let html = "";
+                    let html = '';
 
-                    if(row._level >= MAX_DEPTH && !row.subReceived) {
-                        if(row.subRequested) {
+                    if (row._level >= MAX_DEPTH && !row.subReceived) {
+                        if (row.subRequested) {
                             html += `<a href='#'><span class='fas fa-sync fa-spin'></span></a>`;
                         } else {
                             html += `
-                                <a href='#' pk='${row.pk}' class="load-sub-location">
+                                <a href='#' pk='${row.pk}' class='load-sub-location'>
                                     <span class='fas fa-sync-alt' title='{% trans "Load Subloactions" %}'></span>
                                 </a> `;
                         }
