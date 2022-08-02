@@ -87,7 +87,15 @@ if __name__ == '__main__':
     # GITHUB_REF may be either 'refs/heads/<branch>' or 'refs/heads/<tag>'
     GITHUB_REF = os.environ['GITHUB_REF']
 
+    GITHUB_REF_NAME = os.environ['GITHUB_REF_NAME']
+
     GITHUB_BASE_REF = os.environ['GITHUB_BASE_REF']
+
+    # Print out version information, makes debugging actions *much* easier!
+    print(f"GITHUB_REF: {GITHUB_REF}")
+    print(f"GITHUB_REF_NAME: {GITHUB_REF_NAME}")
+    print(f"GITHUB_REF_TYPE: {GITHUB_REF_TYPE}")
+    print(f"GITHUB_BASE_REF: {GITHUB_REF_TYPE}")
 
     version_file = os.path.join(here, '..', 'InvenTree', 'InvenTree', 'version.py')
 
