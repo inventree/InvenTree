@@ -127,7 +127,7 @@ STATFILES_I18_PROCESSORS = [
 ]
 
 # Color Themes Directory
-STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes')
+STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
