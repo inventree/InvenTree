@@ -10,7 +10,6 @@ import hmac
 import json
 import logging
 import math
-import os
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
@@ -1775,15 +1774,15 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """Get all color themes from static folder."""
-        if not os.path.exists(settings.STATIC_COLOR_THEMES_DIR):
+        if not settings.STATIC_COLOR_THEMES_DIR.exists():
             logger.error('Theme directory does not exsist')
             return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
 
-        for file in os.listdir(settings.STATIC_COLOR_THEMES_DIR):
-            files_list.append(os.path.splitext(file))
+        for file in settings.STATIC_COLOR_THEMES_DIR.iterdir():
+            files_list.append(file.stem)
 
         # Get color themes choices (CSS sheets)
         choices = [(file_name.lower(), _(file_name.replace('-', ' ').title()))
