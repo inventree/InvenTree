@@ -117,8 +117,19 @@ if __name__ == '__main__':
     print(f"InvenTree Version: '{version}'")
 
     # Check version number and look for existing versions
-    # Note that on a 'tag' (release) we *must* allow duplicate versions, as this *is* the version that has just been released
-    highest_release = check_version_number(version, allow_duplicate=GITHUB_REF_TYPE == 'tag')
+    # If a release is found which matches the current tag, throw an error
+
+    allow_duplicate = False
+
+    # Note: on a 'tag' (release) we *must* allow duplicate versions, as this *is* the version that has just been released
+    if GITHUB_REF_TYPE == 'tag':
+        allow_duplicate = True
+
+    # Note: on a push to 'stable' branch we also allow duplicates
+    if GITHUB_BASE_REF == 'stable':
+        allow_duplicate = True
+
+    highest_release = check_version_number(version, allow_duplicate=allow_duplicate)
 
     # Determine which docker tag we are going to use
     docker_tags = None
