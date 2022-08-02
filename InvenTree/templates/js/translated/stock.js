@@ -2324,7 +2324,7 @@ function loadStockLocationTable(table, options) {
                         const pk = $(this).attr('pk');
                         const row = $(table).bootstrapTable('getRowByUniqueId', pk);
 
-                        // Request BOM data for this subassembly
+                        // Request sub-location for this location
                         requestSubItems(row.pk);
 
                         row.subRequested = true;

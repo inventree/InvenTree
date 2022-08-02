@@ -1732,7 +1732,7 @@ function loadPartTable(table, url, options={}) {
  * Display a table of part categories
  */
 function loadPartCategoryTable(table, options) {
-
+    const MAX_DEPTH = 1;
     var params = options.params || {};
 
     var filterListElement = options.filterList || '#filter-list-category';
@@ -1750,6 +1750,7 @@ function loadPartCategoryTable(table, options) {
 
     if (tree_view) {
         params.cascade = true;
+        params.depth = MAX_DEPTH;
     }
 
     var original = {};
@@ -1760,6 +1761,35 @@ function loadPartCategoryTable(table, options) {
     }
 
     setupFilterList(filterKey, table, filterListElement);
+
+    // Function to request sub-category items
+    function requestSubItems(parent_pk) {
+        inventreeGet(
+            options.url || '{% url "api-part-category-list" %}',
+            {
+                parent: parent_pk,
+            },
+            {
+                success: function(response) {
+                    // Add the returned sub-items to the table
+                    for (var idx = 0; idx < response.length; idx++) {
+                        response[idx].parent = parent_pk;
+                    }
+
+                    const row = $(table).bootstrapTable('getRowByUniqueId', parent_pk);
+                    row.subReceived = true;
+
+                    $(table).bootstrapTable('updateByUniqueId', parent_pk, row, true);
+
+                    table.bootstrapTable('append', response);
+                },
+                error: function(xhr) {
+                    console.error('Error requesting sub-category for category=' + parent_pk);
+                    showApiError(xhr);
+                }
+            }
+        );
+    }
 
     table.inventreeTable({
         treeEnable: tree_view,
@@ -1839,6 +1869,20 @@ function loadPartCategoryTable(table, options) {
 
                         }
                     });
+
+                    // Callback for 'load sub category' button
+                    $(table).find('.load-sub-category').click(function(event) {
+                        event.preventDefault();
+
+                        const pk = $(this).attr('pk');
+                        const row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                        // Request sub-category for this category
+                        requestSubItems(row.pk);
+
+                        row.subRequested = true;
+                        $(table).bootstrapTable('updateByUniqueId', pk, row, true);
+                    });
                 } else {
                     $('#view-category-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
                     $('#view-category-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
@@ -1859,8 +1903,20 @@ function loadPartCategoryTable(table, options) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
+                    let html = "";
 
-                    var html = renderLink(
+                    if(row._level >= MAX_DEPTH && !row.subReceived) {
+                        if(row.subRequested) {
+                            html += `<a href='#'><span class='fas fa-sync fa-spin'></span></a>`;
+                        } else {
+                            html += `
+                                <a href='#' pk='${row.pk}' class="load-sub-category">
+                                    <span class='fas fa-sync-alt' title='{% trans "Load Subcategories" %}'></span>
+                                </a> `;
+                        }
+                    }
+                    
+                    html += renderLink(
                         value,
                         `/part/category/${row.pk}/`
                     );
