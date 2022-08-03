@@ -877,6 +877,16 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
         },
 
+        'INVENTREE_TREE_DEPTH': {
+            'name': _('Tree Depth'),
+            'description': _('Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed.'),
+            'default': 1,
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ]
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),

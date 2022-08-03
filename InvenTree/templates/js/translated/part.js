@@ -1732,7 +1732,7 @@ function loadPartTable(table, url, options={}) {
  * Display a table of part categories
  */
 function loadPartCategoryTable(table, options) {
-    const MAX_DEPTH = 1;
+
     var params = options.params || {};
 
     var filterListElement = options.filterList || '#filter-list-category';
@@ -1750,7 +1750,7 @@ function loadPartCategoryTable(table, options) {
 
     if (tree_view) {
         params.cascade = true;
-        params.depth = MAX_DEPTH;
+        params.depth = global_settings.INVENTREE_TREE_DEPTH;
     }
 
     var original = {};
@@ -1905,7 +1905,7 @@ function loadPartCategoryTable(table, options) {
                 formatter: function(value, row) {
                     let html = '';
 
-                    if (row._level >= MAX_DEPTH && !row.subReceived) {
+                    if (row._level >= global_settings.INVENTREE_TREE_DEPTH && !row.subReceived) {
                         if (row.subRequested) {
                             html += `<a href='#'><span class='fas fa-sync fa-spin'></span></a>`;
                         } else {

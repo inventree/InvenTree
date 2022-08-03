@@ -2217,7 +2217,7 @@ function loadStockTable(table, options) {
  * Display a table of stock locations
  */
 function loadStockLocationTable(table, options) {
-    const MAX_DEPTH = 1;
+
     var params = options.params || {};
 
     var filterListElement = options.filterList || '#filter-list-location';
@@ -2226,7 +2226,7 @@ function loadStockLocationTable(table, options) {
 
     if (tree_view) {
         params.cascade = true;
-        params.depth = MAX_DEPTH;
+        params.depth = global_settings.INVENTREE_TREE_DEPTH;
     }
 
     var filters = {};
@@ -2391,7 +2391,7 @@ function loadStockLocationTable(table, options) {
                 formatter: function(value, row) {
                     let html = '';
 
-                    if (row._level >= MAX_DEPTH && !row.subReceived) {
+                    if (row._level >= global_settings.INVENTREE_TREE_DEPTH && !row.subReceived) {
                         if (row.subRequested) {
                             html += `<a href='#'><span class='fas fa-sync fa-spin'></span></a>`;
                         } else {
