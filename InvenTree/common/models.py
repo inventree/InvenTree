@@ -1782,7 +1782,7 @@ class ColorTheme(models.Model):
         files_list = []
 
         for file in settings.STATIC_COLOR_THEMES_DIR.iterdir():
-            files_list.append(file.stem)
+            files_list.append([file.stem, file.suffix])
 
         # Get color themes choices (CSS sheets)
         choices = [(file_name.lower(), _(file_name.replace('-', ' ').title()))
