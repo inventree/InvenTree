@@ -24,7 +24,8 @@ from django.views.generic.base import RedirectView, TemplateView
 
 from allauth.account.forms import AddEmailForm
 from allauth.account.models import EmailAddress
-from allauth.account.views import EmailView, PasswordResetFromKeyView
+from allauth.account.views import (EmailView, LoginView,
+                                   PasswordResetFromKeyView)
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
 from allauth_2fa.views import TwoFactorRemove
@@ -698,6 +699,23 @@ class CustomSessionDeleteView(UserSessionOverride, SessionDeleteView):
 class CustomSessionDeleteOtherView(UserSessionOverride, SessionDeleteOtherView):
     """Revert to settings after session delete."""
     pass
+
+
+class CustomLoginView(LoginView):
+    """Custom login view that allows login with urlargs."""
+
+    def get(self, request, *args, **kwargs):
+        """Extendend get to allow for auth via url args."""
+        # Check if login is present
+        if 'login' in request.GET:
+            # Initiate form
+            form = self.get_form_class()(request.GET.dict(), request=request)
+
+            # Try to login
+            form.full_clean()
+            return form.login(request)
+
+        return super().get(request, *args, **kwargs)
 
 
 class CurrencyRefreshView(RedirectView):

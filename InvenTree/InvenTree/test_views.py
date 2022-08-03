@@ -119,3 +119,16 @@ class ViewTests(InvenTreeTestCase):
         for panel in staff_panels + plugin_panels:
             self.assertNotIn(f"select-{panel}", content)
             self.assertNotIn(f"panel-{panel}", content)
+
+    def test_url_login(self):
+        """Test logging in via arguments"""
+
+        # Log out
+        self.client.logout()
+        response = self.client.get("/index/")
+        self.assertEqual(response.status_code, 302)
+
+        # Try login with url
+        response = self.client.get(f"/accounts/login/?next=/&login={self.username}&password={self.password}")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/')
