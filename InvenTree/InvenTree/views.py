@@ -7,7 +7,7 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 import json
 
 from django.conf import settings
-from django.contrib.auth import password_validation
+from django.contrib.auth import authenticate, login, password_validation
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
 from django.core.exceptions import ValidationError
@@ -24,7 +24,9 @@ from django.views.generic.base import RedirectView, TemplateView
 
 from allauth.account.forms import AddEmailForm
 from allauth.account.models import EmailAddress
-from allauth.account.views import EmailView, PasswordResetFromKeyView
+from allauth.account.utils import get_login_redirect_url
+from allauth.account.views import (EmailView, LoginView,
+                                   PasswordResetFromKeyView)
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
 from allauth_2fa.views import TwoFactorRemove
@@ -698,6 +700,22 @@ class CustomSessionDeleteView(UserSessionOverride, SessionDeleteView):
 class CustomSessionDeleteOtherView(UserSessionOverride, SessionDeleteOtherView):
     """Revert to settings after session delete."""
     pass
+
+
+class CustomLoginView(LoginView):
+    """Custom login view that allows login with urlargs."""
+
+    def get(self, request, *args, **kwargs):
+        """Extendend get to allow for auth via url args."""
+        get_data = self.request.GET
+        if 'password' in get_data and 'user' in get_data:
+            user = authenticate(request, username=get_data['user'], password=get_data['password'])
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(get_login_redirect_url(request))
+
+        ret = super().get(request, *args, **kwargs)
+        return ret
 
 
 class CurrencyRefreshView(RedirectView):
