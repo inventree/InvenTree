@@ -7,7 +7,7 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 import json
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login, password_validation
+from django.contrib.auth import password_validation
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
 from django.core.exceptions import ValidationError
@@ -24,7 +24,6 @@ from django.views.generic.base import RedirectView, TemplateView
 
 from allauth.account.forms import AddEmailForm
 from allauth.account.models import EmailAddress
-from allauth.account.utils import get_login_redirect_url
 from allauth.account.views import (EmailView, LoginView,
                                    PasswordResetFromKeyView)
 from allauth.socialaccount.forms import DisconnectForm
@@ -707,15 +706,16 @@ class CustomLoginView(LoginView):
 
     def get(self, request, *args, **kwargs):
         """Extendend get to allow for auth via url args."""
-        get_data = self.request.GET
-        if 'password' in get_data and 'user' in get_data:
-            user = authenticate(request, username=get_data['user'], password=get_data['password'])
-            if user is not None:
-                login(request, user)
-                return HttpResponseRedirect(get_login_redirect_url(request))
+        # Check if login is present
+        if 'login' in request.GET:
+            # Initiate form
+            form = self.get_form_class()(request.GET.dict(), request=request)
 
-        ret = super().get(request, *args, **kwargs)
-        return ret
+            # Try to login
+            form.full_clean()
+            return form.login(request)
+
+        return super().get(request, *args, **kwargs)
 
 
 class CurrencyRefreshView(RedirectView):
