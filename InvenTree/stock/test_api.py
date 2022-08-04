@@ -91,7 +91,7 @@ class StockLocationTest(StockAPITestCase):
         response = self.get(self.list_url, expected_code=200)
         for result in response.data:
             for f in fields:
-                self.assertIn(f, result)
+                self.assertIn(f, result, f'"{f}" is missing in result of StockLocation list')
 
     def test_add(self):
         """Test adding StockLocation."""
