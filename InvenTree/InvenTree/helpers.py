@@ -283,6 +283,22 @@ def str2bool(text, test=True):
         return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
 
 
+def str2int(text, default=None):
+    """Convert a string to int if possible
+
+    Args:
+        text: Int like string
+        default: Return value if str is no int like
+
+    Returns:
+        Converted int value
+    """
+    try:
+        return int(text)
+    except Exception:
+        return default
+
+
 def is_bool(text):
     """Determine if a string value 'looks' like a boolean."""
     if str2bool(text, True):

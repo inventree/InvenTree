@@ -26,7 +26,7 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
-                               str2bool)
+                               str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
@@ -241,7 +241,7 @@ class StockLocationList(ListCreateAPI):
 
         cascade = str2bool(params.get('cascade', False))
 
-        depth = params.get("depth", None)
+        depth = str2int(params.get('depth', None))
 
         # Do not filter by location
         if loc_id is None:
@@ -254,7 +254,7 @@ class StockLocationList(ListCreateAPI):
                 queryset = queryset.filter(parent=None)
 
             if depth is not None:
-                queryset = queryset.filter(level__lte=int(depth))
+                queryset = queryset.filter(level__lte=depth)
 
         else:
 
@@ -265,7 +265,7 @@ class StockLocationList(ListCreateAPI):
                 if cascade:
                     parents = location.get_descendants(include_self=True)
                     if depth is not None:
-                        parents = parents.filter(level__lte=location.level + int(depth))
+                        parents = parents.filter(level__lte=location.level + depth)
 
                     parent_ids = [p.id for p in parents]
                     queryset = queryset.filter(parent__in=parent_ids)
