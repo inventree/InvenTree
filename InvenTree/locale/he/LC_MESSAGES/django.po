@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-02 06:50+0000\n"
+"POT-Creation-Date: 2022-08-04 00:21+0000\n"
 "PO-Revision-Date: 2022-08-03 00:15\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
@@ -687,27 +687,27 @@ msgstr ""
 msgid "Invalid value for overage"
 msgstr ""
 
-#: InvenTree/views.py:518 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:519 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr "ערוך מידע אודות המשתמש"
 
-#: InvenTree/views.py:530 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:531 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "הגדר סיסמא"
 
-#: InvenTree/views.py:552
+#: InvenTree/views.py:553
 msgid "Password fields must match"
 msgstr "הסיסמאות מוכרחות להיות תואמות"
 
-#: InvenTree/views.py:561
+#: InvenTree/views.py:562
 msgid "Wrong password provided"
 msgstr ""
 
-#: InvenTree/views.py:751 templates/navbar.html:152
+#: InvenTree/views.py:769 templates/navbar.html:152
 msgid "System Information"
 msgstr "מידע אודות המערכת"
 
-#: InvenTree/views.py:758 templates/navbar.html:163
+#: InvenTree/views.py:776 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr ""
 
@@ -951,7 +951,7 @@ msgstr ""
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr ""
 
-#: build/models.py:1162
+#: build/models.py:1162 order/models.py:1379
 msgid "Stock item is over-allocated"
 msgstr ""
 
@@ -3763,10 +3763,6 @@ msgstr ""
 
 #: order/models.py:1375
 msgid "Allocation quantity cannot exceed stock quantity"
-msgstr ""
-
-#: order/models.py:1379
-msgid "StockItem is over-allocated"
 msgstr ""
 
 #: order/models.py:1385 order/serializers.py:1066
@@ -7452,14 +7448,16 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10422,4 +10420,3 @@ msgstr ""
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr ""
-

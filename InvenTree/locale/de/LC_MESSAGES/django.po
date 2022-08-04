@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-02 06:50+0000\n"
+"POT-Creation-Date: 2022-08-04 00:21+0000\n"
 "PO-Revision-Date: 2022-08-03 00:16\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -687,27 +687,27 @@ msgstr "Überschuss darf 100% nicht überschreiten"
 msgid "Invalid value for overage"
 msgstr "Ungültiger Wert für Ausschuss"
 
-#: InvenTree/views.py:518 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:519 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr "Benutzerinformationen bearbeiten"
 
-#: InvenTree/views.py:530 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:531 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "Passwort eingeben"
 
-#: InvenTree/views.py:552
+#: InvenTree/views.py:553
 msgid "Password fields must match"
 msgstr "Passwörter stimmen nicht überein"
 
-#: InvenTree/views.py:561
+#: InvenTree/views.py:562
 msgid "Wrong password provided"
 msgstr "Falsches Passwort angegeben"
 
-#: InvenTree/views.py:751 templates/navbar.html:152
+#: InvenTree/views.py:769 templates/navbar.html:152
 msgid "System Information"
 msgstr "Systeminformationen"
 
-#: InvenTree/views.py:758 templates/navbar.html:163
+#: InvenTree/views.py:776 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "Über InvenTree"
 
@@ -951,7 +951,7 @@ msgstr "Bauauftragsposition muss ein Endprodukt festlegen, da der übergeordnete
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Zugewiesene Menge ({q}) darf nicht verfügbare Menge ({a}) übersteigen"
 
-#: build/models.py:1162
+#: build/models.py:1162 order/models.py:1379
 msgid "Stock item is over-allocated"
 msgstr "BestandObjekt ist zu oft zugewiesen"
 
@@ -3764,10 +3764,6 @@ msgstr "Kann Lagerartikel keiner Zeile ohne Teil hinzufügen"
 #: order/models.py:1375
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "Die zugeordnete Anzahl darf nicht die verfügbare Anzahl überschreiten"
-
-#: order/models.py:1379
-msgid "StockItem is over-allocated"
-msgstr "Zu viele Lagerartikel zugewiesen"
 
 #: order/models.py:1385 order/serializers.py:1066
 msgid "Quantity must be 1 for serialized stock item"
@@ -7452,14 +7448,16 @@ msgstr "Einloggen"
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
@@ -10423,3 +10421,5 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
+#~ msgid "StockItem is over-allocated"
+#~ msgstr "Zu viele Lagerartikel zugewiesen"
