@@ -1376,7 +1376,7 @@ class SalesOrderAllocation(models.Model):
 
         # TODO: The logic here needs improving. Do we need to subtract our own amount, or something?
         if self.item.quantity - self.item.allocation_count() + self.quantity < self.quantity:
-            errors['quantity'] = _('StockItem is over-allocated')
+            errors['quantity'] = _('Stock item is over-allocated')
 
         if self.quantity <= 0:
             errors['quantity'] = _('Allocation quantity must be greater than zero')
