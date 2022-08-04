@@ -97,7 +97,7 @@ class CategoryList(ListCreateAPI):
             if not cascade:
                 queryset = queryset.filter(parent=None)
 
-            if depth is not None:
+            if cascade and depth is not None:
                 queryset = queryset.filter(level__lte=depth)
 
         else:

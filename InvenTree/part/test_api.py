@@ -49,33 +49,25 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         """Test the PartCategoryList API endpoint"""
         url = reverse('api-part-category-list')
 
-        response = self.get(url, expected_code=200)
+        test_cases = [
+            ({}, 8, 'no parameters'),
+            ({'parent': 1, 'cascade': False}, 3, 'Filter by parent, no cascading'),
+            ({'parent': 1, 'cascade': True}, 5, 'Filter by parent, cascading'),
+            ({'cascade': True, 'depth': 0}, 8, 'Cascade with no parent, depth=0'),
+            ({'cascade': False, 'depth': 10}, 8, 'Cascade with no parent, depth=0'),
+            ({'parent': 'null', 'cascade': True, 'depth': 0}, 2, 'Cascade with null parent, depth=0'),
+            ({'parent': 'null', 'cascade': True, 'depth': 10}, 8, 'Cascade with null parent and bigger depth'),
+            ({'parent': 'null', 'cascade': False, 'depth': 10}, 2, 'No cascade even with depth specified with null parent'),
+            ({'parent': 1, 'cascade': False, 'depth': 0}, 3, 'Dont cascade with depth=0 and parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 0}, 3, 'Cascade with depth=0 and parent'),
+            ({'parent': 1, 'cascade': False, 'depth': 1}, 3, 'Dont cascade even with depth=1 specified with parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 1}, 5, 'Cascade with depth=1 with parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 'abcdefg'}, 5, 'Cascade with invalid depth and parent'),
+        ]
 
-        self.assertEqual(len(response.data), 8)
-
-        # Filter by parent, depth=1
-        response = self.get(
-            url,
-            {
-                'parent': 1,
-                'cascade': False,
-            },
-            expected_code=200
-        )
-
-        self.assertEqual(len(response.data), 3)
-
-        # Filter by parent, cascading
-        response = self.get(
-            url,
-            {
-                'parent': 1,
-                'cascade': True,
-            },
-            expected_code=200,
-        )
-
-        self.assertEqual(len(response.data), 5)
+        for params, res_len, description in test_cases:
+            response = self.get(url, params, expected_code=200)
+            self.assertEqual(len(response.data), res_len, description)
 
         # Check that the required fields are present
         fields = [
@@ -90,6 +82,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             'url'
         ]
 
+        response = self.get(url, expected_code=200)
         for result in response.data:
             for f in fields:
                 self.assertIn(f, result)
