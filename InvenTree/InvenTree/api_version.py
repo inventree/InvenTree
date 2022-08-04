@@ -2,10 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 69
+INVENTREE_API_VERSION = 70
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v70 -> 2022-08-02 : https://github.com/inventree/InvenTree/pull/3451
+    - Adds a 'depth' parameter to the PartCategory list API
+    - Adds a 'depth' parameter to the StockLocation list API
 
 v69 -> 2022-08-01 : https://github.com/inventree/InvenTree/pull/3443
     - Updates the PartCategory list API:
