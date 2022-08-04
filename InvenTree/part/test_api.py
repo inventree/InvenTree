@@ -96,7 +96,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200)
         for result in response.data:
             for f in fields:
-                self.assertIn(f, result, f'"{f}" is missing in result of StockLocation list')
+                self.assertIn(f, result, f'"{f}" is missing in result of PartCategory list')
 
     def test_part_count(self):
         """Test that the 'part_count' field is annotated correctly"""
