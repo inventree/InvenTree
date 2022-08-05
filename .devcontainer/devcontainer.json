@@ -21,7 +21,7 @@
     "vscode": {
       // Set *default* container specific settings.json values on container create.
       "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.defaultInterpreterPath": "/workspaces/InvenTree/venv/bin/python",
         "python.linting.enabled": true,
         "python.linting.pylintEnabled": false,
         "python.linting.flake8Enabled": true,
@@ -33,18 +33,11 @@
         "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
         "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
         "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-        "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
-        "[python]": {
-          "editor.defaultFormatter": "ms-python.black-formatter"
-        }
+        "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
       },
 
       // Add the IDs of extensions you want installed when the container is created.
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-python.black-formatter"
-      ]
+      "extensions": ["ms-python.python", "ms-python.vscode-pylance","batisteo.vscode-django"]
     }
   },
 
@@ -52,7 +45,7 @@
   "forwardPorts": [8000],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "python3 -m venv venv && . venv/bin/activate && cd /workspaces/InvenTree && pip install invoke && pip install -r requirements.txt && mkdir -p dev && inv setup-dev && inv migrate && inv server",
+  "postCreateCommand": "python3 -m venv venv && . venv/bin/activate && cd /workspaces/InvenTree && pip install invoke && pip install -r requirements.txt && mkdir -p dev && inv setup-dev && inv update",
 
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
@@ -65,6 +58,10 @@
     "INVENTREE_DB_NAME": "/workspaces/InvenTree/dev/database.sqlite3",
     "INVENTREE_MEDIA_ROOT": "/workspaces/InvenTree/inventree-data/media",
     "INVENTREE_STATIC_ROOT": "/workspaces/InvenTree/dev/static",
-    "PIP_USER": "no"
+    "PIP_USER": "no",
+    "VIRTUAL_ENV": "/workspaces/InvenTree/venv"
+  },
+  "remoteEnv": {
+    "PATH": "/workspaces/InvenTree/venv/bin:${containerEnv:PATH}"
   }
 }
