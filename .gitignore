@@ -73,8 +73,8 @@ secret_key.txt
 #!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
+#!.vscode/extensions.json
+#!.vscode/*.code-snippets
 
 # Coverage reports
 .coverage

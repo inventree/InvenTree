@@ -9,11 +9,18 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/InvenTree/manage.py",
-      "args": [
-        "runserver"
-      ],
+      "args": ["runserver"],
       "django": true,
       "justMyCode": true
+    },
+    {
+      "name": "Python: Django - 3rd party",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/InvenTree/manage.py",
+      "args": ["runserver"],
+      "django": true,
+      "justMyCode": false
     }
   ]
 }
