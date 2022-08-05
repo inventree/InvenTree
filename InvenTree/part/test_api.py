@@ -49,6 +49,12 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         """Test the PartCategoryList API endpoint"""
         url = reverse('api-part-category-list')
 
+        # star categories manually for tests as it is not possible with fixures
+        # because the current user is no fixure itself and throws an invalid
+        # foreign key constrain
+        for pk in [3, 4]:
+            PartCategory.objects.get(pk=pk).set_starred(self.user, True)
+
         test_cases = [
             ({}, 8, 'no parameters'),
             ({'parent': 1, 'cascade': False}, 3, 'Filter by parent, no cascading'),
@@ -63,6 +69,11 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             ({'parent': 1, 'cascade': False, 'depth': 1}, 3, 'Dont cascade even with depth=1 specified with parent'),
             ({'parent': 1, 'cascade': True, 'depth': 1}, 5, 'Cascade with depth=1 with parent'),
             ({'parent': 1, 'cascade': True, 'depth': 'abcdefg'}, 5, 'Cascade with invalid depth and parent'),
+            ({'parent': 42}, 8, 'Should return everything if parent_pk is not vaild'),
+            ({'parent': 'null', 'exclude_tree': 1, 'cascade': True}, 2, 'Should return everything from except tree with pk=1'),
+            ({'parent': 'null', 'exclude_tree': 42, 'cascade': True}, 8, 'Should return everything because exclude_tree=42 is no valid pk'),
+            ({'parent': 1, 'starred': True, 'cascade': True}, 2, 'Should return the starred categories for the current user within the pk=1 tree'),
+            ({'parent': 1, 'starred': False, 'cascade': True}, 3, 'Should return the not starred categories for the current user within the pk=1 tree'),
         ]
 
         for params, res_len, description in test_cases:
@@ -85,7 +96,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200)
         for result in response.data:
             for f in fields:
-                self.assertIn(f, result)
+                self.assertIn(f, result, f'"{f}" is missing in result of PartCategory list')
 
     def test_part_count(self):
         """Test that the 'part_count' field is annotated correctly"""
