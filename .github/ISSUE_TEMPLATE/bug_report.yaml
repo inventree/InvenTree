@@ -2,6 +2,14 @@ name: "Bug"
 description: "Create a bug report to help us improve InvenTree!"
 labels: [bug, question]
 body:
+  - type: checkboxes
+    id: no-duplicate-issues
+    attributes:
+      label: "Please verify that this bug has NOT been raised before."
+      description: "Search in the issues sections by clicking [HERE](https://github.com/inventree/inventree/issues?q=)"
+      options:
+        - label: "I checked and didn't find similar issue"
+          required: true
   - type: textarea
     id: description
     validations:
@@ -44,3 +52,11 @@ body:
       label: "Version Information"
       description: "The version info block."
       placeholder: "You can get this by going to the `About InvenTree` section in the upper right corner and clicking on to the `copy version information`"
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Relevant log output"
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+    validations:
+      required: false
