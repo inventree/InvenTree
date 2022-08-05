@@ -1,0 +1,46 @@
+name: "Bug"
+description: "Create a bug report to help us improve InvenTree!"
+labels: [bug, question]
+body:
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: "Describe the bug*"
+      description: "A clear and concise description of what the bug is."
+  - type: textarea
+    id: steps-to-reproduce
+    validations:
+      required: true
+    attributes:
+      label: "Steps to Reproduce"
+      description: "Steps to reproduce the behavior, please make it detailed"
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+  - type: textarea
+    id: expected-behavior
+    validations:
+      required: true
+    attributes:
+      label: "Expected behavior"
+      description: "A clear and concise description of what you expected to happen."
+      placeholder: "..."
+  - type: checkboxes
+    id: deployment
+    attributes:
+      label: "Deployment Method"
+      options:
+        - label: "Docker"
+        - label: "Bare metal"
+  - type: textarea
+    id: version-info
+    validations:
+      required: true
+    attributes:
+      label: "Version Information"
+      description: "The version info block."
+      placeholder: "You can get this by going to the `About InvenTree` section in the upper right corner and clicking on to the `copy version information`"
