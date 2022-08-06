@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-04 22:08+0000\n"
-"PO-Revision-Date: 2022-08-05 01:02\n"
+"PO-Revision-Date: 2022-08-06 01:07\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -2476,7 +2476,7 @@ msgstr ""
 
 #: common/models.py:1548
 msgid "Search Purchase Orders"
-msgstr "Inkooporders zoeken"
+msgstr "Inkooporders Zoeken"
 
 #: common/models.py:1549
 msgid "Display purchase orders in search preview window"
@@ -2679,7 +2679,7 @@ msgstr "Upload Bestand"
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
 #: part/views.py:113 templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
-msgstr "Vergelijkingsvelden"
+msgstr "Vergelijk Velden"
 
 #: common/views.py:87
 msgid "Match Items"
@@ -3263,7 +3263,7 @@ msgstr "Toegewezen Voorraadartikelen"
 #: templates/js/translated/company.js:909 templates/js/translated/order.js:935
 #: templates/js/translated/stock.js:1929
 msgid "Supplier Part"
-msgstr "Leveranciersonderzoek"
+msgstr "Leveranciersonderdeel"
 
 #: company/templates/company/supplier_part.html:35
 msgid "Supplier part actions"
@@ -3671,7 +3671,7 @@ msgstr "Ontvangen"
 
 #: order/models.py:1010
 msgid "Number of items received"
-msgstr "Aantal artikelen ontvangen"
+msgstr "Aantal ontvangen artikelen"
 
 #: order/models.py:1017 part/templates/part/prices.html:181 stock/models.py:727
 #: stock/serializers.py:171 stock/templates/stock/item_base.html:191
@@ -3681,11 +3681,11 @@ msgstr "Inkoopprijs"
 
 #: order/models.py:1018
 msgid "Unit purchase price"
-msgstr "Aankoopprijs per eenheid"
+msgstr "Aankoopprijs per stuk"
 
 #: order/models.py:1026
 msgid "Where does the Purchaser want this item to be stored?"
-msgstr "Waar wil de Inkoper dat dit artikel opgeslagen wordt?"
+msgstr "Waar wil de inkoper dat dit artikel opgeslagen wordt?"
 
 #: order/models.py:1092
 msgid "Virtual part cannot be assigned to a sales order"
@@ -3702,7 +3702,7 @@ msgstr "Verkoopprijs"
 
 #: order/models.py:1124
 msgid "Unit sale price"
-msgstr "Prijs per eenheid"
+msgstr "Prijs per stuk"
 
 #: order/models.py:1129
 msgid "Shipped quantity"
@@ -3739,7 +3739,7 @@ msgstr "Volgnummer"
 
 #: order/models.py:1232
 msgid "Shipment tracking information"
-msgstr "Verzending volginformatie"
+msgstr "Zending volginformatie"
 
 #: order/models.py:1239
 msgid "Invoice Number"
@@ -7656,7 +7656,7 @@ msgstr "Klik op de volgende link om deze productieorder te bekijken"
 
 #: templates/email/build_order_required_stock.html:14
 msgid "The following parts are low on required stock"
-msgstr "De volgende onderdelen zijn laag op vereiste voorraad"
+msgstr "De volgende onderdelen hebben een lage vereiste voorraad"
 
 #: templates/email/build_order_required_stock.html:18
 #: templates/js/translated/bom.js:1483
@@ -8683,7 +8683,7 @@ msgstr ""
 #: templates/js/translated/model_renderers.js:278
 #: templates/js/translated/model_renderers.js:303
 msgid "Order ID"
-msgstr "Order-id"
+msgstr "Order-ID"
 
 #: templates/js/translated/model_renderers.js:316
 #: templates/js/translated/model_renderers.js:320
@@ -8989,23 +8989,23 @@ msgstr "Ongeldige Klant"
 
 #: templates/js/translated/order.js:2615
 msgid "Edit shipment"
-msgstr "Bewerk verzending"
+msgstr "Verzending bewerken"
 
 #: templates/js/translated/order.js:2618
 msgid "Complete shipment"
-msgstr "Voltooi verzending"
+msgstr "Verzending Voltooien"
 
 #: templates/js/translated/order.js:2623
 msgid "Delete shipment"
-msgstr "Verwijder verzending"
+msgstr "Verzending verwijderen"
 
 #: templates/js/translated/order.js:2643
 msgid "Edit Shipment"
-msgstr "Bewerk Verzending"
+msgstr "Verzending bewerken"
 
 #: templates/js/translated/order.js:2660
 msgid "Delete Shipment"
-msgstr "Verwijder Verzending"
+msgstr "Verzending verwijderen"
 
 #: templates/js/translated/order.js:2694
 msgid "No matching shipments found"
