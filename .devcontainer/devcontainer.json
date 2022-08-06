@@ -47,9 +47,14 @@
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": {
+      "label": "InvenTree server"
+    }
+  },
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "python3 -m venv venv && . venv/bin/activate && cd /workspaces/InvenTree && pip install invoke && inv update && mkdir -p dev && inv setup-dev",
+  "postCreateCommand": "mkdir -p /workspaces/InvenTree/dev/commandhistory && python3 -m venv venv && . venv/bin/activate && cd /workspaces/InvenTree && pip install invoke && inv update && mkdir -p dev && inv setup-dev",
 
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
@@ -57,15 +62,21 @@
     "git": "os-provided"
   },
 
-  "containerEnv": {
-    "INVENTREE_DB_ENGINE": "sqlite3",
-    "INVENTREE_DB_NAME": "/workspaces/InvenTree/dev/database.sqlite3",
-    "INVENTREE_MEDIA_ROOT": "/workspaces/InvenTree/inventree-data/media",
-    "INVENTREE_STATIC_ROOT": "/workspaces/InvenTree/dev/static",
-    "PIP_USER": "no",
-    "VIRTUAL_ENV": "/workspaces/InvenTree/venv"
-  },
   "remoteEnv": {
+    // Inventree config
+    "INVENTREE_DEBUG": "True",
+    "INVENTREE_DEBUG_LEVEL": "INFO",
+    "INVENTREE_DB_ENGINE": "sqlite3",
+    "INVENTREE_DB_NAME": "/workspaces/InvenTree/dev/InvenTree/database.sqlite3",
+    "INVENTREE_MEDIA_ROOT": "/workspaces/InvenTree/dev/InvenTree/media",
+    "INVENTREE_STATIC_ROOT": "/workspaces/InvenTree/dev/InvenTree/static",
+
+    // Python config
+    "PIP_USER": "no",
+
+    // used to load the venv into the PATH and avtivate it
+    // Ref: https://stackoverflow.com/a/56286534
+    "VIRTUAL_ENV": "/workspaces/InvenTree/venv",
     "PATH": "/workspaces/InvenTree/venv/bin:${containerEnv:PATH}"
   }
 }

@@ -15,9 +15,29 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && \
-    apt-get -y install --no-install-recommends gettext libpangocairo-1.0-0
+    apt-get -y install --no-install-recommends \
+    git gcc g++ gettext gnupg libffi-dev \
+    # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
+    poppler-utils libpango-1.0-0 libpangoft2-1.0-0 \
+    # Image format support
+    libjpeg-dev webp \
+    # SQLite support
+    sqlite3 \
+    # PostgreSQL support
+    libpq-dev \
+    # MySQL / MariaDB support
+    default-libmysqlclient-dev mariadb-client && \
+    apt-get autoclean && apt-get autoremove
 
 # [Optional] Uncomment this line to install global node packages.
 # RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
+
+# Update pip
+RUN pip install --upgrade pip
+
+# preserve command history between container starts
+# Ref: https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
+# Folder will be created in 'postCreateCommand' in devcontainer.json as it's not preserved due to the bind mount
+RUN echo "export PROMPT_COMMAND='history -a' && export HISTFILE=/workspaces/InvenTree/dev/commandhistory/.bash_history" >> "/home/vscode/.bashrc"
 
 WORKDIR /workspaces/InvenTree
