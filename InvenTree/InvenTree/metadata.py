@@ -116,6 +116,12 @@ class InvenTreeMetadata(SimpleMetadata):
 
         model_class = None
 
+        # Attributes to copy extra attributes from the model to the field (if they don't exist)
+        extra_attributes = [
+            'help_text',
+            'max_length',
+        ]
+
         try:
             model_class = serializer.Meta.model
 
@@ -148,10 +154,7 @@ class InvenTreeMetadata(SimpleMetadata):
                     elif name in model_default_values:
                         serializer_info[name]['default'] = model_default_values[name]
 
-                    # Attributes to copy from the model to the field (if they don't exist)
-                    attributes = ['help_text']
-
-                    for attr in attributes:
+                    for attr in extra_attributes:
                         if attr not in serializer_info[name]:
 
                             if hasattr(field, attr):
@@ -172,8 +175,9 @@ class InvenTreeMetadata(SimpleMetadata):
                 # This is used to automatically filter AJAX requests
                 serializer_info[name]['filters'] = relation.model_field.get_limit_choices_to()
 
-                if 'help_text' not in serializer_info[name] and hasattr(relation.model_field, 'help_text'):
-                    serializer_info[name]['help_text'] = relation.model_field.help_text
+                for attr in extra_attributes:
+                    if attr not in serializer_info[name] and hasattr(relation.model_field, attr):
+                        serializer_info[name]['help_text'] = getattr(relation.model_field, attr)
 
                 if name in model_default_values:
                     serializer_info[name]['default'] = model_default_values[name]
