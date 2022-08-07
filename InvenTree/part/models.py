@@ -69,36 +69,45 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         """
 
         rebuild = kwargs.get('rebuild', True)
+        delete_parts = kwargs.get('delete_parts', '0') != '0'
+        parent_category = kwargs.get('parent_category', None)
         try:
-            # when doing recursive category tree delete the atomic transaction needs to be started once
+            # If doing recursive category tree delete operation then the
+            # atomic transaction needs to be started only once at the first iteration
             if rebuild:
                 transaction.atomic()
 
             parent = self.parent
             tree_id = self.tree_id
 
-            if kwargs.get('delete_parts', False):
+            if delete_parts:
                 # Delete each part in this category if user wants to do that
                 self.parts.delete()
             else:
                 # Update each part in this category to point to the parent category
                 for p in self.parts.all():
-                    if kwargs.get('parent_category') is None:
-                        p.category = self.parent
+                    if parent_category is None:
+                        # First iteration, (no part_category kwargs passed)
+                        p.category = parent
                     else:
-                        p.category = kwargs.get('parent_category')
+                        # We are in recursive iteration update the part category to the
+                        # parent of the topmost deleted category
+                        p.category = parent_category
                     p.save()
 
-            if kwargs.get('delete_child_categories', False):
-                # Recursively delete all child category if used wanted this
+            if kwargs.get('delete_child_categories', '0') != '0':
+                # Recursively delete all child categories
+                if parent_category is None:
+                    parent_category = parent
                 for child in self.children.all():
-                    child.delete(**dict(child_categories_action='delete',
-                                        rebuild=False,
-                                        parent_category=self.parent))
+                    child.delete(**dict(delete_child_categories=True,
+                                        delete_parts=delete_parts,
+                                        parent_category=parent_category,
+                                        rebuild=False))
             else:
-                # Update each child category
+                # Move each child category to the parent of the deleted category
                 for child in self.children.all():
-                    child.parent = self.parent
+                    child.parent = parent
                     child.save()
 
             super().delete(*args, **dict())

@@ -213,9 +213,8 @@ class CategoryDetail(CustomRetrieveUpdateDestroyAPI):
         return super(CategoryDetail, self).destroy(request,
                                                    *args,
                                                    **dict(kwargs,
-                                                          child_parts_action=request.data['child_parts_action'],
-                                                          child_categories_action=request.data['child_categories_action']))
-
+                                                   delete_parts=request.data['delete_parts'],
+                                                   delete_child_categories=request.data['delete_child_categories']))
 
 class CategoryMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating PartCategory metadata."""
