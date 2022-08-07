@@ -147,7 +147,7 @@ Any user-facing strings *must* be passed through the translation engine.
 For strings exposed via Python code, use the following format:
 
 ```python
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 user_facing_string = _('This string will be exposed to the translation engine!')
 ```
