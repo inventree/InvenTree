@@ -167,6 +167,9 @@ HTML and javascript files are passed through the django templating engine. Trans
 The tags describe issues and PRs in multiple areas:
 | Area | Name | Description |
 |---|---|---|
+| Triage Labels |  |  |
+|  | triage:not-checked | Item was not checked by the core team  |
+|  | triage:not-approved | Item is not green-light by maintainer |
 | Type Labels |  |  |
 |  | breaking | Indicates a major update or change which breaks compatibility |
 |  | bug | Identifies a bug which needs to be addressed |

@@ -1,6 +1,6 @@
 name: "Bug"
 description: "Create a bug report to help us improve InvenTree!"
-labels: [bug, question]
+labels: ["bug", "question", "triage:not-checked"]
 body:
   - type: checkboxes
     id: no-duplicate-issues
