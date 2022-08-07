@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 import django.conf.locale
+from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.files.storage import default_storage
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
@@ -820,10 +821,22 @@ CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
 
 CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', None)
 
-# check that the logo-file exsists in media
-if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):  # pragma: no cover
-    logger.warning(f"The custom logo file '{CUSTOM_LOGO}' could not be found in the default media storage")
-    CUSTOM_LOGO = False
+"""
+Check for the existence of a 'custom logo' file:
+- Check the 'static' directory
+- Check the 'media' directory (legacy)
+"""
+
+if CUSTOM_LOGO:
+    static_storage = StaticFilesStorage()
+
+    if static_storage.exists(CUSTOM_LOGO):
+        logger.info(f"Loading custom logo from static directory: {CUSTOM_LOGO}")
+    elif default_storage.exists(CUSTOM_LOGO):
+        logger.info(f"Loading custom logo from media directory: {CUSTOM_LOGO}")
+    else:
+        logger.warning(f"The custom logo file '{CUSTOM_LOGO}' could not be found in the static or media directories")
+        CUSTOM_LOGO = False
 
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
