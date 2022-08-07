@@ -6,7 +6,6 @@ from decimal import Decimal
 from django import forms
 from django.core import validators
 from django.db import models as models
-from django.forms.fields import URLField as FormURLField
 from django.utils.translation import gettext_lazy as _
 
 from djmoney.forms.fields import MoneyField
@@ -23,26 +22,28 @@ class InvenTreeRestURLField(RestURLField):
     """Custom field for DRF with custom scheme vaildators."""
     def __init__(self, **kwargs):
         """Update schemes."""
+
+        # Enforce 'max length' parameter in form validation
+        if 'max_length' not in kwargs:
+            kwargs['max_length'] = 200
+
         super().__init__(**kwargs)
         self.validators[-1].schemes = allowable_url_schemes()
-
-
-class InvenTreeURLFormField(FormURLField):
-    """Custom URL form field with custom scheme validators."""
-
-    default_validators = [validators.URLValidator(schemes=allowable_url_schemes())]
 
 
 class InvenTreeURLField(models.URLField):
     """Custom URL field which has custom scheme validators."""
 
-    validators = [validators.URLValidator(schemes=allowable_url_schemes())]
+    default_validators = [validators.URLValidator(schemes=allowable_url_schemes())]
 
-    def formfield(self, **kwargs):
-        """Return a Field instance for this field."""
-        return super().formfield(**{
-            'form_class': InvenTreeURLFormField
-        })
+    def __init__(self, **kwargs):
+        """Initialization method for InvenTreeURLField"""
+
+        # Max length for InvenTreeURLField defaults to 200
+        if 'max_length' not in kwargs:
+            kwargs['max_length'] = 200
+
+        super().__init__(**kwargs)
 
 
 def money_kwargs():

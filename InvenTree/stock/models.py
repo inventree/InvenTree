@@ -647,7 +647,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     link = InvenTreeURLField(
         verbose_name=_('External Link'),
-        max_length=125, blank=True,
+        blank=True, max_length=200,
         help_text=_("Link to external URL")
     )
 
