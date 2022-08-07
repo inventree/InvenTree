@@ -44,6 +44,45 @@ class StockTest(InvenTreeTestCase):
         Part.objects.rebuild()
         StockItem.objects.rebuild()
 
+    def test_link(self):
+        """Test the link URL field validation"""
+
+        item = StockItem.objects.get(pk=1)
+
+        # Check that invalid URLs fail
+        for bad_url in [
+            'test.com',
+            'httpx://abc.xyz',
+            'https:google.com',
+        ]:
+            with self.assertRaises(ValidationError):
+                item.link = bad_url
+                item.save()
+                item.full_clean()
+
+        # Check that valid URLs pass
+        for good_url in [
+            'https://test.com',
+            'https://digikey.com/datasheets?file=1010101010101.bin',
+            'ftp://download.com:8080/file.aspx',
+        ]:
+            item.link = good_url
+            item.save()
+            item.full_clean()
+
+        # A long URL should fail
+        long_url = 'https://website.co.uk?query=' + 'a' * 173
+
+        with self.assertRaises(ValidationError):
+            item.link = long_url
+            item.full_clean()
+
+        # Shorten by a single character, will pass
+        long_url = long_url[:-1]
+
+        item.link = long_url
+        item.save()
+
     def test_expiry(self):
         """Test expiry date functionality for StockItem model."""
         today = datetime.datetime.now().date()
