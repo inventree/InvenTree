@@ -136,6 +136,8 @@ MEDIA_URL = '/media/'
 # Application definition
 
 INSTALLED_APPS = [
+    # Admin site integration
+    'django.contrib.admin',
 
     # InvenTree apps
     'build.apps.BuildConfig',
@@ -151,7 +153,6 @@ INSTALLED_APPS = [
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Core django modules
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'user_sessions',                # db user sessions
