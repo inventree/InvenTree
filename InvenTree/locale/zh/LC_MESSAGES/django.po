@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-04 22:08+0000\n"
+"POT-Creation-Date: 2022-08-07 12:49+0000\n"
 "PO-Revision-Date: 2022-08-05 01:02\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -25,11 +25,11 @@ msgstr "未找到 API 端点"
 msgid "Error details can be found in the admin panel"
 msgstr "在管理面板中可以找到错误详细信息"
 
-#: InvenTree/fields.py:108
+#: InvenTree/fields.py:109
 msgid "Enter date"
 msgstr "输入日期"
 
-#: InvenTree/fields.py:185 build/serializers.py:384
+#: InvenTree/fields.py:186 build/serializers.py:384
 #: build/templates/build/sidebar.html:21 company/models.py:523
 #: company/templates/company/sidebar.html:25 order/models.py:906
 #: order/templates/order/po_sidebar.html:11
@@ -89,76 +89,76 @@ msgstr "Email 地址确认"
 msgid "You must type the same email each time."
 msgstr "您必须输入相同的 Email 。"
 
-#: InvenTree/helpers.py:172
+#: InvenTree/helpers.py:173
 msgid "Connection error"
 msgstr ""
 
-#: InvenTree/helpers.py:176 InvenTree/helpers.py:181
+#: InvenTree/helpers.py:177 InvenTree/helpers.py:182
 msgid "Server responded with invalid status code"
 msgstr ""
 
-#: InvenTree/helpers.py:178
+#: InvenTree/helpers.py:179
 msgid "Exception occurred"
 msgstr ""
 
-#: InvenTree/helpers.py:186
+#: InvenTree/helpers.py:187
 msgid "Server responded with invalid Content-Length value"
 msgstr ""
 
-#: InvenTree/helpers.py:189
+#: InvenTree/helpers.py:190
 msgid "Image size is too large"
 msgstr ""
 
-#: InvenTree/helpers.py:201
+#: InvenTree/helpers.py:202
 msgid "Image download exceeded maximum size"
 msgstr ""
 
-#: InvenTree/helpers.py:206
+#: InvenTree/helpers.py:207
 msgid "Remote server returned empty response"
 msgstr ""
 
-#: InvenTree/helpers.py:214
+#: InvenTree/helpers.py:215
 msgid "Supplied URL is not a valid image file"
 msgstr "提供的 URL 不是一个有效的图片文件"
 
-#: InvenTree/helpers.py:573
+#: InvenTree/helpers.py:584
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
 msgstr "重复的序列号: {sn}"
 
-#: InvenTree/helpers.py:580 order/models.py:320 order/models.py:472
+#: InvenTree/helpers.py:591 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
 msgstr "提供的数量无效"
 
-#: InvenTree/helpers.py:583
+#: InvenTree/helpers.py:594
 msgid "Empty serial number string"
 msgstr "空序列号字符串"
 
-#: InvenTree/helpers.py:615
+#: InvenTree/helpers.py:626
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "无效的组范围: {g}"
 
-#: InvenTree/helpers.py:618
+#: InvenTree/helpers.py:629
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "无效的群组: {g}"
 
-#: InvenTree/helpers.py:646
+#: InvenTree/helpers.py:657
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr "无效的组序列: {g}"
 
-#: InvenTree/helpers.py:654
+#: InvenTree/helpers.py:665
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr "无效的群组: {group}"
 
-#: InvenTree/helpers.py:660
+#: InvenTree/helpers.py:671
 msgid "No serial numbers found"
 msgstr "未找到序列号"
 
-#: InvenTree/helpers.py:664
+#: InvenTree/helpers.py:675
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "唯一序列号 ({s}) 必须匹配数量 ({q})"
@@ -398,99 +398,99 @@ msgstr ""
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/settings.py:607
+#: InvenTree/settings.py:609
 msgid "Czech"
 msgstr "捷克语"
 
-#: InvenTree/settings.py:608
+#: InvenTree/settings.py:610
 msgid "German"
 msgstr "德语"
 
-#: InvenTree/settings.py:609
+#: InvenTree/settings.py:611
 msgid "Greek"
 msgstr "希腊语"
 
-#: InvenTree/settings.py:610
+#: InvenTree/settings.py:612
 msgid "English"
 msgstr "英语"
 
-#: InvenTree/settings.py:611
+#: InvenTree/settings.py:613
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: InvenTree/settings.py:612
+#: InvenTree/settings.py:614
 msgid "Spanish (Mexican)"
 msgstr "西班牙语(墨西哥)"
 
-#: InvenTree/settings.py:613
+#: InvenTree/settings.py:615
 msgid "Farsi / Persian"
 msgstr "波斯语"
 
-#: InvenTree/settings.py:614
+#: InvenTree/settings.py:616
 msgid "French"
 msgstr "法语"
 
-#: InvenTree/settings.py:615
+#: InvenTree/settings.py:617
 msgid "Hebrew"
 msgstr "希伯来语"
 
-#: InvenTree/settings.py:616
+#: InvenTree/settings.py:618
 msgid "Hungarian"
 msgstr "匈牙利语"
 
-#: InvenTree/settings.py:617
+#: InvenTree/settings.py:619
 msgid "Italian"
 msgstr "意大利语"
 
-#: InvenTree/settings.py:618
+#: InvenTree/settings.py:620
 msgid "Japanese"
 msgstr "日语"
 
-#: InvenTree/settings.py:619
+#: InvenTree/settings.py:621
 msgid "Korean"
 msgstr "韩语"
 
-#: InvenTree/settings.py:620
+#: InvenTree/settings.py:622
 msgid "Dutch"
 msgstr "荷兰语"
 
-#: InvenTree/settings.py:621
+#: InvenTree/settings.py:623
 msgid "Norwegian"
 msgstr "挪威语"
 
-#: InvenTree/settings.py:622
+#: InvenTree/settings.py:624
 msgid "Polish"
 msgstr "波兰语"
 
-#: InvenTree/settings.py:623
+#: InvenTree/settings.py:625
 msgid "Portuguese"
 msgstr "葡萄牙语"
 
-#: InvenTree/settings.py:624
+#: InvenTree/settings.py:626
 msgid "Portuguese (Brazilian)"
 msgstr "葡萄牙语 (巴西)"
 
-#: InvenTree/settings.py:625
+#: InvenTree/settings.py:627
 msgid "Russian"
 msgstr "俄语"
 
-#: InvenTree/settings.py:626
+#: InvenTree/settings.py:628
 msgid "Swedish"
 msgstr "瑞典语"
 
-#: InvenTree/settings.py:627
+#: InvenTree/settings.py:629
 msgid "Thai"
 msgstr "泰语"
 
-#: InvenTree/settings.py:628
+#: InvenTree/settings.py:630
 msgid "Turkish"
 msgstr "土耳其语"
 
-#: InvenTree/settings.py:629
+#: InvenTree/settings.py:631
 msgid "Vietnamese"
 msgstr "越南语"
 
-#: InvenTree/settings.py:630
+#: InvenTree/settings.py:632
 msgid "Chinese"
 msgstr "中文（简体）"
 
@@ -7456,14 +7456,16 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10434,4 +10436,3 @@ msgstr "编辑项目权限"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "删除项目权限"
-

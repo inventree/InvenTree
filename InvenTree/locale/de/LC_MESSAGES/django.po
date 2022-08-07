@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-04 22:08+0000\n"
+"POT-Creation-Date: 2022-08-07 12:49+0000\n"
 "PO-Revision-Date: 2022-08-05 01:02\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -25,11 +25,11 @@ msgstr "API-Endpunkt nicht gefunden"
 msgid "Error details can be found in the admin panel"
 msgstr "Fehlerdetails finden Sie im Admin-Panel"
 
-#: InvenTree/fields.py:108
+#: InvenTree/fields.py:109
 msgid "Enter date"
 msgstr "Datum eingeben"
 
-#: InvenTree/fields.py:185 build/serializers.py:384
+#: InvenTree/fields.py:186 build/serializers.py:384
 #: build/templates/build/sidebar.html:21 company/models.py:523
 #: company/templates/company/sidebar.html:25 order/models.py:906
 #: order/templates/order/po_sidebar.html:11
@@ -89,76 +89,76 @@ msgstr "Bestätigung der E-Mail Adresse"
 msgid "You must type the same email each time."
 msgstr "E-Mail Adressen müssen übereinstimmen."
 
-#: InvenTree/helpers.py:172
+#: InvenTree/helpers.py:173
 msgid "Connection error"
 msgstr "Verbindungsfehler"
 
-#: InvenTree/helpers.py:176 InvenTree/helpers.py:181
+#: InvenTree/helpers.py:177 InvenTree/helpers.py:182
 msgid "Server responded with invalid status code"
 msgstr "Server antwortete mit ungültigem Statuscode"
 
-#: InvenTree/helpers.py:178
+#: InvenTree/helpers.py:179
 msgid "Exception occurred"
 msgstr "Ausnahme aufgetreten"
 
-#: InvenTree/helpers.py:186
+#: InvenTree/helpers.py:187
 msgid "Server responded with invalid Content-Length value"
 msgstr ""
 
-#: InvenTree/helpers.py:189
+#: InvenTree/helpers.py:190
 msgid "Image size is too large"
 msgstr "Bild ist zu groß"
 
-#: InvenTree/helpers.py:201
+#: InvenTree/helpers.py:202
 msgid "Image download exceeded maximum size"
 msgstr "Bilddownload überschreitet maximale Größe"
 
-#: InvenTree/helpers.py:206
+#: InvenTree/helpers.py:207
 msgid "Remote server returned empty response"
 msgstr "Remote-Server gab leere Antwort zurück"
 
-#: InvenTree/helpers.py:214
+#: InvenTree/helpers.py:215
 msgid "Supplied URL is not a valid image file"
 msgstr "Angegebene URL ist kein gültiges Bild"
 
-#: InvenTree/helpers.py:573
+#: InvenTree/helpers.py:584
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
 msgstr "Doppelte Seriennummer: {sn}"
 
-#: InvenTree/helpers.py:580 order/models.py:320 order/models.py:472
+#: InvenTree/helpers.py:591 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
 msgstr "Keine gültige Menge"
 
-#: InvenTree/helpers.py:583
+#: InvenTree/helpers.py:594
 msgid "Empty serial number string"
 msgstr "Keine Seriennummer angegeben"
 
-#: InvenTree/helpers.py:615
+#: InvenTree/helpers.py:626
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "Ungültiger Gruppenbereich: {g}"
 
-#: InvenTree/helpers.py:618
+#: InvenTree/helpers.py:629
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Ungültige Gruppe: {g}"
 
-#: InvenTree/helpers.py:646
+#: InvenTree/helpers.py:657
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr "Ungültige Gruppensequenz: {g}"
 
-#: InvenTree/helpers.py:654
+#: InvenTree/helpers.py:665
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr "Ungültige/Keine Gruppe {group}"
 
-#: InvenTree/helpers.py:660
+#: InvenTree/helpers.py:671
 msgid "No serial numbers found"
 msgstr "Keine Seriennummern gefunden"
 
-#: InvenTree/helpers.py:664
+#: InvenTree/helpers.py:675
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) übereinstimmen"
@@ -398,99 +398,99 @@ msgstr "URL der Remote-Bilddatei"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Das Herunterladen von Bildern von Remote-URLs ist nicht aktiviert"
 
-#: InvenTree/settings.py:607
+#: InvenTree/settings.py:609
 msgid "Czech"
 msgstr "Tschechisch"
 
-#: InvenTree/settings.py:608
+#: InvenTree/settings.py:610
 msgid "German"
 msgstr "Deutsch"
 
-#: InvenTree/settings.py:609
+#: InvenTree/settings.py:611
 msgid "Greek"
 msgstr "Griechisch"
 
-#: InvenTree/settings.py:610
+#: InvenTree/settings.py:612
 msgid "English"
 msgstr "Englisch"
 
-#: InvenTree/settings.py:611
+#: InvenTree/settings.py:613
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: InvenTree/settings.py:612
+#: InvenTree/settings.py:614
 msgid "Spanish (Mexican)"
 msgstr "Spanisch (Mexikanisch)"
 
-#: InvenTree/settings.py:613
+#: InvenTree/settings.py:615
 msgid "Farsi / Persian"
 msgstr "Persisch"
 
-#: InvenTree/settings.py:614
+#: InvenTree/settings.py:616
 msgid "French"
 msgstr "Französisch"
 
-#: InvenTree/settings.py:615
+#: InvenTree/settings.py:617
 msgid "Hebrew"
 msgstr "Hebräisch"
 
-#: InvenTree/settings.py:616
+#: InvenTree/settings.py:618
 msgid "Hungarian"
 msgstr "Ungarisch"
 
-#: InvenTree/settings.py:617
+#: InvenTree/settings.py:619
 msgid "Italian"
 msgstr "Italienisch"
 
-#: InvenTree/settings.py:618
+#: InvenTree/settings.py:620
 msgid "Japanese"
 msgstr "Japanisch"
 
-#: InvenTree/settings.py:619
+#: InvenTree/settings.py:621
 msgid "Korean"
 msgstr "Koreanisch"
 
-#: InvenTree/settings.py:620
+#: InvenTree/settings.py:622
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: InvenTree/settings.py:621
+#: InvenTree/settings.py:623
 msgid "Norwegian"
 msgstr "Norwegisch"
 
-#: InvenTree/settings.py:622
+#: InvenTree/settings.py:624
 msgid "Polish"
 msgstr "Polnisch"
 
-#: InvenTree/settings.py:623
+#: InvenTree/settings.py:625
 msgid "Portuguese"
 msgstr "Portugiesisch"
 
-#: InvenTree/settings.py:624
+#: InvenTree/settings.py:626
 msgid "Portuguese (Brazilian)"
 msgstr "Portugiesisch (Brasilien)"
 
-#: InvenTree/settings.py:625
+#: InvenTree/settings.py:627
 msgid "Russian"
 msgstr "Russisch"
 
-#: InvenTree/settings.py:626
+#: InvenTree/settings.py:628
 msgid "Swedish"
 msgstr "Schwedisch"
 
-#: InvenTree/settings.py:627
+#: InvenTree/settings.py:629
 msgid "Thai"
 msgstr "Thailändisch"
 
-#: InvenTree/settings.py:628
+#: InvenTree/settings.py:630
 msgid "Turkish"
 msgstr "Türkisch"
 
-#: InvenTree/settings.py:629
+#: InvenTree/settings.py:631
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
-#: InvenTree/settings.py:630
+#: InvenTree/settings.py:632
 msgid "Chinese"
 msgstr "Chinesisch"
 
@@ -7456,14 +7456,16 @@ msgstr "Einloggen"
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
@@ -10434,4 +10436,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
-
