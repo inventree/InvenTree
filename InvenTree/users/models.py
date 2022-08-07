@@ -76,6 +76,7 @@ class RuleSet(models.Model):
             'plugin_pluginconfig',
             'plugin_pluginsetting',
             'plugin_notificationusersetting',
+            'common_newsfeedentry',
         ],
         'part_category': [
             'part_partcategory',
