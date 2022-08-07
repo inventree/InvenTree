@@ -54,12 +54,13 @@
   },
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "mkdir -p /workspaces/InvenTree/dev/commandhistory && cd /workspaces/InvenTree && python3 -m venv dev/venv && . dev/venv/bin/activate && pip install invoke && inv update && inv setup-test --ignore-update --path dev/demo-dataset",
+  "postCreateCommand": "mkdir -p /workspaces/InvenTree/dev/{commandhistory,plugins} && cd /workspaces/InvenTree && python3 -m venv dev/venv && . dev/venv/bin/activate && pip install invoke && inv update && inv setup-test --ignore-update --path dev/demo-dataset",
 
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
   "features": {
-    "git": "os-provided"
+    "git": "os-provided",
+    "github-cli": "latest"
   },
 
   "remoteEnv": {
