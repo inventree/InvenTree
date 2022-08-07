@@ -25,7 +25,8 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
-from InvenTree.helpers import DownloadFile, increment, isNull, str2bool
+from InvenTree.helpers import (DownloadFile, increment, isNull, str2bool,
+                               str2int)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
@@ -85,6 +86,8 @@ class CategoryList(ListCreateAPI):
 
         cascade = str2bool(params.get('cascade', False))
 
+        depth = str2int(params.get('depth', None))
+
         # Do not filter by category
         if cat_id is None:
             pass
@@ -94,12 +97,18 @@ class CategoryList(ListCreateAPI):
             if not cascade:
                 queryset = queryset.filter(parent=None)
 
+            if cascade and depth is not None:
+                queryset = queryset.filter(level__lte=depth)
+
         else:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
 
                 if cascade:
                     parents = category.get_descendants(include_self=True)
+                    if depth is not None:
+                        parents = parents.filter(level__lte=category.level + depth)
+
                     parent_ids = [p.id for p in parents]
 
                     queryset = queryset.filter(parent__in=parent_ids)
