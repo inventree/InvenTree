@@ -21,7 +21,7 @@
     "vscode": {
       // Set *default* container specific settings.json values on container create.
       "settings": {
-        "python.defaultInterpreterPath": "/workspaces/InvenTree/venv/bin/python",
+        "python.defaultInterpreterPath": "/workspaces/InvenTree/dev/venv/bin/python",
         "python.linting.enabled": true,
         "python.linting.pylintEnabled": false,
         "python.linting.flake8Enabled": true,
@@ -54,7 +54,7 @@
   },
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "mkdir -p /workspaces/InvenTree/dev/commandhistory && python3 -m venv venv && . venv/bin/activate && cd /workspaces/InvenTree && pip install invoke && inv update && mkdir -p dev && inv setup-dev",
+  "postCreateCommand": "mkdir -p /workspaces/InvenTree/dev/commandhistory && cd /workspaces/InvenTree && python3 -m venv dev/venv && . dev/venv/bin/activate && pip install invoke && inv update && inv setup-test --ignore-update --path dev/demo-dataset",
 
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
@@ -67,16 +67,20 @@
     "INVENTREE_DEBUG": "True",
     "INVENTREE_DEBUG_LEVEL": "INFO",
     "INVENTREE_DB_ENGINE": "sqlite3",
-    "INVENTREE_DB_NAME": "/workspaces/InvenTree/dev/InvenTree/database.sqlite3",
-    "INVENTREE_MEDIA_ROOT": "/workspaces/InvenTree/dev/InvenTree/media",
-    "INVENTREE_STATIC_ROOT": "/workspaces/InvenTree/dev/InvenTree/static",
+    "INVENTREE_DB_NAME": "/workspaces/InvenTree/dev/database.sqlite3",
+    "INVENTREE_MEDIA_ROOT": "/workspaces/InvenTree/dev/media",
+    "INVENTREE_STATIC_ROOT": "/workspaces/InvenTree/dev/static",
+    "INVENTREE_CONFIG_FILE": "/workspaces/InvenTree/dev/config.yaml",
+    "INVENTREE_SECRET_KEY_FILE": "/workspaces/InvenTree/dev/secret_key.txt",
+    "INVENTREE_PLUGIN_DIR": "/workspaces/InvenTree/dev/plugins",
+    "INVENTREE_PLUGIN_FILE": "/workspaces/InvenTree/dev/plugins.txt",
 
     // Python config
     "PIP_USER": "no",
 
     // used to load the venv into the PATH and avtivate it
     // Ref: https://stackoverflow.com/a/56286534
-    "VIRTUAL_ENV": "/workspaces/InvenTree/venv",
-    "PATH": "/workspaces/InvenTree/venv/bin:${containerEnv:PATH}"
+    "VIRTUAL_ENV": "/workspaces/InvenTree/dev/venv",
+    "PATH": "/workspaces/InvenTree/dev/venv/bin:${containerEnv:PATH}"
   }
 }

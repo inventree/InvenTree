@@ -35,6 +35,10 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && \
 # Update pip
 RUN pip install --upgrade pip
 
+# Install required base-level python packages
+COPY ./docker/requirements.txt base_requirements.txt
+RUN pip install --disable-pip-version-check -U -r base_requirements.txt
+
 # preserve command history between container starts
 # Ref: https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
 # Folder will be created in 'postCreateCommand' in devcontainer.json as it's not preserved due to the bind mount
