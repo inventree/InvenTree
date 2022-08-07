@@ -177,7 +177,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 for attr in extra_attributes:
                     if attr not in serializer_info[name] and hasattr(relation.model_field, attr):
-                        serializer_info[name]['help_text'] = getattr(relation.model_field, attr)
+                        serializer_info[name][attr] = getattr(relation.model_field, attr)
 
                 if name in model_default_values:
                     serializer_info[name]['default'] = model_default_values[name]
