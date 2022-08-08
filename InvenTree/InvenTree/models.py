@@ -500,13 +500,24 @@ class InvenTreeTree(MPTTModel):
         }
 
     def save(self, *args, **kwargs):
-        """Provide better error for invalid moves."""
+        """Custom save method for InvenTreeTree abstract model"""
+
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
+            # Provide better error for parent selection
             raise ValidationError({
                 'parent': _("Invalid choice"),
             })
+
+        # Re-calculate the 'pathstring' field
+        pathstring = InvenTree.helpers.constructPathString(
+            [item.name for item in self.path]
+        )
+
+        if pathstring != self.pathstring:
+            self.pathstring = pathstring
+            super().save(force_update=True)
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -541,6 +552,14 @@ class InvenTreeTree(MPTTModel):
                             null=True,
                             verbose_name=_("parent"),
                             related_name='children')
+
+    # The 'pathstring' field is calculated each time the model is saved
+    pathstring = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Path'),
+        help_text=_('Path')
+    )
 
     @property
     def item_count(self):
@@ -611,14 +630,6 @@ class InvenTreeTree(MPTTModel):
             List of category names from the top level to this category
         """
         return self.parentpath + [self]
-
-    @property
-    def pathstring(self):
-        """Get a string representation for the path of this item.
-
-        e.g. "Top/Second/Third/This"
-        """
-        return '/'.join([item.name for item in self.path])
 
     def __str__(self):
         """String representation of a category is the full path to that category."""

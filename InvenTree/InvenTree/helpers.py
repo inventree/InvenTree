@@ -12,6 +12,7 @@ from wsgiref.util import FileWrapper
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
@@ -52,6 +53,42 @@ def generateTestKey(test_name):
     key = re.sub(r'[^a-zA-Z0-9]', '', key)
 
     return key
+
+
+def constructPathString(path, max_chars=250):
+    """Construct a 'path string' for the given path.
+
+    Arguments:
+        path: A list of strings e.g. ['path', 'to', 'location']
+        max_chars: Maximum number of characters
+    """
+
+    pathstring = '/'.join(path)
+
+    idx = 0
+
+    # Replace middle elements to limit the pathstring
+    if len(pathstring) > max_chars:
+        mid = len(path) // 2
+        path_l = path[0:mid]
+        path_r = path[mid:]
+
+        # Ensure the pathstring length is limited
+        while len(pathstring) > max_chars:
+
+            # Remove an element from the list
+            if idx % 2 == 0:
+                path_l = path_l[:-1]
+            else:
+                path_r = path_r[1:]
+
+            subpath = path_l + ['...'] + path_r
+
+            pathstring = '/'.join(subpath)
+
+            idx += 1
+
+    return pathstring
 
 
 def getMediaUrl(filename):
@@ -205,17 +242,27 @@ def getLogoImage(as_file=False, custom=True):
     """Return the path to the logo-file."""
     if custom and settings.CUSTOM_LOGO:
 
-        if as_file:
-            return f"file://{default_storage.path(settings.CUSTOM_LOGO)}"
-        else:
-            return default_storage.url(settings.CUSTOM_LOGO)
+        static_storage = StaticFilesStorage()
 
-    else:
-        if as_file:
-            path = settings.STATIC_ROOT.joinpath('img/inventree.png')
-            return f"file://{path}"
+        if static_storage.exists(settings.CUSTOM_LOGO):
+            storage = static_storage
+        elif default_storage.exists(settings.CUSTOM_LOGO):
+            storage = default_storage
         else:
-            return getStaticUrl('img/inventree.png')
+            storage = None
+
+        if storage is not None:
+            if as_file:
+                return f"file://{storage.path(settings.CUSTOM_LOGO)}"
+            else:
+                return storage.url(settings.CUSTOM_LOGO)
+
+    # If we have got to this point, return the default logo
+    if as_file:
+        path = settings.STATIC_ROOT.joinpath('img/inventree.png')
+        return f"file://{path}"
+    else:
+        return getStaticUrl('img/inventree.png')
 
 
 def TestIfImageURL(url):
@@ -245,6 +292,22 @@ def str2bool(text, test=True):
         return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', 'on', ]
     else:
         return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
+
+
+def str2int(text, default=None):
+    """Convert a string to int if possible
+
+    Args:
+        text: Int like string
+        default: Return value if str is no int like
+
+    Returns:
+        Converted int value
+    """
+    try:
+        return int(text)
+    except Exception:
+        return default
 
 
 def is_bool(text):

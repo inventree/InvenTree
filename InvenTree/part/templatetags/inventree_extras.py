@@ -17,6 +17,7 @@ import InvenTree.helpers
 from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
 from common.settings import currency_code_default
 from InvenTree import settings, version
+from plugin import registry
 from plugin.models import NotificationUserSetting, PluginSetting
 
 register = template.Library()
@@ -147,6 +148,25 @@ def inventree_docker_mode(*args, **kwargs):
 def plugins_enabled(*args, **kwargs):
     """Return True if plugins are enabled for the server instance."""
     return djangosettings.PLUGINS_ENABLED
+
+
+@register.simple_tag()
+def plugins_info(*args, **kwargs):
+    """Return information about activated plugins."""
+    # Check if plugins are even enabled
+    if not djangosettings.PLUGINS_ENABLED:
+        return False
+
+    # Fetch plugins
+    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Format list
+    return [
+        {
+            'name': plg.name,
+            'slug': plg.slug,
+            'version': plg.version
+        } for plg in plug_list
+    ]
 
 
 @register.simple_tag()

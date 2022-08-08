@@ -25,7 +25,8 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
-from InvenTree.helpers import DownloadFile, increment, isNull, str2bool
+from InvenTree.helpers import (DownloadFile, increment, isNull, str2bool,
+                               str2int)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
@@ -53,6 +54,13 @@ class CategoryList(ListCreateAPI):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
 
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the CategoryList endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
+        return queryset
+
     def get_serializer_context(self):
         """Add extra context data to the serializer for the PartCategoryList endpoint"""
         ctx = super().get_serializer_context()
@@ -78,6 +86,8 @@ class CategoryList(ListCreateAPI):
 
         cascade = str2bool(params.get('cascade', False))
 
+        depth = str2int(params.get('depth', None))
+
         # Do not filter by category
         if cat_id is None:
             pass
@@ -87,12 +97,18 @@ class CategoryList(ListCreateAPI):
             if not cascade:
                 queryset = queryset.filter(parent=None)
 
+            if cascade and depth is not None:
+                queryset = queryset.filter(level__lte=depth)
+
         else:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
 
                 if cascade:
                     parents = category.get_descendants(include_self=True)
+                    if depth is not None:
+                        parents = parents.filter(level__lte=category.level + depth)
+
                     parent_ids = [p.id for p in parents]
 
                     queryset = queryset.filter(parent__in=parent_ids)
@@ -141,9 +157,11 @@ class CategoryList(ListCreateAPI):
 
     ordering_fields = [
         'name',
+        'pathstring',
         'level',
         'tree_id',
         'lft',
+        'part_count',
     ]
 
     # Use hierarchical ordering by default
@@ -164,6 +182,13 @@ class CategoryDetail(RetrieveUpdateDestroyAPI):
 
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the CategoryDetail endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
+        return queryset
 
     def get_serializer_context(self):
         """Add extra context to the serializer for the CategoryDetail endpoint"""

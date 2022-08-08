@@ -1,4 +1,4 @@
-"""Custom query filters for the Part model
+"""Custom query filters for the Part models
 
 The code here makes heavy use of subquery annotations!
 
@@ -19,11 +19,13 @@ Relevant PRs:
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import F, FloatField, Func, OuterRef, Q, Subquery
+from django.db.models import (F, FloatField, Func, IntegerField, OuterRef, Q,
+                              Subquery)
 from django.db.models.functions import Coalesce
 
 from sql_util.utils import SubquerySum
 
+import part.models
 import stock.models
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
@@ -157,4 +159,30 @@ def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
         ),
         0,
         output_field=FloatField(),
+    )
+
+
+def annotate_category_parts():
+    """Construct a queryset annotation which returns the number of parts in a particular category.
+
+    - Includes parts in subcategories also
+    - Requires subquery to perform annotation
+    """
+
+    # Construct a subquery to provide all parts in this category and any subcategories:
+    subquery = part.models.Part.objects.exclude(category=None).filter(
+        category__tree_id=OuterRef('tree_id'),
+        category__lft__gte=OuterRef('lft'),
+        category__rght__lte=OuterRef('rght'),
+        category__level__gte=OuterRef('level'),
+    )
+
+    return Coalesce(
+        Subquery(
+            subquery.annotate(
+                total=Func(F('pk'), function='COUNT', output_field=IntegerField())
+            ).values('total'),
+        ),
+        0,
+        output_field=IntegerField()
     )
