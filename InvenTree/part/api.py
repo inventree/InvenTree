@@ -24,7 +24,9 @@ from common.models import InvenTreeSetting
 from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
-from InvenTree.helpers import DownloadFile, increment, isNull, str2bool
+from InvenTree.filters import InvenTreeOrderingFilter
+from InvenTree.helpers import (DownloadFile, increment, isNull, str2bool,
+                               str2int)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
@@ -52,6 +54,13 @@ class CategoryList(ListCreateAPI):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
 
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the CategoryList endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
+        return queryset
+
     def get_serializer_context(self):
         """Add extra context data to the serializer for the PartCategoryList endpoint"""
         ctx = super().get_serializer_context()
@@ -77,6 +86,8 @@ class CategoryList(ListCreateAPI):
 
         cascade = str2bool(params.get('cascade', False))
 
+        depth = str2int(params.get('depth', None))
+
         # Do not filter by category
         if cat_id is None:
             pass
@@ -86,12 +97,18 @@ class CategoryList(ListCreateAPI):
             if not cascade:
                 queryset = queryset.filter(parent=None)
 
+            if cascade and depth is not None:
+                queryset = queryset.filter(level__lte=depth)
+
         else:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
 
                 if cascade:
                     parents = category.get_descendants(include_self=True)
+                    if depth is not None:
+                        parents = parents.filter(level__lte=category.level + depth)
+
                     parent_ids = [p.id for p in parents]
 
                     queryset = queryset.filter(parent__in=parent_ids)
@@ -135,14 +152,16 @@ class CategoryList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
 
     ordering_fields = [
         'name',
+        'pathstring',
         'level',
         'tree_id',
         'lft',
+        'part_count',
     ]
 
     # Use hierarchical ordering by default
@@ -163,6 +182,13 @@ class CategoryDetail(RetrieveUpdateDestroyAPI):
 
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the CategoryDetail endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
+        return queryset
 
     def get_serializer_context(self):
         """Add extra context to the serializer for the CategoryDetail endpoint"""
@@ -281,7 +307,7 @@ class PartSalePriceList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -304,7 +330,7 @@ class PartInternalPriceList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -319,7 +345,7 @@ class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -564,6 +590,40 @@ class PartScheduling(RetrieveAPI):
         schedule = sorted(schedule, key=lambda entry: entry['date'])
 
         return Response(schedule)
+
+
+class PartRequirements(RetrieveAPI):
+    """API endpoint detailing 'requirements' information for a particular part.
+
+    This endpoint returns information on upcoming requirements for:
+
+    - Sales Orders
+    - Build Orders
+    - Total requirements
+
+    As this data is somewhat complex to calculate, is it not included in the default API
+    """
+
+    queryset = Part.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        """Construct a response detailing Part requirements"""
+
+        part = self.get_object()
+
+        data = {
+            "available_stock": part.available_stock,
+            "on_order": part.on_order,
+            "required_build_order_quantity": part.required_build_order_quantity(),
+            "allocated_build_order_quantity": part.build_order_allocation_count(),
+            "required_sales_order_quantity": part.required_sales_order_quantity(),
+            "allocated_sales_order_quantity": part.sales_order_allocation_count(pending=True),
+        }
+
+        data["allocated"] = data["allocated_build_order_quantity"] + data["allocated_sales_order_quantity"]
+        data["required"] = data["required_build_order_quantity"] + data["required_sales_order_quantity"]
+
+        return Response(data)
 
 
 class PartMetadata(RetrieveUpdateAPI):
@@ -866,7 +926,8 @@ class PartFilter(rest_filters.FilterSet):
     def filter_in_bom(self, queryset, name, part):
         """Limit queryset to parts in the BOM for the specified part"""
 
-        queryset = queryset.filter(id__in=part.get_parts_in_bom())
+        bom_parts = part.get_parts_in_bom()
+        queryset = queryset.filter(id__in=[p.pk for p in bom_parts])
         return queryset
 
     is_template = rest_filters.BooleanFilter()
@@ -1412,7 +1473,7 @@ class PartParameterTemplateList(ListCreateAPI):
         filters.SearchFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'name',
     ]
 
@@ -1477,7 +1538,7 @@ class PartParameterList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
         'template',
     ]
@@ -1526,6 +1587,34 @@ class BomFilter(rest_filters.FilterSet):
             queryset = queryset.filter(pk__in=pks)
         else:
             queryset = queryset.exclude(pk__in=pks)
+
+        return queryset
+
+    available_stock = rest_filters.BooleanFilter(label="Has available stock", method="filter_available_stock")
+
+    def filter_available_stock(self, queryset, name, value):
+        """Filter the queryset based on whether each line item has any available stock"""
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(available_stock__gt=0)
+        else:
+            queryset = queryset.filter(available_stock=0)
+
+        return queryset
+
+    on_order = rest_filters.BooleanFilter(label="On order", method="filter_on_order")
+
+    def filter_on_order(self, queryset, name, value):
+        """Filter the queryset based on whether each line item has any stock on order"""
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(on_order__gt=0)
+        else:
+            queryset = queryset.filter(on_order=0)
 
         return queryset
 
@@ -1755,11 +1844,31 @@ class BomList(ListCreateDestroyAPIView):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
+
+    search_fields = [
+        'reference',
+        'sub_part__name',
+        'sub_part__description',
+        'sub_part__IPN',
+        'sub_part__revision',
+        'sub_part__keywords',
+        'sub_part__category__name',
+    ]
+
+    ordering_fields = [
+        'quantity',
+        'sub_part',
+        'available_stock',
+    ]
+
+    ordering_field_aliases = {
+        'sub_part': 'sub_part__name',
+    }
 
 
 class BomImportUpload(CreateAPI):
@@ -1857,7 +1966,7 @@ class BomItemSubstituteList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
         'bom_item',
     ]
@@ -1946,6 +2055,8 @@ part_api_urls = [
 
         # Endpoint for future scheduling information
         re_path(r'^scheduling/', PartScheduling.as_view(), name='api-part-scheduling'),
+
+        re_path(r'^requirements/', PartRequirements.as_view(), name='api-part-requirements'),
 
         # Endpoint for duplicating a BOM for the specific Part
         re_path(r'^bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),

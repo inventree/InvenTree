@@ -2,17 +2,152 @@
 
 import os
 import shutil
+from pathlib import Path
 
 from django.conf import settings
 from django.core.cache import cache
 from django.http.response import StreamingHttpResponse
+from django.test import TestCase
 from django.urls import reverse
+
+from PIL import Image
 
 import report.models as report_models
 from build.models import Build
 from common.models import InvenTreeSetting, InvenTreeUserSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
+from report.templatetags import barcode as barcode_tags
+from report.templatetags import report as report_tags
 from stock.models import StockItem, StockItemAttachment
+
+
+class ReportTagTest(TestCase):
+    """Unit tests for the report template tags"""
+
+    def debug_mode(self, value: bool):
+        """Enable or disable debug mode for reports"""
+        InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', value, change_user=None)
+
+    def test_asset(self):
+        """Tests for asset files"""
+
+        # Test that an error is raised if the file does not exist
+        for b in [True, False]:
+            self.debug_mode(b)
+
+            with self.assertRaises(FileNotFoundError):
+                report_tags.asset("bad_file.txt")
+
+        # Create an asset file
+        asset_dir = settings.MEDIA_ROOT.joinpath('report', 'assets')
+        asset_dir.mkdir(parents=True, exist_ok=True)
+        asset_path = asset_dir.joinpath('test.txt')
+
+        asset_path.write_text("dummy data")
+
+        self.debug_mode(True)
+        asset = report_tags.asset('test.txt')
+        self.assertEqual(asset, '/media/report/assets/test.txt')
+
+        self.debug_mode(False)
+        asset = report_tags.asset('test.txt')
+        self.assertEqual(asset, f'file://{asset_dir}/test.txt')
+
+    def test_uploaded_image(self):
+        """Tests for retrieving uploaded images"""
+
+        # Test for a missing image
+        for b in [True, False]:
+            self.debug_mode(b)
+
+            with self.assertRaises(FileNotFoundError):
+                report_tags.uploaded_image('/part/something/test.png', replace_missing=False)
+
+            img = report_tags.uploaded_image('/part/something/other.png')
+            self.assertTrue('blank_image.png' in img)
+
+        # Create a dummy image
+        img_path = 'part/images/'
+        img_path = settings.MEDIA_ROOT.joinpath(img_path)
+        img_file = img_path.joinpath('test.jpg')
+
+        img_path.mkdir(parents=True, exist_ok=True)
+        img_file.write_text("dummy data")
+
+        # Test in debug mode. Returns blank image as dummy file is not a valid image
+        self.debug_mode(True)
+        img = report_tags.uploaded_image('part/images/test.jpg')
+        self.assertEqual(img, '/static/img/blank_image.png')
+
+        # Now, let's create a proper image
+        img = Image.new('RGB', (128, 128), color='RED')
+        img.save(img_file)
+
+        # Try again
+        img = report_tags.uploaded_image('part/images/test.jpg')
+        self.assertEqual(img, '/media/part/images/test.jpg')
+
+        self.debug_mode(False)
+        img = report_tags.uploaded_image('part/images/test.jpg')
+        self.assertEqual(img, f'file://{img_path.joinpath("test.jpg")}')
+
+    def test_part_image(self):
+        """Unit tests for the 'part_image' tag"""
+
+        with self.assertRaises(TypeError):
+            report_tags.part_image(None)
+
+    def test_company_image(self):
+        """Unit tests for the 'company_image' tag"""
+
+        with self.assertRaises(TypeError):
+            report_tags.company_image(None)
+
+    def test_logo_image(self):
+        """Unit tests for the 'logo_image' tag"""
+
+        # By default, should return the core InvenTree logo
+        for b in [True, False]:
+            self.debug_mode(b)
+            logo = report_tags.logo_image()
+            self.assertIn('inventree.png', logo)
+
+
+class BarcodeTagTest(TestCase):
+    """Unit tests for the barcode template tags"""
+
+    def test_barcode(self):
+        """Test the barcode generation tag"""
+
+        barcode = barcode_tags.barcode("12345")
+
+        self.assertTrue(type(barcode) == str)
+        self.assertTrue(barcode.startswith('data:image/png;'))
+
+        # Try with a different format
+        barcode = barcode_tags.barcode('99999', format='BMP')
+        self.assertTrue(type(barcode) == str)
+        self.assertTrue(barcode.startswith('data:image/bmp;'))
+
+    def test_qrcode(self):
+        """Test the qrcode generation tag"""
+
+        # Test with default settings
+        qrcode = barcode_tags.qrcode("hello world")
+        self.assertTrue(type(qrcode) == str)
+        self.assertTrue(qrcode.startswith('data:image/png;'))
+        self.assertEqual(len(qrcode), 700)
+
+        # Generate a much larger qrcode
+        qrcode = barcode_tags.qrcode(
+            "hello_world",
+            version=2,
+            box_size=50,
+            format='BMP',
+        )
+        self.assertTrue(type(qrcode) == str)
+        self.assertTrue(qrcode.startswith('data:image/bmp;'))
+        self.assertEqual(len(qrcode), 309720)
 
 
 class ReportTest(InvenTreeAPITestCase):
@@ -41,8 +176,7 @@ class ReportTest(InvenTreeAPITestCase):
 
     def copyReportTemplate(self, filename, description):
         """Copy the provided report template into the required media directory."""
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
+        src_dir = Path(__file__).parent.joinpath(
             'templates',
             'report'
         )
@@ -53,18 +187,15 @@ class ReportTest(InvenTreeAPITestCase):
             self.model.getSubdir(),
         )
 
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
-            template_dir
-        )
+        dst_dir = settings.MEDIA_ROOT.joinpath(template_dir)
 
-        if not os.path.exists(dst_dir):  # pragma: no cover
-            os.makedirs(dst_dir, exist_ok=True)
+        if not dst_dir.exists():  # pragma: no cover
+            dst_dir.mkdir(parents=True, exist_ok=True)
 
-        src_file = os.path.join(src_dir, filename)
-        dst_file = os.path.join(dst_dir, filename)
+        src_file = src_dir.joinpath(filename)
+        dst_file = dst_dir.joinpath(filename)
 
-        if not os.path.exists(dst_file):  # pragma: no cover
+        if not dst_file.exists():  # pragma: no cover
             shutil.copyfile(src_file, dst_file)
 
         # Convert to an "internal" filename

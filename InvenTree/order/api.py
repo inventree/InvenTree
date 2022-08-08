@@ -70,7 +70,7 @@ class GeneralExtraLineList:
         'reference'
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'order',
     ]
 
@@ -326,7 +326,7 @@ class PurchaseOrderComplete(PurchaseOrderContextMixin, CreateAPI):
 
 
 class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'complete' a purchase order."""
+    """API endpoint to 'issue' (send) a purchase order."""
 
     queryset = models.PurchaseOrder.objects.all()
 
@@ -495,7 +495,7 @@ class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateAPI):
     search_fields = [
         'part__part__name',
         'part__part__description',
-        'part__MPN',
+        'part__manufacturer_part__MPN',
         'part__SKU',
         'reference',
     ]
@@ -540,7 +540,7 @@ class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         rest_filters.DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'order',
     ]
 
@@ -672,7 +672,7 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
         'reference': ['reference_int', 'reference'],
     }
 
-    filter_fields = [
+    filterset_fields = [
         'customer',
     ]
 
@@ -814,7 +814,7 @@ class SalesOrderLineItemList(ListCreateAPI):
         'reference',
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'order',
         'part',
     ]
@@ -990,7 +990,7 @@ class SalesOrderAllocationList(ListAPI):
     ]
 
     # Default filterable fields
-    filter_fields = [
+    filterset_fields = [
     ]
 
 
@@ -1069,7 +1069,7 @@ class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         rest_filters.DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'order',
     ]
 

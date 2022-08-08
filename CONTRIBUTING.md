@@ -1,8 +1,39 @@
+Hi there, thank you for your intrest in contributing!
 Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
 
-## Setup
+## Quickstart
 
-Please run `invoke setup-dev` in the root directory of your InvenTree code base to set up your development setup before starting to contribute. This will install and set up pre-commit to run some checks before each commit and help reduce the style errors.
+The following commands will get you quickly configure and run a development server, complete with a demo dataset to work with:
+
+### Bare Metal
+
+```bash
+git clone https://github.com/inventree/InvenTree.git && cd InvenTree
+python3 -m venv env && source env/bin/activate
+pip install invoke && invoke
+pip install invoke && invoke setup-dev --tests
+```
+
+### Docker
+
+```bash
+git clone https://github.com/inventree/InvenTree.git && cd InvenTree
+docker compose run inventree-dev-server invoke install
+docker compose run inventree-dev-server invoke setup-test
+docker compose up -d
+```
+
+Read the [InvenTree setup documentation](https://inventree.readthedocs.io/en/latest/start/intro/) for a complete installation reference guide.
+
+### Setup Devtools
+
+Run the following command to set up all toolsets for development.
+
+```bash
+invoke setup-dev
+```
+
+*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.*
 
 ## Branches and Versioning
 
@@ -116,7 +147,7 @@ Any user-facing strings *must* be passed through the translation engine.
 For strings exposed via Python code, use the following format:
 
 ```python
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 user_facing_string = _('This string will be exposed to the translation engine!')
 ```
@@ -136,6 +167,9 @@ HTML and javascript files are passed through the django templating engine. Trans
 The tags describe issues and PRs in multiple areas:
 | Area | Name | Description |
 |---|---|---|
+| Triage Labels |  |  |
+|  | triage:not-checked | Item was not checked by the core team  |
+|  | triage:not-approved | Item is not green-light by maintainer |
 | Type Labels |  |  |
 |  | breaking | Indicates a major update or change which breaks compatibility |
 |  | bug | Identifies a bug which needs to be addressed |

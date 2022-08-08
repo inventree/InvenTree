@@ -20,7 +20,9 @@ from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 
-from .models import extract_int
+from common.models import InvenTreeSetting
+from InvenTree.fields import InvenTreeRestURLField
+from InvenTree.helpers import download_image_from_url
 
 
 class InvenTreeMoneySerializer(MoneyField):
@@ -33,6 +35,7 @@ class InvenTreeMoneySerializer(MoneyField):
         """Overrite default values."""
         kwargs["max_digits"] = kwargs.get("max_digits", 19)
         kwargs["decimal_places"] = kwargs.get("decimal_places", 4)
+        kwargs["required"] = kwargs.get("required", False)
 
         super().__init__(*args, **kwargs)
 
@@ -62,6 +65,12 @@ class InvenTreeMoneySerializer(MoneyField):
 
 class InvenTreeModelSerializer(serializers.ModelSerializer):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
+
+    # Switch out URLField mapping
+    serializer_field_mapping = {
+        **serializers.ModelSerializer.serializer_field_mapping,
+        models.URLField: InvenTreeRestURLField,
+    }
 
     def __init__(self, instance=None, data=empty, **kwargs):
         """Custom __init__ routine to ensure that *default* values (as specified in the ORM) are used by the DRF serializers, *if* the values are not provided by the user."""
@@ -208,16 +217,6 @@ class UserSerializer(InvenTreeModelSerializer):
             'last_name',
             'email'
         ]
-
-
-class ReferenceIndexingSerializerMixin():
-    """This serializer mixin ensures the the reference is not to big / small for the BigIntegerField."""
-
-    def validate_reference(self, value):
-        """Ensures the reference is not to big / small for the BigIntegerField."""
-        if extract_int(value) > models.BigIntegerField.MAX_BIGINT:
-            raise serializers.ValidationError('reference is to to big')
-        return value
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):
@@ -588,3 +587,39 @@ class DataFileExtractSerializer(serializers.Serializer):
     def save(self):
         """No "save" action for this serializer."""
         pass
+
+
+class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
+    """Mixin class which allows downloading an 'image' from a remote URL.
+
+    Adds the optional, write-only `remote_image` field to the serializer
+    """
+
+    remote_image = serializers.URLField(
+        required=False,
+        allow_blank=False,
+        write_only=True,
+        label=_("URL"),
+        help_text=_("URL of remote image file"),
+    )
+
+    def validate_remote_image(self, url):
+        """Perform custom validation for the remote image URL.
+
+        - Attempt to download the image and store it against this object instance
+        - Catches and re-throws any errors
+        """
+
+        if not url:
+            return
+
+        if not InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL'):
+            raise ValidationError(_("Downloading images from remote URL is not enabled"))
+
+        try:
+            self.remote_image_file = download_image_from_url(url)
+        except Exception as exc:
+            self.remote_image_file = None
+            raise ValidationError(str(exc))
+
+        return url

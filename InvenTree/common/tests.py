@@ -133,6 +133,7 @@ class SettingsTest(InvenTreeTestCase):
             'choices',
             'units',
             'requires_restart',
+            'after_save',
         ]
 
         for k in setting.keys():
@@ -533,8 +534,10 @@ class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
 
     def test_setting(self):
         """Test the string name for NotificationUserSetting."""
+
+        NotificationUserSetting.set_setting('NOTIFICATION_METHOD_MAIL', True, change_user=self.user, user=self.user)
         test_setting = NotificationUserSetting.get_setting_object('NOTIFICATION_METHOD_MAIL', user=self.user)
-        self.assertEqual(str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): ')
+        self.assertEqual(str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): True')
 
 
 class PluginSettingsApiTest(InvenTreeAPITestCase):

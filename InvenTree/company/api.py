@@ -46,7 +46,7 @@ class CompanyList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'is_customer',
         'is_manufacturer',
         'is_supplier',
@@ -169,7 +169,7 @@ class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'manufacturer_part',
     ]
 
@@ -233,7 +233,7 @@ class ManufacturerPartParameterList(ListCreateDestroyAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'name',
         'value',
         'units',
@@ -254,6 +254,31 @@ class ManufacturerPartParameterDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ManufacturerPartParameterSerializer
 
 
+class SupplierPartFilter(rest_filters.FilterSet):
+    """API filters for the SupplierPartList endpoint"""
+
+    class Meta:
+        """Metaclass option"""
+
+        model = SupplierPart
+        fields = [
+            'supplier',
+            'part',
+            'manufacturer_part',
+            'SKU',
+        ]
+
+    # Filter by 'active' status of linked part
+    active = rest_filters.BooleanFilter(field_name='part__active')
+
+    # Filter by the 'MPN' of linked manufacturer part
+    MPN = rest_filters.CharFilter(
+        label='Manufacturer Part Number',
+        field_name='manufacturer_part__MPN',
+        lookup_expr='iexact'
+    )
+
+
 class SupplierPartList(ListCreateDestroyAPIView):
     """API endpoint for list view of SupplierPart object.
 
@@ -262,6 +287,14 @@ class SupplierPartList(ListCreateDestroyAPIView):
     """
 
     queryset = SupplierPart.objects.all()
+    filterset_class = SupplierPartFilter
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryest object for the SupplierPart list"""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = SupplierPartSerializer.annotate_queryset(queryset)
+
+        return queryset
 
     def filter_queryset(self, queryset):
         """Custom filtering for the queryset."""
@@ -275,36 +308,11 @@ class SupplierPartList(ListCreateDestroyAPIView):
         if manufacturer is not None:
             queryset = queryset.filter(manufacturer_part__manufacturer=manufacturer)
 
-        # Filter by supplier
-        supplier = params.get('supplier', None)
-
-        if supplier is not None:
-            queryset = queryset.filter(supplier=supplier)
-
         # Filter by EITHER manufacturer or supplier
         company = params.get('company', None)
 
         if company is not None:
             queryset = queryset.filter(Q(manufacturer_part__manufacturer=company) | Q(supplier=company))
-
-        # Filter by parent part?
-        part = params.get('part', None)
-
-        if part is not None:
-            queryset = queryset.filter(part=part)
-
-        # Filter by manufacturer part?
-        manufacturer_part = params.get('manufacturer_part', None)
-
-        if manufacturer_part is not None:
-            queryset = queryset.filter(manufacturer_part=manufacturer_part)
-
-        # Filter by 'active' status of the part?
-        active = params.get('active', None)
-
-        if active is not None:
-            active = str2bool(active)
-            queryset = queryset.filter(part__active=active)
 
         return queryset
 
@@ -333,7 +341,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
 
     search_fields = [
@@ -345,6 +353,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'part__IPN',
         'part__name',
         'part__description',
+        'part__keywords',
     ]
 
 
@@ -377,7 +386,7 @@ class SupplierPriceBreakList(ListCreateAPI):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 

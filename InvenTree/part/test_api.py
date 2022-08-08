@@ -49,33 +49,107 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         """Test the PartCategoryList API endpoint"""
         url = reverse('api-part-category-list')
 
+        # star categories manually for tests as it is not possible with fixures
+        # because the current user is no fixure itself and throws an invalid
+        # foreign key constrain
+        for pk in [3, 4]:
+            PartCategory.objects.get(pk=pk).set_starred(self.user, True)
+
+        test_cases = [
+            ({}, 8, 'no parameters'),
+            ({'parent': 1, 'cascade': False}, 3, 'Filter by parent, no cascading'),
+            ({'parent': 1, 'cascade': True}, 5, 'Filter by parent, cascading'),
+            ({'cascade': True, 'depth': 0}, 8, 'Cascade with no parent, depth=0'),
+            ({'cascade': False, 'depth': 10}, 8, 'Cascade with no parent, depth=0'),
+            ({'parent': 'null', 'cascade': True, 'depth': 0}, 2, 'Cascade with null parent, depth=0'),
+            ({'parent': 'null', 'cascade': True, 'depth': 10}, 8, 'Cascade with null parent and bigger depth'),
+            ({'parent': 'null', 'cascade': False, 'depth': 10}, 2, 'No cascade even with depth specified with null parent'),
+            ({'parent': 1, 'cascade': False, 'depth': 0}, 3, 'Dont cascade with depth=0 and parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 0}, 3, 'Cascade with depth=0 and parent'),
+            ({'parent': 1, 'cascade': False, 'depth': 1}, 3, 'Dont cascade even with depth=1 specified with parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 1}, 5, 'Cascade with depth=1 with parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 'abcdefg'}, 5, 'Cascade with invalid depth and parent'),
+            ({'parent': 42}, 8, 'Should return everything if parent_pk is not vaild'),
+            ({'parent': 'null', 'exclude_tree': 1, 'cascade': True}, 2, 'Should return everything from except tree with pk=1'),
+            ({'parent': 'null', 'exclude_tree': 42, 'cascade': True}, 8, 'Should return everything because exclude_tree=42 is no valid pk'),
+            ({'parent': 1, 'starred': True, 'cascade': True}, 2, 'Should return the starred categories for the current user within the pk=1 tree'),
+            ({'parent': 1, 'starred': False, 'cascade': True}, 3, 'Should return the not starred categories for the current user within the pk=1 tree'),
+        ]
+
+        for params, res_len, description in test_cases:
+            response = self.get(url, params, expected_code=200)
+            self.assertEqual(len(response.data), res_len, description)
+
+        # Check that the required fields are present
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'default_location',
+            'level',
+            'parent',
+            'part_count',
+            'pathstring',
+            'url'
+        ]
+
         response = self.get(url, expected_code=200)
+        for result in response.data:
+            for f in fields:
+                self.assertIn(f, result, f'"{f}" is missing in result of PartCategory list')
 
-        self.assertEqual(len(response.data), 8)
+    def test_part_count(self):
+        """Test that the 'part_count' field is annotated correctly"""
 
-        # Filter by parent, depth=1
+        url = reverse('api-part-category-list')
+
+        # Create a parent category
+        cat = PartCategory.objects.create(
+            name='Parent Cat',
+            description='Some name',
+            parent=None
+        )
+
+        # Create child categories
+        for ii in range(10):
+            child = PartCategory.objects.create(
+                name=f"Child cat {ii}",
+                description="A child category",
+                parent=cat
+            )
+
+            # Create parts in this category
+            for jj in range(10):
+                Part.objects.create(
+                    name=f"Part xyz {jj}",
+                    description="A test part",
+                    category=child
+                )
+
+        # Filter by parent category
         response = self.get(
             url,
             {
-                'parent': 1,
-                'cascade': False,
+                'parent': cat.pk,
             },
             expected_code=200
         )
 
-        self.assertEqual(len(response.data), 3)
+        # 10 child categories
+        self.assertEqual(len(response.data), 10)
 
-        # Filter by parent, cascading
+        for result in response.data:
+            self.assertEqual(result['parent'], cat.pk)
+            self.assertEqual(result['part_count'], 10)
+
+        # Detail view for parent category
         response = self.get(
-            url,
-            {
-                'parent': 1,
-                'cascade': True,
-            },
-            expected_code=200,
+            f'/api/part/category/{cat.pk}/',
+            expected_code=200
         )
 
-        self.assertEqual(len(response.data), 5)
+        # Annotation should include parts from all sub-categories
+        self.assertEqual(response.data['part_count'], 100)
 
     def test_category_metadata(self):
         """Test metadata endpoint for the PartCategory."""
@@ -399,6 +473,21 @@ class PartAPITest(InvenTreeAPITestCase):
 
         for part in response.data:
             self.assertEqual(part['category'], 2)
+
+    def test_filter_by_in_bom(self):
+        """Test that we can filter part list by the 'in_bom_for' parameter"""
+
+        url = reverse('api-part-list')
+
+        response = self.get(
+            url,
+            {
+                'in_bom_for': 100,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 4)
 
     def test_filter_by_related(self):
         """Test that we can filter by the 'related' status"""
@@ -1499,6 +1588,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
             part=Part.objects.get(pk=101),
             quantity=10,
             title='Making some assemblies',
+            reference='BO-9999',
             status=BuildStatus.PRODUCTION,
         )
 
@@ -1631,6 +1721,102 @@ class BomItemTest(InvenTreeAPITestCase):
 
             for key in ['available_stock', 'available_substitute_stock']:
                 self.assertTrue(key in el)
+
+    def test_bom_list_search(self):
+        """Test that we can search the BOM list API endpoint"""
+
+        url = reverse('api-bom-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 6)
+
+        # Limit the results with a search term
+        response = self.get(
+            url,
+            {
+                'search': '0805',
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 3)
+
+        # Search by 'reference' field
+        for q in ['ABCDE', 'LMNOP', 'VWXYZ']:
+            response = self.get(
+                url,
+                {
+                    'search': q,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(len(response.data), 1)
+            self.assertEqual(response.data[0]['reference'], q)
+
+        # Search by nonsense data
+        response = self.get(
+            url,
+            {
+                'search': 'xxxxxxxxxxxxxxxxx',
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 0)
+
+    def test_bom_list_ordering(self):
+        """Test that the BOM list results can be ordered"""
+
+        url = reverse('api-bom-list')
+
+        # Order by increasing quantity
+        response = self.get(
+            f"{url}?ordering=+quantity",
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 6)
+
+        q1 = response.data[0]['quantity']
+        q2 = response.data[-1]['quantity']
+
+        self.assertTrue(q1 < q2)
+
+        # Order by decreasing quantity
+        response = self.get(
+            f"{url}?ordering=-quantity",
+            expected_code=200,
+        )
+
+        self.assertEqual(q1, response.data[-1]['quantity'])
+        self.assertEqual(q2, response.data[0]['quantity'])
+
+        # Now test ordering by 'sub_part' (which is actually 'sub_part__name')
+        response = self.get(
+            url,
+            {
+                'ordering': 'sub_part',
+                'sub_part_detail': True,
+            },
+            expected_code=200,
+        )
+
+        n1 = response.data[0]['sub_part_detail']['name']
+        n2 = response.data[-1]['sub_part_detail']['name']
+
+        response = self.get(
+            url,
+            {
+                'ordering': '-sub_part',
+                'sub_part_detail': True,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(n1, response.data[-1]['sub_part_detail']['name'])
+        self.assertEqual(n2, response.data[0]['sub_part_detail']['name'])
 
     def test_get_bom_detail(self):
         """Get the detail view for a single BomItem object."""

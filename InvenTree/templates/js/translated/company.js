@@ -102,10 +102,14 @@ function editManufacturerPart(part, options={}) {
 }
 
 
-function supplierPartFields() {
+function supplierPartFields(options={}) {
 
-    return {
-        part: {},
+    var fields = {
+        part: {
+            filters: {
+                purchaseable: true,
+            }
+        },
         manufacturer_part: {
             filters: {
                 part_detail: true,
@@ -128,6 +132,12 @@ function supplierPartFields() {
             icon: 'fa-box',
         }
     };
+
+    if (options.part) {
+        fields.manufacturer_part.filters.part = options.part;
+    }
+
+    return fields;
 }
 
 /*
@@ -135,10 +145,11 @@ function supplierPartFields() {
  */
 function createSupplierPart(options={}) {
 
-    var fields = supplierPartFields();
+    var fields = supplierPartFields({
+        part: options.part,
+    });
 
     if (options.part) {
-        fields.manufacturer_part.filters.part = options.part;
         fields.part.hidden = true;
         fields.part.value = options.part;
     }
@@ -263,6 +274,7 @@ function deleteSupplierParts(parts, options={}) {
 
     constructForm('{% url "api-supplier-part-list" %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete Supplier Parts" %}',
         preFormContent: html,
         form_data: {
@@ -491,6 +503,7 @@ function deleteManufacturerParts(selections, options={}) {
 
     constructForm('{% url "api-manufacturer-part-list" %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete Manufacturer Parts" %}',
         preFormContent: html,
         form_data: {
@@ -538,6 +551,7 @@ function deleteManufacturerPartParameters(selections, options={}) {
 
     constructForm('{% url "api-manufacturer-part-parameter-list" %}', {
         method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete Parameters" %}',
         preFormContent: html,
         form_data: {
@@ -837,6 +851,7 @@ function loadSupplierPartTable(table, url, options) {
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
+        sortable: true,
         formatNoMatches: function() {
             return '{% trans "No supplier parts found" %}';
         },
@@ -953,6 +968,11 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'packaging',
                 title: '{% trans "Packaging" %}',
                 sortable: false,
+            },
+            {
+                field: 'in_stock',
+                title: '{% trans "In Stock" %}',
+                sortable: true,
             },
             {
                 field: 'available',

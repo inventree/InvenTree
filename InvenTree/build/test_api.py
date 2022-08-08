@@ -748,6 +748,7 @@ class BuildListTest(BuildAPITest):
 
         Build.objects.create(
             part=part,
+            reference="BO-0006",
             quantity=10,
             title='Just some thing',
             status=BuildStatus.PRODUCTION,
@@ -773,20 +774,23 @@ class BuildListTest(BuildAPITest):
             Build.objects.create(
                 part=part,
                 quantity=10,
-                reference=f"build-000{i}",
+                reference=f"BO-{i + 10}",
                 title=f"Sub build {i}",
                 parent=parent
             )
 
         # And some sub-sub builds
-        for sub_build in Build.objects.filter(parent=parent):
+        for ii, sub_build in enumerate(Build.objects.filter(parent=parent)):
 
             for i in range(3):
+
+                x = ii * 10 + i + 50
+
                 Build.objects.create(
                     part=part,
-                    reference=f"{sub_build.reference}-00{i}-sub",
+                    reference=f"BO-{x}",
+                    title=f"{sub_build.reference}-00{i}-sub",
                     quantity=40,
-                    title=f"sub sub build {i}",
                     parent=sub_build
                 )
 

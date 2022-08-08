@@ -40,18 +40,26 @@ class SalesOrderTest(TestCase):
         # Create a SalesOrder to ship against
         self.order = SalesOrder.objects.create(
             customer=self.customer,
-            reference='1234',
+            reference='SO-1234',
             customer_reference='ABC 55555'
         )
 
         # Create a Shipment against this SalesOrder
         self.shipment = SalesOrderShipment.objects.create(
             order=self.order,
-            reference='001',
+            reference='SO-001',
         )
 
         # Create a line item
         self.line = SalesOrderLineItem.objects.create(quantity=50, order=self.order, part=self.part)
+
+    def test_so_reference(self):
+        """Unit tests for sales order generation"""
+
+        # Test that a good reference is created when we have no existing orders
+        SalesOrder.objects.all().delete()
+
+        self.assertEqual(SalesOrder.generate_reference(), 'SO-0001')
 
     def test_rebuild_reference(self):
         """Test that the 'reference_int' field gets rebuilt when the model is saved"""

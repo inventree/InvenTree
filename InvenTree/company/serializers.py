@@ -1,16 +1,20 @@
 """JSON serializers for Company app."""
 
+import io
+
+from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
+import part.filters
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer)
+                                   InvenTreeMoneySerializer, RemoteImageMixin)
 from part.serializers import PartBriefSerializer
 
 from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
@@ -38,7 +42,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
-class CompanySerializer(InvenTreeModelSerializer):
+class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for Company object (full detail)"""
 
     @staticmethod
@@ -94,7 +98,32 @@ class CompanySerializer(InvenTreeModelSerializer):
             'notes',
             'parts_supplied',
             'parts_manufactured',
+            'remote_image',
         ]
+
+    def save(self):
+        """Save the Company instance"""
+        super().save()
+
+        company = self.instance
+
+        # Check if an image was downloaded from a remote URL
+        remote_img = getattr(self, 'remote_image_file', None)
+
+        if remote_img and company:
+            fmt = remote_img.format or 'PNG'
+            buffer = io.BytesIO()
+            remote_img.save(buffer, format=fmt)
+
+            # Construct a simplified name for the image
+            filename = f"company_{company.pk}_image.{fmt.lower()}"
+
+            company.image.save(
+                filename,
+                ContentFile(buffer.getvalue()),
+            )
+
+        return self.instance
 
 
 class ManufacturerPartSerializer(InvenTreeModelSerializer):
@@ -199,6 +228,9 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
 class SupplierPartSerializer(InvenTreeModelSerializer):
     """Serializer for SupplierPart object."""
 
+    # Annotated field showing total in-stock quantity
+    in_stock = serializers.FloatField(read_only=True)
+
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
@@ -249,6 +281,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'available',
             'availability_updated',
             'description',
+            'in_stock',
             'link',
             'manufacturer',
             'manufacturer_detail',
@@ -269,6 +302,20 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         read_only_fields = [
             'availability_updated',
         ]
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the SupplierPart queryset with extra fields:
+
+        Fields:
+            in_stock: Current stock quantity for each SupplierPart
+        """
+
+        queryset = queryset.annotate(
+            in_stock=part.filters.annotate_total_stock()
+        )
+
+        return queryset
 
     def update(self, supplier_part, data):
         """Custom update functionality for the serializer"""

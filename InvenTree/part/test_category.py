@@ -64,8 +64,68 @@ class CategoryTest(TestCase):
 
     def test_path_string(self):
         """Test that the category path string works correctly."""
+
+        # Note that due to data migrations, these fields need to be saved first
+        self.resistors.save()
+        self.transceivers.save()
+
         self.assertEqual(str(self.resistors), 'Electronics/Resistors - Resistors')
         self.assertEqual(str(self.transceivers.pathstring), 'Electronics/IC/Transceivers')
+
+        # Create a new subcategory
+        subcat = PartCategory.objects.create(
+            name='Subcategory',
+            description='My little sub category',
+            parent=self.transceivers
+        )
+
+        # Pathstring should have been updated correctly
+        self.assertEqual(subcat.pathstring, 'Electronics/IC/Transceivers/Subcategory')
+        self.assertEqual(len(subcat.path), 4)
+
+        # Move to a new parent location
+        subcat.parent = self.resistors
+        subcat.save()
+        self.assertEqual(subcat.pathstring, 'Electronics/Resistors/Subcategory')
+        self.assertEqual(len(subcat.path), 3)
+
+        # Move to top-level
+        subcat.parent = None
+        subcat.save()
+        self.assertEqual(subcat.pathstring, 'Subcategory')
+        self.assertEqual(len(subcat.path), 1)
+
+        # Construct a very long pathstring and ensure it gets updated correctly
+        cat = PartCategory.objects.create(
+            name='Cat',
+            description='A long running category',
+            parent=None
+        )
+
+        parent = cat
+
+        for idx in range(26):
+            letter = chr(ord('A') + idx)
+
+            child = PartCategory.objects.create(
+                name=letter * 10,
+                description=f"Subcategory {letter}",
+                parent=parent
+            )
+
+            parent = child
+
+        self.assertTrue(len(child.path), 26)
+        self.assertEqual(
+            child.pathstring,
+            "Cat/AAAAAAAAAA/BBBBBBBBBB/CCCCCCCCCC/DDDDDDDDDD/EEEEEEEEEE/FFFFFFFFFF/GGGGGGGGGG/HHHHHHHHHH/IIIIIIIIII/JJJJJJJJJJ/.../OOOOOOOOOO/PPPPPPPPPP/QQQQQQQQQQ/RRRRRRRRRR/SSSSSSSSSS/TTTTTTTTTT/UUUUUUUUUU/VVVVVVVVVV/WWWWWWWWWW/XXXXXXXXXX/YYYYYYYYYY/ZZZZZZZZZZ"
+        )
+        self.assertTrue(len(child.pathstring) <= 250)
+
+        # Attempt an invalid move
+        with self.assertRaises(ValidationError):
+            cat.parent = child
+            cat.save()
 
     def test_url(self):
         """Test that the PartCategory URL works."""
@@ -109,19 +169,6 @@ class CategoryTest(TestCase):
                     part_parameter.pop(item)
                 self.assertEqual(len(part_parameter), 1)
 
-    def test_invalid_name(self):
-        """Test that an illegal character is prohibited in a category name"""
-        cat = PartCategory(name='test/with/illegal/chars', description='Test category', parent=None)
-
-        with self.assertRaises(ValidationError) as err:
-            cat.full_clean()
-            cat.save()  # pragma: no cover
-
-        self.assertIn('Illegal character in name', str(err.exception.error_dict.get('name')))
-
-        cat.name = 'good name'
-        cat.save()
-
     def test_delete(self):
         """Test that category deletion moves the children properly."""
         # Delete the 'IC' category and 'Transceiver' should move to be under 'Electronics'
@@ -144,6 +191,9 @@ class CategoryTest(TestCase):
 
     def test_default_locations(self):
         """Test traversal for default locations."""
+
+        self.assertIsNotNone(self.fasteners.default_location)
+        self.fasteners.default_location.save()
         self.assertEqual(str(self.fasteners.default_location), 'Office/Drawer_1 - In my desk')
 
         # Any part under electronics should default to 'Home'

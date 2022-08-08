@@ -3,6 +3,7 @@
 import logging
 import os
 import re
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -19,9 +20,10 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
+import InvenTree.format
 import InvenTree.helpers
+from common.models import InvenTreeSetting
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.validators import validate_tree_name
 
 logger = logging.getLogger('inventree')
 
@@ -96,9 +98,6 @@ class DataImportMixin(object):
 class ReferenceIndexingMixin(models.Model):
     """A mixin for keeping track of numerical copies of the "reference" field.
 
-    !!DANGER!! always add `ReferenceIndexingSerializerMixin`to all your models serializers to
-    ensure the reference field is not too big
-
     Here, we attempt to convert a "reference" field value (char) to an integer,
     for performing fast natural sorting.
 
@@ -112,23 +111,215 @@ class ReferenceIndexingMixin(models.Model):
     - Otherwise, we store zero
     """
 
+    # Name of the global setting which defines the required reference pattern for this model
+    REFERENCE_PATTERN_SETTING = None
+
+    @classmethod
+    def get_reference_pattern(cls):
+        """Returns the reference pattern associated with this model.
+
+        This is defined by a global setting object, specified by the REFERENCE_PATTERN_SETTING attribute
+        """
+
+        # By default, we return an empty string
+        if cls.REFERENCE_PATTERN_SETTING is None:
+            return ''
+
+        return InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
+
+    @classmethod
+    def get_reference_context(cls):
+        """Generate context data for generating the 'reference' field for this class.
+
+        - Returns a python dict object which contains the context data for formatting the reference string.
+        - The default implementation provides some default context information
+        """
+
+        return {
+            'ref': cls.get_next_reference(),
+            'date': datetime.now(),
+        }
+
+    @classmethod
+    def get_most_recent_item(cls):
+        """Return the item which is 'most recent'
+
+        In practice, this means the item with the highest reference value
+        """
+
+        query = cls.objects.all().order_by('-reference_int', '-pk')
+
+        if query.exists():
+            return query.first()
+        else:
+            return None
+
+    @classmethod
+    def get_next_reference(cls):
+        """Return the next available reference value for this particular class."""
+
+        # Find the "most recent" item
+        latest = cls.get_most_recent_item()
+
+        if not latest:
+            # No existing items
+            return 1
+
+        reference = latest.reference.strip
+
+        try:
+            reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
+        except Exception:
+            # If reference cannot be extracted using the pattern, try just the integer value
+            reference = str(latest.reference_int)
+
+        # Attempt to perform 'intelligent' incrementing of the reference field
+        incremented = InvenTree.helpers.increment(reference)
+
+        try:
+            incremented = int(incremented)
+        except ValueError:
+            pass
+
+        return incremented
+
+    @classmethod
+    def generate_reference(cls):
+        """Generate the next 'reference' field based on specified pattern"""
+
+        fmt = cls.get_reference_pattern()
+        ctx = cls.get_reference_context()
+
+        reference = None
+
+        attempts = set()
+
+        while reference is None:
+            try:
+                ref = fmt.format(**ctx)
+
+                if ref in attempts:
+                    # We are stuck in a loop!
+                    reference = ref
+                    break
+                else:
+                    attempts.add(ref)
+
+                    if cls.objects.filter(reference=ref).exists():
+                        # Handle case where we have duplicated an existing reference
+                        ctx['ref'] = InvenTree.helpers.increment(ctx['ref'])
+                    else:
+                        # We have found an 'unused' reference
+                        reference = ref
+                        break
+
+            except Exception:
+                # If anything goes wrong, return the most recent reference
+                recent = cls.get_most_recent_item()
+                if recent:
+                    reference = recent.reference
+                else:
+                    reference = ""
+
+        return reference
+
+    @classmethod
+    def validate_reference_pattern(cls, pattern):
+        """Ensure that the provided pattern is valid"""
+
+        ctx = cls.get_reference_context()
+
+        try:
+            info = InvenTree.format.parse_format_string(pattern)
+        except Exception:
+            raise ValidationError({
+                "value": _("Improperly formatted pattern"),
+            })
+
+        # Check that only 'allowed' keys are provided
+        for key in info.keys():
+            if key not in ctx.keys():
+                raise ValidationError({
+                    "value": _("Unknown format key specified") + f": '{key}'"
+                })
+
+        # Check that the 'ref' variable is specified
+        if 'ref' not in info.keys():
+            raise ValidationError({
+                'value': _("Missing required format key") + ": 'ref'"
+            })
+
+    @classmethod
+    def validate_reference_field(cls, value):
+        """Check that the provided 'reference' value matches the requisite pattern"""
+
+        pattern = cls.get_reference_pattern()
+
+        value = str(value).strip()
+
+        if len(value) == 0:
+            raise ValidationError(_("Reference field cannot be empty"))
+
+        # An 'empty' pattern means no further validation is required
+        if not pattern:
+            return
+
+        if not InvenTree.format.validate_string(value, pattern):
+            raise ValidationError(_("Reference must match required pattern") + ": " + pattern)
+
+        # Check that the reference field can be rebuild
+        cls.rebuild_reference_field(value, validate=True)
+
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
 
         abstract = True
 
-    def rebuild_reference_field(self):
-        """Extract integer out of reference for sorting."""
-        reference = getattr(self, 'reference', '')
-        self.reference_int = extract_int(reference)
+    @classmethod
+    def rebuild_reference_field(cls, reference, validate=False):
+        """Extract integer out of reference for sorting.
+
+        If the 'integer' portion is buried somewhere 'within' the reference,
+        we can first try to extract it using the pattern.
+
+        Example:
+        reference - BO-123-ABC
+        pattern - BO-{ref}-???
+        extracted - 123
+
+        If we cannot extract using the pattern for some reason, fallback to the entire reference
+        """
+
+        try:
+            # Extract named group based on provided pattern
+            reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
+        except Exception:
+            pass
+
+        reference_int = extract_int(reference)
+
+        if validate:
+            if reference_int > models.BigIntegerField.MAX_BIGINT:
+                raise ValidationError({
+                    "reference": _("Reference number is too large")
+                })
+
+        return reference_int
 
     reference_int = models.BigIntegerField(default=0)
 
 
-def extract_int(reference, clip=0x7fffffff):
-    """Extract integer out of reference."""
+def extract_int(reference, clip=0x7fffffff, allow_negative=False):
+    """Extract an integer out of reference."""
+
     # Default value if we cannot convert to an integer
     ref_int = 0
+
+    reference = str(reference).strip()
+
+    # Ignore empty string
+    if len(reference) == 0:
+        return 0
 
     # Look at the start of the string - can it be "integerized"?
     result = re.match(r"^(\d+)", reference)
@@ -139,6 +330,16 @@ def extract_int(reference, clip=0x7fffffff):
             ref_int = int(ref)
         except Exception:
             ref_int = 0
+    else:
+        # Look at the "end" of the string
+        result = re.search(r'(\d+)$', reference)
+
+        if result and len(result.groups()) == 1:
+            ref = result.groups()[0]
+            try:
+                ref_int = int(ref)
+            except Exception:
+                ref_int = 0
 
     # Ensure that the returned values are within the range that can be stored in an IntegerField
     # Note: This will result in large values being "clipped"
@@ -147,6 +348,9 @@ def extract_int(reference, clip=0x7fffffff):
             ref_int = clip
         elif ref_int < -clip:
             ref_int = -clip
+
+    if not allow_negative and ref_int < 0:
+        ref_int = abs(ref_int)
 
     return ref_int
 
@@ -233,26 +437,12 @@ class InvenTreeAttachment(models.Model):
         if len(fn) == 0:
             raise ValidationError(_('Filename must not be empty'))
 
-        attachment_dir = os.path.join(
-            settings.MEDIA_ROOT,
-            self.getSubdir()
-        )
-
-        old_file = os.path.join(
-            settings.MEDIA_ROOT,
-            self.attachment.name
-        )
-
-        new_file = os.path.join(
-            settings.MEDIA_ROOT,
-            self.getSubdir(),
-            fn
-        )
-
-        new_file = os.path.abspath(new_file)
+        attachment_dir = settings.MEDIA_ROOT.joinpath(self.getSubdir())
+        old_file = settings.MEDIA_ROOT.joinpath(self.attachment.name)
+        new_file = settings.MEDIA_ROOT.joinpath(self.getSubdir(), fn).resolve()
 
         # Check that there are no directory tricks going on...
-        if os.path.dirname(new_file) != attachment_dir:
+        if new_file.parent != attachment_dir:
             logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
             raise ValidationError(_("Invalid attachment directory"))
 
@@ -269,11 +459,11 @@ class InvenTreeAttachment(models.Model):
         if len(fn.split('.')) < 2:
             raise ValidationError(_("Filename missing extension"))
 
-        if not os.path.exists(old_file):
+        if not old_file.exists():
             logger.error(f"Trying to rename attachment '{old_file}' which does not exist")
             return
 
-        if os.path.exists(new_file):
+        if new_file.exists():
             raise ValidationError(_("Attachment with this filename already exists"))
 
         try:
@@ -310,13 +500,24 @@ class InvenTreeTree(MPTTModel):
         }
 
     def save(self, *args, **kwargs):
-        """Provide better error for invalid moves."""
+        """Custom save method for InvenTreeTree abstract model"""
+
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
+            # Provide better error for parent selection
             raise ValidationError({
                 'parent': _("Invalid choice"),
             })
+
+        # Re-calculate the 'pathstring' field
+        pathstring = InvenTree.helpers.constructPathString(
+            [item.name for item in self.path]
+        )
+
+        if pathstring != self.pathstring:
+            self.pathstring = pathstring
+            super().save(force_update=True)
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -333,7 +534,6 @@ class InvenTreeTree(MPTTModel):
     name = models.CharField(
         blank=False,
         max_length=100,
-        validators=[validate_tree_name],
         verbose_name=_("Name"),
         help_text=_("Name"),
     )
@@ -352,6 +552,14 @@ class InvenTreeTree(MPTTModel):
                             null=True,
                             verbose_name=_("parent"),
                             related_name='children')
+
+    # The 'pathstring' field is calculated each time the model is saved
+    pathstring = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Path'),
+        help_text=_('Path')
+    )
 
     @property
     def item_count(self):
@@ -423,14 +631,6 @@ class InvenTreeTree(MPTTModel):
         """
         return self.parentpath + [self]
 
-    @property
-    def pathstring(self):
-        """Get a string representation for the path of this item.
-
-        e.g. "Top/Second/Third/This"
-        """
-        return '/'.join([item.name for item in self.path])
-
     def __str__(self):
         """String representation of a category is the full path to that category."""
         return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
@@ -461,13 +661,15 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
             users = get_user_model().objects.filter(is_staff=True)
 
+            link = InvenTree.helpers.construct_absolute_url(
+                reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
+            )
+
             context = {
                 'error': instance,
                 'name': _('Server Error'),
                 'message': _('An error has been logged by the server.'),
-                'link': InvenTree.helpers.construct_absolute_url(
-                    reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
-                )
+                'link': link
             }
 
             common.notifications.trigger_notification(

@@ -1916,10 +1916,7 @@ function loadStockTable(table, options) {
             var text = `${row.purchase_order}`;
 
             if (row.purchase_order_reference) {
-
-                var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-
-                text = prefix + row.purchase_order_reference;
+                text = row.purchase_order_reference;
             }
 
             return renderLink(text, link);
@@ -2229,6 +2226,7 @@ function loadStockLocationTable(table, options) {
 
     if (tree_view) {
         params.cascade = true;
+        params.depth = global_settings.INVENTREE_TREE_DEPTH;
     }
 
     var filters = {};
@@ -2251,6 +2249,35 @@ function loadStockLocationTable(table, options) {
         filters[key] = params[key];
     }
 
+    // Function to request sub-location items
+    function requestSubItems(parent_pk) {
+        inventreeGet(
+            options.url || '{% url "api-location-list" %}',
+            {
+                parent: parent_pk,
+            },
+            {
+                success: function(response) {
+                    // Add the returned sub-items to the table
+                    for (var idx = 0; idx < response.length; idx++) {
+                        response[idx].parent = parent_pk;
+                    }
+
+                    const row = $(table).bootstrapTable('getRowByUniqueId', parent_pk);
+                    row.subReceived = true;
+
+                    $(table).bootstrapTable('updateByUniqueId', parent_pk, row, true);
+
+                    table.bootstrapTable('append', response);
+                },
+                error: function(xhr) {
+                    console.error('Error requesting sub-locations for location=' + parent_pk);
+                    showApiError(xhr);
+                }
+            }
+        );
+    }
+
     table.inventreeTable({
         treeEnable: tree_view,
         rootParentId: tree_view ? options.params.parent : null,
@@ -2267,6 +2294,7 @@ function loadStockLocationTable(table, options) {
         queryParams: filters,
         name: 'location',
         original: original,
+        sortable: true,
         showColumns: true,
         onPostBody: function() {
 
@@ -2287,6 +2315,20 @@ function loadStockLocationTable(table, options) {
                         onExpand: function() {
 
                         }
+                    });
+
+                    // Callback for 'load sub location' button
+                    $(table).find('.load-sub-location').click(function(event) {
+                        event.preventDefault();
+
+                        const pk = $(this).attr('pk');
+                        const row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                        // Request sub-location for this location
+                        requestSubItems(row.pk);
+
+                        row.subRequested = true;
+                        $(table).bootstrapTable('updateByUniqueId', pk, row, true);
                     });
                 } else {
                     $('#view-location-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
@@ -2347,10 +2389,25 @@ function loadStockLocationTable(table, options) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    return renderLink(
+                    let html = '';
+
+                    if (row._level >= global_settings.INVENTREE_TREE_DEPTH && !row.subReceived) {
+                        if (row.subRequested) {
+                            html += `<a href='#'><span class='fas fa-sync fa-spin'></span></a>`;
+                        } else {
+                            html += `
+                                <a href='#' pk='${row.pk}' class='load-sub-location'>
+                                    <span class='fas fa-sync-alt' title='{% trans "Load Subloactions" %}'></span>
+                                </a> `;
+                        }
+                    }
+
+                    html += renderLink(
                         value,
                         `/stock/location/${row.pk}/`
                     );
+
+                    return html;
                 },
             },
             {
@@ -2363,14 +2420,13 @@ function loadStockLocationTable(table, options) {
                 field: 'pathstring',
                 title: '{% trans "Path" %}',
                 switchable: true,
-                sortable: false,
+                sortable: true,
             },
             {
                 field: 'items',
                 title: '{% trans "Stock Items" %}',
                 switchable: true,
-                sortable: false,
-                sortName: 'item_count',
+                sortable: true,
             }
         ]
     });

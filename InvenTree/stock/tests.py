@@ -44,6 +44,45 @@ class StockTest(InvenTreeTestCase):
         Part.objects.rebuild()
         StockItem.objects.rebuild()
 
+    def test_link(self):
+        """Test the link URL field validation"""
+
+        item = StockItem.objects.get(pk=1)
+
+        # Check that invalid URLs fail
+        for bad_url in [
+            'test.com',
+            'httpx://abc.xyz',
+            'https:google.com',
+        ]:
+            with self.assertRaises(ValidationError):
+                item.link = bad_url
+                item.save()
+                item.full_clean()
+
+        # Check that valid URLs pass
+        for good_url in [
+            'https://test.com',
+            'https://digikey.com/datasheets?file=1010101010101.bin',
+            'ftp://download.com:8080/file.aspx',
+        ]:
+            item.link = good_url
+            item.save()
+            item.full_clean()
+
+        # A long URL should fail
+        long_url = 'https://website.co.uk?query=' + 'a' * 173
+
+        with self.assertRaises(ValidationError):
+            item.link = long_url
+            item.full_clean()
+
+        # Shorten by a single character, will pass
+        long_url = long_url[:-1]
+
+        item.link = long_url
+        item.save()
+
     def test_expiry(self):
         """Test expiry date functionality for StockItem model."""
         today = datetime.datetime.now().date()
@@ -87,7 +126,7 @@ class StockTest(InvenTreeTestCase):
         # And there should be *no* items being build
         self.assertEqual(part.quantity_being_built, 0)
 
-        build = Build.objects.create(reference='12345', part=part, title='A test build', quantity=1)
+        build = Build.objects.create(reference='BO-4444', part=part, title='A test build', quantity=1)
 
         # Add some stock items which are "building"
         for _ in range(10):
@@ -125,6 +164,10 @@ class StockTest(InvenTreeTestCase):
 
     def test_parent_locations(self):
         """Test parent."""
+
+        # Ensure pathstring gets updated
+        self.drawer3.save()
+
         self.assertEqual(self.office.parent, None)
         self.assertEqual(self.drawer1.parent, self.office)
         self.assertEqual(self.drawer2.parent, self.office)
@@ -395,13 +438,14 @@ class StockTest(InvenTreeTestCase):
         item.serial = "-123"
         item.save()
 
-        # Negative number should map to zero
-        self.assertEqual(item.serial_int, 0)
+        # Negative number should map to positive value
+        self.assertEqual(item.serial_int, 123)
 
         # Test a very very large value
         item.serial = '99999999999999999999999999999999999999999999999999999'
         item.save()
 
+        # The 'integer' portion has been clipped to a maximum value
         self.assertEqual(item.serial_int, 0x7fffffff)
 
         # Non-numeric values should encode to zero

@@ -16,6 +16,7 @@
     sanitizeData,
 */
 
+
 function attachClipboard(selector, containerselector, textElement) {
     // set container
     if (containerselector) {
@@ -39,8 +40,7 @@ function attachClipboard(selector, containerselector, textElement) {
     }
 
     // create Clipboard
-    // eslint-disable-next-line no-unused-vars
-    var cis = new ClipboardJS(selector, {
+    new ClipboardJS(selector, {
         text: text,
         container: containerselector
     });
@@ -109,6 +109,9 @@ function inventreeDocReady() {
     $('#launch-about').click(function() {
         launchModalForm(`/about/`, {
             no_post: true,
+            after_render: function() {
+                attachClipboard('.clip-btn', 'modal-form', 'about-copy-text');
+            }
         });
     });
 
@@ -118,9 +121,6 @@ function inventreeDocReady() {
             no_post: true,
         });
     });
-
-    // Initialize clipboard-buttons
-    attachClipboard('.clip-btn');
 
     // Generate brand-icons
     $('.brand-icon').each(function(i, obj) {

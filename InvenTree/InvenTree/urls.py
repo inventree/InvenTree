@@ -32,12 +32,12 @@ from users.api import user_urls
 
 from .api import InfoView, NotFoundView
 from .views import (AboutView, AppearanceSelectView, CurrencyRefreshView,
-                    CustomConnectionsView, CustomEmailView,
+                    CustomConnectionsView, CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
                     CustomSessionDeleteOtherView, CustomSessionDeleteView,
-                    DatabaseStatsView, DynamicJsView, EditUserView, IndexView,
-                    NotificationsView, SearchView, SetPasswordView,
-                    SettingsView, auth_request)
+                    CustomTwoFactorRemove, DatabaseStatsView, DynamicJsView,
+                    EditUserView, IndexView, NotificationsView, SearchView,
+                    SetPasswordView, SettingsView, auth_request)
 
 admin.site.site_header = "InvenTree Admin"
 
@@ -152,7 +152,6 @@ frontendpatterns = [
 
     # admin sites
     re_path(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
-    re_path(f'^{settings.INVENTREE_ADMIN_URL}/shell/', include('django_admin_shell.urls')),
     re_path(f'^{settings.INVENTREE_ADMIN_URL}/', admin.site.urls, name='inventree-admin'),
 
     # DB user sessions
@@ -164,6 +163,14 @@ frontendpatterns = [
     re_path(r'^accounts/email/', CustomEmailView.as_view(), name='account_email'),
     re_path(r'^accounts/social/connections/', CustomConnectionsView.as_view(), name='socialaccount_connections'),
     re_path(r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$", CustomPasswordResetFromKeyView.as_view(), name="account_reset_password_from_key"),
+
+    # Temporary fix for django-allauth-2fa # TODO remove
+    # See https://github.com/inventree/InvenTree/security/advisories/GHSA-8j76-mm54-52xq
+    re_path(r'^accounts/two_factor/remove/?$', CustomTwoFactorRemove.as_view(), name='two-factor-remove'),
+
+    # Override login page
+    re_path("accounts/login/", CustomLoginView.as_view(), name="account_login"),
+
     re_path(r'^accounts/', include('allauth_2fa.urls')),    # MFA support
     re_path(r'^accounts/', include('allauth.urls')),        # included urlpatterns
 ]

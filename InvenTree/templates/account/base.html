@@ -89,27 +89,20 @@
 <!-- general JS -->
 {% include "third_party_js.html" %}
 
-<script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'notification.js' %}"></script>
-
+<script type='text/javascript' src='{% static "script/inventree/message.js" %}'></script>
 
 <script type='text/javascript'>
 
 $(document).ready(function () {
-    // notifications
+
     {% if messages %}
     {% for message in messages %}
-    showAlertOrCache(
-        '{{ message }}',
-        true,
-        {
-            style: 'info',
-        }
-    );
+        showMessage(messsage);
     {% endfor %}
     {% endif %}
 
-    inventreeDocReady();
+    showCachedAlerts();
+
 });
 
 </script>

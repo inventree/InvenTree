@@ -111,14 +111,13 @@ class ReportBase(models.Model):
 
         path = os.path.join('report', 'report_template', self.getSubdir(), filename)
 
-        fullpath = os.path.join(settings.MEDIA_ROOT, path)
-        fullpath = os.path.abspath(fullpath)
+        fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
         # If the report file is the *same* filename as the one being uploaded,
         # remove the original one from the media directory
         if str(filename) == str(self.template):
 
-            if os.path.exists(fullpath):
+            if fullpath.exists():
                 logger.info(f"Deleting existing report template: '{filename}'")
                 os.remove(fullpath)
 
@@ -139,10 +138,12 @@ class ReportBase(models.Model):
         Required for passing the file to an external process
         """
         template = self.template.name
+
+        # TODO @matmair change to using new file objects
         template = template.replace('/', os.path.sep)
         template = template.replace('\\', os.path.sep)
 
-        template = os.path.join(settings.MEDIA_ROOT, template)
+        template = settings.MEDIA_ROOT.joinpath(template)
 
         return template
 
@@ -425,7 +426,6 @@ class PurchaseOrderReport(ReportTemplateBase):
             'order': order,
             'reference': order.reference,
             'supplier': order.supplier,
-            'prefix': common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_PREFIX'),
             'title': str(order),
         }
 
@@ -463,7 +463,6 @@ class SalesOrderReport(ReportTemplateBase):
             'lines': order.lines,
             'extra_lines': order.extra_lines,
             'order': order,
-            'prefix': common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_PREFIX'),
             'reference': order.reference,
             'title': str(order),
         }
@@ -476,14 +475,13 @@ def rename_snippet(instance, filename):
 
     path = os.path.join('report', 'snippets', filename)
 
-    fullpath = os.path.join(settings.MEDIA_ROOT, path)
-    fullpath = os.path.abspath(fullpath)
+    fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
     # If the snippet file is the *same* filename as the one being uploaded,
     # delete the original one from the media directory
     if str(filename) == str(instance.snippet):
 
-        if os.path.exists(fullpath):
+        if fullpath.exists():
             logger.info(f"Deleting existing snippet file: '{filename}'")
             os.remove(fullpath)
 
@@ -519,10 +517,9 @@ def rename_asset(instance, filename):
     # If the asset file is the *same* filename as the one being uploaded,
     # delete the original one from the media directory
     if str(filename) == str(instance.asset):
-        fullpath = os.path.join(settings.MEDIA_ROOT, path)
-        fullpath = os.path.abspath(fullpath)
+        fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
-        if os.path.exists(fullpath):
+        if fullpath.exists():
             logger.info(f"Deleting existing asset file: '{filename}'")
             os.remove(fullpath)
 
@@ -541,10 +538,16 @@ class ReportAsset(models.Model):
         """String representation of a ReportAsset instance"""
         return os.path.basename(self.asset.name)
 
+    # Asset file
     asset = models.FileField(
         upload_to=rename_asset,
         verbose_name=_('Asset'),
         help_text=_("Report asset file"),
     )
 
-    description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_("Asset file description"))
+    # Asset description (user facing string, not used internally)
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_("Asset file description")
+    )

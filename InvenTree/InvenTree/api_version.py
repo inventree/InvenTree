@@ -2,10 +2,47 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 61
+INVENTREE_API_VERSION = 70
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v70 -> 2022-08-02 : https://github.com/inventree/InvenTree/pull/3451
+    - Adds a 'depth' parameter to the PartCategory list API
+    - Adds a 'depth' parameter to the StockLocation list API
+
+v69 -> 2022-08-01 : https://github.com/inventree/InvenTree/pull/3443
+    - Updates the PartCategory list API:
+        - Improve query efficiency: O(n) becomes O(1)
+        - Rename 'parts' field to 'part_count'
+    - Updates the StockLocation list API:
+        - Improve query efficiency: O(n) becomes O(1)
+
+v68 -> 2022-07-27 : https://github.com/inventree/InvenTree/pull/3417
+    - Allows SupplierPart list to be filtered by SKU value
+    - Allows SupplierPart list to be filtered by MPN value
+
+v67 -> 2022-07-25 : https://github.com/inventree/InvenTree/pull/3395
+    - Adds a 'requirements' endpoint for Part instance
+    - Provides information on outstanding order requirements for a given part
+
+v66 -> 2022-07-24 : https://github.com/inventree/InvenTree/pull/3393
+    - Part images can now be downloaded from a remote URL via the API
+    - Company images can now be downloaded from a remote URL via the API
+
+v65 -> 2022-07-15 : https://github.com/inventree/InvenTree/pull/3335
+    - Annotates 'in_stock' quantity to the SupplierPart API
+
+v64 -> 2022-07-08 : https://github.com/inventree/InvenTree/pull/3310
+    - Annotate 'on_order' quantity to BOM list API
+    - Allow BOM List API endpoint to be filtered by "on_order" parameter
+
+v63 -> 2022-07-06 : https://github.com/inventree/InvenTree/pull/3301
+    - Allow BOM List API endpoint to be filtered by "available_stock" paramater
+
+v62 -> 2022-07-05 : https://github.com/inventree/InvenTree/pull/3296
+    - Allows search on BOM List API endpoint
+    - Allows ordering on BOM List API endpoint
 
 v61 -> 2022-06-12 : https://github.com/inventree/InvenTree/pull/3183
     - Migrate the "Convert Stock Item" form class to use the API

@@ -36,6 +36,8 @@ local_settings.py
 *.old
 
 # Files used for testing
+inventree-demo-dataset/
+inventree-data/
 dummy_image.*
 _tmp.csv
 inventree/label.pdf
@@ -76,6 +78,8 @@ js_tmp/
 
 # Development files
 dev/
+data/
+env/
 
 # Locale stats file
 locale_stats.json

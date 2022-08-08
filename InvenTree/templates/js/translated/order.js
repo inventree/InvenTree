@@ -16,6 +16,7 @@
     renderLink,
     salesOrderStatusDisplay,
     setupFilterList,
+    supplierPartFields,
 */
 
 /* exported
@@ -25,6 +26,8 @@
     completePurchaseOrder,
     completeShipment,
     completePendingShipments,
+    createPurchaseOrder,
+    createPurchaseOrderLineItem,
     createSalesOrder,
     createSalesOrderShipment,
     editPurchaseOrderLineItem,
@@ -431,7 +434,7 @@ function createSalesOrderShipment(options={}) {
                 var fields = salesOrderShipmentFields(options);
 
                 fields.reference.value = ref;
-                fields.reference.prefix = global_settings.SALESORDER_REFERENCE_PREFIX + options.reference;
+                fields.reference.prefix = options.reference;
 
                 constructForm('{% url "api-so-shipment-list" %}', {
                     method: 'POST',
@@ -456,7 +459,7 @@ function createSalesOrder(options={}) {
         method: 'POST',
         fields: {
             reference: {
-                prefix: global_settings.SALESORDER_REFERENCE_PREFIX,
+                icon: 'fa-hashtag',
             },
             customer: {
                 value: options.customer,
@@ -497,7 +500,7 @@ function createPurchaseOrder(options={}) {
         method: 'POST',
         fields: {
             reference: {
-                prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
+                icon: 'fa-hashtag',
             },
             supplier: {
                 icon: 'fa-building',
@@ -535,6 +538,26 @@ function createPurchaseOrder(options={}) {
             }
         },
         title: '{% trans "Create Purchase Order" %}',
+    });
+}
+
+
+// Create a new PurchaseOrderLineItem
+function createPurchaseOrderLineItem(order, options={}) {
+
+    var fields = poLineItemFields({
+        order: order,
+        supplier: options.supplier,
+        currency: options.currency,
+    });
+
+    constructForm('{% url "api-po-line-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Line Item" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
     });
 }
 
@@ -590,13 +613,40 @@ function poLineItemFields(options={}) {
 
     var fields = {
         order: {
-            hidden: true,
+            filters: {
+                supplier_detail: true,
+            }
         },
         part: {
             filters: {
                 part_detail: true,
                 supplier_detail: true,
                 supplier: options.supplier,
+            },
+            secondary: {
+                method: 'POST',
+                title: '{% trans "Add Supplier Part" %}',
+                fields: function(data) {
+                    var fields = supplierPartFields({
+                        part: data.part,
+                    });
+
+                    fields.supplier.value = options.supplier;
+
+                    // Adjust manufacturer part query based on selected part
+                    fields.manufacturer_part.adjustFilters = function(query, opts) {
+
+                        var part = getFormFieldValue('part', {}, opts);
+
+                        if (part) {
+                            query.part = part;
+                        }
+
+                        return query;
+                    };
+
+                    return fields;
+                }
             }
         },
         quantity: {},
@@ -610,6 +660,7 @@ function poLineItemFields(options={}) {
 
     if (options.order) {
         fields.order.value = options.order;
+        fields.order.hidden = true;
     }
 
     if (options.currency) {
@@ -766,7 +817,7 @@ function orderParts(parts_list, options={}) {
 
         var thumb = thumbnailImage(part.thumbnail || part.image);
 
-        // The "quantity" field should have been provided for each part
+        // Default quantity value
         var quantity = part.quantity || 1;
 
         if (quantity < 0) {
@@ -966,6 +1017,29 @@ function orderParts(parts_list, options={}) {
                         return '{% trans "No matching purchase orders" %}';
                     }
                 }, null, opts);
+
+                // Request 'requirements' information for each part
+                inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
+                    success: function(response) {
+                        var required = response.required || 0;
+                        var allocated = response.allocated || 0;
+                        var available = response.available_stock || 0;
+
+                        // Based on what we currently 'have' on hand, what do we need to order?
+                        var deficit = Math.max(required - allocated, 0);
+
+                        if (available < deficit) {
+                            var q = deficit - available;
+
+                            updateFieldValue(
+                                `quantity_${part.pk}`,
+                                q,
+                                {},
+                                opts
+                            );
+                        }
+                    }
+                });
             });
 
             // Add callback for "add to purchase order" button
@@ -1081,9 +1155,7 @@ function newPurchaseOrderFromOrderWizard(e) {
                 },
                 {
                     success: function(response) {
-                        var text = global_settings.PURCHASEORDER_REFERENCE_PREFIX || '';
-
-                        text += response.reference;
+                        var text = response.reference;
 
                         if (response.supplier_detail) {
                             text += ` ${response.supplier_detail.name}`;
@@ -1545,8 +1617,6 @@ function loadPurchaseOrderTable(table, options) {
             filters,
             {
                 success: function(response) {
-                    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-
                     for (var idx = 0; idx < response.length; idx++) {
 
                         var order = response[idx];
@@ -1559,7 +1629,7 @@ function loadPurchaseOrderTable(table, options) {
                             date = order.target_date;
                         }
 
-                        var title = `${prefix}${order.reference} - ${order.supplier_detail.name}`;
+                        var title = `${order.reference} - ${order.supplier_detail.name}`;
 
                         var color = '#4c68f5';
 
@@ -1622,12 +1692,6 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 switchable: false,
                 formatter: function(value, row) {
-
-                    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-
-                    if (prefix) {
-                        value = `${prefix}${value}`;
-                    }
 
                     var html = renderLink(value, `/order/purchase-order/${row.pk}/`);
 
@@ -2336,8 +2400,6 @@ function loadSalesOrderTable(table, options) {
             {
                 success: function(response) {
 
-                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-
                     for (var idx = 0; idx < response.length; idx++) {
                         var order = response[idx];
 
@@ -2349,7 +2411,7 @@ function loadSalesOrderTable(table, options) {
                             date = order.target_date;
                         }
 
-                        var title = `${prefix}${order.reference} - ${order.customer_detail.name}`;
+                        var title = `${order.reference} - ${order.customer_detail.name}`;
 
                         // Default color is blue
                         var color = '#4c68f5';
@@ -2435,13 +2497,6 @@ function loadSalesOrderTable(table, options) {
                 field: 'reference',
                 title: '{% trans "Sales Order" %}',
                 formatter: function(value, row) {
-
-                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-
-                    if (prefix) {
-                        value = `${prefix}${value}`;
-                    }
-
                     var html = renderLink(value, `/order/sales-order/${row.pk}/`);
 
                     if (row.overdue) {
@@ -2891,7 +2946,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                         var fields = salesOrderShipmentFields(options);
 
                         fields.reference.value = ref;
-                        fields.reference.prefix = global_settings.SALESORDER_REFERENCE_PREFIX + options.reference;
+                        fields.reference.prefix = options.reference;
 
                         return fields;
                     }
@@ -3123,9 +3178,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
                 title: '{% trans "Order" %}',
                 formatter: function(value, row) {
 
-                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-
-                    var ref = `${prefix}${row.order_detail.reference}`;
+                    var ref = `${row.order_detail.reference}`;
 
                     return renderLink(ref, `/order/sales-order/${row.order}/`);
                 }
@@ -3236,10 +3289,12 @@ function showAllocationSubTable(index, row, element, options) {
                 formatter: function(value, row, index, field) {
                     var text = '';
 
-                    if (row.serial != null && row.quantity == 1) {
-                        text = `{% trans "Serial Number" %}: ${row.serial}`;
-                    } else {
-                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                    var item = row.item_detail;
+
+                    var text = `{% trans "Quantity" %}: ${row.quantity}`;
+
+                    if (item && item.serial != null && row.quantity == 1) {
+                        text = `{% trans "Serial Number" %}: ${item.serial}`;
                     }
 
                     return renderLink(text, `/stock/item/${row.item}/`);

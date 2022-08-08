@@ -7,8 +7,7 @@ from datetime import date, datetime
 
 from django import template
 from django.conf import settings as djangosettings
-from django.core.files.storage import default_storage
-from django.templatetags.static import StaticNode, static
+from django.templatetags.static import StaticNode
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -18,6 +17,7 @@ import InvenTree.helpers
 from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
 from common.settings import currency_code_default
 from InvenTree import settings, version
+from plugin import registry
 from plugin.models import NotificationUserSetting, PluginSetting
 
 register = template.Library()
@@ -151,6 +151,25 @@ def plugins_enabled(*args, **kwargs):
 
 
 @register.simple_tag()
+def plugins_info(*args, **kwargs):
+    """Return information about activated plugins."""
+    # Check if plugins are even enabled
+    if not djangosettings.PLUGINS_ENABLED:
+        return False
+
+    # Fetch plugins
+    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Format list
+    return [
+        {
+            'name': plg.name,
+            'slug': plg.slug,
+            'version': plg.version
+        } for plg in plug_list
+    ]
+
+
+@register.simple_tag()
 def inventree_db_engine(*args, **kwargs):
     """Return the InvenTree database backend e.g. 'postgresql'."""
     db = djangosettings.DATABASES['default']
@@ -172,6 +191,16 @@ def inventree_instance_name(*args, **kwargs):
 def inventree_title(*args, **kwargs):
     """Return the title for the current instance - respecting the settings"""
     return version.inventreeInstanceTitle()
+
+
+@register.simple_tag()
+def inventree_logo(**kwargs):
+    """Return the InvenTree logo, *or* a custom logo if the user has uploaded one.
+
+    Returns a path to an image file, which can be rendered in the web interface
+    """
+
+    return InvenTree.helpers.getLogoImage(**kwargs)
 
 
 @register.simple_tag()
@@ -471,14 +500,6 @@ def mail_configured():
 def inventree_customize(reference, *args, **kwargs):
     """Return customization values for the user interface."""
     return djangosettings.CUSTOMIZE.get(reference, '')
-
-
-@register.simple_tag()
-def inventree_logo(*args, **kwargs):
-    """Return the path to the logo-file."""
-    if settings.CUSTOM_LOGO:
-        return default_storage.url(settings.CUSTOM_LOGO)
-    return static('img/inventree.png')
 
 
 class I18nStaticNode(StaticNode):
