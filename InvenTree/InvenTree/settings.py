@@ -820,7 +820,7 @@ PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
 # User interface customization values
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
 
-CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', None)
+static_storage = StaticFilesStorage()
 
 """
 Check for the existence of a 'custom logo' file:
@@ -828,9 +828,9 @@ Check for the existence of a 'custom logo' file:
 - Check the 'media' directory (legacy)
 """
 
-if CUSTOM_LOGO:
-    static_storage = StaticFilesStorage()
+CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', None)
 
+if CUSTOM_LOGO:
     if static_storage.exists(CUSTOM_LOGO):
         logger.info(f"Loading custom logo from static directory: {CUSTOM_LOGO}")
     elif default_storage.exists(CUSTOM_LOGO):
@@ -839,8 +839,18 @@ if CUSTOM_LOGO:
         logger.warning(f"The custom logo file '{CUSTOM_LOGO}' could not be found in the static or media directories")
         CUSTOM_LOGO = False
 
+# Check for a custom splash screen
+CUSTOM_SPLASH = get_setting('INVENTREE_CUSTOM_SPLASH', 'customize.splash', None)
+
+if CUSTOM_SPLASH:
+    if static_storage.exists(CUSTOM_SPLASH):
+        logger.info(f"Loading custom splash screen from static directory: {CUSTOM_SPLASH}")
+    else:
+        logger.warning(f"The custom splash screen '{CUSTOM_SPLASH}' could not be found in the static directory")
+        CUSTOM_SPLASH = False
+
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 
-logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
-logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
+logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
+logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")

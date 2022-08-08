@@ -265,6 +265,20 @@ def getLogoImage(as_file=False, custom=True):
         return getStaticUrl('img/inventree.png')
 
 
+def getSplashScren(custom=True):
+    """Return the InvenTree splash screen, or a custom splash if available"""
+
+    static_storage = StaticFilesStorage()
+
+    if custom and settings.CUSTOM_SPLASH:
+
+        if static_storage.exists(settings.CUSTOM_SPLASH):
+            return static_storage.url(settings.CUSTOM_SPLASH)
+
+    # No custom splash screen
+    return static_storage.url("img/inventree_splash.jpg")
+
+
 def TestIfImageURL(url):
     """Test if an image URL (or filename) looks like a valid image format.
 

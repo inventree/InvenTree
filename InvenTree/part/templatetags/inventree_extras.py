@@ -195,12 +195,19 @@ def inventree_title(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_logo(**kwargs):
-    """Return the InvenTree logo, *or* a custom logo if the user has uploaded one.
+    """Return the InvenTree logo, *or* a custom logo if the user has provided one.
 
     Returns a path to an image file, which can be rendered in the web interface
     """
 
     return InvenTree.helpers.getLogoImage(**kwargs)
+
+
+@register.simple_tag()
+def inventree_splash(**kwargs):
+    """Return the URL for the InvenTree splash screen, *or* a custom screen if the user has provided one."""
+
+    return InvenTree.helpers.getSplashScren(**kwargs)
 
 
 @register.simple_tag()
