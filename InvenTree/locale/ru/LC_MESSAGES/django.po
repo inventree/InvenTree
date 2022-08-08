@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-04 22:08+0000\n"
-"PO-Revision-Date: 2022-08-05 01:02\n"
+"POT-Creation-Date: 2022-08-07 21:57+0000\n"
+"PO-Revision-Date: 2022-08-08 13:03\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
-#: InvenTree/api.py:52
+#: InvenTree/api.py:54
 msgid "API endpoint not found"
 msgstr "Конечная точка API не обнаружена"
 
@@ -25,11 +25,11 @@ msgstr "Конечная точка API не обнаружена"
 msgid "Error details can be found in the admin panel"
 msgstr "Подробности об ошибке можно найти в панели администратора"
 
-#: InvenTree/fields.py:108
+#: InvenTree/fields.py:109
 msgid "Enter date"
 msgstr "Введите дату"
 
-#: InvenTree/fields.py:185 build/serializers.py:384
+#: InvenTree/fields.py:186 build/serializers.py:384
 #: build/templates/build/sidebar.html:21 company/models.py:523
 #: company/templates/company/sidebar.html:25 order/models.py:906
 #: order/templates/order/po_sidebar.html:11
@@ -89,76 +89,76 @@ msgstr "Подтверждение адреса электронной почт�
 msgid "You must type the same email each time."
 msgstr "Вы должны вводить один и тот же адрес электронной почты."
 
-#: InvenTree/helpers.py:172
+#: InvenTree/helpers.py:173
 msgid "Connection error"
 msgstr ""
 
-#: InvenTree/helpers.py:176 InvenTree/helpers.py:181
+#: InvenTree/helpers.py:177 InvenTree/helpers.py:182
 msgid "Server responded with invalid status code"
 msgstr ""
 
-#: InvenTree/helpers.py:178
+#: InvenTree/helpers.py:179
 msgid "Exception occurred"
 msgstr ""
 
-#: InvenTree/helpers.py:186
+#: InvenTree/helpers.py:187
 msgid "Server responded with invalid Content-Length value"
 msgstr ""
 
-#: InvenTree/helpers.py:189
+#: InvenTree/helpers.py:190
 msgid "Image size is too large"
 msgstr "Изображение слишком большое"
 
-#: InvenTree/helpers.py:201
+#: InvenTree/helpers.py:202
 msgid "Image download exceeded maximum size"
 msgstr ""
 
-#: InvenTree/helpers.py:206
+#: InvenTree/helpers.py:207
 msgid "Remote server returned empty response"
 msgstr ""
 
-#: InvenTree/helpers.py:214
+#: InvenTree/helpers.py:215
 msgid "Supplied URL is not a valid image file"
 msgstr ""
 
-#: InvenTree/helpers.py:573
+#: InvenTree/helpers.py:584
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
 msgstr "Повторяющийся серийный номер: {sn}"
 
-#: InvenTree/helpers.py:580 order/models.py:320 order/models.py:472
+#: InvenTree/helpers.py:591 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
 msgstr "недопустимое количество"
 
-#: InvenTree/helpers.py:583
+#: InvenTree/helpers.py:594
 msgid "Empty serial number string"
 msgstr "Пустая строка серийного номера"
 
-#: InvenTree/helpers.py:615
+#: InvenTree/helpers.py:626
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:618
+#: InvenTree/helpers.py:629
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Некорректный идентификатор группы {g}"
 
-#: InvenTree/helpers.py:646
+#: InvenTree/helpers.py:657
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:654
+#: InvenTree/helpers.py:665
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr "Недопустимая/несуществующая группа {group}"
 
-#: InvenTree/helpers.py:660
+#: InvenTree/helpers.py:671
 msgid "No serial numbers found"
 msgstr "Серийных номеров не найдено"
 
-#: InvenTree/helpers.py:664
+#: InvenTree/helpers.py:675
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr ""
@@ -398,99 +398,99 @@ msgstr ""
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/settings.py:607
+#: InvenTree/settings.py:609
 msgid "Czech"
 msgstr ""
 
-#: InvenTree/settings.py:608
+#: InvenTree/settings.py:610
 msgid "German"
 msgstr "Немецкий"
 
-#: InvenTree/settings.py:609
+#: InvenTree/settings.py:611
 msgid "Greek"
 msgstr "Греческий"
 
-#: InvenTree/settings.py:610
+#: InvenTree/settings.py:612
 msgid "English"
 msgstr "Английский"
 
-#: InvenTree/settings.py:611
+#: InvenTree/settings.py:613
 msgid "Spanish"
 msgstr "Испанский"
 
-#: InvenTree/settings.py:612
+#: InvenTree/settings.py:614
 msgid "Spanish (Mexican)"
 msgstr "Испанский (Мексика)"
 
-#: InvenTree/settings.py:613
+#: InvenTree/settings.py:615
 msgid "Farsi / Persian"
 msgstr ""
 
-#: InvenTree/settings.py:614
+#: InvenTree/settings.py:616
 msgid "French"
 msgstr "Французский"
 
-#: InvenTree/settings.py:615
+#: InvenTree/settings.py:617
 msgid "Hebrew"
 msgstr "Иврит"
 
-#: InvenTree/settings.py:616
+#: InvenTree/settings.py:618
 msgid "Hungarian"
 msgstr "Венгерский"
 
-#: InvenTree/settings.py:617
+#: InvenTree/settings.py:619
 msgid "Italian"
 msgstr "Итальянский"
 
-#: InvenTree/settings.py:618
+#: InvenTree/settings.py:620
 msgid "Japanese"
 msgstr "Японский"
 
-#: InvenTree/settings.py:619
+#: InvenTree/settings.py:621
 msgid "Korean"
 msgstr "Корейский"
 
-#: InvenTree/settings.py:620
+#: InvenTree/settings.py:622
 msgid "Dutch"
 msgstr "Голландский"
 
-#: InvenTree/settings.py:621
+#: InvenTree/settings.py:623
 msgid "Norwegian"
 msgstr "Норвежский"
 
-#: InvenTree/settings.py:622
+#: InvenTree/settings.py:624
 msgid "Polish"
 msgstr "Польский"
 
-#: InvenTree/settings.py:623
+#: InvenTree/settings.py:625
 msgid "Portuguese"
 msgstr ""
 
-#: InvenTree/settings.py:624
+#: InvenTree/settings.py:626
 msgid "Portuguese (Brazilian)"
 msgstr ""
 
-#: InvenTree/settings.py:625
+#: InvenTree/settings.py:627
 msgid "Russian"
 msgstr "Русский"
 
-#: InvenTree/settings.py:626
+#: InvenTree/settings.py:628
 msgid "Swedish"
 msgstr "Шведский"
 
-#: InvenTree/settings.py:627
+#: InvenTree/settings.py:629
 msgid "Thai"
 msgstr "Тайский"
 
-#: InvenTree/settings.py:628
+#: InvenTree/settings.py:630
 msgid "Turkish"
 msgstr "Турецкий"
 
-#: InvenTree/settings.py:629
+#: InvenTree/settings.py:631
 msgid "Vietnamese"
 msgstr "Вьетнамский"
 
-#: InvenTree/settings.py:630
+#: InvenTree/settings.py:632
 msgid "Chinese"
 msgstr "Китайский"
 
@@ -5516,11 +5516,11 @@ msgstr "Создать новую разновидность детали"
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
 msgstr "Создать новую разновидность из шаблона <em>'%(full_name)s'</em>."
 
-#: part/templatetags/inventree_extras.py:157
+#: part/templatetags/inventree_extras.py:177
 msgid "Unknown database"
 msgstr "Неизвестная база данных"
 
-#: part/templatetags/inventree_extras.py:202
+#: part/templatetags/inventree_extras.py:222
 #, python-brace-format
 msgid "{title} v{version}"
 msgstr ""
