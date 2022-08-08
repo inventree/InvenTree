@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-07 12:49+0000\n"
-"PO-Revision-Date: 2022-08-07 13:01\n"
+"POT-Creation-Date: 2022-08-07 21:57+0000\n"
+"PO-Revision-Date: 2022-08-08 13:03\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
-#: InvenTree/api.py:52
+#: InvenTree/api.py:54
 msgid "API endpoint not found"
 msgstr "API endepunkt ikke funnet"
 
@@ -5516,11 +5516,11 @@ msgstr ""
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:157
+#: part/templatetags/inventree_extras.py:177
 msgid "Unknown database"
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:202
+#: part/templatetags/inventree_extras.py:222
 #, python-brace-format
 msgid "{title} v{version}"
 msgstr ""
