@@ -11,4 +11,4 @@ python3 -m venv dev/venv
 # setup inventree server
 pip install invoke
 inv update
-inv setup-test --ignore-update --path dev/demo-dataset
+inv setup-dev

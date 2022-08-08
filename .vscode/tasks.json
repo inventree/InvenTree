@@ -31,7 +31,7 @@
     {
       "label": "setup-test",
       "type": "shell",
-      "command": "inv setup-test",
+      "command": "inv setup-test --path dev/inventree-demo-dataset",
     },
     {
       "label": "superuser",
