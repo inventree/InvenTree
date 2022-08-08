@@ -188,5 +188,6 @@ remote_login_header: REMOTE_USER
 #   login_message: InvenTree demo instance - <a href='https://inventree.readthedocs.io/en/latest/demo/'> Click here for login details</a>
 #   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.readthedocs.io/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
 #   logo: logo.png
+#   splash: splash_screen.jpg
 #   hide_admin_link: true
 #   hide_password_reset: true
