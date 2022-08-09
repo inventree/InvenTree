@@ -34,6 +34,31 @@ class CleanMixin():
 
         return Response(serializer.data)
 
+    def clean_string(self, data: str) -> str:
+        """Clean / sanitize a single input string.
+
+        Note that this function will *allow* orphaned <>& characters,
+        which would normally be escaped by bleach.
+
+        Nominally, the only thing that will be "cleaned" will be HTML tags
+
+        Ref: https://github.com/mozilla/bleach/issues/192
+        """
+
+        cleaned = clean(data, strip=True)
+
+        # Add escaped characters back in
+        replacements = {
+            '&gt;': '>',
+            '&lt;': '<',
+            '&amp;': '&',
+        }
+
+        for o, r in replacements.items():
+            cleaned = cleaned.replace(o, r)
+
+        return cleaned
+
     def clean_data(self, data: dict) -> dict:
         """Clean / sanitize data.
 
@@ -46,17 +71,21 @@ class CleanMixin():
             data (dict): Data that should be sanatized.
 
         Returns:
-            dict: Profided data sanatized; still in the same order.
+            dict: Provided data sanatized; still in the same order.
         """
+
         clean_data = {}
+
         for k, v in data.items():
             if isinstance(v, str):
-                ret = clean(v)
+                ret = self.clean_string(v)
             elif isinstance(v, dict):
                 ret = self.clean_data(v)
             else:
                 ret = v
+
             clean_data[k] = ret
+
         return clean_data
 
 
