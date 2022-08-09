@@ -230,7 +230,10 @@ def update(c):
     """
     # Recompile the translation files (.mo)
     # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
-    manage(c, 'compilemessages', pty=True)
+    try:
+        manage(c, 'compilemessages', pty=True)
+    except Exception:
+        print("WARNING: Translation files could not be compiled:")
 
 
 # Data tasks
