@@ -481,9 +481,9 @@ class OverallocationChoice():
     TRIM = 'trim'
 
     OPTIONS = {
-        REJECT: ('not permitted'),
-        ACCEPT: _('accept as consumed by this build order'),
-        TRIM: _('deallocate before completing this build order'),
+        REJECT: ('Not permitted'),
+        ACCEPT: _('Accept as consumed by this build order'),
+        TRIM: _('Deallocate before completing this build order'),
     }
 
 
