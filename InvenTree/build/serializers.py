@@ -27,7 +27,6 @@ from users.serializers import OwnerSerializer
 
 from .models import Build, BuildItem, BuildOrderAttachment
 
-
 class BuildSerializer(InvenTreeModelSerializer):
     """Serializes a Build object."""
 
@@ -473,21 +472,34 @@ class BuildCancelSerializer(serializers.Serializer):
         )
 
 
+class OverallocationChoice():
+
+    REJECT = 'reject'
+    ACCEPT = 'accept'
+    TRIM = 'trim'
+
+    OPTIONS = {
+        REJECT: ('not permitted'),
+        ACCEPT: _('accept as consumed by this build order'),
+        TRIM: _('deallocate before completing this build order'),
+    }
+
 class BuildCompleteSerializer(serializers.Serializer):
     """DRF serializer for marking a BuildOrder as complete."""
 
-    accept_overallocated = serializers.BooleanField(
-        label=_('Accept Overallocated'),
-        help_text=_('Accept stock items which have been overallocated to this build order'),
+    accept_overallocated = serializers.ChoiceField(
+        label=_('Overallocated Stock'),
+        choices=list(OverallocationChoice.OPTIONS.items()),
+        help_text=_('How do you want to handle extra stock items assigned to the build order'),
         required=False,
-        default=False,
+        default=OverallocationChoice.REJECT,
     )
 
     def validate_accept_overallocated(self, value):
         """Check if the 'accept_overallocated' field is required"""
         build = self.context['build']
 
-        if build.has_overallocated_parts(output=None) and not value:
+        if build.has_overallocated_parts(output=None) and value == OverallocationChoice.REJECT:
             raise ValidationError(_('Some stock items have been overallocated'))
 
         return value
@@ -540,6 +552,10 @@ class BuildCompleteSerializer(serializers.Serializer):
         """Complete the specified build output"""
         request = self.context['request']
         build = self.context['build']
+
+        data = self.validated_data
+        if data.get('accept_overallocated', OverallocationChoice.REJECT) == OverallocationChoice.TRIM:
+            build.trim_allocated_stock()
 
         build.complete_build(request.user)
 

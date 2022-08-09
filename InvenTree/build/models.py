@@ -105,9 +105,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                 'parent': _('Invalid choice for parent build'),
             })
 
-        # Check for overallocated stock, which might happen if the quantity was reduced.
-        self.trim_allocated_stock()
-
     class Meta:
         """Metaclass options for the BuildOrder model"""
         verbose_name = _("Build Order")

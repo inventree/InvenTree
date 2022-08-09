@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+from django.db.models import Sum, Q
 
 from InvenTree import status_codes as status
 
@@ -16,6 +17,9 @@ from build.models import Build, BuildItem, generate_next_build_reference
 from part.models import Part, BomItem, BomItemSubstitute
 from stock.models import StockItem
 from users.models import Owner
+
+import logging
+logger = logging.getLogger('inventree')
 
 
 class BuildTestBase(TestCase):
@@ -120,9 +124,9 @@ class BuildTestBase(TestCase):
 
         self.stock_2_1 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
         self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
-        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
-        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
-        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        self.stock_2_3 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        self.stock_2_4 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        self.stock_2_5 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
 
         self.stock_3_1 = StockItem.objects.create(part=self.sub_part_3, quantity=1000)
 
@@ -374,6 +378,65 @@ class BuildTest(BuildTestBase):
         )
 
         self.assertTrue(self.build.are_untracked_parts_allocated())
+
+    def test_overallocation_and_trim(self):
+        """Test overallocation of stock and trim function"""
+
+        # Fully allocate tracked stock (not eligible for trimming)
+        self.allocate_stock(
+            self.output_1,
+            {
+                self.stock_3_1: 6,
+            }
+        )
+        self.allocate_stock(
+            self.output_2,
+            {
+                self.stock_3_1: 14,
+            }
+        )
+        # Fully allocate part 1 (should be left alone)
+        self.allocate_stock(
+            None,
+            {
+                self.stock_1_1: 3,
+                self.stock_1_2: 47,
+            }
+        )
+
+        extra_2_1 = StockItem.objects.create(part=self.sub_part_2, quantity=6)
+        extra_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=4)
+
+        # Overallocate part 2 (30 needed)
+        self.allocate_stock(
+            None,
+            {
+                self.stock_2_1: 5,
+                self.stock_2_2: 5,
+                self.stock_2_3: 5,
+                self.stock_2_4: 5,
+                self.stock_2_5: 5, # 25
+                extra_2_1: 6,      # 31
+                extra_2_2: 4,      # 35
+            }
+        )
+        self.assertTrue(self.build.has_overallocated_parts(None))
+
+        self.build.trim_allocated_stock()
+        self.assertFalse(self.build.has_overallocated_parts(None))
+
+        self.build.complete_build_output(self.output_1, None)
+        self.build.complete_build_output(self.output_2, None)
+        self.assertTrue(self.build.can_complete)
+
+        self.build.complete_build(None)
+
+        self.assertEqual(self.build.status, status.BuildStatus.COMPLETE)
+
+        # Check stock items are in expected state.
+        self.assertEqual(StockItem.objects.get(pk=self.stock_1_2.pk).quantity, 53)
+        self.assertEqual(StockItem.objects.filter(part=self.sub_part_2).aggregate(Sum('quantity'))['quantity__sum'], 5)
+        self.assertEqual(StockItem.objects.get(pk=self.stock_3_1.pk).quantity, 980)
 
     def test_cancel(self):
         """Test cancellation of the build"""
