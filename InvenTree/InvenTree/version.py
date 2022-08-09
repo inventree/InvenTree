@@ -13,7 +13,7 @@ import common.models
 from InvenTree.api_version import INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = "0.8.1"
+INVENTREE_SW_VERSION = "0.8.2"
 
 
 def inventreeInstanceName():
