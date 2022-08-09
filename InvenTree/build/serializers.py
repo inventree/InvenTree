@@ -474,6 +474,7 @@ class BuildCancelSerializer(serializers.Serializer):
 
 
 class OverallocationChoice():
+    """Utility class to contain options for handling over allocated stock items."""
 
     REJECT = 'reject'
     ACCEPT = 'accept'
