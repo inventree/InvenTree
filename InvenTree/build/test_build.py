@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from django.db.models import Sum, Q
+from django.db.models import Sum
 
 from InvenTree import status_codes as status
 
@@ -415,9 +415,9 @@ class BuildTest(BuildTestBase):
                 self.stock_2_2: 5,
                 self.stock_2_3: 5,
                 self.stock_2_4: 5,
-                self.stock_2_5: 5, # 25
-                extra_2_1: 6,      # 31
-                extra_2_2: 4,      # 35
+                self.stock_2_5: 5,  # 25
+                extra_2_1: 6,       # 31
+                extra_2_2: 4,       # 35
             }
         )
         self.assertTrue(self.build.has_overallocated_parts(None))

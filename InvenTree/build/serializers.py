@@ -27,6 +27,7 @@ from users.serializers import OwnerSerializer
 
 from .models import Build, BuildItem, BuildOrderAttachment
 
+
 class BuildSerializer(InvenTreeModelSerializer):
     """Serializes a Build object."""
 
@@ -483,6 +484,7 @@ class OverallocationChoice():
         ACCEPT: _('accept as consumed by this build order'),
         TRIM: _('deallocate before completing this build order'),
     }
+
 
 class BuildCompleteSerializer(serializers.Serializer):
     """DRF serializer for marking a BuildOrder as complete."""
