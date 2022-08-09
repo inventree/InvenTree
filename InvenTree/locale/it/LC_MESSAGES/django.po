@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-07 21:57+0000\n"
+"POT-Creation-Date: 2022-08-09 06:07+0000\n"
 "PO-Revision-Date: 2022-08-08 13:04\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -121,44 +121,44 @@ msgstr ""
 msgid "Supplied URL is not a valid image file"
 msgstr "L'URL fornito non è un file immagine valido"
 
-#: InvenTree/helpers.py:584
+#: InvenTree/helpers.py:598
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
 msgstr "Seriale duplicato: {sn}"
 
-#: InvenTree/helpers.py:591 order/models.py:320 order/models.py:472
+#: InvenTree/helpers.py:605 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
 msgstr "Quantità inserita non valida"
 
-#: InvenTree/helpers.py:594
+#: InvenTree/helpers.py:608
 msgid "Empty serial number string"
 msgstr "Numero seriale vuoto"
 
-#: InvenTree/helpers.py:626
+#: InvenTree/helpers.py:640
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "Range gruppo: {g}"
 
-#: InvenTree/helpers.py:629
+#: InvenTree/helpers.py:643
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Gruppo non valido: {g}"
 
-#: InvenTree/helpers.py:657
+#: InvenTree/helpers.py:671
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr "Sequenza gruppo non valida: {g}"
 
-#: InvenTree/helpers.py:665
+#: InvenTree/helpers.py:679
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr "Gruppo {group} invalido o inesistente"
 
-#: InvenTree/helpers.py:671
+#: InvenTree/helpers.py:685
 msgid "No serial numbers found"
 msgstr "Nessun numero di serie trovato"
 
-#: InvenTree/helpers.py:675
+#: InvenTree/helpers.py:689
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "Il numero dei numeri seriali univoci ({s}) deve essere uguale alla quantità ({q})"
@@ -5520,7 +5520,7 @@ msgstr ""
 msgid "Unknown database"
 msgstr "Database sconosciuto"
 
-#: part/templatetags/inventree_extras.py:222
+#: part/templatetags/inventree_extras.py:229
 #, python-brace-format
 msgid "{title} v{version}"
 msgstr ""
@@ -7456,14 +7456,16 @@ msgstr "Accedi"
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10434,4 +10436,3 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
-
