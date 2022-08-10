@@ -8,7 +8,7 @@ import importlib
 import logging
 import os
 import subprocess
-from importlib import metadata, reload
+from importlib import reload
 from pathlib import Path
 from typing import OrderedDict
 
@@ -24,8 +24,8 @@ from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
 
 from InvenTree.config import get_setting
 
-from .helpers import (IntegrationPluginError, get_plugins, handle_error,
-                      log_error)
+from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
+                      handle_error, log_error)
 from .plugin import InvenTreePlugin
 
 logger = logging.getLogger('inventree')
@@ -266,7 +266,7 @@ class PluginsRegistry:
         # Check if not running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
             # Collect plugins from setup entry points
-            for entry in metadata.entry_points().get('inventree_plugins', []):  # pragma: no cover
+            for entry in get_entrypoints():  # pragma: no cover
                 try:
                     plugin = entry.load()
                     plugin.is_package = True
