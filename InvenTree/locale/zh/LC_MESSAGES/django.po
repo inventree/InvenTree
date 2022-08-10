@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-08 23:44+0000\n"
-"PO-Revision-Date: 2022-08-09 13:01\n"
+"POT-Creation-Date: 2022-08-10 11:38+0000\n"
+"PO-Revision-Date: 2022-08-10 13:22\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -816,7 +816,7 @@ msgstr "相关销售订单"
 msgid "SalesOrder to which this build is allocated"
 msgstr "此次生产匹配的销售订单"
 
-#: build/models.py:213 build/serializers.py:784
+#: build/models.py:213 build/serializers.py:803
 #: templates/js/translated/build.js:2073 templates/js/translated/order.js:2873
 msgid "Source Location"
 msgstr "来源地点"
@@ -942,42 +942,42 @@ msgstr "生产产出已完成"
 msgid "Build output does not match Build Order"
 msgstr "生产产出与订单不匹配"
 
-#: build/models.py:1143
+#: build/models.py:1171
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "生产项必须指定生产产出，因为主部件已经被标记为可追踪的"
 
-#: build/models.py:1152
+#: build/models.py:1180
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "分配数量 ({q}) 不得超过可用库存数量 ({a})"
 
-#: build/models.py:1162 order/models.py:1379
+#: build/models.py:1190 order/models.py:1379
 msgid "Stock item is over-allocated"
 msgstr "库存物品分配过度！"
 
-#: build/models.py:1168 order/models.py:1382
+#: build/models.py:1196 order/models.py:1382
 msgid "Allocation quantity must be greater than zero"
 msgstr "分配数量必须大于0"
 
-#: build/models.py:1174
+#: build/models.py:1202
 msgid "Quantity must be 1 for serialized stock"
 msgstr "序列化库存的数量必须是 1"
 
-#: build/models.py:1231
+#: build/models.py:1259
 msgid "Selected stock item not found in BOM"
 msgstr "在BOM中找不到选定的库存项"
 
-#: build/models.py:1300 stock/templates/stock/item_base.html:177
+#: build/models.py:1328 stock/templates/stock/item_base.html:177
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:2455
 #: templates/navbar.html:38
 msgid "Build"
 msgstr "生产"
 
-#: build/models.py:1301
+#: build/models.py:1329
 msgid "Build to allocate parts"
 msgstr "生产以分配部件"
 
-#: build/models.py:1317 build/serializers.py:629 order/serializers.py:1015
+#: build/models.py:1345 build/serializers.py:648 order/serializers.py:1015
 #: order/serializers.py:1036 stock/serializers.py:396 stock/serializers.py:754
 #: stock/serializers.py:880 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -992,11 +992,11 @@ msgstr "生产以分配部件"
 msgid "Stock Item"
 msgstr "库存项"
 
-#: build/models.py:1318
+#: build/models.py:1346
 msgid "Source stock item"
 msgstr "源库存项"
 
-#: build/models.py:1330 build/serializers.py:193
+#: build/models.py:1358 build/serializers.py:193
 #: build/templates/build/build_base.html:82
 #: build/templates/build/detail.html:34 common/models.py:1678
 #: company/templates/company/supplier_part.html:279 order/models.py:897
@@ -1033,19 +1033,19 @@ msgstr "源库存项"
 msgid "Quantity"
 msgstr "数量"
 
-#: build/models.py:1331
+#: build/models.py:1359
 msgid "Stock quantity to allocate to build"
 msgstr "分配到生产的数量"
 
-#: build/models.py:1339
+#: build/models.py:1367
 msgid "Install into"
 msgstr "安装到"
 
-#: build/models.py:1340
+#: build/models.py:1368
 msgid "Destination stock item"
 msgstr "目标库存项"
 
-#: build/serializers.py:138 build/serializers.py:658
+#: build/serializers.py:138 build/serializers.py:677
 #: templates/js/translated/build.js:1166
 msgid "Build Output"
 msgstr "生产产出"
@@ -1070,7 +1070,7 @@ msgstr "生产产出未被完成分配"
 msgid "Enter quantity for build output"
 msgstr "输入生产产出数量"
 
-#: build/serializers.py:208 build/serializers.py:649 order/models.py:318
+#: build/serializers.py:208 build/serializers.py:668 order/models.py:318
 #: order/serializers.py:287 order/serializers.py:442 part/serializers.py:542
 #: part/serializers.py:974 stock/models.py:477 stock/models.py:1244
 #: stock/serializers.py:302
@@ -1164,117 +1164,125 @@ msgstr "移除未完成的产出"
 msgid "Delete any build outputs which have not been completed"
 msgstr "删除所有未完成的生产产出"
 
-#: build/serializers.py:480
-msgid "Accept Overallocated"
-msgstr "接受过度分配"
+#: build/serializers.py:485
+msgid "Accept as consumed by this build order"
+msgstr ""
 
-#: build/serializers.py:481
-msgid "Accept stock items which have been overallocated to this build order"
-msgstr "接受已经被过度分配至此生产订单的库存项"
+#: build/serializers.py:486
+msgid "Deallocate before completing this build order"
+msgstr ""
 
-#: build/serializers.py:491
+#: build/serializers.py:494
+msgid "Overallocated Stock"
+msgstr ""
+
+#: build/serializers.py:496
+msgid "How do you want to handle extra stock items assigned to the build order"
+msgstr ""
+
+#: build/serializers.py:506
 msgid "Some stock items have been overallocated"
 msgstr "一些库存项已被过度分配"
 
-#: build/serializers.py:496
+#: build/serializers.py:511
 msgid "Accept Unallocated"
 msgstr "接受未分配的"
 
-#: build/serializers.py:497
+#: build/serializers.py:512
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr "接受库存项未被完成分配至此生产订单"
 
-#: build/serializers.py:507 templates/js/translated/build.js:195
+#: build/serializers.py:522 templates/js/translated/build.js:195
 msgid "Required stock has not been fully allocated"
 msgstr "所需库存尚未完全分配"
 
-#: build/serializers.py:512
+#: build/serializers.py:527
 msgid "Accept Incomplete"
 msgstr "接受未完成"
 
-#: build/serializers.py:513
+#: build/serializers.py:528
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr "接受所需的生产产出未完成"
 
-#: build/serializers.py:523 templates/js/translated/build.js:199
+#: build/serializers.py:538 templates/js/translated/build.js:199
 msgid "Required build quantity has not been completed"
 msgstr "所需生产数量尚未完成"
 
-#: build/serializers.py:532
+#: build/serializers.py:547
 msgid "Build order has incomplete outputs"
 msgstr "生产订单有未完成的产出"
 
-#: build/serializers.py:535 build/templates/build/build_base.html:95
+#: build/serializers.py:550 build/templates/build/build_base.html:95
 msgid "No build outputs have been created for this build order"
 msgstr "针对此生产订单，尚未创建生产产出"
 
-#: build/serializers.py:561 build/serializers.py:606 part/models.py:2719
+#: build/serializers.py:580 build/serializers.py:625 part/models.py:2719
 #: part/models.py:2853
 msgid "BOM Item"
 msgstr "BOM项"
 
-#: build/serializers.py:571
+#: build/serializers.py:590
 msgid "Build output"
 msgstr "生产产出"
 
-#: build/serializers.py:579
+#: build/serializers.py:598
 msgid "Build output must point to the same build"
 msgstr "生产产出必须指向相同的生产"
 
-#: build/serializers.py:620
+#: build/serializers.py:639
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part 必须与生产订单指向相同的部件"
 
-#: build/serializers.py:635 stock/serializers.py:767
+#: build/serializers.py:654 stock/serializers.py:767
 msgid "Item must be in stock"
 msgstr "项目必须在库存中"
 
-#: build/serializers.py:693 order/serializers.py:1073
+#: build/serializers.py:712 order/serializers.py:1073
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "可用量 ({q}) 超出了限制"
 
-#: build/serializers.py:699
+#: build/serializers.py:718
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr "对于被追踪的部件的分配，必须指定生产产出"
 
-#: build/serializers.py:706
+#: build/serializers.py:725
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "对于未被追踪的部件，无法指定生产产出"
 
-#: build/serializers.py:711
+#: build/serializers.py:730
 msgid "This stock item has already been allocated to this build output"
 msgstr "此库存项已被分配至此生产产出"
 
-#: build/serializers.py:734 order/serializers.py:1319
+#: build/serializers.py:753 order/serializers.py:1319
 msgid "Allocation items must be provided"
 msgstr "必须提供分配的项"
 
-#: build/serializers.py:785
+#: build/serializers.py:804
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr "部件来源的仓储地点(留空则可来源于任何仓储地点)"
 
-#: build/serializers.py:793
+#: build/serializers.py:812
 msgid "Exclude Location"
 msgstr "排除地点"
 
-#: build/serializers.py:794
+#: build/serializers.py:813
 msgid "Exclude stock items from this selected location"
 msgstr "从该选定的仓储地点排除库存项"
 
-#: build/serializers.py:799
+#: build/serializers.py:818
 msgid "Interchangeable Stock"
 msgstr "可互换的库存"
 
-#: build/serializers.py:800
+#: build/serializers.py:819
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr "多处地点的库存项可以互换使用"
 
-#: build/serializers.py:805
+#: build/serializers.py:824
 msgid "Substitute Stock"
 msgstr "可替换的库存"
 
-#: build/serializers.py:806
+#: build/serializers.py:825
 msgid "Allow allocation of substitute parts"
 msgstr "允许分配可替换的部件"
 
