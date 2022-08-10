@@ -7,7 +7,8 @@ import pkgutil
 import subprocess
 import sysconfig
 import traceback
-from importlib.metadata import entry_points
+from importlib.metadata import distributions, entry_points
+from importlib.util import find_spec
 
 from django import template
 from django.conf import settings
@@ -229,6 +230,29 @@ def get_plugins(pkg, baseclass, path=None):
                 plugins.append(plugin)
 
     return plugins
+
+
+def get_module_meta(mdl_name):
+    """Return distribution for module.
+
+    Modified form source: https://stackoverflow.com/a/60975978/17860466
+    """
+    # Get spec for module
+    spec = find_spec(mdl_name)
+
+    # Try to get specific package for the module
+    result = None
+    for dist in distributions():
+        try:
+            relative = pathlib.Path(spec.origin).relative_to(dist.locate_file(''))
+        except ValueError:
+            pass
+        else:
+            if relative in dist.files:
+                result = dist
+
+    # Return metadata
+    return result.metadata
 # endregion
 
 
