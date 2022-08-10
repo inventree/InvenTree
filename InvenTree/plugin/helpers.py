@@ -7,7 +7,8 @@ import pkgutil
 import subprocess
 import sysconfig
 import traceback
-from importlib.metadata import distributions, entry_points
+from importlib.metadata import (PackageNotFoundError, distributions,
+                                entry_points)
 from importlib.util import find_spec
 
 from django import template
@@ -250,6 +251,11 @@ def get_module_meta(mdl_name):
         else:
             if relative in dist.files:
                 result = dist
+
+    # Check if a distribution was found
+    # A no should not be possible here as a call can only be made on a discovered module but better save then sorry
+    if not result:
+        raise PackageNotFoundError(mdl_name)
 
     # Return metadata
     return result.metadata
