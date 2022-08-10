@@ -717,6 +717,105 @@ class BuildAllocationTest(BuildAPITest):
         self.assertEqual(allocation.stock_item.pk, 2)
 
 
+class BuildOverallocationTest(BuildAPITest):
+    """Unit tests for over allocation of stock items against a build order.
+
+    Using same Build ID=1 as allocation test above.
+    """
+
+    def setUp(self):
+        """Basic operation as part of test suite setup"""
+        super().setUp()
+
+        self.assignRole('build.add')
+        self.assignRole('build.change')
+
+        self.build = Build.objects.get(pk=1)
+        self.url = reverse('api-build-finish', kwargs={'pk': self.build.pk})
+
+        StockItem.objects.create(part=Part.objects.get(pk=50), quantity=30)
+
+        # Keep some state for use in later assertions, and then overallocate
+        self.state = {}
+        self.allocation = {}
+        for i, bi in enumerate(self.build.part.bom_items.all()):
+            rq = self.build.required_quantity(bi, None) + i + 1
+            si = StockItem.objects.filter(part=bi.sub_part, quantity__gte=rq).first()
+
+            self.state[bi.sub_part] = (si, si.quantity, rq)
+            BuildItem.objects.create(
+                build=self.build,
+                stock_item=si,
+                quantity=rq,
+            )
+
+        # create and complete outputs
+        self.build.create_build_output(self.build.quantity)
+        outputs = self.build.build_outputs.all()
+        self.build.complete_build_output(outputs[0], self.user)
+
+        # Validate expected state after set-up.
+        self.assertEqual(self.build.incomplete_outputs.count(), 0)
+        self.assertEqual(self.build.complete_outputs.count(), 1)
+        self.assertEqual(self.build.completed, self.build.quantity)
+
+    def test_overallocated_requires_acceptance(self):
+        """Test build order cannot complete with overallocated items."""
+        # Try to complete the build (it should fail due to overallocation)
+        response = self.post(
+            self.url,
+            {},
+            expected_code=400
+        )
+        self.assertTrue('accept_overallocated' in response.data)
+
+        # Check stock items have not reduced at all
+        for si, oq, _ in self.state.values():
+            si.refresh_from_db()
+            self.assertEqual(si.quantity, oq)
+
+        # Accept overallocated stock
+        self.post(
+            self.url,
+            {
+                'accept_overallocated': 'accept',
+            },
+            expected_code=201,
+        )
+
+        self.build.refresh_from_db()
+
+        # Build should have been marked as complete
+        self.assertTrue(self.build.is_complete)
+
+        # Check stock items have reduced in-line with the overallocation
+        for si, oq, rq in self.state.values():
+            si.refresh_from_db()
+            self.assertEqual(si.quantity, oq - rq)
+
+    def test_overallocated_can_trim(self):
+        """Test build order will trim/de-allocate overallocated stock when requested."""
+        self.post(
+            self.url,
+            {
+                'accept_overallocated': 'trim',
+            },
+            expected_code=201,
+        )
+
+        self.build.refresh_from_db()
+
+        # Build should have been marked as complete
+        self.assertTrue(self.build.is_complete)
+
+        # Check stock items have reduced only by bom requirement (overallocation trimmed)
+        for bi in self.build.part.bom_items.all():
+            si, oq, _ = self.state[bi.sub_part]
+            rq = self.build.required_quantity(bi, None)
+            si.refresh_from_db()
+            self.assertEqual(si.quantity, oq - rq)
+
+
 class BuildListTest(BuildAPITest):
     """Tests for the BuildOrder LIST API."""
 
