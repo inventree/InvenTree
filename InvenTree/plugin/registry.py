@@ -215,7 +215,7 @@ class PluginsRegistry:
                 if not pd.exists():
                     try:
                         pd.mkdir(exist_ok=True)
-                    except Exception:
+                    except Exception:  # pragma: no cover
                         logger.error(f"Could not create plugin directory '{pd}'")
                         continue
 
@@ -225,7 +225,7 @@ class PluginsRegistry:
                 if not init_filename.exists():
                     try:
                         init_filename.write_text("# InvenTree plugin directory\n")
-                    except Exception:
+                    except Exception:  # pragma: no cover
                         logger.error(f"Could not create file '{init_filename}'")
                         continue
 
