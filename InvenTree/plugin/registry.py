@@ -230,9 +230,13 @@ class PluginsRegistry:
                         continue
 
                 if pd.exists() and pd.is_dir():
+                    # Convert to python dot-path
+                    relativ = pd.relative_to(settings.BASE_DIR)
+                    pd_path = '.'.join(relativ.parts)
+
                     # By this point, we have confirmed that the directory at least exists
-                    logger.info(f"Added plugin directory: '{pd}'")
-                    dirs.append(pd)
+                    logger.info(f"Added plugin directory: '{pd_path}'")
+                    dirs.append(pd_path)
 
         return dirs
 

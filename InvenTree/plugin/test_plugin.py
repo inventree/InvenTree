@@ -184,3 +184,15 @@ class RegistryTests(TestCase):
         # Clean folder
         test_dir.joinpath('__init__.py').unlink(missing_ok=True)
         test_dir.rmdir()
+
+    def test_folder_loading(self):
+        """Test that plugins in folders get loaded"""
+
+        envs = {'INVENTREE_PLUGIN_TEST_DIR': 'InvenTree/plugin/mock'}
+        with mock.patch.dict(os.environ, envs):
+            registry.reload_plugins(full_reload=True)
+
+            plg = registry.get_plugin('simple')
+            self.assertTrue(plg)
+            self.assertEqual(plg.slug, 'simple')
+            self.assertEqual(plg.human_name, 'SimplePlugin')
