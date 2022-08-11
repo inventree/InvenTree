@@ -237,12 +237,12 @@ class PluginsRegistry:
         return dirs
 
     def collect_plugins(self):
-        """Collect plugins from all possible ways of loading."""
+        """Collect plugins from all possible ways of loading. Returned as list."""
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return  # pragma: no cover
 
-        self.plugin_modules = []  # clear
+        collected_plugins = []
 
         # Collect plugins from paths
         for plugin in self.plugin_dirs():
@@ -261,7 +261,7 @@ class PluginsRegistry:
             modules = get_plugins(importlib.import_module(plugin), InvenTreePlugin, path=parent_path)
 
             if modules:
-                [self.plugin_modules.append(item) for item in modules]
+                [collected_plugins.append(item) for item in modules]
 
         # Check if not running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
@@ -271,13 +271,15 @@ class PluginsRegistry:
                     plugin = entry.load()
                     plugin.is_package = True
                     plugin._get_package_metadata()
-                    self.plugin_modules.append(plugin)
+                    collected_plugins.append(plugin)
                 except Exception as error:
                     handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
-        logger.info(f'Collected {len(self.plugin_modules)} plugins!')
-        logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
+        logger.info(f'Collected {len(collected_plugins)} plugins!')
+        logger.info(", ".join([a.__module__ for a in collected_plugins]))
+
+        return collected_plugins
 
     def install_plugin_file(self):
         """Make sure all plugins are installed in the current enviroment."""
