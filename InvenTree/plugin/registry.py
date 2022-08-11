@@ -270,7 +270,7 @@ class PluginsRegistry:
         # Check if not running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
             # Collect plugins from setup entry points
-            for entry in get_entrypoints():  # pragma: no cover
+            for entry in get_entrypoints():
                 try:
                     plugin = entry.load()
                     plugin.is_package = True

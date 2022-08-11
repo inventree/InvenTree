@@ -1,11 +1,12 @@
 """Unit tests for plugins."""
 
 import os
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from unittest import mock
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
 from plugin import InvenTreePlugin, registry
@@ -196,3 +197,18 @@ class RegistryTests(TestCase):
             self.assertTrue(plg)
             self.assertEqual(plg.slug, 'simple')
             self.assertEqual(plg.human_name, 'SimplePlugin')
+
+    @override_settings(PLUGIN_TESTING_SETUP=True)
+    def test_package_loading(self):
+        """Test that pypi installed plugins work."""
+        # Install package
+        subprocess.check_output('pip install inventree-zapier'.split())
+
+        # Reload
+        registry.reload_plugins(full_reload=True)
+
+        # Test
+        plg = registry.get_plugin('zapier')
+        self.assertTrue(plg)
+        self.assertEqual(plg.slug, 'zapier')
+        self.assertEqual(plg.name, 'inventree_zapier')
