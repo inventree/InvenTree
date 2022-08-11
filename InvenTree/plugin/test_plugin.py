@@ -3,7 +3,7 @@
 import os
 import subprocess
 from datetime import datetime
-# from pathlib import Path
+from pathlib import Path
 from unittest import mock
 
 from django.test import TestCase, override_settings
@@ -171,9 +171,8 @@ class InvenTreePluginTests(TestCase):
 class RegistryTests(TestCase):
     """Tests for specific registry methods."""
 
-    """
     def test_custom_loading(self):
-        ""Test if data in custom dir is loade correctly.""
+        """Test if data in custom dir is loade correctly."""
 
         dir_name = 'plugin_test_dir'
         test_dir = Path(dir_name)
@@ -186,7 +185,6 @@ class RegistryTests(TestCase):
         # Clean folder
         test_dir.joinpath('__init__.py').unlink(missing_ok=True)
         test_dir.rmdir()
-    """
 
     def test_subfolder_loading(self):
         """Test that plugins in folders get loaded."""

@@ -229,14 +229,20 @@ class PluginsRegistry:
                         logger.error(f"Could not create file '{init_filename}'")
                         continue
 
+                # By this point, we have confirmed that the directory at least exists
                 if pd.exists() and pd.is_dir():
                     # Convert to python dot-path
-                    relativ = pd.relative_to(settings.BASE_DIR)
-                    pd_path = '.'.join(relativ.parts)
+                    if pd.is_relative_to(settings.BASE_DIR):
+                        parts = pd.relative_to(settings.BASE_DIR).parts
+                    else:
+                        # Build up traversing path
+                        traversed_path = os.path.relpath(pd, settings.BASE_DIR)
+                        parts = traversed_path.split('/')
+                    pd_path = '.'.join(parts)
 
-                    # By this point, we have confirmed that the directory at least exists
-                    logger.info(f"Added plugin directory: '{pd_path}'")
+                    # Add path
                     dirs.append(pd_path)
+                    logger.info(f"Added plugin directory: '{pd}' as '{pd_path}'")
 
         return dirs
 
