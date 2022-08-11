@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-10 11:38+0000\n"
+"POT-Creation-Date: 2022-08-11 02:47+0000\n"
 "PO-Revision-Date: 2022-08-10 13:22\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -816,7 +816,7 @@ msgstr "相关销售订单"
 msgid "SalesOrder to which this build is allocated"
 msgstr "此次生产匹配的销售订单"
 
-#: build/models.py:213 build/serializers.py:803
+#: build/models.py:213 build/serializers.py:800
 #: templates/js/translated/build.js:2073 templates/js/translated/order.js:2873
 msgid "Source Location"
 msgstr "来源地点"
@@ -977,7 +977,7 @@ msgstr "生产"
 msgid "Build to allocate parts"
 msgstr "生产以分配部件"
 
-#: build/models.py:1345 build/serializers.py:648 order/serializers.py:1015
+#: build/models.py:1345 build/serializers.py:645 order/serializers.py:1015
 #: order/serializers.py:1036 stock/serializers.py:396 stock/serializers.py:754
 #: stock/serializers.py:880 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1045,7 +1045,7 @@ msgstr "安装到"
 msgid "Destination stock item"
 msgstr "目标库存项"
 
-#: build/serializers.py:138 build/serializers.py:677
+#: build/serializers.py:138 build/serializers.py:674
 #: templates/js/translated/build.js:1166
 msgid "Build Output"
 msgstr "生产产出"
@@ -1070,7 +1070,7 @@ msgstr "生产产出未被完成分配"
 msgid "Enter quantity for build output"
 msgstr "输入生产产出数量"
 
-#: build/serializers.py:208 build/serializers.py:668 order/models.py:318
+#: build/serializers.py:208 build/serializers.py:665 order/models.py:318
 #: order/serializers.py:287 order/serializers.py:442 part/serializers.py:542
 #: part/serializers.py:974 stock/models.py:477 stock/models.py:1244
 #: stock/serializers.py:302
@@ -1212,77 +1212,73 @@ msgstr "所需生产数量尚未完成"
 msgid "Build order has incomplete outputs"
 msgstr "生产订单有未完成的产出"
 
-#: build/serializers.py:550 build/templates/build/build_base.html:95
-msgid "No build outputs have been created for this build order"
-msgstr "针对此生产订单，尚未创建生产产出"
-
-#: build/serializers.py:580 build/serializers.py:625 part/models.py:2719
+#: build/serializers.py:577 build/serializers.py:622 part/models.py:2719
 #: part/models.py:2853
 msgid "BOM Item"
 msgstr "BOM项"
 
-#: build/serializers.py:590
+#: build/serializers.py:587
 msgid "Build output"
 msgstr "生产产出"
 
-#: build/serializers.py:598
+#: build/serializers.py:595
 msgid "Build output must point to the same build"
 msgstr "生产产出必须指向相同的生产"
 
-#: build/serializers.py:639
+#: build/serializers.py:636
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part 必须与生产订单指向相同的部件"
 
-#: build/serializers.py:654 stock/serializers.py:767
+#: build/serializers.py:651 stock/serializers.py:767
 msgid "Item must be in stock"
 msgstr "项目必须在库存中"
 
-#: build/serializers.py:712 order/serializers.py:1073
+#: build/serializers.py:709 order/serializers.py:1073
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "可用量 ({q}) 超出了限制"
 
-#: build/serializers.py:718
+#: build/serializers.py:715
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr "对于被追踪的部件的分配，必须指定生产产出"
 
-#: build/serializers.py:725
+#: build/serializers.py:722
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "对于未被追踪的部件，无法指定生产产出"
 
-#: build/serializers.py:730
+#: build/serializers.py:727
 msgid "This stock item has already been allocated to this build output"
 msgstr "此库存项已被分配至此生产产出"
 
-#: build/serializers.py:753 order/serializers.py:1319
+#: build/serializers.py:750 order/serializers.py:1319
 msgid "Allocation items must be provided"
 msgstr "必须提供分配的项"
 
-#: build/serializers.py:804
+#: build/serializers.py:801
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr "部件来源的仓储地点(留空则可来源于任何仓储地点)"
 
-#: build/serializers.py:812
+#: build/serializers.py:809
 msgid "Exclude Location"
 msgstr "排除地点"
 
-#: build/serializers.py:813
+#: build/serializers.py:810
 msgid "Exclude stock items from this selected location"
 msgstr "从该选定的仓储地点排除库存项"
 
-#: build/serializers.py:818
+#: build/serializers.py:815
 msgid "Interchangeable Stock"
 msgstr "可互换的库存"
 
-#: build/serializers.py:819
+#: build/serializers.py:816
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr "多处地点的库存项可以互换使用"
 
-#: build/serializers.py:824
+#: build/serializers.py:821
 msgid "Substitute Stock"
 msgstr "可替换的库存"
 
-#: build/serializers.py:825
+#: build/serializers.py:822
 msgid "Allow allocation of substitute parts"
 msgstr "允许分配可替换的部件"
 
@@ -1333,6 +1329,10 @@ msgstr "生产完成"
 #: build/templates/build/build_base.html:87
 msgid "Build Description"
 msgstr ""
+
+#: build/templates/build/build_base.html:95
+msgid "No build outputs have been created for this build order"
+msgstr "针对此生产订单，尚未创建生产产出"
 
 #: build/templates/build/build_base.html:101
 #, python-format
@@ -1412,16 +1412,7 @@ msgstr "销售订单"
 msgid "Issued By"
 msgstr "发布者"
 
-#: build/templates/build/build_base.html:230
-#: build/templates/build/sidebar.html:12
-msgid "Incomplete Outputs"
-msgstr "未完成输出"
-
-#: build/templates/build/build_base.html:231
-msgid "Build Order cannot be completed as incomplete build outputs remain"
-msgstr ""
-
-#: build/templates/build/build_base.html:257
+#: build/templates/build/build_base.html:245
 msgid "Delete Build Order"
 msgstr "删除生产订单"
 
@@ -1616,6 +1607,10 @@ msgstr "打印生产订单"
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
 msgstr ""
+
+#: build/templates/build/sidebar.html:12
+msgid "Incomplete Outputs"
+msgstr "未完成输出"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Outputs"
@@ -7464,14 +7459,16 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10442,4 +10439,3 @@ msgstr "编辑项目权限"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "删除项目权限"
-
