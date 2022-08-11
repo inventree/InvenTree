@@ -187,7 +187,7 @@ class RegistryTests(TestCase):
         test_dir.rmdir()
 
     def test_subfolder_loading(self):
-        """Test that plugins in folders get loaded"""
+        """Test that plugins in folders get loaded."""
 
         envs = {'INVENTREE_PLUGIN_TEST_DIR': 'InvenTree/plugin/mock'}
         with mock.patch.dict(os.environ, envs):
