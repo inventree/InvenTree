@@ -241,6 +241,9 @@ def get_module_meta(mdl_name):
     # Get spec for module
     spec = find_spec(mdl_name)
 
+    if not spec:
+        raise PackageNotFoundError(mdl_name)
+
     # Try to get specific package for the module
     result = None
     for dist in distributions():
