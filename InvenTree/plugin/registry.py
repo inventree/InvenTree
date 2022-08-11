@@ -4,6 +4,7 @@
 - Manages setup and teardown of plugin class instances
 """
 
+import imp
 import importlib
 import logging
 import os
@@ -266,7 +267,12 @@ class PluginsRegistry:
                 parent_path = str(parent_obj.parent)
                 plugin = parent_obj.name
 
-            modules = get_plugins(importlib.import_module(plugin), InvenTreePlugin, path=parent_path)
+            # Gather Modules
+            if parent_path:
+                raw_module = imp.load_source(plugin, str(parent_obj.joinpath('__init__.py')))
+            else:
+                raw_module = importlib.import_module(plugin)
+            modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
 
             if modules:
                 [collected_plugins.append(item) for item in modules]

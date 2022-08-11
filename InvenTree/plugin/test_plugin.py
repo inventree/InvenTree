@@ -1,7 +1,9 @@
 """Unit tests for plugins."""
 
 import os
+import shutil
 import subprocess
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from unittest import mock
@@ -171,6 +173,18 @@ class InvenTreePluginTests(TestCase):
 class RegistryTests(TestCase):
     """Tests for specific registry methods."""
 
+    def run_package_test(self, directory):
+        """General runner for testing package installs."""
+
+        envs = {'INVENTREE_PLUGIN_TEST_DIR': directory}
+        with mock.patch.dict(os.environ, envs):
+            registry.reload_plugins(full_reload=True)
+
+            plg = registry.get_plugin('simple')
+            self.assertTrue(plg)
+            self.assertEqual(plg.slug, 'simple')
+            self.assertEqual(plg.human_name, 'SimplePlugin')
+
     def test_custom_loading(self):
         """Test if data in custom dir is loade correctly."""
 
@@ -188,15 +202,17 @@ class RegistryTests(TestCase):
 
     def test_subfolder_loading(self):
         """Test that plugins in folders get loaded."""
+        self.run_package_test('InvenTree/plugin/mock')
 
-        envs = {'INVENTREE_PLUGIN_TEST_DIR': 'InvenTree/plugin/mock'}
-        with mock.patch.dict(os.environ, envs):
-            registry.reload_plugins(full_reload=True)
+    def test_folder_loading(self):
+        """Test that plugins in folders outside of BASE_DIR get loaded."""
 
-            plg = registry.get_plugin('simple')
-            self.assertTrue(plg)
-            self.assertEqual(plg.slug, 'simple')
-            self.assertEqual(plg.human_name, 'SimplePlugin')
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            src_dir = Path('InvenTree/plugin/mock').absolute()
+            new_dir = Path(tmpdirname).joinpath('mock')
+            shutil.copytree(src_dir, new_dir)
+
+            self.run_package_test(str(new_dir))
 
     @override_settings(PLUGIN_TESTING_SETUP=True)
     def test_package_loading(self):
