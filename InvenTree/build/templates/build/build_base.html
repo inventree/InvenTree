@@ -224,23 +224,11 @@ src="{% static 'img/blank_image.png' %}"
     });
 
     $("#build-complete").on('click', function() {
-
-        {% if build.incomplete_count > 0 %}
-        showAlertDialog(
-            '{% trans "Incomplete Outputs" %}',
-            '{% trans "Build Order cannot be completed as incomplete build outputs remain" %}',
-            {
-                alert_style: 'danger',
-            }
-        );
-        {% else %}
-
         completeBuildOrder({{ build.pk }}, {
             overallocated: {% if build.has_overallocated_parts %}true{% else %}false{% endif %},
             allocated: {% if build.are_untracked_parts_allocated %}true{% else %}false{% endif %},
             completed: {% if build.remaining == 0 %}true{% else %}false{% endif %},
         });
-        {% endif %}
     });
 
     {% if report_enabled %}
