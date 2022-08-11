@@ -249,7 +249,7 @@ def get_module_meta(mdl_name):
     for dist in distributions():
         try:
             relative = pathlib.Path(spec.origin).relative_to(dist.locate_file(''))
-        except ValueError:
+        except ValueError:  # pragma: no cover
             pass
         else:
             if relative in dist.files:
