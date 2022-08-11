@@ -282,7 +282,7 @@ class PluginsRegistry:
                     plugin.is_package = True
                     plugin._get_package_metadata()
                     collected_plugins.append(plugin)
-                except Exception as error:
+                except Exception as error:  # pragma: no cover
                     handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
