@@ -1,6 +1,9 @@
 """Unit tests for plugins."""
 
+import os
 from datetime import datetime
+from pathlib import Path
+from unittest import mock
 
 from django.test import TestCase
 
@@ -162,3 +165,22 @@ class InvenTreePluginTests(TestCase):
             self.assertEqual(self.plugin_old.slug, 'old')
             # check default value is used
             self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
+
+
+class RegistryTests(TestCase):
+    """Tests for specific registry methods."""
+
+    def test_custom_loading(self):
+        """Test if data in custom dir is loade correctly."""
+
+        dir_name = 'plugin_test_dir'
+        test_dir = Path(dir_name)
+        envs = {'INVENTREE_PLUGIN_TEST_DIR': dir_name}
+
+        with mock.patch.dict(os.environ, envs):
+            registry.plugin_dirs()
+            self.assertTrue(test_dir.exists())
+
+        # Clean folder
+        test_dir.joinpath('__init__.py').unlink(missing_ok=True)
+        test_dir.rmdir()
