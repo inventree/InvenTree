@@ -200,7 +200,7 @@ class PluginsRegistry:
 
         if settings.TESTING:
             custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
-        else:
+        else:  # pragma: no cover
             custom_dirs = get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
             # Load from user specified directories (unless in testing mode)
