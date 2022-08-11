@@ -241,7 +241,7 @@ def get_module_meta(mdl_name):
     # Get spec for module
     spec = find_spec(mdl_name)
 
-    if not spec:
+    if not spec:  # pragma: no cover
         raise PackageNotFoundError(mdl_name)
 
     # Try to get specific package for the module
@@ -257,7 +257,7 @@ def get_module_meta(mdl_name):
 
     # Check if a distribution was found
     # A no should not be possible here as a call can only be made on a discovered module but better save then sorry
-    if not result:
+    if not result:  # pragma: no cover
         raise PackageNotFoundError(mdl_name)
 
     # Return metadata
