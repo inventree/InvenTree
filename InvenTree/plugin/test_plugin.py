@@ -185,7 +185,7 @@ class RegistryTests(TestCase):
         test_dir.joinpath('__init__.py').unlink(missing_ok=True)
         test_dir.rmdir()
 
-    def test_folder_loading(self):
+    def test_subfolder_loading(self):
         """Test that plugins in folders get loaded"""
 
         envs = {'INVENTREE_PLUGIN_TEST_DIR': 'InvenTree/plugin/mock'}
