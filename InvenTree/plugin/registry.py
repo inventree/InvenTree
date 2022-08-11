@@ -234,8 +234,7 @@ class PluginsRegistry:
                 if pd.exists() and pd.is_dir():
                     # Convert to python dot-path
                     if pd.is_relative_to(settings.BASE_DIR):
-                        relativ = pd.relative_to(settings.BASE_DIR).parts
-                        pd_path = '.'.join(relativ)
+                        pd_path = '.'.join(pd.relative_to(settings.BASE_DIR).parts)
                     else:
                         pd_path = str(pd)
 
