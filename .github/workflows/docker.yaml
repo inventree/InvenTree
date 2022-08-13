@@ -15,7 +15,7 @@ name: Docker
 
 on:
   release:
-    types: [published]
+    types: [ published ]
 
   push:
     branches:
@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Check out repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
       - name: Version Check
         run: |
           pip install requests
@@ -66,30 +66,30 @@ jobs:
           test -f data/secret_key.txt
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480 # pin@v1
       - name: Set up Docker Buildx
         if: github.event_name != 'pull_request'
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@f211e3e9ded2d9377c8cadc4489a4e38014bc4c9 # pin@v1
       - name: Set up cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@48866aa521d8bf870604709cd43ec2f602d03ff2
+        uses: sigstore/cosign-installer@48866aa521d8bf870604709cd43ec2f602d03ff2 # pin@48866aa521d8bf870604709cd43ec2f602d03ff2
       - name: Login to Dockerhub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
+        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7 # pin@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Extract Docker metadata
         if: github.event_name != 'pull_request'
         id: meta
-        uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a
+        uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a # pin@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a
         with:
           images: |
             inventree/inventree
       - name: Build and Push
         id: build-and-push
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a # pin@v2
         with:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
@@ -103,9 +103,10 @@ jobs:
         if: github.event_name != 'pull_request'
         env:
           COSIGN_EXPERIMENTAL: "true"
-        run: cosign sign ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
+        run: cosign sign ${{ steps.meta.outputs.tags }}@${{
+          steps.build-and-push.outputs.digest }}
       - name: Push to Stable Branch
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@9a46ba8d86d3171233e861a4351b1278a2805c83 # pin@master
         if: env.stable_release == 'true' && github.event_name != 'pull_request'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
