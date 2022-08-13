@@ -265,30 +265,41 @@ class InvenTreePlugin(MixinBase, MetaBase):
         return lic
     # endregion
 
+    @classmethod
+    def check_is_sample(cls):
+        """Is the plugin delivered as a package."""
+        return getattr(cls, 'is_package', False)
+
     @property
     def _is_package(self):
         """Is the plugin delivered as a package."""
         return getattr(self, 'is_package', False)
 
-    def check_sample(self) -> bool:
+    @classmethod
+    def check_sample(cls) -> bool:
         """Is this plugin part of the samples?"""
-        return str(self.package_path).startswith('plugin/samples/')
+        return str(cls.check_package_path()).startswith('plugin/samples/')
 
     @property
     def is_sample(self) -> bool:
         """Is this plugin part of the samples?"""
         return self.check_sample()
 
+    @classmethod
+    def check_package_path(cls):
+        """Path to the plugin."""
+        if cls.check_is_sample():
+            return cls.__module__  # pragma: no cover
+
+        try:
+            return cls.file().relative_to(settings.BASE_DIR)
+        except ValueError:
+            return cls.file()
+
     @property
     def package_path(self):
         """Path to the plugin."""
-        if self._is_package:
-            return self.__module__  # pragma: no cover
-
-        try:
-            return self.file().relative_to(settings.BASE_DIR)
-        except ValueError:
-            return self.file()
+        return self.check_package_path()
 
     @property
     def settings_url(self):
