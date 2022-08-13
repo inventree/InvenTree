@@ -193,9 +193,10 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
         self.define_package()
 
-    def file(self) -> Path:
+    @classmethod
+    def file(cls) -> Path:
         """File that contains plugin definition."""
-        return Path(inspect.getfile(self.__class__))
+        return Path(inspect.getfile(cls))
 
     def path(self) -> Path:
         """Path to plugins base folder."""
