@@ -2,7 +2,6 @@
 
 import inspect
 import logging
-import os
 import warnings
 from datetime import datetime
 from importlib.metadata import PackageNotFoundError, metadata
@@ -191,10 +190,16 @@ class InvenTreePlugin(MixinBase, MetaBase):
         """
         super().__init__()
         self.add_mixin('base')
-        self.def_path = inspect.getfile(self.__class__)
-        self.path = os.path.dirname(self.def_path)
 
         self.define_package()
+
+    def file(self) -> Path:
+        """File that contains plugin definition."""
+        return Path(inspect.getfile(self.__class__))
+
+    def path(self) -> Path:
+        """Path to plugins base folder."""
+        return self.file().parent
 
     def _get_value(self, meta_name: str, package_name: str) -> str:
         """Extract values from class meta or package info.
@@ -277,9 +282,9 @@ class InvenTreePlugin(MixinBase, MetaBase):
             return self.__module__  # pragma: no cover
 
         try:
-            return Path(self.def_path).relative_to(settings.BASE_DIR)
+            return self.file().relative_to(settings.BASE_DIR)
         except ValueError:
-            return Path(self.def_path)
+            return self.file()
 
     @property
     def settings_url(self):
@@ -289,7 +294,7 @@ class InvenTreePlugin(MixinBase, MetaBase):
     # region package info
     def _get_package_commit(self):
         """Get last git commit for the plugin."""
-        return get_git_log(self.def_path)
+        return get_git_log(str(self.file()))
 
     @classmethod
     def _get_package_metadata(cls):
