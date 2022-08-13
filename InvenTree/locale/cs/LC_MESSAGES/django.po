@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-11 02:47+0000\n"
-"PO-Revision-Date: 2022-08-11 13:49\n"
+"PO-Revision-Date: 2022-08-13 21:39\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -91,7 +91,7 @@ msgstr "Pokaždé musíte zadat stejný email."
 
 #: InvenTree/helpers.py:173
 msgid "Connection error"
-msgstr ""
+msgstr "Chyba spojení"
 
 #: InvenTree/helpers.py:177 InvenTree/helpers.py:182
 msgid "Server responded with invalid status code"
@@ -107,11 +107,11 @@ msgstr ""
 
 #: InvenTree/helpers.py:190
 msgid "Image size is too large"
-msgstr ""
+msgstr "Velikost obrázku je příliš velká"
 
 #: InvenTree/helpers.py:202
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "Stahování obrázku překročilo maximální velikost"
 
 #: InvenTree/helpers.py:207
 msgid "Remote server returned empty response"
@@ -321,11 +321,11 @@ msgstr "nadřazený"
 #: InvenTree/models.py:560 InvenTree/models.py:561
 #: templates/js/translated/part.js:1939 templates/js/translated/stock.js:2421
 msgid "Path"
-msgstr ""
+msgstr "Cesta"
 
 #: InvenTree/models.py:670
 msgid "Server Error"
-msgstr ""
+msgstr "Chyba serveru"
 
 #: InvenTree/models.py:671
 msgid "An error has been logged by the server."
@@ -388,7 +388,7 @@ msgstr "Duplicitní sloupec: '{col}'"
 #: InvenTree/serializers.py:602
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: InvenTree/serializers.py:603
 msgid "URL of remote image file"
@@ -464,11 +464,11 @@ msgstr "Polština"
 
 #: InvenTree/settings.py:625
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugalština"
 
 #: InvenTree/settings.py:626
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugalština (Brazilská)"
 
 #: InvenTree/settings.py:627
 msgid "Russian"
@@ -543,7 +543,7 @@ msgstr "Odesláno"
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
@@ -611,11 +611,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:276
 msgid "Removed component item"
-msgstr ""
+msgstr "Odstraněná komponenta"
 
 #: InvenTree/status_codes.py:278
 msgid "Split from parent item"
-msgstr ""
+msgstr "Rozdělit od nadřazené položky"
 
 #: InvenTree/status_codes.py:279
 msgid "Split child item"
@@ -631,7 +631,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:285 templates/js/translated/table_filters.js:221
 msgid "Sent to customer"
-msgstr ""
+msgstr "Odesláno zákazníkovi"
 
 #: InvenTree/status_codes.py:286
 msgid "Returned from customer"
@@ -659,7 +659,7 @@ msgstr ""
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Neplatný kód měny"
 
 #: InvenTree/validators.py:45
 msgid "Invalid character in part name"
