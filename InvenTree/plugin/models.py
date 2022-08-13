@@ -3,6 +3,7 @@
 import warnings
 
 from django.conf import settings
+from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -137,7 +138,7 @@ class PluginConfig(models.Model):
         }
 
         # Save plugin
-        self.plugin = plugin
+        self.plugin: InvenTreePlugin = plugin
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
@@ -153,6 +154,20 @@ class PluginConfig(models.Model):
                 registry.reload_plugins()
 
         return ret
+
+    @admin.display(boolean=True, description=_('Sample plugin'))
+    def is_sample(self) -> bool:
+        """Is this plugin a sample app?"""
+        # Loaded and active plugin
+        if isinstance(self.plugin, InvenTreePlugin):
+            return self.plugin.check_sample()
+
+        # If no plugin_class is available it can not be a sample
+        if not self.plugin:
+            return False
+
+        # Not loaded plugin
+        return self.plugin.check_sample(self.plugin)
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):
