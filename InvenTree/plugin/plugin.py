@@ -269,11 +269,14 @@ class InvenTreePlugin(MixinBase, MetaBase):
         """Is the plugin delivered as a package."""
         return getattr(self, 'is_package', False)
 
-    @property
-    def is_sample(self):
+    def check_sample(self) -> bool:
         """Is this plugin part of the samples?"""
-        path = str(self.package_path)
-        return path.startswith('plugin/samples/')
+        return str(self.package_path).startswith('plugin/samples/')
+
+    @property
+    def is_sample(self) -> bool:
+        """Is this plugin part of the samples?"""
+        return self.check_sample()
 
     @property
     def package_path(self):
