@@ -123,11 +123,11 @@ class PluginConfig(models.Model):
         self.__org_active = self.active
 
         # append settings from registry
-        self.plugin = registry.plugins.get(self.key, None)
+        plugin = registry.plugins_full.get(self.key, None)
 
         def get_plugin_meta(name):
-            if self.plugin:
-                return str(getattr(self.plugin, name, None))
+            if plugin:
+                return str(getattr(plugin, name, None))
             return None
 
         self.meta = {
@@ -135,6 +135,9 @@ class PluginConfig(models.Model):
                                                   'pub_date', 'version', 'website', 'license',
                                                   'package_path', 'settings_url', ]
         }
+
+        # Save plugin
+        self.plugin = plugin
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
