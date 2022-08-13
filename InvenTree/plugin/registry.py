@@ -10,7 +10,7 @@ import os
 import subprocess
 from importlib import reload
 from pathlib import Path
-from typing import OrderedDict
+from typing import Dict, List, OrderedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -40,11 +40,11 @@ class PluginsRegistry:
         Set up all needed references for internal and external states.
         """
         # plugin registry
-        self.plugins = {}
-        self.plugins_inactive = {}
-        self.plugins_full = {}
+        self.plugins: Dict[str, InvenTreePlugin] = {}
+        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}
+        self.plugins_full: Dict[str, InvenTreePlugin] = {}
 
-        self.plugin_modules = []         # Holds all discovered plugins
+        self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
 
         self.errors = {}                 # Holds discovering errors
 
@@ -682,7 +682,7 @@ class PluginsRegistry:
     # endregion
 
 
-registry = PluginsRegistry()
+registry: PluginsRegistry = PluginsRegistry()
 
 
 def call_function(plugin_name, function_name, *args, **kwargs):
