@@ -42,6 +42,7 @@ class PluginsRegistry:
         # plugin registry
         self.plugins = {}
         self.plugins_inactive = {}
+        self.plugins_full = {}
 
         self.plugin_modules = []         # Holds all discovered plugins
 
@@ -389,9 +390,11 @@ class PluginsRegistry:
 
                 # safe reference
                 self.plugins[plugin.slug] = plugin
-            else:
+                self.plugins_full[plug_key] = plugin
+            else:  # pragma: no cover
                 # save for later reference
-                self.plugins_inactive[plug_key] = plugin_db_setting  # pragma: no cover
+                self.plugins_inactive[plug_key] = plugin_db_setting
+                self.plugins_full[plug_key] = plugin
 
     def _activate_plugins(self, force_reload=False, full_reload: bool = False):
         """Run activation functions for all plugins.
@@ -628,6 +631,7 @@ class PluginsRegistry:
         # remove all plugins from registry
         self.plugins = {}
         self.plugins_inactive = {}
+        self.plugins_full = {}
 
     def _update_urls(self):
         from InvenTree.urls import frontendpatterns as urlpatterns
