@@ -3,10 +3,10 @@
 import inspect
 import logging
 import os
-import pathlib
 import warnings
 from datetime import datetime
 from importlib.metadata import PackageNotFoundError, metadata
+from pathlib import Path
 
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
@@ -277,9 +277,9 @@ class InvenTreePlugin(MixinBase, MetaBase):
             return self.__module__  # pragma: no cover
 
         try:
-            return pathlib.Path(self.def_path).relative_to(settings.BASE_DIR)
+            return Path(self.def_path).relative_to(settings.BASE_DIR)
         except ValueError:
-            return pathlib.Path(self.def_path)
+            return Path(self.def_path)
 
     @property
     def settings_url(self):
