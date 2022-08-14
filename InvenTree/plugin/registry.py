@@ -397,8 +397,7 @@ class PluginsRegistry:
                         safe_reference(plugin=plugin, plug_key=plug_key, active=False)
                         continue  # continue -> the plugin is not loaded
 
-                # Initialize package
-                # now we can be sure that an admin has activated the plugin
+                # Initialize package - we can be sure that an admin has activated the plugin
                 logger.info(f'Loading plugin {plug_name}')
 
                 try:
@@ -411,6 +410,7 @@ class PluginsRegistry:
 
                 plugin.is_package = was_packaged
 
+                # Safe DB instance reference
                 if plugin_db_setting:
                     plugin.pk = plugin_db_setting.pk
 
