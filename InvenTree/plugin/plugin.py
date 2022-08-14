@@ -176,15 +176,15 @@ class VersionMixin:
     MIN_VERSION = None
     MAX_VERSION = None
 
-    def check_version(self) -> bool:
+    def check_version(self, latest=None) -> bool:
         """Check if plugin functions for the current InvenTree version."""
         from InvenTree import version
 
-        instance_v = version.inventreeVersionTuple()
+        latest = latest if latest else version.inventreeVersionTuple()
         min_v = version.inventreeVersionTuple(self.MIN_VERSION)
         max_v = version.inventreeVersionTuple(self.MAX_VERSION)
 
-        return bool(min_v <= instance_v <= max_v)
+        return bool(min_v <= latest <= max_v)
 
 
 class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
