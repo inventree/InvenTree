@@ -2,6 +2,7 @@
 
 import datetime
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
 
@@ -60,11 +61,13 @@ class StockTest(InvenTreeTestCase):
                 item.save()
                 item.full_clean()
 
-        # Check that valid URLs pass
+        # Check that valid URLs pass - and check custon schemes
+        settings.EXTRA_URL_SCHEMES = ['ssh']
         for good_url in [
             'https://test.com',
             'https://digikey.com/datasheets?file=1010101010101.bin',
             'ftp://download.com:8080/file.aspx',
+            'ssh://deb@deb:223',
         ]:
             item.link = good_url
             item.save()
