@@ -384,6 +384,7 @@ class PluginsRegistry:
 
                         # Add to inactive plugins so it shows up in the ui
                         self.plugins_inactive[plug_key] = plugin_db_setting
+                        self.plugins_full[plug_key] = plugin
                         continue  # continue -> the plugin is not loaded
 
                 # Initialize package
