@@ -367,14 +367,11 @@ class PluginsRegistry:
 
         # Initialize plugins
         for plugin in self.plugin_modules:
-            # Check if package
-            was_packaged = getattr(plugin, 'is_package', False)
-
             # Check if activated
             # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
             plug_name = plugin.NAME
-            plug_key = plugin.SLUG if getattr(plugin, 'SLUG', None) else plug_name
-            plug_key = slugify(plug_key)  # keys are slugs!
+            plug_key = slugify(getattr(plugin, 'SLUG', plug_name))  # keys are slugs!
+
             try:
                 plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
             except (OperationalError, ProgrammingError) as error:
@@ -402,17 +399,13 @@ class PluginsRegistry:
 
                 try:
                     plugin: InvenTreePlugin = plugin()
+                    logger.debug(f'Loaded plugin {plug_name}')
                 except Exception as error:
                     # log error and raise it -> disable plugin
                     handle_error(error, log_name='init')
 
-                logger.debug(f'Loaded plugin {plug_name}')
-
-                plugin.is_package = was_packaged
-
-                # Safe DB instance reference
-                if plugin_db_setting:
-                    plugin.pk = plugin_db_setting.pk
+                plugin.is_package = getattr(plugin, 'is_package', False)
+                plugin.pk = plugin_db_setting.pk if plugin_db_setting else None
 
                 # Run version check for plugin
                 if (plugin.MIN_VERSION or plugin.MAX_VERSION) and not plugin.check_version():
