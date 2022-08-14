@@ -249,20 +249,17 @@ class InvenTreePlugin(MixinBase, MetaBase):
     @property
     def version(self):
         """Version of plugin."""
-        version = self._get_value('VERSION', 'version')
-        return version
+        return self._get_value('VERSION', 'version')
 
     @property
     def website(self):
         """Website of plugin - if set else None."""
-        website = self._get_value('WEBSITE', 'website')
-        return website
+        return self._get_value('WEBSITE', 'website')
 
     @property
     def license(self):
         """License of plugin."""
-        lic = self._get_value('LICENSE', 'license')
-        return lic
+        return self._get_value('LICENSE', 'license')
     # endregion
 
     @classmethod
