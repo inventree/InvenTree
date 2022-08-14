@@ -41,20 +41,20 @@ class PluginsRegistry:
         Set up all needed references for internal and external states.
         """
         # plugin registry
-        self.plugins: Dict[str, InvenTreePlugin] = {}
-        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}
-        self.plugins_full: Dict[str, InvenTreePlugin] = {}
+        self.plugins: Dict[str, InvenTreePlugin] = {}           # List of active instances
+        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}  # List of inactive instances
+        self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
 
         self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
 
-        self.errors = {}                 # Holds discovering errors
+        self.errors = {}                                        # Holds discovering errors
 
         # flags
-        self.is_loading = False
-        self.apps_loading = True        # Marks if apps were reloaded yet
-        self.git_is_modern = True       # Is a modern version of git available
+        self.is_loading = False                                 # Are plugins beeing loaded right now
+        self.apps_loading = True                                # Marks if apps were reloaded yet
+        self.git_is_modern = True                               # Is a modern version of git available
 
-        self.installed_apps = []         # Holds all added plugin_paths
+        self.installed_apps = []                                # Holds all added plugin_paths
 
         # mixins
         self.mixins_settings = {}
@@ -391,7 +391,7 @@ class PluginsRegistry:
                 logger.info(f'Loading plugin {plug_name}')
 
                 try:
-                    plugin = plugin()
+                    plugin: InvenTreePlugin = plugin()
                 except Exception as error:
                     # log error and raise it -> disable plugin
                     handle_error(error, log_name='init')
