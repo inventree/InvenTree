@@ -349,6 +349,20 @@ class PluginsRegistry:
         """
         from plugin.models import PluginConfig
 
+        def safe_reference(plugin, plug_key, active=True):
+            """Safe reference to plugin dicts."""
+            if active:
+                self.plugins[plug_key] = plugin
+                self.plugins_full[plug_key] = plugin
+            else:
+                # Deactivate plugin in db
+                if not settings.PLUGIN_TESTING:  # pragma: no cover
+                    plugin.db.active = False
+                    plugin.db.save(no_reload=True)
+                # Add to inactive plugins so it shows up in the ui
+                self.plugins_inactive[plug_key] = plugin.db
+                self.plugins_full[plug_key] = plugin
+
         logger.info('Starting plugin initialisation')
 
         # Initialize plugins
@@ -377,14 +391,7 @@ class PluginsRegistry:
                 if disabled:
                     # option1: package, option2: file-based
                     if (plugin.__name__ == disabled) or (plugin.__module__ == disabled):
-                        # Errors are bad so disable the plugin in the database
-                        if not settings.PLUGIN_TESTING:  # pragma: no cover
-                            plugin_db_setting.active = False
-                            plugin_db_setting.save(no_reload=True)
-
-                        # Add to inactive plugins so it shows up in the ui
-                        self.plugins_inactive[plug_key] = plugin_db_setting
-                        self.plugins_full[plug_key] = plugin
+                        safe_reference(plugin=plugin, plug_key=plug_key, active=False)
                         continue  # continue -> the plugin is not loaded
 
                 # Initialize package
@@ -406,20 +413,12 @@ class PluginsRegistry:
 
                 # Run version check for plugin
                 if (plugin.MIN_VERSION or plugin.MAX_VERSION) and not plugin.check_version():
-                    if not settings.PLUGIN_TESTING:  # pragma: no cover
-                        plugin_db_setting.active = False
-                        plugin_db_setting.save(no_reload=True)
-                    self.plugins_inactive[plug_key] = plugin_db_setting
-                    self.plugins_full[plug_key] = plugin
-                    continue
-
-                # safe reference
-                self.plugins[plug_key] = plugin
-                self.plugins_full[plug_key] = plugin
+                    safe_reference(plugin=plugin, plug_key=plug_key, active=False)
+                else:
+                    safe_reference(plugin=plugin, plug_key=plug_key)
             else:  # pragma: no cover
                 # save for later reference
-                self.plugins_inactive[plug_key] = plugin_db_setting
-                self.plugins_full[plug_key] = plugin
+                safe_reference(plugin=plugin, plug_key=plug_key, active=False)
 
     def _activate_plugins(self, force_reload=False, full_reload: bool = False):
         """Run activation functions for all plugins.
