@@ -167,7 +167,7 @@ class PluginConfig(models.Model):
             return False
 
         # Not loaded plugin
-        return self.plugin.check_is_sample()
+        return self.plugin.check_is_sample()  # pragma: no cover
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):
