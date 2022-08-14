@@ -18,6 +18,7 @@ import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import part.models as part_models
+import stock.filters
 from common.settings import currency_code_default, currency_code_mappings
 from company.serializers import SupplierPartSerializer
 from InvenTree.models import extract_int
@@ -575,9 +576,20 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Detailed information about a stock location."""
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate extra information to the queryset"""
+
+        # Annotate the number of stock items which exist in this category (including subcategories)
+        queryset = queryset.annotate(
+            items=stock.filters.annotate_location_items()
+        )
+
+        return queryset
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    items = serializers.IntegerField(source='item_count', read_only=True)
+    items = serializers.IntegerField(read_only=True)
 
     level = serializers.IntegerField(read_only=True)
 

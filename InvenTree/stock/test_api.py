@@ -54,11 +54,47 @@ class StockLocationTest(StockAPITestCase):
         StockLocation.objects.create(name='top', description='top category')
 
     def test_list(self):
-        """Test StockLocation list."""
-        # Check that we can request the StockLocation list
-        response = self.client.get(self.list_url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertGreaterEqual(len(response.data), 1)
+        """Test the StockLocationList API endpoint"""
+        test_cases = [
+            ({}, 8, 'no parameters'),
+            ({'parent': 1, 'cascade': False}, 2, 'Filter by parent, no cascading'),
+            ({'parent': 1, 'cascade': True}, 2, 'Filter by parent, cascading'),
+            ({'cascade': True, 'depth': 0}, 8, 'Cascade with no parent, depth=0'),
+            ({'cascade': False, 'depth': 10}, 8, 'Cascade with no parent, depth=0'),
+            ({'parent': 'null', 'cascade': True, 'depth': 0}, 7, 'Cascade with null parent, depth=0'),
+            ({'parent': 'null', 'cascade': True, 'depth': 10}, 8, 'Cascade with null parent and bigger depth'),
+            ({'parent': 'null', 'cascade': False, 'depth': 10}, 3, 'No cascade even with depth specified with null parent'),
+            ({'parent': 1, 'cascade': False, 'depth': 0}, 2, 'Dont cascade with depth=0 and parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 0}, 2, 'Cascade with depth=0 and parent'),
+            ({'parent': 1, 'cascade': False, 'depth': 1}, 2, 'Dont cascade even with depth=1 specified with parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 1}, 2, 'Cascade with depth=1 with parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 'abcdefg'}, 2, 'Cascade with invalid depth and parent'),
+            ({'parent': 42}, 8, 'Should return everything if parent_pk is not vaild'),
+            ({'parent': 'null', 'exclude_tree': 1, 'cascade': True}, 5, 'Should return everything except tree with pk=1'),
+            ({'parent': 'null', 'exclude_tree': 42, 'cascade': True}, 8, 'Should return everything because exclude_tree=42 is no valid pk'),
+        ]
+
+        for params, res_len, description in test_cases:
+            response = self.get(self.list_url, params, expected_code=200)
+            self.assertEqual(len(response.data), res_len, description)
+
+        # Check that the required fields are present
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'level',
+            'parent',
+            'items',
+            'pathstring',
+            'owner',
+            'url'
+        ]
+
+        response = self.get(self.list_url, expected_code=200)
+        for result in response.data:
+            for f in fields:
+                self.assertIn(f, result, f'"{f}" is missing in result of StockLocation list')
 
     def test_add(self):
         """Test adding StockLocation."""

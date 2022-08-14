@@ -267,7 +267,7 @@ class TestHelpers(TestCase):
 
         # Attempt to download an image which throws a 404
         with self.assertRaises(requests.exceptions.HTTPError):
-            helpers.download_image_from_url("https://httpstat.us/404")
+            helpers.download_image_from_url("https://httpstat.us/404", timeout=10)
 
         # Attempt to download, but timeout
         with self.assertRaises(requests.exceptions.Timeout):
@@ -275,7 +275,7 @@ class TestHelpers(TestCase):
 
         # Attempt to download, but not a valid image
         with self.assertRaises(TypeError):
-            helpers.download_image_from_url("https://httpstat.us/200")
+            helpers.download_image_from_url("https://httpstat.us/200", timeout=10)
 
         large_img = "https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg"
 
@@ -283,13 +283,13 @@ class TestHelpers(TestCase):
 
         # Attempt to download an image which is too large
         with self.assertRaises(ValueError):
-            helpers.download_image_from_url(large_img)
+            helpers.download_image_from_url(large_img, timeout=10)
 
         # Increase allowable download size
         InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None)
 
         # Download a valid image (should not throw an error)
-        helpers.download_image_from_url(large_img)
+        helpers.download_image_from_url(large_img, timeout=10)
 
 
 class TestQuoteWrap(TestCase):
@@ -745,11 +745,11 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/config.yaml',
         ]
 
-        self.assertTrue(any([opt in config.get_config_file().lower() for opt in valid]))
+        self.assertTrue(any([opt in str(config.get_config_file()).lower() for opt in valid]))
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
-            self.assertIn('inventree/my_special_conf.yaml', config.get_config_file().lower())
+            self.assertIn('inventree/my_special_conf.yaml', str(config.get_config_file()).lower())
 
     def test_helpers_plugin_file(self):
         """Test get_plugin_file."""
@@ -760,11 +760,11 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/plugins.txt',
         ]
 
-        self.assertTrue(any([opt in config.get_plugin_file().lower() for opt in valid]))
+        self.assertTrue(any([opt in str(config.get_plugin_file()).lower() for opt in valid]))
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
-            self.assertIn('my_special_plugins.txt', config.get_plugin_file())
+            self.assertIn('my_special_plugins.txt', str(config.get_plugin_file()))
 
     def test_helpers_setting(self):
         """Test get_setting."""

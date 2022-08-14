@@ -798,7 +798,7 @@ function loadBomTable(table, options={}) {
     // Part column
     cols.push(
         {
-            field: 'sub_part',
+            field: 'sub_part_detail.full_name',
             title: '{% trans "Part" %}',
             sortable: true,
             switchable: false,
