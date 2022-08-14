@@ -369,52 +369,50 @@ class PluginsRegistry:
         for plugin in self.plugin_modules:
             # Check if activated
             # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
-            plug_name = plugin.NAME
-            plug_key = slugify(getattr(plugin, 'SLUG', plug_name))  # keys are slugs!
+            plg_name = plugin.NAME
+            plg_key = slugify(getattr(plugin, 'SLUG', plg_name))  # keys are slugs!
 
             try:
-                plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
+                plg_db, _ = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
                     raise error  # pragma: no cover
-                plugin_db_setting = None
+                plg_db = None
             except (IntegrityError) as error:  # pragma: no cover
                 logger.error(f"Error initializing plugin: {error}")
 
             # Append reference to plugin
-            plugin.db = plugin_db_setting
+            plugin.db = plg_db
 
             # Always activate if testing
-            if settings.PLUGIN_TESTING or (plugin_db_setting and plugin_db_setting.active):
-                # Check if the plugin was blocked -> threw an error
-                if disabled:
-                    # option1: package, option2: file-based
-                    if (plugin.__name__ == disabled) or (plugin.__module__ == disabled):
-                        safe_reference(plugin=plugin, plug_key=plug_key, active=False)
-                        continue  # continue -> the plugin is not loaded
+            if settings.PLUGIN_TESTING or (plg_db and plg_db.active):
+                # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
+                if disabled and ((plugin.__name__ == disabled) or (plugin.__module__ == disabled)):
+                    safe_reference(plugin=plugin, plug_key=plg_key, active=False)
+                    continue  # continue -> the plugin is not loaded
 
                 # Initialize package - we can be sure that an admin has activated the plugin
-                logger.info(f'Loading plugin {plug_name}')
-
+                logger.info(f'Loading plugin {plg_name}')
                 try:
                     plugin: InvenTreePlugin = plugin()
-                    logger.debug(f'Loaded plugin {plug_name}')
+                    logger.debug(f'Loaded plugin {plg_name}')
                 except Exception as error:
                     # log error and raise it -> disable plugin
                     handle_error(error, log_name='init')
 
+                # Safe extra attributes
                 plugin.is_package = getattr(plugin, 'is_package', False)
-                plugin.pk = plugin_db_setting.pk if plugin_db_setting else None
+                plugin.pk = plg_db.pk if plg_db else None
 
                 # Run version check for plugin
                 if (plugin.MIN_VERSION or plugin.MAX_VERSION) and not plugin.check_version():
-                    safe_reference(plugin=plugin, plug_key=plug_key, active=False)
+                    safe_reference(plugin=plugin, plug_key=plg_key, active=False)
                 else:
-                    safe_reference(plugin=plugin, plug_key=plug_key)
+                    safe_reference(plugin=plugin, plug_key=plg_key)
             else:  # pragma: no cover
                 # save for later reference
-                safe_reference(plugin=plugin, plug_key=plug_key, active=False)
+                safe_reference(plugin=plugin, plug_key=plg_key, active=False)
 
     def _activate_plugins(self, force_reload=False, full_reload: bool = False):
         """Run activation functions for all plugins.
