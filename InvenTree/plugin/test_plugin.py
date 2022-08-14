@@ -184,6 +184,9 @@ class InvenTreePluginTests(TestCase):
         self.assertTrue(self.plugin_version.check_version([0, 1, 0]))
         self.assertFalse(self.plugin_version.check_version([0, 1, 4]))
 
+        plug = registry.plugins_full.get('version')
+        self.assertEqual(plug.is_active(), False)
+
 
 class RegistryTests(TestCase):
     """Tests for registry loading methods."""
