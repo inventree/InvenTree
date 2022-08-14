@@ -340,12 +340,14 @@ class PluginsRegistry:
     # endregion
 
     # region general internal loading /activating / deactivating / deloading
-    def _init_plugins(self, disabled=None):
+    def _init_plugins(self, disabled: str = None):
         """Initialise all found plugins.
 
-        :param disabled: loading path of disabled app, defaults to None
-        :type disabled: str, optional
-        :raises error: IntegrationPluginError
+        Args:
+            disabled (str, optional): Loading path of disabled app. Defaults to None.
+
+        Raises:
+            error: IntegrationPluginError
         """
         from plugin.models import PluginConfig
 
@@ -353,22 +355,18 @@ class PluginsRegistry:
             """Safe reference to plugin dicts."""
             if active:
                 self.plugins[key] = plugin
-                self.plugins_full[key] = plugin
             else:
                 # Deactivate plugin in db
                 if not settings.PLUGIN_TESTING:  # pragma: no cover
                     plugin.db.active = False
                     plugin.db.save(no_reload=True)
-
-                # Add to inactive plugins so it shows up in the ui
                 self.plugins_inactive[key] = plugin.db
-                self.plugins_full[key] = plugin
+            self.plugins_full[key] = plugin
 
         logger.info('Starting plugin initialisation')
 
         # Initialize plugins
         for plg in self.plugin_modules:
-            # Check if activated
             # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
             plg_name = plg.NAME
             plg_key = slugify(getattr(plg, 'SLUG', plg_name))  # keys are slugs!
@@ -397,10 +395,9 @@ class PluginsRegistry:
                 logger.info(f'Loading plugin `{plg_name}`')
                 try:
                     plg_i: InvenTreePlugin = plg()
-                    logger.debug(f'Loaded plugin `{plg_name}`')
+                    logger.info(f'Loaded plugin `{plg_name}`')
                 except Exception as error:
-                    # log error and raise it -> disable plugin
-                    handle_error(error, log_name='init')
+                    handle_error(error, log_name='init')  # log error and raise it -> disable plugin
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)
@@ -413,7 +410,6 @@ class PluginsRegistry:
                 else:
                     safe_reference(plugin=plg_i, key=plg_key)
             else:  # pragma: no cover
-                # save for later reference
                 safe_reference(plugin=plg, key=plg_key, active=False)
 
     def _activate_plugins(self, force_reload=False, full_reload: bool = False):
@@ -648,25 +644,25 @@ class PluginsRegistry:
         self.installed_apps = []
 
     def _clean_registry(self):
-        # remove all plugins from registry
-        self.plugins = {}
-        self.plugins_inactive = {}
-        self.plugins_full = {}
+        """Remove all plugins from registry."""
+        self.plugins: Dict[str, InvenTreePlugin] = {}
+        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}
+        self.plugins_full: Dict[str, InvenTreePlugin] = {}
 
     def _update_urls(self):
-        from InvenTree.urls import frontendpatterns as urlpatterns
+        from InvenTree.urls import frontendpatterns as urlpattern
         from InvenTree.urls import urlpatterns as global_pattern
         from plugin.urls import get_plugin_urls
 
-        for index, a in enumerate(urlpatterns):
-            if hasattr(a, 'app_name'):
-                if a.app_name == 'admin':
-                    urlpatterns[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
-                elif a.app_name == 'plugin':
-                    urlpatterns[index] = get_plugin_urls()
+        for index, url in enumerate(urlpattern):
+            if hasattr(url, 'app_name'):
+                if url.app_name == 'admin':
+                    urlpattern[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
+                elif url.app_name == 'plugin':
+                    urlpattern[index] = get_plugin_urls()
 
-        # replace frontendpatterns
-        global_pattern[0] = re_path('', include(urlpatterns))
+        # Replace frontendpatterns
+        global_pattern[0] = re_path('', include(urlpattern))
         clear_url_caches()
 
     def _reload_apps(self, force_reload: bool = False, full_reload: bool = False):
