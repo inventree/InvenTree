@@ -389,7 +389,7 @@ class PluginsRegistry:
                     plugin.pk = plugin_db_setting.pk
 
                 # safe reference
-                self.plugins[plugin.slug] = plugin
+                self.plugins[plug_key] = plugin
                 self.plugins_full[plug_key] = plugin
             else:  # pragma: no cover
                 # save for later reference
