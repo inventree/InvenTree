@@ -571,10 +571,10 @@ class PluginsRegistry:
         """
         try:
             # for local path plugins
-            plugin_path = '.'.join(Path(plugin.path).relative_to(settings.BASE_DIR).parts)
+            plugin_path = '.'.join(plugin.path().relative_to(settings.BASE_DIR).parts)
         except ValueError:  # pragma: no cover
-            # plugin is shipped as package
-            plugin_path = plugin.NAME
+            # plugin is shipped as package - extract plugin module name
+            plugin_path = plugin.__module__.split('.')[0]
         return plugin_path
 
     def deactivate_plugin_app(self):
