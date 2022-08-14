@@ -385,6 +385,9 @@ class PluginsRegistry:
             except (IntegrityError) as error:  # pragma: no cover
                 logger.error(f"Error initializing plugin: {error}")
 
+            # Append reference to plugin
+            plugin.db = plugin_db_setting
+
             # Always activate if testing
             if settings.PLUGIN_TESTING or (plugin_db_setting and plugin_db_setting.active):
                 # Check if the plugin was blocked -> threw an error
