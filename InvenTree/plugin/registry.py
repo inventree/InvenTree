@@ -405,6 +405,7 @@ class PluginsRegistry:
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)
                 plg_i.pk = plg_db.pk if plg_db else None
+                plg_i.db = plg_db
 
                 # Run version check for plugin
                 if (plg_i.MIN_VERSION or plg_i.MAX_VERSION) and not plg_i.check_version():
