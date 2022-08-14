@@ -369,7 +369,7 @@ class PluginsRegistry:
         for plg in self.plugin_modules:
             # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
             plg_name = plg.NAME
-            plg_key = slugify(getattr(plg, 'SLUG', plg_name))  # keys are slugs!
+            plg_key = slugify(plg.SLUG if getattr(plg, 'SLUG', None) else plg_name)  # keys are slugs!
 
             try:
                 plg_db, _ = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
