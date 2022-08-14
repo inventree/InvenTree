@@ -160,7 +160,7 @@ class PluginConfig(models.Model):
         """Is this plugin a sample app?"""
         # Loaded and active plugin
         if isinstance(self.plugin, InvenTreePlugin):
-            return self.plugin.check_sample()
+            return self.plugin.check_is_sample()
 
         # If no plugin_class is available it can not be a sample
         if not self.plugin:

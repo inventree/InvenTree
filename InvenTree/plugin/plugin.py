@@ -263,7 +263,7 @@ class InvenTreePlugin(MixinBase, MetaBase):
     # endregion
 
     @classmethod
-    def check_is_sample(cls):
+    def check_is_package(cls):
         """Is the plugin delivered as a package."""
         return getattr(cls, 'is_package', False)
 
@@ -273,19 +273,19 @@ class InvenTreePlugin(MixinBase, MetaBase):
         return getattr(self, 'is_package', False)
 
     @classmethod
-    def check_sample(cls) -> bool:
+    def check_is_sample(cls) -> bool:
         """Is this plugin part of the samples?"""
         return str(cls.check_package_path()).startswith('plugin/samples/')
 
     @property
     def is_sample(self) -> bool:
         """Is this plugin part of the samples?"""
-        return self.check_sample()
+        return self.check_is_sample()
 
     @classmethod
     def check_package_path(cls):
         """Path to the plugin."""
-        if cls.check_is_sample():
+        if cls.check_is_package():
             return cls.__module__  # pragma: no cover
 
         try:
