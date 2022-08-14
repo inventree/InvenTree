@@ -380,7 +380,7 @@ class PluginsRegistry:
                     raise error  # pragma: no cover
                 plg_db = None
             except (IntegrityError) as error:  # pragma: no cover
-                logger.error(f"Error initializing plugin: {error}")
+                logger.error(f"Error initializing plugin `{plg_name}`: {error}")
 
             # Append reference to plugin
             plugin.db = plg_db
@@ -393,10 +393,10 @@ class PluginsRegistry:
                     continue  # continue -> the plugin is not loaded
 
                 # Initialize package - we can be sure that an admin has activated the plugin
-                logger.info(f'Loading plugin {plg_name}')
+                logger.info(f'Loading plugin `{plg_name}`')
                 try:
                     plugin: InvenTreePlugin = plugin()
-                    logger.debug(f'Loaded plugin {plg_name}')
+                    logger.debug(f'Loaded plugin `{plg_name}`')
                 except Exception as error:
                     # log error and raise it -> disable plugin
                     handle_error(error, log_name='init')
