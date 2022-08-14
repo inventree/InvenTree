@@ -403,6 +403,14 @@ class PluginsRegistry:
                 if plugin_db_setting:
                     plugin.pk = plugin_db_setting.pk
 
+                # Run version check for plugin
+                if (plugin.MIN_VERSION or plugin.MAX_VERSION) and not plugin.check_version():
+                    plugin_db_setting.active = False
+                    plugin_db_setting.save(no_reload=True)
+                    self.plugins_inactive[plug_key] = plugin_db_setting
+                    self.plugins_full[plug_key] = plugin
+                    continue
+
                 # safe reference
                 self.plugins[plug_key] = plugin
                 self.plugins_full[plug_key] = plugin

@@ -170,7 +170,24 @@ class MixinBase:
         return mixins
 
 
-class InvenTreePlugin(MixinBase, MetaBase):
+class VersionMixin:
+    """Mixin to enable version checking."""
+
+    MIN_VERSION = None
+    MAX_VERSION = None
+
+    def check_version(self) -> bool:
+        """Check if plugin functions for the current InvenTree version."""
+        from InvenTree import version
+
+        instance_v = version.inventreeVersionTuple()
+        min_v = version.inventreeVersionTuple(self.MIN_VERSION)
+        max_v = version.inventreeVersionTuple(self.MAX_VERSION)
+
+        return bool(min_v <= instance_v <= max_v)
+
+
+class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     """The InvenTreePlugin class is used to integrate with 3rd party software.
 
     DO NOT USE THIS DIRECTLY, USE plugin.InvenTreePlugin
