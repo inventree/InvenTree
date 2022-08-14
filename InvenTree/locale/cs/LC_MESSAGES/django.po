@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-11 02:47+0000\n"
-"PO-Revision-Date: 2022-08-13 21:39\n"
+"PO-Revision-Date: 2022-08-14 21:43\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -23,7 +23,7 @@ msgstr "API endpoint nebyl nalezen"
 
 #: InvenTree/exceptions.py:68
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "Podrobnosti o chybě lze nalézt v panelu administrace"
 
 #: InvenTree/fields.py:109
 msgid "Enter date"
@@ -1715,7 +1715,7 @@ msgstr ""
 
 #: common/models.py:833 company/models.py:93 company/models.py:94
 msgid "Company name"
-msgstr ""
+msgstr "Jméno společnosti"
 
 #: common/models.py:834
 msgid "Internal company name"
