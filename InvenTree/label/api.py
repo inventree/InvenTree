@@ -1,5 +1,6 @@
 """API functionality for the 'label' app"""
 
+import datetime
 from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse, JsonResponse
@@ -18,7 +19,7 @@ from plugin.base.label import label as plugin_label
 from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
-from .models import PartLabel, StockItemLabel, StockLocationLabel
+from .models import PartLabel, StockItemLabel, StockLocationLabel, WeasyprintLabelMixin
 from .serializers import (PartLabelSerializer, StockItemLabelSerializer,
                           StockLocationLabelSerializer)
 
@@ -107,10 +108,7 @@ class LabelPrintMixin:
             label_names.append(label_name)
             label_instances.append(label)
 
-            if debug_mode:
-                outputs.append(label.render_as_string(request))
-            else:
-                outputs.append(label.render(request))
+            outputs.append(label.render_as_string(request))
 
         if not label_name.endswith(".pdf"):
             label_name += ".pdf"
@@ -154,28 +152,29 @@ class LabelPrintMixin:
             return HttpResponse(html)
 
         else:
-            """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
 
-            pages = []
+            label = self.get_object()
+            context = {}
 
-            if len(outputs) > 1:
-                # If more than one output is generated, merge them into a single file
-                for output in outputs:
-                    doc = output.get_document()
-                    for page in doc.pages:
-                        pages.append(page)
+            context['base_url'] = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+            context['date'] = datetime.datetime.now().date()
+            context['datetime'] = datetime.datetime.now()
+            context['request'] = request
+            context['user'] = request.user
+            context['width'] = label.width
+            context['height'] = label.height
+            context['outputs'] = outputs
 
-                pdf = outputs[0].get_document().copy(pages).write_pdf()
-            else:
-                pdf = outputs[0].get_document().write_pdf()
+            wp = WeasyprintLabelMixin(
+                request,
+                "label/labels.html",
+                base_url=request.build_absolute_uri("/"),
+                presentational_hints=True,
+                filename="labels.pdf",
+            )
 
-            inline = common.models.InvenTreeUserSetting.get_setting('LABEL_INLINE', user=request.user)
-
-            return InvenTree.helpers.DownloadFile(
-                pdf,
-                label_name,
-                content_type='application/pdf',
-                inline=inline
+            return wp.render_to_response(
+                context=context,
             )
 
 

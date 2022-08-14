@@ -1,0 +1,41 @@
+{% load report %}
+{% load barcode %}
+
+<head>
+    <style>
+        @page {
+            size: {{ width }}mm {{ height }}mm;
+            {% block margin %}
+            margin: 0mm;
+            {% endblock %}
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0mm;
+            color: #000;
+            background-color: #FFF;
+        }
+
+        img {
+            display: inline-block;
+            image-rendering: pixelated;
+        }
+
+        .thelabel {
+            break-after: always;
+        }
+
+        {% block style %}
+        {% endblock %}
+
+    </style>
+</head>
+
+<body>
+    {% for output in outputs %}
+    <div class="thelabel">
+        {{ output }}
+    </div>
+    {% endfor %}
+</body>
