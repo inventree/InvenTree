@@ -1268,6 +1268,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
 
+        'PLUGIN_CHECK_SIGNATURES': {
+            'name': _('Check plugin signatures'),
+            'description': _('Check and show signatures for plugins'),
+            'default': False,
+            'validator': bool,
+        },
+
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
