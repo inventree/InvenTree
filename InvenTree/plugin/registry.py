@@ -349,28 +349,29 @@ class PluginsRegistry:
         """
         from plugin.models import PluginConfig
 
-        def safe_reference(plugin, plug_key, active=True):
+        def safe_reference(plugin, key: str, active: bool = True):
             """Safe reference to plugin dicts."""
             if active:
-                self.plugins[plug_key] = plugin
-                self.plugins_full[plug_key] = plugin
+                self.plugins[key] = plugin
+                self.plugins_full[key] = plugin
             else:
                 # Deactivate plugin in db
                 if not settings.PLUGIN_TESTING:  # pragma: no cover
                     plugin.db.active = False
                     plugin.db.save(no_reload=True)
+
                 # Add to inactive plugins so it shows up in the ui
-                self.plugins_inactive[plug_key] = plugin.db
-                self.plugins_full[plug_key] = plugin
+                self.plugins_inactive[key] = plugin.db
+                self.plugins_full[key] = plugin
 
         logger.info('Starting plugin initialisation')
 
         # Initialize plugins
-        for plugin in self.plugin_modules:
+        for plg in self.plugin_modules:
             # Check if activated
             # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
-            plg_name = plugin.NAME
-            plg_key = slugify(getattr(plugin, 'SLUG', plg_name))  # keys are slugs!
+            plg_name = plg.NAME
+            plg_key = slugify(getattr(plg, 'SLUG', plg_name))  # keys are slugs!
 
             try:
                 plg_db, _ = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
@@ -383,36 +384,36 @@ class PluginsRegistry:
                 logger.error(f"Error initializing plugin `{plg_name}`: {error}")
 
             # Append reference to plugin
-            plugin.db = plg_db
+            plg.db = plg_db
 
             # Always activate if testing
             if settings.PLUGIN_TESTING or (plg_db and plg_db.active):
                 # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
-                if disabled and ((plugin.__name__ == disabled) or (plugin.__module__ == disabled)):
-                    safe_reference(plugin=plugin, plug_key=plg_key, active=False)
+                if disabled and ((plg.__name__ == disabled) or (plg.__module__ == disabled)):
+                    safe_reference(plugin=plg, key=plg_key, active=False)
                     continue  # continue -> the plugin is not loaded
 
                 # Initialize package - we can be sure that an admin has activated the plugin
                 logger.info(f'Loading plugin `{plg_name}`')
                 try:
-                    plugin: InvenTreePlugin = plugin()
+                    plg_i: InvenTreePlugin = plg()
                     logger.debug(f'Loaded plugin `{plg_name}`')
                 except Exception as error:
                     # log error and raise it -> disable plugin
                     handle_error(error, log_name='init')
 
                 # Safe extra attributes
-                plugin.is_package = getattr(plugin, 'is_package', False)
-                plugin.pk = plg_db.pk if plg_db else None
+                plg_i.is_package = getattr(plg_i, 'is_package', False)
+                plg_i.pk = plg_db.pk if plg_db else None
 
                 # Run version check for plugin
-                if (plugin.MIN_VERSION or plugin.MAX_VERSION) and not plugin.check_version():
-                    safe_reference(plugin=plugin, plug_key=plg_key, active=False)
+                if (plg_i.MIN_VERSION or plg_i.MAX_VERSION) and not plg_i.check_version():
+                    safe_reference(plugin=plg_i, key=plg_key, active=False)
                 else:
-                    safe_reference(plugin=plugin, plug_key=plg_key)
+                    safe_reference(plugin=plg_i, key=plg_key)
             else:  # pragma: no cover
                 # save for later reference
-                safe_reference(plugin=plugin, plug_key=plg_key, active=False)
+                safe_reference(plugin=plg, key=plg_key, active=False)
 
     def _activate_plugins(self, force_reload=False, full_reload: bool = False):
         """Run activation functions for all plugins.
