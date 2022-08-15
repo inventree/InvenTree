@@ -54,6 +54,7 @@ def check_prohibited_tags(data):
         'load',
         'include',
         'url',
+        'blocktrans'
     ]
 
     pattern = r"{% (\w+)\s"
