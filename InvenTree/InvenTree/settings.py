@@ -16,8 +16,6 @@ import sys
 from pathlib import Path
 
 import django.conf.locale
-from django.contrib.staticfiles.storage import StaticFilesStorage
-from django.core.files.storage import default_storage
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
@@ -26,7 +24,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from . import config
-from .config import get_boolean_setting, get_setting
+from .config import get_boolean_setting, get_custom_file, get_setting
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
@@ -818,36 +816,10 @@ PLUGIN_RETRY = CONFIG.get('PLUGIN_RETRY', 5)  # how often should plugin loading 
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
 
 # User interface customization values
+CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True)
+CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
+
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
-
-static_storage = StaticFilesStorage()
-
-"""
-Check for the existence of a 'custom logo' file:
-- Check the 'static' directory
-- Check the 'media' directory (legacy)
-"""
-
-CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', None)
-
-if CUSTOM_LOGO:
-    if static_storage.exists(CUSTOM_LOGO):
-        logger.info(f"Loading custom logo from static directory: {CUSTOM_LOGO}")
-    elif default_storage.exists(CUSTOM_LOGO):
-        logger.info(f"Loading custom logo from media directory: {CUSTOM_LOGO}")
-    else:
-        logger.warning(f"The custom logo file '{CUSTOM_LOGO}' could not be found in the static or media directories")
-        CUSTOM_LOGO = False
-
-# Check for a custom splash screen
-CUSTOM_SPLASH = get_setting('INVENTREE_CUSTOM_SPLASH', 'customize.splash', None)
-
-if CUSTOM_SPLASH:
-    if static_storage.exists(CUSTOM_SPLASH):
-        logger.info(f"Loading custom splash screen from static directory: {CUSTOM_SPLASH}")
-    else:
-        logger.warning(f"The custom splash screen '{CUSTOM_SPLASH}' could not be found in the static directory")
-        CUSTOM_SPLASH = False
 
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")

@@ -7,6 +7,9 @@ import shutil
 import string
 from pathlib import Path
 
+from django.contrib.staticfiles.storage import StaticFilesStorage
+from django.core.files.storage import default_storage
+
 import yaml
 
 logger = logging.getLogger('inventree')
@@ -203,3 +206,27 @@ def get_secret_key():
     key_data = secret_key_file.read_text().strip()
 
     return key_data
+
+
+def get_custom_file(env_ref: str, conf_ref: str, log_ref: str, lookup_media: bool = False):
+    """Returns the checked path to a custom file.
+
+    Set lookup_media to True to also search in the media folder.
+    """
+    value = get_setting(env_ref, conf_ref, None)
+
+    if not value:
+        return None
+
+    static_storage = StaticFilesStorage()
+
+    if static_storage.exists(value):
+        logger.info(f"Loading {log_ref} from static directory: {value}")
+    elif lookup_media and default_storage.exists(value):
+        logger.info(f"Loading {log_ref} from media directory: {value}")
+    else:
+        add_dir_str = ' or media' if lookup_media else ''
+        logger.warning(f"The {log_ref} file '{value}' could not be found in the static{add_dir_str} directories")
+        value = False
+
+    return value
