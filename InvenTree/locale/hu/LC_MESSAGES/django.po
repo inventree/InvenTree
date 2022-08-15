@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-15 13:12+0000\n"
-"PO-Revision-Date: 2022-08-11 13:49\n"
+"POT-Creation-Date: 2022-08-15 12:30+0000\n"
+"PO-Revision-Date: 2022-08-15 21:40\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1150,8 +1150,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:380
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:449
@@ -1172,19 +1171,19 @@ msgstr "A nem befejezett gyártási kimenetek törlése"
 
 #: build/serializers.py:485
 msgid "Accept as consumed by this build order"
-msgstr ""
+msgstr "Gyártásban fel lett használva"
 
 #: build/serializers.py:486
 msgid "Deallocate before completing this build order"
-msgstr ""
+msgstr "Foglalás felszabadítása a készre jelentés előtt"
 
 #: build/serializers.py:494
 msgid "Overallocated Stock"
-msgstr ""
+msgstr "Túlfoglalt készlet"
 
 #: build/serializers.py:496
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr ""
+msgstr "Hogyyan kezeljük az gyártáshoz rendelt extra készletet"
 
 #: build/serializers.py:506
 msgid "Some stock items have been overallocated"
@@ -1769,11 +1768,11 @@ msgstr "Kérjen felhasználói megerősítést bizonyos műveletekhez"
 
 #: common/models.py:880
 msgid "Tree Depth"
-msgstr ""
+msgstr "Fa mélység"
 
 #: common/models.py:881
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
-msgstr ""
+msgstr "Alapértelmezett mélység a fa nézetekben. A mélyebb szintek betöltődnek ha szükségesek."
 
 #: common/models.py:890 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
@@ -7465,16 +7464,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -9363,7 +9360,7 @@ msgstr "Megjelenítés fában"
 
 #: templates/js/translated/part.js:1914
 msgid "Load Subcategories"
-msgstr ""
+msgstr "Alkategóriák betöltése"
 
 #: templates/js/translated/part.js:1925
 msgid "Subscribed category"
@@ -9818,7 +9815,7 @@ msgstr "Státuszkódot ki kell választani"
 
 #: templates/js/translated/stock.js:2400
 msgid "Load Subloactions"
-msgstr ""
+msgstr "Alhelyek betöltése"
 
 #: templates/js/translated/stock.js:2484
 msgid "Details"
@@ -10445,3 +10442,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
