@@ -48,7 +48,12 @@ class CleanMixin():
         Ref: https://github.com/mozilla/bleach/issues/192
         """
 
-        cleaned = clean(data, strip=True)
+        cleaned = clean(
+            data,
+            strip=True,
+            tags=[],
+            attributes=[],
+        )
 
         # Add escaped characters back in
         replacements = {
