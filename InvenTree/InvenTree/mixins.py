@@ -1,15 +1,18 @@
 """Mixins for (API) views in the whole project."""
 
+from django.utils.translation import gettext_lazy as _
+
 from bleach import clean
 from rest_framework import generics, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 
 class CleanMixin():
-    """Model mixin class which cleans inputs."""
+    """Model mixin class which cleans inputs using the Mozilla bleach tools."""
 
-    # Define a map of fields avaialble for import
-    SAFE_FIELDS = {}
+    # Define a list of field names which will *not* be cleaned
+    SAFE_FIELDS = []
 
     def create(self, request, *args, **kwargs):
         """Override to clean data before processing it."""
@@ -34,7 +37,7 @@ class CleanMixin():
 
         return Response(serializer.data)
 
-    def clean_string(self, data: str) -> str:
+    def clean_string(self, field: str, data: str) -> str:
         """Clean / sanitize a single input string.
 
         Note that this function will *allow* orphaned <>& characters,
@@ -57,6 +60,12 @@ class CleanMixin():
         for o, r in replacements.items():
             cleaned = cleaned.replace(o, r)
 
+        # If the length changed, it means that HTML tags were removed!
+        if len(cleaned) != len(data):
+            raise ValidationError({
+                field: [_("Remove HTML tags from this value")]
+            })
+
         return cleaned
 
     def clean_data(self, data: dict) -> dict:
@@ -77,8 +86,11 @@ class CleanMixin():
         clean_data = {}
 
         for k, v in data.items():
-            if isinstance(v, str):
-                ret = self.clean_string(v)
+
+            if k in self.SAFE_FIELDS:
+                ret = v
+            elif isinstance(v, str):
+                ret = self.clean_string(k, v)
             elif isinstance(v, dict):
                 ret = self.clean_data(v)
             else:
