@@ -301,7 +301,14 @@ function categoryFields() {
         default_location: {},
         default_keywords: {
             icon: 'fa-key',
-        }
+        },
+        icon: {
+            help_text: `
+                {% blocktrans with '<a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">' as link_begin and '</a>' as link_end %}
+                Icon (optional) - See {{ link_begin }}Font Awesome{{ link_end }} for all available icons
+                {% endblocktrans %}`,
+            placeholder: 'fas fa-tag',
+        },
     };
 }
 
@@ -1914,6 +1921,11 @@ function loadPartCategoryTable(table, options) {
                                     <span class='fas fa-sync-alt' title='{% trans "Load Subcategories" %}'></span>
                                 </a> `;
                         }
+                    }
+
+                    const icon = row.icon || global_settings.PART_CATEGORY_DEFAULT_ICON;
+                    if (icon) {
+                        html += `<span class="${icon} me-1"></span>`
                     }
 
                     html += renderLink(

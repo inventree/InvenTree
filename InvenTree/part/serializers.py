@@ -75,6 +75,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'pathstring',
             'starred',
             'url',
+            'icon',
         ]
 
 
@@ -88,6 +89,7 @@ class CategoryTree(InvenTreeModelSerializer):
             'pk',
             'name',
             'parent',
+            'icon',
         ]
 
 
