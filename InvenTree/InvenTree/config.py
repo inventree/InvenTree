@@ -7,9 +7,6 @@ import shutil
 import string
 from pathlib import Path
 
-from django.contrib.staticfiles.storage import StaticFilesStorage
-from django.core.files.storage import default_storage
-
 import yaml
 
 logger = logging.getLogger('inventree')
@@ -213,6 +210,9 @@ def get_custom_file(env_ref: str, conf_ref: str, log_ref: str, lookup_media: boo
 
     Set lookup_media to True to also search in the media folder.
     """
+    from django.contrib.staticfiles.storage import StaticFilesStorage
+    from django.core.files.storage import default_storage
+
     value = get_setting(env_ref, conf_ref, None)
 
     if not value:
