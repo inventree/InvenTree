@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-11 02:47+0000\n"
+"POT-Creation-Date: 2022-08-15 13:12+0000\n"
 "PO-Revision-Date: 2022-08-11 13:49\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
@@ -162,6 +162,10 @@ msgstr "Ingen serienummer funnet"
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "Antall unike serienumre ({s}) må samsvare med antall ({q})"
+
+#: InvenTree/mixins.py:71
+msgid "Remove HTML tags from this value"
+msgstr ""
 
 #: InvenTree/models.py:236
 msgid "Improperly formatted pattern"
@@ -398,99 +402,99 @@ msgstr ""
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/settings.py:609
+#: InvenTree/settings.py:607
 msgid "Czech"
 msgstr "Tsjekkisk"
 
-#: InvenTree/settings.py:610
+#: InvenTree/settings.py:608
 msgid "German"
 msgstr "Tysk"
 
-#: InvenTree/settings.py:611
+#: InvenTree/settings.py:609
 msgid "Greek"
 msgstr "Gresk"
 
-#: InvenTree/settings.py:612
+#: InvenTree/settings.py:610
 msgid "English"
 msgstr "Engelsk"
 
-#: InvenTree/settings.py:613
+#: InvenTree/settings.py:611
 msgid "Spanish"
 msgstr "Spansk"
 
-#: InvenTree/settings.py:614
+#: InvenTree/settings.py:612
 msgid "Spanish (Mexican)"
 msgstr "Spansk (Meksikansk)"
 
-#: InvenTree/settings.py:615
+#: InvenTree/settings.py:613
 msgid "Farsi / Persian"
 msgstr "Farsi / Persisk"
 
-#: InvenTree/settings.py:616
+#: InvenTree/settings.py:614
 msgid "French"
 msgstr "Fransk"
 
-#: InvenTree/settings.py:617
+#: InvenTree/settings.py:615
 msgid "Hebrew"
 msgstr "Hebraisk"
 
-#: InvenTree/settings.py:618
+#: InvenTree/settings.py:616
 msgid "Hungarian"
 msgstr "Ungarsk"
 
-#: InvenTree/settings.py:619
+#: InvenTree/settings.py:617
 msgid "Italian"
 msgstr "Italiensk"
 
-#: InvenTree/settings.py:620
+#: InvenTree/settings.py:618
 msgid "Japanese"
 msgstr "Japansk"
 
-#: InvenTree/settings.py:621
+#: InvenTree/settings.py:619
 msgid "Korean"
 msgstr "Koreansk"
 
-#: InvenTree/settings.py:622
+#: InvenTree/settings.py:620
 msgid "Dutch"
 msgstr "Nederlandsk"
 
-#: InvenTree/settings.py:623
+#: InvenTree/settings.py:621
 msgid "Norwegian"
 msgstr "Norsk"
 
-#: InvenTree/settings.py:624
+#: InvenTree/settings.py:622
 msgid "Polish"
 msgstr "Polsk"
 
-#: InvenTree/settings.py:625
+#: InvenTree/settings.py:623
 msgid "Portuguese"
 msgstr "Portugisisk"
 
-#: InvenTree/settings.py:626
+#: InvenTree/settings.py:624
 msgid "Portuguese (Brazilian)"
 msgstr "Portugisisk (Brasilian)"
 
-#: InvenTree/settings.py:627
+#: InvenTree/settings.py:625
 msgid "Russian"
 msgstr "Russisk"
 
-#: InvenTree/settings.py:628
+#: InvenTree/settings.py:626
 msgid "Swedish"
 msgstr "Svensk"
 
-#: InvenTree/settings.py:629
+#: InvenTree/settings.py:627
 msgid "Thai"
 msgstr "Thailandsk"
 
-#: InvenTree/settings.py:630
+#: InvenTree/settings.py:628
 msgid "Turkish"
 msgstr "Tyrkisk"
 
-#: InvenTree/settings.py:631
+#: InvenTree/settings.py:629
 msgid "Vietnamese"
 msgstr "Vietnamesisk"
 
-#: InvenTree/settings.py:632
+#: InvenTree/settings.py:630
 msgid "Chinese"
 msgstr "Kinesisk"
 
@@ -5746,12 +5750,12 @@ msgstr ""
 msgid "No valid objects provided to template"
 msgstr ""
 
-#: report/api.py:216 report/api.py:257
+#: report/api.py:216 report/api.py:252
 #, python-brace-format
 msgid "Template file '{template}' is missing or does not exist"
 msgstr ""
 
-#: report/api.py:360
+#: report/api.py:355
 msgid "Test report"
 msgstr ""
 
@@ -7459,14 +7463,16 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10437,4 +10443,3 @@ msgstr ""
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr ""
-
