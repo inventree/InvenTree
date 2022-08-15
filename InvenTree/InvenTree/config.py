@@ -208,7 +208,7 @@ def get_secret_key():
     return key_data
 
 
-def get_cstm_file(env_ref: str, conf_ref: str, log_ref: str, lookup_media: bool = False):
+def get_custom_file(env_ref: str, conf_ref: str, log_ref: str, lookup_media: bool = False):
     """Returns the checked path to a custom file.
 
     Set lookup_media to True to also search in the media folder.

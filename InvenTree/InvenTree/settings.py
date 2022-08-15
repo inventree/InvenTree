@@ -24,7 +24,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from . import config
-from .config import get_boolean_setting, get_cstm_file, get_setting
+from .config import get_boolean_setting, get_custom_file, get_setting
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
@@ -816,13 +816,8 @@ PLUGIN_RETRY = CONFIG.get('PLUGIN_RETRY', 5)  # how often should plugin loading 
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
 
 # User interface customization values
-"""
-Check for the existence of a 'custom logo' file:
-- Check the 'static' directory
-- Check the 'media' directory (legacy)
-"""
-CUSTOM_LOGO = get_cstm_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True)
-CUSTOM_SPLASH = get_cstm_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
+CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True)
+CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
 
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
 
