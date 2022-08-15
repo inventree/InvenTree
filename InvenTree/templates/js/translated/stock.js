@@ -114,6 +114,13 @@ function stockLocationFields(options={}) {
         name: {},
         description: {},
         owner: {},
+        icon: {
+            help_text: `
+                {% blocktrans with '<a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">' as link_begin and '</a>' as link_end %}
+                Icon (optional) - See {{ link_begin }}Font Awesome{{ link_end }} for all available icons
+                {% endblocktrans %}`,
+            placeholder: 'fas fa-box',
+        },
     };
 
     if (options.parent) {
@@ -2400,6 +2407,11 @@ function loadStockLocationTable(table, options) {
                                     <span class='fas fa-sync-alt' title='{% trans "Load Subloactions" %}'></span>
                                 </a> `;
                         }
+                    }
+
+                    const icon = row.icon || global_settings.STOCK_LOCATION_DEFAULT_ICON;
+                    if (icon) {
+                        html += `<span class="${icon} me-1"></span>`
                     }
 
                     html += renderLink(

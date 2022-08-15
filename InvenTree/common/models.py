@@ -1168,6 +1168,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'STOCK_LOCATION_DEFAULT_ICON': {
+            'name': _('Stock Location Default Icon'),
+            'description': _('Stock location default icon (empty means no icon)'),
+            'default': '',
+        },
+
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _('Required pattern for generating Build Order reference field'),

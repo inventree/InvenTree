@@ -1028,3 +1028,8 @@ a {
     margin-top: 3px;
     overflow: hidden;
 }
+
+.treeview .node-icon {
+    margin-left: 0.25rem;
+	margin-right: 0.25rem;
+}

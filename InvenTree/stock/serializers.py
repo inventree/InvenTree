@@ -570,6 +570,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pk',
             'name',
             'parent',
+            'icon',
         ]
 
 
@@ -607,6 +608,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pathstring',
             'items',
             'owner',
+            'icon',
         ]
 
 
