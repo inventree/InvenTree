@@ -1070,6 +1070,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': InvenTree.validators.validate_part_name_format
         },
 
+        'PART_CATEGORY_DEFAULT_ICON': {
+            'name': _('Part Category Default Icon'),
+            'description': _('Part category default icon (empty means no icon)'),
+            'default': '',
+        },
+
         'LABEL_ENABLE': {
             'name': _('Enable label printing'),
             'description': _('Enable label printing from the web interface'),
@@ -1166,6 +1172,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable ownership control over stock locations and items'),
             'default': False,
             'validator': bool,
+        },
+
+        'STOCK_LOCATION_DEFAULT_ICON': {
+            'name': _('Stock Location Default Icon'),
+            'description': _('Stock location default icon (empty means no icon)'),
+            'default': '',
         },
 
         'BUILDORDER_REFERENCE_PATTERN': {
@@ -1266,6 +1278,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
             'requires_restart': True,
+        },
+
+        'PLUGIN_CHECK_SIGNATURES': {
+            'name': _('Check plugin signatures'),
+            'description': _('Check and show signatures for plugins'),
+            'default': False,
+            'validator': bool,
         },
 
         # Settings for plugin mixin features
