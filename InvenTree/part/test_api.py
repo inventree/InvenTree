@@ -227,31 +227,40 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         url = reverse('api-part-category-detail', kwargs={'pk': 1})
 
-        self.patch(
-            url,
-            {
-                'description': '<img src=# onerror=alert("pwned")>',
-            },
-            expected_code=200
-        )
+        # Invalid values containing tags
+        invalid_values = [
+            '<img src="test"/>',
+            '<a href="#">Link</a>',
+            "<a href='#'>Link</a>",
+            '<b>',
+        ]
 
-        cat = PartCategory.objects.get(pk=1)
+        for v in invalid_values:
+            response = self.patch(
+                url,
+                {
+                    'description': v
+                },
+                expected_code=400
+            )
 
-        # Image tags have been stripped
-        self.assertEqual(cat.description, '&lt;img src=# onerror=alert("pwned")&gt;')
+        # Raw characters should be allowed
+        allowed = [
+            '<< hello',
+            'Alpha & Omega',
+            'A > B > C',
+        ]
 
-        self.patch(
-            url,
-            {
-                'description': '<a href="www.google.com">LINK</a><script>alert("h4x0r")</script>',
-            },
-            expected_code=200,
-        )
+        for val in allowed:
+            response = self.patch(
+                url,
+                {
+                    'description': val,
+                },
+                expected_code=200,
+            )
 
-        # Tags must have been bleached out
-        cat.refresh_from_db()
-
-        self.assertEqual(cat.description, '<a href="www.google.com">LINK</a>&lt;script&gt;alert("h4x0r")&lt;/script&gt;')
+            self.assertEqual(response.data['description'], val)
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):

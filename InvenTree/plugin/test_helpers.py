@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from .helpers import render_template
+from .helpers import get_module_meta, render_template
 
 
 class HelperTests(TestCase):
@@ -21,3 +21,15 @@ class HelperTests(TestCase):
         response = render_template(ErrorSource(), 'sample/wrongsample.html', {'abc': 123})
         self.assertTrue('lert alert-block alert-danger' in response)
         self.assertTrue('Template file <em>sample/wrongsample.html</em>' in response)
+
+    def test_get_module_meta(self):
+        """Test for get_module_meta."""
+
+        # We need a stable, known good that will be in enviroment for sure
+        # and it can't be stdlib because does might differ depending on the abstraction layer
+        # and version
+        meta = get_module_meta('django')
+
+        # Lets just hope they do not change the name or author
+        self.assertEqual(meta['Name'], 'Django')
+        self.assertEqual(meta['Author'], 'Django Software Foundation')

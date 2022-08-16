@@ -1,8 +1,14 @@
 """Unit tests for plugins."""
 
+import os
+import shutil
+import subprocess
+import tempfile
 from datetime import datetime
+from pathlib import Path
+from unittest import mock
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
 from plugin import InvenTreePlugin, registry
@@ -162,3 +168,67 @@ class InvenTreePluginTests(TestCase):
             self.assertEqual(self.plugin_old.slug, 'old')
             # check default value is used
             self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
+
+
+class RegistryTests(TestCase):
+    """Tests for registry loading methods."""
+
+    def run_package_test(self, directory):
+        """General runner for testing package based installs."""
+
+        # Patch enviroment varible to add dir
+        envs = {'INVENTREE_PLUGIN_TEST_DIR': directory}
+        with mock.patch.dict(os.environ, envs):
+            # Reload to redicsover plugins
+            registry.reload_plugins(full_reload=True)
+
+            # Depends on the meta set in InvenTree/plugin/mock/simple:SimplePlugin
+            plg = registry.get_plugin('simple')
+            self.assertEqual(plg.slug, 'simple')
+            self.assertEqual(plg.human_name, 'SimplePlugin')
+
+    def test_custom_loading(self):
+        """Test if data in custom dir is loaded correctly."""
+        test_dir = Path('plugin_test_dir')
+
+        # Patch env
+        envs = {'INVENTREE_PLUGIN_TEST_DIR': 'plugin_test_dir'}
+        with mock.patch.dict(os.environ, envs):
+            # Run plugin directory discovery again
+            registry.plugin_dirs()
+
+            # Check the directory was created
+            self.assertTrue(test_dir.exists())
+
+        # Clean folder up
+        shutil.rmtree(test_dir, ignore_errors=True)
+
+    def test_subfolder_loading(self):
+        """Test that plugins in subfolders get loaded."""
+        self.run_package_test('InvenTree/plugin/mock')
+
+    def test_folder_loading(self):
+        """Test that plugins in folders outside of BASE_DIR get loaded."""
+
+        # Run in temporary directory -> always a new random name
+        with tempfile.TemporaryDirectory() as tmp:
+            # Fill directory with sample data
+            new_dir = Path(tmp).joinpath('mock')
+            shutil.copytree(Path('InvenTree/plugin/mock').absolute(), new_dir)
+
+            # Run tests
+            self.run_package_test(str(new_dir))
+
+    @override_settings(PLUGIN_TESTING_SETUP=True)
+    def test_package_loading(self):
+        """Test that package distributed plugins work."""
+        # Install sample package
+        subprocess.check_output('pip install inventree-zapier'.split())
+
+        # Reload to discover plugin
+        registry.reload_plugins(full_reload=True)
+
+        # Test that plugin was installed
+        plg = registry.get_plugin('zapier')
+        self.assertEqual(plg.slug, 'zapier')
+        self.assertEqual(plg.name, 'inventree_zapier')

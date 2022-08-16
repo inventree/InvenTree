@@ -101,9 +101,9 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
 <details>
 <summary>DevOps</summary>
   <ul>
-    <li><a href="https://www.docker.com/">Docker</a></li>
-    <li><a href="https://crowdin.com/">Crowdin</a></li>
-    <li><a href="https://coveralls.io/">Coveralls</a></li>
+    <li><a href="https://hub.docker.com/r/inventree/inventree">Docker</a></li>
+    <li><a href="https://crowdin.com/project/inventree">Crowdin</a></li>
+    <li><a href="https://coveralls.io/github/inventree/InvenTree">Coveralls</a></li>
   </ul>
 </details>
 

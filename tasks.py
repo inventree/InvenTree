@@ -267,7 +267,7 @@ def export_records(c, filename='data.json', overwrite=False, include_permissions
 
     print(f"Exporting database records to file '{filename}'")
 
-    if filename.exists() and overwrite is False:
+    if Path(filename).is_file() and overwrite is False:
         response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
         response = str(response).strip().lower()
 
