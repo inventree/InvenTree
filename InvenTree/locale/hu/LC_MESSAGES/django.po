@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-10 11:38+0000\n"
-"PO-Revision-Date: 2022-08-10 13:23\n"
+"POT-Creation-Date: 2022-08-11 02:47+0000\n"
+"PO-Revision-Date: 2022-08-11 13:49\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -816,7 +816,7 @@ msgstr "Vevői rendelés azonosító"
 msgid "SalesOrder to which this build is allocated"
 msgstr "Vevői rendelés amihez ez a gyártás hozzá van rendelve"
 
-#: build/models.py:213 build/serializers.py:803
+#: build/models.py:213 build/serializers.py:800
 #: templates/js/translated/build.js:2073 templates/js/translated/order.js:2873
 msgid "Source Location"
 msgstr "Forrás hely"
@@ -977,7 +977,7 @@ msgstr "Gyártás"
 msgid "Build to allocate parts"
 msgstr "Gyártás amihez készletet foglaljunk"
 
-#: build/models.py:1345 build/serializers.py:648 order/serializers.py:1015
+#: build/models.py:1345 build/serializers.py:645 order/serializers.py:1015
 #: order/serializers.py:1036 stock/serializers.py:396 stock/serializers.py:754
 #: stock/serializers.py:880 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1045,7 +1045,7 @@ msgstr "Beépítés ebbe"
 msgid "Destination stock item"
 msgstr "Cél készlet tétel"
 
-#: build/serializers.py:138 build/serializers.py:677
+#: build/serializers.py:138 build/serializers.py:674
 #: templates/js/translated/build.js:1166
 msgid "Build Output"
 msgstr "Gyártás kimenet"
@@ -1070,7 +1070,7 @@ msgstr "Ez a gyártási kimenet nincs teljesen lefoglalva"
 msgid "Enter quantity for build output"
 msgstr "Add meg a mennyiséget a gyártás kimenetéhez"
 
-#: build/serializers.py:208 build/serializers.py:668 order/models.py:318
+#: build/serializers.py:208 build/serializers.py:665 order/models.py:318
 #: order/serializers.py:287 order/serializers.py:442 part/serializers.py:542
 #: part/serializers.py:974 stock/models.py:477 stock/models.py:1244
 #: stock/serializers.py:302
@@ -1213,77 +1213,73 @@ msgstr "Szükséges gyártási mennyiség nem lett elérve"
 msgid "Build order has incomplete outputs"
 msgstr "A gyártási utasítás befejezetlen kimeneteket tartalmaz"
 
-#: build/serializers.py:550 build/templates/build/build_base.html:95
-msgid "No build outputs have been created for this build order"
-msgstr "Ehhez a gyártási utasításhoz nem készült kimenet"
-
-#: build/serializers.py:580 build/serializers.py:625 part/models.py:2719
+#: build/serializers.py:577 build/serializers.py:622 part/models.py:2719
 #: part/models.py:2853
 msgid "BOM Item"
 msgstr "Alkatrészjegyzék tétel"
 
-#: build/serializers.py:590
+#: build/serializers.py:587
 msgid "Build output"
 msgstr "Gyártás kimenet"
 
-#: build/serializers.py:598
+#: build/serializers.py:595
 msgid "Build output must point to the same build"
 msgstr "A gyártási kimenetnek ugyanarra a gyártásra kell mutatnia"
 
-#: build/serializers.py:639
+#: build/serializers.py:636
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part ugyanarra az alkatrészre kell mutasson mint a gyártási utasítás"
 
-#: build/serializers.py:654 stock/serializers.py:767
+#: build/serializers.py:651 stock/serializers.py:767
 msgid "Item must be in stock"
 msgstr "A tételnek kell legyen készlete"
 
-#: build/serializers.py:712 order/serializers.py:1073
+#: build/serializers.py:709 order/serializers.py:1073
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Rendelkezésre álló mennyiség ({q}) túllépve"
 
-#: build/serializers.py:718
+#: build/serializers.py:715
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr "Gyártási kimenetet meg kell adni a követésre kötelezett alkatrészek lefoglalásához"
 
-#: build/serializers.py:725
+#: build/serializers.py:722
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Gyártási kimenetet nem lehet megadni a követésre kötelezett alkatrészek lefoglalásához"
 
-#: build/serializers.py:730
+#: build/serializers.py:727
 msgid "This stock item has already been allocated to this build output"
 msgstr "Ez a készlet tétel már le lett foglalva ehhez a gyártási kimenethez"
 
-#: build/serializers.py:753 order/serializers.py:1319
+#: build/serializers.py:750 order/serializers.py:1319
 msgid "Allocation items must be provided"
 msgstr "A lefoglalandó tételeket meg kell adni"
 
-#: build/serializers.py:804
+#: build/serializers.py:801
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr "Készlet hely ahonnan az alkatrészek származnak (hagyd üresen ha bárhonnan)"
 
-#: build/serializers.py:812
+#: build/serializers.py:809
 msgid "Exclude Location"
 msgstr "Hely kizárása"
 
-#: build/serializers.py:813
+#: build/serializers.py:810
 msgid "Exclude stock items from this selected location"
 msgstr "Készlet tételek kizárása erről a kiválasztott helyről"
 
-#: build/serializers.py:818
+#: build/serializers.py:815
 msgid "Interchangeable Stock"
 msgstr "Felcserélhető készlet"
 
-#: build/serializers.py:819
+#: build/serializers.py:816
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr "A különböző helyeken lévő készlet egyenrangúan felhasználható"
 
-#: build/serializers.py:824
+#: build/serializers.py:821
 msgid "Substitute Stock"
 msgstr "Készlet helyettesítés"
 
-#: build/serializers.py:825
+#: build/serializers.py:822
 msgid "Allow allocation of substitute parts"
 msgstr "Helyettesítő alkatrészek foglalásának engedélyezése"
 
@@ -1334,6 +1330,10 @@ msgstr "Gyártás befejezése"
 #: build/templates/build/build_base.html:87
 msgid "Build Description"
 msgstr "Gyártás leírása"
+
+#: build/templates/build/build_base.html:95
+msgid "No build outputs have been created for this build order"
+msgstr "Ehhez a gyártási utasításhoz nem készült kimenet"
 
 #: build/templates/build/build_base.html:101
 #, python-format
@@ -1413,16 +1413,7 @@ msgstr "Vevői rendelés"
 msgid "Issued By"
 msgstr "Kiállította"
 
-#: build/templates/build/build_base.html:230
-#: build/templates/build/sidebar.html:12
-msgid "Incomplete Outputs"
-msgstr "Befejezetlen kimenetek"
-
-#: build/templates/build/build_base.html:231
-msgid "Build Order cannot be completed as incomplete build outputs remain"
-msgstr "Gyártási utasítás nem teljesíthető mivel befejezetlen kimenetek maradnak"
-
-#: build/templates/build/build_base.html:257
+#: build/templates/build/build_base.html:245
 msgid "Delete Build Order"
 msgstr "Gyártási utasítás törlése"
 
@@ -1617,6 +1608,10 @@ msgstr "Gyártási utasítások nyomtatása"
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
 msgstr "Gyártási utasítás részletei"
+
+#: build/templates/build/sidebar.html:12
+msgid "Incomplete Outputs"
+msgstr "Befejezetlen kimenetek"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Outputs"

@@ -1,7 +1,7 @@
 name: Update dependency files regularly
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: null
   schedule:
     - cron: "0 0 * * *"
 
@@ -9,14 +9,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
       - name: Setup
         run: pip install -r requirements-dev.txt
       - name: Update requirements.txt
         run: pip-compile --output-file=requirements.txt requirements.in -U
       - name: Update requirements-dev.txt
-        run: pip-compile --generate-hashes --output-file=requirements-dev.txt requirements-dev.in -U
-      - uses: stefanzweifel/git-auto-commit-action@v4
+        run: pip-compile --generate-hashes --output-file=requirements-dev.txt
+          requirements-dev.in -U
+      - uses: stefanzweifel/git-auto-commit-action@49620cd3ed21ee620a48530e81dba0d139c9cb80 # pin@v4
         with:
           commit_message: "[Bot] Updated dependency"
           branch: dep-update
