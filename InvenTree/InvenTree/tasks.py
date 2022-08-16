@@ -9,10 +9,17 @@ from datetime import timedelta
 from django.conf import settings
 from django.core import mail as django_mail
 from django.core.exceptions import AppRegistryNotReady
+from django.core.management import call_command
+from django.db import DEFAULT_DB_ALIAS, connections
+from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils import timezone
 
 import requests
+from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
+                                   set_maintenance_mode)
+
+from InvenTree.config import get_setting
 
 logger = logging.getLogger("inventree")
 
@@ -286,3 +293,60 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         fail_silently=False,
         html_message=html_message
     )
+
+
+def check_for_migrations():
+    """Checks if migrations are needed.
+
+    If the setting auto_update is enabled we will start updateing.
+    """
+    # Test if auto-updates are enabled
+    if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+        return
+
+    from plugin import registry
+
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+    plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
+
+    # Check if there are any open migrations
+    if not plan:
+        logger.info('There are no open migrations')
+        return
+
+    logger.info('There are open migrations')
+
+    # Log open migrations
+    for migration in plan:
+        logger.info(migration[0])
+
+    # Set the application to maintenance mode - no access from now on.
+    logger.info('Going into maintenance')
+    set_maintenance_mode(True)
+    logger.info('Mainentance mode is on now')
+
+    # Check if we are worker - go kill all other workers then.
+    # Only the frontend workers run updates.
+
+    # TODO
+    if True:
+        logger.info('Current process is a worker - shutting down cluster')
+
+    # Ok now we are ready to go ahead!
+    # To be sure we are in maintenance this is wrapped
+    with maintenance_mode_on():
+        logger.info('Starting migrations')
+        call_command('migrate', interactive=False)
+        logger.info('Ran migrations')
+
+    # Make sure we are out of maintenance again
+    logger.info('Checking InvenTree left maintenance mode')
+    if get_maintenance_mode():
+
+        logger.warning('Mainentance was still on - releasing now')
+        set_maintenance_mode(False)
+        logger.info('Released out of maintenance')
+
+    # We should be current now - triggering full reload to make sure all models
+    # are loaded fully in their new state.
+    registry.reload_plugins(full_reload=True, force_reload=True)

@@ -6,18 +6,12 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
-from django.core.management import call_command
-from django.db import DEFAULT_DB_ALIAS, connections, transaction
-from django.db.migrations.executor import MigrationExecutor
+from django.db import transaction
 from django.db.utils import IntegrityError
 
-from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
-                                   set_maintenance_mode)
-
 import InvenTree.tasks
+from InvenTree.config import get_setting
 from InvenTree.ready import canAppAccessDatabase, isInTestMode
-
-from .config import get_setting
 
 logger = logging.getLogger("inventree")
 
@@ -38,7 +32,7 @@ class InvenTreeConfig(AppConfig):
         - Adding users set in the current enviroment
         """
         if canAppAccessDatabase():
-            self.check_for_migrations()
+            InvenTree.tasks.check_for_migrations()
 
             self.remove_obsolete_tasks()
 
@@ -87,6 +81,13 @@ class InvenTreeConfig(AppConfig):
         InvenTree.tasks.schedule_task(
             'InvenTree.tasks.check_for_updates',
             schedule_type=Schedule.DAILY
+        )
+
+        # Run auto-migrations
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.check_for_migrations',
+            schedule_type=Schedule.MINUTES,
+            minutes=5,
         )
 
         # Heartbeat to let the server know the background worker is running
@@ -229,59 +230,3 @@ class InvenTreeConfig(AppConfig):
         from common.notifications import storage
 
         storage.collect()
-
-    def check_for_migrations(self):
-        """Checks if migrations are needed.
-
-        If the setting auto_update is enabled we will start updateing.
-        """
-        # Test if auto-updates are enabled
-        if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
-            return
-
-        from plugin import registry
-
-        executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
-        plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
-
-        # Check if there are any open migrations
-        if not plan:
-            logger.info('There are no open migrations')
-            return
-
-        logger.info('There are open migrations')
-
-        # Log open migrations
-        for migration in plan:
-            logger.info(migration[0])
-
-        # Set the application to maintenance mode - no access from now on.
-        logger.info('Going into maintenance')
-        set_maintenance_mode(True)
-        logger.info('Mainentance mode is on now')
-
-        # Check if we are worker - go kill all other workers then.
-        # Only the frontend workers run updates.
-
-        # TODO
-        if True:
-            logger.info('Current process is a worker - shutting down cluster')
-
-        # Ok now we are ready to go ahead!
-        # To be sure we are in maintenance this is wrapped
-        with maintenance_mode_on():
-            logger.info('Starting migrations')
-            call_command('migrate', interactive=False)
-            logger.info('Ran migrations')
-
-        # Make sure we are out of maintenance again
-        logger.info('Checking InvenTree left maintenance mode')
-        if get_maintenance_mode():
-
-            logger.warning('Mainentance was still on - releasing now')
-            set_maintenance_mode(False)
-            logger.info('Released out of maintenance')
-
-        # We should be current now - triggering full reload to make sure all models
-        # are loaded fully in their new state.
-        registry.reload_plugins(full_reload=True, force_reload=True)
