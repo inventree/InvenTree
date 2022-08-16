@@ -235,11 +235,11 @@ class InvenTreeConfig(AppConfig):
 
         If the setting auto_update is enabled we will start updateing.
         """
-        from plugin import registry
-
         # Test if auto-updates are enabled
         if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
             return
+
+        from plugin import registry
 
         needs_updating: bool = False
 
