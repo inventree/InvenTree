@@ -6,6 +6,7 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
+from django.core.management import call_command
 from django.db import transaction
 from django.db.utils import IntegrityError
 
@@ -265,8 +266,7 @@ class InvenTreeConfig(AppConfig):
         # Ok now we are ready to go ahead!
         # To be sure we are in maintenance this is wrapped
         with maintenance_mode_on():
-            # TODO run migrations
-            pass
+            call_command('migrate', interactive=False)
 
         # Make sure we are out of maintenance again
         logger.info('Checking InvenTree left maintenance mode')
