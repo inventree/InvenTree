@@ -248,6 +248,7 @@ class InvenTreeConfig(AppConfig):
 
         # Check if there are any open migrations
         if not plan:
+            logger.info('There are no open migrations')
             return
 
         logger.info('There are open migrations')
@@ -271,7 +272,9 @@ class InvenTreeConfig(AppConfig):
         # Ok now we are ready to go ahead!
         # To be sure we are in maintenance this is wrapped
         with maintenance_mode_on():
+            logger.info('Starting migrations')
             call_command('migrate', interactive=False)
+            logger.info('Ran migrations')
 
         # Make sure we are out of maintenance again
         logger.info('Checking InvenTree left maintenance mode')
