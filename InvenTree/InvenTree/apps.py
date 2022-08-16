@@ -286,4 +286,4 @@ class InvenTreeConfig(AppConfig):
 
         # We should be current now - triggering full reload to make sure all models
         # are loaded fully in their new state.
-        registry.reload_plugins(full_reload=True)
+        registry.reload_plugins(full_reload=True, force_reload=True)

@@ -149,8 +149,12 @@ class PluginsRegistry:
 
         logger.info('Finished loading plugins')
 
-    def unload_plugins(self):
-        """Unload and deactivate all IntegrationPlugins."""
+    def unload_plugins(self, force_reload: bool = False):
+        """Unload and deactivate all IntegrationPlugins.
+
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+        """
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return  # pragma: no cover
@@ -166,18 +170,19 @@ class PluginsRegistry:
         self._clean_registry()
 
         # deactivate all integrations
-        self._deactivate_plugins()
+        self._deactivate_plugins(force_reload=force_reload)
 
         # remove maintenance
         if not _maintenance:
             set_maintenance_mode(False)  # pragma: no cover
         logger.info('Finished unloading plugins')
 
-    def reload_plugins(self, full_reload: bool = False):
+    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False):
         """Safely reload.
 
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
         """
         # Do not reload whe currently loading
         if self.is_loading:
@@ -186,8 +191,8 @@ class PluginsRegistry:
         logger.info('Start reloading plugins')
 
         with maintenance_mode_on():
-            self.unload_plugins()
-            self.load_plugins(full_reload)
+            self.unload_plugins(force_reload=force_reload)
+            self.load_plugins(full_reload=full_reload)
 
         logger.info('Finished reloading plugins')
 
@@ -427,9 +432,13 @@ class PluginsRegistry:
         self.activate_plugin_schedule(plugins)
         self.activate_plugin_app(plugins, force_reload=force_reload, full_reload=full_reload)
 
-    def _deactivate_plugins(self):
-        """Run deactivation functions for all plugins."""
-        self.deactivate_plugin_app()
+    def _deactivate_plugins(self, force_reload: bool = False):
+        """Run deactivation functions for all plugins.
+
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+        """
+        self.deactivate_plugin_app(force_reload=force_reload)
         self.deactivate_plugin_schedule()
         self.deactivate_plugin_settings()
     # endregion
@@ -593,8 +602,12 @@ class PluginsRegistry:
             plugin_path = plugin.__module__.split('.')[0]
         return plugin_path
 
-    def deactivate_plugin_app(self):
-        """Deactivate AppMixin plugins - some magic required."""
+    def deactivate_plugin_app(self, force_reload: bool = False):
+        """Deactivate AppMixin plugins - some magic required.
+
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+        """
         # unregister models from admin
         for plugin_path in self.installed_apps:
             models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed
@@ -631,7 +644,7 @@ class PluginsRegistry:
 
         # reset load flag and reload apps
         settings.INTEGRATION_APPS_LOADED = False
-        self._reload_apps()
+        self._reload_apps(force_reload=force_reload)
 
         # update urls to remove the apps from the site admin
         self._update_urls()
