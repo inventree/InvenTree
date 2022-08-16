@@ -191,6 +191,10 @@ class InvenTreePluginTests(TestCase):
 class RegistryTests(TestCase):
     """Tests for registry loading methods."""
 
+    def mockDir(self) -> None:
+        """Returns path to mock dir"""
+        return str(Path(__file__).parent.joinpath('mock').absolute())
+
     def run_package_test(self, directory):
         """General runner for testing package based installs."""
 
@@ -223,7 +227,7 @@ class RegistryTests(TestCase):
 
     def test_subfolder_loading(self):
         """Test that plugins in subfolders get loaded."""
-        self.run_package_test(str(Path(__file__).parent.joinpath('mock').absolute()))
+        self.run_package_test(self.mockDir())
 
     def test_folder_loading(self):
         """Test that plugins in folders outside of BASE_DIR get loaded."""
@@ -232,7 +236,7 @@ class RegistryTests(TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             # Fill directory with sample data
             new_dir = Path(tmp).joinpath('mock')
-            shutil.copytree(Path(__file__).parent.joinpath('mock').absolute(), new_dir)
+            shutil.copytree(self.mockDir(), new_dir)
 
             # Run tests
             self.run_package_test(str(new_dir))
