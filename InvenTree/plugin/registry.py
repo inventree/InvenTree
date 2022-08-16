@@ -4,12 +4,13 @@
 - Manages setup and teardown of plugin class instances
 """
 
+import imp
 import importlib
 import logging
 import os
-import pathlib
 import subprocess
-from importlib import metadata, reload
+from importlib import reload
+from pathlib import Path
 from typing import OrderedDict
 
 from django.apps import apps
@@ -22,8 +23,10 @@ from django.utils.text import slugify
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
-from .helpers import (IntegrationPluginError, get_plugins, handle_error,
-                      log_error)
+from InvenTree.config import get_setting
+
+from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
+                      handle_error, log_error)
 from .plugin import InvenTreePlugin
 
 logger = logging.getLogger('inventree')
@@ -198,8 +201,8 @@ class PluginsRegistry:
 
         if settings.TESTING:
             custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
-        else:
-            custom_dirs = os.getenv('INVENTREE_PLUGIN_DIR', None)
+        else:  # pragma: no cover
+            custom_dirs = get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
             # Load from user specified directories (unless in testing mode)
             dirs.append('plugins')
@@ -207,13 +210,13 @@ class PluginsRegistry:
         if custom_dirs is not None:
             # Allow multiple plugin directories to be specified
             for pd_text in custom_dirs.split(','):
-                pd = pathlib.Path(pd_text.strip()).absolute()
+                pd = Path(pd_text.strip()).absolute()
 
                 # Attempt to create the directory if it does not already exist
                 if not pd.exists():
                     try:
                         pd.mkdir(exist_ok=True)
-                    except Exception:
+                    except Exception:  # pragma: no cover
                         logger.error(f"Could not create plugin directory '{pd}'")
                         continue
 
@@ -223,24 +226,31 @@ class PluginsRegistry:
                 if not init_filename.exists():
                     try:
                         init_filename.write_text("# InvenTree plugin directory\n")
-                    except Exception:
+                    except Exception:  # pragma: no cover
                         logger.error(f"Could not create file '{init_filename}'")
                         continue
 
+                # By this point, we have confirmed that the directory at least exists
                 if pd.exists() and pd.is_dir():
-                    # By this point, we have confirmed that the directory at least exists
-                    logger.info(f"Added plugin directory: '{pd}'")
-                    dirs.append(pd)
+                    # Convert to python dot-path
+                    if pd.is_relative_to(settings.BASE_DIR):
+                        pd_path = '.'.join(pd.relative_to(settings.BASE_DIR).parts)
+                    else:
+                        pd_path = str(pd)
+
+                    # Add path
+                    dirs.append(pd_path)
+                    logger.info(f"Added plugin directory: '{pd}' as '{pd_path}'")
 
         return dirs
 
     def collect_plugins(self):
-        """Collect plugins from all possible ways of loading."""
+        """Collect plugins from all possible ways of loading. Returned as list."""
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return  # pragma: no cover
 
-        self.plugin_modules = []  # clear
+        collected_plugins = []
 
         # Collect plugins from paths
         for plugin in self.plugin_dirs():
@@ -248,33 +258,41 @@ class PluginsRegistry:
             logger.info(f"Loading plugins from directory '{plugin}'")
 
             parent_path = None
-            parent_obj = pathlib.Path(plugin)
+            parent_obj = Path(plugin)
 
             # If a "path" is provided, some special handling is required
             if parent_obj.name is not plugin and len(parent_obj.parts) > 1:
-                parent_path = parent_obj.parent
+                # Ensure PosixPath object is converted to a string, before passing to get_plugins
+                parent_path = str(parent_obj.parent)
                 plugin = parent_obj.name
 
-            modules = get_plugins(importlib.import_module(plugin), InvenTreePlugin, path=parent_path)
+            # Gather Modules
+            if parent_path:
+                raw_module = imp.load_source(plugin, str(parent_obj.joinpath('__init__.py')))
+            else:
+                raw_module = importlib.import_module(plugin)
+            modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
 
             if modules:
-                [self.plugin_modules.append(item) for item in modules]
+                [collected_plugins.append(item) for item in modules]
 
         # Check if not running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
             # Collect plugins from setup entry points
-            for entry in metadata.entry_points().get('inventree_plugins', []):  # pragma: no cover
+            for entry in get_entrypoints():
                 try:
                     plugin = entry.load()
                     plugin.is_package = True
                     plugin._get_package_metadata()
-                    self.plugin_modules.append(plugin)
-                except Exception as error:
+                    collected_plugins.append(plugin)
+                except Exception as error:  # pragma: no cover
                     handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
-        logger.info(f'Collected {len(self.plugin_modules)} plugins!')
-        logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
+        logger.info(f'Collected {len(collected_plugins)} plugins!')
+        logger.info(", ".join([a.__module__ for a in collected_plugins]))
+
+        return collected_plugins
 
     def install_plugin_file(self):
         """Make sure all plugins are installed in the current enviroment."""
@@ -283,7 +301,7 @@ class PluginsRegistry:
             return True
 
         try:
-            output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
+            output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=settings.BASE_DIR.parent), 'utf-8')
         except subprocess.CalledProcessError as error:  # pragma: no cover
             logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
             return False
@@ -565,7 +583,7 @@ class PluginsRegistry:
         """
         try:
             # for local path plugins
-            plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
+            plugin_path = '.'.join(Path(plugin.path).relative_to(settings.BASE_DIR).parts)
         except ValueError:  # pragma: no cover
             # plugin is shipped as package
             plugin_path = plugin.NAME

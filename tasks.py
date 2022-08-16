@@ -4,7 +4,9 @@ import json
 import os
 import pathlib
 import re
+import shutil
 import sys
+from pathlib import Path
 
 from invoke import task
 
@@ -52,23 +54,23 @@ def content_excludes():
     return output
 
 
-def localDir():
+def localDir() -> Path:
     """Returns the directory of *THIS* file.
 
     Used to ensure that the various scripts always run
     in the correct directory.
     """
-    return os.path.dirname(os.path.abspath(__file__))
+    return Path(__file__).parent.resolve()
 
 
 def managePyDir():
     """Returns the directory of the manage.py file."""
-    return os.path.join(localDir(), 'InvenTree')
+    return localDir().joinpath('InvenTree')
 
 
 def managePyPath():
     """Return the path of the manage.py file."""
-    return os.path.join(managePyDir(), 'manage.py')
+    return managePyDir().joinpath('manage.py')
 
 
 def manage(c, cmd, pty: bool = False):
@@ -109,8 +111,8 @@ def install(c):
     c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
 
 
-@task
-def setup_dev(c):
+@task(help={'tests': 'Set up test dataset at the end'})
+def setup_dev(c, tests=False):
     """Sets up everything needed for the dev enviroment."""
     print("Installing required python packages from 'requirements-dev.txt'")
 
@@ -118,10 +120,16 @@ def setup_dev(c):
     c.run('pip3 install -U -r requirements-dev.txt')
 
     # Install pre-commit hook
+    print("Installing pre-commit for checks before git commits...")
     c.run('pre-commit install')
 
     # Update all the hooks
     c.run('pre-commit autoupdate')
+    print("pre-commit set up is done...")
+
+    # Set up test-data if flag is set
+    if tests:
+        setup_test(c)
 
 
 # Setup / maintenance tasks
@@ -171,7 +179,7 @@ def translate_stats(c):
 
     The file generated from this is needed for the UI.
     """
-    path = os.path.join('InvenTree', 'script', 'translation_stats.py')
+    path = Path('InvenTree', 'script', 'translation_stats.py')
     c.run(f'python3 {path}')
 
 
@@ -222,7 +230,10 @@ def update(c):
     """
     # Recompile the translation files (.mo)
     # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
-    manage(c, 'compilemessages', pty=True)
+    try:
+        manage(c, 'compilemessages', pty=True)
+    except Exception:
+        print("WARNING: Translation files could not be compiled:")
 
 
 # Data tasks
@@ -252,12 +263,11 @@ def export_records(c, filename='data.json', overwrite=False, include_permissions
     """
     # Get an absolute path to the file
     if not os.path.isabs(filename):
-        filename = os.path.join(localDir(), filename)
-        filename = os.path.abspath(filename)
+        filename = localDir().joinpath(filename).resolve()
 
     print(f"Exporting database records to file '{filename}'")
 
-    if os.path.exists(filename) and overwrite is False:
+    if Path(filename).is_file() and overwrite is False:
         response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
         response = str(response).strip().lower()
 
@@ -306,7 +316,7 @@ def import_records(c, filename='data.json', clear=False):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
     if not os.path.isabs(filename):
-        filename = os.path.join(localDir(), filename)
+        filename = localDir().joinpath(filename)
 
     if not os.path.exists(filename):
         print(f"Error: File '{filename}' does not exist")
@@ -442,8 +452,8 @@ def test_translations(c):
     from django.conf import settings
 
     # setup django
-    base_path = os.getcwd()
-    new_base_path = pathlib.Path('InvenTree').absolute()
+    base_path = Path.cwd()
+    new_base_path = pathlib.Path('InvenTree').resolve()
     sys.path.append(str(new_base_path))
     os.chdir(new_base_path)
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InvenTree.settings')
@@ -487,8 +497,8 @@ def test_translations(c):
                     file_new.write(line)
 
     # change out translation files
-    os.rename(file_path, str(file_path) + '_old')
-    os.rename(new_file_path, file_path)
+    file_path.rename(str(file_path) + '_old')
+    new_file_path.rename(file_path)
 
     # compile languages
     print("Compile languages ...")
@@ -512,17 +522,46 @@ def test(c, database=None):
     manage(c, 'test', pty=True)
 
 
-@task(pre=[update])
-def setup_test(c):
+@task(help={'dev': 'Set up development enviroment at the end'})
+def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
     """Setup a testing enviroment."""
+
+    from InvenTree.InvenTree.config import get_media_dir
+
+    if not ignore_update:
+        update(c)
+
     # Remove old data directory
-    c.run('rm inventree-data -r')
+    if os.path.exists(path):
+        print("Removing old data ...")
+        c.run(f'rm {path} -r')
 
     # Get test data
-    c.run('git clone https://github.com/inventree/demo-dataset inventree-data')
+    print("Cloning demo dataset ...")
+    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v')
+    print("========================================")
+
+    # Make sure migrations are done - might have just deleted sqlite database
+    if not ignore_update:
+        migrate(c)
 
     # Load data
-    import_records(c, filename='inventree-data/inventree_data.json', clear=True)
+    print("Loading database records ...")
+    import_records(c, filename=f'{path}/inventree_data.json', clear=True)
+
+    # Copy media files
+    print("Copying media files ...")
+    src = Path(path).joinpath('media').resolve()
+    dst = get_media_dir()
+
+    shutil.copytree(src, dst, dirs_exist_ok=True)
+
+    print("Done setting up test enviroment...")
+    print("========================================")
+
+    # Set up development setup if flag is set
+    if dev:
+        setup_dev(c)
 
 
 @task

@@ -26,7 +26,7 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
-                               str2bool)
+                               str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
@@ -224,6 +224,13 @@ class StockLocationList(ListCreateAPI):
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the StockLocationList endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
+        return queryset
+
     def filter_queryset(self, queryset):
         """Custom filtering: - Allow filtering by "null" parent to retrieve top-level stock locations."""
         queryset = super().filter_queryset(queryset)
@@ -233,6 +240,8 @@ class StockLocationList(ListCreateAPI):
         loc_id = params.get('parent', None)
 
         cascade = str2bool(params.get('cascade', False))
+
+        depth = str2int(params.get('depth', None))
 
         # Do not filter by location
         if loc_id is None:
@@ -244,6 +253,9 @@ class StockLocationList(ListCreateAPI):
             if not cascade:
                 queryset = queryset.filter(parent=None)
 
+            if cascade and depth is not None:
+                queryset = queryset.filter(level__lte=depth)
+
         else:
 
             try:
@@ -252,6 +264,9 @@ class StockLocationList(ListCreateAPI):
                 # All sub-locations to be returned too?
                 if cascade:
                     parents = location.get_descendants(include_self=True)
+                    if depth is not None:
+                        parents = parents.filter(level__lte=location.level + depth)
+
                     parent_ids = [p.id for p in parents]
                     queryset = queryset.filter(parent__in=parent_ids)
 
@@ -293,6 +308,7 @@ class StockLocationList(ListCreateAPI):
 
     ordering_fields = [
         'name',
+        'pathstring',
         'items',
         'level',
         'tree_id',
@@ -1339,6 +1355,13 @@ class LocationDetail(RetrieveUpdateDestroyAPI):
 
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the StockLocationList endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
+        return queryset
 
 
 stock_api_urls = [

@@ -172,21 +172,13 @@ class InvenTreeConfig(AppConfig):
             return
 
         # get values
-        add_user = get_setting(
-            'INVENTREE_ADMIN_USER',
-            settings.CONFIG.get('admin_user', False)
-        )
-        add_email = get_setting(
-            'INVENTREE_ADMIN_EMAIL',
-            settings.CONFIG.get('admin_email', False)
-        )
-        add_password = get_setting(
-            'INVENTREE_ADMIN_PASSWORD',
-            settings.CONFIG.get('admin_password', False)
-        )
+        add_user = get_setting('INVENTREE_ADMIN_USER', 'admin_user')
+        add_email = get_setting('INVENTREE_ADMIN_EMAIL', 'admin_email')
+        add_password = get_setting('INVENTREE_ADMIN_PASSWORD', 'admin_password')
 
         # check if all values are present
         set_variables = 0
+
         for tested_var in [add_user, add_email, add_password]:
             if tested_var:
                 set_variables += 1

@@ -174,6 +174,12 @@ function updateNotificationReadState(btn, panel_caller=false) {
             } else {
                 count = count + 1;
             }
+
+            // Prevent negative notification count
+            if (count < 0) {
+                count = 0;
+            }
+
             // update notification indicator now
             updateNotificationIndicator(count);
 

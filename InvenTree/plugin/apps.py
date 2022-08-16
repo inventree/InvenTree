@@ -43,7 +43,7 @@ class PluginAppConfig(AppConfig):
                         pass
 
                     # get plugins and init them
-                    registry.collect_plugins()
+                    registry.plugin_modules = registry.collect_plugins()
                     registry.load_plugins()
 
                     # drop out of maintenance

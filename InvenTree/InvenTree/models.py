@@ -437,26 +437,12 @@ class InvenTreeAttachment(models.Model):
         if len(fn) == 0:
             raise ValidationError(_('Filename must not be empty'))
 
-        attachment_dir = os.path.join(
-            settings.MEDIA_ROOT,
-            self.getSubdir()
-        )
-
-        old_file = os.path.join(
-            settings.MEDIA_ROOT,
-            self.attachment.name
-        )
-
-        new_file = os.path.join(
-            settings.MEDIA_ROOT,
-            self.getSubdir(),
-            fn
-        )
-
-        new_file = os.path.abspath(new_file)
+        attachment_dir = settings.MEDIA_ROOT.joinpath(self.getSubdir())
+        old_file = settings.MEDIA_ROOT.joinpath(self.attachment.name)
+        new_file = settings.MEDIA_ROOT.joinpath(self.getSubdir(), fn).resolve()
 
         # Check that there are no directory tricks going on...
-        if os.path.dirname(new_file) != attachment_dir:
+        if new_file.parent != attachment_dir:
             logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
             raise ValidationError(_("Invalid attachment directory"))
 
@@ -473,11 +459,11 @@ class InvenTreeAttachment(models.Model):
         if len(fn.split('.')) < 2:
             raise ValidationError(_("Filename missing extension"))
 
-        if not os.path.exists(old_file):
+        if not old_file.exists():
             logger.error(f"Trying to rename attachment '{old_file}' which does not exist")
             return
 
-        if os.path.exists(new_file):
+        if new_file.exists():
             raise ValidationError(_("Attachment with this filename already exists"))
 
         try:
@@ -514,13 +500,24 @@ class InvenTreeTree(MPTTModel):
         }
 
     def save(self, *args, **kwargs):
-        """Provide better error for invalid moves."""
+        """Custom save method for InvenTreeTree abstract model"""
+
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
+            # Provide better error for parent selection
             raise ValidationError({
                 'parent': _("Invalid choice"),
             })
+
+        # Re-calculate the 'pathstring' field
+        pathstring = InvenTree.helpers.constructPathString(
+            [item.name for item in self.path]
+        )
+
+        if pathstring != self.pathstring:
+            self.pathstring = pathstring
+            super().save(force_update=True)
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -555,6 +552,14 @@ class InvenTreeTree(MPTTModel):
                             null=True,
                             verbose_name=_("parent"),
                             related_name='children')
+
+    # The 'pathstring' field is calculated each time the model is saved
+    pathstring = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Path'),
+        help_text=_('Path')
+    )
 
     @property
     def item_count(self):
@@ -626,14 +631,6 @@ class InvenTreeTree(MPTTModel):
         """
         return self.parentpath + [self]
 
-    @property
-    def pathstring(self):
-        """Get a string representation for the path of this item.
-
-        e.g. "Top/Second/Third/This"
-        """
-        return '/'.join([item.name for item in self.path])
-
     def __str__(self):
         """String representation of a category is the full path to that category."""
         return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
@@ -664,13 +661,15 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
             users = get_user_model().objects.filter(is_staff=True)
 
+            link = InvenTree.helpers.construct_absolute_url(
+                reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
+            )
+
             context = {
                 'error': instance,
                 'name': _('Server Error'),
                 'message': _('An error has been logged by the server.'),
-                'link': InvenTree.helpers.construct_absolute_url(
-                    reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
-                )
+                'link': link
             }
 
             common.notifications.trigger_notification(

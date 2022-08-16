@@ -155,7 +155,7 @@ class LabelTemplate(models.Model):
         template = template.replace('/', os.path.sep)
         template = template.replace('\\', os.path.sep)
 
-        template = os.path.join(settings.MEDIA_ROOT, template)
+        template = settings.MEDIA_ROOT.joinpath(template)
 
         return template
 

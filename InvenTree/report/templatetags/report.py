@@ -32,9 +32,9 @@ def asset(filename):
     debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
     # Test if the file actually exists
-    full_path = os.path.join(settings.MEDIA_ROOT, 'report', 'assets', filename)
+    full_path = settings.MEDIA_ROOT.joinpath('report', 'assets', filename)
 
-    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+    if not full_path.exists() or not full_path.is_file():
         raise FileNotFoundError(f"Asset file '{filename}' does not exist")
 
     if debug_mode:
@@ -63,9 +63,8 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         exists = False
     else:
         try:
-            full_path = os.path.join(settings.MEDIA_ROOT, filename)
-            full_path = os.path.abspath(full_path)
-            exists = os.path.exists(full_path) and os.path.isfile(full_path)
+            full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
+            exists = full_path.exists() and full_path.is_file()
         except Exception:
             exists = False
 
@@ -85,11 +84,9 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
     else:
         # Return file path
         if exists:
-            path = os.path.join(settings.MEDIA_ROOT, filename)
-            path = os.path.abspath(path)
+            path = settings.MEDIA_ROOT.joinpath(filename).resolve()
         else:
-            path = os.path.join(settings.STATIC_ROOT, 'img', replacement_file)
-            path = os.path.abspath(path)
+            path = settings.STATIC_ROOT.joinpath('img', replacement_file).resolve()
 
         return f"file://{path}"
 

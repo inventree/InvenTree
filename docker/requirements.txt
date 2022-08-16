@@ -1,9 +1,10 @@
 # Base python requirements for docker containers
 
 # Basic package requirements
+invoke>=1.4.0                   # Invoke build tool
+pyyaml>=6.0
 setuptools==60.0.5
 wheel>=0.37.0
-invoke>=1.4.0                   # Invoke build tool
 
 # Database links
 psycopg2>=2.9.1

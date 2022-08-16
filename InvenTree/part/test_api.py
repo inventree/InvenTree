@@ -49,33 +49,107 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         """Test the PartCategoryList API endpoint"""
         url = reverse('api-part-category-list')
 
+        # star categories manually for tests as it is not possible with fixures
+        # because the current user is no fixure itself and throws an invalid
+        # foreign key constrain
+        for pk in [3, 4]:
+            PartCategory.objects.get(pk=pk).set_starred(self.user, True)
+
+        test_cases = [
+            ({}, 8, 'no parameters'),
+            ({'parent': 1, 'cascade': False}, 3, 'Filter by parent, no cascading'),
+            ({'parent': 1, 'cascade': True}, 5, 'Filter by parent, cascading'),
+            ({'cascade': True, 'depth': 0}, 8, 'Cascade with no parent, depth=0'),
+            ({'cascade': False, 'depth': 10}, 8, 'Cascade with no parent, depth=0'),
+            ({'parent': 'null', 'cascade': True, 'depth': 0}, 2, 'Cascade with null parent, depth=0'),
+            ({'parent': 'null', 'cascade': True, 'depth': 10}, 8, 'Cascade with null parent and bigger depth'),
+            ({'parent': 'null', 'cascade': False, 'depth': 10}, 2, 'No cascade even with depth specified with null parent'),
+            ({'parent': 1, 'cascade': False, 'depth': 0}, 3, 'Dont cascade with depth=0 and parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 0}, 3, 'Cascade with depth=0 and parent'),
+            ({'parent': 1, 'cascade': False, 'depth': 1}, 3, 'Dont cascade even with depth=1 specified with parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 1}, 5, 'Cascade with depth=1 with parent'),
+            ({'parent': 1, 'cascade': True, 'depth': 'abcdefg'}, 5, 'Cascade with invalid depth and parent'),
+            ({'parent': 42}, 8, 'Should return everything if parent_pk is not vaild'),
+            ({'parent': 'null', 'exclude_tree': 1, 'cascade': True}, 2, 'Should return everything from except tree with pk=1'),
+            ({'parent': 'null', 'exclude_tree': 42, 'cascade': True}, 8, 'Should return everything because exclude_tree=42 is no valid pk'),
+            ({'parent': 1, 'starred': True, 'cascade': True}, 2, 'Should return the starred categories for the current user within the pk=1 tree'),
+            ({'parent': 1, 'starred': False, 'cascade': True}, 3, 'Should return the not starred categories for the current user within the pk=1 tree'),
+        ]
+
+        for params, res_len, description in test_cases:
+            response = self.get(url, params, expected_code=200)
+            self.assertEqual(len(response.data), res_len, description)
+
+        # Check that the required fields are present
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'default_location',
+            'level',
+            'parent',
+            'part_count',
+            'pathstring',
+            'url'
+        ]
+
         response = self.get(url, expected_code=200)
+        for result in response.data:
+            for f in fields:
+                self.assertIn(f, result, f'"{f}" is missing in result of PartCategory list')
 
-        self.assertEqual(len(response.data), 8)
+    def test_part_count(self):
+        """Test that the 'part_count' field is annotated correctly"""
 
-        # Filter by parent, depth=1
+        url = reverse('api-part-category-list')
+
+        # Create a parent category
+        cat = PartCategory.objects.create(
+            name='Parent Cat',
+            description='Some name',
+            parent=None
+        )
+
+        # Create child categories
+        for ii in range(10):
+            child = PartCategory.objects.create(
+                name=f"Child cat {ii}",
+                description="A child category",
+                parent=cat
+            )
+
+            # Create parts in this category
+            for jj in range(10):
+                Part.objects.create(
+                    name=f"Part xyz {jj}",
+                    description="A test part",
+                    category=child
+                )
+
+        # Filter by parent category
         response = self.get(
             url,
             {
-                'parent': 1,
-                'cascade': False,
+                'parent': cat.pk,
             },
             expected_code=200
         )
 
-        self.assertEqual(len(response.data), 3)
+        # 10 child categories
+        self.assertEqual(len(response.data), 10)
 
-        # Filter by parent, cascading
+        for result in response.data:
+            self.assertEqual(result['parent'], cat.pk)
+            self.assertEqual(result['part_count'], 10)
+
+        # Detail view for parent category
         response = self.get(
-            url,
-            {
-                'parent': 1,
-                'cascade': True,
-            },
-            expected_code=200,
+            f'/api/part/category/{cat.pk}/',
+            expected_code=200
         )
 
-        self.assertEqual(len(response.data), 5)
+        # Annotation should include parts from all sub-categories
+        self.assertEqual(response.data['part_count'], 100)
 
     def test_category_metadata(self):
         """Test metadata endpoint for the PartCategory."""
@@ -153,31 +227,40 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         url = reverse('api-part-category-detail', kwargs={'pk': 1})
 
-        self.patch(
-            url,
-            {
-                'description': '<img src=# onerror=alert("pwned")>',
-            },
-            expected_code=200
-        )
+        # Invalid values containing tags
+        invalid_values = [
+            '<img src="test"/>',
+            '<a href="#">Link</a>',
+            "<a href='#'>Link</a>",
+            '<b>',
+        ]
 
-        cat = PartCategory.objects.get(pk=1)
+        for v in invalid_values:
+            response = self.patch(
+                url,
+                {
+                    'description': v
+                },
+                expected_code=400
+            )
 
-        # Image tags have been stripped
-        self.assertEqual(cat.description, '&lt;img src=# onerror=alert("pwned")&gt;')
+        # Raw characters should be allowed
+        allowed = [
+            '<< hello',
+            'Alpha & Omega',
+            'A > B > C',
+        ]
 
-        self.patch(
-            url,
-            {
-                'description': '<a href="www.google.com">LINK</a><script>alert("h4x0r")</script>',
-            },
-            expected_code=200,
-        )
+        for val in allowed:
+            response = self.patch(
+                url,
+                {
+                    'description': val,
+                },
+                expected_code=200,
+            )
 
-        # Tags must have been bleached out
-        cat.refresh_from_db()
-
-        self.assertEqual(cat.description, '<a href="www.google.com">LINK</a>&lt;script&gt;alert("h4x0r")&lt;/script&gt;')
+            self.assertEqual(response.data['description'], val)
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
