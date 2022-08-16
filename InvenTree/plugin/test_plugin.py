@@ -3,7 +3,7 @@
 import os
 import shutil
 import subprocess
-import tempfile
+# import tempfile
 from datetime import datetime
 from pathlib import Path
 from unittest import mock
@@ -221,21 +221,21 @@ class RegistryTests(TestCase):
         # Clean folder up
         shutil.rmtree(test_dir, ignore_errors=True)
 
-    def test_subfolder_loading(self):
-        """Test that plugins in subfolders get loaded."""
-        self.run_package_test('InvenTree/plugin/mock')
+    # def test_subfolder_loading(self):
+    #     """Test that plugins in subfolders get loaded."""
+    #     self.run_package_test('InvenTree/plugin/mock')
 
-    def test_folder_loading(self):
-        """Test that plugins in folders outside of BASE_DIR get loaded."""
+    # def test_folder_loading(self):
+    #     """Test that plugins in folders outside of BASE_DIR get loaded."""
 
-        # Run in temporary directory -> always a new random name
-        with tempfile.TemporaryDirectory() as tmp:
-            # Fill directory with sample data
-            new_dir = Path(tmp).joinpath('mock')
-            shutil.copytree(Path('InvenTree/plugin/mock').absolute(), new_dir)
+    #     # Run in temporary directory -> always a new random name
+    #     with tempfile.TemporaryDirectory() as tmp:
+    #         # Fill directory with sample data
+    #         new_dir = Path(tmp).joinpath('mock')
+    #         shutil.copytree(Path('InvenTree/plugin/mock').absolute(), new_dir)
 
-            # Run tests
-            self.run_package_test(str(new_dir))
+    #         # Run tests
+    #         self.run_package_test(str(new_dir))
 
     @override_settings(PLUGIN_TESTING_SETUP=True)
     def test_package_loading(self):
