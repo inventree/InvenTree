@@ -37,10 +37,8 @@ class InvenTreeConfig(AppConfig):
         - Collecting notification mehods
         - Adding users set in the current enviroment
         """
-        # Check for migrations.
-        self.check_for_migrations()
-
         if canAppAccessDatabase():
+            self.check_for_migrations()
 
             self.remove_obsolete_tasks()
 
