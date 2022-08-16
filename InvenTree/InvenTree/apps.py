@@ -7,7 +7,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
 from django.core.management import call_command
-from django.db import transaction
+from django.db import DEFAULT_DB_ALIAS, connections, transaction
+from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import IntegrityError
 
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
@@ -242,11 +243,11 @@ class InvenTreeConfig(AppConfig):
 
         from plugin import registry
 
-        needs_updating: bool = False
+        executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+        plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
 
-        # TODO check if migrations are open
-
-        if not needs_updating:
+        # Check if there are any open migrations
+        if not plan:
             return
 
         logger.info('There are open migrations')
