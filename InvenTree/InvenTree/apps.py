@@ -252,6 +252,10 @@ class InvenTreeConfig(AppConfig):
 
         logger.info('There are open migrations')
 
+        # Log open migrations
+        for migration in plan:
+            logger.info(migration[0])
+
         # Set the application to maintenance mode - no access from now on.
         logger.info('Going into maintenance')
         set_maintenance_mode(True)
