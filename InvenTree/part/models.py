@@ -101,6 +101,13 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
     default_keywords = models.CharField(null=True, blank=True, max_length=250, verbose_name=_('Default keywords'), help_text=_('Default keywords for parts in this category'))
 
+    icon = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_("Icon"),
+        help_text=_("Icon (optional)")
+    )
+
     @staticmethod
     def get_api_url():
         """Return the API url associated with the PartCategory model"""
