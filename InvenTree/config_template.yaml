@@ -108,6 +108,10 @@ plugins_enabled: False
 #plugin_file: /path/to/plugins.txt
 #plugin_dir: /path/to/plugins/
 
+# Set this variable to True to enable auto-migrations and auto-updates (on bare-metal with git avai)
+# Alternatively, use the environment variable INVENTREE_AUTO_UPDATE
+auto_update: False
+
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
 # Default behaviour is to allow all hosts (THIS IS NOT SECURE!)

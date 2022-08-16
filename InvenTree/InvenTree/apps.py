@@ -237,11 +237,13 @@ class InvenTreeConfig(AppConfig):
         """
         from plugin import registry
 
+        # Test if auto-updates are enabled
+        if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+            return
+
         needs_updating: bool = False
 
         # TODO check if migrations are open
-
-        # TODO check setting
 
         if not needs_updating:
             return
