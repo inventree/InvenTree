@@ -15,7 +15,6 @@ env:
   python_version: 3.9
   node_version: 16
   # The OS version must be set per job
-
   server_start_sleep: 60
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -30,7 +29,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # pin@v1
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
@@ -45,7 +44,7 @@ jobs:
     needs: pep_style
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # pin@v1
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
@@ -67,7 +66,7 @@ jobs:
     needs: pep_style
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # pin@v1
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
@@ -83,18 +82,18 @@ jobs:
     needs: pep_style
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ env.python_version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ env.python_version }}
-        cache: 'pip'
-    - name: Run pre-commit Checks
-      uses: pre-commit/action@v2.0.3
-    - name: Check Version
-      run: |
-        pip install requests
-        python3 ci/version_check.py
+      - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
+      - name: Set up Python ${{ env.python_version }}
+        uses: actions/setup-python@7f80679172b057fc5e90d70d197929d454754a5a # pin@v2
+        with:
+          python-version: ${{ env.python_version }}
+          cache: 'pip'
+      - name: Run pre-commit Checks
+        uses: pre-commit/action@9b88afc9cd57fd75b655d5c71bd38146d07135fe # pin@v2.0.3
+      - name: Check Version
+        run: |
+          pip install requests
+          python3 ci/version_check.py
 
   python:
     name: Tests - inventree-python
@@ -114,7 +113,7 @@ jobs:
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # pin@v1
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
@@ -122,7 +121,8 @@ jobs:
           dev-install: true
           update: true
       - name: Download Python Code For `${{ env.wrapper_name }}`
-        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
+        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }}
+          ./${{ env.wrapper_name }}
       - name: Start InvenTree Server
         run: |
           invoke delete-data -f
@@ -143,7 +143,7 @@ jobs:
     continue-on-error: true
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # pin@v1
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
@@ -155,8 +155,8 @@ jobs:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: ['javascript', 'html', 'pre-commit']
-    continue-on-error: true   # continue if a step fails so that coverage gets pushed
+    needs: [ 'javascript', 'html', 'pre-commit' ]
+    continue-on-error: true # continue if a step fails so that coverage gets pushed
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
@@ -164,7 +164,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: true
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # pin@v1
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
@@ -186,7 +186,7 @@ jobs:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
 
-    needs: ['javascript', 'html', 'pre-commit']
+    needs: [ 'javascript', 'html', 'pre-commit' ]
     if: github.event_name == 'push'
 
     env:
@@ -214,7 +214,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # pin@v1
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
@@ -231,7 +231,7 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: ['javascript', 'html', 'pre-commit']
+    needs: [ 'javascript', 'html', 'pre-commit' ]
     if: github.event_name == 'push'
 
     env:
@@ -253,12 +253,13 @@ jobs:
           MYSQL_USER: inventree
           MYSQL_PASSWORD: password
           MYSQL_ROOT_PASSWORD: password
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s
+          --health-retries=3
         ports:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # pin@v1
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:

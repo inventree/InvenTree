@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-10 11:38+0000\n"
-"PO-Revision-Date: 2022-08-10 13:23\n"
+"POT-Creation-Date: 2022-08-11 02:47+0000\n"
+"PO-Revision-Date: 2022-08-14 21:43\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -23,7 +23,7 @@ msgstr "API endpoint nebyl nalezen"
 
 #: InvenTree/exceptions.py:68
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "Podrobnosti o chybě lze nalézt v panelu administrace"
 
 #: InvenTree/fields.py:109
 msgid "Enter date"
@@ -91,7 +91,7 @@ msgstr "Pokaždé musíte zadat stejný email."
 
 #: InvenTree/helpers.py:173
 msgid "Connection error"
-msgstr ""
+msgstr "Chyba spojení"
 
 #: InvenTree/helpers.py:177 InvenTree/helpers.py:182
 msgid "Server responded with invalid status code"
@@ -107,11 +107,11 @@ msgstr ""
 
 #: InvenTree/helpers.py:190
 msgid "Image size is too large"
-msgstr ""
+msgstr "Velikost obrázku je příliš velká"
 
 #: InvenTree/helpers.py:202
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "Stahování obrázku překročilo maximální velikost"
 
 #: InvenTree/helpers.py:207
 msgid "Remote server returned empty response"
@@ -321,11 +321,11 @@ msgstr "nadřazený"
 #: InvenTree/models.py:560 InvenTree/models.py:561
 #: templates/js/translated/part.js:1939 templates/js/translated/stock.js:2421
 msgid "Path"
-msgstr ""
+msgstr "Cesta"
 
 #: InvenTree/models.py:670
 msgid "Server Error"
-msgstr ""
+msgstr "Chyba serveru"
 
 #: InvenTree/models.py:671
 msgid "An error has been logged by the server."
@@ -388,7 +388,7 @@ msgstr "Duplicitní sloupec: '{col}'"
 #: InvenTree/serializers.py:602
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: InvenTree/serializers.py:603
 msgid "URL of remote image file"
@@ -464,11 +464,11 @@ msgstr "Polština"
 
 #: InvenTree/settings.py:625
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugalština"
 
 #: InvenTree/settings.py:626
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugalština (Brazilská)"
 
 #: InvenTree/settings.py:627
 msgid "Russian"
@@ -543,7 +543,7 @@ msgstr "Odesláno"
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
@@ -611,11 +611,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:276
 msgid "Removed component item"
-msgstr ""
+msgstr "Odstraněná komponenta"
 
 #: InvenTree/status_codes.py:278
 msgid "Split from parent item"
-msgstr ""
+msgstr "Rozdělit od nadřazené položky"
 
 #: InvenTree/status_codes.py:279
 msgid "Split child item"
@@ -631,7 +631,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:285 templates/js/translated/table_filters.js:221
 msgid "Sent to customer"
-msgstr ""
+msgstr "Odesláno zákazníkovi"
 
 #: InvenTree/status_codes.py:286
 msgid "Returned from customer"
@@ -659,7 +659,7 @@ msgstr ""
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Neplatný kód měny"
 
 #: InvenTree/validators.py:45
 msgid "Invalid character in part name"
@@ -816,7 +816,7 @@ msgstr ""
 msgid "SalesOrder to which this build is allocated"
 msgstr ""
 
-#: build/models.py:213 build/serializers.py:803
+#: build/models.py:213 build/serializers.py:800
 #: templates/js/translated/build.js:2073 templates/js/translated/order.js:2873
 msgid "Source Location"
 msgstr ""
@@ -977,7 +977,7 @@ msgstr ""
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:1345 build/serializers.py:648 order/serializers.py:1015
+#: build/models.py:1345 build/serializers.py:645 order/serializers.py:1015
 #: order/serializers.py:1036 stock/serializers.py:396 stock/serializers.py:754
 #: stock/serializers.py:880 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1045,7 +1045,7 @@ msgstr ""
 msgid "Destination stock item"
 msgstr ""
 
-#: build/serializers.py:138 build/serializers.py:677
+#: build/serializers.py:138 build/serializers.py:674
 #: templates/js/translated/build.js:1166
 msgid "Build Output"
 msgstr ""
@@ -1070,7 +1070,7 @@ msgstr ""
 msgid "Enter quantity for build output"
 msgstr ""
 
-#: build/serializers.py:208 build/serializers.py:668 order/models.py:318
+#: build/serializers.py:208 build/serializers.py:665 order/models.py:318
 #: order/serializers.py:287 order/serializers.py:442 part/serializers.py:542
 #: part/serializers.py:974 stock/models.py:477 stock/models.py:1244
 #: stock/serializers.py:302
@@ -1212,77 +1212,73 @@ msgstr ""
 msgid "Build order has incomplete outputs"
 msgstr ""
 
-#: build/serializers.py:550 build/templates/build/build_base.html:95
-msgid "No build outputs have been created for this build order"
-msgstr ""
-
-#: build/serializers.py:580 build/serializers.py:625 part/models.py:2719
+#: build/serializers.py:577 build/serializers.py:622 part/models.py:2719
 #: part/models.py:2853
 msgid "BOM Item"
 msgstr ""
 
-#: build/serializers.py:590
+#: build/serializers.py:587
 msgid "Build output"
 msgstr ""
 
-#: build/serializers.py:598
+#: build/serializers.py:595
 msgid "Build output must point to the same build"
 msgstr ""
 
-#: build/serializers.py:639
+#: build/serializers.py:636
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:654 stock/serializers.py:767
+#: build/serializers.py:651 stock/serializers.py:767
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:712 order/serializers.py:1073
+#: build/serializers.py:709 order/serializers.py:1073
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr ""
 
-#: build/serializers.py:718
+#: build/serializers.py:715
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr ""
 
-#: build/serializers.py:725
+#: build/serializers.py:722
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
-#: build/serializers.py:730
+#: build/serializers.py:727
 msgid "This stock item has already been allocated to this build output"
 msgstr ""
 
-#: build/serializers.py:753 order/serializers.py:1319
+#: build/serializers.py:750 order/serializers.py:1319
 msgid "Allocation items must be provided"
 msgstr ""
 
-#: build/serializers.py:804
+#: build/serializers.py:801
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr ""
 
-#: build/serializers.py:812
+#: build/serializers.py:809
 msgid "Exclude Location"
 msgstr ""
 
-#: build/serializers.py:813
+#: build/serializers.py:810
 msgid "Exclude stock items from this selected location"
 msgstr ""
 
-#: build/serializers.py:818
+#: build/serializers.py:815
 msgid "Interchangeable Stock"
 msgstr ""
 
-#: build/serializers.py:819
+#: build/serializers.py:816
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr ""
 
-#: build/serializers.py:824
+#: build/serializers.py:821
 msgid "Substitute Stock"
 msgstr ""
 
-#: build/serializers.py:825
+#: build/serializers.py:822
 msgid "Allow allocation of substitute parts"
 msgstr ""
 
@@ -1332,6 +1328,10 @@ msgstr ""
 
 #: build/templates/build/build_base.html:87
 msgid "Build Description"
+msgstr ""
+
+#: build/templates/build/build_base.html:95
+msgid "No build outputs have been created for this build order"
 msgstr ""
 
 #: build/templates/build/build_base.html:101
@@ -1412,16 +1412,7 @@ msgstr ""
 msgid "Issued By"
 msgstr ""
 
-#: build/templates/build/build_base.html:230
-#: build/templates/build/sidebar.html:12
-msgid "Incomplete Outputs"
-msgstr ""
-
-#: build/templates/build/build_base.html:231
-msgid "Build Order cannot be completed as incomplete build outputs remain"
-msgstr ""
-
-#: build/templates/build/build_base.html:257
+#: build/templates/build/build_base.html:245
 msgid "Delete Build Order"
 msgstr ""
 
@@ -1617,6 +1608,10 @@ msgstr ""
 msgid "Build Order Details"
 msgstr ""
 
+#: build/templates/build/sidebar.html:12
+msgid "Incomplete Outputs"
+msgstr ""
+
 #: build/templates/build/sidebar.html:15
 msgid "Completed Outputs"
 msgstr ""
@@ -1720,7 +1715,7 @@ msgstr ""
 
 #: common/models.py:833 company/models.py:93 company/models.py:94
 msgid "Company name"
-msgstr ""
+msgstr "Jméno společnosti"
 
 #: common/models.py:834
 msgid "Internal company name"
