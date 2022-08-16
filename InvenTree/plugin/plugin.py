@@ -2,11 +2,10 @@
 
 import inspect
 import logging
-import os
-import pathlib
 import warnings
 from datetime import datetime
 from importlib.metadata import PackageNotFoundError, metadata
+from pathlib import Path
 
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
@@ -171,7 +170,24 @@ class MixinBase:
         return mixins
 
 
-class InvenTreePlugin(MixinBase, MetaBase):
+class VersionMixin:
+    """Mixin to enable version checking."""
+
+    MIN_VERSION = None
+    MAX_VERSION = None
+
+    def check_version(self, latest=None) -> bool:
+        """Check if plugin functions for the current InvenTree version."""
+        from InvenTree import version
+
+        latest = latest if latest else version.inventreeVersionTuple()
+        min_v = version.inventreeVersionTuple(self.MIN_VERSION)
+        max_v = version.inventreeVersionTuple(self.MAX_VERSION)
+
+        return bool(min_v <= latest <= max_v)
+
+
+class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     """The InvenTreePlugin class is used to integrate with 3rd party software.
 
     DO NOT USE THIS DIRECTLY, USE plugin.InvenTreePlugin
@@ -191,10 +207,17 @@ class InvenTreePlugin(MixinBase, MetaBase):
         """
         super().__init__()
         self.add_mixin('base')
-        self.def_path = inspect.getfile(self.__class__)
-        self.path = os.path.dirname(self.def_path)
 
         self.define_package()
+
+    @classmethod
+    def file(cls) -> Path:
+        """File that contains plugin definition."""
+        return Path(inspect.getfile(cls))
+
+    def path(self) -> Path:
+        """Path to plugins base folder."""
+        return self.file().parent
 
     def _get_value(self, meta_name: str, package_name: str) -> str:
         """Extract values from class meta or package info.
@@ -243,43 +266,54 @@ class InvenTreePlugin(MixinBase, MetaBase):
     @property
     def version(self):
         """Version of plugin."""
-        version = self._get_value('VERSION', 'version')
-        return version
+        return self._get_value('VERSION', 'version')
 
     @property
     def website(self):
         """Website of plugin - if set else None."""
-        website = self._get_value('WEBSITE', 'website')
-        return website
+        return self._get_value('WEBSITE', 'website')
 
     @property
     def license(self):
         """License of plugin."""
-        lic = self._get_value('LICENSE', 'license')
-        return lic
+        return self._get_value('LICENSE', 'license')
     # endregion
+
+    @classmethod
+    def check_is_package(cls):
+        """Is the plugin delivered as a package."""
+        return getattr(cls, 'is_package', False)
 
     @property
     def _is_package(self):
         """Is the plugin delivered as a package."""
         return getattr(self, 'is_package', False)
 
-    @property
-    def is_sample(self):
+    @classmethod
+    def check_is_sample(cls) -> bool:
         """Is this plugin part of the samples?"""
-        path = str(self.package_path)
-        return path.startswith('plugin/samples/')
+        return str(cls.check_package_path()).startswith('plugin/samples/')
+
+    @property
+    def is_sample(self) -> bool:
+        """Is this plugin part of the samples?"""
+        return self.check_is_sample()
+
+    @classmethod
+    def check_package_path(cls):
+        """Path to the plugin."""
+        if cls.check_is_package():
+            return cls.__module__  # pragma: no cover
+
+        try:
+            return cls.file().relative_to(settings.BASE_DIR)
+        except ValueError:
+            return cls.file()
 
     @property
     def package_path(self):
         """Path to the plugin."""
-        if self._is_package:
-            return self.__module__  # pragma: no cover
-
-        try:
-            return pathlib.Path(self.def_path).relative_to(settings.BASE_DIR)
-        except ValueError:
-            return pathlib.Path(self.def_path)
+        return self.check_package_path()
 
     @property
     def settings_url(self):
@@ -289,7 +323,7 @@ class InvenTreePlugin(MixinBase, MetaBase):
     # region package info
     def _get_package_commit(self):
         """Get last git commit for the plugin."""
-        return get_git_log(self.def_path)
+        return get_git_log(str(self.file()))
 
     @classmethod
     def _get_package_metadata(cls):

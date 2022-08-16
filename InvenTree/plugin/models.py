@@ -3,6 +3,7 @@
 import warnings
 
 from django.conf import settings
+from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -123,11 +124,11 @@ class PluginConfig(models.Model):
         self.__org_active = self.active
 
         # append settings from registry
-        self.plugin = registry.plugins.get(self.key, None)
+        plugin = registry.plugins_full.get(self.key, None)
 
         def get_plugin_meta(name):
-            if self.plugin:
-                return str(getattr(self.plugin, name, None))
+            if plugin:
+                return str(getattr(plugin, name, None))
             return None
 
         self.meta = {
@@ -135,6 +136,9 @@ class PluginConfig(models.Model):
                                                   'pub_date', 'version', 'website', 'license',
                                                   'package_path', 'settings_url', ]
         }
+
+        # Save plugin
+        self.plugin: InvenTreePlugin = plugin
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
@@ -150,6 +154,20 @@ class PluginConfig(models.Model):
                 registry.reload_plugins()
 
         return ret
+
+    @admin.display(boolean=True, description=_('Sample plugin'))
+    def is_sample(self) -> bool:
+        """Is this plugin a sample app?"""
+        # Loaded and active plugin
+        if isinstance(self.plugin, InvenTreePlugin):
+            return self.plugin.check_is_sample()
+
+        # If no plugin_class is available it can not be a sample
+        if not self.plugin:
+            return False
+
+        # Not loaded plugin
+        return self.plugin.check_is_sample()  # pragma: no cover
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):

@@ -100,6 +100,14 @@ class InvenTreePluginTests(TestCase):
         self.plugin_name = NameInvenTreePlugin()
         self.plugin_sample = SampleIntegrationPlugin()
 
+        class VersionInvenTreePlugin(InvenTreePlugin):
+            NAME = 'Version'
+
+            MIN_VERSION = '0.1.0'
+            MAX_VERSION = '0.1.3'
+
+        self.plugin_version = VersionInvenTreePlugin()
+
     def test_basic_plugin_init(self):
         """Check if a basic plugin intis."""
         self.assertEqual(self.plugin.NAME, '')
@@ -168,6 +176,16 @@ class InvenTreePluginTests(TestCase):
             self.assertEqual(self.plugin_old.slug, 'old')
             # check default value is used
             self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
+
+    def test_version(self):
+        """Test Version checks"""
+
+        self.assertFalse(self.plugin_version.check_version([0, 0, 3]))
+        self.assertTrue(self.plugin_version.check_version([0, 1, 0]))
+        self.assertFalse(self.plugin_version.check_version([0, 1, 4]))
+
+        plug = registry.plugins_full.get('version')
+        self.assertEqual(plug.is_active(), False)
 
 
 class RegistryTests(TestCase):

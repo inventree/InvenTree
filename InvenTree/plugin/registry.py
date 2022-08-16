@@ -11,7 +11,7 @@ import os
 import subprocess
 from importlib import reload
 from pathlib import Path
-from typing import OrderedDict
+from typing import Dict, List, OrderedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -41,19 +41,20 @@ class PluginsRegistry:
         Set up all needed references for internal and external states.
         """
         # plugin registry
-        self.plugins = {}
-        self.plugins_inactive = {}
+        self.plugins: Dict[str, InvenTreePlugin] = {}           # List of active instances
+        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}  # List of inactive instances
+        self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
 
-        self.plugin_modules = []         # Holds all discovered plugins
+        self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
 
-        self.errors = {}                 # Holds discovering errors
+        self.errors = {}                                        # Holds discovering errors
 
         # flags
-        self.is_loading = False
-        self.apps_loading = True        # Marks if apps were reloaded yet
-        self.git_is_modern = True       # Is a modern version of git available
+        self.is_loading = False                                 # Are plugins beeing loaded right now
+        self.apps_loading = True                                # Marks if apps were reloaded yet
+        self.git_is_modern = True                               # Is a modern version of git available
 
-        self.installed_apps = []         # Holds all added plugin_paths
+        self.installed_apps = []                                # Holds all added plugin_paths
 
         # mixins
         self.mixins_settings = {}
@@ -339,74 +340,77 @@ class PluginsRegistry:
     # endregion
 
     # region general internal loading /activating / deactivating / deloading
-    def _init_plugins(self, disabled=None):
+    def _init_plugins(self, disabled: str = None):
         """Initialise all found plugins.
 
-        :param disabled: loading path of disabled app, defaults to None
-        :type disabled: str, optional
-        :raises error: IntegrationPluginError
+        Args:
+            disabled (str, optional): Loading path of disabled app. Defaults to None.
+
+        Raises:
+            error: IntegrationPluginError
         """
         from plugin.models import PluginConfig
+
+        def safe_reference(plugin, key: str, active: bool = True):
+            """Safe reference to plugin dicts."""
+            if active:
+                self.plugins[key] = plugin
+            else:
+                # Deactivate plugin in db
+                if not settings.PLUGIN_TESTING:  # pragma: no cover
+                    plugin.db.active = False
+                    plugin.db.save(no_reload=True)
+                self.plugins_inactive[key] = plugin.db
+            self.plugins_full[key] = plugin
 
         logger.info('Starting plugin initialisation')
 
         # Initialize plugins
-        for plugin in self.plugin_modules:
-            # Check if package
-            was_packaged = getattr(plugin, 'is_package', False)
-
-            # Check if activated
+        for plg in self.plugin_modules:
             # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
-            plug_name = plugin.NAME
-            plug_key = plugin.SLUG if getattr(plugin, 'SLUG', None) else plug_name
-            plug_key = slugify(plug_key)  # keys are slugs!
+            plg_name = plg.NAME
+            plg_key = slugify(plg.SLUG if getattr(plg, 'SLUG', None) else plg_name)  # keys are slugs!
+
             try:
-                plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
+                plg_db, _ = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
                     raise error  # pragma: no cover
-                plugin_db_setting = None
+                plg_db = None
             except (IntegrityError) as error:  # pragma: no cover
-                logger.error(f"Error initializing plugin: {error}")
+                logger.error(f"Error initializing plugin `{plg_name}`: {error}")
+
+            # Append reference to plugin
+            plg.db = plg_db
 
             # Always activate if testing
-            if settings.PLUGIN_TESTING or (plugin_db_setting and plugin_db_setting.active):
-                # Check if the plugin was blocked -> threw an error
-                if disabled:
-                    # option1: package, option2: file-based
-                    if (plugin.__name__ == disabled) or (plugin.__module__ == disabled):
-                        # Errors are bad so disable the plugin in the database
-                        if not settings.PLUGIN_TESTING:  # pragma: no cover
-                            plugin_db_setting.active = False
-                            plugin_db_setting.save(no_reload=True)
+            if settings.PLUGIN_TESTING or (plg_db and plg_db.active):
+                # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
+                if disabled and ((plg.__name__ == disabled) or (plg.__module__ == disabled)):
+                    safe_reference(plugin=plg, key=plg_key, active=False)
+                    continue  # continue -> the plugin is not loaded
 
-                        # Add to inactive plugins so it shows up in the ui
-                        self.plugins_inactive[plug_key] = plugin_db_setting
-                        continue  # continue -> the plugin is not loaded
-
-                # Initialize package
-                # now we can be sure that an admin has activated the plugin
-                logger.info(f'Loading plugin {plug_name}')
-
+                # Initialize package - we can be sure that an admin has activated the plugin
+                logger.info(f'Loading plugin `{plg_name}`')
                 try:
-                    plugin = plugin()
+                    plg_i: InvenTreePlugin = plg()
+                    logger.info(f'Loaded plugin `{plg_name}`')
                 except Exception as error:
-                    # log error and raise it -> disable plugin
-                    handle_error(error, log_name='init')
+                    handle_error(error, log_name='init')  # log error and raise it -> disable plugin
 
-                logger.debug(f'Loaded plugin {plug_name}')
+                # Safe extra attributes
+                plg_i.is_package = getattr(plg_i, 'is_package', False)
+                plg_i.pk = plg_db.pk if plg_db else None
+                plg_i.db = plg_db
 
-                plugin.is_package = was_packaged
-
-                if plugin_db_setting:
-                    plugin.pk = plugin_db_setting.pk
-
-                # safe reference
-                self.plugins[plugin.slug] = plugin
-            else:
-                # save for later reference
-                self.plugins_inactive[plug_key] = plugin_db_setting  # pragma: no cover
+                # Run version check for plugin
+                if (plg_i.MIN_VERSION or plg_i.MAX_VERSION) and not plg_i.check_version():
+                    safe_reference(plugin=plg_i, key=plg_key, active=False)
+                else:
+                    safe_reference(plugin=plg_i, key=plg_key)
+            else:  # pragma: no cover
+                safe_reference(plugin=plg, key=plg_key, active=False)
 
     def _activate_plugins(self, force_reload=False, full_reload: bool = False):
         """Run activation functions for all plugins.
@@ -583,10 +587,10 @@ class PluginsRegistry:
         """
         try:
             # for local path plugins
-            plugin_path = '.'.join(Path(plugin.path).relative_to(settings.BASE_DIR).parts)
+            plugin_path = '.'.join(plugin.path().relative_to(settings.BASE_DIR).parts)
         except ValueError:  # pragma: no cover
-            # plugin is shipped as package
-            plugin_path = plugin.NAME
+            # plugin is shipped as package - extract plugin module name
+            plugin_path = plugin.__module__.split('.')[0]
         return plugin_path
 
     def deactivate_plugin_app(self):
@@ -640,24 +644,25 @@ class PluginsRegistry:
         self.installed_apps = []
 
     def _clean_registry(self):
-        # remove all plugins from registry
-        self.plugins = {}
-        self.plugins_inactive = {}
+        """Remove all plugins from registry."""
+        self.plugins: Dict[str, InvenTreePlugin] = {}
+        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}
+        self.plugins_full: Dict[str, InvenTreePlugin] = {}
 
     def _update_urls(self):
-        from InvenTree.urls import frontendpatterns as urlpatterns
+        from InvenTree.urls import frontendpatterns as urlpattern
         from InvenTree.urls import urlpatterns as global_pattern
         from plugin.urls import get_plugin_urls
 
-        for index, a in enumerate(urlpatterns):
-            if hasattr(a, 'app_name'):
-                if a.app_name == 'admin':
-                    urlpatterns[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
-                elif a.app_name == 'plugin':
-                    urlpatterns[index] = get_plugin_urls()
+        for index, url in enumerate(urlpattern):
+            if hasattr(url, 'app_name'):
+                if url.app_name == 'admin':
+                    urlpattern[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
+                elif url.app_name == 'plugin':
+                    urlpattern[index] = get_plugin_urls()
 
-        # replace frontendpatterns
-        global_pattern[0] = re_path('', include(urlpatterns))
+        # Replace frontendpatterns
+        global_pattern[0] = re_path('', include(urlpattern))
         clear_url_caches()
 
     def _reload_apps(self, force_reload: bool = False, full_reload: bool = False):
@@ -693,7 +698,7 @@ class PluginsRegistry:
     # endregion
 
 
-registry = PluginsRegistry()
+registry: PluginsRegistry = PluginsRegistry()
 
 
 def call_function(plugin_name, function_name, *args, **kwargs):
