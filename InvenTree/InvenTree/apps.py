@@ -253,7 +253,7 @@ class InvenTreeConfig(AppConfig):
         # Set the application to maintenance mode - no access from now on.
         logger.info('Going into maintenance')
         set_maintenance_mode(True)
-        logger.info('Migration mode is on now')
+        logger.info('Mainentance mode is on now')
 
         # Check if we are worker - go kill all other workers then.
         # Only the frontend workers run updates.
