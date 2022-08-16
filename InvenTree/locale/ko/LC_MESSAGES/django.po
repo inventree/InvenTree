@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-07 21:57+0000\n"
-"PO-Revision-Date: 2022-08-08 13:03\n"
+"POT-Creation-Date: 2022-08-11 02:47+0000\n"
+"PO-Revision-Date: 2022-08-11 13:49\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -121,44 +121,44 @@ msgstr ""
 msgid "Supplied URL is not a valid image file"
 msgstr ""
 
-#: InvenTree/helpers.py:584
+#: InvenTree/helpers.py:598
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
 msgstr ""
 
-#: InvenTree/helpers.py:591 order/models.py:320 order/models.py:472
+#: InvenTree/helpers.py:605 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
 msgstr ""
 
-#: InvenTree/helpers.py:594
+#: InvenTree/helpers.py:608
 msgid "Empty serial number string"
 msgstr ""
 
-#: InvenTree/helpers.py:626
+#: InvenTree/helpers.py:640
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:629
+#: InvenTree/helpers.py:643
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:657
+#: InvenTree/helpers.py:671
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:665
+#: InvenTree/helpers.py:679
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr ""
 
-#: InvenTree/helpers.py:671
+#: InvenTree/helpers.py:685
 msgid "No serial numbers found"
 msgstr ""
 
-#: InvenTree/helpers.py:675
+#: InvenTree/helpers.py:689
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr ""
@@ -816,7 +816,7 @@ msgstr ""
 msgid "SalesOrder to which this build is allocated"
 msgstr ""
 
-#: build/models.py:213 build/serializers.py:784
+#: build/models.py:213 build/serializers.py:800
 #: templates/js/translated/build.js:2073 templates/js/translated/order.js:2873
 msgid "Source Location"
 msgstr ""
@@ -942,42 +942,42 @@ msgstr ""
 msgid "Build output does not match Build Order"
 msgstr ""
 
-#: build/models.py:1143
+#: build/models.py:1171
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr ""
 
-#: build/models.py:1152
+#: build/models.py:1180
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr ""
 
-#: build/models.py:1162 order/models.py:1379
+#: build/models.py:1190 order/models.py:1379
 msgid "Stock item is over-allocated"
 msgstr ""
 
-#: build/models.py:1168 order/models.py:1382
+#: build/models.py:1196 order/models.py:1382
 msgid "Allocation quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:1174
+#: build/models.py:1202
 msgid "Quantity must be 1 for serialized stock"
 msgstr ""
 
-#: build/models.py:1231
+#: build/models.py:1259
 msgid "Selected stock item not found in BOM"
 msgstr ""
 
-#: build/models.py:1300 stock/templates/stock/item_base.html:177
+#: build/models.py:1328 stock/templates/stock/item_base.html:177
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:2455
 #: templates/navbar.html:38
 msgid "Build"
 msgstr ""
 
-#: build/models.py:1301
+#: build/models.py:1329
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:1317 build/serializers.py:629 order/serializers.py:1015
+#: build/models.py:1345 build/serializers.py:645 order/serializers.py:1015
 #: order/serializers.py:1036 stock/serializers.py:396 stock/serializers.py:754
 #: stock/serializers.py:880 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -992,11 +992,11 @@ msgstr ""
 msgid "Stock Item"
 msgstr ""
 
-#: build/models.py:1318
+#: build/models.py:1346
 msgid "Source stock item"
 msgstr ""
 
-#: build/models.py:1330 build/serializers.py:193
+#: build/models.py:1358 build/serializers.py:193
 #: build/templates/build/build_base.html:82
 #: build/templates/build/detail.html:34 common/models.py:1678
 #: company/templates/company/supplier_part.html:279 order/models.py:897
@@ -1033,19 +1033,19 @@ msgstr ""
 msgid "Quantity"
 msgstr "수량"
 
-#: build/models.py:1331
+#: build/models.py:1359
 msgid "Stock quantity to allocate to build"
 msgstr ""
 
-#: build/models.py:1339
+#: build/models.py:1367
 msgid "Install into"
 msgstr ""
 
-#: build/models.py:1340
+#: build/models.py:1368
 msgid "Destination stock item"
 msgstr ""
 
-#: build/serializers.py:138 build/serializers.py:658
+#: build/serializers.py:138 build/serializers.py:674
 #: templates/js/translated/build.js:1166
 msgid "Build Output"
 msgstr ""
@@ -1070,7 +1070,7 @@ msgstr ""
 msgid "Enter quantity for build output"
 msgstr ""
 
-#: build/serializers.py:208 build/serializers.py:649 order/models.py:318
+#: build/serializers.py:208 build/serializers.py:665 order/models.py:318
 #: order/serializers.py:287 order/serializers.py:442 part/serializers.py:542
 #: part/serializers.py:974 stock/models.py:477 stock/models.py:1244
 #: stock/serializers.py:302
@@ -1164,117 +1164,121 @@ msgstr ""
 msgid "Delete any build outputs which have not been completed"
 msgstr ""
 
-#: build/serializers.py:480
-msgid "Accept Overallocated"
+#: build/serializers.py:485
+msgid "Accept as consumed by this build order"
 msgstr ""
 
-#: build/serializers.py:481
-msgid "Accept stock items which have been overallocated to this build order"
+#: build/serializers.py:486
+msgid "Deallocate before completing this build order"
 msgstr ""
 
-#: build/serializers.py:491
-msgid "Some stock items have been overallocated"
+#: build/serializers.py:494
+msgid "Overallocated Stock"
 msgstr ""
 
 #: build/serializers.py:496
+msgid "How do you want to handle extra stock items assigned to the build order"
+msgstr ""
+
+#: build/serializers.py:506
+msgid "Some stock items have been overallocated"
+msgstr ""
+
+#: build/serializers.py:511
 msgid "Accept Unallocated"
 msgstr ""
 
-#: build/serializers.py:497
+#: build/serializers.py:512
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr ""
 
-#: build/serializers.py:507 templates/js/translated/build.js:195
+#: build/serializers.py:522 templates/js/translated/build.js:195
 msgid "Required stock has not been fully allocated"
 msgstr ""
 
-#: build/serializers.py:512
+#: build/serializers.py:527
 msgid "Accept Incomplete"
 msgstr ""
 
-#: build/serializers.py:513
+#: build/serializers.py:528
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr ""
 
-#: build/serializers.py:523 templates/js/translated/build.js:199
+#: build/serializers.py:538 templates/js/translated/build.js:199
 msgid "Required build quantity has not been completed"
 msgstr ""
 
-#: build/serializers.py:532
+#: build/serializers.py:547
 msgid "Build order has incomplete outputs"
 msgstr ""
 
-#: build/serializers.py:535 build/templates/build/build_base.html:95
-msgid "No build outputs have been created for this build order"
-msgstr ""
-
-#: build/serializers.py:561 build/serializers.py:606 part/models.py:2719
+#: build/serializers.py:577 build/serializers.py:622 part/models.py:2719
 #: part/models.py:2853
 msgid "BOM Item"
 msgstr ""
 
-#: build/serializers.py:571
+#: build/serializers.py:587
 msgid "Build output"
 msgstr ""
 
-#: build/serializers.py:579
+#: build/serializers.py:595
 msgid "Build output must point to the same build"
 msgstr ""
 
-#: build/serializers.py:620
+#: build/serializers.py:636
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:635 stock/serializers.py:767
+#: build/serializers.py:651 stock/serializers.py:767
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:693 order/serializers.py:1073
+#: build/serializers.py:709 order/serializers.py:1073
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr ""
 
-#: build/serializers.py:699
+#: build/serializers.py:715
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr ""
 
-#: build/serializers.py:706
+#: build/serializers.py:722
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
-#: build/serializers.py:711
+#: build/serializers.py:727
 msgid "This stock item has already been allocated to this build output"
 msgstr ""
 
-#: build/serializers.py:734 order/serializers.py:1319
+#: build/serializers.py:750 order/serializers.py:1319
 msgid "Allocation items must be provided"
 msgstr ""
 
-#: build/serializers.py:785
+#: build/serializers.py:801
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr ""
 
-#: build/serializers.py:793
+#: build/serializers.py:809
 msgid "Exclude Location"
 msgstr ""
 
-#: build/serializers.py:794
+#: build/serializers.py:810
 msgid "Exclude stock items from this selected location"
 msgstr ""
 
-#: build/serializers.py:799
+#: build/serializers.py:815
 msgid "Interchangeable Stock"
 msgstr ""
 
-#: build/serializers.py:800
+#: build/serializers.py:816
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr ""
 
-#: build/serializers.py:805
+#: build/serializers.py:821
 msgid "Substitute Stock"
 msgstr ""
 
-#: build/serializers.py:806
+#: build/serializers.py:822
 msgid "Allow allocation of substitute parts"
 msgstr ""
 
@@ -1324,6 +1328,10 @@ msgstr ""
 
 #: build/templates/build/build_base.html:87
 msgid "Build Description"
+msgstr ""
+
+#: build/templates/build/build_base.html:95
+msgid "No build outputs have been created for this build order"
 msgstr ""
 
 #: build/templates/build/build_base.html:101
@@ -1404,16 +1412,7 @@ msgstr ""
 msgid "Issued By"
 msgstr ""
 
-#: build/templates/build/build_base.html:230
-#: build/templates/build/sidebar.html:12
-msgid "Incomplete Outputs"
-msgstr ""
-
-#: build/templates/build/build_base.html:231
-msgid "Build Order cannot be completed as incomplete build outputs remain"
-msgstr ""
-
-#: build/templates/build/build_base.html:257
+#: build/templates/build/build_base.html:245
 msgid "Delete Build Order"
 msgstr ""
 
@@ -1607,6 +1606,10 @@ msgstr ""
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
+msgstr ""
+
+#: build/templates/build/sidebar.html:12
+msgid "Incomplete Outputs"
 msgstr ""
 
 #: build/templates/build/sidebar.html:15
@@ -5520,7 +5523,7 @@ msgstr ""
 msgid "Unknown database"
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:222
+#: part/templatetags/inventree_extras.py:229
 #, python-brace-format
 msgid "{title} v{version}"
 msgstr ""

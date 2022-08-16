@@ -7,6 +7,9 @@ import pkgutil
 import subprocess
 import sysconfig
 import traceback
+from importlib.metadata import (PackageNotFoundError, distributions,
+                                entry_points)
+from importlib.util import find_spec
 
 from django import template
 from django.conf import settings
@@ -92,6 +95,11 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
         if settings.TESTING_ENV and package_name != 'integration.broken_sample' and isinstance(error, IntegrityError):
             raise error  # pragma: no cover
         raise IntegrationPluginError(package_name, str(error))
+
+
+def get_entrypoints():
+    """Returns list for entrypoints for InvenTree plugins."""
+    return entry_points().get('inventree_plugins', [])
 # endregion
 
 
@@ -223,6 +231,37 @@ def get_plugins(pkg, baseclass, path=None):
                 plugins.append(plugin)
 
     return plugins
+
+
+def get_module_meta(mdl_name):
+    """Return distribution for module.
+
+    Modified form source: https://stackoverflow.com/a/60975978/17860466
+    """
+    # Get spec for module
+    spec = find_spec(mdl_name)
+
+    if not spec:  # pragma: no cover
+        raise PackageNotFoundError(mdl_name)
+
+    # Try to get specific package for the module
+    result = None
+    for dist in distributions():
+        try:
+            relative = pathlib.Path(spec.origin).relative_to(dist.locate_file(''))
+        except ValueError:  # pragma: no cover
+            pass
+        else:
+            if relative in dist.files:
+                result = dist
+
+    # Check if a distribution was found
+    # A no should not be possible here as a call can only be made on a discovered module but better save then sorry
+    if not result:  # pragma: no cover
+        raise PackageNotFoundError(mdl_name)
+
+    # Return metadata
+    return result.metadata
 # endregion
 
 

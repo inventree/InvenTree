@@ -2,9 +2,9 @@
 name: Welcome
 on:
   pull_request:
-    types: [opened]
+    types: [ opened ]
   issues:
-    types: [opened]
+    types: [ opened ]
 
 jobs:
   run:
@@ -13,13 +13,13 @@ jobs:
       pull-requests: write
 
     steps:
-    - uses: actions/first-interaction@v1
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: |
-          Welcome to InvenTree! Please check the [contributing docs](https://inventree.readthedocs.io/en/latest/contribute/) on how to help.
-          If you experience setup / install issues please read all [install docs]( https://inventree.readthedocs.io/en/latest/start/intro/).
-        pr-message: |
-          This is your first PR, welcome!
-          Please check [Contributing](https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md) to make sure your submission fits our general code-style and workflow.
-          Make sure to document why this PR is needed and to link connected issues so we can review it faster.
+      - uses: actions/first-interaction@bd33205aa5c96838e10fd65df0d01efd613677c1 # pin@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            Welcome to InvenTree! Please check the [contributing docs](https://inventree.readthedocs.io/en/latest/contribute/) on how to help.
+            If you experience setup / install issues please read all [install docs]( https://inventree.readthedocs.io/en/latest/start/intro/).
+          pr-message: |
+            This is your first PR, welcome!
+            Please check [Contributing](https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md) to make sure your submission fits our general code-style and workflow.
+            Make sure to document why this PR is needed and to link connected issues so we can review it faster.

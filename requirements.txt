@@ -234,8 +234,10 @@ urllib3==1.26.11
     #   sentry-sdk
 wcwidth==0.2.5
     # via blessed
-weasyprint==56.1
-    # via django-weasyprint
+weasyprint==54.3
+    # via
+    #   -r requirements.in
+    #   django-weasyprint
 webencodings==0.5.1
     # via
     #   bleach
