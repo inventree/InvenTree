@@ -115,10 +115,7 @@ function stockLocationFields(options={}) {
         description: {},
         owner: {},
         icon: {
-            help_text: `
-                {% blocktrans with '<a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">' as link_begin and '</a>' as link_end %}
-                Icon (optional) - See {{ link_begin }}Font Awesome{{ link_end }} for all available icons
-                {% endblocktrans %}`,
+            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-box',
         },
     };
@@ -2411,7 +2408,7 @@ function loadStockLocationTable(table, options) {
 
                     const icon = row.icon || global_settings.STOCK_LOCATION_DEFAULT_ICON;
                     if (icon) {
-                        html += `<span class="${icon} me-1"></span>`
+                        html += `<span class="${icon} me-1"></span>`;
                     }
 
                     html += renderLink(
