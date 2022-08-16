@@ -233,7 +233,7 @@ class InvenTreeConfig(AppConfig):
     def check_for_migrations(self):
         """Checks if migrations are needed.
 
-        If the setting # TODO is enabled we will start updateing.
+        If the setting auto_update is enabled we will start updateing.
         """
         from plugin import registry
 
