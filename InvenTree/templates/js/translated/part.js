@@ -1460,46 +1460,42 @@ function loadPartTable(table, url, options={}) {
         title: '{% trans "Stock" %}',
         searchable: false,
         formatter: function(value, row) {
-            var link = '?display=part-stock';
 
-            if (row.in_stock) {
-                // There IS stock available for this part
+            var text = '';
 
-                // Is stock "low" (below the 'minimum_stock' quantity)?
-                if (row.minimum_stock && row.minimum_stock > row.in_stock) {
-                    value += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Low stock" %}</span>`;
-                } else if (value == 0) {
-                    if (row.ordering) {
-                        // There is no available stock, but stock is on order
-                        value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "On Order" %}: ${row.ordering}</span>`;
-                        link = '?display=purchase-orders';
-                    } else if (row.building) {
-                        // There is no available stock, but stock is being built
-                        value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
-                        link = '?display=build-orders';
-                    } else {
-                        // There is no available stock
-                        value = `0<span class='badge badge-right rounded-pill bg-warning'>{% trans "No stock available" %}</span>`;
-                    }
-                }
+            if (row.unallocated_stock != row.in_stock) {
+                text = `${row.unallocated_stock} / ${row.in_stock}`;
             } else {
-                // There IS NO stock available for this part
-
-                if (row.ordering) {
-                    // There is no stock, but stock is on order
-                    value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "On Order" %}: ${row.ordering}</span>`;
-                    link = '?display=purchase-orders';
-                } else if (row.building) {
-                    // There is no stock, but stock is being built
-                    value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
-                    link = '?display=build-orders';
-                } else {
-                    // There is no stock
-                    value = `0<span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
-                }
+                text = `${row.in_stock}`;
             }
 
-            return renderLink(value, `/part/${row.pk}/${link}`);
+            // Construct extra informational badges
+            var badges = '';
+
+            if (row.in_stock == 0) {
+                badges += `<span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "No stock" %}'></span>`;
+            } else if (row.in_stock < row.minimum_stock) {
+                badges += `<span class='fas fa-exclamation-circle icon-yellow float-right' title='{% trans "Low stock" %}'></span>`;
+            }
+
+            if (row.ordering && row.ordering > 0) {
+                badges += renderLink(
+                    `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.ordering}'></span>`,
+                    `/part/${row.pk}/?display=purchase-orders`
+                );
+            }
+
+            if (row.building && row.building > 0) {
+                badges += renderLink(
+                    `<span class='fas fa-tools float-right' title='{% trans "Building" %}: ${row.building}'></span>`,
+                    `/part/${row.pk}/?display=build-orders`
+                );
+            }
+
+            text = renderLink(text, `/part/${row.pk}/?display=part-stock`);
+            text += badges;
+
+            return text;
         }
     };
 
