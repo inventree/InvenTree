@@ -2316,6 +2316,9 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                         url: entry.url,
                     });
                 });
+            },
+            error: function(response) {
+                console.error(`Error retrieving scheduling information for part ${part_id}`);
             }
         }
     );
