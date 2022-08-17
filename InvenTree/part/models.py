@@ -1436,6 +1436,53 @@ class Part(MetadataMixin, MPTTModel):
 
         return parts
 
+    def get_used_in_bom_item_filter(self, include_inherited=True, include_variants=True, include_substitutes=True):
+        """Return a BomItem queryset which returns all BomItem instances which refer to *this* part.
+
+        As the BOM allocation logic is somewhat complicted, there are some considerations:
+
+        A) This part may be directly specified in a BomItem instance
+        B) This part may be a *variant* of a part which is directly specified in a BomItem instance
+        C) This part may be a *substitute* for a part which is directly specifed in a BomItem instance
+
+        So we construct a query for each case, and combine them...
+        """
+
+        # Cache all *parent* parts
+        parents = self.get_ancestors(include_self=False)
+
+        # Case A: This part is directly specified in a BomItem (we always use this case)
+        query = Q(
+            sub_part=self,
+            inherited=False,
+        )
+
+        if include_inherited:
+            query |= Q(
+                sub_part__in=parents,
+                inherited=True
+            )
+
+        if include_variants:
+            # Case B: This part is a *variant* of a part which is specified in a BomItem which allows variants
+            query |= Q(
+                allow_variants=True,
+                sub_part__in=parents,
+                inherited=False,
+            )
+
+        # Case C: This part is a *substitute* of a part which is directly specified in a BomItem
+        if include_substitutes:
+
+            # Grab a list of BomItem substitutes which reference this part
+            substitutes = self.substitute_items.all()
+
+            query |= Q(
+                pk__in=[substitute.bom_item.pk for substitute in substitutes],
+            )
+
+        return query
+
     def get_used_in_filter(self, include_inherited=True):
         """Return a query filter for all parts that this part is used in.
 

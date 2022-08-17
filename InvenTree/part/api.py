@@ -574,7 +574,7 @@ class PartScheduling(RetrieveAPI):
         build_allocations = BuildItem.objects.filter(
             stock_item__part=part,
             build__status__in=BuildStatus.ACTIVE_CODES,
-        )
+        ).prefetch_related('build')
 
         for allocation in build_allocations:
 
@@ -1746,28 +1746,7 @@ class BomList(ListCreateDestroyAPIView):
                 # Extract the part we are interested in
                 uses_part = Part.objects.get(pk=uses)
 
-                # Construct the database query in multiple parts
-
-                # A) Direct specification of sub_part
-                q_A = Q(sub_part=uses_part)
-
-                # B) BomItem is inherited and points to a "parent" of this part
-                parents = uses_part.get_ancestors(include_self=False)
-
-                q_B = Q(
-                    inherited=True,
-                    sub_part__in=parents
-                )
-
-                # C) Substitution of variant parts
-                # TODO
-
-                # D) Specification of individual substitutes
-                # TODO
-
-                q = q_A | q_B
-
-                queryset = queryset.filter(q)
+                queryset = queryset.filter(uses_part.get_used_in_bom_item_filter())
 
             except (ValueError, Part.DoesNotExist):
                 pass
