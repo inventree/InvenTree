@@ -67,9 +67,10 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         """Custom model deletion routine, which updates any child categories or parts.
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
-
+        print(kwargs)
         rebuild = kwargs.get('rebuild', True)
-        delete_parts = kwargs.get('delete_parts', '0') != '0'
+        delete_parts = kwargs.get('delete_parts', False)
+        print(delete_parts)
         parent_category = kwargs.get('parent_category', None)
         try:
             # If doing recursive category tree delete operation then the
@@ -81,21 +82,26 @@ class PartCategory(MetadataMixin, InvenTreeTree):
             tree_id = self.tree_id
 
             if delete_parts:
+                print("delete parts")
                 # Delete each part in this category if user wants to do that
                 self.parts.delete()
             else:
                 # Update each part in this category to point to the parent category
                 for p in self.parts.all():
+                    print("move part to parent")
                     if parent_category is None:
                         # First iteration, (no part_category kwargs passed)
+                        print("1st iteration")
                         p.category = parent
                     else:
+                        print("Lower iteration")
                         # We are in recursive iteration update the part category to the
                         # parent of the topmost deleted category
                         p.category = parent_category
                     p.save()
 
-            if kwargs.get('delete_child_categories', '0') != '0':
+            if kwargs.get('delete_child_categories', False):
+                print("delete child cats")
                 # Recursively delete all child categories
                 if parent_category is None:
                     parent_category = parent
@@ -105,9 +111,13 @@ class PartCategory(MetadataMixin, InvenTreeTree):
                                         parent_category=parent_category,
                                         rebuild=False))
             else:
+                print("move child categories up")
                 # Move each child category to the parent of the deleted category
                 for child in self.children.all():
+                    print(child.id)
+                    print(child.parent)
                     child.parent = parent
+                    print(child.parent)
                     child.save()
 
             super().delete(*args, **dict())
@@ -120,9 +130,6 @@ class PartCategory(MetadataMixin, InvenTreeTree):
                     PartCategory.objects.rebuild()
         except:
             pass
-        finally:
-            if rebuild:
-                transaction.commit()
 
     default_location = TreeForeignKey(
         'stock.StockLocation', related_name="default_categories",

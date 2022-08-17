@@ -255,7 +255,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # 1: move subcategories to parent, delete all parts
         # 2: delete subcategories, move parts to parent
         # 3: delete subcategories, delete all parts
-        for i in range(0, 4):
+        for i in range(4):
             delete_child_categories: bool = False
             delete_parts: bool = False
 
@@ -265,9 +265,9 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 delete_child_categories = True
 
             # Create a parent category
-            cat = PartCategory.objects.create(
+            parent_cat = PartCategory.objects.create(
                 name='Parent Cat',
-                description='Some name',
+                description='Some name of parent category',
                 parent=None
             )
 
@@ -275,8 +275,10 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             cat_to_delete = PartCategory.objects.create(
                 name='Cat to delete',
                 description='Some name',
-                parent=cat
+                parent=parent_cat
             )
+
+            url = reverse('api-part-category-detail', kwargs={'pk': cat_to_delete.id})
 
             category_count_before = PartCategory.objects.count()
             part_count_before = Part.objects.count()
@@ -288,13 +290,14 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                     description="A test part",
                     category=cat_to_delete
                 ))
+                print(parts[jj].id)
 
             child_categories = []
-            child_parts = []
+            child_categories_parts = []
             # Create child categories under the category to be deleted
             for ii in range(10):
                 child = PartCategory.objects.create(
-                    name=f"Child cat {ii}",
+                    name=f"Child parent_cat {ii}",
                     description="A child category",
                     parent=cat_to_delete
                 )
@@ -302,13 +305,11 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
                 # Create parts in the child categories
                 for jj in range(10):
-                    child_parts.append(Part.objects.create(
+                    child_categories_parts.append(Part.objects.create(
                         name=f"Part xyz {jj}",
                         description="A test part",
                         category=child
                     ))
-
-            url = reverse('delete')
 
             # Delete the created category (sub categories and their parts will be moved under the parent)
             params = {}
@@ -319,7 +320,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             response = self.delete(
                 url,
                 params,
-                expected_code=200
+                expected_code=204,
             )
 
             self.assertEqual(response.status_code, 204)
@@ -329,16 +330,23 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 self.assertNotEqual(Part.objects.count(), part_count_before)
             else:
                 for part in parts:
-                    self.assertEqual(part.category, cat)
-                for part in child_parts:
-                    self.assertEqual(part.category, cat)
+                    part.refresh_from_db()
+                    self.assertEqual(part.category, parent_cat)
+
+                if delete_child_categories:
+                    for part in child_categories_parts:
+                        part.refresh_from_db()
+                        self.assertEqual(part.category, parent_cat)
 
             if delete_child_categories:
                 self.assertNotEqual(PartCategory.objects.count(), category_count_before)
             else:
                 #  Check if all subcategories to parent moved to parent and all parts deleted
                 for child in child_categories:
-                    self.assertEqual(child.parent, cat)
+                    child.refresh_from_db()
+                    print(child.id)
+                    self.assertEqual(child.parent, parent_cat)
+                    print('OK')
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
