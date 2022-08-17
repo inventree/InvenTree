@@ -2339,8 +2339,10 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         return;
     }
 
-    // Iterate through future "events" to calculate expected quantity
+    var y_min = 0;
+    var y_max = 0;
 
+    // Iterate through future "events" to calculate expected quantity values
     var quantity = part_info.in_stock;
 
     for (var idx = 0; idx < stock_schedule.length; idx++) {
@@ -2349,11 +2351,14 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
         stock_schedule[idx].x = stock_schedule[idx].date.format('YYYY-MM-DD');
         stock_schedule[idx].y = quantity;
+
+        if (quantity < y_min) y_min = quantity;
+        if (quantity > y_max) y_max = quantity;
     }
 
     var context = document.getElementById(canvas_id);
 
-    const data = {
+    var data = {
         datasets: [{
             label: '{% trans "Scheduled Stock Quantities" %}',
             data: stock_schedule,
@@ -2362,6 +2367,46 @@ function loadPartSchedulingChart(canvas_id, part_id) {
             borderColor: 'rgb(90, 130, 150)'
         }],
     };
+
+    if (part_info.minimum_stock) {
+        // Construct a 'minimum stock' threshold line
+        var minimum_stock_curve = [
+            {
+                x: today.format(),
+                y: part_info.minimum_stock,
+            },
+            {
+                x: stock_schedule[stock_schedule.length - 1].x,
+                y: part_info.minimum_stock,
+            }
+        ];
+
+        data.datasets.push({
+            data: minimum_stock_curve,
+            label: '{% trans "Minimum Stock Level" %}',
+            backgroundColor: 'rgba(250, 50, 50, 0.25)',
+            borderColor: 'rgba(250, 50, 50, 0.5)',
+            borderDash: [5, 5],
+            fill: {
+                target: {
+                    value: 0,
+                }
+            }
+        });
+    }
+
+    // Ensure that the vertical scale is "expanded" to show all data
+    var y_scale = y_max - y_min;
+
+    if (y_scale > 0) {
+        if (y_min < 0) {
+            y_min -= 0.1 * y_scale;
+        }
+
+        if (y_max > 0) {
+            y_max += 0.1 * y_scale;
+        }
+    }
 
     return new Chart(context, {
         type: 'scatter',
@@ -2379,7 +2424,8 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     },
                 },
                 y: {
-                    beginAtZero: true,
+                    min: y_min,
+                    max: y_max,
                 }
             },
             plugins: {
