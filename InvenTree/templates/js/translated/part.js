@@ -2261,6 +2261,14 @@ function initPriceBreakSet(table, options) {
 }
 
 
+/*
+ * Load a chart which displays projected scheduling information for a particular part.
+ * This takes into account:
+ * - Current stock levels / availability
+ * - Upcoming / scheduled build orders
+ * - Upcoming / scheduled sales orders
+ * - Upcoming / scheduled purchase orders
+ */
 function loadPartSchedulingChart(canvas_id, part_id) {
 
     var part_info = null;
@@ -2272,6 +2280,11 @@ function loadPartSchedulingChart(canvas_id, part_id) {
             part_info = response;
         }
     });
+
+    if (!part_info) {
+        console.error(`Error loading part information for part ${part_id}`);
+        return;
+    }
 
     var today = moment();
 
