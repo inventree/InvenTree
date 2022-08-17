@@ -62,6 +62,8 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         default_location: Default storage location for parts in this category or child categories
         default_keywords: Default keywords for parts created in this category
     """
+    def on_commit(self):
+        print("commit")
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
@@ -75,8 +77,9 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         try:
             # If doing recursive category tree delete operation then the
             # atomic transaction needs to be started only once at the first iteration
-            if rebuild:
-                transaction.atomic()
+            #if rebuild:
+            transaction.atomic()
+            transaction.on_commit(self.on_commit)
 
             parent = self.parent
             tree_id = self.tree_id
