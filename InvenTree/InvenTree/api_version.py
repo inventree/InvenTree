@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 70
+INVENTREE_API_VERSION = 71
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v71 -> 2022-08-18 : https://github.com/inventree/InvenTree/pull/3564
+    - Updates to the "part scheduling" API endpoint
 
 v70 -> 2022-08-02 : https://github.com/inventree/InvenTree/pull/3451
     - Adds a 'depth' parameter to the PartCategory list API
