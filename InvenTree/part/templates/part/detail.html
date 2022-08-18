@@ -435,8 +435,12 @@
         var chart = loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
 
         $('#btn-schedule-reload').click(function() {
-            chart.destroy();
-            loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
+
+            if (chart != null) {
+                chart.destroy();
+            }
+
+            chart = loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
         });
     });
 
