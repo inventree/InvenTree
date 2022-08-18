@@ -2515,7 +2515,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
     }
 
     // Update the table
-    $("#part-schedule-table").find('tbody').html(table_html);
+    $('#part-schedule-table').find('tbody').html(table_html);
 
     var y_range = y_max - y_min;
 
