@@ -2585,15 +2585,15 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                 tooltip: {
                     callbacks: {
                         label: function(item) {
-                            return item.raw.label;
+                            return item.raw.label || '';
                         },
                         beforeLabel: function(item) {
-                            return item.raw.title;
+                            return item.raw.title || '';
                         },
                         afterLabel: function(item) {
                             var delta = item.raw.delta;
 
-                            if (delta == 0) {
+                            if (delta == null || delta == 0) {
                                 delta = '';
                             } else {
                                 delta = ` (${item.raw.delta > 0 ? '+' : ''}${item.raw.delta})`;
