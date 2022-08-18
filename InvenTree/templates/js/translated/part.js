@@ -2326,14 +2326,15 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
                     if (date == null) {
                         date_string = '<em>{% trans "No date specified" %}</em>';
+                        date_string += `<span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "No date specified" %}'></span>`;
                     } else if (date < today) {
-                        date_string += ' <em>({% trans "In the past" %})</em>';
+                        date_string += `<span class='fas fa-exclamation-circle icon-yellow float-right' title='{% trans "Specified date is in the past" %}'></span>`;
                     }
 
-                    var quantity_string = entry.quantity;
+                    var quantity_string = entry.quantity + entry.speculative_quantity;
 
-                    if (entry.speculative_quantity != null && entry.speculative_quantity != 0) {
-                        quantity_string += ` <em><small> (${entry.speculative_quantity})</small></em>`;
+                    if (entry.speculative_quantity != 0) {
+                        quantity_string += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Speculative" %}'></span>`;
                     }
 
                     // Add an entry to the scheduling table
@@ -2464,9 +2465,9 @@ function loadPartSchedulingChart(canvas_id, part_id) {
             {
                 label: '{% trans "Scheduled Stock Quantities" %}',
                 data: quantity_scheduled,
-                backgroundColor: 'rgba(160, 220, 80, 0.75)',
+                backgroundColor: 'rgba(160, 80, 220, 0.75)',
                 borderWidth: 3,
-                borderColor: 'rgb(160, 220, 80)'
+                borderColor: 'rgb(160, 80, 220)'
             },
             {
                 label: '{% trans "Minimum Quantity" %}',
@@ -2516,19 +2517,6 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         });
     }
 
-    // Ensure that the vertical scale is "expanded" to show all data
-    var y_scale = y_max - y_min;
-
-    if (y_scale > 0) {
-        if (y_min < 0) {
-            y_min -= 0.1 * y_scale;
-        }
-
-        if (y_max > 0) {
-            y_max += 0.1 * y_scale;
-        }
-    }
-
     // Update the table
     $("#part-schedule-table").find('tbody').html(table_html);
 
@@ -2549,7 +2537,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                 },
                 y: {
                     min: 0,
-                    max: y_max,
+                    max: 1.1 * y_max,
                 }
             },
             plugins: {
