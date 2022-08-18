@@ -46,6 +46,9 @@
         {% if order.can_cancel %}
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
         {% endif %}
+        {% if roles.purchase_order.add %}
+        <li><a class='dropdown-item' href='#' id='duplicate-order'><span class='fas fa-clone'></span> {% trans "Duplicate order" %}</a></li>
+        {% endif %}
     </ul>
 </div>
 {% if order.status == PurchaseOrderStatus.PENDING %}
@@ -217,6 +220,8 @@ $('#print-order-report').click(function() {
 });
 {% endif %}
 
+{% if roles.purchase_order.change %}
+
 $("#edit-order").click(function() {
 
     editPurchaseOrder({{ order.pk }}, {
@@ -274,6 +279,16 @@ $("#cancel-order").click(function() {
         },
     );
 });
+
+{% endif %}
+
+{% if roles.purchase_order.add %}
+$('#duplicate-order').click(function() {
+    duplicatePurchaseOrder(
+        {{ order.pk }},
+    );
+});
+{% endif %}
 
 $("#export-order").click(function() {
     exportOrder('{% url "po-export" order.id %}');

@@ -30,6 +30,7 @@
     createPurchaseOrderLineItem,
     createSalesOrder,
     createSalesOrderShipment,
+    duplicatePurchaseOrder,
     editPurchaseOrder,
     editPurchaseOrderLineItem,
     exportOrder,
@@ -538,6 +539,30 @@ function purchaseOrderFields(options={}) {
         fields.supplier.hidden = true;
     }
 
+    if (options.duplicate_order) {
+        fields.duplicate_order = {
+            value: options.duplicate_order,
+            group: 'duplicate',
+            required: 'true',
+            type: 'related field',
+            model: 'purchaseorder',
+            filters: {
+                supplier_detail: true,
+            },
+            api_url: '{% url "api-po-list" %}',
+            label: '{% trans "Purchase Order" %}',
+            help_text: '{% trans "Select purchase order to duplicate" %}',
+        };
+
+        fields.duplicate_line_items = {
+            value: true,
+            group: 'duplicate',
+            type: 'boolean',
+            label: '{% trans "Duplicate Line Items" %}',
+            help_text: '{% trans "Duplicate all line items from the selected order" %}',
+        };
+    }
+
     return fields;
 }
 
@@ -564,9 +589,20 @@ function createPurchaseOrder(options={}) {
 
     var fields = purchaseOrderFields(options);
 
+    var groups = {};
+
+    if (options.duplicate_order) {
+        groups.duplicate = {
+            title: '{% trans "Duplication Options" %}',
+            collapsible: false,
+        }
+    };
+
     constructForm('{% url "api-po-list" %}', {
         method: 'POST',
         fields: fields,
+        groups: groups,
+        data: options.data,
         onSuccess: function(data) {
 
             if (options.onSuccess) {
@@ -576,8 +612,33 @@ function createPurchaseOrder(options={}) {
                 location.href = `/order/purchase-order/${data.pk}/`;
             }
         },
-        title: '{% trans "Create Purchase Order" %}',
+        title: options.title || '{% trans "Create Purchase Order" %}',
     });
+}
+
+/*
+ * Duplicate an existing PurchaseOrder
+ * Provides user with option to duplicate line items for the order also.
+ */
+function duplicatePurchaseOrder(order_id, options={}) {
+
+    options.duplicate_order = order_id;
+
+    inventreeGet(`/api/order/po/${order_id}/`, {}, {
+        success: function(data) {
+
+            // Clear out data we do not want to be duplicated
+            delete data['pk'];
+            delete data['reference'];
+
+            options.data = data;
+
+            createPurchaseOrder(options);
+        }
+    })
+
+    var fields = purchaseOrderFields(options);
+
 }
 
 
