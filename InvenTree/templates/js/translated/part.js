@@ -2432,7 +2432,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
         if (speculative < 0) {
             speculative_min += speculative;
-        } if (speculative > 0) {
+        } else if (speculative > 0) {
             speculative_max += speculative;
         }
 
