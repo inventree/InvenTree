@@ -131,7 +131,7 @@ class BaseInvenTreeSetting(models.Model):
         for k, v in kwargs.items():
             key += f"_{k}:{v}"
 
-        return key
+        return key.replace(" ", "")
 
     @classmethod
     def allValues(cls, user=None, exclude_hidden=False):
