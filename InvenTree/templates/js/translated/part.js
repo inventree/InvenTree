@@ -2269,6 +2269,8 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
     var part_info = null;
 
+    var was_error = false;
+
     // First, grab updated data for the particular part
     inventreeGet(`/api/part/${part_id}/`, {}, {
         async: false,
