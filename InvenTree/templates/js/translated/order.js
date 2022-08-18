@@ -595,7 +595,7 @@ function createPurchaseOrder(options={}) {
         groups.duplicate = {
             title: '{% trans "Duplication Options" %}',
             collapsible: false,
-        }
+        };
     };
 
     constructForm('{% url "api-po-list" %}', {
@@ -635,10 +635,7 @@ function duplicatePurchaseOrder(order_id, options={}) {
 
             createPurchaseOrder(options);
         }
-    })
-
-    var fields = purchaseOrderFields(options);
-
+    });
 }
 
 
