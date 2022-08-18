@@ -2269,6 +2269,8 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
     var part_info = null;
 
+    var was_error = false;
+
     // First, grab updated data for the particular part
     inventreeGet(`/api/part/${part_id}/`, {}, {
         async: false,
@@ -2302,6 +2304,8 @@ function loadPartSchedulingChart(canvas_id, part_id) {
     var initial_stock_min = part_info.in_stock;
     var initial_stock_max = part_info.in_stock;
 
+    var n_entries = 0;
+
     /* Request scheduling information for the part.
      * Note that this information has already been 'curated' by the server,
      * and arranged in increasing chronological order
@@ -2312,6 +2316,8 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         {
             async: false,
             success: function(response) {
+
+                n_entries = response.length;
 
                 for (var idx = 0; idx < response.length; idx++) {
 
@@ -2330,7 +2336,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     var quantity_string = entry.quantity + entry.speculative_quantity;
 
                     if (entry.speculative_quantity != 0) {
-                        quantity_string += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Speculative" %}'></span>`;
+                        quantity_string += `<span class='fas fa-question-circle icon-blue float-right' title='{% trans "Speculative" %}'></span>`;
                     }
 
                     // Add an entry to the scheduling table
@@ -2376,7 +2382,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
     // If no scheduling information is available for the part,
     // remove the chart and display a message instead
-    if (quantity_scheduled.length <= 1) {
+    if (n_entries < 1) {
 
         var message = `
         <div class='alert alert-block alert-info'>
@@ -2395,8 +2401,12 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
         canvas_element.closest('div').html(message);
 
+        $('#part-schedule-table').hide();
+
         return;
     }
+
+    $('#part-schedule-table').show();
 
     var y_min = 0;
     var y_max = 0;
@@ -2435,21 +2445,43 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         q_spec_min.push({
             x: date,
             y: speculative_min,
-            label: 'label',
+            label: '',
             title: '',
         });
 
         q_spec_max.push({
             x: date,
             y: speculative_max,
-            label: 'label',
+            label: '',
             title: '',
         });
 
         // Update min / max values
         if (quantity < y_min) y_min = quantity;
         if (quantity > y_max) y_max = quantity;
+
+        if (speculative_min < y_min) y_min = speculative_min;
+        if (speculative_max > y_max) y_max = speculative_max;
     }
+
+    // Add one extra data point at the end
+    var n = quantity_scheduled.length;
+    var final_date = quantity_scheduled[n - 1].date.add(1, 'd').format('YYYY-MM-DD');
+
+    quantity_scheduled.push({
+        x: final_date,
+        y: quantity_scheduled[n - 1].y,
+    });
+
+    q_spec_min.push({
+        x: final_date,
+        y: q_spec_min[n - 1].y,
+    });
+
+    q_spec_max.push({
+        x: final_date,
+        y: q_spec_max[n - 1].y,
+    });
 
     var context = document.getElementById(canvas_id);
 
@@ -2487,7 +2519,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         // Construct a 'minimum stock' threshold line
         var minimum_stock_curve = [
             {
-                x: today.format(),
+                x: quantity_scheduled[0].x,
                 y: part_info.minimum_stock,
             },
             {
@@ -2513,10 +2545,20 @@ function loadPartSchedulingChart(canvas_id, part_id) {
     // Update the table
     $('#part-schedule-table').find('tbody').html(table_html);
 
+    if (y_max < part_info.minimum_stock) {
+        y_max = part_info.minimum_stock;
+    }
+
     var y_range = y_max - y_min;
 
     y_max += 0.1 * y_range;
     y_min -= 0.1 * y_range;
+
+    // Prevent errors if y-scale is weird
+    if (y_max == y_min) {
+        y_min -= 1;
+        y_max += 1;
+    }
 
     return new Chart(context, {
         type: 'scatter',
@@ -2527,30 +2569,31 @@ function loadPartSchedulingChart(canvas_id, part_id) {
             scales: {
                 x: {
                     type: 'time',
-                    min: today.format(),
+                    suggestedMin: today.format(),
+                    suggestedMax: quantity_scheduled[quantity_scheduled.length - 1].x,
                     position: 'bottom',
                     time: {
-                        unit: 'day',
+                        minUnit: 'day',
                     },
                 },
                 y: {
-                    min: y_min,
-                    max: y_max,
+                    suggestedMin: y_min,
+                    suggestedMax: y_max,
                 }
             },
             plugins: {
                 tooltip: {
                     callbacks: {
                         label: function(item) {
-                            return item.raw.label;
+                            return item.raw.label || '';
                         },
                         beforeLabel: function(item) {
-                            return item.raw.title;
+                            return item.raw.title || '';
                         },
                         afterLabel: function(item) {
                             var delta = item.raw.delta;
 
-                            if (delta == 0) {
+                            if (delta == null || delta == 0) {
                                 delta = '';
                             } else {
                                 delta = ` (${item.raw.delta > 0 ? '+' : ''}${item.raw.delta})`;
