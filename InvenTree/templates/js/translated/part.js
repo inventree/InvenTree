@@ -2549,8 +2549,8 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     },
                 },
                 y: {
-                    min: y_min,
-                    max: y_max,
+                    suggestedMin: y_min,
+                    suggestedMax: y_max,
                 }
             },
             plugins: {
