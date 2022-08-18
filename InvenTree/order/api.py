@@ -124,6 +124,7 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
 
         duplicate_order = data.pop('duplicate_order', None)
         duplicate_line_items = str2bool(data.pop('duplicate_line_items', False))
+        duplicate_extra_lines = str2bool(data.pop('duplicate_extra_lines', False))
 
         if duplicate_order is not None:
             try:
@@ -150,6 +151,14 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
                         line.pk = None
                         line.order = order
                         line.received = 0
+
+                        line.save()
+
+                if duplicate_extra_lines:
+                    for line in duplicate_order.extra_lines.all():
+                        # Copy the line across to the new order
+                        line.pk = None
+                        line.order = order
 
                         line.save()
 

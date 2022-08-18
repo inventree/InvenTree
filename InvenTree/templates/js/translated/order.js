@@ -539,6 +539,7 @@ function purchaseOrderFields(options={}) {
         fields.supplier.hidden = true;
     }
 
+    // Add fields for order duplication (only if required)
     if (options.duplicate_order) {
         fields.duplicate_order = {
             value: options.duplicate_order,
@@ -560,6 +561,14 @@ function purchaseOrderFields(options={}) {
             type: 'boolean',
             label: '{% trans "Duplicate Line Items" %}',
             help_text: '{% trans "Duplicate all line items from the selected order" %}',
+        };
+
+        fields.duplicate_extra_lines = {
+            value: true,
+            group: 'duplicate',
+            type: 'boolean',
+            label: '{% trans "Duplicate Extra Lines" %}',
+            help_text: '{% trans "Duplicate extra line items from the selected order" %}',
         };
     }
 
