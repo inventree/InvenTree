@@ -219,28 +219,10 @@ $('#print-order-report').click(function() {
 
 $("#edit-order").click(function() {
 
-    constructForm('{% url "api-po-detail" order.pk %}', {
-        fields: {
-            reference: {
-                icon: 'fa-hashtag',
-            },
-            {% if order.lines.count == 0 and order.status == PurchaseOrderStatus.PENDING %}
-            supplier: {
-            },
-            {% endif %}
-            supplier_reference: {},
-            description: {},
-            target_date: {
-                icon: 'fa-calendar-alt',
-            },
-            link: {
-                icon: 'fa-link',
-            },
-            responsible: {
-                icon: 'fa-user',
-            },
-        },
-        title: '{% trans "Edit Purchase Order" %}',
+    editPurchaseOrder({{ order.pk }}, {
+        {% if order.lines.count > 0 or order.status != PurchaseOrderStatus.PENDING %}
+        hide_supplier: true,
+        {% endif %}
         reload: true,
     });
 });
