@@ -23,6 +23,7 @@
     cancelBuildOrder,
     completeBuildOrder,
     createBuildOutput,
+    duplicateBuildOrder,
     editBuildOrder,
     loadAllocationTable,
     loadBuildOrderAllocationTable,
@@ -75,7 +76,9 @@ function buildFormFields() {
     };
 }
 
-
+/*
+ * Edit an existing BuildOrder via the API
+ */
 function editBuildOrder(pk) {
 
     var fields = buildFormFields();
@@ -87,6 +90,10 @@ function editBuildOrder(pk) {
     });
 }
 
+
+/*
+ * Create a new build order via an API form
+ */
 function newBuildOrder(options={}) {
     /* Launch modal form to create a new BuildOrder.
      */
@@ -113,14 +120,39 @@ function newBuildOrder(options={}) {
         fields.sales_order.value = options.sales_order;
     }
 
+    if (options.data) {
+        delete options.data.pk;
+    }
+
     constructForm(`/api/build/`, {
         fields: fields,
+        data: options.data,
         follow: true,
         method: 'POST',
         title: '{% trans "Create Build Order" %}',
         onSuccess: options.onSuccess,
     });
 }
+
+
+/*
+ * Duplicate an existing build order.
+ */
+function duplicateBuildOrder(build_id, options={}) {
+
+    inventreeGet(`/api/build/${build_id}/`, {}, {
+        success: function(data) {
+            // Clear out data we do not want to be duplicated
+            delete data['pk'];
+            delete data['issued_by'];
+            delete data['reference'];
+
+            options.data = data;
+            newBuildOrder(options);
+        }
+    });
+}
+
 
 
 /* Construct a form to cancel a build order */

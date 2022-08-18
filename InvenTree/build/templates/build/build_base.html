@@ -55,6 +55,9 @@ src="{% static 'img/blank_image.png' %}"
         {% if build.is_active %}
         <li><a class='dropdown-item' href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
         {% endif %}
+        {% if roles.build.add %}
+        <li><a class='dropdown-item' href='#' id='build-duplicate'><span class='fas fa-clone'></span> {% trans "Duplicate Build" %}</a></li>
+        {% endif %}
         {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
         <li><a class='dropdown-item' href='#' id='build-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Build" %}</a>
         {% endif %}
@@ -209,6 +212,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 
+    {% if roles.build.change %}
     $("#build-edit").click(function () {
         editBuildOrder({{ build.pk }});
     });
@@ -230,6 +234,13 @@ src="{% static 'img/blank_image.png' %}"
             completed: {% if build.remaining == 0 %}true{% else %}false{% endif %},
         });
     });
+    {% endif %}
+
+    {% if roles.build.add %}
+    $('#build-duplicate').click(function() {
+        duplicateBuildOrder({{ build.pk }});
+    });
+    {% endif %}
 
     {% if report_enabled %}
     $('#print-build-report').click(function() {
