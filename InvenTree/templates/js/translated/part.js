@@ -2453,9 +2453,6 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         // Update min / max values
         if (quantity < y_min) y_min = quantity;
         if (quantity > y_max) y_max = quantity;
-
-        if (speculative_min < y_min) y_min = speculative_min;
-        if (speculative_max > y_max) y_max = speculative_max;
     }
 
     var context = document.getElementById(canvas_id);
@@ -2520,6 +2517,11 @@ function loadPartSchedulingChart(canvas_id, part_id) {
     // Update the table
     $("#part-schedule-table").find('tbody').html(table_html);
 
+    var y_range = y_max - y_min;
+
+    y_max += 0.1 * y_range;
+    y_min -= 0.1 * y_range;
+
     return new Chart(context, {
         type: 'scatter',
         data: data,
@@ -2536,8 +2538,8 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     },
                 },
                 y: {
-                    min: 0,
-                    max: 1.1 * y_max,
+                    min: y_min,
+                    max: y_max,
                 }
             },
             plugins: {
