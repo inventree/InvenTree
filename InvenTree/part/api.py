@@ -1,6 +1,6 @@
 """Provides a JSON API for the Part app."""
 
-import datetime
+import functools
 from decimal import Decimal, InvalidOperation
 
 from django.db import transaction
@@ -474,27 +474,27 @@ class PartScheduling(RetrieveAPI):
 
     def retrieve(self, request, *args, **kwargs):
         """Return scheduling information for the referenced Part instance"""
-        today = datetime.datetime.now().date()
 
         part = self.get_object()
 
         schedule = []
 
-        def add_schedule_entry(date, quantity, title, label, url):
+        def add_schedule_entry(date, quantity, title, label, url, speculative_quantity=0):
             """Check if a scheduled entry should be added:
 
             - date must be non-null
             - date cannot be in the "past"
             - quantity must not be zero
             """
-            if date and date >= today and quantity != 0:
-                schedule.append({
-                    'date': date,
-                    'quantity': quantity,
-                    'title': title,
-                    'label': label,
-                    'url': url,
-                })
+
+            schedule.append({
+                'date': date,
+                'quantity': quantity,
+                'speculative_quantity': speculative_quantity,
+                'title': title,
+                'label': label,
+                'url': url,
+            })
 
         # Add purchase order (incoming stock) information
         po_lines = order.models.PurchaseOrderLineItem.objects.filter(
@@ -571,23 +571,77 @@ class PartScheduling(RetrieveAPI):
         and just looking at what stock items the user has actually allocated against the Build.
         """
 
-        build_allocations = BuildItem.objects.filter(
-            stock_item__part=part,
-            build__status__in=BuildStatus.ACTIVE_CODES,
-        )
+        # Grab a list of BomItem objects that this part might be used in
+        bom_items = BomItem.objects.filter(part.get_used_in_bom_item_filter())
 
-        for allocation in build_allocations:
+        for bom_item in bom_items:
+            # Find a list of active builds for this BomItem
 
-            add_schedule_entry(
-                allocation.build.target_date,
-                -allocation.quantity,
-                _('Stock required for Build Order'),
-                str(allocation.build),
-                allocation.build.get_absolute_url(),
+            builds = Build.objects.filter(
+                status__in=BuildStatus.ACTIVE_CODES,
+                part=bom_item.part,
             )
 
+            for build in builds:
+
+                if bom_item.sub_part.trackable:
+                    # Trackable parts are allocated against the outputs
+                    required_quantity = build.remaining * bom_item.quantity
+                else:
+                    # Non-trackable parts are allocated against the build itself
+                    required_quantity = build.quantity * bom_item.quantity
+
+                # Grab all allocations against the spefied BomItem
+                allocations = BuildItem.objects.filter(
+                    bom_item=bom_item,
+                    build=build,
+                )
+
+                # Total allocated for *this* part
+                part_allocated_quantity = 0
+
+                # Total allocated for *any* part
+                total_allocated_quantity = 0
+
+                for allocation in allocations:
+                    total_allocated_quantity += allocation.quantity
+
+                    if allocation.stock_item.part == part:
+                        part_allocated_quantity += allocation.quantity
+
+                speculative_quantity = 0
+
+                # Consider the case where the build order is *not* fully allocated
+                if required_quantity > total_allocated_quantity:
+                    speculative_quantity = -1 * (required_quantity - total_allocated_quantity)
+
+                add_schedule_entry(
+                    build.target_date,
+                    -part_allocated_quantity,
+                    _('Stock required for Build Order'),
+                    str(build),
+                    build.get_absolute_url(),
+                    speculative_quantity=speculative_quantity
+                )
+
+        def compare(entry_1, entry_2):
+            """Comparison function for sorting entries by date.
+
+            Account for the fact that either date might be None
+            """
+
+            date_1 = entry_1['date']
+            date_2 = entry_2['date']
+
+            if date_1 is None:
+                return -1
+            elif date_2 is None:
+                return 1
+
+            return -1 if date_1 < date_2 else 1
+
         # Sort by incrementing date values
-        schedule = sorted(schedule, key=lambda entry: entry['date'])
+        schedule = sorted(schedule, key=functools.cmp_to_key(compare))
 
         return Response(schedule)
 
@@ -1746,28 +1800,7 @@ class BomList(ListCreateDestroyAPIView):
                 # Extract the part we are interested in
                 uses_part = Part.objects.get(pk=uses)
 
-                # Construct the database query in multiple parts
-
-                # A) Direct specification of sub_part
-                q_A = Q(sub_part=uses_part)
-
-                # B) BomItem is inherited and points to a "parent" of this part
-                parents = uses_part.get_ancestors(include_self=False)
-
-                q_B = Q(
-                    inherited=True,
-                    sub_part__in=parents
-                )
-
-                # C) Substitution of variant parts
-                # TODO
-
-                # D) Specification of individual substitutes
-                # TODO
-
-                q = q_A | q_B
-
-                queryset = queryset.filter(q)
+                queryset = queryset.filter(uses_part.get_used_in_bom_item_filter())
 
             except (ValueError, Part.DoesNotExist):
                 pass

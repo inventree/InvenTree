@@ -40,6 +40,11 @@
         <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Scheduling" %}</h4>
             {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button class='btn btn-primary' type='button' id='btn-schedule-reload' title='{% trans "Refresh scheduling data" %}'>
+                    <span class='fas fa-redo-alt'></span> {% trans "Refresh" %}
+                </button>
+            </div>
         </div>
     </div>
     <div class='panel-content'>
@@ -427,7 +432,12 @@
 
     // Load the "scheduling" tab
     onPanelLoad('scheduling', function() {
-        loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
+        var chart = loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
+
+        $('#btn-schedule-reload').click(function() {
+            chart.destroy();
+            loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
+        });
     });
 
     // Load the "suppliers" tab

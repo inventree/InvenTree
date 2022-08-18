@@ -2257,6 +2257,14 @@ function initPriceBreakSet(table, options) {
 }
 
 
+/*
+ * Load a chart which displays projected scheduling information for a particular part.
+ * This takes into account:
+ * - Current stock levels / availability
+ * - Upcoming / scheduled build orders
+ * - Upcoming / scheduled sales orders
+ * - Upcoming / scheduled purchase orders
+ */
 function loadPartSchedulingChart(canvas_id, part_id) {
 
     var part_info = null;
@@ -2269,16 +2277,30 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         }
     });
 
+    if (!part_info) {
+        console.error(`Error loading part information for part ${part_id}`);
+        return;
+    }
+
     var today = moment();
 
-    // Create an initial entry, using the available quantity
-    var stock_schedule = [
-        {
-            date: today,
-            delta: 0,
-            label: '{% trans "Current Stock" %}',
-        }
-    ];
+    /* Construct initial datasets for:
+     * - Scheduled quantity
+     * - Minimum speculative quantity
+     * - Maximum speculative quantity
+     */
+
+    var quantity_scheduled = [{
+        date: today,
+        delta: 0,
+    }];
+
+    // We will construct the HTML table as we go
+    var table_html = '';
+
+    // The "known" initial stock quantity
+    var initial_stock_min = part_info.in_stock;
+    var initial_stock_max = part_info.in_stock;
 
     /* Request scheduling information for the part.
      * Note that this information has already been 'curated' by the server,
@@ -2290,27 +2312,84 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         {
             async: false,
             success: function(response) {
-                response.forEach(function(entry) {
-                    stock_schedule.push({
+
+                for (var idx = 0; idx < response.length; idx++) {
+
+                    var entry = response[idx];
+                    var date = entry.date != null ? moment(entry.date) : null;
+
+                    var date_string = entry.date;
+
+                    if (date == null) {
+                        date_string = '<em>{% trans "No date specified" %}</em>';
+                        date_string += `<span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "No date specified" %}'></span>`;
+                    } else if (date < today) {
+                        date_string += `<span class='fas fa-exclamation-circle icon-yellow float-right' title='{% trans "Specified date is in the past" %}'></span>`;
+                    }
+
+                    var quantity_string = entry.quantity + entry.speculative_quantity;
+
+                    if (entry.speculative_quantity != 0) {
+                        quantity_string += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Speculative" %}'></span>`;
+                    }
+
+                    // Add an entry to the scheduling table
+                    table_html += `
+                        <tr>
+                            <td><a href="${entry.url}">${entry.label}</a></td>
+                            <td>${entry.title}</td>
+                            <td>${date_string}</td>
+                            <td>${quantity_string}</td>
+                        </tr>
+                    `;
+
+                    // If the date is unknown or in the past, we cannot make use of this information
+                    // So we update the "speculative quantity"
+                    if (date == null || date < today) {
+                        if (entry.quantity < 0) initial_stock_min += entry.quantity;
+                        if (entry.speculative_quantity < 0) initial_stock_min += entry.speculative_quantity;
+
+                        if (entry.quantity > 0) initial_stock_max += entry.quantity;
+                        if (entry.speculative_quantity > 0) initial_stock_max += entry.speculative_quantity;
+
+                        // We do not add this entry to the graph
+                        continue;
+                    }
+
+                    // Add an entry to the scheduled quantity
+                    quantity_scheduled.push({
                         date: moment(entry.date),
                         delta: entry.quantity,
+                        speculative: entry.speculative_quantity,
                         title: entry.title,
                         label: entry.label,
                         url: entry.url,
                     });
-                });
+                }
+            },
+            error: function(response) {
+                console.error(`Error retrieving scheduling information for part ${part_id}`);
+                was_error = true;
             }
         }
     );
 
     // If no scheduling information is available for the part,
     // remove the chart and display a message instead
-    if (stock_schedule.length <= 1) {
+    if (quantity_scheduled.length <= 1) {
 
         var message = `
         <div class='alert alert-block alert-info'>
-            {% trans "No scheduling information available for this part" %}.<br>
+            {% trans "No scheduling information available for this part" %}.
         </div>`;
+
+        if (was_error) {
+            message = `
+                <div class='alert alert-block alert-danger'>
+                    {% trans "Error fetching scheduling information for this part" %}.
+                </div>
+            `;
+        }
 
         var canvas_element = $('#part-schedule-chart');
 
@@ -2319,29 +2398,125 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         return;
     }
 
-    // Iterate through future "events" to calculate expected quantity
+    var y_min = 0;
+    var y_max = 0;
 
+    // Iterate through future "events" to calculate expected quantity values
     var quantity = part_info.in_stock;
+    var speculative_min = initial_stock_min;
+    var speculative_max = initial_stock_max;
 
-    for (var idx = 0; idx < stock_schedule.length; idx++) {
+    // Datasets for speculative quantity
+    var q_spec_min = [];
+    var q_spec_max = [];
 
-        quantity += stock_schedule[idx].delta;
+    for (var idx = 0; idx < quantity_scheduled.length; idx++) {
 
-        stock_schedule[idx].x = stock_schedule[idx].date.format('YYYY-MM-DD');
-        stock_schedule[idx].y = quantity;
+        var speculative = quantity_scheduled[idx].speculative;
+        var date = quantity_scheduled[idx].date.format('YYYY-MM-DD');
+        var delta = quantity_scheduled[idx].delta;
+
+        // Update the running quantity
+        quantity += delta;
+
+        quantity_scheduled[idx].x = date;
+        quantity_scheduled[idx].y = quantity;
+
+        // Update minimum "speculative" quantity
+        speculative_min += delta;
+        speculative_max += delta;
+
+        if (speculative < 0) {
+            speculative_min += speculative;
+        } else if (speculative > 0) {
+            speculative_max += speculative;
+        }
+
+        q_spec_min.push({
+            x: date,
+            y: speculative_min,
+            label: 'label',
+            title: '',
+        });
+
+        q_spec_max.push({
+            x: date,
+            y: speculative_max,
+            label: 'label',
+            title: '',
+        });
+
+        // Update min / max values
+        if (quantity < y_min) y_min = quantity;
+        if (quantity > y_max) y_max = quantity;
     }
 
     var context = document.getElementById(canvas_id);
 
-    const data = {
-        datasets: [{
-            label: '{% trans "Scheduled Stock Quantities" %}',
-            data: stock_schedule,
-            backgroundColor: 'rgb(220, 160, 80)',
-            borderWidth: 2,
-            borderColor: 'rgb(90, 130, 150)'
-        }],
+    var data = {
+        datasets: [
+            {
+                label: '{% trans "Scheduled Stock Quantities" %}',
+                data: quantity_scheduled,
+                backgroundColor: 'rgba(160, 80, 220, 0.75)',
+                borderWidth: 3,
+                borderColor: 'rgb(160, 80, 220)'
+            },
+            {
+                label: '{% trans "Minimum Quantity" %}',
+                data: q_spec_min,
+                backgroundColor: 'rgba(220, 160, 80, 0.25)',
+                borderWidth: 2,
+                borderColor: 'rgba(220, 160, 80, 0.35)',
+                borderDash: [10, 5],
+                fill: '-1',
+            },
+            {
+                label: '{% trans "Maximum Quantity" %}',
+                data: q_spec_max,
+                backgroundColor: 'rgba(220, 160, 80, 0.25)',
+                borderWidth: 2,
+                borderColor: 'rgba(220, 160, 80, 0.35)',
+                borderDash: [10, 5],
+                fill: '-2',
+            },
+        ],
     };
+
+    if (part_info.minimum_stock) {
+        // Construct a 'minimum stock' threshold line
+        var minimum_stock_curve = [
+            {
+                x: today.format(),
+                y: part_info.minimum_stock,
+            },
+            {
+                x: quantity_scheduled[quantity_scheduled.length - 1].x,
+                y: part_info.minimum_stock,
+            }
+        ];
+
+        data.datasets.push({
+            data: minimum_stock_curve,
+            label: '{% trans "Minimum Stock Level" %}',
+            backgroundColor: 'rgba(250, 50, 50, 0.1)',
+            borderColor: 'rgba(250, 50, 50, 0.5)',
+            borderDash: [5, 5],
+            fill: {
+                target: {
+                    value: 0,
+                }
+            }
+        });
+    }
+
+    // Update the table
+    $('#part-schedule-table').find('tbody').html(table_html);
+
+    var y_range = y_max - y_min;
+
+    y_max += 0.1 * y_range;
+    y_min -= 0.1 * y_range;
 
     return new Chart(context, {
         type: 'scatter',
@@ -2359,7 +2534,8 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     },
                 },
                 y: {
-                    beginAtZero: true,
+                    min: y_min,
+                    max: y_max,
                 }
             },
             plugins: {
