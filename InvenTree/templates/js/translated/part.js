@@ -1463,18 +1463,24 @@ function loadPartTable(table, url, options={}) {
 
             var text = '';
 
+            var total_stock = row.in_stock;
+
+            if (row.variant_stock) {
+                total_stock += row.variant_stock;
+            }
+
             if (row.unallocated_stock != row.in_stock) {
-                text = `${row.unallocated_stock} / ${row.in_stock}`;
+                text = `${row.unallocated_stock} / ${total_stock}`;
             } else {
-                text = `${row.in_stock}`;
+                text = `${total_stock}`;
             }
 
             // Construct extra informational badges
             var badges = '';
 
-            if (row.in_stock == 0) {
+            if (total_stock == 0) {
                 badges += `<span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "No stock" %}'></span>`;
-            } else if (row.in_stock < row.minimum_stock) {
+            } else if (total_stock < row.minimum_stock) {
                 badges += `<span class='fas fa-exclamation-circle icon-yellow float-right' title='{% trans "Low stock" %}'></span>`;
             }
 
@@ -1490,6 +1496,10 @@ function loadPartTable(table, url, options={}) {
                     `<span class='fas fa-tools float-right' title='{% trans "Building" %}: ${row.building}'></span>`,
                     `/part/${row.pk}/?display=build-orders`
                 );
+            }
+
+            if (row.variant_stock && row.variant_stock > 0) {
+                badges += `<span class='fas fa-info-circle float-right' title='{% trans "Includes variant stock" %}'></span>`;
             }
 
             text = renderLink(text, `/part/${row.pk}/?display=part-stock`);
