@@ -2336,7 +2336,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     var quantity_string = entry.quantity + entry.speculative_quantity;
 
                     if (entry.speculative_quantity != 0) {
-                        quantity_string += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Speculative" %}'></span>`;
+                        quantity_string += `<span class='fas fa-question-circle icon-blue float-right' title='{% trans "Speculative" %}'></span>`;
                     }
 
                     // Add an entry to the scheduling table
