@@ -30,6 +30,7 @@
     createPurchaseOrderLineItem,
     createSalesOrder,
     createSalesOrderShipment,
+    editPurchaseOrder,
     editPurchaseOrderLineItem,
     exportOrder,
     issuePurchaseOrder,
@@ -493,41 +494,79 @@ function createSalesOrder(options={}) {
     });
 }
 
+
+/*
+ * Construct a set of fields for a purchase order form
+ */
+function purchaseOrderFields(options={}) {
+
+    var fields = {
+        reference: {
+            icon: 'fa-hashtag',
+        },
+        supplier: {
+            icon: 'fa-building',
+            secondary: {
+                title: '{% trans "Add Supplier" %}',
+                fields: function() {
+                    var fields = companyFormFields();
+
+                    fields.is_supplier.value = true;
+
+                    return fields;
+                }
+            }
+        },
+        description: {},
+        supplier_reference: {},
+        target_date: {
+            icon: 'fa-calendar-alt',
+        },
+        link: {
+            icon: 'fa-link',
+        },
+        responsible: {
+            icon: 'fa-user',
+        },
+    };
+
+    if (options.supplier) {
+        fields.supplier.value = options.supplier;
+    }
+
+    if (options.hide_supplier) {
+        fields.supplier.hidden = true;
+    }
+
+    return fields;
+}
+
+
+/*
+ * Edit an existing PurchaseOrder
+ */
+function editPurchaseOrder(pk, options={}) {
+
+    var fields = purchaseOrderFields(options);
+
+    constructForm(`/api/order/po/${pk}/`, {
+        fields: fields,
+        title: '{% trans "Edit Purchase Order" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
 // Create a new PurchaseOrder
 function createPurchaseOrder(options={}) {
 
+    var fields = purchaseOrderFields(options);
+
     constructForm('{% url "api-po-list" %}', {
         method: 'POST',
-        fields: {
-            reference: {
-                icon: 'fa-hashtag',
-            },
-            supplier: {
-                icon: 'fa-building',
-                value: options.supplier,
-                secondary: {
-                    title: '{% trans "Add Supplier" %}',
-                    fields: function() {
-                        var fields = companyFormFields();
-
-                        fields.is_supplier.value = true;
-
-                        return fields;
-                    }
-                }
-            },
-            description: {},
-            supplier_reference: {},
-            target_date: {
-                icon: 'fa-calendar-alt',
-            },
-            link: {
-                icon: 'fa-link',
-            },
-            responsible: {
-                icon: 'fa-user',
-            }
-        },
+        fields: fields,
         onSuccess: function(data) {
 
             if (options.onSuccess) {
