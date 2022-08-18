@@ -1831,6 +1831,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     var available_stock = availableQuantity(row);
 
                     var required = requiredQuantity(row);
+                    var allocated = allocatedQuantity(row);
 
                     var text = '';
 
@@ -1838,7 +1839,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         text += `${available_stock}`;
                     }
 
-                    if (available_stock < required) {
+                    if (available_stock < (required - allocated)) {
                         text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
                     } else {
                         text += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
