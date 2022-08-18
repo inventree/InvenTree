@@ -432,9 +432,10 @@
 
     // Load the "scheduling" tab
     onPanelLoad('scheduling', function() {
-        loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
+        var chart = loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
 
         $('#btn-schedule-reload').click(function() {
+            chart.destroy();
             loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
         });
     });
