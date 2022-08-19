@@ -365,6 +365,7 @@ class BuildItemList(ListCreateAPI):
             kwargs['part_detail'] = str2bool(params.get('part_detail', False))
             kwargs['build_detail'] = str2bool(params.get('build_detail', False))
             kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+            kwargs['stock_detail'] = str2bool(params.get('stock_detail', True))
         except AttributeError:
             pass
 
