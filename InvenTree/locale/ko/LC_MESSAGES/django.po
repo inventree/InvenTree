@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-19 07:17+0000\n"
-"PO-Revision-Date: 2022-08-18 21:39\n"
+"PO-Revision-Date: 2022-08-19 21:44\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -7520,16 +7520,14 @@ msgstr "로그인"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8878,10 +8876,8 @@ msgid "Create Sales Order"
 msgstr ""
 
 #: templates/js/translated/order.js:555
-#, fuzzy
-#| msgid "Select {name} file to upload"
 msgid "Select purchase order to duplicate"
-msgstr "업로드할 {name} 파일을 선택하세요"
+msgstr ""
 
 #: templates/js/translated/order.js:562
 msgid "Duplicate Line Items"
@@ -10555,3 +10551,4 @@ msgstr ""
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr ""
+
