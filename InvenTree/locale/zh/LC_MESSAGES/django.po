@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-19 07:17+0000\n"
-"PO-Revision-Date: 2022-08-18 21:39\n"
+"PO-Revision-Date: 2022-08-19 21:44\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -3526,10 +3526,8 @@ msgid "Part query filters (comma-separated value of key=value pairs)"
 msgstr "商品查询筛选器 (逗号分隔的键值对列表)"
 
 #: order/api.py:134
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching purchase order found"
-msgstr "未找到指定操作"
+msgstr ""
 
 #: order/models.py:82
 msgid "Order description"
@@ -4005,10 +4003,8 @@ msgid "Cancel order"
 msgstr "取消订单"
 
 #: order/templates/order/order_base.html:50
-#, fuzzy
-#| msgid "Duplicate Part"
 msgid "Duplicate order"
-msgstr "复制部件"
+msgstr ""
 
 #: order/templates/order/order_base.html:55
 msgid "Place order"
@@ -7524,16 +7520,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8886,20 +8880,16 @@ msgid "Select purchase order to duplicate"
 msgstr ""
 
 #: templates/js/translated/order.js:562
-#, fuzzy
-#| msgid "Duplicate Part"
 msgid "Duplicate Line Items"
-msgstr "复制部件"
+msgstr ""
 
 #: templates/js/translated/order.js:563
 msgid "Duplicate all line items from the selected order"
 msgstr ""
 
 #: templates/js/translated/order.js:570
-#, fuzzy
-#| msgid "Duplicate serial: {sn}"
 msgid "Duplicate Extra Lines"
-msgstr "重复的序列号: {sn}"
+msgstr ""
 
 #: templates/js/translated/order.js:571
 msgid "Duplicate extra line items from the selected order"
@@ -8910,10 +8900,8 @@ msgid "Edit Purchase Order"
 msgstr ""
 
 #: templates/js/translated/order.js:605
-#, fuzzy
-#| msgid "Part Duplication Options"
 msgid "Duplication Options"
-msgstr "商品重复选项"
+msgstr ""
 
 #: templates/js/translated/order.js:863
 msgid "Export Order"
@@ -10563,3 +10551,4 @@ msgstr "编辑项目权限"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "删除项目权限"
+
