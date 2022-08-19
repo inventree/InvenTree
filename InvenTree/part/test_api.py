@@ -295,7 +295,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             child_categories = []
             child_categories_parts = []
             # Create child categories under the category to be deleted
-            for ii in range(10):
+            for ii in range(3):
                 child = PartCategory.objects.create(
                     name=f"Child parent_cat {ii}",
                     description="A child category",

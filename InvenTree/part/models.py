@@ -62,25 +62,16 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         default_location: Default storage location for parts in this category or child categories
         default_keywords: Default keywords for parts created in this category
     """
-    def on_commit(self):
-        print("commit")
 
-    def delete(self, *args, **kwargs):
+    def delete_recursive(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
-        This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
-        """
+                This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
+                """
         print(kwargs)
-        rebuild = kwargs.get('rebuild', True)
         delete_parts = kwargs.get('delete_parts', False)
         print(delete_parts)
         parent_category = kwargs.get('parent_category', None)
         try:
-            # If doing recursive category tree delete operation then the
-            # atomic transaction needs to be started only once at the first iteration
-            #if rebuild:
-            transaction.atomic()
-            transaction.on_commit(self.on_commit)
-
             parent = self.parent
             tree_id = self.tree_id
 
@@ -125,12 +116,72 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
             super().delete(*args, **dict())
 
-            if rebuild:
-                if parent is not None:
-                    # Partially rebuild the tree (cheaper than a complete rebuild)
-                    PartCategory.objects.partial_rebuild(tree_id)
-                else:
-                    PartCategory.objects.rebuild()
+        except:
+            pass
+
+    def delete(self, *args, **kwargs):
+        """Custom model deletion routine, which updates any child categories or parts.
+        This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
+        """
+        print(kwargs)
+        delete_parts = kwargs.get('delete_parts', False)
+        print(delete_parts)
+        parent_category = kwargs.get('parent_category', None)
+        try:
+            # If doing recursive category tree delete operation then the
+            # atomic transaction needs to be started only once at the first iteration
+            #if rebuild:
+            transaction.atomic()
+
+            parent = self.parent
+            tree_id = self.tree_id
+
+            if delete_parts:
+                print("delete parts")
+                # Delete each part in this category if user wants to do that
+                self.parts.delete()
+            else:
+                # Update each part in this category to point to the parent category
+                for p in self.parts.all():
+                    print("move part to parent")
+                    if parent_category is None:
+                        # First iteration, (no part_category kwargs passed)
+                        print("1st iteration")
+                        p.category = parent
+                    else:
+                        print("Lower iteration")
+                        # We are in recursive iteration update the part category to the
+                        # parent of the topmost deleted category
+                        p.category = parent_category
+                    p.save()
+
+            if kwargs.get('delete_child_categories', False):
+                print("delete child cats")
+                # Recursively delete all child categories
+                if parent_category is None:
+                    parent_category = parent
+                for child in self.children.all():
+                    child.delete_recursive(**dict(delete_child_categories=True,
+                                        delete_parts=delete_parts,
+                                        parent_category=parent_category,
+                                        rebuild=False))
+            else:
+                print("move child categories up")
+                # Move each child category to the parent of the deleted category
+                for child in self.children.all():
+                    print(child.id)
+                    print(child.parent)
+                    child.parent = parent
+                    print(child.parent)
+                    child.save()
+
+            super().delete(*args, **dict())
+
+            if parent is not None:
+                # Partially rebuild the tree (cheaper than a complete rebuild)
+                PartCategory.objects.partial_rebuild(tree_id)
+            else:
+                PartCategory.objects.rebuild()
         except:
             pass
 
