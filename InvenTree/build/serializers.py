@@ -856,6 +856,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
         build_detail = kwargs.pop('build_detail', False)
         part_detail = kwargs.pop('part_detail', False)
         location_detail = kwargs.pop('location_detail', False)
+        stock_detail = kwargs.pop('stock_detail', False)
 
         super().__init__(*args, **kwargs)
 
@@ -867,6 +868,9 @@ class BuildItemSerializer(InvenTreeModelSerializer):
 
         if not location_detail:
             self.fields.pop('location_detail')
+
+        if not stock_detail:
+            self.fields.pop('stock_item_detail')
 
     class Meta:
         """Serializer metaclass"""

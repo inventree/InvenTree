@@ -365,6 +365,7 @@ class BuildItemList(ListCreateAPI):
             kwargs['part_detail'] = str2bool(params.get('part_detail', False))
             kwargs['build_detail'] = str2bool(params.get('build_detail', False))
             kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+            kwargs['stock_detail'] = str2bool(params.get('stock_detail', True))
         except AttributeError:
             pass
 
@@ -372,13 +373,19 @@ class BuildItemList(ListCreateAPI):
 
     def get_queryset(self):
         """Override the queryset method, to allow filtering by stock_item.part."""
-        query = BuildItem.objects.all()
+        queryset = BuildItem.objects.all()
 
-        query = query.select_related('stock_item__location')
-        query = query.select_related('stock_item__part')
-        query = query.select_related('stock_item__part__category')
+        queryset = queryset.select_related(
+            'bom_item',
+            'bom_item__sub_part',
+            'build',
+            'install_into',
+            'stock_item',
+            'stock_item__location',
+            'stock_item__part',
+        )
 
-        return query
+        return queryset
 
     def filter_queryset(self, queryset):
         """Customm query filtering for the BuildItem list."""
