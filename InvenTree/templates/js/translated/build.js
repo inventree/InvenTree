@@ -731,6 +731,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
     options.params['part_detail'] = true;
     options.params['build_detail'] = true;
     options.params['location_detail'] = true;
+    options.params['stock_detail'] = true;
 
     var filters = loadTableFilters('buildorderallocation');
 
@@ -1718,9 +1719,10 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         field: 'location',
                         title: '{% trans "Location" %}',
                         formatter: function(value, row) {
-                            if (row.stock_item_detail.location) {
-                                var text = row.stock_item_detail.location_name;
-                                var url = `/stock/location/${row.stock_item_detail.location}/`;
+
+                            if (row.location && row.location_detail) {
+                                var text = row.location_detail.name;
+                                var url = `/stock/location/${row.location}/`;
 
                                 return renderLink(text, url);
                             } else {
