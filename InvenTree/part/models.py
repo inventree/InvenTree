@@ -1436,7 +1436,7 @@ class Part(MetadataMixin, MPTTModel):
 
         return parts
 
-    def get_used_in_bom_item_filter(self, include_inherited=True, include_variants=True, include_substitutes=True):
+    def get_used_in_bom_item_filter(self, include_variants=True, include_substitutes=True):
         """Return a BomItem queryset which returns all BomItem instances which refer to *this* part.
 
         As the BOM allocation logic is somewhat complicted, there are some considerations:
@@ -1454,21 +1454,13 @@ class Part(MetadataMixin, MPTTModel):
         # Case A: This part is directly specified in a BomItem (we always use this case)
         query = Q(
             sub_part=self,
-            inherited=False,
         )
-
-        if include_inherited:
-            query |= Q(
-                sub_part__in=parents,
-                inherited=True
-            )
 
         if include_variants:
             # Case B: This part is a *variant* of a part which is specified in a BomItem which allows variants
             query |= Q(
                 allow_variants=True,
                 sub_part__in=parents,
-                inherited=False,
             )
 
         # Case C: This part is a *substitute* of a part which is directly specified in a BomItem

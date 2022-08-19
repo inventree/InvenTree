@@ -574,15 +574,32 @@ class PartScheduling(RetrieveAPI):
         # Grab a list of BomItem objects that this part might be used in
         bom_items = BomItem.objects.filter(part.get_used_in_bom_item_filter())
 
+        # Track all outstanding build orders
+        seen_builds = set()
+
         for bom_item in bom_items:
             # Find a list of active builds for this BomItem
 
-            builds = Build.objects.filter(
-                status__in=BuildStatus.ACTIVE_CODES,
-                part=bom_item.part,
-            )
+            if bom_item.inherited:
+                # An "inherited" BOM item filters down to variant parts also
+                childs = bom_item.part.get_descendants(include_self=True)
+                builds = Build.objects.filter(
+                    status__in=BuildStatus.ACTIVE_CODES,
+                    part__in=childs,
+                )
+            else:
+                builds = Build.objects.filter(
+                    status__in=BuildStatus.ACTIVE_CODES,
+                    part=bom_item.part,
+                )
 
             for build in builds:
+
+                # Ensure we don't double-count any builds
+                if build in seen_builds:
+                    continue
+
+                seen_builds.add(build)
 
                 if bom_item.sub_part.trackable:
                     # Trackable parts are allocated against the outputs
