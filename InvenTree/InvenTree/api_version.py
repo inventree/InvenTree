@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 71
+INVENTREE_API_VERSION = 72
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v72 -> 2022-08-18 : https://github.com/inventree/InvenTree/pull/3567
+    - Allow PurchaseOrder to be duplicated via the API
 
 v71 -> 2022-08-18 : https://github.com/inventree/InvenTree/pull/3564
     - Updates to the "part scheduling" API endpoint

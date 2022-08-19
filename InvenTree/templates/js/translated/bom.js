@@ -1049,7 +1049,7 @@ function loadBomTable(table, options={}) {
                     available += row.on_order;
                     can_build = available / row.quantity;
 
-                    text += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Including On Order" %}: ${can_build}'></span>`;
+                    text += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Including On Order" %}: ${formatDecimal(can_build, 2)}'></span>`;
                 }
 
                 return text;
