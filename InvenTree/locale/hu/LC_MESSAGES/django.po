@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-19 07:17+0000\n"
-"PO-Revision-Date: 2022-08-18 21:39\n"
+"PO-Revision-Date: 2022-08-19 21:44\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -165,7 +165,7 @@ msgstr "A megadott számú egyedi sorozatszám ({s}) meg kell egyezzen a darabsz
 
 #: InvenTree/mixins.py:71
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "HTML tag-ek eltávolítása ebből az értékből"
 
 #: InvenTree/models.py:236
 msgid "Improperly formatted pattern"
@@ -1151,8 +1151,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:380
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:449
@@ -1326,7 +1325,7 @@ msgstr "Gyártás törlése"
 
 #: build/templates/build/build_base.html:59
 msgid "Duplicate Build"
-msgstr ""
+msgstr "Gyártás másolása"
 
 #: build/templates/build/build_base.html:62
 msgid "Delete Build"
@@ -1994,11 +1993,11 @@ msgstr "Formátum az alkatrész név megjelenítéséhez"
 
 #: common/models.py:1074
 msgid "Part Category Default Icon"
-msgstr ""
+msgstr "Alkatrész kategória alapértelmezett ikon"
 
 #: common/models.py:1075
 msgid "Part category default icon (empty means no icon)"
-msgstr ""
+msgstr "Alkatrész kategória alapértelmezett ikon (üres ha nincs)"
 
 #: common/models.py:1080
 msgid "Enable label printing"
@@ -2110,11 +2109,11 @@ msgstr "Tuajdonosok kezelésének engedélyezése a készlet helyekre és tétel
 
 #: common/models.py:1178
 msgid "Stock Location Default Icon"
-msgstr ""
+msgstr "Hely alapértelmezett ikon"
 
 #: common/models.py:1179
 msgid "Stock location default icon (empty means no icon)"
-msgstr ""
+msgstr "Hely alapértelmezett ikon (üres ha nincs)"
 
 #: common/models.py:1184
 msgid "Build Order Reference Pattern"
@@ -2230,11 +2229,11 @@ msgstr "Ellenőrizze induláskor hogy minden plugin telepítve van - engedélyez
 
 #: common/models.py:1284
 msgid "Check plugin signatures"
-msgstr ""
+msgstr "Plugin aláírások ellenőrzése"
 
 #: common/models.py:1285
 msgid "Check and show signatures for plugins"
-msgstr ""
+msgstr "Pluginok aláírásainak ellenőrzése és megjelenítése"
 
 #: common/models.py:1292
 msgid "Enable URL integration"
@@ -3528,10 +3527,8 @@ msgid "Part query filters (comma-separated value of key=value pairs)"
 msgstr "Alkatrész lekérdezés szűrők (vesszővel elválasztott kulcs=érték párok)"
 
 #: order/api.py:134
-#, fuzzy
-#| msgid "No matching purchase orders"
 msgid "No matching purchase order found"
-msgstr "Nincsenek egyező beszerzési rendelések"
+msgstr "Nincs egyező beszerzési rendelés"
 
 #: order/models.py:82
 msgid "Order description"
@@ -4007,10 +4004,8 @@ msgid "Cancel order"
 msgstr "Rendelés törlése"
 
 #: order/templates/order/order_base.html:50
-#, fuzzy
-#| msgid "Duplicate Part"
 msgid "Duplicate order"
-msgstr "Alkatrész másolása"
+msgstr "Rendelés másolása"
 
 #: order/templates/order/order_base.html:55
 msgid "Place order"
@@ -4343,11 +4338,11 @@ msgstr "Ebben a kategóriában évő alkatrészek kulcsszavai alapban"
 
 #: part/models.py:107 stock/models.py:84
 msgid "Icon"
-msgstr ""
+msgstr "Ikon"
 
 #: part/models.py:108 stock/models.py:85
 msgid "Icon (optional)"
-msgstr ""
+msgstr "Ikon (opcionális)"
 
 #: part/models.py:122 part/models.py:2501 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
@@ -5030,7 +5025,7 @@ msgstr "Alkatrész készlet"
 
 #: part/templates/part/detail.html:44
 msgid "Refresh scheduling data"
-msgstr ""
+msgstr "Ütemezési adatok frissítése"
 
 #: part/templates/part/detail.html:45 templates/js/translated/tables.js:558
 msgid "Refresh"
@@ -5446,7 +5441,7 @@ msgstr "Dátum"
 
 #: part/templates/part/part_scheduling.html:14
 msgid "Scheduled Quantity"
-msgstr ""
+msgstr "Ütemezett mennyiség"
 
 #: part/templates/part/part_sidebar.html:11
 msgid "Variants"
@@ -5734,7 +5729,7 @@ msgstr "Aktív-e a plugin"
 
 #: plugin/models.py:158
 msgid "Sample plugin"
-msgstr ""
+msgstr "Példa plugin"
 
 #: plugin/models.py:186
 msgid "Plugin"
@@ -7526,16 +7521,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -8884,44 +8877,32 @@ msgid "Create Sales Order"
 msgstr "Vevői rendelés létrehozása"
 
 #: templates/js/translated/order.js:555
-#, fuzzy
-#| msgid "Select Purchase Orders"
 msgid "Select purchase order to duplicate"
-msgstr "Beszerzési rendelések kiválasztása"
+msgstr "Válaszd ki a lemásolandó beszerzési rendelést"
 
 #: templates/js/translated/order.js:562
-#, fuzzy
-#| msgid "Duplicate Line Item"
 msgid "Duplicate Line Items"
-msgstr "Sortétel másolása"
+msgstr "Sortételek másolása"
 
 #: templates/js/translated/order.js:563
-#, fuzzy
-#| msgid "At least one line item must be selected"
 msgid "Duplicate all line items from the selected order"
-msgstr "Legalább egy sortételt ki kell választani"
+msgstr "Összes sortétel másolása a kiválasztott rendelésből"
 
 #: templates/js/translated/order.js:570
-#, fuzzy
-#| msgid "Duplicate Line"
 msgid "Duplicate Extra Lines"
-msgstr "Sor másolása"
+msgstr "Egyéb tételek másolása"
 
 #: templates/js/translated/order.js:571
-#, fuzzy
-#| msgid "At least one line item must be selected"
 msgid "Duplicate extra line items from the selected order"
-msgstr "Legalább egy sortételt ki kell választani"
+msgstr "Összes egyéb tétel másolása a kiválasztott rendelésből"
 
 #: templates/js/translated/order.js:588
 msgid "Edit Purchase Order"
 msgstr "Beszerzési rendelés szerkesztése"
 
 #: templates/js/translated/order.js:605
-#, fuzzy
-#| msgid "Part Duplication Options"
 msgid "Duplication Options"
-msgstr "Alkatrész másolási opciók"
+msgstr "Másolási opciók"
 
 #: templates/js/translated/order.js:863
 msgid "Export Order"
@@ -9295,7 +9276,7 @@ msgstr "Felsőbb szintű alkatrész kategória"
 
 #: templates/js/translated/part.js:306 templates/js/translated/stock.js:118
 msgid "Icon (optional) - Explore all available icons on"
-msgstr ""
+msgstr "Ikon (opcionális) - Az összes ikon felfedezése itt"
 
 #: templates/js/translated/part.js:322
 msgid "Edit Part Category"
@@ -9440,7 +9421,7 @@ msgstr "Nincs kategória"
 
 #: templates/js/translated/part.js:1482
 msgid "No stock"
-msgstr ""
+msgstr "Nincs készlet"
 
 #: templates/js/translated/part.js:1583 templates/js/translated/part.js:1826
 #: templates/js/translated/stock.js:2347
@@ -9521,15 +9502,15 @@ msgstr "${human_name} törlése"
 
 #: templates/js/translated/part.js:2340 templates/js/translated/part.js:2341
 msgid "No date specified"
-msgstr ""
+msgstr "Nincs megadva dátum"
 
 #: templates/js/translated/part.js:2343
 msgid "Specified date is in the past"
-msgstr ""
+msgstr "A megadott dátum a múltban van"
 
 #: templates/js/translated/part.js:2349
 msgid "Speculative"
-msgstr ""
+msgstr "Spekulatív"
 
 #: templates/js/translated/part.js:2399
 msgid "No scheduling information available for this part"
@@ -9537,7 +9518,7 @@ msgstr "Az alkatrészhez nem áll rendelkezésre ütemezési információ"
 
 #: templates/js/translated/part.js:2405
 msgid "Error fetching scheduling information for this part"
-msgstr ""
+msgstr "Hiba az alkatrész ütemezési információinak betöltésekor"
 
 #: templates/js/translated/part.js:2501
 msgid "Scheduled Stock Quantities"
@@ -9545,11 +9526,11 @@ msgstr "Ütemezett készlet mennyiség"
 
 #: templates/js/translated/part.js:2517
 msgid "Maximum Quantity"
-msgstr ""
+msgstr "Minimum mennyiség"
 
 #: templates/js/translated/part.js:2543
 msgid "Minimum Stock Level"
-msgstr ""
+msgstr "Minimális készlet"
 
 #: templates/js/translated/part.js:2637
 msgid "Single Price"
@@ -10571,3 +10552,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
