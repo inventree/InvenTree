@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-19 07:17+0000\n"
-"PO-Revision-Date: 2022-08-18 21:39\n"
+"PO-Revision-Date: 2022-08-19 21:44\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -3526,10 +3526,8 @@ msgid "Part query filters (comma-separated value of key=value pairs)"
 msgstr ""
 
 #: order/api.py:134
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching purchase order found"
-msgstr "Ingen samsvarende handling funnet"
+msgstr ""
 
 #: order/models.py:82
 msgid "Order description"
@@ -4005,10 +4003,8 @@ msgid "Cancel order"
 msgstr ""
 
 #: order/templates/order/order_base.html:50
-#, fuzzy
-#| msgid "Duplicate serial: {sn}"
 msgid "Duplicate order"
-msgstr "Dupliser serie: {sn}"
+msgstr ""
 
 #: order/templates/order/order_base.html:55
 msgid "Place order"
@@ -7524,16 +7520,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8882,26 +8876,20 @@ msgid "Create Sales Order"
 msgstr ""
 
 #: templates/js/translated/order.js:555
-#, fuzzy
-#| msgid "Select {name} file to upload"
 msgid "Select purchase order to duplicate"
-msgstr "Velg {name} fil som skal lastes opp"
+msgstr ""
 
 #: templates/js/translated/order.js:562
-#, fuzzy
-#| msgid "Duplicate serial: {sn}"
 msgid "Duplicate Line Items"
-msgstr "Dupliser serie: {sn}"
+msgstr ""
 
 #: templates/js/translated/order.js:563
 msgid "Duplicate all line items from the selected order"
 msgstr ""
 
 #: templates/js/translated/order.js:570
-#, fuzzy
-#| msgid "Duplicate serial: {sn}"
 msgid "Duplicate Extra Lines"
-msgstr "Dupliser serie: {sn}"
+msgstr ""
 
 #: templates/js/translated/order.js:571
 msgid "Duplicate extra line items from the selected order"
@@ -8912,10 +8900,8 @@ msgid "Edit Purchase Order"
 msgstr ""
 
 #: templates/js/translated/order.js:605
-#, fuzzy
-#| msgid "Destination Location"
 msgid "Duplication Options"
-msgstr "Sted for destinasjon"
+msgstr ""
 
 #: templates/js/translated/order.js:863
 msgid "Export Order"
@@ -10565,3 +10551,4 @@ msgstr ""
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr ""
+
