@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-19 07:17+0000\n"
-"PO-Revision-Date: 2022-08-19 21:44\n"
+"PO-Revision-Date: 2022-08-20 21:49\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -91,35 +91,35 @@ msgstr "Du måste ange samma e-post varje gång."
 
 #: InvenTree/helpers.py:173
 msgid "Connection error"
-msgstr ""
+msgstr "Anslutningsfel"
 
 #: InvenTree/helpers.py:177 InvenTree/helpers.py:182
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "Servern svarade med ogiltig statuskod"
 
 #: InvenTree/helpers.py:179
 msgid "Exception occurred"
-msgstr ""
+msgstr "Undantag inträffade"
 
 #: InvenTree/helpers.py:187
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "Servern svarade med ogiltigt innehållslängdsvärde"
 
 #: InvenTree/helpers.py:190
 msgid "Image size is too large"
-msgstr ""
+msgstr "Bilden är för stor"
 
 #: InvenTree/helpers.py:202
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "Nedladdning av bilder överskred maximal storlek"
 
 #: InvenTree/helpers.py:207
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "Fjärrservern returnerade tomt svar"
 
 #: InvenTree/helpers.py:215
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "Angiven URL är inte en giltig bildfil"
 
 #: InvenTree/helpers.py:598
 #, python-brace-format
@@ -152,7 +152,7 @@ msgstr "Ogiltig gruppsekvens: {g}"
 #: InvenTree/helpers.py:679
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Ogiltig/ingen grupp {group}"
 
 #: InvenTree/helpers.py:685
 msgid "No serial numbers found"
@@ -161,23 +161,23 @@ msgstr "Inga serienummer hittades"
 #: InvenTree/helpers.py:689
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Antal unika serienummer ({s}) måste matcha antal ({q})"
 
 #: InvenTree/mixins.py:71
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Ta bort HTML-taggar från detta värde"
 
 #: InvenTree/models.py:236
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Felaktigt formaterat mönster"
 
 #: InvenTree/models.py:243
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "Okänd formatnyckel angiven"
 
 #: InvenTree/models.py:249
 msgid "Missing required format key"
-msgstr ""
+msgstr "Obligatorisk formatnyckel saknas"
 
 #: InvenTree/models.py:261
 msgid "Reference field cannot be empty"
@@ -185,7 +185,7 @@ msgstr "Textfältet kan inte lämnas tomt"
 
 #: InvenTree/models.py:268
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "Referensen måste matcha obligatoriskt mönster"
 
 #: InvenTree/models.py:304
 msgid "Reference number is too large"
@@ -326,7 +326,7 @@ msgstr "överordnad"
 #: InvenTree/models.py:560 InvenTree/models.py:561
 #: templates/js/translated/part.js:1954 templates/js/translated/stock.js:2430
 msgid "Path"
-msgstr ""
+msgstr "Sökväg"
 
 #: InvenTree/models.py:670
 msgid "Server Error"
@@ -393,15 +393,15 @@ msgstr "Duplicerad kolumn: '{col}'"
 #: InvenTree/serializers.py:602
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: InvenTree/serializers.py:603
 msgid "URL of remote image file"
-msgstr ""
+msgstr "URL för fjärrbildsfil"
 
 #: InvenTree/serializers.py:617
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "Nedladdning av bilder från fjärr-URL är inte aktiverad"
 
 #: InvenTree/settings.py:607
 msgid "Czech"
@@ -604,27 +604,27 @@ msgstr "Platsen har ändrats"
 
 #: InvenTree/status_codes.py:272
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Installerad i montering"
 
 #: InvenTree/status_codes.py:273
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Borttagen från montering"
 
 #: InvenTree/status_codes.py:275
 msgid "Installed component item"
-msgstr ""
+msgstr "Installerat komponentobjekt"
 
 #: InvenTree/status_codes.py:276
 msgid "Removed component item"
-msgstr ""
+msgstr "Tog bort komponentobjekt"
 
 #: InvenTree/status_codes.py:278
 msgid "Split from parent item"
-msgstr ""
+msgstr "Dela från överordnat objekt"
 
 #: InvenTree/status_codes.py:279
 msgid "Split child item"
-msgstr ""
+msgstr "Dela underordnat objekt"
 
 #: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2084
 msgid "Merged stock items"
@@ -632,7 +632,7 @@ msgstr "Sammanfogade lagerposter"
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
-msgstr ""
+msgstr "Konverterad till variant"
 
 #: InvenTree/status_codes.py:285 templates/js/translated/table_filters.js:221
 msgid "Sent to customer"
@@ -644,19 +644,19 @@ msgstr "Returnerad från kund"
 
 #: InvenTree/status_codes.py:288
 msgid "Build order output created"
-msgstr ""
+msgstr "Bygg orderutgång skapad"
 
 #: InvenTree/status_codes.py:289
 msgid "Build order output completed"
-msgstr ""
+msgstr "Bygg orderutgång slutförd"
 
 #: InvenTree/status_codes.py:290
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Konsumeras av byggorder"
 
 #: InvenTree/status_codes.py:292
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Mottagen mot inköpsorder"
 
 #: InvenTree/status_codes.py:307
 msgid "Production"
@@ -668,17 +668,17 @@ msgstr "Inte en giltig valutakod"
 
 #: InvenTree/validators.py:45
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Ogiltigt tecken i delnamn"
 
 #: InvenTree/validators.py:57
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "IPN måste matcha regex mönster {pat}"
 
 #: InvenTree/validators.py:68 InvenTree/validators.py:79
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "Referens måste matcha mönster {pattern}"
 
 #: InvenTree/validators.py:102 InvenTree/validators.py:118
 msgid "Overage value must not be negative"
@@ -718,7 +718,7 @@ msgstr "Om InvenTree"
 
 #: build/api.py:217
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "Byggnationen måste avbrytas innan den kan tas bort"
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
