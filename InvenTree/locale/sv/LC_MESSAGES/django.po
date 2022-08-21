@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-19 07:17+0000\n"
-"PO-Revision-Date: 2022-08-20 21:49\n"
+"PO-Revision-Date: 2022-08-21 21:59\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -51,7 +51,7 @@ msgstr "Anteeckningar"
 #: InvenTree/format.py:142
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "Värdet '{name}' visas inte i mönsterformat"
 
 #: InvenTree/format.py:152
 msgid "Provided value does not match required pattern: "
@@ -682,15 +682,15 @@ msgstr "Referens måste matcha mönster {pattern}"
 
 #: InvenTree/validators.py:102 InvenTree/validators.py:118
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Överskott värde får inte vara negativt"
 
 #: InvenTree/validators.py:120
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Överskott får inte överstiga 100%"
 
 #: InvenTree/validators.py:127
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Ogiltigt värde för överskott"
 
 #: InvenTree/views.py:519 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
@@ -722,7 +722,7 @@ msgstr "Byggnationen måste avbrytas innan den kan tas bort"
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Ogiltigt val för överordnad bygge"
 
 #: build/models.py:110 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -770,7 +770,7 @@ msgstr "Överordnat Bygge"
 
 #: build/models.py:186
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "Byggorder till vilken detta bygge är tilldelad"
 
 #: build/models.py:191 build/templates/build/build_base.html:80
 #: build/templates/build/detail.html:29 company/models.py:670
@@ -819,40 +819,40 @@ msgstr "Försäljningsorderreferens"
 
 #: build/models.py:208
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Försäljningsorder till vilken detta bygge allokeras"
 
 #: build/models.py:213 build/serializers.py:800
 #: templates/js/translated/build.js:2108 templates/js/translated/order.js:2979
 msgid "Source Location"
-msgstr ""
+msgstr "Källa Plats"
 
 #: build/models.py:217
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Välj plats att ta lager från för detta bygge (lämna tomt för att ta från någon lagerplats)"
 
 #: build/models.py:222
 msgid "Destination Location"
-msgstr ""
+msgstr "Destinationsplats"
 
 #: build/models.py:226
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Välj plats där de färdiga objekten kommer att lagras"
 
 #: build/models.py:230
 msgid "Build Quantity"
-msgstr ""
+msgstr "Bygg kvantitet"
 
 #: build/models.py:233
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Antal lagerobjekt att bygga"
 
 #: build/models.py:237
 msgid "Completed items"
-msgstr ""
+msgstr "Slutförda objekt"
 
 #: build/models.py:239
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Antal lagerposter som har slutförts"
 
 #: build/models.py:243
 msgid "Build Status"
@@ -860,16 +860,16 @@ msgstr "Byggstatus"
 
 #: build/models.py:247
 msgid "Build status code"
-msgstr ""
+msgstr "Bygg statuskod"
 
 #: build/models.py:251 build/serializers.py:225 order/serializers.py:447
 #: stock/models.py:662 templates/js/translated/order.js:1353
 msgid "Batch Code"
-msgstr ""
+msgstr "Batchkod"
 
 #: build/models.py:255 build/serializers.py:226
 msgid "Batch code for this build output"
-msgstr ""
+msgstr "Batch-kod för denna byggutdata"
 
 #: build/models.py:258 order/models.py:86 part/models.py:938
 #: part/templates/part/part_base.html:305 templates/js/translated/order.js:2650
@@ -882,20 +882,20 @@ msgstr "Datum för slutförande"
 
 #: build/models.py:263
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Måldatum för färdigställande. Byggandet kommer att förfallas efter detta datum."
 
 #: build/models.py:266 order/models.py:286
 #: templates/js/translated/build.js:2588
 msgid "Completion Date"
-msgstr ""
+msgstr "Slutförandedatum"
 
 #: build/models.py:272
 msgid "completed by"
-msgstr ""
+msgstr "slutfört av"
 
 #: build/models.py:280 templates/js/translated/build.js:2556
 msgid "Issued by"
-msgstr ""
+msgstr "Utfärdad av"
 
 #: build/models.py:281
 msgid "User who issued this build order"
@@ -924,53 +924,53 @@ msgstr "Extern länk"
 
 #: build/models.py:300
 msgid "Extra build notes"
-msgstr ""
+msgstr "Extra bygganteckningar"
 
 #: build/models.py:538
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "Byggorder {build} har slutförts"
 
 #: build/models.py:544
 msgid "A build order has been completed"
-msgstr ""
+msgstr "En byggorder har slutförts"
 
 #: build/models.py:725
 msgid "No build output specified"
-msgstr ""
+msgstr "Ingen byggutgång angiven"
 
 #: build/models.py:728
 msgid "Build output is already completed"
-msgstr ""
+msgstr "Byggutgång är redan slutförd"
 
 #: build/models.py:731
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "Byggutgång matchar inte bygg order"
 
 #: build/models.py:1171
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "Byggobjekt måste ange en byggutgång, eftersom huvuddelen är markerad som spårbar"
 
 #: build/models.py:1180
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
-msgstr ""
+msgstr "Tilldelad kvantitet ({q}) får inte överstiga tillgängligt lagersaldo ({a})"
 
 #: build/models.py:1190 order/models.py:1379
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "Lagerposten är överallokerad"
 
 #: build/models.py:1196 order/models.py:1382
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Allokeringsmängden måste vara större än noll"
 
 #: build/models.py:1202
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "Antal måste vara 1 för serialiserat lager"
 
 #: build/models.py:1259
 msgid "Selected stock item not found in BOM"
-msgstr ""
+msgstr "Vald lagervara hittades inte i BOM"
 
 #: build/models.py:1328 stock/templates/stock/item_base.html:177
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:2490
@@ -980,7 +980,7 @@ msgstr "Bygg"
 
 #: build/models.py:1329
 msgid "Build to allocate parts"
-msgstr ""
+msgstr "Bygg för att allokera delar"
 
 #: build/models.py:1345 build/serializers.py:645 order/serializers.py:1015
 #: order/serializers.py:1036 stock/serializers.py:394 stock/serializers.py:754
@@ -999,7 +999,7 @@ msgstr "Artikel i lager"
 
 #: build/models.py:1346
 msgid "Source stock item"
-msgstr ""
+msgstr "Källa lagervara"
 
 #: build/models.py:1358 build/serializers.py:193
 #: build/templates/build/build_base.html:85
@@ -1040,24 +1040,24 @@ msgstr "Antal"
 
 #: build/models.py:1359
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Lagersaldo att allokera för att bygga"
 
 #: build/models.py:1367
 msgid "Install into"
-msgstr ""
+msgstr "Installera till"
 
 #: build/models.py:1368
 msgid "Destination stock item"
-msgstr ""
+msgstr "Destination lagervara"
 
 #: build/serializers.py:138 build/serializers.py:674
 #: templates/js/translated/build.js:1199
 msgid "Build Output"
-msgstr ""
+msgstr "Bygg utdata"
 
 #: build/serializers.py:150
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Byggutdata matchar inte överordnad version"
 
 #: build/serializers.py:154
 msgid "Output part does not match BuildOrder part"
