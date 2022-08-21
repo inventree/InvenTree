@@ -43,6 +43,7 @@ import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.validators
 import order.validators
+from users.models import Owner
 
 logger = logging.getLogger('inventree')
 
@@ -1842,6 +1843,53 @@ class VerificationMethod(Enum):
     HMAC = 2
 
 
+class GenericWebTransaction(models.Model):
+    """Generic web transaction model.
+
+    Attributes:
+        message_id: Unique identifier for this message,
+        host: Host from which this message was received,
+        header: Header of this message,
+        body: Body of this message,
+        endpoint: Endpoint on which this message was received,
+        worked_on: Was the work on this message finished?
+    """
+    class Meta:
+        """Define this as abstract -> no DB entry is created."""
+
+        abstract = True
+
+    message_id = models.UUIDField(
+        verbose_name=_('Message ID'),
+        help_text=_('Unique identifier for this transaction'),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    host = models.CharField(
+        max_length=255,
+        verbose_name=_('Host'),
+        help_text=_('Host from which this message was received'),
+        editable=False,
+    )
+
+    header = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Header'),
+        help_text=_('Header of this message'),
+        editable=False,
+    )
+
+    body = models.JSONField(
+        blank=True, null=True,
+        verbose_name=_('Body'),
+        help_text=_('Body of this message'),
+        editable=False,
+    )
+
+
 class WebhookEndpoint(models.Model):
     """Defines a Webhook entdpoint.
 
@@ -1995,7 +2043,7 @@ class WebhookEndpoint(models.Model):
         return self.MESSAGE_OK
 
 
-class WebhookMessage(models.Model):
+class WebhookMessage(GenericWebTransaction):
     """Defines a webhook message.
 
     Attributes:
@@ -2006,36 +2054,6 @@ class WebhookMessage(models.Model):
         endpoint: Endpoint on which this message was received,
         worked_on: Was the work on this message finished?
     """
-
-    message_id = models.UUIDField(
-        verbose_name=_('Message ID'),
-        help_text=_('Unique identifier for this message'),
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    host = models.CharField(
-        max_length=255,
-        verbose_name=_('Host'),
-        help_text=_('Host from which this message was received'),
-        editable=False,
-    )
-
-    header = models.CharField(
-        max_length=255,
-        blank=True, null=True,
-        verbose_name=_('Header'),
-        help_text=_('Header of this message'),
-        editable=False,
-    )
-
-    body = models.JSONField(
-        blank=True, null=True,
-        verbose_name=_('Body'),
-        help_text=_('Body of this message'),
-        editable=False,
-    )
 
     endpoint = models.ForeignKey(
         WebhookEndpoint,
@@ -2192,3 +2210,81 @@ class NotificationMessage(models.Model):
     def age_human(self):
         """Humanized age."""
         return naturaltime(self.creation)
+
+
+class WebConnection(models.Model):
+    """Defines a Connection for a plugin or the core code base..
+
+    Attributes:
+        name: TODO,
+        active: TODO,
+        creator: TODO,
+        creation: TODO,
+        owner: TODO,
+        updated: TODO,
+    """
+
+    name = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Name'),
+        help_text=_('Name for this webhook')
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this webhook active')
+    )
+
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
+    )
+
+    creation = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    owner = models.ForeignKey(
+        Owner,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Owner'),
+        help_text=_('Select Owner')
+    )
+
+    updated = models.DateTimeField(
+        auto_now=True,
+        null=False,
+    )
+
+
+class WebConnectionTransaction(GenericWebTransaction):
+    """Records a webtransaction.
+
+    Attributes:
+        message_id: Unique identifier for this message,
+        host: Host for which this message was processed,
+        header: Header of this message,
+        body: Body of this message,
+        connection: Connection for which this message was processed,
+        processed: Was the work on this transaction finished?
+    """
+
+    connection = models.ForeignKey(
+        WebConnection,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Connection'),
+        help_text=_('Connection for which this message was processed'),
+    )
+
+    processed = models.BooleanField(
+        default=False,
+        verbose_name=_('Processed'),
+        help_text=_('Was the work on this transaction finished?'),
+    )
