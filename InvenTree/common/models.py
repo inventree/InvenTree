@@ -16,7 +16,7 @@ from enum import Enum
 from secrets import compare_digest
 
 from django.apps import apps
-from django.conf import settings
+from django.conf import settings as dj_settings
 from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -1804,14 +1804,14 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """Get all color themes from static folder."""
-        if not settings.STATIC_COLOR_THEMES_DIR.exists():
+        if not dj_settings.STATIC_COLOR_THEMES_DIR.exists():
             logger.error('Theme directory does not exsist')
             return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
 
-        for file in settings.STATIC_COLOR_THEMES_DIR.iterdir():
+        for file in dj_settings.STATIC_COLOR_THEMES_DIR.iterdir():
             files_list.append([file.stem, file.suffix])
 
         # Get color themes choices (CSS sheets)
