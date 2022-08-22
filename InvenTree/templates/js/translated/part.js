@@ -1043,20 +1043,34 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    if (row.target_date) {
-                        var html = row.target_date;
 
-                        if (row.overdue) {
-                            html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    var target = row.target_date || row.order_detail.target_date;
+
+                    var today = moment();
+
+                    var overdue = row.overdue || false;
+
+                    if (target) {
+                        if (moment(target) < today) {
+                            overdue = true;
                         }
+                    }
 
-                        return html;
+                    var html = '-';
+
+                    if (row.target_date) {
+                        html = row.target_date;
+
 
                     } else if (row.order_detail && row.order_detail.target_date) {
-                        return `<em>${row.order_detail.target_date}</em>`;
-                    } else {
-                        return '-';
+                        html = `<em>${row.order_detail.target_date}</em>`;
                     }
+
+                    if (overdue) {
+                        html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {
