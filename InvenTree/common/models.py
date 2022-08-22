@@ -11,9 +11,11 @@ import json
 import logging
 import math
 import uuid
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 from secrets import compare_digest
+from typing import List
 
 from django.apps import apps
 from django.conf import settings as dj_settings
@@ -2261,6 +2263,15 @@ class WebConnection(models.Model):
         auto_now=True,
         null=False,
     )
+
+
+@dataclass()
+class WebConnectionSettings:
+    """Type definition for WebConnection Settings."""
+    name: str
+    description: str
+    settings: List[dict]
+    multiple: bool = False
 
 
 class WebConnectionTransaction(GenericWebTransaction):
