@@ -2,6 +2,7 @@
 
 from common.notifications import (BulkNotificationMethod,
                                   SingleNotificationMethod)
+from plugin.base.supplier.mixins import SupplierMixin
 
 from ..base.action.mixins import ActionMixin
 from ..base.barcodes.mixins import BarcodeMixin
@@ -20,6 +21,7 @@ __all__ = [
     'NavigationMixin',
     'ScheduleMixin',
     'SettingsMixin',
+    'SupplierMixin',
     'UrlsMixin',
     'PanelMixin',
     'ActionMixin',
