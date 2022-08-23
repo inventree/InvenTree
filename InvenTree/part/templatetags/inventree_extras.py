@@ -325,6 +325,26 @@ def setting_object(key, *args, **kwargs):
 
 
 @register.simple_tag()
+def setting_ref(**kwargs):
+    """Return a settings reference for the specific settings object."""
+    ret = ''
+
+    if 'plugin' in kwargs:
+        ret += f" plugin={kwargs['plugin'].slug}"
+
+    if 'user' in kwargs:
+        ret += f" user='{kwargs['user'].id}'"
+
+    if 'method' in kwargs:
+        ret += f" notification='{kwargs['user'].id}'"
+
+    if 'connection' in kwargs:
+        ret += f" connection='{kwargs['connection']}'"
+
+    return ret
+
+
+@register.simple_tag()
 def settings_value(key, *args, **kwargs):
     """Return a settings value specified by the given key."""
     if 'user' in kwargs:
