@@ -141,4 +141,9 @@
     {% include 'InvenTree/settings/mixins/urls.html' %}
 {% endif %}
 
+{% mixin_enabled plugin 'supplier' as supplier %}
+{% if supplier %}
+    {% include 'InvenTree/settings/mixins/supplier.html' %}
+{% endif %}
+
 {% endblock %}

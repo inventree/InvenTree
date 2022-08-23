@@ -18,6 +18,7 @@ from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
 from common.settings import currency_code_default
 from InvenTree import settings, version
 from plugin import registry
+from plugin.base.supplier.models import ConnectionSetting
 from plugin.models import NotificationUserSetting, PluginSetting
 
 register = template.Library()
@@ -308,6 +309,9 @@ def setting_object(key, *args, **kwargs):
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
     """
+    if 'connection' in kwargs:
+        return ConnectionSetting.get_setting_object(key, connection=kwargs['connection'], plugin=kwargs['plugin'])
+
     if 'plugin' in kwargs:
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 

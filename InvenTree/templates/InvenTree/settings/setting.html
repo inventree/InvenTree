@@ -1,7 +1,9 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% if plugin %}
+{% if connection %}
+{% setting_object key connection=connection plugin=plugin as setting %}
+{% elif plugin %}
 {% setting_object key plugin=plugin as setting %}
 {% elif user_setting %}
 {% setting_object key user=request.user as setting %}
