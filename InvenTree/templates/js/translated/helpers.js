@@ -341,10 +341,10 @@ function sanitizeInputString(s, options={}) {
     s = s.trim();
 
     // Remove ASCII control characters
-    s = s.replace(/[^\x20-\x7E]+/g, "");
+    s = s.replace(/[^\x20-\x7E]+/g, '');
 
     // Remove type-setting charactrs
-    s = s.replace(/[\u200E\u200F\u202A\u202B\u202C\u202D\u202E]/g, "");
+    s = s.replace(/[\u200E\u200F\u202A\u202B\u202C\u202D\u202E]/g, '');
 
     return s;
 }
