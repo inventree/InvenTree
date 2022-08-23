@@ -313,11 +313,7 @@ def setting_object(key, *args, **kwargs):
         return ConnectionSetting.get_setting_object(key, connection=kwargs['connection'], plugin=kwargs['plugin'])
 
     if 'plugin' in kwargs:
-        # Note, 'plugin' is an instance of an InvenTreePlugin class
-
-        plugin = kwargs['plugin']
-
-        return PluginSetting.get_setting_object(key, plugin=plugin)
+        return PluginSetting.get_setting_object(key, plugin=kwargs['plugin'])
 
     if 'method' in kwargs:
         return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'])
