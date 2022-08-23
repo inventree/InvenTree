@@ -30,6 +30,12 @@ def plugin_settings(plugin, *args, **kwargs):
 
 
 @register.simple_tag()
+def plugin_connections(plugin, *args, **kwargs):
+    """List of all connections for the plugin."""
+    return registry.mixins_suppliers.get(plugin)
+
+
+@register.simple_tag()
 def mixin_enabled(plugin, key, *args, **kwargs):
     """Is the mixin registerd and configured in the plugin?"""
     return plugin.mixin_enabled(key)

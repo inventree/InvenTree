@@ -58,6 +58,7 @@ class PluginsRegistry:
 
         # mixins
         self.mixins_settings = {}
+        self.mixins_suppliers = {}
 
     def get_plugin(self, slug):
         """Lookup plugin by slug (unique key)."""
@@ -425,6 +426,7 @@ class PluginsRegistry:
 
         self.activate_plugin_settings(plugins)
         self.activate_plugin_schedule(plugins)
+        self.activate_plugin_supplier(plugins)
         self.activate_plugin_app(plugins, force_reload=force_reload, full_reload=full_reload)
 
     def _deactivate_plugins(self):
@@ -432,6 +434,7 @@ class PluginsRegistry:
         self.deactivate_plugin_app()
         self.deactivate_plugin_schedule()
         self.deactivate_plugin_settings()
+        self.deactivate_plugin_supplier()
     # endregion
 
     # region mixin specific loading ...
@@ -455,6 +458,22 @@ class PluginsRegistry:
         logger.info('Deactivating plugin settings')
         # clear settings cache
         self.mixins_settings = {}
+
+    def activate_plugin_supplier(self, plugins):
+        """Activate supplier plugins."""
+        logger.info('Activating supplier plugins')
+
+        self.mixins_suppliers = {}
+
+        for slug, plugin in plugins:
+            if plugin.mixin_enabled('supplier'):
+                self.mixins_suppliers[slug] = plugin.connections
+
+    def deactivate_plugin_supplier(self):
+        """Deactivate all supplier plugins."""
+        logger.info('Deactivating supplier plugins')
+        # clear settings cache
+        self.mixins_suppliers = {}
 
     def activate_plugin_schedule(self, plugins):
         """Activate scheudles from plugins with the ScheduleMixin."""
