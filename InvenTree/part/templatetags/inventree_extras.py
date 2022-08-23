@@ -309,19 +309,25 @@ def setting_object(key, *args, **kwargs):
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
     """
+    def return_ref(val):
+        """Return as dict if kwarg ref is set to true."""
+        if 'ref' in kwargs and kwargs['ref'] == 'true':
+            return {'setting': val, 'reference': setting_ref(**kwargs)}
+        return val
+
     if 'connection' in kwargs:
-        return ConnectionSetting.get_setting_object(key, connection=kwargs['connection'], plugin=kwargs['plugin'])
+        return_ref(ConnectionSetting.get_setting_object(key, connection=kwargs['connection'], plugin=kwargs['plugin']))
 
     if 'plugin' in kwargs:
-        return PluginSetting.get_setting_object(key, plugin=kwargs['plugin'])
+        return_ref(PluginSetting.get_setting_object(key, plugin=kwargs['plugin']))
 
     if 'method' in kwargs:
-        return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'])
+        return_ref(NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method']))
 
     if 'user' in kwargs:
-        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+        return_ref(InvenTreeUserSetting.get_setting_object(key, user=kwargs['user']))
 
-    return InvenTreeSetting.get_setting_object(key)
+    return_ref(InvenTreeSetting.get_setting_object(key))
 
 
 @register.simple_tag()
