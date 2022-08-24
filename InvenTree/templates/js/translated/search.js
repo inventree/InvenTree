@@ -98,7 +98,9 @@ var searchQueries = [];
 
 function searchTextChanged(event) {
 
-    searchText = $('#offcanvas-search').find('#search-input').val();
+    var text = $('#offcanvas-search').find('#search-input').val();
+
+    searchText = sanitizeInputString(text);
 
     clearTimeout(searchInputTimer);
     searchInputTimer = setTimeout(updateSearch, 250);
