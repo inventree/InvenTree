@@ -17,6 +17,7 @@ from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
 from plugin.base.supplier.models import ConnectionSetting
 from plugin.models import PluginConfig, PluginSetting
+from plugin.plugin import InvenTreePlugin
 from plugin.registry import registry
 
 
@@ -147,6 +148,38 @@ class PluginSettingList(ListAPI):
     ]
 
 
+def check_plugin(plugin_slug: str) -> InvenTreePlugin:
+    """Check that a plugin for the provided slug exsists and get the config.
+
+    Args:
+        plugin_slug (str): Slug for plugin.
+
+    Raises:
+        NotFound: If plugin is not installed
+        NotFound: If plugin is not correctly registered
+        NotFound: If plugin is not active
+
+    Returns:
+        InvenTreePlugin: The config object for the provided plugin.
+    """
+    # Check that the 'plugin' specified is valid!
+    if not PluginConfig.objects.filter(key=plugin_slug).exists():
+        raise NotFound(detail=f"Plugin '{plugin_slug}' not installed")
+
+    # Get the list of settings available for the specified plugin
+    plugin = registry.get_plugin(plugin_slug)
+
+    if plugin is None:
+        # This only occurs if the plugin mechanism broke
+        raise NotFound(detail=f"Plugin '{plugin_slug}' not found")  # pragma: no cover
+
+    # Check that the plugin is activated
+    if not plugin.is_active():
+        raise NotFound(detail=f"Plugin '{plugin_slug}' is not active")
+
+    return plugin
+
+
 class PluginSettingDetail(RetrieveUpdateAPI):
     """Detail endpoint for a plugin-specific setting.
 
@@ -165,20 +198,8 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         plugin_slug = self.kwargs['plugin']
         key = self.kwargs['key']
 
-        # Check that the 'plugin' specified is valid!
-        if not PluginConfig.objects.filter(key=plugin_slug).exists():
-            raise NotFound(detail=f"Plugin '{plugin_slug}' not installed")
-
-        # Get the list of settings available for the specified plugin
-        plugin = registry.get_plugin(plugin_slug)
-
-        if plugin is None:
-            # This only occurs if the plugin mechanism broke
-            raise NotFound(detail=f"Plugin '{plugin_slug}' not found")  # pragma: no cover
-
-        # Check that the plugin is activated
-        if not plugin.is_active():
-            raise NotFound(detail=f"Plugin '{plugin_slug}' is not active")
+        # Look up plugin
+        plugin = check_plugin(plugin_slug)
 
         settings = getattr(plugin, 'settings', {})
 
@@ -212,20 +233,8 @@ class WebConnectionSettingDetail(RetrieveUpdateAPI):
         key = self.kwargs['key']
         connection_slug = self.kwargs['connection']
 
-        # Check that the 'plugin' specified is valid!
-        if not PluginConfig.objects.filter(key=plugin_slug).exists():
-            raise NotFound(detail=f"Plugin '{plugin_slug}' not installed")
-
-        # Get the list of settings available for the specified plugin
-        plugin = registry.get_plugin(plugin_slug)
-
-        if plugin is None:
-            # This only occurs if the plugin mechanism broke
-            raise NotFound(detail=f"Plugin '{plugin_slug}' not found")  # pragma: no cover
-
-        # Check that the plugin is activated
-        if not plugin.is_active():
-            raise NotFound(detail=f"Plugin '{plugin_slug}' is not active")
+        # Look up plugin
+        plugin = check_plugin(plugin_slug)
 
         # Check the connection exsists
         connection = getattr(plugin, 'connections', {})
