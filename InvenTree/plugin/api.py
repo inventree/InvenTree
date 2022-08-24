@@ -176,7 +176,7 @@ class PluginSettingDetail(RetrieveUpdateAPI):
             # This only occurs if the plugin mechanism broke
             raise NotFound(detail=f"Plugin '{plugin_slug}' not found")  # pragma: no cover
 
-        settings = getattr(plugin, 'SETTINGS', {})
+        settings = getattr(plugin, 'settings', {})
 
         if key not in settings:
             raise NotFound(detail=f"Plugin '{plugin_slug}' has no setting matching '{key}'")
