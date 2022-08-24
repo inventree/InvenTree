@@ -12,13 +12,12 @@ import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
 from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
+from plugin import InvenTreePlugin, registry
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
 from plugin.base.supplier.models import ConnectionSetting
 from plugin.models import PluginConfig, PluginSetting
-from plugin.plugin import InvenTreePlugin
-from plugin.registry import registry
 
 
 class PluginList(ListAPI):
