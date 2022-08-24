@@ -15,6 +15,7 @@ from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
+from plugin.base.supplier.models import ConnectionSetting
 from plugin.models import PluginConfig, PluginSetting
 from plugin.registry import registry
 
@@ -188,6 +189,58 @@ class PluginSettingDetail(RetrieveUpdateAPI):
     ]
 
 
+class WebConnectionSettingDetail(RetrieveUpdateAPI):
+    """Detail endpoint for a supplier based webconnection setting.
+
+    Note that these cannot be created or deleted via the API
+    """
+
+    queryset = ConnectionSetting.objects.all()
+    serializer_class = PluginSerializers.PluginSettingSerializer
+
+    def get_object(self):
+        """Lookup the plugin setting object, based on the URL.
+
+        The URL provides the 'slug' of the plugin, and the 'key' of the setting.
+        Both the 'slug' and 'key' must be valid, else a 404 error is raised
+        """
+        plugin_slug = self.kwargs['plugin']
+        key = self.kwargs['key']
+        connection_slug = self.kwargs['connection']
+
+        # Check that the 'plugin' specified is valid!
+        if not PluginConfig.objects.filter(key=plugin_slug).exists():
+            raise NotFound(detail=f"Plugin '{plugin_slug}' not installed")
+
+        # Get the list of settings available for the specified plugin
+        plugin = registry.get_plugin(plugin_slug)
+
+        if plugin is None:
+            # This only occurs if the plugin mechanism broke
+            raise NotFound(detail=f"Plugin '{plugin_slug}' not found")  # pragma: no cover
+
+        # Check that the plugin is activated
+        if not plugin.is_active():
+            raise NotFound(detail=f"Plugin '{plugin_slug}' is not active")
+
+        # Check the connection exsists
+        connection = getattr(plugin, 'connections', {})
+        if connection_slug not in connection:
+            raise NotFound(detail=f"Plugin '{plugin_slug}' has no connection matching '{connection_slug}'")
+
+        # Check the setting exsists
+        settings = connection[connection_slug].settings
+        if key not in settings:
+            raise NotFound(detail=f"Plugin '{plugin_slug}' connection {connection_slug} has no setting matching '{key}'")
+
+        return ConnectionSetting.get_setting_object(key, plugin=plugin, connection=connection_slug)
+
+    # Staff permission required
+    permission_classes = [
+        GlobalSettingsPermissions,
+    ]
+
+
 plugin_api_urls = [
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
     re_path(r'^barcode/', include(barcode_api_urls)),
@@ -198,6 +251,10 @@ general_plugin_api_urls = [
 
     # Plugin settings URLs
     re_path(r'^settings/', include([
+        # WebConnection  - SupplierMixin
+        re_path(r'^(?P<plugin>\w+)/connection/(?P<connection>\w+)/(?P<key>\w+)/', WebConnectionSettingDetail.as_view(), name='api-plugin-webconnection-setting-detail'),
+
+        # PluginSetting
         re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
         re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
     ])),
