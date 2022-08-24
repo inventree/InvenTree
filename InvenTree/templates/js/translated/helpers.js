@@ -342,7 +342,7 @@ function sanitizeInputString(s, options={}) {
     s = s.replace(/[\x01-\x1F]+/g, '');
 
     // Remove Unicode control characters
-    s = s.replace(/[^\P{C}]+/g, '');
+    s = s.replace(/[\p{C}]+/gu, '');
 
     s = s.trim();
 
