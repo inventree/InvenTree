@@ -1,9 +1,8 @@
 """Mixins for (API) views in the whole project."""
 
-import re
-
 from django.utils.translation import gettext_lazy as _
 
+import regex
 from bleach import clean
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
@@ -73,11 +72,11 @@ class CleanMixin():
                 field: [_("Remove HTML tags from this value")]
             })
 
-        # Remove control characters from the provided string
-        cleaned = re.sub('[\x01-\x1F]+', '', cleaned)
+        # Remove ASCII control characters
+        cleaned = regex.sub(u'[\x01-\x1F]+', '', cleaned)
 
-        # Remove non-printable characters from the provided string
-        cleaned = re.sub('[^ -~]+', '', cleaned)
+        # Remove Unicode control characters
+        cleaned = regex.sub(u'[^\P{C}]+', '', cleaned)
 
         return cleaned
 
