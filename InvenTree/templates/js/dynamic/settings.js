@@ -36,14 +36,15 @@ function editSetting(key, options={}) {
 
     // Is this a global setting or a user setting?
     var global = options.global || false;
-
     var plugin = options.plugin;
-
     var notification = options.notification;
+    var connection = options.connection;
 
     var url = '';
 
-    if (plugin) {
+    if (connection) {
+        url = `/api/plugin/settings/${plugin}/connection/${connection}/${key}/`;
+    } else if (plugin) {
         url = `/api/plugin/settings/${plugin}/${key}/`;
     } else if (notification) {
         url = `/api/settings/notification/${pk}/`;

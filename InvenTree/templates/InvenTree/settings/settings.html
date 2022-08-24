@@ -109,6 +109,7 @@ $('table').find('.btn-edit-setting').click(function() {
     var plugin = $(this).attr('plugin');
     var is_global = true;
     var notification = $(this).attr('notification');
+    var connection = $(this).attr('connection');
 
     if ($(this).attr('user')){
         is_global = false;
@@ -116,7 +117,9 @@ $('table').find('.btn-edit-setting').click(function() {
 
     var title = '';
 
-    if (plugin != null) {
+    if (connection) {
+        title = '{% trans "Edit Connection Setting" %}';
+    } else if (plugin != null) {
         title = '{% trans "Edit Plugin Setting" %}';
     } else if (notification) {
         title = '{% trans "Edit Notification Setting" %}';
@@ -131,6 +134,7 @@ $('table').find('.btn-edit-setting').click(function() {
         plugin: plugin,
         global: is_global,
         notification: notification,
+        connection: connection,
         title: title,
     });
 });
