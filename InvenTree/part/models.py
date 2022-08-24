@@ -2424,6 +2424,13 @@ class PartParameterTemplate(models.Model):
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
 
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Parameter description'),
+        blank=True,
+    )
+
 
 class PartParameter(models.Model):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
