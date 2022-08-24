@@ -311,9 +311,11 @@ def setting_object(key, *args, **kwargs):
     """
     def return_ref(val):
         """Return as dict if kwarg ref is set to true."""
-        if 'ref' in kwargs and kwargs['ref'] == 'true':
-            return {'setting': val, 'reference': setting_ref(**kwargs)}
-        return val
+        ref = kwargs.pop('ref', None)
+
+        if ref and ref == 'true':
+            ref = setting_ref(**kwargs)
+        return {'setting': val, 'reference': ref}
 
     if 'connection' in kwargs:
         return_ref(ConnectionSetting.get_setting_object(key, connection=kwargs['connection'], plugin=kwargs['plugin']))
