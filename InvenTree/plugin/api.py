@@ -176,6 +176,10 @@ class PluginSettingDetail(RetrieveUpdateAPI):
             # This only occurs if the plugin mechanism broke
             raise NotFound(detail=f"Plugin '{plugin_slug}' not found")  # pragma: no cover
 
+        # Check that the plugin is activated
+        if not plugin.is_active():
+            raise NotFound(detail=f"Plugin '{plugin_slug}' is not active")
+
         settings = getattr(plugin, 'settings', {})
 
         if key not in settings:
