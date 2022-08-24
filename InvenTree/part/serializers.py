@@ -240,6 +240,7 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
             'pk',
             'name',
             'units',
+            'description',
         ]
 
 
