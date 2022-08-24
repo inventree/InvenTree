@@ -318,18 +318,18 @@ def setting_object(key, *args, **kwargs):
         return {'setting': val, 'reference': ref}
 
     if 'connection' in kwargs:
-        return_ref(ConnectionSetting.get_setting_object(key, connection=kwargs['connection'], plugin=kwargs['plugin']))
+        return return_ref(ConnectionSetting.get_setting_object(key, connection=kwargs['connection'], plugin=kwargs['plugin']))
 
     if 'plugin' in kwargs:
-        return_ref(PluginSetting.get_setting_object(key, plugin=kwargs['plugin']))
+        return return_ref(PluginSetting.get_setting_object(key, plugin=kwargs['plugin']))
 
     if 'method' in kwargs:
-        return_ref(NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method']))
+        return return_ref(NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method']))
 
     if 'user' in kwargs:
-        return_ref(InvenTreeUserSetting.get_setting_object(key, user=kwargs['user']))
+        return return_ref(InvenTreeUserSetting.get_setting_object(key, user=kwargs['user']))
 
-    return_ref(InvenTreeSetting.get_setting_object(key))
+    return return_ref(InvenTreeSetting.get_setting_object(key))
 
 
 @register.simple_tag()
