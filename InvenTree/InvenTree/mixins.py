@@ -2,6 +2,7 @@
 
 from django.utils.translation import gettext_lazy as _
 
+import regex
 from bleach import clean
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
@@ -70,6 +71,12 @@ class CleanMixin():
             raise ValidationError({
                 field: [_("Remove HTML tags from this value")]
             })
+
+        # Remove ASCII control characters
+        cleaned = regex.sub(u'[\x01-\x1F]+', '', cleaned)
+
+        # Remove Unicode control characters
+        cleaned = regex.sub(u'[^\P{C}]+', '', cleaned)
 
         return cleaned
 

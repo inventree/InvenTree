@@ -223,7 +223,10 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         self.assertEqual(PartCategoryParameterTemplate.objects.count(), 0)
 
     def test_bleach(self):
-        """Test that the data cleaning functionality is working"""
+        """Test that the data cleaning functionality is working.
+
+        This helps to protect against XSS injection
+        """
 
         url = reverse('api-part-category-detail', kwargs={'pk': 1})
 
@@ -244,6 +247,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 expected_code=400
             )
 
+            self.assertIn('Remove HTML tags', str(response.data))
+
         # Raw characters should be allowed
         allowed = [
             '<< hello',
@@ -261,6 +266,30 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             )
 
             self.assertEqual(response.data['description'], val)
+
+    def test_invisible_chars(self):
+        """Test that invisible characters are removed from the input data"""
+
+        url = reverse('api-part-category-detail', kwargs={'pk': 1})
+
+        values = [
+            'A part\n category\n\t',
+            'A\t part\t category\t',
+            'A pa\rrt cat\r\r\regory',
+            'A part\u200e catego\u200fry\u202e'
+        ]
+
+        for val in values:
+
+            response = self.patch(
+                url,
+                {
+                    'description': val,
+                },
+                expected_code=200,
+            )
+
+            self.assertEqual(response.data['description'], 'A part category')
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
