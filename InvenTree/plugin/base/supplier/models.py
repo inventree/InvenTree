@@ -14,7 +14,7 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
     class Meta:
         """Meta for ConnectionSetting."""
         unique_together = [
-            ('plugin', 'key'),
+            ('connection', 'plugin', 'key'),
         ]
 
     plugin = models.ForeignKey(
@@ -26,7 +26,6 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
     )
 
     connection = models.CharField(
-        unique=True,
         max_length=255,
         verbose_name=_('Connection'),
         help_text=_('connection'),
