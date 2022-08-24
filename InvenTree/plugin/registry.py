@@ -60,7 +60,7 @@ class PluginsRegistry:
         self.mixins_settings = {}
         self.mixins_suppliers = {}
 
-    def get_plugin(self, slug):
+    def get_plugin(self, slug: str) -> InvenTreePlugin:
         """Lookup plugin by slug (unique key)."""
         if slug not in self.plugins:
             logger.warning(f"Plugin registry has no record of plugin '{slug}'")
