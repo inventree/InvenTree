@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 import common.models
 from plugin import registry
 from plugin.models import PluginConfig
+from plugin.plugin import InvenTreePlugin
 
 
 class ConnectionSetting(common.models.BaseInvenTreeSetting):
@@ -39,8 +40,11 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
             plugin = kwargs.pop('plugin', None)
             connection = kwargs.pop('connection', None)
 
+            if issubclass(plugin.__class__, InvenTreePlugin):
+                plugin = plugin.plugin_config()
+
             if plugin and connection:
-                plugin_connection_settings = registry.mixins_suppliers.get(plugin, None)
+                plugin_connection_settings = registry.mixins_suppliers.get(plugin.key, None)
                 if plugin_connection_settings:
                     connection_settings = plugin_connection_settings.get(connection, None)
                     if connection_settings:
