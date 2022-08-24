@@ -1,5 +1,7 @@
 """Mixins for (API) views in the whole project."""
 
+import re
+
 from django.utils.translation import gettext_lazy as _
 
 from bleach import clean
@@ -70,6 +72,12 @@ class CleanMixin():
             raise ValidationError({
                 field: [_("Remove HTML tags from this value")]
             })
+
+        # Remove control characters from the provided string
+        cleaned = re.sub('[\x01-\x1F]+', '', cleaned)
+
+        # Remove non-printable characters from the provided string
+        cleaned = re.sub('[^ -~]+', '', cleaned)
 
         return cleaned
 
