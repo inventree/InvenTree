@@ -38,6 +38,7 @@ from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
 from .forms import EditUserForm, SetPasswordForm
+from .helpers import remove_non_printable_characters, strip_html_tags
 
 
 def auth_request(request):
@@ -599,6 +600,9 @@ class SearchView(TemplateView):
         context = self.get_context_data()
 
         query = request.POST.get('search', '')
+
+        query = strip_html_tags(query, raise_error=False)
+        query = remove_non_printable_characters(query)
 
         context['query'] = query
 
