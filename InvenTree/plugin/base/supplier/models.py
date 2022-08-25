@@ -65,3 +65,7 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
             'plugin': self.plugin,
             'connection_key': self.connection_key,
         }
+
+    def __str__(self) -> str:
+        """Pretty display name for ConenctionSetting."""
+        return f'{self.plugin.key} \ {self.connection_key} \ {self.connection.name} : {self.key}'
