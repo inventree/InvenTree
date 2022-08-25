@@ -53,11 +53,6 @@ from stock import models as StockModels
 logger = logging.getLogger("inventree")
 
 
-def do_something():
-    print("commit")
-    pass  # send a mail, invalidate a cache, fire off a Celery task, etc.
-
-
 class PartCategory(MetadataMixin, InvenTreeTree):
     """PartCategory provides hierarchical organization of Part objects.
 
@@ -124,65 +119,65 @@ class PartCategory(MetadataMixin, InvenTreeTree):
             print("delete_recursive error")
             pass
 
-    @transaction.atomic
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
-        print(kwargs)
-        delete_parts = kwargs.get('delete_parts', False)
-        print(delete_parts)
-        parent_category = kwargs.get('parent_category', None)
+        with transaction.atomic():
+            print(kwargs)
+            delete_parts = kwargs.get('delete_parts', False)
+            print(delete_parts)
+            parent_category = kwargs.get('parent_category', None)
 
-        parent = self.parent
-        tree_id = self.tree_id
+            parent = self.parent
+            tree_id = self.tree_id
 
-        if delete_parts:
-            print("delete parts")
-            # Delete each part in this category if user wants to do that
-            self.parts.delete()
-        else:
-            # Update each part in this category to point to the parent category
-            for p in self.parts.all():
-                print("move part to parent")
+            if delete_parts:
+                print("delete parts")
+                # Delete each part in this category if user wants to do that
+                self.parts.delete()
+            else:
+                # Update each part in this category to point to the parent category
+                for p in self.parts.all():
+                    print("move part to parent")
+                    if parent_category is None:
+                        # First iteration, (no part_category kwargs passed)
+                        print("1st iteration")
+                        p.category = parent
+                    else:
+                        print("Lower iteration")
+                        # We are in recursive iteration update the part category to the
+                        # parent of the topmost deleted category
+                        p.category = parent_category
+                    p.save()
+
+            if kwargs.get('delete_child_categories', False):
+                print("delete child cats")
+                # Recursively delete all child categories
                 if parent_category is None:
-                    # First iteration, (no part_category kwargs passed)
-                    print("1st iteration")
-                    p.category = parent
-                else:
-                    print("Lower iteration")
-                    # We are in recursive iteration update the part category to the
-                    # parent of the topmost deleted category
-                    p.category = parent_category
-                p.save()
+                    parent_category = parent
+                for child in self.children.all():
+                    child.delete_recursive(**dict(delete_child_categories=True,
+                                                  delete_parts=delete_parts,
+                                                  parent_category=parent_category,
+                                                  rebuild=False))
+            else:
+                print("move child categories up")
+                # Move each child category to the parent of the deleted category
+                for child in self.children.all():
+                    print(child.id)
+                    print(child.parent)
+                    child.parent = parent
+                    print(child.parent)
+                    child.save()
 
-        if kwargs.get('delete_child_categories', False):
-            print("delete child cats")
-            # Recursively delete all child categories
-            if parent_category is None:
-                parent_category = parent
-            for child in self.children.all():
-                child.delete_recursive(**dict(delete_child_categories=True,
-                                              delete_parts=delete_parts,
-                                              parent_category=parent_category,
-                                              rebuild=False))
-        else:
-            print("move child categories up")
-            # Move each child category to the parent of the deleted category
-            for child in self.children.all():
-                print(child.id)
-                print(child.parent)
-                child.parent = parent
-                print(child.parent)
-                child.save()
+            super().delete(*args, **dict())
 
-        super().delete(*args, **dict())
-
-        if parent is not None:
-            # Partially rebuild the tree (cheaper than a complete rebuild)
-            PartCategory.objects.partial_rebuild(tree_id)
-        else:
-            PartCategory.objects.rebuild()
+            if parent is not None:
+                # Partially rebuild the tree (cheaper than a complete rebuild)
+                PartCategory.objects.partial_rebuild(tree_id)
+            else:
+                PartCategory.objects.rebuild()
 
     default_location = TreeForeignKey(
         'stock.StockLocation', related_name="default_categories",
