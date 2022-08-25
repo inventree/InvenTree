@@ -14,7 +14,7 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
     class Meta:
         """Meta for ConnectionSetting."""
         unique_together = [
-            ('connection', 'plugin', 'key'),
+            ('connection_key', 'plugin', 'key'),
         ]
 
     plugin = models.ForeignKey(
@@ -25,10 +25,10 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
         on_delete=models.CASCADE,
     )
 
-    connection = models.CharField(
+    connection_key = models.CharField(
         max_length=255,
-        verbose_name=_('Connection'),
-        help_text=_('connection'),
+        verbose_name=_('Connection key'),
+        help_text=_('connection key'),
     )
 
     @classmethod
@@ -37,15 +37,15 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
         if 'settings' not in kwargs:
 
             plugin = kwargs.pop('plugin', None)
-            connection = kwargs.pop('connection', None)
+            connection_key = kwargs.pop('connection_key', None)
 
             if issubclass(plugin.__class__, InvenTreePlugin):
                 plugin = plugin.plugin_config()
 
-            if plugin and connection:
+            if plugin and connection_key:
                 plugin_connection_settings = registry.mixins_suppliers.get(plugin.key, None)
                 if plugin_connection_settings:
-                    connection_settings = plugin_connection_settings.get(connection, None)
+                    connection_settings = plugin_connection_settings.get(connection_key, None)
                     if connection_settings:
                         kwargs['settings'] = connection_settings.settings
 
@@ -55,5 +55,5 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
         """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
         return {
             'plugin': self.plugin,
-            'connection': self.connection,
+            'connection_key': self.connection_key,
         }

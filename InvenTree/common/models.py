@@ -310,11 +310,11 @@ class BaseInvenTreeSetting(models.Model):
             filters['plugin'] = plugin
             kwargs['plugin'] = plugin
 
-        # Filter by connection
-        connection = kwargs.get('connection', None)
+        # Filter by connection_key
+        connection_key = kwargs.get('connection_key', None)
 
-        if connection is not None:
-            filters['connection'] = connection
+        if connection_key is not None:
+            filters['connection_key'] = connection_key
 
         # Filter by method
         method = kwargs.get('method', None)

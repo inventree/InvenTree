@@ -317,8 +317,8 @@ def setting_object(key, *args, **kwargs):
             ref = setting_ref(**kwargs)
         return {'setting': val, 'reference': ref}
 
-    if 'connection' in kwargs:
-        return return_ref(ConnectionSetting.get_setting_object(key, connection=kwargs['connection'], plugin=kwargs['plugin']))
+    if 'connection_key' in kwargs:
+        return return_ref(ConnectionSetting.get_setting_object(key, connection_key=kwargs['connection_key'], plugin=kwargs['plugin']))
 
     if 'plugin' in kwargs:
         return return_ref(PluginSetting.get_setting_object(key, plugin=kwargs['plugin']))
@@ -346,8 +346,8 @@ def setting_ref(**kwargs):
     if 'method' in kwargs:
         ret += f" notification='{kwargs['user'].id}'"
 
-    if 'connection' in kwargs:
-        ret += f" connection={kwargs['connection']}"
+    if 'connection_key' in kwargs:
+        ret += f" connection_key={kwargs['connection_key']}"
 
     return ret
 

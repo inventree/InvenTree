@@ -230,22 +230,22 @@ class WebConnectionSettingDetail(RetrieveUpdateAPI):
         """
         plugin_slug = self.kwargs['plugin']
         key = self.kwargs['key']
-        connection_slug = self.kwargs['connection']
+        connection_key_slug = self.kwargs['connection_key']
 
         # Look up plugin
         plugin = check_plugin(plugin_slug)
 
         # Check the connection exsists
-        connection = getattr(plugin, 'connections', {})
-        if connection_slug not in connection:
-            raise NotFound(detail=f"Plugin '{plugin_slug}' has no connection matching '{connection_slug}'")
+        connection_key = getattr(plugin, 'connections', {})
+        if connection_key_slug not in connection_key:
+            raise NotFound(detail=f"Plugin '{plugin_slug}' has no connection_key matching '{connection_key_slug}'")
 
         # Check the setting exsists
-        settings = connection[connection_slug].settings
+        settings = connection_key[connection_key_slug].settings
         if key not in settings:
-            raise NotFound(detail=f"Plugin '{plugin_slug}' connection {connection_slug} has no setting matching '{key}'")
+            raise NotFound(detail=f"Plugin '{plugin_slug}' connection_key {connection_key_slug} has no setting matching '{key}'")
 
-        return ConnectionSetting.get_setting_object(key, plugin=plugin, connection=connection_slug)
+        return ConnectionSetting.get_setting_object(key, plugin=plugin, connection_key=connection_key_slug)
 
     # Staff permission required
     permission_classes = [
@@ -264,7 +264,7 @@ general_plugin_api_urls = [
     # Plugin settings URLs
     re_path(r'^settings/', include([
         # WebConnection  - SupplierMixin
-        re_path(r'^(?P<plugin>\w+)/connection/(?P<connection>\w+)/(?P<key>\w+)/', WebConnectionSettingDetail.as_view(), name='api-plugin-webconnection-setting-detail'),
+        re_path(r'^(?P<plugin>\w+)/connection/(?P<connection_key>\w+)/(?P<connection>\w+)/(?P<key>\w+)/', WebConnectionSettingDetail.as_view(), name='api-plugin-webconnection-setting-detail'),
 
         # PluginSetting
         re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),

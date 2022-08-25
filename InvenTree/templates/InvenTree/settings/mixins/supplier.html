@@ -13,7 +13,7 @@
 <table class='table table-striped table-condensed'>
     <tbody>
         {% for connection_setting in connection.settings %}
-            {% include "InvenTree/settings/setting.html" with key=connection_setting connection=key plugin=plugin %}
+            {% include "InvenTree/settings/setting.html" with key=connection_setting connection_key=key plugin=plugin %}
         {% endfor %}
     </tbody>
 </table>

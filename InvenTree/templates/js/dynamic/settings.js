@@ -38,12 +38,12 @@ function editSetting(key, options={}) {
     var global = options.global || false;
     var plugin = options.plugin;
     var notification = options.notification;
-    var connection = options.connection;
+    var connection_key = options.connection_key;
 
     var url = '';
 
-    if (connection) {
-        url = `/api/plugin/settings/${plugin}/connection/${connection}/${key}/`;
+    if (connection_key) {
+        url = `/api/plugin/settings/${plugin}/connection/${connection_key}/${key}/`;
     } else if (plugin) {
         url = `/api/plugin/settings/${plugin}/${key}/`;
     } else if (notification) {

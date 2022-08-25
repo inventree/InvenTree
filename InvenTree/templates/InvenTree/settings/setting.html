@@ -1,8 +1,8 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% if connection %}
-{% setting_object key connection=connection plugin=plugin ref='true' as set_obj %}
+{% if connection_key %}
+{% setting_object key connection_key=connection_key plugin=plugin ref='true' as set_obj %}
 {% elif plugin %}
 {% setting_object key plugin=plugin ref='true' as set_obj %}
 {% elif user_setting %}
