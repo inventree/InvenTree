@@ -110,6 +110,7 @@ $('table').find('.btn-edit-setting').click(function() {
     var is_global = true;
     var notification = $(this).attr('notification');
     var connection_key = $(this).attr('connection_key');
+    var connection = $(this).attr('connection');
 
     if ($(this).attr('user')){
         is_global = false;
@@ -135,6 +136,7 @@ $('table').find('.btn-edit-setting').click(function() {
         global: is_global,
         notification: notification,
         connection_key: connection_key,
+        connection: connection,
         title: title,
     });
 });

@@ -14,7 +14,7 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
     class Meta:
         """Meta for ConnectionSetting."""
         unique_together = [
-            ('connection_key', 'plugin', 'key'),
+            ('connection', 'connection_key', 'plugin', 'key'),
         ]
 
     plugin = models.ForeignKey(
@@ -22,6 +22,14 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
         related_name='connections',
         null=False,
         verbose_name=_('Plugin'),
+        on_delete=models.CASCADE,
+    )
+
+    connection = models.ForeignKey(
+        common.models.WebConnection,
+        related_name='settings',
+        null=False,
+        verbose_name=_('Connection'),
         on_delete=models.CASCADE,
     )
 

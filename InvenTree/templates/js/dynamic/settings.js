@@ -39,11 +39,12 @@ function editSetting(key, options={}) {
     var plugin = options.plugin;
     var notification = options.notification;
     var connection_key = options.connection_key;
+    var connection = options.connection;
 
     var url = '';
 
     if (connection_key) {
-        url = `/api/plugin/settings/${plugin}/connection/${connection_key}/${key}/`;
+        url = `/api/plugin/settings/${plugin}/connection/${connection_key}/${connection}/${key}/`;
     } else if (plugin) {
         url = `/api/plugin/settings/${plugin}/${key}/`;
     } else if (notification) {

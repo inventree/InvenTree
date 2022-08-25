@@ -347,7 +347,7 @@ def setting_ref(**kwargs):
         ret += f" notification='{kwargs['user'].id}'"
 
     if 'connection_key' in kwargs:
-        ret += f" connection_key={kwargs['connection_key']}"
+        ret += f" connection_key={kwargs['connection_key']} connection={kwargs['connection']}"
 
     return ret
 

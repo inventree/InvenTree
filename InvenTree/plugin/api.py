@@ -231,6 +231,7 @@ class WebConnectionSettingDetail(RetrieveUpdateAPI):
         plugin_slug = self.kwargs['plugin']
         key = self.kwargs['key']
         connection_key_slug = self.kwargs['connection_key']
+        connection_slug = self.kwargs['connection']
 
         # Look up plugin
         plugin = check_plugin(plugin_slug)
@@ -245,7 +246,7 @@ class WebConnectionSettingDetail(RetrieveUpdateAPI):
         if key not in settings:
             raise NotFound(detail=f"Plugin '{plugin_slug}' connection_key {connection_key_slug} has no setting matching '{key}'")
 
-        return ConnectionSetting.get_setting_object(key, plugin=plugin, connection_key=connection_key_slug)
+        return ConnectionSetting.get_setting_object(key, plugin=plugin, connection_key=connection_key_slug, connection_id=connection_slug)
 
     # Staff permission required
     permission_classes = [

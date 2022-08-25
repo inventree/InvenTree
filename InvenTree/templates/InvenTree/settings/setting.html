@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% if connection_key %}
-{% setting_object key connection_key=connection_key plugin=plugin ref='true' as set_obj %}
+{% setting_object key connection_key=connection_key connection=connection_ref plugin=plugin ref='true' as set_obj %}
 {% elif plugin %}
 {% setting_object key plugin=plugin ref='true' as set_obj %}
 {% elif user_setting %}
