@@ -896,11 +896,13 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
 def remove_non_printable_characters(value: str, remove_ascii=True, remove_unicode=True):
     """Remove non-printable / control characters from the provided string"""
 
-    # Remove ASCII control characters
-    cleaned = regex.sub(u'[\x01-\x1F]+', '', value)
+    if remove_ascii:
+        # Remove ASCII control characters
+        cleaned = regex.sub(u'[\x01-\x1F]+', '', value)
 
-    # Remove Unicode control characters
-    cleaned = regex.sub(u'[^\P{C}]+', '', value)
+    if remove_unicode:
+        # Remove Unicode control characters
+        cleaned = regex.sub(u'[^\P{C}]+', '', value)
 
     return cleaned
 
