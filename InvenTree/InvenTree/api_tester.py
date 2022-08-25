@@ -9,7 +9,6 @@ from django.contrib.auth.models import Group
 from django.http.response import StreamingHttpResponse
 
 from rest_framework.test import APITestCase
-from rest_framework.test import APITransactionTestCase
 
 
 class UserMixin:
@@ -88,7 +87,7 @@ class UserMixin:
                 break
 
 
-class InvenTreeAPITestCase(UserMixin, APITransactionTestCase):
+class InvenTreeAPITestCase(UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
     def getActions(self, url):

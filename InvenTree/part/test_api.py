@@ -18,6 +18,8 @@ from part.models import (BomItem, BomItemSubstitute, Part, PartCategory,
                          PartRelated)
 from stock.models import StockItem, StockLocation
 
+from django.core.cache import cache
+
 
 class PartCategoryAPITest(InvenTreeAPITestCase):
     """Unit tests for the PartCategory API."""
@@ -250,12 +252,15 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         self.assertEqual(cat.description, '<a href="www.google.com">LINK</a>&lt;script&gt;alert("h4x0r")&lt;/script&gt;')
 
     def test_category_delete(self):
+        cache.clear()
+
         # execute 4 test cases:
         # 0: all child categories and parts moved under the parent category (old behavior)
         # 1: move subcategories to parent, delete all parts
         # 2: delete subcategories, move parts to parent
         # 3: delete subcategories, delete all parts
         for i in range(4):
+            cache.clear()
             delete_child_categories: bool = False
             delete_parts: bool = False
 
@@ -310,6 +315,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                         description="A test part",
                         category=child
                     ))
+
+            cache.clear()
 
             # Delete the created category (sub categories and their parts will be moved under the parent)
             params = {}

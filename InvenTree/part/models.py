@@ -52,9 +52,11 @@ from stock import models as StockModels
 
 logger = logging.getLogger("inventree")
 
+
 def do_something():
     print("commit")
     pass  # send a mail, invalidate a cache, fire off a Celery task, etc.
+
 
 class PartCategory(MetadataMixin, InvenTreeTree):
     """PartCategory provides hierarchical organization of Part objects.
@@ -76,7 +78,6 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         parent_category = kwargs.get('parent_category', None)
         try:
             parent = self.parent
-            tree_id = self.tree_id
 
             if delete_parts:
                 print("delete parts")
@@ -162,9 +163,9 @@ class PartCategory(MetadataMixin, InvenTreeTree):
                 parent_category = parent
             for child in self.children.all():
                 child.delete_recursive(**dict(delete_child_categories=True,
-                                    delete_parts=delete_parts,
-                                    parent_category=parent_category,
-                                    rebuild=False))
+                                              delete_parts=delete_parts,
+                                              parent_category=parent_category,
+                                              rebuild=False))
         else:
             print("move child categories up")
             # Move each child category to the parent of the deleted category
