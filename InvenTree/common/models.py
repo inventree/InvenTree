@@ -2272,8 +2272,8 @@ class WebConnection(models.Model):
 
 
 @dataclass()
-class WebConnectionSettings:
-    """Type definition for WebConnection Settings."""
+class WebConnectionData:
+    """Type definition for a WebConnection."""
     name: str
     description: str
     settings: List[dict]

@@ -3,7 +3,7 @@
 import logging
 from typing import Dict
 
-from common.models import WebConnectionSettings
+from common.models import WebConnectionData
 
 logger = logging.getLogger('inventree')
 
@@ -11,7 +11,7 @@ logger = logging.getLogger('inventree')
 class SupplierMixin:
     """Mixin to enable supplier integration."""
 
-    CONNECTIONS: Dict[str, WebConnectionSettings]
+    CONNECTIONS: Dict[str, WebConnectionData]
 
     class MixinMeta:
         """Meta for mixin."""
