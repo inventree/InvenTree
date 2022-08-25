@@ -19,7 +19,7 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
 
     plugin = models.ForeignKey(
         PluginConfig,
-        related_name='connections',
+        related_name='connection_settings',
         null=False,
         verbose_name=_('Plugin'),
         on_delete=models.CASCADE,
