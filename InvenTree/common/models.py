@@ -561,12 +561,20 @@ class BaseInvenTreeSetting(models.Model):
 
         user = getattr(self, 'user', None)
         plugin = getattr(self, 'plugin', None)
+        connection = getattr(self, 'connection', None)
+        connection_key = getattr(self, 'connection_key', None)
 
         if user is not None:
             filters['user'] = user
 
         if plugin is not None:
             filters['plugin'] = plugin
+
+        if connection is not None:
+            filters['connection'] = connection
+
+        if connection_key is not None:
+            filters['connection_key'] = connection_key
 
         try:
             # Check if a duplicate setting already exists
