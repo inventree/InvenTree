@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-25 10:08+0000\n"
-"PO-Revision-Date: 2022-08-26 01:55\n"
+"PO-Revision-Date: 2022-08-27 01:59\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -930,11 +930,11 @@ msgstr "Extranotizen für den Bauauftrag"
 #: build/models.py:538
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "Bauauftrag {build} wurde fertiggestellt"
 
 #: build/models.py:544
 msgid "A build order has been completed"
-msgstr ""
+msgstr "Ein Bauauftrag wurde fertiggestellt"
 
 #: build/models.py:723
 msgid "No build output specified"
@@ -1299,7 +1299,7 @@ msgstr ""
 #: build/tasks.py:123
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr ""
+msgstr "Bauauftrag {bo} ist jetzt überfällig"
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
@@ -3963,12 +3963,12 @@ msgstr "Folgende Seriennummern sind bereits zugewiesen"
 
 #: order/tasks.py:26
 msgid "Overdue Purchase Order"
-msgstr ""
+msgstr "Überfällige Bestellung"
 
 #: order/tasks.py:31
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
-msgstr ""
+msgstr "Bestellung {po} ist jetzt überfällig"
 
 #: order/tasks.py:88
 msgid "Overdue Sales Order"
@@ -3977,7 +3977,7 @@ msgstr ""
 #: order/tasks.py:93
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
-msgstr ""
+msgstr "Auftrag {so} ist jetzt überfällig"
 
 #: order/templates/order/order_base.html:33
 msgid "Print purchase order report"
@@ -4338,11 +4338,11 @@ msgstr "Standard-Stichworte für Teile dieser Kategorie"
 
 #: part/models.py:107 stock/models.py:84
 msgid "Icon"
-msgstr ""
+msgstr "Symbol"
 
 #: part/models.py:108 stock/models.py:85
 msgid "Icon (optional)"
-msgstr ""
+msgstr "Symbol (optional)"
 
 #: part/models.py:122 part/models.py:2508 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
