@@ -282,6 +282,17 @@ function completePurchaseOrder(order_id, options={}) {
             method: 'POST',
             title: '{% trans "Complete Purchase Order" %}',
             confirm: true,
+            fieldsFunction: function(opts) {
+                var fields = {
+                    accept_incomplete: {},
+                };
+
+                if (opts.context.is_complete) {
+                    delete fields['accept_incomplete'];
+                }
+
+                return fields;
+            },
             preFormContent: function(opts) {
 
                 var html = `

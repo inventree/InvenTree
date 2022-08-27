@@ -204,6 +204,21 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
 class PurchaseOrderCompleteSerializer(serializers.Serializer):
     """Serializer for completing a purchase order."""
 
+    accept_incomplete = serializers.BooleanField(
+        label=_('Accept Incomplete'),
+        help_text=_('Allow order to be closed with incoimplete line items'),
+        required=False,
+        default=False,
+    )
+
+    def validate_accept_incomplete(self, value):
+        """Check if the 'accept_incomplete' field is required"""
+
+        order = self.context['order']
+
+        if not value and not order.is_complete:
+            raise ValidationError(_("Order has incomplete line items"))
+
     class Meta:
         """Metaclass options."""
 
