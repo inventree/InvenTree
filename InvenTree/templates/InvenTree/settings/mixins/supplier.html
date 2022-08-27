@@ -5,16 +5,25 @@
     <h4>{% trans "Web Connections" %}</h4>
 </div>
 
-{% plugin_connections plugin_key as plugin_connections %}
-{% for key, connection in plugin_connections.items %}
-{{connection.name}}:<br>
-{{connection.description}}
+{% plugin_connections plugin_key as connections%}
+
+{% for key, connection_def in connections.items %}
+{{connection_def.setup.name}}:<br>
+{{connection_def.setup.description}}
 <hr>
-<table class='table table-striped table-condensed'>
-    <tbody>
-        {% for connection_setting in connection.settings %}
-            {% include "InvenTree/settings/setting.html" with key=connection_setting connection_key=key plugin=plugin %}
-        {% endfor %}
-    </tbody>
-</table>
+{% for connection in connection_def.connections %}
+    <div class="mx-5">
+        <h5>{{connection.name}}</h5>
+        {{connection.comment}}
+        <table class='table table-striped table-condensed'>
+            <tbody>
+                {% for connection_setting in connection_def.setup.settings %}
+                    {% include "InvenTree/settings/setting.html" with key=connection_setting connection_key=key connection_ref=connection.id plugin=plugin %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endfor %}
+
+
 {% endfor %}

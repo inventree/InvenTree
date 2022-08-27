@@ -318,7 +318,7 @@ def setting_object(key, *args, **kwargs):
         return {'setting': val, 'reference': ref}
 
     if 'connection_key' in kwargs:
-        return return_ref(ConnectionSetting.get_setting_object(key, connection_key=kwargs['connection_key'], plugin=kwargs['plugin']))
+        return return_ref(ConnectionSetting.get_setting_object(key, connection_key=kwargs['connection_key'], connection_id=kwargs['connection'], plugin=kwargs['plugin']))
 
     if 'plugin' in kwargs:
         return return_ref(PluginSetting.get_setting_object(key, plugin=kwargs['plugin']))

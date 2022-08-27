@@ -32,7 +32,13 @@ def plugin_settings(plugin, *args, **kwargs):
 @register.simple_tag()
 def plugin_connections(plugin, *args, **kwargs):
     """List of all connections for the plugin."""
-    return registry.mixins_suppliers.get(plugin)
+    ret = {}
+    for key, val in registry.mixins_suppliers.get(plugin).items():
+        ret[key] = {
+            'setup': val,
+            'connections': registry.get_plugin(plugin).db.webconnections.filter(connection_key=key)
+        }
+    return ret
 
 
 @register.simple_tag()

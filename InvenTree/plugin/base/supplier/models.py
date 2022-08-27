@@ -64,6 +64,7 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
         return {
             'plugin': self.plugin,
             'connection_key': self.connection_key,
+            'connection': self.connection,
         }
 
     def __str__(self) -> str:
