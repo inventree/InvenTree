@@ -2299,6 +2299,10 @@ class WebConnection(models.Model):
         null=False,
     )
 
+    def __str__(self) -> str:
+        """Pretty name for connection."""
+        return f'{self.plugin.key} \ {self.connection_key} : {self.name}'
+
     def get_api_url(self):
         """Return API endpoint."""
         return reverse('api-plugin-connection-list')
