@@ -2234,7 +2234,10 @@ class WebConnection(models.Model):
     """Defines a Connection for a plugin or the core code base..
 
     Attributes:
+        plugin: TODO,
+        connection_key: TODO,
         name: TODO,
+        comment: TODO,
         active: TODO,
         creator: TODO,
         creation: TODO,
@@ -2242,17 +2245,33 @@ class WebConnection(models.Model):
         updated: TODO,
     """
 
+    plugin = models.ForeignKey(
+        'plugin.PluginConfig',
+        related_name='webconnections',
+        null=False,
+        verbose_name=_('Plugin'),
+        on_delete=models.CASCADE,
+    )
+
+    connection_key = models.CharField(
+        max_length=255,
+        verbose_name=_('Connection key'),
+        help_text=_('connection key'),
+    )
+
     name = models.CharField(
         max_length=255,
         blank=True, null=True,
         verbose_name=_('Name'),
-        help_text=_('Name for this webhook')
+        help_text=_('Name for this connections')
     )
+
+    comment = models.CharField(blank=True, max_length=100, verbose_name=_('Comment'), help_text=_('Connection comment'))
 
     active = models.BooleanField(
         default=True,
         verbose_name=_('Active'),
-        help_text=_('Is this webhook active')
+        help_text=_('Is this connection active')
     )
 
     creator = models.ForeignKey(
