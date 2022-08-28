@@ -434,8 +434,7 @@ function completeSalesOrder(order_id, options={}) {
                 handleFormSuccess(response, options);
             }
         }
-    )
-
+    );
 }
 
 
