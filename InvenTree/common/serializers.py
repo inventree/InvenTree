@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import serializers
 
 from common.models import (InvenTreeSetting, InvenTreeUserSetting,
-                           NotificationMessage)
+                           NotificationMessage, WebConnection)
 from InvenTree.helpers import construct_absolute_url, get_objectreference
 from InvenTree.serializers import InvenTreeModelSerializer
 
@@ -208,3 +208,27 @@ class NotificationReadSerializer(NotificationMessageSerializer):
         self.instance = self.context['instance']  # set instance that should be returned
         self._validated_data = True
         return True
+
+
+class WebConnectionSerializer(InvenTreeModelSerializer):
+    """Serializer for the WebConnection model."""
+
+    creator = serializers.CharField(read_only=True)
+    creation = serializers.DateTimeField(read_only=True)
+    updated = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        """Meta options for WebConnectionSerializer."""
+
+        model = WebConnection
+        fields = [
+            'plugin',
+            'connection_key',
+            'name',
+            'comment',
+            'active',
+            'creator',
+            'creation',
+            'owner',
+            'updated',
+        ]

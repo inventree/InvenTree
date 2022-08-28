@@ -435,6 +435,45 @@ $("#import-part").click(function() {
 $("#install-plugin").click(function() {
     installPlugin();
 });
+
+$("#new-connection").click(function() {
+    var plugin = $(this).attr('plugin');
+    var key = $(this).attr('key');
+
+    constructForm('{% url "api-plugin-connection-list" %}', {
+        fields: {
+            plugin: {value: plugin, hidden: true},
+            connection_key: {value: key, hidden: true},
+            name: {},
+            comment: {},
+            owner: {},
+        },
+        method: 'POST',
+        title: '{% trans "Create new connection" %}',
+        onSuccess: function() {location.reload();}
+    });
+});
+
+$('.supplier-connections').on('click', '.connection-edit', function() {
+    var pk = $(this).attr('pk');
+    constructForm(`/api/plugin/connection/${pk}/`, {
+        fields: {
+            name: {},
+            comment: {},
+            owner: {},
+        },
+        onSuccess: function() {location.reload();},
+    });
+});
+
+$('.supplier-connections').on('click', '.connection-delete', function() {
+    var pk = $(this).attr('pk');
+    constructForm(`/api/plugin/connection/${pk}/`, {
+        method: 'DELETE',
+        title: '{% trans "Delete Connection" %}',
+        onSuccess: function() {location.reload();},
+    });
+});
 {% endif %}
 
 enableSidebar('settings');

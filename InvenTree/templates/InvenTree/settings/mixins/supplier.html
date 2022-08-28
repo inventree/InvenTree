@@ -5,16 +5,24 @@
     <h4>{% trans "Web Connections" %}</h4>
 </div>
 
+<div class="supplier-connections">
 {% plugin_connections plugin_key as connections%}
 
 {% for key, connection_def in connections.items %}
-{{connection_def.setup.name}}:<br>
-{{connection_def.setup.description}}
+<div class='d-flex flex-wrap'>
+    <span>{{connection_def.setup.name}}:<br>{{connection_def.setup.description}}</span>
+    {% include "spacer.html" %}
+    <button class="btn btn-success" id="new-connection" plugin="{{plugin.pk}}" key="{{key}}" title="{% trans 'Add Connection' %}"><span class='fas fa-plus-circle'></span> {% trans "Add Connection" %}</button>
+</div
 <hr>
 {% for connection in connection_def.connections %}
     <div class="mx-5">
-        <h5>{{connection.name}}</h5>
-        {{connection.comment}}
+        <div class='d-flex flex-wrap'>
+            <span><h5>{{connection.name}}</h5>{{connection.comment}}</span>
+            {% include "spacer.html" %}
+            <button title='{% trans "Edit Connection" %}' class='connection-edit btn btn-outline-secondary' type='button' pk='{{connection.pk}}'><span class='fas fa-edit'></span></button>
+            <button title='{% trans "Delete Connection" %}' class='connection-delete btn btn-outline-secondary' type='button' pk='{{connection.pk}}'><span class='fas fa-trash-alt icon-red'></span></button>
+        </div>
         <table class='table table-striped table-condensed'>
             <tbody>
                 {% for connection_setting in connection_def.setup.settings %}
@@ -24,6 +32,5 @@
         </table>
     </div>
 {% endfor %}
-
-
 {% endfor %}
+</div>

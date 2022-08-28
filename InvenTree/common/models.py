@@ -29,7 +29,9 @@ from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     URLValidator)
 from django.db import models, transaction
+from django.db.models.signals import pre_save
 from django.db.utils import IntegrityError, OperationalError
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -2277,6 +2279,21 @@ class WebConnection(models.Model):
         auto_now=True,
         null=False,
     )
+
+    def get_api_url(self):
+        """Return API endpoint."""
+        return reverse('api-plugin-connection-list')
+
+
+@receiver(pre_save, sender=WebConnection)
+def pre_save_user(sender, instance, **kwargs):
+    """Stop users from changing protected fields."""
+    if not instance._state.adding:
+        org_inst = WebConnection.objects.get(pk=instance.pk)
+        if instance.plugin != org_inst.plugin:
+            raise ValidationError({'plugin': 'You can not update the connection_key.'})
+        if instance.connection_key != org_inst.connection_key:
+            raise ValidationError({'connection_key': 'You can not update the plugin.'})
 
 
 @dataclass()

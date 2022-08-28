@@ -18,7 +18,7 @@ import common.models
 import common.serializers
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.helpers import inheritors
-from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveAPI,
+from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
@@ -378,6 +378,38 @@ class NotificationReadAll(RetrieveAPI):
             return Response({'status': 'ok'})
         except Exception as exc:
             raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
+
+
+class WebConnectionList(ListCreateAPI):
+    """List view for all webconnections."""
+
+    queryset = common.models.WebConnection.objects.all()
+    serializer_class = common.serializers.WebConnectionSerializer
+
+    permission_classes = [
+        permissions.IsAdminUser,
+    ]
+
+    def perform_create(self, serializer):
+        """Set user if not present."""
+        ret = super().perform_create(serializer)
+
+        inst = serializer.instance
+        if not inst.creator:
+            user = serializer.context['request'].user
+            inst.creator = user
+            inst.save()
+        return ret
+
+
+class WebConnectionDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for an individual webconnection object."""
+
+    queryset = common.models.WebConnection.objects.all()
+    serializer_class = common.serializers.WebConnectionSerializer
+    permission_classes = [
+        permissions.IsAdminUser,
+    ]
 
 
 settings_api_urls = [

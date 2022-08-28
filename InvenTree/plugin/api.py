@@ -9,7 +9,8 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import plugin.serializers as PluginSerializers
-from common.api import GlobalSettingsPermissions
+from common.api import (GlobalSettingsPermissions, WebConnectionDetail,
+                        WebConnectionList)
 from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
 from plugin import InvenTreePlugin, registry
@@ -278,6 +279,11 @@ general_plugin_api_urls = [
     ])),
 
     re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
+
+    re_path(r'^connection/', include([
+        re_path(r'^(?P<pk>\d+)/', WebConnectionDetail.as_view(), name='api-plugin-connection-detail'),
+        re_path(r'^.*$', WebConnectionList.as_view(), name='api-plugin-connection-list'),
+    ])),
 
     # Anything else
     re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),

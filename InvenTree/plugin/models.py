@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import common.models
@@ -154,6 +155,10 @@ class PluginConfig(models.Model):
                 registry.reload_plugins()
 
         return ret
+
+    def get_api_url():
+        """Return the API URL associated with the PluginConfig model"""
+        return reverse('api-plugin-list')
 
     @admin.display(boolean=True, description=_('Sample plugin'))
     def is_sample(self) -> bool:
