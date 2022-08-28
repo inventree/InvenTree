@@ -318,6 +318,12 @@ class BaseInvenTreeSetting(models.Model):
         if connection_key is not None:
             filters['connection_key'] = connection_key
 
+        # Filter by connection id
+        connection_id = kwargs.get('connection_id', None)
+
+        if connection_id is not None:
+            filters['connection_id'] = connection_id
+
         # Filter by method
         method = kwargs.get('method', None)
 
