@@ -11,6 +11,8 @@ from plugin.plugin import InvenTreePlugin
 class ConnectionSetting(common.models.BaseInvenTreeSetting):
     """This model represents settings for an individual connection."""
 
+    typ = 'connection'
+
     class Meta:
         """Meta for ConnectionSetting."""
         unique_together = [

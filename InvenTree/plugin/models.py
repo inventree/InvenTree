@@ -178,6 +178,8 @@ class PluginConfig(models.Model):
 class PluginSetting(common.models.BaseInvenTreeSetting):
     """This model represents settings for individual plugins."""
 
+    typ = 'plugin'
+
     class Meta:
         """Meta for PluginSetting."""
         unique_together = [
@@ -226,6 +228,8 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
 
 class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     """This model represents notification settings for a user."""
+
+    typ = 'notification'
 
     class Meta:
         """Meta for NotificationUserSetting."""

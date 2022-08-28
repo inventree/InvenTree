@@ -1354,6 +1354,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
     }
 
+    typ = 'inventree'
+
     class Meta:
         """Meta options for InvenTreeSetting."""
 
@@ -1666,6 +1668,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
     }
+
+    typ = 'user'
 
     class Meta:
         """Meta options for InvenTreeUserSetting."""
