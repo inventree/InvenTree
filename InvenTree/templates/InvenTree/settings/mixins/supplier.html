@@ -10,7 +10,7 @@
 
 {% for key, connection_def in connections.items %}
 <div class='d-flex flex-wrap'>
-    <span>{{connection_def.setup.name}}:<br>{{connection_def.setup.description}}</span>
+    <span><h5>{{connection_def.setup.name}}</h5>{{connection_def.setup.description}}</span>
     {% include "spacer.html" %}
     <button class="btn btn-success" id="new-connection" plugin="{{plugin.pk}}" key="{{key}}" title="{% trans 'Add Connection' %}"><span class='fas fa-plus-circle'></span> {% trans "Add Connection" %}</button>
 </div
