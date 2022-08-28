@@ -12,7 +12,9 @@
 <div class='d-flex flex-wrap'>
     <span><h5>{{connection_def.setup.name}}</h5>{{connection_def.setup.description}}</span>
     {% include "spacer.html" %}
+    {% if connection_def.show %}
     <button class="btn btn-success" id="new-connection" plugin="{{plugin.pk}}" key="{{key}}" title="{% trans 'Add Connection' %}"><span class='fas fa-plus-circle'></span> {% trans "Add Connection" %}</button>
+    {% endif %}
 </div
 <hr>
 {% for connection in connection_def.connections %}
