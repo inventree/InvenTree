@@ -24,11 +24,11 @@
     <td>
         {% if setting.is_bool %}
         <div class='form-check form-switch'>
-            <input class='form-check-input boolean-setting' fieldname='{{ setting.key.upper }}' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' {% if setting.as_bool %}checked=''{% endif %} {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}{% if notification_setting %}notification='{{request.user.id}}'{% endif %}>
+            <input class='form-check-input boolean-setting' fieldname='{{ setting.key.upper }}' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' id='setting-value-{{ setting.pk }}-{{ setting.typ }}' type='checkbox' {% if setting.as_bool %}checked=''{% endif %}{{reference}}>
         </div>
         {% else %}
         <div id='setting-{{ setting.pk }}'>
-            <span id='setting-value-{{ setting.key.upper }}' fieldname='{{ setting.key.upper }}'>
+            <span id='setting-value-{{ setting.pk }}-{{ setting.typ }}' fieldname='{{ setting.key.upper }}'>
                 {% if setting.value %}
                 {% if setting.is_choice %}
                 <strong>{{ setting.as_choice }}</strong>
