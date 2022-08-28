@@ -5,12 +5,13 @@ import json
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
 from rest_framework import filters, permissions, serializers
-from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.exceptions import NotAcceptable, NotFound, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -20,7 +21,7 @@ from InvenTree.api import BulkDeleteMixin
 from InvenTree.helpers import inheritors
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
-from plugin.models import NotificationUserSetting
+from plugin.models import NotificationUserSetting, PluginConfig
 from plugin.serializers import NotificationUserSettingSerializer
 
 
@@ -391,15 +392,37 @@ class WebConnectionList(ListCreateAPI):
     ]
 
     def perform_create(self, serializer):
-        """Set user if not present."""
-        ret = super().perform_create(serializer)
+        """Validate correctness and set creator if not present."""
+        data = serializer.data
+        connection = data.get('connection_key')
+        plugin = PluginConfig.objects.get(pk=data.get('plugin')).plugin
 
-        inst = serializer.instance
-        if not inst.creator:
+        # Check if connections are defined
+        if not hasattr(plugin, 'connections'):
+            raise ValidationError({'plugin': _('The selected plugin is not a valid supplier plugin.')})
+
+        # Check if connection exsists
+        con_setting = plugin.connections.get(connection)
+        if not con_setting:
+            raise ValidationError({'plugin': _(f'The selected plugin does not declare the connection `{connection}`.')})
+
+        # Check that the multiples restriction is not breached
+        qs = self.queryset.filter(plugin=data.get('plugin'), connection_key=connection)
+        if not con_setting.multiple and len(qs) > 1:
+            raise ValidationError(_('This connection can only be set once.'))
+
+        # Create instance
+        return_data = super().perform_create(serializer)
+
+        # Set the creator if not present
+        instance = serializer.instance
+        if not instance.creator:
             user = serializer.context['request'].user
-            inst.creator = user
-            inst.save()
-        return ret
+            instance.creator = user
+            instance.save()
+
+        # REturn data
+        return return_data
 
 
 class WebConnectionDetail(RetrieveUpdateDestroyAPI):
