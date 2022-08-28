@@ -4,6 +4,7 @@ from django.contrib import admin
 
 import plugin.models as models
 import plugin.registry as pl_registry
+from common.models import WebConnection
 
 
 def plugin_update(queryset, new_status: bool):
@@ -48,6 +49,24 @@ class PluginSettingInline(admin.TabularInline):
         return False
 
 
+class WebConnectionInline(admin.TabularInline):
+    """Inline admin class for WebConnection."""
+
+    model = WebConnection
+    inlines = [PluginSettingInline, ]
+
+    read_only_fields = [
+        'plugin',
+        'connection_key',
+        'creator',
+        'creation',
+    ]
+
+    def has_add_permission(self, request, obj):
+        """The plugin settings should not be meddled with manually."""
+        return False
+
+
 class PluginConfigAdmin(admin.ModelAdmin):
     """Custom admin with restricted id fields."""
 
@@ -55,7 +74,7 @@ class PluginConfigAdmin(admin.ModelAdmin):
     list_display = ['name', 'key', '__str__', 'active', 'is_sample']
     list_filter = ['active']
     actions = [plugin_activate, plugin_deactivate, ]
-    inlines = [PluginSettingInline, ]
+    inlines = [PluginSettingInline, WebConnectionInline]
 
 
 class NotificationUserSettingAdmin(admin.ModelAdmin):
