@@ -393,9 +393,8 @@ class WebConnectionList(ListCreateAPI):
 
     def perform_create(self, serializer):
         """Validate correctness and set creator if not present."""
-        data = serializer.data
-        connection = data.get('connection_key')
-        plugin = PluginConfig.objects.get(pk=data.get('plugin')).plugin
+        connection = serializer.data.get('connection_key')
+        plugin = PluginConfig.objects.get(pk=serializer.data.get('plugin')).plugin
 
         # Check if connections are defined
         if not hasattr(plugin, 'connections'):
@@ -407,8 +406,7 @@ class WebConnectionList(ListCreateAPI):
             raise ValidationError({'plugin': _(f'The selected plugin does not declare the connection `{connection}`.')})
 
         # Check that the multiples restriction is not breached
-        qs = self.queryset.filter(plugin=data.get('plugin'), connection_key=connection)
-        if not con_setting.multiple and len(qs) > 1:
+        if not con_setting.multiple and len(self.queryset.filter(plugin=serializer.data.get('plugin'), connection_key=connection)) > 1:
             raise ValidationError(_('This connection can only be set once.'))
 
         # Create instance
