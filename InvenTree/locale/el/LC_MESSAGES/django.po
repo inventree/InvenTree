@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-25 10:08+0000\n"
-"PO-Revision-Date: 2022-08-26 01:55\n"
+"PO-Revision-Date: 2022-08-29 10:50\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -115,65 +115,65 @@ msgstr "Η λήψη εικόνας ξεπέρασε το μέγιστο μέγε
 
 #: InvenTree/helpers.py:209
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "Ο διακομιστής επέστρεψε σφάλμα %1$d %2$s"
 
 #: InvenTree/helpers.py:217
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "Το URL δεν είναι έγκυρο αρχείο εικόνας"
 
 #: InvenTree/helpers.py:600
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Διπλότυπο serial number: {sn}"
 
 #: InvenTree/helpers.py:607 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Μη έγκυρη ποσότητα"
 
 #: InvenTree/helpers.py:610
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Κενό σειριακό αριθμό συμβολοσειράς"
 
 #: InvenTree/helpers.py:642
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "Μη έγκυρο εύρος ομάδας: {g}"
 
 #: InvenTree/helpers.py:645
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Μη έγκυρη ομάδα: {g}"
 
 #: InvenTree/helpers.py:673
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "Μη έγκυρη ακολουθία ομάδας: {g}"
 
 #: InvenTree/helpers.py:681
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Μη έγκυρη ομάδα {group}"
 
 #: InvenTree/helpers.py:687
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Δεν βρέθηκαν σειριακοί αριθμοί"
 
 #: InvenTree/helpers.py:691
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Ο αριθμός μοναδικών σειριακών αριθμών ({s}) πρέπει να αντιστοιχεί στην ποσότητα ({q})"
 
 #: InvenTree/helpers.py:890
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Αφαιρέστε τα HTML tags από την τιμή που εισάγατε"
 
 #: InvenTree/models.py:236
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Λανθασμένο μοτίβο"
 
 #: InvenTree/models.py:243
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "Δώσατε λάθος μορφή κλειδιού"
 
 #: InvenTree/models.py:249
 msgid "Missing required format key"
