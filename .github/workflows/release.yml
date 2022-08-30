@@ -12,8 +12,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
+      - name: Version Check
+        run: |
+          pip install requests
+          python3 ci/version_check.py
       - name: Push to Stable Branch
         uses: ad-m/github-push-action@9a46ba8d86d3171233e861a4351b1278a2805c83 # pin@master
+        if: env.stable_release == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: stable
