@@ -12,6 +12,7 @@ from wsgiref.util import FileWrapper
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
@@ -241,17 +242,27 @@ def getLogoImage(as_file=False, custom=True):
     """Return the path to the logo-file."""
     if custom and settings.CUSTOM_LOGO:
 
-        if as_file:
-            return f"file://{default_storage.path(settings.CUSTOM_LOGO)}"
-        else:
-            return default_storage.url(settings.CUSTOM_LOGO)
+        static_storage = StaticFilesStorage()
 
-    else:
-        if as_file:
-            path = settings.STATIC_ROOT.joinpath('img/inventree.png')
-            return f"file://{path}"
+        if static_storage.exists(settings.CUSTOM_LOGO):
+            storage = static_storage
+        elif default_storage.exists(settings.CUSTOM_LOGO):
+            storage = default_storage
         else:
-            return getStaticUrl('img/inventree.png')
+            storage = None
+
+        if storage is not None:
+            if as_file:
+                return f"file://{storage.path(settings.CUSTOM_LOGO)}"
+            else:
+                return storage.url(settings.CUSTOM_LOGO)
+
+    # If we have got to this point, return the default logo
+    if as_file:
+        path = settings.STATIC_ROOT.joinpath('img/inventree.png')
+        return f"file://{path}"
+    else:
+        return getStaticUrl('img/inventree.png')
 
 
 def TestIfImageURL(url):
