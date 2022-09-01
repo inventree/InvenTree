@@ -7,7 +7,8 @@
 
 /* exported
     installPlugin,
-    locateItemOrLocation
+    locateItemOrLocation,
+    loadSupplierApiTable,
 */
 
 function installPlugin() {
