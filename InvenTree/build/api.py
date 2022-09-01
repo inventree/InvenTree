@@ -100,6 +100,8 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
         'reference': ['reference_int', 'reference'],
     }
 
+    ordering = '-reference'
+
     search_fields = [
         'reference',
         'title',
