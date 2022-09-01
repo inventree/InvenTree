@@ -70,3 +70,55 @@ function locateItemOrLocation(options={}) {
         },
     );
 }
+
+/*
+ * Load table displaying list of supplier parts
+ */
+function loadSupplierApiTable(table, options) {
+    options.params = options.params || {};
+    var filters = loadTableFilters('supplier-api');
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    $(table).inventreeTable({
+        url: options.url,
+        queryParams: filters,
+        name: 'supplier-api',
+        groupBy: false,
+        sidePagination: 'server',
+        original: options.params,
+        formatNoMatches: function() {
+            return '{% trans "No matching parts for this supplier found" %}';
+        },
+        onRefresh: function() {loadSupplierApiTable(table, options);},
+        columns: [
+            {
+                title: '',
+                checkbox: true,
+                visible: true,
+                switchable: false,
+            },
+            {
+                sortable: true,
+                field: 'id',
+                title: '{% trans "Supplier ID" %}',
+            },
+            {
+                sortable: true,
+                field: 'title',
+                title: '{% trans "Title" %}',
+            },
+            {
+                sortable: false,
+                field: 'description',
+                title: '{% trans "Description" %}',
+            },
+            {
+                sortable: false,
+                field: 'link',
+                title: '{% trans "Link" %}',
+            },
+        ],
+    });
+}
