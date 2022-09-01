@@ -92,7 +92,9 @@ function loadSupplierApiTable(table, options) {
         formatNoMatches: function() {
             return '{% trans "No matching parts for this supplier found" %}';
         },
-        onRefresh: function() {loadSupplierApiTable(table, options);},
+        onRefresh: function() {
+            loadSupplierApiTable(table, options);
+        },
         columns: [
             {
                 title: '',
