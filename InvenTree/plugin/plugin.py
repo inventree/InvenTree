@@ -4,6 +4,7 @@ import inspect
 import logging
 import warnings
 from datetime import datetime
+from distutils.sysconfig import get_python_lib
 from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
 
@@ -324,6 +325,13 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     def _get_package_commit(self):
         """Get last git commit for the plugin."""
         return get_git_log(str(self.file()))
+
+    @classmethod
+    def is_editable(cls):
+        """Returns if the current part is editable."""
+        pkg_name = cls.__name__.split('.')[0]
+        dist_info = list(Path(get_python_lib()).glob(f'{pkg_name}-*.dist-info'))
+        return bool(len(dist_info) == 1)
 
     @classmethod
     def _get_package_metadata(cls):
