@@ -1068,10 +1068,10 @@ function loadBomTable(table, options={}) {
                 });
 
                 if (can_build == null) {
-                    can_build = '-';
+                    return '-';
+                } else {
+                    return formatDecimal(can_build, 2);
                 }
-
-                return can_build;
             },
             sorter: function(valA, valB, rowA, rowB) {
                 // Function to sort the "can build" quantity

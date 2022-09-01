@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 72
+INVENTREE_API_VERSION = 73
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v73 -> 2022-08-24 : https://github.com/inventree/InvenTree/pull/3605
+    - Add 'description' field to PartParameterTemplate model
 
 v72 -> 2022-08-18 : https://github.com/inventree/InvenTree/pull/3567
     - Allow PurchaseOrder to be duplicated via the API

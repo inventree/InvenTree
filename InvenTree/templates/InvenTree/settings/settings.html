@@ -351,16 +351,23 @@ $("#param-table").inventreeTable({
         {
             field: 'name',
             title: '{% trans "Name" %}',
-            sortable: 'true',
+            sortable: true,
         },
         {
             field: 'units',
             title: '{% trans "Units" %}',
-            sortable: 'true',
+            sortable: true,
+            switchable: true,
+        },
+        {
+            field: 'description',
+            title: '{% trans "Description" %}',
+            sortable: false,
+            switchable: true,
         },
         {
             formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit icon-green'></span></button>";
                 var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
                 var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
@@ -376,6 +383,7 @@ $("#new-param").click(function() {
         fields: {
             name: {},
             units: {},
+            description: {},
         },
         method: 'POST',
         title: '{% trans "Create Part Parameter Template" %}',
@@ -395,6 +403,7 @@ $("#param-table").on('click', '.template-edit', function() {
             fields: {
                 name: {},
                 units: {},
+                description: {},
             },
             title: '{% trans "Edit Part Parameter Template" %}',
             onSuccess: function() {

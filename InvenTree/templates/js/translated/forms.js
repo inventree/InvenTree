@@ -1007,6 +1007,11 @@ function getFormFieldValue(name, field={}, options={}) {
             value = null;
         }
         break;
+    case 'string':
+    case 'url':
+    case 'email':
+        value = sanitizeInputString(el.val());
+        break;
     default:
         value = el.val();
         break;

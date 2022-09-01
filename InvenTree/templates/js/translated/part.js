@@ -1043,20 +1043,34 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    if (row.target_date) {
-                        var html = row.target_date;
 
-                        if (row.overdue) {
-                            html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    var target = row.target_date || row.order_detail.target_date;
+
+                    var today = moment();
+
+                    var overdue = row.overdue || false;
+
+                    if (target) {
+                        if (moment(target) < today) {
+                            overdue = true;
                         }
+                    }
 
-                        return html;
+                    var html = '-';
+
+                    if (row.target_date) {
+                        html = row.target_date;
+
 
                     } else if (row.order_detail && row.order_detail.target_date) {
-                        return `<em>${row.order_detail.target_date}</em>`;
-                    } else {
-                        return '-';
+                        html = `<em>${row.order_detail.target_date}</em>`;
                     }
+
+                    if (overdue) {
+                        html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {
@@ -2525,15 +2539,34 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         ],
     };
 
+    var t_min = quantity_scheduled[0].x;
+    var t_max = quantity_scheduled[quantity_scheduled.length - 1].x;
+
+    // Construct a 'zero stock' threshold line
+    data.datasets.push({
+        data: [
+            {
+                x: t_min,
+                y: 0,
+            },
+            {
+                x: t_max,
+                y: 0,
+            }
+        ],
+        borderColor: 'rgba(250, 50, 50, 0.75)',
+        label: 'zero-stock-level',
+    });
+
+    // Construct a 'minimum stock' threshold line
     if (part_info.minimum_stock) {
-        // Construct a 'minimum stock' threshold line
         var minimum_stock_curve = [
             {
-                x: quantity_scheduled[0].x,
+                x: t_min,
                 y: part_info.minimum_stock,
             },
             {
-                x: quantity_scheduled[quantity_scheduled.length - 1].x,
+                x: t_max,
                 y: part_info.minimum_stock,
             }
         ];
@@ -2612,7 +2645,14 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                             return `{% trans "Quantity" %}: ${item.raw.y}${delta}`;
                         }
                     }
-                }
+                },
+                legend: {
+                    labels: {
+                        filter: function(item, chart) {
+                            return !item.text.includes('zero-stock-level');
+                        }
+                    }
+                },
             },
         }
     });

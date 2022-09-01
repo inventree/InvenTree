@@ -1841,14 +1841,20 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         text += `${available_stock}`;
                     }
 
+                    var icons = '';
+
                     if (available_stock < (required - allocated)) {
-                        text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                        icons += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
                     } else {
-                        text += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                        icons += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                    }
+
+                    if (row.on_order && row.on_order > 0) {
+                        icons += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
                     }
 
                     if (available_stock <= 0) {
-                        text += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                        icons += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                     } else {
                         var extra = '';
                         if ((substitute_stock > 0) && (variant_stock > 0)) {
@@ -1860,11 +1866,11 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         }
 
                         if (extra) {
-                            text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                            icons += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
                         }
                     }
 
-                    return renderLink(text, url);
+                    return renderLink(text, url) + icons;
                 },
                 sorter: function(valA, valB, rowA, rowB) {
 

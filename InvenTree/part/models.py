@@ -2369,7 +2369,7 @@ class PartTestTemplate(models.Model):
 
 def validate_template_name(name):
     """Prevent illegal characters in "name" field for PartParameterTemplate."""
-    for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":  # noqa: P103
+    for c in "\"\'`!?|":  # noqa: P103
         if c in str(name):
             raise ValidationError(_(f"Illegal character in template name ({c})"))
 
@@ -2423,6 +2423,13 @@ class PartParameterTemplate(models.Model):
     )
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Parameter description'),
+        blank=True,
+    )
 
 
 class PartParameter(models.Model):
