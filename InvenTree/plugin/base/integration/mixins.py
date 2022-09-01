@@ -413,7 +413,7 @@ class APICallMixin:
             groups.append(f'{key}={",".join([str(a) for a in val])}')
         return f'?{"&".join(groups)}'
 
-    def api_call(self, endpoint: str, method: str = 'GET', url_args: dict = None, data=None, headers: dict = None, simple_response: bool = True, endpoint_is_url: bool = False):
+    def api_call(self, endpoint: str, method: str = 'GET', url_args: dict = None, data=None, headers: dict = None, simple_response: bool = True, endpoint_is_url: bool = False, data_is_json: bool = True):
         """Do an API call.
 
         Simplest call example:
@@ -456,7 +456,10 @@ class APICallMixin:
         }
 
         if data:
-            kwargs['data'] = json.dumps(data)
+            if data_is_json:
+                kwargs['data'] = json.dumps(data)
+            else:
+                kwargs['data'] = data
 
         # run command
         response = requests.request(method, **kwargs)
