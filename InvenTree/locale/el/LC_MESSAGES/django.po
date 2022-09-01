@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-25 10:08+0000\n"
-"PO-Revision-Date: 2022-08-30 10:59\n"
+"POT-Creation-Date: 2022-09-01 02:26+0000\n"
+"PO-Revision-Date: 2022-09-01 11:15\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -717,7 +717,7 @@ msgstr "Πληροφορίες συστήματος"
 msgid "About InvenTree"
 msgstr "Σχετικά με το InvenTree"
 
-#: build/api.py:217
+#: build/api.py:219
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Η έκδοση πρέπει να ακυρωθεί πριν διαγραφεί"
 
@@ -841,32 +841,32 @@ msgstr "Επιλέξτε την τοποθεσία όπου θα αποθηκε�
 
 #: build/models.py:230
 msgid "Build Quantity"
-msgstr ""
+msgstr "Ποσότητα Κατασκευής"
 
 #: build/models.py:233
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Αριθμός αντικειμένων για κατασκευή"
 
 #: build/models.py:237
 msgid "Completed items"
-msgstr ""
+msgstr "Ολοκληρωμένα αντικείμενα"
 
 #: build/models.py:239
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Αριθμός αντικειμένων αποθέματος που έχουν ολοκληρωθεί"
 
 #: build/models.py:243
 msgid "Build Status"
-msgstr ""
+msgstr "Κατάσταση Κατασκευής"
 
 #: build/models.py:247
 msgid "Build status code"
-msgstr ""
+msgstr "Κωδικός κατάστασης κατασκευής"
 
 #: build/models.py:251 build/serializers.py:225 order/serializers.py:447
 #: stock/models.py:662 templates/js/translated/order.js:1353
 msgid "Batch Code"
-msgstr ""
+msgstr "Κωδικός Παρτίδας"
 
 #: build/models.py:255 build/serializers.py:226
 msgid "Batch code for this build output"
