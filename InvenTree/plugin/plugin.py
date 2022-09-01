@@ -13,7 +13,7 @@ from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from plugin.helpers import GitStatus, get_git_log, get_module_meta
+from plugin.helpers import GitStatus, get_git_log
 
 logger = logging.getLogger("inventree")
 
@@ -334,7 +334,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             meta = metadata(cls.__name__)
         # Simpel lookup did not work - get data from module
         except PackageNotFoundError:
-            meta = get_module_meta(cls.__module__)
+            meta = metadata(cls.__module__.split('.')[0])
 
         return {
             'author': meta['Author-email'],
