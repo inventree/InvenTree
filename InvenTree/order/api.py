@@ -292,7 +292,7 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
         'status',
     ]
 
-    ordering = '-creation_date'
+    ordering = '-reference'
 
 
 class PurchaseOrderDetail(RetrieveUpdateDestroyAPI):
@@ -733,7 +733,7 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
         'customer_reference',
     ]
 
-    ordering = '-creation_date'
+    ordering = '-reference'
 
 
 class SalesOrderDetail(RetrieveUpdateDestroyAPI):

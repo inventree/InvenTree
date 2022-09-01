@@ -34,6 +34,8 @@
         });
     }
 
+    var search_text = sanitizeInputString("{{ query|escapejs }}");
+
     function addItem(label, title, icon, options) {
 
         // Construct a "badge" to add to the sidebar item
@@ -86,7 +88,7 @@
         "{% url 'api-part-list' %}",
         {
             params: {
-                original_search: "{{ query }}",
+                original_search: search_text,
             },
             checkbox: false,
             disableFilters: true,
@@ -97,7 +99,7 @@
 
     loadPartCategoryTable($("#table-category"), {
         params: {
-            original_search: "{{ query }}",
+            original_search: search_text,
         }
     });
 
@@ -108,7 +110,7 @@
         "{% url 'api-manufacturer-part-list' %}",
         {
             params: {
-                original_search: "{{ query }}",
+                original_search: search_text,
                 part_detail: true,
                 supplier_detail: true,
                 manufacturer_detail: true
@@ -123,7 +125,7 @@
         "{% url 'api-supplier-part-list' %}",
         {
             params: {
-                original_search: "{{ query }}",
+                original_search: search_text,
                 part_detail: true,
                 supplier_detail: true,
                 manufacturer_detail: true
@@ -142,7 +144,7 @@
     loadBuildTable('#table-build-order', {
         locale: '{{ request.LANGUAGE_CODE }}',
         params: {
-            original_search: '{{ query }}',
+            original_search: search_text,
         }
     });
 
@@ -157,7 +159,7 @@
         filterKey: 'stocksearch',
         url: "{% url 'api-stock-list' %}",
         params: {
-            original_search: "{{ query }}",
+            original_search: search_text,
             part_detail: true,
             location_detail: true
         }
@@ -168,7 +170,7 @@
     loadStockLocationTable($("#table-location"), {
         filterKey: 'locationsearch',
         params: {
-            original_search: "{{ query }}",
+            original_search: search_text,
         },
     });
 
@@ -181,8 +183,8 @@
 
     loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
         params: {
-            original_search: "{{ query }}",
-            is_manufacturer: "true",
+            original_search: search_text,
+            is_manufacturer: true,
         }
     });
 
@@ -191,8 +193,8 @@
 
     loadCompanyTable('#table-supplier', "{% url 'api-company-list' %}", {
         params: {
-            original_search: "{{ query }}",
-            is_supplier: "true",
+            original_search: search_text,
+            is_supplier: true,
         }
     });
 
@@ -200,7 +202,7 @@
 
     loadPurchaseOrderTable('#table-purchase-order', {
         params: {
-            original_search: '{{ query }}',
+            original_search: search_text,
         }
     });
 
@@ -211,8 +213,8 @@
 
     loadCompanyTable('#table-customer', "{% url 'api-company-list' %}", {
         params: {
-            original_search: "{{ query }}",
-            is_customer: "true",
+            original_search: search_text,
+            is_customer: true,
         }
     });
 
@@ -220,7 +222,7 @@
 
     loadSalesOrderTable('#table-sales-orders', {
         params: {
-            original_search: '{{ query }}',
+            original_search: search_text,
         }
     });
 
@@ -250,7 +252,7 @@
     enableSidebar(
         'search',
         {
-            hide_toggle: 'true',
+            hide_toggle: true,
         }
     );
 

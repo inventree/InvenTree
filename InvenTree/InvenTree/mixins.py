@@ -1,11 +1,9 @@
 """Mixins for (API) views in the whole project."""
 
-from django.utils.translation import gettext_lazy as _
-
-from bleach import clean
 from rest_framework import generics, status
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+
+from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
 
 
 class CleanMixin():
@@ -48,28 +46,8 @@ class CleanMixin():
         Ref: https://github.com/mozilla/bleach/issues/192
         """
 
-        cleaned = clean(
-            data,
-            strip=True,
-            tags=[],
-            attributes=[],
-        )
-
-        # Add escaped characters back in
-        replacements = {
-            '&gt;': '>',
-            '&lt;': '<',
-            '&amp;': '&',
-        }
-
-        for o, r in replacements.items():
-            cleaned = cleaned.replace(o, r)
-
-        # If the length changed, it means that HTML tags were removed!
-        if len(cleaned) != len(data):
-            raise ValidationError({
-                field: [_("Remove HTML tags from this value")]
-            })
+        cleaned = strip_html_tags(data, field_name=field)
+        cleaned = remove_non_printable_characters(cleaned)
 
         return cleaned
 
