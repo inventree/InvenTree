@@ -2571,7 +2571,7 @@ function loadSalesOrderTable(table, options) {
             return `<div id='purchase-order-calendar'></div>`;
         },
         onRefresh: function() {
-            loadPurchaseOrderTable(table, options);
+            loadSalesOrderTable(table, options);
         },
         onLoadSuccess: function() {
 
