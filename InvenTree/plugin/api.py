@@ -279,8 +279,10 @@ general_plugin_api_urls = [
         re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
     ])),
 
+    # Install endpoint
     re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
 
+    # Connections
     re_path(r'^connection/', include([
         re_path(r'^(?P<pk>\d+)/', WebConnectionDetail.as_view(), name='api-plugin-connection-detail'),
         re_path(r'^.*$', WebConnectionList.as_view(), name='api-plugin-connection-list'),
