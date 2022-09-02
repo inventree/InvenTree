@@ -636,6 +636,40 @@ class InvenTreeTree(MPTTModel):
         return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
 
 
+class InvenTreeBarcodeMixin(models.Model):
+    """A mixin class for adding barcode functionality to a model class.
+
+    Two types of barcodes are supported:
+
+    - Internal barcodes (QR codes using a strictly defined format)
+    - External barcodes (assign third party barcode data to a model instance)
+
+    The following fields are added to any model which implements this mixin:
+
+    - barcode_data : Raw data associated with an assigned barcode
+    - barcode_hash : A 'hash' of the assigned barcode data used to improve matching
+    """
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+        abstract = True
+
+    barcode_data = models.CharField(
+        blank=True, max_length=500,
+        verbose_name=_('Barcode Data'),
+        help_text=_('Third party barcode data'),
+    )
+
+    barcode_hash = models.CharField(
+        unique=True, blank=True, max_length=128,
+        verbose_name=_('Barcode Hash'),
+        help_text=_('Unique hash of barcode data')
+    )
+
+
 @receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')
 def before_delete_tree_item(sender, instance, using, **kwargs):
     """Receives pre_delete signal from InvenTreeTree object.
