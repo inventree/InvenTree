@@ -1,6 +1,6 @@
 """Plugin mixin classes."""
 
-import json
+import json as json_pkg
 import logging
 
 from django.db.utils import OperationalError, ProgrammingError
@@ -413,7 +413,7 @@ class APICallMixin:
             groups.append(f'{key}={",".join([str(a) for a in val])}')
         return f'?{"&".join(groups)}'
 
-    def api_call(self, endpoint: str, method: str = 'GET', url_args: dict = None, data=None, headers: dict = None, simple_response: bool = True, endpoint_is_url: bool = False, data_is_json: bool = True):
+    def api_call(self, endpoint: str, method: str = 'GET', url_args: dict = None, data=None, json=None, headers: dict = None, simple_response: bool = True, endpoint_is_url: bool = False):
         """Do an API call.
 
         Simplest call example:
@@ -426,7 +426,8 @@ class APICallMixin:
             endpoint (str): Path to current endpoint. Either the endpoint or the full or if the flag is set
             method (str, optional): HTTP method that should be uses - capitalized. Defaults to 'GET'.
             url_args (dict, optional): arguments that should be appended to the url. Defaults to None.
-            data (Any, optional): Data that should be transmitted in the body - must be JSON serializable. Defaults to None.
+            data (Any, optional): Data that should be transmitted in the body - url-encoded. Defaults to None.
+            json (Any, optional): Data that should be transmitted in the body - must be JSON serializable. Defaults to None.
             headers (dict, optional): Headers that should be used for the request. Defaults to self.api_headers.
             simple_response (bool, optional): Return the response as JSON. Defaults to True.
             endpoint_is_url (bool, optional): The provided endpoint is the full url - do not use self.api_url as base. Defaults to False.
@@ -455,11 +456,14 @@ class APICallMixin:
             'headers': headers,
         }
 
+        if data and json:
+            raise ValueError('You can either pass `data` or `json` to this function.')
+
+        if json:
+            kwargs['data'] = json_pkg.dumps(json)
+
         if data:
-            if data_is_json:
-                kwargs['data'] = json.dumps(data)
-            else:
-                kwargs['data'] = data
+            kwargs['data'] = data
 
         # run command
         response = requests.request(method, **kwargs)
