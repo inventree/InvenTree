@@ -1,29 +1,9 @@
 """Plugin mixin classes for barcode plugin."""
 
-import hashlib
-import string
-
+from InvenTree.helpers import hash_barcode
 from part.serializers import PartSerializer
 from stock.models import StockItem
 from stock.serializers import LocationSerializer, StockItemSerializer
-
-
-def hash_barcode(barcode_data):
-    """Calculate an MD5 hash of barcode data.
-
-    HACK: Remove any 'non printable' characters from the hash,
-          as it seems browers will remove special control characters...
-
-    TODO: Work out a way around this!
-    """
-    barcode_data = str(barcode_data).strip()
-
-    printable_chars = filter(lambda x: x in string.printable, barcode_data)
-
-    barcode_data = ''.join(list(printable_chars))
-
-    result_hash = hashlib.md5(str(barcode_data).encode())
-    return str(result_hash.hexdigest())
 
 
 class BarcodeMixin:

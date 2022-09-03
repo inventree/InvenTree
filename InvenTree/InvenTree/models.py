@@ -669,6 +669,23 @@ class InvenTreeBarcodeMixin(models.Model):
         help_text=_('Unique hash of barcode data')
     )
 
+    def assign_barcode(self, barcode_data):
+        """Assign an external (third-party) barcode to this object.
+
+        First checks that the barcode has not already been assigned to an instance of this class.
+        """
+
+        barcode_hash = InvenTree.helpers.hash_barcode(barcode_data)
+
+        # Check for existing item
+        if self.__class__.objects.exclude(pk=self.pk).filter(barcode_hash=barcode_hash).exists():
+            raise ValidationError(_("Existing barcode found"))
+
+        self.barcode_data = barcode_data
+        self.barcode_hash
+
+        self.save()
+
 
 @receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')
 def before_delete_tree_item(sender, instance, using, **kwargs):

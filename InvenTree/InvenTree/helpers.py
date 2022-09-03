@@ -1,5 +1,6 @@
 """Provides helper functions used throughout the InvenTree project."""
 
+import hashlib
 import io
 import json
 import logging
@@ -905,6 +906,23 @@ def remove_non_printable_characters(value: str, remove_ascii=True, remove_unicod
         cleaned = regex.sub(u'[^\P{C}]+', '', value)
 
     return cleaned
+
+
+def hash_barcode(barcode_data):
+    """Calculate a 'unique' hash for a barcode string.
+
+    This hash is used for comparison / lookup.
+
+    We first remove any non-printable characters from the barcode data,
+    as some browsers have issues scanning characters in.
+    """
+
+    barcode_data = str(barcode_data).strip()
+    barcode_data = remove_non_printable_characters(barcode_data)
+
+    hash = hashlib.md5(barcode_data.encode())
+
+    return str(hash.digest())
 
 
 def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = 'object_id'):
