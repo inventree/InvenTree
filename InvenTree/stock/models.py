@@ -30,7 +30,8 @@ import report.models
 from company import models as CompanyModels
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               InvenTreeURLField)
-from InvenTree.models import InvenTreeAttachment, InvenTreeTree, extract_int
+from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
+                              InvenTreeTree, extract_int)
 from InvenTree.status_codes import StockHistoryCode, StockStatus
 from part import models as PartModels
 from plugin.events import trigger_event
@@ -221,7 +222,7 @@ def generate_batch_code():
     return Template(batch_template).render(context)
 
 
-class StockItem(MetadataMixin, MPTTModel):
+class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     """A StockItem object represents a quantity of physical instances of a part.
 
     Attributes:
