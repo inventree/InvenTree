@@ -738,10 +738,15 @@ class StockBarcodeTest(StockTestBase):
 
         self.assertEqual(item.barcode_model_type, 'stockitem')
 
-        # Render barcode data for the StockItem
+        # Call format_barcode method
+        barcode = item.format_barcode(brief=False)
+
+        for key in ['tool', 'version', 'instance', 'stockitem']:
+            self.assertIn(key, barcode)
+
+        # Render simple barcode data for the StockItem
         barcode = item.barcode
-        self.assertEqual(len(barcode.keys()), 1)
-        self.assertEqual(barcode['stockitem'], 1)
+        self.assertEqual(barcode, '{"stockitem": 1}')
 
 
 class VariantTest(StockTestBase):
