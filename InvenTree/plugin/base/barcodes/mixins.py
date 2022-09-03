@@ -7,7 +7,7 @@ from stock.serializers import LocationSerializer, StockItemSerializer
 
 
 class BarcodeMixin:
-    """Mixin that enables barcode handeling.
+    """Mixin that enables barcode handling.
 
     Custom barcode plugins should use and extend this mixin as necessary.
     """
@@ -46,11 +46,8 @@ class BarcodeMixin:
 
     def getStockItemByHash(self):
         """Attempt to retrieve a StockItem associated with this barcode, based on the barcode hash."""
-        try:
-            item = StockItem.objects.get(uid=self.hash())
-            return item
-        except StockItem.DoesNotExist:
-            return None
+
+        return StockItem.lookup_barcode(self.hash())
 
     def renderStockItem(self, item):
         """Render a stock item to JSON response."""

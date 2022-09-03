@@ -393,8 +393,8 @@ function unlinkBarcode(stockitem) {
                 inventreePut(
                     `/api/stock/${stockitem}/`,
                     {
-                        // Clear the UID field
-                        uid: '',
+                        // Clear the barcode hash field
+                        barcode_hash: '',
                     },
                     {
                         method: 'PATCH',

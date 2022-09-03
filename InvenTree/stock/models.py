@@ -227,7 +227,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     Attributes:
         parent: Link to another StockItem from which this StockItem was created
-        uid: Field containing a unique-id which is mapped to a third-party identifier (e.g. a barcode)
         part: Link to the master abstract part that this StockItem is an instance of
         supplier_part: Link to a specific SupplierPart (optional)
         location: Where this StockItem is located
@@ -552,8 +551,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     def get_part_name(self):
         """Returns part name."""
         return self.part.full_name
-
-    uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 
     # Note: When a StockItem is deleted, a pre_delete signal handles the parent/child relationship
     parent = TreeForeignKey(

@@ -480,7 +480,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         if not barcode or barcode.strip() == '':
             return None
 
-        if stock.models.StockItem.objects.filter(uid=barcode).exists():
+        if stock.models.StockItem.objects.filter(barcode_hash=barcode).exists():
             raise ValidationError(_('Barcode is already in use'))
 
         return barcode

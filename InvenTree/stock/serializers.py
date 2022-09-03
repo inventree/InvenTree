@@ -62,7 +62,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'quantity',
             'serial',
             'supplier_part',
-            'uid',
+            'barcode_hash',
         ]
 
     def validate_serial(self, value):
@@ -245,7 +245,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'supplier_part',
             'supplier_part_detail',
             'tracking_items',
-            'uid',
+            'barcode_hash',
             'updated',
             'purchase_price',
             'purchase_price_currency',

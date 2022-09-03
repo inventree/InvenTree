@@ -208,7 +208,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         """Test that a barcode can be associated with a StockItem."""
         item = StockItem.objects.get(pk=522)
 
-        self.assertEqual(len(item.uid), 0)
+        self.assertEqual(len(item.barcode_hash), 0)
 
         barcode_data = 'A-TEST-BARCODE-STRING'
 
@@ -231,9 +231,9 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         # Read the item out from the database again
         item = StockItem.objects.get(pk=522)
 
-        self.assertEqual(result_hash, item.uid)
+        self.assertEqual(result_hash, item.barcode_hash)
 
-        # Ensure that the same UID cannot be assigned to a different stock item!
+        # Ensure that the same barcode hash cannot be assigned to a different stock item!
         response = self.client.post(
             self.assign_url, format='json',
             data={

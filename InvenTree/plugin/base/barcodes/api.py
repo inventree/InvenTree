@@ -115,14 +115,13 @@ class BarcodeScan(APIView):
             response['plugin'] = None
 
             # Try to look for a matching StockItem
-            try:
-                item = StockItem.objects.get(uid=result_hash)
+            item = StockItem.lookup_barcode(result_hash)
+
+            if item is not None:
                 serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
                 response['stockitem'] = serializer.data
                 response['url'] = reverse('stock-item-detail', kwargs={'pk': item.id})
                 match_found = True
-            except StockItem.DoesNotExist:
-                pass
 
         if not match_found:
             response['error'] = _('No match found for barcode data')
@@ -215,19 +214,17 @@ class BarcodeAssign(APIView):
             response['plugin'] = None
 
             # Lookup stock item by hash
-            try:
-                item = StockItem.objects.get(uid=result_hash)
+            item = StockItem.lookup_barcode(result_hash)
+
+            if item is not None:
                 response['error'] = _('Barcode hash already matches Stock Item')
                 match_found = True
-            except StockItem.DoesNotExist:
-                pass
 
         if not match_found:
             response['success'] = _('Barcode associated with Stock Item')
 
             # Save the barcode hash
-            item.uid = response['hash']
-            item.save()
+            item.assign_barcode(response['hash'])
 
             serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
             response['stockitem'] = serializer.data
