@@ -664,10 +664,32 @@ class InvenTreeBarcodeMixin(models.Model):
     )
 
     barcode_hash = models.CharField(
-        unique=True, blank=True, max_length=128,
+        blank=True, max_length=128,
         verbose_name=_('Barcode Hash'),
         help_text=_('Unique hash of barcode data')
     )
+
+    @property
+    def barcode_model_type(self):
+        """Return the model 'type' for creating a custom QR code."""
+
+        # By default, use the name of the class
+        return self.__class__.__name__.lower()
+
+    def format_barcode(self, **kwargs):
+        """Return a JSON string for formatting a QR code for this model instance."""
+
+        return InvenTree.helpers.MakeBarcode(
+            self.barcode_model_type,
+            self.pk,
+            **kwargs
+        )
+
+    @property
+    def barcode(self):
+        """Format a minimal barcode string (e.g. for label printing)"""
+
+        return self.format_barcode(brief=True)
 
     def assign_barcode(self, barcode_data):
         """Assign an external (third-party) barcode to this object.

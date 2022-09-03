@@ -553,36 +553,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         """Returns part name."""
         return self.part.full_name
 
-    def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a barcode for this StockItem.
-
-        Can be used to perform lookup of a stockitem using barcode.
-
-        Contains the following data:
-        `{ type: 'StockItem', stock_id: <pk>, part_id: <part_pk> }`
-
-        Voltagile data (e.g. stock quantity) should be looked up using the InvenTree API (as it may change)
-        """
-        return InvenTree.helpers.MakeBarcode(
-            "stockitem",
-            self.id,
-            {
-                "request": kwargs.get('request', None),
-                "item_url": reverse('stock-item-detail', kwargs={'pk': self.id}),
-                "url": reverse('api-stock-detail', kwargs={'pk': self.id}),
-            },
-            **kwargs
-        )
-
-    @property
-    def barcode(self):
-        """Get Brief payload data (e.g. for labels).
-
-        Returns:
-            str: Brief pyload data
-        """
-        return self.format_barcode(brief=True)
-
     uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 
     # Note: When a StockItem is deleted, a pre_delete signal handles the parent/child relationship
