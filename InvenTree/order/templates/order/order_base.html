@@ -46,6 +46,9 @@
         {% if order.can_cancel %}
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
         {% endif %}
+        {% if roles.purchase_order.add %}
+        <li><a class='dropdown-item' href='#' id='duplicate-order'><span class='fas fa-clone'></span> {% trans "Duplicate order" %}</a></li>
+        {% endif %}
     </ul>
 </div>
 {% if order.status == PurchaseOrderStatus.PENDING %}
@@ -217,30 +220,14 @@ $('#print-order-report').click(function() {
 });
 {% endif %}
 
+{% if roles.purchase_order.change %}
+
 $("#edit-order").click(function() {
 
-    constructForm('{% url "api-po-detail" order.pk %}', {
-        fields: {
-            reference: {
-                icon: 'fa-hashtag',
-            },
-            {% if order.lines.count == 0 and order.status == PurchaseOrderStatus.PENDING %}
-            supplier: {
-            },
-            {% endif %}
-            supplier_reference: {},
-            description: {},
-            target_date: {
-                icon: 'fa-calendar-alt',
-            },
-            link: {
-                icon: 'fa-link',
-            },
-            responsible: {
-                icon: 'fa-user',
-            },
-        },
-        title: '{% trans "Edit Purchase Order" %}',
+    editPurchaseOrder({{ order.pk }}, {
+        {% if order.lines.count > 0 or order.status != PurchaseOrderStatus.PENDING %}
+        hide_supplier: true,
+        {% endif %}
         reload: true,
     });
 });
@@ -292,6 +279,16 @@ $("#cancel-order").click(function() {
         },
     );
 });
+
+{% endif %}
+
+{% if roles.purchase_order.add %}
+$('#duplicate-order').click(function() {
+    duplicatePurchaseOrder(
+        {{ order.pk }},
+    );
+});
+{% endif %}
 
 $("#export-order").click(function() {
     exportOrder('{% url "po-export" order.id %}');

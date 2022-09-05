@@ -131,7 +131,7 @@ class BaseInvenTreeSetting(models.Model):
         for k, v in kwargs.items():
             key += f"_{k}:{v}"
 
-        return key
+        return key.replace(" ", "")
 
     @classmethod
     def allValues(cls, user=None, exclude_hidden=False):
@@ -1070,6 +1070,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': InvenTree.validators.validate_part_name_format
         },
 
+        'PART_CATEGORY_DEFAULT_ICON': {
+            'name': _('Part Category Default Icon'),
+            'description': _('Part category default icon (empty means no icon)'),
+            'default': '',
+        },
+
         'LABEL_ENABLE': {
             'name': _('Enable label printing'),
             'description': _('Enable label printing from the web interface'),
@@ -1166,6 +1172,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable ownership control over stock locations and items'),
             'default': False,
             'validator': bool,
+        },
+
+        'STOCK_LOCATION_DEFAULT_ICON': {
+            'name': _('Stock Location Default Icon'),
+            'description': _('Stock location default icon (empty means no icon)'),
+            'default': '',
         },
 
         'BUILDORDER_REFERENCE_PATTERN': {
@@ -1268,6 +1280,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
 
+        'PLUGIN_CHECK_SIGNATURES': {
+            'name': _('Check plugin signatures'),
+            'description': _('Check and show signatures for plugins'),
+            'default': False,
+            'validator': bool,
+        },
+
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
@@ -1309,6 +1328,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
     }
+
+    typ = 'inventree'
 
     class Meta:
         """Meta options for InvenTreeSetting."""
@@ -1622,6 +1643,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
     }
+
+    typ = 'user'
 
     class Meta:
         """Meta options for InvenTreeUserSetting."""

@@ -5,6 +5,7 @@
   pk: 1
   fields:
     reference: 'PO-0001'
+    reference_int: 1
     description: "Ordering some screws"
     supplier: 1
     status: 10  # Pending
@@ -14,6 +15,7 @@
   pk: 2
   fields:
     reference: 'PO-0002'
+    reference_int: 2
     description: "Ordering some more screws"
     supplier: 3
     status: 10  # Pending
@@ -22,6 +24,7 @@
   pk: 3
   fields:
     reference: 'PO-0003'
+    reference_int: 3
     description: 'Another PO'
     supplier: 3
     status: 20  # Placed
@@ -30,6 +33,7 @@
   pk: 4
   fields:
     reference: 'PO-0004'
+    reference_int: 4
     description: 'Another PO'
     supplier: 3
     status: 20  # Placed
@@ -38,6 +42,7 @@
   pk: 5
   fields:
     reference: 'PO-0005'
+    reference_int: 5
     description: 'Another PO'
     supplier: 3
     status: 30  # Complete
@@ -46,6 +51,7 @@
   pk: 6
   fields:
     reference: 'PO-0006'
+    reference_int: 6
     description: 'Another PO'
     supplier: 3
     status: 40  # Cancelled
@@ -55,6 +61,7 @@
   pk: 7
   fields:
     reference: 'PO-0007'
+    reference_int: 7
     description: 'Another PO'
     supplier: 2
     status: 10  # Pending

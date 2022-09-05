@@ -194,6 +194,8 @@ redis==3.5.3
     # via
     #   django-q
     #   django-redis
+regex==2022.8.17
+    # via -r requirements.in
 requests==2.28.1
     # via
     #   coreapi
