@@ -185,9 +185,7 @@ jobs:
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-
     needs: [ 'javascript', 'html', 'pre-commit' ]
-    if: github.event_name == 'push'
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql

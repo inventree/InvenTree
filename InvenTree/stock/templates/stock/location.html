@@ -14,7 +14,12 @@
 
 {% block heading %}
 {% if location %}
-{% trans "Stock Location" %}: {{ location.name }}
+{% trans "Stock Location" %}:
+{% settings_value "STOCK_LOCATION_DEFAULT_ICON" as default_icon %}
+{% if location.icon or default_icon %}
+<span class="{{ location.icon|default:default_icon }}"></span>
+{% endif %}
+{{ location.name }}
 {% else %}
 {% trans "Stock" %}
 {% endif %}
@@ -380,7 +385,8 @@
             node.href = `/stock/location/${node.pk}/`;
 
             return node;
-        }
+        },
+        defaultIcon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
     });
 
 {% endblock %}

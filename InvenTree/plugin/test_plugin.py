@@ -100,6 +100,14 @@ class InvenTreePluginTests(TestCase):
         self.plugin_name = NameInvenTreePlugin()
         self.plugin_sample = SampleIntegrationPlugin()
 
+        class VersionInvenTreePlugin(InvenTreePlugin):
+            NAME = 'Version'
+
+            MIN_VERSION = '0.1.0'
+            MAX_VERSION = '0.1.3'
+
+        self.plugin_version = VersionInvenTreePlugin()
+
     def test_basic_plugin_init(self):
         """Check if a basic plugin intis."""
         self.assertEqual(self.plugin.NAME, '')
@@ -169,9 +177,23 @@ class InvenTreePluginTests(TestCase):
             # check default value is used
             self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
 
+    def test_version(self):
+        """Test Version checks"""
+
+        self.assertFalse(self.plugin_version.check_version([0, 0, 3]))
+        self.assertTrue(self.plugin_version.check_version([0, 1, 0]))
+        self.assertFalse(self.plugin_version.check_version([0, 1, 4]))
+
+        plug = registry.plugins_full.get('version')
+        self.assertEqual(plug.is_active(), False)
+
 
 class RegistryTests(TestCase):
     """Tests for registry loading methods."""
+
+    def mockDir(self) -> None:
+        """Returns path to mock dir"""
+        return str(Path(__file__).parent.joinpath('mock').absolute())
 
     def run_package_test(self, directory):
         """General runner for testing package based installs."""
@@ -205,7 +227,7 @@ class RegistryTests(TestCase):
 
     def test_subfolder_loading(self):
         """Test that plugins in subfolders get loaded."""
-        self.run_package_test('InvenTree/plugin/mock')
+        self.run_package_test(self.mockDir())
 
     def test_folder_loading(self):
         """Test that plugins in folders outside of BASE_DIR get loaded."""
@@ -214,7 +236,7 @@ class RegistryTests(TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             # Fill directory with sample data
             new_dir = Path(tmp).joinpath('mock')
-            shutil.copytree(Path('InvenTree/plugin/mock').absolute(), new_dir)
+            shutil.copytree(self.mockDir(), new_dir)
 
             # Run tests
             self.run_package_test(str(new_dir))

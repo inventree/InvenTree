@@ -75,24 +75,20 @@
     <div class='btn-group'>
         <button id='stock-actions' title='{% trans "Stock adjustment actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
+            {% if item.can_adjust_location %}
             {% if not item.serialized %}
-            {% if item.in_stock %}
             <li><a class='dropdown-item' href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-check-circle icon-green'></span> {% trans "Count stock" %}</a></li>
-            {% endif %}
             {% if not item.customer %}
             <li><a class='dropdown-item' href='#' id='stock-add' title='{% trans "Add stock" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
-            {% endif %}
-            {% if item.in_stock %}
             <li><a class='dropdown-item' href='#' id='stock-remove' title='{% trans "Remove stock" %}'><span class='fas fa-minus-circle icon-red'></span> {% trans "Remove stock" %}</a></li>
             {% endif %}
-            {% if item.in_stock and item.part.trackable %}
+            {% if item.part.trackable %}
             <li><a class='dropdown-item' href='#' id='stock-serialize' title='{% trans "Serialize stock" %}'><span class='fas fa-hashtag'></span> {% trans "Serialize stock" %}</a> </li>
             {% endif %}
             {% endif %}
-            {% if item.in_stock and item.can_adjust_location %}
             <li><a class='dropdown-item' href='#' id='stock-move' title='{% trans "Transfer stock" %}'><span class='fas fa-exchange-alt icon-blue'></span> {% trans "Transfer stock" %}</a></li>
             {% endif %}
-            {% if item.in_stock and item.can_adjust_location and item.part.salable and not item.customer %}
+            {% if item.part.salable and not item.customer %}
             <li><a class='dropdown-item' href='#' id='stock-assign-to-customer' title='{% trans "Assign to customer" %}'><span class='fas fa-user-tie'></span> {% trans "Assign to customer" %}</a></li>
             {% endif %}
             {% if item.customer %}
@@ -100,12 +96,11 @@
             {% endif %}
             {% if item.belongs_to %}
             <li><a class='dropdown-item' href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a></li>
-            {% else %}
+            {% endif %}
             {% if item.part.get_used_in %}
             <!--
                 <li><a class='dropdown-item' href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
             -->
-            {% endif %}
             {% endif %}
         </ul>
     </div>
@@ -618,37 +613,7 @@ $("#stock-convert").click(function() {
 });
 {% endif %}
 
-{% if item.in_stock %}
-$("#stock-assign-to-customer").click(function() {
-
-    inventreeGet('{% url "api-stock-detail" item.pk %}', {}, {
-        success: function(response) {
-            assignStockToCustomer(
-                [response],
-                {
-                    success: function() {
-                        location.reload();
-                    },
-                }
-            );
-        }
-    });
-});
-
-$("#stock-move").click(function() {
-    itemAdjust("move");
-});
-
-$("#stock-count").click(function() {
-    itemAdjust('count');
-});
-
-$('#stock-remove').click(function() {
-    itemAdjust('take');
-});
-
-{% else %}
-
+{% if item.customer %}
 $("#stock-return-from-customer").click(function() {
 
     constructForm('{% url "api-stock-item-return" item.pk %}', {
@@ -665,6 +630,37 @@ $("#stock-return-from-customer").click(function() {
         reload: true,
     });
 
+});
+{% else %}
+$("#stock-assign-to-customer").click(function() {
+
+    inventreeGet('{% url "api-stock-detail" item.pk %}', {}, {
+        success: function(response) {
+            assignStockToCustomer(
+                [response],
+                {
+                    success: function() {
+                        location.reload();
+                    },
+                }
+            );
+        }
+    });
+});
+{% endif %}
+
+{% if item.can_adjust_location %}
+
+$("#stock-move").click(function() {
+    itemAdjust("move");
+});
+
+$("#stock-count").click(function() {
+    itemAdjust('count');
+});
+
+$('#stock-remove').click(function() {
+    itemAdjust('take');
 });
 
 {% endif %}

@@ -24,12 +24,15 @@
     cancelPurchaseOrder,
     cancelSalesOrder,
     completePurchaseOrder,
+    completeSalesOrder,
     completeShipment,
     completePendingShipments,
     createPurchaseOrder,
     createPurchaseOrderLineItem,
     createSalesOrder,
     createSalesOrderShipment,
+    duplicatePurchaseOrder,
+    editPurchaseOrder,
     editPurchaseOrderLineItem,
     exportOrder,
     issuePurchaseOrder,
@@ -280,6 +283,17 @@ function completePurchaseOrder(order_id, options={}) {
             method: 'POST',
             title: '{% trans "Complete Purchase Order" %}',
             confirm: true,
+            fieldsFunction: function(opts) {
+                var fields = {
+                    accept_incomplete: {},
+                };
+
+                if (opts.context.is_complete) {
+                    delete fields['accept_incomplete'];
+                }
+
+                return fields;
+            },
             preFormContent: function(opts) {
 
                 var html = `
@@ -360,6 +374,59 @@ function issuePurchaseOrder(order_id, options={}) {
                 <div class='alert alert-block alert-warning'>
                 {% trans 'After placing this purchase order, line items will no longer be editable.' %}
                 </div>`;
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
+}
+
+
+/*
+ * Launches a modal form to mark a SalesOrder as "complete"
+ */
+function completeSalesOrder(order_id, options={}) {
+
+    constructForm(
+        `/api/order/so/${order_id}/complete/`,
+        {
+            method: 'POST',
+            title: '{% trans "Complete Sales Order" %}',
+            confirm: true,
+            fieldsFunction: function(opts) {
+                var fields = {
+                    accept_incomplete: {},
+                };
+
+                if (opts.context.is_complete) {
+                    delete fields['accept_incomplete'];
+                }
+
+                return fields;
+            },
+            preFormContent: function(opts) {
+                var html = `
+                <div class='alert alert-block alert-info'>
+                    {% trans "Mark this order as complete?" %}
+                </div>`;
+
+                if (opts.context.pending_shipments) {
+                    html += `
+                    <div class='alert alert-block alert-danger'>
+                    {% trans "Order cannot be completed as there are incomplete shipments" %}<br>
+                    </div>`;
+                }
+
+                if (!opts.context.is_complete) {
+                    html += `
+                    <div class='alert alert-block alert-warning'>
+                    {% trans "This order has line items which have not been completed." %}<br>
+                    {% trans "Completing this order means that the order and line items will no longer be editable." %}
+                    </div>`;
+                }
 
                 return html;
             },
@@ -493,41 +560,123 @@ function createSalesOrder(options={}) {
     });
 }
 
+
+/*
+ * Construct a set of fields for a purchase order form
+ */
+function purchaseOrderFields(options={}) {
+
+    var fields = {
+        reference: {
+            icon: 'fa-hashtag',
+        },
+        supplier: {
+            icon: 'fa-building',
+            secondary: {
+                title: '{% trans "Add Supplier" %}',
+                fields: function() {
+                    var fields = companyFormFields();
+
+                    fields.is_supplier.value = true;
+
+                    return fields;
+                }
+            }
+        },
+        description: {},
+        supplier_reference: {},
+        target_date: {
+            icon: 'fa-calendar-alt',
+        },
+        link: {
+            icon: 'fa-link',
+        },
+        responsible: {
+            icon: 'fa-user',
+        },
+    };
+
+    if (options.supplier) {
+        fields.supplier.value = options.supplier;
+    }
+
+    if (options.hide_supplier) {
+        fields.supplier.hidden = true;
+    }
+
+    // Add fields for order duplication (only if required)
+    if (options.duplicate_order) {
+        fields.duplicate_order = {
+            value: options.duplicate_order,
+            group: 'duplicate',
+            required: 'true',
+            type: 'related field',
+            model: 'purchaseorder',
+            filters: {
+                supplier_detail: true,
+            },
+            api_url: '{% url "api-po-list" %}',
+            label: '{% trans "Purchase Order" %}',
+            help_text: '{% trans "Select purchase order to duplicate" %}',
+        };
+
+        fields.duplicate_line_items = {
+            value: true,
+            group: 'duplicate',
+            type: 'boolean',
+            label: '{% trans "Duplicate Line Items" %}',
+            help_text: '{% trans "Duplicate all line items from the selected order" %}',
+        };
+
+        fields.duplicate_extra_lines = {
+            value: true,
+            group: 'duplicate',
+            type: 'boolean',
+            label: '{% trans "Duplicate Extra Lines" %}',
+            help_text: '{% trans "Duplicate extra line items from the selected order" %}',
+        };
+    }
+
+    return fields;
+}
+
+
+/*
+ * Edit an existing PurchaseOrder
+ */
+function editPurchaseOrder(pk, options={}) {
+
+    var fields = purchaseOrderFields(options);
+
+    constructForm(`/api/order/po/${pk}/`, {
+        fields: fields,
+        title: '{% trans "Edit Purchase Order" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
 // Create a new PurchaseOrder
 function createPurchaseOrder(options={}) {
 
+    var fields = purchaseOrderFields(options);
+
+    var groups = {};
+
+    if (options.duplicate_order) {
+        groups.duplicate = {
+            title: '{% trans "Duplication Options" %}',
+            collapsible: false,
+        };
+    };
+
     constructForm('{% url "api-po-list" %}', {
         method: 'POST',
-        fields: {
-            reference: {
-                icon: 'fa-hashtag',
-            },
-            supplier: {
-                icon: 'fa-building',
-                value: options.supplier,
-                secondary: {
-                    title: '{% trans "Add Supplier" %}',
-                    fields: function() {
-                        var fields = companyFormFields();
-
-                        fields.is_supplier.value = true;
-
-                        return fields;
-                    }
-                }
-            },
-            description: {},
-            supplier_reference: {},
-            target_date: {
-                icon: 'fa-calendar-alt',
-            },
-            link: {
-                icon: 'fa-link',
-            },
-            responsible: {
-                icon: 'fa-user',
-            }
-        },
+        fields: fields,
+        groups: groups,
+        data: options.data,
         onSuccess: function(data) {
 
             if (options.onSuccess) {
@@ -537,7 +686,29 @@ function createPurchaseOrder(options={}) {
                 location.href = `/order/purchase-order/${data.pk}/`;
             }
         },
-        title: '{% trans "Create Purchase Order" %}',
+        title: options.title || '{% trans "Create Purchase Order" %}',
+    });
+}
+
+/*
+ * Duplicate an existing PurchaseOrder
+ * Provides user with option to duplicate line items for the order also.
+ */
+function duplicatePurchaseOrder(order_id, options={}) {
+
+    options.duplicate_order = order_id;
+
+    inventreeGet(`/api/order/po/${order_id}/`, {}, {
+        success: function(data) {
+
+            // Clear out data we do not want to be duplicated
+            delete data['pk'];
+            delete data['reference'];
+
+            options.data = data;
+
+            createPurchaseOrder(options);
+        }
     });
 }
 
@@ -2465,7 +2636,7 @@ function loadSalesOrderTable(table, options) {
             return `<div id='purchase-order-calendar'></div>`;
         },
         onRefresh: function() {
-            loadPurchaseOrderTable(table, options);
+            loadSalesOrderTable(table, options);
         },
         onLoadSuccess: function() {
 

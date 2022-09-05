@@ -346,7 +346,9 @@ function convertQueryParameters(params, filters) {
     if ('original_search' in params) {
         var search = params['search'] || '';
 
-        params['search'] = search + ' ' + params['original_search'];
+        var clean_search = sanitizeInputString(search + ' ' + params['original_search']);
+
+        params['search'] = clean_search;
 
         delete params['original_search'];
     }

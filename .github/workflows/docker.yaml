@@ -105,10 +105,3 @@ jobs:
           COSIGN_EXPERIMENTAL: "true"
         run: cosign sign ${{ steps.meta.outputs.tags }}@${{
           steps.build-and-push.outputs.digest }}
-      - name: Push to Stable Branch
-        uses: ad-m/github-push-action@9a46ba8d86d3171233e861a4351b1278a2805c83 # pin@master
-        if: env.stable_release == 'true' && github.event_name != 'pull_request'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: stable
-          force: true
