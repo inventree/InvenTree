@@ -212,6 +212,7 @@ function duplicateSupplierPart(part, options={}) {
         success: function(data) {
 
             // Remove fields which we do not want to duplicate
+            delete data['pk'];
             delete data['available'];
             delete data['availability_updated'];
 
