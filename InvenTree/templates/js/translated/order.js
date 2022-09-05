@@ -24,6 +24,7 @@
     cancelPurchaseOrder,
     cancelSalesOrder,
     completePurchaseOrder,
+    completeSalesOrder,
     completeShipment,
     completePendingShipments,
     createPurchaseOrder,
@@ -282,6 +283,17 @@ function completePurchaseOrder(order_id, options={}) {
             method: 'POST',
             title: '{% trans "Complete Purchase Order" %}',
             confirm: true,
+            fieldsFunction: function(opts) {
+                var fields = {
+                    accept_incomplete: {},
+                };
+
+                if (opts.context.is_complete) {
+                    delete fields['accept_incomplete'];
+                }
+
+                return fields;
+            },
             preFormContent: function(opts) {
 
                 var html = `
@@ -362,6 +374,59 @@ function issuePurchaseOrder(order_id, options={}) {
                 <div class='alert alert-block alert-warning'>
                 {% trans 'After placing this purchase order, line items will no longer be editable.' %}
                 </div>`;
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
+}
+
+
+/*
+ * Launches a modal form to mark a SalesOrder as "complete"
+ */
+function completeSalesOrder(order_id, options={}) {
+
+    constructForm(
+        `/api/order/so/${order_id}/complete/`,
+        {
+            method: 'POST',
+            title: '{% trans "Complete Sales Order" %}',
+            confirm: true,
+            fieldsFunction: function(opts) {
+                var fields = {
+                    accept_incomplete: {},
+                };
+
+                if (opts.context.is_complete) {
+                    delete fields['accept_incomplete'];
+                }
+
+                return fields;
+            },
+            preFormContent: function(opts) {
+                var html = `
+                <div class='alert alert-block alert-info'>
+                    {% trans "Mark this order as complete?" %}
+                </div>`;
+
+                if (opts.context.pending_shipments) {
+                    html += `
+                    <div class='alert alert-block alert-danger'>
+                    {% trans "Order cannot be completed as there are incomplete shipments" %}<br>
+                    </div>`;
+                }
+
+                if (!opts.context.is_complete) {
+                    html += `
+                    <div class='alert alert-block alert-warning'>
+                    {% trans "This order has line items which have not been completed." %}<br>
+                    {% trans "Completing this order means that the order and line items will no longer be editable." %}
+                    </div>`;
+                }
 
                 return html;
             },
