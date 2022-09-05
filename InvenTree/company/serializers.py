@@ -239,6 +239,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     pretty_name = serializers.CharField(read_only=True)
 
+    pack_size = serializers.FloatField()
+
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
 

@@ -344,6 +344,24 @@ class SupplierPartList(ListCreateDestroyAPIView):
     filterset_fields = [
     ]
 
+    ordering_fields = [
+        'SKU',
+        'part',
+        'supplier',
+        'manufacturer',
+        'MPN',
+        'packaging',
+        'pack_size',
+        'in_stock',
+    ]
+
+    ordering_field_aliases = {
+        'part': 'part__name',
+        'supplier': 'supplier__name',
+        'manufacturer': 'manufacturer_part__manufacturer__name',
+        'MPN': 'manufacturer_part__MPN',
+    }
+
     search_fields = [
         'SKU',
         'supplier__name',

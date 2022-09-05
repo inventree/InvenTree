@@ -866,6 +866,7 @@ function loadSupplierPartTable(table, url, options) {
                 switchable: params['part_detail'],
                 sortable: true,
                 field: 'part_detail.full_name',
+                sortName: 'part',
                 title: '{% trans "Part" %}',
                 formatter: function(value, row) {
 
@@ -916,6 +917,7 @@ function loadSupplierPartTable(table, url, options) {
                 visible: params['manufacturer_detail'],
                 switchable: params['manufacturer_detail'],
                 sortable: true,
+                sortName: 'manufacturer',
                 field: 'manufacturer_detail.name',
                 title: '{% trans "Manufacturer" %}',
                 formatter: function(value, row) {
@@ -934,6 +936,7 @@ function loadSupplierPartTable(table, url, options) {
                 visible: params['manufacturer_detail'],
                 switchable: params['manufacturer_detail'],
                 sortable: true,
+                sortName: 'MPN',
                 field: 'manufacturer_part_detail.MPN',
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row) {
@@ -968,7 +971,12 @@ function loadSupplierPartTable(table, url, options) {
             {
                 field: 'packaging',
                 title: '{% trans "Packaging" %}',
-                sortable: false,
+                sortable: true,
+            },
+            {
+                field: 'pack_size',
+                title: '{% trans "Pack Size" %}',
+                sortable: true,
             },
             {
                 field: 'in_stock',
