@@ -19,7 +19,7 @@ import stock.models
 import stock.serializers
 from common.settings import currency_code_mappings
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
-from InvenTree.helpers import extract_serial_numbers, normalize
+from InvenTree.helpers import extract_serial_numbers, normalize, str2bool
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeModelSerializer,
@@ -203,6 +203,23 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
 
 class PurchaseOrderCompleteSerializer(serializers.Serializer):
     """Serializer for completing a purchase order."""
+
+    accept_incomplete = serializers.BooleanField(
+        label=_('Accept Incomplete'),
+        help_text=_('Allow order to be closed with incomplete line items'),
+        required=False,
+        default=False,
+    )
+
+    def validate_accept_incomplete(self, value):
+        """Check if the 'accept_incomplete' field is required"""
+
+        order = self.context['order']
+
+        if not value and not order.is_complete:
+            raise ValidationError(_("Order has incomplete line items"))
+
+        return value
 
     class Meta:
         """Metaclass options."""
@@ -1079,13 +1096,43 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
 class SalesOrderCompleteSerializer(serializers.Serializer):
     """DRF serializer for manually marking a sales order as complete."""
 
+    accept_incomplete = serializers.BooleanField(
+        label=_('Accept Incomplete'),
+        help_text=_('Allow order to be closed with incomplete line items'),
+        required=False,
+        default=False,
+    )
+
+    def validate_accept_incomplete(self, value):
+        """Check if the 'accept_incomplete' field is required"""
+
+        order = self.context['order']
+
+        if not value and not order.is_completed():
+            raise ValidationError(_("Order has incomplete line items"))
+
+        return value
+
+    def get_context_data(self):
+        """Custom context data for this serializer"""
+
+        order = self.context['order']
+
+        return {
+            'is_complete': order.is_completed(),
+            'pending_shipments': order.pending_shipment_count,
+        }
+
     def validate(self, data):
         """Custom validation for the serializer"""
         data = super().validate(data)
 
         order = self.context['order']
 
-        order.can_complete(raise_error=True)
+        order.can_complete(
+            raise_error=True,
+            allow_incomplete_lines=str2bool(data.get('accept_incomplete', False)),
+        )
 
         return data
 
@@ -1093,10 +1140,14 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
         """Save the serializer to complete the SalesOrder"""
         request = self.context['request']
         order = self.context['order']
+        data = self.validated_data
 
         user = getattr(request, 'user', None)
 
-        order.complete_order(user)
+        order.complete_order(
+            user,
+            allow_incomplete_lines=str2bool(data.get('accept_incomplete', False)),
+        )
 
 
 class SalesOrderCancelSerializer(serializers.Serializer):
