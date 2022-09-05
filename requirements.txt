@@ -194,6 +194,8 @@ redis==3.5.3
     # via
     #   django-q
     #   django-redis
+regex==2022.8.17
+    # via -r requirements.in
 requests==2.28.1
     # via
     #   coreapi
@@ -230,8 +232,10 @@ urllib3==1.26.11
     #   sentry-sdk
 wcwidth==0.2.5
     # via blessed
-weasyprint==56.1
-    # via django-weasyprint
+weasyprint==54.3
+    # via
+    #   -r requirements.in
+    #   django-weasyprint
 webencodings==0.5.1
     # via
     #   bleach

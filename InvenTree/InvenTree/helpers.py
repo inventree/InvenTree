@@ -20,7 +20,9 @@ from django.http import StreamingHttpResponse
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 
+import regex
 import requests
+from bleach import clean
 from djmoney.money import Money
 from PIL import Image
 
@@ -263,6 +265,20 @@ def getLogoImage(as_file=False, custom=True):
         return f"file://{path}"
     else:
         return getStaticUrl('img/inventree.png')
+
+
+def getSplashScren(custom=True):
+    """Return the InvenTree splash screen, or a custom splash if available"""
+
+    static_storage = StaticFilesStorage()
+
+    if custom and settings.CUSTOM_SPLASH:
+
+        if static_storage.exists(settings.CUSTOM_SPLASH):
+            return static_storage.url(settings.CUSTOM_SPLASH)
+
+    # No custom splash screen
+    return static_storage.url("img/inventree_splash.jpg")
 
 
 def TestIfImageURL(url):
@@ -840,6 +856,55 @@ def clean_decimal(number):
         return Decimal(0)
 
     return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
+
+
+def strip_html_tags(value: str, raise_error=True, field_name=None):
+    """Strip HTML tags from an input string using the bleach library.
+
+    If raise_error is True, a ValidationError will be thrown if HTML tags are detected
+    """
+
+    cleaned = clean(
+        value,
+        strip=True,
+        tags=[],
+        attributes=[],
+    )
+
+    # Add escaped characters back in
+    replacements = {
+        '&gt;': '>',
+        '&lt;': '<',
+        '&amp;': '&',
+    }
+
+    for o, r in replacements.items():
+        cleaned = cleaned.replace(o, r)
+
+    # If the length changed, it means that HTML tags were removed!
+    if len(cleaned) != len(value) and raise_error:
+
+        field = field_name or 'non_field_errors'
+
+        raise ValidationError({
+            field: [_("Remove HTML tags from this value")]
+        })
+
+    return cleaned
+
+
+def remove_non_printable_characters(value: str, remove_ascii=True, remove_unicode=True):
+    """Remove non-printable / control characters from the provided string"""
+
+    if remove_ascii:
+        # Remove ASCII control characters
+        cleaned = regex.sub(u'[\x01-\x1F]+', '', value)
+
+    if remove_unicode:
+        # Remove Unicode control characters
+        cleaned = regex.sub(u'[^\P{C}]+', '', value)
+
+    return cleaned
 
 
 def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = 'object_id'):

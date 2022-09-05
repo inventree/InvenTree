@@ -55,6 +55,9 @@ src="{% static 'img/blank_image.png' %}"
         {% if build.is_active %}
         <li><a class='dropdown-item' href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
         {% endif %}
+        {% if roles.build.add %}
+        <li><a class='dropdown-item' href='#' id='build-duplicate'><span class='fas fa-clone'></span> {% trans "Duplicate Build" %}</a></li>
+        {% endif %}
         {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
         <li><a class='dropdown-item' href='#' id='build-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Build" %}</a>
         {% endif %}
@@ -209,6 +212,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 
+    {% if roles.build.change %}
     $("#build-edit").click(function () {
         editBuildOrder({{ build.pk }});
     });
@@ -224,24 +228,19 @@ src="{% static 'img/blank_image.png' %}"
     });
 
     $("#build-complete").on('click', function() {
-
-        {% if build.incomplete_count > 0 %}
-        showAlertDialog(
-            '{% trans "Incomplete Outputs" %}',
-            '{% trans "Build Order cannot be completed as incomplete build outputs remain" %}',
-            {
-                alert_style: 'danger',
-            }
-        );
-        {% else %}
-
         completeBuildOrder({{ build.pk }}, {
             overallocated: {% if build.has_overallocated_parts %}true{% else %}false{% endif %},
             allocated: {% if build.are_untracked_parts_allocated %}true{% else %}false{% endif %},
             completed: {% if build.remaining == 0 %}true{% else %}false{% endif %},
         });
-        {% endif %}
     });
+    {% endif %}
+
+    {% if roles.build.add %}
+    $('#build-duplicate').click(function() {
+        duplicateBuildOrder({{ build.pk }});
+    });
+    {% endif %}
 
     {% if report_enabled %}
     $('#print-build-report').click(function() {

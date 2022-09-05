@@ -78,6 +78,13 @@ class StockLocation(MetadataMixin, InvenTreeTree):
         """Return API url."""
         return reverse('api-location-list')
 
+    icon = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_("Icon"),
+        help_text=_("Icon (optional)")
+    )
+
     owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
                               verbose_name=_('Owner'),
                               help_text=_('Select Owner'),

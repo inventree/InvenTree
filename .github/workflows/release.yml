@@ -3,15 +3,35 @@
 name: Publish release notes
 on:
   release:
-    types: [published]
+    types: [ published ]
 
 jobs:
+
+  stable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
+      - name: Version Check
+        run: |
+          pip install requests
+          python3 ci/version_check.py
+      - name: Push to Stable Branch
+        uses: ad-m/github-push-action@9a46ba8d86d3171233e861a4351b1278a2805c83 # pin@master
+        if: env.stable_release == 'true'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: stable
+          force: true
+
   tweet:
     runs-on: ubuntu-latest
     steps:
-      - uses: Eomm/why-don-t-you-tweet@v1
+      - uses: Eomm/why-don-t-you-tweet@f61f2a86c30c46528c1398a1abb1f64aa0988f69 # pin@v1
         with:
-          tweet-message: "InvenTree release ${{ github.event.release.tag_name }} is out now! Release notes: ${{ github.event.release.html_url }} #opensource #inventree"
+          tweet-message: "InvenTree release ${{ github.event.release.tag_name }} is out
+            now! Release notes: ${{ github.event.release.html_url }} #opensource
+            #inventree"
         env:
           TWITTER_CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
           TWITTER_CONSUMER_API_SECRET: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
@@ -19,14 +39,14 @@ jobs:
           TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
 
   reddit:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: bluwy/release-for-reddit-action@v1
-          with:
-            username: ${{ secrets.REDDIT_USERNAME }}
-            password: ${{ secrets.REDDIT_PASSWORD }}
-            app-id: ${{ secrets.REDDIT_APP_ID }}
-            app-secret: ${{ secrets.REDDIT_APP_SECRET }}
-            subreddit: InvenTree
-            title: "InvenTree version ${{ github.event.release.tag_name }} released"
-            comment: "${{ github.event.release.body }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: bluwy/release-for-reddit-action@4d948192aff856da22f19f9806b00b46ca384547 # pin@v1
+        with:
+          username: ${{ secrets.REDDIT_USERNAME }}
+          password: ${{ secrets.REDDIT_PASSWORD }}
+          app-id: ${{ secrets.REDDIT_APP_ID }}
+          app-secret: ${{ secrets.REDDIT_APP_SECRET }}
+          subreddit: InvenTree
+          title: "InvenTree version ${{ github.event.release.tag_name }} released"
+          comment: "${{ github.event.release.body }}"

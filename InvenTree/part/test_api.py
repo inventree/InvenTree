@@ -223,35 +223,73 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         self.assertEqual(PartCategoryParameterTemplate.objects.count(), 0)
 
     def test_bleach(self):
-        """Test that the data cleaning functionality is working"""
+        """Test that the data cleaning functionality is working.
+
+        This helps to protect against XSS injection
+        """
 
         url = reverse('api-part-category-detail', kwargs={'pk': 1})
 
-        self.patch(
-            url,
-            {
-                'description': '<img src=# onerror=alert("pwned")>',
-            },
-            expected_code=200
-        )
+        # Invalid values containing tags
+        invalid_values = [
+            '<img src="test"/>',
+            '<a href="#">Link</a>',
+            "<a href='#'>Link</a>",
+            '<b>',
+        ]
 
-        cat = PartCategory.objects.get(pk=1)
+        for v in invalid_values:
+            response = self.patch(
+                url,
+                {
+                    'description': v
+                },
+                expected_code=400
+            )
 
-        # Image tags have been stripped
-        self.assertEqual(cat.description, '&lt;img src=# onerror=alert("pwned")&gt;')
+            self.assertIn('Remove HTML tags', str(response.data))
 
-        self.patch(
-            url,
-            {
-                'description': '<a href="www.google.com">LINK</a><script>alert("h4x0r")</script>',
-            },
-            expected_code=200,
-        )
+        # Raw characters should be allowed
+        allowed = [
+            '<< hello',
+            'Alpha & Omega',
+            'A > B > C',
+        ]
 
-        # Tags must have been bleached out
-        cat.refresh_from_db()
+        for val in allowed:
+            response = self.patch(
+                url,
+                {
+                    'description': val,
+                },
+                expected_code=200,
+            )
 
-        self.assertEqual(cat.description, '<a href="www.google.com">LINK</a>&lt;script&gt;alert("h4x0r")&lt;/script&gt;')
+            self.assertEqual(response.data['description'], val)
+
+    def test_invisible_chars(self):
+        """Test that invisible characters are removed from the input data"""
+
+        url = reverse('api-part-category-detail', kwargs={'pk': 1})
+
+        values = [
+            'A part\n category\n\t',
+            'A\t part\t category\t',
+            'A pa\rrt cat\r\r\regory',
+            'A part\u200e catego\u200fry\u202e'
+        ]
+
+        for val in values:
+
+            response = self.patch(
+                url,
+                {
+                    'description': val,
+                },
+                expected_code=200,
+            )
+
+            self.assertEqual(response.data['description'], 'A part category')
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):

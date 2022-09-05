@@ -19,8 +19,8 @@ main {
 }
 
 .login-screen {
-    background: url(/static/img/paper_splash.jpg) no-repeat center fixed;
     background-size: cover;
+    background-position: center;
     height: 100vh;
     font-family: 'Numans', sans-serif;
     color: #eee;
@@ -1027,4 +1027,9 @@ a {
     padding: 3px;
     margin-top: 3px;
     overflow: hidden;
+}
+
+.treeview .node-icon {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
 }

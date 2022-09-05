@@ -7,6 +7,7 @@ import pkgutil
 import subprocess
 import sysconfig
 import traceback
+from importlib.metadata import entry_points
 
 from django import template
 from django.conf import settings
@@ -68,18 +69,21 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
         package_name = pathlib.Path(package_path).relative_to(install_path).parts[0]
     except ValueError:
         # is file - loaded -> form a name for that
-        path_obj = pathlib.Path(package_path).relative_to(settings.BASE_DIR)
-        path_parts = [*path_obj.parts]
-        path_parts[-1] = path_parts[-1].replace(path_obj.suffix, '')  # remove suffix
+        try:
+            path_obj = pathlib.Path(package_path).relative_to(settings.BASE_DIR)
+            path_parts = [*path_obj.parts]
+            path_parts[-1] = path_parts[-1].replace(path_obj.suffix, '')  # remove suffix
 
-        # remove path prefixes
-        if path_parts[0] == 'plugin':
-            path_parts.remove('plugin')
-            path_parts.pop(0)
-        else:
-            path_parts.remove('plugins')  # pragma: no cover
+            # remove path prefixes
+            if path_parts[0] == 'plugin':
+                path_parts.remove('plugin')
+                path_parts.pop(0)
+            else:
+                path_parts.remove('plugins')  # pragma: no cover
 
-        package_name = '.'.join(path_parts)
+            package_name = '.'.join(path_parts)
+        except Exception:
+            package_name = package_path
 
     if do_log:
         log_kwargs = {}
@@ -92,6 +96,11 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
         if settings.TESTING_ENV and package_name != 'integration.broken_sample' and isinstance(error, IntegrityError):
             raise error  # pragma: no cover
         raise IntegrationPluginError(package_name, str(error))
+
+
+def get_entrypoints():
+    """Returns list for entrypoints for InvenTree plugins."""
+    return entry_points().get('inventree_plugins', [])
 # endregion
 
 

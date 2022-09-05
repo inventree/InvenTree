@@ -16,8 +16,6 @@ import sys
 from pathlib import Path
 
 import django.conf.locale
-from django.contrib.staticfiles.storage import StaticFilesStorage
-from django.core.files.storage import default_storage
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
@@ -26,7 +24,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from . import config
-from .config import get_boolean_setting, get_setting
+from .config import get_boolean_setting, get_custom_file, get_setting
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
@@ -678,7 +676,7 @@ EMAIL_SUBJECT_PREFIX = get_setting('INVENTREE_EMAIL_PREFIX', 'email.prefix', '[I
 EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
 EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
 
-DEFUALT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_SENDER', 'email.sender', '')
+DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_SENDER', 'email.sender', '')
 
 EMAIL_USE_LOCALTIME = False
 EMAIL_TIMEOUT = 60
@@ -818,29 +816,13 @@ PLUGIN_RETRY = CONFIG.get('PLUGIN_RETRY', 5)  # how often should plugin loading 
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
 
 # User interface customization values
+CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True)
+CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
+
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
-
-CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', None)
-
-"""
-Check for the existence of a 'custom logo' file:
-- Check the 'static' directory
-- Check the 'media' directory (legacy)
-"""
-
-if CUSTOM_LOGO:
-    static_storage = StaticFilesStorage()
-
-    if static_storage.exists(CUSTOM_LOGO):
-        logger.info(f"Loading custom logo from static directory: {CUSTOM_LOGO}")
-    elif default_storage.exists(CUSTOM_LOGO):
-        logger.info(f"Loading custom logo from media directory: {CUSTOM_LOGO}")
-    else:
-        logger.warning(f"The custom logo file '{CUSTOM_LOGO}' could not be found in the static or media directories")
-        CUSTOM_LOGO = False
 
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 
-logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
-logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
+logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
+logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")

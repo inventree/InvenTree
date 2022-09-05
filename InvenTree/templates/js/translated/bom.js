@@ -519,7 +519,6 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
                 </a>
             </td>
             <td id='description-${pk}'><em>${part.description}</em></td>
-            <td id='stock-${pk}'><em>${part.stock}</em></td>
             <td>${buttons}</td>
         </tr>
         `;
@@ -552,7 +551,6 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             <tr>
                 <th>{% trans "Part" %}</th>
                 <th>{% trans "Description" %}</th>
-                <th>{% trans "Stock" %}</th>
                 <th><!-- Actions --></th>
             </tr>
         </thead>
@@ -1051,7 +1049,7 @@ function loadBomTable(table, options={}) {
                     available += row.on_order;
                     can_build = available / row.quantity;
 
-                    text += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Including On Order" %}: ${can_build}'></span>`;
+                    text += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Including On Order" %}: ${formatDecimal(can_build, 2)}'></span>`;
                 }
 
                 return text;
@@ -1070,10 +1068,10 @@ function loadBomTable(table, options={}) {
                 });
 
                 if (can_build == null) {
-                    can_build = '-';
+                    return '-';
+                } else {
+                    return formatDecimal(can_build, 2);
                 }
-
-                return can_build;
             },
             sorter: function(valA, valB, rowA, rowB) {
                 // Function to sort the "can build" quantity
