@@ -5,29 +5,29 @@ msgstr ""
 "POT-Creation-Date: 2022-09-05 03:04+0000\n"
 "PO-Revision-Date: 2022-09-05 03:22\n"
 "Last-Translator: \n"
-"Language-Team: Portuguese\n"
-"Language: pt_PT\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: pt-PT\n"
+"X-Crowdin-Language: pt-BR\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
 #: InvenTree/api.py:54
 msgid "API endpoint not found"
-msgstr "Endpoint da API não encontrado"
+msgstr "API endpoint não encontrado"
 
 #: InvenTree/exceptions.py:68
 msgid "Error details can be found in the admin panel"
-msgstr "Os detalhes do erro podem ser consultados no painel de administração"
+msgstr "Detalhes do erro podem ser encontrados no painel de administrador"
 
 #: InvenTree/fields.py:109
 msgid "Enter date"
-msgstr "Inserir data"
+msgstr "Insira uma Data"
 
 #: InvenTree/fields.py:186 build/serializers.py:384
 #: build/templates/build/sidebar.html:21 company/models.py:523
@@ -46,12 +46,12 @@ msgstr "Inserir data"
 #: templates/js/translated/order.js:3810 templates/js/translated/order.js:4208
 #: templates/js/translated/stock.js:1374 templates/js/translated/stock.js:1980
 msgid "Notes"
-msgstr "Notas"
+msgstr "Anotações"
 
 #: InvenTree/format.py:142
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr "O valor '{name}' não aparece no formato padrão"
+msgstr "Valor '{name}' não está no formato correto"
 
 #: InvenTree/format.py:152
 msgid "Provided value does not match required pattern: "
@@ -59,27 +59,27 @@ msgstr "O valor fornecido não corresponde ao padrão exigido: "
 
 #: InvenTree/forms.py:133
 msgid "Enter password"
-msgstr "Introduzir palavra-passe"
+msgstr "Digite a senha"
 
 #: InvenTree/forms.py:134
 msgid "Enter new password"
-msgstr "Introduza a nova palavra-passe"
+msgstr "Insira uma nova senha"
 
 #: InvenTree/forms.py:143
 msgid "Confirm password"
-msgstr "Confirmar palavra-passe"
+msgstr "Confirmar senha"
 
 #: InvenTree/forms.py:144
 msgid "Confirm new password"
-msgstr "Confirmar nova palavra-passe"
+msgstr "Confirmar nova senha"
 
 #: InvenTree/forms.py:148
 msgid "Old password"
-msgstr "Palavra-passe anterior"
+msgstr "Senha atual"
 
 #: InvenTree/forms.py:177
 msgid "Email (again)"
-msgstr "Email (novamente)"
+msgstr "E-mail (novamente)"
 
 #: InvenTree/forms.py:181
 msgid "Email address confirmation"
@@ -87,27 +87,27 @@ msgstr "Confirmação do endereço de email"
 
 #: InvenTree/forms.py:202
 msgid "You must type the same email each time."
-msgstr "Deve ser introduzido o mesmo endereço de email."
+msgstr "Voce precisa digital o mesmo email."
 
 #: InvenTree/helpers.py:175
 msgid "Connection error"
-msgstr ""
+msgstr "Erro de conexão"
 
 #: InvenTree/helpers.py:179 InvenTree/helpers.py:184
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "O servidor respondeu com código de status inválido"
 
 #: InvenTree/helpers.py:181
 msgid "Exception occurred"
-msgstr ""
+msgstr "Ocorreu uma exceção"
 
 #: InvenTree/helpers.py:189
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "O servidor respondeu com valor inválido de '{Content-Length}'"
 
 #: InvenTree/helpers.py:192
 msgid "Image size is too large"
-msgstr ""
+msgstr "Tamanho da imagem muito grande"
 
 #: InvenTree/helpers.py:204
 msgid "Image download exceeded maximum size"
@@ -124,44 +124,44 @@ msgstr ""
 #: InvenTree/helpers.py:600
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr "Número de série em duplicado: {sn}"
+msgstr "Numero serial duplicado: {sn}"
 
 #: InvenTree/helpers.py:607 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
-msgstr "A quantidade fornecida é inválida"
+msgstr "Quantidade invalida"
 
 #: InvenTree/helpers.py:610
 msgid "Empty serial number string"
-msgstr "Número de série vazio"
+msgstr "Numero serial em branco"
 
 #: InvenTree/helpers.py:642
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr "Intervalo de grupos inválido: {g}"
+msgstr "Numero de grupo invalido:{g}"
 
 #: InvenTree/helpers.py:645
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr "Grupo inválido: {g}"
+msgstr "Grupo invalido:{g}"
 
 #: InvenTree/helpers.py:673
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr "Sequência de grupos inválido: {g}"
+msgstr "Sequencia de grupo invalida:{g}"
 
 #: InvenTree/helpers.py:681
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr "Inválido/sem grupo {group}"
+msgstr "Invalido/sem grupo {group}"
 
 #: InvenTree/helpers.py:687
 msgid "No serial numbers found"
-msgstr "Não foram encontrados números de série"
+msgstr "Nenhum numero serial encontrado"
 
 #: InvenTree/helpers.py:691
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
-msgstr "Quantidade de números de série únicos ({s}) devem corresponder à quantidade ({q})"
+msgstr "Numero de numeros seriais ({s}) precisa bater com quantidade ({q})"
 
 #: InvenTree/helpers.py:890
 msgid "Remove HTML tags from this value"
@@ -169,35 +169,35 @@ msgstr ""
 
 #: InvenTree/models.py:236
 msgid "Improperly formatted pattern"
-msgstr "Padrão formatado incorretamente"
+msgstr ""
 
 #: InvenTree/models.py:243
 msgid "Unknown format key specified"
-msgstr "Chave de formato desconhecido"
+msgstr ""
 
 #: InvenTree/models.py:249
 msgid "Missing required format key"
-msgstr "Chave de formato exigida em falta"
+msgstr ""
 
 #: InvenTree/models.py:261
 msgid "Reference field cannot be empty"
-msgstr "Campo de referência não pode estar em branco"
+msgstr ""
 
 #: InvenTree/models.py:268
 msgid "Reference must match required pattern"
-msgstr "A referência deve corresponder ao padrão exigido"
+msgstr ""
 
 #: InvenTree/models.py:304
 msgid "Reference number is too large"
-msgstr "O número de referência é demasiado grande"
+msgstr ""
 
 #: InvenTree/models.py:382
 msgid "Missing file"
-msgstr "Ficheiro em falta"
+msgstr "Arquivo nao encontrado"
 
 #: InvenTree/models.py:383
 msgid "Missing external link"
-msgstr "Link externo em falta"
+msgstr "Link externo nao encontrado"
 
 #: InvenTree/models.py:395 stock/models.py:2102
 #: templates/js/translated/attachment.js:103
@@ -207,7 +207,7 @@ msgstr "Anexo"
 
 #: InvenTree/models.py:396
 msgid "Select file to attach"
-msgstr "Selecionar ficheiro a anexar"
+msgstr "Selecione arquivo para anexar"
 
 #: InvenTree/models.py:402 company/models.py:124 company/models.py:276
 #: company/models.py:510 order/models.py:84 order/models.py:1245
@@ -222,16 +222,16 @@ msgstr "Link"
 #: InvenTree/models.py:403 build/models.py:296 part/models.py:803
 #: stock/models.py:658
 msgid "Link to external URL"
-msgstr "Link para URL externo"
+msgstr "Link para URL externa"
 
 #: InvenTree/models.py:406 templates/js/translated/attachment.js:104
 #: templates/js/translated/attachment.js:285
 msgid "Comment"
-msgstr "Comentário"
+msgstr "Comentario"
 
 #: InvenTree/models.py:406
 msgid "File comment"
-msgstr "Comentário do ficheiro"
+msgstr "Comentario sobre arquivo"
 
 #: InvenTree/models.py:412 InvenTree/models.py:413 common/models.py:1669
 #: common/models.py:1670 common/models.py:1893 common/models.py:1894
@@ -240,7 +240,7 @@ msgstr "Comentário do ficheiro"
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2641
 msgid "User"
-msgstr "Utilizador"
+msgstr "Usuario"
 
 #: InvenTree/models.py:416
 msgid "upload date"
@@ -248,32 +248,32 @@ msgstr "data de upload"
 
 #: InvenTree/models.py:438
 msgid "Filename must not be empty"
-msgstr "O nome do ficheiro não pode estar em branco"
+msgstr "Nome do arquivo nao pode estar vazio"
 
 #: InvenTree/models.py:447
 msgid "Invalid attachment directory"
-msgstr "Pasta de anexos inválida"
+msgstr "Diretorio para anexo invalido"
 
 #: InvenTree/models.py:457
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr "O nome do arquivo contém caratere inválido '{c}'"
+msgstr "Arquivo contem characteres ilegais '{c}'"
 
 #: InvenTree/models.py:460
 msgid "Filename missing extension"
-msgstr "Extensão em falta no nome do ficheiro"
+msgstr "Arquivo sem extensao"
 
 #: InvenTree/models.py:467
 msgid "Attachment with this filename already exists"
-msgstr "Já existe um anexo com este nome"
+msgstr "Anexo ja existe"
 
 #: InvenTree/models.py:474
 msgid "Error renaming file"
-msgstr "Erro a renomear ficheiro"
+msgstr "Erro renomeando o arquivo"
 
 #: InvenTree/models.py:510
 msgid "Invalid choice"
-msgstr "Escolha inválida"
+msgstr "Escolha invalida"
 
 #: InvenTree/models.py:537 InvenTree/models.py:538 common/models.py:1879
 #: company/models.py:358 label/models.py:101 part/models.py:746
@@ -314,15 +314,15 @@ msgstr "Nome"
 #: templates/js/translated/part.js:2031 templates/js/translated/stock.js:1743
 #: templates/js/translated/stock.js:2424 templates/js/translated/stock.js:2478
 msgid "Description"
-msgstr "Descrição"
+msgstr "Descricao"
 
 #: InvenTree/models.py:545
 msgid "Description (optional)"
-msgstr "Descrição (opcional)"
+msgstr "Descricao (opicional)"
 
 #: InvenTree/models.py:553
 msgid "parent"
-msgstr "superior"
+msgstr "parent"
 
 #: InvenTree/models.py:560 InvenTree/models.py:561
 #: templates/js/translated/part.js:1968 templates/js/translated/stock.js:2430
@@ -331,65 +331,65 @@ msgstr ""
 
 #: InvenTree/models.py:670
 msgid "Server Error"
-msgstr "Erro do servidor"
+msgstr "Erro de servidor"
 
 #: InvenTree/models.py:671
 msgid "An error has been logged by the server."
-msgstr "Um erro foi registrado pelo servidor."
+msgstr "Log de erro salvo pelo servidor."
 
 #: InvenTree/serializers.py:55 part/models.py:2745
 msgid "Must be a valid number"
-msgstr "Deve ser um número válido"
+msgstr "Preicsa ser um numero valido"
 
 #: InvenTree/serializers.py:262
 msgid "Filename"
-msgstr "Nome do ficheiro"
+msgstr ""
 
 #: InvenTree/serializers.py:297
 msgid "Invalid value"
-msgstr "Valor inválido"
+msgstr ""
 
 #: InvenTree/serializers.py:319
 msgid "Data File"
-msgstr "Ficheiros de Dados"
+msgstr ""
 
 #: InvenTree/serializers.py:320
 msgid "Select data file for upload"
-msgstr "Selecionar ficheiro a enviar"
+msgstr ""
 
 #: InvenTree/serializers.py:341
 msgid "Unsupported file type"
-msgstr "Tipo de ficheiro não suportado"
+msgstr ""
 
 #: InvenTree/serializers.py:347
 msgid "File is too large"
-msgstr "O ficheiro é demasiado grande"
+msgstr ""
 
 #: InvenTree/serializers.py:368
 msgid "No columns found in file"
-msgstr "Nenhuma coluna encontrada no ficheiro"
+msgstr ""
 
 #: InvenTree/serializers.py:371
 msgid "No data rows found in file"
-msgstr "Nenhuma linha de dados encontrada no ficheiro"
+msgstr ""
 
 #: InvenTree/serializers.py:494
 msgid "No data rows provided"
-msgstr "Nenhuma linha de dados fornecida"
+msgstr ""
 
 #: InvenTree/serializers.py:497
 msgid "No data columns supplied"
-msgstr "Nenhuma coluna de dados fornecida"
+msgstr ""
 
 #: InvenTree/serializers.py:574
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr "Coluna obrigatória em falta: '{name}'"
+msgstr ""
 
 #: InvenTree/serializers.py:583
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr "Coluna duplicada: '{col}'"
+msgstr ""
 
 #: InvenTree/serializers.py:602
 #: templates/InvenTree/settings/mixins/urls.html:14
@@ -406,324 +406,324 @@ msgstr ""
 
 #: InvenTree/settings.py:607
 msgid "Czech"
-msgstr "Checo"
+msgstr ""
 
 #: InvenTree/settings.py:608
 msgid "German"
-msgstr "Alemão"
+msgstr ""
 
 #: InvenTree/settings.py:609
 msgid "Greek"
-msgstr "Grego"
+msgstr ""
 
 #: InvenTree/settings.py:610
 msgid "English"
-msgstr "Inglês"
+msgstr ""
 
 #: InvenTree/settings.py:611
 msgid "Spanish"
-msgstr "Espanhol"
+msgstr ""
 
 #: InvenTree/settings.py:612
 msgid "Spanish (Mexican)"
-msgstr "Espanhol (Mexicano)"
+msgstr ""
 
 #: InvenTree/settings.py:613
 msgid "Farsi / Persian"
-msgstr "Persa"
+msgstr ""
 
 #: InvenTree/settings.py:614
 msgid "French"
-msgstr "Francês"
+msgstr ""
 
 #: InvenTree/settings.py:615
 msgid "Hebrew"
-msgstr "Hebraico"
+msgstr ""
 
 #: InvenTree/settings.py:616
 msgid "Hungarian"
-msgstr "Húngaro"
+msgstr ""
 
 #: InvenTree/settings.py:617
 msgid "Italian"
-msgstr "Italiano"
+msgstr ""
 
 #: InvenTree/settings.py:618
 msgid "Japanese"
-msgstr "﻿Japonês"
+msgstr ""
 
 #: InvenTree/settings.py:619
 msgid "Korean"
-msgstr "Coreano"
+msgstr ""
 
 #: InvenTree/settings.py:620
 msgid "Dutch"
-msgstr "Holandês"
+msgstr ""
 
 #: InvenTree/settings.py:621
 msgid "Norwegian"
-msgstr "Norueguês"
+msgstr ""
 
 #: InvenTree/settings.py:622
 msgid "Polish"
-msgstr "Polaco"
+msgstr ""
 
 #: InvenTree/settings.py:623
 msgid "Portuguese"
-msgstr "Português (Portugal)"
+msgstr ""
 
 #: InvenTree/settings.py:624
 msgid "Portuguese (Brazilian)"
-msgstr "Português (Brasil)"
+msgstr ""
 
 #: InvenTree/settings.py:625
 msgid "Russian"
-msgstr "Russo"
+msgstr ""
 
 #: InvenTree/settings.py:626
 msgid "Swedish"
-msgstr "Sueco"
+msgstr ""
 
 #: InvenTree/settings.py:627
 msgid "Thai"
-msgstr "Tailandês"
+msgstr ""
 
 #: InvenTree/settings.py:628
 msgid "Turkish"
-msgstr "Turco"
+msgstr ""
 
 #: InvenTree/settings.py:629
 msgid "Vietnamese"
-msgstr "Vietnamita"
+msgstr ""
 
 #: InvenTree/settings.py:630
 msgid "Chinese"
-msgstr "Chinês"
+msgstr ""
 
 #: InvenTree/status.py:99
 msgid "Background worker check failed"
-msgstr "Processo em segundo plano falhou"
+msgstr ""
 
 #: InvenTree/status.py:103
 msgid "Email backend not configured"
-msgstr "Backend de e-mail não configurado"
+msgstr ""
 
 #: InvenTree/status.py:106
 msgid "InvenTree system health checks failed"
-msgstr "Verificações de saúde do sistema InvenTree falharam"
+msgstr ""
 
 #: InvenTree/status_codes.py:99 InvenTree/status_codes.py:140
 #: InvenTree/status_codes.py:306 templates/js/translated/table_filters.js:334
 msgid "Pending"
-msgstr "Pendente"
+msgstr ""
 
 #: InvenTree/status_codes.py:100
 msgid "Placed"
-msgstr "Submetido"
+msgstr ""
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:309
 #: order/templates/order/order_base.html:137
 #: order/templates/order/sales_order_base.html:133
 msgid "Complete"
-msgstr "Completo"
+msgstr ""
 
 #: InvenTree/status_codes.py:102 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:308
 msgid "Cancelled"
-msgstr "Cancelado"
+msgstr ""
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:143
 #: InvenTree/status_codes.py:183
 msgid "Lost"
-msgstr "Perdido"
+msgstr ""
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:186
 msgid "Returned"
-msgstr "Devolvido"
+msgstr ""
 
 #: InvenTree/status_codes.py:141 order/models.py:1128
 #: templates/js/translated/order.js:3436 templates/js/translated/order.js:3785
 msgid "Shipped"
-msgstr "Enviado"
+msgstr ""
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
-msgstr "Atenção necessária"
+msgstr ""
 
 #: InvenTree/status_codes.py:181
 msgid "Damaged"
-msgstr "Danificado"
+msgstr ""
 
 #: InvenTree/status_codes.py:182
 msgid "Destroyed"
-msgstr "Destruído"
+msgstr ""
 
 #: InvenTree/status_codes.py:184
 msgid "Rejected"
-msgstr "Rejeitado"
+msgstr ""
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
-msgstr "Em quarentena"
+msgstr ""
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
-msgstr "Entrada de seguimento de stock antiga"
+msgstr ""
 
 #: InvenTree/status_codes.py:261
 msgid "Stock item created"
-msgstr "Elemento de stock criado"
+msgstr ""
 
 #: InvenTree/status_codes.py:263
 msgid "Edited stock item"
-msgstr "Elemento de stock editado"
+msgstr ""
 
 #: InvenTree/status_codes.py:264
 msgid "Assigned serial number"
-msgstr "Número de série atribuído"
+msgstr ""
 
 #: InvenTree/status_codes.py:266
 msgid "Stock counted"
-msgstr "Stock contado"
+msgstr ""
 
 #: InvenTree/status_codes.py:267
 msgid "Stock manually added"
-msgstr "Stock adicionado manualmente"
+msgstr ""
 
 #: InvenTree/status_codes.py:268
 msgid "Stock manually removed"
-msgstr "Stock removido manualmente"
+msgstr ""
 
 #: InvenTree/status_codes.py:270
 msgid "Location changed"
-msgstr "Localização alterada"
+msgstr ""
 
 #: InvenTree/status_codes.py:272
 msgid "Installed into assembly"
-msgstr "Instalado na montagem"
+msgstr ""
 
 #: InvenTree/status_codes.py:273
 msgid "Removed from assembly"
-msgstr "Removido da montagem"
+msgstr ""
 
 #: InvenTree/status_codes.py:275
 msgid "Installed component item"
-msgstr "Instalado elemento do componente"
+msgstr ""
 
 #: InvenTree/status_codes.py:276
 msgid "Removed component item"
-msgstr "Elemento do componente removido"
+msgstr ""
 
 #: InvenTree/status_codes.py:278
 msgid "Split from parent item"
-msgstr "Separar do elemento ascendente"
+msgstr ""
 
 #: InvenTree/status_codes.py:279
 msgid "Split child item"
-msgstr "Separar elemento descendente"
+msgstr ""
 
 #: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2084
 msgid "Merged stock items"
-msgstr "Itens de stock fundidos"
+msgstr ""
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
-msgstr "Transformado em variante"
+msgstr ""
 
 #: InvenTree/status_codes.py:285 templates/js/translated/table_filters.js:221
 msgid "Sent to customer"
-msgstr "Enviado ao cliente"
+msgstr ""
 
 #: InvenTree/status_codes.py:286
 msgid "Returned from customer"
-msgstr "Devolvido do cliente"
+msgstr ""
 
 #: InvenTree/status_codes.py:288
 msgid "Build order output created"
-msgstr "Resultado do pedido de Montagem criado"
+msgstr ""
 
 #: InvenTree/status_codes.py:289
 msgid "Build order output completed"
-msgstr "Resultado do pedido de Montagem completo"
+msgstr ""
 
 #: InvenTree/status_codes.py:290
 msgid "Consumed by build order"
-msgstr "Utilizado no pedido de montagem"
+msgstr ""
 
 #: InvenTree/status_codes.py:292
 msgid "Received against purchase order"
-msgstr "Originou de um pedido de compra"
+msgstr ""
 
 #: InvenTree/status_codes.py:307
 msgid "Production"
-msgstr "Produção"
+msgstr ""
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
-msgstr "Não é um código de moeda válido"
+msgstr ""
 
 #: InvenTree/validators.py:45
 msgid "Invalid character in part name"
-msgstr "Caractere inválido no nome da peça"
+msgstr ""
 
 #: InvenTree/validators.py:57
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr "IPN deve corresponder ao padrão regex {pat}"
+msgstr ""
 
 #: InvenTree/validators.py:68 InvenTree/validators.py:79
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr "A referência deve corresponder ao padrão {pattern}"
+msgstr ""
 
 #: InvenTree/validators.py:102 InvenTree/validators.py:118
 msgid "Overage value must not be negative"
-msgstr "Valor excedente não deve ser negativo"
+msgstr ""
 
 #: InvenTree/validators.py:120
 msgid "Overage must not exceed 100%"
-msgstr "Excedente não deve ultrapassar 100%"
+msgstr ""
 
 #: InvenTree/validators.py:127
 msgid "Invalid value for overage"
-msgstr "Valor inválido para excedente"
+msgstr ""
 
 #: InvenTree/views.py:520 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
-msgstr "Editar informações do utilizador"
+msgstr ""
 
 #: InvenTree/views.py:532 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr "Definir Palavra-Passe"
+msgstr ""
 
 #: InvenTree/views.py:554
 msgid "Password fields must match"
-msgstr "Campos de palavra-passe não coincidem"
+msgstr ""
 
 #: InvenTree/views.py:563
 msgid "Wrong password provided"
-msgstr "Palavra-passe incorreta fornecida"
+msgstr ""
 
 #: InvenTree/views.py:773 templates/navbar.html:152
 msgid "System Information"
-msgstr "Informações do sistema"
+msgstr ""
 
 #: InvenTree/views.py:780 templates/navbar.html:163
 msgid "About InvenTree"
-msgstr "Sobre o InvenTree"
+msgstr ""
 
 #: build/api.py:219
 msgid "Build must be cancelled before it can be deleted"
-msgstr "A Construção deve ser cancelada antes de poder ser excluída"
+msgstr ""
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
-msgstr "Escolha inválida para construção ascendente"
+msgstr ""
 
 #: build/models.py:110 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -732,7 +732,7 @@ msgstr "Escolha inválida para construção ascendente"
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:764
 msgid "Build Order"
-msgstr "Pedido de Construção"
+msgstr ""
 
 #: build/models.py:111 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -742,11 +742,11 @@ msgstr "Pedido de Construção"
 #: templates/InvenTree/search.html:141
 #: templates/InvenTree/settings/sidebar.html:47 users/models.py:41
 msgid "Build Orders"
-msgstr "Pedidos de Construção"
+msgstr ""
 
 #: build/models.py:165
 msgid "Build Order Reference"
-msgstr "Referência do Pedido de Montagem"
+msgstr ""
 
 #: build/models.py:166 order/models.py:240 order/models.py:623
 #: order/models.py:904 part/models.py:2663
@@ -758,20 +758,20 @@ msgstr "Referência do Pedido de Montagem"
 #: templates/js/translated/order.js:2290 templates/js/translated/order.js:3629
 #: templates/js/translated/order.js:4137
 msgid "Reference"
-msgstr "Referência"
+msgstr ""
 
 #: build/models.py:177
 msgid "Brief description of the build"
-msgstr "Breve descrição da construção"
+msgstr ""
 
 #: build/models.py:185 build/templates/build/build_base.html:172
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr "Construção ascendente"
+msgstr ""
 
 #: build/models.py:186
 msgid "BuildOrder to which this build is allocated"
-msgstr "Pedido de Construção a que esta montagem está alocada"
+msgstr ""
 
 #: build/models.py:191 build/templates/build/build_base.html:80
 #: build/templates/build/detail.html:29 company/models.py:670
@@ -808,48 +808,48 @@ msgstr "Pedido de Construção a que esta montagem está alocada"
 #: templates/js/translated/stock.js:1700 templates/js/translated/stock.js:2504
 #: templates/js/translated/stock.js:2699 templates/js/translated/stock.js:2833
 msgid "Part"
-msgstr "Peça"
+msgstr ""
 
 #: build/models.py:199
 msgid "Select part to build"
-msgstr "Selecionar peça a montar"
+msgstr ""
 
 #: build/models.py:204
 msgid "Sales Order Reference"
-msgstr "Referência de Pedido de Venda"
+msgstr ""
 
 #: build/models.py:208
 msgid "SalesOrder to which this build is allocated"
-msgstr "Pedido de Venda ao qual esta construção está associada"
+msgstr ""
 
 #: build/models.py:213 build/serializers.py:800
 #: templates/js/translated/build.js:2114 templates/js/translated/order.js:2979
 msgid "Source Location"
-msgstr "Localização de Origem"
+msgstr ""
 
 #: build/models.py:217
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr "Escolher localização de onde deve ser retirado o stock para esta construção (deixar em branco para retirar de qualquer localização)"
+msgstr ""
 
 #: build/models.py:222
 msgid "Destination Location"
-msgstr "Local de destino"
+msgstr ""
 
 #: build/models.py:226
 msgid "Select location where the completed items will be stored"
-msgstr "Escolher o local onde os elementos completos serão armazenados"
+msgstr ""
 
 #: build/models.py:230
 msgid "Build Quantity"
-msgstr "Quantidade da Montagem"
+msgstr ""
 
 #: build/models.py:233
 msgid "Number of stock items to build"
-msgstr "Número de unidades de stock a construir"
+msgstr ""
 
 #: build/models.py:237
 msgid "Completed items"
-msgstr "Unidades concluídas"
+msgstr ""
 
 #: build/models.py:239
 msgid "Number of stock items which have been completed"
@@ -857,29 +857,29 @@ msgstr ""
 
 #: build/models.py:243
 msgid "Build Status"
-msgstr "Estado da Construção"
+msgstr ""
 
 #: build/models.py:247
 msgid "Build status code"
-msgstr "Código de estado da Construção"
+msgstr ""
 
 #: build/models.py:251 build/serializers.py:225 order/serializers.py:447
 #: stock/models.py:662 templates/js/translated/order.js:1353
 msgid "Batch Code"
-msgstr "Código de lote"
+msgstr ""
 
 #: build/models.py:255 build/serializers.py:226
 msgid "Batch code for this build output"
-msgstr "Código de lote para este resultado da construção"
+msgstr ""
 
 #: build/models.py:258 order/models.py:86 part/models.py:938
 #: part/templates/part/part_base.html:305 templates/js/translated/order.js:2650
 msgid "Creation Date"
-msgstr "Data de Criação"
+msgstr ""
 
 #: build/models.py:262 order/models.py:648
 msgid "Target completion date"
-msgstr "Data Final Alvo"
+msgstr ""
 
 #: build/models.py:263
 msgid "Target date for build completion. Build will be overdue after this date."
@@ -1487,11 +1487,11 @@ msgstr ""
 
 #: build/templates/build/detail.html:176 templates/js/translated/build.js:1942
 msgid "Unallocate stock"
-msgstr "Desalocar stock"
+msgstr ""
 
 #: build/templates/build/detail.html:177
 msgid "Unallocate Stock"
-msgstr "Desalocar stock"
+msgstr ""
 
 #: build/templates/build/detail.html:179
 msgid "Automatically allocate stock to build"
@@ -1789,7 +1789,7 @@ msgstr ""
 
 #: common/models.py:897
 msgid "Barcode Webcam Support"
-msgstr "Suporte a webcam de código de barras"
+msgstr ""
 
 #: common/models.py:898
 msgid "Allow barcode scanning via webcam in browser"
@@ -3233,7 +3233,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part.html:95
 msgid "No manufacturer information available"
-msgstr "Não existe informação do fabricante"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:119
 #: company/templates/company/supplier_part.html:15 company/views.py:32
@@ -4497,7 +4497,7 @@ msgstr ""
 
 #: part/models.py:907
 msgid "Does this part have tracking for unique items?"
-msgstr "Esta peça tem rastreamento para itens únicos?"
+msgstr ""
 
 #: part/models.py:912
 msgid "Can this part be purchased from external suppliers?"
@@ -5631,11 +5631,11 @@ msgstr ""
 
 #: plugin/base/action/api.py:27
 msgid "No action specified"
-msgstr ""
+msgstr "Nenhuma ação especificada"
 
 #: plugin/base/action/api.py:38
 msgid "No matching action found"
-msgstr ""
+msgstr "Nenhuma ação correspondente encontrada"
 
 #: plugin/base/barcodes/api.py:52 plugin/base/barcodes/api.py:154
 msgid "Must provide barcode_data parameter"
@@ -7511,7 +7511,7 @@ msgstr ""
 
 #: templates/account/email_confirm.html:22 templates/js/translated/forms.js:644
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmar"
 
 #: templates/account/email_confirm.html:30
 #, python-format
@@ -8822,7 +8822,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:283
 msgid "Complete Purchase Order"
-msgstr "Concluir Pedido de Compra"
+msgstr ""
 
 #: templates/js/translated/order.js:289
 msgid "Mark this order as complete?"
