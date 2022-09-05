@@ -1,10 +1,13 @@
+{% load l10n %}
 {% load report %}
 {% load barcode %}
 
 <head>
     <style>
         @page {
+            {% localize off %}
             size: {{ width }}mm {{ height }}mm;
+            {% endlocalize %}
             {% block margin %}
             margin: 0mm;
             {% endblock %}

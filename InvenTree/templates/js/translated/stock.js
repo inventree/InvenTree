@@ -114,6 +114,10 @@ function stockLocationFields(options={}) {
         name: {},
         description: {},
         owner: {},
+        icon: {
+            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
+            placeholder: 'fas fa-box',
+        },
     };
 
     if (options.parent) {
@@ -2400,6 +2404,11 @@ function loadStockLocationTable(table, options) {
                                     <span class='fas fa-sync-alt' title='{% trans "Load Subloactions" %}'></span>
                                 </a> `;
                         }
+                    }
+
+                    const icon = row.icon || global_settings.STOCK_LOCATION_DEFAULT_ICON;
+                    if (icon) {
+                        html += `<span class="${icon} me-1"></span>`;
                     }
 
                     html += renderLink(

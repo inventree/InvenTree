@@ -46,7 +46,6 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
     """Brief serializers for a StockItem."""
 
-    location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
 
     quantity = InvenTreeDecimalField()
@@ -60,7 +59,6 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'part_name',
             'pk',
             'location',
-            'location_name',
             'quantity',
             'serial',
             'supplier_part',
@@ -570,6 +568,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pk',
             'name',
             'parent',
+            'icon',
         ]
 
 
@@ -607,6 +606,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pathstring',
             'items',
             'owner',
+            'icon',
         ]
 
 

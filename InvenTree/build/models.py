@@ -674,28 +674,26 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
                         parts = bom_item.get_valid_parts_for_allocation()
 
-                        for part in parts:
+                        items = StockModels.StockItem.objects.filter(
+                            part__in=parts,
+                            serial=str(serial),
+                            quantity=1,
+                        ).filter(StockModels.StockItem.IN_STOCK_FILTER)
 
-                            items = StockModels.StockItem.objects.filter(
-                                part=part,
-                                serial=str(serial),
+                        """
+                        Test if there is a matching serial number!
+                        """
+                        if items.exists() and items.count() == 1:
+                            stock_item = items[0]
+
+                            # Allocate the stock item
+                            BuildItem.objects.create(
+                                build=self,
+                                bom_item=bom_item,
+                                stock_item=stock_item,
                                 quantity=1,
-                            ).filter(StockModels.StockItem.IN_STOCK_FILTER)
-
-                            """
-                            Test if there is a matching serial number!
-                            """
-                            if items.exists() and items.count() == 1:
-                                stock_item = items[0]
-
-                                # Allocate the stock item
-                                BuildItem.objects.create(
-                                    build=self,
-                                    bom_item=bom_item,
-                                    stock_item=stock_item,
-                                    quantity=1,
-                                    install_into=output,
-                                )
+                                install_into=output,
+                            )
 
         else:
             """Create a single build output of the given quantity."""

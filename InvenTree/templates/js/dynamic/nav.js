@@ -216,6 +216,7 @@ function enableBreadcrumbTree(options) {
                     enableLinks: true,
                     expandIcon: 'fas fa-chevron-right',
                     collapseIcon: 'fa fa-chevron-down',
+                    nodeIcon: options.defaultIcon,
                 });
 
             }

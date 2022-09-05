@@ -28,9 +28,6 @@ part_detail_urls = [
 
 category_urls = [
 
-    # Top level subcategory display
-    re_path(r'^subcategory/', views.PartIndex.as_view(template_name='part/subcategory.html'), name='category-index-subcategory'),
-
     # Category detail views
     re_path(r'(?P<pk>\d+)/', views.CategoryDetail.as_view(), name='category-detail'),
 ]

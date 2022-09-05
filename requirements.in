@@ -31,6 +31,7 @@ pillow                                  # Image manipulation
 python-barcode[images]                  # Barcode generator
 qrcode[pil]                             # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
+regex                                   # Advanced regular expressions
 sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard depenedency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
