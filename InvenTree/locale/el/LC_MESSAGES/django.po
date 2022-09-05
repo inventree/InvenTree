@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-25 10:08+0000\n"
-"PO-Revision-Date: 2022-08-29 10:50\n"
+"POT-Creation-Date: 2022-09-05 03:04+0000\n"
+"PO-Revision-Date: 2022-09-05 03:22\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -177,37 +177,37 @@ msgstr "Δώσατε λάθος μορφή κλειδιού"
 
 #: InvenTree/models.py:249
 msgid "Missing required format key"
-msgstr ""
+msgstr "Λείπει το απαραίτητο κλειδί"
 
 #: InvenTree/models.py:261
 msgid "Reference field cannot be empty"
-msgstr ""
+msgstr "Το πεδίο δεν μπορεί να είναι άδειο"
 
 #: InvenTree/models.py:268
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "Η αναφορά πρέπει να ταιριάζει με το απαιτούμενο μοτίβο"
 
 #: InvenTree/models.py:304
 msgid "Reference number is too large"
-msgstr ""
+msgstr "Ο αριθμός αναφοράς είναι πολύ μεγάλος"
 
 #: InvenTree/models.py:382
 msgid "Missing file"
-msgstr ""
+msgstr "Το αρχείο λείπει"
 
 #: InvenTree/models.py:383
 msgid "Missing external link"
-msgstr ""
+msgstr "Λείπει ο εξωτερικός σύνδεσμος"
 
 #: InvenTree/models.py:395 stock/models.py:2102
 #: templates/js/translated/attachment.js:103
 #: templates/js/translated/attachment.js:241
 msgid "Attachment"
-msgstr ""
+msgstr "Συνημμένο"
 
 #: InvenTree/models.py:396
 msgid "Select file to attach"
-msgstr ""
+msgstr "Επιλέξτε αρχείο για επισύναψη"
 
 #: InvenTree/models.py:402 company/models.py:124 company/models.py:276
 #: company/models.py:510 order/models.py:84 order/models.py:1245
@@ -217,65 +217,65 @@ msgstr ""
 #: templates/js/translated/company.js:948 templates/js/translated/order.js:2848
 #: templates/js/translated/part.js:1534
 msgid "Link"
-msgstr ""
+msgstr "Σύνδεσμος"
 
 #: InvenTree/models.py:403 build/models.py:296 part/models.py:803
 #: stock/models.py:658
 msgid "Link to external URL"
-msgstr ""
+msgstr "Σύνδεσμος προς εξωτερική διεύθυνση URL"
 
 #: InvenTree/models.py:406 templates/js/translated/attachment.js:104
 #: templates/js/translated/attachment.js:285
 msgid "Comment"
-msgstr ""
+msgstr "Σχόλιο"
 
 #: InvenTree/models.py:406
 msgid "File comment"
-msgstr ""
+msgstr "Σχόλιο αρχείου"
 
-#: InvenTree/models.py:412 InvenTree/models.py:413 common/models.py:1665
-#: common/models.py:1666 common/models.py:1889 common/models.py:1890
-#: common/models.py:2152 common/models.py:2153 part/models.py:2239
-#: part/models.py:2259 plugin/models.py:256 plugin/models.py:257
+#: InvenTree/models.py:412 InvenTree/models.py:413 common/models.py:1669
+#: common/models.py:1670 common/models.py:1893 common/models.py:1894
+#: common/models.py:2156 common/models.py:2157 part/models.py:2239
+#: part/models.py:2259 plugin/models.py:260 plugin/models.py:261
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2641
 msgid "User"
-msgstr ""
+msgstr "Χρήστης"
 
 #: InvenTree/models.py:416
 msgid "upload date"
-msgstr ""
+msgstr "ημερομηνία φόρτωσης"
 
 #: InvenTree/models.py:438
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Το όνομα αρχείου δεν μπορεί να είναι κενό"
 
 #: InvenTree/models.py:447
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Μη διαθέσιμη τοποθεσία συνημμένου"
 
 #: InvenTree/models.py:457
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Το όνομα αρχείου περιέχει μη έγκυρους χαρακτήρες '{c}'"
 
 #: InvenTree/models.py:460
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Λείπει επέκταση ονόματος αρχείου"
 
 #: InvenTree/models.py:467
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Αρχείο με αυτό το όνομα υπάρχει ήδη"
 
 #: InvenTree/models.py:474
 msgid "Error renaming file"
-msgstr ""
+msgstr "Σφάλμα κατά τη μετονομασία"
 
 #: InvenTree/models.py:510
 msgid "Invalid choice"
-msgstr ""
+msgstr "Μη έγκυρη επιλογή"
 
-#: InvenTree/models.py:537 InvenTree/models.py:538 common/models.py:1875
+#: InvenTree/models.py:537 InvenTree/models.py:538 common/models.py:1879
 #: company/models.py:358 label/models.py:101 part/models.py:746
 #: part/models.py:2417 plugin/models.py:94 report/models.py:152
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -289,7 +289,7 @@ msgstr ""
 #: templates/js/translated/part.js:688 templates/js/translated/part.js:840
 #: templates/js/translated/part.js:1926 templates/js/translated/stock.js:2392
 msgid "Name"
-msgstr ""
+msgstr "Όνομα"
 
 #: InvenTree/models.py:544 build/models.py:174
 #: build/templates/build/detail.html:24 company/models.py:282
@@ -314,416 +314,416 @@ msgstr ""
 #: templates/js/translated/part.js:2031 templates/js/translated/stock.js:1743
 #: templates/js/translated/stock.js:2424 templates/js/translated/stock.js:2478
 msgid "Description"
-msgstr ""
+msgstr "Περιγραφή"
 
 #: InvenTree/models.py:545
 msgid "Description (optional)"
-msgstr ""
+msgstr "Περιγραφή (προαιρετική)"
 
 #: InvenTree/models.py:553
 msgid "parent"
-msgstr ""
+msgstr "γονέας"
 
 #: InvenTree/models.py:560 InvenTree/models.py:561
 #: templates/js/translated/part.js:1968 templates/js/translated/stock.js:2430
 msgid "Path"
-msgstr ""
+msgstr "Μονοπάτι"
 
 #: InvenTree/models.py:670
 msgid "Server Error"
-msgstr ""
+msgstr "Σφάλμα διακομιστή"
 
 #: InvenTree/models.py:671
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Ένα σφάλμα έχει καταγραφεί από το διακομιστή."
 
 #: InvenTree/serializers.py:55 part/models.py:2745
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Πρέπει να είναι αριθμός"
 
 #: InvenTree/serializers.py:262
 msgid "Filename"
-msgstr ""
+msgstr "Όνομα αρχείου"
 
 #: InvenTree/serializers.py:297
 msgid "Invalid value"
-msgstr ""
+msgstr "Μη έγκυρη τιμή"
 
 #: InvenTree/serializers.py:319
 msgid "Data File"
-msgstr ""
+msgstr "Αρχείο Δεδομένων"
 
 #: InvenTree/serializers.py:320
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Επιλέξτε ένα αρχείο για ανέβασμα"
 
 #: InvenTree/serializers.py:341
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Μη υποστηριζόμενος τύπος αρχείου"
 
 #: InvenTree/serializers.py:347
 msgid "File is too large"
-msgstr ""
+msgstr "Το αρχείο είναι πολύ μεγάλο"
 
 #: InvenTree/serializers.py:368
 msgid "No columns found in file"
-msgstr ""
+msgstr "Δεν βρέθηκαν στήλες στο αρχείο"
 
 #: InvenTree/serializers.py:371
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Δεν βρέθηκαν γραμμές δεδομένων στο αρχείο"
 
 #: InvenTree/serializers.py:494
 msgid "No data rows provided"
-msgstr ""
+msgstr "Δεν παρασχέθηκαν σειρές δεδομένων"
 
 #: InvenTree/serializers.py:497
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Δεν δόθηκαν στήλες δεδομένων"
 
 #: InvenTree/serializers.py:574
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Λείπει απαιτούμενη στήλη: '{name}'"
 
 #: InvenTree/serializers.py:583
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Διπλή στήλη: '{col}'"
 
 #: InvenTree/serializers.py:602
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: InvenTree/serializers.py:603
 msgid "URL of remote image file"
-msgstr ""
+msgstr "Διεύθυνση URL του αρχείου απομακρυσμένης εικόνας"
 
 #: InvenTree/serializers.py:617
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "Η λήψη εικόνων από απομακρυσμένο URL δεν είναι ενεργοποιημένη"
 
 #: InvenTree/settings.py:607
 msgid "Czech"
-msgstr ""
+msgstr "Τσέχικα"
 
 #: InvenTree/settings.py:608
 msgid "German"
-msgstr ""
+msgstr "Γερμανικά"
 
 #: InvenTree/settings.py:609
 msgid "Greek"
-msgstr ""
+msgstr "Ελληνικά"
 
 #: InvenTree/settings.py:610
 msgid "English"
-msgstr ""
+msgstr "Αγγλικά"
 
 #: InvenTree/settings.py:611
 msgid "Spanish"
-msgstr ""
+msgstr "Ισπανικά"
 
 #: InvenTree/settings.py:612
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Ισπανικά (Μεξικό)"
 
 #: InvenTree/settings.py:613
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Φαρσί / Περσικά"
 
 #: InvenTree/settings.py:614
 msgid "French"
-msgstr ""
+msgstr "Γαλλικά"
 
 #: InvenTree/settings.py:615
 msgid "Hebrew"
-msgstr ""
+msgstr "Εβραϊκά"
 
 #: InvenTree/settings.py:616
 msgid "Hungarian"
-msgstr ""
+msgstr "Ούγγρικα"
 
 #: InvenTree/settings.py:617
 msgid "Italian"
-msgstr ""
+msgstr "Ιταλικά"
 
 #: InvenTree/settings.py:618
 msgid "Japanese"
-msgstr ""
+msgstr "Ιαπωνικά"
 
 #: InvenTree/settings.py:619
 msgid "Korean"
-msgstr ""
+msgstr "Κορεάτικα"
 
 #: InvenTree/settings.py:620
 msgid "Dutch"
-msgstr ""
+msgstr "Dutch"
 
 #: InvenTree/settings.py:621
 msgid "Norwegian"
-msgstr ""
+msgstr "Νορβηγικά"
 
 #: InvenTree/settings.py:622
 msgid "Polish"
-msgstr ""
+msgstr "Πολωνικά"
 
 #: InvenTree/settings.py:623
 msgid "Portuguese"
-msgstr ""
+msgstr "Πορτογαλικά"
 
 #: InvenTree/settings.py:624
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Πορτογαλικά (Βραζιλίας)"
 
 #: InvenTree/settings.py:625
 msgid "Russian"
-msgstr ""
+msgstr "Ρωσικά"
 
 #: InvenTree/settings.py:626
 msgid "Swedish"
-msgstr ""
+msgstr "Σουηδικά"
 
 #: InvenTree/settings.py:627
 msgid "Thai"
-msgstr ""
+msgstr "Ταϊλανδέζικα"
 
 #: InvenTree/settings.py:628
 msgid "Turkish"
-msgstr ""
+msgstr "Τούρκικα"
 
 #: InvenTree/settings.py:629
 msgid "Vietnamese"
-msgstr ""
+msgstr "Βιετναμέζικα"
 
 #: InvenTree/settings.py:630
 msgid "Chinese"
-msgstr ""
+msgstr "Κινέζικα"
 
 #: InvenTree/status.py:99
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Ο έλεγχος εργασίας στο παρασκήνιο απέτυχε"
 
 #: InvenTree/status.py:103
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Δεν έχει ρυθμιστεί διεύθυνση ηλεκτρονικού ταχυδρομείου"
 
 #: InvenTree/status.py:106
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Ο έλεγχος συστήματος για το Inventree απέτυχε"
 
 #: InvenTree/status_codes.py:99 InvenTree/status_codes.py:140
 #: InvenTree/status_codes.py:306 templates/js/translated/table_filters.js:334
 msgid "Pending"
-msgstr ""
+msgstr "Σε εκκρεμότητα"
 
 #: InvenTree/status_codes.py:100
 msgid "Placed"
-msgstr ""
+msgstr "Τοποθετήθηκε"
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:309
 #: order/templates/order/order_base.html:137
 #: order/templates/order/sales_order_base.html:133
 msgid "Complete"
-msgstr ""
+msgstr "Ολοκληρώθηκε"
 
 #: InvenTree/status_codes.py:102 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:308
 msgid "Cancelled"
-msgstr ""
+msgstr "Ακυρώθηκε"
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:143
 #: InvenTree/status_codes.py:183
 msgid "Lost"
-msgstr ""
+msgstr "Χάθηκε"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:186
 msgid "Returned"
-msgstr ""
+msgstr "Επιστράφηκε"
 
 #: InvenTree/status_codes.py:141 order/models.py:1128
 #: templates/js/translated/order.js:3436 templates/js/translated/order.js:3785
 msgid "Shipped"
-msgstr ""
+msgstr "Αποστάλθηκε"
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
-msgstr ""
+msgstr "ΟΚ"
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
-msgstr ""
+msgstr "Απαιτείται προσοχή"
 
 #: InvenTree/status_codes.py:181
 msgid "Damaged"
-msgstr ""
+msgstr "Κατεστραμμένο"
 
 #: InvenTree/status_codes.py:182
 msgid "Destroyed"
-msgstr ""
+msgstr "Καταστράφηκε"
 
 #: InvenTree/status_codes.py:184
 msgid "Rejected"
-msgstr ""
+msgstr "Απορρίφθηκε"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
-msgstr ""
+msgstr "Σε Καραντίνα"
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Καταχώρηση παλαιού αποθέματος"
 
 #: InvenTree/status_codes.py:261
 msgid "Stock item created"
-msgstr ""
+msgstr "Το αντικείμενο αποθεμάτων δημιουργήθηκε"
 
 #: InvenTree/status_codes.py:263
 msgid "Edited stock item"
-msgstr ""
+msgstr "Έγινε συγχώνευση αποθεμάτων"
 
 #: InvenTree/status_codes.py:264
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Εκχωρημένος σειριακός κωδικός"
 
 #: InvenTree/status_codes.py:266
 msgid "Stock counted"
-msgstr ""
+msgstr "Απόθεμα που μετρήθηκε"
 
 #: InvenTree/status_codes.py:267
 msgid "Stock manually added"
-msgstr ""
+msgstr "Προστέθηκε απόθεμα χειροκίνητα"
 
 #: InvenTree/status_codes.py:268
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Αφαιρέθηκε απόθεμα χειροκίνητα"
 
 #: InvenTree/status_codes.py:270
 msgid "Location changed"
-msgstr ""
+msgstr "Η τοποθεσία τροποποιήθηκε"
 
 #: InvenTree/status_codes.py:272
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Εγκαταστάθηκε στη συναρμολόγηση"
 
 #: InvenTree/status_codes.py:273
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Αφαιρέθηκε από τη συναρμολόγηση"
 
 #: InvenTree/status_codes.py:275
 msgid "Installed component item"
-msgstr ""
+msgstr "Εγκαταστάθηκε αντικείμενο"
 
 #: InvenTree/status_codes.py:276
 msgid "Removed component item"
-msgstr ""
+msgstr "Αφαιρέθηκε αντικείμενο"
 
 #: InvenTree/status_codes.py:278
 msgid "Split from parent item"
-msgstr ""
+msgstr "Έγινε διαχωρισμός από το γονεϊκό αρχείο"
 
 #: InvenTree/status_codes.py:279
 msgid "Split child item"
-msgstr ""
+msgstr "Διαχωρίστηκε θυγατρικό στοιχείο"
 
 #: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2084
 msgid "Merged stock items"
-msgstr ""
+msgstr "Έγινε συγχώνευση αποθεμάτων"
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
-msgstr ""
+msgstr "Μετατράπηκε σε παραλλαγή"
 
 #: InvenTree/status_codes.py:285 templates/js/translated/table_filters.js:221
 msgid "Sent to customer"
-msgstr ""
+msgstr "Απεστάλη στον πελάτη"
 
 #: InvenTree/status_codes.py:286
 msgid "Returned from customer"
-msgstr ""
+msgstr "Επιστράφηκε από πελάτη"
 
 #: InvenTree/status_codes.py:288
 msgid "Build order output created"
-msgstr ""
+msgstr "Δημιουργήθηκε η έξοδος παραγγελίας"
 
 #: InvenTree/status_codes.py:289
 msgid "Build order output completed"
-msgstr ""
+msgstr "Η έξοδος της σειράς κατασκευής ολοκληρώθηκε"
 
 #: InvenTree/status_codes.py:290
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Κατανάλωση με εντολή κατασκευής"
 
 #: InvenTree/status_codes.py:292
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Λήφθηκε έναντι εντολής αγοράς"
 
 #: InvenTree/status_codes.py:307
 msgid "Production"
-msgstr ""
+msgstr "Παραγωγή"
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Μη έγκυρος κωδικός συναλλάγματος"
 
 #: InvenTree/validators.py:45
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Μη έγκυρος χαρακτήρας στο όνομα εξαρτήματος"
 
 #: InvenTree/validators.py:57
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "Το IPN πρέπει να ταιριάζει με το μοτίβο regex {pat}"
 
 #: InvenTree/validators.py:68 InvenTree/validators.py:79
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "Η αναφορά πρέπει να ταιριάζει με το μοτίβο {pattern}"
 
 #: InvenTree/validators.py:102 InvenTree/validators.py:118
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Η μέση τιμή δεν πρέπει να είναι αρνητική"
 
 #: InvenTree/validators.py:120
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Η μέση τιμή δεν πρέπει να υπερβαίνει το 100%"
 
 #: InvenTree/validators.py:127
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Μη έγκυρη τιμή για υπέρβαση"
 
 #: InvenTree/views.py:520 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
-msgstr ""
+msgstr "Τροποποίηση πληροφοριών χρήστη"
 
 #: InvenTree/views.py:532 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "Ορισμός Κωδικού Πρόσβασης"
 
 #: InvenTree/views.py:554
 msgid "Password fields must match"
-msgstr ""
+msgstr "Τα πεδία κωδικού πρόσβασης πρέπει να ταιριάζουν"
 
 #: InvenTree/views.py:563
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Δόθηκε λάθος κωδικός πρόσβασης"
 
 #: InvenTree/views.py:773 templates/navbar.html:152
 msgid "System Information"
-msgstr ""
+msgstr "Πληροφορίες συστήματος"
 
 #: InvenTree/views.py:780 templates/navbar.html:163
 msgid "About InvenTree"
-msgstr ""
+msgstr "Σχετικά με το InvenTree"
 
-#: build/api.py:217
+#: build/api.py:219
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "Η έκδοση πρέπει να ακυρωθεί πριν διαγραφεί"
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Μη έγκυρη επιλογή για γονική κατασκευή"
 
 #: build/models.py:110 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -732,7 +732,7 @@ msgstr ""
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:764
 msgid "Build Order"
-msgstr ""
+msgstr "Σειρά Κατασκευής"
 
 #: build/models.py:111 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -742,11 +742,11 @@ msgstr ""
 #: templates/InvenTree/search.html:141
 #: templates/InvenTree/settings/sidebar.html:47 users/models.py:41
 msgid "Build Orders"
-msgstr ""
+msgstr "Δημιουργία Παραγγελιών"
 
 #: build/models.py:165
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Αναφορά Παραγγελίας Κατασκευής"
 
 #: build/models.py:166 order/models.py:240 order/models.py:623
 #: order/models.py:904 part/models.py:2663
@@ -758,20 +758,20 @@ msgstr ""
 #: templates/js/translated/order.js:2290 templates/js/translated/order.js:3629
 #: templates/js/translated/order.js:4137
 msgid "Reference"
-msgstr ""
+msgstr "Αναφορά"
 
 #: build/models.py:177
 msgid "Brief description of the build"
-msgstr ""
+msgstr "Σύντομη περιγραφή της κατασκευής"
 
 #: build/models.py:185 build/templates/build/build_base.html:172
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr ""
+msgstr "Γονική Κατασκευή"
 
 #: build/models.py:186
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "BuildOrder στην οποία έχει δοθεί αυτή η κατασκευή"
 
 #: build/models.py:191 build/templates/build/build_base.html:80
 #: build/templates/build/detail.html:29 company/models.py:670
@@ -808,99 +808,99 @@ msgstr ""
 #: templates/js/translated/stock.js:1700 templates/js/translated/stock.js:2504
 #: templates/js/translated/stock.js:2699 templates/js/translated/stock.js:2833
 msgid "Part"
-msgstr ""
+msgstr "Εξάρτημα"
 
 #: build/models.py:199
 msgid "Select part to build"
-msgstr ""
+msgstr "Επιλέξτε τμήμα για κατασκευή"
 
 #: build/models.py:204
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Κωδικός Παραγγελίας Πωλήσεων"
 
 #: build/models.py:208
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "SalesOrder στην οποία έχει διατεθεί αυτό το build"
 
 #: build/models.py:213 build/serializers.py:800
 #: templates/js/translated/build.js:2114 templates/js/translated/order.js:2979
 msgid "Source Location"
-msgstr ""
+msgstr "Τοποθεσία Προέλευσης"
 
 #: build/models.py:217
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Επιλέξτε τοποθεσία από την οποία θα γίνει απόθεμα, για αυτή την κατασκευή (αφήστε κενό για να πάρετε από οποιαδήποτε θέση αποθήκευσης)"
 
 #: build/models.py:222
 msgid "Destination Location"
-msgstr ""
+msgstr "Τοποθεσία Προορισμού"
 
 #: build/models.py:226
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Επιλέξτε την τοποθεσία όπου θα αποθηκευτούν τα ολοκληρωμένα στοιχεία"
 
 #: build/models.py:230
 msgid "Build Quantity"
-msgstr ""
+msgstr "Ποσότητα Κατασκευής"
 
 #: build/models.py:233
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Αριθμός αντικειμένων για κατασκευή"
 
 #: build/models.py:237
 msgid "Completed items"
-msgstr ""
+msgstr "Ολοκληρωμένα αντικείμενα"
 
 #: build/models.py:239
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Αριθμός αντικειμένων αποθέματος που έχουν ολοκληρωθεί"
 
 #: build/models.py:243
 msgid "Build Status"
-msgstr ""
+msgstr "Κατάσταση Κατασκευής"
 
 #: build/models.py:247
 msgid "Build status code"
-msgstr ""
+msgstr "Κωδικός κατάστασης κατασκευής"
 
 #: build/models.py:251 build/serializers.py:225 order/serializers.py:447
 #: stock/models.py:662 templates/js/translated/order.js:1353
 msgid "Batch Code"
-msgstr ""
+msgstr "Κωδικός Παρτίδας"
 
 #: build/models.py:255 build/serializers.py:226
 msgid "Batch code for this build output"
-msgstr ""
+msgstr "Κωδικός παρτίδας για αυτήν την κατασκευή"
 
 #: build/models.py:258 order/models.py:86 part/models.py:938
 #: part/templates/part/part_base.html:305 templates/js/translated/order.js:2650
 msgid "Creation Date"
-msgstr ""
+msgstr "Ημερομηνία Δημιουργίας"
 
 #: build/models.py:262 order/models.py:648
 msgid "Target completion date"
-msgstr ""
+msgstr "Ημερομηνία ολοκλήρωσης στόχου"
 
 #: build/models.py:263
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Ημερομηνία ολοκλήρωσης της κατασκευής. Η κατασκευή θα καθυστερήσει μετά από αυτή την ημερομηνία."
 
 #: build/models.py:266 order/models.py:286
 #: templates/js/translated/build.js:2594
 msgid "Completion Date"
-msgstr ""
+msgstr "Ημερομηνία ολοκλήρωσης"
 
 #: build/models.py:272
 msgid "completed by"
-msgstr ""
+msgstr "ολοκληρώθηκε από"
 
 #: build/models.py:280 templates/js/translated/build.js:2562
 msgid "Issued by"
-msgstr ""
+msgstr "Εκδόθηκε από"
 
 #: build/models.py:281
 msgid "User who issued this build order"
-msgstr ""
+msgstr "Χρήστης που εξέδωσε αυτήν την παραγγελία κατασκευής"
 
 #: build/models.py:289 build/templates/build/build_base.html:193
 #: build/templates/build/detail.html:115 order/models.py:100
@@ -909,11 +909,11 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:158
 #: templates/js/translated/build.js:2574 templates/js/translated/order.js:1860
 msgid "Responsible"
-msgstr ""
+msgstr "Υπεύθυνος"
 
 #: build/models.py:290
 msgid "User responsible for this build order"
-msgstr ""
+msgstr "Υπεύθυνος για αυτή την παραγγελία κατασκευής"
 
 #: build/models.py:295 build/templates/build/detail.html:101
 #: company/templates/company/manufacturer_part.html:107
@@ -921,67 +921,67 @@ msgstr ""
 #: part/templates/part/part_base.html:346 stock/models.py:656
 #: stock/templates/stock/item_base.html:200
 msgid "External Link"
-msgstr ""
+msgstr "Εξωτερικοί σύνδεσμοι"
 
 #: build/models.py:300
 msgid "Extra build notes"
-msgstr ""
+msgstr "Επιπλέον σημειώσεις"
 
 #: build/models.py:538
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "Η παραγγελία κατασκευής {build} έχει ολοκληρωθεί"
 
 #: build/models.py:544
 msgid "A build order has been completed"
-msgstr ""
+msgstr "Η παραγγελία κατασκευής έχει ολοκληρωθεί"
 
 #: build/models.py:723
 msgid "No build output specified"
-msgstr ""
+msgstr "Δεν καθορίστηκε έξοδος κατασκευής"
 
 #: build/models.py:726
 msgid "Build output is already completed"
-msgstr ""
+msgstr "Η παραγγελία κατασκευής έχει ολοκληρωθεί"
 
 #: build/models.py:729
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "Η έξοδος κατασκευής δεν ταιριάζει με την παραγγελία κατασκευής"
 
 #: build/models.py:1169
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "Το στοιχείο κατασκευής πρέπει να ορίζει μια έξοδο κατασκευής, καθώς το κύριο τμήμα επισημαίνεται ως ανιχνεύσιμο"
 
 #: build/models.py:1178
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
-msgstr ""
+msgstr "Η καταχωρημένη ποσότητα ({q}) δεν πρέπει να υπερβαίνει τη διαθέσιμη ποσότητα αποθέματος ({a})"
 
 #: build/models.py:1188 order/models.py:1379
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "Στοιχείο αποθέματος είναι υπερ-κατανεμημένο"
 
 #: build/models.py:1194 order/models.py:1382
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Η ποσότητα πρέπει να είναι μεγαλύτερη από 0"
 
 #: build/models.py:1200
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "Η ποσότητα πρέπει να είναι 1 για σειριακό απόθεμα"
 
 #: build/models.py:1257
 msgid "Selected stock item not found in BOM"
-msgstr ""
+msgstr "Το επιλεγμένο αντικείμενο αποθέματος δεν βρέθηκε στο BOM"
 
 #: build/models.py:1326 stock/templates/stock/item_base.html:172
 #: templates/InvenTree/search.html:139 templates/js/translated/build.js:2496
 #: templates/navbar.html:38
 msgid "Build"
-msgstr ""
+msgstr "Κατασκευή"
 
 #: build/models.py:1327
 msgid "Build to allocate parts"
-msgstr ""
+msgstr "Κατασκευή για εκχώρηση τμημάτων"
 
 #: build/models.py:1343 build/serializers.py:645 order/serializers.py:1015
 #: order/serializers.py:1036 stock/serializers.py:394 stock/serializers.py:754
@@ -996,15 +996,15 @@ msgstr ""
 #: templates/js/translated/stock.js:587 templates/js/translated/stock.js:752
 #: templates/js/translated/stock.js:2577
 msgid "Stock Item"
-msgstr ""
+msgstr "Στοιχείο Αποθέματος"
 
 #: build/models.py:1344
 msgid "Source stock item"
-msgstr ""
+msgstr "Στοιχείο πηγαίου αποθέματος"
 
 #: build/models.py:1356 build/serializers.py:193
 #: build/templates/build/build_base.html:85
-#: build/templates/build/detail.html:34 common/models.py:1697
+#: build/templates/build/detail.html:34 common/models.py:1701
 #: company/templates/company/supplier_part.html:279 order/models.py:897
 #: order/models.py:1423 order/serializers.py:1155
 #: order/templates/order/order_wizard/match_parts.html:30 part/forms.py:40
@@ -1037,73 +1037,73 @@ msgstr ""
 #: templates/js/translated/stock.js:612 templates/js/translated/stock.js:782
 #: templates/js/translated/stock.js:2626 templates/js/translated/stock.js:2711
 msgid "Quantity"
-msgstr ""
+msgstr "Ποσότητα"
 
 #: build/models.py:1357
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Ποσότητα αποθέματος για διάθεση για κατασκευή"
 
 #: build/models.py:1365
 msgid "Install into"
-msgstr ""
+msgstr "Εγκατάσταση σε"
 
 #: build/models.py:1366
 msgid "Destination stock item"
-msgstr ""
+msgstr "Αποθήκη προορισμού"
 
 #: build/serializers.py:138 build/serializers.py:674
 #: templates/js/translated/build.js:1199
 msgid "Build Output"
-msgstr ""
+msgstr "Κατασκευή Εξόδου"
 
 #: build/serializers.py:150
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Η έξοδος κατασκευής δεν ταιριάζει με την παραγγελία κατασκευής"
 
 #: build/serializers.py:154
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "Το εξερχόμενο μέρος δεν ταιριάζει με το μέρος BuildOrder"
 
 #: build/serializers.py:158
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "Η παραγγελία κατασκευής έχει ολοκληρωθεί"
 
 #: build/serializers.py:169
 msgid "This build output is not fully allocated"
-msgstr ""
+msgstr "Αυτή η έξοδος κατασκευής δεν έχει εκχωρηθεί πλήρως"
 
 #: build/serializers.py:194
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Εισάγετε ποσότητα για την έξοδο κατασκευής"
 
 #: build/serializers.py:208 build/serializers.py:665 order/models.py:318
 #: order/serializers.py:287 order/serializers.py:442 part/serializers.py:545
 #: part/serializers.py:977 stock/models.py:484 stock/models.py:1251
 #: stock/serializers.py:300
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "Η ποσότητα πρέπει να είναι μεγαλύτερη από 0"
 
 #: build/serializers.py:215
 msgid "Integer quantity required for trackable parts"
-msgstr ""
+msgstr "Ακέραιη ποσότητα που απαιτείται για ανιχνεύσιμα μέρη"
 
 #: build/serializers.py:218
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr ""
+msgstr "Ακέραιη ποσότητα που απαιτείται, καθώς ο λογαριασμός των υλικών περιέχει ανιχνεύσιμα μέρη"
 
 #: build/serializers.py:232 order/serializers.py:455 order/serializers.py:1159
 #: stock/serializers.py:309 templates/js/translated/order.js:1364
 #: templates/js/translated/stock.js:271 templates/js/translated/stock.js:459
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Σειριακοί αριθμοί"
 
 #: build/serializers.py:233
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Εισάγετε ποσότητα για την έξοδο κατασκευής"
 
 #: build/serializers.py:246
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "Αυτόματη Κατανομή Σειριακών Αριθμών"
 
 #: build/serializers.py:247
 msgid "Automatically allocate required items with matching serial numbers"
@@ -2275,349 +2275,349 @@ msgstr ""
 msgid "Enable plugins to respond to internal events"
 msgstr ""
 
-#: common/models.py:1342 common/models.py:1658
+#: common/models.py:1344 common/models.py:1662
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
-#: common/models.py:1364
+#: common/models.py:1366
 msgid "Show subscribed parts"
 msgstr ""
 
-#: common/models.py:1365
+#: common/models.py:1367
 msgid "Show subscribed parts on the homepage"
 msgstr ""
 
-#: common/models.py:1371
+#: common/models.py:1373
 msgid "Show subscribed categories"
 msgstr ""
 
-#: common/models.py:1372
+#: common/models.py:1374
 msgid "Show subscribed part categories on the homepage"
 msgstr ""
 
-#: common/models.py:1378
+#: common/models.py:1380
 msgid "Show latest parts"
 msgstr ""
 
-#: common/models.py:1379
+#: common/models.py:1381
 msgid "Show latest parts on the homepage"
 msgstr ""
 
-#: common/models.py:1385
+#: common/models.py:1387
 msgid "Recent Part Count"
 msgstr ""
 
-#: common/models.py:1386
+#: common/models.py:1388
 msgid "Number of recent parts to display on index page"
 msgstr ""
 
-#: common/models.py:1392
+#: common/models.py:1394
 msgid "Show unvalidated BOMs"
 msgstr ""
 
-#: common/models.py:1393
+#: common/models.py:1395
 msgid "Show BOMs that await validation on the homepage"
 msgstr ""
 
-#: common/models.py:1399
+#: common/models.py:1401
 msgid "Show recent stock changes"
 msgstr ""
 
-#: common/models.py:1400
+#: common/models.py:1402
 msgid "Show recently changed stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1406
+#: common/models.py:1408
 msgid "Recent Stock Count"
 msgstr ""
 
-#: common/models.py:1407
+#: common/models.py:1409
 msgid "Number of recent stock items to display on index page"
 msgstr ""
 
-#: common/models.py:1413
+#: common/models.py:1415
 msgid "Show low stock"
 msgstr ""
 
-#: common/models.py:1414
+#: common/models.py:1416
 msgid "Show low stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1420
+#: common/models.py:1422
 msgid "Show depleted stock"
 msgstr ""
 
-#: common/models.py:1421
+#: common/models.py:1423
 msgid "Show depleted stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1427
+#: common/models.py:1429
 msgid "Show needed stock"
 msgstr ""
 
-#: common/models.py:1428
+#: common/models.py:1430
 msgid "Show stock items needed for builds on the homepage"
 msgstr ""
 
-#: common/models.py:1434
+#: common/models.py:1436
 msgid "Show expired stock"
 msgstr ""
 
-#: common/models.py:1435
+#: common/models.py:1437
 msgid "Show expired stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1441
+#: common/models.py:1443
 msgid "Show stale stock"
 msgstr ""
 
-#: common/models.py:1442
+#: common/models.py:1444
 msgid "Show stale stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1448
+#: common/models.py:1450
 msgid "Show pending builds"
 msgstr ""
 
-#: common/models.py:1449
+#: common/models.py:1451
 msgid "Show pending builds on the homepage"
 msgstr ""
 
-#: common/models.py:1455
+#: common/models.py:1457
 msgid "Show overdue builds"
 msgstr ""
 
-#: common/models.py:1456
+#: common/models.py:1458
 msgid "Show overdue builds on the homepage"
 msgstr ""
 
-#: common/models.py:1462
+#: common/models.py:1464
 msgid "Show outstanding POs"
 msgstr ""
 
-#: common/models.py:1463
+#: common/models.py:1465
 msgid "Show outstanding POs on the homepage"
 msgstr ""
 
-#: common/models.py:1469
+#: common/models.py:1471
 msgid "Show overdue POs"
 msgstr ""
 
-#: common/models.py:1470
+#: common/models.py:1472
 msgid "Show overdue POs on the homepage"
 msgstr ""
 
-#: common/models.py:1476
+#: common/models.py:1478
 msgid "Show outstanding SOs"
 msgstr ""
 
-#: common/models.py:1477
+#: common/models.py:1479
 msgid "Show outstanding SOs on the homepage"
 msgstr ""
 
-#: common/models.py:1483
+#: common/models.py:1485
 msgid "Show overdue SOs"
 msgstr ""
 
-#: common/models.py:1484
+#: common/models.py:1486
 msgid "Show overdue SOs on the homepage"
 msgstr ""
 
-#: common/models.py:1490
+#: common/models.py:1492
 msgid "Inline label display"
 msgstr ""
 
-#: common/models.py:1491
+#: common/models.py:1493
 msgid "Display PDF labels in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:1497
+#: common/models.py:1499
 msgid "Inline report display"
 msgstr ""
 
-#: common/models.py:1498
+#: common/models.py:1500
 msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:1504
+#: common/models.py:1506
 msgid "Search Parts"
 msgstr ""
 
-#: common/models.py:1505
+#: common/models.py:1507
 msgid "Display parts in search preview window"
 msgstr ""
 
-#: common/models.py:1511
+#: common/models.py:1513
 msgid "Seach Supplier Parts"
 msgstr ""
 
-#: common/models.py:1512
+#: common/models.py:1514
 msgid "Display supplier parts in search preview window"
 msgstr ""
 
-#: common/models.py:1518
+#: common/models.py:1520
 msgid "Search Manufacturer Parts"
 msgstr ""
 
-#: common/models.py:1519
+#: common/models.py:1521
 msgid "Display manufacturer parts in search preview window"
 msgstr ""
 
-#: common/models.py:1525
+#: common/models.py:1527
 msgid "Hide Inactive Parts"
 msgstr ""
 
-#: common/models.py:1526
+#: common/models.py:1528
 msgid "Excluded inactive parts from search preview window"
 msgstr ""
 
-#: common/models.py:1532
+#: common/models.py:1534
 msgid "Search Categories"
 msgstr ""
 
-#: common/models.py:1533
+#: common/models.py:1535
 msgid "Display part categories in search preview window"
 msgstr ""
 
-#: common/models.py:1539
+#: common/models.py:1541
 msgid "Search Stock"
 msgstr ""
 
-#: common/models.py:1540
+#: common/models.py:1542
 msgid "Display stock items in search preview window"
 msgstr ""
 
-#: common/models.py:1546
+#: common/models.py:1548
 msgid "Hide Unavailable Stock Items"
 msgstr ""
 
-#: common/models.py:1547
+#: common/models.py:1549
 msgid "Exclude stock items which are not available from the search preview window"
 msgstr ""
 
-#: common/models.py:1553
+#: common/models.py:1555
 msgid "Search Locations"
 msgstr ""
 
-#: common/models.py:1554
+#: common/models.py:1556
 msgid "Display stock locations in search preview window"
 msgstr ""
 
-#: common/models.py:1560
+#: common/models.py:1562
 msgid "Search Companies"
 msgstr ""
 
-#: common/models.py:1561
+#: common/models.py:1563
 msgid "Display companies in search preview window"
 msgstr ""
 
-#: common/models.py:1567
+#: common/models.py:1569
 msgid "Search Purchase Orders"
 msgstr ""
 
-#: common/models.py:1568
+#: common/models.py:1570
 msgid "Display purchase orders in search preview window"
 msgstr ""
 
-#: common/models.py:1574
+#: common/models.py:1576
 msgid "Exclude Inactive Purchase Orders"
 msgstr ""
 
-#: common/models.py:1575
+#: common/models.py:1577
 msgid "Exclude inactive purchase orders from search preview window"
 msgstr ""
 
-#: common/models.py:1581
+#: common/models.py:1583
 msgid "Search Sales Orders"
 msgstr ""
 
-#: common/models.py:1582
+#: common/models.py:1584
 msgid "Display sales orders in search preview window"
 msgstr ""
 
-#: common/models.py:1588
+#: common/models.py:1590
 msgid "Exclude Inactive Sales Orders"
 msgstr ""
 
-#: common/models.py:1589
+#: common/models.py:1591
 msgid "Exclude inactive sales orders from search preview window"
 msgstr ""
 
-#: common/models.py:1595
+#: common/models.py:1597
 msgid "Search Preview Results"
 msgstr ""
 
-#: common/models.py:1596
+#: common/models.py:1598
 msgid "Number of results to show in each section of the search preview window"
 msgstr ""
 
-#: common/models.py:1602
+#: common/models.py:1604
 msgid "Show Quantity in Forms"
 msgstr ""
 
-#: common/models.py:1603
+#: common/models.py:1605
 msgid "Display available part quantity in some forms"
 msgstr ""
 
-#: common/models.py:1609
+#: common/models.py:1611
 msgid "Escape Key Closes Forms"
 msgstr ""
 
-#: common/models.py:1610
+#: common/models.py:1612
 msgid "Use the escape key to close modal forms"
 msgstr ""
 
-#: common/models.py:1616
+#: common/models.py:1618
 msgid "Fixed Navbar"
 msgstr ""
 
-#: common/models.py:1617
+#: common/models.py:1619
 msgid "The navbar position is fixed to the top of the screen"
 msgstr ""
 
-#: common/models.py:1623
+#: common/models.py:1625
 msgid "Date Format"
 msgstr ""
 
-#: common/models.py:1624
+#: common/models.py:1626
 msgid "Preferred format for displaying dates"
 msgstr ""
 
-#: common/models.py:1638 part/templates/part/detail.html:41
+#: common/models.py:1640 part/templates/part/detail.html:41
 msgid "Part Scheduling"
 msgstr ""
 
-#: common/models.py:1639
+#: common/models.py:1641
 msgid "Display part scheduling information"
 msgstr ""
 
-#: common/models.py:1698
+#: common/models.py:1702
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:1705 company/serializers.py:366
+#: common/models.py:1709 company/serializers.py:366
 #: company/templates/company/supplier_part.html:284 order/models.py:938
 #: templates/js/translated/part.js:1083 templates/js/translated/part.js:2181
 msgid "Price"
 msgstr ""
 
-#: common/models.py:1706
+#: common/models.py:1710
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:1866 common/models.py:2044
+#: common/models.py:1870 common/models.py:2048
 msgid "Endpoint"
 msgstr ""
 
-#: common/models.py:1867
+#: common/models.py:1871
 msgid "Endpoint at which this webhook is received"
 msgstr ""
 
-#: common/models.py:1876
+#: common/models.py:1880
 msgid "Name for this webhook"
 msgstr ""
 
-#: common/models.py:1881 part/models.py:921 plugin/models.py:100
+#: common/models.py:1885 part/models.py:921 plugin/models.py:100
 #: templates/js/translated/table_filters.js:34
 #: templates/js/translated/table_filters.js:104
 #: templates/js/translated/table_filters.js:316
@@ -2625,67 +2625,67 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: common/models.py:1882
+#: common/models.py:1886
 msgid "Is this webhook active"
 msgstr ""
 
-#: common/models.py:1896
+#: common/models.py:1900
 msgid "Token"
 msgstr ""
 
-#: common/models.py:1897
+#: common/models.py:1901
 msgid "Token for access"
 msgstr ""
 
-#: common/models.py:1904
+#: common/models.py:1908
 msgid "Secret"
 msgstr ""
 
-#: common/models.py:1905
+#: common/models.py:1909
 msgid "Shared secret for HMAC"
 msgstr ""
 
-#: common/models.py:2011
+#: common/models.py:2015
 msgid "Message ID"
 msgstr ""
 
-#: common/models.py:2012
+#: common/models.py:2016
 msgid "Unique identifier for this message"
 msgstr ""
 
-#: common/models.py:2020
+#: common/models.py:2024
 msgid "Host"
 msgstr ""
 
-#: common/models.py:2021
+#: common/models.py:2025
 msgid "Host from which this message was received"
 msgstr ""
 
-#: common/models.py:2028
+#: common/models.py:2032
 msgid "Header"
 msgstr ""
 
-#: common/models.py:2029
+#: common/models.py:2033
 msgid "Header of this message"
 msgstr ""
 
-#: common/models.py:2035
+#: common/models.py:2039
 msgid "Body"
 msgstr ""
 
-#: common/models.py:2036
+#: common/models.py:2040
 msgid "Body of this message"
 msgstr ""
 
-#: common/models.py:2045
+#: common/models.py:2049
 msgid "Endpoint on which this message was received"
 msgstr ""
 
-#: common/models.py:2050
+#: common/models.py:2054
 msgid "Worked on"
 msgstr ""
 
-#: common/models.py:2051
+#: common/models.py:2055
 msgid "Was the work on this message finished?"
 msgstr ""
 
@@ -5735,19 +5735,19 @@ msgstr ""
 msgid "Sample plugin"
 msgstr ""
 
-#: plugin/models.py:186
+#: plugin/models.py:188
 msgid "Plugin"
 msgstr ""
 
-#: plugin/models.py:249
+#: plugin/models.py:253
 msgid "Method"
 msgstr ""
 
-#: plugin/plugin.py:251
+#: plugin/plugin.py:252
 msgid "No author found"
 msgstr ""
 
-#: plugin/plugin.py:263
+#: plugin/plugin.py:264
 msgid "No date found"
 msgstr ""
 
