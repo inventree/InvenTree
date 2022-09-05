@@ -1156,7 +1156,7 @@ function loadBuildOutputTable(build_info, options={}) {
         uniqueId: 'pk',
         name: 'build-outputs',
         sortable: true,
-        search: false,
+        search: true,
         sidePagination: 'client',
         detailView: bom_items.length > 0,
         detailFilter: function(index, row) {
