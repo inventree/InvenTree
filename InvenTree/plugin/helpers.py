@@ -7,9 +7,7 @@ import pkgutil
 import subprocess
 import sysconfig
 import traceback
-from importlib.metadata import (PackageNotFoundError, distributions,
-                                entry_points)
-from importlib.util import find_spec
+from importlib.metadata import entry_points
 
 from django import template
 from django.conf import settings
@@ -71,18 +69,21 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
         package_name = pathlib.Path(package_path).relative_to(install_path).parts[0]
     except ValueError:
         # is file - loaded -> form a name for that
-        path_obj = pathlib.Path(package_path).relative_to(settings.BASE_DIR)
-        path_parts = [*path_obj.parts]
-        path_parts[-1] = path_parts[-1].replace(path_obj.suffix, '')  # remove suffix
+        try:
+            path_obj = pathlib.Path(package_path).relative_to(settings.BASE_DIR)
+            path_parts = [*path_obj.parts]
+            path_parts[-1] = path_parts[-1].replace(path_obj.suffix, '')  # remove suffix
 
-        # remove path prefixes
-        if path_parts[0] == 'plugin':
-            path_parts.remove('plugin')
-            path_parts.pop(0)
-        else:
-            path_parts.remove('plugins')  # pragma: no cover
+            # remove path prefixes
+            if path_parts[0] == 'plugin':
+                path_parts.remove('plugin')
+                path_parts.pop(0)
+            else:
+                path_parts.remove('plugins')  # pragma: no cover
 
-        package_name = '.'.join(path_parts)
+            package_name = '.'.join(path_parts)
+        except Exception:
+            package_name = package_path
 
     if do_log:
         log_kwargs = {}
@@ -231,37 +232,6 @@ def get_plugins(pkg, baseclass, path=None):
                 plugins.append(plugin)
 
     return plugins
-
-
-def get_module_meta(mdl_name):
-    """Return distribution for module.
-
-    Modified form source: https://stackoverflow.com/a/60975978/17860466
-    """
-    # Get spec for module
-    spec = find_spec(mdl_name)
-
-    if not spec:  # pragma: no cover
-        raise PackageNotFoundError(mdl_name)
-
-    # Try to get specific package for the module
-    result = None
-    for dist in distributions():
-        try:
-            relative = pathlib.Path(spec.origin).relative_to(dist.locate_file(''))
-        except ValueError:  # pragma: no cover
-            pass
-        else:
-            if relative in dist.files:
-                result = dist
-
-    # Check if a distribution was found
-    # A no should not be possible here as a call can only be made on a discovered module but better save then sorry
-    if not result:  # pragma: no cover
-        raise PackageNotFoundError(mdl_name)
-
-    # Return metadata
-    return result.metadata
 # endregion
 
 
