@@ -2158,6 +2158,17 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 switchable: false,
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
+                formatter: function(value, row) {
+                    var data = value;
+
+                    if (row.supplier_part_detail.pack_size != 1.0) {
+                        var pack_size = row.supplier_part_detail.pack_size;
+                        var total = value * pack_size;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Size" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
+
+                        return data;
+                    }
+                },
                 footerFormatter: function(data) {
                     return data.map(function(row) {
                         return +row['quantity'];
