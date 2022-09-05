@@ -130,7 +130,8 @@ function supplierPartFields(options={}) {
         },
         packaging: {
             icon: 'fa-box',
-        }
+        },
+        pack_size: {},
     };
 
     if (options.part) {

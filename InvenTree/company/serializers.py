@@ -291,6 +291,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'note',
             'pk',
             'packaging',
+            'pack_size',
             'part',
             'part_detail',
             'pretty_name',
