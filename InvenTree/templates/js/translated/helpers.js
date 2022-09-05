@@ -10,6 +10,7 @@
     makeIconButton,
     makeProgressBar,
     renderLink,
+    sanitizeInputString,
     select2Thumbnail,
     setupNotesField,
     thumbnailImage
@@ -325,4 +326,25 @@ function setupNotesField(element, url, options={}) {
             });
         });
     }
+}
+
+
+/*
+ * Sanitize a string provided by the user from an input field,
+ * e.g. data form or search box
+ *
+ * - Remove leading / trailing whitespace
+ * - Remove hidden control characters
+ */
+function sanitizeInputString(s, options={}) {
+
+    // Remove ASCII control characters
+    s = s.replace(/[\x01-\x1F]+/g, '');
+
+    // Remove Unicode control characters
+    s = s.replace(/[\p{C}]+/gu, '');
+
+    s = s.trim();
+
+    return s;
 }

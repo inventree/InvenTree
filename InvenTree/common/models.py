@@ -131,7 +131,7 @@ class BaseInvenTreeSetting(models.Model):
         for k, v in kwargs.items():
             key += f"_{k}:{v}"
 
-        return key
+        return key.replace(" ", "")
 
     @classmethod
     def allValues(cls, user=None, exclude_hidden=False):
@@ -1329,6 +1329,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
     }
 
+    typ = 'inventree'
+
     class Meta:
         """Meta options for InvenTreeSetting."""
 
@@ -1641,6 +1643,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
     }
+
+    typ = 'user'
 
     class Meta:
         """Meta options for InvenTreeUserSetting."""

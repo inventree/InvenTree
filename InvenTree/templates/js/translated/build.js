@@ -23,6 +23,7 @@
     cancelBuildOrder,
     completeBuildOrder,
     createBuildOutput,
+    duplicateBuildOrder,
     editBuildOrder,
     loadAllocationTable,
     loadBuildOrderAllocationTable,
@@ -75,7 +76,9 @@ function buildFormFields() {
     };
 }
 
-
+/*
+ * Edit an existing BuildOrder via the API
+ */
 function editBuildOrder(pk) {
 
     var fields = buildFormFields();
@@ -87,6 +90,10 @@ function editBuildOrder(pk) {
     });
 }
 
+
+/*
+ * Create a new build order via an API form
+ */
 function newBuildOrder(options={}) {
     /* Launch modal form to create a new BuildOrder.
      */
@@ -113,14 +120,39 @@ function newBuildOrder(options={}) {
         fields.sales_order.value = options.sales_order;
     }
 
+    if (options.data) {
+        delete options.data.pk;
+    }
+
     constructForm(`/api/build/`, {
         fields: fields,
+        data: options.data,
         follow: true,
         method: 'POST',
         title: '{% trans "Create Build Order" %}',
         onSuccess: options.onSuccess,
     });
 }
+
+
+/*
+ * Duplicate an existing build order.
+ */
+function duplicateBuildOrder(build_id, options={}) {
+
+    inventreeGet(`/api/build/${build_id}/`, {}, {
+        success: function(data) {
+            // Clear out data we do not want to be duplicated
+            delete data['pk'];
+            delete data['issued_by'];
+            delete data['reference'];
+
+            options.data = data;
+            newBuildOrder(options);
+        }
+    });
+}
+
 
 
 /* Construct a form to cancel a build order */
@@ -699,6 +731,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
     options.params['part_detail'] = true;
     options.params['build_detail'] = true;
     options.params['location_detail'] = true;
+    options.params['stock_detail'] = true;
 
     var filters = loadTableFilters('buildorderallocation');
 
@@ -1123,7 +1156,7 @@ function loadBuildOutputTable(build_info, options={}) {
         uniqueId: 'pk',
         name: 'build-outputs',
         sortable: true,
-        search: false,
+        search: true,
         sidePagination: 'client',
         detailView: bom_items.length > 0,
         detailFilter: function(index, row) {
@@ -1686,9 +1719,10 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         field: 'location',
                         title: '{% trans "Location" %}',
                         formatter: function(value, row) {
-                            if (row.stock_item_detail.location) {
-                                var text = row.stock_item_detail.location_name;
-                                var url = `/stock/location/${row.stock_item_detail.location}/`;
+
+                            if (row.location && row.location_detail) {
+                                var text = row.location_detail.name;
+                                var url = `/stock/location/${row.location}/`;
 
                                 return renderLink(text, url);
                             } else {
@@ -1799,6 +1833,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     var available_stock = availableQuantity(row);
 
                     var required = requiredQuantity(row);
+                    var allocated = allocatedQuantity(row);
 
                     var text = '';
 
@@ -1806,14 +1841,20 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         text += `${available_stock}`;
                     }
 
-                    if (available_stock < required) {
-                        text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                    var icons = '';
+
+                    if (available_stock < (required - allocated)) {
+                        icons += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
                     } else {
-                        text += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                        icons += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                    }
+
+                    if (row.on_order && row.on_order > 0) {
+                        icons += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
                     }
 
                     if (available_stock <= 0) {
-                        text += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                        icons += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                     } else {
                         var extra = '';
                         if ((substitute_stock > 0) && (variant_stock > 0)) {
@@ -1825,11 +1866,11 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         }
 
                         if (extra) {
-                            text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                            icons += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
                         }
                     }
 
-                    return renderLink(text, url);
+                    return renderLink(text, url) + icons;
                 },
                 sorter: function(valA, valB, rowA, rowB) {
 

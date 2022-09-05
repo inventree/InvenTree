@@ -1436,6 +1436,45 @@ class Part(MetadataMixin, MPTTModel):
 
         return parts
 
+    def get_used_in_bom_item_filter(self, include_variants=True, include_substitutes=True):
+        """Return a BomItem queryset which returns all BomItem instances which refer to *this* part.
+
+        As the BOM allocation logic is somewhat complicted, there are some considerations:
+
+        A) This part may be directly specified in a BomItem instance
+        B) This part may be a *variant* of a part which is directly specified in a BomItem instance
+        C) This part may be a *substitute* for a part which is directly specifed in a BomItem instance
+
+        So we construct a query for each case, and combine them...
+        """
+
+        # Cache all *parent* parts
+        parents = self.get_ancestors(include_self=False)
+
+        # Case A: This part is directly specified in a BomItem (we always use this case)
+        query = Q(
+            sub_part=self,
+        )
+
+        if include_variants:
+            # Case B: This part is a *variant* of a part which is specified in a BomItem which allows variants
+            query |= Q(
+                allow_variants=True,
+                sub_part__in=parents,
+            )
+
+        # Case C: This part is a *substitute* of a part which is directly specified in a BomItem
+        if include_substitutes:
+
+            # Grab a list of BomItem substitutes which reference this part
+            substitutes = self.substitute_items.all()
+
+            query |= Q(
+                pk__in=[substitute.bom_item.pk for substitute in substitutes],
+            )
+
+        return query
+
     def get_used_in_filter(self, include_inherited=True):
         """Return a query filter for all parts that this part is used in.
 
@@ -2330,7 +2369,7 @@ class PartTestTemplate(models.Model):
 
 def validate_template_name(name):
     """Prevent illegal characters in "name" field for PartParameterTemplate."""
-    for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":  # noqa: P103
+    for c in "\"\'`!?|":  # noqa: P103
         if c in str(name):
             raise ValidationError(_(f"Illegal character in template name ({c})"))
 
@@ -2384,6 +2423,13 @@ class PartParameterTemplate(models.Model):
     )
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Parameter description'),
+        blank=True,
+    )
 
 
 class PartParameter(models.Model):

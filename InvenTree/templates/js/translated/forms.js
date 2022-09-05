@@ -328,8 +328,6 @@ function constructForm(url, options) {
         constructFormBody({}, options);
     }
 
-    options.fields = options.fields || {};
-
     // Save the URL
     options.url = url;
 
@@ -350,6 +348,13 @@ function constructForm(url, options) {
 
         // Extract any custom 'context' information from the OPTIONS data
         options.context = OPTIONS.context || {};
+
+        // Construct fields (can be a static parameter or a function)
+        if (options.fieldsFunction) {
+            options.fields = options.fieldsFunction(options);
+        } else {
+            options.fields = options.fields || {};
+        }
 
         /*
          * Determine what "type" of form we want to construct,
@@ -1006,6 +1011,11 @@ function getFormFieldValue(name, field={}, options={}) {
         if (!value || value.length == 0) {
             value = null;
         }
+        break;
+    case 'string':
+    case 'url':
+    case 'email':
+        value = sanitizeInputString(el.val());
         break;
     default:
         value = el.val();
