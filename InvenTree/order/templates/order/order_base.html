@@ -42,12 +42,18 @@
         <span class='fas fa-tools'></span> <span class='caret'></span>
     </button>
     <ul class='dropdown-menu' role='menu'>
-        <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='edit-order'>
+            <span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}
+        </a></li>
         {% if order.can_cancel %}
-        <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='cancel-order'>
+            <span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}
+        </a></li>
         {% endif %}
         {% if roles.purchase_order.add %}
-        <li><a class='dropdown-item' href='#' id='duplicate-order'><span class='fas fa-clone'></span> {% trans "Duplicate order" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='duplicate-order'>
+            <span class='fas fa-clone'></span> {% trans "Duplicate order" %}
+        </a></li>
         {% endif %}
     </ul>
 </div>

@@ -275,6 +275,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
 
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
     class Meta:
         """Metaclass options."""
 
@@ -300,6 +302,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'SKU',
             'supplier',
             'supplier_detail',
+            'url',
         ]
 
         read_only_fields = [

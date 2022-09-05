@@ -16,6 +16,7 @@
     deleteManufacturerParts,
     deleteManufacturerPartParameters,
     deleteSupplierParts,
+    duplicateSupplierPart,
     editCompany,
     loadCompanyTable,
     loadManufacturerPartTable,
@@ -199,6 +200,38 @@ function createSupplierPart(options={}) {
 }
 
 
+/*
+ * Launch a modal form to duplicate an existing SupplierPart instance
+ */
+function duplicateSupplierPart(part, options={}) {
+
+    var fields = options.fields || supplierPartFields();
+
+    // Retrieve information for the supplied part
+    inventreeGet(`/api/company/part/${part}/`, {}, {
+        success: function(data) {
+
+            // Remove fields which we do not want to duplicate
+            delete data['available'];
+            delete data['availability_updated'];
+
+            constructForm(`/api/company/part/`, {
+                method: 'POST',
+                fields: fields,
+                title: '{% trans "Duplicate Supplier Part" %}',
+                data: data,
+                onSuccess: function(response) {
+                    handleFormSuccess(response, options);
+                }
+            });
+        }
+    });
+}
+
+
+/*
+ * Launch a modal form to edit an existing SupplierPart instance
+ */
 function editSupplierPart(part, options={}) {
 
     var fields = options.fields || supplierPartFields();
@@ -949,6 +982,7 @@ function loadSupplierPartTable(table, url, options) {
             },
             {
                 field: 'link',
+                sortable: false,
                 title: '{% trans "Link" %}',
                 formatter: function(value) {
                     if (value) {

@@ -49,6 +49,11 @@
             <span class='fas fa-edit icon-green'></span> {% trans "Edit Supplier Part" %}
         </a></li>
         {% endif %}
+        {% if roles.purchase_order.add %}
+        <li><a class='dropdown-item' href='#' id='duplicate-part' title='{% trans "Duplicate Supplier Part" %}'>
+            <span class='fas fa-clone'></span> {% trans "Duplicate Supplier Part" %}
+        </a></li>
+        {% endif %}
         {% if roles.purchase_order.delete %}
         <li><a class='dropdown-item' href='#' id='delete-part' title='{% trans "Delete Supplier Part" %}'>
             <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Supplier  Part" %}
@@ -390,6 +395,12 @@ $('#update-part-availability').click(function() {
         onSuccess: function() {
             location.reload();
         }
+    });
+});
+
+$('#duplicate-part').click(function() {
+    duplicateSupplierPart({{ part.pk }}, {
+        follow: true
     });
 });
 
