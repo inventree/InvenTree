@@ -194,11 +194,18 @@ class OrderTest(TestCase):
         # Receive the rest of the items
         order.receive_line_item(line, loc, 50, user=None)
 
+        self.assertEqual(part.on_order, 1300)
+
         line = PurchaseOrderLineItem.objects.get(id=2)
+
+        in_stock = part.total_stock
 
         order.receive_line_item(line, loc, 500, user=None)
 
-        self.assertEqual(part.on_order, 800)
+        # Check that the part stock quantity has increased by the correct amount
+        self.assertEqual(part.total_stock, in_stock + 500)
+
+        self.assertEqual(part.on_order, 1100)
         self.assertEqual(order.status, PurchaseOrderStatus.PLACED)
 
         for line in order.pending_line_items():
