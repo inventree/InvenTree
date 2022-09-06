@@ -1,6 +1,7 @@
 """Various unit tests for order models"""
 
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 import django.core.exceptions as django_exceptions
 from django.contrib.auth import get_user_model
@@ -212,6 +213,91 @@ class OrderTest(TestCase):
             order.receive_line_item(line, loc, line.quantity, user=None)
 
         self.assertEqual(order.status, PurchaseOrderStatus.COMPLETE)
+
+    def test_receive_pack_size(self):
+        """Test receiving orders from suppliers with different pack_size values"""
+
+        prt = Part.objects.get(pk=1)
+        sup = Company.objects.get(pk=1)
+
+        # Create a new supplier part with larger pack size
+        sp_1 = SupplierPart.objects.create(
+            part=prt,
+            supplier=sup,
+            SKU='SKUx10',
+            pack_size=10,
+        )
+
+        # Create a new supplier part with smaller pack size
+        sp_2 = SupplierPart.objects.create(
+            part=prt,
+            supplier=sup,
+            SKU='SKUx0.1',
+            pack_size=0.1,
+        )
+
+        # Record values before we start
+        on_order = prt.on_order
+        in_stock = prt.total_stock
+
+        n = PurchaseOrder.objects.count()
+
+        # Create a new PurchaseOrder
+        po = PurchaseOrder.objects.create(
+            supplier=sup,
+            reference=f"PO-{n + 1}",
+            description='Some PO',
+        )
+
+        # Add line items
+
+        # 3 x 10 = 30
+        line_1 = PurchaseOrderLineItem.objects.create(
+            order=po,
+            part=sp_1,
+            quantity=3
+        )
+
+        # 13 x 0.1 = 1.3
+        line_2 = PurchaseOrderLineItem.objects.create(
+            order=po,
+            part=sp_2,
+            quantity=13,
+        )
+
+        po.place_order()
+
+        # The 'on_order' quantity should have been increased by 31.3
+        self.assertEqual(prt.on_order, round(on_order + Decimal(31.3), 1))
+
+        loc = StockLocation.objects.get(id=1)
+
+        # Receive 1x item against line_1
+        po.receive_line_item(line_1, loc, 1, user=None)
+
+        # Receive 5x item against line_2
+        po.receive_line_item(line_2, loc, 5, user=None)
+
+        # Check that the line items have been updated correctly
+        self.assertEqual(line_1.quantity, 3)
+        self.assertEqual(line_1.received, 1)
+        self.assertEqual(line_1.remaining(), 2)
+
+        self.assertEqual(line_2.quantity, 13)
+        self.assertEqual(line_2.received, 5)
+        self.assertEqual(line_2.remaining(), 8)
+
+        # The 'on_order' quantity should have decreased by 10.5
+        self.assertEqual(
+            prt.on_order,
+            round(on_order + Decimal(31.3) - Decimal(10.5), 1)
+        )
+
+        # The 'in_stock' quantity should have increased by 10.5
+        self.assertEqual(
+            prt.total_stock,
+            round(in_stock + Decimal(10.5), 1)
+        )
 
     def test_overdue_notification(self):
         """Test overdue purchase order notification

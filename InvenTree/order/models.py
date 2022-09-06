@@ -476,7 +476,7 @@ class PurchaseOrder(Order):
         if line.part and quantity > 0:
 
             # Take the 'pack_size' of the SupplierPart into account
-            pack_quantity = quantity * line.part.pack_size
+            pack_quantity = Decimal(quantity) * Decimal(line.part.pack_size)
 
             # Determine if we should individually serialize the items, or not
             if type(serials) is list and len(serials) > 0:
