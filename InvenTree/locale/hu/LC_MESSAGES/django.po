@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-05 11:39+0000\n"
-"PO-Revision-Date: 2022-09-05 03:22\n"
+"POT-Creation-Date: 2022-09-05 04:16+0000\n"
+"PO-Revision-Date: 2022-09-06 03:42\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1152,8 +1152,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:380
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:449
@@ -3856,16 +3855,12 @@ msgid "Order cannot be cancelled"
 msgstr "A rendelést nem lehet törölni"
 
 #: order/serializers.py:209 order/serializers.py:1101
-#, fuzzy
-#| msgid "Order cannot be completed as there are incomplete line items"
 msgid "Allow order to be closed with incomplete line items"
-msgstr "A rendelés nem jelölhető késznek mivel nem teljesített sortételek vannak"
+msgstr ""
 
 #: order/serializers.py:220 order/serializers.py:1112
-#, fuzzy
-#| msgid "Build order has incomplete outputs"
 msgid "Order has incomplete line items"
-msgstr "A gyártási utasítás befejezetlen kimeneteket tartalmaz"
+msgstr ""
 
 #: order/serializers.py:311
 msgid "Order is not open"
@@ -7539,16 +7534,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -8877,10 +8870,8 @@ msgid "After placing this purchase order, line items will no longer be editable.
 msgstr "A beszerzési rendelés kiküldése után annak sortételei a továbbiakban már nem lesznek szerkeszthetők."
 
 #: templates/js/translated/order.js:426
-#, fuzzy
-#| msgid "This order has line items which have not been marked as received."
 msgid "This order has line items which have not been completed."
-msgstr "Ez a rendelés olyan sortételeket tartalmaz amik még nem érkeztek be."
+msgstr ""
 
 #: templates/js/translated/order.js:450
 msgid "Cancel Sales Order"
@@ -10578,3 +10569,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
