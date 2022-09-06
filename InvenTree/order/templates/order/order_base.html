@@ -241,19 +241,11 @@ $("#edit-order").click(function() {
 $("#receive-order").click(function() {
 
     // Auto select items which have not been fully allocated
-    var items = $("#po-line-table").bootstrapTable('getData');
-
-    var items_to_receive = [];
-
-    items.forEach(function(item) {
-        if (item.received < item.quantity) {
-            items_to_receive.push(item);
-        }
-    });
+    var items = getTableData('#po-line-table');
 
     receivePurchaseOrderItems(
         {{ order.id }},
-        items_to_receive,
+        items,
         {
             success: function() {
                 $("#po-line-table").bootstrapTable('refresh');

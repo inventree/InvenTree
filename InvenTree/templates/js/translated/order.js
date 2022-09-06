@@ -1545,7 +1545,9 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
     var table_entries = '';
 
     line_items.forEach(function(item) {
-        table_entries += renderLineItem(item);
+        if (item.received < item.quantity) {
+            table_entries += renderLineItem(item);
+        }
     });
 
     var html = ``;
