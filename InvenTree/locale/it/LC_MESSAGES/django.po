@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-05 11:39+0000\n"
-"PO-Revision-Date: 2022-09-05 03:22\n"
+"POT-Creation-Date: 2022-09-05 04:16+0000\n"
+"PO-Revision-Date: 2022-09-06 03:42\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -3858,10 +3858,8 @@ msgid "Allow order to be closed with incomplete line items"
 msgstr ""
 
 #: order/serializers.py:220 order/serializers.py:1112
-#, fuzzy
-#| msgid "Order selected items"
 msgid "Order has incomplete line items"
-msgstr "Ordina articolo selezionato"
+msgstr ""
 
 #: order/serializers.py:311
 msgid "Order is not open"
@@ -7535,16 +7533,14 @@ msgstr "Accedi"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10572,3 +10568,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
