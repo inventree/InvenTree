@@ -475,6 +475,9 @@ class PurchaseOrder(Order):
         # Create a new stock item
         if line.part and quantity > 0:
 
+            # Take the 'pack_size' of the SupplierPart into account
+            quantity *= line.part.pack_size
+
             # Determine if we should individually serialize the items, or not
             if type(serials) is list and len(serials) > 0:
                 serialize = True
