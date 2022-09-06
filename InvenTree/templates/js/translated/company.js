@@ -982,25 +982,8 @@ function loadSupplierPartTable(table, url, options) {
                 }
             },
             {
-                field: 'link',
-                sortable: false,
-                title: '{% trans "Link" %}',
-                formatter: function(value) {
-                    if (value) {
-                        return renderLink(value, value);
-                    } else {
-                        return '';
-                    }
-                }
-            },
-            {
                 field: 'description',
                 title: '{% trans "Description" %}',
-                sortable: false,
-            },
-            {
-                field: 'note',
-                title: '{% trans "Notes" %}',
                 sortable: false,
             },
             {
@@ -1014,13 +997,30 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
             },
             {
+                field: 'link',
+                sortable: false,
+                title: '{% trans "Link" %}',
+                formatter: function(value) {
+                    if (value) {
+                        return renderLink(value, value);
+                    } else {
+                        return '';
+                    }
+                }
+            },
+            {
+                field: 'note',
+                title: '{% trans "Notes" %}',
+                sortable: false,
+            },
+            {
                 field: 'in_stock',
                 title: '{% trans "In Stock" %}',
                 sortable: true,
             },
             {
                 field: 'available',
-                title: '{% trans "Available" %}',
+                title: '{% trans "Availability" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     if (row.availability_updated) {
