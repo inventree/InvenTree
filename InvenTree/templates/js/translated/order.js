@@ -1404,7 +1404,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             pack_size_div = `
             <div class='alert alert-block alert-info'>
                 {% trans "Pack Size" %}: ${pack_size} ${units}<br>
-                {% trans "Received Quantity" %}: <span id='items_received_quantity_${pk}'>${received}</span> ${units}
+                {% trans "Received Quantity" %}: <span class='pack_received_quantity' id='items_received_quantity_${pk}'>${received}</span> ${units}
             </div>`;
         }
 
@@ -1597,7 +1597,8 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         confirmMessage: '{% trans "Confirm receipt of items" %}',
         title: '{% trans "Receive Purchase Order Items" %}',
         afterRender: function(fields, opts) {
-            // Initialize the "destination" field for each item
+
+            // Run initialization routines for each line in the form
             line_items.forEach(function(item) {
 
                 var pk = item.pk;
@@ -1618,18 +1619,21 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                     render_description: false,
                 };
 
+                // Initialize the location field
                 initializeRelatedField(
                     field_details,
                     null,
                     opts,
                 );
 
+                // Add 'clear' button callback for the location field
                 addClearCallback(
                     name,
                     field_details,
                     opts
                 );
 
+                // Setup stock item status field
                 initializeChoiceField(
                     {
                         name: `items_status_${pk}`,
@@ -1637,6 +1641,19 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                     null,
                     opts
                 );
+
+                // Add change callback for quantity field
+                if (item.supplier_part_detail.pack_size != 1) {
+                    $(opts.modal).find(`#id_items_quantity_${pk}`).change(function() {
+                        var value = $(opts.modal).find(`#id_items_quantity_${pk}`).val();
+
+                        var el = $(opts.modal).find(`#quantity_${pk}`).find('.pack_received_quantity');
+
+                        var actual = value * item.supplier_part_detail.pack_size;
+                        actual = formatDecimal(actual);
+                        el.text(actual);
+                    });
+                }
             });
 
             // Add callbacks to remove rows
