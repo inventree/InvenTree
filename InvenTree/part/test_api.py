@@ -1,5 +1,7 @@
 """Unit tests for the various part API endpoints"""
 
+from random import randint
+
 from django.urls import reverse
 
 import PIL
@@ -9,7 +11,7 @@ from rest_framework.test import APIClient
 import build.models
 import order.models
 from common.models import InvenTreeSetting
-from company.models import Company
+from company.models import Company, SupplierPart
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     StockStatus)
@@ -1675,6 +1677,107 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(part.sales_order_allocation_count(), 15)
         self.assertEqual(part.total_stock, 91)
         self.assertEqual(part.available_stock, 56)
+
+    def test_on_order(self):
+        """Test that the 'on_order' queryset annotation works as expected.
+
+        This queryset annotation takes into account any outstanding line items for active orders,
+        and should also use the 'pack_size' of the supplier part objects.
+        """
+
+        supplier = Company.objects.create(
+            name='Paint Supplies',
+            description='A supplier of paints',
+            is_supplier=True
+        )
+
+        # First, create some parts
+        paint = PartCategory.objects.create(
+            parent=None,
+            name="Paint",
+            description="Paints and such",
+        )
+
+        for color in ['Red', 'Green', 'Blue', 'Orange', 'Yellow']:
+            p = Part.objects.create(
+                category=paint,
+                units='litres',
+                name=f"{color} Paint",
+                description=f"Paint which is {color} in color"
+            )
+
+            # Create multiple supplier parts in different sizes
+            for pk_sz in [1, 10, 25, 100]:
+                sp = SupplierPart.objects.create(
+                    part=p,
+                    supplier=supplier,
+                    SKU=f"PNT-{color}-{pk_sz}L",
+                    pack_size=pk_sz,
+                )
+
+            self.assertEqual(p.supplier_parts.count(), 4)
+
+        # Check that we have the right base data to start with
+        self.assertEqual(paint.parts.count(), 5)
+        self.assertEqual(supplier.supplied_parts.count(), 20)
+
+        supplier_parts = supplier.supplied_parts.all()
+
+        # Create multiple orders
+        for _ii in range(5):
+
+            po = order.models.PurchaseOrder.objects.create(
+                supplier=supplier,
+                description='ordering some paint',
+            )
+
+            # Order an assortment of items
+            for sp in supplier_parts:
+
+                # Generate random quantity to order
+                quantity = randint(10, 20)
+
+                # Mark up to half of the quantity as received
+                received = randint(0, quantity // 2)
+
+                # Add a line item
+                item = order.models.PurchaseOrderLineItem.objects.create(
+                    part=sp,
+                    order=po,
+                    quantity=quantity,
+                    received=received,
+                )
+
+        # Now grab a list of parts from the API
+        response = self.get(
+            reverse('api-part-list'),
+            {
+                'category': paint.pk,
+            },
+            expected_code=200,
+        )
+
+        # Check that the correct number of items have been returned
+        self.assertEqual(len(response.data), 5)
+
+        for item in response.data:
+            # Calculate the 'ordering' quantity from first principles
+            p = Part.objects.get(pk=item['pk'])
+
+            on_order = 0
+
+            for sp in p.supplier_parts.all():
+                for line_item in sp.purchase_order_line_items.all():
+                    po = line_item.order
+
+                    if po.status in PurchaseOrderStatus.OPEN:
+                        remaining = line_item.quantity - line_item.received
+
+                        if remaining > 0:
+                            on_order += remaining * sp.pack_size
+
+            # The annotated quantity must be equal to the hand-calculated quantity
+            self.assertEqual(on_order, item['ordering'])
 
 
 class BomItemTest(InvenTreeAPITestCase):
