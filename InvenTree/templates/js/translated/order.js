@@ -1394,6 +1394,20 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             </span>
         `;
 
+        var units = line_item.part_detail.units || '';
+        var pack_size = line_item.supplier_part_detail.pack_size || 1;
+        var pack_size_div = '';
+
+        var received = quantity * pack_size;
+
+        if (pack_size != 1) {
+            pack_size_div = `
+            <div class='alert alert-block alert-info'>
+                {% trans "Pack Size" %}: ${pack_size} ${units}<br>
+                {% trans "Received Quantity" %}: <span id='items_received_quantity_${pk}'>${received}</span> ${units}
+            </div>`;
+        }
+
         // Quantity to Receive
         var quantity_input = constructField(
             `items_quantity_${pk}`,
@@ -1433,7 +1447,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         );
 
         // Hidden inputs below the "quantity" field
-        var quantity_input_group = `${quantity_input}<div class='collapse' id='div-batch-${pk}'>${batch_input}</div>`;
+        var quantity_input_group = `${quantity_input}${pack_size_div}<div class='collapse' id='div-batch-${pk}'>${batch_input}</div>`;
 
         if (line_item.part_detail.trackable) {
             quantity_input_group += `<div class='collapse' id='div-serials-${pk}'>${sn_input}</div>`;
