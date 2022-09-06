@@ -2217,6 +2217,21 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 }
             },
             {
+                sortable: false,
+                switchable: true,
+                field: 'supplier_part_detail.pack_size',
+                title: '{% trans "Pack Size" %}',
+                formatter: function(value, row) {
+                    var units = row.part_detail.units;
+
+                    if (units) {
+                        value += ` ${units}`;
+                    }
+
+                    return value;
+                }
+            },
+            {
                 sortable: true,
                 field: 'purchase_price',
                 title: '{% trans "Unit Price" %}',
