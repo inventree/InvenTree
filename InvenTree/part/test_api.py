@@ -1779,6 +1779,9 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
             # The annotated quantity must be equal to the hand-calculated quantity
             self.assertEqual(on_order, item['ordering'])
 
+            # The annotated quantity must also match the part.on_order quantity
+            self.assertEqual(on_order, p.on_order)
+
 
 class BomItemTest(InvenTreeAPITestCase):
     """Unit tests for the BomItem API."""

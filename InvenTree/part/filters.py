@@ -46,7 +46,7 @@ def annotate_on_order_quantity(reference: str = ''):
     # Filter only line with outstanding quantity
     order_filter = Q(
         order__status__in=PurchaseOrderStatus.OPEN,
-        quantity__gte=F('received'),
+        quantity__gt=F('received'),
     )
 
     return Coalesce(
