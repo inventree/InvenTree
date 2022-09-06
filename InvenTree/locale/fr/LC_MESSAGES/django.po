@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-05 11:39+0000\n"
-"PO-Revision-Date: 2022-09-05 03:21\n"
+"POT-Creation-Date: 2022-09-05 04:16+0000\n"
+"PO-Revision-Date: 2022-09-06 03:42\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -3854,16 +3854,12 @@ msgid "Order cannot be cancelled"
 msgstr "La commande ne peut pas être annulée"
 
 #: order/serializers.py:209 order/serializers.py:1101
-#, fuzzy
-#| msgid "Order cannot be completed as there are incomplete shipments"
 msgid "Allow order to be closed with incomplete line items"
-msgstr "La commande ne peut pas être terminée car il y a des envois incomplets"
+msgstr ""
 
 #: order/serializers.py:220 order/serializers.py:1112
-#, fuzzy
-#| msgid "Build order has incomplete outputs"
 msgid "Order has incomplete line items"
-msgstr "L'ordre de production a des sorties incomplètes"
+msgstr ""
 
 #: order/serializers.py:311
 msgid "Order is not open"
@@ -7537,16 +7533,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8875,10 +8869,8 @@ msgid "After placing this purchase order, line items will no longer be editable.
 msgstr ""
 
 #: templates/js/translated/order.js:426
-#, fuzzy
-#| msgid "Number of stock items which have been completed"
 msgid "This order has line items which have not been completed."
-msgstr "Nombre d'articles de stock qui ont été terminés"
+msgstr ""
 
 #: templates/js/translated/order.js:450
 msgid "Cancel Sales Order"
@@ -10576,3 +10568,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
