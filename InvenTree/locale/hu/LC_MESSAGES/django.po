@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-05 04:16+0000\n"
-"PO-Revision-Date: 2022-09-06 03:42\n"
+"POT-Creation-Date: 2022-09-06 14:05+0000\n"
+"PO-Revision-Date: 2022-09-07 03:41\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -6748,11 +6748,11 @@ msgstr "A(z) %(inventree_title)s kiszolgáló belső hibát jelzett"
 msgid "Refer to the error log in the admin interface for further details"
 msgstr "Nézd meg az admin felületen lévő hibanaplót bővebb információkért"
 
-#: templates/503.html:11 templates/503.html:36
+#: templates/503.html:11 templates/503.html:34
 msgid "Site is in Maintenance"
 msgstr "Az oldal karbantartás alatt"
 
-#: templates/503.html:42
+#: templates/503.html:40
 msgid "The site is currently in maintenance and should be up again soon!"
 msgstr "Az oldal jelenleg karbantartás alatt van, hamarosan újra használható lesz!"
 
