@@ -1217,7 +1217,7 @@ function orderParts(parts_list, options={}) {
                             }
                         });
                     }
-                }
+                };
 
                 var supplier_part_field = {
                     name: `part_${part.pk}`,
