@@ -1043,9 +1043,9 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                         var pack_size = row.supplier_part_detail.pack_size;
                         var total = value * pack_size;
                         data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Size" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
-
-                        return data;
                     }
+
+                    return data;
                 },
             },
             {
@@ -1095,9 +1095,9 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                         var pack_size = row.supplier_part_detail.pack_size;
                         var total = value * pack_size;
                         data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Size" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
-
-                        return data;
                     }
+
+                    return data;
                 },
             },
             {
