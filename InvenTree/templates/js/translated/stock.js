@@ -1703,7 +1703,7 @@ function loadStockTable(table, options) {
         switchable: params['part_detail'],
         formatter: function(value, row) {
 
-            var url = `/stock/item/${row.pk}/`;
+            var url = `/part/${row.part}/`;
             var thumb = row.part_detail.thumbnail;
             var name = row.part_detail.full_name;
 
