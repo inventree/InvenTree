@@ -239,6 +239,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     pretty_name = serializers.CharField(read_only=True)
 
+    pack_size = serializers.FloatField()
+
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
 
@@ -273,6 +275,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
 
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
     class Meta:
         """Metaclass options."""
 
@@ -291,12 +295,14 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'note',
             'pk',
             'packaging',
+            'pack_size',
             'part',
             'part_detail',
             'pretty_name',
             'SKU',
             'supplier',
             'supplier_detail',
+            'url',
         ]
 
         read_only_fields = [

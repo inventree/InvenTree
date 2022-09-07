@@ -16,6 +16,7 @@
     deleteManufacturerParts,
     deleteManufacturerPartParameters,
     deleteSupplierParts,
+    duplicateSupplierPart,
     editCompany,
     loadCompanyTable,
     loadManufacturerPartTable,
@@ -130,7 +131,8 @@ function supplierPartFields(options={}) {
         },
         packaging: {
             icon: 'fa-box',
-        }
+        },
+        pack_size: {},
     };
 
     if (options.part) {
@@ -198,6 +200,39 @@ function createSupplierPart(options={}) {
 }
 
 
+/*
+ * Launch a modal form to duplicate an existing SupplierPart instance
+ */
+function duplicateSupplierPart(part, options={}) {
+
+    var fields = options.fields || supplierPartFields();
+
+    // Retrieve information for the supplied part
+    inventreeGet(`/api/company/part/${part}/`, {}, {
+        success: function(data) {
+
+            // Remove fields which we do not want to duplicate
+            delete data['pk'];
+            delete data['available'];
+            delete data['availability_updated'];
+
+            constructForm(`/api/company/part/`, {
+                method: 'POST',
+                fields: fields,
+                title: '{% trans "Duplicate Supplier Part" %}',
+                data: data,
+                onSuccess: function(response) {
+                    handleFormSuccess(response, options);
+                }
+            });
+        }
+    });
+}
+
+
+/*
+ * Launch a modal form to edit an existing SupplierPart instance
+ */
 function editSupplierPart(part, options={}) {
 
     var fields = options.fields || supplierPartFields();
@@ -865,6 +900,7 @@ function loadSupplierPartTable(table, url, options) {
                 switchable: params['part_detail'],
                 sortable: true,
                 field: 'part_detail.full_name',
+                sortName: 'part',
                 title: '{% trans "Part" %}',
                 formatter: function(value, row) {
 
@@ -915,6 +951,7 @@ function loadSupplierPartTable(table, url, options) {
                 visible: params['manufacturer_detail'],
                 switchable: params['manufacturer_detail'],
                 sortable: true,
+                sortName: 'manufacturer',
                 field: 'manufacturer_detail.name',
                 title: '{% trans "Manufacturer" %}',
                 formatter: function(value, row) {
@@ -933,6 +970,7 @@ function loadSupplierPartTable(table, url, options) {
                 visible: params['manufacturer_detail'],
                 switchable: params['manufacturer_detail'],
                 sortable: true,
+                sortName: 'MPN',
                 field: 'manufacturer_part_detail.MPN',
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row) {
@@ -944,7 +982,23 @@ function loadSupplierPartTable(table, url, options) {
                 }
             },
             {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+            },
+            {
+                field: 'packaging',
+                title: '{% trans "Packaging" %}',
+                sortable: true,
+            },
+            {
+                field: 'pack_size',
+                title: '{% trans "Pack Quantity" %}',
+                sortable: true,
+            },
+            {
                 field: 'link',
+                sortable: false,
                 title: '{% trans "Link" %}',
                 formatter: function(value) {
                     if (value) {
@@ -955,18 +1009,8 @@ function loadSupplierPartTable(table, url, options) {
                 }
             },
             {
-                field: 'description',
-                title: '{% trans "Description" %}',
-                sortable: false,
-            },
-            {
                 field: 'note',
                 title: '{% trans "Notes" %}',
-                sortable: false,
-            },
-            {
-                field: 'packaging',
-                title: '{% trans "Packaging" %}',
                 sortable: false,
             },
             {
@@ -976,7 +1020,7 @@ function loadSupplierPartTable(table, url, options) {
             },
             {
                 field: 'available',
-                title: '{% trans "Available" %}',
+                title: '{% trans "Availability" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     if (row.availability_updated) {

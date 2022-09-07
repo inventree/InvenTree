@@ -1036,6 +1036,17 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
+                formatter: function(value, row) {
+                    var data = value;
+
+                    if (row.supplier_part_detail.pack_size != 1.0) {
+                        var pack_size = row.supplier_part_detail.pack_size;
+                        var total = value * pack_size;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
+                    }
+
+                    return data;
+                },
             },
             {
                 field: 'target_date',
@@ -1077,6 +1088,17 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 field: 'received',
                 title: '{% trans "Received" %}',
                 switchable: true,
+                formatter: function(value, row) {
+                    var data = value;
+
+                    if (value > 0 && row.supplier_part_detail.pack_size != 1.0) {
+                        var pack_size = row.supplier_part_detail.pack_size;
+                        var total = value * pack_size;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
+                    }
+
+                    return data;
+                },
             },
             {
                 field: 'purchase_price',
