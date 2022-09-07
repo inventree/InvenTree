@@ -993,7 +993,7 @@ function loadSupplierPartTable(table, url, options) {
             },
             {
                 field: 'pack_size',
-                title: '{% trans "Pack Size" %}',
+                title: '{% trans "Pack Quantity" %}',
                 sortable: true,
             },
             {

@@ -817,7 +817,7 @@ function poLineItemFields(options={}) {
                     ).then(function() {
 
                         if (pack_size != 1) {
-                            var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Size" %}: ${pack_size} ${units}`;
+                            var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_size} ${units}`;
                             $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
                         }
                     });
@@ -1212,7 +1212,7 @@ function orderParts(parts_list, options={}) {
                             }
                         ).then(function() {
                             if (pack_size != 1) {
-                                var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Size" %}: ${pack_size} ${units}`;
+                                var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_size} ${units}`;
                                 $(opts.modal).find(`#id_quantity_${pk}`).after(`<div class='form-info-message' id='info-pack-size-${pk}'>${txt}</div>`);
                             }
                         });
@@ -1467,7 +1467,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         if (pack_size != 1) {
             pack_size_div = `
             <div class='alert alert-block alert-info'>
-                {% trans "Pack Size" %}: ${pack_size} ${units}<br>
+                {% trans "Pack Quantity" %}: ${pack_size} ${units}<br>
                 {% trans "Received Quantity" %}: <span class='pack_received_quantity' id='items_received_quantity_${pk}'>${received}</span> ${units}
             </div>`;
         }
@@ -2267,7 +2267,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     if (row.supplier_part_detail.pack_size != 1.0) {
                         var pack_size = row.supplier_part_detail.pack_size;
                         var total = value * pack_size;
-                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Size" %}: ${pack_size}${units} - {% trans "Total Quantity" %}: ${total}${units}'></span>`;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size}${units} - {% trans "Total Quantity" %}: ${total}${units}'></span>`;
                     }
 
                     return data;
@@ -2284,7 +2284,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 sortable: false,
                 switchable: true,
                 field: 'supplier_part_detail.pack_size',
-                title: '{% trans "Pack Size" %}',
+                title: '{% trans "Pack Quantity" %}',
                 formatter: function(value, row) {
                     var units = row.part_detail.units;
 

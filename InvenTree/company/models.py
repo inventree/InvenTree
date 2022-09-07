@@ -529,7 +529,7 @@ class SupplierPart(models.Model):
     packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
 
     pack_size = RoundingDecimalField(
-        verbose_name=_('Pack Size'),
+        verbose_name=_('Pack Quantity'),
         help_text=_('Unit quantity supplied in a single pack'),
         default=1,
         max_digits=15, decimal_places=5,
