@@ -533,7 +533,7 @@ class SupplierPart(models.Model):
         help_text=_('Unit quantity supplied in a single pack'),
         default=1,
         max_digits=15, decimal_places=5,
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(0.001)],
     )
 
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))
