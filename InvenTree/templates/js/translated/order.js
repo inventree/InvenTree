@@ -799,6 +799,9 @@ function poLineItemFields(options={}) {
                 var pack_size = 1;
                 var units = '';
 
+                // Remove any existing note fields
+                $(opts.modal).find('#info-pack-size').remove();
+
                 if (value != null) {
                     inventreeGet(`/api/company/part/${value}/`,
                         {
@@ -812,13 +815,10 @@ function poLineItemFields(options={}) {
                             },
                         }
                     ).then(function() {
-                        $(opts.modal).find('#info-pack-size').remove();
 
                         if (pack_size != 1) {
                             var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Size" %}: ${pack_size} ${units}`;
-                            $(opts.modal).find('#hint_id_quantity').after(
-                                `<div class='form-info-message' id='info-pack-size'>${txt}</div>`
-                            );
+                            $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
                         }
                     });
                 }
@@ -1180,16 +1180,46 @@ function orderParts(parts_list, options={}) {
         afterRender: function(fields, opts) {
             parts.forEach(function(part) {
 
+                var pk = part.pk;
+
                 // Filter by base part
-                supplier_part_filters.part = part.pk;
+                supplier_part_filters.part = pk;
 
                 if (part.manufacturer_part) {
                     // Filter by manufacturer part
                     supplier_part_filters.manufacturer_part = part.manufacturer_part;
                 }
 
-                // Configure the "supplier part" field
-                initializeRelatedField({
+                // Callback function when supplier part is changed
+                // This is used to update the "pack size" attribute
+                var onSupplierPartChanged = function(value, name, field, opts) {
+                    var pack_size = 1;
+                    var units = '';
+
+                    $(opts.modal).find(`#info-pack-size-${pk}`).remove();
+
+                    if (value != null) {
+                        inventreeGet(
+                            `/api/company/part/${value}/`,
+                            {
+                                part_detail: true,
+                            },
+                            {
+                                success: function(response) {
+                                    pack_size = response.pack_size || 1;
+                                    units = response.part_detail.units || '';
+                                }
+                            }
+                        ).then(function() {
+                            if (pack_size != 1) {
+                                var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Size" %}: ${pack_size} ${units}`;
+                                $(opts.modal).find(`#id_quantity_${pk}`).after(`<div class='form-info-message' id='info-pack-size-${pk}'>${txt}</div>`);
+                            }
+                        });
+                    }
+                }
+
+                var supplier_part_field = {
                     name: `part_${part.pk}`,
                     model: 'supplierpart',
                     api_url: '{% url "api-supplier-part-list" %}',
@@ -1198,10 +1228,15 @@ function orderParts(parts_list, options={}) {
                     auto_fill: true,
                     value: options.supplier_part,
                     filters: supplier_part_filters,
+                    onEdit: onSupplierPartChanged,
                     noResults: function(query) {
                         return '{% trans "No matching supplier parts" %}';
                     }
-                }, null, opts);
+                };
+
+                // Configure the "supplier part" field
+                initializeRelatedField(supplier_part_field, null, opts);
+                addFieldCallback(`part_${part.pk}`, supplier_part_field, opts);
 
                 // Configure the "purchase order" field
                 initializeRelatedField({
