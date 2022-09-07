@@ -794,6 +794,35 @@ function poLineItemFields(options={}) {
                 supplier_detail: true,
                 supplier: options.supplier,
             },
+            onEdit: function(value, name, field, opts) {
+                // If the pack_size != 1, add a note to the field
+                var pack_size = 1;
+                var units = '';
+
+                if (value != null) {
+                    inventreeGet(`/api/company/part/${value}/`,
+                        {
+                            part_detail: true,
+                        },
+                        {
+                            success: function(response) {
+                                // Extract information from the returned query
+                                pack_size = response.pack_size || 1;
+                                units = response.part_detail.units || '';
+                            },
+                        }
+                    ).then(function() {
+                        $(opts.modal).find('#info-pack-size').remove();
+
+                        if (pack_size != 1) {
+                            var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Size" %}: ${pack_size} ${units}`;
+                            $(opts.modal).find('#hint_id_quantity').after(
+                                `<div class='form-info-message' id='info-pack-size'>${txt}</div>`
+                            );
+                        }
+                    });
+                }
+            },
             secondary: {
                 method: 'POST',
                 title: '{% trans "Add Supplier Part" %}',
