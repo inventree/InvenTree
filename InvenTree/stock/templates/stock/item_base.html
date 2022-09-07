@@ -149,6 +149,9 @@
             {% if roles.part.view %}
             </a>
             {% endif %}
+            {% if item.part.description %}
+            <span class='fas fa-info-circle icon-blue float-right' title='{{ item.part.description }}'></span>
+            {% endif %}
         </td>
     </tr>
 
