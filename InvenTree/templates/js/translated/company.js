@@ -995,6 +995,15 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'pack_size',
                 title: '{% trans "Pack Quantity" %}',
                 sortable: true,
+                formatter: function(value, row) {
+                    var output = `${value}`;
+
+                    if (row.part_detail) {
+                        output += ` ${row.part_detail.units}`;
+                    }
+
+                    return output;
+                }
             },
             {
                 field: 'link',
