@@ -348,7 +348,7 @@
             <h5>{% trans "Available Quantity" %}</h5>
         </td>
         <td>
-            <h5>{% if item.quantity != available %}{% decimal available %} / {% endif %}{% decimal item.quantity %} {% if item.part.units %}{{ item.part.units }}{% endif %}</h5>
+            <h5>{% if item.quantity != available %}{% decimal available %} / {% endif %}{% decimal item.quantity %} {% include "part/part_units.html" with part=item.part %}</h5>
         </td>
         {% endif %}
     </tr>

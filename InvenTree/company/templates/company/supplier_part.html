@@ -149,7 +149,7 @@ src="{% static 'img/blank_image.png' %}"
         <tr>
             <td><span class='fas fa-box'></span></td>
             <td>{% trans "Pack Quantity" %}</td>
-            <td>{% decimal part.pack_size %}{% if part.part.units %} {{ part.part.units }}{% endif %}</td>
+            <td>{% decimal part.pack_size %} {% include "part/part_units.html" with part=part.part %}</td>
         </tr>
         {% endif %}
         {% if part.note %}

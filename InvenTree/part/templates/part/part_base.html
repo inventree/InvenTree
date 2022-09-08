@@ -187,7 +187,7 @@
         <tr>
             <td><h5><span class='fas fa-boxes'></span></h5></td>
             <td><h5>{% trans "Available Stock" %}</h5></td>
-            <td><h5>{% decimal available %}{% if part.units %} {{ part.units }}{% endif %}</h5></td>
+            <td><h5>{% decimal available %} {% include "part/part_units.html" %}</h5></td>
         </tr>
         <tr>
             <td><span class='fas fa-map-marker-alt'></span></td>
@@ -198,14 +198,14 @@
         <tr>
             <td><span class='fas fa-flag'></span></td>
             <td>{% trans "Minimum Stock" %}</td>
-            <td>{{ part.minimum_stock }} {{ part.units }}</td>
+            <td>{{ part.minimum_stock }} {% include "part/part_units.html" %}</td>
         </tr>
         {% endif %}
         {% if on_order > 0 %}
         <tr>
             <td><span class='fas fa-shopping-cart'></span></td>
             <td>{% trans "On Order" %}</td>
-            <td>{% decimal on_order %} {{ part.units }}</td>
+            <td>{% decimal on_order %} {% include "part/part_units.html" %}/td>
         </tr>
         {% endif %}
         {% if part.component %}

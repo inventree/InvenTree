@@ -998,7 +998,7 @@ function loadSupplierPartTable(table, url, options) {
                 formatter: function(value, row) {
                     var output = `${value}`;
 
-                    if (row.part_detail) {
+                    if (row.part_detail && row.part_detail.units) {
                         output += ` ${row.part_detail.units}`;
                     }
 
