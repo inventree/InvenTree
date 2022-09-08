@@ -927,6 +927,10 @@ function loadBomTable(table, options={}) {
 
             var text = `${available_stock}`;
 
+            if (row.sub_part_detail && row.sub_part_detail.units) {
+                text += ` <small>${row.sub_part_detail.units}</small>`;
+            }
+
             if (available_stock <= 0) {
                 text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "No Stock Available" %}'></span>`;
             } else {
