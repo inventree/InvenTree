@@ -1324,22 +1324,23 @@ function partGridTile(part) {
     // Rows for table view
     var rows = '';
 
-    var stock = `${part.in_stock}`;
+    var units = part.units;
+    var stock = `${part.in_stock} ${part.units}`;
 
     if (!part.in_stock) {
         stock = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
     } else if (!part.unallocated_stock) {
-        stock = `<span class='badge rounded-pill bg-warning'>{% trans "Not available" %}</span>`;
+        stock = `<span class='badge rounded-pill bg-warning'>{% trans "No Stock" %}</span>`;
     }
 
     rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${stock}</td></tr>`;
 
     if (part.ordering) {
-        rows += `<tr><td><b>{% trans "On Order" %}</b></td><td>${part.ordering}</td></tr>`;
+        rows += `<tr><td><b>{% trans "On Order" %}</b></td><td>${part.ordering} ${units}</td></tr>`;
     }
 
     if (part.building) {
-        rows += `<tr><td><b>{% trans "Building" %}</b></td><td>${part.building}</td></tr>`;
+        rows += `<tr><td><b>{% trans "Building" %}</b></td><td>${part.building} ${units}</td></tr>`;
     }
 
     var html = `
@@ -1356,10 +1357,10 @@ function partGridTile(part) {
             </div>
             <div class='panel-content'>
                 <div class='row'>
-                    <div class='col-sm-6'>
-                        <img src='${part.thumbnail}' class='card-thumb' onclick='showModalImage("${part.image}")'>
+                    <div class='col-sm-4'>
+                        <img src='${part.thumbnail}' style='width: 100%;' class='card-thumb' onclick='showModalImage("${part.image}")'>
                     </div>
-                    <div class='col-sm-6'>
+                    <div class='col-sm-8'>
                         <table class='table table-striped table-condensed'>
                             ${rows}
                         </table>
