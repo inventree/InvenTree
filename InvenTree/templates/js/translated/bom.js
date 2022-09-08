@@ -1482,6 +1482,10 @@ function loadUsedInTable(table, part_id, options={}) {
                 formatter: function(value, row) {
                     var html = value;
 
+                    if (row.sub_part_detail && row.sub_part_detail.units) {
+                        html += ` <small>${row.sub_part_detail.units}</small>`;
+                    }
+
                     if (row.parent && row.parent != 'top-level-item') {
                         html += ` <em>({% trans "Inherited from parent BOM" %})</em>`;
                     }
