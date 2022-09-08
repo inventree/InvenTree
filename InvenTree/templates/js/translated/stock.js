@@ -1764,7 +1764,7 @@ function loadStockTable(table, options) {
                 // Format floating point numbers with this one weird trick
                 val = formatDecimal(value);
 
-                if (row.part_detail) {
+                if (row.part_detail && row.part_detail.units) {
                     val += ` ${row.part_detail.units}`;
                 }
             }
