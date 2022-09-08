@@ -868,6 +868,10 @@ function loadBomTable(table, options={}) {
             // Let's make it a bit more pretty
             text = parseFloat(text);
 
+            if (row.sub_part_detail && row.sub_part_detail.units) {
+                text += ` <small>${row.sub_part_detail.units}</small>`;
+            }
+
             if (row.optional) {
                 text += ' ({% trans "Optional" %})';
             }
