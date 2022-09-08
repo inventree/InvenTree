@@ -198,14 +198,14 @@
         <tr>
             <td><span class='fas fa-flag'></span></td>
             <td>{% trans "Minimum Stock" %}</td>
-            <td>{{ part.minimum_stock }}</td>
+            <td>{{ part.minimum_stock }} {{ part.units }}</td>
         </tr>
         {% endif %}
         {% if on_order > 0 %}
         <tr>
             <td><span class='fas fa-shopping-cart'></span></td>
             <td>{% trans "On Order" %}</td>
-            <td>{% decimal on_order %}</td>
+            <td>{% decimal on_order %} {{ part.units }}</td>
         </tr>
         {% endif %}
         {% if part.component %}
