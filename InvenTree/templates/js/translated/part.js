@@ -1506,11 +1506,7 @@ function loadPartTable(table, url, options={}) {
                 total_stock += row.variant_stock;
             }
 
-            if (row.unallocated_stock != row.in_stock) {
-                text = `${row.unallocated_stock} / ${total_stock}`;
-            } else {
-                text = `${total_stock}`;
-            }
+            var text = `${total_stock}`;
 
             // Construct extra informational badges
             var badges = '';
@@ -1537,6 +1533,18 @@ function loadPartTable(table, url, options={}) {
 
             if (row.variant_stock && row.variant_stock > 0) {
                 badges += `<span class='fas fa-info-circle float-right' title='{% trans "Includes variant stock" %}'></span>`;
+            }
+
+            if (row.allocated_to_build_orders > 0) {
+                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to build orders" %}: ${row.allocated_to_build_orders}'></span>`;
+            }
+
+            if (row.allocated_to_sales_orders > 0) {
+                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to sales orders" %}: ${row.allocated_to_sales_orders}'></span>`;
+            }
+
+            if (row.units) {
+                text += ` <small>${row.units}</small>`;
             }
 
             text = renderLink(text, `/part/${row.pk}/?display=part-stock`);
