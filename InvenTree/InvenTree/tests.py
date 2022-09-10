@@ -848,3 +848,14 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             1, 2, 3, 4, 5,
             force_async=True
         )
+
+
+class BarcodeMixinTest(helpers.InvenTreeTestCase):
+    """Tests for the InvenTreeBarcodeMixin mixin class"""
+
+    def test_barcode_model_type(self):
+        """Test that the barcode_model_type property works for each class"""
+
+        from stock.models import StockItem
+
+        self.assertEqual(StockItem.barcode_model_type(), 'stockitem')

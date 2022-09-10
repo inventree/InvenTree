@@ -736,7 +736,7 @@ class StockBarcodeTest(StockTestBase):
 
         item = StockItem.objects.get(pk=1)
 
-        self.assertEqual(item.barcode_model_type, 'stockitem')
+        self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
 
         # Call format_barcode method
         barcode = item.format_barcode(brief=False)
