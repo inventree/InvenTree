@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-09 04:44+0000\n"
-"PO-Revision-Date: 2022-09-09 03:57\n"
+"POT-Creation-Date: 2022-09-09 02:44+0000\n"
+"PO-Revision-Date: 2022-09-10 18:41\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1153,8 +1153,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:380
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:449
@@ -2995,7 +2994,7 @@ msgstr "Alkatrész csomagolás"
 #: templates/js/translated/order.js:2270 templates/js/translated/order.js:2287
 #: templates/js/translated/part.js:1043 templates/js/translated/part.js:1095
 msgid "Pack Quantity"
-msgstr ""
+msgstr "Csomagolási mennyiség"
 
 #: company/models.py:533
 msgid "Unit quantity supplied in a single pack"
@@ -7556,16 +7555,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -10610,3 +10607,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
