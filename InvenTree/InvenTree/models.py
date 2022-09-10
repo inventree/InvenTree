@@ -691,16 +691,17 @@ class InvenTreeBarcodeMixin(models.Model):
 
         return self.format_barcode(brief=True)
 
-    def lookup_barcode(self, barcode_hash):
+    @classmethod
+    def lookup_barcode(cls, barcode_hash):
         """Check if a model instance exists with the specified third-party barcode hash."""
 
-        return self.__class__.objects.filter(barcode_hash=barcode_hash).first()
+        return cls.objects.filter(barcode_hash=barcode_hash).first()
 
     def assign_barcode(self, barcode_hash, barcode_data=None, raise_error=True):
         """Assign an external (third-party) barcode to this object."""
 
         # Check for existing item
-        if self.lookup_barcode(barcode_hash) is not None:
+        if self.__class__.lookup_barcode(barcode_hash) is not None:
             if raise_error:
                 raise ValidationError(_("Existing barcode found"))
             else:
