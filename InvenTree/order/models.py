@@ -475,6 +475,9 @@ class PurchaseOrder(Order):
         # Create a new stock item
         if line.part and quantity > 0:
 
+            # Take the 'pack_size' of the SupplierPart into account
+            pack_quantity = Decimal(quantity) * Decimal(line.part.pack_size)
+
             # Determine if we should individually serialize the items, or not
             if type(serials) is list and len(serials) > 0:
                 serialize = True
@@ -488,7 +491,7 @@ class PurchaseOrder(Order):
                     part=line.part.part,
                     supplier_part=line.part,
                     location=location,
-                    quantity=1 if serialize else quantity,
+                    quantity=1 if serialize else pack_quantity,
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
@@ -515,6 +518,7 @@ class PurchaseOrder(Order):
                 )
 
         # Update the number of parts received against the particular line item
+        # Note that this quantity does *not* take the pack_size into account, it is "number of packs"
         line.received += quantity
         line.save()
 
@@ -702,7 +706,7 @@ class SalesOrder(Order):
         """Check if this order is "shipped" (all line items delivered)."""
         return self.lines.count() > 0 and all([line.is_completed() for line in self.lines.all()])
 
-    def can_complete(self, raise_error=False):
+    def can_complete(self, raise_error=False, allow_incomplete_lines=False):
         """Test if this SalesOrder can be completed.
 
         Throws a ValidationError if cannot be completed.
@@ -720,7 +724,7 @@ class SalesOrder(Order):
             elif self.pending_shipment_count > 0:
                 raise ValidationError(_("Order cannot be completed as there are incomplete shipments"))
 
-            elif self.pending_line_count > 0:
+            elif not allow_incomplete_lines and self.pending_line_count > 0:
                 raise ValidationError(_("Order cannot be completed as there are incomplete line items"))
 
         except ValidationError as e:
@@ -732,9 +736,9 @@ class SalesOrder(Order):
 
         return True
 
-    def complete_order(self, user):
+    def complete_order(self, user, **kwargs):
         """Mark this order as "complete."""
-        if not self.can_complete():
+        if not self.can_complete(**kwargs):
             return False
 
         self.status = SalesOrderStatus.SHIPPED

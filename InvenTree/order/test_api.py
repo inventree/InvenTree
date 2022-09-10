@@ -322,7 +322,19 @@ class PurchaseOrderTest(OrderTest):
 
         self.assignRole('purchase_order.add')
 
-        self.post(url, {}, expected_code=201)
+        # Should fail due to incomplete lines
+        response = self.post(url, {}, expected_code=400)
+
+        self.assertIn('Order has incomplete line items', str(response.data['accept_incomplete']))
+
+        # Post again, accepting incomplete line items
+        self.post(
+            url,
+            {
+                'accept_incomplete': True,
+            },
+            expected_code=201
+        )
 
         po.refresh_from_db()
 

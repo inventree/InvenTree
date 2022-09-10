@@ -49,6 +49,11 @@
             <span class='fas fa-edit icon-green'></span> {% trans "Edit Supplier Part" %}
         </a></li>
         {% endif %}
+        {% if roles.purchase_order.add %}
+        <li><a class='dropdown-item' href='#' id='duplicate-part' title='{% trans "Duplicate Supplier Part" %}'>
+            <span class='fas fa-clone'></span> {% trans "Duplicate Supplier Part" %}
+        </a></li>
+        {% endif %}
         {% if roles.purchase_order.delete %}
         <li><a class='dropdown-item' href='#' id='delete-part' title='{% trans "Delete Supplier Part" %}'>
             <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Supplier  Part" %}
@@ -138,6 +143,13 @@ src="{% static 'img/blank_image.png' %}"
             <td><span class='fas fa-cube'></span></td>
             <td>{% trans "Packaging" %}</td>
             <td>{{ part.packaging }}{% include "clip.html"%}</td>
+        </tr>
+        {% endif %}
+        {% if part.pack_size != 1.0 %}
+        <tr>
+            <td><span class='fas fa-box'></span></td>
+            <td>{% trans "Pack Quantity" %}</td>
+            <td>{% decimal part.pack_size %} {% include "part/part_units.html" with part=part.part %}</td>
         </tr>
         {% endif %}
         {% if part.note %}
@@ -383,6 +395,12 @@ $('#update-part-availability').click(function() {
         onSuccess: function() {
             location.reload();
         }
+    });
+});
+
+$('#duplicate-part').click(function() {
+    duplicateSupplierPart({{ part.pk }}, {
+        follow: true
     });
 });
 
