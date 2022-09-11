@@ -148,7 +148,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     def test_scan_inventree(self):
         """Test scanning of first-party barcodes"""
 
-        # Scan a StockItem object
+        # Scan a StockItem object (which does not exist)
         response = self.scan(
             {
                 'barcode': '{"stockitem": 5}',
@@ -156,14 +156,38 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        print(response)
+        self.assertIn('Stock item does not exist', str(response.data))
+
+        # Scan a StockItem object (which does exist)
+        response = self.scan(
+            {
+                'barcode': '{"stockitem": 1}',
+            },
+            expected_code=200
+        )
+
+        self.assertIn('success', response.data)
+        self.assertIn('stockitem', response.data)
+        self.assertEqual(response.data['stockitem']['pk'], 1)
 
         # Scan a StockLocation object
-        response = self.scan({
-            'barcode': '{"stocklocation": 5}'
-        })
+        response = self.scan(
+            {
+                'barcode': '{"stocklocation": 5}',
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
+        self.assertIn('success', response.data)
+        self.assertEqual(response.data['stocklocation']['pk'], 5)
 
         # Scan a Part object
-        response = self.scan({
-            'barcode': '{"part": 5}'
-        })
+        response = self.scan(
+            {
+                'barcode': '{"part": 5}'
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['part']['pk'], 5)
