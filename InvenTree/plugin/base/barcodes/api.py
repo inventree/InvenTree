@@ -167,16 +167,18 @@ class BarcodeAssign(APIView):
         if len(matched_models) == 0:
             # No matches were found
             model_names = ', '.join(supported_labels)
-            raise ValidationError(
-                f"Missing data: Provide one of '{model_names}'"
-            )
+
+            raise ValidationError({
+                'error': f"Missing data: Provide one of '{model_names}'"
+            })
 
         if len(matched_models) > 1:
             # Multiple matches found (also a problem)
             model_names = ', '.join(matched_models)
-            raise ValidationError(
-                f"Multiple conflicting fields: '{model_names}'"
-            )
+
+            raise ValidationError({
+                'error': f"Multiple conflicting fields: '{model_names}'"
+            })
 
         barcode_data = data['barcode']
 
@@ -215,17 +217,17 @@ class BarcodeAssign(APIView):
 
             if plugin.getStockItem() is not None:
                 raise ValidationError({
-                    'barcode': 'Barcode matches existing Stock Item',
+                    'error': 'Barcode matches existing Stock Item',
                 })
 
             if plugin.getStockLocation() is not None:
                 raise ValidationError({
-                    'barcode': 'Barcode matches existing Stock Location'
+                    'error': 'Barcode matches existing Stock Location'
                 })
 
             if plugin.getPart() is not None:
                 raise ValidationError({
-                    'barcode': 'Barcode matches existing Part',
+                    'error': 'Barcode matches existing Part',
                 })
 
             if not match_found:
@@ -234,7 +236,7 @@ class BarcodeAssign(APIView):
                 if match_item is not None:
 
                     raise ValidationError({
-                        'barcode': 'Barcode matches existing Stock Item',
+                        'error': 'Barcode matches existing Stock Item',
                     })
 
         else:
@@ -251,7 +253,7 @@ class BarcodeAssign(APIView):
 
             if lookup_item is not None:
                 raise ValidationError({
-                    'barcode': _('Barcode matches existing Stock Item')
+                    'error': _('Barcode matches existing Stock Item')
                 })
 
         # At this point, we can be confident that the barcode doesn't match an existing item
