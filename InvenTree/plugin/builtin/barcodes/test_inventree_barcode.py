@@ -29,7 +29,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
                 expected_code=400
             )
 
-            self.assertIn('barcode', response.data)
+            self.assertIn('error', response.data)
 
         # test with already existing stock
         test_assert_error('{"stockitem": 521}')
