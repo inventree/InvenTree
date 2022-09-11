@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-09 02:44+0000\n"
-"PO-Revision-Date: 2022-09-10 18:41\n"
+"PO-Revision-Date: 2022-09-11 18:39\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2998,7 +2998,7 @@ msgstr "Csomagolási mennyiség"
 
 #: company/models.py:533
 msgid "Unit quantity supplied in a single pack"
-msgstr ""
+msgstr "Egy csomagban lévő mennyiség"
 
 #: company/models.py:539 part/models.py:1783
 msgid "multiple"
@@ -3343,7 +3343,7 @@ msgstr "Beszállítói alkatrész szerkesztése"
 #: company/templates/company/supplier_part.html:54
 #: templates/js/translated/company.js:222
 msgid "Duplicate Supplier Part"
-msgstr ""
+msgstr "Beszállítói alkatrész másolása"
 
 #: company/templates/company/supplier_part.html:58
 msgid "Delete Supplier Part"
@@ -3876,11 +3876,11 @@ msgstr "A rendelést nem lehet törölni"
 
 #: order/serializers.py:209 order/serializers.py:1104
 msgid "Allow order to be closed with incomplete line items"
-msgstr ""
+msgstr "Rendelés lezárása teljesítetlen sortételek esetén is"
 
 #: order/serializers.py:220 order/serializers.py:1115
 msgid "Order has incomplete line items"
-msgstr ""
+msgstr "A rendelésben teljesítetlen sortételek vannak"
 
 #: order/serializers.py:311
 msgid "Order is not open"
@@ -4216,7 +4216,7 @@ msgstr "Csomagolási lista nyomtatása"
 #: order/templates/order/sales_order_base.html:60
 #: templates/js/translated/order.js:232
 msgid "Complete Shipments"
-msgstr "Szállítmányok készen"
+msgstr "Függő szállítmányok kiszállítása"
 
 #: order/templates/order/sales_order_base.html:67
 #: templates/js/translated/order.js:397
@@ -8537,7 +8537,7 @@ msgstr "Nincs beszállítói alkatrész"
 
 #: templates/js/translated/company.js:1032
 msgid "Availability"
-msgstr ""
+msgstr "Elérhetőség"
 
 #: templates/js/translated/company.js:1055
 msgid "Edit supplier part"
@@ -8836,7 +8836,7 @@ msgstr "A következő készlet tételek ki lesznek szállítva"
 
 #: templates/js/translated/order.js:142
 msgid "Complete Shipment"
-msgstr "Szállítmány kész"
+msgstr "Függő szállítmányok kiszállítása"
 
 #: templates/js/translated/order.js:162
 msgid "Confirm Shipment"
@@ -8896,7 +8896,7 @@ msgstr "A beszerzési rendelés kiküldése után annak sortételei a továbbiak
 
 #: templates/js/translated/order.js:426
 msgid "This order has line items which have not been completed."
-msgstr ""
+msgstr "Ez a rendelés olyan sortételeket tartalmaz amik még nem teljesítettek."
 
 #: templates/js/translated/order.js:450
 msgid "Cancel Sales Order"
@@ -8996,7 +8996,7 @@ msgstr "Sorozatszám hozzáadása"
 
 #: templates/js/translated/order.js:1471
 msgid "Received Quantity"
-msgstr ""
+msgstr "Beérkezett mennyiség"
 
 #: templates/js/translated/order.js:1482
 msgid "Quantity to receive"
@@ -9062,7 +9062,7 @@ msgstr "Összesen"
 #: templates/js/translated/order.js:2270 templates/js/translated/part.js:1043
 #: templates/js/translated/part.js:1095
 msgid "Total Quantity"
-msgstr ""
+msgstr "Teljes mennyiség"
 
 #: templates/js/translated/order.js:2301 templates/js/translated/order.js:2503
 #: templates/js/translated/order.js:3842 templates/js/translated/order.js:4350
@@ -9138,7 +9138,7 @@ msgstr "Szállítmány szerkesztése"
 
 #: templates/js/translated/order.js:2918
 msgid "Complete shipment"
-msgstr "Szállítmány kész"
+msgstr "Szállítmány kiszállítása"
 
 #: templates/js/translated/order.js:2923
 msgid "Delete shipment"
@@ -9472,11 +9472,11 @@ msgstr "Nincs készlet"
 
 #: templates/js/translated/part.js:1537
 msgid "Allocated to build orders"
-msgstr ""
+msgstr "Gyártáshoz lefoglalva"
 
 #: templates/js/translated/part.js:1541
 msgid "Allocated to sales orders"
-msgstr ""
+msgstr "Vevő rendeléshez lefoglalva"
 
 #: templates/js/translated/part.js:1626 templates/js/translated/part.js:1869
 #: templates/js/translated/stock.js:2343
