@@ -39,7 +39,7 @@ from plugin.models import MetadataMixin
 from users.models import Owner
 
 
-class StockLocation(MetadataMixin, InvenTreeTree):
+class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     """Organization tree for StockItem objects.
 
     A "StockLocation" can be considered a warehouse, or storage location
@@ -126,27 +126,6 @@ class StockLocation(MetadataMixin, InvenTreeTree):
     def get_absolute_url(self):
         """Return url for instance."""
         return reverse('stock-location-detail', kwargs={'pk': self.id})
-
-    def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a barcode for this StockLocation object."""
-        return InvenTree.helpers.MakeBarcode(
-            'stocklocation',
-            self.pk,
-            {
-                "name": self.name,
-                "url": reverse('api-location-detail', kwargs={'pk': self.id}),
-            },
-            **kwargs
-        )
-
-    @property
-    def barcode(self) -> str:
-        """Get Brief payload data (e.g. for labels).
-
-        Returns:
-            str: Brief pyload data
-        """
-        return self.format_barcode(brief=True)
 
     def get_stock_items(self, cascade=True):
         """Return a queryset for all stock items under this category.
