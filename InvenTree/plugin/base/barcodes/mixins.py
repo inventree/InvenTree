@@ -2,7 +2,6 @@
 
 from InvenTree.helpers import hash_barcode
 from part.serializers import PartSerializer
-from stock.models import StockItem
 from stock.serializers import LocationSerializer, StockItemSerializer
 
 
@@ -43,11 +42,6 @@ class BarcodeMixin:
         Default implementation returns None
         """
         return None  # pragma: no cover
-
-    def getStockItemByHash(self):
-        """Attempt to retrieve a StockItem associated with this barcode, based on the barcode hash."""
-
-        return StockItem.lookup_barcode(self.hash())
 
     def renderStockItem(self, item):
         """Render a stock item to JSON response."""

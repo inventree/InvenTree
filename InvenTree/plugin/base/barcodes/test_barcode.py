@@ -52,7 +52,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         """
         response = self.postBarcode(self.scan_url, '')
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, 400)
 
         data = response.data
         self.assertIn('error', data)
@@ -165,7 +165,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         """Test scan of an integer barcode."""
         response = self.postBarcode(self.scan_url, '123456789')
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, 400)
 
         data = response.data
         self.assertIn('error', data)
@@ -179,7 +179,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         """Test scan of barcode with string encoded array."""
         response = self.postBarcode(self.scan_url, "['foo', 'bar']")
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, 400)
 
         data = response.data
         self.assertIn('error', data)

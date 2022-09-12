@@ -252,7 +252,7 @@ class PartTest(TestCase):
         """Test barcode format functionality"""
         barcode = self.r1.format_barcode(brief=False)
         self.assertIn('InvenTree', barcode)
-        self.assertIn(self.r1.name, barcode)
+        self.assertIn('"part": {"id": 3}', barcode)
 
     def test_copy(self):
         """Test that we can 'deep copy' a Part instance"""

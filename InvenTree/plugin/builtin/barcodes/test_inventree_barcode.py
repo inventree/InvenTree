@@ -2,6 +2,7 @@
 
 from django.urls import reverse
 
+import part.models
 import stock.models
 from InvenTree.api_tester import InvenTreeAPITestCase
 
@@ -45,6 +46,15 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
         return self.post(
             reverse('api-barcode-link'),
+            data=data,
+            expected_code=expected_code
+        )
+
+    def scan(self, data, expected_code=None):
+        """Perform a 'scan' operation"""
+
+        return self.post(
+            reverse('api-barcode-scan'),
             data=data,
             expected_code=expected_code
         )
@@ -110,23 +120,73 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     def test_assign_to_part(self):
         """Test that we can assign a unique barcode to a Part instance"""
 
-        # TODO
-        ...
+        barcode = 'xyz-123'
+
+        # Test that an initial scan yields no results
+        response = self.scan(
+            {
+                'barcode': barcode,
+            },
+            expected_code=400
+        )
+
+        # Attempt to assign to an invalid part ID
+        response = self.assign(
+            {
+                'barcode': barcode,
+                'part': 99999999,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('No match found', str(response.data['part']))
+
+        # Test assigning to a valid part (should pass)
+        response = self.assign(
+            {
+                'barcode': barcode,
+                'part': 1,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['part'], 1)
+        self.assertEqual(response.data['plugin'], None)
+        self.assertEqual(response.data['success'], 'Barcode assigned to part instance')
+
+        # Check that the Part instance has been updated
+        p = part.models.Part.objects.get(pk=1)
+        self.assertEqual(p.barcode_data, 'xyz-123')
+        self.assertEqual(p.barcode_hash, 'bc39d07e9a395c7b5658c231bf910fae')
+
+        # Scanning the barcode should now reveal the 'Part' instance
+        response = self.scan(
+            {
+                'barcode': barcode,
+            },
+            expected_code=200,
+        )
+
+        self.assertIn('success', response.data)
+        self.assertEqual(response.data['plugin'], None)
+        self.assertEqual(response.data['part']['pk'], 1)
+
+        # Attempting to assign the same barcode to a different part should result in an error
+        response = self.assign(
+            {
+                'barcode': barcode,
+                'part': 2,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Barcode matches existing part instance', str(response.data['error']))
 
     def test_assign_to_location(self):
         """Test that we can assign a unique barcode to a StockLocation instance"""
 
         # TODO
         ...
-
-    def scan(self, data, expected_code=None):
-        """Perform a 'scan' operation"""
-
-        return self.post(
-            reverse('api-barcode-scan'),
-            data=data,
-            expected_code=expected_code
-        )
 
     def test_scan_third_party(self):
         """Test scanning of third-party barcodes"""

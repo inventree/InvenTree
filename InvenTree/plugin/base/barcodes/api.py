@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from part.models import Part
+from part.serializers import PartSerializer
 from plugin import registry
 from plugin.base.barcodes.mixins import hash_barcode
 from plugin.builtin.barcodes.inventree_barcode import InvenTreeBarcodePlugin
@@ -78,9 +79,6 @@ class BarcodeScan(APIView):
             # Try to associate with a stock item
             item = plugin.getStockItem()
 
-            if item is None:
-                item = plugin.getStockItemByHash()
-
             if item is not None:
                 response['stockitem'] = plugin.renderStockItem(item)
                 response['url'] = reverse('stock-item-detail', kwargs={'pk': item.id})
@@ -105,8 +103,8 @@ class BarcodeScan(APIView):
             response['hash'] = plugin.hash()
             response['plugin'] = plugin.name
 
-        # No plugin is found!
-        # However, the hash of the barcode may still be associated with a StockItem!
+        # No plugin was able to validate this barcode
+        # However, the hash of the barcode may still be associated with an item in the database
         else:
             result_hash = hash_barcode(barcode_data)
 
@@ -119,7 +117,14 @@ class BarcodeScan(APIView):
             if item is not None:
                 serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
                 response['stockitem'] = serializer.data
-                response['url'] = reverse('stock-item-detail', kwargs={'pk': item.id})
+                match_found = True
+
+            # Try to look for a matching Part
+            part = Part.lookup_barcode(result_hash)
+
+            if part is not None:
+                serializer = PartSerializer(part)
+                response['part'] = serializer.data
                 match_found = True
 
         if not match_found:
@@ -227,11 +232,6 @@ class BarcodeAssign(APIView):
                     'error': 'Barcode matches existing Part',
                 })
 
-            if plugin.getStockItemByHash() is not None:
-                raise ValidationError({
-                    'error': 'Barcode matches existing Stock Item',
-                })
-
         else:
             result_hash = hash_barcode(barcode_data)
             response['hash'] = result_hash
@@ -239,26 +239,28 @@ class BarcodeAssign(APIView):
 
         # At this point, no match was found by any loaded plugin.
         # So, we can safely assign this barcode to the provided item
+        # Iterate through the supported model types until we find a match
+        for model in supported_models:
 
-        try:
-            item = StockItem.objects.get(pk=data['stockitem'])
-        except (ValueError, StockItem.DoesNotExist):
-            raise ValidationError({'stockitem': _('No matching stock item found')})
+            label = model.barcode_model_type()
 
-        # Lookup stock item by hash
-        lookup_item = StockItem.lookup_barcode(result_hash)
+            if label in data:
+                try:
+                    instance = model.objects.get(pk=data[label])
+                except (ValueError, model.DoesNotExist):
+                    raise ValidationError({
+                        label: _('No match found for provided PK value')
+                    })
 
-        if lookup_item is not None:
-            raise ValidationError({
-                'error': _('Barcode matches existing Stock Item')
-            })
+                # Ensure that the barcode has not already been assigned to an instance of this model
+                if model.lookup_barcode(result_hash):
+                    raise ValidationError({
+                        'error': f"Barcode matches existing {label} instance",
+                    })
 
-        # At this point, we can be confident that the barcode doesn't match an existing item
-        item.assign_barcode(response['hash'], barcode_data=barcode_data)
-
-        serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
-        response['stockitem'] = serializer.data
-        response['success'] = _('Barcode associated with Stock Item')
+                instance.assign_barcode(response['hash'], barcode_data=barcode_data)
+                response[label] = instance.pk
+                response['success'] = f"Barcode assigned to {label} instance"
 
         return Response(response)
 
