@@ -144,6 +144,15 @@ class PartTest(TestCase):
 
         Part.objects.rebuild()
 
+    def test_barcode_mixin(self):
+        """Test the barcode mixin functionality"""
+
+        self.assertEqual(Part.barcode_model_type(), 'part')
+
+        p = Part.objects.get(pk=1)
+        barcode = p.format_barcode(brief=True)
+        self.assertEqual(barcode, '{"part": 1}')
+
     def test_tree(self):
         """Test that the part variant tree is working properly"""
         chair = Part.objects.get(pk=10000)

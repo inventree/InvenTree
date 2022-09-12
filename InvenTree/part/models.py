@@ -43,7 +43,7 @@ from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
-                              InvenTreeTree)
+                              InvenTreeBarcodeMixin, InvenTreeTree)
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from order import models as OrderModels
@@ -300,7 +300,7 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(MetadataMixin, MPTTModel):
+class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
