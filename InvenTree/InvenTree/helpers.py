@@ -920,9 +920,9 @@ def hash_barcode(barcode_data):
     barcode_data = str(barcode_data).strip()
     barcode_data = remove_non_printable_characters(barcode_data)
 
-    hash = hashlib.md5(barcode_data.encode())
+    hash = hashlib.md5(str(barcode_data).encode())
 
-    return str(hash.digest())
+    return str(hash.hexdigest())
 
 
 def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = 'object_id'):

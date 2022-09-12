@@ -19,6 +19,7 @@ from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 
 import InvenTree.format
+import InvenTree.helpers
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
@@ -859,3 +860,18 @@ class BarcodeMixinTest(helpers.InvenTreeTestCase):
         from stock.models import StockItem
 
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
+
+    def test_bacode_hash(self):
+        """Test that the barcode hashing function provides correct results"""
+
+        # Test multiple values for the hashing function
+        # This is to ensure that the hash function is always "backwards compatible"
+        hashing_tests = {
+            'abcdefg': '7ac66c0f148de9519b8bd264312c4d64',
+            'ABCDEFG': 'bb747b3df3130fe1ca4afa93fb7d97c9',
+            '1234567': 'fcea920f7412b5da7be0cf42b8c93759',
+            '{"part": 17, "stockitem": 12}': 'c88c11ed0628eb7fef0d59b098b96975',
+        }
+
+        for barcode, hash in hashing_tests.items():
+            self.assertEqual(InvenTree.helpers.hash_barcode(barcode), hash)
