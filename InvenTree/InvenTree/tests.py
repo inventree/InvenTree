@@ -857,9 +857,12 @@ class BarcodeMixinTest(helpers.InvenTreeTestCase):
     def test_barcode_model_type(self):
         """Test that the barcode_model_type property works for each class"""
 
-        from stock.models import StockItem
+        from part.models import Part
+        from stock.models import StockItem, StockLocation
 
+        self.assertEqual(Part.barcode_model_type(), 'part')
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
+        self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
 
     def test_bacode_hash(self):
         """Test that the barcode hashing function provides correct results"""

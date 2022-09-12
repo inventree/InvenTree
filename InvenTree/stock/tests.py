@@ -748,6 +748,16 @@ class StockBarcodeTest(StockTestBase):
         barcode = item.barcode
         self.assertEqual(barcode, '{"stockitem": 1}')
 
+    def test_location_barcode_basics(self):
+        """Simple tests for the StockLocation barcode integration"""
+
+        self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
+
+        loc = StockLocation.objects.get(pk=1)
+
+        barcode = loc.format_barcode(brief=True)
+        self.assertEqual('{"stocklocation": 1}', barcode)
+
 
 class VariantTest(StockTestBase):
     """Tests for calculation stock counts against templates / variants."""
