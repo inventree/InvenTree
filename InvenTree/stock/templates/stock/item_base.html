@@ -529,6 +529,7 @@ $("#show-qr-code").click(function() {
     });
 });
 
+{% if barcodes %}
 $("#barcode-link").click(function() {
     linkBarcodeDialog(
         {
@@ -554,6 +555,7 @@ $("#barcode-scan-into-location").click(function() {
         }
     });
 });
+{% endif %}
 
 {% if plugins_enabled %}
 $('#locate-item-button').click(function() {

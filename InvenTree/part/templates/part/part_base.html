@@ -404,6 +404,7 @@
         }
     );
 
+    {% if barcodes %}
     $("#show-qr-code").click(function() {
         launchModalForm(
             "{% url 'part-qr' part.id %}",
@@ -429,6 +430,7 @@
             }
         );
     });
+    {% endif %}
 
     {% if labels_enabled %}
     $('#print-label').click(function() {
