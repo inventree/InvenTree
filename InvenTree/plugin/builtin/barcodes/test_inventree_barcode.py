@@ -115,7 +115,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400
         )
 
-        self.assertIn('Barcode matches existing Stock Item', str(response.data))
+        self.assertIn('Barcode matches existing stockitem instance', str(response.data))
 
     def test_assign_to_part(self):
         """Test that we can assign a unique barcode to a Part instance"""
