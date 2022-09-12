@@ -98,7 +98,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         data = response.data
         self.assertEqual(data['plugin'], 'InvenTreeBarcode')
         self.assertEqual(data['barcode_data'], bc_data)
-        self.assertEqual(data['stockitem']['pk'], 521)
+        self.assertEqual(data['stockitem'], 521)
 
         # Check that the StockItem instance has actually been updated
         si = stock.models.StockItem.objects.get(pk=521)

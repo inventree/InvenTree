@@ -57,11 +57,6 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         data = response.data
         self.assertIn('error', data)
 
-        self.assertIn('barcode_data', data)
-        self.assertIn('hash', data)
-        self.assertIn('plugin', data)
-        self.assertIsNone(data['plugin'])
-
     def test_find_part(self):
         """Test that we can lookup a part based on ID."""
         response = self.client.post(
@@ -170,11 +165,6 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         data = response.data
         self.assertIn('error', data)
 
-        self.assertIn('barcode_data', data)
-        self.assertIn('hash', data)
-        self.assertIn('plugin', data)
-        self.assertIsNone(data['plugin'])
-
     def test_array_barcode(self):
         """Test scan of barcode with string encoded array."""
         response = self.postBarcode(self.scan_url, "['foo', 'bar']")
@@ -183,11 +173,6 @@ class BarcodeAPITest(InvenTreeAPITestCase):
 
         data = response.data
         self.assertIn('error', data)
-
-        self.assertIn('barcode_data', data)
-        self.assertIn('hash', data)
-        self.assertIn('plugin', data)
-        self.assertIsNone(data['plugin'])
 
     def test_barcode_generation(self):
         """Test that a barcode is generated with a scan."""
