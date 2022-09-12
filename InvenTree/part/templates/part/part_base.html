@@ -413,6 +413,12 @@
         );
     });
 
+    $('#barcode-unlink').click(function() {
+        unlinkBarcode({
+            part: {{ part.pk }},
+        });
+    });
+
     $('#barcode-link').click(function() {
         linkBarcodeDialog(
             {

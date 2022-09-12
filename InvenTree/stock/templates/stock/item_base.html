@@ -541,7 +541,9 @@ $("#barcode-link").click(function() {
 });
 
 $("#barcode-unlink").click(function() {
-    unlinkBarcode({{ item.id }});
+    unlinkBarcode({
+        stockitem: {{ item.pk }},
+    });
 });
 
 $("#barcode-scan-into-location").click(function() {
