@@ -18,6 +18,15 @@ from stock.models import StockItem
 from stock.serializers import StockItemSerializer
 
 
+def get_supported_barcode_models():
+    """Returns a list of database models which support barcode functionality"""
+
+    return [
+        Part,
+        StockItem,
+    ]
+
+
 class BarcodeScan(APIView):
     """Endpoint for handling generic barcode scan requests.
 
@@ -155,10 +164,7 @@ class BarcodeAssign(APIView):
         """
 
         # Classes which support assignment of third-party barcodes
-        supported_models = [
-            StockItem,
-            Part,
-        ]
+        supported_models = get_supported_barcode_models()
 
         supported_labels = [model.barcode_model_type() for model in supported_models]
 
@@ -249,7 +255,7 @@ class BarcodeAssign(APIView):
                     instance = model.objects.get(pk=data[label])
                 except (ValueError, model.DoesNotExist):
                     raise ValidationError({
-                        label: _('No match found for provided PK value')
+                        label: _('No match found for provided value')
                     })
 
                 # Ensure that the barcode has not already been assigned to an instance of this model
@@ -265,9 +271,71 @@ class BarcodeAssign(APIView):
         return Response(response)
 
 
+class BarcodeUnassign(APIView):
+    """Endpoint for unlinking / unassigning a custom barcode from a database object"""
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def post(self, request, *args, **kwargs):
+        """Respond to a barcode unassign POST request"""
+
+        # The following database models support assignment of third-party barcodes
+        supported_models = get_supported_barcode_models()
+
+        supported_labels = [model.barcode_model_type() for model in supported_models]
+        model_names = ', '.join(supported_labels)
+
+        data = request.data
+
+        matched_labels = []
+
+        for label in supported_labels:
+            if label in data:
+                matched_labels.append(label)
+
+        if len(matched_labels) == 0:
+            raise ValidationError({
+                'error': f"Missing data: Provide one of '{model_names}'"
+            })
+
+        if len(matched_labels) > 1:
+            raise ValidationError({
+                'error': f"Multiple conflicting fields: '{model_names}'",
+            })
+
+        # At this stage, we know that we have received a single valid field
+        for model in supported_models:
+            label = model.barcode_model_type()
+
+            if label in data:
+                try:
+                    instance = model.objects.get(pk=data[label])
+                except (ValueError, model.DoesNotExist):
+                    raise ValidationError({
+                        label: _('No match found for provided value')
+                    })
+
+                # Unassign the barcode data from the model instance
+                instance.unassign_barcode()
+
+                return Response({
+                    'success': 'Barcode unassigned from {label} instance',
+                })
+
+        # If we get to this point, something has gone wrong!
+        raise ValidationError({
+            'error': 'Could not unassign barcode',
+        })
+
+
 barcode_api_urls = [
     # Link a third-party barcode to an item (e.g. Part / StockItem / etc)
     path('link/', BarcodeAssign.as_view(), name='api-barcode-link'),
+
+    # Unlink a third-pary barcode from an item
+    path('unlink/', BarcodeUnassign.as_view(), name='api-barcode-unlink'),
 
     # Catch-all performs barcode 'scan'
     re_path(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),

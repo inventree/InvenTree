@@ -50,6 +50,15 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=expected_code
         )
 
+    def unassign(self, data, expected_code=None):
+        """Perform a 'barcode unassign' request"""
+
+        return self.post(
+            reverse('api-barcode-unlink'),
+            data=data,
+            expected_code=expected_code,
+        )
+
     def scan(self, data, expected_code=None):
         """Perform a 'scan' operation"""
 
@@ -58,6 +67,48 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             data=data,
             expected_code=expected_code
         )
+
+    def test_unassign_errors(self):
+        """Test various error conditions for the barcode unassign endpoint"""
+
+        # Fail without any fields provided
+        response = self.unassign(
+            {},
+            expected_code=400,
+        )
+
+        self.assertIn('Missing data: Provide one of', str(response.data['error']))
+
+        # Fail with too many fields provided
+        response = self.unassign(
+            {
+                'stockitem': 'abcde',
+                'part': 'abcde',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Multiple conflicting fields:', str(response.data['error']))
+
+        # Fail with an invalid StockItem instance
+        response = self.unassign(
+            {
+                'stockitem': 'invalid',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('No match found', str(response.data['stockitem']))
+
+        # Fail with an invalid Part instance
+        response = self.unassign(
+            {
+                'part': 'invalid',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('No match found', str(response.data['part']))
 
     def test_assign_to_stock_item(self):
         """Test that we can assign a unique barcode to a StockItem object"""
@@ -116,6 +167,19 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         )
 
         self.assertIn('Barcode matches existing stockitem instance', str(response.data))
+
+        # Next, test that we can 'unassign' the barcode via the API
+        response = self.unassign(
+            {
+                'stockitem': 521,
+            },
+            expected_code=200,
+        )
+
+        si.refresh_from_db()
+
+        self.assertEqual(si.barcode_data, '')
+        self.assertEqual(si.barcode_hash, '')
 
     def test_assign_to_part(self):
         """Test that we can assign a unique barcode to a Part instance"""
@@ -181,6 +245,19 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         )
 
         self.assertIn('Barcode matches existing part instance', str(response.data['error']))
+
+        # Now test that we can unassign the barcode data also
+        response = self.unassign(
+            {
+                'part': 1,
+            },
+            expected_code=200,
+        )
+
+        p.refresh_from_db()
+
+        self.assertEqual(p.barcode_data, '')
+        self.assertEqual(p.barcode_hash, '')
 
     def test_assign_to_location(self):
         """Test that we can assign a unique barcode to a StockLocation instance"""

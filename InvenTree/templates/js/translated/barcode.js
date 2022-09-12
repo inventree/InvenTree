@@ -354,17 +354,15 @@ function barcodeScanDialog() {
 /*
  * Dialog for linking a particular barcode to a stock item.
  */
-function linkBarcodeDialog(stockitem) {
+function linkBarcodeDialog(data, options={}) {
 
     var modal = '#modal-form';
 
     barcodeDialog(
-        '{% trans "Link Barcode to Stock Item" %}',
+        options.title,
         {
             url: '/api/barcode/link/',
-            data: {
-                stockitem: stockitem,
-            },
+            data: data,
             onScan: function() {
 
                 $(modal).modal('hide');

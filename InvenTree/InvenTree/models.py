@@ -724,6 +724,14 @@ class InvenTreeBarcodeMixin(models.Model):
 
         return True
 
+    def unassign_barcode(self):
+        """Unassign custom barcode from this model"""
+
+        self.barcode_data = ''
+        self.barcode_hash = ''
+
+        self.save()
+
 
 @receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')
 def before_delete_tree_item(sender, instance, using, **kwargs):

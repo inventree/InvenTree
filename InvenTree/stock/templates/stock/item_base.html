@@ -530,7 +530,14 @@ $("#show-qr-code").click(function() {
 });
 
 $("#barcode-link").click(function() {
-    linkBarcodeDialog({{ item.id }});
+    linkBarcodeDialog(
+        {
+            stockitem: {{ item.pk }},
+        },
+        {
+            title: '{% trans "Link Barcode to Stock Item" %}',
+        }
+    );
 });
 
 $("#barcode-unlink").click(function() {
