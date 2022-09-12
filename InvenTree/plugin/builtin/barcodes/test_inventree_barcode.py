@@ -63,9 +63,18 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.assertIn('Missing data:', str(response.data))
 
         # Provide too many fields
-        # TODO: Test this!
+        response = self.assign(
+            {
+                'barcode': 'abcdefg',
+                'part': 1,
+                'stockitem': 1,
+            },
+            expected_code=400
+        )
 
-        bc_data = '{"blbla": 10004}'
+        self.assertIn('Multiple conflicting fields:', str(response.data))
+
+        bc_data = '{"blbla": 10007}'
 
         # Assign a barcode to a StockItem instance
         response = self.assign(
@@ -85,7 +94,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         si = stock.models.StockItem.objects.get(pk=521)
 
         self.assertEqual(si.barcode_data, bc_data)
-        self.assertEqual(si.barcode_hash, "b'\\x1b\\xe0\\xdf\\xa9%\\x82\\\\\\\\ly0\\x14I\\xe5\\x0c-'")
+        self.assertEqual(si.barcode_hash, "0e06a1112b489e09a74872542ae7c50f")
 
         # Now test that we cannot assign this barcode to something else
         response = self.assign(
@@ -113,7 +122,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     def scan(self, data, expected_code=None):
         """Perform a 'scan' operation"""
 
-        return self.client.post(
+        return self.post(
             reverse('api-barcode-scan'),
             data=data,
             expected_code=expected_code
@@ -123,11 +132,14 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         """Test scanning of third-party barcodes"""
 
         # First scanned barcode is for a 'third-party' barcode (which does not exist)
-        response = self.scan({'barcode': 'blbla=10004'}, expected_code=400)
+        response = self.scan({'barcode': 'blbla=10008'}, expected_code=400)
+        self.assertEqual(response.data['error'], 'No match found for barcode data')
+
+        # Next scanned barcode is for a 'third-party' barcode (which does exist)
+        response = self.scan({'barcode': 'blbla=10004'}, expected_code=200)
 
         self.assertEqual(response.data['barcode_data'], 'blbla=10004')
         self.assertEqual(response.data['plugin'], None)
-        self.assertEqual(response.data['error'], 'No match found for barcode data')
 
         # Scan for a StockItem instance
         si = stock.models.StockItem.objects.get(pk=1)

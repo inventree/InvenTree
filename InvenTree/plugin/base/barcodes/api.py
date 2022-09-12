@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from part.models import Part
 from plugin import registry
 from plugin.base.barcodes.mixins import hash_barcode
 from plugin.builtin.barcodes.inventree_barcode import InvenTreeBarcodePlugin
@@ -122,10 +123,12 @@ class BarcodeScan(APIView):
                 match_found = True
 
         if not match_found:
-            response['error'] = _('No match found for barcode data')
-        else:
-            response['success'] = _('Match found for barcode data')
+            raise ValidationError({
+                'error': _("No match found for barcode data"),
+                'barcode': barcode_data,
+            })
 
+        response['success'] = _('Match found for barcode data')
         return Response(response)
 
 
@@ -149,6 +152,7 @@ class BarcodeAssign(APIView):
         # Classes which support assignment of third-party barcodes
         supported_models = [
             StockItem,
+            Part,
         ]
 
         supported_labels = [model.barcode_model_type() for model in supported_models]
@@ -182,11 +186,6 @@ class BarcodeAssign(APIView):
 
         barcode_data = data['barcode']
 
-        try:
-            item = StockItem.objects.get(pk=data['stockitem'])
-        except (ValueError, StockItem.DoesNotExist):
-            raise ValidationError({'stockitem': _('No matching stock item found')})
-
         plugins = registry.with_mixin('barcode')
 
         plugin = None
@@ -199,8 +198,6 @@ class BarcodeAssign(APIView):
             if current_plugin.validate():
                 plugin = current_plugin
                 break
-
-        match_found = False
 
         response = {}
 
@@ -230,31 +227,31 @@ class BarcodeAssign(APIView):
                     'error': 'Barcode matches existing Part',
                 })
 
-            if not match_found:
-                match_item = plugin.getStockItemByHash()
-
-                if match_item is not None:
-
-                    raise ValidationError({
-                        'error': 'Barcode matches existing Stock Item',
-                    })
+            if plugin.getStockItemByHash() is not None:
+                raise ValidationError({
+                    'error': 'Barcode matches existing Stock Item',
+                })
 
         else:
-            # At this point, no match was found by any loaded plugin.
-            # So, we can safely assign this barcode to the provided item
-
             result_hash = hash_barcode(barcode_data)
-
             response['hash'] = result_hash
-            response['plugin'] = None
+            response['plugin'] = plugin
 
-            # Lookup stock item by hash
-            lookup_item = StockItem.lookup_barcode(result_hash)
+        # At this point, no match was found by any loaded plugin.
+        # So, we can safely assign this barcode to the provided item
 
-            if lookup_item is not None:
-                raise ValidationError({
-                    'error': _('Barcode matches existing Stock Item')
-                })
+        try:
+            item = StockItem.objects.get(pk=data['stockitem'])
+        except (ValueError, StockItem.DoesNotExist):
+            raise ValidationError({'stockitem': _('No matching stock item found')})
+
+        # Lookup stock item by hash
+        lookup_item = StockItem.lookup_barcode(result_hash)
+
+        if lookup_item is not None:
+            raise ValidationError({
+                'error': _('Barcode matches existing Stock Item')
+            })
 
         # At this point, we can be confident that the barcode doesn't match an existing item
         item.assign_barcode(response['hash'], barcode_data=barcode_data)
