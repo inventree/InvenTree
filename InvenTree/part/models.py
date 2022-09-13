@@ -2036,22 +2036,30 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def on_order(self):
-        """Return the total number of items on order for this part."""
-        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN).aggregate(
-            quantity=Sum('purchase_order_line_items__quantity'),
-            received=Sum('purchase_order_line_items__received')
-        )
+        """Return the total number of items on order for this part.
 
-        quantity = orders['quantity']
-        received = orders['received']
+        Note that some supplier parts may have a different pack_size attribute,
+        and this needs to be taken into account!
+        """
 
-        if quantity is None:
-            quantity = 0
+        quantity = 0
 
-        if received is None:
-            received = 0
+        # Iterate through all supplier parts
+        for sp in self.supplier_parts.all():
 
-        return quantity - received
+            # Look at any incomplete line item for open orders
+            lines = sp.purchase_order_line_items.filter(
+                order__status__in=PurchaseOrderStatus.OPEN,
+                quantity__gt=F('received'),
+            )
+
+            for line in lines:
+                remaining = line.quantity - line.received
+
+                if remaining > 0:
+                    quantity += remaining * sp.pack_size
+
+        return quantity
 
     def get_parameters(self):
         """Return all parameters for this part, ordered by name."""

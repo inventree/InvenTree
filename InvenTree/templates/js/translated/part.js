@@ -574,43 +574,41 @@ function duplicateBom(part_id, options={}) {
 function partStockLabel(part, options={}) {
 
     // Prevent literal string 'null' from being displayed
-    if (part.units == null) {
-        part.units = '';
-    }
+    var units = part.units || '';
 
     if (part.in_stock) {
         // There IS stock available for this part
 
         // Is stock "low" (below the 'minimum_stock' quantity)?
         if ((part.minimum_stock > 0) && (part.minimum_stock > part.in_stock)) {
-            return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Low stock" %}: ${part.in_stock}${part.units}</span>`;
+            return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Low stock" %}: ${part.in_stock} ${units}</span>`;
         } else if (part.unallocated_stock == 0) {
             if (part.ordering) {
                 // There is no available stock, but stock is on order
-                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering}${part.units}</span>`;
+                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering} ${units}</span>`;
             } else if (part.building) {
                 // There is no available stock, but stock is being built
-                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building}${part.units}</span>`;
+                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building} ${units}</span>`;
             } else {
                 // There is no available stock at all
                 return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "No stock available" %}</span>`;
             }
         } else if (part.unallocated_stock < part.in_stock) {
             // Unallocated quanttiy is less than total quantity
-            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}${part.units}</span>`;
+            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock} ${units}</span>`;
         } else {
             // Stock is completely available
-            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}${part.units}</span>`;
+            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock} ${units}</span>`;
         }
     } else {
         // There IS NO stock available for this part
 
         if (part.ordering) {
             // There is no stock, but stock is on order
-            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering}${part.units}</span>`;
+            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering} ${units}</span>`;
         } else if (part.building) {
             // There is no stock, but stock is being built
-            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building}${part.units}</span>`;
+            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building} ${units}</span>`;
         } else {
             // There is no stock
             return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
@@ -1036,6 +1034,17 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
+                formatter: function(value, row) {
+                    var data = value;
+
+                    if (row.supplier_part_detail.pack_size != 1.0) {
+                        var pack_size = row.supplier_part_detail.pack_size;
+                        var total = value * pack_size;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
+                    }
+
+                    return data;
+                },
             },
             {
                 field: 'target_date',
@@ -1077,6 +1086,17 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 field: 'received',
                 title: '{% trans "Received" %}',
                 switchable: true,
+                formatter: function(value, row) {
+                    var data = value;
+
+                    if (value > 0 && row.supplier_part_detail.pack_size != 1.0) {
+                        var pack_size = row.supplier_part_detail.pack_size;
+                        var total = value * pack_size;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
+                    }
+
+                    return data;
+                },
             },
             {
                 field: 'purchase_price',
@@ -1302,22 +1322,23 @@ function partGridTile(part) {
     // Rows for table view
     var rows = '';
 
-    var stock = `${part.in_stock}`;
+    var units = part.units || '';
+    var stock = `${part.in_stock} ${units}`;
 
     if (!part.in_stock) {
         stock = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
     } else if (!part.unallocated_stock) {
-        stock = `<span class='badge rounded-pill bg-warning'>{% trans "Not available" %}</span>`;
+        stock = `<span class='badge rounded-pill bg-warning'>{% trans "No Stock" %}</span>`;
     }
 
     rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${stock}</td></tr>`;
 
     if (part.ordering) {
-        rows += `<tr><td><b>{% trans "On Order" %}</b></td><td>${part.ordering}</td></tr>`;
+        rows += `<tr><td><b>{% trans "On Order" %}</b></td><td>${part.ordering} ${units}</td></tr>`;
     }
 
     if (part.building) {
-        rows += `<tr><td><b>{% trans "Building" %}</b></td><td>${part.building}</td></tr>`;
+        rows += `<tr><td><b>{% trans "Building" %}</b></td><td>${part.building} ${units}</td></tr>`;
     }
 
     var html = `
@@ -1334,10 +1355,10 @@ function partGridTile(part) {
             </div>
             <div class='panel-content'>
                 <div class='row'>
-                    <div class='col-sm-6'>
-                        <img src='${part.thumbnail}' class='card-thumb' onclick='showModalImage("${part.image}")'>
+                    <div class='col-sm-4'>
+                        <img src='${part.thumbnail}' style='width: 100%;' class='card-thumb' onclick='showModalImage("${part.image}")'>
                     </div>
-                    <div class='col-sm-6'>
+                    <div class='col-sm-8'>
                         <table class='table table-striped table-condensed'>
                             ${rows}
                         </table>
@@ -1483,11 +1504,7 @@ function loadPartTable(table, url, options={}) {
                 total_stock += row.variant_stock;
             }
 
-            if (row.unallocated_stock != row.in_stock) {
-                text = `${row.unallocated_stock} / ${total_stock}`;
-            } else {
-                text = `${total_stock}`;
-            }
+            var text = `${total_stock}`;
 
             // Construct extra informational badges
             var badges = '';
@@ -1514,6 +1531,18 @@ function loadPartTable(table, url, options={}) {
 
             if (row.variant_stock && row.variant_stock > 0) {
                 badges += `<span class='fas fa-info-circle float-right' title='{% trans "Includes variant stock" %}'></span>`;
+            }
+
+            if (row.allocated_to_build_orders > 0) {
+                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to build orders" %}: ${row.allocated_to_build_orders}'></span>`;
+            }
+
+            if (row.allocated_to_sales_orders > 0) {
+                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to sales orders" %}: ${row.allocated_to_sales_orders}'></span>`;
+            }
+
+            if (row.units) {
+                text += ` <small>${row.units}</small>`;
             }
 
             text = renderLink(text, `/part/${row.pk}/?display=part-stock`);
