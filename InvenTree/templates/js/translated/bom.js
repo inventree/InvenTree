@@ -868,6 +868,10 @@ function loadBomTable(table, options={}) {
             // Let's make it a bit more pretty
             text = parseFloat(text);
 
+            if (row.sub_part_detail && row.sub_part_detail.units) {
+                text += ` <small>${row.sub_part_detail.units}</small>`;
+            }
+
             if (row.optional) {
                 text += ' ({% trans "Optional" %})';
             }
@@ -922,6 +926,10 @@ function loadBomTable(table, options={}) {
             var available_stock = availableQuantity(row);
 
             var text = `${available_stock}`;
+
+            if (row.sub_part_detail && row.sub_part_detail.units) {
+                text += ` <small>${row.sub_part_detail.units}</small>`;
+            }
 
             if (available_stock <= 0) {
                 text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "No Stock Available" %}'></span>`;
@@ -1481,6 +1489,10 @@ function loadUsedInTable(table, part_id, options={}) {
                 title: '{% trans "Required Quantity" %}',
                 formatter: function(value, row) {
                     var html = value;
+
+                    if (row.sub_part_detail && row.sub_part_detail.units) {
+                        html += ` <small>${row.sub_part_detail.units}</small>`;
+                    }
 
                     if (row.parent && row.parent != 'top-level-item') {
                         html += ` <em>({% trans "Inherited from parent BOM" %})</em>`;
