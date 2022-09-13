@@ -155,12 +155,6 @@ class StockTest(StockTestBase):
 
         self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
 
-    def test_barcode(self):
-        """Test format_barcode."""
-        barcode = self.office.format_barcode(brief=False)
-
-        self.assertIn('"name": "Office"', barcode)
-
     def test_strings(self):
         """Test str function."""
         it = StockItem.objects.get(pk=1)
