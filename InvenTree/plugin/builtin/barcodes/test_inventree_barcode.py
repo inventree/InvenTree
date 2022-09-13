@@ -262,8 +262,48 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     def test_assign_to_location(self):
         """Test that we can assign a unique barcode to a StockLocation instance"""
 
-        # TODO
-        ...
+        barcode = '555555555555555555555555'
+
+        # Assign random barcode data to a StockLocation instance
+        response = self.assign(
+            data={
+                'barcode': barcode,
+                'stocklocation': 1,
+            },
+            expected_code=200,
+        )
+
+        self.assertIn('success', response.data)
+        self.assertEqual(response.data['stocklocation'], 1)
+
+        # Check that the StockLocation instance has been updated
+        loc = stock.models.StockLocation.objects.get(pk=1)
+
+        self.assertEqual(loc.barcode_data, barcode)
+        self.assertEqual(loc.barcode_hash, '4aa63f5e55e85c1f842796bf74896dbb')
+
+        # Check that an error is thrown if we try to assign the same value again
+        response = self.assign(
+            data={
+                'barcode': barcode,
+                'stocklocation': 2,
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Barcode matches existing stocklocation', str(response.data['error']))
+
+        # Now, unassign the barcode
+        response = self.unassign(
+            {
+                'stocklocation': 1,
+            },
+            expected_code=200,
+        )
+
+        loc.refresh_from_db()
+        self.assertEqual(loc.barcode_data, '')
+        self.assertEqual(loc.barcode_hash, '')
 
     def test_scan_third_party(self):
         """Test scanning of third-party barcodes"""

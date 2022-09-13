@@ -14,7 +14,7 @@ from part.serializers import PartSerializer
 from plugin import registry
 from plugin.base.barcodes.mixins import hash_barcode
 from plugin.builtin.barcodes.inventree_barcode import InvenTreeBarcodePlugin
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation
 from stock.serializers import StockItemSerializer
 
 
@@ -24,6 +24,7 @@ def get_supported_barcode_models():
     return [
         Part,
         StockItem,
+        StockLocation,
     ]
 
 
