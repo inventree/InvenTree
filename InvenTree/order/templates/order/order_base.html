@@ -42,12 +42,18 @@
         <span class='fas fa-tools'></span> <span class='caret'></span>
     </button>
     <ul class='dropdown-menu' role='menu'>
-        <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='edit-order'>
+            <span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}
+        </a></li>
         {% if order.can_cancel %}
-        <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='cancel-order'>
+            <span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}
+        </a></li>
         {% endif %}
         {% if roles.purchase_order.add %}
-        <li><a class='dropdown-item' href='#' id='duplicate-order'><span class='fas fa-clone'></span> {% trans "Duplicate order" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='duplicate-order'>
+            <span class='fas fa-clone'></span> {% trans "Duplicate order" %}
+        </a></li>
         {% endif %}
     </ul>
 </div>
@@ -235,19 +241,11 @@ $("#edit-order").click(function() {
 $("#receive-order").click(function() {
 
     // Auto select items which have not been fully allocated
-    var items = $("#po-line-table").bootstrapTable('getData');
-
-    var items_to_receive = [];
-
-    items.forEach(function(item) {
-        if (item.received < item.quantity) {
-            items_to_receive.push(item);
-        }
-    });
+    var items = getTableData('#po-line-table');
 
     receivePurchaseOrderItems(
         {{ order.id }},
-        items_to_receive,
+        items,
         {
             success: function() {
                 $("#po-line-table").bootstrapTable('refresh');
