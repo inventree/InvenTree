@@ -49,7 +49,7 @@ class StockDetailTest(StockViewTestCase):
 
         # Quantity
         self.assertIn('<h5>Available Quantity</h5>', html)
-        self.assertIn('<h5>4000 </h5>', html)
+        self.assertIn('<h5>4000', html)
 
         # Batch code
         self.assertIn('Batch', html)
