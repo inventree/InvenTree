@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from company.models import SupplierPart
 from part.models import Part
 from part.serializers import PartSerializer
 from plugin import registry
@@ -25,6 +26,7 @@ def get_supported_barcode_models():
         Part,
         StockItem,
         StockLocation,
+        SupplierPart,
     ]
 
 
