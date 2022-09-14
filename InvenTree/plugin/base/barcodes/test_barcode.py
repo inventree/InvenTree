@@ -87,8 +87,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-
-        self.assertEqual(response.data['part'], 'Part does not exist')
+        self.assertIn('error', response.data)
 
     def test_find_stock_item(self):
         """Test that we can lookup a stock item based on ID."""
@@ -120,8 +119,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-
-        self.assertEqual(response.data['stockitem'], 'Stock item does not exist')
+        self.assertIn('error', response.data)
 
     def test_find_location(self):
         """Test that we can lookup a stock location based on ID."""
@@ -153,6 +151,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.data)
 
         self.assertEqual(response.data['stocklocation'], 'Stock location does not exist')
 
@@ -211,7 +210,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
 
         self.assertIn('success', data)
 
-        result_hash = data['hash']
+        result_hash = data['barcode_hash']
 
         # Read the item out from the database again
         item = StockItem.objects.get(pk=522)
