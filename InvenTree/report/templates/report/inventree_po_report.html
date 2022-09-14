@@ -74,7 +74,7 @@ table td.expand {
 
     <div class='header-right'>
         <h3>{% trans "Purchase Order" %} {{ prefix }}{{ reference }}</h3>
-        {% if supplier %}{{ supplier.name }}{% endif %}{% else %}{% trans "Supplier was deleted" %}{% endif %}
+        {% if supplier %}{{ supplier.name }}{% else %}{% trans "Supplier was deleted" %}{% endif %}
     </div>
 
 {% endblock %}
