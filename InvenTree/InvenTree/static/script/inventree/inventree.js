@@ -140,6 +140,8 @@ function inventreeDocReady() {
     // start watcher
     startNotificationWatcher();
 
+    attachClipboard('.clip-btn');
+
     // always refresh when the focus returns
     $(document).focus(function(){
         startNotificationWatcher();
