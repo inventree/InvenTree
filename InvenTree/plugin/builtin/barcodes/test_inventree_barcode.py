@@ -14,7 +14,9 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         'category',
         'part',
         'location',
-        'stock'
+        'stock',
+        'company',
+        'supplier_part',
     ]
 
     def test_assign_errors(self):
@@ -130,10 +132,11 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
                 'part': 1,
                 'stockitem': 1,
             },
-            expected_code=400
+            expected_code=200
         )
 
-        self.assertIn('Multiple conflicting fields:', str(response.data))
+        self.assertIn('Assigned barcode to part instance', str(response.data))
+        self.assertEqual(response.data['part']['pk'], 1)
 
         bc_data = '{"blbla": 10007}'
 
@@ -147,15 +150,14 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         )
 
         data = response.data
-        self.assertEqual(data['plugin'], 'InvenTreeBarcode')
         self.assertEqual(data['barcode_data'], bc_data)
-        self.assertEqual(data['stockitem'], 521)
+        self.assertEqual(data['stockitem']['pk'], 521)
 
         # Check that the StockItem instance has actually been updated
         si = stock.models.StockItem.objects.get(pk=521)
 
         self.assertEqual(si.barcode_data, bc_data)
-        self.assertEqual(si.barcode_hash, "0e06a1112b489e09a74872542ae7c50f")
+        self.assertEqual(si.barcode_hash, "2f5dba5c83a360599ba7665b2a4131c6")
 
         # Now test that we cannot assign this barcode to something else
         response = self.assign(
@@ -166,7 +168,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400
         )
 
-        self.assertIn('Barcode matches existing stockitem instance', str(response.data))
+        self.assertIn('Barcode matches existing item', str(response.data))
 
         # Next, test that we can 'unassign' the barcode via the API
         response = self.unassign(
@@ -203,7 +205,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn('No match found', str(response.data['part']))
+        self.assertIn('No matching part instance found in database', str(response.data))
 
         # Test assigning to a valid part (should pass)
         response = self.assign(
@@ -214,9 +216,8 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=200,
         )
 
-        self.assertEqual(response.data['part'], 1)
-        self.assertEqual(response.data['plugin'], None)
-        self.assertEqual(response.data['success'], 'Barcode assigned to part instance')
+        self.assertEqual(response.data['part']['pk'], 1)
+        self.assertEqual(response.data['success'], 'Assigned barcode to part instance')
 
         # Check that the Part instance has been updated
         p = part.models.Part.objects.get(pk=1)
@@ -232,7 +233,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         )
 
         self.assertIn('success', response.data)
-        self.assertEqual(response.data['plugin'], None)
+        self.assertEqual(response.data['plugin'], 'InvenTreeExternalBarcode')
         self.assertEqual(response.data['part']['pk'], 1)
 
         # Attempting to assign the same barcode to a different part should result in an error
@@ -244,7 +245,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn('Barcode matches existing part instance', str(response.data['error']))
+        self.assertIn('Barcode matches existing item', str(response.data['error']))
 
         # Now test that we can unassign the barcode data also
         response = self.unassign(
@@ -274,7 +275,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         )
 
         self.assertIn('success', response.data)
-        self.assertEqual(response.data['stocklocation'], 1)
+        self.assertEqual(response.data['stocklocation']['pk'], 1)
 
         # Check that the StockLocation instance has been updated
         loc = stock.models.StockLocation.objects.get(pk=1)
@@ -291,7 +292,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400
         )
 
-        self.assertIn('Barcode matches existing stocklocation', str(response.data['error']))
+        self.assertIn('Barcode matches existing item', str(response.data['error']))
 
         # Now, unassign the barcode
         response = self.unassign(
@@ -316,7 +317,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         response = self.scan({'barcode': 'blbla=10004'}, expected_code=200)
 
         self.assertEqual(response.data['barcode_data'], 'blbla=10004')
-        self.assertEqual(response.data['plugin'], None)
+        self.assertEqual(response.data['plugin'], 'InvenTreeExternalBarcode')
 
         # Scan for a StockItem instance
         si = stock.models.StockItem.objects.get(pk=1)
@@ -345,7 +346,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn('Stock item does not exist', str(response.data))
+        self.assertIn('No match found for barcode data', str(response.data))
 
         # Scan a StockItem object (which does exist)
         response = self.scan(
@@ -367,9 +368,11 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=200,
         )
 
-        self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
         self.assertIn('success', response.data)
         self.assertEqual(response.data['stocklocation']['pk'], 5)
+        self.assertEqual(response.data['stocklocation']['api_url'], '/api/stock/location/5/')
+        self.assertEqual(response.data['stocklocation']['web_url'], '/stock/location/5/')
+        self.assertEqual(response.data['plugin'], 'InvenTreeInternalBarcode')
 
         # Scan a Part object
         response = self.scan(
@@ -380,3 +383,18 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.data['part']['pk'], 5)
+
+        # Scan a SupplierPart instance
+        response = self.scan(
+            {
+                'barcode': '{"supplierpart": 1}',
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(response.data['supplierpart']['pk'], 1)
+        self.assertEqual(response.data['plugin'], 'InvenTreeInternalBarcode')
+
+        self.assertIn('success', response.data)
+        self.assertIn('barcode_data', response.data)
+        self.assertIn('barcode_hash', response.data)

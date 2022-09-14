@@ -1,7 +1,7 @@
 """API endpoints for barcode plugins."""
 
 
-from django.urls import path, re_path, reverse
+from django.urls import path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import permissions
@@ -9,25 +9,10 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from company.models import SupplierPart
-from part.models import Part
-from part.serializers import PartSerializer
+from InvenTree.helpers import hash_barcode
 from plugin import registry
-from plugin.base.barcodes.mixins import hash_barcode
-from plugin.builtin.barcodes.inventree_barcode import InvenTreeBarcodePlugin
-from stock.models import StockItem, StockLocation
-from stock.serializers import StockItemSerializer
-
-
-def get_supported_barcode_models():
-    """Returns a list of database models which support barcode functionality"""
-
-    return [
-        Part,
-        StockItem,
-        StockLocation,
-        SupplierPart,
-    ]
+from plugin.builtin.barcodes.inventree_barcode import (
+    InvenTreeExternalBarcodePlugin, InvenTreeInternalBarcodePlugin)
 
 
 class BarcodeScan(APIView):
@@ -65,88 +50,40 @@ class BarcodeScan(APIView):
         if 'barcode' not in data:
             raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
 
-        # Ensure that the default barcode handler is run first
-        plugins = [InvenTreeBarcodePlugin()] + registry.with_mixin('barcode')
+        # Ensure that the default barcode handlers are run first
+        plugins = [
+            InvenTreeInternalBarcodePlugin(),
+            InvenTreeExternalBarcodePlugin(),
+        ] + registry.with_mixin('barcode')
 
         barcode_data = data.get('barcode')
+        barcode_hash = hash_barcode(barcode_data)
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
-
-        for current_plugin in plugins:
-            current_plugin.init(barcode_data)
-
-            if current_plugin.validate():
-                plugin = current_plugin
-                break
-
-        match_found = False
         response = {}
 
+        for current_plugin in plugins:
+
+            result = current_plugin.scan(barcode_data)
+
+            if result is not None:
+                plugin = current_plugin
+                response = result
+                break
+
+        response['plugin'] = plugin.name if plugin else None
         response['barcode_data'] = barcode_data
+        response['barcode_hash'] = barcode_hash
 
-        # A plugin has been found!
-        if plugin is not None:
+        # A plugin has not been found!
+        if plugin is None:
+            response['error'] = _('No match found for barcode data')
 
-            # Try to associate with a stock item
-            item = plugin.getStockItem()
-
-            if item is not None:
-                response['stockitem'] = plugin.renderStockItem(item)
-                response['url'] = reverse('stock-item-detail', kwargs={'pk': item.id})
-                match_found = True
-
-            # Try to associate with a stock location
-            loc = plugin.getStockLocation()
-
-            if loc is not None:
-                response['stocklocation'] = plugin.renderStockLocation(loc)
-                response['url'] = reverse('stock-location-detail', kwargs={'pk': loc.id})
-                match_found = True
-
-            # Try to associate with a part
-            part = plugin.getPart()
-
-            if part is not None:
-                response['part'] = plugin.renderPart(part)
-                response['url'] = reverse('part-detail', kwargs={'pk': part.id})
-                match_found = True
-
-            response['hash'] = plugin.hash()
-            response['plugin'] = plugin.name
-
-        # No plugin was able to validate this barcode
-        # However, the hash of the barcode may still be associated with an item in the database
+            raise ValidationError(response)
         else:
-            result_hash = hash_barcode(barcode_data)
-
-            response['hash'] = result_hash
-            response['plugin'] = None
-
-            # Try to look for a matching StockItem
-            item = StockItem.lookup_barcode(result_hash)
-
-            if item is not None:
-                serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
-                response['stockitem'] = serializer.data
-                match_found = True
-
-            # Try to look for a matching Part
-            part = Part.lookup_barcode(result_hash)
-
-            if part is not None:
-                serializer = PartSerializer(part)
-                response['part'] = serializer.data
-                match_found = True
-
-        if not match_found:
-            raise ValidationError({
-                'error': _("No match found for barcode data"),
-                'barcode': barcode_data,
-            })
-
-        response['success'] = _('Match found for barcode data')
-        return Response(response)
+            response['success'] = _('Match found for barcode data')
+            return Response(response)
 
 
 class BarcodeAssign(APIView):
@@ -166,112 +103,65 @@ class BarcodeAssign(APIView):
         Checks inputs and assign barcode (hash) to StockItem.
         """
 
-        # Classes which support assignment of third-party barcodes
-        supported_models = get_supported_barcode_models()
-
-        supported_labels = [model.barcode_model_type() for model in supported_models]
-
         data = request.data
 
         if 'barcode' not in data:
             raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
 
-        matched_models = []
-
-        for key in data.keys():
-            if key in supported_labels:
-                matched_models.append(key)
-
-        if len(matched_models) == 0:
-            # No matches were found
-            model_names = ', '.join(supported_labels)
-
-            raise ValidationError({
-                'error': f"Missing data: Provide one of '{model_names}'"
-            })
-
-        if len(matched_models) > 1:
-            # Multiple matches found (also a problem)
-            model_names = ', '.join(matched_models)
-
-            raise ValidationError({
-                'error': f"Multiple conflicting fields: '{model_names}'"
-            })
-
         barcode_data = data['barcode']
 
-        plugins = registry.with_mixin('barcode')
+        # Here we only check against 'InvenTree' plugins
+        plugins = [
+            InvenTreeInternalBarcodePlugin(),
+            InvenTreeExternalBarcodePlugin(),
+        ]
 
-        plugin = None
+        # First check if the provided barcode matches an existing database entry
+        for plugin in plugins:
+            result = plugin.scan(barcode_data)
 
-        # Test the supplied barcode against each loaded plugin
-        # If we find a match, then we cannot assign this barcode to anything else
-        for current_plugin in plugins:
-            current_plugin.init(barcode_data)
+            if result is not None:
+                result["error"] = _("Barcode matches existing item")
+                result["plugin"] = plugin.name
+                result["barcode_data"] = barcode_data
 
-            if current_plugin.validate():
-                plugin = current_plugin
-                break
+                raise ValidationError(result)
 
-        response = {}
+        barcode_hash = hash_barcode(barcode_data)
 
-        response['barcode_data'] = barcode_data
+        valid_labels = []
 
-        # Matching plugin was found
-        if plugin is not None:
-
-            result_hash = plugin.hash()
-            response['hash'] = result_hash
-            response['plugin'] = plugin.name
-
-            # Ensure that the barcode does not already match a database entry
-
-            if plugin.getStockItem() is not None:
-                raise ValidationError({
-                    'error': 'Barcode matches existing Stock Item',
-                })
-
-            if plugin.getStockLocation() is not None:
-                raise ValidationError({
-                    'error': 'Barcode matches existing Stock Location'
-                })
-
-            if plugin.getPart() is not None:
-                raise ValidationError({
-                    'error': 'Barcode matches existing Part',
-                })
-
-        else:
-            result_hash = hash_barcode(barcode_data)
-            response['hash'] = result_hash
-            response['plugin'] = plugin
-
-        # At this point, no match was found by any loaded plugin.
-        # So, we can safely assign this barcode to the provided item
-        # Iterate through the supported model types until we find a match
-        for model in supported_models:
-
+        for model in InvenTreeExternalBarcodePlugin.get_supported_barcode_models():
             label = model.barcode_model_type()
+            valid_labels.append(label)
 
             if label in data:
                 try:
                     instance = model.objects.get(pk=data[label])
+
+                    instance.assign_barcode(
+                        barcode_data=barcode_data,
+                        barcode_hash=barcode_hash,
+                    )
+
+                    return Response({
+                        'success': f"Assigned barcode to {label} instance",
+                        label: {
+                            'pk': instance.pk,
+                        },
+                        "barcode_data": barcode_data,
+                        "barcode_hash": barcode_hash,
+                    })
+
                 except (ValueError, model.DoesNotExist):
                     raise ValidationError({
-                        label: _('No match found for provided value')
+                        'error': f"No matching {label} instance found in database",
                     })
 
-                # Ensure that the barcode has not already been assigned to an instance of this model
-                if model.lookup_barcode(result_hash):
-                    raise ValidationError({
-                        'error': f"Barcode matches existing {label} instance",
-                    })
-
-                instance.assign_barcode(response['hash'], barcode_data=barcode_data)
-                response[label] = instance.pk
-                response['success'] = f"Barcode assigned to {label} instance"
-
-        return Response(response)
+        # If we got here, it means that no valid model types were provided
+        raise ValidationError({
+            'error': f"Missing data: provide one of '{valid_labels}'",
+        })
 
 
 class BarcodeUnassign(APIView):
@@ -285,7 +175,7 @@ class BarcodeUnassign(APIView):
         """Respond to a barcode unassign POST request"""
 
         # The following database models support assignment of third-party barcodes
-        supported_models = get_supported_barcode_models()
+        supported_models = InvenTreeExternalBarcodePlugin.get_supported_barcode_models()
 
         supported_labels = [model.barcode_model_type() for model in supported_models]
         model_names = ', '.join(supported_labels)

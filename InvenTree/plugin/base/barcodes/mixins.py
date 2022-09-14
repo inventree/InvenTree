@@ -1,9 +1,5 @@
 """Plugin mixin classes for barcode plugin."""
 
-from InvenTree.helpers import hash_barcode
-from part.serializers import PartSerializer
-from stock.serializers import LocationSerializer, StockItemSerializer
-
 
 class BarcodeMixin:
     """Mixin that enables barcode handling.
@@ -28,64 +24,16 @@ class BarcodeMixin:
         """Does this plugin have everything needed to process a barcode."""
         return True
 
-    def init(self, barcode_data):
-        """Initialize the BarcodePlugin instance.
+    def scan(self, barcode_data):
+        """Scan a barcode against this plugin.
 
-        Args:
-            barcode_data: The raw barcode data
+        This method is explicitly called from the /scan/ API endpoint,
+        and thus it is expected that any barcode which matches this barcode will return a result.
+
+        If this plugin finds a match against the provided barcode, it should return a dict object
+        with the intended result.
+
+        Default return value is None
         """
-        self.data = barcode_data
 
-    def getStockItem(self):
-        """Attempt to retrieve a StockItem associated with this barcode.
-
-        Default implementation returns None
-        """
-        return None  # pragma: no cover
-
-    def renderStockItem(self, item):
-        """Render a stock item to JSON response."""
-        serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
-        return serializer.data
-
-    def getStockLocation(self):
-        """Attempt to retrieve a StockLocation associated with this barcode.
-
-        Default implementation returns None
-        """
-        return None  # pragma: no cover
-
-    def renderStockLocation(self, loc):
-        """Render a stock location to a JSON response."""
-        serializer = LocationSerializer(loc)
-        return serializer.data
-
-    def getPart(self):
-        """Attempt to retrieve a Part associated with this barcode.
-
-        Default implementation returns None
-        """
-        return None  # pragma: no cover
-
-    def renderPart(self, part):
-        """Render a part to JSON response."""
-        serializer = PartSerializer(part)
-        return serializer.data
-
-    def hash(self):
-        """Calculate a hash for the barcode data.
-
-        This is supposed to uniquely identify the barcode contents,
-        at least within the bardcode sub-type.
-
-        The default implementation simply returns an MD5 hash of the barcode data,
-        encoded to a string.
-
-        This may be sufficient for most applications, but can obviously be overridden
-        by a subclass.
-        """
-        return hash_barcode(self.data)
-
-    def validate(self):
-        """Default implementation returns False."""
-        return False  # pragma: no cover
+        return None
