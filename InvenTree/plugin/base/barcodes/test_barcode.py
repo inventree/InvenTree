@@ -153,8 +153,6 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('error', response.data)
 
-        self.assertEqual(response.data['stocklocation'], 'Stock location does not exist')
-
     def test_integer_barcode(self):
         """Test scan of an integer barcode."""
         response = self.postBarcode(self.scan_url, '123456789')
