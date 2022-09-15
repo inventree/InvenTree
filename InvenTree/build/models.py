@@ -22,7 +22,7 @@ from mptt.exceptions import InvalidMove
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, normalize, MakeBarcode, notify_responsible
+from InvenTree.helpers import increment, normalize, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
@@ -109,17 +109,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         """Metaclass options for the BuildOrder model"""
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
-
-    def format_barcode(self, **kwargs):
-        """Return a JSON string to represent this build as a barcode."""
-        return MakeBarcode(
-            "buildorder",
-            self.pk,
-            {
-                "reference": self.title,
-                "url": self.get_absolute_url(),
-            }
-        )
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):

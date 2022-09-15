@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-from InvenTree.views import InvenTreeRoleMixin
+from InvenTree.views import InvenTreeRoleMixin, QRCodeView
 from plugin.views import InvenTreePluginViewMixin
 
 from .models import Company, ManufacturerPart, SupplierPart
@@ -112,3 +112,18 @@ class SupplierPartDetail(InvenTreePluginViewMixin, DetailView):
     context_object_name = 'part'
     queryset = SupplierPart.objects.all()
     permission_required = 'purchase_order.view'
+
+
+class SupplierPartQRCode(QRCodeView):
+    """View for displaying a QR code for a StockItem object."""
+
+    ajax_form_title = _("Stock Item QR Code")
+    role_required = 'stock.view'
+
+    def get_qr_data(self):
+        """Generate QR code data for the StockItem."""
+        try:
+            part = SupplierPart.objects.get(id=self.pk)
+            return part.format_barcode()
+        except SupplierPart.DoesNotExist:
+            return None

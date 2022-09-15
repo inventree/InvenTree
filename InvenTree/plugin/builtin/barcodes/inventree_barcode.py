@@ -9,8 +9,8 @@ references model objects actually exist in the database.
 
 import json
 
-from rest_framework.exceptions import ValidationError
-
+from company.models import SupplierPart
+from InvenTree.helpers import hash_barcode
 from part.models import Part
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
@@ -18,121 +18,89 @@ from stock.models import StockItem, StockLocation
 
 
 class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
+    """Generic base class for handling InvenTree barcodes"""
+
+    @staticmethod
+    def get_supported_barcode_models():
+        """Returns a list of database models which support barcode functionality"""
+
+        return [
+            Part,
+            StockItem,
+            StockLocation,
+            SupplierPart,
+        ]
+
+    def format_matched_response(self, label, model, instance):
+        """Format a response for the scanned data"""
+
+        response = {
+            'pk': instance.pk
+        }
+
+        # Add in the API URL if available
+        if hasattr(model, 'get_api_url'):
+            response['api_url'] = f"{model.get_api_url()}{instance.pk}/"
+
+        # Add in the web URL if available
+        if hasattr(instance, 'get_absolute_url'):
+            response['web_url'] = instance.get_absolute_url()
+
+        return {label: response}
+
+
+class InvenTreeInternalBarcodePlugin(InvenTreeBarcodePlugin):
     """Builtin BarcodePlugin for matching and generating internal barcodes."""
 
-    NAME = "InvenTreeBarcode"
+    NAME = "InvenTreeInternalBarcode"
 
-    def validate(self):
-        """Validate a barcode.
+    def scan(self, barcode_data):
+        """Scan a barcode against this plugin.
 
-        An "InvenTree" barcode must be a jsonnable-dict with the following tags:
-        {
-            'tool': 'InvenTree',
-            'version': <anything>
-        }
+        Here we are looking for a dict object which contains a reference to a particular InvenTree database object
         """
-        # The data must either be dict or be able to dictified
-        if type(self.data) is dict:
+
+        if type(barcode_data) is dict:
             pass
-        elif type(self.data) is str:
+        elif type(barcode_data) is str:
             try:
-                self.data = json.loads(self.data)
-                if type(self.data) is not dict:
-                    return False
+                barcode_data = json.loads(barcode_data)
             except json.JSONDecodeError:
-                return False
+                return None
         else:
-            return False  # pragma: no cover
+            return None
 
-        # If any of the following keys are in the JSON data,
-        # let's go ahead and assume that the code is a valid InvenTree one...
+        if type(barcode_data) is not dict:
+            return None
 
-        for key in ['tool', 'version', 'InvenTree', 'stockitem', 'stocklocation', 'part']:
-            if key in self.data.keys():
-                return True
-
-        return True
-
-    def getStockItem(self):
-        """Lookup StockItem by 'stockitem' key in barcode data."""
-        for k in self.data.keys():
-            if k.lower() == 'stockitem':
-
-                data = self.data[k]
-
-                pk = None
-
-                # Initially try casting to an integer
+        # Look for various matches. First good match will be returned
+        for model in self.get_supported_barcode_models():
+            label = model.barcode_model_type()
+            if label in barcode_data:
                 try:
-                    pk = int(data)
-                except (TypeError, ValueError):  # pragma: no cover
-                    pk = None
+                    instance = model.objects.get(pk=barcode_data[label])
+                    return self.format_matched_response(label, model, instance)
+                except (ValueError, model.DoesNotExist):
+                    pass
 
-                if pk is None:  # pragma: no cover
-                    try:
-                        pk = self.data[k]['id']
-                    except (AttributeError, KeyError):
-                        raise ValidationError({k: "id parameter not supplied"})
 
-                try:
-                    item = StockItem.objects.get(pk=pk)
-                    return item
-                except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
-                    raise ValidationError({k: "Stock item does not exist"})
+class InvenTreeExternalBarcodePlugin(InvenTreeBarcodePlugin):
+    """Builtin BarcodePlugin for matching arbitrary external barcodes."""
 
-        return None
+    NAME = "InvenTreeExternalBarcode"
 
-    def getStockLocation(self):
-        """Lookup StockLocation by 'stocklocation' key in barcode data."""
-        for k in self.data.keys():
-            if k.lower() == 'stocklocation':
+    def scan(self, barcode_data):
+        """Scan a barcode against this plugin.
 
-                pk = None
+        Here we are looking for a dict object which contains a reference to a particular InvenTree databse object
+        """
 
-                # First try simple integer lookup
-                try:
-                    pk = int(self.data[k])
-                except (TypeError, ValueError):  # pragma: no cover
-                    pk = None
+        for model in self.get_supported_barcode_models():
+            label = model.barcode_model_type()
 
-                if pk is None:  # pragma: no cover
-                    # Lookup by 'id' field
-                    try:
-                        pk = self.data[k]['id']
-                    except (AttributeError, KeyError):
-                        raise ValidationError({k: "id parameter not supplied"})
+            barcode_hash = hash_barcode(barcode_data)
 
-                try:
-                    loc = StockLocation.objects.get(pk=pk)
-                    return loc
-                except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
-                    raise ValidationError({k: "Stock location does not exist"})
+            instance = model.lookup_barcode(barcode_hash)
 
-        return None
-
-    def getPart(self):
-        """Lookup Part by 'part' key in barcode data."""
-        for k in self.data.keys():
-            if k.lower() == 'part':
-
-                pk = None
-
-                # Try integer lookup first
-                try:
-                    pk = int(self.data[k])
-                except (TypeError, ValueError):  # pragma: no cover
-                    pk = None
-
-                if pk is None:  # pragma: no cover
-                    try:
-                        pk = self.data[k]['id']
-                    except (AttributeError, KeyError):
-                        raise ValidationError({k: 'id parameter not supplied'})
-
-                try:
-                    part = Part.objects.get(pk=pk)
-                    return part
-                except (ValueError, Part.DoesNotExist):  # pragma: no cover
-                    raise ValidationError({k: 'Part does not exist'})
-
-        return None
+            if instance is not None:
+                return self.format_matched_response(label, model, instance)
