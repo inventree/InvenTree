@@ -497,7 +497,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         if not barcode or barcode.strip() == '':
             return None
 
-        if stock.models.StockItem.objects.filter(uid=barcode).exists():
+        if stock.models.StockItem.objects.filter(barcode_hash=barcode).exists():
             raise ValidationError(_('Barcode is already in use'))
 
         return barcode
@@ -515,11 +515,14 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         serial_numbers = data.get('serial_numbers', '').strip()
 
         base_part = line_item.part.part
+        pack_size = line_item.part.pack_size
+
+        pack_quantity = pack_size * quantity
 
         # Does the quantity need to be "integer" (for trackable parts?)
         if base_part.trackable:
 
-            if Decimal(quantity) != int(quantity):
+            if Decimal(pack_quantity) != int(pack_quantity):
                 raise ValidationError({
                     'quantity': _('An integer quantity must be provided for trackable parts'),
                 })
@@ -528,7 +531,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         if serial_numbers:
             try:
                 # Pass the serial numbers through to the parent serializer once validated
-                data['serials'] = extract_serial_numbers(serial_numbers, quantity, base_part.getLatestSerialNumberInt())
+                data['serials'] = extract_serial_numbers(serial_numbers, pack_quantity, base_part.getLatestSerialNumberInt())
             except DjangoValidationError as e:
                 raise ValidationError({
                     'serial_numbers': e.messages,

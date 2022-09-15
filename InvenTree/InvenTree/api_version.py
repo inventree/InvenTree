@@ -2,10 +2,17 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 74
+INVENTREE_API_VERSION = 76
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v76 -> 2022-09-10 : https://github.com/inventree/InvenTree/pull/3640
+    - Refactor of barcode data on the API
+    - StockItem.uid renamed to StockItem.barcode_hash
+
+v75 -> 2022-09-05 : https://github.com/inventree/InvenTree/pull/3644
+    - Adds "pack_size" attribute to SupplierPart API serializer
 
 v74 -> 2022-08-28 : https://github.com/inventree/InvenTree/pull/3615
     - Add confirmation field for completing PurchaseOrder if the order has incomplete lines

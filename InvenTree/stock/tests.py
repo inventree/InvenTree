@@ -14,8 +14,8 @@ from .models import (StockItem, StockItemTestResult, StockItemTracking,
                      StockLocation)
 
 
-class StockTest(InvenTreeTestCase):
-    """Tests to ensure that the stock location tree functions correcly."""
+class StockTestBase(InvenTreeTestCase):
+    """Base class for running Stock tests"""
 
     fixtures = [
         'category',
@@ -43,6 +43,10 @@ class StockTest(InvenTreeTestCase):
         # Ensure the MPTT objects are correctly rebuild
         Part.objects.rebuild()
         StockItem.objects.rebuild()
+
+
+class StockTest(StockTestBase):
+    """Tests to ensure that the stock location tree functions correcly."""
 
     def test_link(self):
         """Test the link URL field validation"""
@@ -150,12 +154,6 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
 
         self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
-
-    def test_barcode(self):
-        """Test format_barcode."""
-        barcode = self.office.format_barcode(brief=False)
-
-        self.assertIn('"name": "Office"', barcode)
 
     def test_strings(self):
         """Test str function."""
@@ -724,7 +722,38 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(C22.get_ancestors().count(), 1)
 
 
-class VariantTest(StockTest):
+class StockBarcodeTest(StockTestBase):
+    """Run barcode tests for the stock app"""
+
+    def test_stock_item_barcode_basics(self):
+        """Simple tests for the StockItem barcode integration"""
+
+        item = StockItem.objects.get(pk=1)
+
+        self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
+
+        # Call format_barcode method
+        barcode = item.format_barcode(brief=False)
+
+        for key in ['tool', 'version', 'instance', 'stockitem']:
+            self.assertIn(key, barcode)
+
+        # Render simple barcode data for the StockItem
+        barcode = item.barcode
+        self.assertEqual(barcode, '{"stockitem": 1}')
+
+    def test_location_barcode_basics(self):
+        """Simple tests for the StockLocation barcode integration"""
+
+        self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
+
+        loc = StockLocation.objects.get(pk=1)
+
+        barcode = loc.format_barcode(brief=True)
+        self.assertEqual('{"stocklocation": 1}', barcode)
+
+
+class VariantTest(StockTestBase):
     """Tests for calculation stock counts against templates / variants."""
 
     def test_variant_stock(self):
@@ -805,7 +834,7 @@ class VariantTest(StockTest):
         item.save()
 
 
-class TestResultTest(StockTest):
+class TestResultTest(StockTestBase):
     """Tests for the StockItemTestResult model."""
 
     def test_test_count(self):

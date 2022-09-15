@@ -19,8 +19,8 @@ Relevant PRs:
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import (F, FloatField, Func, IntegerField, OuterRef, Q,
-                              Subquery)
+from django.db.models import (DecimalField, ExpressionWrapper, F, FloatField,
+                              Func, IntegerField, OuterRef, Q, Subquery)
 from django.db.models.functions import Coalesce
 
 from sql_util.utils import SubquerySum
@@ -32,19 +32,43 @@ from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
 
 
 def annotate_on_order_quantity(reference: str = ''):
-    """Annotate the 'on order' quantity for each part in a queryset"""
+    """Annotate the 'on order' quantity for each part in a queryset.
+
+    Sum the 'remaining quantity' of each line item for any open purchase orders for each part:
+
+    - Purchase order must be 'active' or 'pending'
+    - Received quantity must be less than line item quantity
+
+    Note that in addition to the 'quantity' on order, we must also take into account 'pack_size'.
+    """
 
     # Filter only 'active' purhase orders
-    order_filter = Q(order__status__in=PurchaseOrderStatus.OPEN)
+    # Filter only line with outstanding quantity
+    order_filter = Q(
+        order__status__in=PurchaseOrderStatus.OPEN,
+        quantity__gt=F('received'),
+    )
 
     return Coalesce(
-        SubquerySum(f'{reference}supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
+        SubquerySum(
+            ExpressionWrapper(
+                F(f'{reference}supplier_parts__purchase_order_line_items__quantity') * F(f'{reference}supplier_parts__pack_size'),
+                output_field=DecimalField(),
+            ),
+            filter=order_filter
+        ),
         Decimal(0),
-        output_field=models.DecimalField()
+        output_field=DecimalField()
     ) - Coalesce(
-        SubquerySum(f'{reference}supplier_parts__purchase_order_line_items__received', filter=order_filter),
+        SubquerySum(
+            ExpressionWrapper(
+                F(f'{reference}supplier_parts__purchase_order_line_items__received') * F(f'{reference}supplier_parts__pack_size'),
+                output_field=DecimalField(),
+            ),
+            filter=order_filter
+        ),
         Decimal(0),
-        output_field=models.DecimalField(),
+        output_field=DecimalField(),
     )
 
 

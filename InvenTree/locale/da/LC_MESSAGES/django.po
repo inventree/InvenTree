@@ -1,25 +1,26 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: inventree\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-09 02:44+0000\n"
-"PO-Revision-Date: 2022-09-09 03:56\n"
-"Last-Translator: \n"
-"Language-Team: Indonesian\n"
-"Language: id_ID\n"
+"POT-Creation-Date: 2022-09-14 04:24+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Crowdin-Project: inventree\n"
-"X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: id\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: InvenTree/api.py:54
 msgid "API endpoint not found"
-msgstr "API endpoint tidak ditemukan"
+msgstr ""
 
 #: InvenTree/exceptions.py:68
 msgid "Error details can be found in the admin panel"
@@ -27,7 +28,7 @@ msgstr ""
 
 #: InvenTree/fields.py:109
 msgid "Enter date"
-msgstr "Masukkan tanggal"
+msgstr ""
 
 #: InvenTree/fields.py:183 build/serializers.py:384
 #: build/templates/build/sidebar.html:21 company/models.py:524
@@ -60,19 +61,19 @@ msgstr ""
 
 #: InvenTree/forms.py:133
 msgid "Enter password"
-msgstr "Masukkan sandi"
+msgstr ""
 
 #: InvenTree/forms.py:134
 msgid "Enter new password"
-msgstr "Masukkan kata sandi baru"
+msgstr ""
 
 #: InvenTree/forms.py:143
 msgid "Confirm password"
-msgstr "Konfirmasikan kata sandi"
+msgstr ""
 
 #: InvenTree/forms.py:144
 msgid "Confirm new password"
-msgstr "Konfirmasi sandi baru"
+msgstr ""
 
 #: InvenTree/forms.py:148
 msgid "Old password"
@@ -80,11 +81,11 @@ msgstr ""
 
 #: InvenTree/forms.py:177
 msgid "Email (again)"
-msgstr "Email (ulang)"
+msgstr ""
 
 #: InvenTree/forms.py:181
 msgid "Email address confirmation"
-msgstr "Konfirmasi alamat email"
+msgstr ""
 
 #: InvenTree/forms.py:202
 msgid "You must type the same email each time."
@@ -410,94 +411,98 @@ msgid "Czech"
 msgstr ""
 
 #: InvenTree/settings.py:608
-msgid "German"
+msgid "Danish"
 msgstr ""
 
 #: InvenTree/settings.py:609
-msgid "Greek"
+msgid "German"
 msgstr ""
 
 #: InvenTree/settings.py:610
-msgid "English"
+msgid "Greek"
 msgstr ""
 
 #: InvenTree/settings.py:611
-msgid "Spanish"
+msgid "English"
 msgstr ""
 
 #: InvenTree/settings.py:612
-msgid "Spanish (Mexican)"
+msgid "Spanish"
 msgstr ""
 
 #: InvenTree/settings.py:613
-msgid "Farsi / Persian"
+msgid "Spanish (Mexican)"
 msgstr ""
 
 #: InvenTree/settings.py:614
-msgid "French"
+msgid "Farsi / Persian"
 msgstr ""
 
 #: InvenTree/settings.py:615
-msgid "Hebrew"
+msgid "French"
 msgstr ""
 
 #: InvenTree/settings.py:616
-msgid "Hungarian"
+msgid "Hebrew"
 msgstr ""
 
 #: InvenTree/settings.py:617
-msgid "Italian"
+msgid "Hungarian"
 msgstr ""
 
 #: InvenTree/settings.py:618
-msgid "Japanese"
+msgid "Italian"
 msgstr ""
 
 #: InvenTree/settings.py:619
-msgid "Korean"
+msgid "Japanese"
 msgstr ""
 
 #: InvenTree/settings.py:620
-msgid "Dutch"
+msgid "Korean"
 msgstr ""
 
 #: InvenTree/settings.py:621
-msgid "Norwegian"
+msgid "Dutch"
 msgstr ""
 
 #: InvenTree/settings.py:622
-msgid "Polish"
+msgid "Norwegian"
 msgstr ""
 
 #: InvenTree/settings.py:623
-msgid "Portuguese"
+msgid "Polish"
 msgstr ""
 
 #: InvenTree/settings.py:624
-msgid "Portuguese (Brazilian)"
+msgid "Portuguese"
 msgstr ""
 
 #: InvenTree/settings.py:625
-msgid "Russian"
+msgid "Portuguese (Brazilian)"
 msgstr ""
 
 #: InvenTree/settings.py:626
-msgid "Swedish"
+msgid "Russian"
 msgstr ""
 
 #: InvenTree/settings.py:627
-msgid "Thai"
+msgid "Swedish"
 msgstr ""
 
 #: InvenTree/settings.py:628
-msgid "Turkish"
+msgid "Thai"
 msgstr ""
 
 #: InvenTree/settings.py:629
-msgid "Vietnamese"
+msgid "Turkish"
 msgstr ""
 
 #: InvenTree/settings.py:630
+msgid "Vietnamese"
+msgstr ""
+
+#: InvenTree/settings.py:631
 msgid "Chinese"
 msgstr ""
 
@@ -829,7 +834,9 @@ msgid "Source Location"
 msgstr ""
 
 #: build/models.py:217
-msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
+msgid ""
+"Select location to take stock from for this build (leave blank to take from "
+"any stock location)"
 msgstr ""
 
 #: build/models.py:222
@@ -883,7 +890,8 @@ msgid "Target completion date"
 msgstr ""
 
 #: build/models.py:263
-msgid "Target date for build completion. Build will be overdue after this date."
+msgid ""
+"Target date for build completion. Build will be overdue after this date."
 msgstr ""
 
 #: build/models.py:266 order/models.py:286
@@ -950,7 +958,8 @@ msgid "Build output does not match Build Order"
 msgstr ""
 
 #: build/models.py:1169
-msgid "Build item must specify a build output, as master part is marked as trackable"
+msgid ""
+"Build item must specify a build output, as master part is marked as trackable"
 msgstr ""
 
 #: build/models.py:1178
@@ -1089,7 +1098,8 @@ msgid "Integer quantity required for trackable parts"
 msgstr ""
 
 #: build/serializers.py:218
-msgid "Integer quantity required, as the bill of materials contains trackable parts"
+msgid ""
+"Integer quantity required, as the bill of materials contains trackable parts"
 msgstr ""
 
 #: build/serializers.py:232 order/serializers.py:472 order/serializers.py:1213
@@ -1196,7 +1206,8 @@ msgid "Accept Unallocated"
 msgstr ""
 
 #: build/serializers.py:512
-msgid "Accept that stock items have not been fully allocated to this build order"
+msgid ""
+"Accept that stock items have not been fully allocated to this build order"
 msgstr ""
 
 #: build/serializers.py:522 templates/js/translated/build.js:227
@@ -1208,7 +1219,8 @@ msgid "Accept Incomplete"
 msgstr ""
 
 #: build/serializers.py:528
-msgid "Accept that the required number of build outputs have not been completed"
+msgid ""
+"Accept that the required number of build outputs have not been completed"
 msgstr ""
 
 #: build/serializers.py:538 templates/js/translated/build.js:231
@@ -1262,7 +1274,9 @@ msgid "Allocation items must be provided"
 msgstr ""
 
 #: build/serializers.py:801
-msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
+msgid ""
+"Stock location where parts are to be sourced (leave blank to take from any "
+"location)"
 msgstr ""
 
 #: build/serializers.py:809
@@ -1777,7 +1791,9 @@ msgid "Tree Depth"
 msgstr ""
 
 #: common/models.py:881
-msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
+msgid ""
+"Default tree depth for treeview. Deeper levels can be lazy loaded as they "
+"are needed."
 msgstr ""
 
 #: common/models.py:890 templates/InvenTree/settings/sidebar.html:33
@@ -2013,7 +2029,9 @@ msgid "Label Image DPI"
 msgstr ""
 
 #: common/models.py:1088
-msgid "DPI resolution when generating image files to supply to label printing plugins"
+msgid ""
+"DPI resolution when generating image files to supply to label printing "
+"plugins"
 msgstr ""
 
 #: common/models.py:1097
@@ -2053,7 +2071,9 @@ msgid "Attach Test Reports"
 msgstr ""
 
 #: common/models.py:1130
-msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
+msgid ""
+"When printing a Test Report, attach a copy of the Test Report to the "
+"associated Stock Item"
 msgstr ""
 
 #: common/models.py:1136
@@ -2225,7 +2245,9 @@ msgid "Check plugins on startup"
 msgstr ""
 
 #: common/models.py:1277
-msgid "Check that all plugins are installed on startup - enable in container enviroments"
+msgid ""
+"Check that all plugins are installed on startup - enable in container "
+"enviroments"
 msgstr ""
 
 #: common/models.py:1284
@@ -2493,7 +2515,8 @@ msgid "Hide Unavailable Stock Items"
 msgstr ""
 
 #: common/models.py:1549
-msgid "Exclude stock items which are not available from the search preview window"
+msgid ""
+"Exclude stock items which are not available from the search preview window"
 msgstr ""
 
 #: common/models.py:1555
@@ -3608,7 +3631,8 @@ msgid "Target Delivery Date"
 msgstr ""
 
 #: order/models.py:281
-msgid "Expected date for order delivery. Order will be overdue after this date."
+msgid ""
+"Expected date for order delivery. Order will be overdue after this date."
 msgstr ""
 
 #: order/models.py:287
@@ -3636,7 +3660,8 @@ msgid "Customer order reference code"
 msgstr ""
 
 #: order/models.py:653
-msgid "Target date for order completion. Order will be overdue after this date."
+msgid ""
+"Target date for order completion. Order will be overdue after this date."
 msgstr ""
 
 #: order/models.py:656 order/models.py:1208
@@ -4895,7 +4920,9 @@ msgstr ""
 
 #: part/tasks.py:22
 #, python-brace-format
-msgid "The available stock for {part.name} has fallen below the configured minimum level"
+msgid ""
+"The available stock for {part.name} has fallen below the configured minimum "
+"level"
 msgstr ""
 
 #: part/templates/part/bom.html:6
@@ -4909,7 +4936,9 @@ msgstr ""
 
 #: part/templates/part/bom.html:17
 #, python-format
-msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
+msgid ""
+"The BOM for <em>%(part)s</em> was last checked by %(checker)s on "
+"%(check_date)s"
 msgstr ""
 
 #: part/templates/part/bom.html:21
@@ -5596,7 +5625,8 @@ msgid "Requirements for BOM upload"
 msgstr ""
 
 #: part/templates/part/upload_bom.html:39
-msgid "The BOM file must contain the required named columns as provided in the "
+msgid ""
+"The BOM file must contain the required named columns as provided in the "
 msgstr ""
 
 #: part/templates/part/upload_bom.html:39
@@ -5654,16 +5684,18 @@ msgid "Part Pricing"
 msgstr ""
 
 #: plugin/apps.py:56
-msgid "Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details."
+msgid ""
+"Your enviroment has an outdated git version. This prevents InvenTree from "
+"loading plugin details."
 msgstr ""
 
 #: plugin/base/action/api.py:27
 msgid "No action specified"
-msgstr "Tidak ada tindakan yang ditentukan"
+msgstr ""
 
 #: plugin/base/action/api.py:38
 msgid "No matching action found"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:52 plugin/base/barcodes/api.py:154
 msgid "Must provide barcode_data parameter"
@@ -5832,7 +5864,9 @@ msgid "Confirm plugin installation"
 msgstr ""
 
 #: plugin/serializers.py:83
-msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
+msgid ""
+"This will install this plugin now into the current instance. The instance "
+"will go into maintenance."
 msgstr ""
 
 #: plugin/serializers.py:103
@@ -6120,7 +6154,8 @@ msgid "Expiry Date"
 msgstr ""
 
 #: stock/models.py:707
-msgid "Expiry date for stock item. Stock will be considered expired after this date"
+msgid ""
+"Expiry date for stock item. Stock will be considered expired after this date"
 msgstr ""
 
 #: stock/models.py:720
@@ -6520,7 +6555,9 @@ msgid "No manufacturer set"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:254
-msgid "You are not in the list of owners of this item. This stock item cannot be edited."
+msgid ""
+"You are not in the list of owners of this item. This stock item cannot be "
+"edited."
 msgstr ""
 
 #: stock/templates/stock/item_base.html:255
@@ -6549,7 +6586,9 @@ msgid "This stock item is allocated to Build Order"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:304
-msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
+msgid ""
+"This stock item is serialized - it has a unique serial number and the "
+"quantity cannot be adjusted."
 msgstr ""
 
 #: stock/templates/stock/item_base.html:326
@@ -6689,7 +6728,9 @@ msgid "Location Owner"
 msgstr ""
 
 #: stock/templates/stock/location.html:131
-msgid "You are not in the list of owners of this location. This stock location cannot be edited."
+msgid ""
+"You are not in the list of owners of this location. This stock location "
+"cannot be edited."
 msgstr ""
 
 #: stock/templates/stock/location.html:147
@@ -6959,7 +7000,9 @@ msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:8
 #, python-format
-msgid "The Base-URL for this plugin is <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
+msgid ""
+"The Base-URL for this plugin is <a href=\"/%(base)s\" target=\"_blank"
+"\"><strong>%(base)s</strong></a>."
 msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
@@ -6987,7 +7030,9 @@ msgid "Plugin Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:16
-msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
+msgid ""
+"Changing the settings below require you to immediately restart the server. "
+"Do not change this while under active usage."
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:36
@@ -7053,7 +7098,10 @@ msgid "License"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:71
-msgid "The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running."
+msgid ""
+"The code information is pulled from the latest git commit for this plugin. "
+"It might not reflect official version numbers or information but the actual "
+"code running."
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:77
@@ -7298,7 +7346,9 @@ msgid "Warning:"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:96
-msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
+msgid ""
+"You currently do not have any email address set up. You should really add an "
+"email address so you can receive notifications, reset your password, etc."
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:104
@@ -7314,7 +7364,9 @@ msgid "Social Accounts"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:122
-msgid "You can sign in to your account using any of the following third party accounts:"
+msgid ""
+"You can sign in to your account using any of the following third party "
+"accounts:"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:158
@@ -7457,7 +7509,9 @@ msgid "Help the translation efforts!"
 msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:105
-msgid "Native language translation of the web application is community contributed via crowdin. Contributions are welcomed and encouraged."
+msgid ""
+"Native language translation of the web application is community contributed "
+"via crowdin. Contributions are welcomed and encouraged."
 msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:106
@@ -7535,16 +7589,20 @@ msgstr ""
 
 #: templates/account/email_confirm.html:16
 #, python-format
-msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
+msgid ""
+"Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email "
+"address for user %(user_display)s."
 msgstr ""
 
 #: templates/account/email_confirm.html:22 templates/js/translated/forms.js:649
 msgid "Confirm"
-msgstr "Konfirmasi"
+msgstr ""
 
 #: templates/account/email_confirm.html:30
 #, python-format
-msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
+msgid ""
+"This email confirmation link expired or is invalid. Please <a href="
+"\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr ""
 
 #: templates/account/login.html:6 templates/account/login.html:16
@@ -7554,14 +7612,17 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
-"of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
+msgid ""
+"Please sign in with one\n"
+"of your existing third party accounts or  <a class=\"btn btn-primary btn-"
+"small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7593,7 +7654,9 @@ msgid "Password Reset"
 msgstr ""
 
 #: templates/account/password_reset.html:18
-msgid "Forgotten your password? Enter your email address below, and we'll send you an email allowing you to reset it."
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll send you "
+"an email allowing you to reset it."
 msgstr ""
 
 #: templates/account/password_reset.html:23
@@ -7610,7 +7673,10 @@ msgstr ""
 
 #: templates/account/password_reset_from_key.html:11
 #, python-format
-msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
 msgstr ""
 
 #: templates/account/password_reset_from_key.html:18
@@ -7627,7 +7693,8 @@ msgstr ""
 
 #: templates/account/signup.html:13
 #, python-format
-msgid "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgid ""
+"Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
 msgstr ""
 
 #: templates/account/signup.html:27
@@ -7651,11 +7718,14 @@ msgid "Two-Factor Authentication Backup Tokens"
 msgstr ""
 
 #: templates/allauth_2fa/backup_tokens.html:17
-msgid "Backup tokens have been generated, but are not revealed here for security reasons. Press the button below to generate new ones."
+msgid ""
+"Backup tokens have been generated, but are not revealed here for security "
+"reasons. Press the button below to generate new ones."
 msgstr ""
 
 #: templates/allauth_2fa/backup_tokens.html:20
-msgid "No backup tokens are available. Press the button below to generate some."
+msgid ""
+"No backup tokens are available. Press the button below to generate some."
 msgstr ""
 
 #: templates/allauth_2fa/backup_tokens.html:28
@@ -7683,7 +7753,9 @@ msgid "Step 1"
 msgstr ""
 
 #: templates/allauth_2fa/setup.html:14
-msgid "Scan the QR code below with a token generator of your choice (for instance Google Authenticator)."
+msgid ""
+"Scan the QR code below with a token generator of your choice (for instance "
+"Google Authenticator)."
 msgstr ""
 
 #: templates/allauth_2fa/setup.html:23
@@ -7763,7 +7835,9 @@ msgstr ""
 
 #: templates/email/build_order_required_stock.html:38
 #: templates/email/low_stock_notification.html:31
-msgid "You are receiving this email because you are subscribed to notifications for this part "
+msgid ""
+"You are receiving this email because you are subscribed to notifications for "
+"this part "
 msgstr ""
 
 #: templates/email/low_stock_notification.html:9
@@ -7917,7 +7991,8 @@ msgid "Link Barcode to Stock Item"
 msgstr ""
 
 #: templates/js/translated/barcode.js:385
-msgid "This will remove the association between this stock item and the barcode"
+msgid ""
+"This will remove the association between this stock item and the barcode"
 msgstr ""
 
 #: templates/js/translated/barcode.js:391
@@ -8389,19 +8464,26 @@ msgid "Automatic Stock Allocation"
 msgstr ""
 
 #: templates/js/translated/build.js:2324
-msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
+msgid ""
+"Stock items will be automatically allocated to this build order, according "
+"to the provided guidelines"
 msgstr ""
 
 #: templates/js/translated/build.js:2326
-msgid "If a location is specifed, stock will only be allocated from that location"
+msgid ""
+"If a location is specifed, stock will only be allocated from that location"
 msgstr ""
 
 #: templates/js/translated/build.js:2327
-msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
+msgid ""
+"If stock is considered interchangeable, it will be allocated from the first "
+"location it is found"
 msgstr ""
 
 #: templates/js/translated/build.js:2328
-msgid "If substitute stock is allowed, it will be used where stock of the primary part cannot be found"
+msgid ""
+"If substitute stock is allowed, it will be used where stock of the primary "
+"part cannot be found"
 msgstr ""
 
 #: templates/js/translated/build.js:2349
@@ -8870,7 +8952,9 @@ msgid "This order has line items which have not been marked as received."
 msgstr ""
 
 #: templates/js/translated/order.js:313 templates/js/translated/order.js:427
-msgid "Completing this order means that the order and line items will no longer be editable."
+msgid ""
+"Completing this order means that the order and line items will no longer be "
+"editable."
 msgstr ""
 
 #: templates/js/translated/order.js:336
@@ -8890,7 +8974,8 @@ msgid "Issue Purchase Order"
 msgstr ""
 
 #: templates/js/translated/order.js:375
-msgid "After placing this purchase order, line items will no longer be editable."
+msgid ""
+"After placing this purchase order, line items will no longer be editable."
 msgstr ""
 
 #: templates/js/translated/order.js:426
@@ -9701,7 +9786,8 @@ msgid "Any child locations will be moved to the parent of this location"
 msgstr ""
 
 #: templates/js/translated/stock.js:176
-msgid "Any stock items in this location will be moved to the parent of this location"
+msgid ""
+"Any stock items in this location will be moved to the parent of this location"
 msgstr ""
 
 #: templates/js/translated/stock.js:182
@@ -10606,4 +10692,3 @@ msgstr ""
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr ""
-

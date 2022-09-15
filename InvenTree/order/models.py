@@ -450,11 +450,11 @@ class PurchaseOrder(Order):
         notes = kwargs.get('notes', '')
 
         # Extract optional barcode field
-        barcode = kwargs.get('barcode', None)
+        barcode_hash = kwargs.get('barcode', None)
 
         # Prevent null values for barcode
-        if barcode is None:
-            barcode = ''
+        if barcode_hash is None:
+            barcode_hash = ''
 
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
@@ -475,6 +475,9 @@ class PurchaseOrder(Order):
         # Create a new stock item
         if line.part and quantity > 0:
 
+            # Take the 'pack_size' of the SupplierPart into account
+            pack_quantity = Decimal(quantity) * Decimal(line.part.pack_size)
+
             # Determine if we should individually serialize the items, or not
             if type(serials) is list and len(serials) > 0:
                 serialize = True
@@ -488,13 +491,13 @@ class PurchaseOrder(Order):
                     part=line.part.part,
                     supplier_part=line.part,
                     location=location,
-                    quantity=1 if serialize else quantity,
+                    quantity=1 if serialize else pack_quantity,
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
                     serial=sn,
                     purchase_price=line.purchase_price,
-                    uid=barcode
+                    barcode_hash=barcode_hash
                 )
 
                 stock.save(add_note=False)
@@ -515,6 +518,7 @@ class PurchaseOrder(Order):
                 )
 
         # Update the number of parts received against the particular line item
+        # Note that this quantity does *not* take the pack_size into account, it is "number of packs"
         line.received += quantity
         line.save()
 

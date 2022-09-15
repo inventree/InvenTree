@@ -43,7 +43,7 @@ from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
-                              InvenTreeTree)
+                              InvenTreeBarcodeMixin, InvenTreeTree)
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from order import models as OrderModels
@@ -300,7 +300,7 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(MetadataMixin, MPTTModel):
+class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -940,18 +940,6 @@ class Part(MetadataMixin, MPTTModel):
     creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Creation User'), related_name='parts_created')
 
     responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
-
-    def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a barcode for this Part object."""
-        return helpers.MakeBarcode(
-            "part",
-            self.id,
-            {
-                "name": self.full_name,
-                "url": reverse('api-part-detail', kwargs={'pk': self.id}),
-            },
-            **kwargs
-        )
 
     @property
     def category_path(self):
@@ -2036,22 +2024,30 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def on_order(self):
-        """Return the total number of items on order for this part."""
-        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN).aggregate(
-            quantity=Sum('purchase_order_line_items__quantity'),
-            received=Sum('purchase_order_line_items__received')
-        )
+        """Return the total number of items on order for this part.
 
-        quantity = orders['quantity']
-        received = orders['received']
+        Note that some supplier parts may have a different pack_size attribute,
+        and this needs to be taken into account!
+        """
 
-        if quantity is None:
-            quantity = 0
+        quantity = 0
 
-        if received is None:
-            received = 0
+        # Iterate through all supplier parts
+        for sp in self.supplier_parts.all():
 
-        return quantity - received
+            # Look at any incomplete line item for open orders
+            lines = sp.purchase_order_line_items.filter(
+                order__status__in=PurchaseOrderStatus.OPEN,
+                quantity__gt=F('received'),
+            )
+
+            for line in lines:
+                remaining = line.quantity - line.received
+
+                if remaining > 0:
+                    quantity += remaining * sp.pack_size
+
+        return quantity
 
     def get_parameters(self):
         """Return all parameters for this part, ordered by name."""
