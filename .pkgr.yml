@@ -1,0 +1,19 @@
+name: inventree
+description: Open Source Inventory Management System 
+homepage: https://inventree.org
+notifications: false
+targets:
+  debian-11:
+    dependencies:
+      - nginx
+      - postgresql
+  ubuntu-20.04:
+    dependencies:
+      - nginx
+      - postgresql
+env:
+  - INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
+  - INVENTREE_PLUGINS_ENABLED
+  - INVENTREE_STATIC_ROOT=/opt/inventree/static
+  - INVENTREE_MEDIA_ROOT=/opt/inventree/media
+  - INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
