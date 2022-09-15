@@ -1,6 +1,6 @@
 """Plugin mixin classes."""
 
-import json
+import json as dj_json
 import logging
 
 from django.db.utils import OperationalError, ProgrammingError
@@ -413,7 +413,7 @@ class APICallMixin:
             groups.append(f'{key}={",".join([str(a) for a in val])}')
         return f'?{"&".join(groups)}'
 
-    def api_call(self, endpoint: str, method: str = 'GET', url_args: dict = None, data=None, headers: dict = None, simple_response: bool = True, endpoint_is_url: bool = False, data_is_json: bool = True):
+    def api_call(self, endpoint: str, method: str = 'GET', url_args: dict = None, json: dict = None, data: dict = None, headers: dict = None, simple_response: bool = True, endpoint_is_url: bool = False):
         """Do an API call.
 
         Simplest call example:
@@ -455,11 +455,10 @@ class APICallMixin:
             'headers': headers,
         }
 
+        if json:
+            kwargs['data'] = dj_json.dumps(json)
         if data:
-            if data_is_json:
-                kwargs['data'] = json.dumps(data)
-            else:
-                kwargs['data'] = data
+            kwargs['data'] = data
 
         # run command
         response = requests.request(method, **kwargs)
