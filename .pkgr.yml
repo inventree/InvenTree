@@ -2,7 +2,7 @@ name: inventree
 description: Open Source Inventory Management System
 homepage: https://inventree.org
 notifications: false
-buildpack: https://github.com/heroku/heroku-buildpack-nodejs#v58
+buildpack: https://github.com/heroku/heroku-buildpack-python/archive/main.tar.gz
 #buildpack: https://github.com/heroku/heroku-buildpack-python#main
 # v218 would be better
 targets:
