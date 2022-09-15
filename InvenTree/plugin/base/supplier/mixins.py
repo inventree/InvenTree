@@ -18,7 +18,7 @@ class SearchResult:
     link: str
     description: str = None
     pricture_url: str = None
-    unique_id: str = None
+    id: str = None
 
 
 @dataclass()
