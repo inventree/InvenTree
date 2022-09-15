@@ -2,7 +2,7 @@ name: inventree
 description: Open Source Inventory Management System
 homepage: https://inventree.org
 notifications: false
-buildpack: https://github.com/pkgr/heroku-buildpack-python#v218
+buildpack: https://github.com/pkgr/heroku-buildpack-python.git#56c596f662af1f1f59ec33013d3da18b3fa9ea52
 targets:
   debian-11:
     dependencies:
