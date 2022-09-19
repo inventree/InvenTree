@@ -636,6 +636,103 @@ class InvenTreeTree(MPTTModel):
         return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
 
 
+class InvenTreeBarcodeMixin(models.Model):
+    """A mixin class for adding barcode functionality to a model class.
+
+    Two types of barcodes are supported:
+
+    - Internal barcodes (QR codes using a strictly defined format)
+    - External barcodes (assign third party barcode data to a model instance)
+
+    The following fields are added to any model which implements this mixin:
+
+    - barcode_data : Raw data associated with an assigned barcode
+    - barcode_hash : A 'hash' of the assigned barcode data used to improve matching
+    """
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+        abstract = True
+
+    barcode_data = models.CharField(
+        blank=True, max_length=500,
+        verbose_name=_('Barcode Data'),
+        help_text=_('Third party barcode data'),
+    )
+
+    barcode_hash = models.CharField(
+        blank=True, max_length=128,
+        verbose_name=_('Barcode Hash'),
+        help_text=_('Unique hash of barcode data')
+    )
+
+    @classmethod
+    def barcode_model_type(cls):
+        """Return the model 'type' for creating a custom QR code."""
+
+        # By default, use the name of the class
+        return cls.__name__.lower()
+
+    def format_barcode(self, **kwargs):
+        """Return a JSON string for formatting a QR code for this model instance."""
+
+        return InvenTree.helpers.MakeBarcode(
+            self.__class__.barcode_model_type(),
+            self.pk,
+            **kwargs
+        )
+
+    @property
+    def barcode(self):
+        """Format a minimal barcode string (e.g. for label printing)"""
+
+        return self.format_barcode(brief=True)
+
+    @classmethod
+    def lookup_barcode(cls, barcode_hash):
+        """Check if a model instance exists with the specified third-party barcode hash."""
+
+        return cls.objects.filter(barcode_hash=barcode_hash).first()
+
+    def assign_barcode(self, barcode_hash=None, barcode_data=None, raise_error=True):
+        """Assign an external (third-party) barcode to this object."""
+
+        # Must provide either barcode_hash or barcode_data
+        if barcode_hash is None and barcode_data is None:
+            raise ValueError("Provide either 'barcode_hash' or 'barcode_data'")
+
+        # If barcode_hash is not provided, create from supplier barcode_data
+        if barcode_hash is None:
+            barcode_hash = InvenTree.helpers.hash_barcode(barcode_data)
+
+        # Check for existing item
+        if self.__class__.lookup_barcode(barcode_hash) is not None:
+            if raise_error:
+                raise ValidationError(_("Existing barcode found"))
+            else:
+                return False
+
+        if barcode_data is not None:
+            self.barcode_data = barcode_data
+
+        self.barcode_hash = barcode_hash
+
+        self.save()
+
+        return True
+
+    def unassign_barcode(self):
+        """Unassign custom barcode from this model"""
+
+        self.barcode_data = ''
+        self.barcode_hash = ''
+
+        self.save()
+
+
 @receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')
 def before_delete_tree_item(sender, instance, using, **kwargs):
     """Receives pre_delete signal from InvenTreeTree object.

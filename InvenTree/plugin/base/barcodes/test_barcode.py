@@ -52,15 +52,10 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         """
         response = self.postBarcode(self.scan_url, '')
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, 400)
 
         data = response.data
         self.assertIn('error', data)
-
-        self.assertIn('barcode_data', data)
-        self.assertIn('hash', data)
-        self.assertIn('plugin', data)
-        self.assertIsNone(data['plugin'])
 
     def test_find_part(self):
         """Test that we can lookup a part based on ID."""
@@ -92,8 +87,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-
-        self.assertEqual(response.data['part'], 'Part does not exist')
+        self.assertIn('error', response.data)
 
     def test_find_stock_item(self):
         """Test that we can lookup a stock item based on ID."""
@@ -125,8 +119,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-
-        self.assertEqual(response.data['stockitem'], 'Stock item does not exist')
+        self.assertIn('error', response.data)
 
     def test_find_location(self):
         """Test that we can lookup a stock location based on ID."""
@@ -158,36 +151,25 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-
-        self.assertEqual(response.data['stocklocation'], 'Stock location does not exist')
+        self.assertIn('error', response.data)
 
     def test_integer_barcode(self):
         """Test scan of an integer barcode."""
         response = self.postBarcode(self.scan_url, '123456789')
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, 400)
 
         data = response.data
         self.assertIn('error', data)
-
-        self.assertIn('barcode_data', data)
-        self.assertIn('hash', data)
-        self.assertIn('plugin', data)
-        self.assertIsNone(data['plugin'])
 
     def test_array_barcode(self):
         """Test scan of barcode with string encoded array."""
         response = self.postBarcode(self.scan_url, "['foo', 'bar']")
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, 400)
 
         data = response.data
         self.assertIn('error', data)
-
-        self.assertIn('barcode_data', data)
-        self.assertIn('hash', data)
-        self.assertIn('plugin', data)
-        self.assertIsNone(data['plugin'])
 
     def test_barcode_generation(self):
         """Test that a barcode is generated with a scan."""
@@ -208,7 +190,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         """Test that a barcode can be associated with a StockItem."""
         item = StockItem.objects.get(pk=522)
 
-        self.assertEqual(len(item.uid), 0)
+        self.assertEqual(len(item.barcode_hash), 0)
 
         barcode_data = 'A-TEST-BARCODE-STRING'
 
@@ -226,14 +208,14 @@ class BarcodeAPITest(InvenTreeAPITestCase):
 
         self.assertIn('success', data)
 
-        result_hash = data['hash']
+        result_hash = data['barcode_hash']
 
         # Read the item out from the database again
         item = StockItem.objects.get(pk=522)
 
-        self.assertEqual(result_hash, item.uid)
+        self.assertEqual(result_hash, item.barcode_hash)
 
-        # Ensure that the same UID cannot be assigned to a different stock item!
+        # Ensure that the same barcode hash cannot be assigned to a different stock item!
         response = self.client.post(
             self.assign_url, format='json',
             data={

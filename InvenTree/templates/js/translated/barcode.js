@@ -352,19 +352,17 @@ function barcodeScanDialog() {
 
 
 /*
- * Dialog for linking a particular barcode to a stock item.
+ * Dialog for linking a particular barcode to a database model instsance
  */
-function linkBarcodeDialog(stockitem) {
+function linkBarcodeDialog(data, options={}) {
 
     var modal = '#modal-form';
 
     barcodeDialog(
-        '{% trans "Link Barcode to Stock Item" %}',
+        options.title,
         {
             url: '/api/barcode/link/',
-            data: {
-                stockitem: stockitem,
-            },
+            data: data,
             onScan: function() {
 
                 $(modal).modal('hide');
@@ -376,13 +374,13 @@ function linkBarcodeDialog(stockitem) {
 
 
 /*
- * Remove barcode association from a device.
+ * Remove barcode association from a database model instance.
  */
-function unlinkBarcode(stockitem) {
+function unlinkBarcode(data, options={}) {
 
     var html = `<b>{% trans "Unlink Barcode" %}</b><br>`;
 
-    html += '{% trans "This will remove the association between this stock item and the barcode" %}';
+    html += '{% trans "This will remove the link to the associated barcode" %}';
 
     showQuestionDialog(
         '{% trans "Unlink Barcode" %}',
@@ -391,13 +389,10 @@ function unlinkBarcode(stockitem) {
             accept_text: '{% trans "Unlink" %}',
             accept: function() {
                 inventreePut(
-                    `/api/stock/${stockitem}/`,
+                    '/api/barcode/unlink/',
+                    data,
                     {
-                        // Clear the UID field
-                        uid: '',
-                    },
-                    {
-                        method: 'PATCH',
+                        method: 'POST',
                         success: function() {
                             location.reload();
                         },
