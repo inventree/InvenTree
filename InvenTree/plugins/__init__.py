@@ -1,2 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals  # pragma: no cover
+"""
+Directory for custom plugin development.
+
+Please read the docs for more information https://inventree.readthedocs.io/en/latest/extend/plugins/#local-directory
+"""

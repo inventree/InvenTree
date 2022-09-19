@@ -6,9 +6,10 @@
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
 {% settings_value 'STICKY_HEADER' user=request.user as sticky %}
 {% navigation_enabled as plugin_nav %}
-{% inventree_demo_mode as demo %}
+
 {% inventree_show_about user as show_about %}
 {% inventree_customize 'navbar_message' as navbar_message %}
+{% inventree_customize 'hide_admin_link' as hide_admin_link %}
 
 <nav class="navbar {% if sticky %}fixed-top{% endif %} navbar-expand-lg navbar-light">
   <div class="container-fluid">
@@ -89,14 +90,14 @@
     {% if navbar_message %}
       {% include "spacer.html" %}
       <div class='flex justify-content-center'>
-        {{ navbar_message }}
+        {{ navbar_message | safe }}
       </div>
       {% include "spacer.html" %}
       {% include "spacer.html" %}
     {% endif %}
-    
+
     <ul class='navbar-nav flex-row'>
-      
+
       <li class='nav-item me-2'>
         <button data-bs-toggle='offcanvas' data-bs-target="#offcanvas-search" class='btn position-relative' title='{% trans "Search" %}'>
           <span class='fas fa-search'></span>
@@ -132,7 +133,7 @@
         </a>
         <ul class='dropdown-menu dropdown-menu-end inventree-navbar-menu'>
           {% if user.is_authenticated %}
-          {% if user.is_staff and not demo %}
+          {% if user.is_staff and not hide_admin_link %}
           <li><a class='dropdown-item' href="{% url 'admin:index' %}"><span class="fas fa-user-shield"></span> {% trans "Admin" %}</a></li>
           {% endif %}
           <li><a class='dropdown-item' href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>

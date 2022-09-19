@@ -74,7 +74,7 @@
         <td><span class='fas fa-envelope'></span></td>
         <td>{% trans "Email Settings" %}</td>
         <td>
-            <a href='{% inventree_docs_url %}/admin/email'>
+            <a href='{% inventree_docs_url %}/settings/email'>
                 <span class='badge rounded-pill bg-warning'>{% trans "Email settings not configured" %}</span>
             </a>
         </td>
@@ -87,31 +87,4 @@
     <!-- TODO - Enumerate system issues here! -->
     {% endfor %}
     {% endif %}
-
-    <tr>
-        <td colspan='3'><strong>{% trans "Parts" %}</strong></td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-sitemap'></span></td>
-        <td>{% trans "Part Categories" %}</td>
-        <td>{{ part_cat_count }}</td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-shapes'></span></td>
-        <td>{% trans "Parts" %}</td>
-        <td>{{ part_count }}</td>
-    </tr>
-    <tr>
-        <td colspan="3"><strong>{% trans "Stock Items" %}</strong></td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-map-marker-alt'></span></td>
-        <td>{% trans "Stock Locations" %}</td>
-        <td>{{ stock_loc_count }}</td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-boxes'></span></td>
-        <td>{% trans "Stock Items" %}</td>
-        <td>{{ stock_item_count }}</td>
-    </tr>
 </table>

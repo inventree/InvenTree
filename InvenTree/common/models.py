@@ -1,56 +1,57 @@
-"""
-Common database model definitions.
+"""Common database model definitions.
+
 These models are 'generic' and do not fit a particular business logic object.
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import os
+import base64
 import decimal
-import math
-import uuid
+import hashlib
 import hmac
 import json
-import hashlib
-import base64
-from secrets import compare_digest
+import logging
+import math
+import uuid
 from datetime import datetime, timedelta
+from enum import Enum
+from secrets import compare_digest
 
-from django.db import models, transaction
-from django.contrib.auth.models import User, Group
+from django.apps import apps
+from django.conf import settings
+from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.contrib.sites.models import Site
+from django.core.cache import cache
+from django.core.exceptions import AppRegistryNotReady, ValidationError
+from django.core.validators import (MaxValueValidator, MinValueValidator,
+                                    URLValidator)
+from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
-from django.conf import settings
 from django.urls import reverse
 from django.utils.timezone import now
-from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.utils.translation import gettext_lazy as _
 
-from djmoney.settings import CURRENCY_CHOICES
-from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
-
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
-from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinValueValidator, URLValidator
-from django.core.exceptions import ValidationError
-
-import InvenTree.helpers
+import build.validators
 import InvenTree.fields
+import InvenTree.helpers
+import InvenTree.ready
 import InvenTree.validators
-
-import logging
-
+import order.validators
 
 logger = logging.getLogger('inventree')
 
 
 class EmptyURLValidator(URLValidator):
+    """Validator for filed with url - that can be empty."""
 
     def __call__(self, value):
-
+        """Make sure empty values pass."""
         value = str(value).strip()
 
         if len(value) == 0:
@@ -61,38 +62,85 @@ class EmptyURLValidator(URLValidator):
 
 
 class BaseInvenTreeSetting(models.Model):
-    """
-    An base InvenTreeSetting object is a key:value pair used for storing
-    single values (e.g. one-off settings values).
-    """
+    """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values)."""
 
     SETTINGS = {}
 
     class Meta:
+        """Meta options for BaseInvenTreeSetting -> abstract stops creation of database entry."""
+
         abstract = True
 
     def save(self, *args, **kwargs):
-        """
-        Enforce validation and clean before saving
-        """
-
+        """Enforce validation and clean before saving."""
         self.key = str(self.key).upper()
+
+        do_cache = kwargs.pop('cache', True)
 
         self.clean(**kwargs)
         self.validate_unique(**kwargs)
 
+        # Update this setting in the cache
+        if do_cache:
+            self.save_to_cache()
+
         super().save()
+
+        # Get after_save action
+        setting = self.get_setting_definition(self.key, *args, **kwargs)
+        after_save = setting.get('after_save', None)
+
+        # Execute if callable
+        if callable(after_save):
+            after_save(self)
+
+    @property
+    def cache_key(self):
+        """Generate a unique cache key for this settings object"""
+        return self.__class__.create_cache_key(self.key, **self.get_kwargs())
+
+    def save_to_cache(self):
+        """Save this setting object to cache"""
+
+        ckey = self.cache_key
+
+        logger.debug(f"Saving setting '{ckey}' to cache")
+
+        try:
+            cache.set(
+                ckey,
+                self,
+                timeout=3600
+            )
+        except TypeError:
+            # Some characters cause issues with caching; ignore and move on
+            pass
+
+    @classmethod
+    def create_cache_key(cls, setting_key, **kwargs):
+        """Create a unique cache key for a particular setting object.
+
+        The cache key uses the following elements to ensure the key is 'unique':
+        - The name of the class
+        - The unique KEY string
+        - Any key:value kwargs associated with the particular setting type (e.g. user-id)
+        """
+
+        key = f"{str(cls.__name__)}:{setting_key}"
+
+        for k, v in kwargs.items():
+            key += f"_{k}:{v}"
+
+        return key.replace(" ", "")
 
     @classmethod
     def allValues(cls, user=None, exclude_hidden=False):
-        """
-        Return a dict of "all" defined global settings.
+        """Return a dict of "all" defined global settings.
 
         This performs a single database lookup,
         and then any settings which are not *in* the database
         are assigned their default values
         """
-
         results = cls.objects.all()
 
         # Optionally filter by user
@@ -136,16 +184,24 @@ class BaseInvenTreeSetting(models.Model):
 
         return settings
 
+    def get_kwargs(self):
+        """Construct kwargs for doing class-based settings lookup, depending on *which* class we are.
+
+        This is necessary to abtract the settings object
+        from the implementing class (e.g plugins)
+
+        Subclasses should override this function to ensure the kwargs are correctly set.
+        """
+        return {}
+
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
-        """
-        Return the 'definition' of a particular settings value, as a dict object.
+        """Return the 'definition' of a particular settings value, as a dict object.
 
         - The 'settings' dict can be passed as a kwarg
         - If not passed, look for cls.SETTINGS
         - Returns an empty dict if the key is not found
         """
-
         settings = kwargs.get('settings', cls.SETTINGS)
 
         key = str(key).strip().upper()
@@ -157,69 +213,56 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def get_setting_name(cls, key, **kwargs):
-        """
-        Return the name of a particular setting.
+        """Return the name of a particular setting.
 
         If it does not exist, return an empty string.
         """
-
         setting = cls.get_setting_definition(key, **kwargs)
         return setting.get('name', '')
 
     @classmethod
     def get_setting_description(cls, key, **kwargs):
-        """
-        Return the description for a particular setting.
+        """Return the description for a particular setting.
 
         If it does not exist, return an empty string.
         """
-
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('description', '')
 
     @classmethod
     def get_setting_units(cls, key, **kwargs):
-        """
-        Return the units for a particular setting.
+        """Return the units for a particular setting.
 
         If it does not exist, return an empty string.
         """
-
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('units', '')
 
     @classmethod
     def get_setting_validator(cls, key, **kwargs):
-        """
-        Return the validator for a particular setting.
+        """Return the validator for a particular setting.
 
         If it does not exist, return None
         """
-
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('validator', None)
 
     @classmethod
     def get_setting_default(cls, key, **kwargs):
-        """
-        Return the default value for a particular setting.
+        """Return the default value for a particular setting.
 
         If it does not exist, return an empty string
         """
-
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('default', '')
 
     @classmethod
     def get_setting_choices(cls, key, **kwargs):
-        """
-        Return the validator choices available for a particular setting.
-        """
-
+        """Return the validator choices available for a particular setting."""
         setting = cls.get_setting_definition(key, **kwargs)
 
         choices = setting.get('choices', None)
@@ -232,16 +275,15 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def get_setting_object(cls, key, **kwargs):
-        """
-        Return an InvenTreeSetting object matching the given key.
+        """Return an InvenTreeSetting object matching the given key.
 
         - Key is case-insensitive
         - Returns None if no match is made
+
+        First checks the cache to see if this object has recently been accessed,
+        and returns the cached version if so.
         """
-
         key = str(key).strip().upper()
-
-        settings = cls.objects.all()
 
         filters = {
             'key__iexact': key,
@@ -257,15 +299,39 @@ class BaseInvenTreeSetting(models.Model):
         plugin = kwargs.get('plugin', None)
 
         if plugin is not None:
-            from plugin import InvenTreePluginBase
+            from plugin import InvenTreePlugin
 
-            if issubclass(plugin.__class__, InvenTreePluginBase):
+            if issubclass(plugin.__class__, InvenTreePlugin):
                 plugin = plugin.plugin_config()
 
             filters['plugin'] = plugin
             kwargs['plugin'] = plugin
 
+        # Filter by method
+        method = kwargs.get('method', None)
+
+        if method is not None:
+            filters['method'] = method
+
+        # Perform cache lookup by default
+        do_cache = kwargs.pop('cache', True)
+
+        ckey = cls.create_cache_key(key, **kwargs)
+
+        if do_cache:
+            try:
+                # First attempt to find the setting object in the cache
+                cached_setting = cache.get(ckey)
+
+                if cached_setting is not None:
+                    return cached_setting
+
+            except AppRegistryNotReady:
+                # Cache is not ready yet
+                do_cache = False
+
         try:
+            settings = cls.objects.all()
             setting = settings.filter(**filters).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
@@ -277,6 +343,10 @@ class BaseInvenTreeSetting(models.Model):
 
             # Unless otherwise specified, attempt to create the setting
             create = kwargs.get('create', True)
+
+            # Prevent creation of new settings objects when importing data
+            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+                create = False
 
             if create:
                 # Attempt to create a new settings object
@@ -294,15 +364,18 @@ class BaseInvenTreeSetting(models.Model):
                     # It might be the case that the database isn't created yet
                     pass
 
+        if setting and do_cache:
+            # Cache this setting object
+            setting.save_to_cache()
+
         return setting
 
     @classmethod
     def get_setting(cls, key, backup_value=None, **kwargs):
-        """
-        Get the value of a particular setting.
+        """Get the value of a particular setting.
+
         If it does not exist, return the backup value (default = None)
         """
-
         # If no backup value is specified, atttempt to retrieve a "default" value
         if backup_value is None:
             backup_value = cls.get_setting_default(key, **kwargs)
@@ -313,11 +386,11 @@ class BaseInvenTreeSetting(models.Model):
             value = setting.value
 
             # Cast to boolean if necessary
-            if setting.is_bool(**kwargs):
+            if setting.is_bool():
                 value = InvenTree.helpers.str2bool(value)
 
             # Cast to integer if necessary
-            if setting.is_int(**kwargs):
+            if setting.is_int():
                 try:
                     value = int(value)
                 except (ValueError, TypeError):
@@ -330,9 +403,7 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def set_setting(cls, key, value, change_user, create=True, **kwargs):
-        """
-        Set the value of a particular setting.
-        If it does not exist, option to create it.
+        """Set the value of a particular setting. If it does not exist, option to create it.
 
         Args:
             key: settings key
@@ -340,7 +411,6 @@ class BaseInvenTreeSetting(models.Model):
             change_user: User object (must be staff member to update a core setting)
             create: If True, create a new setting if the specified key does not exist.
         """
-
         if change_user is not None and not change_user.is_staff:
             return
 
@@ -355,9 +425,9 @@ class BaseInvenTreeSetting(models.Model):
             filters['user'] = user
 
         if plugin is not None:
-            from plugin import InvenTreePluginBase
+            from plugin import InvenTreePlugin
 
-            if issubclass(plugin.__class__, InvenTreePluginBase):
+            if issubclass(plugin.__class__, InvenTreePlugin):
                 filters['plugin'] = plugin.plugin_config()
             else:
                 filters['plugin'] = plugin
@@ -384,27 +454,34 @@ class BaseInvenTreeSetting(models.Model):
 
     @property
     def name(self):
-        return self.__class__.get_setting_name(self.key)
+        """Return name for setting."""
+        return self.__class__.get_setting_name(self.key, **self.get_kwargs())
 
     @property
     def default_value(self):
-        return self.__class__.get_setting_default(self.key)
+        """Return default_value for setting."""
+        return self.__class__.get_setting_default(self.key, **self.get_kwargs())
 
     @property
     def description(self):
-        return self.__class__.get_setting_description(self.key)
+        """Return description for setting."""
+        return self.__class__.get_setting_description(self.key, **self.get_kwargs())
 
     @property
     def units(self):
-        return self.__class__.get_setting_units(self.key)
+        """Return units for setting."""
+        return self.__class__.get_setting_units(self.key, **self.get_kwargs())
 
     def clean(self, **kwargs):
-        """
-        If a validator (or multiple validators) are defined for a particular setting key,
-        run them against the 'value' field.
-        """
-
+        """If a validator (or multiple validators) are defined for a particular setting key, run them against the 'value' field."""
         super().clean()
+
+        # Encode as native values
+        if self.is_int():
+            self.value = self.as_int()
+
+        elif self.is_bool():
+            self.value = self.as_bool()
 
         validator = self.__class__.get_setting_validator(self.key, **kwargs)
 
@@ -417,10 +494,7 @@ class BaseInvenTreeSetting(models.Model):
             raise ValidationError(_("Chosen value is not a valid option"))
 
     def run_validator(self, validator):
-        """
-        Run a validator against the 'value' field for this InvenTreeSetting object.
-        """
-
+        """Run a validator against the 'value' field for this InvenTreeSetting object."""
         if validator is None:
             return
 
@@ -455,18 +529,21 @@ class BaseInvenTreeSetting(models.Model):
 
         if callable(validator):
             # We can accept function validators with a single argument
-            validator(self.value)
+
+            if self.is_bool():
+                value = self.as_bool()
+
+            if self.is_int():
+                value = self.as_int()
+
+            validator(value)
 
     def validate_unique(self, exclude=None, **kwargs):
-        """
-        Ensure that the key:value pair is unique.
-        In addition to the base validators, this ensures that the 'key'
-        is unique, using a case-insensitive comparison.
+        """Ensure that the key:value pair is unique. In addition to the base validators, this ensures that the 'key' is unique, using a case-insensitive comparison.
 
         Note that sub-classes (UserSetting, PluginSetting) use other filters
         to determine if the setting is 'unique' or not
         """
-
         super().validate_unique(exclude)
 
         filters = {
@@ -492,18 +569,12 @@ class BaseInvenTreeSetting(models.Model):
         except self.DoesNotExist:
             pass
 
-    def choices(self, **kwargs):
-        """
-        Return the available choices for this setting (or None if no choices are defined)
-        """
-
-        return self.__class__.get_setting_choices(self.key, **kwargs)
+    def choices(self):
+        """Return the available choices for this setting (or None if no choices are defined)."""
+        return self.__class__.get_setting_choices(self.key, **self.get_kwargs())
 
     def valid_options(self):
-        """
-        Return a list of valid options for this setting
-        """
-
+        """Return a list of valid options for this setting."""
         choices = self.choices()
 
         if not choices:
@@ -511,23 +582,19 @@ class BaseInvenTreeSetting(models.Model):
 
         return [opt[0] for opt in choices]
 
-    def is_choice(self, **kwargs):
-        """
-        Check if this setting is a "choice" field
-        """
+    def is_choice(self):
+        """Check if this setting is a "choice" field."""
+        return self.__class__.get_setting_choices(self.key, **self.get_kwargs()) is not None
 
-        return self.__class__.get_setting_choices(self.key, **kwargs) is not None
+    def as_choice(self):
+        """Render this setting as the "display" value of a choice field.
 
-    def as_choice(self, **kwargs):
-        """
-        Render this setting as the "display" value of a choice field,
-        e.g. if the choices are:
+        E.g. if the choices are:
         [('A4', 'A4 paper'), ('A3', 'A3 paper')],
         and the value is 'A4',
         then display 'A4 paper'
         """
-
-        choices = self.get_setting_choices(self.key, **kwargs)
+        choices = self.get_setting_choices(self.key, **self.get_kwargs())
 
         if not choices:
             return self.value
@@ -538,41 +605,93 @@ class BaseInvenTreeSetting(models.Model):
 
         return self.value
 
-    def is_bool(self, **kwargs):
-        """
-        Check if this setting is required to be a boolean value
-        """
+    def is_model(self):
+        """Check if this setting references a model instance in the database."""
+        return self.model_name() is not None
 
-        validator = self.__class__.get_setting_validator(self.key, **kwargs)
+    def model_name(self):
+        """Return the model name associated with this setting."""
+        setting = self.get_setting_definition(self.key, **self.get_kwargs())
+
+        return setting.get('model', None)
+
+    def model_class(self):
+        """Return the model class associated with this setting.
+
+        If (and only if):
+        - It has a defined 'model' parameter
+        - The 'model' parameter is of the form app.model
+        - The 'model' parameter has matches a known app model
+        """
+        model_name = self.model_name()
+
+        if not model_name:
+            return None
+
+        try:
+            (app, mdl) = model_name.strip().split('.')
+        except ValueError:
+            logger.error(f"Invalid 'model' parameter for setting {self.key} : '{model_name}'")
+            return None
+
+        app_models = apps.all_models.get(app, None)
+
+        if app_models is None:
+            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no app named '{app}'")
+            return None
+
+        model = app_models.get(mdl, None)
+
+        if model is None:
+            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no model named '{mdl}'")
+            return None
+
+        # Looks like we have found a model!
+        return model
+
+    def api_url(self):
+        """Return the API url associated with the linked model, if provided, and valid!"""
+        model_class = self.model_class()
+
+        if model_class:
+            # If a valid class has been found, see if it has registered an API URL
+            try:
+                return model_class.get_api_url()
+            except Exception:
+                pass
+
+        return None
+
+    def is_bool(self):
+        """Check if this setting is required to be a boolean value."""
+        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
 
         return self.__class__.validator_is_bool(validator)
 
     def as_bool(self):
-        """
-        Return the value of this setting converted to a boolean value.
+        """Return the value of this setting converted to a boolean value.
 
         Warning: Only use on values where is_bool evaluates to true!
         """
-
         return InvenTree.helpers.str2bool(self.value)
 
-    def setting_type(self, **kwargs):
-        """
-        Return the field type identifier for this setting object
-        """
-
-        if self.is_bool(**kwargs):
+    def setting_type(self):
+        """Return the field type identifier for this setting object."""
+        if self.is_bool():
             return 'boolean'
 
-        elif self.is_int(**kwargs):
+        elif self.is_int():
             return 'integer'
+
+        elif self.is_model():
+            return 'related field'
 
         else:
             return 'string'
 
     @classmethod
     def validator_is_bool(cls, validator):
-
+        """Return if validator is for bool."""
         if validator == bool:
             return True
 
@@ -583,18 +702,15 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
-    def is_int(self, **kwargs):
-        """
-        Check if the setting is required to be an integer value:
-        """
-
-        validator = self.__class__.get_setting_validator(self.key, **kwargs)
+    def is_int(self,):
+        """Check if the setting is required to be an integer value."""
+        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
 
         return self.__class__.validator_is_int(validator)
 
     @classmethod
     def validator_is_int(cls, validator):
-
+        """Return if validator is for int."""
         if validator == int:
             return True
 
@@ -606,12 +722,10 @@ class BaseInvenTreeSetting(models.Model):
         return False
 
     def as_int(self):
-        """
-        Return the value of this setting converted to a boolean value.
+        """Return the value of this setting converted to a boolean value.
 
         If an error occurs, return the default value
         """
-
         try:
             value = int(self.value)
         except (ValueError, TypeError):
@@ -621,40 +735,51 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def is_protected(cls, key, **kwargs):
-        """
-        Check if the setting value is protected
-        """
-
+        """Check if the setting value is protected."""
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('protected', False)
 
+    @property
+    def protected(self):
+        """Returns if setting is protected from rendering."""
+        return self.__class__.is_protected(self.key, **self.get_kwargs())
+
 
 def settings_group_options():
-    """
-    Build up group tuple for settings based on your choices
-    """
+    """Build up group tuple for settings based on your choices."""
     return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
 
 
+def update_instance_url(setting):
+    """Update the first site objects domain to url."""
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.domain = setting.value
+    site_obj.save()
+
+
+def update_instance_name(setting):
+    """Update the first site objects name to instance name."""
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.name = setting.value
+    site_obj.save()
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
-    """
-    An InvenTreeSetting object is a key:value pair used for storing
-    single values (e.g. one-off settings values).
+    """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     The class provides a way of retrieving the value for a particular key,
     even if that key does not exist.
     """
 
     def save(self, *args, **kwargs):
-        """
-        When saving a global setting, check to see if it requires a server restart.
+        """When saving a global setting, check to see if it requires a server restart.
+
         If so, set the "SERVER_RESTART_REQUIRED" setting to True
         """
-
         super().save()
 
-        if self.requires_restart():
+        if self.requires_restart() and not InvenTree.ready.isImportingData():
             InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
 
     """
@@ -685,8 +810,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'INVENTREE_INSTANCE': {
             'name': _('Server Instance Name'),
-            'default': 'InvenTree server',
+            'default': 'InvenTree',
             'description': _('String descriptor for the server instance'),
+            'after_save': update_instance_name,
         },
 
         'INVENTREE_INSTANCE_TITLE': {
@@ -714,6 +840,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Base URL for server instance'),
             'validator': EmptyURLValidator(),
             'default': '',
+            'after_save': update_instance_url,
         },
 
         'INVENTREE_DEFAULT_CURRENCY': {
@@ -730,9 +857,45 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
         },
 
+        'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE': {
+            'name': _('Download Size Limit'),
+            'description': _('Maximum allowable download size for remote image'),
+            'units': 'MB',
+            'default': 1,
+            'validator': [
+                int,
+                MinValueValidator(1),
+                MaxValueValidator(25),
+            ]
+        },
+
+        'INVENTREE_REQUIRE_CONFIRM': {
+            'name': _('Require confirm'),
+            'description': _('Require explicit user confirmation for certain action.'),
+            'validator': bool,
+            'default': True,
+        },
+
+        'INVENTREE_TREE_DEPTH': {
+            'name': _('Tree Depth'),
+            'description': _('Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed.'),
+            'default': 1,
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ]
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'BARCODE_WEBCAM_SUPPORT': {
+            'name': _('Barcode Webcam Support'),
+            'description': _('Allow barcode scanning via webcam in browser'),
             'default': True,
             'validator': bool,
         },
@@ -907,6 +1070,29 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': InvenTree.validators.validate_part_name_format
         },
 
+        'PART_CATEGORY_DEFAULT_ICON': {
+            'name': _('Part Category Default Icon'),
+            'description': _('Part category default icon (empty means no icon)'),
+            'default': '',
+        },
+
+        'LABEL_ENABLE': {
+            'name': _('Enable label printing'),
+            'description': _('Enable label printing from the web interface'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'LABEL_DPI': {
+            'name': _('Label Image DPI'),
+            'description': _('DPI resolution when generating image files to supply to label printing plugins'),
+            'default': 300,
+            'validator': [
+                int,
+                MinValueValidator(100),
+            ]
+        },
+
         'REPORT_ENABLE': {
             'name': _('Enable Reports'),
             'description': _('Enable generation of reports'),
@@ -933,9 +1119,16 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'REPORT_ENABLE_TEST_REPORT': {
-            'name': _('Test Reports'),
+            'name': _('Enable Test Reports'),
             'description': _('Enable generation of test reports'),
             'default': True,
+            'validator': bool,
+        },
+
+        'REPORT_ATTACH_TEST_REPORT': {
+            'name': _('Attach Test Reports'),
+            'description': _('When printing a Test Report, attach a copy of the Test Report to the associated Stock Item'),
+            'default': False,
             'validator': bool,
         },
 
@@ -981,27 +1174,38 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'BUILDORDER_REFERENCE_PREFIX': {
-            'name': _('Build Order Reference Prefix'),
-            'description': _('Prefix value for build order reference'),
-            'default': 'BO',
+        'STOCK_LOCATION_DEFAULT_ICON': {
+            'name': _('Stock Location Default Icon'),
+            'description': _('Stock location default icon (empty means no icon)'),
+            'default': '',
         },
 
-        'BUILDORDER_REFERENCE_REGEX': {
-            'name': _('Build Order Reference Regex'),
-            'description': _('Regular expression pattern for matching build order reference')
+        'BUILDORDER_REFERENCE_PATTERN': {
+            'name': _('Build Order Reference Pattern'),
+            'description': _('Required pattern for generating Build Order reference field'),
+            'default': 'BO-{ref:04d}',
+            'validator': build.validators.validate_build_order_reference_pattern,
         },
 
-        'SALESORDER_REFERENCE_PREFIX': {
-            'name': _('Sales Order Reference Prefix'),
-            'description': _('Prefix value for sales order reference'),
-            'default': 'SO',
+        'SALESORDER_REFERENCE_PATTERN': {
+            'name': _('Sales Order Reference Pattern'),
+            'description': _('Required pattern for generating Sales Order reference field'),
+            'default': 'SO-{ref:04d}',
+            'validator': order.validators.validate_sales_order_reference_pattern,
         },
 
-        'PURCHASEORDER_REFERENCE_PREFIX': {
-            'name': _('Purchase Order Reference Prefix'),
-            'description': _('Prefix value for purchase order reference'),
-            'default': 'PO',
+        'SALESORDER_DEFAULT_SHIPMENT': {
+            'name': _('Sales Order Default Shipment'),
+            'description': _('Enable creation of default shipment with sales orders'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PURCHASEORDER_REFERENCE_PATTERN': {
+            'name': _('Purchase Order Reference Pattern'),
+            'description': _('Required pattern for generating Purchase Order reference field'),
+            'default': 'PO-{ref:04d}',
+            'validator': order.validators.validate_purchase_order_reference_pattern,
         },
 
         # login / SSO
@@ -1011,48 +1215,56 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
         'LOGIN_ENABLE_REG': {
             'name': _('Enable registration'),
             'description': _('Enable self-registration for users on the login pages'),
             'default': False,
             'validator': bool,
         },
+
         'LOGIN_ENABLE_SSO': {
             'name': _('Enable SSO'),
             'description': _('Enable SSO on the login pages'),
             'default': False,
             'validator': bool,
         },
+
         'LOGIN_MAIL_REQUIRED': {
             'name': _('Email required'),
             'description': _('Require user to supply mail on signup'),
             'default': False,
             'validator': bool,
         },
+
         'LOGIN_SIGNUP_SSO_AUTO': {
             'name': _('Auto-fill SSO users'),
             'description': _('Automatically fill out user-details from SSO account-data'),
             'default': True,
             'validator': bool,
         },
+
         'LOGIN_SIGNUP_MAIL_TWICE': {
             'name': _('Mail twice'),
             'description': _('On signup ask users twice for their mail'),
             'default': False,
             'validator': bool,
         },
+
         'LOGIN_SIGNUP_PWD_TWICE': {
             'name': _('Password twice'),
             'description': _('On signup ask users twice for their password'),
             'default': True,
             'validator': bool,
         },
+
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
             'description': _('Group to which new users are assigned on registration'),
             'default': '',
             'choices': settings_group_options
         },
+
         'LOGIN_ENFORCE_MFA': {
             'name': _('Enforce MFA'),
             'description': _('Users must use multifactor security.'),
@@ -1067,6 +1279,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
+        'PLUGIN_CHECK_SIGNATURES': {
+            'name': _('Check plugin signatures'),
+            'description': _('Check and show signatures for plugins'),
+            'default': False,
+            'validator': bool,
+        },
+
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
@@ -1075,6 +1295,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
         'ENABLE_PLUGINS_NAVIGATION': {
             'name': _('Enable navigation integration'),
             'description': _('Enable plugins to integrate into navigation'),
@@ -1082,6 +1303,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
         'ENABLE_PLUGINS_APP': {
             'name': _('Enable app integration'),
             'description': _('Enable plugins to add apps'),
@@ -1089,6 +1311,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
         'ENABLE_PLUGINS_SCHEDULE': {
             'name': _('Enable schedule integration'),
             'description': _('Enable plugins to run scheduled tasks'),
@@ -1096,6 +1319,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
         'ENABLE_PLUGINS_EVENTS': {
             'name': _('Enable event integration'),
             'description': _('Enable plugins to respond to internal events'),
@@ -1105,7 +1329,11 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
     }
 
+    typ = 'inventree'
+
     class Meta:
+        """Meta options for InvenTreeSetting."""
+
         verbose_name = "InvenTree Setting"
         verbose_name_plural = "InvenTree Settings"
 
@@ -1117,18 +1345,11 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     )
 
     def to_native_value(self):
-        """
-        Return the "pythonic" value,
-        e.g. convert "True" to True, and "1" to 1
-        """
-
+        """Return the "pythonic" value, e.g. convert "True" to True, and "1" to 1."""
         return self.__class__.get_setting(self.key)
 
     def requires_restart(self):
-        """
-        Return True if this setting requires a server restart after changing
-        """
-
+        """Return True if this setting requires a server restart after changing."""
         options = InvenTreeSetting.SETTINGS.get(self.key, None)
 
         if options:
@@ -1138,9 +1359,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
-    """
-    An InvenTreeSetting object with a usercontext
-    """
+    """An InvenTreeSetting object with a usercontext."""
 
     SETTINGS = {
         'HOMEPAGE_PART_STARRED': {
@@ -1149,18 +1368,21 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_CATEGORY_STARRED': {
             'name': _('Show subscribed categories'),
             'description': _('Show subscribed part categories on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_PART_LATEST': {
             'name': _('Show latest parts'),
             'description': _('Show latest parts on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'PART_RECENT_COUNT': {
             'name': _('Recent Part Count'),
             'description': _('Number of recent parts to display on index page'),
@@ -1174,95 +1396,94 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_STOCK_RECENT': {
             'name': _('Show recent stock changes'),
             'description': _('Show recently changed stock items on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'STOCK_RECENT_COUNT': {
             'name': _('Recent Stock Count'),
             'description': _('Number of recent stock items to display on index page'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
         },
+
         'HOMEPAGE_STOCK_LOW': {
             'name': _('Show low stock'),
             'description': _('Show low stock items on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_STOCK_DEPLETED': {
             'name': _('Show depleted stock'),
             'description': _('Show depleted stock items on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_STOCK_NEEDED': {
             'name': _('Show needed stock'),
             'description': _('Show stock items needed for builds on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_STOCK_EXPIRED': {
             'name': _('Show expired stock'),
             'description': _('Show expired stock items on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_STOCK_STALE': {
             'name': _('Show stale stock'),
             'description': _('Show stale stock items on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_BUILD_PENDING': {
             'name': _('Show pending builds'),
             'description': _('Show pending builds on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_BUILD_OVERDUE': {
             'name': _('Show overdue builds'),
             'description': _('Show overdue builds on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_PO_OUTSTANDING': {
             'name': _('Show outstanding POs'),
             'description': _('Show outstanding POs on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_PO_OVERDUE': {
             'name': _('Show overdue POs'),
             'description': _('Show overdue POs on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_SO_OUTSTANDING': {
             'name': _('Show outstanding SOs'),
             'description': _('Show outstanding SOs on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_SO_OVERDUE': {
             'name': _('Show overdue SOs'),
             'description': _('Show overdue SOs on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-
-        'NOTIFICATION_SEND_EMAILS': {
-            'name': _('Enable email notifications'),
-            'description': _('Allow sending of emails for event notifications'),
-            'default': True,
-            'validator': bool,
-        },
-
-        'LABEL_ENABLE': {
-            'name': _('Enable label printing'),
-            'description': _('Enable label printing from the web interface'),
             'default': True,
             'validator': bool,
         },
@@ -1288,6 +1509,27 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS': {
+            'name': _('Seach Supplier Parts'),
+            'description': _('Display supplier parts in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS': {
+            'name': _('Search Manufacturer Parts'),
+            'description': _('Display manufacturer parts in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_HIDE_INACTIVE_PARTS': {
+            'name': _("Hide Inactive Parts"),
+            'description': _('Excluded inactive parts from search preview window'),
+            'default': False,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_CATEGORIES': {
             'name': _('Search Categories'),
             'description': _('Display part categories in search preview window'),
@@ -1300,6 +1542,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Display stock items in search preview window'),
             'default': True,
             'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK': {
+            'name': _('Hide Unavailable Stock Items'),
+            'description': _('Exclude stock items which are not available from the search preview window'),
+            'validator': bool,
+            'default': False,
         },
 
         'SEARCH_PREVIEW_SHOW_LOCATIONS': {
@@ -1323,6 +1572,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS': {
+            'name': _('Exclude Inactive Purchase Orders'),
+            'description': _('Exclude inactive purchase orders from search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_SALES_ORDERS': {
             'name': _('Search Sales Orders'),
             'description': _('Display sales orders in search preview window'),
@@ -1330,18 +1586,18 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS': {
+            'name': _('Exclude Inactive Sales Orders'),
+            'description': _('Exclude inactive sales orders from search preview window'),
+            'validator': bool,
+            'default': True,
+        },
+
         'SEARCH_PREVIEW_RESULTS': {
             'name': _('Search Preview Results'),
             'description': _('Number of results to show in each section of the search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
-        },
-
-        'SEARCH_HIDE_INACTIVE_PARTS': {
-            'name': _("Hide Inactive Parts"),
-            'description': _('Hide inactive parts in search preview window'),
-            'default': False,
-            'validator': bool,
         },
 
         'PART_SHOW_QUANTITY_IN_FORMS': {
@@ -1388,7 +1644,11 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         },
     }
 
+    typ = 'user'
+
     class Meta:
+        """Meta options for InvenTreeUserSetting."""
+
         verbose_name = "InvenTree User Setting"
         verbose_name_plural = "InvenTree User Settings"
         constraints = [
@@ -1410,28 +1670,27 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         help_text=_('User'),
     )
 
-    @classmethod
-    def get_setting_object(cls, key, user):
-        return super().get_setting_object(key, user=user)
-
     def validate_unique(self, exclude=None, **kwargs):
+        """Return if the setting (including key) is unique."""
         return super().validate_unique(exclude=exclude, user=self.user)
 
     def to_native_value(self):
-        """
-        Return the "pythonic" value,
-        e.g. convert "True" to True, and "1" to 1
-        """
-
+        """Return the "pythonic" value, e.g. convert "True" to True, and "1" to 1."""
         return self.__class__.get_setting(self.key, user=self.user)
+
+    def get_kwargs(self):
+        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
+        return {
+            'user': self.user,
+        }
 
 
 class PriceBreak(models.Model):
-    """
-    Represents a PriceBreak model
-    """
+    """Represents a PriceBreak model."""
 
     class Meta:
+        """Define this as abstract -> no DB entry is created."""
+
         abstract = True
 
     quantity = InvenTree.fields.RoundingDecimalField(
@@ -1452,13 +1711,11 @@ class PriceBreak(models.Model):
     )
 
     def convert_to(self, currency_code):
-        """
-        Convert the unit-price at this price break to the specified currency code.
+        """Convert the unit-price at this price break to the specified currency code.
 
         Args:
-            currency_code - The currency code to convert to (e.g "USD" or "AUD")
+            currency_code: The currency code to convert to (e.g "USD" or "AUD")
         """
-
         try:
             converted = convert_money(self.price, currency_code)
         except MissingRate:
@@ -1469,7 +1726,7 @@ class PriceBreak(models.Model):
 
 
 def get_price(instance, quantity, moq=True, multiples=True, currency=None, break_name: str = 'price_breaks'):
-    """ Calculate the price based on quantity price breaks.
+    """Calculate the price based on quantity price breaks.
 
     - Don't forget to add in flat-fee cost (base_cost field)
     - If MOQ (minimum order quantity) is required, bump quantity
@@ -1539,7 +1796,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
 
 
 class ColorTheme(models.Model):
-    """ Color Theme Setting """
+    """Color Theme Setting."""
     name = models.CharField(max_length=20,
                             default='',
                             blank=True)
@@ -1549,12 +1806,16 @@ class ColorTheme(models.Model):
 
     @classmethod
     def get_color_themes_choices(cls):
-        """ Get all color themes from static folder """
+        """Get all color themes from static folder."""
+        if not settings.STATIC_COLOR_THEMES_DIR.exists():
+            logger.error('Theme directory does not exsist')
+            return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
-        for file in os.listdir(settings.STATIC_COLOR_THEMES_DIR):
-            files_list.append(os.path.splitext(file))
+
+        for file in settings.STATIC_COLOR_THEMES_DIR.iterdir():
+            files_list.append([file.stem, file.suffix])
 
         # Get color themes choices (CSS sheets)
         choices = [(file_name.lower(), _(file_name.replace('-', ' ').title()))
@@ -1565,7 +1826,7 @@ class ColorTheme(models.Model):
 
     @classmethod
     def is_valid_choice(cls, user_color_theme):
-        """ Check if color theme is valid choice """
+        """Check if color theme is valid choice."""
         try:
             user_color_theme_name = user_color_theme.name
         except AttributeError:
@@ -1578,14 +1839,15 @@ class ColorTheme(models.Model):
         return False
 
 
-class VerificationMethod:
+class VerificationMethod(Enum):
+    """Class to hold method references."""
     NONE = 0
     TOKEN = 1
     HMAC = 2
 
 
 class WebhookEndpoint(models.Model):
-    """ Defines a Webhook entdpoint
+    """Defines a Webhook entdpoint.
 
     Attributes:
         endpoint_id: Path to the webhook,
@@ -1650,18 +1912,30 @@ class WebhookEndpoint(models.Model):
     # To be overridden
 
     def init(self, request, *args, **kwargs):
+        """Set verification method.
+
+        Args:
+            request: Original request object.
+        """
         self.verify = self.VERIFICATION_METHOD
 
     def process_webhook(self):
+        """Process the webhook incomming.
+
+        This does not deal with the data itself - that happens in process_payload.
+        Do not touch or pickle data here - it was not verified to be safe.
+        """
         if self.token:
             self.verify = VerificationMethod.TOKEN
-            # TODO make a object-setting
         if self.secret:
             self.verify = VerificationMethod.HMAC
-            # TODO make a object-setting
         return True
 
     def validate_token(self, payload, headers, request):
+        """Make sure that the provided token (if any) confirms to the setting for this endpoint.
+
+        This can be overridden to create your own token validation method.
+        """
         token = headers.get(self.TOKEN_NAME, "")
 
         # no token
@@ -1683,7 +1957,14 @@ class WebhookEndpoint(models.Model):
 
         return True
 
-    def save_data(self, payload, headers=None, request=None):
+    def save_data(self, payload=None, headers=None, request=None):
+        """Safes payload to database.
+
+        Args:
+            payload  (optional): Payload that was send along. Defaults to None.
+            headers (optional): Headers that were send along. Defaults to None.
+            request (optional): Original request object. Defaults to None.
+        """
         return WebhookMessage.objects.create(
             host=request.get_host(),
             header=json.dumps({key: val for key, val in headers.items()}),
@@ -1691,15 +1972,35 @@ class WebhookEndpoint(models.Model):
             endpoint=self,
         )
 
-    def process_payload(self, message, payload=None, headers=None):
+    def process_payload(self, message, payload=None, headers=None) -> bool:
+        """Process a payload.
+
+        Args:
+            message: DB entry for this message mm
+            payload (optional): Payload that was send along. Defaults to None.
+            headers (optional): Headers that were included. Defaults to None.
+
+        Returns:
+            bool: Was the message processed
+        """
         return True
 
-    def get_return(self, payload, headers=None, request=None):
+    def get_return(self, payload=None, headers=None, request=None) -> str:
+        """Returns the message that should be returned to the endpoint caller.
+
+        Args:
+            payload  (optional): Payload that was send along. Defaults to None.
+            headers (optional): Headers that were send along. Defaults to None.
+            request (optional): Original request object. Defaults to None.
+
+        Returns:
+            str: Message for caller.
+        """
         return self.MESSAGE_OK
 
 
 class WebhookMessage(models.Model):
-    """ Defines a webhook message
+    """Defines a webhook message.
 
     Attributes:
         message_id: Unique identifier for this message,
@@ -1756,8 +2057,7 @@ class WebhookMessage(models.Model):
 
 
 class NotificationEntry(models.Model):
-    """
-    A NotificationEntry records the last time a particular notifaction was sent out.
+    """A NotificationEntry records the last time a particular notifaction was sent out.
 
     It is recorded to ensure that notifications are not sent out "too often" to users.
 
@@ -1768,6 +2068,8 @@ class NotificationEntry(models.Model):
     """
 
     class Meta:
+        """Meta options for NotificationEntry."""
+
         unique_together = [
             ('key', 'uid'),
         ]
@@ -1787,10 +2089,7 @@ class NotificationEntry(models.Model):
 
     @classmethod
     def check_recent(cls, key: str, uid: int, delta: timedelta):
-        """
-        Test if a particular notification has been sent in the specified time period
-        """
-
+        """Test if a particular notification has been sent in the specified time period."""
         since = datetime.now().date() - delta
 
         entries = cls.objects.filter(
@@ -1803,10 +2102,7 @@ class NotificationEntry(models.Model):
 
     @classmethod
     def notify(cls, key: str, uid: int):
-        """
-        Notify the database that a particular notification has been sent out
-        """
-
+        """Notify the database that a particular notification has been sent out."""
         entry, created = cls.objects.get_or_create(
             key=key,
             uid=uid
@@ -1816,8 +2112,7 @@ class NotificationEntry(models.Model):
 
 
 class NotificationMessage(models.Model):
-    """
-    A NotificationEntry records the last time a particular notifaction was sent out.
+    """A NotificationEntry records the last time a particular notifaction was sent out.
 
     It is recorded to ensure that notifications are not sent out "too often" to users.
 
@@ -1890,13 +2185,14 @@ class NotificationMessage(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return API endpoint."""
         return reverse('api-notifications-list')
 
     def age(self):
-        """age of the message in seconds"""
+        """Age of the message in seconds."""
         delta = now() - self.creation
         return delta.seconds
 
     def age_human(self):
-        """humanized age"""
+        """Humanized age."""
         return naturaltime(self.creation)

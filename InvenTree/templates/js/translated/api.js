@@ -14,11 +14,11 @@
 $.urlParam = function(name) {
     // eslint-disable-next-line no-useless-escape
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-    
+
     if (results == null) {
         return null;
     }
-    
+
     return decodeURI(results[1]) || 0;
 };
 
@@ -80,9 +80,9 @@ function inventreeGet(url, filters={}, options={}) {
 
 function inventreeFormDataUpload(url, data, options={}) {
     /* Upload via AJAX using the FormData approach.
-     * 
+     *
      * Note that the following AJAX parameters are required for FormData upload
-     * 
+     *
      * processData: false
      * contentType: false
      */
@@ -105,7 +105,7 @@ function inventreeFormDataUpload(url, data, options={}) {
             }
         },
         error: function(xhr, status, error) {
-            console.log('Form data upload failure: ' + status);
+            console.error('Form data upload failure: ' + status);
 
             if (options.error) {
                 options.error(xhr, status, error);
@@ -159,17 +159,22 @@ function inventreePut(url, data={}, options={}) {
 }
 
 
+/*
+ * Performs a DELETE API call to the server
+ */
 function inventreeDelete(url, options={}) {
-    /*
-     * Delete a record
-     */
 
     options = options || {};
 
     options.method = 'DELETE';
 
-    return inventreePut(url, {}, options);
+    return inventreePut(
+        url,
+        options.data || {},
+        options
+    );
 }
+
 
 /*
  * Display a notification with error information
@@ -225,6 +230,20 @@ function showApiError(xhr, url) {
     default:
         title = '{% trans "Unhandled Error Code" %}';
         message = `{% trans "Error code" %}: ${xhr.status}`;
+
+        var response = xhr.responseJSON;
+
+        // The server may have provided some extra information about this error
+        if (response) {
+            if (response.error) {
+                title = response.error;
+            }
+
+            if (response.detail) {
+                message = response.detail;
+            }
+        }
+
         break;
     }
 

@@ -30,7 +30,7 @@
                     <span class='fas fa-sign-in-alt'></span> {% trans "Receive Items" %}
                 </button>
                 {% endif %}
-                {% endif %}  
+                {% endif %}
             </div>
         </div>
     </div>
@@ -38,8 +38,31 @@
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
             {% include "filter_list.html" with id="purchase-order-lines" %}
         </div>
-        
+
         <table class='table table-striped table-condensed' id='po-line-table' data-toolbar='#order-toolbar-buttons'>
+        </table>
+    </div>
+
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Extra Lines" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.change and order.status == PurchaseOrderStatus.PENDING %}
+                <button type='button' class='btn btn-success' id='new-po-extra-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='order-extra-toolbar-buttons' class='btn-group' style='float: right;'>
+            <div class='btn-group'>
+                {% include "filter_list.html" with id="purchase-order-extra-lines" %}
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' id='po-extra-lines-table' data-toolbar='#order-extra-toolbar-buttons'>
         </table>
     </div>
 </div>
@@ -112,7 +135,7 @@
             },
             label: 'attachment',
             success: function(data, status, xhr) {
-                location.reload();
+                $('#attachment-table').bootstrapTable('refresh');
             }
         }
     );
@@ -145,32 +168,23 @@
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $('#new-po-line').click(function() {
 
-    var fields = poLineItemFields({
-        order: {{ order.pk }},
+    createPurchaseOrderLineItem({{ order.pk }}, {
+        {% if order.supplier %}
         supplier: {{ order.supplier.pk }},
         {% if order.supplier.currency %}
         currency: '{{ order.supplier.currency }}',
         {% endif %}
-    });
-
-    constructForm('{% url "api-po-line-list" %}', {
-        fields: fields,
-        method: 'POST',
-        title: '{% trans "Add Line Item" %}',
+        {% endif %}
         onSuccess: function() {
             $('#po-line-table').bootstrapTable('refresh');
-        },
+        }
     });
 });
 
 {% elif order.status == PurchaseOrderStatus.PLACED %}
 
     $('#receive-selected-items').click(function() {
-        var items = $("#po-line-table").bootstrapTable('getSelections');
-
-        if (items.length == 0) {
-            items = $("#po-line-table").bootstrapTable('getData');
-        }
+        var items = getTableData('#po-line-table');
 
         receivePurchaseOrderItems(
             {{ order.id }},
@@ -187,7 +201,9 @@ $('#new-po-line').click(function() {
 
 loadPurchaseOrderLineItemTable('#po-line-table', {
     order: {{ order.pk }},
+    {% if order.supplier %}
     supplier: {{ order.supplier.pk }},
+    {% endif %}
     {% if roles.purchase_order.change %}
     allow_edit: true,
     {% else %}
@@ -199,6 +215,41 @@ loadPurchaseOrderLineItemTable('#po-line-table', {
     allow_receive: false,
     {% endif %}
 });
+
+$("#new-po-extra-line").click(function() {
+
+    var fields = extraLineFields({
+        order: {{ order.pk }},
+    });
+
+    {% if order.supplier.currency %}
+    fields.price_currency.value = '{{ order.supplier.currency }}';
+    {% endif %}
+
+    constructForm('{% url "api-po-extra-line-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Order Line" %}',
+        onSuccess: function() {
+            $("#po-extra-lines-table").bootstrapTable("refresh");
+        },
+    });
+});
+
+loadPurchaseOrderExtraLineTable(
+    '#po-extra-lines-table',
+    {
+        order: {{ order.pk }},
+        status: {{ order.status }},
+    }
+);
+
+loadOrderTotal(
+    '#poTotalPrice',
+    {
+        url: '{% url "api-po-detail" order.pk %}',
+    }
+);
 
 enableSidebar('purchaseorder');
 

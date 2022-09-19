@@ -1,51 +1,47 @@
-"""
-Provides a JSON API for common components.
-"""
-
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Provides a JSON API for common components."""
 
 import json
 
 from django.http.response import HttpResponse
+from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
-from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
-from django.conf.urls import url, include
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.exceptions import NotAcceptable, NotFound
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, permissions
-from rest_framework import serializers
 from django_q.tasks import async_task
+from rest_framework import filters, permissions, serializers
+from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 import common.models
 import common.serializers
+from InvenTree.api import BulkDeleteMixin
 from InvenTree.helpers import inheritors
+from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveAPI,
+                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+from plugin.models import NotificationUserSetting
+from plugin.serializers import NotificationUserSettingSerializer
 
 
 class CsrfExemptMixin(object):
-    """
-    Exempts the view from CSRF requirements.
-    """
+    """Exempts the view from CSRF requirements."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
-        return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
+        """Overwrites dispatch to be extempt from csrf checks."""
+        return super().dispatch(*args, **kwargs)
 
 
 class WebhookView(CsrfExemptMixin, APIView):
-    """
-    Endpoint for receiving webhooks.
-    """
+    """Endpoint for receiving webhooks."""
     authentication_classes = []
     permission_classes = []
     model_class = common.models.WebhookEndpoint
     run_async = False
 
     def post(self, request, endpoint, *args, **kwargs):
+        """Process incomming webhook."""
         # get webhook definition
         self._get_webhook(endpoint, request, *args, **kwargs)
 
@@ -103,7 +99,11 @@ class WebhookView(CsrfExemptMixin, APIView):
             raise NotFound()
 
 
-class SettingsList(generics.ListAPIView):
+class SettingsList(ListAPI):
+    """Generic ListView for settings.
+
+    This is inheritted by all list views for settings.
+    """
 
     filter_backends = [
         DjangoFilterBackend,
@@ -123,63 +123,66 @@ class SettingsList(generics.ListAPIView):
 
 
 class GlobalSettingsList(SettingsList):
-    """
-    API endpoint for accessing a list of global settings objects
-    """
+    """API endpoint for accessing a list of global settings objects."""
 
     queryset = common.models.InvenTreeSetting.objects.all()
     serializer_class = common.serializers.GlobalSettingsSerializer
 
 
 class GlobalSettingsPermissions(permissions.BasePermission):
-    """
-    Special permission class to determine if the user is "staff"
-    """
+    """Special permission class to determine if the user is "staff"."""
 
     def has_permission(self, request, view):
-        """
-        Check that the requesting user is 'admin'
-        """
-
+        """Check that the requesting user is 'admin'."""
         try:
             user = request.user
 
-            return user.is_staff
-        except AttributeError:
+            if request.method in ['GET', 'HEAD', 'OPTIONS']:
+                return True
+            else:
+                # Any other methods require staff access permissions
+                return user.is_staff
+
+        except AttributeError:  # pragma: no cover
             return False
 
 
-class GlobalSettingsDetail(generics.RetrieveUpdateAPIView):
-    """
-    Detail view for an individual "global setting" object.
+class GlobalSettingsDetail(RetrieveUpdateAPI):
+    """Detail view for an individual "global setting" object.
 
     - User must have 'staff' status to view / edit
     """
 
+    lookup_field = 'key'
     queryset = common.models.InvenTreeSetting.objects.all()
     serializer_class = common.serializers.GlobalSettingsSerializer
 
+    def get_object(self):
+        """Attempt to find a global setting object with the provided key."""
+        key = self.kwargs['key']
+
+        if key not in common.models.InvenTreeSetting.SETTINGS.keys():
+            raise NotFound()
+
+        return common.models.InvenTreeSetting.get_setting_object(key)
+
     permission_classes = [
+        permissions.IsAuthenticated,
         GlobalSettingsPermissions,
     ]
 
 
 class UserSettingsList(SettingsList):
-    """
-    API endpoint for accessing a list of user settings objects
-    """
+    """API endpoint for accessing a list of user settings objects."""
 
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
 
     def filter_queryset(self, queryset):
-        """
-        Only list settings which apply to the current user
-        """
-
+        """Only list settings which apply to the current user."""
         try:
             user = self.request.user
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return common.models.InvenTreeUserSetting.objects.none()
 
         queryset = super().filter_queryset(queryset)
@@ -190,38 +193,83 @@ class UserSettingsList(SettingsList):
 
 
 class UserSettingsPermissions(permissions.BasePermission):
-    """
-    Special permission class to determine if the user can view / edit a particular setting
-    """
+    """Special permission class to determine if the user can view / edit a particular setting."""
 
     def has_object_permission(self, request, view, obj):
-
+        """Check if the user that requested is also the object owner."""
         try:
             user = request.user
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return False
 
         return user == obj.user
 
 
-class UserSettingsDetail(generics.RetrieveUpdateAPIView):
-    """
-    Detail view for an individual "user setting" object
+class UserSettingsDetail(RetrieveUpdateAPI):
+    """Detail view for an individual "user setting" object.
 
     - User can only view / edit settings their own settings objects
     """
 
+    lookup_field = 'key'
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
+
+    def get_object(self):
+        """Attempt to find a user setting object with the provided key."""
+        key = self.kwargs['key']
+
+        if key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
+            raise NotFound()
+
+        return common.models.InvenTreeUserSetting.get_setting_object(key, user=self.request.user)
 
     permission_classes = [
         UserSettingsPermissions,
     ]
 
 
-class NotificationList(generics.ListAPIView):
+class NotificationUserSettingsList(SettingsList):
+    """API endpoint for accessing a list of notification user settings objects."""
+
+    queryset = NotificationUserSetting.objects.all()
+    serializer_class = NotificationUserSettingSerializer
+
+    def filter_queryset(self, queryset):
+        """Only list settings which apply to the current user."""
+        try:
+            user = self.request.user
+        except AttributeError:
+            return NotificationUserSetting.objects.none()
+
+        queryset = super().filter_queryset(queryset)
+        queryset = queryset.filter(user=user)
+        return queryset
+
+
+class NotificationUserSettingsDetail(RetrieveUpdateAPI):
+    """Detail view for an individual "notification user setting" object.
+
+    - User can only view / edit settings their own settings objects
+    """
+
+    queryset = NotificationUserSetting.objects.all()
+    serializer_class = NotificationUserSettingSerializer
+
+    permission_classes = [
+        UserSettingsPermissions,
+    ]
+
+
+class NotificationList(BulkDeleteMixin, ListAPI):
+    """List view for all notifications of the current user."""
+
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -233,6 +281,7 @@ class NotificationList(generics.ListAPIView):
         'category',
         'name',
         'read',
+        'creation',
     ]
 
     search_fields = [
@@ -240,16 +289,13 @@ class NotificationList(generics.ListAPIView):
         'message',
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'category',
         'read',
     ]
 
     def filter_queryset(self, queryset):
-        """
-        Only list notifications which apply to the current user
-        """
-
+        """Only list notifications which apply to the current user."""
         try:
             user = self.request.user
         except AttributeError:
@@ -259,10 +305,15 @@ class NotificationList(generics.ListAPIView):
         queryset = queryset.filter(user=user)
         return queryset
 
+    def filter_delete_queryset(self, queryset, request):
+        """Ensure that the user can only delete their *own* notifications"""
 
-class NotificationDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Detail view for an individual notification object
+        queryset = queryset.filter(user=request.user)
+        return queryset
+
+
+class NotificationDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for an individual notification object.
 
     - User can only view / delete their own notification objects
     """
@@ -274,10 +325,8 @@ class NotificationDetail(generics.RetrieveUpdateDestroyAPIView):
     ]
 
 
-class NotificationReadEdit(generics.CreateAPIView):
-    """
-    general API endpoint to manipulate read state of a notification
-    """
+class NotificationReadEdit(CreateAPI):
+    """General API endpoint to manipulate read state of a notification."""
 
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationReadSerializer
@@ -287,12 +336,14 @@ class NotificationReadEdit(generics.CreateAPIView):
     ]
 
     def get_serializer_context(self):
+        """Add instance to context so it can be accessed in the serializer."""
         context = super().get_serializer_context()
         if self.request:
             context['instance'] = self.get_object()
         return context
 
     def perform_create(self, serializer):
+        """Set the `read` status to the target value."""
         message = self.get_object()
         try:
             message.read = self.target
@@ -302,23 +353,17 @@ class NotificationReadEdit(generics.CreateAPIView):
 
 
 class NotificationRead(NotificationReadEdit):
-    """
-    API endpoint to mark a notification as read.
-    """
+    """API endpoint to mark a notification as read."""
     target = True
 
 
 class NotificationUnread(NotificationReadEdit):
-    """
-    API endpoint to mark a notification as unread.
-    """
+    """API endpoint to mark a notification as unread."""
     target = False
 
 
-class NotificationReadAll(generics.RetrieveAPIView):
-    """
-    API endpoint to mark all notifications as read.
-    """
+class NotificationReadAll(RetrieveAPI):
+    """API endpoint to mark all notifications as read."""
 
     queryset = common.models.NotificationMessage.objects.all()
 
@@ -327,6 +372,7 @@ class NotificationReadAll(generics.RetrieveAPIView):
     ]
 
     def get(self, request, *args, **kwargs):
+        """Set all messages for the current user as read."""
         try:
             self.queryset.filter(user=request.user, read=False).update(read=True)
             return Response({'status': 'ok'})
@@ -336,21 +382,30 @@ class NotificationReadAll(generics.RetrieveAPIView):
 
 settings_api_urls = [
     # User settings
-    url(r'^user/', include([
+    re_path(r'^user/', include([
         # User Settings Detail
-        url(r'^(?P<pk>\d+)/', UserSettingsDetail.as_view(), name='api-user-setting-detail'),
+        re_path(r'^(?P<key>\w+)/', UserSettingsDetail.as_view(), name='api-user-setting-detail'),
 
         # User Settings List
-        url(r'^.*$', UserSettingsList.as_view(), name='api-user-setting-list'),
+        re_path(r'^.*$', UserSettingsList.as_view(), name='api-user-setting-list'),
+    ])),
+
+    # Notification settings
+    re_path(r'^notification/', include([
+        # Notification Settings Detail
+        re_path(r'^(?P<pk>\d+)/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
+
+        # Notification Settings List
+        re_path(r'^.*$', NotificationUserSettingsList.as_view(), name='api-notifcation-setting-list'),
     ])),
 
     # Global settings
-    url(r'^global/', include([
+    re_path(r'^global/', include([
         # Global Settings Detail
-        url(r'^(?P<pk>\d+)/', GlobalSettingsDetail.as_view(), name='api-global-setting-detail'),
+        re_path(r'^(?P<key>\w+)/', GlobalSettingsDetail.as_view(), name='api-global-setting-detail'),
 
         # Global Settings List
-        url(r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'),
+        re_path(r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'),
     ])),
 ]
 
@@ -359,18 +414,18 @@ common_api_urls = [
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
 
     # Notifications
-    url(r'^notifications/', include([
+    re_path(r'^notifications/', include([
         # Individual purchase order detail URLs
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'^read/', NotificationRead.as_view(), name='api-notifications-read'),
-            url(r'^unread/', NotificationUnread.as_view(), name='api-notifications-unread'),
-            url(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^read/', NotificationRead.as_view(), name='api-notifications-read'),
+            re_path(r'^unread/', NotificationUnread.as_view(), name='api-notifications-unread'),
+            re_path(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
         ])),
         # Read all
-        url(r'^readall/', NotificationReadAll.as_view(), name='api-notifications-readall'),
+        re_path(r'^readall/', NotificationReadAll.as_view(), name='api-notifications-readall'),
 
         # Notification messages list
-        url(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
+        re_path(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
     ])),
 
 ]

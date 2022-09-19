@@ -1,7 +1,11 @@
+"""label app specification"""
+
+import hashlib
+import logging
 import os
 import shutil
-import logging
-import hashlib
+import warnings
+from pathlib import Path
 
 from django.apps import AppConfig
 from django.conf import settings
@@ -9,15 +13,11 @@ from django.core.exceptions import AppRegistryNotReady
 
 from InvenTree.ready import canAppAccessDatabase
 
-
 logger = logging.getLogger("inventree")
 
 
 def hashFile(filename):
-    """
-    Calculate the MD5 hash of a file
-    """
-
+    """Calculate the MD5 hash of a file."""
     md5 = hashlib.md5()
 
     with open(filename, 'rb') as f:
@@ -28,286 +28,150 @@ def hashFile(filename):
 
 
 class LabelConfig(AppConfig):
+    """App configuration class for the 'label' app"""
+
     name = 'label'
 
     def ready(self):
-        """
-        This function is called whenever the label app is loaded
-        """
-
+        """This function is called whenever the label app is loaded."""
         if canAppAccessDatabase():
             self.create_labels()  # pragma: no cover
 
     def create_labels(self):
-        """
-        Create all default templates
-        """
-        self.create_stock_item_labels()
-        self.create_stock_location_labels()
-        self.create_part_labels()
-
-    def create_stock_item_labels(self):
-        """
-        Create database entries for the default StockItemLabel templates,
-        if they do not already exist
-        """
-
+        """Create all default templates."""
+        # Test if models are ready
         try:
-            from .models import StockItemLabel
-        except AppRegistryNotReady:  # pragma: no cover
-            # Database might not by ready yet
-            return
-
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            'templates',
-            'label',
-            'stockitem',
-        )
-
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
-            'label',
-            'inventree',
-            'stockitem',
-        )
-
-        if not os.path.exists(dst_dir):
-            logger.info(f"Creating required directory: '{dst_dir}'")
-            os.makedirs(dst_dir, exist_ok=True)
-
-        labels = [
-            {
-                'file': 'qr.html',
-                'name': 'QR Code',
-                'description': 'Simple QR code label',
-                'width': 24,
-                'height': 24,
-            },
-        ]
-
-        for label in labels:
-
-            filename = os.path.join(
-                'label',
-                'inventree',
-                'stockitem',
-                label['file'],
-            )
-
-            # Check if the file exists in the media directory
-            src_file = os.path.join(src_dir, label['file'])
-            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
-
-            to_copy = False
-
-            if os.path.exists(dst_file):
-                # File already exists - let's see if it is the "same",
-                # or if we need to overwrite it with a newer copy!
-
-                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
-                    logger.info(f"Hash differs for '{filename}'")
-                    to_copy = True
-
-            else:
-                logger.info(f"Label template '{filename}' is not present")
-                to_copy = True
-
-            if to_copy:
-                logger.info(f"Copying label template '{dst_file}'")
-                shutil.copyfile(src_file, dst_file)
-
-            # Check if a label matching the template already exists
-            if StockItemLabel.objects.filter(label=filename).exists():
-                continue  # pragma: no cover
-
-            logger.info(f"Creating entry for StockItemLabel '{label['name']}'")
-
-            StockItemLabel.objects.create(
-                name=label['name'],
-                description=label['description'],
-                label=filename,
-                filters='',
-                enabled=True,
-                width=label['width'],
-                height=label['height'],
-            )
-
-    def create_stock_location_labels(self):
-        """
-        Create database entries for the default StockItemLocation templates,
-        if they do not already exist
-        """
-
-        try:
-            from .models import StockLocationLabel
+            from .models import PartLabel, StockItemLabel, StockLocationLabel
+            assert bool(StockLocationLabel is not None)
         except AppRegistryNotReady:  # pragma: no cover
             # Database might not yet be ready
+            warnings.warn('Database was not ready for creating labels')
             return
 
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
+        # Create the categories
+        self.create_labels_category(
+            StockItemLabel,
+            'stockitem',
+            [
+                {
+                    'file': 'qr.html',
+                    'name': 'QR Code',
+                    'description': 'Simple QR code label',
+                    'width': 24,
+                    'height': 24,
+                },
+            ],
+        )
+        self.create_labels_category(
+            StockLocationLabel,
+            'stocklocation',
+            [
+                {
+                    'file': 'qr.html',
+                    'name': 'QR Code',
+                    'description': 'Simple QR code label',
+                    'width': 24,
+                    'height': 24,
+                },
+                {
+                    'file': 'qr_and_text.html',
+                    'name': 'QR and text',
+                    'description': 'Label with QR code and name of location',
+                    'width': 50,
+                    'height': 24,
+                }
+            ]
+        )
+        self.create_labels_category(
+            PartLabel,
+            'part',
+            [
+                {
+                    'file': 'part_label.html',
+                    'name': 'Part Label',
+                    'description': 'Simple part label',
+                    'width': 70,
+                    'height': 24,
+                },
+                {
+                    'file': 'part_label_code128.html',
+                    'name': 'Barcode Part Label',
+                    'description': 'Simple part label with Code128 barcode',
+                    'width': 70,
+                    'height': 24,
+                },
+            ]
+        )
+
+    def create_labels_category(self, model, ref_name, labels):
+        """Create folder and database entries for the default templates, if they do not already exist."""
+        # Create root dir for templates
+        src_dir = Path(__file__).parent.joinpath(
             'templates',
             'label',
-            'stocklocation',
+            ref_name,
         )
 
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
+        dst_dir = settings.MEDIA_ROOT.joinpath(
             'label',
             'inventree',
-            'stocklocation',
+            ref_name,
         )
 
-        if not os.path.exists(dst_dir):
+        if not dst_dir.exists():
             logger.info(f"Creating required directory: '{dst_dir}'")
-            os.makedirs(dst_dir, exist_ok=True)
+            dst_dir.mkdir(parents=True, exist_ok=True)
 
-        labels = [
-            {
-                'file': 'qr.html',
-                'name': 'QR Code',
-                'description': 'Simple QR code label',
-                'width': 24,
-                'height': 24,
-            },
-            {
-                'file': 'qr_and_text.html',
-                'name': 'QR and text',
-                'description': 'Label with QR code and name of location',
-                'width': 50,
-                'height': 24,
-            }
-        ]
-
+        # Create lables
         for label in labels:
+            self.create_template_label(model, src_dir, ref_name, label)
 
-            filename = os.path.join(
-                'label',
-                'inventree',
-                'stocklocation',
-                label['file'],
-            )
-
-            # Check if the file exists in the media directory
-            src_file = os.path.join(src_dir, label['file'])
-            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
-
-            to_copy = False
-
-            if os.path.exists(dst_file):
-                # File already exists - let's see if it is the "same",
-                # or if we need to overwrite it with a newer copy!
-
-                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
-                    logger.info(f"Hash differs for '{filename}'")
-                    to_copy = True
-
-            else:
-                logger.info(f"Label template '{filename}' is not present")
-                to_copy = True
-
-            if to_copy:
-                logger.info(f"Copying label template '{dst_file}'")
-                shutil.copyfile(src_file, dst_file)
-
-            # Check if a label matching the template already exists
-            if StockLocationLabel.objects.filter(label=filename).exists():
-                continue  # pragma: no cover
-
-            logger.info(f"Creating entry for StockLocationLabel '{label['name']}'")
-
-            StockLocationLabel.objects.create(
-                name=label['name'],
-                description=label['description'],
-                label=filename,
-                filters='',
-                enabled=True,
-                width=label['width'],
-                height=label['height'],
-            )
-
-    def create_part_labels(self):
-        """
-        Create database entries for the default PartLabel templates,
-        if they do not already exist.
-        """
-
-        try:
-            from .models import PartLabel
-        except AppRegistryNotReady:  # pragma: no cover
-            # Database might not yet be ready
-            return
-
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            'templates',
-            'label',
-            'part',
-        )
-
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
+    def create_template_label(self, model, src_dir, ref_name, label):
+        """Ensure a label template is in place."""
+        filename = os.path.join(
             'label',
             'inventree',
-            'part',
+            ref_name,
+            label['file']
         )
 
-        if not os.path.exists(dst_dir):
-            logger.info(f"Creating required directory: '{dst_dir}'")
-            os.makedirs(dst_dir, exist_ok=True)
+        src_file = src_dir.joinpath(label['file'])
+        dst_file = settings.MEDIA_ROOT.joinpath(filename)
 
-        labels = [
-            {
-                'file': 'part_label.html',
-                'name': 'Part Label',
-                'description': 'Simple part label',
-                'width': 70,
-                'height': 24,
-            },
-        ]
+        to_copy = False
 
-        for label in labels:
+        if dst_file.exists():
+            # File already exists - let's see if it is the "same"
 
-            filename = os.path.join(
-                'label',
-                'inventree',
-                'part',
-                label['file']
-            )
-
-            src_file = os.path.join(src_dir, label['file'])
-            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
-
-            to_copy = False
-
-            if os.path.exists(dst_file):
-                # File already exists - let's see if it is the "same"
-
-                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
-                    logger.info(f"Hash differs for '{filename}'")
-                    to_copy = True
-
-            else:
-                logger.info(f"Label template '{filename}' is not present")
+            if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover
+                logger.info(f"Hash differs for '{filename}'")
                 to_copy = True
 
-            if to_copy:
-                logger.info(f"Copying label template '{dst_file}'")
-                shutil.copyfile(src_file, dst_file)
+        else:
+            logger.info(f"Label template '{filename}' is not present")
+            to_copy = True
 
-            # Check if a label matching the template already exists
-            if PartLabel.objects.filter(label=filename).exists():
-                continue  # pragma: no cover
+        if to_copy:
+            logger.info(f"Copying label template '{dst_file}'")
+            # Ensure destionation dir exists
+            dst_file.parent.mkdir(parents=True, exist_ok=True)
 
-            logger.info(f"Creating entry for PartLabel '{label['name']}'")
+            # Copy file
+            shutil.copyfile(src_file, dst_file)
 
-            PartLabel.objects.create(
-                name=label['name'],
-                description=label['description'],
-                label=filename,
-                filters='',
-                enabled=True,
-                width=label['width'],
-                height=label['height'],
-            )
+        # Check if a label matching the template already exists
+        if model.objects.filter(label=filename).exists():
+            return  # pragma: no cover
+
+        logger.info(f"Creating entry for {model} '{label['name']}'")
+
+        model.objects.create(
+            name=label['name'],
+            description=label['description'],
+            label=filename,
+            filters='',
+            enabled=True,
+            width=label['width'],
+            height=label['height'],
+        )
+        return

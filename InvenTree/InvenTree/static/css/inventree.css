@@ -19,8 +19,8 @@ main {
 }
 
 .login-screen {
-    background: url(/static/img/paper_splash.jpg) no-repeat center fixed; 
     background-size: cover;
+    background-position: center;
     height: 100vh;
     font-family: 'Numans', sans-serif;
     color: #eee;
@@ -63,27 +63,7 @@ main {
     background-color: #EEEEF5;
 }
 
-.markdownx .row {
-    margin: 5px;
-    padding: 5px;
-    border: 1px solid #cce;
-    border-radius: 4px;
-}
-
-.markdownx-editor {
-    width: 100%;
-    border: 1px solid #cce;
-    border-radius: 3px;
-    padding: 10px;
-}
-
 .panel-content {
-    padding: 10px;
-}
-
-.markdownx-preview {
-    border: 1px solid #cce;
-    border-radius: 3px;
     padding: 10px;
 }
 
@@ -259,7 +239,7 @@ main {
 }
 
 .rowinvalid {
-    color: #A00; 
+    color: #A00;
 }
 
 .rowinherited {
@@ -306,7 +286,7 @@ main {
     padding-left: 2px;
     transform: translate(0%, -25%);
 }
-  
+
 .filter-list .close:hover {
     background: #bbb;
 }
@@ -470,8 +450,8 @@ main {
 }
 
 .part-thumb {
-    width: 200px;
-    height: 200px;
+    width: 256px;
+    height: 256px;
     margin: 2px;
     padding: 3px;
     object-fit: contain;
@@ -1008,7 +988,7 @@ input[type='number']{
 
 .product-card-panel{
     height: 100%;
-    margin-bottom: 5px;    
+    margin-bottom: 5px;
 }
 
 .borderless {
@@ -1047,4 +1027,9 @@ a {
     padding: 3px;
     margin-top: 3px;
     overflow: hidden;
+}
+
+.treeview .node-icon {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
 }

@@ -21,7 +21,7 @@
             </div>
         </div>
     </div>
-    
+
     {% block page_info %}
     <div class='panel-content'>
         {% block details_above %}
@@ -32,7 +32,7 @@
                     <div class='card'>
                         {% block details_left %}
                         <div class='row'>
-                            <div class='col' style='max-width: 220px;'>
+                            <div class='col' style='max-width: 280px;'>
                                 {% block thumbnail %}
                                 {% endblock thumbnail %}
                             </div>
@@ -57,10 +57,12 @@
         </div>
     </div>
     {% endblock %}
-    
+
 </div>
 
 {% block page_content %}
+<!-- Custom page content goes here-->
 {% endblock %}
+{% include "plugin/panel_content.html" %}
 
 {% endblock %}

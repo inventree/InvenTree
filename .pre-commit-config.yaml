@@ -1,0 +1,41 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+exclude: |
+    (?x)^(
+        InvenTree/InvenTree/static/.*|
+        InvenTree/locale/.*
+    )$
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-added-large-files
+    -   id: mixed-line-ending
+-   repo: https://github.com/pycqa/flake8
+    rev: '5.0.0'
+    hooks:
+    -   id: flake8
+        additional_dependencies: [
+                'flake8-bugbear',
+                'flake8-docstrings',
+                'flake8-string-format',
+                'pep8-naming ',
+        ]
+-   repo: https://github.com/pycqa/isort
+    rev: '5.10.1'
+    hooks:
+    -   id: isort
+-   repo: https://github.com/jazzband/pip-tools
+    rev: 6.8.0
+    hooks:
+      - id: pip-compile
+        name: pip-compile requirements-dev.in
+        args: [--generate-hashes, requirements-dev.in, -o, requirements-dev.txt]
+        files: ^requirements-dev\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [requirements.in, -o, requirements.txt]
+        files: ^requirements\.(in|txt)$

@@ -1,27 +1,27 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Functions for tasks and a few general async tasks."""
 
-import re
 import json
-import requests
 import logging
-
+import re
+import warnings
 from datetime import timedelta
-from django.utils import timezone
 
+from django.conf import settings
+from django.core import mail as django_mail
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
+from django.utils import timezone
 
+import requests
 
 logger = logging.getLogger("inventree")
 
 
 def schedule_task(taskname, **kwargs):
-    """
-    Create a scheduled task.
+    """Create a scheduled task.
+
     If the task has already been scheduled, ignore!
     """
-
     # If unspecified, repeat indefinitely
     repeats = kwargs.pop('repeats', -1)
     kwargs['repeats'] = repeats
@@ -52,43 +52,59 @@ def schedule_task(taskname, **kwargs):
         pass
 
 
-def offload_task(taskname, *args, force_sync=False, **kwargs):
-    """
-        Create an AsyncTask if workers are running.
-        This is different to a 'scheduled' task,
-        in that it only runs once!
+def raise_warning(msg):
+    """Log and raise a warning."""
+    logger.warning(msg)
 
-        If workers are not running or force_sync flag
-        is set then the task is ran synchronously.
-    """
+    # If testing is running raise a warning that can be asserted
+    if settings.TESTING:
+        warnings.warn(msg)
 
+
+def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs):
+    """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
+
+    If workers are not running or force_sync flag
+    is set then the task is ran synchronously.
+    """
     try:
+        import importlib
+
         from django_q.tasks import AsyncTask
 
-        import importlib
         from InvenTree.status import is_worker_running
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
+        return
+    except (OperationalError, ProgrammingError):  # pragma: no cover
+        raise_warning(f"Could not offload task '{taskname}' - database not ready")
 
-        if is_worker_running() and not force_sync:  # pragma: no cover
-            # Running as asynchronous task
-            try:
-                task = AsyncTask(taskname, *args, **kwargs)
-                task.run()
-            except ImportError:
-                logger.warning(f"WARNING: '{taskname}' not started - Function not found")
+    if force_async or (is_worker_running() and not force_sync):
+        # Running as asynchronous task
+        try:
+            task = AsyncTask(taskname, *args, **kwargs)
+            task.run()
+        except ImportError:
+            raise_warning(f"WARNING: '{taskname}' not started - Function not found")
+    else:
+
+        if callable(taskname):
+            # function was passed - use that
+            _func = taskname
         else:
             # Split path
             try:
                 app, mod, func = taskname.split('.')
                 app_mod = app + '.' + mod
             except ValueError:
-                logger.warning(f"WARNING: '{taskname}' not started - Malformed function path")
+                raise_warning(f"WARNING: '{taskname}' not started - Malformed function path")
                 return
 
             # Import module from app
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
-                logger.warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
+                raise_warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
                 return
 
             # Retrieve function
@@ -102,32 +118,22 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
                 if not _func:
                     _func = eval(func)  # pragma: no cover
             except NameError:
-                logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
+                raise_warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
                 return
 
-            # Workers are not running: run it as synchronous task
-            _func(*args, **kwargs)
-
-    except AppRegistryNotReady:  # pragma: no cover
-        logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
-        return
-    except (OperationalError, ProgrammingError):  # pragma: no cover
-        logger.warning(f"Could not offload task '{taskname}' - database not ready")
+        # Workers are not running: run it as synchronous task
+        _func(*args, **kwargs)
 
 
 def heartbeat():
-    """
-    Simple task which runs at 5 minute intervals,
-    so we can determine that the background worker
-    is actually running.
+    """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
 
     (There is probably a less "hacky" way of achieving this)?
     """
-
     try:
         from django_q.models import Success
-        logger.info("Could not perform heartbeat task - App registry not ready")
     except AppRegistryNotReady:  # pragma: no cover
+        logger.info("Could not perform heartbeat task - App registry not ready")
         return
 
     threshold = timezone.now() - timedelta(minutes=30)
@@ -143,11 +149,7 @@ def heartbeat():
 
 
 def delete_successful_tasks():
-    """
-    Delete successful task logs
-    which are more than a month old.
-    """
-
+    """Delete successful task logs which are more than a month old."""
     try:
         from django_q.models import Success
     except AppRegistryNotReady:  # pragma: no cover
@@ -166,10 +168,7 @@ def delete_successful_tasks():
 
 
 def delete_old_error_logs():
-    """
-    Delete old error logs from the server
-    """
-
+    """Delete old error logs from the server."""
     try:
         from error_report.models import Error
 
@@ -191,10 +190,7 @@ def delete_old_error_logs():
 
 
 def check_for_updates():
-    """
-    Check if there is an update for InvenTree
-    """
-
+    """Check if there is an update for InvenTree."""
     try:
         import common.models
     except AppRegistryNotReady:  # pragma: no cover
@@ -204,26 +200,26 @@ def check_for_updates():
 
     response = requests.get('https://api.github.com/repos/inventree/inventree/releases/latest')
 
-    if not response.status_code == 200:
-        raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')
+    if response.status_code != 200:
+        raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')  # pragma: no cover
 
     data = json.loads(response.text)
 
     tag = data.get('tag_name', None)
 
     if not tag:
-        raise ValueError("'tag_name' missing from GitHub response")
+        raise ValueError("'tag_name' missing from GitHub response")  # pragma: no cover
 
     match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)
 
-    if not len(match.groups()) == 3:
+    if len(match.groups()) != 3:  # pragma: no cover
         logger.warning(f"Version '{tag}' did not match expected pattern")
         return
 
     latest_version = [int(x) for x in match.groups()]
 
-    if not len(latest_version) == 3:
-        raise ValueError(f"Version '{tag}' is not correct format")
+    if len(latest_version) != 3:
+        raise ValueError(f"Version '{tag}' is not correct format")  # pragma: no cover
 
     logger.info(f"Latest InvenTree version: '{tag}'")
 
@@ -236,19 +232,17 @@ def check_for_updates():
 
 
 def update_exchange_rates():
-    """
-    Update currency exchange rates
-    """
-
+    """Update currency exchange rates."""
     try:
-        from InvenTree.exchange import InvenTreeExchange
         from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+
         from common.settings import currency_code_default, currency_codes
+        from InvenTree.exchange import InvenTreeExchange
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'update_exchange_rates' - App registry not ready")
         return
-    except:  # pragma: no cover
+    except Exception:  # pragma: no cover
         # Other error?
         return
 
@@ -257,7 +251,7 @@ def update_exchange_rates():
         backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
     except ExchangeBackend.DoesNotExist:
         pass
-    except:  # pragma: no cover
+    except Exception:  # pragma: no cover
         # Some other error
         logger.warning("update_exchange_rates: Database not ready")
         return
@@ -279,16 +273,12 @@ def update_exchange_rates():
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
-    """
-    Send an email with the specified subject and body,
-    to the specified recipients list.
-    """
-
+    """Send an email with the specified subject and body, to the specified recipients list."""
     if type(recipients) == str:
         recipients = [recipients]
 
     offload_task(
-        'django.core.mail.send_mail',
+        django_mail.send_mail,
         subject,
         body,
         from_email,

@@ -13,7 +13,7 @@
 {% block content %}
 
 <div class='alert alert-block alert-danger'>
-    {% trans "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage." %}
+    {% trans "Changing the settings below require you to immediately restart the server. Do not change this while under active usage." %}
 </div>
 
 <div class='table-responsive'>
@@ -25,6 +25,8 @@
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_NAVIGATION" icon="fa-sitemap" %}
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_APP" icon="fa-rocket" %}
         {% include "InvenTree/settings/setting.html" with key="PLUGIN_ON_STARTUP" %}
+        <tr><td colspan='5'></td></tr>
+        {% include "InvenTree/settings/setting.html" with key="PLUGIN_CHECK_SIGNATURES" %}
     </tbody>
 </table>
 </div>
@@ -36,7 +38,7 @@
         <div class='btn-group' role='group'>
             {% url 'admin:plugin_pluginconfig_changelist' as url %}
             {% include "admin_button.html" with url=url %}
-            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"><span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}</button>        
+            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"><span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}</button>
         </div>
     </div>
 </div>
@@ -52,7 +54,7 @@
             <th>{% trans "Version" %}</th>
         </tr>
     </thead>
-    
+
     <tbody>
         {% plugin_list as pl_list %}
         {% for plugin_key, plugin in pl_list.items %}
@@ -69,18 +71,18 @@
             <td>{{ plugin.human_name }}<span class="text-muted"> - {{plugin_key}}</span>
                 {% define plugin.registered_mixins as mixin_list %}
 
+                {% if plugin.is_sample %}
+                <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
+                    <span class='badge bg-info rounded-pill badge-right'>{% trans "Sample" %}</span>
+                </a>
+                {% endif %}
+
                 {% if mixin_list %}
                 {% for mixin in mixin_list %}
                 <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
                     <span class='badge bg-dark badge-right rounded-pill'>{{ mixin.human_name }}</span>
                 </a>
                 {% endfor %}
-                {% endif %}
-
-                {% if plugin.is_sample %}
-                <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
-                    <span class='badge bg-info rounded-pill'>{% trans "code sample" %}</span>
-                </a>
                 {% endif %}
 
                 {% if plugin.website %}
@@ -133,7 +135,7 @@
                 <th>{% trans "Message" %}</th>
             </tr>
         </thead>
-        
+
         <tbody>
         {% for stage, errors in pl_errors.items %}
             {% for error_detail in errors %}

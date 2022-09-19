@@ -29,23 +29,28 @@ const plugins_enabled = false;
 {% endif %}
 
 /*
- * Edit a setting value
+ * Interactively edit a setting value.
+ * Launches a modal dialog form to adjut the value of the setting.
  */
-function editSetting(pk, options={}) {
+function editSetting(key, options={}) {
 
     // Is this a global setting or a user setting?
     var global = options.global || false;
 
     var plugin = options.plugin;
 
+    var notification = options.notification;
+
     var url = '';
 
     if (plugin) {
-        url = `/api/plugin/settings/${pk}/`;
+        url = `/api/plugin/settings/${plugin}/${key}/`;
+    } else if (notification) {
+        url = `/api/settings/notification/${pk}/`;
     } else if (global) {
-        url = `/api/settings/global/${pk}/`;
+        url = `/api/settings/global/${key}/`;
     } else {
-        url = `/api/settings/user/${pk}/`;
+        url = `/api/settings/user/${key}/`;
     }
 
     var reload_required = false;
@@ -53,21 +58,36 @@ function editSetting(pk, options={}) {
     // First, read the settings object from the server
     inventreeGet(url, {}, {
         success: function(response) {
-    
+
             if (response.choices && response.choices.length > 0) {
                 response.type = 'choice';
                 reload_required = true;
             }
 
-            // Construct the field 
+            // Construct the field
             var fields = {
                 value: {
                     label: response.name,
                     help_text: response.description,
                     type: response.type,
                     choices: response.choices,
+                    value: response.value,
                 }
             };
+
+            // Foreign key lookup available!
+            if (response.type == 'related field') {
+
+                if (response.model_name && response.api_url) {
+                    fields.value.type = 'related field';
+                    fields.value.model = response.model_name.split('.').at(-1);
+                    fields.value.api_url = response.api_url;
+                } else {
+                    // Unknown / unsupported model type, default to 'text' field
+                    fields.value.type = 'text';
+                    console.warn(`Unsupported model type: '${response.model_name}' for setting '${response.key}'`);
+                }
+            }
 
             constructChangeForm(fields, {
                 url: url,
@@ -98,15 +118,16 @@ function editSetting(pk, options={}) {
                 },
                 onSuccess: function(response) {
 
-                    var setting = response.key;
+                    var setting_pk = response.pk;
+                    var setting_typ = response.typ;
 
                     if (reload_required) {
                         location.reload();
                     } else if (response.type == 'boolean') {
                         var enabled = response.value.toString().toLowerCase() == 'true';
-                        $(`#setting-value-${setting}`).prop('checked', enabled);
+                        $(`#setting-value-${setting_pk}-${setting_typ}`).prop('checked', enabled);
                     } else {
-                        $(`#setting-value-${setting}`).html(response.value);
+                        $(`#setting-value-${setting_pk}-${setting_typ}`).html(response.value);
                     }
                 }
             });

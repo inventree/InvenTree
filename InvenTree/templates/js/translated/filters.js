@@ -6,22 +6,22 @@
     inventreeSave,
     reloadTableFilters,
 */
-   
+
 /* exported
    setupFilterList,
 */
 
 /**
  * Code for managing query filters / table options.
- * 
+ *
  * Optional query filters are available to the user for various
  * tables display in the web interface.
- * These filters are saved to the web session, and should be 
+ * These filters are saved to the web session, and should be
  * persistent for a given table type.
- * 
+ *
  * This makes use of the 'inventreeSave' and 'inventreeLoad' functions
  * for writing to and reading from session storage.
- * 
+ *
  */
 
 
@@ -39,7 +39,7 @@ function defaultFilters() {
 
 /**
  * Load table filters for the given table from session storage
- * 
+ *
  * @param tableKey - String key for the particular table
  * @param defaults - Default filters for this table e.g. 'cascade=1&location=5'
  */
@@ -62,7 +62,7 @@ function loadTableFilters(tableKey) {
             if (f.length == 2) {
                 filters[f[0]] = f[1];
             } else {
-                console.log(`Improperly formatted filter: ${item}`);
+                console.warn(`Improperly formatted filter: ${item}`);
             }
         }
     });
@@ -73,7 +73,7 @@ function loadTableFilters(tableKey) {
 
 /**
  * Save table filters to session storage
- * 
+ *
  * @param {*} tableKey - string key for the given table
  * @param {*} filters - object of string:string pairs
  */
@@ -251,7 +251,7 @@ function generateFilterInput(tableKey, filterKey) {
 
 /**
  * Configure a filter list for a given table
- * 
+ *
  * @param {*} tableKey - string lookup key for filter settings
  * @param {*} table - bootstrapTable element to update
  * @param {*} target - name of target element on page
@@ -274,7 +274,7 @@ function setupFilterList(tableKey, table, target, options={}) {
     var element = $(target);
 
     if (!element || !element.exists()) {
-        console.log(`WARNING: setupFilterList could not find target '${target}'`);
+        console.warn(`setupFilterList could not find target '${target}'`);
         return;
     }
 
@@ -410,7 +410,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 /**
  * Return the pretty title for the given table and filter selection.
  * If no title is provided, default to the key value.
- * 
+ *
  */
 function getFilterTitle(tableKey, filterKey) {
     var settings = getFilterSettings(tableKey, filterKey);
@@ -460,4 +460,3 @@ function getFilterOptionValue(tableKey, filterKey, valueKey) {
     // Cannot map to a display string - return the original text
     return value;
 }
-

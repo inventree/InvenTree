@@ -17,16 +17,11 @@
             <h4>{% trans "Stock Tracking Information" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if user_owns_item and roles.stock.change and not item.is_building %}
-                <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>
-                    <span class='fas fa-plus-circle'></span> {% trans "New Entry" %}
-                </button>
-                {% endif %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
-        <div id='tracking-table-toolbar'>  
+        <div id='tracking-table-toolbar'>
             <div class='btn-group'>
                 {% include "filter_list.html" with id="stocktracking" %}
             </div>
@@ -111,8 +106,8 @@
                 {% include "filter_list.html" with id="stocktests" %}
             </div>
         </div>
-        
-        <table class='table table-striped table-condensed' data-toolbar='#test-button-toolbar' id='test-result-table'></table>                        
+
+        <table class='table table-striped table-condensed' data-toolbar='#test-button-toolbar' id='test-result-table'></table>
     </div>
 </div>
 
@@ -152,16 +147,21 @@
             <h4>{% trans "Installed Stock Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
+                {% if roles.stock.add %}
                 <button type='button' class='btn btn-success' id='stock-item-install'>
                     <span class='fas fa-plus-circle'></span> {% trans "Install Stock Item" %}
                 </button>
+                {% endif %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
-        <div class='btn-group'>
+        <div id='installed-table-toolbar'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id='installed-items' %}
+            </div>
         </div>
-        <table class='table table-striped table-condensed' id='installed-table'></table>
+        <table class='table table-striped table-condensed' id='installed-table' data-toolbar='#installed-table-toolbar'></table>
     </div>
 </div>
 
@@ -208,28 +208,6 @@
         }
     );
 
-    $('#multi-item-uninstall').click(function() {
-
-        var selections = $('#installed-table').bootstrapTable('getSelections');
-
-        var items = [];
-
-        selections.forEach(function(item) {
-            items.push(item.pk);
-        });
-
-        launchModalForm(
-            "{% url 'stock-item-uninstall' %}",
-            {
-                data: {
-                    'items[]': items,
-                },
-                reload: true,
-            }
-        );
-
-    });
-    
     onPanelLoad('notes', function() {
         setupNotesField(
             'stock-notes',
@@ -289,10 +267,43 @@
 
     {% if user.is_staff %}
     $("#delete-test-results").click(function() {
-        launchModalForm(
-            "{% url 'stock-item-delete-test-data' item.id %}",
+
+        var url = '{% url "api-stock-test-result-list" %}';
+
+        inventreeGet(
+            url,
             {
-                success: reloadTable,
+                stock_item: {{ item.pk }},
+            },
+            {
+                success: function(response) {
+
+                    var items = [];
+
+                    // Ensure that we are only deleting the correct test results
+                    response.forEach(function(result) {
+                        items.push(result.pk);
+                    });
+
+                    var html = `
+                    <div class='alert alert-block alert-danger'>
+                        {% trans "Delete all test results for this stock item" %}
+                    </div>`;
+
+                    constructForm(url, {
+                        form_data: {
+                            items: items,
+                            filters: {
+                                stock_item: {{ item.pk }},
+                            }
+                        },
+                        multi_delete: true,
+                        method: 'DELETE',
+                        title: '{% trans "Delete Test Data" %}',
+                        preFormContent: html,
+                        onSuccess: reloadTable,
+                    });
+                }
             }
         );
     });
@@ -334,22 +345,13 @@
     });
     {% endif %}
 
-    $("#new-entry").click(function() {
-        launchModalForm(
-            "{% url 'stock-tracking-create' item.id %}",
-            {
-                reload: true,
-            }
-        );
-    }); 
-
     loadStockTrackingTable($("#track-table"), {
         params: {
             ordering: '-date',
             item: {{ item.pk }},
             user_detail: true,
         },
-        url: "{% url 'api-stock-tracking-list' %}", 
+        url: "{% url 'api-stock-tracking-list' %}",
     });
 
     enableSidebar('stockitem');

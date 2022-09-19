@@ -9,7 +9,7 @@ def supplierpart_make_manufacturer_parts(apps, schema_editor):
     SupplierPart = apps.get_model('company', 'SupplierPart')
 
     supplier_parts = SupplierPart.objects.all()
-    
+
     if supplier_parts:
         print(f'\nCreating ManufacturerPart Objects\n{"-"*10}')
         for supplier_part in supplier_parts:
@@ -23,7 +23,7 @@ def supplierpart_make_manufacturer_parts(apps, schema_editor):
             if not part:  # pragma: no cover
                 print(f'[ERROR: SUPPLIER PART IS NOT CONNECTED TO PART]')
                 continue
-            
+
             manufacturer = supplier_part.manufacturer
             MPN = supplier_part.MPN
             link = supplier_part.link
@@ -31,7 +31,7 @@ def supplierpart_make_manufacturer_parts(apps, schema_editor):
 
             if manufacturer or MPN:
                 print(f' | {part.name[:15].ljust(15)}', end='')
-                
+
                 try:
                     print(f' | {manufacturer.name[:15].ljust(15)}', end='')
                 except AttributeError:
@@ -73,12 +73,12 @@ def supplierpart_populate_manufacturer_info(apps, schema_editor):  # pragma: no 
     SupplierPart = apps.get_model('company', 'SupplierPart')
 
     supplier_parts = SupplierPart.objects.all()
-    
+
     if supplier_parts:
         print(f'\nSupplierPart: Populating Manufacturer Information\n{"-"*10}')
         for supplier_part in supplier_parts:
             print(f'{supplier_part.supplier.name[:15].ljust(15)} | {supplier_part.SKU[:15].ljust(15)}\t', end='')
-            
+
             manufacturer_part = supplier_part.manufacturer_part
 
             if manufacturer_part:
@@ -89,13 +89,13 @@ def supplierpart_populate_manufacturer_info(apps, schema_editor):  # pragma: no 
                     supplier_part.MPN = manufacturer_part.MPN
 
                 supplier_part.save()
-                
+
                 print(f'[SUCCESS: UPDATED MANUFACTURER INFO]')
             else:
                 print(f'[IGNORED: NO MANUFACTURER PART]')
 
         print(f'{"-"*10}\nDone\n')
-                
+
 
 class Migration(migrations.Migration):
 

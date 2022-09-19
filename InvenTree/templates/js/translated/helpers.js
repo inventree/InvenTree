@@ -4,11 +4,13 @@
     blankImage,
     deleteButton,
     editButton,
+    formatDecimal,
     imageHoverIcon,
     makeIconBadge,
     makeIconButton,
     makeProgressBar,
     renderLink,
+    sanitizeInputString,
     select2Thumbnail,
     setupNotesField,
     thumbnailImage
@@ -31,6 +33,13 @@ function editButton(url, text='{% trans "Edit" %}') {
 
 function deleteButton(url, text='{% trans "Delete" %}') {
     return `<button class='btn btn-danger delete-button btn-sm' type='button' url='${url}'>${text}</button>`;
+}
+
+
+/* Format a decimal (floating point) number, to strip trailing zeros
+ */
+function formatDecimal(number, places=5) {
+    return +parseFloat(number).toFixed(places);
 }
 
 
@@ -60,7 +69,7 @@ function imageHoverIcon(url) {
 
 /**
  * Renders a simple thumbnail image
- * @param {String} url is the image URL 
+ * @param {String} url is the image URL
  * @returns html <img> tag
  */
 function thumbnailImage(url, options={}) {
@@ -131,7 +140,7 @@ function makeIconButton(icon, cls, pk, title, options={}) {
 
 /*
  * Render a progessbar!
- * 
+ *
  * @param value is the current value of the progress bar
  * @param maximum is the maximum value of the progress bar
  */
@@ -163,27 +172,29 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var style = options.style || '';
 
-    var text = '';
+    var text = options.text;
 
-    if (style == 'percent') {
-        // Display e.g. "50%"
+    if (!text) {
+        if (style == 'percent') {
+            // Display e.g. "50%"
 
-        text = `${percent}%`;
-    } else if (style == 'max') {
-        // Display just the maximum value
-        text = `${maximum}`;
-    } else if (style == 'value') {
-        // Display just the current value
-        text = `${value}`;
-    } else if (style == 'blank') {
-        // No display!
-        text = '';
-    } else {
-        /* Default style
-        * Display e.g. "5 / 10"
-        */
+            text = `${percent}%`;
+        } else if (style == 'max') {
+            // Display just the maximum value
+            text = `${maximum}`;
+        } else if (style == 'value') {
+            // Display just the current value
+            text = `${value}`;
+        } else if (style == 'blank') {
+            // No display!
+            text = '';
+        } else {
+            /* Default style
+            * Display e.g. "5 / 10"
+            */
 
-        text = `${value} / ${maximum}`;
+            text = `${value} / ${maximum}`;
+        }
     }
 
     var id = options.id || 'progress-bar';
@@ -245,13 +256,13 @@ function setupNotesField(element, url, options={}) {
     if (editable) {
         // Heading icons
         toolbar_icons.push('heading-1', 'heading-2', 'heading-3', '|');
-            
+
         // Font style
         toolbar_icons.push('bold', 'italic', 'strikethrough', '|');
-        
+
         // Text formatting
         toolbar_icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|');
-        
+
         // Elements
         toolbar_icons.push('table', 'link', 'image');
     }
@@ -264,6 +275,11 @@ function setupNotesField(element, url, options={}) {
         initialValue: initial,
         toolbar: toolbar_icons,
         shortcuts: [],
+        renderingConfig: {
+            markedOptions: {
+                sanitize: true,
+            }
+        }
     });
 
 
@@ -273,11 +289,11 @@ function setupNotesField(element, url, options={}) {
     if (!editable) {
         // Set readonly
         mde.codemirror.setOption('readOnly', true);
-            
+
         // Hide the "edit" and "save" buttons
         $('#edit-notes').hide();
         $('#save-notes').hide();
-        
+
     } else {
         mde.togglePreview();
 
@@ -287,7 +303,7 @@ function setupNotesField(element, url, options={}) {
             $('#save-notes').show();
 
             // Show the toolbar
-            $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').show();     
+            $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').show();
 
             mde.togglePreview();
         });
@@ -312,3 +328,23 @@ function setupNotesField(element, url, options={}) {
     }
 }
 
+
+/*
+ * Sanitize a string provided by the user from an input field,
+ * e.g. data form or search box
+ *
+ * - Remove leading / trailing whitespace
+ * - Remove hidden control characters
+ */
+function sanitizeInputString(s, options={}) {
+
+    // Remove ASCII control characters
+    s = s.replace(/[\x01-\x1F]+/g, '');
+
+    // Remove Unicode control characters
+    s = s.replace(/[\p{C}]+/gu, '');
+
+    s = s.trim();
+
+    return s;
+}

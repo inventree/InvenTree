@@ -1,6 +1,7 @@
 {% extends "stock/stock_app_base.html" %}
 {% load static %}
 {% load inventree_extras %}
+{% load plugin_extras %}
 {% load i18n %}
 
 {% block sidebar %}
@@ -13,7 +14,12 @@
 
 {% block heading %}
 {% if location %}
-{% trans "Stock Location" %}: {{ location.name }}
+{% trans "Stock Location" %}:
+{% settings_value "STOCK_LOCATION_DEFAULT_ICON" as default_icon %}
+{% if location.icon or default_icon %}
+<span class="{{ location.icon|default:default_icon }}"></span>
+{% endif %}
+{{ location.name }}
 {% else %}
 {% trans "Stock" %}
 {% endif %}
@@ -27,6 +33,14 @@
 {% include "admin_button.html" with url=url %}
 {% endif %}
 
+{% mixin_available "locate" as locate_available %}
+{% if location and plugins_enabled and locate_available %}
+<button id='locate-location-button' title='{% trans "Locate stock location" %}' class='btn btn-outline-secondary' typy='button'>
+    <span class='fas fa-search-location'></span>
+</button>
+
+{% endif %}
+
 {% if barcodes %}
 <!-- Barcode actions menu -->
 {% if location %}
@@ -34,6 +48,11 @@
     <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
     <ul class='dropdown-menu'>
         <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if location.barcode_hash %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
         {% if labels_enabled %}
         <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
         {% endif %}
@@ -121,6 +140,13 @@
         </td>
     </tr>
     {% endif %}
+    {% if location and location.barcode_hash %}
+    <tr>
+        <td><span class='fas fa-barcode'></span></td>
+        <td>{% trans "Barcode Identifier" %}</td>
+        <td {% if location.barcode_data %}title='{{ location.barcode_data }}'{% endif %}>{{ location.barcode_hash }}</td>
+    </tr>
+    {% endif %}
 </table>
 {% endblock details_left %}
 
@@ -196,7 +222,7 @@
                 {% include "filter_list.html" with id="location" %}
             </div>
         </div>
-    
+
         <table class='table table-striped table-condensed' data-toolbar='#sublocation-button-toolbar' id='sublocation-table'></table>
     </div>
 </div>
@@ -205,6 +231,14 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    {% if plugins_enabled and location %}
+    $('#locate-location-button').click(function() {
+        locateItemOrLocation({
+            location: {{ location.pk }},
+        });
+    });
+    {% endif %}
 
     onPanelLoad('sublocations', function() {
         loadStockLocationTable($('#sublocation-table'), {
@@ -218,33 +252,33 @@
             allowTreeView: true,
         });
     });
-    
+
     linkButtonsToSelection(
         $('#sublocation-table'),
         [
             '#location-print-options',
         ]
     );
-    
+
     {% if labels_enabled %}
     $('#print-label').click(function() {
 
         var locs = [{{ location.pk }}];
 
-        printStockLocationLabels(locs);        
+        printStockLocationLabels(locs);
 
     });
-    
+
     $('#multi-location-print-label').click(function() {
-    
-        var selections = $('#sublocation-table').bootstrapTable('getSelections');
-    
+
+        var selections = getTableData('#sublocation-table');
+
         var locations = [];
-    
+
         selections.forEach(function(loc) {
             locations.push(loc.pk);
         });
-    
+
         printStockLocationLabels(locations);
     });
     {% endif %}
@@ -274,14 +308,15 @@
     });
 
     $('#location-delete').click(function() {
-        launchModalForm("{% url 'stock-location-delete' location.id %}",
-                         {
-                             redirect: "{% url 'stock-index' %}"
-                         });
-        return false;
-    });
 
-    {% if location %}
+        deleteStockLocation({{ location.pk }}, {
+            {% if location.parent %}
+            redirect: '{% url "stock-location-detail" location.parent.pk %}',
+            {% else %}
+            redirect: '{% url "stock-index" %}',
+            {% endif %}
+        });
+    });
 
     function adjustLocationStock(action) {
         inventreeGet(
@@ -312,14 +347,33 @@
         adjustLocationStock('move');
     });
 
-    {% endif %}
-
+    {% if barcodes %}
     $('#show-qr-code').click(function() {
         launchModalForm("{% url 'stock-location-qr' location.id %}",
         {
             no_post: true,
         });
     });
+
+    $("#barcode-link").click(function() {
+        linkBarcodeDialog(
+            {
+                stocklocation: {{ location.pk }},
+            },
+            {
+                title: '{% trans "Link Barcode to Stock Location" %}',
+            }
+        );
+    });
+
+    $("#barcode-unlink").click(function() {
+        unlinkBarcode({
+            stocklocation: {{ location.pk }},
+        });
+    });
+
+
+    {% endif %}
 
     {% endif %}
 
@@ -364,7 +418,8 @@
             node.href = `/stock/location/${node.pk}/`;
 
             return node;
-        }
+        },
+        defaultIcon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
     });
 
 {% endblock %}

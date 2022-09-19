@@ -1,25 +1,36 @@
-# -*- coding: utf-8 -*-
+"""Unit tests for the 'build' models"""
+
+from datetime import datetime, timedelta
 
 from django.test import TestCase
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db.models import Sum
 
 from InvenTree import status_codes as status
 
-from build.models import Build, BuildItem, get_next_build_number
+import common.models
+import build.tasks
+from build.models import Build, BuildItem, generate_next_build_reference
 from part.models import Part, BomItem, BomItemSubstitute
 from stock.models import StockItem
+from users.models import Owner
+
+import logging
+logger = logging.getLogger('inventree')
 
 
 class BuildTestBase(TestCase):
-    """
-    Run some tests to ensure that the Build model is working properly.
-    """
+    """Run some tests to ensure that the Build model is working properly."""
+
+    fixtures = [
+        'users',
+    ]
 
     def setUp(self):
-        """
-        Initialize data to use for these tests.
+        """Initialize data to use for these tests.
 
         The base Part 'assembly' has a BOM consisting of three parts:
 
@@ -81,14 +92,15 @@ class BuildTestBase(TestCase):
             quantity=2
         )
 
-        ref = get_next_build_number()
+        ref = generate_next_build_reference()
 
         # Create a "Build" object to make 10x objects
         self.build = Build.objects.create(
             reference=ref,
             title="This is a build",
             part=self.assembly,
-            quantity=10
+            quantity=10,
+            issued_by=get_user_model().objects.get(pk=1),
         )
 
         # Create some build output (StockItem) objects
@@ -112,37 +124,113 @@ class BuildTestBase(TestCase):
 
         self.stock_2_1 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
         self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
-        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
-        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
-        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        self.stock_2_3 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        self.stock_2_4 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        self.stock_2_5 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
 
         self.stock_3_1 = StockItem.objects.create(part=self.sub_part_3, quantity=1000)
 
 
 class BuildTest(BuildTestBase):
+    """Unit testing class for the Build model"""
 
     def test_ref_int(self):
-        """
-        Test the "integer reference" field used for natural sorting
-        """
+        """Test the "integer reference" field used for natural sorting"""
 
-        for ii in range(10):
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref}-???', change_user=None)
+
+        refs = {
+            'BO-123-456': 123,
+            'BO-456-123': 456,
+            'BO-999-ABC': 999,
+            'BO-123ABC-ABC': 123,
+            'BO-ABC123-ABC': 123,
+        }
+
+        for ref, ref_int in refs.items():
             build = Build(
-                reference=f"{ii}_abcde",
+                reference=ref,
                 quantity=1,
                 part=self.assembly,
-                title="Making some parts"
+                title='Making some parts',
             )
 
             self.assertEqual(build.reference_int, 0)
-
             build.save()
+            self.assertEqual(build.reference_int, ref_int)
 
-            # After saving, the integer reference should have been updated
-            self.assertEqual(build.reference_int, ii)
+    def test_ref_validation(self):
+        """Test that the reference field validation works as expected"""
+
+        # Default reference pattern = 'BO-{ref:04d}
+
+        # These patterns should fail
+        for ref in [
+            'BO-1234x',
+            'BO1234',
+            'OB-1234',
+            'BO--1234'
+        ]:
+            with self.assertRaises(ValidationError):
+                Build.objects.create(
+                    part=self.assembly,
+                    quantity=10,
+                    reference=ref,
+                    title='Invalid reference',
+                )
+
+        for ref in [
+            'BO-1234',
+            'BO-9999',
+            'BO-123'
+        ]:
+            Build.objects.create(
+                part=self.assembly,
+                quantity=10,
+                reference=ref,
+                title='Valid reference',
+            )
+
+        # Try a new validator pattern
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', '{ref}-BO', change_user=None)
+
+        for ref in [
+            '1234-BO',
+            '9999-BO'
+        ]:
+            Build.objects.create(
+                part=self.assembly,
+                quantity=10,
+                reference=ref,
+                title='Valid reference',
+            )
+
+    def test_next_ref(self):
+        """Test that the next reference is automatically generated"""
+
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'XYZ-{ref:06d}', change_user=None)
+
+        build = Build.objects.create(
+            part=self.assembly,
+            quantity=5,
+            reference='XYZ-987',
+            title='Some thing',
+        )
+
+        self.assertEqual(build.reference_int, 987)
+
+        # Now create one *without* specifying the reference
+        build = Build.objects.create(
+            part=self.assembly,
+            quantity=1,
+            title='Some new title',
+        )
+
+        self.assertEqual(build.reference, 'XYZ-000988')
+        self.assertEqual(build.reference_int, 988)
 
     def test_init(self):
-        # Perform some basic tests before we start the ball rolling
+        """Perform some basic tests before we start the ball rolling"""
 
         self.assertEqual(StockItem.objects.count(), 10)
 
@@ -167,7 +255,7 @@ class BuildTest(BuildTestBase):
         self.assertFalse(self.build.is_complete)
 
     def test_build_item_clean(self):
-        # Ensure that dodgy BuildItem objects cannot be created
+        """Ensure that dodgy BuildItem objects cannot be created"""
 
         stock = StockItem.objects.create(part=self.assembly, quantity=99)
 
@@ -194,22 +282,20 @@ class BuildTest(BuildTestBase):
         b.save()
 
     def test_duplicate_bom_line(self):
-        # Try to add a duplicate BOM item - it should fail!
+        """Try to add a duplicate BOM item - it should be allowed"""
 
-        with self.assertRaises(IntegrityError):
-            BomItem.objects.create(
-                part=self.assembly,
-                sub_part=self.sub_part_1,
-                quantity=99
-            )
+        BomItem.objects.create(
+            part=self.assembly,
+            sub_part=self.sub_part_1,
+            quantity=99
+        )
 
     def allocate_stock(self, output, allocations):
-        """
-        Allocate stock to this build, against a particular output
+        """Allocate stock to this build, against a particular output
 
         Args:
-            output - StockItem object (or None)
-            allocations - Map of {StockItem: quantity}
+            output: StockItem object (or None)
+            allocations: Map of {StockItem: quantity}
         """
 
         for item, quantity in allocations.items():
@@ -221,9 +307,7 @@ class BuildTest(BuildTestBase):
             )
 
     def test_partial_allocation(self):
-        """
-        Test partial allocation of stock
-        """
+        """Test partial allocation of stock"""
 
         # Fully allocate tracked stock against build output 1
         self.allocate_stock(
@@ -295,25 +379,80 @@ class BuildTest(BuildTestBase):
 
         self.assertTrue(self.build.are_untracked_parts_allocated())
 
+    def test_overallocation_and_trim(self):
+        """Test overallocation of stock and trim function"""
+
+        # Fully allocate tracked stock (not eligible for trimming)
+        self.allocate_stock(
+            self.output_1,
+            {
+                self.stock_3_1: 6,
+            }
+        )
+        self.allocate_stock(
+            self.output_2,
+            {
+                self.stock_3_1: 14,
+            }
+        )
+        # Fully allocate part 1 (should be left alone)
+        self.allocate_stock(
+            None,
+            {
+                self.stock_1_1: 3,
+                self.stock_1_2: 47,
+            }
+        )
+
+        extra_2_1 = StockItem.objects.create(part=self.sub_part_2, quantity=6)
+        extra_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=4)
+
+        # Overallocate part 2 (30 needed)
+        self.allocate_stock(
+            None,
+            {
+                self.stock_2_1: 5,
+                self.stock_2_2: 5,
+                self.stock_2_3: 5,
+                self.stock_2_4: 5,
+                self.stock_2_5: 5,  # 25
+                extra_2_1: 6,       # 31
+                extra_2_2: 4,       # 35
+            }
+        )
+        self.assertTrue(self.build.has_overallocated_parts(None))
+
+        self.build.trim_allocated_stock()
+        self.assertFalse(self.build.has_overallocated_parts(None))
+
+        self.build.complete_build_output(self.output_1, None)
+        self.build.complete_build_output(self.output_2, None)
+        self.assertTrue(self.build.can_complete)
+
+        self.build.complete_build(None)
+
+        self.assertEqual(self.build.status, status.BuildStatus.COMPLETE)
+
+        # Check stock items are in expected state.
+        self.assertEqual(StockItem.objects.get(pk=self.stock_1_2.pk).quantity, 53)
+        self.assertEqual(StockItem.objects.filter(part=self.sub_part_2).aggregate(Sum('quantity'))['quantity__sum'], 5)
+        self.assertEqual(StockItem.objects.get(pk=self.stock_3_1.pk).quantity, 980)
+
     def test_cancel(self):
-        """
-        Test cancellation of the build
-        """
+        """Test cancellation of the build"""
 
         # TODO
 
         """
         self.allocate_stock(50, 50, 200, self.output_1)
-        self.build.cancelBuild(None)
+        self.build.cancel_build(None)
 
         self.assertEqual(BuildItem.objects.count(), 0)
         """
         pass
 
     def test_complete(self):
-        """
-        Test completion of a build output
-        """
+        """Test completion of a build output"""
 
         self.stock_1_1.quantity = 1000
         self.stock_1_1.save()
@@ -385,14 +524,52 @@ class BuildTest(BuildTestBase):
         for output in outputs:
             self.assertFalse(output.is_building)
 
+    def test_overdue_notification(self):
+        """Test sending of notifications when a build order is overdue."""
+
+        self.build.target_date = datetime.now().date() - timedelta(days=1)
+        self.build.save()
+
+        # Check for overdue orders
+        build.tasks.check_overdue_build_orders()
+
+        message = common.models.NotificationMessage.objects.get(
+            category='build.overdue_build_order',
+            user__id=1,
+        )
+
+        self.assertEqual(message.name, 'Overdue Build Order')
+
+    def test_new_build_notification(self):
+        """Test that a notification is sent when a new build is created"""
+
+        Build.objects.create(
+            reference='BO-9999',
+            title='Some new build',
+            part=self.assembly,
+            quantity=5,
+            issued_by=get_user_model().objects.get(pk=2),
+            responsible=Owner.create(obj=Group.objects.get(pk=3))
+        )
+
+        # Two notifications should have been sent
+        messages = common.models.NotificationMessage.objects.filter(
+            category='build.new_build',
+        )
+
+        self.assertEqual(messages.count(), 2)
+
+        self.assertFalse(messages.filter(user__pk=2).exists())
+
+        self.assertTrue(messages.filter(user__pk=3).exists())
+        self.assertTrue(messages.filter(user__pk=4).exists())
+
 
 class AutoAllocationTests(BuildTestBase):
-    """
-    Tests for auto allocating stock against a build order
-    """
+    """Tests for auto allocating stock against a build order"""
 
     def setUp(self):
-
+        """Init routines for this unit test class"""
         super().setUp()
 
         # Add a "substitute" part for bom_item_2
@@ -413,8 +590,7 @@ class AutoAllocationTests(BuildTestBase):
         )
 
     def test_auto_allocate(self):
-        """
-        Run the 'auto-allocate' function. What do we expect to happen?
+        """Run the 'auto-allocate' function. What do we expect to happen?
 
         There are two "untracked" parts:
             - sub_part_1 (quantity 5 per BOM = 50 required total) / 103 in stock (2 items)
@@ -466,8 +642,6 @@ class AutoAllocationTests(BuildTestBase):
             substitutes=True,
         )
 
-        # self.assertTrue(self.build.are_untracked_parts_allocated())
-
         # self.assertEqual(self.build.allocated_stock.count(), 8)
         self.assertEqual(self.build.unallocated_quantity(self.bom_item_1), 0)
         self.assertEqual(self.build.unallocated_quantity(self.bom_item_2), 0)
@@ -476,9 +650,7 @@ class AutoAllocationTests(BuildTestBase):
         self.assertTrue(self.build.is_bom_item_allocated(self.bom_item_2))
 
     def test_fully_auto(self):
-        """
-        We should be able to auto-allocate against a build in a single go
-        """
+        """We should be able to auto-allocate against a build in a single go"""
 
         self.build.auto_allocate_stock(
             interchangeable=True,

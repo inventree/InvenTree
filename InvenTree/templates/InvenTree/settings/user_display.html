@@ -34,7 +34,7 @@
             {% csrf_token %}
             <input name='next' type='hidden' value='{% url "settings" %}'>
             <label for='theme' class=' requiredField'>
-                {% trans "Select theme" %}
+                <h6>{% trans "Select theme" %}</h6>
             </label>
             <div class='form-group input-group mb-3'>
                 <select id='theme' name='theme' class='select form-control'>
@@ -62,7 +62,7 @@
             {% csrf_token %}
             <input name="next" type="hidden" value="{% url 'settings' %}">
             <label for='language' class=' requiredField'>
-                {% trans "Select language" %}
+                <h6>{% trans "Select language" %}</h6>
             </label>
             <div class='form-group input-group mb-3'>
                 <select name="language" class="select form-control w-25">
@@ -76,7 +76,7 @@
                         {% if lang_translated > 10 or lang_code == 'en' or lang_code == LANGUAGE_CODE %}{% define True as use_lang %}{% else %}{% define False as use_lang %}{% endif %}
                         {% if ALL_LANG or use_lang  %}
                         <option value="{{ lang_code }}"{% if lang_code == LANGUAGE_CODE %} selected{% endif %}>
-                            {{ language.name_local }} ({{ lang_code }}) 
+                            {{ language.name_local }} ({{ lang_code }})
                             {% if lang_translated %}
                                 {% blocktrans %}{{ lang_translated }}% translated{% endblocktrans %}
                             {% else %}
@@ -100,8 +100,11 @@
     </form>
     </div>
     <div class="col-sm-6">
-        <h4>{% trans "Help the translation efforts!" %}</h4>
-        <p>{% blocktrans with link="https://crowdin.com/project/inventree" %}Native language translation of the web application is <a href="{{link}}">community contributed via crowdin</a>. Contributions are welcomed and encouraged.{% endblocktrans %}</p>
+        <div class='alert alert-block alert-success'>
+            <h5>{% trans "Help the translation efforts!" %}</h5>
+            <p>{% trans "Native language translation of the web application is community contributed via crowdin. Contributions are welcomed and encouraged." %}</p>
+            <p><a href="https://crowdin.com/project/inventree">{% trans "InvenTree Translation Project" %}</a></p>
+        </div>
     </div>
 </div>
 

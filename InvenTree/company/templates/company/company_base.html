@@ -23,6 +23,8 @@
     <span class='fas fa-shopping-cart'/>
 </button>
 {% endif %}
+{% define perms.company.change_company or perms.company.delete_company as has_permission %}
+{% if has_permission %}
 <button id='company-edit-actions' title='{% trans "Company actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
     <span class='fas fa-tools'></span> <span class='caret'></span>
 </button>
@@ -38,13 +40,14 @@
     </a></li>
     {% endif %}
 </ul>
+{% endif %}
 {% endblock actions %}
 
 {% block thumbnail %}
 <div class='dropzone part-thumb-container' id='company-thumb'>
     <img class="part-thumb" id='company-image'
     {% if company.image %}
-    src="{{ company.image.url }}"
+    src="{{ company.image.preview.url }}"
     {% else %}
     src="{% static 'img/blank_image.png' %}"
     {% endif %}/>
@@ -213,12 +216,19 @@
     if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
 
         $('#company-image-url').click(function() {
-            launchModalForm(
-                '{% url "company-image-download" company.id %}',
+            constructForm(
+                '{% url "api-company-detail" company.pk %}',
                 {
-                    reload: true,
+                    method: 'PATCH',
+                    title: '{% trans "Download Image" %}',
+                    fields: {
+                        remote_image: {},
+                    },
+                    onSuccess: function(data) {
+                        reloadImage(data);
+                    }
                 }
-            )
+            );
         });
     }
 

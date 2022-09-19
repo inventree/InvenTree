@@ -1,18 +1,22 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""App configuration class for the 'users' app"""
 
-from django.db.utils import OperationalError, ProgrammingError
+import logging
 
 from django.apps import AppConfig
+from django.db.utils import OperationalError, ProgrammingError
 
 from InvenTree.ready import canAppAccessDatabase
 
+logger = logging.getLogger('inventree')
+
 
 class UsersConfig(AppConfig):
+    """Config class for the 'users' app"""
+
     name = 'users'
 
     def ready(self):
-
+        """Called when the 'users' app is loaded at runtime"""
         if canAppAccessDatabase(allow_test=True):
 
             try:
@@ -26,14 +30,15 @@ class UsersConfig(AppConfig):
                 pass
 
     def assign_permissions(self):
-
+        """Update role permissions for existing groups"""
         from django.contrib.auth.models import Group
+
         from users.models import RuleSet, update_group_roles
 
         # First, delete any rule_set objects which have become outdated!
         for rule in RuleSet.objects.all():
-            if rule.name not in RuleSet.RULESET_NAMES:  # pragma: no cover  # can not change ORM without the app beeing loaded
-                print("need to delete:", rule.name)
+            if rule.name not in RuleSet.RULESET_NAMES:  # pragma: no cover  # can not change ORM without the app being loaded
+                logger.info(f"Deleting outdated ruleset: {rule.name}")
                 rule.delete()
 
         # Update group permission assignments for all groups
@@ -42,9 +47,10 @@ class UsersConfig(AppConfig):
             update_group_roles(group)
 
     def update_owners(self):
-
+        """Create an 'owner' object for each user and group instance"""
         from django.contrib.auth import get_user_model
         from django.contrib.auth.models import Group
+
         from users.models import Owner
 
         # Create group owners

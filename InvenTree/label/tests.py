@@ -1,32 +1,35 @@
-# Tests for labels
+"""Tests for labels"""
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import os
-
-from django.test import TestCase
-from django.conf import settings
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
+from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import validateFilterString
-
-from .models import StockItemLabel, StockLocationLabel
+from part.models import Part
 from stock.models import StockItem
 
+from .models import PartLabel, StockItemLabel, StockLocationLabel
 
-class LabelTest(TestCase):
+
+class LabelTest(InvenTreeAPITestCase):
+    """Unit test class for label models"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'stock'
+    ]
 
     def setUp(self) -> None:
-        # ensure the labels were created
+        """Ensure that some label instances exist as part of init routine"""
+        super().setUp()
         apps.get_app_config('label').create_labels()
 
     def test_default_labels(self):
-        """
-        Test that the default label templates are copied across
-        """
-
+        """Test that the default label templates are copied across."""
         labels = StockItemLabel.objects.all()
 
         self.assertTrue(labels.count() > 0)
@@ -36,37 +39,21 @@ class LabelTest(TestCase):
         self.assertTrue(labels.count() > 0)
 
     def test_default_files(self):
-        """
-        Test that label files exist in the MEDIA directory
-        """
+        """Test that label files exist in the MEDIA directory."""
+        def test_subdir(ref_name):
+            item_dir = settings.MEDIA_ROOT.joinpath(
+                'label',
+                'inventree',
+                ref_name,
+            )
+            self.assertTrue(len([item_dir.iterdir()]) > 0)
 
-        item_dir = os.path.join(
-            settings.MEDIA_ROOT,
-            'label',
-            'inventree',
-            'stockitem',
-        )
-
-        files = os.listdir(item_dir)
-
-        self.assertTrue(len(files) > 0)
-
-        loc_dir = os.path.join(
-            settings.MEDIA_ROOT,
-            'label',
-            'inventree',
-            'stocklocation',
-        )
-
-        files = os.listdir(loc_dir)
-
-        self.assertTrue(len(files) > 0)
+        test_subdir('stockitem')
+        test_subdir('stocklocation')
+        test_subdir('part')
 
     def test_filters(self):
-        """
-        Test the label filters
-        """
-
+        """Test the label filters."""
         filter_string = "part__pk=10"
 
         filters = validateFilterString(filter_string, model=StockItem)
@@ -77,3 +64,12 @@ class LabelTest(TestCase):
 
         with self.assertRaises(ValidationError):
             validateFilterString(bad_filter_string, model=StockItem)
+
+    def test_label_rendering(self):
+        """Test label rendering."""
+        labels = PartLabel.objects.all()
+        part = Part.objects.first()
+
+        for label in labels:
+            url = reverse('api-part-label-print', kwargs={'pk': label.pk})
+            self.get(f'{url}?parts={part.pk}', expected_code=200)

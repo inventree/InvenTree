@@ -42,9 +42,18 @@
         <span class='fas fa-tools'></span> <span class='caret'></span>
     </button>
     <ul class='dropdown-menu' role='menu'>
-        <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='edit-order'>
+            <span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}
+        </a></li>
         {% if order.can_cancel %}
-        <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='cancel-order'>
+            <span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}
+        </a></li>
+        {% endif %}
+        {% if roles.purchase_order.add %}
+        <li><a class='dropdown-item' href='#' id='duplicate-order'>
+            <span class='fas fa-clone'></span> {% trans "Duplicate order" %}
+        </a></li>
         {% endif %}
     </ul>
 </div>
@@ -67,7 +76,7 @@
 
 {% block thumbnail %}
 <img class='part-thumb'
-{% if order.supplier.image %}
+{% if order.supplier and order.supplier.image %}
 src="{{ order.supplier.image.url }}"
 {% else %}
 src="{% static 'img/blank_image.png' %}"
@@ -82,7 +91,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}{{ order.reference }}{% include "clip.html"%}</td>
+        <td>{{ order.reference }}{% include "clip.html"%}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info-circle'></span></td>
@@ -110,7 +119,13 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
-        <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html"%}</td>
+        <td>
+            {% if order.supplier %}
+            <a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html"%}
+            {% else %}
+            <em>{% trans "No suppplier information available" %}</em>
+            {% endif %}
+        </td>
     </tr>
     {% if order.supplier_reference %}
     <tr>
@@ -171,6 +186,20 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.responsible }}</td>
     </tr>
     {% endif %}
+
+    <tr>
+        <td><span class='fas fa-dollar-sign'></span></td>
+        <td>{% trans "Total cost" %}</td>
+        <td id="poTotalPrice">
+            {% with order.get_total_price as tp %}
+            {% if tp == None %}
+            <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
+            {% else %}
+            {{ tp }}
+            {% endif %}
+            {% endwith %}
+        </td>
+    </tr>
 </table>
 {% endblock %}
 
@@ -180,10 +209,14 @@ src="{% static 'img/blank_image.png' %}"
 
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $("#place-order").click(function() {
-    launchModalForm("{% url 'po-issue' order.id %}",
-    {
-        reload: true,
-    });
+
+    issuePurchaseOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+
 });
 {% endif %}
 
@@ -193,30 +226,14 @@ $('#print-order-report').click(function() {
 });
 {% endif %}
 
+{% if roles.purchase_order.change %}
+
 $("#edit-order").click(function() {
 
-    constructForm('{% url "api-po-detail" order.pk %}', {
-        fields: {
-            reference: {
-                prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
-            },
-            {% if order.lines.count == 0 and order.status == PurchaseOrderStatus.PENDING %}
-            supplier: {
-            },
-            {% endif %}
-            supplier_reference: {},
-            description: {},
-            target_date: {
-                icon: 'fa-calendar-alt',
-            },
-            link: {
-                icon: 'fa-link',
-            },
-            responsible: {
-                icon: 'fa-user',
-            },
-        },
-        title: '{% trans "Edit Purchase Order" %}',
+    editPurchaseOrder({{ order.pk }}, {
+        {% if order.lines.count > 0 or order.status != PurchaseOrderStatus.PENDING %}
+        hide_supplier: true,
+        {% endif %}
         reload: true,
     });
 });
@@ -224,19 +241,11 @@ $("#edit-order").click(function() {
 $("#receive-order").click(function() {
 
     // Auto select items which have not been fully allocated
-    var items = $("#po-line-table").bootstrapTable('getData');
-
-    var items_to_receive = [];
-
-    items.forEach(function(item) {
-        if (item.received < item.quantity) {
-            items_to_receive.push(item);
-        }
-    });
+    var items = getTableData('#po-line-table');
 
     receivePurchaseOrderItems(
         {{ order.id }},
-        items_to_receive,
+        items,
         {
             success: function() {
                 $("#po-line-table").bootstrapTable('refresh');
@@ -246,16 +255,38 @@ $("#receive-order").click(function() {
 });
 
 $("#complete-order").click(function() {
-    launchModalForm("{% url 'po-complete' order.id %}", {
-        reload: true,
-    });
+
+    completePurchaseOrder(
+        {{ order.pk }},
+        {
+            onSuccess: function() {
+                window.location.reload();
+            }
+        }
+    );
 });
 
 $("#cancel-order").click(function() {
-    launchModalForm("{% url 'po-cancel' order.id %}", {
-        reload: true,
-    });
+
+    cancelPurchaseOrder(
+        {{ order.pk }},
+        {
+            onSuccess: function() {
+                window.location.reload();
+            }
+        },
+    );
 });
+
+{% endif %}
+
+{% if roles.purchase_order.add %}
+$('#duplicate-order').click(function() {
+    duplicatePurchaseOrder(
+        {{ order.pk }},
+    );
+});
+{% endif %}
 
 $("#export-order").click(function() {
     exportOrder('{% url "po-export" order.id %}');

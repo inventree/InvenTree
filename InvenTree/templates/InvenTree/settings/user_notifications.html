@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load inventree_extras %}
+{% load plugin_extras %}
 
 {% block label %}user-notifications{% endblock label %}
 
@@ -12,7 +13,10 @@
 <div class='row'>
     <table class='table table-striped table-condensed'>
         <tbody>
-            {% include "InvenTree/settings/setting.html" with key="NOTIFICATION_SEND_EMAILS" icon='fa-envelope' user_setting=True %}
+            {% notification_settings_list as settings %}
+            {% for setting in settings %}
+            {% include "InvenTree/settings/setting.html" with key=setting.key icon=setting.icon method=setting.method notification_setting=True %}
+            {% endfor %}
         </tbody>
     </table>
 </div>

@@ -1,17 +1,14 @@
-"""
-Unit testing for BOM export functionality
-"""
+"""Unit testing for BOM export functionality."""
 
 import csv
 
-from django.test import TestCase
-
 from django.urls import reverse
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+
+from InvenTree.helpers import InvenTreeTestCase
 
 
-class BomExportTest(TestCase):
+class BomExportTest(InvenTreeTestCase):
+    """Class for performing unit testing of BOM export functionality"""
 
     fixtures = [
         'category',
@@ -20,40 +17,16 @@ class BomExportTest(TestCase):
         'bom',
     ]
 
+    roles = 'all'
+
     def setUp(self):
+        """Perform test setup functions"""
         super().setUp()
-
-        # Create a user
-        user = get_user_model()
-
-        self.user = user.objects.create_user(
-            username='username',
-            email='user@email.com',
-            password='password'
-        )
-
-        # Put the user into a group with the correct permissions
-        group = Group.objects.create(name='mygroup')
-        self.user.groups.add(group)
-
-        # Give the group *all* the permissions!
-        for rule in group.rule_sets.all():
-            rule.can_view = True
-            rule.can_change = True
-            rule.can_add = True
-            rule.can_delete = True
-
-            rule.save()
-
-        self.client.login(username='username', password='password')
 
         self.url = reverse('bom-download', kwargs={'pk': 100})
 
     def test_bom_template(self):
-        """
-        Test that the BOM template can be downloaded from the server
-        """
-
+        """Test that the BOM template can be downloaded from the server."""
         url = reverse('bom-upload-template')
 
         # Download an XLS template
@@ -102,10 +75,7 @@ class BomExportTest(TestCase):
                 self.assertTrue(header in headers)
 
     def test_export_csv(self):
-        """
-        Test BOM download in CSV format
-        """
-
+        """Test BOM download in CSV format."""
         params = {
             'format': 'csv',
             'cascade': True,
@@ -166,10 +136,7 @@ class BomExportTest(TestCase):
                 self.assertTrue(header in expected)
 
     def test_export_xls(self):
-        """
-        Test BOM download in XLS format
-        """
-
+        """Test BOM download in XLS format."""
         params = {
             'format': 'xls',
             'cascade': True,
@@ -187,10 +154,7 @@ class BomExportTest(TestCase):
         self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.xls"')
 
     def test_export_xlsx(self):
-        """
-        Test BOM download in XLSX format
-        """
-
+        """Test BOM download in XLSX format."""
         params = {
             'format': 'xlsx',
             'cascade': True,
@@ -205,10 +169,7 @@ class BomExportTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_export_json(self):
-        """
-        Test BOM download in JSON format
-        """
-
+        """Test BOM download in JSON format."""
         params = {
             'format': 'json',
             'cascade': True,

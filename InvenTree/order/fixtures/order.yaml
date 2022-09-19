@@ -4,7 +4,8 @@
 - model: order.purchaseorder
   pk: 1
   fields:
-    reference: '0001'
+    reference: 'PO-0001'
+    reference_int: 1
     description: "Ordering some screws"
     supplier: 1
     status: 10  # Pending
@@ -13,7 +14,8 @@
 - model: order.purchaseorder
   pk: 2
   fields:
-    reference: '0002'
+    reference: 'PO-0002'
+    reference_int: 2
     description: "Ordering some more screws"
     supplier: 3
     status: 10  # Pending
@@ -21,7 +23,8 @@
 - model: order.purchaseorder
   pk: 3
   fields:
-    reference: '0003'
+    reference: 'PO-0003'
+    reference_int: 3
     description: 'Another PO'
     supplier: 3
     status: 20  # Placed
@@ -29,7 +32,8 @@
 - model: order.purchaseorder
   pk: 4
   fields:
-    reference: '0004'
+    reference: 'PO-0004'
+    reference_int: 4
     description: 'Another PO'
     supplier: 3
     status: 20  # Placed
@@ -37,7 +41,8 @@
 - model: order.purchaseorder
   pk: 5
   fields:
-    reference: '0005'
+    reference: 'PO-0005'
+    reference_int: 5
     description: 'Another PO'
     supplier: 3
     status: 30  # Complete
@@ -45,7 +50,8 @@
 - model: order.purchaseorder
   pk: 6
   fields:
-    reference: '0006'
+    reference: 'PO-0006'
+    reference_int: 6
     description: 'Another PO'
     supplier: 3
     status: 40  # Cancelled
@@ -54,7 +60,8 @@
 - model: order.purchaseorder
   pk: 7
   fields:
-    reference: '0007'
+    reference: 'PO-0007'
+    reference_int: 7
     description: 'Another PO'
     supplier: 2
     status: 10  # Pending

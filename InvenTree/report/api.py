@@ -1,51 +1,40 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""API functionality for the 'report' app"""
 
-from django.utils.translation import ugettext_lazy as _
-from django.conf.urls import url, include
-from django.core.exceptions import ValidationError, FieldError
+from django.core.exceptions import FieldError, ValidationError
+from django.core.files.base import ContentFile
 from django.http import HttpResponse
-
 from django.template.exceptions import TemplateDoesNotExist
+from django.urls import include, path, re_path
+from django.utils.translation import gettext_lazy as _
 
 from django_filters.rest_framework import DjangoFilterBackend
-
-from rest_framework import generics, filters
+from rest_framework import filters
 from rest_framework.response import Response
 
+import build.models
 import common.models
 import InvenTree.helpers
-
-from stock.models import StockItem
-
-import build.models
-import part.models
 import order.models
+import part.models
+from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
+from stock.models import StockItem, StockItemAttachment
 
-from .models import TestReport
-from .models import BuildReport
-from .models import BillOfMaterialsReport
-from .models import PurchaseOrderReport
-from .models import SalesOrderReport
-
-from .serializers import TestReportSerializer
-from .serializers import BuildReportSerializer
-from .serializers import BOMReportSerializer
-from .serializers import POReportSerializer
-from .serializers import SOReportSerializer
+from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
+                     SalesOrderReport, TestReport)
+from .serializers import (BOMReportSerializer, BuildReportSerializer,
+                          PurchaseOrderReportSerializer,
+                          SalesOrderReportSerializer, TestReportSerializer)
 
 
-class ReportListView(generics.ListAPIView):
-    """
-    Generic API class for report templates
-    """
+class ReportListView(ListAPI):
+    """Generic API class for report templates."""
 
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'enabled',
     ]
 
@@ -56,15 +45,10 @@ class ReportListView(generics.ListAPIView):
 
 
 class StockItemReportMixin:
-    """
-    Mixin for extracting stock items from query params
-    """
+    """Mixin for extracting stock items from query params."""
 
     def get_items(self):
-        """
-        Return a list of requested stock items
-        """
-
+        """Return a list of requested stock items."""
         items = []
 
         params = self.request.query_params
@@ -89,15 +73,10 @@ class StockItemReportMixin:
 
 
 class BuildReportMixin:
-    """
-    Mixin for extracting Build items from query params
-    """
+    """Mixin for extracting Build items from query params."""
 
     def get_builds(self):
-        """
-        Return a list of requested Build objects
-        """
-
+        """Return a list of requested Build objects."""
         builds = []
 
         params = self.request.query_params
@@ -121,17 +100,13 @@ class BuildReportMixin:
 
 
 class OrderReportMixin:
-    """
-    Mixin for extracting order items from query params
+    """Mixin for extracting order items from query params.
 
     requires the OrderModel class attribute to be set!
     """
 
     def get_orders(self):
-        """
-        Return a list of order objects
-        """
-
+        """Return a list of order objects."""
         orders = []
 
         params = self.request.query_params
@@ -155,15 +130,10 @@ class OrderReportMixin:
 
 
 class PartReportMixin:
-    """
-    Mixin for extracting part items from query params
-    """
+    """Mixin for extracting part items from query params."""
 
     def get_parts(self):
-        """
-        Return a list of requested part objects
-        """
-
+        """Return a list of requested part objects."""
         parts = []
 
         params = self.request.query_params
@@ -188,15 +158,22 @@ class PartReportMixin:
 
 
 class ReportPrintMixin:
-    """
-    Mixin for printing reports
-    """
+    """Mixin for printing reports."""
+
+    def report_callback(self, object, report, request):
+        """Callback function for each object/report combination.
+
+        Allows functionality to be performed before returning the consolidated PDF
+
+        Arguments:
+            object: The model instance to be printed
+            report: The individual PDF file object
+            request: The request instance associated with this print call
+        """
+        ...
 
     def print(self, request, items_to_print):
-        """
-        Print this report template against a number of pre-validated items.
-        """
-
+        """Print this report template against a number of pre-validated items."""
         if len(items_to_print) == 0:
             # No valid items provided, return an error message
             data = {
@@ -219,12 +196,16 @@ class ReportPrintMixin:
             report.object_to_print = item
 
             report_name = report.generate_filename(request)
+            output = report.render(request)
+
+            # Run report callback for each generated report
+            self.report_callback(item, output, request)
 
             try:
                 if debug_mode:
                     outputs.append(report.render_as_string(request))
                 else:
-                    outputs.append(report.render(request))
+                    outputs.append(output)
             except TemplateDoesNotExist as e:
                 template = str(e)
                 if not template:
@@ -241,34 +222,23 @@ class ReportPrintMixin:
             report_name += '.pdf'
 
         if debug_mode:
-            """
-            Contatenate all rendered templates into a single HTML string,
-            and return the string as a HTML response.
-            """
+            """Contatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
 
             html = "\n".join(outputs)
 
             return HttpResponse(html)
         else:
-            """
-            Concatenate all rendered pages into a single PDF object,
-            and return the resulting document!
-            """
+            """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
 
             pages = []
 
             try:
+                for output in outputs:
+                    doc = output.get_document()
+                    for page in doc.pages:
+                        pages.append(page)
 
-                if len(outputs) > 1:
-                    # If more than one output is generated, merge them into a single file
-                    for output in outputs:
-                        doc = output.get_document()
-                        for page in doc.pages:
-                            pages.append(page)
-
-                    pdf = outputs[0].get_document().copy(pages).write_pdf()
-                else:
-                    pdf = outputs[0].get_document().write_pdf()
+                pdf = outputs[0].get_document().copy(pages).write_pdf()
 
             except TemplateDoesNotExist as e:
 
@@ -295,21 +265,19 @@ class ReportPrintMixin:
 
 
 class StockItemTestReportList(ReportListView, StockItemReportMixin):
-    """
-    API endpoint for viewing list of TestReport objects.
+    """API endpoint for viewing list of TestReport objects.
 
     Filterable by:
 
     - enabled: Filter by enabled / disabled status
     - item: Filter by stock item(s)
-
     """
 
     queryset = TestReport.objects.all()
     serializer_class = TestReportSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering"""
         queryset = super().filter_queryset(queryset)
 
         # List of StockItem objects to match against
@@ -334,7 +302,7 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
                 # Filter string defined for the report object
                 try:
                     filters = InvenTree.helpers.validateFilterString(report.filters)
-                except:
+                except Exception:
                     continue
 
                 for item in items:
@@ -358,36 +326,44 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
         return queryset
 
 
-class StockItemTestReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single TestReport object
-    """
+class StockItemTestReportDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for a single TestReport object."""
 
     queryset = TestReport.objects.all()
     serializer_class = TestReportSerializer
 
 
-class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin, ReportPrintMixin):
-    """
-    API endpoint for printing a TestReport object
-    """
+class StockItemTestReportPrint(RetrieveAPI, StockItemReportMixin, ReportPrintMixin):
+    """API endpoint for printing a TestReport object."""
 
     queryset = TestReport.objects.all()
     serializer_class = TestReportSerializer
+
+    def report_callback(self, item, report, request):
+        """Callback to (optionally) save a copy of the generated report"""
+
+        if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT'):
+
+            # Construct a PDF file object
+            pdf = report.get_document().write_pdf()
+            pdf_content = ContentFile(pdf, "test_report.pdf")
+
+            StockItemAttachment.objects.create(
+                attachment=pdf_content,
+                stock_item=item,
+                user=request.user,
+                comment=_("Test report")
+            )
 
     def get(self, request, *args, **kwargs):
-        """
-        Check if valid stock item(s) have been provided.
-        """
-
+        """Check if valid stock item(s) have been provided."""
         items = self.get_items()
 
         return self.print(request, items)
 
 
 class BOMReportList(ReportListView, PartReportMixin):
-    """
-    API endpoint for viewing a list of BillOfMaterialReport objects.
+    """API endpoint for viewing a list of BillOfMaterialReport objects.
 
     Filterably by:
 
@@ -399,7 +375,7 @@ class BOMReportList(ReportListView, PartReportMixin):
     serializer_class = BOMReportSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering"""
         queryset = super().filter_queryset(queryset)
 
         # List of Part objects to match against
@@ -447,36 +423,28 @@ class BOMReportList(ReportListView, PartReportMixin):
         return queryset
 
 
-class BOMReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single BillOfMaterialReport object
-    """
+class BOMReportDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for a single BillOfMaterialReport object."""
 
     queryset = BillOfMaterialsReport.objects.all()
     serializer_class = BOMReportSerializer
 
 
-class BOMReportPrint(generics.RetrieveAPIView, PartReportMixin, ReportPrintMixin):
-    """
-    API endpoint for printing a BillOfMaterialReport object
-    """
+class BOMReportPrint(RetrieveAPI, PartReportMixin, ReportPrintMixin):
+    """API endpoint for printing a BillOfMaterialReport object."""
 
     queryset = BillOfMaterialsReport.objects.all()
     serializer_class = BOMReportSerializer
 
     def get(self, request, *args, **kwargs):
-        """
-        Check if valid part item(s) have been provided
-        """
-
+        """Check if valid part item(s) have been provided."""
         parts = self.get_parts()
 
         return self.print(request, parts)
 
 
 class BuildReportList(ReportListView, BuildReportMixin):
-    """
-    API endpoint for viewing a list of BuildReport objects.
+    """API endpoint for viewing a list of BuildReport objects.
 
     Can be filtered by:
 
@@ -488,7 +456,7 @@ class BuildReportList(ReportListView, BuildReportMixin):
     serializer_class = BuildReportSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering"""
         queryset = super().filter_queryset(queryset)
 
         # List of Build objects to match against
@@ -537,46 +505,42 @@ class BuildReportList(ReportListView, BuildReportMixin):
         return queryset
 
 
-class BuildReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single BuildReport object
-    """
+class BuildReportDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for a single BuildReport object."""
 
     queryset = BuildReport.objects.all()
     serializer_class = BuildReportSerializer
 
 
-class BuildReportPrint(generics.RetrieveAPIView, BuildReportMixin, ReportPrintMixin):
-    """
-    API endpoint for printing a BuildReport
-    """
+class BuildReportPrint(RetrieveAPI, BuildReportMixin, ReportPrintMixin):
+    """API endpoint for printing a BuildReport."""
 
     queryset = BuildReport.objects.all()
     serializer_class = BuildReportSerializer
 
     def get(self, request, *ars, **kwargs):
-
+        """Perform a GET action to print the report"""
         builds = self.get_builds()
 
         return self.print(request, builds)
 
 
-class POReportList(ReportListView, OrderReportMixin):
-
+class PurchaseOrderReportList(ReportListView, OrderReportMixin):
+    """API list endpoint for the PurchaseOrderReport model"""
     OrderModel = order.models.PurchaseOrder
 
     queryset = PurchaseOrderReport.objects.all()
-    serializer_class = POReportSerializer
+    serializer_class = PurchaseOrderReportSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filter for the PurchaseOrderReport list"""
         queryset = super().filter_queryset(queryset)
 
         orders = self.get_orders()
 
         if len(orders) > 0:
             """
-            We wish to filter by purchase orders
+            We wish to filter by purchase orders.
 
             We need to compare the 'filters' string of each report,
             and see if it matches against each of the specified orders.
@@ -593,7 +557,7 @@ class POReportList(ReportListView, OrderReportMixin):
                 # Filter string defined for the report object
                 try:
                     filters = InvenTree.helpers.validateFilterString(report.filters)
-                except:
+                except Exception:
                     continue
 
                 for o in orders:
@@ -618,48 +582,44 @@ class POReportList(ReportListView, OrderReportMixin):
         return queryset
 
 
-class POReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single PurchaseOrderReport object
-    """
+class PurchaseOrderReportDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for a single PurchaseOrderReport object."""
 
     queryset = PurchaseOrderReport.objects.all()
-    serializer_class = POReportSerializer
+    serializer_class = PurchaseOrderReportSerializer
 
 
-class POReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPrintMixin):
-    """
-    API endpoint for printing a PurchaseOrderReport object
-    """
+class PurchaseOrderReportPrint(RetrieveAPI, OrderReportMixin, ReportPrintMixin):
+    """API endpoint for printing a PurchaseOrderReport object."""
 
     OrderModel = order.models.PurchaseOrder
 
     queryset = PurchaseOrderReport.objects.all()
-    serializer_class = POReportSerializer
+    serializer_class = PurchaseOrderReportSerializer
 
     def get(self, request, *args, **kwargs):
-
+        """Perform GET request to print the report"""
         orders = self.get_orders()
 
         return self.print(request, orders)
 
 
-class SOReportList(ReportListView, OrderReportMixin):
-
+class SalesOrderReportList(ReportListView, OrderReportMixin):
+    """API list endpoint for the SalesOrderReport model"""
     OrderModel = order.models.SalesOrder
 
     queryset = SalesOrderReport.objects.all()
-    serializer_class = SOReportSerializer
+    serializer_class = SalesOrderReportSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering for the SalesOrderReport API list"""
         queryset = super().filter_queryset(queryset)
 
         orders = self.get_orders()
 
         if len(orders) > 0:
             """
-            We wish to filter by purchase orders
+            We wish to filter by purchase orders.
 
             We need to compare the 'filters' string of each report,
             and see if it matches against each of the specified orders.
@@ -676,7 +636,7 @@ class SOReportList(ReportListView, OrderReportMixin):
                 # Filter string defined for the report object
                 try:
                     filters = InvenTree.helpers.validateFilterString(report.filters)
-                except:
+                except Exception:
                     continue
 
                 for o in orders:
@@ -701,27 +661,23 @@ class SOReportList(ReportListView, OrderReportMixin):
         return queryset
 
 
-class SOReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single SalesOrderReport object
-    """
+class SalesOrderReportDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for a single SalesOrderReport object."""
 
     queryset = SalesOrderReport.objects.all()
-    serializer_class = SOReportSerializer
+    serializer_class = SalesOrderReportSerializer
 
 
-class SOReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPrintMixin):
-    """
-    API endpoint for printing a PurchaseOrderReport object
-    """
+class SalesOrderReportPrint(RetrieveAPI, OrderReportMixin, ReportPrintMixin):
+    """API endpoint for printing a PurchaseOrderReport object."""
 
     OrderModel = order.models.SalesOrder
 
     queryset = SalesOrderReport.objects.all()
-    serializer_class = SOReportSerializer
+    serializer_class = SalesOrderReportSerializer
 
     def get(self, request, *args, **kwargs):
-
+        """Perform a GET request to print the report"""
         orders = self.get_orders()
 
         return self.print(request, orders)
@@ -730,62 +686,62 @@ class SOReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPrintMixin
 report_api_urls = [
 
     # Purchase order reports
-    url(r'po/', include([
+    re_path(r'po/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/', POReportPrint.as_view(), name='api-po-report-print'),
-            url(r'^$', POReportDetail.as_view(), name='api-po-report-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/', PurchaseOrderReportPrint.as_view(), name='api-po-report-print'),
+            path('', PurchaseOrderReportDetail.as_view(), name='api-po-report-detail'),
         ])),
 
         # List view
-        url(r'^$', POReportList.as_view(), name='api-po-report-list'),
+        path('', PurchaseOrderReportList.as_view(), name='api-po-report-list'),
     ])),
 
     # Sales order reports
-    url(r'so/', include([
+    re_path(r'so/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/', SOReportPrint.as_view(), name='api-so-report-print'),
-            url(r'^$', SOReportDetail.as_view(), name='api-so-report-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/', SalesOrderReportPrint.as_view(), name='api-so-report-print'),
+            path('', SalesOrderReportDetail.as_view(), name='api-so-report-detail'),
         ])),
 
-        url(r'^$', SOReportList.as_view(), name='api-so-report-list'),
+        path('', SalesOrderReportList.as_view(), name='api-so-report-list'),
     ])),
 
     # Build reports
-    url(r'build/', include([
+    re_path(r'build/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
-            url(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
+            re_path(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
         ])),
 
         # List view
-        url(r'^.*$', BuildReportList.as_view(), name='api-build-report-list'),
+        re_path(r'^.*$', BuildReportList.as_view(), name='api-build-report-list'),
     ])),
 
     # Bill of Material reports
-    url(r'bom/', include([
+    re_path(r'bom/', include([
 
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
-            url(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
+            re_path(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
         ])),
 
         # List view
-        url(r'^.*$', BOMReportList.as_view(), name='api-bom-report-list'),
+        re_path(r'^.*$', BOMReportList.as_view(), name='api-bom-report-list'),
     ])),
 
     # Stock item test reports
-    url(r'test/', include([
+    re_path(r'test/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
-            url(r'^.*$', StockItemTestReportDetail.as_view(), name='api-stockitem-testreport-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
+            re_path(r'^.*$', StockItemTestReportDetail.as_view(), name='api-stockitem-testreport-detail'),
         ])),
 
         # List view
-        url(r'^.*$', StockItemTestReportList.as_view(), name='api-stockitem-testreport-list'),
+        re_path(r'^.*$', StockItemTestReportList.as_view(), name='api-stockitem-testreport-list'),
     ])),
 ]

@@ -13,15 +13,15 @@
 {% endblock %}
 
 {% block actions %}
-{% inventree_demo_mode as demo %}
-{% if not demo %}
+{% inventree_customize 'hide_password_reset' as hide_password_reset %}
+{% if not hide_password_reset %}
 <div class='btn btn-outline-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
     <span class='fas fa-key'></span> {% trans "Set Password" %}
 </div>
+{% endif %}
 <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
     <span class='fas fa-user-cog'></span> {% trans "Edit" %}
 </div>
-{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -154,7 +154,9 @@
         </form>
 
         {% else %}
-        <p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
+        <div class='alert alert-block alert-warning'>
+            {% trans 'There are no social network accounts connected to this account.' %}
+        </div>
         {% endif %}
     </div>
 
@@ -198,9 +200,9 @@
     </table>
 
     {% else %}
-    <p><strong>{% trans 'Warning:'%}</strong>
-        {% trans "You currently do not have any factors set up." %}
-    </p>
+    <div class='alert alert-block alert-warning'>
+        {% trans "Multifactor authentication is not configured for your account" %}
+    </div>
 
     {% endif %}
     </div>
@@ -224,7 +226,7 @@
                 <form method="post" action="{% url 'session_delete_other' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm btn-default btn-danger" title='{% trans "Log out active sessions (except this one)" %}'>
-                        {% trans "Log Out Active Sessions" %}
+                        <span class='fas fa-sign-out-alt'></span> {% trans "Log Out Active Sessions" %}
                     </button>
                 </form>
                 {% endif %}
@@ -246,7 +248,11 @@
         {% for object in session_list %}
             <tr {% if object.session_key == session_key %}class="active"{% endif %}>
             <td>{{ object.ip }}</td>
+            {% if object.user_agent or object.device %}
             <td>{{ object.user_agent|device|default_if_none:unknown_on_unknown|safe }}</td>
+            {% else %}
+            <td>{{ unknown_on_unknown }}</td>
+            {% endif %}
             <td>
                 {% if object.session_key == session_key %}
                 {% blocktrans with time=object.last_activity|timesince %}{{ time }} ago (this session){% endblocktrans %}

@@ -1,19 +1,13 @@
-"""
-Test that the "translated" javascript files to not contain template tags
-which need to be determined at "run time".
+"""Test that the "translated" javascript files to not contain template tags which need to be determined at "run time".
 
 This is because the "translated" javascript files are compiled into the "static" directory.
-
 They should only contain template tags that render static information.
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import sys
-import re
 import os
 import pathlib
+import re
+import sys
 
 here = os.path.abspath(os.path.dirname(__file__))
 template_dir = os.path.abspath(os.path.join(here, '..', 'InvenTree', 'templates'))
@@ -30,7 +24,7 @@ print("=================================")
 
 
 def check_invalid_tag(data):
-
+    """Check for invalid tags."""
     pattern = r"{%(\w+)"
 
     err_count = 0
@@ -48,7 +42,7 @@ def check_invalid_tag(data):
 
 
 def check_prohibited_tags(data):
-
+    """Check for prohibited tags."""
     allowed_tags = [
         'if',
         'elif',

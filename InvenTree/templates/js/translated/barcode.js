@@ -19,6 +19,7 @@
     linkBarcodeDialog,
     scanItemsIntoLocation,
     unlinkBarcode,
+    onBarcodeScanClicked,
 */
 
 function makeBarcodeInput(placeholderText='', hintText='') {
@@ -31,6 +32,9 @@ function makeBarcodeInput(placeholderText='', hintText='') {
     hintText = hintText || '{% trans "Enter barcode data" %}';
 
     var html = `
+    <div id='barcode_scan_video_container' class='text-center' style='height: 240px; display: none;'>
+        <video id='barcode_scan_video' disablepictureinpicture playsinline height='240' style='object-fit: fill;'></video>
+    </div>
     <div class='form-group'>
         <label class='control-label' for='barcode'>{% trans "Barcode" %}</label>
         <div class='controls'>
@@ -39,6 +43,7 @@ function makeBarcodeInput(placeholderText='', hintText='') {
                     <span class='fas fa-qrcode'></span>
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
+                <button id='barcode_scan_btn' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'><span class='fas fa-camera'></span></button>
             </div>
             <div id='hint_barcode_data' class='help-block'>${hintText}</div>
         </div>
@@ -46,6 +51,43 @@ function makeBarcodeInput(placeholderText='', hintText='') {
     `;
 
     return html;
+}
+
+qrScanner = null;
+
+function startQrScanner() {
+    $('#barcode_scan_video_container').show();
+    qrScanner.start();
+}
+
+function stopQrScanner() {
+    if (qrScanner != null) qrScanner.stop();
+    $('#barcode_scan_video_container').hide();
+}
+
+function onBarcodeScanClicked(e) {
+    if ($('#barcode_scan_video_container').is(':visible') == false) startQrScanner(); else stopQrScanner();
+}
+
+function onCameraAvailable(hasCamera, options) {
+    if (hasCamera && global_settings.BARCODE_WEBCAM_SUPPORT) {
+        // Camera is only acccessible if page is served over secure connection
+        if ( window.isSecureContext == true ) {
+            qrScanner = new QrScanner(document.getElementById('barcode_scan_video'), (result) => {
+                onBarcodeScanCompleted(result, options);
+            }, {
+                highlightScanRegion: true,
+                highlightCodeOutline: true,
+            });
+            $('#barcode_scan_btn').show();
+        }
+    }
+}
+
+function onBarcodeScanCompleted(result, options) {
+    if (result.data == '') return;
+    stopQrScanner();
+    postBarcodeData(result.data, options);
 }
 
 function makeNotesField(options={}) {
@@ -186,6 +228,11 @@ function barcodeDialog(title, options={}) {
     $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
 
+        // Check for qr-scanner camera
+        QrScanner.hasCamera().then( (hasCamera) => {
+            onCameraAvailable(hasCamera, options);
+        });
+
         var barcode = $(modal + ' #barcode');
 
         // Handle 'enter' key on barcode
@@ -218,6 +265,12 @@ function barcodeDialog(title, options={}) {
             options.onShow();
         }
 
+    });
+
+    $(modal).on('hidden.bs.modal', function() {
+        stopQrScanner();
+        if (qrScanner != null) qrScanner.destroy();
+        qrScanner = null;
     });
 
     modalSetTitle(modal, title);
@@ -271,7 +324,7 @@ function barcodeDialog(title, options={}) {
 function barcodeScanDialog() {
     /*
      * Perform a barcode scan,
-     * and (potentially) redirect the browser 
+     * and (potentially) redirect the browser
      */
 
     var modal = '#modal-form';
@@ -292,26 +345,24 @@ function barcodeScanDialog() {
                         'warning'
                     );
                 }
-            } 
+            }
         },
-    ); 
+    );
 }
 
 
 /*
- * Dialog for linking a particular barcode to a stock item.
+ * Dialog for linking a particular barcode to a database model instsance
  */
-function linkBarcodeDialog(stockitem) {
+function linkBarcodeDialog(data, options={}) {
 
     var modal = '#modal-form';
 
     barcodeDialog(
-        '{% trans "Link Barcode to Stock Item" %}',
+        options.title,
         {
             url: '/api/barcode/link/',
-            data: {
-                stockitem: stockitem,
-            },
+            data: data,
             onScan: function() {
 
                 $(modal).modal('hide');
@@ -323,13 +374,13 @@ function linkBarcodeDialog(stockitem) {
 
 
 /*
- * Remove barcode association from a device.
+ * Remove barcode association from a database model instance.
  */
-function unlinkBarcode(stockitem) {
+function unlinkBarcode(data, options={}) {
 
     var html = `<b>{% trans "Unlink Barcode" %}</b><br>`;
 
-    html += '{% trans "This will remove the association between this stock item and the barcode" %}';
+    html += '{% trans "This will remove the link to the associated barcode" %}';
 
     showQuestionDialog(
         '{% trans "Unlink Barcode" %}',
@@ -338,13 +389,10 @@ function unlinkBarcode(stockitem) {
             accept_text: '{% trans "Unlink" %}',
             accept: function() {
                 inventreePut(
-                    `/api/stock/${stockitem}/`,
+                    '/api/barcode/unlink/',
+                    data,
                     {
-                        // Clear the UID field
-                        uid: '',
-                    },
-                    {
-                        method: 'PATCH',
+                        method: 'POST',
                         success: function() {
                             location.reload();
                         },
@@ -594,7 +642,7 @@ function scanItemsIntoLocation(item_list, options={}) {
                 item_list.forEach(function(item) {
                     items.push({
                         pk: item.pk || item.id,
-                        quantity: item.quantity, 
+                        quantity: item.quantity,
                     });
                 });
 

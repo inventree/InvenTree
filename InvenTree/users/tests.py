@@ -1,24 +1,21 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Unit tests for the 'users' app"""
 
-from django.test import TestCase
 from django.apps import apps
-from django.urls import reverse
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.test import TestCase
+from django.urls import reverse
 
 from rest_framework.authtoken.models import Token
 
-from users.models import RuleSet, Owner
+from InvenTree.helpers import InvenTreeTestCase
+from users.models import Owner, RuleSet
 
 
 class RuleSetModelTest(TestCase):
-    """
-    Some simplistic tests to ensure the RuleSet model is setup correctly.
-    """
+    """Some simplistic tests to ensure the RuleSet model is setup correctly."""
 
     def test_ruleset_models(self):
-
+        """Test that the role rulesets work as intended"""
         keys = RuleSet.RULESET_MODELS.keys()
 
         # Check if there are any rulesets which do not have models defined
@@ -51,11 +48,7 @@ class RuleSetModelTest(TestCase):
         self.assertEqual(len(empty), 0)
 
     def test_model_names(self):
-        """
-        Test that each model defined in the rulesets is valid,
-        based on the database schema!
-        """
-
+        """Test that each model defined in the rulesets is valid, based on the database schema!"""
         available_models = apps.get_models()
 
         available_tables = set()
@@ -111,10 +104,7 @@ class RuleSetModelTest(TestCase):
         self.assertEqual(len(extra_models), 0)
 
     def test_permission_assign(self):
-        """
-        Test that the permission assigning works!
-        """
-
+        """Test that the permission assigning works!"""
         # Create a new group
         group = Group.objects.create(name="Test group")
 
@@ -163,27 +153,17 @@ class RuleSetModelTest(TestCase):
         self.assertEqual(group.permissions.count(), 0)
 
 
-class OwnerModelTest(TestCase):
-    """
-    Some simplistic tests to ensure the Owner model is setup correctly.
-    """
-
-    def setUp(self):
-        """ Add users and groups """
-
-        # Create a new user
-        self.user = get_user_model().objects.create_user('username', 'user@email.com', 'password')
-        # Put the user into a new group
-        self.group = Group.objects.create(name='new_group')
-        self.user.groups.add(self.group)
+class OwnerModelTest(InvenTreeTestCase):
+    """Some simplistic tests to ensure the Owner model is setup correctly."""
 
     def do_request(self, endpoint, filters, status_code=200):
+        """Perform an API request"""
         response = self.client.get(endpoint, filters, format='json')
         self.assertEqual(response.status_code, status_code)
         return response.data
 
     def test_owner(self):
-
+        """Tests for the 'owner' model"""
         # Check that owner was created for user
         user_as_owner = Owner.get_owner(self.user)
         self.assertEqual(type(user_as_owner), Owner)
@@ -192,10 +172,26 @@ class OwnerModelTest(TestCase):
         group_as_owner = Owner.get_owner(self.group)
         self.assertEqual(type(group_as_owner), Owner)
 
+        # Check name
+        self.assertEqual(str(user_as_owner), 'testuser (user)')
+
         # Get related owners (user + group)
         related_owners = group_as_owner.get_related_owners(include_group=True)
         self.assertTrue(user_as_owner in related_owners)
         self.assertTrue(group_as_owner in related_owners)
+
+        # Get related owners (only user)
+        related_owners = group_as_owner.get_related_owners(include_group=False)
+        self.assertTrue(user_as_owner in related_owners)
+        self.assertFalse(group_as_owner in related_owners)
+
+        # Get related owners on user
+        related_owners = user_as_owner.get_related_owners()
+        self.assertEqual(related_owners, [user_as_owner])
+
+        # Check owner matching
+        owners = Owner.get_owners_matching_user(self.user)
+        self.assertEqual(owners, [user_as_owner, group_as_owner])
 
         # Delete user and verify owner was deleted too
         self.user.delete()
@@ -208,14 +204,14 @@ class OwnerModelTest(TestCase):
         self.assertEqual(group_as_owner, None)
 
     def test_api(self):
-        """
-        Test user APIs
-        """
+        """Test user APIs."""
+        self.client.logout()
+
         # not authed
         self.do_request(reverse('api-owner-list'), {}, 401)
         self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {}, 401)
 
-        self.client.login(username='username', password='password')
+        self.client.login(username=self.username, password=self.password)
         # user list
         self.do_request(reverse('api-owner-list'), {})
         # user list with search
@@ -225,15 +221,15 @@ class OwnerModelTest(TestCase):
         # self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {})
 
     def test_token(self):
-        """
-        Test token mechanisms
-        """
+        """Test token mechanisms."""
+        self.client.logout()
+
         token = Token.objects.filter(user=self.user)
 
         # not authed
         self.do_request(reverse('api-token'), {}, 401)
 
-        self.client.login(username='username', password='password')
+        self.client.login(username=self.username, password=self.password)
         # token get
         response = self.do_request(reverse('api-token'), {})
         self.assertEqual(response['token'], token.first().key)

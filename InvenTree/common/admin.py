@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Admin for the common app."""
 
 from django.contrib import admin
 
@@ -9,14 +8,12 @@ import common.models
 
 
 class SettingsAdmin(ImportExportModelAdmin):
+    """Admin settings for InvenTreeSetting."""
 
     list_display = ('key', 'value')
 
     def get_readonly_fields(self, request, obj=None):  # pragma: no cover
-        """
-        Prevent the 'key' field being edited once the setting is created
-        """
-
+        """Prevent the 'key' field being edited once the setting is created."""
         if obj:
             return ['key']
         else:
@@ -24,14 +21,12 @@ class SettingsAdmin(ImportExportModelAdmin):
 
 
 class UserSettingsAdmin(ImportExportModelAdmin):
+    """Admin settings for InvenTreeUserSetting."""
 
     list_display = ('key', 'value', 'user', )
 
     def get_readonly_fields(self, request, obj=None):  # pragma: no cover
-        """
-        Prevent the 'key' field being edited once the setting is created
-        """
-
+        """Prevent the 'key' field being edited once the setting is created."""
         if obj:
             return ['key']
         else:
@@ -39,16 +34,19 @@ class UserSettingsAdmin(ImportExportModelAdmin):
 
 
 class WebhookAdmin(ImportExportModelAdmin):
+    """Admin settings for Webhook."""
 
     list_display = ('endpoint_id', 'name', 'active', 'user')
 
 
 class NotificationEntryAdmin(admin.ModelAdmin):
+    """Admin settings for NotificationEntry."""
 
     list_display = ('key', 'uid', 'updated', )
 
 
 class NotificationMessageAdmin(admin.ModelAdmin):
+    """Admin settings for NotificationMessage."""
 
     list_display = ('age_human', 'user', 'category', 'name', 'read', 'target_object', 'source_object', )
 

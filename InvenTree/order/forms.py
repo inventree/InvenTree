@@ -1,74 +1,18 @@
-"""
-Django Forms for interacting with Order objects
-"""
-
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Django Forms for interacting with Order objects."""
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
-
-from InvenTree.forms import HelperForm
-from InvenTree.fields import InvenTreeMoneyField
-
-from InvenTree.helpers import clean_decimal
+from django.utils.translation import gettext_lazy as _
 
 from common.forms import MatchItemForm
-
-from .models import PurchaseOrder
-from .models import SalesOrder
-
-
-class IssuePurchaseOrderForm(HelperForm):
-
-    confirm = forms.BooleanField(required=True, initial=False, label=_('Confirm'), help_text=_('Place order'))
-
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            'confirm',
-        ]
-
-
-class CompletePurchaseOrderForm(HelperForm):
-
-    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_("Mark order as complete"))
-
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            'confirm',
-        ]
-
-
-class CancelPurchaseOrderForm(HelperForm):
-
-    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Cancel order'))
-
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            'confirm',
-        ]
-
-
-class CancelSalesOrderForm(HelperForm):
-
-    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Cancel order'))
-
-    class Meta:
-        model = SalesOrder
-        fields = [
-            'confirm',
-        ]
+from InvenTree.fields import InvenTreeMoneyField
+from InvenTree.helpers import clean_decimal
 
 
 class OrderMatchItemForm(MatchItemForm):
-    """ Override MatchItemForm fields """
+    """Override MatchItemForm fields."""
 
     def get_special_field(self, col_guess, row, file_manager):
-        """ Set special fields """
-
+        """Set special fields."""
         # set quantity field
         if 'quantity' in col_guess.lower():
             return forms.CharField(

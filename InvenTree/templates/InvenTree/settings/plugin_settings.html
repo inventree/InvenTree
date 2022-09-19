@@ -70,7 +70,7 @@
         <div class='alert alert-block alert-info'>
             {% trans 'The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running.' %}
         </div>
-            
+
         {% endif %}
     </div>
     <div class="col">
@@ -112,6 +112,9 @@
                 <td>{% trans "Commit Message" %}</td><td>{{ plugin.package.message }}{% include "clip.html" %}</td>
             </tr>
             {% endif %}
+
+            {% settings_value "PLUGIN_CHECK_SIGNATURES" as signatures %}
+            {% if signatures %}
             <tr>
                 <td><span class='text-{{plugin.sign_color}} fas fa-check'></span></td>
                 <td>{% trans "Sign Status" %}</td>
@@ -122,6 +125,7 @@
                 <td>{% trans "Sign Key" %}</td>
                 <td class="bg-{{plugin.sign_color}}">{{ plugin.package.key }}{% include "clip.html" %}</td>
             </tr>
+            {% endif %}
         </table>
         </div>
     </div>

@@ -8,6 +8,7 @@ __pycache__/
 env/
 inventree-env/
 ./build/
+.cache/
 develop-eggs/
 dist/
 bin/
@@ -26,7 +27,6 @@ var/
 .installed.cfg
 *.egg
 
-
 # Django stuff:
 *.log
 local_settings.py
@@ -36,8 +36,12 @@ local_settings.py
 *.old
 
 # Files used for testing
+inventree-demo-dataset/
+inventree-data/
 dummy_image.*
 _tmp.csv
+inventree/label.pdf
+inventree/label.png
 
 # Sphinx files
 docs/_build
@@ -62,7 +66,15 @@ secret_key.txt
 # IDE / development files
 .idea/
 *.code-workspace
-.vscode/
+.bash_history
+
+# https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
+.vscode/*
+#!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+#!.vscode/extensions.json
+#!.vscode/*.code-snippets
 
 # Coverage reports
 .coverage
@@ -73,6 +85,8 @@ js_tmp/
 
 # Development files
 dev/
+data/
+env/
 
 # Locale stats file
 locale_stats.json
@@ -85,3 +99,6 @@ maintenance_mode_state.txt
 
 # plugin dev directory
 plugins/
+
+# Compiled translation files
+*.mo

@@ -1,17 +1,14 @@
-# Tests for Part Parameters
+"""Various unit tests for Part Parameters"""
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from django.test import TestCase, TransactionTestCase
 import django.core.exceptions as django_exceptions
+from django.test import TestCase, TransactionTestCase
 
-from .models import Part, PartCategory
-from .models import PartParameter, PartParameterTemplate
-from .models import PartCategoryParameterTemplate
+from .models import (Part, PartCategory, PartCategoryParameterTemplate,
+                     PartParameter, PartParameterTemplate)
 
 
 class TestParams(TestCase):
+    """Unit test class for testing the PartParameter model"""
 
     fixtures = [
         'location',
@@ -21,7 +18,7 @@ class TestParams(TestCase):
     ]
 
     def test_str(self):
-
+        """Test the str representation of the PartParameterTemplate model"""
         t1 = PartParameterTemplate.objects.get(pk=1)
         self.assertEqual(str(t1), 'Length (mm)')
 
@@ -32,7 +29,7 @@ class TestParams(TestCase):
         self.assertEqual(str(c1), 'Mechanical | Length | 2.8')
 
     def test_validate(self):
-
+        """Test validation for part templates"""
         n = PartParameterTemplate.objects.all().count()
 
         t1 = PartParameterTemplate(name='abcde', units='dd')
@@ -48,6 +45,7 @@ class TestParams(TestCase):
 
 
 class TestCategoryTemplates(TransactionTestCase):
+    """Test class for PartCategoryParameterTemplate model"""
 
     fixtures = [
         'location',
@@ -57,7 +55,7 @@ class TestCategoryTemplates(TransactionTestCase):
     ]
 
     def test_validate(self):
-
+        """Test that category templates are correctly applied to Part instances"""
         # Category templates
         n = PartCategoryParameterTemplate.objects.all().count()
         self.assertEqual(n, 2)
@@ -83,6 +81,7 @@ class TestCategoryTemplates(TransactionTestCase):
             'main': True,
             'parent': True,
         }
+
         # Save it with category parameters
         part.save(**{'add_category_templates': add_category_templates})
 

@@ -1,32 +1,22 @@
-"""
-Label printing models
-"""
+"""Label printing models."""
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import sys
-import os
-import logging
 import datetime
+import logging
+import os
+import sys
 
 from django.conf import settings
-from django.db import models
-from django.urls import reverse
 from django.core.validators import FileExtensionValidator, MinValueValidator
-from django.core.exceptions import ValidationError, FieldError
-
-from django.template import Template, Context
+from django.db import models
+from django.template import Context, Template
 from django.template.loader import render_to_string
-
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.helpers import validateFilterString, normalize
-
 import common.models
-import stock.models
 import part.models
-
+import stock.models
+from InvenTree.helpers import normalize, validateFilterString
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -40,55 +30,52 @@ logger = logging.getLogger("inventree")
 
 
 def rename_label(instance, filename):
-    """ Place the label file into the correct subdirectory """
-
+    """Place the label file into the correct subdirectory."""
     filename = os.path.basename(filename)
 
     return os.path.join('label', 'template', instance.SUBDIR, filename)
 
 
 def validate_stock_item_filters(filters):
-
+    """Validate query filters for the StockItemLabel model"""
     filters = validateFilterString(filters, model=stock.models.StockItem)
 
     return filters
 
 
 def validate_stock_location_filters(filters):
-
+    """Validate query filters for the StockLocationLabel model"""
     filters = validateFilterString(filters, model=stock.models.StockLocation)
 
     return filters
 
 
 def validate_part_filters(filters):
-
+    """Validate query filters for the PartLabel model"""
     filters = validateFilterString(filters, model=part.models.Part)
 
     return filters
 
 
 class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
-    """
-    Class for rendering a label to a PDF
-    """
+    """Class for rendering a label to a PDF."""
 
     pdf_filename = 'label.pdf'
     pdf_attachment = True
 
     def __init__(self, request, template, **kwargs):
-
+        """Initialize a label mixin with certain properties"""
         self.request = request
         self.template_name = template
         self.pdf_filename = kwargs.get('filename', 'label.pdf')
 
 
 class LabelTemplate(models.Model):
-    """
-    Base class for generic, filterable labels.
-    """
+    """Base class for generic, filterable labels."""
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
     # Each class of label files will be stored in a separate subdirectory
@@ -99,9 +86,11 @@ class LabelTemplate(models.Model):
 
     @property
     def template(self):
+        """Return the file path of the template associated with this label instance"""
         return self.label.path
 
     def __str__(self):
+        """Format a string representation of a label instance"""
         return "{n} - {d}".format(
             n=self.name,
             d=self.description
@@ -158,33 +147,27 @@ class LabelTemplate(models.Model):
 
     @property
     def template_name(self):
-        """
-        Returns the file system path to the template file.
+        """Returns the file system path to the template file.
+
         Required for passing the file to an external process
         """
-
         template = self.label.name
         template = template.replace('/', os.path.sep)
         template = template.replace('\\', os.path.sep)
 
-        template = os.path.join(settings.MEDIA_ROOT, template)
+        template = settings.MEDIA_ROOT.joinpath(template)
 
         return template
 
     def get_context_data(self, request):
-        """
-        Supply custom context data to the template for rendering.
+        """Supply custom context data to the template for rendering.
 
         Note: Override this in any subclass
         """
-
-        return {}
+        return {}  # pragma: no cover
 
     def generate_filename(self, request, **kwargs):
-        """
-        Generate a filename for this label
-        """
-
+        """Generate a filename for this label."""
         template_string = Template(self.filename_pattern)
 
         ctx = self.context(request)
@@ -194,10 +177,7 @@ class LabelTemplate(models.Model):
         return template_string.render(context)
 
     def context(self, request):
-        """
-        Provides context data to the template.
-        """
-
+        """Provides context data to the template."""
         context = self.get_context_data(request)
 
         # Add "basic" context data which gets passed to every label
@@ -212,21 +192,17 @@ class LabelTemplate(models.Model):
         return context
 
     def render_as_string(self, request, **kwargs):
-        """
-        Render the label to a HTML string
+        """Render the label to a HTML string.
 
         Useful for debug mode (viewing generated code)
         """
-
         return render_to_string(self.template_name, self.context(request), request)
 
     def render(self, request, **kwargs):
-        """
-        Render the label template to a PDF file
+        """Render the label template to a PDF file.
 
         Uses django-weasyprint plugin to render HTML template
         """
-
         wp = WeasyprintLabelMixin(
             request,
             self.template_name,
@@ -243,13 +219,12 @@ class LabelTemplate(models.Model):
 
 
 class StockItemLabel(LabelTemplate):
-    """
-    Template for printing StockItem labels
-    """
+    """Template for printing StockItem labels."""
 
     @staticmethod
     def get_api_url():
-        return reverse('api-stockitem-label-list')
+        """Return the API URL associated with the StockItemLabel model"""
+        return reverse('api-stockitem-label-list')  # pragma: no cover
 
     SUBDIR = "stockitem"
 
@@ -262,27 +237,8 @@ class StockItemLabel(LabelTemplate):
         ]
     )
 
-    def matches_stock_item(self, item):
-        """
-        Test if this label template matches a given StockItem object
-        """
-
-        try:
-            filters = validateFilterString(self.filters)
-            items = stock.models.StockItem.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            # If an error exists with the "filters" field, return False
-            return False
-
-        items = items.filter(pk=item.pk)
-
-        return items.exists()
-
     def get_context_data(self, request):
-        """
-        Generate context data for each provided StockItem
-        """
-
+        """Generate context data for each provided StockItem."""
         stock_item = self.object_to_print
 
         return {
@@ -293,7 +249,8 @@ class StockItemLabel(LabelTemplate):
             'revision': stock_item.part.revision,
             'quantity': normalize(stock_item.quantity),
             'serial': stock_item.serial,
-            'uid': stock_item.uid,
+            'barcode_data': stock_item.barcode_data,
+            'barcode_hash': stock_item.barcode_hash,
             'qr_data': stock_item.format_barcode(brief=True),
             'qr_url': stock_item.format_barcode(url=True, request=request),
             'tests': stock_item.testResultMap(),
@@ -303,13 +260,12 @@ class StockItemLabel(LabelTemplate):
 
 
 class StockLocationLabel(LabelTemplate):
-    """
-    Template for printing StockLocation labels
-    """
+    """Template for printing StockLocation labels."""
 
     @staticmethod
     def get_api_url():
-        return reverse('api-stocklocation-label-list')
+        """Return the API URL associated with the StockLocationLabel model"""
+        return reverse('api-stocklocation-label-list')  # pragma: no cover
 
     SUBDIR = "stocklocation"
 
@@ -321,26 +277,8 @@ class StockLocationLabel(LabelTemplate):
             validate_stock_location_filters]
     )
 
-    def matches_stock_location(self, location):
-        """
-        Test if this label template matches a given StockLocation object
-        """
-
-        try:
-            filters = validateFilterString(self.filters)
-            locs = stock.models.StockLocation.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            return False
-
-        locs = locs.filter(pk=location.pk)
-
-        return locs.exists()
-
     def get_context_data(self, request):
-        """
-        Generate context data for each provided StockLocation
-        """
-
+        """Generate context data for each provided StockLocation."""
         location = self.object_to_print
 
         return {
@@ -350,13 +288,12 @@ class StockLocationLabel(LabelTemplate):
 
 
 class PartLabel(LabelTemplate):
-    """
-    Template for printing Part labels
-    """
+    """Template for printing Part labels."""
 
     @staticmethod
     def get_api_url():
-        return reverse('api-part-label-list')
+        """Return the API url associated with the PartLabel model"""
+        return reverse('api-part-label-list')  # pragma: no cover
 
     SUBDIR = 'part'
 
@@ -369,26 +306,8 @@ class PartLabel(LabelTemplate):
         ]
     )
 
-    def matches_part(self, part):
-        """
-        Test if this label template matches a given Part object
-        """
-
-        try:
-            filters = validateFilterString(self.filters)
-            parts = part.models.Part.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            return False
-
-        parts = parts.filter(pk=part.pk)
-
-        return parts.exists()
-
     def get_context_data(self, request):
-        """
-        Generate context data for each provided Part object
-        """
-
+        """Generate context data for each provided Part object."""
         part = self.object_to_print
 
         return {

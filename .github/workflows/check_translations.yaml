@@ -21,17 +21,16 @@ jobs:
       INVENTREE_MEDIA_ROOT: ./media
       INVENTREE_STATIC_ROOT: ./static
 
-
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
       - name: Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install gettext
           pip3 install invoke
           invoke install
-      - name: Test Translations 
+      - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
         run: python3 ci/check_migration_files.py

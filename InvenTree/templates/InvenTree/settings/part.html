@@ -36,6 +36,8 @@
         <tr><td colspan='5'></td></tr>
         {% include "InvenTree/settings/setting.html" with key="PART_INTERNAL_PRICE" %}
         {% include "InvenTree/settings/setting.html" with key="PART_BOM_USE_INTERNAL_PRICE" %}
+        <tr><td colspan='5'></td></tr>
+        {% include "InvenTree/settings/setting.html" with key="PART_CATEGORY_DEFAULT_ICON" icon="fa-icons" %}
     </tbody>
 </table>
 
@@ -46,7 +48,7 @@
         <div class='btn-group' role='group'>
             <button class='btn btn-success' id='import-part'>
                 <span class='fas fa-plus-circle'></span> {% trans "Import Part" %}
-            </button>        
+            </button>
         </div>
     </div>
 </div>

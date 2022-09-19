@@ -1,23 +1,20 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
+"""Custom metadata for DRF."""
 
 import logging
 
 from rest_framework import serializers
+from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.utils import model_meta
-from rest_framework.fields import empty
 
 import users.models
-
+from InvenTree.helpers import str2bool
 
 logger = logging.getLogger('inventree')
 
 
 class InvenTreeMetadata(SimpleMetadata):
-    """
-    Custom metadata class for the DRF API.
+    """Custom metadata class for the DRF API.
 
     This custom metadata class imits the available "actions",
     based on the user's role permissions.
@@ -27,15 +24,30 @@ class InvenTreeMetadata(SimpleMetadata):
 
     Additionally, we include some extra information about database models,
     so we can perform lookup for ForeignKey related fields.
-
     """
 
     def determine_metadata(self, request, view):
-
+        """Overwrite the metadata to adapt to hte request user."""
         self.request = request
         self.view = view
 
         metadata = super().determine_metadata(request, view)
+
+        """
+        Custom context information to pass through to the OPTIONS endpoint,
+        if the "context=True" is supplied to the OPTIONS requst
+
+        Serializer class can supply context data by defining a get_context_data() method (no arguments)
+        """
+
+        context = {}
+
+        if str2bool(request.query_params.get('context', False)):
+
+            if hasattr(self, 'serializer') and hasattr(self.serializer, 'get_context_data'):
+                context = self.serializer.get_context_data()
+
+            metadata['context'] = context
 
         user = request.user
 
@@ -58,33 +70,36 @@ class InvenTreeMetadata(SimpleMetadata):
 
             actions = metadata.get('actions', None)
 
-            if actions is not None:
+            if actions is None:
+                actions = {}
 
-                check = users.models.RuleSet.check_table_permission
+            check = users.models.RuleSet.check_table_permission
 
-                # Map the request method to a permission type
-                rolemap = {
-                    'POST': 'add',
-                    'PUT': 'change',
-                    'PATCH': 'change',
-                    'DELETE': 'delete',
-                }
+            # Map the request method to a permission type
+            rolemap = {
+                'POST': 'add',
+                'PUT': 'change',
+                'PATCH': 'change',
+                'DELETE': 'delete',
+            }
 
-                # Remove any HTTP methods that the user does not have permission for
-                for method, permission in rolemap.items():
+            # Remove any HTTP methods that the user does not have permission for
+            for method, permission in rolemap.items():
 
-                    result = check(user, table, permission)
+                result = check(user, table, permission)
 
-                    if method in actions and not result:
-                        del actions[method]
+                if method in actions and not result:
+                    del actions[method]
 
-                # Add a 'DELETE' action if we are allowed to delete
-                if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
-                    actions['DELETE'] = True
+            # Add a 'DELETE' action if we are allowed to delete
+            if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
+                actions['DELETE'] = True
 
-                # Add a 'VIEW' action if we are allowed to view
-                if 'GET' in view.allowed_methods and check(user, table, 'view'):
-                    actions['GET'] = True
+            # Add a 'VIEW' action if we are allowed to view
+            if 'GET' in view.allowed_methods and check(user, table, 'view'):
+                actions['GET'] = True
+
+            metadata['actions'] = actions
 
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta
@@ -94,14 +109,18 @@ class InvenTreeMetadata(SimpleMetadata):
         return metadata
 
     def get_serializer_info(self, serializer):
-        """
-        Override get_serializer_info so that we can add 'default' values
-        to any fields whose Meta.model specifies a default value
-        """
+        """Override get_serializer_info so that we can add 'default' values to any fields whose Meta.model specifies a default value."""
+        self.serializer = serializer
 
         serializer_info = super().get_serializer_info(serializer)
 
         model_class = None
+
+        # Attributes to copy extra attributes from the model to the field (if they don't exist)
+        extra_attributes = [
+            'help_text',
+            'max_length',
+        ]
 
         try:
             model_class = serializer.Meta.model
@@ -127,7 +146,7 @@ class InvenTreeMetadata(SimpleMetadata):
                         if callable(default):
                             try:
                                 default = default()
-                            except:
+                            except Exception:
                                 continue
 
                         serializer_info[name]['default'] = default
@@ -135,10 +154,7 @@ class InvenTreeMetadata(SimpleMetadata):
                     elif name in model_default_values:
                         serializer_info[name]['default'] = model_default_values[name]
 
-                    # Attributes to copy from the model to the field (if they don't exist)
-                    attributes = ['help_text']
-
-                    for attr in attributes:
+                    for attr in extra_attributes:
                         if attr not in serializer_info[name]:
 
                             if hasattr(field, attr):
@@ -159,8 +175,9 @@ class InvenTreeMetadata(SimpleMetadata):
                 # This is used to automatically filter AJAX requests
                 serializer_info[name]['filters'] = relation.model_field.get_limit_choices_to()
 
-                if 'help_text' not in serializer_info[name] and hasattr(relation.model_field, 'help_text'):
-                    serializer_info[name]['help_text'] = relation.model_field.help_text
+                for attr in extra_attributes:
+                    if attr not in serializer_info[name] and hasattr(relation.model_field, attr):
+                        serializer_info[name][attr] = getattr(relation.model_field, attr)
 
                 if name in model_default_values:
                     serializer_info[name]['default'] = model_default_values[name]
@@ -194,10 +211,7 @@ class InvenTreeMetadata(SimpleMetadata):
                         pass
 
         if instance is not None:
-            """
-            If there is an instance associated with this API View,
-            introspect that instance to find any specific API info.
-            """
+            """If there is an instance associated with this API View, introspect that instance to find any specific API info."""
 
             if hasattr(instance, 'api_instance_filters'):
 
@@ -219,18 +233,15 @@ class InvenTreeMetadata(SimpleMetadata):
         return serializer_info
 
     def get_field_info(self, field):
-        """
-        Given an instance of a serializer field, return a dictionary
-        of metadata about it.
+        """Given an instance of a serializer field, return a dictionary of metadata about it.
 
         We take the regular DRF metadata and add our own unique flavor
         """
-
         # Run super method first
         field_info = super().get_field_info(field)
 
         # If a default value is specified for the serializer field, add it!
-        if 'default' not in field_info and not field.default == empty:
+        if 'default' not in field_info and field.default != empty:
             field_info['default'] = field.get_default()
 
         # Force non-nullable fields to read as "required"

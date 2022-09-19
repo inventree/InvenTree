@@ -57,13 +57,14 @@ src="{% static 'img/blank_image.png' %}"
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
         {% if order.status == SalesOrderStatus.PENDING %}
+        <li><a class='dropdown-item' href='#' id='complete-order-shipments'><span class='fas fa-truck'></span> {% trans "Complete Shipments" %}</a></li>
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
         {% endif %}
     </ul>
 
 </div>
 {% if order.status == SalesOrderStatus.PENDING %}
-<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'{% if not order.is_completed %} disabled{% endif %}>
+<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
     <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
 </button>
 {% endif %}
@@ -77,7 +78,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}{{ order.reference }}{% include "clip.html"%}</td>
+        <td>{{ order.reference }}{% include "clip.html"%}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info-circle'></span></td>
@@ -183,6 +184,20 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.responsible }}</td>
     </tr>
     {% endif %}
+
+    <tr>
+        <td><span class='fas fa-dollar-sign'></span></td>
+        <td>{% trans "Total cost" %}</td>
+        <td id="soTotalPrice">
+            {% with order.get_total_price as tp %}
+            {% if tp == None %}
+            <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
+            {% else %}
+            {{ tp }}
+            {% endif %}
+            {% endwith %}
+        </td>
+    </tr>
 </table>
 {% endblock %}
 
@@ -194,7 +209,7 @@ $("#edit-order").click(function() {
     constructForm('{% url "api-so-detail" order.pk %}', {
         fields: {
             reference: {
-                prefix: global_settings.SALESORDER_REFERENCE_PREFIX,
+                icon: 'fa-hashtag',
             },
             {% if order.lines.count == 0 and order.status == SalesOrderStatus.PENDING %}
             customer: {
@@ -217,19 +232,33 @@ $("#edit-order").click(function() {
     });
 });
 
+$("#complete-order-shipments").click(function() {
+
+    completePendingShipments(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+});
+
 $("#cancel-order").click(function() {
-    launchModalForm("{% url 'so-cancel' order.id %}", {
-        reload: true,
-    });
+
+    cancelSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
 });
 
 $("#complete-order").click(function() {
-    constructForm('{% url "api-so-complete" order.id %}', {
-        method: 'POST',
-        title: '{% trans "Complete Sales Order" %}',
-        confirm: true,
-        reload: true,
-    });
+    completeSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
 });
 
 {% if report_enabled %}

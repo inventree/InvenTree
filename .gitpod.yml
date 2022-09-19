@@ -7,32 +7,27 @@ tasks:
       export INVENTREE_STATIC_ROOT='/workspace/InvenTree/dev/static'
       export PIP_USER='no'
 
+      sudo apt install -y gettext
       python3 -m venv venv
       source venv/bin/activate
-      pip install invoke
-      inv install
+      pip install invoke pyyaml
       mkdir dev
-      inv update
-      gp sync-done setup_server
+      invoke update
+      invoke setup-test --ignore-update --path inventree-data
+      gp sync-done start_server
 
  - name: Start server
-   init: gp sync-await setup_server
+   init: gp sync-await start_server
    command: |
-      gp sync-await setup_server
+      gp sync-await start_server
       export INVENTREE_DB_ENGINE='sqlite3'
       export INVENTREE_DB_NAME='/workspace/InvenTree/dev/database.sqlite3'
       export INVENTREE_MEDIA_ROOT='/workspace/InvenTree/inventree-data/media'
       export INVENTREE_STATIC_ROOT='/workspace/InvenTree/dev/static'
 
       source venv/bin/activate
-      rm /workspace/InvenTree/inventree-data -r
-      git clone https://github.com/inventree/demo-dataset /workspace/InvenTree/inventree-data
-      invoke delete-data -f
-      invoke import-records -f /workspace/InvenTree/inventree-data/inventree_data.json
-      
       inv server
 
-# List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 ports:
   - port: 8000
     onOpen: open-preview

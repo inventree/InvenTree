@@ -45,7 +45,7 @@
                     </tr>
                 {% endif %}
             {% endif %}
-        
+
             {% if part.assembly and part.bom_count > 0 %}
                 {% if min_total_bom_price %}
                     <tr>
@@ -64,9 +64,9 @@
                             <td>Max: {% include "price.html" with price=max_total_bom_price %}</td>
                         </tr>
                     {% endif %}
+                {% endif %}
 
-
-                    {% if min_total_bom_purchase_price %}
+                {% if min_total_bom_purchase_price %}
                     <tr>
                         <td></td>
                         <td>{% trans 'Unit Purchase Price' %}</td>
@@ -81,15 +81,17 @@
                         <td>Max: {% include "price.html" with price=max_total_bom_purchase_price %}</td>
                     </tr>
                     {% endif %}
-                    {% endif %}
+                {% endif %}
 
-                    {% if part.has_complete_bom_pricing == False %}
-                        <tr>
-                            <td colspan='4'>
-                                <span class='warning-msg'><em>{% trans 'Note: BOM pricing is incomplete for this part' %}</em></span>
-                            </td>
-                        </tr>
-                    {% endif %}
+                {% if not part.has_complete_bom_pricing %}
+                    <tr>
+                        <td colspan='4'>
+                            <span class='warning-msg'><em>{% trans 'Note: BOM pricing is incomplete for this part' %}</em></span>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                {% if min_total_bom_price or min_total_bom_purchase_price %}
                 {% else %}
                     <tr>
                         <td colspan='4'>
@@ -98,7 +100,7 @@
                     </tr>
                 {% endif %}
             {% endif %}
-        
+
             {% if show_internal_price and roles.sales_order.view %}
             {% if total_internal_part_price %}
                 <tr>
@@ -113,7 +115,7 @@
                 </tr>
             {% endif %}
             {% endif %}
-        
+
             {% if total_part_price %}
                 <tr>
                     <td><strong>{% trans 'Sale Price' %}</strong>
@@ -131,7 +133,7 @@
             {% endif %}
             </table>
 
-            {% if min_unit_buy_price or min_unit_bom_price %}
+            {% if min_unit_buy_price or min_unit_bom_price or min_unit_bom_purchase_price %}
             {% else %}
                 <div class='alert alert-danger alert-block'>
                     {% trans 'No pricing information is available for this part.' %}
@@ -155,11 +157,11 @@
 {% if part.purchaseable and roles.purchase_order.view %}
 <a class="anchor" id="supplier-cost"></a>
 <div class='panel-heading'>
-    <h4>{% trans "Supplier Cost" %}  
+    <h4>{% trans "Supplier Cost" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
-        
+
 <div class='panel-content'>
     <div class="row">
         <div class="col col-md-6">
@@ -176,7 +178,7 @@
 {% if show_price_history %}
 <a class="anchor" id="purchase-price"></a>
 <div class='panel-heading'>
-    <h4>{% trans "Purchase Price" %}  
+    <h4>{% trans "Purchase Price" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
@@ -200,11 +202,11 @@
 {% if show_internal_price and roles.sales_order.view %}
 <a class="anchor" id="internal-cost"></a>
 <div class='panel-heading'>
-    <h4>{% trans "Internal Cost" %}  
+    <h4>{% trans "Internal Cost" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
-        
+
 <div class='panel-content'>
     <div class="row full-height">
         <div class="col col-md-8">
@@ -218,7 +220,7 @@
                     <span class='fas fa-plus-circle'></span> {% trans "Add Internal Price Break" %}
                 </button>
             </div>
-            
+
             <table class='table table-striped table-condensed' id='internal-price-break-table' data-toolbar='#internal-price-break-toolbar'
                 data-sort-name="quantity" data-sort-order="asc">
             </table>
@@ -230,11 +232,11 @@
 {% if part.has_bom and roles.sales_order.view %}
 <a class="anchor" id="bom-cost"></a>
 <div class='panel-heading'>
-    <h4>{% trans "BOM Cost" %}  
+    <h4>{% trans "BOM Cost" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
-    
+
 <div class='panel-content'>
     <div class="row">
         <div class="col col-md-6">
@@ -256,11 +258,11 @@
 {% if part.salable and roles.sales_order.view %}
 <a class="anchor" id="sale-cost"></a>
 <div class='panel-heading'>
-    <h4>{% trans "Sale Cost" %}  
+    <h4>{% trans "Sale Cost" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
-        
+
 <div class='panel-content'>
     <div class="row full-height">
         <div class="col col-md-8">
@@ -274,7 +276,7 @@
                     <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
                 </button>
             </div>
-            
+
             <table class='table table-striped table-condensed' id='price-break-table' data-toolbar='#price-break-toolbar'
             data-sort-name="quantity" data-sort-order="asc">
             </table>
@@ -285,11 +287,11 @@
 {% if show_price_history %}
 <a class="anchor" id="sale-price"></a>
 <div class='panel-heading'>
-    <h4>{% trans "Sale Price" %}  
+    <h4>{% trans "Sale Price" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
-        
+
 <div class='panel-content'>
     {% if sale_history|length > 0 %}
         <div style="max-width: 99%; min-height: 300px">
@@ -303,4 +305,3 @@
 </div>
 {% endif %}
 {% endif %}
-    

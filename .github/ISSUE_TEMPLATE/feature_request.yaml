@@ -1,0 +1,53 @@
+name: Feature Request
+description: Suggest an idea for this project
+title: "[FR] title"
+labels: ["enhancement", "triage:not-checked"]
+body:
+  - type: checkboxes
+    id: no-duplicate-issues
+    attributes:
+      label: "Please verify that this feature request has NOT been suggested before."
+      description: "Search in the issues sections by clicking [HERE](https://github.com/inventree/inventree/issues?q=)"
+      options:
+        - label: "I checked and didn't find similar feature request"
+          required: true
+  - type: textarea
+    id: problem
+    validations:
+      required: true
+    attributes:
+      label: "Problem statement"
+      description: "A clear and concise description of what the solved problem or feature request is."
+      placeholder: "I am always struggeling with ..."
+  - type: textarea
+    id: solution
+    validations:
+      required: true
+    attributes:
+      label: "Suggested solution"
+      description: "A clear and concise description of what you want to happen."
+      placeholder: "In my use-case, ..."
+  - type: textarea
+    id: alternatives
+    validations:
+      required: true
+    attributes:
+      label: "Describe alternatives you've considered"
+      description: "A clear and concise description of any alternative solutions or features you've considered."
+      placeholder: "This could also be done by doing ..."
+  - type: textarea
+    id: examples
+    validations:
+      required: false
+    attributes:
+      label: "Examples of other systems"
+      description: "Show how other software handles your FR if you have examples."
+      placeholder: "I software xxx this is done in the following way..."
+  - type: checkboxes
+    id: self-develop
+    attributes:
+      label: "Do you want to develop this?"
+      description: "you do not need to be a pro - this is just as a information for us"
+      options:
+        - label: "I want to develop this."
+          required: false

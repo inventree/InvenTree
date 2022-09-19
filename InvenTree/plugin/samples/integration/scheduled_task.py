@@ -1,28 +1,32 @@
-"""
-Sample plugin which supports task scheduling
-"""
+"""Sample plugin which supports task scheduling."""
 
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import ScheduleMixin, SettingsMixin
 
 
 # Define some simple tasks to perform
 def print_hello():
-    print("Hello")
+    """Sample function that can be called on schedule.
+
+    Contents do not matter - therefore no coverage.
+    """
+    print("Hello")  # pragma: no cover
 
 
 def print_world():
-    print("World")
+    """Sample function that can be called on schedule.
 
-
-class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
+    Contents do not matter - therefore no coverage.
     """
-    A sample plugin which provides support for scheduled tasks
-    """
+    print("World")  # pragma: no cover
 
-    PLUGIN_NAME = "ScheduledTasksPlugin"
-    PLUGIN_SLUG = "schedule"
-    PLUGIN_TITLE = "Scheduled Tasks"
+
+class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
+    """A sample plugin which provides support for scheduled tasks."""
+
+    NAME = "ScheduledTasksPlugin"
+    SLUG = "schedule"
+    TITLE = "Scheduled Tasks"
 
     SCHEDULED_TASKS = {
         'member': {
@@ -36,7 +40,7 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
             'minutes': 45,
         },
         'world': {
-            'func': 'plugin.samples.integration.scheduled_task.print_hello',
+            'func': 'plugin.samples.integration.scheduled_task.print_world',
             'schedule': 'H',
         },
     }
@@ -51,10 +55,8 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
     }
 
     def member_func(self, *args, **kwargs):
-        """
-        A simple member function to demonstrate functionality
-        """
-
+        """A simple member function to demonstrate functionality."""
         t_or_f = self.get_setting('T_OR_F')
 
         print(f"Called member_func - value is {t_or_f}")
+        return t_or_f

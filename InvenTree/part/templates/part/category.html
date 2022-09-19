@@ -1,6 +1,7 @@
 {% extends "part/part_app_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block sidebar %}
 {% include 'part/category_sidebar.html' %}
@@ -12,7 +13,12 @@
 
 {% block heading %}
 {% if category %}
-{% trans "Part Category" %}: {{ category.name }}
+{% trans "Part Category" %}:
+{% settings_value "PART_CATEGORY_DEFAULT_ICON" as default_icon %}
+{% if category.icon or default_icon %}
+<span class="{{ category.icon|default:default_icon }}"></span>
+{% endif %}
+{{ category.name }}
 {% else %}
 {% trans "Parts" %}
 {% endif %}
@@ -165,17 +171,22 @@
         <div class='btn-group' role='group'>
             <div class='btn-group' role='group'>
                 <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
-                    {% trans "Options" %}
+                    <span class='fas fa-tools' title='{% trans "Options" %}'></span>
                 </button>
                 <ul class='dropdown-menu'>
                     {% if roles.part.change %}
-                    <li><a class='dropdown-item' href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-category' title='{% trans "Set category" %}'>
+                        <span class='fas fa-sitemap'></span> {% trans "Set Category" %}
+                    </a></li>
                     {% endif %}
-                    <li><a class='dropdown-item' href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-order' title='{% trans "Order parts" %}'>
+                        <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
+                    </a></li>
                     {% if report_enabled %}
-                    <li><a class='dropdown-item' href='#' id='multi-part-print-label' title='{% trans "Print Labels" %}'>{% trans "Print Labels" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-print-label' title='{% trans "Print Labels" %}'>
+                        <span class='fas fa-tag'></span> {% trans "Print Labels" %}
+                    </a></li>
                     {% endif %}
-                    <li><a class='dropdown-item' href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
                 </ul>
             </div>
             {% include "filter_list.html" with id="parts" %}
@@ -183,7 +194,7 @@
     </div>
     <div class='panel-content'>
         <table class='table table-striped table-condensed' data-toolbar='#part-button-toolbar' id='part-table'>
-        </table> 
+        </table>
     </div>
 </div>
 
@@ -201,6 +212,12 @@
         <h4>{% trans "Part Parameters" %}</h4>
     </div>
     <div class='panel-content'>
+        <div id='param-button-toolbar'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="parameters" %}
+            </div>
+        </div>
+
         <table class='table table-striped table-condensed' data-toolbar='#param-button-toolbar' id='parametric-part-table'>
         </table>
     </div>
@@ -216,9 +233,9 @@
                 {% include "filter_list.html" with id="category" %}
             </div>
         </div>
-    
+
         <table class='table table-striped table-condensed' id='subcategory-table' data-toolbar='#subcategory-button-toolbar'></table>
-    
+
     </div>
 </div>
 
@@ -250,7 +267,7 @@
     onPanelLoad('parameters', function() {
         loadParametricPartTable(
             "#parametric-part-table",
-            { 
+            {
                 category: {{ category.pk }},
             }
         );
@@ -277,7 +294,8 @@
             node.href = `/part/category/${node.pk}/`;
 
             return node;
-        }
+        },
+        defaultIcon: global_settings.PART_CATEGORY_DEFAULT_ICON,
     });
 
     onPanelLoad('subcategories', function() {
@@ -336,29 +354,24 @@
                 location.href = `/part/${data.pk}/`;
             },
         });
-        
+
     });
     {% endif %}
 
     {% if category %}
     $("#cat-edit").click(function () {
-
         editCategory({{ category.pk }});
     });
 
-    {% if category.parent %}
-    var redirect = "{% url 'category-detail' category.parent.id %}";
-    {% else %}
-    var redirect = "{% url 'part-index' %}";
-    {% endif %}
 
     $('#cat-delete').click(function() {
-        launchModalForm(
-            "{% url 'category-delete' category.id %}",
-            {
-                redirect: redirect
-            }
-        );
+        deletePartCategory({{ category.pk }}, {
+            {% if category.parent %}
+            redirect: "{% url 'category-detail' category.parent.id %}",
+            {% else %}
+            redirect: "{% url 'part-index' %}",
+            {% endif %}
+        });
     });
 
     {% endif %}
@@ -373,7 +386,6 @@
                     {% else %}category: "null",
                     {% endif %}
                 },
-                buttons: ['#part-options'],
                 checkbox: true,
                 gridView: true,
             },

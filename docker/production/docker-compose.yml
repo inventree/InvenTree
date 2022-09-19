@@ -1,10 +1,11 @@
 version: "3.8"
 
-# Docker compose recipe for InvenTree production server
+# Docker compose recipe for a production-ready InvenTree setup, with the following containers:
 # - PostgreSQL as the database backend
 # - gunicorn as the InvenTree web server
 # - django-q as the InvenTree background worker process
 # - nginx as a reverse proxy
+# - redis as the cache manager (optional, disabled by default)
 
 # ---------------------
 # READ BEFORE STARTING!
@@ -17,26 +18,21 @@ version: "3.8"
 # Changes made to this file are reflected across all containers!
 #
 # IMPORTANT NOTE:
-# You should not have to change *anything* within the docker-compose.yml file!
+# You should not have to change *anything* within this docker-compose.yml file!
 # Instead, make any changes in the .env file!
-# The only *mandatory* change is to set the INVENTREE_EXT_VOLUME variable,
-# which defines the directory (on your local machine) where persistent data are stored.
 
 # ------------------------
 # InvenTree Image Versions
 # ------------------------
 # By default, this docker-compose script targets the STABLE version of InvenTree,
 # image: inventree/inventree:stable
-# 
-# To run the LATEST (development) version of InvenTree, change the target image to:
-# image: inventree/inventree:latest
+#
+# To run the LATEST (development) version of InvenTree,
+# change the INVENTREE_TAG variable (in the .env file) to "latest"
 #
 # Alternatively, you could target a specific tagged release version with (for example):
-# image: inventree/inventree:0.5.3
+# INVENTREE_TAG=0.7.5
 #
-# NOTE: If you change the target image, ensure it is the same for the following containers:
-# - inventree-server
-# - inventree-worker
 
 services:
     # Database service
@@ -44,7 +40,7 @@ services:
     inventree-db:
         container_name: inventree-db
         image: postgres:13
-        ports:
+        expose:
             - ${INVENTREE_DB_PORT:-5432}/tcp
         environment:
             - PGDATA=/var/lib/postgresql/data/pgdb
@@ -56,12 +52,27 @@ services:
             - inventree_data:/var/lib/postgresql/data/
         restart: unless-stopped
 
-    # InvenTree web server services
+    # redis acts as database cache manager
+    # only runs under the "redis" profile : https://docs.docker.com/compose/profiles/
+    inventree-cache:
+        container_name: inventree-cache
+        image: redis:7.0
+        depends_on:
+            - inventree-db
+        profiles:
+            - redis
+        env_file:
+            - .env
+        expose:
+            - ${INVENTREE_CACHE_PORT:-6379}
+        restart: always
+
+    # InvenTree web server service
     # Uses gunicorn as the web server
     inventree-server:
         container_name: inventree-server
         # If you wish to specify a particular InvenTree version, do so here
-        image: inventree/inventree:stable
+        image: inventree/inventree:${INVENTREE_TAG:-stable}
         expose:
             - 8000
         depends_on:
@@ -77,10 +88,9 @@ services:
     inventree-worker:
         container_name: inventree-worker
         # If you wish to specify a particular InvenTree version, do so here
-        image: inventree/inventree:stable
+        image: inventree/inventree:${INVENTREE_TAG:-stable}
         command: invoke worker
         depends_on:
-            - inventree-db
             - inventree-server
         env_file:
             - .env
@@ -113,7 +123,6 @@ services:
         restart: unless-stopped
 
 volumes:
-    # NOTE: Change /path/to/data to a directory on your local machine
     # Persistent data, stored external to the container(s)
     inventree_data:
         driver: local

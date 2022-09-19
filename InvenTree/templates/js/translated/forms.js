@@ -6,6 +6,7 @@
     inventreeFormDataUpload,
     inventreeGet,
     inventreePut,
+    global_settings,
     modalEnable,
     modalShowSubmitButton,
     renderBuild,
@@ -62,7 +63,7 @@ $.fn.select2.defaults.set('theme', 'bootstrap-5');
  * can perform a GET method at the endpoint.
  */
 function canView(OPTIONS) {
-    
+
     if ('actions' in OPTIONS) {
         return ('GET' in OPTIONS.actions);
     } else {
@@ -90,7 +91,7 @@ function canCreate(OPTIONS) {
  * can perform a PUT or PATCH method at the endpoint
  */
 function canChange(OPTIONS) {
-    
+
     if ('actions' in OPTIONS) {
         return ('PUT' in OPTIONS.actions || 'PATCH' in OPTIONS.actions);
     } else {
@@ -123,6 +124,9 @@ function getApiEndpointOptions(url, callback) {
         return;
     }
 
+    // Include extra context information in the request
+    url += '?context=true';
+
     // Return the ajax request object
     $.ajax({
         url: url,
@@ -135,7 +139,7 @@ function getApiEndpointOptions(url, callback) {
         success: callback,
         error: function(xhr) {
             // TODO: Handle error
-            console.log(`ERROR in getApiEndpointOptions at '${url}'`);
+            console.error(`Error in getApiEndpointOptions at '${url}'`);
             showApiError(xhr, url);
         }
     });
@@ -144,25 +148,25 @@ function getApiEndpointOptions(url, callback) {
 
 /*
  * Construct a 'creation' (POST) form, to create a new model in the database.
- * 
+ *
  * arguments:
  * - fields: The 'actions' object provided by the OPTIONS endpoint
- * 
+ *
  * options:
- * - 
+ * -
  */
 function constructCreateForm(fields, options) {
 
     // Check if default values were provided for any fields
     for (const name in fields) {
-    
+
         var field = fields[name];
 
         var field_options = options.fields[name] || {};
 
         // If a 'value' is not provided for the field,
         if (field.value == null) {
-            
+
             if ('value' in field_options) {
                 // Client has specified the default value for the field
                 field.value = field_options.value;
@@ -180,12 +184,12 @@ function constructCreateForm(fields, options) {
 
 /*
  * Construct a 'change' (PATCH) form, to create a new model in the database.
- * 
+ *
  * arguments:
  * - fields: The 'actions' object provided by the OPTIONS endpoint
- * 
+ *
  * options:
- * - 
+ * -
  */
 function constructChangeForm(fields, options) {
 
@@ -200,12 +204,15 @@ function constructChangeForm(fields, options) {
             json: 'application/json',
         },
         success: function(data) {
-            
+
+            // Ensure the data are fully sanitized before we operate on it
+            data = sanitizeData(data);
+
             // An optional function can be provided to process the returned results,
             // before they are rendered to the form
             if (options.processResults) {
                 var processed = options.processResults(data, fields, options);
-                
+
                 // If the processResults function returns data, it will be stored
                 if (processed) {
                     data = processed;
@@ -222,12 +229,12 @@ function constructChangeForm(fields, options) {
 
             // Store the entire data object
             options.instance = data;
-            
+
             constructFormBody(fields, options);
         },
         error: function(xhr) {
             // TODO: Handle error here
-            console.log(`ERROR in constructChangeForm at '${options.url}'`);
+            console.error(`Error in constructChangeForm at '${options.url}'`);
 
             showApiError(xhr, options.url);
         }
@@ -237,54 +244,60 @@ function constructChangeForm(fields, options) {
 
 /*
  * Construct a 'delete' form, to remove a model instance from the database.
- * 
+ *
  * arguments:
  * - fields: The 'actions' object provided by the OPTIONS request
  * - options: The 'options' object provided by the client
  */
 function constructDeleteForm(fields, options) {
 
-    // Force the "confirm" property if not set
-    if (!('confirm' in options)) {
-        options.confirm = true;
+    // If we are deleting a specific "instance" (i.e. a single object)
+    // then we request the instance information first
+
+    // However we may be performing a "multi-delete" (against a list endpoint),
+    // in which case we do not want to perform such a request!
+
+    if (options.multi_delete) {
+        constructFormBody(fields, options);
+    } else {
+        // Request existing data from the API endpoint
+        // This data can be used to render some information on the form
+        $.ajax({
+            url: options.url,
+            type: 'GET',
+            contentType: 'application/json',
+            dataType: 'json',
+            accepts: {
+                json: 'application/json',
+            },
+            success: function(data) {
+
+                // Store the instance data
+                options.instance = data;
+
+                constructFormBody(fields, options);
+            },
+            error: function(xhr) {
+                // TODO: Handle error here
+                console.error(`Error in constructDeleteForm at '${options.url}`);
+
+                showApiError(xhr, options.url);
+            }
+        });
     }
-
-    // Request existing data from the API endpoint
-    // This data can be used to render some information on the form
-    $.ajax({
-        url: options.url,
-        type: 'GET',
-        contentType: 'application/json',
-        dataType: 'json',
-        accepts: {
-            json: 'application/json',
-        },
-        success: function(data) {
-
-            // Store the instance data
-            options.instance = data;
-
-            constructFormBody(fields, options);
-        },
-        error: function(xhr) {
-            // TODO: Handle error here
-            console.log(`ERROR in constructDeleteForm at '${options.url}`);
-
-            showApiError(xhr, options.url);
-        }
-    });
 }
 
 
 /*
  * Request API OPTIONS data from the server,
  * and construct a modal form based on the response.
- * 
+ *
  * url: API URL which defines form data
  * options:
  * - method: The HTTP method e.g. 'PUT', 'POST', 'DELETE' (default='PATCH')
  * - title: The form title
  * - submitText: Text for the "submit" button
+ * - submitClass: CSS class for the "submit" button (default = ')
  * - closeText: Text for the "close" button
  * - fields: list of fields to display, with the following options
  *      - filters: API query filters
@@ -306,7 +319,7 @@ function constructDeleteForm(fields, options) {
  * - reload: Set to true to reload the current page after form success
  * - confirm: Set to true to require a "confirm" button
  * - confirmText: Text for confirm button (default = "Confirm")
- * 
+ *
  */
 function constructForm(url, options) {
 
@@ -315,9 +328,7 @@ function constructForm(url, options) {
         constructFormBody({}, options);
     }
 
-    options.fields = options.fields || {};
-
-    // Save the URL 
+    // Save the URL
     options.url = url;
 
     // Default HTTP method
@@ -335,10 +346,20 @@ function constructForm(url, options) {
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
 
+        // Extract any custom 'context' information from the OPTIONS data
+        options.context = OPTIONS.context || {};
+
+        // Construct fields (can be a static parameter or a function)
+        if (options.fieldsFunction) {
+            options.fields = options.fieldsFunction(options);
+        } else {
+            options.fields = options.fields || {};
+        }
+
         /*
          * Determine what "type" of form we want to construct,
          * based on the requested action.
-         * 
+         *
          * First we must determine if the user has the correct permissions!
          */
 
@@ -353,8 +374,8 @@ function constructForm(url, options) {
                     details: '{% trans "Create operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
-            
-                console.log(`'POST action unavailable at ${url}`);
+
+                console.warn(`'POST action unavailable at ${url}`);
             }
             break;
         case 'PUT':
@@ -368,8 +389,8 @@ function constructForm(url, options) {
                     details: '{% trans "Update operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
-            
-                console.log(`${options.method} action unavailable at ${url}`);
+
+                console.warn(`${options.method} action unavailable at ${url}`);
             }
             break;
         case 'DELETE':
@@ -382,8 +403,8 @@ function constructForm(url, options) {
                     details: '{% trans "Delete operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
-            
-                console.log(`DELETE action unavailable at ${url}`);
+
+                console.warn(`DELETE action unavailable at ${url}`);
             }
             break;
         case 'GET':
@@ -396,12 +417,12 @@ function constructForm(url, options) {
                     details: '{% trans "View operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
-            
-                console.log(`GET action unavailable at ${url}`);
+
+                console.warn(`GET action unavailable at ${url}`);
             }
             break;
         default:
-            console.log(`constructForm() called with invalid method '${options.method}'`);
+            console.warn(`constructForm() called with invalid method '${options.method}'`);
             break;
         }
     });
@@ -410,7 +431,7 @@ function constructForm(url, options) {
 
 /*
  * Construct a modal form based on the provided options
- * 
+ *
  * arguments:
  * - fields: The endpoint description returned from the OPTIONS request
  * - options: form options object provided by the client.
@@ -422,6 +443,21 @@ function constructFormBody(fields, options) {
     // Client must provide set of fields to be displayed,
     // otherwise *all* fields will be displayed
     var displayed_fields = options.fields || fields;
+
+    // Override default option values if a 'DELETE' form is specified
+    if (options.method == 'DELETE') {
+        if (!('confirm' in options)) {
+            options.confirm = true;
+        }
+
+        if (!('submitClass' in options)) {
+            options.submitClass = 'danger';
+        }
+
+        if (!('submitText' in options)) {
+            options.submitText = '{% trans "Delete" %}';
+        }
+    }
 
     // Handle initial data overrides
     if (options.data) {
@@ -443,7 +479,7 @@ function constructFormBody(fields, options) {
     // Provide each field object with its own name
     for (field in fields) {
         fields[field].name = field;
-        
+
         // If any "instance_filters" are defined for the endpoint, copy them across (overwrite)
         if (fields[field].instance_filters) {
             fields[field].filters = Object.assign(fields[field].filters || {}, fields[field].instance_filters);
@@ -505,7 +541,7 @@ function constructFormBody(fields, options) {
         default:
             break;
         }
-        
+
         html += constructField(field_name, field, options);
     }
 
@@ -522,29 +558,41 @@ function constructFormBody(fields, options) {
     var modal = options.modal;
 
     modalEnable(modal, true);
-    
+
     // Insert generated form content
     $(modal).find('#form-content').html(html);
 
     if (options.preFormContent) {
-        $(modal).find('#pre-form-content').html(options.preFormContent);
+
+        if (typeof(options.preFormContent) === 'function') {
+            var content = options.preFormContent(options);
+        } else {
+            var content = options.preFormContent;
+        }
+
+        $(modal).find('#pre-form-content').html(content);
     }
 
     if (options.postFormContent) {
         $(modal).find('#post-form-content').html(options.postFormContent);
     }
-    
+
     // Clear any existing buttons from the modal
     $(modal).find('#modal-footer-buttons').html('');
 
     // Insert "confirm" button (if required)
-    if (options.confirm) {
+    if (options.confirm && global_settings.INVENTREE_REQUIRE_CONFIRM) {
         insertConfirmButton(options);
     }
 
     // Insert "persist" button (if required)
     if (options.persist) {
         insertPersistButton(options);
+    }
+
+    // Insert secondary buttons (if required)
+    if (options.buttons) {
+        insertSecondaryButtons(options);
     }
 
     // Display the modal
@@ -567,7 +615,7 @@ function constructFormBody(fields, options) {
 
         // Immediately disable the "submit" button,
         // to prevent the form being submitted multiple times!
-        $(options.modal).find('#modal-form-submit').prop('disabled', true);
+        enableSubmitButton(options, false);
 
         // Run custom code before normal form submission
         if (options.beforeSubmit) {
@@ -610,13 +658,13 @@ function insertConfirmButton(options) {
     $(options.modal).find('#modal-footer-buttons').append(html);
 
     // Disable the 'submit' button
-    $(options.modal).find('#modal-form-submit').prop('disabled', true);
+    enableSubmitButton(options, false);
 
     // Trigger event
     $(options.modal).find('#modal-confirm').change(function() {
         var enabled = this.checked;
 
-        $(options.modal).find('#modal-form-submit').prop('disabled', !enabled);
+        enableSubmitButton(options, enabled);
     });
 }
 
@@ -636,6 +684,31 @@ function insertPersistButton(options) {
     $(options.modal).find('#modal-footer-buttons').append(html);
 }
 
+/*
+ * Add secondary buttons to the left of the close and submit buttons
+ * with callback functions
+ */
+function insertSecondaryButtons(options) {
+    for (var idx = 0; idx < options.buttons.length; idx++) {
+
+        var html = `
+        <button type="button" class="btn btn-outline-secondary" id="modal-form-${options.buttons[idx].name}">
+            ${options.buttons[idx].title}
+        </button>
+        `;
+
+        $(options.modal).find('#modal-footer-secondary-buttons').append(html);
+
+        if (options.buttons[idx].onClick instanceof Function) {
+            // Copy callback reference to prevent errors if `idx` changes value before execution
+            var onclick_callback = options.buttons[idx].onClick;
+
+            $(options.modal).find(`#modal-form-${options.buttons[idx].name}`).click(function() {
+                onclick_callback(options);
+            });
+        }
+    }
+}
 
 /*
  * Extract all specified form values as a single object
@@ -645,7 +718,7 @@ function extractFormData(fields, options) {
     var data = {};
 
     for (var idx = 0; idx < options.field_names.length; idx++) {
-        
+
         var name = options.field_names[idx];
 
         var field = fields[name] || null;
@@ -663,7 +736,7 @@ function extractFormData(fields, options) {
 
 /*
  * Submit form data to the server.
- * 
+ *
  */
 function submitFormData(fields, options) {
 
@@ -671,7 +744,8 @@ function submitFormData(fields, options) {
     // Only used if file / image upload is required
     var form_data = new FormData();
 
-    var data = {};
+    // We can (optionally) provide a "starting point" for the submitted data
+    var data = options.form_data || {};
 
     var has_files = false;
 
@@ -698,7 +772,7 @@ function submitFormData(fields, options) {
             case 'decimal':
                 if (!validateFormField(name, options)) {
                     data_valid = false;
-    
+
                     data_errors[name] = ['{% trans "Enter a valid number" %}'];
                 }
                 break;
@@ -720,7 +794,7 @@ function submitFormData(fields, options) {
                     var file = field_files[0];
 
                     form_data.append(name, file);
-                    
+
                     has_files = true;
                 }
             } else {
@@ -731,7 +805,7 @@ function submitFormData(fields, options) {
                 data[name] = value;
             }
         } else {
-            console.log(`WARNING: Could not find field matching '${name}'`);
+            console.warn(`Could not find field matching '${name}'`);
         }
     }
 
@@ -753,7 +827,7 @@ function submitFormData(fields, options) {
     }
 
     // Show the progress spinner
-    $(options.modal).find('#modal-progress-spinner').show();
+    showModalSpinner(options.modal);
 
     // Submit data
     upload_func(
@@ -766,7 +840,7 @@ function submitFormData(fields, options) {
                 handleFormSuccess(response, options);
             },
             error: function(xhr) {
-                
+
                 $(options.modal).find('#modal-progress-spinner').hide();
 
                 switch (xhr.status) {
@@ -776,7 +850,7 @@ function submitFormData(fields, options) {
                 default:
                     $(options.modal).modal('hide');
 
-                    console.log(`upload error at ${options.url}`);
+                    console.error(`Upload error at ${options.url}`);
                     showApiError(xhr, options.url);
                     break;
                 }
@@ -794,7 +868,7 @@ function submitFormData(fields, options) {
  *
  */
 function updateFieldValues(fields, options) {
-  
+
     for (var idx = 0; idx < options.field_names.length; idx++) {
 
         var name = options.field_names[idx];
@@ -827,7 +901,7 @@ function updateFieldValue(name, value, field, options) {
     var el = getFormFieldElement(name, options);
 
     if (!el) {
-        console.log(`WARNING: updateFieldValue could not find field '${name}'`);
+        console.warn(`updateFieldValue could not find field '${name}'`);
         return;
     }
 
@@ -869,8 +943,8 @@ function getFormFieldElement(name, options) {
         el = $(`#id_${field_name}`);
     }
 
-    if (!el.exists) {
-        console.log(`ERROR: Could not find form element for field '${name}'`);
+    if (!el.exists()) {
+        console.error(`Could not find form element for field '${name}'`);
     }
 
     return el;
@@ -880,16 +954,17 @@ function getFormFieldElement(name, options) {
 /*
  * Check that a "numerical" input field has a valid number in it.
  * An invalid number is expunged at the client side by the getFormFieldValue() function,
- * which means that an empty string '' is sent to the server if the number is not valud.
+ * which means that an empty string '' is sent to the server if the number is not valid.
  * This can result in confusing error messages displayed under the form field.
- * 
+ *
  * So, we can invalid numbers and display errors *before* the form is submitted!
  */
 function validateFormField(name, options) {
 
     if (getFormFieldElement(name, options)) {
 
-        var el = document.getElementById(`id_${name}`);
+        var field_name = getFieldName(name, options);
+        var el = document.getElementById(`id_${field_name}`);
 
         if (el.validity.valueMissing) {
             // Accept empty strings (server will validate)
@@ -918,7 +993,7 @@ function getFormFieldValue(name, field={}, options={}) {
     var el = getFormFieldElement(name, options);
 
     if (!el.exists()) {
-        console.log(`ERROR: getFormFieldValue could not locate field '${name}'`);
+        console.error(`getFormFieldValue could not locate field '${name}'`);
         return null;
     }
 
@@ -937,6 +1012,11 @@ function getFormFieldValue(name, field={}, options={}) {
             value = null;
         }
         break;
+    case 'string':
+    case 'url':
+    case 'email':
+        value = sanitizeInputString(el.val());
+        break;
     default:
         value = el.val();
         break;
@@ -948,7 +1028,7 @@ function getFormFieldValue(name, field={}, options={}) {
 
 /*
  * Handle successful form posting
- * 
+ *
  * arguments:
  * - response: The JSON response object from the server
  * - options: The original options object provided by the client
@@ -990,7 +1070,7 @@ function handleFormSuccess(response, options) {
                 target: msg_target,
             });
     }
-    
+
     if (response && response.info) {
         showAlertOrCache(response.info, cache, {style: 'info'});
     }
@@ -1006,10 +1086,10 @@ function handleFormSuccess(response, options) {
     if (persist) {
         // Instead of closing the form and going somewhere else,
         // reload (empty) the form so the user can input more data
-        
+
         // Reset the status of the "submit" button
         if (options.modal) {
-            $(options.modal).find('#modal-form-submit').prop('disabled', false);
+            enableSubmitButton(options, true);
         }
 
         // Remove any error flags from the form
@@ -1051,7 +1131,7 @@ function clearFormErrors(options={}) {
     if (options && options.modal) {
         // Remove the individual error messages
         $(options.modal).find('.form-error-message').remove();
-    
+
         $(options.modal).find('.modal-content').removeClass('modal-error');
 
         // Remove the "has error" class
@@ -1072,12 +1152,12 @@ function clearFormErrors(options={}) {
  *
  * We need to know the unique ID of each item in the array,
  * and the array length must equal the length of the array returned from the server
- * 
+ *
  * arguments:
  * - response: The JSON error response from the server
  * - parent: The name of the parent field e.g. "items"
  * - options: The global options struct
- * 
+ *
  * options:
  * - nested: A map of nested ID values for the "parent" field
  *           e.g.
@@ -1088,7 +1168,7 @@ function clearFormErrors(options={}) {
  *                  12
  *               ]
  *           }
- * 
+ *
  */
 
 function handleNestedErrors(errors, field_name, options={}) {
@@ -1101,25 +1181,25 @@ function handleNestedErrors(errors, field_name, options={}) {
     }
 
     var nest_list = nest_list = options['nested'][field_name];
-    
+
     // Nest list must be provided!
     if (!nest_list) {
-        console.log(`WARNING: handleNestedErrors missing nesting options for field '${fieldName}'`);
+        console.warn(`handleNestedErrors missing nesting options for field '${fieldName}'`);
         return;
     }
 
     for (var idx = 0; idx < error_list.length; idx++) {
-        
+
         var error_item = error_list[idx];
-        
+
         if (idx >= nest_list.length) {
-            console.log(`WARNING: handleNestedErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
+            console.warn(`handleNestedErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
             break;
         }
 
         // Extract the particular ID of the nested item
         var nest_id = nest_list[idx];
-        
+
         // Here, error_item is a map of field names to error messages
         for (sub_field_name in error_item) {
 
@@ -1144,7 +1224,7 @@ function handleNestedErrors(errors, field_name, options={}) {
 
                     row.after(html);
                 }
-                
+
             }
 
             // Find the target (nested) field
@@ -1164,7 +1244,7 @@ function handleNestedErrors(errors, field_name, options={}) {
 
 /*
  * Display form error messages as returned from the server.
- * 
+ *
  * arguments:
  * - errors: The JSON error response from the server
  * - fields: The form data object
@@ -1174,14 +1254,14 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     // Reset the status of the "submit" button
     if (options.modal) {
-        $(options.modal).find('#modal-form-submit').prop('disabled', false);
+        enableSubmitButton(options, true);
     }
 
     // Remove any existing error messages from the form
     clearFormErrors(options);
 
     var non_field_errors = null;
-    
+
     if (options.modal) {
         non_field_errors = $(options.modal).find('#non-field-errors');
     } else {
@@ -1218,29 +1298,26 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     for (var field_name in errors) {
 
-        if (field_name in fields) {
+        var field = fields[field_name] || {};
 
-            var field = fields[field_name];
+        if ((field.type == 'field') && ('child' in field)) {
+            // This is a "nested" field
+            handleNestedErrors(errors, field_name, options);
+        } else {
+            // This is a "simple" field
 
-            if ((field.type == 'field') && ('child' in field)) {
-                // This is a "nested" field
-                handleNestedErrors(errors, field_name, options);
-            } else {
-                // This is a "simple" field
+            var field_errors = errors[field_name];
 
-                var field_errors = errors[field_name];
+            if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
+                first_error_field = field_name;
+            }
 
-                if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
-                    first_error_field = field_name;
-                }
+            // Add an entry for each returned error message
+            for (var ii = field_errors.length-1; ii >= 0; ii--) {
 
-                // Add an entry for each returned error message
-                for (var ii = field_errors.length-1; ii >= 0; ii--) {
+                var error_text = field_errors[ii];
 
-                    var error_text = field_errors[ii];
-
-                    addFieldErrorMessage(field_name, error_text, ii, options);
-                }
+                addFieldErrorMessage(field_name, error_text, ii, options);
             }
         }
     }
@@ -1285,7 +1362,7 @@ function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
 
         field_dom.append(error_html);
     } else {
-        console.log(`WARNING: addFieldErrorMessage could not locate field '${field_name}'`);
+        console.warn(`addFieldErrorMessage could not locate field '${field_name}'`);
     }
 }
 
@@ -1299,13 +1376,13 @@ function isFieldVisible(field, options) {
 /*
  * Attach callbacks to specified fields,
  * triggered after the field value is edited.
- * 
+ *
  * Callback function is called with arguments (name, field, options)
  */
 function addFieldCallbacks(fields, options) {
 
     for (var idx = 0; idx < options.field_names.length; idx++) {
-        
+
         var name = options.field_names[idx];
 
         var field = fields[name];
@@ -1358,7 +1435,7 @@ function addClearCallback(name, field, options={}) {
     }
 
     if (!el) {
-        console.log(`WARNING: addClearCallback could not find field '${name}'`);
+        console.warn(`addClearCallback could not find field '${name}'`);
         return;
     }
 
@@ -1527,10 +1604,17 @@ function addSecondaryModal(field, fields, options) {
         var url = secondary.api_url || field.api_url;
 
         // If the "fields" attribute is a function, call it with data
-        if (secondary.fields instanceof Function) {
+        if (secondary.fields instanceof Function || secondary.fieldsFunction instanceof Function) {
 
             // Extract form values at time of button press
             var data = extractFormData(fields, options);
+
+            // Backup and execute fields function in sequential executions of modal
+            if (secondary.fields instanceof Function) {
+                secondary.fieldsFunction = secondary.fields;
+            } else if (secondary.fieldsFunction instanceof Function) {
+                secondary.fields = secondary.fieldsFunction;
+            }
 
             secondary.fields = secondary.fields(data);
         }
@@ -1570,7 +1654,7 @@ function addSecondaryModal(field, fields, options) {
 
 /*
  * Initialize a single related-field
- * 
+ *
  * argument:
  * - modal: DOM identifier for the modal window
  * - name: name of the field e.g. 'location'
@@ -1582,7 +1666,7 @@ function initializeRelatedField(field, fields, options={}) {
     var name = field.name;
 
     if (!field.api_url) {
-        console.log(`WARNING: Related field '${name}' missing 'api_url' parameter.`);
+        console.warn(`Related field '${name}' missing 'api_url' parameter.`);
         return;
     }
 
@@ -1646,7 +1730,7 @@ function initializeRelatedField(field, fields, options={}) {
                 query.search = params.term;
                 query.offset = offset;
                 query.limit = pageSize;
-                
+
                 // Allow custom run-time filter augmentation
                 if ('adjustFilters' in field) {
                     query = field.adjustFilters(query, options);
@@ -1696,7 +1780,7 @@ function initializeRelatedField(field, fields, options={}) {
             // Extract 'instance' data passed through from an initial value
             // Or, use the raw 'item' data as a backup
             var data = item;
-            
+
             if (item.element && item.element.instance) {
                 data = item.element.instance;
             }
@@ -1712,7 +1796,7 @@ function initializeRelatedField(field, fields, options={}) {
                 return $(html);
             } else {
                 // Return a simple renderering
-                console.log(`WARNING: templateResult() missing 'field.model' for '${name}'`);
+                console.warn(`templateResult() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
         },
@@ -1721,7 +1805,7 @@ function initializeRelatedField(field, fields, options={}) {
             // Extract 'instance' data passed through from an initial value
             // Or, use the raw 'item' data as a backup
             var data = item;
-            
+
             if (item.element && item.element.instance) {
                 data = item.element.instance;
             }
@@ -1742,7 +1826,7 @@ function initializeRelatedField(field, fields, options={}) {
                 return $(html);
             } else {
                 // Return a simple renderering
-                console.log(`WARNING: templateSelection() missing 'field.model' for '${name}'`);
+                console.warn(`templateSelection() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
         }
@@ -1750,7 +1834,7 @@ function initializeRelatedField(field, fields, options={}) {
 
     // If a 'value' is already defined, grab the model info from the server
     if (field.value) {
-        
+
         var pk = field.value;
         var url = `${field.api_url}/${pk}/`.replace('//', '/');
 
@@ -1780,6 +1864,11 @@ function initializeRelatedField(field, fields, options={}) {
                 // Only a single result is available, given the provided filters
                 if (data.count == 1) {
                     setRelatedFieldData(name, data.results[0], options);
+
+                    // Run "callback" function (if supplied)
+                    if (field.onEdit) {
+                        field.onEdit(data.results[0], name, field, options);
+                    }
                 }
             }
         });
@@ -1790,7 +1879,7 @@ function initializeRelatedField(field, fields, options={}) {
 /*
  * Set the value of a select2 instace for a "related field",
  * e.g. with data returned from a secondary modal
- * 
+ *
  * arguments:
  * - name: The name of the field
  * - data: JSON data representing the model instance
@@ -1836,7 +1925,7 @@ function searching() {
 /*
  * Render a "foreign key" model reference in a select2 instance.
  * Allows custom rendering with access to the entire serialized object.
- * 
+ *
  * arguments:
  * - name: The name of the field e.g. 'location'
  * - model: The name of the InvenTree model e.g. 'stockitem'
@@ -1856,7 +1945,7 @@ function renderModelData(name, model, data, parameters, options) {
 
     var renderer = null;
 
-    // Find a custom renderer 
+    // Find a custom renderer
     switch (model) {
     case 'company':
         renderer = renderCompany;
@@ -1903,7 +1992,7 @@ function renderModelData(name, model, data, parameters, options) {
     default:
         break;
     }
-    
+
     if (renderer != null) {
         html = renderer(name, data, parameters, options);
     }
@@ -1911,7 +2000,7 @@ function renderModelData(name, model, data, parameters, options) {
     if (html != null) {
         return html;
     } else {
-        console.log(`ERROR: Rendering not implemented for model '${model}'`);
+        console.error(`Rendering not implemented for model '${model}'`);
         // Simple text rendering
         return `${model} - ID ${data.id}`;
     }
@@ -1924,6 +2013,10 @@ function renderModelData(name, model, data, parameters, options) {
 function getFieldName(name, options={}) {
     var field_name = name;
 
+    if (options.field_suffix) {
+        field_name += options.field_suffix;
+    }
+
     if (options && options.depth) {
         field_name += `_${options.depth}`;
     }
@@ -1934,16 +2027,16 @@ function getFieldName(name, options={}) {
 
 /*
  * Construct a single form 'field' for rendering in a form.
- * 
+ *
  * arguments:
  * - name: The 'name' of the field
  * - parameters: The field parameters supplied by the DRF OPTIONS method
- * 
+ *
  * options:
- * - 
- * 
+ * -
+ *
  * The function constructs a fieldset which mostly replicates django "crispy" forms:
- * 
+ *
  * - Field name
  * - Field <input> (depends on specified field type)
  * - Field description (help text)
@@ -1962,7 +2055,7 @@ function constructField(name, parameters, options={}) {
 
     // Hidden inputs are rendered without label / help text / etc
     if (parameters.hidden) {
-        return constructHiddenInput(name, parameters, options);
+        return constructHiddenInput(field_name, parameters, options);
     }
 
     // Are we ending a group?
@@ -1992,7 +2085,7 @@ function constructField(name, parameters, options={}) {
             if (group_options.collapsible) {
                 html += `
                 <div data-bs-toggle='collapse' data-bs-target='#form-panel-content-${group_id}'>
-                    <a href='#'><span id='group-icon-${group_id}' class='fas fa-angle-up'></span> 
+                    <a href='#'><span id='group-icon-${group_id}' class='fas fa-angle-up'></span>
                 `;
             } else {
                 html += `<div>`;
@@ -2024,7 +2117,7 @@ function constructField(name, parameters, options={}) {
     if (parameters.before) {
         html += parameters.before;
     }
-    
+
     var hover_title = '';
 
     if (parameters.help_text) {
@@ -2042,7 +2135,7 @@ function constructField(name, parameters, options={}) {
 
     // Does this input deserve "extra" decorators?
     var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null);
-    
+
     // Some fields can have 'clear' inputs associated with them
     if (!parameters.required && !parameters.read_only) {
         switch (parameters.type) {
@@ -2060,10 +2153,10 @@ function constructField(name, parameters, options={}) {
             break;
         }
     }
-    
+
     if (extra) {
         html += `<div class='input-group'>`;
- 
+
         if (parameters.prefix) {
             html += `<span class='input-group-text'>${parameters.prefix}</span>`;
         } else if (parameters.prefixRaw) {
@@ -2100,7 +2193,7 @@ function constructField(name, parameters, options={}) {
 
     html += `</div>`; // controls
     html += `</div>`; // form-group
-    
+
     if (parameters.after) {
         html += parameters.after;
     }
@@ -2125,17 +2218,17 @@ function constructLabel(name, parameters) {
     }
 
     var html = `<label class='${label_classes}' for='id_${name}'>`;
-    
+
     if (parameters.label) {
         html += `${parameters.label}`;
     } else {
         html += `${name}`;
     }
-    
+
     if (parameters.required) {
         html += `<span class='asteriskField'>*</span>`;
     }
-    
+
     html += `</label>`;
 
     return html;
@@ -2144,11 +2237,11 @@ function constructLabel(name, parameters) {
 
 /*
  * Construct a form input based on the field parameters
- * 
+ *
  * arguments:
  * - name: The name of the field
  * - parameters: Field parameters returned by the OPTIONS method
- * 
+ *
  */
 function constructInput(name, parameters, options={}) {
 
@@ -2192,11 +2285,11 @@ function constructInput(name, parameters, options={}) {
         // Unsupported field type!
         break;
     }
-        
+
     if (func != null) {
         html = func(name, parameters, options);
     } else {
-        console.log(`WARNING: Unhandled form field type: '${parameters.type}'`);
+        console.warn(`Unhandled form field type: '${parameters.type}'`);
     }
 
     return html;
@@ -2311,13 +2404,14 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
 
 
 // Construct a "hidden" input
-function constructHiddenInput(name, parameters) {
+function constructHiddenInput(name, parameters, options={}) {
 
     return constructInputOptions(
         name,
         'hiddeninput',
         'hidden',
-        parameters
+        parameters,
+        options
     );
 }
 
@@ -2479,14 +2573,14 @@ function constructRawInput(name, parameters) {
 
 /*
  * Construct a 'help text' div based on the field parameters
- * 
+ *
  * arguments:
  * - name: The name of the field
  * - parameters: Field parameters returned by the OPTIONS method
- *  
+ *
  */
 function constructHelpText(name, parameters) {
-    
+
     var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
@@ -2499,12 +2593,12 @@ function constructHelpText(name, parameters) {
 function selectImportFields(url, data={}, options={}) {
 
     if (!data.model_fields) {
-        console.log(`WARNING: selectImportFields is missing 'model_fields'`);
+        console.warn(`selectImportFields is missing 'model_fields'`);
         return;
     }
 
     if (!data.file_fields) {
-        console.log(`WARNING: selectImportFields is missing 'file_fields'`);
+        console.warn(`selectImportFields is missing 'file_fields'`);
         return;
     }
 
@@ -2547,7 +2641,7 @@ function selectImportFields(url, data={}, options={}) {
     var headers = `<tr><th>{% trans "File Column" %}</th><th>{% trans "Field Name" %}</th></tr>`;
 
     var html = '';
-    
+
     if (options.preamble) {
         html += options.preamble;
     }
@@ -2560,14 +2654,14 @@ function selectImportFields(url, data={}, options={}) {
         fields: {},
         preFormContent: html,
         onSubmit: function(fields, opts) {
-            
+
             var columns = [];
 
             for (var idx = 0; idx < field_names.length; idx++) {
                 columns.push(getFormFieldValue(`column_${idx}`, {}, opts));
             }
 
-            $(opts.modal).find('#modal-progress-spinner').show();
+            showModalSpinner(opts.modal);
 
             inventreePut(
                 opts.url,
@@ -2585,17 +2679,17 @@ function selectImportFields(url, data={}, options={}) {
                         }
                     },
                     error: function(xhr) {
-                
+
                         $(opts.modal).find('#modal-progress-spinner').hide();
-        
+
                         switch (xhr.status) {
                         case 400:
                             handleFormErrors(xhr.responseJSON, fields, opts);
                             break;
                         default:
                             $(opts.modal).modal('hide');
-        
-                            console.log(`upload error at ${opts.url}`);
+
+                            console.error(`upload error at ${opts.url}`);
                             showApiError(xhr, opts.url);
                             break;
                         }

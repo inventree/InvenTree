@@ -1,47 +1,54 @@
-"""
-Provides helper functions used throughout the InvenTree project
-"""
+"""Provides helper functions used throughout the InvenTree project."""
 
+import hashlib
 import io
-import re
 import json
+import logging
+import os
 import os.path
+import re
+from decimal import Decimal, InvalidOperation
+from pathlib import Path
+from wsgiref.util import FileWrapper
+
+from django.conf import settings
+from django.contrib.auth.models import Permission
+from django.contrib.staticfiles.storage import StaticFilesStorage
+from django.core.exceptions import FieldError, ValidationError
+from django.core.files.storage import default_storage
+from django.core.validators import URLValidator
+from django.http import StreamingHttpResponse
+from django.test import TestCase
+from django.utils.translation import gettext_lazy as _
+
+import regex
+import requests
+from bleach import clean
+from djmoney.money import Money
 from PIL import Image
 
-from decimal import Decimal, InvalidOperation
-
-from wsgiref.util import FileWrapper
-from django.http import StreamingHttpResponse
-from django.core.exceptions import ValidationError, FieldError
-from django.utils.translation import ugettext_lazy as _
-
-from django.contrib.auth.models import Permission
-
 import InvenTree.version
-
 from common.models import InvenTreeSetting
-from .settings import MEDIA_URL, STATIC_URL
+from common.notifications import (InvenTreeNotificationBodies,
+                                  NotificationBody, trigger_notification)
 from common.settings import currency_code_default
 
-from djmoney.money import Money
+from .api_tester import UserMixin
+from .settings import MEDIA_URL, STATIC_URL
+
+logger = logging.getLogger('inventree')
 
 
 def getSetting(key, backup_value=None):
-    """
-    Shortcut for reading a setting value from the database
-    """
-
+    """Shortcut for reading a setting value from the database."""
     return InvenTreeSetting.get_setting(key, backup_value=backup_value)
 
 
 def generateTestKey(test_name):
-    """
-    Generate a test 'key' for a given test name.
-    This must not have illegal chars as it will be used for dict lookup in a template.
+    """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.
     """
-
     key = test_name.strip().lower()
     key = key.replace(" ", "")
 
@@ -51,34 +58,60 @@ def generateTestKey(test_name):
     return key
 
 
-def getMediaUrl(filename):
-    """
-    Return the qualified access path for the given file,
-    under the media directory.
+def constructPathString(path, max_chars=250):
+    """Construct a 'path string' for the given path.
+
+    Arguments:
+        path: A list of strings e.g. ['path', 'to', 'location']
+        max_chars: Maximum number of characters
     """
 
+    pathstring = '/'.join(path)
+
+    idx = 0
+
+    # Replace middle elements to limit the pathstring
+    if len(pathstring) > max_chars:
+        mid = len(path) // 2
+        path_l = path[0:mid]
+        path_r = path[mid:]
+
+        # Ensure the pathstring length is limited
+        while len(pathstring) > max_chars:
+
+            # Remove an element from the list
+            if idx % 2 == 0:
+                path_l = path_l[:-1]
+            else:
+                path_r = path_r[1:]
+
+            subpath = path_l + ['...'] + path_r
+
+            pathstring = '/'.join(subpath)
+
+            idx += 1
+
+    return pathstring
+
+
+def getMediaUrl(filename):
+    """Return the qualified access path for the given file, under the media directory."""
     return os.path.join(MEDIA_URL, str(filename))
 
 
 def getStaticUrl(filename):
-    """
-    Return the qualified access path for the given file,
-    under the static media directory.
-    """
-
+    """Return the qualified access path for the given file, under the static media directory."""
     return os.path.join(STATIC_URL, str(filename))
 
 
 def construct_absolute_url(*arg):
-    """
-    Construct (or attempt to construct) an absolute URL from a relative URL.
+    """Construct (or attempt to construct) an absolute URL from a relative URL.
 
     This is useful when (for example) sending an email to a user with a link
     to something in the InvenTree web framework.
 
     This requires the BASE_URL configuration option to be set!
     """
-
     base = str(InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
 
     url = '/'.join(arg)
@@ -98,38 +131,164 @@ def construct_absolute_url(*arg):
     return url
 
 
-def getBlankImage():
-    """
-    Return the qualified path for the 'blank image' placeholder.
+def download_image_from_url(remote_url, timeout=2.5):
+    """Download an image file from a remote URL.
+
+    This is a potentially dangerous operation, so we must perform some checks:
+
+    - The remote URL is available
+    - The Content-Length is provided, and is not too large
+    - The file is a valid image file
+
+    Arguments:
+        remote_url: The remote URL to retrieve image
+        max_size: Maximum allowed image size (default = 1MB)
+        timeout: Connection timeout in seconds (default = 5)
+
+    Returns:
+        An in-memory PIL image file, if the download was successful
+
+    Raises:
+        requests.exceptions.ConnectionError: Connection could not be established
+        requests.exceptions.Timeout: Connection timed out
+        requests.exceptions.HTTPError: Server responded with invalid response code
+        ValueError: Server responded with invalid 'Content-Length' value
+        TypeError: Response is not a valid image
     """
 
+    # Check that the provided URL at least looks valid
+    validator = URLValidator()
+    validator(remote_url)
+
+    # Calculate maximum allowable image size (in bytes)
+    max_size = int(InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
+
+    try:
+        response = requests.get(
+            remote_url,
+            timeout=timeout,
+            allow_redirects=True,
+            stream=True,
+        )
+        # Throw an error if anything goes wrong
+        response.raise_for_status()
+    except requests.exceptions.ConnectionError as exc:
+        raise Exception(_("Connection error") + f": {str(exc)}")
+    except requests.exceptions.Timeout as exc:
+        raise exc
+    except requests.exceptions.HTTPError:
+        raise requests.exceptions.HTTPError(_("Server responded with invalid status code") + f": {response.status_code}")
+    except Exception as exc:
+        raise Exception(_("Exception occurred") + f": {str(exc)}")
+
+    if response.status_code != 200:
+        raise Exception(_("Server responded with invalid status code") + f": {response.status_code}")
+
+    try:
+        content_length = int(response.headers.get('Content-Length', 0))
+    except ValueError:
+        raise ValueError(_("Server responded with invalid Content-Length value"))
+
+    if content_length > max_size:
+        raise ValueError(_("Image size is too large"))
+
+    # Download the file, ensuring we do not exceed the reported size
+    fo = io.BytesIO()
+
+    dl_size = 0
+    chunk_size = 64 * 1024
+
+    for chunk in response.iter_content(chunk_size=chunk_size):
+        dl_size += len(chunk)
+
+        if dl_size > max_size:
+            raise ValueError(_("Image download exceeded maximum size"))
+
+        fo.write(chunk)
+
+    if dl_size == 0:
+        raise ValueError(_("Remote server returned empty response"))
+
+    # Now, attempt to convert the downloaded data to a valid image file
+    # img.verify() will throw an exception if the image is not valid
+    try:
+        img = Image.open(fo).convert()
+        img.verify()
+    except Exception:
+        raise TypeError(_("Supplied URL is not a valid image file"))
+
+    return img
+
+
+def TestIfImage(img):
+    """Test if an image file is indeed an image."""
+    try:
+        Image.open(img).verify()
+        return True
+    except Exception:
+        return False
+
+
+def getBlankImage():
+    """Return the qualified path for the 'blank image' placeholder."""
     return getStaticUrl("img/blank_image.png")
 
 
 def getBlankThumbnail():
-    """
-    Return the qualified path for the 'blank image' thumbnail placeholder.
-    """
-
+    """Return the qualified path for the 'blank image' thumbnail placeholder."""
     return getStaticUrl("img/blank_image.thumbnail.png")
 
 
-def TestIfImage(img):
-    """ Test if an image file is indeed an image """
-    try:
-        Image.open(img).verify()
-        return True
-    except:
-        return False
+def getLogoImage(as_file=False, custom=True):
+    """Return the InvenTree logo image, or a custom logo if available."""
+
+    """Return the path to the logo-file."""
+    if custom and settings.CUSTOM_LOGO:
+
+        static_storage = StaticFilesStorage()
+
+        if static_storage.exists(settings.CUSTOM_LOGO):
+            storage = static_storage
+        elif default_storage.exists(settings.CUSTOM_LOGO):
+            storage = default_storage
+        else:
+            storage = None
+
+        if storage is not None:
+            if as_file:
+                return f"file://{storage.path(settings.CUSTOM_LOGO)}"
+            else:
+                return storage.url(settings.CUSTOM_LOGO)
+
+    # If we have got to this point, return the default logo
+    if as_file:
+        path = settings.STATIC_ROOT.joinpath('img/inventree.png')
+        return f"file://{path}"
+    else:
+        return getStaticUrl('img/inventree.png')
+
+
+def getSplashScren(custom=True):
+    """Return the InvenTree splash screen, or a custom splash if available"""
+
+    static_storage = StaticFilesStorage()
+
+    if custom and settings.CUSTOM_SPLASH:
+
+        if static_storage.exists(settings.CUSTOM_SPLASH):
+            return static_storage.url(settings.CUSTOM_SPLASH)
+
+    # No custom splash screen
+    return static_storage.url("img/inventree_splash.jpg")
 
 
 def TestIfImageURL(url):
-    """ Test if an image URL (or filename) looks like a valid image format.
+    """Test if an image URL (or filename) looks like a valid image format.
 
     Simply tests the extension against a set of allowed values
     """
     return os.path.splitext(os.path.basename(url))[-1].lower() in [
-        '.jpg', '.jpeg',
+        '.jpg', '.jpeg', '.j2k',
         '.png', '.bmp',
         '.tif', '.tiff',
         '.webp', '.gif',
@@ -137,7 +296,7 @@ def TestIfImageURL(url):
 
 
 def str2bool(text, test=True):
-    """ Test if a string 'looks' like a boolean value.
+    """Test if a string 'looks' like a boolean value.
 
     Args:
         text: Input text
@@ -152,11 +311,24 @@ def str2bool(text, test=True):
         return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
 
 
-def is_bool(text):
-    """
-    Determine if a string value 'looks' like a boolean.
-    """
+def str2int(text, default=None):
+    """Convert a string to int if possible
 
+    Args:
+        text: Int like string
+        default: Return value if str is no int like
+
+    Returns:
+        Converted int value
+    """
+    try:
+        return int(text)
+    except Exception:
+        return default
+
+
+def is_bool(text):
+    """Determine if a string value 'looks' like a boolean."""
     if str2bool(text, True):
         return True
     elif str2bool(text, False):
@@ -166,9 +338,7 @@ def is_bool(text):
 
 
 def isNull(text):
-    """
-    Test if a string 'looks' like a null value.
-    This is useful for querying the API against a null key.
+    """Test if a string 'looks' like a null value. This is useful for querying the API against a null key.
 
     Args:
         text: Input text
@@ -176,15 +346,11 @@ def isNull(text):
     Returns:
         True if the text looks like a null value
     """
-
     return str(text).strip().lower() in ['top', 'null', 'none', 'empty', 'false', '-1', '']
 
 
 def normalize(d):
-    """
-    Normalize a decimal number, and remove exponential formatting.
-    """
-
+    """Normalize a decimal number, and remove exponential formatting."""
     if type(d) is not Decimal:
         d = Decimal(d)
 
@@ -195,8 +361,7 @@ def normalize(d):
 
 
 def increment(n):
-    """
-    Attempt to increment an integer (or a string that looks like an integer!)
+    """Attempt to increment an integer (or a string that looks like an integer).
 
     e.g.
 
@@ -204,9 +369,7 @@ def increment(n):
     2 -> 3
     AB01 -> AB02
     QQQ -> QQQ
-
     """
-
     value = str(n).strip()
 
     # Ignore empty strings
@@ -224,7 +387,7 @@ def increment(n):
     groups = result.groups()
 
     # If we cannot match the regex, then simply return the provided value
-    if not len(groups) == 2:
+    if len(groups) != 2:
         return value
 
     prefix, number = groups
@@ -248,10 +411,7 @@ def increment(n):
 
 
 def decimal2string(d):
-    """
-    Format a Decimal number as a string,
-    stripping out any trailing zeroes or decimal points.
-    Essentially make it look like a whole number if it is one.
+    """Format a Decimal number as a string, stripping out any trailing zeroes or decimal points. Essentially make it look like a whole number if it is one.
 
     Args:
         d: A python Decimal object
@@ -259,7 +419,6 @@ def decimal2string(d):
     Returns:
         A string representation of the input number
     """
-
     if type(d) is Decimal:
         d = normalize(d)
 
@@ -280,8 +439,7 @@ def decimal2string(d):
 
 
 def decimal2money(d, currency=None):
-    """
-    Format a Decimal number as Money
+    """Format a Decimal number as Money.
 
     Args:
         d: A python Decimal object
@@ -296,7 +454,7 @@ def decimal2money(d, currency=None):
 
 
 def WrapWithQuotes(text, quote='"'):
-    """ Wrap the supplied text with quotes
+    """Wrap the supplied text with quotes.
 
     Args:
         text: Input text to wrap
@@ -305,7 +463,6 @@ def WrapWithQuotes(text, quote='"'):
     Returns:
         Supplied text wrapped in quote char
     """
-
     if not text.startswith(quote):
         text = quote + text
 
@@ -316,7 +473,7 @@ def WrapWithQuotes(text, quote='"'):
 
 
 def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
-    """ Generate a string for a barcode. Adds some global InvenTree parameters.
+    """Generate a string for a barcode. Adds some global InvenTree parameters.
 
     Args:
         object_type: string describing the object type e.g. 'StockItem'
@@ -363,8 +520,7 @@ def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
 
 
 def GetExportFormats():
-    """ Return a list of allowable file formats for exporting data """
-
+    """Return a list of allowable file formats for exporting data."""
     return [
         'csv',
         'tsv',
@@ -375,9 +531,8 @@ def GetExportFormats():
     ]
 
 
-def DownloadFile(data, filename, content_type='application/text', inline=False):
-    """
-    Create a dynamic file for the user to download.
+def DownloadFile(data, filename, content_type='application/text', inline=False) -> StreamingHttpResponse:
+    """Create a dynamic file for the user to download.
 
     Args:
         data: Raw file data (string or bytes)
@@ -388,7 +543,6 @@ def DownloadFile(data, filename, content_type='application/text', inline=False):
     Return:
         A StreamingHttpResponse object wrapping the supplied data
     """
-
     filename = WrapWithQuotes(filename)
 
     if type(data) == str:
@@ -407,8 +561,7 @@ def DownloadFile(data, filename, content_type='application/text', inline=False):
 
 
 def extract_serial_numbers(serials, expected_quantity, next_number: int):
-    """
-    Attempt to extract serial numbers from an input string:
+    """Attempt to extract serial numbers from an input string.
 
     Requirements:
         - Serial numbers can be either strings, or integers
@@ -423,21 +576,27 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
         expected_quantity: The number of (unique) serial numbers we expect
         next_number(int): the next possible serial number
     """
-
     serials = serials.strip()
 
     # fill in the next serial number into the serial
-    if '~' in serials:
-        serials = serials.replace('~', str(next_number))
+    while '~' in serials:
+        serials = serials.replace('~', str(next_number), 1)
+        next_number += 1
 
     # Split input string by whitespace or comma (,) characters
-    groups = re.split("[\s,]+", serials)
+    groups = re.split(r"[\s,]+", serials)
 
     numbers = []
     errors = []
 
     # Helper function to check for duplicated numbers
     def add_sn(sn):
+        # Attempt integer conversion first, so numerical strings are never stored
+        try:
+            sn = int(sn)
+        except ValueError:
+            pass
+
         if sn in numbers:
             errors.append(_('Duplicate serial: {sn}').format(sn=sn))
         else:
@@ -451,15 +610,25 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
     if len(serials) == 0:
         raise ValidationError([_("Empty serial number string")])
 
-    for group in groups:
+    # If the user has supplied the correct number of serials, don't process them for groups
+    # just add them so any duplicates (or future validations) are checked
+    if len(groups) == expected_quantity:
+        for group in groups:
+            add_sn(group)
 
+        if len(errors) > 0:
+            raise ValidationError(errors)
+
+        return numbers
+
+    for group in groups:
         group = group.strip()
 
         # Hyphen indicates a range of numbers
         if '-' in group:
             items = group.split('-')
 
-            if len(items) == 2:
+            if len(items) == 2 and all([i.isnumeric() for i in items]):
                 a = items[0].strip()
                 b = items[1].strip()
 
@@ -471,13 +640,14 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
                         for n in range(a, b + 1):
                             add_sn(n)
                     else:
-                        errors.append(_("Invalid group: {g}").format(g=group))
+                        errors.append(_("Invalid group range: {g}").format(g=group))
 
                 except ValueError:
                     errors.append(_("Invalid group: {g}").format(g=group))
                     continue
             else:
-                errors.append(_("Invalid group: {g}").format(g=group))
+                # More than 2 hyphens or non-numeric group so add without interpolating
+                add_sn(group)
 
         # plus signals either
         # 1:  'start+':  expected number of serials, starting at start
@@ -495,23 +665,17 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
 
                 # case 1
                 else:
-                    end = start + expected_quantity
+                    end = start + (expected_quantity - len(numbers))
 
                 for n in range(start, end):
                     add_sn(n)
             # no case
             else:
-                errors.append(_("Invalid group: {g}").format(g=group))
+                errors.append(_("Invalid group sequence: {g}").format(g=group))
 
         # At this point, we assume that the "group" is just a single serial value
         elif group:
-
-            try:
-                # First attempt to add as an integer value
-                add_sn(int(group))
-            except (ValueError):
-                # As a backup, add as a string value
-                add_sn(group)
+            add_sn(group)
 
         # No valid input group detected
         else:
@@ -524,15 +688,14 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
         raise ValidationError([_("No serial numbers found")])
 
     # The number of extracted serial numbers must match the expected quantity
-    if not expected_quantity == len(numbers):
-        raise ValidationError([_("Number of unique serial number ({s}) must match quantity ({q})").format(s=len(numbers), q=expected_quantity)])
+    if expected_quantity != len(numbers):
+        raise ValidationError([_("Number of unique serial numbers ({s}) must match quantity ({q})").format(s=len(numbers), q=expected_quantity)])
 
     return numbers
 
 
 def validateFilterString(value, model=None):
-    """
-    Validate that a provided filter string looks like a list of comma-separated key=value pairs
+    """Validate that a provided filter string looks like a list of comma-separated key=value pairs.
 
     These should nominally match to a valid database filter based on the model being filtered.
 
@@ -547,7 +710,6 @@ def validateFilterString(value, model=None):
 
     Returns a map of key:value pairs
     """
-
     # Empty results map
     results = {}
 
@@ -563,7 +725,7 @@ def validateFilterString(value, model=None):
 
         pair = group.split('=')
 
-        if not len(pair) == 2:
+        if len(pair) != 2:
             raise ValidationError(
                 "Invalid group: {g}".format(g=group)
             )
@@ -593,51 +755,36 @@ def validateFilterString(value, model=None):
 
 
 def addUserPermission(user, permission):
-    """
-    Shortcut function for adding a certain permission to a user.
-    """
-
+    """Shortcut function for adding a certain permission to a user."""
     perm = Permission.objects.get(codename=permission)
     user.user_permissions.add(perm)
 
 
 def addUserPermissions(user, permissions):
-    """
-    Shortcut function for adding multiple permissions to a user.
-    """
-
+    """Shortcut function for adding multiple permissions to a user."""
     for permission in permissions:
         addUserPermission(user, permission)
 
 
 def getMigrationFileNames(app):
-    """
-    Return a list of all migration filenames for provided app
-    """
-
-    local_dir = os.path.dirname(os.path.abspath(__file__))
-
-    migration_dir = os.path.join(local_dir, '..', app, 'migrations')
-
-    files = os.listdir(migration_dir)
+    """Return a list of all migration filenames for provided app."""
+    local_dir = Path(__file__).parent
+    files = local_dir.joinpath('..', app, 'migrations').iterdir()
 
     # Regex pattern for migration files
-    pattern = r"^[\d]+_.*\.py$"
+    regex = re.compile(r"^[\d]+_.*\.py$")
 
     migration_files = []
 
     for f in files:
-        if re.match(pattern, f):
-            migration_files.append(f)
+        if regex.match(f.name):
+            migration_files.append(f.name)
 
     return migration_files
 
 
 def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
-    """
-    Return the filename associated with the oldest migration
-    """
-
+    """Return the filename associated with the oldest migration."""
     oldest_num = -1
     oldest_file = None
 
@@ -659,10 +806,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
 
 
 def getNewestMigrationFile(app, exclude_extension=True):
-    """
-    Return the filename associated with the newest migration
-    """
-
+    """Return the filename associated with the newest migration."""
     newest_file = None
     newest_num = -1
 
@@ -680,8 +824,7 @@ def getNewestMigrationFile(app, exclude_extension=True):
 
 
 def clean_decimal(number):
-    """ Clean-up decimal value """
-
+    """Clean-up decimal value."""
     # Check if empty
     if number is None or number == '' or number == 0:
         return Decimal(0)
@@ -716,8 +859,74 @@ def clean_decimal(number):
     return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
 
 
+def strip_html_tags(value: str, raise_error=True, field_name=None):
+    """Strip HTML tags from an input string using the bleach library.
+
+    If raise_error is True, a ValidationError will be thrown if HTML tags are detected
+    """
+
+    cleaned = clean(
+        value,
+        strip=True,
+        tags=[],
+        attributes=[],
+    )
+
+    # Add escaped characters back in
+    replacements = {
+        '&gt;': '>',
+        '&lt;': '<',
+        '&amp;': '&',
+    }
+
+    for o, r in replacements.items():
+        cleaned = cleaned.replace(o, r)
+
+    # If the length changed, it means that HTML tags were removed!
+    if len(cleaned) != len(value) and raise_error:
+
+        field = field_name or 'non_field_errors'
+
+        raise ValidationError({
+            field: [_("Remove HTML tags from this value")]
+        })
+
+    return cleaned
+
+
+def remove_non_printable_characters(value: str, remove_ascii=True, remove_unicode=True):
+    """Remove non-printable / control characters from the provided string"""
+
+    if remove_ascii:
+        # Remove ASCII control characters
+        cleaned = regex.sub(u'[\x01-\x1F]+', '', value)
+
+    if remove_unicode:
+        # Remove Unicode control characters
+        cleaned = regex.sub(u'[^\P{C}]+', '', value)
+
+    return cleaned
+
+
+def hash_barcode(barcode_data):
+    """Calculate a 'unique' hash for a barcode string.
+
+    This hash is used for comparison / lookup.
+
+    We first remove any non-printable characters from the barcode data,
+    as some browsers have issues scanning characters in.
+    """
+
+    barcode_data = str(barcode_data).strip()
+    barcode_data = remove_non_printable_characters(barcode_data)
+
+    hash = hashlib.md5(str(barcode_data).encode())
+
+    return str(hash.hexdigest())
+
+
 def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = 'object_id'):
-    """lookup method for the GenericForeignKey fields
+    """Lookup method for the GenericForeignKey fields.
 
     Attributes:
     - obj: object that will be resolved
@@ -733,6 +942,7 @@ def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = '
 
     The method name must always be the name of the field prefixed by 'get_'
     """
+
     model_cls = getattr(obj, type_ref)
     obj_id = getattr(obj, object_ref)
 
@@ -742,7 +952,12 @@ def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = '
 
     # resolve referenced data into objects
     model_cls = model_cls.model_class()
-    item = model_cls.objects.get(id=obj_id)
+
+    try:
+        item = model_cls.objects.get(id=obj_id)
+    except model_cls.DoesNotExist:
+        return None
+
     url_fnc = getattr(item, 'get_absolute_url', None)
 
     # create output
@@ -757,9 +972,7 @@ def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = '
 
 
 def inheritors(cls):
-    """
-    Return all classes that are subclasses from the supplied cls
-    """
+    """Return all classes that are subclasses from the supplied cls."""
     subcls = set()
     work = [cls]
     while work:
@@ -769,3 +982,51 @@ def inheritors(cls):
                 subcls.add(child)
                 work.append(child)
     return subcls
+
+
+class InvenTreeTestCase(UserMixin, TestCase):
+    """Testcase with user setup buildin."""
+    pass
+
+
+def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
+    """Notify all responsible parties of a change in an instance.
+
+    Parses the supplied content with the provided instance and sender and sends a notification to all responsible users,
+    excluding the optional excluded list.
+
+    Args:
+        instance: The newly created instance
+        sender: Sender model reference
+        content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        exclude (User, optional): User instance that should be excluded. Defaults to None.
+    """
+    if instance.responsible is not None:
+        # Setup context for notification parsing
+        content_context = {
+            'instance': str(instance),
+            'verbose_name': sender._meta.verbose_name,
+            'app_label': sender._meta.app_label,
+            'model_name': sender._meta.model_name,
+        }
+
+        # Setup notification context
+        context = {
+            'instance': instance,
+            'name': content.name.format(**content_context),
+            'message': content.message.format(**content_context),
+            'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+            'template': {
+                'html': content.template.format(**content_context),
+                'subject': content.name.format(**content_context),
+            }
+        }
+
+        # Create notification
+        trigger_notification(
+            instance,
+            content.slug.format(**content_context),
+            targets=[instance.responsible],
+            target_exclude=[exclude],
+            context=context,
+        )

@@ -1,17 +1,15 @@
-"""
-Validate that all URLs specified in template files are correct.
-"""
+"""Validate that all URLs specified in template files are correct."""
+
+import os
+import re
+from pathlib import Path
 
 from django.test import TestCase
 from django.urls import reverse
 
-import os
-import re
-
-from pathlib import Path
-
 
 class URLTest(TestCase):
+    """Test all files for broken url tags."""
 
     # Need fixture data in the database
     fixtures = [
@@ -36,11 +34,7 @@ class URLTest(TestCase):
     ]
 
     def find_files(self, suffix):
-        """
-        Search for all files in the template directories,
-        which can have URLs rendered
-        """
-
+        """Search for all files in the template directories, which can have URLs rendered."""
         template_dirs = [
             ('build', 'templates'),
             ('common', 'templates'),
@@ -72,10 +66,7 @@ class URLTest(TestCase):
         return template_files
 
     def find_urls(self, input_file):
-        """
-        Search for all instances of {% url %} in supplied template file
-        """
-
+        """Search for all instances of {% url %} in supplied template file."""
         urls = []
 
         pattern = "{% url ['\"]([^'\"]+)['\"]([^%]*)%}"
@@ -101,10 +92,7 @@ class URLTest(TestCase):
         return urls
 
     def reverse_url(self, url_pair):
-        """
-        Perform lookup on the URL
-        """
-
+        """Perform lookup on the URL."""
         url, pk = url_pair
 
         # Ignore "renaming"
@@ -126,24 +114,21 @@ class URLTest(TestCase):
             reverse(url)
 
     def check_file(self, f):
-        """
-        Run URL checks for the provided file
-        """
-
+        """Run URL checks for the provided file."""
         urls = self.find_urls(f)
 
         for url in urls:
             self.reverse_url(url)
 
     def test_html_templates(self):
-
+        """Test all HTML templates for broken url tags."""
         template_files = self.find_files("*.html")
 
         for f in template_files:
             self.check_file(f)
 
     def test_js_templates(self):
-
+        """Test all JS templates for broken url tags."""
         template_files = self.find_files("*.js")
 
         for f in template_files:

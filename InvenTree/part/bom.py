@@ -1,5 +1,5 @@
-"""
-Functionality for Bill of Material (BOM) management.
+"""Functionality for Bill of Material (BOM) management.
+
 Primarily BOM upload tools.
 """
 
@@ -7,22 +7,20 @@ from collections import OrderedDict
 
 from django.utils.translation import gettext as _
 
+from company.models import ManufacturerPart, SupplierPart
 from InvenTree.helpers import DownloadFile, GetExportFormats, normalize
 
 from .admin import BomItemResource
-from .models import BomItem
-from company.models import ManufacturerPart, SupplierPart
+from .models import BomItem, Part
 
 
 def IsValidBOMFormat(fmt):
-    """ Test if a file format specifier is in the valid list of BOM file formats """
-
+    """Test if a file format specifier is in the valid list of BOM file formats."""
     return fmt.strip().lower() in GetExportFormats()
 
 
 def MakeBomTemplate(fmt):
-    """ Generate a Bill of Materials upload template file (for user download) """
-
+    """Generate a Bill of Materials upload template file (for user download)."""
     fmt = fmt.strip().lower()
 
     if not IsValidBOMFormat(fmt):
@@ -44,14 +42,22 @@ def MakeBomTemplate(fmt):
     return DownloadFile(data, filename)
 
 
-def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=False, stock_data=False, supplier_data=False, manufacturer_data=False):
-    """ Export a BOM (Bill of Materials) for a given part.
+def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = None, parameter_data=False, stock_data=False, supplier_data=False, manufacturer_data=False):
+    """Export a BOM (Bill of Materials) for a given part.
 
     Args:
-        fmt: File format (default = 'csv')
-        cascade: If True, multi-level BOM output is supported. Otherwise, a flat top-level-only BOM is exported.
-    """
+        part (Part): Part for which the BOM should be exported
+        fmt (str, optional): file format. Defaults to 'csv'.
+        cascade (bool, optional): If True, multi-level BOM output is supported. Otherwise, a flat top-level-only BOM is exported.. Defaults to False.
+        max_levels (int, optional): Levels of items that should be included. None for np sublevels. Defaults to None.
+        parameter_data (bool, optional): Additonal data that should be added. Defaults to False.
+        stock_data (bool, optional): Additonal data that should be added. Defaults to False.
+        supplier_data (bool, optional): Additonal data that should be added. Defaults to False.
+        manufacturer_data (bool, optional): Additonal data that should be added. Defaults to False.
 
+    Returns:
+        StreamingHttpResponse: Response that can be passed to the endpoint
+    """
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'
 
@@ -92,9 +98,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
             pass
 
     if parameter_data:
-        """
-        If requested, add extra columns for each PartParameter associated with each line item
-        """
+        """If requested, add extra columns for each PartParameter associated with each line item."""
 
         parameter_cols = {}
 
@@ -117,9 +121,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
         add_columns_to_dataset(parameter_cols_ordered, len(bom_items))
 
     if stock_data:
-        """
-        If requested, add extra columns for stock data associated with each line item
-        """
+        """If requested, add extra columns for stock data associated with each line item."""
 
         stock_headers = [
             _('Default Location'),
@@ -172,9 +174,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
         add_columns_to_dataset(stock_cols, len(bom_items))
 
     if manufacturer_data or supplier_data:
-        """
-        If requested, add extra columns for each SupplierPart and ManufacturerPart associated with each line item
-        """
+        """If requested, add extra columns for each SupplierPart and ManufacturerPart associated with each line item."""
 
         # Keep track of the supplier parts we have already exported
         supplier_parts_used = set()

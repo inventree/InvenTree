@@ -1,56 +1,51 @@
-"""
-Various Views which provide extra functionality over base Django Views.
+"""Various Views which provide extra functionality over base Django Views.
 
 In particular these views provide base functionality for rendering Django forms
 as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-import os
 import json
 
-from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from django.contrib.auth import password_validation
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
+from django.core.exceptions import ValidationError
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from django.shortcuts import redirect
-from django.conf import settings
-
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-
+from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
 from django.views.generic.base import RedirectView, TemplateView
 
-from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from allauth.account.forms import AddEmailForm
-from allauth.socialaccount.forms import DisconnectForm
 from allauth.account.models import EmailAddress
-from allauth.account.views import EmailView, PasswordResetFromKeyView
+from allauth.account.views import (EmailView, LoginView,
+                                   PasswordResetFromKeyView)
+from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
-from user_sessions.views import SessionDeleteView, SessionDeleteOtherView
+from allauth_2fa.views import TwoFactorRemove
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
+from common.models import ColorTheme, InvenTreeSetting
 from common.settings import currency_code_default, currency_codes
+from part.models import PartCategory
+from users.models import RuleSet, check_user_role
 
-from part.models import Part, PartCategory
-from stock.models import StockLocation, StockItem
-from common.models import InvenTreeSetting, ColorTheme
-from users.models import check_user_role, RuleSet
-
-from .forms import DeleteForm, EditUserForm, SetPasswordForm
-from .forms import SettingCategorySelectForm
-from .helpers import str2bool
+from .forms import EditUserForm, SetPasswordForm
+from .helpers import remove_non_printable_characters, strip_html_tags
 
 
 def auth_request(request):
-    """
-    Simple 'auth' endpoint used to determine if the user is authenticated.
-    Useful for (for example) redirecting authentication requests through
-    django's permission framework.
-    """
+    """Simple 'auth' endpoint used to determine if the user is authenticated.
 
+    Useful for (for example) redirecting authentication requests through django's permission framework.
+    """
     if request.user.is_authenticated:
         return HttpResponse(status=200)
     else:
@@ -58,8 +53,7 @@ def auth_request(request):
 
 
 class InvenTreeRoleMixin(PermissionRequiredMixin):
-    """
-    Permission class based on user roles, not user 'permissions'.
+    """Permission class based on user roles, not user 'permissions'.
 
     There are a number of ways that the permissions can be specified for a view:
 
@@ -101,10 +95,7 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
     role_required = None
 
     def has_permission(self):
-        """
-        Determine if the current user has specified permissions
-        """
-
+        """Determine if the current user has specified permissions."""
         roles_required = []
 
         if type(self.role_required) is str:
@@ -167,8 +158,7 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
         return True
 
     def get_permission_class(self):
-        """
-        Return the 'permission_class' required for the current View.
+        """Return the 'permission_class' required for the current View.
 
         Must be one of:
 
@@ -181,7 +171,6 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
         'permission_class' attribute,
         or it can be "guessed" by looking at the type of class
         """
-
         perm = getattr(self, 'permission_class', None)
 
         # Permission is specified by the class itself
@@ -208,13 +197,10 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
 
 
 class AjaxMixin(InvenTreeRoleMixin):
-    """ AjaxMixin provides basic functionality for rendering a Django form to JSON.
-    Handles jsonResponse rendering, and adds extra data for the modal forms to process
-    on the client side.
+    """AjaxMixin provides basic functionality for rendering a Django form to JSON. Handles jsonResponse rendering, and adds extra data for the modal forms to process on the client side.
 
     Any view which inherits the AjaxMixin will need
     correct permissions set using the 'role_required' attribute
-
     """
 
     # By default, allow *any* role
@@ -227,11 +213,11 @@ class AjaxMixin(InvenTreeRoleMixin):
     ajax_form_title = ''
 
     def get_form_title(self):
-        """ Default implementation - return the ajax_form_title variable """
+        """Default implementation - return the ajax_form_title variable."""
         return self.ajax_form_title
 
     def get_param(self, name, method='GET'):
-        """ Get a request query parameter value from URL e.g. ?part=3
+        """Get a request query parameter value from URL e.g. ?part=3.
 
         Args:
             name: Variable name e.g. 'part'
@@ -240,14 +226,13 @@ class AjaxMixin(InvenTreeRoleMixin):
         Returns:
             Value of the supplier parameter or None if parameter is not available
         """
-
         if method == 'POST':
             return self.request.POST.get(name, None)
         else:
             return self.request.GET.get(name, None)
 
     def get_data(self):
-        """ Get extra context data (default implementation is empty dict)
+        """Get extra context data (default implementation is empty dict).
 
         Returns:
             dict object (empty)
@@ -255,20 +240,18 @@ class AjaxMixin(InvenTreeRoleMixin):
         return {}
 
     def validate(self, obj, form, **kwargs):
-        """
-        Hook for performing custom form validation steps.
+        """Hook for performing custom form validation steps.
 
         If a form error is detected, add it to the form,
         with 'form.add_error()'
 
         Ref: https://docs.djangoproject.com/en/dev/topics/forms/
         """
-
         # Do nothing by default
         pass
 
     def renderJsonResponse(self, request, form=None, data=None, context=None):
-        """ Render a JSON response based on specific class context.
+        """Render a JSON response based on specific class context.
 
         Args:
             request: HTTP request object (e.g. GET / POST)
@@ -322,19 +305,25 @@ class AjaxMixin(InvenTreeRoleMixin):
 
 
 class AjaxView(AjaxMixin, View):
-    """ An 'AJAXified' View for displaying an object
-    """
+    """An 'AJAXified' View for displaying an object."""
 
     def post(self, request, *args, **kwargs):
+        """Return a json formatted response.
+
+        This renderJsonResponse function must be supplied by your function.
+        """
         return self.renderJsonResponse(request)
 
     def get(self, request, *args, **kwargs):
+        """Return a json formatted response.
 
+        This renderJsonResponse function must be supplied by your function.
+        """
         return self.renderJsonResponse(request)
 
 
 class QRCodeView(AjaxView):
-    """ An 'AJAXified' view for displaying a QR code.
+    """An 'AJAXified' view for displaying a QR code.
 
     Subclasses should implement the get_qr_data(self) function.
     """
@@ -342,22 +331,23 @@ class QRCodeView(AjaxView):
     ajax_template_name = "qr_code.html"
 
     def get(self, request, *args, **kwargs):
+        """Return json with qr-code data."""
         self.request = request
         self.pk = self.kwargs['pk']
         return self.renderJsonResponse(request, None, context=self.get_context_data())
 
     def get_qr_data(self):
-        """ Returns the text object to render to a QR code.
-        The actual rendering will be handled by the template """
+        """Returns the text object to render to a QR code.
 
+        The actual rendering will be handled by the template
+        """
         return None
 
     def get_context_data(self):
-        """ Get context data for passing to the rendering template.
+        """Get context data for passing to the rendering template.
 
         Explicity passes the parameter 'qr_data'
         """
-
         context = {}
 
         qr = self.get_qr_data()
@@ -371,15 +361,14 @@ class QRCodeView(AjaxView):
 
 
 class AjaxCreateView(AjaxMixin, CreateView):
+    """An 'AJAXified' CreateView for creating a new object in the db.
 
-    """ An 'AJAXified' CreateView for creating a new object in the db
     - Returns a form in JSON format (for delivery to a modal window)
     - Handles form validation via AJAX POST requests
     """
 
     def get(self, request, *args, **kwargs):
-        """ Creates form with initial data, and renders JSON response """
-
+        """Creates form with initial data, and renders JSON response."""
         super(CreateView, self).get(request, *args, **kwargs)
 
         self.request = request
@@ -387,18 +376,16 @@ class AjaxCreateView(AjaxMixin, CreateView):
         return self.renderJsonResponse(request, form)
 
     def save(self, form):
-        """
-        Method for actually saving the form to the database.
-        Default implementation is very simple,
-        but can be overridden if required.
-        """
+        """Method for actually saving the form to the database.
 
+        Default implementation is very simple, but can be overridden if required.
+        """
         self.object = form.save()
 
         return self.object
 
     def post(self, request, *args, **kwargs):
-        """ Responds to form POST. Validates POST data and returns status info.
+        """Responds to form POST. Validates POST data and returns status info.
 
         - Validate POST form data
         - If valid, save form
@@ -445,45 +432,44 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
 
 class AjaxUpdateView(AjaxMixin, UpdateView):
-    """ An 'AJAXified' UpdateView for updating an object in the db
+    """An 'AJAXified' UpdateView for updating an object in the db.
+
     - Returns form in JSON format (for delivery to a modal window)
     - Handles repeated form validation (via AJAX) until the form is valid
     """
 
     def get(self, request, *args, **kwargs):
-        """ Respond to GET request.
+        """Respond to GET request.
 
         - Populates form with object data
         - Renders form to JSON and returns to client
         """
-
         super(UpdateView, self).get(request, *args, **kwargs)
 
         return self.renderJsonResponse(request, self.get_form(), context=self.get_context_data())
 
     def save(self, object, form, **kwargs):
-        """
-        Method for updating the object in the database.
-        Default implementation is very simple, but can be overridden if required.
+        """Method for updating the object in the database. Default implementation is very simple, but can be overridden if required.
 
         Args:
             object - The current object, to be updated
             form - The validated form
-        """
 
+        Returns:
+            object instance for supplied form
+        """
         self.object = form.save()
 
         return self.object
 
     def post(self, request, *args, **kwargs):
-        """ Respond to POST request.
+        """Respond to POST request.
 
         - Updates model with POST field data
         - Performs form and object validation
         - If errors exist, re-render the form
         - Otherwise, return sucess status
         """
-
         self.request = request
 
         # Make sure we have an object to point to
@@ -527,141 +513,79 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class AjaxDeleteView(AjaxMixin, UpdateView):
-
-    """ An 'AJAXified DeleteView for removing an object from the DB
-    - Returns a HTML object (not a form!) in JSON format (for delivery to a modal window)
-    - Handles deletion
-    """
-
-    form_class = DeleteForm
-    ajax_form_title = _("Delete Item")
-    ajax_template_name = "modal_delete_form.html"
-    context_object_name = 'item'
-
-    def get_object(self):
-        try:
-            self.object = self.model.objects.get(pk=self.kwargs['pk'])
-        except:
-            return None
-        return self.object
-
-    def get_form(self):
-        return self.form_class(self.get_form_kwargs())
-
-    def get(self, request, *args, **kwargs):
-        """ Respond to GET request
-
-        - Render a DELETE confirmation form to JSON
-        - Return rendered form to client
-        """
-
-        super(UpdateView, self).get(request, *args, **kwargs)
-
-        form = self.get_form()
-
-        context = self.get_context_data()
-
-        context[self.context_object_name] = self.get_object()
-
-        return self.renderJsonResponse(request, form, context=context)
-
-    def post(self, request, *args, **kwargs):
-        """ Respond to POST request
-
-        - DELETE the object
-        - Render success message to JSON and return to client
-        """
-
-        obj = self.get_object()
-        pk = obj.id
-
-        form = self.get_form()
-
-        confirmed = str2bool(request.POST.get('confirm_delete', False))
-        context = self.get_context_data()
-
-        if confirmed:
-            obj.delete()
-        else:
-            form.add_error('confirm_delete', _('Check box to confirm item deletion'))
-            context[self.context_object_name] = self.get_object()
-
-        data = {
-            'id': pk,
-            'form_valid': confirmed
-        }
-
-        return self.renderJsonResponse(request, form, data=data, context=context)
-
-
 class EditUserView(AjaxUpdateView):
-    """ View for editing user information """
+    """View for editing user information."""
 
     ajax_template_name = "modal_form.html"
     ajax_form_title = _("Edit User Information")
     form_class = EditUserForm
 
     def get_object(self):
+        """Set form to edit current user."""
         return self.request.user
 
 
 class SetPasswordView(AjaxUpdateView):
-    """ View for setting user password """
+    """View for setting user password."""
 
     ajax_template_name = "InvenTree/password.html"
     ajax_form_title = _("Set Password")
     form_class = SetPasswordForm
 
     def get_object(self):
+        """Set form to edit current user."""
         return self.request.user
 
     def post(self, request, *args, **kwargs):
-
+        """Validate inputs and change password."""
         form = self.get_form()
 
         valid = form.is_valid()
 
         p1 = request.POST.get('enter_password', '')
         p2 = request.POST.get('confirm_password', '')
+        old_password = request.POST.get('old_password', '')
+        user = self.request.user
 
         if valid:
             # Passwords must match
 
-            if not p1 == p2:
+            if p1 != p2:
                 error = _('Password fields must match')
                 form.add_error('enter_password', error)
                 form.add_error('confirm_password', error)
-
                 valid = False
 
-        data = {
-            'form_valid': valid
-        }
+        if valid:
+            # Old password must be correct
+
+            if not user.check_password(old_password):
+                form.add_error('old_password', _('Wrong password provided'))
+                valid = False
 
         if valid:
-            user = self.request.user
+            try:
+                # Validate password
+                password_validation.validate_password(p1, user)
 
-            user.set_password(p1)
-            user.save()
+                # Update the user
+                user.set_password(p1)
+                user.save()
+            except ValidationError as error:
+                form.add_error('confirm_password', str(error))
+                valid = False
 
-        return self.renderJsonResponse(request, form, data=data)
+        return self.renderJsonResponse(request, form, data={'form_valid': valid})
 
 
 class IndexView(TemplateView):
-    """ View for InvenTree index page """
+    """View for InvenTree index page."""
 
     template_name = 'InvenTree/index.html'
 
-    def get_context_data(self, **kwargs):
-
-        context = super(TemplateView, self).get_context_data(**kwargs)
-
-        return context
-
 
 class SearchView(TemplateView):
-    """ View for InvenTree search page.
+    """View for InvenTree search page.
 
     Displays results of search query
     """
@@ -669,14 +593,16 @@ class SearchView(TemplateView):
     template_name = 'InvenTree/search.html'
 
     def post(self, request, *args, **kwargs):
-        """ Handle POST request (which contains search query).
+        """Handle POST request (which contains search query).
 
         Pass the search query to the page template
         """
-
         context = self.get_context_data()
 
         query = request.POST.get('search', '')
+
+        query = strip_html_tags(query, raise_error=False)
+        query = remove_non_printable_characters(query)
 
         context['query'] = query
 
@@ -684,24 +610,19 @@ class SearchView(TemplateView):
 
 
 class DynamicJsView(TemplateView):
-    """
-    View for returning javacsript files,
-    which instead of being served dynamically,
-    are passed through the django translation engine!
-    """
+    """View for returning javacsript files, which instead of being served dynamically, are passed through the django translation engine!"""
 
     template_name = ""
     content_type = 'text/javascript'
 
 
 class SettingsView(TemplateView):
-    """ View for configuring User settings
-    """
+    """View for configuring User settings."""
 
     template_name = "InvenTree/settings/settings.html"
 
     def get_context_data(self, **kwargs):
-
+        """Add data for template."""
         ctx = super().get_context_data(**kwargs).copy()
 
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
@@ -717,14 +638,15 @@ class SettingsView(TemplateView):
         try:
             backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
             ctx["rates_updated"] = backend.last_update
-        except:
+        except Exception:
             ctx["rates_updated"] = None
 
         # load locale stats
-        STAT_FILE = os.path.abspath(os.path.join(settings.BASE_DIR, 'InvenTree/locale_stats.json'))
+        STAT_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').absolute()
+
         try:
             ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
-        except:
+        except Exception:
             ctx["locale_stats"] = {}
 
         # Forms and context for allauth
@@ -743,77 +665,82 @@ class SettingsView(TemplateView):
 
 
 class AllauthOverrides(LoginRequiredMixin):
-    """
-    Override allauths views to always redirect to success_url
-    """
+    """Override allauths views to always redirect to success_url."""
+
     def get(self, request, *args, **kwargs):
-        # always redirect to settings
+        """Always redirect to success_url (set to settings)."""
         return HttpResponseRedirect(self.success_url)
 
 
 class CustomEmailView(AllauthOverrides, EmailView):
-    """
-    Override of allauths EmailView to always show the settings but leave the functions allow
-    """
+    """Override of allauths EmailView to always show the settings but leave the functions allow."""
     success_url = reverse_lazy("settings")
 
 
 class CustomConnectionsView(AllauthOverrides, ConnectionsView):
-    """
-    Override of allauths ConnectionsView to always show the settings but leave the functions allow
-    """
+    """Override of allauths ConnectionsView to always show the settings but leave the functions allow."""
     success_url = reverse_lazy("settings")
 
 
 class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
-    """
-    Override of allauths PasswordResetFromKeyView to always show the settings but leave the functions allow
-    """
+    """Override of allauths PasswordResetFromKeyView to always show the settings but leave the functions allow."""
     success_url = reverse_lazy("account_login")
 
 
 class UserSessionOverride():
-    """overrides sucessurl to lead to settings"""
+    """Overrides sucessurl to lead to settings."""
+
     def get_success_url(self):
+        """Revert to settings page after success."""
         return str(reverse_lazy('settings'))
 
 
 class CustomSessionDeleteView(UserSessionOverride, SessionDeleteView):
+    """Revert to settings after session delete."""
     pass
 
 
 class CustomSessionDeleteOtherView(UserSessionOverride, SessionDeleteOtherView):
+    """Revert to settings after session delete."""
     pass
 
 
+class CustomLoginView(LoginView):
+    """Custom login view that allows login with urlargs."""
+
+    def get(self, request, *args, **kwargs):
+        """Extendend get to allow for auth via url args."""
+        # Check if login is present
+        if 'login' in request.GET:
+            # Initiate form
+            form = self.get_form_class()(request.GET.dict(), request=request)
+
+            # Try to login
+            form.full_clean()
+            return form.login(request)
+
+        return super().get(request, *args, **kwargs)
+
+
 class CurrencyRefreshView(RedirectView):
-    """
-    POST endpoint to refresh / update exchange rates
-    """
+    """POST endpoint to refresh / update exchange rates."""
 
     url = reverse_lazy("settings-currencies")
 
     def post(self, request, *args, **kwargs):
-        """
-        On a POST request we will attempt to refresh the exchange rates
-        """
+        """On a POST request we will attempt to refresh the exchange rates."""
+        from InvenTree.tasks import offload_task, update_exchange_rates
 
-        from InvenTree.tasks import offload_task
-
-        # Define associated task from InvenTree.tasks list of methods
-        taskname = 'InvenTree.tasks.update_exchange_rates'
-
-        # Run it
-        offload_task(taskname, force_sync=True)
+        offload_task(update_exchange_rates, force_sync=True)
 
         return redirect(reverse_lazy('settings'))
 
 
 class AppearanceSelectView(RedirectView):
-    """ View for selecting a color theme """
+    """View for selecting a color theme."""
 
     def get_user_theme(self):
-        """ Get current user color theme """
+        """Get current user color theme."""
         try:
             user_theme = ColorTheme.objects.filter(user=self.request.user).get()
         except ColorTheme.DoesNotExist:
@@ -822,8 +749,7 @@ class AppearanceSelectView(RedirectView):
         return user_theme
 
     def post(self, request, *args, **kwargs):
-        """ Save user color theme selection """
-
+        """Save user color theme selection."""
         theme = request.POST.get('theme', None)
 
         # Get current user theme
@@ -840,74 +766,27 @@ class AppearanceSelectView(RedirectView):
         return redirect(reverse_lazy('settings'))
 
 
-class SettingCategorySelectView(FormView):
-    """ View for selecting categories in settings """
-
-    form_class = SettingCategorySelectForm
-    success_url = reverse_lazy('settings-category')
-    template_name = "InvenTree/settings/category.html"
-
-    def get_initial(self):
-        """ Set category selection """
-
-        initial = super(SettingCategorySelectView, self).get_initial()
-
-        category = self.request.GET.get('category', None)
-        if category:
-            initial['category'] = category
-
-        return initial
-
-    def post(self, request, *args, **kwargs):
-        """ Handle POST request (which contains category selection).
-
-        Pass the selected category to the page template
-        """
-
-        form = self.get_form()
-
-        if form.is_valid():
-            context = self.get_context_data()
-
-            context['category'] = form.cleaned_data['category']
-
-            return super(SettingCategorySelectView, self).render_to_response(context)
-
-        return self.form_invalid(form)
-
-
 class DatabaseStatsView(AjaxView):
-    """ View for displaying database statistics """
+    """View for displaying database statistics."""
 
     ajax_template_name = "stats.html"
     ajax_form_title = _("System Information")
 
-    def get_context_data(self, **kwargs):
 
-        ctx = {}
+class AboutView(AjaxView):
+    """A view for displaying InvenTree version information"""
 
-        # Part stats
-        ctx['part_count'] = Part.objects.count()
-        ctx['part_cat_count'] = PartCategory.objects.count()
-
-        # Stock stats
-        ctx['stock_item_count'] = StockItem.objects.count()
-        ctx['stock_loc_count'] = StockLocation.objects.count()
-
-        """
-        TODO: Other ideas for database metrics
-
-        - "Popular" parts (used to make other parts?)
-        - Most ordered part
-        - Most sold part
-        - etc etc etc
-        """
-
-        return ctx
+    ajax_template_name = "about.html"
+    ajax_form_title = _("About InvenTree")
 
 
 class NotificationsView(TemplateView):
-    """ View for showing notifications
-    """
+    """View for showing notifications."""
 
     template_name = "InvenTree/notifications/notifications.html"
+
+
+# Custom 2FA removal form to allow custom redirect URL
+class CustomTwoFactorRemove(TwoFactorRemove):
+    """Specify custom URL redirect."""
+    success_url = reverse_lazy("settings")

@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""General filters for InvenTree."""
 
 from rest_framework.filters import OrderingFilter
 
 
 class InvenTreeOrderingFilter(OrderingFilter):
-    """
-    Custom OrderingFilter class which allows aliased filtering of related fields.
+    """Custom OrderingFilter class which allows aliased filtering of related fields.
 
     To use, simply specify this filter in the "filter_backends" section.
 
@@ -23,16 +21,14 @@ class InvenTreeOrderingFilter(OrderingFilter):
     """
 
     def get_ordering(self, request, queryset, view):
-
+        """Override ordering for supporting aliases."""
         ordering = super().get_ordering(request, queryset, view)
 
         aliases = getattr(view, 'ordering_field_aliases', None)
 
         # Attempt to map ordering fields based on provided aliases
         if ordering is not None and aliases is not None:
-            """
-            Ordering fields should be mapped to separate fields
-            """
+            """Ordering fields should be mapped to separate fields."""
 
             ordering_initial = ordering
             ordering = []

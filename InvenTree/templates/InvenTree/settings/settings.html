@@ -33,6 +33,7 @@
 {% include "InvenTree/settings/login.html" %}
 {% include "InvenTree/settings/barcode.html" %}
 {% include "InvenTree/settings/currencies.html" %}
+{% include "InvenTree/settings/label.html" %}
 {% include "InvenTree/settings/report.html" %}
 {% include "InvenTree/settings/part.html" %}
 {% include "InvenTree/settings/category.html" %}
@@ -66,20 +67,23 @@
 // Callback for when boolean settings are edited
 $('table').find('.boolean-setting').change(function() {
 
-    var setting = $(this).attr('setting');
     var pk = $(this).attr('pk');
+    var setting = $(this).attr('setting');
     var plugin = $(this).attr('plugin');
     var user = $(this).attr('user');
+    var notification = $(this).attr('notification');
 
     var checked = this.checked;
 
     // Global setting by default
-    var url = `/api/settings/global/${pk}/`;
+    var url = `/api/settings/global/${setting}/`;
 
     if (plugin) {
-        url = `/api/plugin/settings/${pk}/`;
+        url = `/api/plugin/settings/${plugin}/${setting}/`;
     } else if (user) {
-        url = `/api/settings/user/${pk}/`;
+        url = `/api/settings/user/${setting}/`;
+    } else if (notification) {
+        url = `/api/settings/notification/${pk}/`;
     }
 
     inventreePut(
@@ -96,15 +100,15 @@ $('table').find('.boolean-setting').change(function() {
             }
         }
     );
-    
+
 });
 
 // Callback for when non-boolean settings are edited
 $('table').find('.btn-edit-setting').click(function() {
     var setting = $(this).attr('setting');
-    var pk = $(this).attr('pk');
     var plugin = $(this).attr('plugin');
     var is_global = true;
+    var notification = $(this).attr('notification');
 
     if ($(this).attr('user')){
         is_global = false;
@@ -114,15 +118,19 @@ $('table').find('.btn-edit-setting').click(function() {
 
     if (plugin != null) {
         title = '{% trans "Edit Plugin Setting" %}';
+    } else if (notification) {
+        title = '{% trans "Edit Notification Setting" %}';
+        setting = $(this).attr('pk');
     } else if (is_global) {
         title = '{% trans "Edit Global Setting" %}';
     } else {
         title = '{% trans "Edit User Setting" %}';
     }
 
-    editSetting(pk, {
+    editSetting(setting, {
         plugin: plugin,
         global: is_global,
+        notification: notification,
         title: title,
     });
 });
@@ -215,7 +223,7 @@ $('#cat-param-table').inventreeTable({
             switchable: false,
         },
         {
-            field: 'parameter_template.name',
+            field: 'parameter_template_detail.name',
             title: '{% trans "Parameter Template" %}',
             sortable: 'true',
         },
@@ -242,17 +250,22 @@ $('#cat-param-table').inventreeTable({
 
 function loadTemplateTable(pk) {
 
-    // Enable the buttons
-    $('#new-cat-param').removeAttr('disabled');
+    var query = {};
+
+    if (pk) {
+        query['category'] = pk;
+    }
 
     // Load the parameter table
     $("#cat-param-table").bootstrapTable('refresh', {
-        query: {
-            category: pk,
-        },
+        query: query,
         url: '{% url "api-part-category-parameter-list" %}',
     });
 }
+
+
+// Initially load table with *all* categories
+loadTemplateTable();
 
 $('body').on('change', '#category-select', function() {
     var pk = $(this).val();
@@ -263,14 +276,20 @@ $("#new-cat-param").click(function() {
 
     var pk = $('#category-select').val();
 
-    launchModalForm(`/part/category/${pk}/parameters/new/`, {
-        success: function() {
-            $("#cat-param-table").bootstrapTable('refresh', {
-                query: {
-                    category: pk,
-                }
-            });
+    constructForm('{% url "api-part-category-parameter-list" %}', {
+        title: '{% trans "Create Category Parameter Template" %}',
+        method: 'POST',
+        fields: {
+            parameter_template: {},
+            category: {
+                icon: 'fa-sitemap',
+                value: pk,
+            },
+            default_value: {},
         },
+        onSuccess: function() {
+            loadTemplateTable(pk);
+        }
     });
 });
 
@@ -279,14 +298,20 @@ $("#cat-param-table").on('click', '.template-edit', function() {
     var category = $('#category-select').val();
     var pk = $(this).attr('pk');
 
-    var url = `/part/category/${category}/parameters/${pk}/edit/`;
-
-    launchModalForm(url, {
-        success: function() {
-            $("#cat-param-table").bootstrapTable('refresh');
+    constructForm(`/api/part/category/parameters/${pk}/`, {
+        fields: {
+            parameter_template: {},
+            category: {
+                icon: 'fa-sitemap',
+            },
+            default_value: {},
+        },
+        onSuccess: function() {
+            loadTemplateTable(pk);
         }
     });
 });
+
 
 $("#cat-param-table").on('click', '.template-delete', function() {
 
@@ -295,9 +320,11 @@ $("#cat-param-table").on('click', '.template-delete', function() {
 
     var url = `/part/category/${category}/parameters/${pk}/delete/`;
 
-    launchModalForm(url, {
-        success: function() {
-            $("#cat-param-table").bootstrapTable('refresh');
+    constructForm(`/api/part/category/parameters/${pk}/`, {
+        method: 'DELETE',
+        title: '{% trans "Delete Category Parameter Template" %}',
+        onSuccess: function() {
+            loadTemplateTable(pk);
         }
     });
 });
@@ -318,16 +345,23 @@ $("#param-table").inventreeTable({
         {
             field: 'name',
             title: '{% trans "Name" %}',
-            sortable: 'true',
+            sortable: true,
         },
         {
             field: 'units',
             title: '{% trans "Units" %}',
-            sortable: 'true',
+            sortable: true,
+            switchable: true,
+        },
+        {
+            field: 'description',
+            title: '{% trans "Description" %}',
+            sortable: false,
+            switchable: true,
         },
         {
             formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit icon-green'></span></button>";
                 var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
                 var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
@@ -339,8 +373,15 @@ $("#param-table").inventreeTable({
 });
 
 $("#new-param").click(function() {
-    launchModalForm("{% url 'part-param-template-create' %}", {
-        success: function() {
+    constructForm('{% url "api-part-parameter-template-list" %}', {
+        fields: {
+            name: {},
+            units: {},
+            description: {},
+        },
+        method: 'POST',
+        title: '{% trans "Create Part Parameter Template" %}',
+        onSuccess: function() {
             $("#param-table").bootstrapTable('refresh');
         },
     });
@@ -348,26 +389,44 @@ $("#new-param").click(function() {
 
 $("#param-table").on('click', '.template-edit', function() {
     var button = $(this);
+    var pk = button.attr('pk');
 
-    var url = "/part/parameter/template/" + button.attr('pk') + "/edit/";
-
-    launchModalForm(url, {
-        success: function() {
-            $("#param-table").bootstrapTable('refresh');
+    constructForm(
+        `/api/part/parameter/template/${pk}/`,
+        {
+            fields: {
+                name: {},
+                units: {},
+                description: {},
+            },
+            title: '{% trans "Edit Part Parameter Template" %}',
+            onSuccess: function() {
+                $("#param-table").bootstrapTable('refresh');
+            },
         }
-    });
+    );
 });
 
 $("#param-table").on('click', '.template-delete', function() {
     var button = $(this);
+    var pk = button.attr('pk');
 
-    var url = "/part/parameter/template/" + button.attr('pk') + "/delete/";
+    var html = `
+    <div class='alert alert-block alert-danger'>
+        {% trans "Any parameters which reference this template will also be deleted" %}
+    </div>`;
 
-    launchModalForm(url, {
-        success: function() {
-            $("#param-table").bootstrapTable('refresh');
+    constructForm(
+        `/api/part/parameter/template/${pk}/`,
+        {
+            method: 'DELETE',
+            preFormContent: html,
+            title: '{% trans "Delete Part Parameter Template" %}',
+            onSuccess: function() {
+                $("#param-table").bootstrapTable('refresh');
+            },
         }
-    });
+    );
 });
 
 $("#import-part").click(function() {

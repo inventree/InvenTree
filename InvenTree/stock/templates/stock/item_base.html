@@ -1,5 +1,6 @@
 {% extends "page_base.html" %}
 {% load static %}
+{% load plugin_extras %}
 {% load inventree_extras %}
 {% load status_codes %}
 {% load i18n %}
@@ -18,7 +19,6 @@
 <div id="breadcrumb-tree"></div>
 {% endblock breadcrumb_tree %}
 
-
 {% block heading %}
     {% trans "Stock Item" %}: {{ item.part.full_name}}
 {% endblock heading %}
@@ -29,6 +29,12 @@
 {% url 'admin:stock_stockitem_change' item.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
+{% mixin_available "locate" as locate_available %}
+{% if plugins_enabled and locate_available %}
+<button id='locate-item-button' title='{% trans "Locate stock item" %}' class='btn btn-outline-secondary' typy='button'>
+    <span class='fas fa-search-location'></span>
+</button>
+{% endif %}
 {% if barcodes %}
 <!-- Barcode actions menu -->
 <div class='btn-group' role='group'>
@@ -38,7 +44,7 @@
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
         {% if roles.stock.change %}
-        {% if item.uid %}
+        {% if item.barcode_hash %}
         <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
         {% else %}
         <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
@@ -69,24 +75,20 @@
     <div class='btn-group'>
         <button id='stock-actions' title='{% trans "Stock adjustment actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
+            {% if item.can_adjust_location %}
             {% if not item.serialized %}
-            {% if item.in_stock %}
             <li><a class='dropdown-item' href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-check-circle icon-green'></span> {% trans "Count stock" %}</a></li>
-            {% endif %}
             {% if not item.customer %}
             <li><a class='dropdown-item' href='#' id='stock-add' title='{% trans "Add stock" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
-            {% endif %}
-            {% if item.in_stock %}
             <li><a class='dropdown-item' href='#' id='stock-remove' title='{% trans "Remove stock" %}'><span class='fas fa-minus-circle icon-red'></span> {% trans "Remove stock" %}</a></li>
             {% endif %}
-            {% if item.in_stock and item.part.trackable %}
+            {% if item.part.trackable %}
             <li><a class='dropdown-item' href='#' id='stock-serialize' title='{% trans "Serialize stock" %}'><span class='fas fa-hashtag'></span> {% trans "Serialize stock" %}</a> </li>
             {% endif %}
             {% endif %}
-            {% if item.in_stock and item.can_adjust_location %}
             <li><a class='dropdown-item' href='#' id='stock-move' title='{% trans "Transfer stock" %}'><span class='fas fa-exchange-alt icon-blue'></span> {% trans "Transfer stock" %}</a></li>
             {% endif %}
-            {% if item.in_stock and item.can_adjust_location and item.part.salable and not item.customer %}
+            {% if item.part.salable and not item.customer %}
             <li><a class='dropdown-item' href='#' id='stock-assign-to-customer' title='{% trans "Assign to customer" %}'><span class='fas fa-user-tie'></span> {% trans "Assign to customer" %}</a></li>
             {% endif %}
             {% if item.customer %}
@@ -94,12 +96,11 @@
             {% endif %}
             {% if item.belongs_to %}
             <li><a class='dropdown-item' href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a></li>
-            {% else %}
+            {% endif %}
             {% if item.part.get_used_in %}
-            <!--    
+            <!--
                 <li><a class='dropdown-item' href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
             -->
-            {% endif %}
             {% endif %}
         </ul>
     </div>
@@ -130,7 +131,7 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
+<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.preview.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
 {% endblock thumbnail %}
 
 {% block details %}
@@ -148,165 +149,17 @@
             {% if roles.part.view %}
             </a>
             {% endif %}
-        </td>
-    </tr>
-    {% if item.serialized %}
-    <tr>
-        <td><span class='fas fa-hashtag'></span></td>
-        <td>{% trans "Serial Number" %}</td>
-        <td>
-            {{ item.serial }}
-            <div class='btn-group float-right' role='group'>
-                {% if previous %}
-                <a class="btn btn-small btn-outline-secondary" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}" title='{% trans "Navigate to previous serial number" %}'>
-                    <span class='fas fa-angle-left'></span>
-                    <small>{{ previous.serial }}</small>
-                </a>
-                {% endif %}
-                <a class='btn btn-small btn-outline-secondary text-sm' href='#' id='serial-number-search' title='{% trans "Search for serial number" %}'>
-                    <span class='fas fa-search'></span>
-                </a>
-                {% if next %}
-                <a class="btn btn-small btn-outline-secondary text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}" title='{% trans "Navigate to next serial number" %}'>
-                    <small>{{ next.serial }}</small>
-                    <span class='fas fa-angle-right'></span>
-                </a>
-                {% endif %}
-            </div>
-        </td>
-    </tr>
-    {% else %}
-    <tr>
-        <td></td>
-        <td>{% trans "Quantity" %}</td>
-        <td>{% decimal item.quantity %} {% if item.part.units %}{{ item.part.units }}{% endif %}</td>
-    </tr>
-    {% endif %}
-    <tr>
-        <td><span class='fas fa-info'></span></td>
-        <td>{% trans "Status" %}</td>
-        <td>{% stock_status_label item.status %}</td>
-    </tr>
-    {% if item.expiry_date %}
-    <tr>
-        <td><span class='fas fa-calendar-alt{% if item.is_expired %} icon-red{% endif %}'></span></td>
-        <td>{% trans "Expiry Date" %}</td>
-        <td>
-            {% render_date item.expiry_date %}
-            {% if item.is_expired %}
-            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-danger badge-right'>{% trans "Expired" %}</span>
-            {% elif item.is_stale %}
-            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-warning badge-right'>{% trans "Stale" %}</span>
+            {% if item.part.description %}
+            <span class='fas fa-info-circle icon-blue float-right' title='{{ item.part.description }}'></span>
             {% endif %}
         </td>
     </tr>
-    {% endif %}
-    <tr>
-        <td><span class='fas fa-calendar-alt'></span></td>
-        <td>{% trans "Last Updated" %}</td>
-        <td>{{ item.updated }}</td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-calendar-alt'></span></td>
-        <td>{% trans "Last Stocktake" %}</td>
-        {% if item.stocktake_date %}
-        <td>{% render_date item.stocktake_date %} <span class='badge badge-right rounded-pill bg-dark'>{{ item.stocktake_user }}</span></td>
-        {% else %}
-        <td><em>{% trans "No stocktake performed" %}</em></td>
-        {% endif %}
-    </tr>
-</table>
 
-<div class='info-messages'>
-
-    {% if item.is_building %}
-    <div class='alert alert-block alert-info'>
-        {% trans "This stock item is in production and cannot be edited." %}<br>
-        {% trans "Edit the stock item from the build view." %}<br>
-
-        {% if item.build %}
-        <a href="{% url 'build-detail' item.build.id %}">
-            <strong>{{ item.build }}</strong>
-        </a>
-        {% endif %}
-
-    </div>
-    {% endif %}
-
-    {% if item.hasRequiredTests and not item.passedAllRequiredTests %}
-    <div class='alert alert-block alert-danger'>
-        {% trans "This stock item has not passed all required tests" %}
-    </div>
-    {% endif %}
-
-    {% for allocation in item.sales_order_allocations.all %}
-    <div class='alert alert-block alert-info'>
-        {% object_link 'so-detail' allocation.line.order.id allocation.line.order as link %}
-        {% decimal allocation.quantity as qty %}
-        {% trans "This stock item is allocated to Sales Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
-    </div>
-    {% endfor %}
-
-    {% for allocation in item.allocations.all %}
-    <div class='alert alert-block alert-info'>
-        {% object_link 'build-detail' allocation.build.id allocation.build as link %}
-        {% decimal allocation.quantity as qty %}
-        {% trans "This stock item is allocated to Build Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
-    </div>
-    {% endfor %}
-    
-    {% if item.serialized %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
-    </div>
-    {% endif %}
-    
-</div>
-{% endblock details %}
-
-{% block details_right %}
-<table class="table table-striped table-condensed">
-    <col width='25'>
-
-    {% if item.customer %}
-    <tr>
-        <td><span class='fas fa-user-tie'></span></td>
-        <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail' item.customer.id %}?display=assigned-stock">{{ item.customer.name }}</a></td>
-    </tr>
-    {% endif %}
-    {% if item.belongs_to %}
-    <tr>
-        <td><span class='fas fa-box'></span></td>
-        <td>
-            {% trans "Installed In" %}
-        </td>
-        <td>
-            <a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a>
-        </td>
-    </tr>
-    {% elif item.sales_order %}
-    <tr>
-        <td><span class='fas fa-user-tie'></span></td>
-        <td>{% trans "Sales Order" %}</td>
-        <td><a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a> - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a></td>
-    </tr>
-    {% else %}
-    <tr>
-        <td><span class='fas fa-map-marker-alt'></span></td>
-        <td>{% trans "Location" %}</td>
-        {% if item.location %}
-        <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
-        {% else %}
-        <td><em>{% trans "No location set" %}</em></td>
-        {% endif %}
-    </tr>
-    {% endif %}
-    {% if item.uid %}
+    {% if item.barcode_hash %}
     <tr>
         <td><span class='fas fa-barcode'></span></td>
         <td>{% trans "Barcode Identifier" %}</td>
-        <td>{{ item.uid }}</td>
+        <td {% if item.barcode_data %}title='{{ item.barcode_data }}'{% endif %}>{{ item.barcode_hash }}</td>
     </tr>
     {% endif %}
     {% if item.batch %}
@@ -314,13 +167,6 @@
         <td><span class='fas fa-layer-group'></span></td>
         <td>{% trans "Batch" %}</td>
         <td>{{ item.batch }}</td>
-    </tr>
-    {% endif %}
-    {% if item.packaging %}
-    <tr>
-        <td><span class='fas fa-cube'></span></td>
-        <td>{% trans "Packaging" %}</td>
-        <td>{{ item.packaging }}</td>
     </tr>
     {% endif %}
     {% if item.build %}
@@ -379,7 +225,11 @@
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
-        <td><a href="{% url 'company-detail' item.supplier_part.supplier.id %}">{{ item.supplier_part.supplier.name }}</a></td>
+        <td>
+            {% if item.supplier_part.supplier %}
+            <a href="{% url 'company-detail' item.supplier_part.supplier.id %}">{{ item.supplier_part.supplier.name }}</a>
+            {% endif %}
+        </td>
     </tr>
     <tr>
         <td><span class='fas fa-shapes'></span></td>
@@ -387,18 +237,11 @@
         <td><a href="{% url 'supplier-part-detail' item.supplier_part.id %}">{{ item.supplier_part.SKU }}</a></td>
     </tr>
     {% endif %}
-    {% if item.hasRequiredTests %}
+    {% if item.packaging %}
     <tr>
-        <td><span class='fas fa-vial'></span></td>
-        <td>{% trans "Tests" %}</td>
-        <td>
-            {{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}
-            {% if item.passedAllRequiredTests %}
-            <span class='fas fa-check-circle float-right icon-green'></span>
-            {% else %}
-            <span class='fas fa-times-circle float-right icon-red'></span>
-            {% endif %}
-        </td>
+        <td><span class='fas fa-cube'></span></td>
+        <td>{% trans "Packaging" %}</td>
+        <td>{{ item.packaging }}</td>
     </tr>
     {% endif %}
     {% if ownership_enabled and item_owner %}
@@ -415,6 +258,199 @@
         </td>
     </tr>
     {% endif %}
+
+</table>
+
+<div class='info-messages'>
+
+    {% if item.is_building %}
+    <div class='alert alert-block alert-info'>
+        {% trans "This stock item is in production and cannot be edited." %}<br>
+        {% trans "Edit the stock item from the build view." %}<br>
+
+        {% if item.build %}
+        <a href="{% url 'build-detail' item.build.id %}">
+            <strong>{{ item.build }}</strong>
+        </a>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+    {% if item.hasRequiredTests and not item.passedAllRequiredTests %}
+    <div class='alert alert-block alert-danger'>
+        {% trans "This stock item has not passed all required tests" %}
+    </div>
+    {% endif %}
+
+    {% for allocation in item.sales_order_allocations.all %}
+    <div class='alert alert-block alert-info'>
+        {% object_link 'so-detail' allocation.line.order.id allocation.line.order as link %}
+        {% decimal allocation.quantity as qty %}
+        {% trans "This stock item is allocated to Sales Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
+    </div>
+    {% endfor %}
+
+    {% for allocation in item.allocations.all %}
+    <div class='alert alert-block alert-info'>
+        {% object_link 'build-detail' allocation.build.id allocation.build as link %}
+        {% decimal allocation.quantity as qty %}
+        {% trans "This stock item is allocated to Build Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
+    </div>
+    {% endfor %}
+
+    {% if item.serialized %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
+    </div>
+    {% endif %}
+</div>
+{% endblock details %}
+
+{% block details_right %}
+<table class="table table-striped table-condensed">
+    <col width='25'>
+
+    <tr>
+        {% if item.serialized %}
+        <td>
+            <h5><span class='fas fa-hashtag'></span></h5>
+        </td>
+        <td>
+            <h5>{% trans "Serial Number" %}</h5>
+        </td>
+        <td><h5>
+            {{ item.serial }}
+            <div class='btn-group float-right' role='group'>
+                {% if previous %}
+                <a class="btn btn-small btn-outline-secondary" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}" title='{% trans "Navigate to previous serial number" %}'>
+                    <span class='fas fa-angle-left'></span>
+                    <small>{{ previous.serial }}</small>
+                </a>
+                {% endif %}
+                <a class='btn btn-small btn-outline-secondary text-sm' href='#' id='serial-number-search' title='{% trans "Search for serial number" %}'>
+                    <span class='fas fa-search'></span>
+                </a>
+                {% if next %}
+                <a class="btn btn-small btn-outline-secondary text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}" title='{% trans "Navigate to next serial number" %}'>
+                    <small>{{ next.serial }}</small>
+                    <span class='fas fa-angle-right'></span>
+                </a>
+                {% endif %}
+            </div>
+            </h5>
+        </td>
+        {% else %}
+        <td>
+            <h5><div class='fas fa-boxes'></div></h5>
+        </td>
+        <td>
+            <h5>{% trans "Available Quantity" %}</h5>
+        </td>
+        <td>
+            <h5>{% if item.quantity != available %}{% decimal available %} / {% endif %}{% decimal item.quantity %} {% include "part/part_units.html" with part=item.part %}</h5>
+        </td>
+        {% endif %}
+    </tr>
+    {% if item.belongs_to %}
+    <tr>
+        <td><span class='fas fa-box'></span></td>
+        <td>
+            {% trans "Installed In" %}
+        </td>
+        <td>
+            <a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a>
+        </td>
+    </tr>
+    {% elif item.sales_order %}
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Sales Order" %}</td>
+        <td><a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a> - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a></td>
+    </tr>
+    {% else %}
+    {% if allocated_to_sales_orders %}
+    <tr>
+        <td><span class='fas fa-truck'></span></td>
+        <td>{% trans "Allocated to Sales Orders" %}</td>
+        <td>{% decimal allocated_to_sales_orders %}</td>
+    </tr>
+    {% endif %}
+    {% if allocated_to_build_orders %}
+    <tr>
+        <td><span class='fas fa-tools'></span></td>
+        <td>{% trans "Allocated to Build Orders" %}</td>
+        <td>{% decimal allocated_to_build_orders %}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td><span class='fas fa-map-marker-alt'></span></td>
+        <td>{% trans "Location" %}</td>
+        {% if item.location %}
+        <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
+        {% elif not item.customer %}
+        <td><em>{% trans "No location set" %}</em></td>
+        {% endif %}
+    </tr>
+    {% endif %}
+    {% if item.customer %}
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Customer" %}</td>
+        <td><a href="{% url 'company-detail' item.customer.id %}?display=assigned-stock">{{ item.customer.name }}</a></td>
+    </tr>
+    {% endif %}
+
+    {% if item.hasRequiredTests %}
+    <tr>
+        <td><span class='fas fa-vial'></span></td>
+        <td>{% trans "Tests" %}</td>
+        <td>
+            {{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}
+            {% if item.passedAllRequiredTests %}
+            <span class='fas fa-check-circle float-right icon-green'></span>
+            {% else %}
+            <span class='fas fa-times-circle float-right icon-red'></span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+
+    <tr>
+        <td><span class='fas fa-info'></span></td>
+        <td>{% trans "Status" %}</td>
+        <td>{% stock_status_label item.status %}</td>
+    </tr>
+    {% if item.expiry_date %}
+    <tr>
+        <td><span class='fas fa-calendar-alt{% if item.is_expired %} icon-red{% endif %}'></span></td>
+        <td>{% trans "Expiry Date" %}</td>
+        <td>
+            {% render_date item.expiry_date %}
+            {% if item.is_expired %}
+            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-danger badge-right'>{% trans "Expired" %}</span>
+            {% elif item.is_stale %}
+            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-warning badge-right'>{% trans "Stale" %}</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Last Updated" %}</td>
+        <td>{{ item.updated }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Last Stocktake" %}</td>
+        {% if item.stocktake_date %}
+        <td>{% render_date item.stocktake_date %} <span class='badge badge-right rounded-pill bg-dark'>{{ item.stocktake_user }}</span></td>
+        {% else %}
+        <td><em>{% trans "No stocktake performed" %}</em></td>
+        {% endif %}
+    </tr>
+
+
 </table>
 {% endblock details_right %}
 
@@ -445,12 +481,9 @@ $('#stock-install-in').click(function() {
 
 $('#stock-uninstall').click(function() {
 
-    launchModalForm(
-        "{% url 'stock-item-uninstall' %}",
+    uninstallStockItem(
+        {{ item.pk }},
         {
-            data: {
-                'items[]': [{{ item.pk }}],
-            },
             reload: true,
         }
     );
@@ -466,7 +499,7 @@ $("#print-label").click(function() {
 
 {% if roles.stock.change %}
 $("#stock-duplicate").click(function() {
-    // Duplicate a stock item 
+    // Duplicate a stock item
     duplicateStockItem({{ item.pk }}, {});
 });
 
@@ -496,22 +529,41 @@ $("#show-qr-code").click(function() {
     });
 });
 
+{% if barcodes %}
 $("#barcode-link").click(function() {
-    linkBarcodeDialog({{ item.id }});
+    linkBarcodeDialog(
+        {
+            stockitem: {{ item.pk }},
+        },
+        {
+            title: '{% trans "Link Barcode to Stock Item" %}',
+        }
+    );
 });
 
 $("#barcode-unlink").click(function() {
-    unlinkBarcode({{ item.id }});
+    unlinkBarcode({
+        stockitem: {{ item.pk }},
+    });
 });
 
 $("#barcode-scan-into-location").click(function() {
-    
+
     inventreeGet('{% url "api-stock-detail" item.pk %}', {}, {
         success: function(item) {
             scanItemsIntoLocation([item]);
         }
     });
 });
+{% endif %}
+
+{% if plugins_enabled %}
+$('#locate-item-button').click(function() {
+    locateItemOrLocation({
+        item: {{ item.pk }},
+    });
+});
+{% endif %}
 
 function itemAdjust(action) {
 
@@ -538,26 +590,62 @@ $('#stock-add').click(function() {
 });
 
 $("#stock-delete").click(function () {
-    launchModalForm(
-        "{% url 'stock-item-delete' item.id %}",
-        {
-            redirect: "{% url 'part-detail' item.part.id %}"
-        }
-    );
+    deleteStockItem({{ item.pk }}, {
+        redirect: '{% url "part-detail" item.part.pk %}',
+    });
 });
 
 {% if item.part.can_convert %}
 $("#stock-convert").click(function() {
-    launchModalForm("{% url 'stock-item-convert' item.id %}",
+
+    var html = `
+    <div class='alert alert-block alert-info'>
+        {% trans "Select one of the part variants listed below." %}
+    </div>
+    <div class='alert alert-block alert-warning'>
+        <strong>{% trans "Warning" %}</strong>
+        {% trans "This action cannot be easily undone" %}
+    </div>
+    `;
+
+    constructForm(
+        '{% url "api-stock-item-convert" item.pk %}',
         {
+            method: 'POST',
+            title: '{% trans "Convert Stock Item" %}',
+            preFormContent: html,
             reload: true,
+            fields: {
+                part: {
+                    filters: {
+                        convert_from: {{ item.part.pk }}
+                    }
+                },
+            }
         }
     );
 });
 {% endif %}
 
+{% if item.customer %}
+$("#stock-return-from-customer").click(function() {
 
-{% if item.in_stock %}
+    constructForm('{% url "api-stock-item-return" item.pk %}', {
+        fields: {
+            location: {
+                {% if item.part.default_location %}
+                value: {{ item.part.default_location.pk }},
+                {% endif %}
+            },
+            notes: {},
+        },
+        method: 'POST',
+        title: '{% trans "Return to Stock" %}',
+        reload: true,
+    });
+
+});
+{% else %}
 $("#stock-assign-to-customer").click(function() {
 
     inventreeGet('{% url "api-stock-detail" item.pk %}', {}, {
@@ -573,6 +661,9 @@ $("#stock-assign-to-customer").click(function() {
         }
     });
 });
+{% endif %}
+
+{% if item.can_adjust_location %}
 
 $("#stock-move").click(function() {
     itemAdjust("move");
@@ -584,16 +675,6 @@ $("#stock-count").click(function() {
 
 $('#stock-remove').click(function() {
     itemAdjust('take');
-});
-
-{% else %}
-
-$("#stock-return-from-customer").click(function() {
-    launchModalForm("{% url 'stock-item-return' item.id %}",
-        {
-            reload: true,
-        }
-    );
 });
 
 {% endif %}

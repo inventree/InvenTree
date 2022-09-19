@@ -1,54 +1,47 @@
-"""
-URL lookup for the Order app. Provides URL endpoints for:
+"""URL lookup for the Order app. Provides URL endpoints for:
 
 - List view of Purchase Orders
 - Detail view of Purchase Orders
 """
 
-from django.conf.urls import url, include
+from django.urls import include, re_path
 
 from . import views
 
 purchase_order_detail_urls = [
 
-    url(r'^cancel/', views.PurchaseOrderCancel.as_view(), name='po-cancel'),
-    url(r'^issue/', views.PurchaseOrderIssue.as_view(), name='po-issue'),
-    url(r'^complete/', views.PurchaseOrderComplete.as_view(), name='po-complete'),
+    re_path(r'^upload/', views.PurchaseOrderUpload.as_view(), name='po-upload'),
+    re_path(r'^export/', views.PurchaseOrderExport.as_view(), name='po-export'),
 
-    url(r'^upload/', views.PurchaseOrderUpload.as_view(), name='po-upload'),
-    url(r'^export/', views.PurchaseOrderExport.as_view(), name='po-export'),
-
-    url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='po-detail'),
+    re_path(r'^.*$', views.PurchaseOrderDetail.as_view(), name='po-detail'),
 ]
 
 purchase_order_urls = [
 
-    url(r'^order-parts/', views.OrderParts.as_view(), name='order-parts'),
-    url(r'^pricing/', views.LineItemPricing.as_view(), name='line-pricing'),
+    re_path(r'^pricing/', views.LineItemPricing.as_view(), name='line-pricing'),
 
     # Display detail view for a single purchase order
-    url(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),
+    re_path(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),
 
     # Display complete list of purchase orders
-    url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='po-index'),
+    re_path(r'^.*$', views.PurchaseOrderIndex.as_view(), name='po-index'),
 ]
 
 sales_order_detail_urls = [
-    url(r'^cancel/', views.SalesOrderCancel.as_view(), name='so-cancel'),
-    url(r'^export/', views.SalesOrderExport.as_view(), name='so-export'),
+    re_path(r'^export/', views.SalesOrderExport.as_view(), name='so-export'),
 
-    url(r'^.*$', views.SalesOrderDetail.as_view(), name='so-detail'),
+    re_path(r'^.*$', views.SalesOrderDetail.as_view(), name='so-detail'),
 ]
 
 sales_order_urls = [
     # Display detail view for a single SalesOrder
-    url(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),
+    re_path(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),
 
     # Display list of all sales orders
-    url(r'^.*$', views.SalesOrderIndex.as_view(), name='so-index'),
+    re_path(r'^.*$', views.SalesOrderIndex.as_view(), name='so-index'),
 ]
 
 order_urls = [
-    url(r'^purchase-order/', include(purchase_order_urls)),
-    url(r'^sales-order/', include(sales_order_urls)),
+    re_path(r'^purchase-order/', include(purchase_order_urls)),
+    re_path(r'^sales-order/', include(sales_order_urls)),
 ]

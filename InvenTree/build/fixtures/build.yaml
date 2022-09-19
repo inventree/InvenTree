@@ -1,11 +1,11 @@
-# Construct build objects 
+# Construct build objects
 
 - model: build.build
   pk: 1
   fields:
     part: 100  # Build against part 100 "Bob"
     batch: 'B1'
-    reference: "0001"
+    reference: "BO-0001"
     title: 'Building 7 parts'
     quantity: 7
     notes: 'Some simple notes'
@@ -21,7 +21,7 @@
   pk: 2
   fields:
     part: 50
-    reference: "0002"
+    reference: "BO-0002"
     title: 'Making things'
     batch: 'B2'
     status: 40  # COMPLETE
@@ -37,7 +37,7 @@
   pk: 3
   fields:
     part: 50
-    reference: "0003"
+    reference: "BO-003"
     title: 'Making things'
     batch: 'B2'
     status: 40  # COMPLETE
@@ -53,7 +53,7 @@
   pk: 4
   fields:
     part: 50
-    reference: "0004"
+    reference: "BO-4"
     title: 'Making things'
     batch: 'B4'
     status: 40  # COMPLETE
@@ -69,7 +69,7 @@
   pk: 5
   fields:
     part: 25
-    reference: "0005"
+    reference: "BO-0005"
     title: "Building some Widgets"
     batch: "B10"
     status: 40 # Complete

@@ -8,7 +8,6 @@
     imageHoverIcon,
     inventreeGet,
     inventreePut,
-    launchModalForm,
     linkButtonsToSelection,
     loadTableFilters,
     makeIconBadge,
@@ -21,6 +20,8 @@
 */
 
 /* exported
+    deletePart,
+    deletePartCategory,
     duplicateBom,
     duplicatePart,
     editCategory,
@@ -209,7 +210,7 @@ function partFields(options={}) {
             help_text: '{% trans "Create initial supplier data for this part" %}',
             group: 'supplier',
         };
-        
+
         fields.supplier = {
             type: 'related field',
             model: 'company',
@@ -221,14 +222,14 @@ function partFields(options={}) {
             api_url: '{% url "api-company-list" %}',
             group: 'supplier',
         };
-        
+
         fields.SKU = {
             type: 'string',
-            label: '{% trans "SKU" %}', 
+            label: '{% trans "SKU" %}',
             help_text: '{% trans "Supplier stock keeping unit" %}',
             group: 'supplier',
         };
-        
+
         fields.manufacturer = {
             type: 'related field',
             model: 'company',
@@ -240,7 +241,7 @@ function partFields(options={}) {
             api_url: '{% url "api-company-list" %}',
             group: 'supplier',
         };
-        
+
         fields.MPN = {
             type: 'string',
             label: '{% trans "MPN" %}',
@@ -300,7 +301,11 @@ function categoryFields() {
         default_location: {},
         default_keywords: {
             icon: 'fa-key',
-        }
+        },
+        icon: {
+            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
+            placeholder: 'fas fa-tag',
+        },
     };
 }
 
@@ -317,7 +322,31 @@ function editCategory(pk) {
         title: '{% trans "Edit Part Category" %}',
         reload: true,
     });
+}
 
+/*
+ * Delete a PartCategory via the API
+ */
+function deletePartCategory(pk, options={}) {
+    var url = `/api/part/category/${pk}/`;
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this part category?" %}
+    <ul>
+        <li>{% trans "Any child categories will be moved to the parent of this category" %}</li>
+        <li>{% trans "Any parts in this category will be moved to the parent of this category" %}</li>
+    </ul>
+    </div>`;
+
+    constructForm(url, {
+        title: '{% trans "Delete Part Category" %}',
+        method: 'DELETE',
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
 }
 
 
@@ -357,7 +386,7 @@ function duplicatePart(pk, options={}) {
     inventreeGet(`/api/part/${pk}/`, {}, {
 
         success: function(data) {
-            
+
             var fields = partFields({
                 duplicate: pk,
             });
@@ -378,7 +407,7 @@ function duplicatePart(pk, options={}) {
                 // By default, disable "is_template" when making a variant *of* a template
                 data.is_template = false;
             }
-            
+
             constructForm('{% url "api-part-list" %}', {
                 method: 'POST',
                 fields: fields,
@@ -395,9 +424,53 @@ function duplicatePart(pk, options={}) {
 }
 
 
+// Launch form to delete a part
+function deletePart(pk, options={}) {
+
+    inventreeGet(`/api/part/${pk}/`, {}, {
+        success: function(part) {
+            if (part.active) {
+                showAlertDialog(
+                    '{% trans "Active Part" %}',
+                    '{% trans "Part cannot be deleted as it is currently active" %}',
+                    {
+                        alert_style: 'danger',
+                    }
+                );
+                return;
+            }
+
+            var thumb = thumbnailImage(part.thumbnail || part.image);
+
+            var html = `
+            <div class='alert alert-block alert-danger'>
+            <p>${thumb} ${part.full_name} - <em>${part.description}</em></p>
+
+            {% trans "Deleting this part cannot be reversed" %}
+            <ul>
+            <li>{% trans "Any stock items for this part will be deleted" %}</li>
+            <li>{% trans "This part will be removed from any Bills of Material" %}</li>
+            <li>{% trans "All manufacturer and supplier information for this part will be deleted" %}</li>
+            </div>`;
+
+            constructForm(
+                `/api/part/${pk}/`,
+                {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Part" %}',
+                    preFormContent: html,
+                    onSuccess: function(response) {
+                        handleFormSuccess(response, options);
+                    }
+                }
+            );
+        }
+    });
+}
+
 /* Toggle the 'starred' status of a part.
  * Performs AJAX queries and updates the display on the button.
- * 
+ *
  * options:
  * - button: ID of the button (default = '#part-star-icon')
  * - URL: API url of the object
@@ -500,39 +573,42 @@ function duplicateBom(part_id, options={}) {
  */
 function partStockLabel(part, options={}) {
 
+    // Prevent literal string 'null' from being displayed
+    var units = part.units || '';
+
     if (part.in_stock) {
         // There IS stock available for this part
 
         // Is stock "low" (below the 'minimum_stock' quantity)?
         if ((part.minimum_stock > 0) && (part.minimum_stock > part.in_stock)) {
-            return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Low stock" %}: ${part.in_stock}${part.units}</span>`;
+            return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Low stock" %}: ${part.in_stock} ${units}</span>`;
         } else if (part.unallocated_stock == 0) {
             if (part.ordering) {
                 // There is no available stock, but stock is on order
-                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering}${part.units}</span>`;
+                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering} ${units}</span>`;
             } else if (part.building) {
                 // There is no available stock, but stock is being built
-                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building}${part.units}</span>`;
+                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building} ${units}</span>`;
             } else {
                 // There is no available stock at all
                 return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "No stock available" %}</span>`;
             }
         } else if (part.unallocated_stock < part.in_stock) {
             // Unallocated quanttiy is less than total quantity
-            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}${part.units}</span>`;
+            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock} ${units}</span>`;
         } else {
             // Stock is completely available
-            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}${part.units}</span>`;
+            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock} ${units}</span>`;
         }
     } else {
         // There IS NO stock available for this part
 
         if (part.ordering) {
             // There is no stock, but stock is on order
-            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering}${part.units}</span>`;
+            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering} ${units}</span>`;
         } else if (part.building) {
             // There is no stock, but stock is being built
-            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building}${part.units}</span>`;
+            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building} ${units}</span>`;
         } else {
             // There is no stock
             return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
@@ -573,7 +649,7 @@ function makePartIcons(part) {
     }
 
     if (!part.active) {
-        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `; 
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `;
     }
 
     return html;
@@ -650,7 +726,7 @@ function loadPartVariantTable(table, partId, options={}) {
                 }
 
                 if (!row.active) {
-                    html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
+                    html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
                 }
 
                 return html;
@@ -834,7 +910,7 @@ function loadPartParameterTable(table, url, options) {
 
 /*
  * Construct a table showing a list of purchase orders for a given part.
- * 
+ *
  * This requests API data from the PurchaseOrderLineItem endpoint
  */
 function loadPartPurchaseOrderTable(table, part_id, options={}) {
@@ -845,7 +921,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
     options.params.base_part = part_id;
     options.params.part_detail = true;
     options.params.order_detail = true;
-    
+
     var filters = loadTableFilters('purchaseorderlineitem');
 
     for (var key in options.params) {
@@ -871,7 +947,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
 
                 if (!line_item) {
-                    console.log('WARNING: getRowByUniqueId returned null');
+                    console.warn('getRowByUniqueId returned null');
                     return;
                 }
 
@@ -900,9 +976,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                         return '-';
                     }
 
-                    var ref = global_settings.PURCHASEORDER_REFERENCE_PREFIX + order.reference;
-
-                    var html = renderLink(ref, `/order/purchase-order/${order.pk}/`);
+                    var html = renderLink(order.reference, `/order/purchase-order/${order.pk}/`);
 
                     html += purchaseOrderStatusDisplay(
                         order.status,
@@ -960,6 +1034,17 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
+                formatter: function(value, row) {
+                    var data = value;
+
+                    if (row.supplier_part_detail.pack_size != 1.0) {
+                        var pack_size = row.supplier_part_detail.pack_size;
+                        var total = value * pack_size;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
+                    }
+
+                    return data;
+                },
             },
             {
                 field: 'target_date',
@@ -967,26 +1052,51 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    if (row.target_date) {
-                        var html = row.target_date;
 
-                        if (row.overdue) {
-                            html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    var target = row.target_date || row.order_detail.target_date;
+
+                    var today = moment();
+
+                    var overdue = row.overdue || false;
+
+                    if (target) {
+                        if (moment(target) < today) {
+                            overdue = true;
                         }
+                    }
 
-                        return html;
+                    var html = '-';
+
+                    if (row.target_date) {
+                        html = row.target_date;
+
 
                     } else if (row.order_detail && row.order_detail.target_date) {
-                        return `<em>${row.order_detail.target_date}</em>`;
-                    } else {
-                        return '-';
+                        html = `<em>${row.order_detail.target_date}</em>`;
                     }
+
+                    if (overdue) {
+                        html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {
                 field: 'received',
                 title: '{% trans "Received" %}',
                 switchable: true,
+                formatter: function(value, row) {
+                    var data = value;
+
+                    if (value > 0 && row.supplier_part_detail.pack_size != 1.0) {
+                        var pack_size = row.supplier_part_detail.pack_size;
+                        var total = value * pack_size;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
+                    }
+
+                    return data;
+                },
             },
             {
                 field: 'purchase_price',
@@ -1009,7 +1119,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 title: '',
                 switchable: false,
                 formatter: function(value, row) {
-                    
+
                     if (row.received >= row.quantity) {
                         // Already recevied
                         return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
@@ -1084,7 +1194,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
             title: '',
             switchable: false,
             formatter: function(value, row) {
-                
+
                 var html = `<div class='btn-group float-right' role='group'>`;
 
                 html += makeIconButton('fa-trash-alt icon-red', 'button-related-delete', row.pk, '{% trans "Delete part relationship" %}');
@@ -1125,6 +1235,8 @@ function loadRelatedPartsTable(table, part_id, options={}) {
 /* Load parametric table for part parameters
  */
 function loadParametricPartTable(table, options={}) {
+
+    setupFilterList('parameters', $(table), '#filter-list-parameters');
 
     var columns = [
         {
@@ -1210,26 +1322,27 @@ function partGridTile(part) {
     // Rows for table view
     var rows = '';
 
-    var stock = `${part.in_stock}`;
+    var units = part.units || '';
+    var stock = `${part.in_stock} ${units}`;
 
     if (!part.in_stock) {
         stock = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
     } else if (!part.unallocated_stock) {
-        stock = `<span class='badge rounded-pill bg-warning'>{% trans "Not available" %}</span>`;
+        stock = `<span class='badge rounded-pill bg-warning'>{% trans "No Stock" %}</span>`;
     }
 
     rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${stock}</td></tr>`;
 
     if (part.ordering) {
-        rows += `<tr><td><b>{% trans "On Order" %}</b></td><td>${part.ordering}</td></tr>`;
+        rows += `<tr><td><b>{% trans "On Order" %}</b></td><td>${part.ordering} ${units}</td></tr>`;
     }
 
     if (part.building) {
-        rows += `<tr><td><b>{% trans "Building" %}</b></td><td>${part.building}</td></tr>`;
+        rows += `<tr><td><b>{% trans "Building" %}</b></td><td>${part.building} ${units}</td></tr>`;
     }
 
     var html = `
-    
+
     <div class='card product-card borderless'>
         <div class='panel product-card-panel'>
             <div class='panel-heading'>
@@ -1242,10 +1355,10 @@ function partGridTile(part) {
             </div>
             <div class='panel-content'>
                 <div class='row'>
-                    <div class='col-sm-6'>
-                        <img src='${part.thumbnail}' class='card-thumb' onclick='showModalImage("${part.image}")'>
+                    <div class='col-sm-4'>
+                        <img src='${part.thumbnail}' style='width: 100%;' class='card-thumb' onclick='showModalImage("${part.image}")'>
                     </div>
-                    <div class='col-sm-6'>
+                    <div class='col-sm-8'>
                         <table class='table table-striped table-condensed'>
                             ${rows}
                         </table>
@@ -1253,7 +1366,7 @@ function partGridTile(part) {
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
     `;
 
     return html;
@@ -1262,7 +1375,7 @@ function partGridTile(part) {
 
 function loadPartTable(table, url, options={}) {
     /* Load part listing data into specified table.
-     * 
+     *
      * Args:
      *  - table: HTML reference to the table
      *  - url: Base URL for API query
@@ -1335,7 +1448,7 @@ function loadPartTable(table, url, options={}) {
 
             display += makePartIcons(row);
 
-            return display; 
+            return display;
         }
     };
 
@@ -1368,7 +1481,7 @@ function loadPartTable(table, url, options={}) {
             } else {
                 return '{% trans "No category" %}';
             }
-        }   
+        }
     };
 
     if (!options.params.ordering) {
@@ -1381,47 +1494,61 @@ function loadPartTable(table, url, options={}) {
         field: 'unallocated_stock',
         title: '{% trans "Stock" %}',
         searchable: false,
-        formatter: function(value, row) {            
-            var link = '?display=part-stock';
+        formatter: function(value, row) {
 
-            if (row.in_stock) {
-                // There IS stock available for this part
+            var text = '';
 
-                // Is stock "low" (below the 'minimum_stock' quantity)?
-                if (row.minimum_stock && row.minimum_stock > row.in_stock) {
-                    value += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Low stock" %}</span>`;
-                } else if (value == 0) {
-                    if (row.ordering) {
-                        // There is no available stock, but stock is on order
-                        value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "On Order" %}: ${row.ordering}</span>`;
-                        link = '?display=purchase-orders';
-                    } else if (row.building) {
-                        // There is no available stock, but stock is being built
-                        value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
-                        link = '?display=build-orders';
-                    } else {
-                        // There is no available stock
-                        value = `0<span class='badge badge-right rounded-pill bg-warning'>{% trans "No stock available" %}</span>`;
-                    }
-                }
-            } else {
-                // There IS NO stock available for this part
+            var total_stock = row.in_stock;
 
-                if (row.ordering) {
-                    // There is no stock, but stock is on order
-                    value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "On Order" %}: ${row.ordering}</span>`;
-                    link = '?display=purchase-orders';
-                } else if (row.building) {
-                    // There is no stock, but stock is being built
-                    value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
-                    link = '?display=build-orders';
-                } else {
-                    // There is no stock
-                    value = `0<span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
-                }
+            if (row.variant_stock) {
+                total_stock += row.variant_stock;
             }
 
-            return renderLink(value, `/part/${row.pk}/${link}`);
+            var text = `${total_stock}`;
+
+            // Construct extra informational badges
+            var badges = '';
+
+            if (total_stock == 0) {
+                badges += `<span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "No stock" %}'></span>`;
+            } else if (total_stock < row.minimum_stock) {
+                badges += `<span class='fas fa-exclamation-circle icon-yellow float-right' title='{% trans "Low stock" %}'></span>`;
+            }
+
+            if (row.ordering && row.ordering > 0) {
+                badges += renderLink(
+                    `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.ordering}'></span>`,
+                    `/part/${row.pk}/?display=purchase-orders`
+                );
+            }
+
+            if (row.building && row.building > 0) {
+                badges += renderLink(
+                    `<span class='fas fa-tools float-right' title='{% trans "Building" %}: ${row.building}'></span>`,
+                    `/part/${row.pk}/?display=build-orders`
+                );
+            }
+
+            if (row.variant_stock && row.variant_stock > 0) {
+                badges += `<span class='fas fa-info-circle float-right' title='{% trans "Includes variant stock" %}'></span>`;
+            }
+
+            if (row.allocated_to_build_orders > 0) {
+                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to build orders" %}: ${row.allocated_to_build_orders}'></span>`;
+            }
+
+            if (row.allocated_to_sales_orders > 0) {
+                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to sales orders" %}: ${row.allocated_to_sales_orders}'></span>`;
+            }
+
+            if (row.units) {
+                text += ` <small>${row.units}</small>`;
+            }
+
+            text = renderLink(text, `/part/${row.pk}/?display=part-stock`);
+            text += badges;
+
+            return text;
         }
     };
 
@@ -1533,7 +1660,7 @@ function loadPartTable(table, url, options={}) {
             html = `<div class='row full-height'>`;
 
             data.forEach(function(row, index) {
-                
+
                 // Force a new row every 5 columns
                 if ((index > 0) && (index % 5 == 0) && (index < data.length)) {
                     html += `</div><div class='row full-height'>`;
@@ -1547,48 +1674,101 @@ function loadPartTable(table, url, options={}) {
             return html;
         }
     });
-    
+
     if (options.buttons) {
         linkButtonsToSelection($(table), options.buttons);
     }
 
     /* Button callbacks for part table buttons */
 
+    // Callback function for the "order parts" button
     $('#multi-part-order').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var parts = [];
 
-        selections.forEach(function(item) {
-            parts.push(item.pk);
+        selections.forEach(function(part) {
+            parts.push(part);
         });
 
-        launchModalForm('/order/purchase-order/order-parts/', {
-            data: {
-                parts: parts,
-            },
-        });
+        orderParts(parts, {});
     });
 
+    // Callback function for the "set category" button
     $('#multi-part-category').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
-
+        var selections = getTableData(table);
         var parts = [];
 
         selections.forEach(function(item) {
             parts.push(item.pk);
         });
 
-        launchModalForm('/part/set-category/', {
-            data: {
-                parts: parts,
+        var html = `
+        <div class='alert alert-block alert-info'>
+            {% trans "Set the part category for the selected parts" %}
+        </div>
+        `;
+
+        constructFormBody({}, {
+            title: '{% trans "Set Part Category" %}',
+            preFormContent: html,
+            fields: {
+                category: {
+                    label: '{% trans "Category" %}',
+                    help_text: '{% trans "Select Part Category" %}',
+                    required: true,
+                    type: 'related field',
+                    model: 'partcategory',
+                    api_url: '{% url "api-part-category-list" %}',
+                }
             },
-            reload: true,
+            onSubmit: function(fields, opts) {
+                var category = getFormFieldValue('category', fields['category'], opts);
+
+                if (category == null) {
+                    handleFormErrors(
+                        {
+                            'category': ['{% trans "Category is required" %}']
+                        },
+                        opts.fields,
+                        opts
+                    );
+                    return;
+                }
+
+                // Set the category for each part in sequence
+                function setCategory() {
+                    if (parts.length > 0) {
+                        var part = parts.shift();
+
+                        inventreePut(
+                            `/api/part/${part}/`,
+                            {
+                                category: category,
+                            },
+                            {
+                                method: 'PATCH',
+                                complete: setCategory,
+                            }
+                        );
+                    } else {
+                        // We are done!
+                        $(opts.modal).modal('hide');
+
+                        $(table).bootstrapTable('refresh');
+                    }
+                };
+
+                // Start the ball rolling
+                showModalSpinner(opts.modal);
+                setCategory();
+            },
         });
     });
 
+    // Callback function for the "print label" button
     $('#multi-part-print-label').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 
@@ -1597,19 +1777,6 @@ function loadPartTable(table, url, options={}) {
         });
 
         printPartLabels(items);
-    });
-
-    $('#multi-part-export').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
-
-        var parts = '';
-
-        selections.forEach(function(item) {
-            parts += item.pk;
-            parts += ',';
-        });
-
-        location.href = '/part/export/?parts=' + parts;
     });
 }
 
@@ -1631,11 +1798,12 @@ function loadPartCategoryTable(table, options) {
         filters = loadTableFilters(filterKey);
     }
 
-    
+
     var tree_view = options.allowTreeView && inventreeLoad('category-tree-view') == 1;
 
     if (tree_view) {
-        params.cascade = true;   
+        params.cascade = true;
+        params.depth = global_settings.INVENTREE_TREE_DEPTH;
     }
 
     var original = {};
@@ -1646,6 +1814,35 @@ function loadPartCategoryTable(table, options) {
     }
 
     setupFilterList(filterKey, table, filterListElement);
+
+    // Function to request sub-category items
+    function requestSubItems(parent_pk) {
+        inventreeGet(
+            options.url || '{% url "api-part-category-list" %}',
+            {
+                parent: parent_pk,
+            },
+            {
+                success: function(response) {
+                    // Add the returned sub-items to the table
+                    for (var idx = 0; idx < response.length; idx++) {
+                        response[idx].parent = parent_pk;
+                    }
+
+                    const row = $(table).bootstrapTable('getRowByUniqueId', parent_pk);
+                    row.subReceived = true;
+
+                    $(table).bootstrapTable('updateByUniqueId', parent_pk, row, true);
+
+                    table.bootstrapTable('append', response);
+                },
+                error: function(xhr) {
+                    console.error('Error requesting sub-category for category=' + parent_pk);
+                    showApiError(xhr);
+                }
+            }
+        );
+    }
 
     table.inventreeTable({
         treeEnable: tree_view,
@@ -1659,11 +1856,12 @@ function loadPartCategoryTable(table, options) {
         queryParams: filters,
         disablePagination: tree_view,
         sidePagination: tree_view ? 'client' : 'server',
-        serverSort: !tree_view, 
+        serverSort: !tree_view,
         search: !tree_view,
         name: 'category',
         original: original,
         showColumns: true,
+        sortable: true,
         buttons: options.allowTreeView ? [
             {
                 icon: 'fas fa-bars',
@@ -1714,15 +1912,29 @@ function loadPartCategoryTable(table, options) {
 
                     $('#view-category-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
                     $('#view-category-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
-                    
+
                     table.treegrid({
                         treeColumn: 0,
                         onChange: function() {
                             table.bootstrapTable('resetView');
                         },
                         onExpand: function() {
-                            
+
                         }
+                    });
+
+                    // Callback for 'load sub category' button
+                    $(table).find('.load-sub-category').click(function(event) {
+                        event.preventDefault();
+
+                        const pk = $(this).attr('pk');
+                        const row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                        // Request sub-category for this category
+                        requestSubItems(row.pk);
+
+                        row.subRequested = true;
+                        $(table).bootstrapTable('updateByUniqueId', pk, row, true);
                     });
                 } else {
                     $('#view-category-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
@@ -1744,8 +1956,25 @@ function loadPartCategoryTable(table, options) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
+                    let html = '';
 
-                    var html = renderLink(
+                    if (row._level >= global_settings.INVENTREE_TREE_DEPTH && !row.subReceived) {
+                        if (row.subRequested) {
+                            html += `<a href='#'><span class='fas fa-sync fa-spin'></span></a>`;
+                        } else {
+                            html += `
+                                <a href='#' pk='${row.pk}' class='load-sub-category'>
+                                    <span class='fas fa-sync-alt' title='{% trans "Load Subcategories" %}'></span>
+                                </a> `;
+                        }
+                    }
+
+                    const icon = row.icon || global_settings.PART_CATEGORY_DEFAULT_ICON;
+                    if (icon) {
+                        html += `<span class="${icon} me-1"></span>`;
+                    }
+
+                    html += renderLink(
                         value,
                         `/part/category/${row.pk}/`
                     );
@@ -1768,13 +1997,13 @@ function loadPartCategoryTable(table, options) {
                 title: '{% trans "Path" %}',
                 switchable: !tree_view,
                 visible: !tree_view,
-                sortable: false,
+                sortable: true,
             },
             {
-                field: 'parts',
+                field: 'part_count',
                 title: '{% trans "Parts" %}',
                 switchable: true,
-                sortable: false,
+                sortable: true,
             }
         ]
     });
@@ -1869,7 +2098,7 @@ function loadPartTestTemplateTable(table, options) {
                     } else {
                         var text = '{% trans "This test is defined for a parent part" %}';
 
-                        return renderLink(text, `/part/${row.part}/tests/`); 
+                        return renderLink(text, `/part/${row.part}/tests/`);
                     }
                 }
             }
@@ -1878,9 +2107,9 @@ function loadPartTestTemplateTable(table, options) {
 
             table.find('.button-test-edit').click(function() {
                 var pk = $(this).attr('pk');
-            
+
                 var url = `/api/part/test-template/${pk}/`;
-            
+
                 constructForm(url, {
                     fields: {
                         test_name: {},
@@ -1898,9 +2127,9 @@ function loadPartTestTemplateTable(table, options) {
 
             table.find('.button-test-delete').click(function() {
                 var pk = $(this).attr('pk');
-            
+
                 var url = `/api/part/test-template/${pk}/`;
-            
+
                 constructForm(url, {
                     method: 'DELETE',
                     title: '{% trans "Delete Test Result Template" %}',
@@ -1982,14 +2211,14 @@ function loadPriceBreakTable(table, options) {
                 sortable: true,
                 formatter: function(value, row) {
                     var html = value;
-    
+
                     html += `<div class='btn-group float-right' role='group'>`;
 
                     html += makeIconButton('fa-edit icon-blue', `button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
                     html += makeIconButton('fa-trash-alt icon-red', `button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
-    
+
                     html += `</div>`;
-    
+
                     return html;
                 }
             },
@@ -2081,9 +2310,19 @@ function initPriceBreakSet(table, options) {
 }
 
 
+/*
+ * Load a chart which displays projected scheduling information for a particular part.
+ * This takes into account:
+ * - Current stock levels / availability
+ * - Upcoming / scheduled build orders
+ * - Upcoming / scheduled sales orders
+ * - Upcoming / scheduled purchase orders
+ */
 function loadPartSchedulingChart(canvas_id, part_id) {
 
     var part_info = null;
+
+    var was_error = false;
 
     // First, grab updated data for the particular part
     inventreeGet(`/api/part/${part_id}/`, {}, {
@@ -2093,16 +2332,32 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         }
     });
 
+    if (!part_info) {
+        console.error(`Error loading part information for part ${part_id}`);
+        return;
+    }
+
     var today = moment();
 
-    // Create an initial entry, using the available quantity
-    var stock_schedule = [
-        {
-            date: today,
-            delta: 0,
-            label: '{% trans "Current Stock" %}',
-        }
-    ];
+    /* Construct initial datasets for:
+     * - Scheduled quantity
+     * - Minimum speculative quantity
+     * - Maximum speculative quantity
+     */
+
+    var quantity_scheduled = [{
+        date: today,
+        delta: 0,
+    }];
+
+    // We will construct the HTML table as we go
+    var table_html = '';
+
+    // The "known" initial stock quantity
+    var initial_stock_min = part_info.in_stock;
+    var initial_stock_max = part_info.in_stock;
+
+    var n_entries = 0;
 
     /* Request scheduling information for the part.
      * Note that this information has already been 'curated' by the server,
@@ -2114,58 +2369,268 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         {
             async: false,
             success: function(response) {
-                response.forEach(function(entry) {
-                    stock_schedule.push({
+
+                n_entries = response.length;
+
+                for (var idx = 0; idx < response.length; idx++) {
+
+                    var entry = response[idx];
+                    var date = entry.date != null ? moment(entry.date) : null;
+
+                    var date_string = entry.date;
+
+                    if (date == null) {
+                        date_string = '<em>{% trans "No date specified" %}</em>';
+                        date_string += `<span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "No date specified" %}'></span>`;
+                    } else if (date < today) {
+                        date_string += `<span class='fas fa-exclamation-circle icon-yellow float-right' title='{% trans "Specified date is in the past" %}'></span>`;
+                    }
+
+                    var quantity_string = entry.quantity + entry.speculative_quantity;
+
+                    if (entry.speculative_quantity != 0) {
+                        quantity_string += `<span class='fas fa-question-circle icon-blue float-right' title='{% trans "Speculative" %}'></span>`;
+                    }
+
+                    // Add an entry to the scheduling table
+                    table_html += `
+                        <tr>
+                            <td><a href="${entry.url}">${entry.label}</a></td>
+                            <td>${entry.title}</td>
+                            <td>${date_string}</td>
+                            <td>${quantity_string}</td>
+                        </tr>
+                    `;
+
+                    // If the date is unknown or in the past, we cannot make use of this information
+                    // So we update the "speculative quantity"
+                    if (date == null || date < today) {
+                        if (entry.quantity < 0) initial_stock_min += entry.quantity;
+                        if (entry.speculative_quantity < 0) initial_stock_min += entry.speculative_quantity;
+
+                        if (entry.quantity > 0) initial_stock_max += entry.quantity;
+                        if (entry.speculative_quantity > 0) initial_stock_max += entry.speculative_quantity;
+
+                        // We do not add this entry to the graph
+                        continue;
+                    }
+
+                    // Add an entry to the scheduled quantity
+                    quantity_scheduled.push({
                         date: moment(entry.date),
                         delta: entry.quantity,
+                        speculative: entry.speculative_quantity,
                         title: entry.title,
                         label: entry.label,
                         url: entry.url,
                     });
-                });
+                }
+            },
+            error: function(response) {
+                console.error(`Error retrieving scheduling information for part ${part_id}`);
+                was_error = true;
             }
         }
     );
 
     // If no scheduling information is available for the part,
     // remove the chart and display a message instead
-    if (stock_schedule.length <= 1) {
+    if (n_entries < 1) {
 
         var message = `
         <div class='alert alert-block alert-info'>
-            {% trans "No scheduling information available for this part" %}.<br>
+            {% trans "No scheduling information available for this part" %}.
         </div>`;
+
+        if (was_error) {
+            message = `
+                <div class='alert alert-block alert-danger'>
+                    {% trans "Error fetching scheduling information for this part" %}.
+                </div>
+            `;
+        }
 
         var canvas_element = $('#part-schedule-chart');
 
         canvas_element.closest('div').html(message);
 
+        $('#part-schedule-table').hide();
+
         return;
     }
 
-    // Iterate through future "events" to calculate expected quantity
+    $('#part-schedule-table').show();
 
+    var y_min = 0;
+    var y_max = 0;
+
+    // Iterate through future "events" to calculate expected quantity values
     var quantity = part_info.in_stock;
+    var speculative_min = initial_stock_min;
+    var speculative_max = initial_stock_max;
 
-    for (var idx = 0; idx < stock_schedule.length; idx++) {
+    // Datasets for speculative quantity
+    var q_spec_min = [];
+    var q_spec_max = [];
 
-        quantity += stock_schedule[idx].delta;
+    for (var idx = 0; idx < quantity_scheduled.length; idx++) {
 
-        stock_schedule[idx].x = stock_schedule[idx].date.format('YYYY-MM-DD');
-        stock_schedule[idx].y = quantity;
+        var speculative = quantity_scheduled[idx].speculative;
+        var date = quantity_scheduled[idx].date.format('YYYY-MM-DD');
+        var delta = quantity_scheduled[idx].delta;
+
+        // Update the running quantity
+        quantity += delta;
+
+        quantity_scheduled[idx].x = date;
+        quantity_scheduled[idx].y = quantity;
+
+        // Update minimum "speculative" quantity
+        speculative_min += delta;
+        speculative_max += delta;
+
+        if (speculative < 0) {
+            speculative_min += speculative;
+        } else if (speculative > 0) {
+            speculative_max += speculative;
+        }
+
+        q_spec_min.push({
+            x: date,
+            y: speculative_min,
+            label: '',
+            title: '',
+        });
+
+        q_spec_max.push({
+            x: date,
+            y: speculative_max,
+            label: '',
+            title: '',
+        });
+
+        // Update min / max values
+        if (quantity < y_min) y_min = quantity;
+        if (quantity > y_max) y_max = quantity;
+
+        if (speculative_min < y_min) y_min = speculative_min;
+        if (speculative_max > y_max) y_max = speculative_max;
     }
+
+    // Add one extra data point at the end
+    var n = quantity_scheduled.length;
+    var final_date = quantity_scheduled[n - 1].date.add(1, 'd').format('YYYY-MM-DD');
+
+    quantity_scheduled.push({
+        x: final_date,
+        y: quantity_scheduled[n - 1].y,
+    });
+
+    q_spec_min.push({
+        x: final_date,
+        y: q_spec_min[n - 1].y,
+    });
+
+    q_spec_max.push({
+        x: final_date,
+        y: q_spec_max[n - 1].y,
+    });
 
     var context = document.getElementById(canvas_id);
 
-    const data = {
-        datasets: [{
-            label: '{% trans "Scheduled Stock Quantities" %}',
-            data: stock_schedule,
-            backgroundColor: 'rgb(220, 160, 80)',
-            borderWidth: 2,
-            borderColor: 'rgb(90, 130, 150)'
-        }],
+    var data = {
+        datasets: [
+            {
+                label: '{% trans "Scheduled Stock Quantities" %}',
+                data: quantity_scheduled,
+                backgroundColor: 'rgba(160, 80, 220, 0.75)',
+                borderWidth: 3,
+                borderColor: 'rgb(160, 80, 220)'
+            },
+            {
+                label: '{% trans "Minimum Quantity" %}',
+                data: q_spec_min,
+                backgroundColor: 'rgba(220, 160, 80, 0.25)',
+                borderWidth: 2,
+                borderColor: 'rgba(220, 160, 80, 0.35)',
+                borderDash: [10, 5],
+                fill: '-1',
+            },
+            {
+                label: '{% trans "Maximum Quantity" %}',
+                data: q_spec_max,
+                backgroundColor: 'rgba(220, 160, 80, 0.25)',
+                borderWidth: 2,
+                borderColor: 'rgba(220, 160, 80, 0.35)',
+                borderDash: [10, 5],
+                fill: '-2',
+            },
+        ],
     };
+
+    var t_min = quantity_scheduled[0].x;
+    var t_max = quantity_scheduled[quantity_scheduled.length - 1].x;
+
+    // Construct a 'zero stock' threshold line
+    data.datasets.push({
+        data: [
+            {
+                x: t_min,
+                y: 0,
+            },
+            {
+                x: t_max,
+                y: 0,
+            }
+        ],
+        borderColor: 'rgba(250, 50, 50, 0.75)',
+        label: 'zero-stock-level',
+    });
+
+    // Construct a 'minimum stock' threshold line
+    if (part_info.minimum_stock) {
+        var minimum_stock_curve = [
+            {
+                x: t_min,
+                y: part_info.minimum_stock,
+            },
+            {
+                x: t_max,
+                y: part_info.minimum_stock,
+            }
+        ];
+
+        data.datasets.push({
+            data: minimum_stock_curve,
+            label: '{% trans "Minimum Stock Level" %}',
+            backgroundColor: 'rgba(250, 50, 50, 0.1)',
+            borderColor: 'rgba(250, 50, 50, 0.5)',
+            borderDash: [5, 5],
+            fill: {
+                target: {
+                    value: 0,
+                }
+            }
+        });
+    }
+
+    // Update the table
+    $('#part-schedule-table').find('tbody').html(table_html);
+
+    if (y_max < part_info.minimum_stock) {
+        y_max = part_info.minimum_stock;
+    }
+
+    var y_range = y_max - y_min;
+
+    y_max += 0.1 * y_range;
+    y_min -= 0.1 * y_range;
+
+    // Prevent errors if y-scale is weird
+    if (y_max == y_min) {
+        y_min -= 1;
+        y_max += 1;
+    }
 
     return new Chart(context, {
         type: 'scatter',
@@ -2176,29 +2641,31 @@ function loadPartSchedulingChart(canvas_id, part_id) {
             scales: {
                 x: {
                     type: 'time',
-                    min: today.format(),
+                    suggestedMin: today.format(),
+                    suggestedMax: quantity_scheduled[quantity_scheduled.length - 1].x,
                     position: 'bottom',
                     time: {
-                        unit: 'day',
+                        minUnit: 'day',
                     },
                 },
                 y: {
-                    beginAtZero: true,
+                    suggestedMin: y_min,
+                    suggestedMax: y_max,
                 }
             },
             plugins: {
                 tooltip: {
                     callbacks: {
                         label: function(item) {
-                            return item.raw.label;
+                            return item.raw.label || '';
                         },
                         beforeLabel: function(item) {
-                            return item.raw.title;
+                            return item.raw.title || '';
                         },
                         afterLabel: function(item) {
                             var delta = item.raw.delta;
 
-                            if (delta == 0) {
+                            if (delta == null || delta == 0) {
                                 delta = '';
                             } else {
                                 delta = ` (${item.raw.delta > 0 ? '+' : ''}${item.raw.delta})`;
@@ -2207,7 +2674,14 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                             return `{% trans "Quantity" %}: ${item.raw.y}${delta}`;
                         }
                     }
-                }
+                },
+                legend: {
+                    labels: {
+                        filter: function(item, chart) {
+                            return !item.text.includes('zero-stock-level');
+                        }
+                    }
+                },
             },
         }
     });

@@ -1,11 +1,7 @@
-"""
-Test that the root API endpoint is available.
-"""
-
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Test that the root API endpoint is available."""
 
 import json
+
 import requests
 
 # We expect the server to be running on the local host
@@ -15,7 +11,7 @@ print("Testing InvenTree API endpoint")
 
 response = requests.get(url)
 
-assert(response.status_code == 200)
+assert response.status_code == 200
 
 print("- Response 200 OK")
 
@@ -29,11 +25,11 @@ required_keys = [
 ]
 
 for key in required_keys:
-    assert(key in data)
+    assert key in data
     print(f"- Found key '{key}'")
 
 # Check that the worker is running
-assert(data['worker_running'])
+assert data['worker_running']
 
 print("- Background worker is operational")
 

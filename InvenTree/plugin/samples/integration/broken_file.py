@@ -1,11 +1,10 @@
-"""sample of a broken python file that will be ignored on import"""
-from plugin import IntegrationPluginBase
+"""Sample of a broken python file that will be ignored on import."""
+
+from plugin import InvenTreePlugin
 
 
-class BrokenFileIntegrationPlugin(IntegrationPluginBase):
-    """
-    An very broken integration plugin
-    """
+class BrokenFileIntegrationPlugin(InvenTreePlugin):
+    """An very broken plugin."""
 
 
 aaa = bb  # noqa: F821

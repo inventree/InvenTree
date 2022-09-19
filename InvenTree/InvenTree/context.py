@@ -1,26 +1,20 @@
 # -*- coding: utf-8 -*-
 
-"""
-Provides extra global data to all templates.
-"""
-
-from InvenTree.status_codes import SalesOrderStatus, PurchaseOrderStatus
-from InvenTree.status_codes import BuildStatus, StockStatus
-from InvenTree.status_codes import StockHistoryCode
+"""Provides extra global data to all templates."""
 
 import InvenTree.status
-
-from users.models import RuleSet
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+                                    SalesOrderStatus, StockHistoryCode,
+                                    StockStatus)
+from users.models import RuleSet, check_user_role
 
 
 def health_status(request):
-    """
-    Provide system health status information to the global context.
+    """Provide system health status information to the global context.
 
     - Not required for AJAX requests
     - Do not provide if it is already provided to the context
     """
-
     if request.path.endswith('.js'):
         # Do not provide to script requests
         return {}  # pragma: no cover
@@ -55,10 +49,7 @@ def health_status(request):
 
 
 def status_codes(request):
-    """
-    Provide status code enumerations.
-    """
-
+    """Provide status code enumerations."""
     if hasattr(request, '_inventree_status_codes'):
         # Do not duplicate efforts
         return {}
@@ -76,8 +67,7 @@ def status_codes(request):
 
 
 def user_roles(request):
-    """
-    Return a map of the current roles assigned to the user.
+    """Return a map of the current roles assigned to the user.
 
     Roles are denoted by their simple names, and then the permission type.
 
@@ -88,37 +78,18 @@ def user_roles(request):
 
     Each value will return a boolean True / False
     """
-
     user = request.user
 
     roles = {
     }
 
-    if user.is_superuser:
-        for ruleset in RuleSet.RULESET_MODELS.keys():  # pragma: no cover
-            roles[ruleset] = {
-                'view': True,
-                'add': True,
-                'change': True,
-                'delete': True,
-            }
-    else:
-        for group in user.groups.all():
-            for rule in group.rule_sets.all():
+    for role in RuleSet.RULESET_MODELS.keys():
 
-                # Ensure the role name is in the dict
-                if rule.name not in roles:
-                    roles[rule.name] = {
-                        'view': user.is_superuser,
-                        'add': user.is_superuser,
-                        'change': user.is_superuser,
-                        'delete': user.is_superuser
-                    }
+        permissions = {}
 
-                # Roles are additive across groups
-                roles[rule.name]['view'] |= rule.can_view
-                roles[rule.name]['add'] |= rule.can_add
-                roles[rule.name]['change'] |= rule.can_change
-                roles[rule.name]['delete'] |= rule.can_delete
+        for perm in ['view', 'add', 'change', 'delete']:
+            permissions[perm] = user.is_superuser or check_user_role(user, role, perm)
+
+        roles[role] = permissions
 
     return {'roles': roles}

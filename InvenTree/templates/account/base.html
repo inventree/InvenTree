@@ -49,10 +49,8 @@
 {% endblock %}
 </head>
 
-<body class='login-screen'>
-    <!-- 
-        Background Image Attribution: https://unsplash.com/photos/Ixvv3YZkd7w
-    -->
+<body class='login-screen' style='background: url({% inventree_splash %}); background-size: cover;'>
+
     <div class='container-fluid'>
         <div class='notification-area' id='alerts'>
             <!-- Div for displayed alerts -->
@@ -84,47 +82,25 @@
         {% endblock %}
     </div>
 
-<!-- Scripts -->
-<script type="text/javascript" src="{% static 'script/jquery_3.3.1_jquery.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/jquery-ui/jquery-ui.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
 
 <!-- general JS -->
-<script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'notification.js' %}"></script>
+{% include "third_party_js.html" %}
 
-<!-- fontawesome -->
-<script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
-
-<!-- 3rd party general js -->
-<script type="text/javascript" src="{% static 'fullcalendar/main.js' %}"></script>
-<script type="text/javascript" src="{% static 'fullcalendar/locales-all.js' %}"></script>
-<script type="text/javascript" src="{% static 'select2/js/select2.full.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/chart.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/clipboard.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/randomColor.min.js' %}"></script>
-
+<script type='text/javascript' src='{% static "script/inventree/message.js" %}'></script>
 
 <script type='text/javascript'>
 
 $(document).ready(function () {
-    // notifications
+
     {% if messages %}
     {% for message in messages %}
-    showAlertOrCache(
-        '{{ message }}',
-        true,
-        {
-            style: 'info',
-        }
-    );
+        showMessage(messsage);
     {% endfor %}
     {% endif %}
 
-    inventreeDocReady();
+    showCachedAlerts();
+
 });
 
 </script>

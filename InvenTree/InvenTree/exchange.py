@@ -1,50 +1,58 @@
-import certifi
+"""Exchangerate backend to use `exchangerate.host` to get rates."""
+
 import ssl
+from urllib.error import URLError
 from urllib.request import urlopen
 
-from common.settings import currency_code_default, currency_codes
-from urllib.error import URLError
-
-from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 from django.db.utils import OperationalError
+
+import certifi
+from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
+
+from common.settings import currency_code_default, currency_codes
 
 
 class InvenTreeExchange(SimpleExchangeBackend):
-    """
-    Backend for automatically updating currency exchange rates.
+    """Backend for automatically updating currency exchange rates.
 
-    Uses the exchangerate.host service API
+    Uses the `exchangerate.host` service API
     """
 
     name = "InvenTreeExchange"
 
     def __init__(self):
+        """Set API url."""
         self.url = "https://api.exchangerate.host/latest"
 
         super().__init__()
 
     def get_params(self):
+        """Placeholder to set API key. Currently not required by `exchangerate.host`."""
         # No API key is required
         return {
         }
 
     def get_response(self, **kwargs):
-        """
-        Custom code to get response from server.
+        """Custom code to get response from server.
+
         Note: Adds a 5-second timeout
         """
-
         url = self.get_url(**kwargs)
 
         try:
             context = ssl.create_default_context(cafile=certifi.where())
             response = urlopen(url, timeout=5, context=context)
             return response.read()
-        except:
-            # Returning None here will raise an error upstream
-            return None
+        except Exception:
+            # Something has gone wrong, but we can just try again next time
+            # Raise a TypeError so the outer function can handle this
+            raise TypeError
 
-    def update_rates(self, base_currency=currency_code_default()):
+    def update_rates(self, base_currency=None):
+        """Set the requested currency codes and get rates."""
+        # Set default - see B008
+        if base_currency is None:
+            base_currency = currency_code_default()
 
         symbols = ','.join(currency_codes())
 
@@ -53,6 +61,8 @@ class InvenTreeExchange(SimpleExchangeBackend):
         # catch connection errors
         except URLError:
             print('Encountered connection error while updating')
+        except TypeError:
+            print('Exchange returned invalid response')
         except OperationalError as e:
             if 'SerializationFailure' in e.__cause__.__class__.__name__:
                 print('Serialization Failure while updating exchange rates')

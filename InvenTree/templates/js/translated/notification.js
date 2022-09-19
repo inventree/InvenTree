@@ -1,135 +1,102 @@
 {% load i18n %}
 
 /* exported
-    showAlertOrCache,
-    showCachedAlerts,
+    loadNotificationTable,
     startNotificationWatcher,
     stopNotificationWatcher,
     openNotificationPanel,
     closeNotificationPanel,
 */
 
-/*
- * Add a cached alert message to sesion storage
- */
-function addCachedAlert(message, options={}) {
-
-    var alerts = sessionStorage.getItem('inventree-alerts');
-
-    if (alerts) {
-        alerts = JSON.parse(alerts);
-    } else {
-        alerts = [];
-    }
-
-    alerts.push({
-        message: message,
-        style: options.style || 'success',
-        icon: options.icon,
-    });
-
-    sessionStorage.setItem('inventree-alerts', JSON.stringify(alerts));
-}
-
 
 /*
- * Remove all cached alert messages
+ * Load notification table
  */
-function clearCachedAlerts() {
-    sessionStorage.removeItem('inventree-alerts');
-}
+function loadNotificationTable(table, options={}, enableDelete=false) {
 
+    var params = options.params || {};
+    var read = typeof(params.read) === 'undefined' ? true : params.read;
 
-/*
- * Display an alert, or cache to display on reload
- */
-function showAlertOrCache(message, cache, options={}) {
+    setupFilterList(`notifications-${options.name}`, table);
 
-    if (cache) {
-        addCachedAlert(message, options);
-    } else {
-        showMessage(message, options);
-    }
-}
-
-
-/*
- * Display cached alert messages when loading a page
- */
-function showCachedAlerts() {
-
-    var alerts = JSON.parse(sessionStorage.getItem('inventree-alerts')) || [];
-
-    alerts.forEach(function(alert) {
-        showMessage(
-            alert.message,
+    $(table).inventreeTable({
+        url: options.url,
+        name: options.name,
+        groupBy: false,
+        search: true,
+        queryParams: {
+            ordering: 'age',
+            read: read,
+        },
+        paginationVAlign: 'bottom',
+        formatNoMatches: options.no_matches,
+        columns: [
             {
-                style: alert.style || 'success',
-                icon: alert.icon,
+                field: 'pk',
+                title: '{% trans "ID" %}',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'age',
+                title: '{% trans "Age" %}',
+                sortable: 'true',
+                formatter: function(value, row) {
+                    return row.age_human;
+                }
+            },
+            {
+                field: 'category',
+                title: '{% trans "Category" %}',
+                sortable: 'true',
+            },
+            {
+                field: 'target',
+                title: '{% trans "Item" %}',
+                sortable: 'true',
+                formatter: function(value, row, index, field) {
+                    if (value == null) {
+                        return '';
+                    }
+
+                    var html = `${value.model}: ${value.name}`;
+                    if (value.link ) {
+                        html = `<a href='${value.link}'>${html}</a>`;
+                    }
+                    return html;
+                }
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+            },
+            {
+                field: 'message',
+                title: '{% trans "Message" %}',
+            },
+            {
+                formatter: function(value, row, index, field) {
+                    var bRead = getReadEditButton(row.pk, row.read);
+
+                    if (enableDelete) {
+                        var bDel = `<button title='{% trans "Delete Notification" %}' class='notification-delete btn btn-outline-secondary' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
+                    } else {
+                        var bDel = '';
+                    }
+
+                    var html = `<div class='btn-group float-right' role='group'>${bRead}${bDel}</div>`;
+
+                    return html;
+                }
             }
-        );
+        ]
     });
 
-    clearCachedAlerts();
-}
-
-
-/* 
- * Display an alert message at the top of the screen.
- * The message will contain a "close" button,
- * and also dismiss automatically after a certain amount of time.
- * 
- * arguments:
- * - message: Text / HTML content to display
- * 
- * options:
- * - style: alert style e.g. 'success' / 'warning'
- * - timeout: Time (in milliseconds) after which the message will be dismissed
- */
-function showMessage(message, options={}) {
-
-    var style = options.style || 'info';
-
-    var timeout = options.timeout || 5000;
-
-    var target = options.target || $('#alerts');
-
-    var details = '';
-
-    if (options.details) {
-        details = `<p><small>${options.details}</p></small>`;
-    }
-
-    // Hacky function to get the next available ID
-    var id = 1;
-
-    while ($(`#alert-${id}`).exists()) {
-        id++;
-    }
-
-    var icon = '';
-
-    if (options.icon) {
-        icon = `<span class='${options.icon}'></span>`;
-    }
-
-    // Construct the alert
-    var html = `
-    <div id='alert-${id}' class='alert alert-${style} alert-dismissible fade show' role='alert'>
-        ${icon}
-        <b>${message}</b>
-        ${details}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>  
-    </div>
-    `;
-
-    target.append(html);
-
-    // Remove the alert automatically after a specified period of time
-    $(`#alert-${id}`).delay(timeout).slideUp(200, function() {
-        $(this).alert(close);
+    $(table).on('click', '.notification-read', function() {
+        updateNotificationReadState($(this));
     });
 }
+
 
 var notificationWatcher = null; // reference for the notificationWatcher
 /**
@@ -152,7 +119,7 @@ var notificationUpdateTic = 0;
 /**
  * The notification checker is initiated when the document is loaded. It checks if there are unread notifications
  * if unread messages exist the notification indicator is updated
- * 
+ *
  * options:
  * - force: set true to force an update now (if you got in focus for example)
  **/
@@ -182,10 +149,10 @@ function notificationCheck(force = false) {
 
 /**
  * handles read / unread buttons and UI rebuilding
- * 
+ *
  * arguments:
  * - btn: element that got clicked / fired the event -> must contain pk and target as attributes
- * 
+ *
  * options:
  * - panel_caller: this button was clicked in the notification panel
  **/
@@ -207,6 +174,12 @@ function updateNotificationReadState(btn, panel_caller=false) {
             } else {
                 count = count + 1;
             }
+
+            // Prevent negative notification count
+            if (count < 0) {
+                count = 0;
+            }
+
             // update notification indicator now
             updateNotificationIndicator(count);
 
@@ -220,7 +193,7 @@ function updateNotificationReadState(btn, panel_caller=false) {
 
 /**
  * Returns the html for a read / unread button
- * 
+ *
  * arguments:
  * - pk: primary key of the notification
  * - state: current state of the notification (read / unread) -> just pass what you were handed by the api
@@ -238,7 +211,7 @@ function getReadEditButton(pk, state, small=false) {
     }
 
     var style = (small) ? 'btn-sm ' : '';
-    return `<button title='${bReadText}' class='notification-read btn ${style}btn-outline-secondary' type='button' pk='${pk}' target='${bReadTarget}'><span class='${bReadIcon}'></span></button>`;
+    return `<button title='${bReadText}' class='notification-read btn ${style}btn-outline-secondary float-right' type='button' pk='${pk}' target='${bReadTarget}'><span class='${bReadIcon}'></span></button>`;
 }
 
 /**
@@ -252,6 +225,7 @@ function openNotificationPanel() {
         '/api/notifications/',
         {
             read: false,
+            ordering: '-creation',
         },
         {
             success: function(response) {
@@ -261,20 +235,21 @@ function openNotificationPanel() {
                     // build up items
                     response.forEach(function(item, index) {
                         html += '<li class="list-group-item">';
-                        // d-flex justify-content-between align-items-start
-                        html += '<div>';
-                        html += `<span class="badge rounded-pill bg-primary">${item.category}</span><span class="ms-2">${item.name}</span>`;
-                        html += '</div>';
+                        html += `<div>`;
+                        html += `<span class="badge bg-secondary rounded-pill">${item.name}</span>`;
+                        html += getReadEditButton(item.pk, item.read, true);
+                        html += `</div>`;
+
                         if (item.target) {
-                            var link_text = `${item.target.model}: ${item.target.name}`;
+                            var link_text = `${item.target.name}`;
                             if (item.target.link) {
                                 link_text = `<a href='${item.target.link}'>${link_text}</a>`;
                             }
                             html += link_text;
                         }
+
                         html += '<div>';
-                        html += `<span class="text-muted">${item.age_human}</span>`;
-                        html += getReadEditButton(item.pk, item.read, true);
+                        html += `<span class="text-muted"><small>${item.age_human}</small></span>`;
                         html += '</div></li>';
                     });
 

@@ -1,27 +1,28 @@
-# -*- coding: utf-8 -*-
+"""AppConfig for inventree app."""
 
 import logging
 
 from django.apps import AppConfig
-from django.core.exceptions import AppRegistryNotReady
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError
 
-from InvenTree.ready import isInTestMode, canAppAccessDatabase
-from .config import get_setting
 import InvenTree.tasks
+from InvenTree.ready import canAppAccessDatabase, isInTestMode
 
+from .config import get_setting
 
 logger = logging.getLogger("inventree")
 
 
 class InvenTreeConfig(AppConfig):
+    """AppConfig for inventree app."""
     name = 'InvenTree'
 
     def ready(self):
-
+        """Setup background tasks and update exchange rates."""
         if canAppAccessDatabase():
 
             self.remove_obsolete_tasks()
@@ -31,14 +32,13 @@ class InvenTreeConfig(AppConfig):
             if not isInTestMode():  # pragma: no cover
                 self.update_exchange_rates()
 
+        self.collect_notification_methods()
+
         if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
 
     def remove_obsolete_tasks(self):
-        """
-        Delete any obsolete scheduled tasks in the database
-        """
-
+        """Delete any obsolete scheduled tasks in the database."""
         obsolete = [
             'InvenTree.tasks.delete_expired_sessions',
             'stock.tasks.delete_old_stock_items',
@@ -53,10 +53,11 @@ class InvenTreeConfig(AppConfig):
         Schedule.objects.filter(func__in=obsolete).delete()
 
     def start_background_tasks(self):
-
+        """Start all background tests for InvenTree."""
         try:
             from django_q.models import Schedule
         except AppRegistryNotReady:  # pragma: no cover
+            logger.warning("Cannot start background tasks - app registry not ready")
             return
 
         logger.info("Starting background tasks...")
@@ -98,19 +99,36 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
-    def update_exchange_rates(self):  # pragma: no cover
-        """
-        Update exchange rates each time the server is started, *if*:
+        # Check for overdue purchase orders
+        InvenTree.tasks.schedule_task(
+            'order.tasks.check_overdue_purchase_orders',
+            schedule_type=Schedule.DAILY
+        )
 
+        # Check for overdue sales orders
+        InvenTree.tasks.schedule_task(
+            'order.tasks.check_overdue_sales_orders',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Check for overdue build orders
+        InvenTree.tasks.schedule_task(
+            'build.tasks.check_overdue_build_orders',
+            schedule_type=Schedule.DAILY
+        )
+
+    def update_exchange_rates(self):  # pragma: no cover
+        """Update exchange rates each time the server is started.
+
+        Only runs *if*:
         a) Have not been updated recently (one day or less)
         b) The base exchange rate has been altered
         """
-
         try:
             from djmoney.contrib.exchange.models import ExchangeBackend
 
-            from InvenTree.tasks import update_exchange_rates
             from common.settings import currency_code_default
+            from InvenTree.tasks import update_exchange_rates
         except AppRegistryNotReady:  # pragma: no cover
             pass
 
@@ -129,7 +147,7 @@ class InvenTreeConfig(AppConfig):
                 update = True
 
             # Backend currency has changed?
-            if not base_currency == backend.base_currency:
+            if base_currency != backend.base_currency:
                 logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
                 update = True
 
@@ -137,7 +155,7 @@ class InvenTreeConfig(AppConfig):
             logger.info("Exchange backend not found - updating")
             update = True
 
-        except:
+        except Exception:
             # Some other error - potentially the tables are not ready yet
             return
 
@@ -148,27 +166,19 @@ class InvenTreeConfig(AppConfig):
                 logger.error(f"Error updating exchange rates: {e}")
 
     def add_user_on_startup(self):
-        """Add a user on startup"""
+        """Add a user on startup."""
         # stop if checks were already created
         if hasattr(settings, 'USER_ADDED') and settings.USER_ADDED:
             return
 
         # get values
-        add_user = get_setting(
-            'INVENTREE_ADMIN_USER',
-            settings.CONFIG.get('admin_user', False)
-        )
-        add_email = get_setting(
-            'INVENTREE_ADMIN_EMAIL',
-            settings.CONFIG.get('admin_email', False)
-        )
-        add_password = get_setting(
-            'INVENTREE_ADMIN_PASSWORD',
-            settings.CONFIG.get('admin_password', False)
-        )
+        add_user = get_setting('INVENTREE_ADMIN_USER', 'admin_user')
+        add_email = get_setting('INVENTREE_ADMIN_EMAIL', 'admin_email')
+        add_password = get_setting('INVENTREE_ADMIN_PASSWORD', 'admin_password')
 
         # check if all values are present
         set_variables = 0
+
         for tested_var in [add_user, add_email, add_password]:
             if tested_var:
                 set_variables += 1
@@ -188,12 +198,19 @@ class InvenTreeConfig(AppConfig):
         user = get_user_model()
         try:
             with transaction.atomic():
-                new_user = user.objects.create_superuser(add_user, add_email, add_password)
-            logger.info(f'User {str(new_user)} was created!')
+                if user.objects.filter(username=add_user).exists():
+                    logger.info(f"User {add_user} already exists - skipping creation")
+                else:
+                    new_user = user.objects.create_superuser(add_user, add_email, add_password)
+                    logger.info(f'User {str(new_user)} was created!')
         except IntegrityError as _e:
             logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
-            if settings.TESTING_ENV:
-                raise _e
 
         # do not try again
         settings.USER_ADDED = True
+
+    def collect_notification_methods(self):
+        """Collect all notification methods."""
+        from common.notifications import storage
+
+        storage.collect()

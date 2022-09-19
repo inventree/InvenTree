@@ -28,10 +28,35 @@
     <div class='panel-content'>
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
             <div class='btn-group'>
+                {% include "expand_rows.html" with label="sales-lines" %}
+                {% include "collapse_rows.html" with label="sales-lines" %}
                 {% include "filter_list.html" with id="sales-order-lines" %}
             </div>
         </div>
         <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
+        </table>
+    </div>
+
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Extra Lines" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.sales_order.change and order.is_pending %}
+                <button type='button' class='btn btn-success' id='new-so-extra-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='order-extra-toolbar-buttons' class='btn-group' style='float: right;'>
+            <div class='btn-group'>
+                {% include "filter_list.html" with id="sales-order-extra-lines" %}
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' id='so-extra-lines-table' data-toolbar='#order-extra-toolbar-buttons'>
         </table>
     </div>
 </div>
@@ -63,6 +88,8 @@
         {% if roles.sales_order.change %}
         <div id='pending-shipment-toolbar' class='btn-group' style='float: right;'>
             <div class='btn-group' role='group'>
+                {% include "expand_rows.html" with label="pending-shipments" %}
+                {% include "collapse_rows.html" with label="pending-shipments" %}
                 {% include "filter_list.html" with id="pending-shipments" %}
             </div>
         </div>
@@ -79,6 +106,8 @@
     <div class='panel-content'>
         <div id='completed-shipment-toolbar' class='btn-group' style='float: right;'>
             <div class='btn-group' role='group'>
+                {% include "expand_rows.html" with label="completed-shipments" %}
+                {% include "collapse_rows.html" with label="completed-shipments" %}
                 {% include "filter_list.html" with id="completed-shipments" %}
             </div>
         </div>
@@ -158,7 +187,7 @@
         {% endif %}
 
     });
-    
+
     onPanelLoad('order-shipments-complete', function() {
         loadSalesOrderShipmentTable('#completed-shipments-table', {
             order: {{ order.pk }},
@@ -208,7 +237,7 @@
     });
 
     loadBuildTable($("#builds-table"), {
-        url: "{% url 'api-build-list' %}",
+        locale: '{{ request.LANGUAGE_CODE }}',
         params: {
             sales_order: {{ order.id }},
         },
@@ -234,10 +263,42 @@
         '#so-lines-table',
         {
             order: {{ order.pk }},
+            reference: '{{ order.reference }}',
             status: {{ order.status }},
         }
     );
 
+    $("#new-so-extra-line").click(function() {
+
+        var fields = extraLineFields({
+            order: {{ order.pk }},
+        });
+
+        constructForm('{% url "api-so-extra-line-list" %}', {
+            fields: fields,
+            method: 'POST',
+            title: '{% trans "Add Extra Line" %}',
+            onSuccess: function() {
+                $("#so-extra-lines-table").bootstrapTable("refresh");
+            },
+        });
+    });
+
+    loadSalesOrderExtraLineTable(
+        '#so-extra-lines-table',
+        {
+            order: {{ order.pk }},
+            status: {{ order.status }},
+        }
+    );
+
+    loadOrderTotal(
+        '#soTotalPrice',
+        {
+            url: '{% url "api-so-detail" order.pk %}',
+        }
+    );
+
     enableSidebar('salesorder');
-    
+
 {% endblock %}

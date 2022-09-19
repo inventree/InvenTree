@@ -19,42 +19,31 @@ jobs:
       INVENTREE_STATIC_ROOT: ./static
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Get Current Translations
-      run: |
-        git fetch
-        git checkout origin/l10 -- `git ls-tree origin/l10 -r --name-only | grep ".po"`
-        git reset
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Install Dependencies
-      run: |
+      - name: Checkout Code
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@152ba7c4dd6521b8e9c93f72d362ce03bf6c4f20 # pin@v1
+        with:
+          python-version: 3.9
+      - name: Install Dependencies
+        run: |
           sudo apt-get update
           sudo apt-get install -y gettext
           pip3 install invoke
           invoke install
-    - name: Make Translations
-      run: |
-        invoke translate
-    - name: stash changes
-      run: |
-        git stash
-    - name: Checkout Translation Branch
-      uses: actions/checkout@v2.3.4
-      with:
-        ref: l10
-    - name: Commit files
-      run: |
-        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        git checkout stash -- .
-        git reset
-        git add "*.po"
-        git commit -m "updated translation base"
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: l10
+      - name: Make Translations
+        run: |
+          invoke translate
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git checkout -b l10_local
+          git add "*.po"
+          git commit -m "updated translation base"
+      - name: Push changes
+        uses: ad-m/github-push-action@9a46ba8d86d3171233e861a4351b1278a2805c83 # pin@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: l10
+          force: true

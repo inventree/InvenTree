@@ -33,7 +33,7 @@ def migrate_currencies(apps, schema_editor):
 
     # The 'suffix' field denotes the currency code
     response = cursor.execute('SELECT id, suffix, description from common_currency;')
-    
+
     results = cursor.fetchall()
 
     remap = {}
@@ -57,7 +57,7 @@ def migrate_currencies(apps, schema_editor):
 
     # Now iterate through each PartSellPriceBreak and update the rows
     response = cursor.execute('SELECT id, cost, currency_id, price, price_currency from part_partsellpricebreak;')
-    
+
     results = cursor.fetchall()
 
     count = 0
@@ -93,7 +93,7 @@ def reverse_currencies(apps, schema_editor):  # pragma: no cover
 
     # Extract a list of currency codes which are in use
     response = cursor.execute(f'SELECT id, price, price_currency from part_partsellpricebreak;')
-    
+
     results = cursor.fetchall()
 
     codes_in_use = set()
@@ -124,7 +124,7 @@ def reverse_currencies(apps, schema_editor):  # pragma: no cover
 
             # Create a new object in the database
             print(f"Creating new Currency object for {code}")
-        
+
             # Construct a query to create a new Currency object
             query = f"INSERT into common_currency (symbol, suffix, description, value, base) VALUES ('$', '{code}', '{description}', 1.0, False);"
 

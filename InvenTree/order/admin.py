@@ -1,24 +1,53 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Admin functionality for the 'order' app"""
 
 from django.contrib import admin
 
+import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
-
-from import_export.resources import ModelResource
 from import_export.fields import Field
 
-from .models import PurchaseOrder, PurchaseOrderLineItem
-from .models import SalesOrder, SalesOrderLineItem
-from .models import SalesOrderShipment, SalesOrderAllocation
+from InvenTree.admin import InvenTreeResource
+
+from .models import (PurchaseOrder, PurchaseOrderExtraLine,
+                     PurchaseOrderLineItem, SalesOrder, SalesOrderAllocation,
+                     SalesOrderExtraLine, SalesOrderLineItem,
+                     SalesOrderShipment)
+
+
+# region general classes
+class GeneralExtraLineAdmin:
+    """Admin class template for the 'ExtraLineItem' models"""
+    list_display = (
+        'order',
+        'quantity',
+        'reference'
+    )
+
+    search_fields = [
+        'order__reference',
+        'order__customer__name',
+        'reference',
+    ]
+
+    autocomplete_fields = ('order', )
+
+
+class GeneralExtraLineMeta:
+    """Metaclass template for the 'ExtraLineItem' models"""
+    skip_unchanged = True
+    report_skipped = False
+    clean_model_instances = True
+# endregion
 
 
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
+    """Inline admin class for the PurchaseOrderLineItem model"""
     model = PurchaseOrderLineItem
     extra = 0
 
 
 class PurchaseOrderAdmin(ImportExportModelAdmin):
+    """Admin class for the PurchaseOrder model"""
 
     exclude = [
         'reference_int',
@@ -46,6 +75,7 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
 
 
 class SalesOrderAdmin(ImportExportModelAdmin):
+    """Admin class for the SalesOrder model"""
 
     exclude = [
         'reference_int',
@@ -68,8 +98,27 @@ class SalesOrderAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('customer',)
 
 
-class POLineItemResource(ModelResource):
-    """ Class for managing import / export of POLineItem data """
+class PurchaseOrderResource(InvenTreeResource):
+    """Class for managing import / export of PurchaseOrder data."""
+
+    # Add number of line items
+    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
+
+    # Is this order overdue?
+    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
+
+    class Meta:
+        """Metaclass"""
+        model = PurchaseOrder
+        skip_unchanged = True
+        clean_model_instances = True
+        exclude = [
+            'metadata',
+        ]
+
+
+class PurchaseOrderLineItemResource(InvenTreeResource):
+    """Class for managing import / export of PurchaseOrderLineItem data."""
 
     part_name = Field(attribute='part__part__name', readonly=True)
 
@@ -80,16 +129,43 @@ class POLineItemResource(ModelResource):
     SKU = Field(attribute='part__SKU', readonly=True)
 
     class Meta:
+        """Metaclass"""
         model = PurchaseOrderLineItem
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
 
 
-class SOLineItemResource(ModelResource):
-    """
-    Class for managing import / export of SOLineItem data
-    """
+class PurchaseOrderExtraLineResource(InvenTreeResource):
+    """Class for managing import / export of PurchaseOrderExtraLine data."""
+
+    class Meta(GeneralExtraLineMeta):
+        """Metaclass options."""
+
+        model = PurchaseOrderExtraLine
+
+
+class SalesOrderResource(InvenTreeResource):
+    """Class for managing import / export of SalesOrder data."""
+
+    # Add number of line items
+    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
+
+    # Is this order overdue?
+    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
+
+    class Meta:
+        """Metaclass options"""
+        model = SalesOrder
+        skip_unchanged = True
+        clean_model_instances = True
+        exclude = [
+            'metadata',
+        ]
+
+
+class SalesOrderLineItemResource(InvenTreeResource):
+    """Class for managing import / export of SalesOrderLineItem data."""
 
     part_name = Field(attribute='part__name', readonly=True)
 
@@ -100,26 +176,36 @@ class SOLineItemResource(ModelResource):
     fulfilled = Field(attribute='fulfilled_quantity', readonly=True)
 
     def dehydrate_sale_price(self, item):
-        """
-        Return a string value of the 'sale_price' field, rather than the 'Money' object.
+        """Return a string value of the 'sale_price' field, rather than the 'Money' object.
+
         Ref: https://github.com/inventree/InvenTree/issues/2207
         """
-
         if item.sale_price:
             return str(item.sale_price)
         else:
             return ''
 
     class Meta:
+        """Metaclass options"""
         model = SalesOrderLineItem
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
 
 
-class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
+class SalesOrderExtraLineResource(InvenTreeResource):
+    """Class for managing import / export of SalesOrderExtraLine data."""
 
-    resource_class = POLineItemResource
+    class Meta(GeneralExtraLineMeta):
+        """Metaclass options."""
+
+        model = SalesOrderExtraLine
+
+
+class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
+    """Admin class for the PurchaseOrderLine model"""
+
+    resource_class = PurchaseOrderLineItemResource
 
     list_display = (
         'order',
@@ -133,9 +219,15 @@ class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('order', 'part', 'destination',)
 
 
-class SalesOrderLineItemAdmin(ImportExportModelAdmin):
+class PurchaseOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
+    """Admin class for the PurchaseOrderExtraLine model"""
+    resource_class = PurchaseOrderExtraLineResource
 
-    resource_class = SOLineItemResource
+
+class SalesOrderLineItemAdmin(ImportExportModelAdmin):
+    """Admin class for the SalesOrderLine model"""
+
+    resource_class = SalesOrderLineItemResource
 
     list_display = (
         'order',
@@ -154,7 +246,13 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('order', 'part',)
 
 
+class SalesOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
+    """Admin class for the SalesOrderExtraLine model"""
+    resource_class = SalesOrderExtraLineResource
+
+
 class SalesOrderShipmentAdmin(ImportExportModelAdmin):
+    """Admin class for the SalesOrderShipment model"""
 
     list_display = [
         'order',
@@ -172,6 +270,7 @@ class SalesOrderShipmentAdmin(ImportExportModelAdmin):
 
 
 class SalesOrderAllocationAdmin(ImportExportModelAdmin):
+    """Admin class for the SalesOrderAllocation model"""
 
     list_display = (
         'line',
@@ -184,9 +283,11 @@ class SalesOrderAllocationAdmin(ImportExportModelAdmin):
 
 admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
 admin.site.register(PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
+admin.site.register(PurchaseOrderExtraLine, PurchaseOrderExtraLineAdmin)
 
 admin.site.register(SalesOrder, SalesOrderAdmin)
 admin.site.register(SalesOrderLineItem, SalesOrderLineItemAdmin)
+admin.site.register(SalesOrderExtraLine, SalesOrderExtraLineAdmin)
 
 admin.site.register(SalesOrderShipment, SalesOrderShipmentAdmin)
 admin.site.register(SalesOrderAllocation, SalesOrderAllocationAdmin)

@@ -12,7 +12,6 @@
 {% settings_value 'LOGIN_ENABLE_SSO' as enable_sso %}
 {% inventree_customize 'login_message' as login_message %}
 {% mail_configured as mail_conf %}
-{% inventree_demo_mode as demo %}
 
 <h1>{% trans "Sign In" %}</h1>
 
@@ -37,12 +36,14 @@ for a account and sign in below:{% endblocktrans %}</p>
 
   <hr>
   {% if login_message %}
-  <div>{{ login_message }}<hr></div>
+  <div>{{ login_message | safe }}<hr></div>
   {% endif %}
   <div class="btn-group float-right" role="group">
-    <button class="btn btn-success" type="submit">{% trans "Sign In" %}</button>
+    <button class="btn btn-success" type="submit">
+      <span class='fas fa-sign-in-alt'></span> {% trans "Sign In" %}
+    </button>
   </div>
-  {% if mail_conf and enable_pwd_forgot and not demo %}
+  {% if mail_conf and enable_pwd_forgot %}
   <a class="" href="{% url 'account_reset_password' %}"><small>{% trans "Forgot Password?" %}</small></a>
   {% endif %}
 </form>

@@ -1,17 +1,16 @@
-"""
-Files management tools.
-"""
+"""Files management tools."""
 
-from rapidfuzz import fuzz
-import tablib
 import os
 
-from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+import tablib
+from rapidfuzz import fuzz
 
 
 class FileManager:
-    """ Class for managing an uploaded file """
+    """Class for managing an uploaded file."""
 
     name = ''
 
@@ -31,8 +30,7 @@ class FileManager:
     HEADERS = []
 
     def __init__(self, file, name=None):
-        """ Initialize the FileManager class with a user-uploaded file object """
-
+        """Initialize the FileManager class with a user-uploaded file object."""
         # Set name
         if name:
             self.name = name
@@ -45,8 +43,7 @@ class FileManager:
 
     @classmethod
     def validate(cls, file):
-        """ Validate file extension and data """
-
+        """Validate file extension and data."""
         cleaned_data = None
 
         ext = os.path.splitext(file.name)[-1].lower().replace('.', '')
@@ -78,21 +75,15 @@ class FileManager:
         return cleaned_data
 
     def process(self, file):
-        """ Process file """
-
+        """Process file."""
         self.data = self.__class__.validate(file)
 
     def update_headers(self):
-        """ Update headers """
-
+        """Update headers."""
         self.HEADERS = self.REQUIRED_HEADERS + self.ITEM_MATCH_HEADERS + self.OPTIONAL_MATCH_HEADERS + self.OPTIONAL_HEADERS
 
     def setup(self):
-        """
-        Setup headers
-        should be overriden in usage to set the Different Headers
-        """
-
+        """Setup headers should be overriden in usage to set the Different Headers."""
         if not self.name:
             return
 
@@ -100,14 +91,15 @@ class FileManager:
         self.update_headers()
 
     def guess_header(self, header, threshold=80):
-        """
-        Try to match a header (from the file) to a list of known headers
+        """Try to match a header (from the file) to a list of known headers.
 
         Args:
-            header - Header name to look for
-            threshold - Match threshold for fuzzy search
-        """
+            header (Any): Header name to look for
+            threshold (int, optional): Match threshold for fuzzy search. Defaults to 80.
 
+        Returns:
+            Any: Matched headers
+        """
         # Replace null values with empty string
         if header is None:
             header = ''
@@ -142,7 +134,7 @@ class FileManager:
         return None
 
     def columns(self):
-        """ Return a list of headers for the thingy """
+        """Return a list of headers for the thingy."""
         headers = []
 
         for header in self.data.headers:
@@ -150,7 +142,7 @@ class FileManager:
             guess = self.guess_header(header, threshold=95)
             # Check if already present
             guess_exists = False
-            for idx, data in enumerate(headers):
+            for _idx, data in enumerate(headers):
                 if guess == data['guess']:
                     guess_exists = True
                     break
@@ -169,21 +161,21 @@ class FileManager:
         return headers
 
     def col_count(self):
+        """Return the number of columns in the file."""
         if self.data is None:
             return 0
 
         return len(self.data.headers)
 
     def row_count(self):
-        """ Return the number of rows in the file. """
-
+        """Return the number of rows in the file."""
         if self.data is None:
             return 0
 
         return len(self.data)
 
     def rows(self):
-        """ Return a list of all rows """
+        """Return a list of all rows."""
         rows = []
 
         for i in range(self.row_count()):
@@ -199,7 +191,7 @@ class FileManager:
 
                 try:
                     # Excel import casts number-looking-items into floats, which is annoying
-                    if item == int(item) and not str(item) == str(int(item)):
+                    if item == int(item) and str(item) != str(int(item)):
                         data[idx] = int(item)
                 except ValueError:
                     pass
@@ -220,15 +212,14 @@ class FileManager:
         return rows
 
     def get_row_data(self, index):
-        """ Retrieve row data at a particular index """
+        """Retrieve row data at a particular index."""
         if self.data is None or index >= len(self.data):
             return None
 
         return self.data[index]
 
     def get_row_dict(self, index):
-        """ Retrieve a dict object representing the data row at a particular offset """
-
+        """Retrieve a dict object representing the data row at a particular offset."""
         if self.data is None or index >= len(self.data):
             return None
 

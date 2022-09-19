@@ -222,7 +222,7 @@
     lft: 0
     rght: 0
     expiry_date: "1990-10-10"
-    uid: 9e5ae7fc20568ed4814c10967bba8b65
+    barcode_hash: 9e5ae7fc20568ed4814c10967bba8b65
 
 - model: stock.stockitem
   pk: 521
@@ -236,7 +236,7 @@
     lft: 0
     rght: 0
     status: 60
-    uid: 1be0dfa925825c5c6c79301449e50c2d
+    barcode_hash: 1be0dfa925825c5c6c79301449e50c2d
 
 - model: stock.stockitem
   pk: 522
@@ -274,7 +274,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1002
   fields:
@@ -285,7 +285,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1003
   fields:
@@ -307,7 +307,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1005
   fields:
@@ -318,7 +318,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1006
   fields:
@@ -329,7 +329,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1007
   fields:
@@ -340,7 +340,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1008
   fields:
@@ -351,4 +351,3 @@
     tree_id: 0
     lft: 0
     rght: 0
-  

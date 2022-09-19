@@ -68,7 +68,7 @@ function activatePanel(label, panel_name, options={}) {
 
 function onPanelLoad(panel, callback) {
     // One-time callback when a panel is first displayed
-    // Used to implement lazy-loading, rather than firing 
+    // Used to implement lazy-loading, rather than firing
     // multiple AJAX queries when the page is first loaded.
 
     var panelId = `#panel-${panel}`;
@@ -130,12 +130,12 @@ function enableSidebar(label, options={}) {
 
             // By default, the menu is "expanded"
             var state = localStorage.getItem(`inventree-menu-state-${label}`) || 'expanded';
-            
+
             // We wish to "toggle" the state!
             setSidebarState(label, state == 'expanded' ? 'collapsed' : 'expanded');
         });
     }
-    
+
     // Set the initial state (default = expanded)
     var state = localStorage.getItem(`inventree-menu-state-${label}`) || 'expanded';
 
@@ -204,7 +204,7 @@ function enableBreadcrumbTree(options) {
                                 node = nodes[node.parent];
                             }
                         }
-                        
+
                     } else {
                         roots.push(node);
                     }
@@ -216,6 +216,7 @@ function enableBreadcrumbTree(options) {
                     enableLinks: true,
                     expandIcon: 'fas fa-chevron-right',
                     collapseIcon: 'fa fa-chevron-down',
+                    nodeIcon: options.defaultIcon,
                 });
 
             }
@@ -227,7 +228,7 @@ function enableBreadcrumbTree(options) {
 
         // Toggle treeview visibilty
         $('#breadcrumb-tree-collapse').toggle();
-        
+
     });
 
 }

@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Tests for general API tests for the plugin app."""
 
 from django.urls import reverse
 
@@ -7,9 +6,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 
 
 class PluginDetailAPITest(InvenTreeAPITestCase):
-    """
-    Tests the plugin API endpoints
-    """
+    """Tests the plugin API endpoints."""
 
     roles = [
         'admin.add',
@@ -19,6 +16,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
+        """Setup for all tests."""
         self.MSG_NO_PKG = 'Either packagename of URL must be provided'
 
         self.PKG_NAME = 'minimal'
@@ -26,9 +24,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         super().setUp()
 
     def test_plugin_install(self):
-        """
-        Test the plugin install command
-        """
+        """Test the plugin install command."""
         url = reverse('api-plugin-install')
 
         # valid - Pypi
@@ -42,6 +38,14 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         data = self.post(url, {
             'confirm': True,
             'url': self.PKG_URL
+        }, expected_code=201).data
+        self.assertEqual(data['success'], True)
+
+        # valid - github url and packagename
+        data = self.post(url, {
+            'confirm': True,
+            'url': self.PKG_URL,
+            'packagename': 'minimal',
         }, expected_code=201).data
         self.assertEqual(data['success'], True)
 
@@ -67,11 +71,9 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         self.assertEqual(data['confirm'][0].title().upper(), 'Installation not confirmed'.upper())
 
     def test_admin_action(self):
-        """
-        Test the PluginConfig action commands
-        """
-        from plugin.models import PluginConfig
+        """Test the PluginConfig action commands."""
         from plugin import registry
+        from plugin.models import PluginConfig
 
         url = reverse('admin:plugin_pluginconfig_changelist')
         fixtures = PluginConfig.objects.all()
@@ -124,3 +126,28 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
             '_save': 'Save',
         }, follow=True)
         self.assertEqual(response.status_code, 200)
+
+    def test_model(self):
+        """Test the PluginConfig model."""
+        from plugin import registry
+        from plugin.models import PluginConfig
+
+        fixtures = PluginConfig.objects.all()
+
+        # check if plugins were registered
+        if not fixtures:
+            registry.reload_plugins()
+            fixtures = PluginConfig.objects.all()
+
+        # check mixin registry
+        plg = fixtures.first()
+        mixin_dict = plg.mixins()
+        self.assertIn('base', mixin_dict)
+        self.assertDictContainsSubset({'base': {'key': 'base', 'human_name': 'base'}}, mixin_dict)
+
+        # check reload on save
+        with self.assertWarns(Warning) as cm:
+            plg_inactive = fixtures.filter(active=False).first()
+            plg_inactive.active = True
+            plg_inactive.save()
+        self.assertEqual(cm.warning.args[0], 'A reload was triggered')
