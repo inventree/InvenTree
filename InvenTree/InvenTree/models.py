@@ -519,6 +519,11 @@ class InvenTreeTree(MPTTModel):
             self.pathstring = pathstring
             super().save(force_update=True)
 
+            # Ensure that the pathstring changes are propagated down the tree also
+            for child in self.get_children():
+                print("child:", child)
+                child.save()
+
     class Meta:
         """Metaclass defines extra model properties."""
 
