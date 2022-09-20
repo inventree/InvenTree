@@ -47,8 +47,14 @@ function shortenString(input_string, options={}) {
 
     var max_length = options.max_length || 100;
 
+    if (input_string == null) {
+        return null;
+    }
+
+    input_string = input_string.toString();
+
     // Easy option: input string is already short enough
-    if (!input_string || input_string.length <= max_length) {
+    if (input_string.length <= max_length) {
         return input_string;
     }
 
