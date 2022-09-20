@@ -13,6 +13,7 @@
     sanitizeInputString,
     select2Thumbnail,
     setupNotesField,
+    shortenString,
     thumbnailImage
     yesNoLabel,
 */
@@ -33,6 +34,29 @@ function editButton(url, text='{% trans "Edit" %}') {
 
 function deleteButton(url, text='{% trans "Delete" %}') {
     return `<button class='btn btn-danger delete-button btn-sm' type='button' url='${url}'>${text}</button>`;
+}
+
+
+/*
+ * Ensure a string does not exceed a maximum length.
+ * Useful for displaying long strings in tables,
+ * to ensure a very long string does not "overflow" the table
+ */
+function shortenString(input_string, options={}) {
+
+    var max_length = options.max_length || 150;
+
+    // Easy option: input string is already short enough
+    if (input_string.length <= max_length) {
+        return input_string;
+    }
+
+    var L = input_string.length;
+    var N = Math.floor(max_length / 2 - 1);
+
+    var output_string = input_string.substring(0, N) + "..." + input_string.substring(L - N, L);
+
+    return output_string;
 }
 
 
