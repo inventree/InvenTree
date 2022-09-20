@@ -16,6 +16,7 @@
     shortenString,
     thumbnailImage
     yesNoLabel,
+    withTitle,
 */
 
 function yesNoLabel(value) {
@@ -44,19 +45,24 @@ function deleteButton(url, text='{% trans "Delete" %}') {
  */
 function shortenString(input_string, options={}) {
 
-    var max_length = options.max_length || 150;
+    var max_length = options.max_length || 100;
 
     // Easy option: input string is already short enough
-    if (input_string.length <= max_length) {
+    if (!input_string || input_string.length <= max_length) {
         return input_string;
     }
 
-    var L = input_string.length;
     var N = Math.floor(max_length / 2 - 1);
 
-    var output_string = input_string.substring(0, N) + "..." + input_string.substring(L - N, L);
+    var output_string = input_string.slice(0, N) + "..." + input_string.slice(-N);
 
     return output_string;
+}
+
+
+function withTitle(html, title, options={}) {
+
+    return `<div title='${title}'>${html}</div>`;
 }
 
 
@@ -238,24 +244,29 @@ function makeProgressBar(value, maximum, opts={}) {
 }
 
 
+/*
+ * Render a URL for display
+ */
 function renderLink(text, url, options={}) {
     if (url === null || url === undefined || url === '') {
         return text;
     }
 
-    var max_length = options.max_length || -1;
+    var max_length = options.max_length || 32;
 
-    // Shorten the displayed length if required
-    if ((max_length > 0) && (text.length > max_length)) {
-        var slice_length = (max_length - 3) / 2;
-
-        var text_start = text.slice(0, slice_length);
-        var text_end = text.slice(-slice_length);
-
-        text = `${text_start}...${text_end}`;
+    if (max_length > 0) {
+        text = shortenString(text, {
+            max_length: max_length,
+        });
     }
 
-    return `<a href="${url}">${text}</a>`;
+    var extras = '';
+
+    if (options.tooltip) {
+        extras += ` title="${url}"`;
+    }
+
+    return `<a href="${url}" ${extras}>${text}</a>`;
 }
 
 
