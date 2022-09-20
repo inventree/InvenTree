@@ -1721,7 +1721,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         formatter: function(value, row) {
 
                             if (row.location && row.location_detail) {
-                                var text = row.location_detail.name;
+                                var text = shortenString(row.location_detail.pathstring);
                                 var url = `/stock/location/${row.location}/`;
 
                                 return renderLink(text, url);
