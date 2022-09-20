@@ -262,7 +262,7 @@ function renderLink(text, url, options={}) {
 
     var extras = '';
 
-    if (options.tooltip) {
+    if (options.tooltip != false) {
         extras += ` title="${url}"`;
     }
 

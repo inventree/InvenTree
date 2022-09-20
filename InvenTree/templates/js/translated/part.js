@@ -1982,7 +1982,7 @@ function loadPartCategoryTable(table, options) {
 
                     html += renderLink(
                         value,
-                        `/part/category/${row.pk}/`
+                        `/part/category/${row.pk}/`,
                     );
 
                     if (row.starred) {
@@ -1997,6 +1997,9 @@ function loadPartCategoryTable(table, options) {
                 title: '{% trans "Description" %}',
                 switchable: true,
                 sortable: false,
+                formatter: function(value) {
+                    return withTitle(shortenString(value), value);
+                }
             },
             {
                 field: 'pathstring',
@@ -2004,6 +2007,9 @@ function loadPartCategoryTable(table, options) {
                 switchable: !tree_view,
                 visible: !tree_view,
                 sortable: true,
+                formatter: function(value) {
+                    return withTitle(shortenString(value), value);
+                }
             },
             {
                 field: 'part_count',
