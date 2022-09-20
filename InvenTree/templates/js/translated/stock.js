@@ -2420,12 +2420,18 @@ function loadStockLocationTable(table, options) {
                 title: '{% trans "Description" %}',
                 switchable: true,
                 sortable: false,
+                formatter: function(value) {
+                    return withTitle(shortenString(value), value);
+                }
             },
             {
                 field: 'pathstring',
                 title: '{% trans "Path" %}',
                 switchable: true,
                 sortable: true,
+                formatter: function(value) {
+                    return withTitle(shortenString(value), value);
+                }
             },
             {
                 field: 'items',
