@@ -48,6 +48,82 @@ class StockTestBase(InvenTreeTestCase):
 class StockTest(StockTestBase):
     """Tests to ensure that the stock location tree functions correcly."""
 
+    def test_pathstring(self):
+        """Check that pathstring updates occur as expected"""
+
+        a = StockLocation.objects.create(name="A")
+        b = StockLocation.objects.create(name="B", parent=a)
+        c = StockLocation.objects.create(name="C", parent=b)
+        d = StockLocation.objects.create(name="D", parent=c)
+
+        def refresh():
+            a.refresh_from_db()
+            b.refresh_from_db()
+            c.refresh_from_db()
+            d.refresh_from_db()
+
+        # Initial checks
+        self.assertEqual(a.pathstring, "A")
+        self.assertEqual(b.pathstring, "A/B")
+        self.assertEqual(c.pathstring, "A/B/C")
+        self.assertEqual(d.pathstring, "A/B/C/D")
+
+        c.name = "Cc"
+        c.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "A")
+        self.assertEqual(b.pathstring, "A/B")
+        self.assertEqual(c.pathstring, "A/B/Cc")
+        self.assertEqual(d.pathstring, "A/B/Cc/D")
+
+        b.name = "Bb"
+        b.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "A")
+        self.assertEqual(b.pathstring, "A/Bb")
+        self.assertEqual(c.pathstring, "A/Bb/Cc")
+        self.assertEqual(d.pathstring, "A/Bb/Cc/D")
+
+        a.name = "Aa"
+        a.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "Aa")
+        self.assertEqual(b.pathstring, "Aa/Bb")
+        self.assertEqual(c.pathstring, "Aa/Bb/Cc")
+        self.assertEqual(d.pathstring, "Aa/Bb/Cc/D")
+
+        d.name = "Dd"
+        d.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "Aa")
+        self.assertEqual(b.pathstring, "Aa/Bb")
+        self.assertEqual(c.pathstring, "Aa/Bb/Cc")
+        self.assertEqual(d.pathstring, "Aa/Bb/Cc/Dd")
+
+        # Test a really long name
+        # (it will be clipped to < 250 characters)
+        a.name = "A" * 100
+        a.save()
+        b.name = "B" * 100
+        b.save()
+        c.name = "C" * 100
+        c.save()
+        d.name = "D" * 100
+        d.save()
+
+        refresh()
+        self.assertEqual(len(a.pathstring), 100)
+        self.assertEqual(len(b.pathstring), 201)
+        self.assertEqual(len(c.pathstring), 249)
+        self.assertEqual(len(d.pathstring), 249)
+
+        self.assertTrue(d.pathstring.startswith("AAAAAAAA"))
+        self.assertTrue(d.pathstring.endswith("DDDDDDDD"))
+
     def test_link(self):
         """Test the link URL field validation"""
 

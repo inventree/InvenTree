@@ -68,28 +68,10 @@ def constructPathString(path, max_chars=250):
 
     pathstring = '/'.join(path)
 
-    idx = 0
-
     # Replace middle elements to limit the pathstring
     if len(pathstring) > max_chars:
-        mid = len(path) // 2
-        path_l = path[0:mid]
-        path_r = path[mid:]
-
-        # Ensure the pathstring length is limited
-        while len(pathstring) > max_chars:
-
-            # Remove an element from the list
-            if idx % 2 == 0:
-                path_l = path_l[:-1]
-            else:
-                path_r = path_r[1:]
-
-            subpath = path_l + ['...'] + path_r
-
-            pathstring = '/'.join(subpath)
-
-            idx += 1
+        n = int(max_chars / 2 - 2)
+        pathstring = pathstring[:n] + "..." + pathstring[-n:]
 
     return pathstring
 

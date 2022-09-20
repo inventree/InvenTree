@@ -516,13 +516,18 @@ class InvenTreeTree(MPTTModel):
         )
 
         if pathstring != self.pathstring:
+
+            if 'force_insert' in kwargs:
+                del kwargs['force_insert']
+
+            kwargs['force_update'] = True
+
             self.pathstring = pathstring
-            super().save(force_update=True)
+            super().save(*args, **kwargs)
 
             # Ensure that the pathstring changes are propagated down the tree also
             for child in self.get_children():
-                print("child:", child)
-                child.save()
+                child.save(*args, **kwargs)
 
     class Meta:
         """Metaclass defines extra model properties."""
