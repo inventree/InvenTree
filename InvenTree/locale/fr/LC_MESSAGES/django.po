@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-15 04:15+0000\n"
-"PO-Revision-Date: 2022-09-15 04:55\n"
+"PO-Revision-Date: 2022-09-20 00:46\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -92,15 +92,15 @@ msgstr "Vous devez taper le même e-mail à chaque fois."
 
 #: InvenTree/helpers.py:176
 msgid "Connection error"
-msgstr ""
+msgstr "Erreur de connexion"
 
 #: InvenTree/helpers.py:180 InvenTree/helpers.py:185
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "Le serveur a répondu avec un code de statut invalide"
 
 #: InvenTree/helpers.py:182
 msgid "Exception occurred"
-msgstr ""
+msgstr "Une erreur est survenue"
 
 #: InvenTree/helpers.py:190
 msgid "Server responded with invalid Content-Length value"
@@ -108,19 +108,19 @@ msgstr ""
 
 #: InvenTree/helpers.py:193
 msgid "Image size is too large"
-msgstr ""
+msgstr "Image trop volumineuse"
 
 #: InvenTree/helpers.py:205
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "La taille de l'image dépasse la taille maximale autorisée"
 
 #: InvenTree/helpers.py:210
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "Le serveur distant a renvoyé une réponse vide"
 
 #: InvenTree/helpers.py:218
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "L'URL fournie n'est pas un fichier image valide"
 
 #: InvenTree/helpers.py:601
 #, python-brace-format
@@ -332,11 +332,11 @@ msgstr "Chemin d'accès"
 
 #: InvenTree/models.py:662
 msgid "Barcode Data"
-msgstr ""
+msgstr "Données du code-barres"
 
 #: InvenTree/models.py:663
 msgid "Third party barcode data"
-msgstr ""
+msgstr "Données de code-barres tierces"
 
 #: InvenTree/models.py:668 order/serializers.py:486
 msgid "Barcode Hash"
@@ -344,11 +344,11 @@ msgstr ""
 
 #: InvenTree/models.py:669
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Hachage unique des données du code-barres"
 
 #: InvenTree/models.py:714
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Code-barres trouvé"
 
 #: InvenTree/models.py:767
 msgid "Server Error"
@@ -415,15 +415,15 @@ msgstr "Colonne duliquée : '{col}'"
 #: InvenTree/serializers.py:602
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: InvenTree/serializers.py:603
 msgid "URL of remote image file"
-msgstr ""
+msgstr "URL du fichier image distant"
 
 #: InvenTree/serializers.py:617
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "Le téléchargement des images depuis une URL distante n'est pas activé"
 
 #: InvenTree/settings.py:607
 msgid "Czech"
@@ -431,7 +431,7 @@ msgstr "Tchèque"
 
 #: InvenTree/settings.py:608
 msgid "Danish"
-msgstr ""
+msgstr "Danois"
 
 #: InvenTree/settings.py:609
 msgid "German"
@@ -1197,7 +1197,7 @@ msgstr "Supprimer toutes les sorties de construction qui n'ont pas été complé
 
 #: build/serializers.py:485
 msgid "Accept as consumed by this build order"
-msgstr ""
+msgstr "Accepter comme consommé par cet ordre de construction"
 
 #: build/serializers.py:486
 msgid "Deallocate before completing this build order"
@@ -1782,11 +1782,11 @@ msgstr "Autoriser le téléchargement d'images distantes et de fichiers à parti
 
 #: common/models.py:861
 msgid "Download Size Limit"
-msgstr ""
+msgstr "Limite du volume de téléchargement"
 
 #: common/models.py:862
 msgid "Maximum allowable download size for remote image"
-msgstr ""
+msgstr "Taille maximale autorisée pour le téléchargement de l'image distante"
 
 #: common/models.py:873
 msgid "Require confirm"
@@ -1798,11 +1798,11 @@ msgstr "Exiger une confirmation explicite de l’utilisateur pour certaines acti
 
 #: common/models.py:880
 msgid "Tree Depth"
-msgstr ""
+msgstr "Profondeur de l'arborescence"
 
 #: common/models.py:881
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
-msgstr ""
+msgstr "Profondeur de l'arborescence par défaut. Les niveaux plus profonds peuvent être chargés au fur et à mesure qu'ils sont nécessaires."
 
 #: common/models.py:890 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
