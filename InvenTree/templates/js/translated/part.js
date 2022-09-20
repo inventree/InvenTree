@@ -1442,13 +1442,13 @@ function loadPartTable(table, url, options={}) {
         switchable: false,
         formatter: function(value, row) {
 
-            var name = row.full_name;
+            var name = shortenString(row.full_name);
 
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, `/part/${row.pk}/`);
 
             display += makePartIcons(row);
 
-            return display;
+            return withTitle(display, row.full_name);
         }
     };
 
@@ -1463,11 +1463,13 @@ function loadPartTable(table, url, options={}) {
         title: '{% trans "Description" %}',
         formatter: function(value, row) {
 
+            var text = shortenString(value);
+
             if (row.is_template) {
-                value = `<i>${value}</i>`;
+                text = `<i>${text}</i>`;
             }
 
-            return value;
+            return withTitle(text, row.description);
         }
     });
 
@@ -1476,8 +1478,11 @@ function loadPartTable(table, url, options={}) {
         field: 'category_detail',
         title: '{% trans "Category" %}',
         formatter: function(value, row) {
+
+            var text = shortenString(row.category_detail.pathstring);
+
             if (row.category) {
-                return renderLink(value.pathstring, `/part/category/${row.category}/`);
+                return withTitle(renderLink(text, `/part/category/${row.category}/`), row.category_detail.pathstring);
             } else {
                 return '{% trans "No category" %}';
             }
@@ -1563,10 +1568,11 @@ function loadPartTable(table, url, options={}) {
         title: '{% trans "Link" %}',
         formatter: function(value) {
             return renderLink(
-                value, value,
+                value,
+                value,
                 {
-                    max_length: 32,
                     remove_http: true,
+                    tooltip: true,
                 }
             );
         }
