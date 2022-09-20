@@ -60,7 +60,7 @@ function shortenString(input_string, options={}) {
 
     var N = Math.floor(max_length / 2 - 1);
 
-    var output_string = input_string.slice(0, N) + "..." + input_string.slice(-N);
+    var output_string = input_string.slice(0, N) + '...' + input_string.slice(-N);
 
     return output_string;
 }
