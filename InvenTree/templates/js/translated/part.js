@@ -803,7 +803,7 @@ function loadSimplePartTable(table, url, options={}) {
 }
 
 
-function loadPartParameterTable(table, url, options) {
+function loadPartParameterTable(table, options) {
 
     var params = options.params || {};
 
@@ -819,7 +819,7 @@ function loadPartParameterTable(table, url, options) {
     setupFilterList('part-parameters', $(table), filterTarget);
 
     $(table).inventreeTable({
-        url: url,
+        url: '{% url "api-part-parameter-list" %}',
         original: params,
         queryParams: filters,
         name: 'partparameters',
@@ -1309,7 +1309,7 @@ function loadParametricPartTable(table, options={}) {
                     row[`parameter_${parameter.template}`] = parameter.data;
                 });
 
-                $(table).bootstrapTable('updateRow', pk, row);
+                $(table).bootstrapTable('updateByUniqueId', pk, row);
             }
         }
     });
