@@ -228,11 +228,7 @@ src="{% static 'img/blank_image.png' %}"
     });
 
     $("#build-complete").on('click', function() {
-        completeBuildOrder({{ build.pk }}, {
-            overallocated: {% if build.has_overallocated_parts %}true{% else %}false{% endif %},
-            allocated: {% if build.are_untracked_parts_allocated %}true{% else %}false{% endif %},
-            completed: {% if build.remaining == 0 %}true{% else %}false{% endif %},
-        });
+        completeBuildOrder({{ build.pk }});
     });
     {% endif %}
 
