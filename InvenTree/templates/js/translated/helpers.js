@@ -258,7 +258,7 @@ function renderLink(text, url, options={}) {
         return text;
     }
 
-    var max_length = options.max_length || 100;
+    var max_length = options.max_length || 0;
 
     if (max_length > 0) {
         text = shortenString(text, {
