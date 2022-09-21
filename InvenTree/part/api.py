@@ -1605,6 +1605,20 @@ class PartParameterList(ListCreateAPI):
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
 
+    def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this API endpoint.
+
+        If requested, extra detail fields are annotated to the queryset:
+        - template_detail
+        """
+
+        try:
+            kwargs['template_detail'] = str2bool(self.request.GET.get('template_detail', True))
+        except AttributeError:
+            pass
+
+        return self.serializer_class(*args, **kwargs)
+
     filter_backends = [
         DjangoFilterBackend
     ]
