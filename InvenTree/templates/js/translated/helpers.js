@@ -379,6 +379,10 @@ function setupNotesField(element, url, options={}) {
  */
 function sanitizeInputString(s, options={}) {
 
+    if (!s) {
+        return s;
+    }
+
     // Remove ASCII control characters
     s = s.replace(/[\x01-\x1F]+/g, '');
 
