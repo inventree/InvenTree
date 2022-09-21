@@ -13,8 +13,10 @@
     sanitizeInputString,
     select2Thumbnail,
     setupNotesField,
+    shortenString,
     thumbnailImage
     yesNoLabel,
+    withTitle,
 */
 
 function yesNoLabel(value) {
@@ -33,6 +35,40 @@ function editButton(url, text='{% trans "Edit" %}') {
 
 function deleteButton(url, text='{% trans "Delete" %}') {
     return `<button class='btn btn-danger delete-button btn-sm' type='button' url='${url}'>${text}</button>`;
+}
+
+
+/*
+ * Ensure a string does not exceed a maximum length.
+ * Useful for displaying long strings in tables,
+ * to ensure a very long string does not "overflow" the table
+ */
+function shortenString(input_string, options={}) {
+
+    var max_length = options.max_length || 100;
+
+    if (input_string == null) {
+        return null;
+    }
+
+    input_string = input_string.toString();
+
+    // Easy option: input string is already short enough
+    if (input_string.length <= max_length) {
+        return input_string;
+    }
+
+    var N = Math.floor(max_length / 2 - 1);
+
+    var output_string = input_string.slice(0, N) + '...' + input_string.slice(-N);
+
+    return output_string;
+}
+
+
+function withTitle(html, title, options={}) {
+
+    return `<div title='${title}'>${html}</div>`;
 }
 
 
@@ -214,24 +250,29 @@ function makeProgressBar(value, maximum, opts={}) {
 }
 
 
+/*
+ * Render a URL for display
+ */
 function renderLink(text, url, options={}) {
     if (url === null || url === undefined || url === '') {
         return text;
     }
 
-    var max_length = options.max_length || -1;
+    var max_length = options.max_length || 0;
 
-    // Shorten the displayed length if required
-    if ((max_length > 0) && (text.length > max_length)) {
-        var slice_length = (max_length - 3) / 2;
-
-        var text_start = text.slice(0, slice_length);
-        var text_end = text.slice(-slice_length);
-
-        text = `${text_start}...${text_end}`;
+    if (max_length > 0) {
+        text = shortenString(text, {
+            max_length: max_length,
+        });
     }
 
-    return `<a href="${url}">${text}</a>`;
+    var extras = '';
+
+    if (options.tooltip != false) {
+        extras += ` title="${url}"`;
+    }
+
+    return `<a href="${url}" ${extras}>${text}</a>`;
 }
 
 
@@ -337,6 +378,10 @@ function setupNotesField(element, url, options={}) {
  * - Remove hidden control characters
  */
 function sanitizeInputString(s, options={}) {
+
+    if (!s) {
+        return s;
+    }
 
     // Remove ASCII control characters
     s = s.replace(/[\x01-\x1F]+/g, '');

@@ -201,58 +201,74 @@ function cancelBuildOrder(build_id, options={}) {
 /* Construct a form to "complete" (finish) a build order */
 function completeBuildOrder(build_id, options={}) {
 
-    var url = `/api/build/${build_id}/finish/`;
+    constructForm(`/api/build/${build_id}/finish/`, {
+        fieldsFunction: function(opts) {
+            var ctx = opts.context || {};
 
-    var fields = {
-        accept_unallocated: {},
-        accept_overallocated: {},
-        accept_incomplete: {},
-    };
+            var fields = {
+                accept_unallocated: {},
+                accept_overallocated: {},
+                accept_incomplete: {},
+            };
 
-    var html = '';
+            // Hide "accept overallocated" field if the build is *not* overallocated
+            if (!ctx.overallocated) {
+                delete fields.accept_overallocated;
+            }
 
-    if (options.allocated && options.completed) {
-        html += `
-        <div class='alert alert-block alert-success'>
-        {% trans "Build order is ready to be completed" %}
-        </div>`;
-    } else {
-        html += `
-        <div class='alert alert-block alert-danger'>
-        <strong>{% trans "Build Order is incomplete" %}</strong>
-        </div>
-        `;
+            // Hide "accept incomplete" field if the build has been completed
+            if (!ctx.remaining || ctx.remaining == 0) {
+                delete fields.accept_incomplete;
+            }
 
-        if (!options.allocated) {
-            html += `<div class='alert alert-block alert-warning'>{% trans "Required stock has not been fully allocated" %}</div>`;
-        }
+            // Hide "accept unallocated" field if the build is fully allocated
+            if (ctx.allocated) {
+                delete fields.accept_unallocated;
+            }
 
-        if (!options.completed) {
-            html += `<div class='alert alert-block alert-warning'>{% trans "Required build quantity has not been completed" %}</div>`;
-        }
-    }
+            return fields;
+        },
+        preFormContent: function(opts) {
+            var ctx = opts.context || {};
 
-    // Hide particular fields if they are not required
+            var html = '';
 
-    if (options.allocated) {
-        delete fields.accept_unallocated;
-    }
+            if (ctx.allocated && ctx.remaining == 0 && ctx.incomplete == 0) {
+                html += `
+                <div class='alert alert-block alert-success'>
+                {% trans "Build order is ready to be completed" %}'
+                </div>`;
+            } else {
 
-    if (options.completed) {
-        delete fields.accept_incomplete;
-    }
+                if (ctx.incomplete > 0) {
+                    html += `
+                    <div class='alert alert-block alert-danger'>
+                    <strong>{% trans "Build order has incomplete outputs" %}</strong><br>
+                    {% trans "This build order cannot be completed as there are incomplete outputs" %}
+                    </div>`;
+                } else {
+                    html += `
+                    <div class='alert alert-block alert-danger'>
+                    <strong>{% trans "Build Order is incomplete" %}</strong>
+                    </div>
+                    `;
+                }
 
-    if (!options.overallocated) {
-        delete fields.accept_overallocated;
-    }
+                if (!ctx.allocated) {
+                    html += `<div class='alert alert-block alert-warning'>{% trans "Required stock has not been fully allocated" %}</div>`;
+                }
 
-    constructForm(url, {
-        fields: fields,
+                if (ctx.remaining > 0) {
+                    html += `<div class='alert alert-block alert-warning'>{% trans "Required build quantity has not been completed" %}</div>`;
+                }
+            }
+
+            return html;
+        },
         reload: true,
         confirm: true,
-        method: 'POST',
         title: '{% trans "Complete Build Order" %}',
-        preFormContent: html,
+        method: 'POST',
     });
 }
 
@@ -1721,7 +1737,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         formatter: function(value, row) {
 
                             if (row.location && row.location_detail) {
-                                var text = row.location_detail.name;
+                                var text = shortenString(row.location_detail.pathstring);
                                 var url = `/stock/location/${row.location}/`;
 
                                 return renderLink(text, url);
