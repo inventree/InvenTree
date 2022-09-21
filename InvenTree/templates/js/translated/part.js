@@ -1356,7 +1356,7 @@ function partGridTile(part) {
             <div class='panel-content'>
                 <div class='row'>
                     <div class='col-sm-4'>
-                        <img src='${part.thumbnail}' style='width: 100%;' class='card-thumb' onclick='showModalImage("${part.image}")'>
+                        <img src='${part.thumbnail}' class='card-thumb' onclick='showModalImage("${part.image}")'>
                     </div>
                     <div class='col-sm-8'>
                         <table class='table table-striped table-condensed'>

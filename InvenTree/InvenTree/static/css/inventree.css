@@ -839,6 +839,11 @@ input[type="submit"] {
     padding: 10px;
 }
 
+.card-thumb {
+    max-width: 64px;
+    max-height: 64px;
+}
+
 .float-right {
     float: right;
 }
