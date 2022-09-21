@@ -1292,13 +1292,12 @@ function loadParametricPartTable(table, options={}) {
         },
         columns: columns,
         showColumns: true,
-        // filterControl: true,
         sidePagination: 'server',
         idField: 'pk',
         uniqueId: 'pk',
-        onLoadSuccess: function() {
+        onLoadSuccess: function(response) {
 
-            var data = $(table).bootstrapTable('getData');
+            var data = response.results;
 
             for (var idx = 0; idx < data.length; idx++) {
                 var row = data[idx];
