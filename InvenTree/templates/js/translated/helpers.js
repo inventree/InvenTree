@@ -258,7 +258,7 @@ function renderLink(text, url, options={}) {
         return text;
     }
 
-    var max_length = options.max_length || 100;
+    var max_length = options.max_length || 0;
 
     if (max_length > 0) {
         text = shortenString(text, {
@@ -378,6 +378,10 @@ function setupNotesField(element, url, options={}) {
  * - Remove hidden control characters
  */
 function sanitizeInputString(s, options={}) {
+
+    if (!s) {
+        return s;
+    }
 
     // Remove ASCII control characters
     s = s.replace(/[\x01-\x1F]+/g, '');

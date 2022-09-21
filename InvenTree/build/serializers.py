@@ -490,6 +490,21 @@ class OverallocationChoice():
 class BuildCompleteSerializer(serializers.Serializer):
     """DRF serializer for marking a BuildOrder as complete."""
 
+    def get_context_data(self):
+        """Retrieve extra context data for this serializer.
+
+        This is so we can determine (at run time) whether the build is ready to be completed.
+        """
+
+        build = self.context['build']
+
+        return {
+            'overallocated': build.has_overallocated_parts(),
+            'allocated': build.are_untracked_parts_allocated(),
+            'remaining': build.remaining,
+            'incomplete': build.incomplete_count,
+        }
+
     accept_overallocated = serializers.ChoiceField(
         label=_('Overallocated Stock'),
         choices=list(OverallocationChoice.OPTIONS.items()),
