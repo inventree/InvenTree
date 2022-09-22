@@ -813,7 +813,6 @@
     onPanelLoad("part-parameters", function() {
         loadPartParameterTable(
             '#parameter-table',
-            '{% url "api-part-parameter-list" %}',
             {
                 params: {
                     part: {{ part.pk }},

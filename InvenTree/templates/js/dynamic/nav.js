@@ -154,7 +154,7 @@ function enableBreadcrumbTree(options) {
     var label = options.label;
 
     if (!label) {
-        console.log('ERROR: enableBreadcrumbTree called without supplying label');
+        console.error('enableBreadcrumbTree called without supplying label');
         return;
     }
 

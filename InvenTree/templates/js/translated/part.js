@@ -803,7 +803,7 @@ function loadSimplePartTable(table, url, options={}) {
 }
 
 
-function loadPartParameterTable(table, url, options) {
+function loadPartParameterTable(table, options) {
 
     var params = options.params || {};
 
@@ -819,7 +819,7 @@ function loadPartParameterTable(table, url, options) {
     setupFilterList('part-parameters', $(table), filterTarget);
 
     $(table).inventreeTable({
-        url: url,
+        url: '{% url "api-part-parameter-list" %}',
         original: params,
         queryParams: filters,
         name: 'partparameters',
@@ -1292,13 +1292,12 @@ function loadParametricPartTable(table, options={}) {
         },
         columns: columns,
         showColumns: true,
-        // filterControl: true,
         sidePagination: 'server',
         idField: 'pk',
         uniqueId: 'pk',
-        onLoadSuccess: function() {
+        onLoadSuccess: function(response) {
 
-            var data = $(table).bootstrapTable('getData');
+            var data = response.results;
 
             for (var idx = 0; idx < data.length; idx++) {
                 var row = data[idx];
@@ -1309,7 +1308,7 @@ function loadParametricPartTable(table, options={}) {
                     row[`parameter_${parameter.template}`] = parameter.data;
                 });
 
-                $(table).bootstrapTable('updateRow', pk, row);
+                $(table).bootstrapTable('updateByUniqueId', pk, row);
             }
         }
     });
