@@ -1070,6 +1070,7 @@ function loadBomTable(table, options={}) {
         {
             field: 'can_build',
             title: '{% trans "Can Build" %}',
+            sortable: true,
             formatter: function(value, row) {
 
                 // "Consumable" parts are not tracked in the build
@@ -1088,7 +1089,25 @@ function loadBomTable(table, options={}) {
 
                 return (cb_a > cb_b) ? 1 : -1;
             },
-            sortable: true,
+            footerFormatter: function(data) {
+                var can_build = null;
+
+                data.forEach(function(row) {
+                    if (row.quantity > 0 && !row.consumable) {
+                        var cb = availableQuantity(row) / row.quantity;
+
+                        if (can_build == null || cb < can_build) {
+                            can_build = cb;
+                        }
+                    }
+                });
+
+                if (can_build == null) {
+                    return '-';
+                } else {
+                    return formatDecimal(can_build, 2);
+                }
+            }
         }
     );
 
