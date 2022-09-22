@@ -2102,6 +2102,11 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
     for (var idx = 0; idx < bom_items.length; idx++) {
         var bom_item = bom_items[idx];
 
+        // Ignore "consumable" BOM items
+        if (bom_item.consumable) {
+            continue;
+        }
+
         var required = bom_item.required || 0;
         var allocated = bom_item.allocated || 0;
         var remaining = required - allocated;
