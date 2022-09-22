@@ -839,6 +839,10 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         # Get a list of all 'untracked' BOM items
         for bom_item in self.untracked_bom_items:
 
+            if bom_item.consumable:
+                # Do not auto-allocate stock to consumable BOM items
+                continue
+
             variant_parts = bom_item.sub_part.get_descendants(include_self=False)
 
             unallocated_quantity = self.unallocated_quantity(bom_item)
