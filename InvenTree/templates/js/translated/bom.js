@@ -1072,9 +1072,12 @@ function loadBomTable(table, options={}) {
             title: '{% trans "Can Build" %}',
             formatter: function(value, row) {
 
+                // "Consumable" parts are not tracked in the build
                 if (row.consumable) {
-                    return `<em>{% trans "Consumable" %}</em>`;
+                    return `<em>{% trans "Consumable item" %}</em>`;
                 }
+
+                var can_build = canBuildQuantity(row);
 
                 return +can_build.toFixed(2);
             },
