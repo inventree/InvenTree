@@ -84,6 +84,7 @@ class RuleSet(models.Model):
         ],
         'part': [
             'part_part',
+            'part_partpricing',
             'part_bomitem',
             'part_bomitemsubstitute',
             'part_partattachment',
