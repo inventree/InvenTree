@@ -2288,61 +2288,61 @@ class PartPricing(models.Model):
     )
 
     bom_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Minimum BOM Cost'),
         help_text=_('Minimum cost of component parts')
     )
 
     bom_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Maximum BOM Cost'),
         help_text=_('Maximum cost of component parts'),
     )
 
     purchase_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Minimum Purchase Cost'),
         help_text=_('Minimum historical purchase cost'),
     )
 
     purchase_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Maximum Purchase Cost'),
         help_text=_('Maximum historical purchase cost'),
     )
 
     internal_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Minimum Internal Cost'),
         help_text=_('Minimum cost based on internal price breaks'),
     )
 
     internal_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Maximum Internal Cost'),
         help_text=_('Maximum cost based on internal price breaks'),
     )
 
     supplier_price_min = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Minimum Supplier Price'),
         help_text=_('Minimum price of part from external suppliers'),
     )
 
     supplier_price_max = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Maximum Supplier Price'),
         help_text=_('Maximum price of part from external suppliers'),
     )
 
     overall_min = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Minimum Cost'),
         help_text=_('Calculated overall minimum cost'),
     )
 
     overall_max = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Maximum Cost'),
         help_text=_('Calculated overall maximum cost'),
     )
