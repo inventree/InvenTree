@@ -4,6 +4,7 @@ import logging
 import os
 import re
 from datetime import datetime
+from io import BytesIO
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -24,6 +25,7 @@ import InvenTree.format
 import InvenTree.helpers
 from common.models import InvenTreeSetting
 from InvenTree.fields import InvenTreeURLField
+from InvenTree.sanitizer import sanitize_svg
 
 logger = logging.getLogger('inventree')
 
@@ -383,7 +385,15 @@ class InvenTreeAttachment(models.Model):
                 'link': _('Missing external link'),
             })
 
+        if self.attachment.name.lower().endswith('.svg'):
+            self.attachment.file.file = self.clean_svg(self.attachment)
+
         super().save(*args, **kwargs)
+
+    def clean_svg(self, field):
+        """Sanitize SVG file before saving."""
+        cleaned = sanitize_svg(field.file.read())
+        return BytesIO(bytes(cleaned, 'utf8'))
 
     def __str__(self):
         """Human name for attachment."""
