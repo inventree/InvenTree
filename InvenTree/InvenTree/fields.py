@@ -70,6 +70,13 @@ class InvenTreeModelMoneyField(ModelMoneyField):
             # set defaults
             kwargs.update(money_kwargs())
 
+        # Default values (if not specified)
+        if 'max_digits' not in kwargs:
+            kwargs['max_digits'] = 19
+
+        if 'decimal_places' not in kwargs:
+            kwargs['decimal_places'] = 6
+
         # Set a minimum value validator
         validators = kwargs.get('validators', [])
 

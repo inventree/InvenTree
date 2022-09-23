@@ -31,6 +31,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
 
 import common.models
+import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
 import part.filters as part_filters
@@ -2163,6 +2164,131 @@ def after_save_part(sender, instance: Part, created, **kwargs):
 
         # Run this check in the background
         InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance)
+
+
+class PartPricing(models.Model):
+    """Model for caching min/max pricing information for a particular Part
+
+    It is prohibitively expensive to calculate min/max pricing for a part "on the fly".
+    As min/max pricing does not change very often, we pre-calculate and cache these values.
+
+    Whenever pricing is updated, these values are re-calculated and stored.
+
+    Pricing information is cached for:
+
+    - BOM cost (min / max cost of component items)
+    - Purchase cost (based on purchase history)
+    - Internal cost (based on user-specified InternalPriceBreak data)
+    - Supplier price (based on supplier part data)
+    - Overall best / worst (based on the values listed above)
+
+    Note that this pricing information does not take "quantity" into account.
+    Quantity pricing still needs to be calculated.
+    """
+
+    def save(self, *args, **kwargs):
+        """Whenever pricing model is saved, automatically update overall prices"""
+
+        self.update_overall_cost()
+
+        super().save(*args, **kwargs)
+
+    def update_bom_cost(self):
+        """Recalculate BOM cost for the referenced Part instance"""
+
+        # TODO - Implement this function
+        pass
+
+    def update_purchase_cost(self):
+        """Recalculate historical purchase cost for the referenced Part instance"""
+
+        # TODO - Implement this function
+        pass
+
+    def update_internal_cost(self):
+        """Recalculate internal cost for the referenced Part instance"""
+
+        # TODO - Implement this function
+        pass
+
+    def update_supplier_cost(self):
+        """Recalculate supplier cost for the referenced Part instance"""
+
+        # TODO - Implement this function
+        pass
+
+    def update_overall_cost(self):
+        """Update overall pricing values"""
+
+        # TODO - Implement this function
+        pass
+
+    part = models.OneToOneField(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='pricing_data',
+        verbose_name=_('Part'),
+    )
+
+    bom_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True,
+        verbose_name=_('Minimum BOM Cost'),
+        help_text=_('Minimum cost of component parts')
+    )
+
+    bom_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True,
+        verbose_name=_('Maximum BOM Cost'),
+        help_text=_('Maximum cost of component parts'),
+    )
+
+    purchase_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True,
+        verbose_name=_('Minimum Purchase Cost'),
+        help_text=_('Minimum historical purchase cost'),
+    )
+
+    purchase_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True,
+        verbose_name=_('Maximum Purchase Cost'),
+        help_text=_('Maximum historical purchase cost'),
+    )
+
+    internal_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True,
+        verbose_name=_('Minimum Internal Cost'),
+        help_text=_('Minimum cost based on internal price breaks'),
+    )
+
+    internal_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True,
+        verbose_name=_('Maximum Internal Cost'),
+        help_text=_('Maximum cost based on internal price breaks'),
+    )
+
+    supplier_price_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True,
+        verbose_name=_('Minimum Supplier Price'),
+        help_text=_('Minimum price of part from external suppliers'),
+    )
+
+    supplier_price_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True,
+        verbose_name=_('Maximum Supplier Price'),
+        help_text=_('Maximum price of part from external suppliers'),
+    )
+
+    overall_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True,
+        verbose_name=_('Minimum Cost'),
+        help_text=_('Calculated overall minimum cost'),
+    )
+
+    overall_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True,
+        verbose_name=_('Maximum Cost'),
+        help_text=_('Calculated overall maximum cost'),
+    )
 
 
 class PartAttachment(InvenTreeAttachment):
