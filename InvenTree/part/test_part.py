@@ -4,7 +4,7 @@ import os
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.test import TestCase
 
 from allauth.account.models import EmailAddress
@@ -257,6 +257,31 @@ class PartTest(TestCase):
     def test_copy(self):
         """Test that we can 'deep copy' a Part instance"""
         self.r2.deep_copy(self.r1, image=True, bom=True)
+
+    def test_pricing_data(self):
+        """Test link between Part and PartPricing models"""
+
+        # Create a new Part
+        part = Part.objects.create(name='PP', description='Some new part')
+
+        # Initially there is no associated Pricing data
+        with self.assertRaises(ObjectDoesNotExist):
+            pricing = part.pricing_data
+
+        # Accessing in this manner should create the associated PartPricing instance
+        pricing = part.pricing
+
+        self.assertEqual(pricing.part, part)
+
+        # Default values should be null
+        self.assertIsNone(pricing.bom_cost_min)
+        self.assertIsNone(pricing.bom_cost_max)
+
+        self.assertIsNone(pricing.internal_cost_min)
+        self.assertIsNone(pricing.internal_cost_max)
+
+        self.assertIsNone(pricing.overall_min)
+        self.assertIsNone(pricing.overall_max)
 
     def test_sell_pricing(self):
         """Check that the sell pricebreaks were loaded"""

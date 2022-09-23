@@ -10,7 +10,7 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
@@ -1617,6 +1617,21 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         return self.supplier_parts.count()
 
     @property
+    def pricing(self):
+        """Return the PartPricing information for this Part instance.
+
+        If there is no PartPricing database entry defined for this Part,
+        it will first be created, and then returned.
+        """
+
+        try:
+            pricing_data = self.pricing_data
+        except ObjectDoesNotExist:
+            pricing_data = PartPricing.objects.create(part=self)
+
+        return pricing_data
+
+    @property
     def has_complete_bom_pricing(self):
         """Return true if there is pricing information for each item in the BOM."""
         use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
@@ -2193,6 +2208,16 @@ class PartPricing(models.Model):
 
         super().save(*args, **kwargs)
 
+    def update_all_costs(self):
+        """Recalculate all cost data for the referenced Part instance"""
+
+        self.update_bom_cost()
+        self.update_purchase_cost()
+        self.update_internal_cost()
+        self.update_supplier_cost()
+
+        self.update_overall_cost()
+
     def update_bom_cost(self):
         """Recalculate BOM cost for the referenced Part instance"""
 
@@ -2218,10 +2243,42 @@ class PartPricing(models.Model):
         pass
 
     def update_overall_cost(self):
-        """Update overall pricing values"""
+        """Update overall cost values.
 
-        # TODO - Implement this function
-        pass
+        Here we simply take the minimum / maximum values of the other calculated fields.
+        """
+
+        overall_min = None
+        overall_max = None
+
+        # Calculate overall minimum cost
+        for cost in [
+            self.bom_cost_min,
+            self.purchase_cost_min,
+            self.internal_cost_min,
+            self.supplier_price_min,
+        ]:
+            if cost is None:
+                continue
+
+            if overall_min is None or cost < overall_min:
+                overall_min = cost
+
+        # Calculate overall maximum cost
+        for cost in [
+            self.bom_cost_max,
+            self.purchase_cost_max,
+            self.internal_cost_max,
+            self.supplier_price_max,
+        ]:
+            if cost is None:
+                continue
+
+            if overall_max is None or cost > overall_max:
+                overall_max = cost
+
+        self.overall_min = overall_min
+        self.overall_max = overall_max
 
     part = models.OneToOneField(
         Part,
