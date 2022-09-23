@@ -43,11 +43,14 @@ ALLOWED_ATTRIBUTES_SVG = [
 ]
 
 
-def sanitize_svg(file_data: str, strip: bool = True) -> str:
+def sanitize_svg(file_data: str, strip: bool = True, elements: str = ALLOWED_ELEMENTS_SVG, attributes: str = ALLOWED_ATTRIBUTES_SVG) -> str:
     """Sanatize a SVG file.
 
     Args:
-        file_data (str): Datastream for the SVG file.
+        file_data (str): SVG as string.
+        strip (bool, optional): Should invalid elements get removed. Defaults to True.
+        elements (str, optional): Allowed elements. Defaults to ALLOWED_ELEMENTS_SVG.
+        attributes (str, optional): Allowed attributes. Defaults to ALLOWED_ATTRIBUTES_SVG.
 
     Returns:
         str: Sanitzied SVG file.
@@ -55,8 +58,8 @@ def sanitize_svg(file_data: str, strip: bool = True) -> str:
 
     cleaned = clean(
         file_data,
-        tags=ALLOWED_ELEMENTS_SVG,
-        attributes=ALLOWED_ATTRIBUTES_SVG,
+        tags=elements,
+        attributes=attributes,
         strip=strip,
         strip_comments=strip,
         css_sanitizer=CSSSanitizer()
