@@ -1629,6 +1629,8 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         except ObjectDoesNotExist:
             pricing_data = PartPricing.objects.create(part=self)
 
+            # TODO: Schedule some background tasks to calculate pricing data
+
         return pricing_data
 
     @property
@@ -2207,6 +2209,10 @@ class PartPricing(models.Model):
         self.update_overall_cost()
 
         super().save(*args, **kwargs)
+
+        # TODO: Implement this background task
+
+        # If the linked Part is used in any assemblies, schedule a pricing update for those assemblies
 
     def update_all_costs(self):
         """Recalculate all cost data for the referenced Part instance"""
