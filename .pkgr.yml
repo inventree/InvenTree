@@ -2,7 +2,7 @@ name: inventree
 description: Open Source Inventory Management System
 homepage: https://inventree.org
 notifications: false
-buildpack: https://github.com/mjmair/heroku-buildpack-python#v177-1
+buildpack: https://github.com/mjmair/heroku-buildpack-python#v177-mjmair
 env:
   - INVENTREE_DB_ENGINE=sqlite3
   - INVENTREE_DB_NAME=database.sqlite3
