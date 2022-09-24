@@ -23,6 +23,7 @@ import InvenTree.helpers
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
+from InvenTree.sanitizer import sanitize_svg
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
@@ -878,3 +879,20 @@ class BarcodeMixinTest(helpers.InvenTreeTestCase):
 
         for barcode, hash in hashing_tests.items():
             self.assertEqual(InvenTree.helpers.hash_barcode(barcode), hash)
+
+
+class SanitizerTest(TestCase):
+    """Simple tests for sanitizer functions."""
+
+    def test_svg_sanitizer(self):
+        """Test that SVGs are sanitized acordingly."""
+        valid_string = """<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" height="400" width="400">{0}
+        <path id="path1" d="m -151.78571,359.62883 v 112.76373 l 97.068507,-56.04253 V 303.14815 Z" style="fill:#ddbc91;"></path>
+        </svg>"""
+        dangerous_string = valid_string.format('<script>alert();</script>')
+
+        # Test that valid string
+        self.assertEqual(valid_string, sanitize_svg(valid_string))
+
+        # Test that invalid string is cleanded
+        self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))

@@ -382,6 +382,7 @@ function bomItemFields() {
         note: {},
         allow_variants: {},
         inherited: {},
+        consumable: {},
         optional: {},
     };
 
@@ -761,7 +762,22 @@ function loadBomTable(table, options={}) {
         }
 
         return available;
+    }
 
+    function canBuildQuantity(row) {
+        // Calculate how many of each row we can make, given current stock
+
+        if (row.consumable) {
+            // If the row is "consumable" we do not 'track' the quantity
+            return Infinity;
+        }
+
+        // Prevent div-by-zero or negative errors
+        if ((row.quantity || 0) <= 0) {
+            return 0;
+        }
+
+        return availableQuantity(row) / row.quantity;
     }
 
     // Construct the table columns
@@ -844,6 +860,9 @@ function loadBomTable(table, options={}) {
         {
             field: 'sub_part_detail.description',
             title: '{% trans "Description" %}',
+            formatter: function(value) {
+                return withTitle(shortenString(value), value);
+            }
         }
     );
 
@@ -872,8 +891,12 @@ function loadBomTable(table, options={}) {
                 text += ` <small>${row.sub_part_detail.units}</small>`;
             }
 
+            if (row.consumable) {
+                text += ` <small>({% trans "Consumable" %})</small>`;
+            }
+
             if (row.optional) {
-                text += ' ({% trans "Optional" %})';
+                text += ' <small>({% trans "Optional" %})</small>';
             }
 
             if (row.overage) {
@@ -966,43 +989,23 @@ function loadBomTable(table, options={}) {
             if (row.substitutes && row.substitutes.length > 0) {
                 return row.substitutes.length;
             } else {
-                return `-`;
+                return yesNoLabel(false);
             }
         }
     });
 
-    if (show_pricing) {
-        cols.push({
-            field: 'purchase_price_range',
-            title: '{% trans "Purchase Price Range" %}',
-            searchable: false,
-            sortable: true,
-        });
-
-        cols.push({
-            field: 'purchase_price_avg',
-            title: '{% trans "Purchase Price Average" %}',
-            searchable: false,
-            sortable: true,
-        });
-
-        cols.push({
-            field: 'price_range',
-            title: '{% trans "Supplier Cost" %}',
-            sortable: true,
-            formatter: function(value) {
-                if (value) {
-                    return value;
-                } else {
-                    return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
-                }
-            }
-        });
-    }
-
     cols.push({
         field: 'optional',
         title: '{% trans "Optional" %}',
+        searchable: false,
+        formatter: function(value) {
+            return yesNoLabel(value);
+        }
+    });
+
+    cols.push({
+        field: 'consumable',
+        title: '{% trans "Consumable" %}',
         searchable: false,
         formatter: function(value) {
             return yesNoLabel(value);
@@ -1037,36 +1040,63 @@ function loadBomTable(table, options={}) {
         }
     });
 
+    if (show_pricing) {
+        cols.push({
+            field: 'purchase_price_range',
+            title: '{% trans "Purchase Price Range" %}',
+            searchable: false,
+            sortable: true,
+        });
+
+        cols.push({
+            field: 'purchase_price_avg',
+            title: '{% trans "Purchase Price Average" %}',
+            searchable: false,
+            sortable: true,
+        });
+
+        cols.push({
+            field: 'price_range',
+            title: '{% trans "Supplier Cost" %}',
+            sortable: true,
+            formatter: function(value) {
+                if (value) {
+                    return value;
+                } else {
+                    return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
+                }
+            }
+        });
+    }
+
     cols.push(
         {
             field: 'can_build',
             title: '{% trans "Can Build" %}',
+            sortable: true,
             formatter: function(value, row) {
-                var can_build = 0;
 
-                var available = availableQuantity(row);
-
-                if (row.quantity > 0) {
-                    can_build = available / row.quantity;
+                // "Consumable" parts are not tracked in the build
+                if (row.consumable) {
+                    return `<em>{% trans "Consumable item" %}</em>`;
                 }
 
-                var text = formatDecimal(can_build, 2);
+                var can_build = canBuildQuantity(row);
 
-                // Take "on order" quantity into account
-                if (row.on_order && row.on_order > 0 && row.quantity > 0) {
-                    available += row.on_order;
-                    can_build = available / row.quantity;
+                return +can_build.toFixed(2);
+            },
+            sorter: function(valA, valB, rowA, rowB) {
+                // Function to sort the "can build" quantity
+                var cb_a = canBuildQuantity(rowA);
+                var cb_b = canBuildQuantity(rowB);
 
-                    text += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Including On Order" %}: ${formatDecimal(can_build, 2)}'></span>`;
-                }
-
-                return text;
+                return (cb_a > cb_b) ? 1 : -1;
             },
             footerFormatter: function(data) {
                 var can_build = null;
 
                 data.forEach(function(row) {
-                    if (row.part == options.parent_id && row.quantity > 0) {
+                    if (row.quantity > 0 && !row.consumable) {
                         var cb = availableQuantity(row) / row.quantity;
 
                         if (can_build == null || cb < can_build) {
@@ -1080,23 +1110,7 @@ function loadBomTable(table, options={}) {
                 } else {
                     return formatDecimal(can_build, 2);
                 }
-            },
-            sorter: function(valA, valB, rowA, rowB) {
-                // Function to sort the "can build" quantity
-                var cb_a = 0;
-                var cb_b = 0;
-
-                if (rowA.quantity > 0) {
-                    cb_a = availableQuantity(rowA) / rowA.quantity;
-                }
-
-                if (rowB.quantity > 0) {
-                    cb_b = availableQuantity(rowB) / rowB.quantity;
-                }
-
-                return (cb_a > cb_b) ? 1 : -1;
-            },
-            sortable: true,
+            }
         }
     );
 
@@ -1107,6 +1121,9 @@ function loadBomTable(table, options={}) {
             title: '{% trans "Notes" %}',
             searchable: true,
             sortable: true,
+            formatter: function(value) {
+                return withTitle(shortenString(value), value);
+            }
         }
     );
 
