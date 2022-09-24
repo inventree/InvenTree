@@ -2,6 +2,7 @@ name: inventree
 description: Open Source Inventory Management System
 homepage: https://inventree.org
 notifications: false
+buildpack: https://github.com/mjmair/heroku-buildpack-python#v177-1
 targets:
   ubuntu-20.04: true
 env:
