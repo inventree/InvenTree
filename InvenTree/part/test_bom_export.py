@@ -118,6 +118,7 @@ class BomExportTest(InvenTreeTestCase):
                 'sub_assembly',
                 'quantity',
                 'optional',
+                'consumable',
                 'overage',
                 'reference',
                 'note',

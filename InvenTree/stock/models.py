@@ -224,7 +224,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         build: Link to a Build (if this stock item was created from a build)
         is_building: Boolean field indicating if this stock item is currently being built (or is "in production")
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
-        infinite: If True this StockItem can never be exhausted
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
         purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
@@ -881,11 +880,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         )
 
         self.save()
-
-    # If stock item is incoming, an (optional) ETA field
-    # expected_arrival = models.DateField(null=True, blank=True)
-
-    infinite = models.BooleanField(default=False)
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""
@@ -1565,7 +1559,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         except InvalidOperation:
             return False
 
-        if count < 0 or self.infinite:
+        if count < 0:
             return False
 
         self.stocktake_date = datetime.now().date()
@@ -1601,7 +1595,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             return False
 
         # Ignore amounts that do not make sense
-        if quantity <= 0 or self.infinite:
+        if quantity <= 0:
             return False
 
         if self.updateQuantity(self.quantity + quantity):
@@ -1630,7 +1624,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         except InvalidOperation:
             return False
 
-        if quantity <= 0 or self.infinite:
+        if quantity <= 0:
             return False
 
         if self.updateQuantity(self.quantity - quantity):
