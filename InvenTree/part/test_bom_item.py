@@ -7,6 +7,8 @@ import django.core.exceptions as django_exceptions
 from django.db import transaction
 from django.test import TestCase
 
+import stock.models
+
 from .models import BomItem, BomItemSubstitute, Part
 
 
@@ -197,3 +199,49 @@ class BomItemTest(TestCase):
 
         # The substitution links should have been automatically removed
         self.assertEqual(bom_item.substitutes.count(), 0)
+
+    def test_consumable(self):
+        """Tests for the 'consumable' BomItem field"""
+
+        # Create an assembly part
+        assembly = Part.objects.create(name="An assembly", description="Made with parts", assembly=True)
+
+        # No BOM information initially
+        self.assertEqual(assembly.can_build, 0)
+
+        # Create some component items
+        c1 = Part.objects.create(name="C1", description="C1")
+        c2 = Part.objects.create(name="C2", description="C2")
+        c3 = Part.objects.create(name="C3", description="C3")
+        c4 = Part.objects.create(name="C4", description="C4")
+
+        for p in [c1, c2, c3, c4]:
+            # Ensure we have stock
+            stock.models.StockItem.objects.create(part=p, quantity=1000)
+
+        # Create some BOM items
+        BomItem.objects.create(
+            part=assembly,
+            sub_part=c1,
+            quantity=10
+        )
+
+        self.assertEqual(assembly.can_build, 100)
+
+        BomItem.objects.create(
+            part=assembly,
+            sub_part=c2,
+            quantity=50,
+            consumable=True
+        )
+
+        # A 'consumable' BomItem does not alter the can_build calculation
+        self.assertEqual(assembly.can_build, 100)
+
+        BomItem.objects.create(
+            part=assembly,
+            sub_part=c3,
+            quantity=50,
+        )
+
+        self.assertEqual(assembly.can_build, 20)
