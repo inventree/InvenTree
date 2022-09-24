@@ -45,10 +45,11 @@ function deleteButton(url, text='{% trans "Delete" %}') {
  */
 function shortenString(input_string, options={}) {
 
-    var max_length = options.max_length || 100;
+    // Maximum length can be provided via options argument, or via a user-configurable setting
+    var max_length = options.max_length || user_settings.TABLE_STRING_MAX_LENGTH;
 
-    if (input_string == null) {
-        return null;
+    if (!max_length || !input_string) {
+        return input_string;
     }
 
     input_string = input_string.toString();
