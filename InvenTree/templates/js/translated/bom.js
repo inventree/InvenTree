@@ -860,6 +860,9 @@ function loadBomTable(table, options={}) {
         {
             field: 'sub_part_detail.description',
             title: '{% trans "Description" %}',
+            formatter: function(value) {
+                return withTitle(shortenString(value), value);
+            }
         }
     );
 
@@ -1118,6 +1121,9 @@ function loadBomTable(table, options={}) {
             title: '{% trans "Notes" %}',
             searchable: true,
             sortable: true,
+            formatter: function(value) {
+                return withTitle(shortenString(value), value);
+            }
         }
     );
 
