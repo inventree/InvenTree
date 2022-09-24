@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-21 13:32+0000\n"
-"PO-Revision-Date: 2022-09-22 01:02\n"
+"POT-Creation-Date: 2022-09-23 06:57+0000\n"
+"PO-Revision-Date: 2022-09-24 01:09\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -168,49 +168,49 @@ msgstr ""
 msgid "Remove HTML tags from this value"
 msgstr ""
 
-#: InvenTree/models.py:236
+#: InvenTree/models.py:238
 msgid "Improperly formatted pattern"
 msgstr ""
 
-#: InvenTree/models.py:243
+#: InvenTree/models.py:245
 msgid "Unknown format key specified"
 msgstr ""
 
-#: InvenTree/models.py:249
+#: InvenTree/models.py:251
 msgid "Missing required format key"
 msgstr ""
 
-#: InvenTree/models.py:261
+#: InvenTree/models.py:263
 msgid "Reference field cannot be empty"
 msgstr ""
 
-#: InvenTree/models.py:268
+#: InvenTree/models.py:270
 msgid "Reference must match required pattern"
 msgstr ""
 
-#: InvenTree/models.py:304
+#: InvenTree/models.py:306
 msgid "Reference number is too large"
 msgstr ""
 
-#: InvenTree/models.py:382
+#: InvenTree/models.py:384
 msgid "Missing file"
 msgstr "Файл не найден"
 
-#: InvenTree/models.py:383
+#: InvenTree/models.py:385
 msgid "Missing external link"
 msgstr "Отсутствует внешняя ссылка"
 
-#: InvenTree/models.py:395 stock/models.py:2049
+#: InvenTree/models.py:405 stock/models.py:2049
 #: templates/js/translated/attachment.js:103
 #: templates/js/translated/attachment.js:241
 msgid "Attachment"
 msgstr "Вложения"
 
-#: InvenTree/models.py:396
+#: InvenTree/models.py:406
 msgid "Select file to attach"
 msgstr "Выберите файл для вложения"
 
-#: InvenTree/models.py:402 company/models.py:124 company/models.py:276
+#: InvenTree/models.py:412 company/models.py:124 company/models.py:276
 #: company/models.py:511 order/models.py:84 order/models.py:1249
 #: part/models.py:802 part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
@@ -220,21 +220,21 @@ msgstr "Выберите файл для вложения"
 msgid "Link"
 msgstr "Ссылка"
 
-#: InvenTree/models.py:403 build/models.py:285 part/models.py:803
+#: InvenTree/models.py:413 build/models.py:285 part/models.py:803
 #: stock/models.py:605
 msgid "Link to external URL"
 msgstr "Ссылка на внешний URL"
 
-#: InvenTree/models.py:406 templates/js/translated/attachment.js:104
+#: InvenTree/models.py:416 templates/js/translated/attachment.js:104
 #: templates/js/translated/attachment.js:285
 msgid "Comment"
 msgstr "Комментарий"
 
-#: InvenTree/models.py:406
+#: InvenTree/models.py:416
 msgid "File comment"
 msgstr "Комментарий к файлу"
 
-#: InvenTree/models.py:412 InvenTree/models.py:413 common/models.py:1669
+#: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1669
 #: common/models.py:1670 common/models.py:1893 common/models.py:1894
 #: common/models.py:2156 common/models.py:2157 part/models.py:2235
 #: part/models.py:2255 plugin/models.py:260 plugin/models.py:261
@@ -243,40 +243,40 @@ msgstr "Комментарий к файлу"
 msgid "User"
 msgstr "Пользователь"
 
-#: InvenTree/models.py:416
+#: InvenTree/models.py:426
 msgid "upload date"
 msgstr "дата загрузки"
 
-#: InvenTree/models.py:438
+#: InvenTree/models.py:448
 msgid "Filename must not be empty"
 msgstr "Имя файла не должно быть пустым"
 
-#: InvenTree/models.py:447
+#: InvenTree/models.py:457
 msgid "Invalid attachment directory"
 msgstr "Неверная директория вложений"
 
-#: InvenTree/models.py:457
+#: InvenTree/models.py:467
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
 msgstr "Имя файла содержит запрещенные символы '{c}'"
 
-#: InvenTree/models.py:460
+#: InvenTree/models.py:470
 msgid "Filename missing extension"
 msgstr "Отсутствует расширение для имени файла"
 
-#: InvenTree/models.py:467
+#: InvenTree/models.py:477
 msgid "Attachment with this filename already exists"
 msgstr "Вложение с таким именем файла уже существует"
 
-#: InvenTree/models.py:474
+#: InvenTree/models.py:484
 msgid "Error renaming file"
 msgstr "Ошибка переименования файла"
 
-#: InvenTree/models.py:510
+#: InvenTree/models.py:520
 msgid "Invalid choice"
 msgstr "Неверный выбор"
 
-#: InvenTree/models.py:547 InvenTree/models.py:548 common/models.py:1879
+#: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:1879
 #: company/models.py:358 label/models.py:101 part/models.py:746
 #: part/models.py:2413 plugin/models.py:94 report/models.py:152
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -292,7 +292,7 @@ msgstr "Неверный выбор"
 msgid "Name"
 msgstr "Название"
 
-#: InvenTree/models.py:554 build/models.py:163
+#: InvenTree/models.py:564 build/models.py:163
 #: build/templates/build/detail.html:24 company/models.py:282
 #: company/models.py:517 company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
@@ -317,44 +317,44 @@ msgstr "Название"
 msgid "Description"
 msgstr "Описание"
 
-#: InvenTree/models.py:555
+#: InvenTree/models.py:565
 msgid "Description (optional)"
 msgstr "Описание (необязательно)"
 
-#: InvenTree/models.py:563
+#: InvenTree/models.py:573
 msgid "parent"
 msgstr "родитель"
 
-#: InvenTree/models.py:570 InvenTree/models.py:571
+#: InvenTree/models.py:580 InvenTree/models.py:581
 #: templates/js/translated/part.js:2005 templates/js/translated/stock.js:2431
 msgid "Path"
 msgstr "Путь"
 
-#: InvenTree/models.py:672
+#: InvenTree/models.py:682
 msgid "Barcode Data"
 msgstr ""
 
-#: InvenTree/models.py:673
+#: InvenTree/models.py:683
 msgid "Third party barcode data"
 msgstr ""
 
-#: InvenTree/models.py:678 order/serializers.py:486
+#: InvenTree/models.py:688 order/serializers.py:486
 msgid "Barcode Hash"
 msgstr ""
 
-#: InvenTree/models.py:679
+#: InvenTree/models.py:689
 msgid "Unique hash of barcode data"
 msgstr ""
 
-#: InvenTree/models.py:724
+#: InvenTree/models.py:734
 msgid "Existing barcode found"
 msgstr ""
 
-#: InvenTree/models.py:777
+#: InvenTree/models.py:787
 msgid "Server Error"
 msgstr ""
 
-#: InvenTree/models.py:778
+#: InvenTree/models.py:788
 msgid "An error has been logged by the server."
 msgstr ""
 
