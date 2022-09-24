@@ -989,39 +989,10 @@ function loadBomTable(table, options={}) {
             if (row.substitutes && row.substitutes.length > 0) {
                 return row.substitutes.length;
             } else {
-                return `-`;
+                return yesNoLabel(false);
             }
         }
     });
-
-    if (show_pricing) {
-        cols.push({
-            field: 'purchase_price_range',
-            title: '{% trans "Purchase Price Range" %}',
-            searchable: false,
-            sortable: true,
-        });
-
-        cols.push({
-            field: 'purchase_price_avg',
-            title: '{% trans "Purchase Price Average" %}',
-            searchable: false,
-            sortable: true,
-        });
-
-        cols.push({
-            field: 'price_range',
-            title: '{% trans "Supplier Cost" %}',
-            sortable: true,
-            formatter: function(value) {
-                if (value) {
-                    return value;
-                } else {
-                    return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
-                }
-            }
-        });
-    }
 
     cols.push({
         field: 'optional',
@@ -1068,6 +1039,35 @@ function loadBomTable(table, options={}) {
             }
         }
     });
+
+    if (show_pricing) {
+        cols.push({
+            field: 'purchase_price_range',
+            title: '{% trans "Purchase Price Range" %}',
+            searchable: false,
+            sortable: true,
+        });
+
+        cols.push({
+            field: 'purchase_price_avg',
+            title: '{% trans "Purchase Price Average" %}',
+            searchable: false,
+            sortable: true,
+        });
+
+        cols.push({
+            field: 'price_range',
+            title: '{% trans "Supplier Cost" %}',
+            sortable: true,
+            formatter: function(value) {
+                if (value) {
+                    return value;
+                } else {
+                    return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
+                }
+            }
+        });
+    }
 
     cols.push(
         {
