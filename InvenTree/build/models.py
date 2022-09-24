@@ -22,7 +22,7 @@ from mptt.exceptions import InvalidMove
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, normalize, MakeBarcode, notify_responsible
+from InvenTree.helpers import increment, normalize, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
@@ -109,17 +109,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         """Metaclass options for the BuildOrder model"""
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
-
-    def format_barcode(self, **kwargs):
-        """Return a JSON string to represent this build as a barcode."""
-        return MakeBarcode(
-            "buildorder",
-            self.pk,
-            {
-                "reference": self.title,
-                "url": self.get_absolute_url(),
-            }
-        )
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -850,6 +839,10 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         # Get a list of all 'untracked' BOM items
         for bom_item in self.untracked_bom_items:
 
+            if bom_item.consumable:
+                # Do not auto-allocate stock to consumable BOM items
+                continue
+
             variant_parts = bom_item.sub_part.get_descendants(include_self=False)
 
             unallocated_quantity = self.unallocated_quantity(bom_item)
@@ -983,7 +976,12 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return max(required - allocated, 0)
 
     def is_bom_item_allocated(self, bom_item, output=None):
-        """Test if the supplied BomItem has been fully allocated!"""
+        """Test if the supplied BomItem has been fully allocated"""
+
+        if bom_item.consumable:
+            # Consumable BOM items do not need to be allocated
+            return True
+
         return self.unallocated_quantity(bom_item, output) == 0
 
     def is_fully_allocated(self, output):
