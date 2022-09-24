@@ -1134,7 +1134,12 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         total = None
 
         # Prefetch related tables, to reduce query expense
-        queryset = self.get_bom_items().prefetch_related(
+        queryset = self.get_bom_items()
+
+        # Ignore 'consumable' BOM items for this calculation
+        queryset = queryset.filter(consumable=False)
+
+        queryset = queryset.prefetch_related(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
