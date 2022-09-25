@@ -15,3 +15,4 @@ env:
   - INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
 targets:
   ubuntu-20.04: true
+  debian11: true
