@@ -21,6 +21,14 @@ def get_base_dir() -> Path:
     """Returns the base (top-level) InvenTree directory."""
     return Path(__file__).parent.parent.resolve()
 
+def ensure_dir(path: Path) -> None:
+    """Ensure that a directory exists.
+
+    If it does not exist, create it.
+    """
+
+    if not path.exists():
+        path.mkdir(parents=True, exist_ok=True)
 
 def get_config_file(create=True) -> Path:
     """Returns the path of the InvenTree configuration file.
@@ -39,6 +47,7 @@ def get_config_file(create=True) -> Path:
 
     if not cfg_filename.exists() and create:
         print("InvenTree configuration file 'config.yaml' not found - creating default file")
+        ensure_dir(cfg_filename.parent)
 
         cfg_template = base_dir.joinpath("config_template.yaml")
         shutil.copyfile(cfg_template, cfg_filename)
@@ -160,6 +169,7 @@ def get_plugin_file():
     if not plugin_file.exists():
         logger.warning("Plugin configuration file does not exist - creating default file")
         logger.info(f"Creating plugin file at '{plugin_file}'")
+        ensure_dir(plugin_file.parent)
 
         # If opening the file fails (no write permission, for example), then this will throw an error
         plugin_file.write_text("# InvenTree Plugins (uses PIP framework to install)\n\n")
@@ -192,6 +202,7 @@ def get_secret_key():
 
     if not secret_key_file.exists():
         logger.info(f"Generating random key file at '{secret_key_file}'")
+        ensure_dir(secret_key_file.parent)
 
         # Create a random key file
         options = string.digits + string.ascii_letters + string.punctuation
