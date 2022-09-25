@@ -20,18 +20,12 @@ targets:
       - curl
       - python3
       - python3-venv
-      - nginx|apache2
+      - nginx
       - postgresql
-      - shared-mime-info
-    build_dependencies:
-      - shared-mime-info
   debian-11:
     dependencies:
       - curl
       - python3
       - python3-venv
-      - nginx|apache2
+      - nginx
       - postgresql
-      - shared-mime-info
-    build_dependencies:
-      - shared-mime-info
