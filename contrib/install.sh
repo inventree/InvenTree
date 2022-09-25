@@ -37,18 +37,18 @@ centos | rhel | sles)
     fi
     ;;
 esac
-
-echo "${lsb_dist} ${dist_version} detected"
+echo "### ${lsb_dist} ${dist_version} detected"
 
 # Make sure the depencies are there
 sudo apt-get install wget apt-transport-https -y
 
+echo "### Add key and package source"
 # Add key
 wget -qO- https://dl.packager.io/srv/matmair/InvenTree/key | sudo apt-key add -
-
 # Add packagelist
 sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/matmair/InvenTree/deploy-test/installer/${lsb_dist}/${dist_version}.repo
 
+echo "### Install InvenTree"
 # Update repos and install inventree
 sudo apt-get update
 sudo apt-get install inventree -y
