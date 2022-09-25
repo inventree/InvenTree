@@ -23,6 +23,7 @@ targets:
       - python3-pip
       - python3-cffi
       - python3-brotli
+      - python-wheel
       - libpango-1.0-0
       - libharfbuzz0b
       - libpangoft2-1.0-0
@@ -36,6 +37,7 @@ targets:
       - python3-pip
       - python3-cffi
       - python3-brotli
+      - python-wheel
       - libpango-1.0-0
       - libpangoft2-1.0-0
       - gettext
