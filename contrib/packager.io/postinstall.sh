@@ -11,7 +11,7 @@ PATH=/opt/inventree/:/sbin:/bin:/usr/sbin:/usr/bin:
 # Activate python virtual environment
 cd ${APP_HOME}
 python3 -m venv virt
-source /opt/inventree/virt/bin/active
+. virt/bin/active
 
 # exec postinstall
 debug
