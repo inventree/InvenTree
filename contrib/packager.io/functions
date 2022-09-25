@@ -65,6 +65,7 @@ function create_initscripts () {
   echo "# Set up python enviroment"
   cd ${APP_HOME}
   pip install invoke
+  pip install wheel
   invoke update
 
   echo "# (Re)creating init scripts"
