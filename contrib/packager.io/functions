@@ -1,0 +1,105 @@
+#!/bin/bash
+#
+# packager.io postinstall script functions
+#
+
+function debug() {
+  if [ "${DEBUG}" == "yes" ]; then
+    echo "DEBUG MODE ON"
+    set -ex
+  fi
+}
+
+function detect_os () {
+  . /etc/os-release
+
+  if [ "${ID}" == "debian" ] || [ "${ID}" == "ubuntu" ]; then
+    OS="DEBIAN"
+  elif [ "${ID}" == "centos" ] || [ "${ID}" == "fedora" ] || [ "${ID}" == "rhel" ]; then
+    OS="REDHAT"
+  elif [ "${ID}" == "opensuse" ] || [ "${ID}" == "sles" ] || [ "${ID}" == "suse" ]; then
+    OS="SUSE"
+  else
+    OS="UNKNOWN"
+  fi
+
+  if [ "${DEBUG}" == "yes" ]; then
+    echo "OS is ${OS} based"
+  fi
+}
+
+function detect_docker() {
+  if [ -n "$(grep docker < /proc/1/cgroup)" ]; then
+    DOCKER="yes"
+  else
+    DOCKER="no"
+  fi
+
+  if [ "${DEBUG}" == "yes" ]; then
+    echo "os runs in docker container = ${DOCKER}"
+  fi
+}
+
+function detect_initcmd () {
+  if [ -n "$(which systemctl 2> /dev/null)" ]; then
+    INIT_CMD="systemctl"
+  elif [ -n "$(which initctl 2> /dev/null)" ]; then
+    INIT_CMD="initctl"
+  else
+    function sysvinit () {
+      service $2 $1
+    }
+    INIT_CMD="sysvinit"
+  fi
+
+  if [ "${DOCKER}" == "yes" ]; then
+    INIT_CMD="initctl"
+  fi
+
+  if [ "${DEBUG}" == "yes" ]; then
+    echo "INIT CMD = ${INIT_CMD}"
+  fi
+}
+
+function create_initscripts () {
+  echo "# (Re)creating init scripts"
+  inventree scale web="1" worker="1"
+
+  echo "# Enabling InvenTree on boot"
+  ${INIT_CMD} enable inventree
+}
+
+function start_inventree () {
+  echo "# Starting InvenTree"
+  ${INIT_CMD} start inventree
+}
+
+function stop_inventree () {
+  echo "# Stopping InvenTree"
+  ${INIT_CMD} stop inventree
+}
+
+function update_or_install () {
+    echo "# Updating InvenTree"
+    invoke update
+}
+
+function final_message () {
+  echo -e "####################################################################################"
+  echo -e "\nAdd your fully qualified domain name or public IP to servername directive of"
+  echo -e "${WEBSERVER}, if this installation is done on a remote server. You have to change:"
+  echo -e "${WEBSERVER_CONF} and restart ${WEBSERVER_CMD} process."
+  echo -e "Otherwise just open http://localhost/ in your browser to start using InvenTree.\n"
+  if [ "${OS}" == "REDHAT" ]; then
+    echo -e "\n Remember to enable selinux and firewall rules!\n"
+    echo -e "Use the following commands:"
+    echo -e "	setsebool httpd_can_network_connect on -P"
+    echo -e "	firewall-cmd --zone=public --add-service=http --permanent"
+    echo -e "	firewall-cmd --zone=public --add-service=https --permanent"
+    echo -e "	firewall-cmd --reload\n"
+  elif [ "${OS}" == "SUSE" ]; then
+    echo -e "\n Make sure that the firewall is not blocking port 80 & 443!\n"
+    echo -e "Use 'yast firewall' or 'SuSEfirewall2' commands to configure it"
+  fi
+  echo -e "####################################################################################"
+}
