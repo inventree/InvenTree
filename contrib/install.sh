@@ -21,20 +21,7 @@ ubuntu)
     ;;
 debian | raspbian)
     dist_version="$(sed 's/\/.*//' /etc/debian_version | sed 's/\..*//')"
-    case "$dist_version" in
-    11)
-        dist_version="bullseye"
-        ;;
-    10)
-        dist_version="buster"
-        ;;
-    9)
-        dist_version="stretch"
-        ;;
-    8)
-        dist_version="jessie"
-        ;;
-    esac
+    lsb_dist="debian"
     ;;
 centos | rhel | sles)
     if [ -z "$dist_version" ] && [ -r /etc/os-release ]; then
@@ -51,7 +38,7 @@ centos | rhel | sles)
     ;;
 esac
 
-echo "${dist_version} detected"
+echo "${lsb_dist} ${dist_version} detected"
 
 # Make sure the depencies are there
 sudo apt-get install wget apt-transport-https -y
