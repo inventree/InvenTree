@@ -66,7 +66,7 @@ function create_initscripts () {
   ls
   echo "# Set up python enviroment"
   python3 -m venv env
-  source ${APP_HOME}/env/bin/active
+  source env/bin/active
   pip install invoke
   inv update
 
