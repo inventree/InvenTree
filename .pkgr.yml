@@ -26,6 +26,7 @@ targets:
       - libpango-1.0-0
       - libharfbuzz0b
       - libpangoft2-1.0-0
+      - gettext
       - nginx
       - postgresql
   debian-11:
@@ -38,5 +39,6 @@ targets:
       - python3-brotli
       - libpango-1.0-0
       - libpangoft2-1.0-0
+      - gettext
       - nginx
       - postgresql
