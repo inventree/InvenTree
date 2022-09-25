@@ -62,6 +62,12 @@ function detect_initcmd () {
 }
 
 function create_initscripts () {
+  echo "# set up python enviroment"
+  python3 -m venv env
+  source env/bin/active
+  pip install invoke
+  inv update
+
   echo "# (Re)creating init scripts"
   inventree scale web="1" worker="1"
 
