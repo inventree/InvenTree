@@ -7,6 +7,12 @@ PATH=/opt/inventree/env/bin:/opt/inventree/:/sbin:/bin:/usr/sbin:/usr/bin:
 cd ${APP_HOME}
 python3 -m venv env
 
+# default config
+INVENTREE_MEDIA_ROOT=/opt/inventree/data/media
+INVENTREE_STATIC_ROOT=/opt/inventree/data/static
+INVENTREE_PLUGIN_FILE=/opt/inventree/data/plugins.txt
+INVENTREE_CONFIG_FILE=/opt/inventree/data/config.yaml
+
 # import functions
 . /opt/inventree/contrib/packager.io/functions
 
