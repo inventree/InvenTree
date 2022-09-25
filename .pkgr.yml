@@ -14,5 +14,21 @@ env:
   - INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
   - INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
 targets:
-  ubuntu-20.04: true
-  debian-11: true
+  ubuntu-20.04:
+    dependencies:
+      - curl
+      - nginx|apache2
+      - postgresql
+      - shared-mime-info
+      - libssl3
+    build_dependencies:
+      - shared-mime-info
+  debian-11:
+    dependencies:
+      - curl
+      - nginx|apache2
+      - postgresql
+      - shared-mime-info
+      - libssl3
+    build_dependencies:
+      - shared-mime-info
