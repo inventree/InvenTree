@@ -20,7 +20,6 @@ targets:
       - nginx|apache2
       - postgresql
       - shared-mime-info
-      - libssl3
     build_dependencies:
       - shared-mime-info
   debian-11:
@@ -29,6 +28,5 @@ targets:
       - nginx|apache2
       - postgresql
       - shared-mime-info
-      - libssl3
     build_dependencies:
       - shared-mime-info
