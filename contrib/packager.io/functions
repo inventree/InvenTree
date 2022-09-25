@@ -68,6 +68,16 @@ function create_initscripts () {
   pip install wheel
   invoke update
 
+  echo "# Set up nginx"
+  cat <<EOF > /etc/nginx/sites-available/default
+  server {
+    listen          80;
+    location / {
+      proxy_pass      http://localhost:6000;
+    }
+  }
+EOF
+
   echo "# (Re)creating init scripts"
   inventree scale web="1" worker="1"
 
