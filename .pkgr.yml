@@ -13,8 +13,6 @@ env:
   - INVENTREE_STATIC_ROOT=/opt/inventree/static
   - INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
   - INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
-before:
-  - contrib/packager.io/before.sh
 after_install: contrib/packager.io/postinstall.sh
 targets:
   ubuntu-20.04:
