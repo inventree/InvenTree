@@ -8,10 +8,10 @@ cd ${APP_HOME}
 python3 -m venv env
 
 # default config
-INVENTREE_MEDIA_ROOT=/opt/inventree/data/media
-INVENTREE_STATIC_ROOT=/opt/inventree/data/static
-INVENTREE_PLUGIN_FILE=/opt/inventree/data/plugins.txt
-INVENTREE_CONFIG_FILE=/opt/inventree/data/config.yaml
+export INVENTREE_MEDIA_ROOT=/opt/inventree/data/media
+export INVENTREE_STATIC_ROOT=/opt/inventree/data/static
+export INVENTREE_PLUGIN_FILE=/opt/inventree/data/plugins.txt
+export INVENTREE_CONFIG_FILE=/opt/inventree/data/config.yaml
 
 # import functions
 . /opt/inventree/contrib/packager.io/functions
