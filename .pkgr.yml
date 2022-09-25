@@ -20,6 +20,8 @@ targets:
   ubuntu-20.04:
     dependencies:
       - curl
+      - python3
+      - python3-venv
       - nginx|apache2
       - postgresql
       - shared-mime-info
@@ -28,6 +30,8 @@ targets:
   debian-11:
     dependencies:
       - curl
+      - python3
+      - python3-venv
       - nginx|apache2
       - postgresql
       - shared-mime-info
