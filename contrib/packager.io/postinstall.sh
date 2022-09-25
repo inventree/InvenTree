@@ -8,12 +8,14 @@ cd ${APP_HOME}
 python3 -m venv env
 
 # default config
-export INVENTREE_MEDIA_ROOT=${APP_HOME}/data/media
-export INVENTREE_STATIC_ROOT=${APP_HOME}/data/static
-export INVENTREE_PLUGIN_FILE=${APP_HOME}/data/plugins.txt
-export INVENTREE_CONFIG_FILE=${APP_HOME}/data/config.yaml
+export DATA_DIR=${APP_HOME}/data
+export INVENTREE_MEDIA_ROOT=${DATA_DIR}/media
+export INVENTREE_STATIC_ROOT=${DATA_DIR}/static
+export INVENTREE_PLUGIN_FILE=${DATA_DIR}/plugins.txt
+export INVENTREE_CONFIG_FILE=${DATA_DIR}/config.yaml
+export INVENTREE_SECRET_KEY_FILE=${DATA_DIR}/secret_key.txt
+export INVENTREE_DB_NAME=${DATA_DIR}/database.sqlite3
 export INVENTREE_DB_ENGINE=sqlite3
-export INVENTREE_DB_NAME=${APP_HOME}/data/database.sqlite3
 export INVENTREE_PLUGINS_ENABLED=true
 
 # import functions
