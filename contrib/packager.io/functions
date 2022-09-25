@@ -85,12 +85,8 @@ function stop_inventree () {
 
 function update_or_install () {
     echo "# Updating InvenTree"
-    ls
     cd ${APP_HOME}
-    ls
-    source ${APP_HOME}/env/bin/active
-    ls
-    invoke update
+    ls && source ${APP_HOME}/env/bin/active && ls && invoke update
 }
 
 function final_message () {
