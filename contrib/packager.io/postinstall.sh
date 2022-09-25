@@ -12,6 +12,9 @@ export INVENTREE_MEDIA_ROOT=/opt/inventree/data/media
 export INVENTREE_STATIC_ROOT=/opt/inventree/data/static
 export INVENTREE_PLUGIN_FILE=/opt/inventree/data/plugins.txt
 export INVENTREE_CONFIG_FILE=/opt/inventree/data/config.yaml
+export INVENTREE_DB_ENGINE=sqlite3
+export INVENTREE_DB_NAME=database.sqlite3
+export INVENTREE_PLUGINS_ENABLED=true
 
 # import functions
 . /opt/inventree/contrib/packager.io/functions
