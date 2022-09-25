@@ -65,9 +65,11 @@ function create_initscripts () {
   echo "# Set up python enviroment"
   cd ${APP_HOME}
   python3 -m venv virt
-  ls virt/bin -la
-  . virt/bin/active
   ls
+  echo "virt ls"
+  ls virt/bin
+  echo "activate"
+  . virt/bin/active
   pip install invoke
   inv update
 
