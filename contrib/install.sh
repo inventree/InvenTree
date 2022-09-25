@@ -13,10 +13,10 @@ get_distribution
 case "$lsb_dist" in
 ubuntu)
     if command_exists lsb_release; then
-        dist_version="$(lsb_release --codename | cut -f2)"
+        dist_version="$(lsb_release -r | cut -f2)"
     fi
     if [ -z "$dist_version" ] && [ -r /etc/lsb-release ]; then
-        dist_version="$(. /etc/lsb-release && echo "$DISTRIB_CODENAME")"
+        dist_version="$(. /etc/lsb-release && echo "$DISTRIB_RELEASE")"
     fi
     ;;
 debian | raspbian)
