@@ -5,12 +5,13 @@
 PATH=${APP_HOME}/env/bin:${APP_HOME}/:/sbin:/bin:/usr/sbin:/usr/bin:
 
 # default config
+export CONF_DIR=/etc/inventree
 export DATA_DIR=${APP_HOME}/data
 export INVENTREE_MEDIA_ROOT=${DATA_DIR}/media
 export INVENTREE_STATIC_ROOT=${DATA_DIR}/static
-export INVENTREE_PLUGIN_FILE=${DATA_DIR}/plugins.txt
-export INVENTREE_CONFIG_FILE=${DATA_DIR}/config.yaml
-export INVENTREE_SECRET_KEY_FILE=${DATA_DIR}/secret_key.txt
+export INVENTREE_PLUGIN_FILE=${CONF_DIR}/plugins.txt
+export INVENTREE_CONFIG_FILE=${CONF_DIR}/config.yaml
+export INVENTREE_SECRET_KEY_FILE=${CONF_DIR}/secret_key.txt
 export INVENTREE_DB_NAME=${DATA_DIR}/database.sqlite3
 export INVENTREE_DB_ENGINE=sqlite3
 export INVENTREE_PLUGINS_ENABLED=true
