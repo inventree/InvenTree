@@ -7,5 +7,5 @@ set -eux
 
 # print environemnt
 uname -a
-python -v
+python3 -v
 env
