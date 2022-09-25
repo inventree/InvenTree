@@ -62,12 +62,15 @@ function detect_initcmd () {
 }
 
 function create_initscripts () {
+  echo "# Set up python enviroment"
   cd ${APP_HOME}
   ls
-  echo "# Set up python enviroment"
   python3 -m venv env
+  ls
   source env/bin/active
+  ls
   pip install invoke
+  ls
   inv update
 
   echo "# (Re)creating init scripts"
