@@ -63,9 +63,10 @@ function detect_initcmd () {
 
 function create_initscripts () {
   cd ${APP_HOME}
+  ls
   echo "# Set up python enviroment"
   python3 -m venv env
-  source env/bin/active
+  source ${APP_HOME}/env/bin/active
   pip install invoke
   inv update
 
