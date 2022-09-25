@@ -14,7 +14,6 @@ env:
   - INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
   - INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
 before:
-  - ls -la contrib/packager.io/before.sh
   - contrib/packager.io/before.sh
 after_install: contrib/packager.io/postinstall.sh
 targets:
