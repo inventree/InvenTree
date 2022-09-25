@@ -64,12 +64,6 @@ function detect_initcmd () {
 function create_initscripts () {
   echo "# Set up python enviroment"
   cd ${APP_HOME}
-  python3 -m venv virt
-  ls
-  echo "virt ls"
-  ls virt/bin
-  echo "activate"
-  . virt/bin/active
   pip install invoke
   inv update
 
@@ -92,7 +86,8 @@ function stop_inventree () {
 
 function update_or_install () {
     echo "# Updating InvenTree"
-    cd ${APP_HOME} && ls && . ${APP_HOME}/env/bin/active && ls && invoke update
+    cd ${APP_HOME}
+    invoke update
 }
 
 function final_message () {
