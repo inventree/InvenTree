@@ -64,8 +64,8 @@ function detect_initcmd () {
 function create_initscripts () {
   echo "# Set up python enviroment"
   cd ${APP_HOME}
-  ls
   python3 -m venv virt
+  ls virt/bin -la
   . virt/bin/active
   ls
   pip install invoke
