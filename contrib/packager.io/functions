@@ -64,8 +64,8 @@ function detect_initcmd () {
 function create_initscripts () {
   echo "# Set up python enviroment"
   cd ${APP_HOME}
-  pip install invoke
-  inv update
+  /opt/inventree/env/bin/pip install invoke
+  /opt/inventree/env/bin/invoke update
 
   echo "# (Re)creating init scripts"
   inventree scale web="1" worker="1"
@@ -87,7 +87,7 @@ function stop_inventree () {
 function update_or_install () {
     echo "# Updating InvenTree"
     cd ${APP_HOME}
-    invoke update
+    /opt/inventree/env/bin/invoke update
 }
 
 function final_message () {
