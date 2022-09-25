@@ -2,9 +2,10 @@
 #
 # packager.io postinstall script
 #
+PATH=/opt/inventree/env/bin:/opt/inventree/:/sbin:/bin:/usr/sbin:/usr/bin:
+
 cd ${APP_HOME}
 python -m venv env
-PATH=/opt/inventree/env/bin:/opt/inventree/:/sbin:/bin:/usr/sbin:/usr/bin:
 
 # import functions
 . /opt/inventree/contrib/packager.io/functions
