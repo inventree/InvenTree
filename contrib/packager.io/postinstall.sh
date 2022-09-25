@@ -4,9 +4,6 @@
 #
 PATH=${APP_HOME}/env/bin:${APP_HOME}/:/sbin:/bin:/usr/sbin:/usr/bin:
 
-cd ${APP_HOME}
-python3 -m venv env
-
 # default config
 export DATA_DIR=${APP_HOME}/data
 export INVENTREE_MEDIA_ROOT=${DATA_DIR}/media

@@ -62,11 +62,11 @@ function detect_initcmd () {
 }
 
 function create_initscripts () {
-  echo "# Set up python enviroment"
+  echo "# Setting up python enviroment"
   cd ${APP_HOME}
+  python3 -m venv env
+  # Install invoke for later ci tasks
   pip install invoke
-  pip install wheel
-  invoke update
 
   echo "# Set up nginx"
   cat <<EOF > /etc/nginx/sites-available/default
