@@ -20,6 +20,7 @@ targets:
       - curl
       - python3
       - python3-venv
+      - python3-pip
       - nginx
       - postgresql
   debian-11:
@@ -27,5 +28,6 @@ targets:
       - curl
       - python3
       - python3-venv
+      - python3-pip
       - nginx
       - postgresql
