@@ -62,7 +62,8 @@ function detect_initcmd () {
 }
 
 function create_initscripts () {
-  echo "# set up python enviroment"
+  echo "# Set up python enviroment"
+  ls
   python3 -m venv env
   source env/bin/active
   pip install invoke
