@@ -67,7 +67,7 @@ function create_initscripts () {
   ls
   python3 -m venv env
   ls
-  source "${APP_HOME}/env/bin/active"
+  source ${APP_HOME}/env/bin/active
   ls
   pip install invoke
   inv update
