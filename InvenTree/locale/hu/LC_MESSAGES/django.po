@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-24 13:47+0000\n"
-"PO-Revision-Date: 2022-09-25 01:08\n"
+"PO-Revision-Date: 2022-09-26 08:10\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -332,11 +332,11 @@ msgstr "Elérési út"
 
 #: InvenTree/models.py:682
 msgid "Barcode Data"
-msgstr ""
+msgstr "Vonalkód adat"
 
 #: InvenTree/models.py:683
 msgid "Third party barcode data"
-msgstr ""
+msgstr "Harmadik féltől származó vonalkód adat"
 
 #: InvenTree/models.py:688 order/serializers.py:486
 msgid "Barcode Hash"
@@ -344,11 +344,11 @@ msgstr "Vonalkód hash"
 
 #: InvenTree/models.py:689
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Egyedi vonalkód hash"
 
 #: InvenTree/models.py:734
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Létező vonalkód"
 
 #: InvenTree/models.py:787
 msgid "Server Error"
@@ -431,7 +431,7 @@ msgstr "Cseh"
 
 #: InvenTree/settings.py:608
 msgid "Danish"
-msgstr ""
+msgstr "Dán"
 
 #: InvenTree/settings.py:609
 msgid "German"
@@ -1373,7 +1373,7 @@ msgstr "Ehhez a gyártási utasításhoz nem készült kimenet"
 #: build/templates/build/build_base.html:104
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
-msgstr "Ez a gyártási utasítás hozzátendelve a %(link)s vevői rendeléshez"
+msgstr "Hozzárendelve a %(link)s vevői rendeléshez"
 
 #: build/templates/build/build_base.html:111
 #, python-format
@@ -2619,11 +2619,11 @@ msgstr "Alkatrész ütemezési információk megjelenítése"
 
 #: common/models.py:1647
 msgid "Table String Length"
-msgstr ""
+msgstr "Táblázati szöveg hossz"
 
 #: common/models.py:1648
 msgid "Maximimum length limit for strings displayed in table views"
-msgstr ""
+msgstr "Maximális szöveg hossz ami megjelenhet a táblázatokban"
 
 #: common/models.py:1712
 msgid "Price break quantity"
@@ -3459,7 +3459,7 @@ msgstr "Árlépcső hozzáadása"
 
 #: company/templates/company/supplier_part.html:282
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Vonalkód hozzárendelése a beszállítói alkatrészhez"
 
 #: company/templates/company/supplier_part.html:300
 msgid "No price break information found"
@@ -4803,11 +4803,11 @@ msgstr "Ez az alkatrészjegyzék tétel opcionális"
 #: templates/js/translated/bom.js:1008
 #: templates/js/translated/table_filters.js:88
 msgid "Consumable"
-msgstr ""
+msgstr "Fogyóeszköz"
 
 #: part/models.py:2668
 msgid "This BOM item is consumable (it is not tracked in build orders)"
-msgstr ""
+msgstr "Ez a BOM tétel fogyóeszköz (készlete nincs követve a gyártásban)"
 
 #: part/models.py:2672 part/templates/part/upload_bom.html:55
 msgid "Overage"
