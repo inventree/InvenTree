@@ -134,19 +134,19 @@ function postBarcodeData(barcode_data, options={}) {
                 enableBarcodeInput(modal, true);
 
                 switch (xhr.status || 0) {
-                    case 400:
-                        // No match for barcode, most likely
-                        console.log(xhr);
+                case 400:
+                    // No match for barcode, most likely
+                    console.log(xhr);
 
-                        data = xhr.responseJSON || {};
-                        showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
+                    data = xhr.responseJSON || {};
+                    showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
 
-                        break;
-                    default:
-                        // Any other error code means something went wrong
-                        $(modal).modal('hide');
+                    break;
+                default:
+                    // Any other error code means something went wrong
+                    $(modal).modal('hide');
 
-                        showApiError(xhr, url);
+                    showApiError(xhr, url);
                 }
             },
             success: function(response, status) {
