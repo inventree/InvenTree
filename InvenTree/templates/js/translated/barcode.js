@@ -129,9 +129,25 @@ function postBarcodeData(barcode_data, options={}) {
         data,
         {
             method: 'POST',
-            error: function() {
+            error: function(xhr) {
+
                 enableBarcodeInput(modal, true);
-                showBarcodeMessage(modal, '{% trans "Server error" %}');
+
+                switch (xhr.status || 0) {
+                    case 400:
+                        // No match for barcode, most likely
+                        console.log(xhr);
+
+                        data = xhr.responseJSON || {};
+                        showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
+
+                        break;
+                    default:
+                        // Any other error code means something went wrong
+                        $(modal).modal('hide');
+
+                        showApiError(xhr, url);
+                }
             },
             success: function(response, status) {
                 modalEnable(modal, false);
