@@ -346,6 +346,12 @@ for key in db_keys:
     env_var = os.environ.get(env_key, None)
 
     if env_var:
+        # Make use PORT is int
+        if key == 'PORT':
+            try:
+                env_var = int(env_var)
+            except ValueError:
+                pass
         # Override configuration value
         db_config[key] = env_var
 
