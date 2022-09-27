@@ -296,9 +296,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             simple_response=False
         )
 
-        self.assertTrue(result)
         self.assertEqual(result.status_code, 400)
-        self.assertContains(result.content, 'Bad Request')
+        self.assertIn('Bad Request', str(result.content))
 
 
 class PanelMixinTests(InvenTreeTestCase):
