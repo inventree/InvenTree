@@ -201,58 +201,74 @@ function cancelBuildOrder(build_id, options={}) {
 /* Construct a form to "complete" (finish) a build order */
 function completeBuildOrder(build_id, options={}) {
 
-    var url = `/api/build/${build_id}/finish/`;
+    constructForm(`/api/build/${build_id}/finish/`, {
+        fieldsFunction: function(opts) {
+            var ctx = opts.context || {};
 
-    var fields = {
-        accept_unallocated: {},
-        accept_overallocated: {},
-        accept_incomplete: {},
-    };
+            var fields = {
+                accept_unallocated: {},
+                accept_overallocated: {},
+                accept_incomplete: {},
+            };
 
-    var html = '';
+            // Hide "accept overallocated" field if the build is *not* overallocated
+            if (!ctx.overallocated) {
+                delete fields.accept_overallocated;
+            }
 
-    if (options.allocated && options.completed) {
-        html += `
-        <div class='alert alert-block alert-success'>
-        {% trans "Build order is ready to be completed" %}
-        </div>`;
-    } else {
-        html += `
-        <div class='alert alert-block alert-danger'>
-        <strong>{% trans "Build Order is incomplete" %}</strong>
-        </div>
-        `;
+            // Hide "accept incomplete" field if the build has been completed
+            if (!ctx.remaining || ctx.remaining == 0) {
+                delete fields.accept_incomplete;
+            }
 
-        if (!options.allocated) {
-            html += `<div class='alert alert-block alert-warning'>{% trans "Required stock has not been fully allocated" %}</div>`;
-        }
+            // Hide "accept unallocated" field if the build is fully allocated
+            if (ctx.allocated) {
+                delete fields.accept_unallocated;
+            }
 
-        if (!options.completed) {
-            html += `<div class='alert alert-block alert-warning'>{% trans "Required build quantity has not been completed" %}</div>`;
-        }
-    }
+            return fields;
+        },
+        preFormContent: function(opts) {
+            var ctx = opts.context || {};
 
-    // Hide particular fields if they are not required
+            var html = '';
 
-    if (options.allocated) {
-        delete fields.accept_unallocated;
-    }
+            if (ctx.allocated && ctx.remaining == 0 && ctx.incomplete == 0) {
+                html += `
+                <div class='alert alert-block alert-success'>
+                {% trans "Build order is ready to be completed" %}'
+                </div>`;
+            } else {
 
-    if (options.completed) {
-        delete fields.accept_incomplete;
-    }
+                if (ctx.incomplete > 0) {
+                    html += `
+                    <div class='alert alert-block alert-danger'>
+                    <strong>{% trans "Build order has incomplete outputs" %}</strong><br>
+                    {% trans "This build order cannot be completed as there are incomplete outputs" %}
+                    </div>`;
+                } else {
+                    html += `
+                    <div class='alert alert-block alert-danger'>
+                    <strong>{% trans "Build Order is incomplete" %}</strong>
+                    </div>
+                    `;
+                }
 
-    if (!options.overallocated) {
-        delete fields.accept_overallocated;
-    }
+                if (!ctx.allocated) {
+                    html += `<div class='alert alert-block alert-warning'>{% trans "Required stock has not been fully allocated" %}</div>`;
+                }
 
-    constructForm(url, {
-        fields: fields,
+                if (ctx.remaining > 0) {
+                    html += `<div class='alert alert-block alert-warning'>{% trans "Required build quantity has not been completed" %}</div>`;
+                }
+            }
+
+            return html;
+        },
         reload: true,
         confirm: true,
-        method: 'POST',
         title: '{% trans "Complete Build Order" %}',
-        preFormContent: html,
+        method: 'POST',
     });
 }
 
@@ -1843,31 +1859,35 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                     var icons = '';
 
-                    if (available_stock < (required - allocated)) {
-                        icons += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                    if (row.consumable) {
+                        icons += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Consumable item" %}'></span>`;
                     } else {
-                        icons += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                        if (available_stock < (required - allocated)) {
+                            icons += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                        } else {
+                            icons += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                        }
+
+                        if (available_stock <= 0) {
+                            icons += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                        } else {
+                            var extra = '';
+                            if ((substitute_stock > 0) && (variant_stock > 0)) {
+                                extra = '{% trans "Includes variant and substitute stock" %}';
+                            } else if (variant_stock > 0) {
+                                extra = '{% trans "Includes variant stock" %}';
+                            } else if (substitute_stock > 0) {
+                                extra = '{% trans "Includes substitute stock" %}';
+                            }
+
+                            if (extra) {
+                                icons += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                            }
+                        }
                     }
 
                     if (row.on_order && row.on_order > 0) {
                         icons += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
-                    }
-
-                    if (available_stock <= 0) {
-                        icons += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
-                    } else {
-                        var extra = '';
-                        if ((substitute_stock > 0) && (variant_stock > 0)) {
-                            extra = '{% trans "Includes variant and substitute stock" %}';
-                        } else if (variant_stock > 0) {
-                            extra = '{% trans "Includes variant stock" %}';
-                        } else if (substitute_stock > 0) {
-                            extra = '{% trans "Includes substitute stock" %}';
-                        }
-
-                        if (extra) {
-                            icons += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
-                        }
                     }
 
                     return renderLink(text, url) + icons;
@@ -1882,8 +1902,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 title: '{% trans "Allocated" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var allocated = allocatedQuantity(row);
                     var required = requiredQuantity(row);
+                    var allocated = row.consumable ? required : allocatedQuantity(row);
                     return makeProgressBar(allocated, required);
                 },
                 sorter: function(valA, valB, rowA, rowB) {
@@ -1922,6 +1942,11 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 field: 'actions',
                 title: '{% trans "Actions" %}',
                 formatter: function(value, row) {
+
+                    if (row.consumable) {
+                        return `<em>{% trans "Consumable item" %}</em>`;
+                    }
+
                     // Generate action buttons for this build output
                     var html = `<div class='btn-group float-right' role='group'>`;
 
@@ -2076,6 +2101,11 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
     for (var idx = 0; idx < bom_items.length; idx++) {
         var bom_item = bom_items[idx];
+
+        // Ignore "consumable" BOM items
+        if (bom_item.consumable) {
+            continue;
+        }
 
         var required = bom_item.required || 0;
         var allocated = bom_item.allocated || 0;
