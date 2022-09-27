@@ -258,7 +258,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # api_call with post and data
         result = self.mixin.api_call(
             'https://reqres.in/api/users/',
-            data={"name": "morpheus", "job": "leader"},
+            json={"name": "morpheus", "job": "leader"},
             method='POST',
             endpoint_is_url=True,
         )
