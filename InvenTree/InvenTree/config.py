@@ -74,7 +74,11 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
     def try_typecasting(value):
         """Attempt to typecast the value"""
         if typecast is not None:
-            return typecast(value)
+            # Try to typecast the value
+            try:
+                return typecast(value)
+            except Exception as error:
+                logger.error(f"Failed to typecast '{env_var}' with value '{value}' to type '{typecast}' with error {error}")
         return value
 
     # First, try to load from the environment variables
