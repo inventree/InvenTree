@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-24 13:47+0000\n"
-"PO-Revision-Date: 2022-09-26 08:10\n"
+"PO-Revision-Date: 2022-09-27 08:27\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -5341,7 +5341,7 @@ msgstr "Értesítések kérése erre az alkatrészre"
 
 #: part/templates/part/part_base.html:49
 msgid "Unink Barcode"
-msgstr ""
+msgstr "Vonalkód leválasztása"
 
 #: part/templates/part/part_base.html:54
 #: stock/templates/stock/item_base.html:63
@@ -5471,7 +5471,7 @@ msgstr "Sorozatszámra keresés"
 
 #: part/templates/part/part_base.html:429
 msgid "Link Barcode to Part"
-msgstr ""
+msgstr "Vonalkód hozzárendelése az alkatrészhez"
 
 #: part/templates/part/part_base.html:475 part/templates/part/prices.html:149
 msgid "Calculate"
@@ -5759,11 +5759,11 @@ msgstr "Egyezés vonalkódra"
 
 #: plugin/base/barcodes/api.py:124
 msgid "Barcode matches existing item"
-msgstr ""
+msgstr "Ez a vonalkód már egy másik tételé"
 
 #: plugin/base/barcodes/api.py:210
 msgid "No match found for provided value"
-msgstr ""
+msgstr "Nincs találat a megadott értékre"
 
 #: plugin/base/label/label.py:60
 msgid "Label printing failed"
@@ -6755,7 +6755,7 @@ msgstr "Készlethelyek"
 
 #: stock/templates/stock/location.html:364
 msgid "Link Barcode to Stock Location"
-msgstr ""
+msgstr "Vonalkód hozzárendelése a készlet helyhez"
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
@@ -7964,7 +7964,7 @@ msgstr "Nincs URL a válaszban"
 
 #: templates/js/translated/barcode.js:383
 msgid "This will remove the link to the associated barcode"
-msgstr ""
+msgstr "Ez törli a vonalkód hozzárendelést"
 
 #: templates/js/translated/barcode.js:389
 msgid "Unlink"
@@ -8170,7 +8170,7 @@ msgstr "Beszerzési átlagár"
 #: templates/js/translated/bom.js:1081 templates/js/translated/build.js:1863
 #: templates/js/translated/build.js:1947
 msgid "Consumable item"
-msgstr ""
+msgstr "Fogyóeszköz tétel"
 
 #: templates/js/translated/bom.js:1141
 msgid "Validate BOM Item"
@@ -8234,7 +8234,7 @@ msgstr "Gyártási utasítás készen áll a befejezésre"
 
 #: templates/js/translated/build.js:247
 msgid "This build order cannot be completed as there are incomplete outputs"
-msgstr ""
+msgstr "A rendelés nem jelölhető késznek mivel függő kimenetek vannak"
 
 #: templates/js/translated/build.js:252
 msgid "Build Order is incomplete"
