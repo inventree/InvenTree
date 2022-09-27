@@ -1606,7 +1606,7 @@ function locationDetail(row, showLink=true) {
         text = '{% trans "Assigned to Sales Order" %}';
         url = `/order/sales-order/${row.sales_order}/`;
     } else if (row.location && row.location_detail) {
-        text = row.location_detail.pathstring;
+        text = shortenString(row.location_detail.pathstring);
         url = `/stock/location/${row.location}/`;
     } else {
         text = '<i>{% trans "No stock location set" %}</i>';
@@ -1707,7 +1707,7 @@ function loadStockTable(table, options) {
             var thumb = row.part_detail.thumbnail;
             var name = row.part_detail.full_name;
 
-            var html = imageHoverIcon(thumb) + renderLink(name, url);
+            var html = imageHoverIcon(thumb) + renderLink(shortenString(name), url);
 
             html += makePartIcons(row.part_detail);
 
@@ -1728,7 +1728,8 @@ function loadStockTable(table, options) {
         visible: params['part_detail'],
         switchable: params['part_detail'],
         formatter: function(value, row) {
-            return row.part_detail.IPN;
+            var ipn = row.part_detail.IPN;
+            return withTitle(shortenString(ipn), ipn);
         },
     };
 
@@ -1744,7 +1745,8 @@ function loadStockTable(table, options) {
         visible: params['part_detail'],
         switchable: params['part_detail'],
         formatter: function(value, row) {
-            return row.part_detail.description;
+            var description = row.part_detail.description;
+            return withTitle(shortenString(description), description);
         }
     });
 
@@ -2420,12 +2422,18 @@ function loadStockLocationTable(table, options) {
                 title: '{% trans "Description" %}',
                 switchable: true,
                 sortable: false,
+                formatter: function(value) {
+                    return withTitle(shortenString(value), value);
+                }
             },
             {
                 field: 'pathstring',
                 title: '{% trans "Path" %}',
                 switchable: true,
                 sortable: true,
+                formatter: function(value) {
+                    return withTitle(shortenString(value), value);
+                }
             },
             {
                 field: 'items',

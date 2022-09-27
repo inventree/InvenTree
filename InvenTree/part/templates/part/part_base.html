@@ -45,6 +45,11 @@
         {% if barcodes %}
         <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
         {% endif %}
+        {% if part.barcode_hash %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
         {% if labels_enabled %}
         <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
         {% endif %}
@@ -167,6 +172,7 @@
         <td>{% trans "Description" %}</td>
         <td>{{ part.description }}{% include "clip.html"%}</td>
     </tr>
+
 </table>
 
 <!-- Part info messages -->
@@ -295,6 +301,13 @@
                 <td>{{ part.keywords }}{% include "clip.html"%}</td>
             </tr>
             {% endif %}
+            {% if part.barcode_hash %}
+            <tr>
+                <td><span class='fas fa-barcode'></span></td>
+                <td>{% trans "Barcode Identifier" %}</td>
+                <td {% if part.barcode_data %}title='{{ part.barcode_data }}'{% endif %}>{{ part.barcode_hash }}</td>
+            </tr>
+            {% endif %}
         </table>
         </div>
         <div class='col-sm-6'>
@@ -391,6 +404,7 @@
         }
     );
 
+    {% if barcodes %}
     $("#show-qr-code").click(function() {
         launchModalForm(
             "{% url 'part-qr' part.id %}",
@@ -399,6 +413,24 @@
             }
         );
     });
+
+    $('#barcode-unlink').click(function() {
+        unlinkBarcode({
+            part: {{ part.pk }},
+        });
+    });
+
+    $('#barcode-link').click(function() {
+        linkBarcodeDialog(
+            {
+                part: {{ part.pk }},
+            },
+            {
+                title: '{% trans "Link Barcode to Part" %}',
+            }
+        );
+    });
+    {% endif %}
 
     {% if labels_enabled %}
     $('#print-label').click(function() {

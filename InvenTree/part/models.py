@@ -43,7 +43,7 @@ from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
-                              InvenTreeTree)
+                              InvenTreeBarcodeMixin, InvenTreeTree)
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from order import models as OrderModels
@@ -300,7 +300,7 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(MetadataMixin, MPTTModel):
+class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -941,18 +941,6 @@ class Part(MetadataMixin, MPTTModel):
 
     responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
 
-    def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a barcode for this Part object."""
-        return helpers.MakeBarcode(
-            "part",
-            self.id,
-            {
-                "name": self.full_name,
-                "url": reverse('api-part-detail', kwargs={'pk': self.id}),
-            },
-            **kwargs
-        )
-
     @property
     def category_path(self):
         """Return the category path of this Part instance"""
@@ -1146,7 +1134,12 @@ class Part(MetadataMixin, MPTTModel):
         total = None
 
         # Prefetch related tables, to reduce query expense
-        queryset = self.get_bom_items().prefetch_related(
+        queryset = self.get_bom_items()
+
+        # Ignore 'consumable' BOM items for this calculation
+        queryset = queryset.filter(consumable=False)
+
+        queryset = queryset.prefetch_related(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
@@ -2538,6 +2531,7 @@ class BomItem(DataImportMixin, models.Model):
         sub_part: Link to the child part (the part that will be consumed)
         quantity: Number of 'sub_parts' consumed to produce one 'part'
         optional: Boolean field describing if this BomItem is optional
+        consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
@@ -2556,6 +2550,7 @@ class BomItem(DataImportMixin, models.Model):
         'allow_variants': {},
         'inherited': {},
         'optional': {},
+        'consumable': {},
         'note': {},
         'part': {
             'label': _('Part'),
@@ -2661,7 +2656,17 @@ class BomItem(DataImportMixin, models.Model):
     # Quantity required
     quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], verbose_name=_('Quantity'), help_text=_('BOM quantity for this BOM item'))
 
-    optional = models.BooleanField(default=False, verbose_name=_('Optional'), help_text=_("This BOM item is optional"))
+    optional = models.BooleanField(
+        default=False,
+        verbose_name=_('Optional'),
+        help_text=_("This BOM item is optional")
+    )
+
+    consumable = models.BooleanField(
+        default=False,
+        verbose_name=_('Consumable'),
+        help_text=_("This BOM item is consumable (it is not tracked in build orders)")
+    )
 
     overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
                                verbose_name=_('Overage'),
@@ -2709,6 +2714,14 @@ class BomItem(DataImportMixin, models.Model):
         result_hash.update(str(self.reference).encode())
         result_hash.update(str(self.optional).encode())
         result_hash.update(str(self.inherited).encode())
+
+        # Optionally encoded for backwards compatibility
+        if self.consumable:
+            result_hash.update(str(self.consumable).encode())
+
+        # Optionally encoded for backwards compatibility
+        if self.allow_variants:
+            result_hash.update(str(self.allow_variants).encode())
 
         return str(result_hash.digest())
 

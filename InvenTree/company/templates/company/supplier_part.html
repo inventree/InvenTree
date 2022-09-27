@@ -30,6 +30,22 @@
 {% url 'admin:company_supplierpart_change' part.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
+{% if barcodes %}
+<!-- Barcode actions menu -->
+<div class='btn-group' role='group'>
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-qrcode'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if part.barcode_hash %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
 {% if roles.purchase_order.change or roles.purchase_order.add or roles.purchase_order.delete %}
 <div class='btn-group'>
     <button id='supplier-part-actions' title='{% trans "Supplier part actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
@@ -98,6 +114,13 @@ src="{% static 'img/blank_image.png' %}"
         <td></td>
         <td>{% trans "Available" %}</td>
         <td>{% decimal part.available %}<span class='badge bg-dark rounded-pill float-right'>{% render_date part.availability_updated %}</span></td>
+    </tr>
+    {% endif %}
+    {% if part.barcode_hash %}
+    <tr>
+        <td><span class='fas fa-barcode'></span></td>
+        <td>{% trans "Barcode Identifier" %}</td>
+        <td {% if part.barcode_data %}title='{{ part.barcode_data }}'{% endif %}>{{ part.barcode_hash }}</td>
     </tr>
     {% endif %}
 </table>
@@ -240,6 +263,33 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 {{ block.super }}
+
+{% if barcodes %}
+
+$("#show-qr-code").click(function() {
+    launchModalForm("{% url 'supplier-part-qr' part.pk %}",
+    {
+        no_post: true,
+    });
+});
+
+$("#barcode-link").click(function() {
+    linkBarcodeDialog(
+        {
+            supplierpart: {{ part.pk }},
+        },
+        {
+            title: '{% trans "Link Barcode to Supplier Part" %}',
+        }
+    );
+});
+
+$("#barcode-unlink").click(function() {
+    unlinkBarcode({
+        supplierpart: {{ part.pk }},
+    });
+});
+{% endif %}
 
 function reloadPriceBreaks() {
     $("#price-break-table").bootstrapTable("refresh");

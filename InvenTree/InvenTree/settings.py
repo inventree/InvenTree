@@ -605,6 +605,7 @@ LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
     ('cs', _('Czech')),
+    ('da', _('Danish')),
     ('de', _('German')),
     ('el', _('Greek')),
     ('en', _('English')),
