@@ -58,7 +58,7 @@ def load_config_data() -> map:
     return data
 
 
-def get_setting(env_var=None, config_key=None, default_value=None):
+def get_setting(env_var=None, config_key=None, default_value=None, typecast=None):
     """Helper function for retrieving a configuration setting value.
 
     - First preference is to look for the environment variable
@@ -69,15 +69,20 @@ def get_setting(env_var=None, config_key=None, default_value=None):
         env_var: Name of the environment variable e.g. 'INVENTREE_STATIC_ROOT'
         config_key: Key to lookup in the configuration file
         default_value: Value to return if first two options are not provided
-
+        typecast: Function to use for typecasting the value
     """
+    def try_typecasting(value):
+        """Attempt to typecast the value"""
+        if typecast is not None:
+            return typecast(value)
+        return value
 
     # First, try to load from the environment variables
     if env_var is not None:
         val = os.getenv(env_var, None)
 
         if val is not None:
-            return val
+            return try_typecasting(val)
 
     # Next, try to load from configuration file
     if config_key is not None:
@@ -96,10 +101,10 @@ def get_setting(env_var=None, config_key=None, default_value=None):
             cfg_data = cfg_data[key]
 
         if result is not None:
-            return result
+            return try_typecasting(result)
 
     # Finally, return the default value
-    return default_value
+    return try_typecasting(default_value)
 
 
 def get_boolean_setting(env_var=None, config_key=None, default_value=False):
