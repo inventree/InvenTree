@@ -34,19 +34,29 @@ class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     def format_matched_response(self, label, model, instance):
         """Format a response for the scanned data"""
 
-        response = {
+        data = {
             'pk': instance.pk
         }
 
         # Add in the API URL if available
         if hasattr(model, 'get_api_url'):
-            response['api_url'] = f"{model.get_api_url()}{instance.pk}/"
+            data['api_url'] = f"{model.get_api_url()}{instance.pk}/"
 
         # Add in the web URL if available
         if hasattr(instance, 'get_absolute_url'):
-            response['web_url'] = instance.get_absolute_url()
+            url = instance.get_absolute_url()
+            data['web_url'] = url
+        else:
+            url = None
 
-        return {label: response}
+        response = {
+            label: data
+        }
+
+        if url is not None:
+            response['url'] = url
+
+        return response
 
 
 class InvenTreeInternalBarcodePlugin(InvenTreeBarcodePlugin):
