@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-24 13:47+0000\n"
-"PO-Revision-Date: 2022-09-27 08:27\n"
+"POT-Creation-Date: 2022-09-28 00:29+0000\n"
+"PO-Revision-Date: 2022-09-28 08:49\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -425,103 +425,103 @@ msgstr "A távoli kép URL-je"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Képek letöltése távoli URL-ről nem engedélyezett"
 
-#: InvenTree/settings.py:607
+#: InvenTree/settings.py:613
 msgid "Czech"
 msgstr "Cseh"
 
-#: InvenTree/settings.py:608
+#: InvenTree/settings.py:614
 msgid "Danish"
 msgstr "Dán"
 
-#: InvenTree/settings.py:609
+#: InvenTree/settings.py:615
 msgid "German"
 msgstr "Német"
 
-#: InvenTree/settings.py:610
+#: InvenTree/settings.py:616
 msgid "Greek"
 msgstr "Görög"
 
-#: InvenTree/settings.py:611
+#: InvenTree/settings.py:617
 msgid "English"
 msgstr "Angol"
 
-#: InvenTree/settings.py:612
+#: InvenTree/settings.py:618
 msgid "Spanish"
 msgstr "Spanyol"
 
-#: InvenTree/settings.py:613
+#: InvenTree/settings.py:619
 msgid "Spanish (Mexican)"
 msgstr "Spanyol (Mexikói)"
 
-#: InvenTree/settings.py:614
+#: InvenTree/settings.py:620
 msgid "Farsi / Persian"
 msgstr "Fárszi/Perzsa"
 
-#: InvenTree/settings.py:615
+#: InvenTree/settings.py:621
 msgid "French"
 msgstr "Francia"
 
-#: InvenTree/settings.py:616
+#: InvenTree/settings.py:622
 msgid "Hebrew"
 msgstr "Héber"
 
-#: InvenTree/settings.py:617
+#: InvenTree/settings.py:623
 msgid "Hungarian"
 msgstr "Magyar"
 
-#: InvenTree/settings.py:618
+#: InvenTree/settings.py:624
 msgid "Italian"
 msgstr "Olasz"
 
-#: InvenTree/settings.py:619
+#: InvenTree/settings.py:625
 msgid "Japanese"
 msgstr "Japán"
 
-#: InvenTree/settings.py:620
+#: InvenTree/settings.py:626
 msgid "Korean"
 msgstr "Koreai"
 
-#: InvenTree/settings.py:621
+#: InvenTree/settings.py:627
 msgid "Dutch"
 msgstr "Holland"
 
-#: InvenTree/settings.py:622
+#: InvenTree/settings.py:628
 msgid "Norwegian"
 msgstr "Norvég"
 
-#: InvenTree/settings.py:623
+#: InvenTree/settings.py:629
 msgid "Polish"
 msgstr "Lengyel"
 
-#: InvenTree/settings.py:624
+#: InvenTree/settings.py:630
 msgid "Portuguese"
 msgstr "Portugál"
 
-#: InvenTree/settings.py:625
+#: InvenTree/settings.py:631
 msgid "Portuguese (Brazilian)"
 msgstr "Portugál (Brazíliai)"
 
-#: InvenTree/settings.py:626
+#: InvenTree/settings.py:632
 msgid "Russian"
 msgstr "Orosz"
 
-#: InvenTree/settings.py:627
+#: InvenTree/settings.py:633
 msgid "Swedish"
 msgstr "Svéd"
 
-#: InvenTree/settings.py:628
+#: InvenTree/settings.py:634
 msgid "Thai"
 msgstr "Tháj"
 
-#: InvenTree/settings.py:629
+#: InvenTree/settings.py:635
 msgid "Turkish"
 msgstr "Török"
 
-#: InvenTree/settings.py:630
+#: InvenTree/settings.py:636
 msgid "Vietnamese"
 msgstr "Vietnámi"
 
-#: InvenTree/settings.py:631
+#: InvenTree/settings.py:637
 msgid "Chinese"
 msgstr "Kínai"
 
@@ -816,7 +816,7 @@ msgstr "Gyártás, amihez ez a gyártás hozzá van rendelve"
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:16
 #: templates/email/overdue_build_order.html:16
-#: templates/js/translated/barcode.js:430 templates/js/translated/bom.js:553
+#: templates/js/translated/barcode.js:452 templates/js/translated/bom.js:553
 #: templates/js/translated/bom.js:690 templates/js/translated/bom.js:816
 #: templates/js/translated/build.js:1205 templates/js/translated/build.js:1698
 #: templates/js/translated/build.js:2156 templates/js/translated/build.js:2547
@@ -1045,7 +1045,7 @@ msgstr "Forrás készlet tétel"
 #: stock/serializers.py:291 stock/templates/stock/item_base.html:290
 #: stock/templates/stock/item_base.html:298
 #: templates/email/build_order_completed.html:18
-#: templates/js/translated/barcode.js:432 templates/js/translated/bom.js:692
+#: templates/js/translated/barcode.js:454 templates/js/translated/bom.js:692
 #: templates/js/translated/bom.js:880 templates/js/translated/build.js:474
 #: templates/js/translated/build.js:626 templates/js/translated/build.js:817
 #: templates/js/translated/build.js:1227 templates/js/translated/build.js:1724
@@ -1146,8 +1146,8 @@ msgstr "A gyártási kimenetek listáját meg kell adni"
 #: stock/serializers.py:320 stock/serializers.py:451 stock/serializers.py:532
 #: stock/serializers.py:915 stock/serializers.py:1148
 #: stock/templates/stock/item_base.html:388
-#: templates/js/translated/barcode.js:431
-#: templates/js/translated/barcode.js:613 templates/js/translated/build.js:802
+#: templates/js/translated/barcode.js:453
+#: templates/js/translated/barcode.js:635 templates/js/translated/build.js:802
 #: templates/js/translated/build.js:1736 templates/js/translated/order.js:1534
 #: templates/js/translated/order.js:3500 templates/js/translated/order.js:3605
 #: templates/js/translated/order.js:3613 templates/js/translated/order.js:3694
@@ -1164,7 +1164,7 @@ msgstr "A kész gyártási kimenetek helye"
 #: build/serializers.py:373 build/templates/build/build_base.html:145
 #: build/templates/build/detail.html:62 order/models.py:646
 #: order/serializers.py:482 stock/templates/stock/item_base.html:421
-#: templates/js/translated/barcode.js:182 templates/js/translated/build.js:2576
+#: templates/js/translated/barcode.js:203 templates/js/translated/build.js:2576
 #: templates/js/translated/order.js:1643 templates/js/translated/order.js:1992
 #: templates/js/translated/order.js:2836 templates/js/translated/stock.js:1827
 #: templates/js/translated/stock.js:2599 templates/js/translated/stock.js:2731
@@ -1887,7 +1887,7 @@ msgstr "Sablon"
 msgid "Parts are templates by default"
 msgstr "Alkatrészek alapból sablon alkatrészek legyenek"
 
-#: common/models.py:958 part/models.py:894 templates/js/translated/bom.js:1471
+#: common/models.py:958 part/models.py:894 templates/js/translated/bom.js:1485
 #: templates/js/translated/table_filters.js:184
 #: templates/js/translated/table_filters.js:455
 msgid "Assembly"
@@ -3366,8 +3366,8 @@ msgstr "QR kód megjelenítése"
 #: company/templates/company/supplier_part.html:42
 #: stock/templates/stock/item_base.html:48
 #: stock/templates/stock/location.html:52
-#: templates/js/translated/barcode.js:381
-#: templates/js/translated/barcode.js:386
+#: templates/js/translated/barcode.js:403
+#: templates/js/translated/barcode.js:408
 msgid "Unlink Barcode"
 msgstr "Vonalkód leválasztása"
 
@@ -7807,7 +7807,7 @@ msgid "The following parts are low on required stock"
 msgstr "A következő alkatrészek szükséges készlete alacsony"
 
 #: templates/email/build_order_required_stock.html:18
-#: templates/js/translated/bom.js:1506
+#: templates/js/translated/bom.js:1520
 msgid "Required Quantity"
 msgstr "Szükséges mennyiség"
 
@@ -7937,77 +7937,77 @@ msgstr "Megjegyzések a készlet áthelyezéshez"
 msgid "Enter notes"
 msgstr "Írd be a megjegyzéseket"
 
-#: templates/js/translated/barcode.js:134
+#: templates/js/translated/barcode.js:142
 msgid "Server error"
 msgstr "Kiszolgálóhiba"
 
-#: templates/js/translated/barcode.js:155
+#: templates/js/translated/barcode.js:171
 msgid "Unknown response from server"
 msgstr "Ismeretlen válasz a kiszolgálótól"
 
-#: templates/js/translated/barcode.js:182
+#: templates/js/translated/barcode.js:203
 #: templates/js/translated/modals.js:1063
 msgid "Invalid server response"
 msgstr "Érvénytelen válasz a szervertől"
 
-#: templates/js/translated/barcode.js:286
+#: templates/js/translated/barcode.js:308
 msgid "Scan barcode data below"
 msgstr "Olvasd be a vonalkódot lentebb"
 
-#: templates/js/translated/barcode.js:333 templates/navbar.html:109
+#: templates/js/translated/barcode.js:354 templates/navbar.html:109
 msgid "Scan Barcode"
 msgstr "Vonalkód beolvasása"
 
-#: templates/js/translated/barcode.js:344
+#: templates/js/translated/barcode.js:366
 msgid "No URL in response"
 msgstr "Nincs URL a válaszban"
 
-#: templates/js/translated/barcode.js:383
+#: templates/js/translated/barcode.js:405
 msgid "This will remove the link to the associated barcode"
 msgstr "Ez törli a vonalkód hozzárendelést"
 
-#: templates/js/translated/barcode.js:389
+#: templates/js/translated/barcode.js:411
 msgid "Unlink"
 msgstr "Leválasztás"
 
-#: templates/js/translated/barcode.js:451 templates/js/translated/stock.js:1054
+#: templates/js/translated/barcode.js:473 templates/js/translated/stock.js:1054
 msgid "Remove stock item"
 msgstr "Készlet tétel törlése"
 
-#: templates/js/translated/barcode.js:493
+#: templates/js/translated/barcode.js:515
 msgid "Check Stock Items into Location"
 msgstr "Készlet bevételezése az adott helyre"
 
-#: templates/js/translated/barcode.js:497
-#: templates/js/translated/barcode.js:629
+#: templates/js/translated/barcode.js:519
+#: templates/js/translated/barcode.js:651
 msgid "Check In"
 msgstr "Bevételezés"
 
-#: templates/js/translated/barcode.js:528
+#: templates/js/translated/barcode.js:550
 msgid "No barcode provided"
 msgstr "Nincs vonalkód beolvasva"
 
-#: templates/js/translated/barcode.js:563
+#: templates/js/translated/barcode.js:585
 msgid "Stock Item already scanned"
 msgstr "Készlet tétel már beolvasva"
 
-#: templates/js/translated/barcode.js:567
+#: templates/js/translated/barcode.js:589
 msgid "Stock Item already in this location"
 msgstr "Készlet tétel már ezen a helyen van"
 
-#: templates/js/translated/barcode.js:574
+#: templates/js/translated/barcode.js:596
 msgid "Added stock item"
 msgstr "Hozzáadott készlet tétel"
 
-#: templates/js/translated/barcode.js:581
+#: templates/js/translated/barcode.js:603
 msgid "Barcode does not match Stock Item"
 msgstr "Vonalkód nem egyezik a készlet tétellel"
 
-#: templates/js/translated/barcode.js:624
+#: templates/js/translated/barcode.js:646
 msgid "Check Into Location"
 msgstr "Készlet áthelyezése a leolvasott helyre"
 
-#: templates/js/translated/barcode.js:687
+#: templates/js/translated/barcode.js:709
 msgid "Barcode does not match a valid location"
 msgstr "A vonalkód nem egyezik egy ismert hellyel sem"
 
@@ -8184,7 +8184,7 @@ msgstr "Ez a sor jóvá lett hagyva"
 msgid "Edit substitute parts"
 msgstr "Helyettesítő alkatrészek szerkesztése"
 
-#: templates/js/translated/bom.js:1147 templates/js/translated/bom.js:1309
+#: templates/js/translated/bom.js:1147 templates/js/translated/bom.js:1323
 msgid "Edit BOM Item"
 msgstr "Alkatrészjegyzék tétel szerkesztése"
 
@@ -8192,15 +8192,15 @@ msgstr "Alkatrészjegyzék tétel szerkesztése"
 msgid "Delete BOM Item"
 msgstr "Alkatrészjegyzék tétel törlése"
 
-#: templates/js/translated/bom.js:1245 templates/js/translated/build.js:1666
+#: templates/js/translated/bom.js:1248 templates/js/translated/build.js:1666
 msgid "No BOM items found"
 msgstr "Nem találhatók alkatrészjegyzék tételek"
 
-#: templates/js/translated/bom.js:1489 templates/js/translated/build.js:1805
+#: templates/js/translated/bom.js:1503 templates/js/translated/build.js:1805
 msgid "Required Part"
 msgstr "Szükséges alkatrész"
 
-#: templates/js/translated/bom.js:1515
+#: templates/js/translated/bom.js:1529
 msgid "Inherited from parent BOM"
 msgstr "Örökölve a szülő alkatrészjegyzéktől"
 
