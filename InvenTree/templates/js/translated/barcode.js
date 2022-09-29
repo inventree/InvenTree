@@ -129,9 +129,25 @@ function postBarcodeData(barcode_data, options={}) {
         data,
         {
             method: 'POST',
-            error: function() {
+            error: function(xhr) {
+
                 enableBarcodeInput(modal, true);
-                showBarcodeMessage(modal, '{% trans "Server error" %}');
+
+                switch (xhr.status || 0) {
+                case 400:
+                    // No match for barcode, most likely
+                    console.log(xhr);
+
+                    data = xhr.responseJSON || {};
+                    showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
+
+                    break;
+                default:
+                    // Any other error code means something went wrong
+                    $(modal).modal('hide');
+
+                    showApiError(xhr, url);
+                }
             },
             success: function(response, status) {
                 modalEnable(modal, false);
@@ -166,6 +182,9 @@ function postBarcodeData(barcode_data, options={}) {
 }
 
 
+/*
+ * Display a message within the barcode scanning dialog
+ */
 function showBarcodeMessage(modal, message, style='danger') {
 
     var html = `<div class='alert alert-block alert-${style}'>`;
@@ -179,7 +198,10 @@ function showBarcodeMessage(modal, message, style='danger') {
 
 
 function showInvalidResponseError(modal, response, status) {
-    showBarcodeMessage(modal, `{% trans "Invalid server response" %}<br>{% trans "Status" %}: '${status}'`);
+    showBarcodeMessage(
+        modal,
+        `{% trans "Invalid server response" %}<br>{% trans "Status" %}: '${status}'`
+    );
 }
 
 
@@ -320,12 +342,11 @@ function barcodeDialog(title, options={}) {
     $(modal).modal('show');
 }
 
-
+/*
+* Perform a barcode scan,
+* and (potentially) redirect the browser
+*/
 function barcodeScanDialog() {
-    /*
-     * Perform a barcode scan,
-     * and (potentially) redirect the browser
-     */
 
     var modal = '#modal-form';
 
@@ -333,11 +354,12 @@ function barcodeScanDialog() {
         '{% trans "Scan Barcode" %}',
         {
             onScan: function(response) {
-                if ('url' in response) {
-                    $(modal).modal('hide');
 
-                    // Redirect to the URL!
-                    window.location.href = response.url;
+                var url = response.url;
+
+                if (url) {
+                    $(modal).modal('hide');
+                    window.location.href = url;
                 } else {
                     showBarcodeMessage(
                         modal,
