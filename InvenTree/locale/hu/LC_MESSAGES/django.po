@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-28 00:29+0000\n"
-"PO-Revision-Date: 2022-09-28 08:49\n"
+"PO-Revision-Date: 2022-09-29 08:50\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1548,11 +1548,11 @@ msgstr "Alkatrész rendelés"
 
 #: build/templates/build/detail.html:199
 msgid "Untracked stock has been fully allocated for this Build Order"
-msgstr "Minden szükséges nem követett készlet le lett foglalva ehhez a gyártási utasításhoz"
+msgstr "A teljes szükséges készlet le lett foglalva ehhez a gyártási utasításhoz"
 
 #: build/templates/build/detail.html:203
 msgid "Untracked stock has not been fully allocated for this Build Order"
-msgstr "Nincs minden nem követett készlet lefoglalva ehhez a gyártási utasításhoz"
+msgstr "Nincs minden készlet lefoglalva ehhez a gyártási utasításhoz"
 
 #: build/templates/build/detail.html:210
 msgid "Allocate selected items"
@@ -1630,7 +1630,7 @@ msgstr "Lefoglalás kész"
 
 #: build/templates/build/detail.html:505
 msgid "All untracked stock items have been allocated"
-msgstr "Az összes nem követett készlet lefoglalásra került"
+msgstr "A szükséges készlet már mind le lett foglalva"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:318
 msgid "New Build Order"
@@ -6576,11 +6576,11 @@ msgstr "Csak olvasható"
 
 #: stock/templates/stock/item_base.html:268
 msgid "This stock item is in production and cannot be edited."
-msgstr "Ez a készlet tétel éppen gyártás alatt van és nem szerkeszthető."
+msgstr "Ez a készlet tétel éppen gyártás alatt van és itt még nem szerkeszthető."
 
 #: stock/templates/stock/item_base.html:269
 msgid "Edit the stock item from the build view."
-msgstr "Készlet tétel szerkesztése a gyártási nézetből."
+msgstr "A tétel szerkesztése most csak a gyártási nézetből lehetséges."
 
 #: stock/templates/stock/item_base.html:282
 msgid "This stock item has not passed all required tests"
@@ -8441,7 +8441,7 @@ msgstr "Automatikus készlet foglalás"
 
 #: templates/js/translated/build.js:2354
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
-msgstr "A készlet automatikusan lefoglalásra került ehhez a gyártási utasításhoz, a megadott feltételek szerint"
+msgstr "A készlet automatikusan lefoglalásra kerül ehhez a gyártási utasításhoz, a következő feltételek szerint"
 
 #: templates/js/translated/build.js:2356
 msgid "If a location is specifed, stock will only be allocated from that location"
