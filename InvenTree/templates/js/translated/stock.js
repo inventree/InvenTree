@@ -971,7 +971,7 @@ function adjustStock(action, items, options={}) {
 
         var item = items[idx];
 
-        if ((item.serial != null) && !allowSerializedStock) {
+        if ((item.serial != null) && (item.serial != "") && !allowSerializedStock) {
             continue;
         }
 
