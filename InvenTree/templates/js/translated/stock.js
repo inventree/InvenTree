@@ -1729,7 +1729,11 @@ function loadStockTable(table, options) {
         switchable: params['part_detail'],
         formatter: function(value, row) {
             var ipn = row.part_detail.IPN;
-            return withTitle(shortenString(ipn), ipn);
+            if (ipn) {
+                return withTitle(shortenString(ipn), ipn);
+            } else {
+                return '-';
+            }
         },
     };
 
