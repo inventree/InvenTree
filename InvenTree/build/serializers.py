@@ -781,6 +781,10 @@ class BuildAllocationSerializer(serializers.Serializer):
                 quantity = item['quantity']
                 output = item.get('output', None)
 
+                # Ignore allocation for consumable BOM items
+                if bom_item.consumable:
+                    continue
+
                 try:
                     # Create a new BuildItem to allocate stock
                     BuildItem.objects.create(
