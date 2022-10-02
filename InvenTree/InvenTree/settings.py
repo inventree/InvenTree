@@ -346,6 +346,12 @@ for key in db_keys:
     env_var = os.environ.get(env_key, None)
 
     if env_var:
+        # Make use PORT is int
+        if key == 'PORT':
+            try:
+                env_var = int(env_var)
+            except ValueError:
+                logger.error(f"Invalid number for {env_key}: {env_var}")
         # Override configuration value
         db_config[key] = env_var
 
@@ -503,7 +509,7 @@ DATABASES = {
 
 # Cache configuration
 cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)
-cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379')
+cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379', typecast=int)
 
 if cache_host:  # pragma: no cover
     # We are going to rely upon a possibly non-localhost for our cache,
@@ -605,6 +611,7 @@ LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
     ('cs', _('Czech')),
+    ('da', _('Danish')),
     ('de', _('German')),
     ('el', _('Greek')),
     ('en', _('English')),
@@ -669,7 +676,7 @@ EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 # Email configuration options
 EMAIL_BACKEND = get_setting('INVENTREE_EMAIL_BACKEND', 'email.backend', 'django.core.mail.backends.smtp.EmailBackend')
 EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
-EMAIL_PORT = int(get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25))
+EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
 EMAIL_HOST_USER = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
 EMAIL_HOST_PASSWORD = get_setting('INVENTREE_EMAIL_PASSWORD', 'email.password', '')
 EMAIL_SUBJECT_PREFIX = get_setting('INVENTREE_EMAIL_PREFIX', 'email.prefix', '[InvenTree] ')
@@ -718,8 +725,8 @@ SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
 SOCIALACCOUNT_STORE_TOKENS = True
 
 # settings for allauth
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3)
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int)
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int)
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
 
