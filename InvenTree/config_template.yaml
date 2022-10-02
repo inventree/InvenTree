@@ -130,10 +130,10 @@ cors:
   # - https://sub.example.com
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
-# media_root: '/home/inventree/data/media'
+#media_root: '/home/inventree/data/media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
-# static_root: '/home/inventree/data/static'
+#static_root: '/home/inventree/data/static'
 
 # Background worker options
 background:
