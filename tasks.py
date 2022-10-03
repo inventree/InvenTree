@@ -237,6 +237,18 @@ def update(c):
         print("WARNING: Translation files could not be compiled:")
 
 
+@task(post=[update])
+def release(c):
+    """Run all update commands in the release enviroment."""
+    # Set envs
+    print('Setting env variables')
+    ENVS = {
+        'INVENTREE_DB_ENGINE': 'sqlite3',
+        'INVENTREE_DB_NAME': 'database.sqlite3',
+    }
+    c.env = ENVS
+
+
 # Data tasks
 @task(help={
     'filename': "Output filename (default = 'data.json')",

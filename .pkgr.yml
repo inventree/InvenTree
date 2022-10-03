@@ -2,11 +2,43 @@ name: inventree
 description: Open Source Inventory Management System
 homepage: https://inventree.org
 notifications: false
-targets:
-  ubuntu-20.04: true
+buildpack: https://github.com/mjmair/heroku-buildpack-python#v216-mjmair
 env:
-  - INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
+  - STACK=heroku-20
+  - DISABLE_COLLECTSTATIC=1
+  - INVENTREE_DB_ENGINE=sqlite3
+  - INVENTREE_DB_NAME=database.sqlite3
   - INVENTREE_PLUGINS_ENABLED
-  - INVENTREE_STATIC_ROOT=/opt/inventree/static
   - INVENTREE_MEDIA_ROOT=/opt/inventree/media
+  - INVENTREE_STATIC_ROOT=/opt/inventree/static
   - INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
+  - INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
+after_install: contrib/packager.io/postinstall.sh
+targets:
+  ubuntu-20.04:
+    dependencies:
+      - curl
+      - python3
+      - python3-venv
+      - python3-pip
+      - python3-cffi
+      - python3-brotli
+      - python-wheel-common
+      - libpango-1.0-0
+      - libharfbuzz0b
+      - libpangoft2-1.0-0
+      - gettext
+      - nginx
+  debian-11:
+    dependencies:
+      - curl
+      - python3
+      - python3-venv
+      - python3-pip
+      - python3-cffi
+      - python3-brotli
+      - python-wheel
+      - libpango-1.0-0
+      - libpangoft2-1.0-0
+      - gettext
+      - nginx
