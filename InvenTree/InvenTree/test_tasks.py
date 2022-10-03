@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 
+from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
@@ -136,3 +137,8 @@ class InvenTreeTaskTests(TestCase):
 
         # Run with migrations
         InvenTree.tasks.check_for_migrations()
+
+        # Cleanup
+        migration_name = InvenTree.tasks.get_migration_plan()[0][0].name + '.py'
+        migration_path = settings.BASE_DIR / 'InvenTree' / 'migrations' / migration_name
+        migration_path.unlink()
