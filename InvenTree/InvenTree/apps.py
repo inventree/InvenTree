@@ -32,7 +32,7 @@ class InvenTreeConfig(AppConfig):
         - Adding users set in the current enviroment
         """
         if canAppAccessDatabase():
-            InvenTree.tasks.check_for_migrations()
+            InvenTree.tasks.check_for_migrations(worker=False)
 
             self.remove_obsolete_tasks()
 

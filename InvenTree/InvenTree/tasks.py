@@ -295,7 +295,7 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
     )
 
 
-def check_for_migrations():
+def check_for_migrations(worker: bool = True):
     """Checks if migrations are needed.
 
     If the setting auto_update is enabled we will start updateing.
@@ -327,9 +327,7 @@ def check_for_migrations():
 
     # Check if we are worker - go kill all other workers then.
     # Only the frontend workers run updates.
-
-    # TODO
-    if True:
+    if worker:
         logger.info('Current process is a worker - shutting down cluster')
 
     # Ok now we are ready to go ahead!
