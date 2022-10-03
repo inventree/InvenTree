@@ -108,7 +108,7 @@ plugins_enabled: False
 #plugin_file: /path/to/plugins.txt
 #plugin_dir: /path/to/plugins/
 
-# Set this variable to True to enable auto-migrations and auto-updates (on bare-metal with git avai)
+# Set this variable to True to enable auto-migrations
 # Alternatively, use the environment variable INVENTREE_AUTO_UPDATE
 auto_update: False
 
