@@ -144,6 +144,15 @@ class PartTest(TestCase):
 
         Part.objects.rebuild()
 
+    def test_barcode_mixin(self):
+        """Test the barcode mixin functionality"""
+
+        self.assertEqual(Part.barcode_model_type(), 'part')
+
+        p = Part.objects.get(pk=1)
+        barcode = p.format_barcode(brief=True)
+        self.assertEqual(barcode, '{"part": 1}')
+
     def test_tree(self):
         """Test that the part variant tree is working properly"""
         chair = Part.objects.get(pk=10000)
@@ -243,7 +252,7 @@ class PartTest(TestCase):
         """Test barcode format functionality"""
         barcode = self.r1.format_barcode(brief=False)
         self.assertIn('InvenTree', barcode)
-        self.assertIn(self.r1.name, barcode)
+        self.assertIn('"part": {"id": 3}', barcode)
 
     def test_copy(self):
         """Test that we can 'deep copy' a Part instance"""

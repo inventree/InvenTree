@@ -258,7 +258,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # api_call with post and data
         result = self.mixin.api_call(
             'https://reqres.in/api/users/',
-            data={"name": "morpheus", "job": "leader"},
+            json={"name": "morpheus", "job": "leader"},
             method='POST',
             endpoint_is_url=True,
         )
@@ -279,6 +279,25 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # cover wrong token setting
         with self.assertRaises(MixinNotImplementedError):
             self.mixin_wrong2.has_api_call()
+
+        # Too many data arguments
+        with self.assertRaises(ValueError):
+            self.mixin.api_call(
+                'https://reqres.in/api/users/',
+                json={"a": 1, }, data={"a": 1},
+            )
+
+        # Sending a request with a wrong data format should result in 40
+        result = self.mixin.api_call(
+            'https://reqres.in/api/users/',
+            data={"name": "morpheus", "job": "leader"},
+            method='POST',
+            endpoint_is_url=True,
+            simple_response=False
+        )
+
+        self.assertEqual(result.status_code, 400)
+        self.assertIn('Bad Request', str(result.content))
 
 
 class PanelMixinTests(InvenTreeTestCase):

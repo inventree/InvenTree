@@ -129,9 +129,25 @@ function postBarcodeData(barcode_data, options={}) {
         data,
         {
             method: 'POST',
-            error: function() {
+            error: function(xhr) {
+
                 enableBarcodeInput(modal, true);
-                showBarcodeMessage(modal, '{% trans "Server error" %}');
+
+                switch (xhr.status || 0) {
+                case 400:
+                    // No match for barcode, most likely
+                    console.log(xhr);
+
+                    data = xhr.responseJSON || {};
+                    showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
+
+                    break;
+                default:
+                    // Any other error code means something went wrong
+                    $(modal).modal('hide');
+
+                    showApiError(xhr, url);
+                }
             },
             success: function(response, status) {
                 modalEnable(modal, false);
@@ -166,6 +182,9 @@ function postBarcodeData(barcode_data, options={}) {
 }
 
 
+/*
+ * Display a message within the barcode scanning dialog
+ */
 function showBarcodeMessage(modal, message, style='danger') {
 
     var html = `<div class='alert alert-block alert-${style}'>`;
@@ -179,7 +198,10 @@ function showBarcodeMessage(modal, message, style='danger') {
 
 
 function showInvalidResponseError(modal, response, status) {
-    showBarcodeMessage(modal, `{% trans "Invalid server response" %}<br>{% trans "Status" %}: '${status}'`);
+    showBarcodeMessage(
+        modal,
+        `{% trans "Invalid server response" %}<br>{% trans "Status" %}: '${status}'`
+    );
 }
 
 
@@ -320,12 +342,11 @@ function barcodeDialog(title, options={}) {
     $(modal).modal('show');
 }
 
-
+/*
+* Perform a barcode scan,
+* and (potentially) redirect the browser
+*/
 function barcodeScanDialog() {
-    /*
-     * Perform a barcode scan,
-     * and (potentially) redirect the browser
-     */
 
     var modal = '#modal-form';
 
@@ -333,11 +354,12 @@ function barcodeScanDialog() {
         '{% trans "Scan Barcode" %}',
         {
             onScan: function(response) {
-                if ('url' in response) {
-                    $(modal).modal('hide');
 
-                    // Redirect to the URL!
-                    window.location.href = response.url;
+                var url = response.url;
+
+                if (url) {
+                    $(modal).modal('hide');
+                    window.location.href = url;
                 } else {
                     showBarcodeMessage(
                         modal,
@@ -352,19 +374,17 @@ function barcodeScanDialog() {
 
 
 /*
- * Dialog for linking a particular barcode to a stock item.
+ * Dialog for linking a particular barcode to a database model instsance
  */
-function linkBarcodeDialog(stockitem) {
+function linkBarcodeDialog(data, options={}) {
 
     var modal = '#modal-form';
 
     barcodeDialog(
-        '{% trans "Link Barcode to Stock Item" %}',
+        options.title,
         {
             url: '/api/barcode/link/',
-            data: {
-                stockitem: stockitem,
-            },
+            data: data,
             onScan: function() {
 
                 $(modal).modal('hide');
@@ -376,13 +396,13 @@ function linkBarcodeDialog(stockitem) {
 
 
 /*
- * Remove barcode association from a device.
+ * Remove barcode association from a database model instance.
  */
-function unlinkBarcode(stockitem) {
+function unlinkBarcode(data, options={}) {
 
     var html = `<b>{% trans "Unlink Barcode" %}</b><br>`;
 
-    html += '{% trans "This will remove the association between this stock item and the barcode" %}';
+    html += '{% trans "This will remove the link to the associated barcode" %}';
 
     showQuestionDialog(
         '{% trans "Unlink Barcode" %}',
@@ -391,13 +411,10 @@ function unlinkBarcode(stockitem) {
             accept_text: '{% trans "Unlink" %}',
             accept: function() {
                 inventreePut(
-                    `/api/stock/${stockitem}/`,
+                    '/api/barcode/unlink/',
+                    data,
                     {
-                        // Clear the UID field
-                        uid: '',
-                    },
-                    {
-                        method: 'PATCH',
+                        method: 'POST',
                         success: function() {
                             location.reload();
                         },

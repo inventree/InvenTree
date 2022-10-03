@@ -3,31 +3,31 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-01 06:10+0000\n"
-"PO-Revision-Date: 2022-10-02 04:07\n"
+"PO-Revision-Date: 2022-10-02 04:08\n"
 "Last-Translator: \n"
-"Language-Team: Norwegian\n"
-"Language: no_NO\n"
+"Language-Team: Danish\n"
+"Language: da_DK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: no\n"
+"X-Crowdin-Language: da\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
 #: InvenTree/api.py:54
 msgid "API endpoint not found"
-msgstr "API endepunkt ikke funnet"
+msgstr "API endpoint ikke fundet"
 
 #: InvenTree/exceptions.py:68
 msgid "Error details can be found in the admin panel"
-msgstr "Feildetaljer kan ikke finnes i admin-panelet"
+msgstr "Fejloplysninger kan findes i admin panelet"
 
 #: InvenTree/fields.py:109
 msgid "Enter date"
-msgstr "Oppgi dato"
+msgstr "Angiv dato"
 
 #: InvenTree/fields.py:183 build/serializers.py:384
 #: build/templates/build/sidebar.html:21 company/models.py:524
@@ -47,122 +47,122 @@ msgstr "Oppgi dato"
 #: templates/js/translated/order.js:4402 templates/js/translated/stock.js:1374
 #: templates/js/translated/stock.js:1982
 msgid "Notes"
-msgstr "Notater"
+msgstr "Bemærkninger"
 
 #: InvenTree/format.py:142
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr "Verdi '{name}' vises ikke i mønsterformat"
+msgstr "Værdi '{name}' vises ikke i mønsterformat"
 
 #: InvenTree/format.py:152
 msgid "Provided value does not match required pattern: "
-msgstr "Angitt verdi samsvarer ikke med påkrevd mønster: "
+msgstr "Den angivne værdi matcher ikke det påkrævede mønster: "
 
 #: InvenTree/forms.py:133
 msgid "Enter password"
-msgstr "Oppgi passord"
+msgstr "Indtast adgangskode"
 
 #: InvenTree/forms.py:134
 msgid "Enter new password"
-msgstr "Oppgi nytt passord"
+msgstr "Indtast ny adgangskode"
 
 #: InvenTree/forms.py:143
 msgid "Confirm password"
-msgstr "Bekreft passord"
+msgstr "Bekræft adgangskode"
 
 #: InvenTree/forms.py:144
 msgid "Confirm new password"
-msgstr "Bekreft nytt passord"
+msgstr "Bekræft ny adgangskode"
 
 #: InvenTree/forms.py:148
 msgid "Old password"
-msgstr "Gammelt passord"
+msgstr "Gammel adgangskode"
 
 #: InvenTree/forms.py:177
 msgid "Email (again)"
-msgstr "E-post (gjenta)"
+msgstr "E-mail (igen)"
 
 #: InvenTree/forms.py:181
 msgid "Email address confirmation"
-msgstr "Bekreftelsen på e-postaddresse"
+msgstr "Bekræftelse af e-mailadresse"
 
 #: InvenTree/forms.py:202
 msgid "You must type the same email each time."
-msgstr "Du må angi samme e-post hver gang."
+msgstr "Du skal indtaste den samme e-mail hver gang."
 
 #: InvenTree/helpers.py:158
 msgid "Connection error"
-msgstr "Tilkoblingsfeil"
+msgstr ""
 
 #: InvenTree/helpers.py:162 InvenTree/helpers.py:167
 msgid "Server responded with invalid status code"
-msgstr "Serveren svarte med ugyldig statuskode"
+msgstr ""
 
 #: InvenTree/helpers.py:164
 msgid "Exception occurred"
-msgstr "Det har oppstått et unntak"
+msgstr ""
 
 #: InvenTree/helpers.py:172
 msgid "Server responded with invalid Content-Length value"
-msgstr "Serveren svarte med ugylding innholdslengde verdi"
+msgstr ""
 
 #: InvenTree/helpers.py:175
 msgid "Image size is too large"
-msgstr "Bildestørrelsen er for stor"
+msgstr ""
 
 #: InvenTree/helpers.py:187
 msgid "Image download exceeded maximum size"
-msgstr "Bildenedlasting overskred maksimal størrelse"
+msgstr ""
 
 #: InvenTree/helpers.py:192
 msgid "Remote server returned empty response"
-msgstr "Ekstern server returnerte tomt svar"
+msgstr ""
 
 #: InvenTree/helpers.py:200
 msgid "Supplied URL is not a valid image file"
-msgstr "Angitt URL er ikke en gyldig bildefil"
+msgstr ""
 
 #: InvenTree/helpers.py:583
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr "Dupliser serie: {sn}"
+msgstr ""
 
 #: InvenTree/helpers.py:590 order/models.py:320 order/models.py:472
 msgid "Invalid quantity provided"
-msgstr "Ugyldig mengde oppgitt"
+msgstr ""
 
 #: InvenTree/helpers.py:593
 msgid "Empty serial number string"
-msgstr "Tom serienummerstreng"
+msgstr ""
 
 #: InvenTree/helpers.py:625
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr "Ugyldig gruppeserie: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:628
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr "Ugyldig gruppe: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:656
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr "Ugyldig gruppesekvense: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:664
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr "Ugyldig/ingen gruppe {group}"
+msgstr ""
 
 #: InvenTree/helpers.py:670
 msgid "No serial numbers found"
-msgstr "Ingen serienummer funnet"
+msgstr ""
 
 #: InvenTree/helpers.py:674
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
-msgstr "Antall unike serienumre ({s}) må samsvare med antall ({q})"
+msgstr ""
 
 #: InvenTree/helpers.py:873
 msgid "Remove HTML tags from this value"
@@ -170,19 +170,19 @@ msgstr ""
 
 #: InvenTree/models.py:238
 msgid "Improperly formatted pattern"
-msgstr "Uriktig formatert mønster"
+msgstr ""
 
 #: InvenTree/models.py:245
 msgid "Unknown format key specified"
-msgstr "Ukjent formatnøkkel spesifisert"
+msgstr ""
 
 #: InvenTree/models.py:251
 msgid "Missing required format key"
-msgstr "Mangler nødvendig formatnøkkel"
+msgstr ""
 
 #: InvenTree/models.py:263
 msgid "Reference field cannot be empty"
-msgstr "Referansefeltet kan ikke være tomt"
+msgstr ""
 
 #: InvenTree/models.py:270
 msgid "Reference must match required pattern"
@@ -194,21 +194,21 @@ msgstr ""
 
 #: InvenTree/models.py:384
 msgid "Missing file"
-msgstr "Fil mangler"
+msgstr ""
 
 #: InvenTree/models.py:385
 msgid "Missing external link"
-msgstr "Mangler eksternlenke"
+msgstr ""
 
 #: InvenTree/models.py:405 stock/models.py:2043
 #: templates/js/translated/attachment.js:103
 #: templates/js/translated/attachment.js:241
 msgid "Attachment"
-msgstr "Vedlegg"
+msgstr ""
 
 #: InvenTree/models.py:406
 msgid "Select file to attach"
-msgstr "Velg fil å legge ved"
+msgstr ""
 
 #: InvenTree/models.py:412 company/models.py:124 company/models.py:276
 #: company/models.py:511 order/models.py:84 order/models.py:1249
@@ -218,21 +218,21 @@ msgstr "Velg fil å legge ved"
 #: templates/js/translated/company.js:1011
 #: templates/js/translated/order.js:3042 templates/js/translated/part.js:1567
 msgid "Link"
-msgstr "Lenke"
+msgstr ""
 
 #: InvenTree/models.py:413 build/models.py:285 part/models.py:803
 #: stock/models.py:604
 msgid "Link to external URL"
-msgstr "Lenke til ekstern URL"
+msgstr ""
 
 #: InvenTree/models.py:416 templates/js/translated/attachment.js:104
 #: templates/js/translated/attachment.js:285
 msgid "Comment"
-msgstr "Kommenter"
+msgstr ""
 
 #: InvenTree/models.py:416
 msgid "File comment"
-msgstr "Kommentar til fil"
+msgstr ""
 
 #: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1679
 #: common/models.py:1680 common/models.py:1903 common/models.py:1904
@@ -241,40 +241,40 @@ msgstr "Kommentar til fil"
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2649
 msgid "User"
-msgstr "Bruker"
+msgstr ""
 
 #: InvenTree/models.py:426
 msgid "upload date"
-msgstr "opplastet dato"
+msgstr ""
 
 #: InvenTree/models.py:448
 msgid "Filename must not be empty"
-msgstr "Filnavn må ikke være tom"
+msgstr ""
 
 #: InvenTree/models.py:457
 msgid "Invalid attachment directory"
-msgstr "Ugyldig vedleggskatalog"
+msgstr ""
 
 #: InvenTree/models.py:467
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr "Filnavn inneholder ugyldig tegn '{c}'"
+msgstr ""
 
 #: InvenTree/models.py:470
 msgid "Filename missing extension"
-msgstr "Filnavn mangler filtype"
+msgstr ""
 
 #: InvenTree/models.py:477
 msgid "Attachment with this filename already exists"
-msgstr "Vedlegg med dette filnavnet finnes allerede"
+msgstr ""
 
 #: InvenTree/models.py:484
 msgid "Error renaming file"
-msgstr "Feil ved endring av navn"
+msgstr ""
 
 #: InvenTree/models.py:520
 msgid "Invalid choice"
-msgstr "Ugyldig valg"
+msgstr ""
 
 #: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:1889
 #: company/models.py:358 label/models.py:101 part/models.py:746
@@ -290,7 +290,7 @@ msgstr "Ugyldig valg"
 #: templates/js/translated/part.js:686 templates/js/translated/part.js:838
 #: templates/js/translated/part.js:1960 templates/js/translated/stock.js:2394
 msgid "Name"
-msgstr "Navn"
+msgstr ""
 
 #: InvenTree/models.py:564 build/models.py:163
 #: build/templates/build/detail.html:24 company/models.py:282
@@ -315,15 +315,15 @@ msgstr "Navn"
 #: templates/js/translated/part.js:2071 templates/js/translated/stock.js:1748
 #: templates/js/translated/stock.js:2426 templates/js/translated/stock.js:2486
 msgid "Description"
-msgstr "Beskrivelse"
+msgstr ""
 
 #: InvenTree/models.py:565
 msgid "Description (optional)"
-msgstr "Beskrivelse (valgfritt)"
+msgstr ""
 
 #: InvenTree/models.py:573
 msgid "parent"
-msgstr "overkategori"
+msgstr ""
 
 #: InvenTree/models.py:580 InvenTree/models.py:581
 #: templates/js/translated/part.js:2005 templates/js/translated/stock.js:2435
@@ -360,57 +360,57 @@ msgstr ""
 
 #: InvenTree/serializers.py:55 part/models.py:2766
 msgid "Must be a valid number"
-msgstr "Nummer må være gyldig"
+msgstr ""
 
 #: InvenTree/serializers.py:262
 msgid "Filename"
-msgstr "Filnavn"
+msgstr ""
 
 #: InvenTree/serializers.py:297
 msgid "Invalid value"
-msgstr "Ugyldig verdi"
+msgstr ""
 
 #: InvenTree/serializers.py:319
 msgid "Data File"
-msgstr "Data fil"
+msgstr ""
 
 #: InvenTree/serializers.py:320
 msgid "Select data file for upload"
-msgstr "Velg datafil for opplasting"
+msgstr ""
 
 #: InvenTree/serializers.py:341
 msgid "Unsupported file type"
-msgstr "Filtypen støttes ikke"
+msgstr ""
 
 #: InvenTree/serializers.py:347
 msgid "File is too large"
-msgstr "Filen er for stor"
+msgstr ""
 
 #: InvenTree/serializers.py:368
 msgid "No columns found in file"
-msgstr "Ingen kolonner funnet i filen"
+msgstr ""
 
 #: InvenTree/serializers.py:371
 msgid "No data rows found in file"
-msgstr "Ingen datalader funnet i fil"
+msgstr ""
 
 #: InvenTree/serializers.py:494
 msgid "No data rows provided"
-msgstr "Ingen datalader oppgitt"
+msgstr ""
 
 #: InvenTree/serializers.py:497
 msgid "No data columns supplied"
-msgstr "Ingen datakolonner angitt"
+msgstr ""
 
 #: InvenTree/serializers.py:574
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr "Mangler påkrevd kolonne: '{name}'"
+msgstr ""
 
 #: InvenTree/serializers.py:583
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr "Dupliser kolonne: '{col}'"
+msgstr ""
 
 #: InvenTree/serializers.py:602
 #: templates/InvenTree/settings/mixins/urls.html:14
@@ -427,7 +427,7 @@ msgstr ""
 
 #: InvenTree/settings.py:613
 msgid "Czech"
-msgstr "Tsjekkisk"
+msgstr ""
 
 #: InvenTree/settings.py:614
 msgid "Danish"
@@ -435,142 +435,142 @@ msgstr ""
 
 #: InvenTree/settings.py:615
 msgid "German"
-msgstr "Tysk"
+msgstr ""
 
 #: InvenTree/settings.py:616
 msgid "Greek"
-msgstr "Gresk"
+msgstr ""
 
 #: InvenTree/settings.py:617
 msgid "English"
-msgstr "Engelsk"
+msgstr ""
 
 #: InvenTree/settings.py:618
 msgid "Spanish"
-msgstr "Spansk"
+msgstr ""
 
 #: InvenTree/settings.py:619
 msgid "Spanish (Mexican)"
-msgstr "Spansk (Meksikansk)"
+msgstr ""
 
 #: InvenTree/settings.py:620
 msgid "Farsi / Persian"
-msgstr "Farsi / Persisk"
+msgstr ""
 
 #: InvenTree/settings.py:621
 msgid "French"
-msgstr "Fransk"
+msgstr ""
 
 #: InvenTree/settings.py:622
 msgid "Hebrew"
-msgstr "Hebraisk"
+msgstr ""
 
 #: InvenTree/settings.py:623
 msgid "Hungarian"
-msgstr "Ungarsk"
+msgstr ""
 
 #: InvenTree/settings.py:624
 msgid "Italian"
-msgstr "Italiensk"
+msgstr ""
 
 #: InvenTree/settings.py:625
 msgid "Japanese"
-msgstr "Japansk"
+msgstr ""
 
 #: InvenTree/settings.py:626
 msgid "Korean"
-msgstr "Koreansk"
+msgstr ""
 
 #: InvenTree/settings.py:627
 msgid "Dutch"
-msgstr "Nederlandsk"
+msgstr ""
 
 #: InvenTree/settings.py:628
 msgid "Norwegian"
-msgstr "Norsk"
+msgstr ""
 
 #: InvenTree/settings.py:629
 msgid "Polish"
-msgstr "Polsk"
+msgstr ""
 
 #: InvenTree/settings.py:630
 msgid "Portuguese"
-msgstr "Portugisisk"
+msgstr ""
 
 #: InvenTree/settings.py:631
 msgid "Portuguese (Brazilian)"
-msgstr "Portugisisk (Brasilian)"
+msgstr ""
 
 #: InvenTree/settings.py:632
 msgid "Russian"
-msgstr "Russisk"
+msgstr ""
 
 #: InvenTree/settings.py:633
 msgid "Swedish"
-msgstr "Svensk"
+msgstr ""
 
 #: InvenTree/settings.py:634
 msgid "Thai"
-msgstr "Thailandsk"
+msgstr ""
 
 #: InvenTree/settings.py:635
 msgid "Turkish"
-msgstr "Tyrkisk"
+msgstr ""
 
 #: InvenTree/settings.py:636
 msgid "Vietnamese"
-msgstr "Vietnamesisk"
+msgstr ""
 
 #: InvenTree/settings.py:637
 msgid "Chinese"
-msgstr "Kinesisk"
+msgstr ""
 
 #: InvenTree/status.py:99
 msgid "Background worker check failed"
-msgstr "Bakgrunnsarbeiderkontroll mislyktes"
+msgstr ""
 
 #: InvenTree/status.py:103
 msgid "Email backend not configured"
-msgstr "E-post backend ikke konfigurert"
+msgstr ""
 
 #: InvenTree/status.py:106
 msgid "InvenTree system health checks failed"
-msgstr "Helsekontroll av IvenTree system mislyktes"
+msgstr ""
 
 #: InvenTree/status_codes.py:99 InvenTree/status_codes.py:140
 #: InvenTree/status_codes.py:306 templates/js/translated/table_filters.js:342
 msgid "Pending"
-msgstr "Ventende"
+msgstr ""
 
 #: InvenTree/status_codes.py:100
 msgid "Placed"
-msgstr "Plassert"
+msgstr ""
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:309
 #: order/templates/order/order_base.html:143
 #: order/templates/order/sales_order_base.html:133
 msgid "Complete"
-msgstr "Fullført"
+msgstr ""
 
 #: InvenTree/status_codes.py:102 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:308
 msgid "Cancelled"
-msgstr "Kansellert"
+msgstr ""
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:143
 #: InvenTree/status_codes.py:183
 msgid "Lost"
-msgstr "Tapt"
+msgstr ""
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:186
 msgid "Returned"
-msgstr "Returnert"
+msgstr ""
 
 #: InvenTree/status_codes.py:141 order/models.py:1132
 #: templates/js/translated/order.js:3630 templates/js/translated/order.js:3979
 msgid "Shipped"
-msgstr "Sendt"
+msgstr ""
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
@@ -578,19 +578,19 @@ msgstr ""
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
-msgstr "Merknad nødvendig"
+msgstr ""
 
 #: InvenTree/status_codes.py:181
 msgid "Damaged"
-msgstr "Skadet"
+msgstr ""
 
 #: InvenTree/status_codes.py:182
 msgid "Destroyed"
-msgstr "Ødelagt"
+msgstr ""
 
 #: InvenTree/status_codes.py:184
 msgid "Rejected"
-msgstr "Avvist"
+msgstr ""
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
@@ -598,83 +598,83 @@ msgstr ""
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
-msgstr "Legacy stock sporingsoppføring"
+msgstr ""
 
 #: InvenTree/status_codes.py:261
 msgid "Stock item created"
-msgstr "Lagevare opprettet"
+msgstr ""
 
 #: InvenTree/status_codes.py:263
 msgid "Edited stock item"
-msgstr "Redigerte lagervare"
+msgstr ""
 
 #: InvenTree/status_codes.py:264
 msgid "Assigned serial number"
-msgstr "Tildelt serienummer"
+msgstr ""
 
 #: InvenTree/status_codes.py:266
 msgid "Stock counted"
-msgstr "Lager tellet"
+msgstr ""
 
 #: InvenTree/status_codes.py:267
 msgid "Stock manually added"
-msgstr "Lager manuelt lagt til"
+msgstr ""
 
 #: InvenTree/status_codes.py:268
 msgid "Stock manually removed"
-msgstr "Lager manuelt fjernet"
+msgstr ""
 
 #: InvenTree/status_codes.py:270
 msgid "Location changed"
-msgstr "Posisjon endret"
+msgstr ""
 
 #: InvenTree/status_codes.py:272
 msgid "Installed into assembly"
-msgstr "Installert i montering"
+msgstr ""
 
 #: InvenTree/status_codes.py:273
 msgid "Removed from assembly"
-msgstr "Fjernet fra montering"
+msgstr ""
 
 #: InvenTree/status_codes.py:275
 msgid "Installed component item"
-msgstr "Installert komponentelement"
+msgstr ""
 
 #: InvenTree/status_codes.py:276
 msgid "Removed component item"
-msgstr "Fjernet komponentelement"
+msgstr ""
 
 #: InvenTree/status_codes.py:278
 msgid "Split from parent item"
-msgstr "Delt fra overordnet element"
+msgstr ""
 
 #: InvenTree/status_codes.py:279
 msgid "Split child item"
-msgstr "Delt fra underelement"
+msgstr ""
 
 #: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2086
 msgid "Merged stock items"
-msgstr "Sammenslått lagervare"
+msgstr ""
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
-msgstr "Konvertert til variant"
+msgstr ""
 
 #: InvenTree/status_codes.py:285 templates/js/translated/table_filters.js:229
 msgid "Sent to customer"
-msgstr "Sendt til kunde"
+msgstr ""
 
 #: InvenTree/status_codes.py:286
 msgid "Returned from customer"
-msgstr "Returnert av kunde"
+msgstr ""
 
 #: InvenTree/status_codes.py:288
 msgid "Build order output created"
-msgstr "Build ordreutgang opprettet"
+msgstr ""
 
 #: InvenTree/status_codes.py:289
 msgid "Build order output completed"
-msgstr "Build ordreutg fullført"
+msgstr ""
 
 #: InvenTree/status_codes.py:290
 msgid "Consumed by build order"
@@ -682,37 +682,37 @@ msgstr ""
 
 #: InvenTree/status_codes.py:292
 msgid "Received against purchase order"
-msgstr "Mottatt mot innkjøpsordre"
+msgstr ""
 
 #: InvenTree/status_codes.py:307
 msgid "Production"
-msgstr "Produksjon"
+msgstr ""
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
-msgstr "Ikke en gyldig valutanr"
+msgstr ""
 
 #: InvenTree/validators.py:45
 msgid "Invalid character in part name"
-msgstr "Ugylding tegn i varenavn"
+msgstr ""
 
 #: InvenTree/validators.py:57
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr "IPN må matche regex-mønster {pat}"
+msgstr ""
 
 #: InvenTree/validators.py:68 InvenTree/validators.py:79
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr "Referansen må samsvare med mønster {pattern}"
+msgstr ""
 
 #: InvenTree/validators.py:102 InvenTree/validators.py:118
 msgid "Overage value must not be negative"
-msgstr "Overde-verdien må ikke være negativ"
+msgstr ""
 
 #: InvenTree/validators.py:120
 msgid "Overage must not exceed 100%"
-msgstr "Overde må ikke overstige 100%"
+msgstr ""
 
 #: InvenTree/validators.py:127
 msgid "Invalid value for overage"
@@ -720,15 +720,15 @@ msgstr ""
 
 #: InvenTree/views.py:520 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
-msgstr "Rediger brukerinformasjon"
+msgstr ""
 
 #: InvenTree/views.py:532 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr "Velg passord"
+msgstr ""
 
 #: InvenTree/views.py:554
 msgid "Password fields must match"
-msgstr "Passordfeltene må samsvare"
+msgstr ""
 
 #: InvenTree/views.py:563
 msgid "Wrong password provided"
@@ -736,7 +736,7 @@ msgstr ""
 
 #: InvenTree/views.py:773 templates/navbar.html:152
 msgid "System Information"
-msgstr "Systeminformasjon"
+msgstr ""
 
 #: InvenTree/views.py:780 templates/navbar.html:163
 msgid "About InvenTree"
@@ -748,7 +748,7 @@ msgstr ""
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
-msgstr "Ugylding valg for overordnet build"
+msgstr ""
 
 #: build/models.py:110 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -757,7 +757,7 @@ msgstr "Ugylding valg for overordnet build"
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:780
 msgid "Build Order"
-msgstr "Build ordre"
+msgstr ""
 
 #: build/models.py:111 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -767,11 +767,11 @@ msgstr "Build ordre"
 #: templates/InvenTree/search.html:141
 #: templates/InvenTree/settings/sidebar.html:47 users/models.py:41
 msgid "Build Orders"
-msgstr "Build Ordre"
+msgstr ""
 
 #: build/models.py:154
 msgid "Build Order Reference"
-msgstr "Bygg ordrereferanse"
+msgstr ""
 
 #: build/models.py:155 order/models.py:240 order/models.py:627
 #: order/models.py:908 part/models.py:2676
@@ -783,20 +783,20 @@ msgstr "Bygg ordrereferanse"
 #: templates/js/translated/order.js:2484 templates/js/translated/order.js:3823
 #: templates/js/translated/order.js:4331
 msgid "Reference"
-msgstr "Referanse"
+msgstr ""
 
 #: build/models.py:166
 msgid "Brief description of the build"
-msgstr "Kort beskrivelse av build"
+msgstr ""
 
 #: build/models.py:174 build/templates/build/build_base.html:172
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr "Overordnet build"
+msgstr ""
 
 #: build/models.py:175
 msgid "BuildOrder to which this build is allocated"
-msgstr "Build order som denne build er tildelt til"
+msgstr ""
 
 #: build/models.py:180 build/templates/build/build_base.html:80
 #: build/templates/build/detail.html:29 company/models.py:679
@@ -833,99 +833,99 @@ msgstr "Build order som denne build er tildelt til"
 #: templates/js/translated/stock.js:1700 templates/js/translated/stock.js:2512
 #: templates/js/translated/stock.js:2707 templates/js/translated/stock.js:2841
 msgid "Part"
-msgstr "Del"
+msgstr ""
 
 #: build/models.py:188
 msgid "Select part to build"
-msgstr "Valg del å bygge"
+msgstr ""
 
 #: build/models.py:193
 msgid "Sales Order Reference"
-msgstr "Salg order referanse"
+msgstr ""
 
 #: build/models.py:197
 msgid "SalesOrder to which this build is allocated"
-msgstr "Salgorder som denne build er tildelt til"
+msgstr ""
 
 #: build/models.py:202 build/serializers.py:819
 #: templates/js/translated/build.js:2144 templates/js/translated/order.js:3173
 msgid "Source Location"
-msgstr "Kilde plassering"
+msgstr ""
 
 #: build/models.py:206
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr "Valg sted for å ta lagervare fra for dette prosjektet (la stå tomt for a ta fra hvilken som helst sted)"
+msgstr ""
 
 #: build/models.py:211
 msgid "Destination Location"
-msgstr "Sted for destinasjon"
+msgstr ""
 
 #: build/models.py:215
 msgid "Select location where the completed items will be stored"
-msgstr "Velg sted hvor fulførte elementer vil bli lagret"
+msgstr ""
 
 #: build/models.py:219
 msgid "Build Quantity"
-msgstr "Prosjekt mengde"
+msgstr ""
 
 #: build/models.py:222
 msgid "Number of stock items to build"
-msgstr "Antall lagervare til prosjektet"
+msgstr ""
 
 #: build/models.py:226
 msgid "Completed items"
-msgstr "Fullførte elementer"
+msgstr ""
 
 #: build/models.py:228
 msgid "Number of stock items which have been completed"
-msgstr "Antall lagervarer som er fullført"
+msgstr ""
 
 #: build/models.py:232
 msgid "Build Status"
-msgstr "Byggstatus"
+msgstr ""
 
 #: build/models.py:236
 msgid "Build status code"
-msgstr "Byggstatuskode"
+msgstr ""
 
 #: build/models.py:240 build/serializers.py:225 order/serializers.py:464
 #: stock/models.py:608 templates/js/translated/order.js:1496
 msgid "Batch Code"
-msgstr "Batch kode"
+msgstr ""
 
 #: build/models.py:244 build/serializers.py:226
 msgid "Batch code for this build output"
-msgstr "Batch kode for denne build output"
+msgstr ""
 
 #: build/models.py:247 order/models.py:86 part/models.py:938
 #: part/templates/part/part_base.html:318 templates/js/translated/order.js:2844
 msgid "Creation Date"
-msgstr "Opprettelsesdato"
+msgstr ""
 
 #: build/models.py:251 order/models.py:652
 msgid "Target completion date"
-msgstr "Forventet sluttdato"
+msgstr ""
 
 #: build/models.py:252
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr "Forventet dato for ferdigstillelse. Build er forvalt etter denne datoen."
+msgstr ""
 
 #: build/models.py:255 order/models.py:286
 #: templates/js/translated/build.js:2624
 msgid "Completion Date"
-msgstr "Fullført dato"
+msgstr ""
 
 #: build/models.py:261
 msgid "completed by"
-msgstr "fullført av"
+msgstr ""
 
 #: build/models.py:269 templates/js/translated/build.js:2592
 msgid "Issued by"
-msgstr "Utstedt av"
+msgstr ""
 
 #: build/models.py:270
 msgid "User who issued this build order"
-msgstr "Brukeren som utstede denne prosjekt order"
+msgstr ""
 
 #: build/models.py:278 build/templates/build/build_base.html:193
 #: build/templates/build/detail.html:115 order/models.py:100
@@ -934,11 +934,11 @@ msgstr "Brukeren som utstede denne prosjekt order"
 #: report/templates/report/inventree_build_order_base.html:158
 #: templates/js/translated/build.js:2604 templates/js/translated/order.js:2022
 msgid "Responsible"
-msgstr "Ansvarlig"
+msgstr ""
 
 #: build/models.py:279
 msgid "User responsible for this build order"
-msgstr "Bruker ansvarlig for denne prosjekt order"
+msgstr ""
 
 #: build/models.py:284 build/templates/build/detail.html:101
 #: company/templates/company/manufacturer_part.html:107
@@ -946,11 +946,11 @@ msgstr "Bruker ansvarlig for denne prosjekt order"
 #: part/templates/part/part_base.html:359 stock/models.py:602
 #: stock/templates/stock/item_base.html:203
 msgid "External Link"
-msgstr "Ekstern link"
+msgstr ""
 
 #: build/models.py:289
 msgid "Extra build notes"
-msgstr "Ekstra prosjekt notater"
+msgstr ""
 
 #: build/models.py:527
 #, python-brace-format
@@ -963,19 +963,19 @@ msgstr ""
 
 #: build/models.py:712
 msgid "No build output specified"
-msgstr "Ingen prosjekt utgang"
+msgstr ""
 
 #: build/models.py:715
 msgid "Build output is already completed"
-msgstr "Prosjekt utdata er allerede utfylt"
+msgstr ""
 
 #: build/models.py:718
 msgid "Build output does not match Build Order"
-msgstr "Prosjekt utdata samsvarer ikke Prosjekt Order"
+msgstr ""
 
 #: build/models.py:1167
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr "Prosjektvare må spesifisere en prosjekt utdata, siden hovedvaren er markert som sporbar"
+msgstr ""
 
 #: build/models.py:1176
 #, python-brace-format
@@ -984,29 +984,29 @@ msgstr ""
 
 #: build/models.py:1186 order/models.py:1383
 msgid "Stock item is over-allocated"
-msgstr "Lagervare er overtildelt"
+msgstr ""
 
 #: build/models.py:1192 order/models.py:1386
 msgid "Allocation quantity must be greater than zero"
-msgstr "Tildeling antallet må være større enn null"
+msgstr ""
 
 #: build/models.py:1198
 msgid "Quantity must be 1 for serialized stock"
-msgstr "Mengden må væew 1 for serialisert lagervare"
+msgstr ""
 
 #: build/models.py:1255
 msgid "Selected stock item not found in BOM"
-msgstr "Valgt lagevare ikke funnet i BOM"
+msgstr ""
 
 #: build/models.py:1324 stock/templates/stock/item_base.html:175
 #: templates/InvenTree/search.html:139 templates/js/translated/build.js:2526
 #: templates/navbar.html:38
 msgid "Build"
-msgstr "Prosjekt"
+msgstr ""
 
 #: build/models.py:1325
 msgid "Build to allocate parts"
-msgstr "Bygge for å tildele deler"
+msgstr ""
 
 #: build/models.py:1341 build/serializers.py:660 order/serializers.py:1035
 #: order/serializers.py:1056 stock/serializers.py:394 stock/serializers.py:754
@@ -1021,11 +1021,11 @@ msgstr "Bygge for å tildele deler"
 #: templates/js/translated/stock.js:587 templates/js/translated/stock.js:752
 #: templates/js/translated/stock.js:2585
 msgid "Stock Item"
-msgstr "Lagervare"
+msgstr ""
 
 #: build/models.py:1342
 msgid "Source stock item"
-msgstr "Kilde lagervare"
+msgstr ""
 
 #: build/models.py:1354 build/serializers.py:193
 #: build/templates/build/build_base.html:85
@@ -1062,7 +1062,7 @@ msgstr "Kilde lagervare"
 #: templates/js/translated/stock.js:612 templates/js/translated/stock.js:782
 #: templates/js/translated/stock.js:2634 templates/js/translated/stock.js:2719
 msgid "Quantity"
-msgstr "Antall"
+msgstr ""
 
 #: build/models.py:1355
 msgid "Stock quantity to allocate to build"
@@ -1070,11 +1070,11 @@ msgstr ""
 
 #: build/models.py:1363
 msgid "Install into"
-msgstr "Installerings informasjon"
+msgstr ""
 
 #: build/models.py:1364
 msgid "Destination stock item"
-msgstr "Målets lagervare"
+msgstr ""
 
 #: build/serializers.py:138 build/serializers.py:689
 #: templates/js/translated/build.js:1215
@@ -1099,14 +1099,14 @@ msgstr ""
 
 #: build/serializers.py:194
 msgid "Enter quantity for build output"
-msgstr "Angi antall for build utgang"
+msgstr ""
 
 #: build/serializers.py:208 build/serializers.py:680 order/models.py:318
 #: order/serializers.py:304 order/serializers.py:459 part/serializers.py:558
 #: part/serializers.py:991 stock/models.py:462 stock/models.py:1192
 #: stock/serializers.py:300
 msgid "Quantity must be greater than zero"
-msgstr "Mengden må være større enn null"
+msgstr ""
 
 #: build/serializers.py:215
 msgid "Integer quantity required for trackable parts"
@@ -1120,11 +1120,11 @@ msgstr ""
 #: stock/serializers.py:309 templates/js/translated/order.js:1507
 #: templates/js/translated/stock.js:271 templates/js/translated/stock.js:459
 msgid "Serial Numbers"
-msgstr "Serienummer"
+msgstr ""
 
 #: build/serializers.py:233
 msgid "Enter serial numbers for build outputs"
-msgstr "Angi serienummer for bygge-utganger"
+msgstr ""
 
 #: build/serializers.py:246
 msgid "Auto Allocate Serial Numbers"
@@ -1155,7 +1155,7 @@ msgstr ""
 #: templates/js/translated/stock.js:753 templates/js/translated/stock.js:960
 #: templates/js/translated/stock.js:1856 templates/js/translated/stock.js:2526
 msgid "Location"
-msgstr "Beliggenhet"
+msgstr ""
 
 #: build/serializers.py:367
 msgid "Location for completed build outputs"
@@ -1225,7 +1225,7 @@ msgstr ""
 
 #: build/serializers.py:537 templates/js/translated/build.js:258
 msgid "Required stock has not been fully allocated"
-msgstr "Påkrevd varer er ikke fullt tildelt"
+msgstr ""
 
 #: build/serializers.py:542 order/serializers.py:208 order/serializers.py:1103
 msgid "Accept Incomplete"
@@ -1246,7 +1246,7 @@ msgstr ""
 #: build/serializers.py:592 build/serializers.py:637 part/models.py:2793
 #: part/models.py:2927
 msgid "BOM Item"
-msgstr "BOM varer"
+msgstr ""
 
 #: build/serializers.py:602
 msgid "Build output"
@@ -1262,12 +1262,12 @@ msgstr ""
 
 #: build/serializers.py:666 stock/serializers.py:767
 msgid "Item must be in stock"
-msgstr "Varen må være på lager"
+msgstr ""
 
 #: build/serializers.py:724 order/serializers.py:1093
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr "Tilgjengelig mengde ({q}) overskredet"
+msgstr ""
 
 #: build/serializers.py:730
 msgid "Build output must be specified for allocation of tracked parts"
@@ -1404,7 +1404,7 @@ msgstr ""
 #: templates/js/translated/order.js:2351 templates/js/translated/order.js:2852
 #: templates/js/translated/order.js:3892 templates/js/translated/part.js:1051
 msgid "Target Date"
-msgstr "Måldato"
+msgstr ""
 
 #: build/templates/build/build_base.html:159
 #, python-format
@@ -1426,7 +1426,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:171
 #: templates/js/translated/table_filters.js:408
 msgid "Completed"
-msgstr "Fullført"
+msgstr ""
 
 #: build/templates/build/build_base.html:179
 #: build/templates/build/detail.html:94 order/models.py:1109
@@ -1439,13 +1439,13 @@ msgstr "Fullført"
 #: templates/email/overdue_sales_order.html:15
 #: templates/js/translated/order.js:2798
 msgid "Sales Order"
-msgstr "Salgsorder"
+msgstr ""
 
 #: build/templates/build/build_base.html:186
 #: build/templates/build/detail.html:108
 #: report/templates/report/inventree_build_order_base.html:152
 msgid "Issued By"
-msgstr "Utstedt av"
+msgstr ""
 
 #: build/templates/build/build_base.html:252
 msgid "Delete Build Order"
@@ -1457,24 +1457,24 @@ msgstr ""
 
 #: build/templates/build/detail.html:38
 msgid "Stock Source"
-msgstr "Lager kilde"
+msgstr ""
 
 #: build/templates/build/detail.html:43
 msgid "Stock can be taken from any available location."
-msgstr "Lagervare kan hentes fra alle tilgengelige steder."
+msgstr ""
 
 #: build/templates/build/detail.html:49 order/models.py:1027
 #: templates/js/translated/order.js:1644 templates/js/translated/order.js:2393
 msgid "Destination"
-msgstr "Destinasjon"
+msgstr ""
 
 #: build/templates/build/detail.html:56
 msgid "Destination location not specified"
-msgstr "Målplassering er ikke spesifisert"
+msgstr ""
 
 #: build/templates/build/detail.html:73
 msgid "Allocated Parts"
-msgstr "Tildelte deler"
+msgstr ""
 
 #: build/templates/build/detail.html:80
 #: stock/templates/stock/item_base.html:168
@@ -1492,11 +1492,11 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:158
 #: templates/js/translated/build.js:2584
 msgid "Created"
-msgstr "Opprettet"
+msgstr ""
 
 #: build/templates/build/detail.html:137
 msgid "No target date set"
-msgstr "Ingen måldato satt"
+msgstr ""
 
 #: build/templates/build/detail.html:146
 msgid "Build not complete"
@@ -1512,11 +1512,11 @@ msgstr ""
 
 #: build/templates/build/detail.html:176 templates/js/translated/build.js:1967
 msgid "Unallocate stock"
-msgstr "Fjern lager allokering"
+msgstr ""
 
 #: build/templates/build/detail.html:177
 msgid "Unallocate Stock"
-msgstr "Fjern lager allokering"
+msgstr ""
 
 #: build/templates/build/detail.html:179
 msgid "Automatically allocate stock to build"
@@ -1532,18 +1532,18 @@ msgstr ""
 
 #: build/templates/build/detail.html:183 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
-msgstr "Tildele lager"
+msgstr ""
 
 #: build/templates/build/detail.html:186
 msgid "Order required parts"
-msgstr "Bestill nødvendige deler"
+msgstr ""
 
 #: build/templates/build/detail.html:187
 #: company/templates/company/detail.html:37
 #: company/templates/company/detail.html:85
 #: part/templates/part/category.html:183 templates/js/translated/order.js:1177
 msgid "Order Parts"
-msgstr "Bestill deler"
+msgstr ""
 
 #: build/templates/build/detail.html:199
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -1555,7 +1555,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:210
 msgid "Allocate selected items"
-msgstr "Tildel valgte varer"
+msgstr ""
 
 #: build/templates/build/detail.html:220
 msgid "This Build Order does not have any associated untracked BOM items"
@@ -1617,7 +1617,7 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:57 stock/templates/stock/item.html:117
 #: stock/templates/stock/stock_sidebar.html:23
 msgid "Attachments"
-msgstr "Vedlegg"
+msgstr ""
 
 #: build/templates/build/detail.html:321
 msgid "Build Notes"
@@ -1625,11 +1625,11 @@ msgstr ""
 
 #: build/templates/build/detail.html:504
 msgid "Allocation Complete"
-msgstr "Tildeling fullført"
+msgstr ""
 
 #: build/templates/build/detail.html:505
 msgid "All untracked stock items have been allocated"
-msgstr "Alle usporbar lagervarer har tildelt"
+msgstr ""
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:318
 msgid "New Build Order"
@@ -1653,31 +1653,31 @@ msgstr ""
 
 #: common/files.py:62
 msgid "Unsupported file format: {ext.upper()}"
-msgstr "Filformatet støttes ikke: {ext.upper()}"
+msgstr ""
 
 #: common/files.py:64
 msgid "Error reading file (invalid encoding)"
-msgstr "Feil under lesing av fil (ugyldig koding)"
+msgstr ""
 
 #: common/files.py:69
 msgid "Error reading file (invalid format)"
-msgstr "Feil under lesing av fil (ugyldig format)"
+msgstr ""
 
 #: common/files.py:71
 msgid "Error reading file (incorrect dimension)"
-msgstr "Feil under lesing av fil (feil dimensjon)"
+msgstr ""
 
 #: common/files.py:73
 msgid "Error reading file (data could be corrupted)"
-msgstr "Feil under lesing av fil (data kan være skadet)"
+msgstr ""
 
 #: common/forms.py:29
 msgid "File"
-msgstr "Fil"
+msgstr ""
 
 #: common/forms.py:30
 msgid "Select file to upload"
-msgstr "Velg fil å laste opp"
+msgstr ""
 
 #: common/forms.py:44
 msgid "{name.title()} File"
@@ -1686,11 +1686,11 @@ msgstr ""
 #: common/forms.py:45
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr "Velg {name} fil som skal lastes opp"
+msgstr ""
 
 #: common/models.py:451
 msgid "Settings key (must be unique - case insensitive)"
-msgstr "Innstillingsnøkkel (må være unik - ufølsom for store of små bokstaver)"
+msgstr ""
 
 #: common/models.py:453
 msgid "Settings value"
@@ -1698,11 +1698,11 @@ msgstr ""
 
 #: common/models.py:494
 msgid "Chosen value is not a valid option"
-msgstr "Valgt verdi er ikke et gyldig alternativ"
+msgstr ""
 
 #: common/models.py:511
 msgid "Value must be a boolean value"
-msgstr "Verdien må være en boolsk verdi"
+msgstr ""
 
 #: common/models.py:522
 msgid "Value must be an integer value"
@@ -1714,15 +1714,15 @@ msgstr ""
 
 #: common/models.py:751
 msgid "No group"
-msgstr "Ingen gruppe"
+msgstr ""
 
 #: common/models.py:804
 msgid "Restart required"
-msgstr "Omstart påkrevd"
+msgstr ""
 
 #: common/models.py:805
 msgid "A setting has been changed which requires a server restart"
-msgstr "En innstilling har blitt endrett som krever en serveromstart"
+msgstr ""
 
 #: common/models.py:812
 msgid "Server Instance Name"
@@ -1750,11 +1750,11 @@ msgstr ""
 
 #: common/models.py:833 company/models.py:93 company/models.py:94
 msgid "Company name"
-msgstr "Firmanavn"
+msgstr ""
 
 #: common/models.py:834
 msgid "Internal company name"
-msgstr "Internt firmanavn"
+msgstr ""
 
 #: common/models.py:839
 msgid "Base URL"
@@ -1766,19 +1766,19 @@ msgstr ""
 
 #: common/models.py:847
 msgid "Default Currency"
-msgstr "Standardvaluta"
+msgstr ""
 
 #: common/models.py:848
 msgid "Default currency"
-msgstr "Standardvaluta"
+msgstr ""
 
 #: common/models.py:854
 msgid "Download from URL"
-msgstr "Last ned fra URL"
+msgstr ""
 
 #: common/models.py:855
 msgid "Allow download of remote images and files from external URL"
-msgstr "Tilat nedlastning av eksterne bilder og filer fra ekstern URL"
+msgstr ""
 
 #: common/models.py:861
 msgid "Download Size Limit"
@@ -1806,11 +1806,11 @@ msgstr ""
 
 #: common/models.py:890 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
-msgstr "Strekkode støtte"
+msgstr ""
 
 #: common/models.py:891
 msgid "Enable barcode scanner support"
-msgstr "Aktiver skrekkodeleser støtte"
+msgstr ""
 
 #: common/models.py:897
 msgid "Barcode Webcam Support"
@@ -1830,19 +1830,19 @@ msgstr ""
 
 #: common/models.py:909
 msgid "Allow Duplicate IPN"
-msgstr "Tilat duplisert IPN"
+msgstr ""
 
 #: common/models.py:910
 msgid "Allow multiple parts to share the same IPN"
-msgstr "Tillat flere deler å dele samme IPN"
+msgstr ""
 
 #: common/models.py:916
 msgid "Allow Editing IPN"
-msgstr "Tillat redigering av IPN"
+msgstr ""
 
 #: common/models.py:917
 msgid "Allow changing the IPN value while editing a part"
-msgstr "Tillat å endre IPN-verdien mens du redigerer en del"
+msgstr ""
 
 #: common/models.py:923
 msgid "Copy Part BOM Data"
@@ -1866,7 +1866,7 @@ msgstr ""
 
 #: common/models.py:938
 msgid "Copy test data by default when duplicating a part"
-msgstr "Kopier testdata som standard ved duplisering av en del"
+msgstr ""
 
 #: common/models.py:944
 msgid "Copy Category Parameter Templates"
@@ -1874,91 +1874,91 @@ msgstr ""
 
 #: common/models.py:945
 msgid "Copy category parameter templates when creating a part"
-msgstr "Kopier kategori parametermaler ved oppretting av en del"
+msgstr ""
 
 #: common/models.py:951 part/models.py:2466 report/models.py:158
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:492
 msgid "Template"
-msgstr "Mal"
+msgstr ""
 
 #: common/models.py:952
 msgid "Parts are templates by default"
-msgstr "Deler er maler som standard"
+msgstr ""
 
 #: common/models.py:958 part/models.py:894 templates/js/translated/bom.js:1485
 #: templates/js/translated/table_filters.js:184
 #: templates/js/translated/table_filters.js:455
 msgid "Assembly"
-msgstr "Montering"
+msgstr ""
 
 #: common/models.py:959
 msgid "Parts can be assembled from other components by default"
-msgstr "Deler kan settes sammen fra andre komponenter som standard"
+msgstr ""
 
 #: common/models.py:965 part/models.py:900
 #: templates/js/translated/table_filters.js:463
 msgid "Component"
-msgstr "Komponent"
+msgstr ""
 
 #: common/models.py:966
 msgid "Parts can be used as sub-components by default"
-msgstr "Deler kan bli brukt som underkomponenter som standard"
+msgstr ""
 
 #: common/models.py:972 part/models.py:911
 msgid "Purchaseable"
-msgstr "Kjøpbar"
+msgstr ""
 
 #: common/models.py:973
 msgid "Parts are purchaseable by default"
-msgstr "Deler er kjøpbare som standard"
+msgstr ""
 
 #: common/models.py:979 part/models.py:916
 #: templates/js/translated/table_filters.js:484
 msgid "Salable"
-msgstr "Salgbar"
+msgstr ""
 
 #: common/models.py:980
 msgid "Parts are salable by default"
-msgstr "Deler er salgbare som standard"
+msgstr ""
 
 #: common/models.py:986 part/models.py:906
 #: templates/js/translated/table_filters.js:46
 #: templates/js/translated/table_filters.js:116
 #: templates/js/translated/table_filters.js:496
 msgid "Trackable"
-msgstr "Sporbar"
+msgstr ""
 
 #: common/models.py:987
 msgid "Parts are trackable by default"
-msgstr "Deler er sporbare som standard"
+msgstr ""
 
 #: common/models.py:993 part/models.py:926
 #: part/templates/part/part_base.html:156
 #: templates/js/translated/table_filters.js:42
 #: templates/js/translated/table_filters.js:500
 msgid "Virtual"
-msgstr "Virtuelle"
+msgstr ""
 
 #: common/models.py:994
 msgid "Parts are virtual by default"
-msgstr "Deler er virtuelle som standard"
+msgstr ""
 
 #: common/models.py:1000
 msgid "Show Import in Views"
-msgstr "Vis import i visninger"
+msgstr ""
 
 #: common/models.py:1001
 msgid "Display the import wizard in some part views"
-msgstr "Vis importveiviseren i noen deler visninger"
+msgstr ""
 
 #: common/models.py:1007
 msgid "Show Price in Forms"
-msgstr "Vis pris i skjemaer"
+msgstr ""
 
 #: common/models.py:1008
 msgid "Display part price in some forms"
-msgstr "Vis delpris i noen skjemaer"
+msgstr ""
 
 #: common/models.py:1019
 msgid "Show Price in BOM"
@@ -2174,59 +2174,59 @@ msgstr ""
 
 #: common/models.py:1213
 msgid "Enable password forgot"
-msgstr "Aktiver passord glemt"
+msgstr ""
 
 #: common/models.py:1214
 msgid "Enable password forgot function on the login pages"
-msgstr "Ativer funskjon for glemt passord på innloggingssidene"
+msgstr ""
 
 #: common/models.py:1220
 msgid "Enable registration"
-msgstr "Aktiver registrering"
+msgstr ""
 
 #: common/models.py:1221
 msgid "Enable self-registration for users on the login pages"
-msgstr "Aktiver egenregistrerting for brukerer på påloggingssidene"
+msgstr ""
 
 #: common/models.py:1227
 msgid "Enable SSO"
-msgstr "Aktiver SSO"
+msgstr ""
 
 #: common/models.py:1228
 msgid "Enable SSO on the login pages"
-msgstr "Aktiver SSO på innloggingssidene"
+msgstr ""
 
 #: common/models.py:1234
 msgid "Email required"
-msgstr "E-postadresse kreves"
+msgstr ""
 
 #: common/models.py:1235
 msgid "Require user to supply mail on signup"
-msgstr "Krevt at brukeren angi e-post ved registrering"
+msgstr ""
 
 #: common/models.py:1241
 msgid "Auto-fill SSO users"
-msgstr "Auto-utfyll SSO brukere"
+msgstr ""
 
 #: common/models.py:1242
 msgid "Automatically fill out user-details from SSO account-data"
-msgstr "Fyll automatisk ut brukeropplysninger fra SSO kontodata"
+msgstr ""
 
 #: common/models.py:1248
 msgid "Mail twice"
-msgstr "E-post to ganger"
+msgstr ""
 
 #: common/models.py:1249
 msgid "On signup ask users twice for their mail"
-msgstr "Ved registrering spør brukere to ganger for e-posten"
+msgstr ""
 
 #: common/models.py:1255
 msgid "Password twice"
-msgstr "Passord to ganger"
+msgstr ""
 
 #: common/models.py:1256
 msgid "On signup ask users twice for their password"
-msgstr "Ved registrerting, spør brukere to ganger for passord"
+msgstr ""
 
 #: common/models.py:1262
 msgid "Group on signup"
@@ -2234,7 +2234,7 @@ msgstr ""
 
 #: common/models.py:1263
 msgid "Group to which new users are assigned on registration"
-msgstr "Gruppe for hvilke nye brukere som er tilknyttet registrering"
+msgstr ""
 
 #: common/models.py:1269
 msgid "Enforce MFA"
@@ -2242,7 +2242,7 @@ msgstr ""
 
 #: common/models.py:1270
 msgid "Users must use multifactor security."
-msgstr "Brukere må bruke flerfaktorsikkerhet."
+msgstr ""
 
 #: common/models.py:1276
 msgid "Check plugins on startup"
@@ -2262,7 +2262,7 @@ msgstr ""
 
 #: common/models.py:1292
 msgid "Enable URL integration"
-msgstr "Aktiver URL integrering"
+msgstr ""
 
 #: common/models.py:1293
 msgid "Enable plugins to add URL routes"
@@ -2270,7 +2270,7 @@ msgstr ""
 
 #: common/models.py:1300
 msgid "Enable navigation integration"
-msgstr "Aktiver navigasjonsintegrering"
+msgstr ""
 
 #: common/models.py:1301
 msgid "Enable plugins to integrate into navigation"
@@ -2278,7 +2278,7 @@ msgstr ""
 
 #: common/models.py:1308
 msgid "Enable app integration"
-msgstr "Aktiver app integrasjon"
+msgstr ""
 
 #: common/models.py:1309
 msgid "Enable plugins to add apps"
@@ -2306,31 +2306,31 @@ msgstr ""
 
 #: common/models.py:1366
 msgid "Show subscribed parts"
-msgstr "Vis abbonerte deler"
+msgstr ""
 
 #: common/models.py:1367
 msgid "Show subscribed parts on the homepage"
-msgstr "Vis abbonerte deler på hjemmesiden"
+msgstr ""
 
 #: common/models.py:1373
 msgid "Show subscribed categories"
-msgstr "Vis abbonerte kategorier"
+msgstr ""
 
 #: common/models.py:1374
 msgid "Show subscribed part categories on the homepage"
-msgstr "Vis abbonerte delkatekorier på hjemmesiden"
+msgstr ""
 
 #: common/models.py:1380
 msgid "Show latest parts"
-msgstr "Vis nyeste deler"
+msgstr ""
 
 #: common/models.py:1381
 msgid "Show latest parts on the homepage"
-msgstr "Vis nyeste deler på hjemmesiden"
+msgstr ""
 
 #: common/models.py:1387
 msgid "Recent Part Count"
-msgstr "Antall nylig deler"
+msgstr ""
 
 #: common/models.py:1388
 msgid "Number of recent parts to display on index page"
@@ -2338,39 +2338,39 @@ msgstr ""
 
 #: common/models.py:1394
 msgid "Show unvalidated BOMs"
-msgstr "Vis uvaliderte BOMs"
+msgstr ""
 
 #: common/models.py:1395
 msgid "Show BOMs that await validation on the homepage"
-msgstr "Vis BOMs som venter validering på hjemmesiden"
+msgstr ""
 
 #: common/models.py:1401
 msgid "Show recent stock changes"
-msgstr "Vis nylige lagerendringer"
+msgstr ""
 
 #: common/models.py:1402
 msgid "Show recently changed stock items on the homepage"
-msgstr "Vis nylig endret lagervarer på hjemmesiden"
+msgstr ""
 
 #: common/models.py:1408
 msgid "Recent Stock Count"
-msgstr "Siste lagertelling"
+msgstr ""
 
 #: common/models.py:1409
 msgid "Number of recent stock items to display on index page"
-msgstr "Antall nylige lagervarer som skal vises på indeksside"
+msgstr ""
 
 #: common/models.py:1415
 msgid "Show low stock"
-msgstr "Vis lav lager"
+msgstr ""
 
 #: common/models.py:1416
 msgid "Show low stock items on the homepage"
-msgstr "Vis lav lagervarer på hjemmesiden"
+msgstr ""
 
 #: common/models.py:1422
 msgid "Show depleted stock"
-msgstr "Vis tom lagervarer"
+msgstr ""
 
 #: common/models.py:1423
 msgid "Show depleted stock items on the homepage"
@@ -2656,7 +2656,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:324
 #: templates/js/translated/table_filters.js:450
 msgid "Active"
-msgstr "Aktiv"
+msgstr ""
 
 #: common/models.py:1896
 msgid "Is this webhook active"
@@ -2664,31 +2664,31 @@ msgstr ""
 
 #: common/models.py:1910
 msgid "Token"
-msgstr "Sjetong"
+msgstr ""
 
 #: common/models.py:1911
 msgid "Token for access"
-msgstr "Nøkkel for tilgang"
+msgstr ""
 
 #: common/models.py:1918
 msgid "Secret"
-msgstr "Hemmelig"
+msgstr ""
 
 #: common/models.py:1919
 msgid "Shared secret for HMAC"
-msgstr "Delt hemmlighet for HMAC"
+msgstr ""
 
 #: common/models.py:2025
 msgid "Message ID"
-msgstr "Melding ID"
+msgstr ""
 
 #: common/models.py:2026
 msgid "Unique identifier for this message"
-msgstr "Unik Id for denne meldingen"
+msgstr ""
 
 #: common/models.py:2034
 msgid "Host"
-msgstr "Vert"
+msgstr ""
 
 #: common/models.py:2035
 msgid "Host from which this message was received"
@@ -2696,15 +2696,15 @@ msgstr ""
 
 #: common/models.py:2042
 msgid "Header"
-msgstr "Tittel"
+msgstr ""
 
 #: common/models.py:2043
 msgid "Header of this message"
-msgstr "Overskrift for denne meldingen"
+msgstr ""
 
 #: common/models.py:2049
 msgid "Body"
-msgstr "Brødtekst"
+msgstr ""
 
 #: common/models.py:2050
 msgid "Body of this message"
@@ -2716,11 +2716,11 @@ msgstr ""
 
 #: common/models.py:2064
 msgid "Worked on"
-msgstr "Arbeidet med"
+msgstr ""
 
 #: common/models.py:2065
 msgid "Was the work on this message finished?"
-msgstr "Var arbeidet med denne meldingen ferdig?"
+msgstr ""
 
 #: common/notifications.py:292
 #, python-brace-format
@@ -2743,17 +2743,17 @@ msgstr ""
 #: order/views.py:102 part/views.py:112
 #: templates/patterns/wizard/upload.html:37
 msgid "Upload File"
-msgstr "Last opp fil"
+msgstr ""
 
 #: common/views.py:86 order/views.py:103
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
 #: part/views.py:113 templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
-msgstr "Sammelign felter"
+msgstr ""
 
 #: common/views.py:87
 msgid "Match Items"
-msgstr "Sammenlign varer"
+msgstr ""
 
 #: common/views.py:420
 msgid "Fields matching failed"
@@ -2761,61 +2761,61 @@ msgstr ""
 
 #: common/views.py:481
 msgid "Parts imported"
-msgstr "Deler importert"
+msgstr ""
 
 #: common/views.py:509 order/templates/order/order_wizard/match_parts.html:19
 #: part/templates/part/import_wizard/match_references.html:19
 #: templates/patterns/wizard/match_fields.html:26
 #: templates/patterns/wizard/upload.html:35
 msgid "Previous Step"
-msgstr "Forrige trinn"
+msgstr ""
 
 #: company/models.py:98
 msgid "Company description"
-msgstr "Beskrivelse av firma"
+msgstr ""
 
 #: company/models.py:99
 msgid "Description of the company"
-msgstr "Beskrivelse av firmaet"
+msgstr ""
 
 #: company/models.py:105 company/templates/company/company_base.html:100
 #: templates/InvenTree/settings/plugin_settings.html:55
 #: templates/js/translated/company.js:448
 msgid "Website"
-msgstr "Nettside"
+msgstr ""
 
 #: company/models.py:106
 msgid "Company website URL"
-msgstr "Bedriftens nettside URL"
+msgstr ""
 
 #: company/models.py:110 company/templates/company/company_base.html:118
 msgid "Address"
-msgstr "Adresse"
+msgstr ""
 
 #: company/models.py:111
 msgid "Company address"
-msgstr "Firmaet adresse"
+msgstr ""
 
 #: company/models.py:114
 msgid "Phone number"
-msgstr "Telefonnummer"
+msgstr ""
 
 #: company/models.py:115
 msgid "Contact phone number"
-msgstr "Kontakt-telefonnummer"
+msgstr ""
 
 #: company/models.py:118 company/templates/company/company_base.html:132
 #: templates/InvenTree/settings/user.html:48
 msgid "Email"
-msgstr "E-post"
+msgstr ""
 
 #: company/models.py:118
 msgid "Contact email address"
-msgstr "Kontakt e-post"
+msgstr ""
 
 #: company/models.py:121 company/templates/company/company_base.html:139
 msgid "Contact"
-msgstr "Kontakt"
+msgstr ""
 
 #: company/models.py:122
 msgid "Point of contact"
@@ -2823,15 +2823,15 @@ msgstr ""
 
 #: company/models.py:124
 msgid "Link to external company information"
-msgstr "Link til ekstern bedriftsinformasjon"
+msgstr ""
 
 #: company/models.py:135 part/models.py:815
 msgid "Image"
-msgstr "Bilde"
+msgstr ""
 
 #: company/models.py:138 company/templates/company/detail.html:185
 msgid "Company Notes"
-msgstr "Notater til firma"
+msgstr ""
 
 #: company/models.py:140
 msgid "is customer"
@@ -2839,7 +2839,7 @@ msgstr ""
 
 #: company/models.py:140
 msgid "Do you sell items to this company?"
-msgstr "Selger du varer til dette firmaet?"
+msgstr ""
 
 #: company/models.py:142
 msgid "is supplier"
@@ -2847,7 +2847,7 @@ msgstr ""
 
 #: company/models.py:142
 msgid "Do you purchase items from this company?"
-msgstr "Kjøper du varer fra dette firmaet?"
+msgstr ""
 
 #: company/models.py:144
 msgid "is manufacturer"
@@ -2855,17 +2855,17 @@ msgstr ""
 
 #: company/models.py:144
 msgid "Does this company manufacture parts?"
-msgstr "Produserer dette firmaet deler?"
+msgstr ""
 
 #: company/models.py:148 company/serializers.py:378
 #: company/templates/company/company_base.html:106 part/serializers.py:153
 #: part/serializers.py:184 stock/serializers.py:178
 msgid "Currency"
-msgstr "Valuta"
+msgstr ""
 
 #: company/models.py:151
 msgid "Default currency used for this company"
-msgstr "Standardvaluta brukt for dette firmaet"
+msgstr ""
 
 #: company/models.py:248 company/models.py:482 stock/models.py:544
 #: stock/serializers.py:85 stock/templates/stock/item_base.html:143
@@ -3114,7 +3114,7 @@ msgstr ""
 #: company/templates/company/company_base.html:59
 #: part/templates/part/part_thumb.html:14
 msgid "Download image from URL"
-msgstr "Last ned bilde fra URL"
+msgstr ""
 
 #: company/templates/company/company_base.html:86 order/models.py:641
 #: order/templates/order/sales_order_base.html:116 stock/models.py:589
@@ -3125,20 +3125,20 @@ msgstr "Last ned bilde fra URL"
 #: templates/js/translated/stock.js:2567
 #: templates/js/translated/table_filters.js:435
 msgid "Customer"
-msgstr "Kunde"
+msgstr ""
 
 #: company/templates/company/company_base.html:111
 msgid "Uses default currency"
-msgstr "Bruker standardvaluta"
+msgstr ""
 
 #: company/templates/company/company_base.html:125
 msgid "Phone"
-msgstr "Telefon"
+msgstr ""
 
 #: company/templates/company/company_base.html:208
 #: part/templates/part/part_base.html:497
 msgid "Upload Image"
-msgstr "Last opp bilde"
+msgstr ""
 
 #: company/templates/company/company_base.html:223
 #: part/templates/part/part_base.html:552
@@ -3149,50 +3149,50 @@ msgstr ""
 #: company/templates/company/manufacturer_part_sidebar.html:7
 #: templates/InvenTree/search.html:120 templates/js/translated/search.js:172
 msgid "Supplier Parts"
-msgstr "Leverandør deler"
+msgstr ""
 
 #: company/templates/company/detail.html:18
 msgid "Create new supplier part"
-msgstr "Oprett ny leverandørdel"
+msgstr ""
 
 #: company/templates/company/detail.html:19
 #: company/templates/company/manufacturer_part.html:123
 #: part/templates/part/detail.html:359
 msgid "New Supplier Part"
-msgstr "Ny leverandørdel"
+msgstr ""
 
 #: company/templates/company/detail.html:36
 #: company/templates/company/detail.html:84
 #: part/templates/part/category.html:182
 msgid "Order parts"
-msgstr "Bestill deler"
+msgstr ""
 
 #: company/templates/company/detail.html:41
 #: company/templates/company/detail.html:89
 msgid "Delete parts"
-msgstr "Slett deler"
+msgstr ""
 
 #: company/templates/company/detail.html:42
 #: company/templates/company/detail.html:90
 msgid "Delete Parts"
-msgstr "Slett deler"
+msgstr ""
 
 #: company/templates/company/detail.html:61 templates/InvenTree/search.html:105
 #: templates/js/translated/search.js:185
 msgid "Manufacturer Parts"
-msgstr "Produsentdeler"
+msgstr ""
 
 #: company/templates/company/detail.html:65
 msgid "Create new manufacturer part"
-msgstr "Opprett ny produsentdeler"
+msgstr ""
 
 #: company/templates/company/detail.html:66 part/templates/part/detail.html:389
 msgid "New Manufacturer Part"
-msgstr "Ny produsentdel"
+msgstr ""
 
 #: company/templates/company/detail.html:107
 msgid "Supplier Stock"
-msgstr "Leverandør lager"
+msgstr ""
 
 #: company/templates/company/detail.html:117
 #: company/templates/company/sidebar.html:12
@@ -3206,17 +3206,17 @@ msgstr "Leverandør lager"
 #: templates/js/translated/search.js:277 templates/navbar.html:50
 #: users/models.py:42
 msgid "Purchase Orders"
-msgstr "Bestillingsorder"
+msgstr ""
 
 #: company/templates/company/detail.html:121
 #: order/templates/order/purchase_orders.html:17
 msgid "Create new purchase order"
-msgstr "Opprett ny bestillingsorder"
+msgstr ""
 
 #: company/templates/company/detail.html:122
 #: order/templates/order/purchase_orders.html:18
 msgid "New Purchase Order"
-msgstr "Ny bestillingsorder"
+msgstr ""
 
 #: company/templates/company/detail.html:143
 #: company/templates/company/sidebar.html:20
@@ -3229,53 +3229,53 @@ msgstr "Ny bestillingsorder"
 #: templates/js/translated/search.js:301 templates/navbar.html:61
 #: users/models.py:43
 msgid "Sales Orders"
-msgstr "Salgsordre"
+msgstr ""
 
 #: company/templates/company/detail.html:147
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
-msgstr "Opprett ny salgsordre"
+msgstr ""
 
 #: company/templates/company/detail.html:148
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
-msgstr "Ny salgsorder"
+msgstr ""
 
 #: company/templates/company/detail.html:168
 #: templates/js/translated/build.js:1709
 msgid "Assigned Stock"
-msgstr "Tildelt lagervare"
+msgstr ""
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
-msgstr "Leverandørliste"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:15 company/views.py:38
 #: part/templates/part/prices.html:172 templates/InvenTree/search.html:181
 #: templates/navbar.html:49
 msgid "Manufacturers"
-msgstr "Produsenter"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:35
 #: company/templates/company/supplier_part.html:221
 #: part/templates/part/detail.html:87 part/templates/part/part_base.html:85
 msgid "Order part"
-msgstr "Bestill del"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:39
 #: templates/js/translated/company.js:716
 msgid "Edit manufacturer part"
-msgstr "Endre produsent del"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:43
 #: templates/js/translated/company.js:717
 msgid "Delete manufacturer part"
-msgstr "Slett produsentdel"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:65
 #: company/templates/company/supplier_part.html:98
 msgid "Internal Part"
-msgstr "Intern del"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:95
 msgid "No manufacturer information available"
@@ -3286,12 +3286,12 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:35 part/templates/part/prices.html:168
 #: templates/InvenTree/search.html:191 templates/navbar.html:48
 msgid "Suppliers"
-msgstr "Leverandører"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:136
 #: part/templates/part/detail.html:370
 msgid "Delete supplier parts"
-msgstr "Slett leverandørdeler"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:136
 #: company/templates/company/manufacturer_part.html:183
@@ -3299,7 +3299,7 @@ msgstr "Slett leverandørdeler"
 #: templates/js/translated/forms.js:458 templates/js/translated/helpers.js:36
 #: users/models.py:222
 msgid "Delete"
-msgstr "Slett"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:166
 #: company/templates/company/manufacturer_part_sidebar.html:5
@@ -3326,7 +3326,7 @@ msgstr ""
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
-msgstr "Produserte deler"
+msgstr ""
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
@@ -3338,7 +3338,7 @@ msgstr ""
 
 #: company/templates/company/sidebar.html:22
 msgid "Assigned Stock Items"
-msgstr "Tildelt lagervarer"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:553
@@ -3607,12 +3607,12 @@ msgstr ""
 
 #: label/models.py:233
 msgid "Query filters (comma-separated list of key=value pairs),"
-msgstr "Spørrefilter (kommaseparert liste over nøkkel=verdiparer),"
+msgstr ""
 
 #: label/models.py:234 label/models.py:275 label/models.py:303
 #: report/models.py:280 report/models.py:411 report/models.py:449
 msgid "Filters"
-msgstr "Filtre"
+msgstr ""
 
 #: label/models.py:274
 msgid "Query filters (comma-separated list of key=value pairs"
@@ -5072,7 +5072,7 @@ msgstr ""
 #: part/templates/part/category.html:174 part/templates/part/detail.html:368
 #: part/templates/part/detail.html:399
 msgid "Options"
-msgstr "Valgmuligheter"
+msgstr ""
 
 #: part/templates/part/category.html:178
 msgid "Set category"
@@ -5738,23 +5738,23 @@ msgstr ""
 
 #: plugin/base/action/api.py:27
 msgid "No action specified"
-msgstr "Ingen handling spesifisert"
+msgstr ""
 
 #: plugin/base/action/api.py:38
 msgid "No matching action found"
-msgstr "Ingen samsvarende handling funnet"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:51 plugin/base/barcodes/api.py:109
 msgid "Must provide barcode_data parameter"
-msgstr "Må oppgi gyldig strekkode_data parameter"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:81
 msgid "No match found for barcode data"
-msgstr "Ingen treff funnet for strekkodedata"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:85
 msgid "Match found for barcode data"
-msgstr "Treff funnet for strekkodedata"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:124
 msgid "Barcode matches existing item"
@@ -6339,7 +6339,7 @@ msgstr ""
 
 #: stock/serializers.py:355
 msgid "Serial numbers already exist"
-msgstr "Seriernummer eksisterer allerede"
+msgstr ""
 
 #: stock/serializers.py:395
 msgid "Select stock item to install"
@@ -7589,7 +7589,7 @@ msgstr ""
 
 #: templates/account/email_confirm.html:22 templates/js/translated/forms.js:649
 msgid "Confirm"
-msgstr "Bekreft"
+msgstr ""
 
 #: templates/account/email_confirm.html:30
 #, python-format
@@ -8217,7 +8217,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:174
 msgid "Are you sure you wish to cancel this build?"
-msgstr "Er du sikker du vil kansellere?"
+msgstr ""
 
 #: templates/js/translated/build.js:180
 msgid "Stock items have been allocated to this build order"
@@ -8263,7 +8263,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:331
 msgid "Trackable parts can have serial numbers specified"
-msgstr "Sporbare varer kan ha angitte serienummer"
+msgstr ""
 
 #: templates/js/translated/build.js:332
 msgid "Enter serial numbers to generate multiple single build outputs"
@@ -8506,7 +8506,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:297
 msgid "All selected supplier parts will be deleted"
-msgstr "Alle valgte leverandørdeler vil slettes"
+msgstr ""
 
 #: templates/js/translated/company.js:313
 msgid "Delete Supplier Parts"
@@ -10341,11 +10341,11 @@ msgstr ""
 
 #: templates/js/translated/tables.js:70
 msgid "Display calendar view"
-msgstr "Vis kalender"
+msgstr ""
 
 #: templates/js/translated/tables.js:80
 msgid "Display list view"
-msgstr "Vis liste"
+msgstr ""
 
 #: templates/js/translated/tables.js:90
 msgid "Display tree view"
