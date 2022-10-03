@@ -306,8 +306,7 @@ def check_for_migrations(worker: bool = True):
 
     from plugin import registry
 
-    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
-    plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
+    plan = get_migration_plan()
 
     # Check if there are any open migrations
     if not plan:
@@ -348,3 +347,10 @@ def check_for_migrations(worker: bool = True):
     # We should be current now - triggering full reload to make sure all models
     # are loaded fully in their new state.
     registry.reload_plugins(full_reload=True, force_reload=True)
+
+
+def get_migration_plan():
+    """Returns a list of migrations which are needed to be run."""
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+    plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
+    return plan
