@@ -333,7 +333,9 @@ def check_for_migrations(worker: bool = True):
     # To be sure we are in maintenance this is wrapped
     with maintenance_mode_on():
         logger.info('Starting migrations')
+        print('Starting migrations')
         call_command('migrate', interactive=False)
+        print('Migrations done')
         logger.info('Ran migrations')
 
     # Make sure we are out of maintenance again
