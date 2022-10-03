@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 
+from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
@@ -117,3 +118,22 @@ class InvenTreeTaskTests(TestCase):
         response = InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION')
         self.assertNotEqual(response, '')
         self.assertTrue(bool(response))
+
+    def test_task_check_for_migrations(self):
+        """Test the task check_for_migrations."""
+        # Update disabled
+        InvenTreeSetting.set_setting('INVENTREE_AUTO_UPDATE', False, change_user=None)
+        InvenTree.tasks.check_for_migrations()
+
+        # Update enabled - no migrations
+        InvenTreeSetting.set_setting('INVENTREE_AUTO_UPDATE', True, change_user=None)
+        InvenTree.tasks.check_for_migrations()
+
+        # Create migration
+        self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 0)
+        call_command('makemigrations', ['InvenTree', '--empty'], interactive=False)
+        self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 1)
+
+        # Run with migrations
+        InvenTree.tasks.check_for_migrations()
+        self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 0)
