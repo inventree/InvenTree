@@ -136,4 +136,3 @@ class InvenTreeTaskTests(TestCase):
 
         # Run with migrations
         InvenTree.tasks.check_for_migrations()
-        self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 0)
