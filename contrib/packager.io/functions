@@ -101,6 +101,20 @@ function update_or_install () {
     invoke update
 }
 
+function set_env () {
+  echo "# Setting up InvenTree config values"
+
+  inventree config:set INVENTREE_MEDIA_ROOT=${INVENTREE_MEDIA_ROOT}
+  inventree config:set INVENTREE_STATIC_ROOT=${INVENTREE_STATIC_ROOT}
+  inventree config:set INVENTREE_PLUGIN_FILE=${INVENTREE_PLUGIN_FILE}
+  inventree config:set INVENTREE_CONFIG_FILE=${INVENTREE_CONFIG_FILE}
+  inventree config:set INVENTREE_SECRET_KEY_FILE=${INVENTREE_SECRET_KEY_FILE}
+  inventree config:set INVENTREE_DB_NAME=${INVENTREE_DB_NAME}
+  inventree config:set INVENTREE_DB_ENGINE=${INVENTREE_DB_ENGINE}
+  inventree config:set INVENTREE_PLUGINS_ENABLED=${INVENTREE_PLUGINS_ENABLED}
+}
+
+
 function final_message () {
   echo -e "####################################################################################"
   echo -e "\nAdd your fully qualified domain name or public IP to servername directive of"

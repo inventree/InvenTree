@@ -29,6 +29,7 @@ create_initscripts
 
 stop_inventree
 update_or_install
+set_env
 start_inventree
 
 final_message
