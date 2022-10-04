@@ -36,7 +36,8 @@ function create_initscripts () {
   pip install invoke
 
   echo "# Setting up nginx"
-  cat <<EOF > /etc/nginx/sites-available/default
+  rm /etc/nginx/sites-available/default
+  cat <<EOF > /etc/nginx/sites-available/inventree
   server {
     listen          80;
     location / {
@@ -89,7 +90,7 @@ function final_message () {
   echo -e "####################################################################################"
   echo -e "\nAdd your fully qualified domain name or public IP to servername directive of"
   echo -e "nginx, if this installation is done on a remote server. You have to change:"
-  echo -e "/etc/nginx/sites-available/default and restart nginx process."
+  echo -e "/etc/nginx/sites-available/inventree and restart nginx process."
   echo -e "Otherwise just open http://localhost/ in your browser to start using InvenTree.\n"
   echo -e "####################################################################################"
 }
