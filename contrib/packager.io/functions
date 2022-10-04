@@ -70,6 +70,8 @@ function stop_inventree () {
 function update_or_install () {
     echo "# Updating InvenTree"
     cd ${APP_HOME} && invoke update
+    echo "# Set permissions for data dir and media: ${DATA_DIR}"
+    chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} -R
 }
 
 function set_env () {
