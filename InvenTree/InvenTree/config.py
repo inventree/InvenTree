@@ -21,6 +21,7 @@ def get_base_dir() -> Path:
     """Returns the base (top-level) InvenTree directory."""
     return Path(__file__).parent.parent.resolve()
 
+
 def ensure_dir(path: Path) -> None:
     """Ensure that a directory exists.
 
@@ -29,6 +30,7 @@ def ensure_dir(path: Path) -> None:
 
     if not path.exists():
         path.mkdir(parents=True, exist_ok=True)
+
 
 def get_config_file(create=True) -> Path:
     """Returns the path of the InvenTree configuration file.
