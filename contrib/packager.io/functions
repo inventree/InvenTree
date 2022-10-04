@@ -36,14 +36,9 @@ function create_initscripts () {
   pip install invoke
 
   echo "# Setting up nginx"
-  cat <<EOF > /etc/nginx/sites-available/default
-  server {
-    listen          80;
-    location / {
-      proxy_pass      http://localhost:6000;
-    }
-  }
-EOF
+  rm /etc/nginx/sites-available/default
+  cp ${APP_HOME}/docker/production/nginx.prod.conf /etc/nginx/sites-enabled/inventree.conf
+  sed s/inventree-server/localhost/g /etc/nginx/sites-enabled/inventree.conf
 
   # Restart nginx
   echo "# Restarting nginx"
