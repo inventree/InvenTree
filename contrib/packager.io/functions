@@ -35,15 +35,17 @@ function create_initscripts () {
   # Install invoke for later ci tasks
   pip install invoke
 
+  echo "# Stopping nginx"
+  ${INIT_CMD} stop nginx
   echo "# Setting up nginx"
-  rm /etc/nginx/sites-available/default
+  rm /etc/nginx/sites-enabled/default
   cp ${APP_HOME}/docker/production/nginx.prod.conf /etc/nginx/sites-enabled/inventree.conf
   sed -i s/inventree-server:8000/localhost:6000/g /etc/nginx/sites-enabled/inventree.conf
   sed -i s=var/www=opt/inventree/data=g /etc/nginx/sites-enabled/inventree.conf
 
   # Restart nginx
   echo "# Restarting nginx"
-  ${INIT_CMD} restart nginx
+  ${INIT_CMD} start nginx
 
   echo "# (Re)creating init scripts"
   inventree scale web="1" worker="1"
