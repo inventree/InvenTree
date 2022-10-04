@@ -78,6 +78,9 @@ function create_initscripts () {
   }
 EOF
 
+  # Restart nginx
+  ${INIT_CMD} restart nginx
+
   echo "# (Re)creating init scripts"
   inventree scale web="1" worker="1"
 
