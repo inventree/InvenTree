@@ -3,40 +3,11 @@
 # packager.io postinstall script functions
 #
 
-function debug() {
-  if [ "${DEBUG}" == "yes" ]; then
-    echo "DEBUG MODE ON"
-    set -ex
-  fi
-}
-
-function detect_os () {
-  . /etc/os-release
-
-  if [ "${ID}" == "debian" ] || [ "${ID}" == "ubuntu" ]; then
-    OS="DEBIAN"
-  elif [ "${ID}" == "centos" ] || [ "${ID}" == "fedora" ] || [ "${ID}" == "rhel" ]; then
-    OS="REDHAT"
-  elif [ "${ID}" == "opensuse" ] || [ "${ID}" == "sles" ] || [ "${ID}" == "suse" ]; then
-    OS="SUSE"
-  else
-    OS="UNKNOWN"
-  fi
-
-  if [ "${DEBUG}" == "yes" ]; then
-    echo "OS is ${OS} based"
-  fi
-}
-
 function detect_docker() {
   if [ -n "$(grep docker < /proc/1/cgroup)" ]; then
     DOCKER="yes"
   else
     DOCKER="no"
-  fi
-
-  if [ "${DEBUG}" == "yes" ]; then
-    echo "os runs in docker container = ${DOCKER}"
   fi
 }
 
@@ -55,10 +26,6 @@ function detect_initcmd () {
   if [ "${DOCKER}" == "yes" ]; then
     INIT_CMD="initctl"
   fi
-
-  if [ "${DEBUG}" == "yes" ]; then
-    echo "INIT CMD = ${INIT_CMD}"
-  fi
 }
 
 function create_initscripts () {
@@ -68,7 +35,7 @@ function create_initscripts () {
   # Install invoke for later ci tasks
   pip install invoke
 
-  echo "# Set up nginx"
+  echo "# Setting up nginx"
   cat <<EOF > /etc/nginx/sites-available/default
   server {
     listen          80;
@@ -79,6 +46,7 @@ function create_initscripts () {
 EOF
 
   # Restart nginx
+  echo "# Restarting nginx"
   ${INIT_CMD} restart nginx
 
   echo "# (Re)creating init scripts"
@@ -100,8 +68,7 @@ function stop_inventree () {
 
 function update_or_install () {
     echo "# Updating InvenTree"
-    cd ${APP_HOME}
-    invoke update
+    cd ${APP_HOME} && invoke update
 }
 
 function set_env () {
@@ -121,19 +88,8 @@ function set_env () {
 function final_message () {
   echo -e "####################################################################################"
   echo -e "\nAdd your fully qualified domain name or public IP to servername directive of"
-  echo -e "${WEBSERVER}, if this installation is done on a remote server. You have to change:"
-  echo -e "${WEBSERVER_CONF} and restart ${WEBSERVER_CMD} process."
+  echo -e "nginx, if this installation is done on a remote server. You have to change:"
+  echo -e "/etc/nginx/sites-available/default and restart nginx process."
   echo -e "Otherwise just open http://localhost/ in your browser to start using InvenTree.\n"
-  if [ "${OS}" == "REDHAT" ]; then
-    echo -e "\n Remember to enable selinux and firewall rules!\n"
-    echo -e "Use the following commands:"
-    echo -e "	setsebool httpd_can_network_connect on -P"
-    echo -e "	firewall-cmd --zone=public --add-service=http --permanent"
-    echo -e "	firewall-cmd --zone=public --add-service=https --permanent"
-    echo -e "	firewall-cmd --reload\n"
-  elif [ "${OS}" == "SUSE" ]; then
-    echo -e "\n Make sure that the firewall is not blocking port 80 & 443!\n"
-    echo -e "Use 'yast firewall' or 'SuSEfirewall2' commands to configure it"
-  fi
   echo -e "####################################################################################"
 }
