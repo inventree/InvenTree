@@ -256,8 +256,11 @@ xlrd==2.0.1
     # via tablib
 xlwt==1.3.0
     # via tablib
+<<<<<<< HEAD
 zipp==3.8.1
     # via importlib-metadata
+=======
+>>>>>>> ics-export
 zopfli==0.2.1
     # via fonttools
 
