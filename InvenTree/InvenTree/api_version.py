@@ -2,10 +2,53 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 65
+INVENTREE_API_VERSION = 76
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v76 -> 2022-09-10 : https://github.com/inventree/InvenTree/pull/3640
+    - Refactor of barcode data on the API
+    - StockItem.uid renamed to StockItem.barcode_hash
+
+v75 -> 2022-09-05 : https://github.com/inventree/InvenTree/pull/3644
+    - Adds "pack_size" attribute to SupplierPart API serializer
+
+v74 -> 2022-08-28 : https://github.com/inventree/InvenTree/pull/3615
+    - Add confirmation field for completing PurchaseOrder if the order has incomplete lines
+    - Add confirmation field for completing SalesOrder if the order has incomplete lines
+
+v73 -> 2022-08-24 : https://github.com/inventree/InvenTree/pull/3605
+    - Add 'description' field to PartParameterTemplate model
+
+v72 -> 2022-08-18 : https://github.com/inventree/InvenTree/pull/3567
+    - Allow PurchaseOrder to be duplicated via the API
+
+v71 -> 2022-08-18 : https://github.com/inventree/InvenTree/pull/3564
+    - Updates to the "part scheduling" API endpoint
+
+v70 -> 2022-08-02 : https://github.com/inventree/InvenTree/pull/3451
+    - Adds a 'depth' parameter to the PartCategory list API
+    - Adds a 'depth' parameter to the StockLocation list API
+
+v69 -> 2022-08-01 : https://github.com/inventree/InvenTree/pull/3443
+    - Updates the PartCategory list API:
+        - Improve query efficiency: O(n) becomes O(1)
+        - Rename 'parts' field to 'part_count'
+    - Updates the StockLocation list API:
+        - Improve query efficiency: O(n) becomes O(1)
+
+v68 -> 2022-07-27 : https://github.com/inventree/InvenTree/pull/3417
+    - Allows SupplierPart list to be filtered by SKU value
+    - Allows SupplierPart list to be filtered by MPN value
+
+v67 -> 2022-07-25 : https://github.com/inventree/InvenTree/pull/3395
+    - Adds a 'requirements' endpoint for Part instance
+    - Provides information on outstanding order requirements for a given part
+
+v66 -> 2022-07-24 : https://github.com/inventree/InvenTree/pull/3393
+    - Part images can now be downloaded from a remote URL via the API
+    - Company images can now be downloaded from a remote URL via the API
 
 v65 -> 2022-07-15 : https://github.com/inventree/InvenTree/pull/3335
     - Annotates 'in_stock' quantity to the SupplierPart API

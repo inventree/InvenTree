@@ -155,7 +155,7 @@ class LabelTemplate(models.Model):
         template = template.replace('/', os.path.sep)
         template = template.replace('\\', os.path.sep)
 
-        template = os.path.join(settings.MEDIA_ROOT, template)
+        template = settings.MEDIA_ROOT.joinpath(template)
 
         return template
 
@@ -249,7 +249,8 @@ class StockItemLabel(LabelTemplate):
             'revision': stock_item.part.revision,
             'quantity': normalize(stock_item.quantity),
             'serial': stock_item.serial,
-            'uid': stock_item.uid,
+            'barcode_data': stock_item.barcode_data,
+            'barcode_hash': stock_item.barcode_hash,
             'qr_data': stock_item.format_barcode(brief=True),
             'qr_url': stock_item.format_barcode(url=True, request=request),
             'tests': stock_item.testResultMap(),

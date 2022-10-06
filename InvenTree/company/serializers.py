@@ -1,5 +1,8 @@
 """JSON serializers for Company app."""
 
+import io
+
+from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -11,7 +14,7 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer)
+                                   InvenTreeMoneySerializer, RemoteImageMixin)
 from part.serializers import PartBriefSerializer
 
 from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
@@ -39,7 +42,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
-class CompanySerializer(InvenTreeModelSerializer):
+class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for Company object (full detail)"""
 
     @staticmethod
@@ -95,7 +98,32 @@ class CompanySerializer(InvenTreeModelSerializer):
             'notes',
             'parts_supplied',
             'parts_manufactured',
+            'remote_image',
         ]
+
+    def save(self):
+        """Save the Company instance"""
+        super().save()
+
+        company = self.instance
+
+        # Check if an image was downloaded from a remote URL
+        remote_img = getattr(self, 'remote_image_file', None)
+
+        if remote_img and company:
+            fmt = remote_img.format or 'PNG'
+            buffer = io.BytesIO()
+            remote_img.save(buffer, format=fmt)
+
+            # Construct a simplified name for the image
+            filename = f"company_{company.pk}_image.{fmt.lower()}"
+
+            company.image.save(
+                filename,
+                ContentFile(buffer.getvalue()),
+            )
+
+        return self.instance
 
 
 class ManufacturerPartSerializer(InvenTreeModelSerializer):
@@ -211,6 +239,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     pretty_name = serializers.CharField(read_only=True)
 
+    pack_size = serializers.FloatField(label=_('Pack Quantity'))
+
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
 
@@ -245,6 +275,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
 
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
     class Meta:
         """Metaclass options."""
 
@@ -263,12 +295,14 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'note',
             'pk',
             'packaging',
+            'pack_size',
             'part',
             'part_detail',
             'pretty_name',
             'SKU',
             'supplier',
             'supplier_detail',
+            'url',
         ]
 
         read_only_fields = [

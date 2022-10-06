@@ -382,6 +382,7 @@ function bomItemFields() {
         note: {},
         allow_variants: {},
         inherited: {},
+        consumable: {},
         optional: {},
     };
 
@@ -519,7 +520,6 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
                 </a>
             </td>
             <td id='description-${pk}'><em>${part.description}</em></td>
-            <td id='stock-${pk}'><em>${part.stock}</em></td>
             <td>${buttons}</td>
         </tr>
         `;
@@ -552,7 +552,6 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             <tr>
                 <th>{% trans "Part" %}</th>
                 <th>{% trans "Description" %}</th>
-                <th>{% trans "Stock" %}</th>
                 <th><!-- Actions --></th>
             </tr>
         </thead>
@@ -763,7 +762,22 @@ function loadBomTable(table, options={}) {
         }
 
         return available;
+    }
 
+    function canBuildQuantity(row) {
+        // Calculate how many of each row we can make, given current stock
+
+        if (row.consumable) {
+            // If the row is "consumable" we do not 'track' the quantity
+            return Infinity;
+        }
+
+        // Prevent div-by-zero or negative errors
+        if ((row.quantity || 0) <= 0) {
+            return 0;
+        }
+
+        return availableQuantity(row) / row.quantity;
     }
 
     // Construct the table columns
@@ -846,6 +860,9 @@ function loadBomTable(table, options={}) {
         {
             field: 'sub_part_detail.description',
             title: '{% trans "Description" %}',
+            formatter: function(value) {
+                return withTitle(shortenString(value), value);
+            }
         }
     );
 
@@ -870,8 +887,16 @@ function loadBomTable(table, options={}) {
             // Let's make it a bit more pretty
             text = parseFloat(text);
 
+            if (row.sub_part_detail && row.sub_part_detail.units) {
+                text += ` <small>${row.sub_part_detail.units}</small>`;
+            }
+
+            if (row.consumable) {
+                text += ` <small>({% trans "Consumable" %})</small>`;
+            }
+
             if (row.optional) {
-                text += ' ({% trans "Optional" %})';
+                text += ' <small>({% trans "Optional" %})</small>';
             }
 
             if (row.overage) {
@@ -925,6 +950,10 @@ function loadBomTable(table, options={}) {
 
             var text = `${available_stock}`;
 
+            if (row.sub_part_detail && row.sub_part_detail.units) {
+                text += ` <small>${row.sub_part_detail.units}</small>`;
+            }
+
             if (available_stock <= 0) {
                 text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "No Stock Available" %}'></span>`;
             } else {
@@ -960,43 +989,23 @@ function loadBomTable(table, options={}) {
             if (row.substitutes && row.substitutes.length > 0) {
                 return row.substitutes.length;
             } else {
-                return `-`;
+                return yesNoLabel(false);
             }
         }
     });
 
-    if (show_pricing) {
-        cols.push({
-            field: 'purchase_price_range',
-            title: '{% trans "Purchase Price Range" %}',
-            searchable: false,
-            sortable: true,
-        });
-
-        cols.push({
-            field: 'purchase_price_avg',
-            title: '{% trans "Purchase Price Average" %}',
-            searchable: false,
-            sortable: true,
-        });
-
-        cols.push({
-            field: 'price_range',
-            title: '{% trans "Supplier Cost" %}',
-            sortable: true,
-            formatter: function(value) {
-                if (value) {
-                    return value;
-                } else {
-                    return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
-                }
-            }
-        });
-    }
-
     cols.push({
         field: 'optional',
         title: '{% trans "Optional" %}',
+        searchable: false,
+        formatter: function(value) {
+            return yesNoLabel(value);
+        }
+    });
+
+    cols.push({
+        field: 'consumable',
+        title: '{% trans "Consumable" %}',
         searchable: false,
         formatter: function(value) {
             return yesNoLabel(value);
@@ -1031,36 +1040,63 @@ function loadBomTable(table, options={}) {
         }
     });
 
+    if (show_pricing) {
+        cols.push({
+            field: 'purchase_price_range',
+            title: '{% trans "Purchase Price Range" %}',
+            searchable: false,
+            sortable: true,
+        });
+
+        cols.push({
+            field: 'purchase_price_avg',
+            title: '{% trans "Purchase Price Average" %}',
+            searchable: false,
+            sortable: true,
+        });
+
+        cols.push({
+            field: 'price_range',
+            title: '{% trans "Supplier Cost" %}',
+            sortable: true,
+            formatter: function(value) {
+                if (value) {
+                    return value;
+                } else {
+                    return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
+                }
+            }
+        });
+    }
+
     cols.push(
         {
             field: 'can_build',
             title: '{% trans "Can Build" %}',
+            sortable: true,
             formatter: function(value, row) {
-                var can_build = 0;
 
-                var available = availableQuantity(row);
-
-                if (row.quantity > 0) {
-                    can_build = available / row.quantity;
+                // "Consumable" parts are not tracked in the build
+                if (row.consumable) {
+                    return `<em>{% trans "Consumable item" %}</em>`;
                 }
 
-                var text = formatDecimal(can_build, 2);
+                var can_build = canBuildQuantity(row);
 
-                // Take "on order" quantity into account
-                if (row.on_order && row.on_order > 0 && row.quantity > 0) {
-                    available += row.on_order;
-                    can_build = available / row.quantity;
+                return +can_build.toFixed(2);
+            },
+            sorter: function(valA, valB, rowA, rowB) {
+                // Function to sort the "can build" quantity
+                var cb_a = canBuildQuantity(rowA);
+                var cb_b = canBuildQuantity(rowB);
 
-                    text += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Including On Order" %}: ${can_build}'></span>`;
-                }
-
-                return text;
+                return (cb_a > cb_b) ? 1 : -1;
             },
             footerFormatter: function(data) {
                 var can_build = null;
 
                 data.forEach(function(row) {
-                    if (row.part == options.parent_id && row.quantity > 0) {
+                    if (row.quantity > 0 && !row.consumable) {
                         var cb = availableQuantity(row) / row.quantity;
 
                         if (can_build == null || cb < can_build) {
@@ -1070,27 +1106,11 @@ function loadBomTable(table, options={}) {
                 });
 
                 if (can_build == null) {
-                    can_build = '-';
+                    return '-';
+                } else {
+                    return formatDecimal(can_build, 2);
                 }
-
-                return can_build;
-            },
-            sorter: function(valA, valB, rowA, rowB) {
-                // Function to sort the "can build" quantity
-                var cb_a = 0;
-                var cb_b = 0;
-
-                if (rowA.quantity > 0) {
-                    cb_a = availableQuantity(rowA) / rowA.quantity;
-                }
-
-                if (rowB.quantity > 0) {
-                    cb_b = availableQuantity(rowB) / rowB.quantity;
-                }
-
-                return (cb_a > cb_b) ? 1 : -1;
-            },
-            sortable: true,
+            }
         }
     );
 
@@ -1101,6 +1121,9 @@ function loadBomTable(table, options={}) {
             title: '{% trans "Notes" %}',
             searchable: true,
             sortable: true,
+            formatter: function(value) {
+                return withTitle(shortenString(value), value);
+            }
         }
     );
 
@@ -1171,12 +1194,15 @@ function loadBomTable(table, options={}) {
                         response[idx].parentId = bom_pk;
                     }
 
-                    var row = $(table).bootstrapTable('getRowByUniqueId', bom_pk);
+                    var row = table.bootstrapTable('getRowByUniqueId', bom_pk);
                     row.sub_assembly_received = true;
 
-                    $(table).bootstrapTable('updateByUniqueId', bom_pk, row, true);
+                    table.bootstrapTable('updateByUniqueId', bom_pk, row, true);
 
                     table.bootstrapTable('append', response);
+
+                    // Auto-expand the newly added row
+                    $(`.treegrid-${bom_pk}`).treegrid('expand');
                 },
                 error: function(xhr) {
                     console.error('Error requesting BOM for part=' + part_pk);
@@ -1229,28 +1255,39 @@ function loadBomTable(table, options={}) {
 
             table.treegrid({
                 treeColumn: 1,
-                onExpand: function() {
-                }
             });
 
             table.treegrid('collapseAll');
 
             // Callback for 'load sub assembly' button
-            $(table).find('.load-sub-assembly').click(function(event) {
+            table.find('.load-sub-assembly').click(function(event) {
 
                 event.preventDefault();
 
                 var pk = $(this).attr('pk');
-                var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+                var row = table.bootstrapTable('getRowByUniqueId', pk);
 
                 // Request BOM data for this subassembly
                 requestSubItems(row.pk, row.sub_part);
 
                 row.sub_assembly_requested = true;
-                $(table).bootstrapTable('updateByUniqueId', pk, row, true);
+                table.bootstrapTable('updateByUniqueId', pk, row, true);
             });
+
+            var data = table.bootstrapTable('getData');
+
+            for (var idx = 0; idx < data.length; idx++) {
+                var row = data[idx];
+
+                if (!row.parentId) {
+                    row.parentId = parent_id;
+
+                    table.bootstrapTable('updateByUniqueId', row.pk, row, true);
+                }
+            }
         },
-        onLoadSuccess: function() {
+        onLoadSuccess: function(data) {
+
             if (options.editable) {
                 table.bootstrapTable('uncheckAll');
             }
@@ -1483,6 +1520,10 @@ function loadUsedInTable(table, part_id, options={}) {
                 title: '{% trans "Required Quantity" %}',
                 formatter: function(value, row) {
                     var html = value;
+
+                    if (row.sub_part_detail && row.sub_part_detail.units) {
+                        html += ` <small>${row.sub_part_detail.units}</small>`;
+                    }
 
                     if (row.parent && row.parent != 'top-level-item') {
                         html += ` <em>({% trans "Inherited from parent BOM" %})</em>`;

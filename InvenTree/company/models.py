@@ -20,8 +20,8 @@ import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.validators
 from common.settings import currency_code_default
-from InvenTree.fields import InvenTreeURLField
-from InvenTree.models import InvenTreeAttachment
+from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
+from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin
 from InvenTree.status_codes import PurchaseOrderStatus
 
 
@@ -391,7 +391,7 @@ class SupplierPartManager(models.Manager):
         )
 
 
-class SupplierPart(models.Model):
+class SupplierPart(InvenTreeBarcodeMixin, models.Model):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 
     Attributes:
@@ -406,6 +406,7 @@ class SupplierPart(models.Model):
         multiple: Multiple that the part is provided in
         lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
+        pack_size: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
     """
 
     objects = SupplierPartManager()
@@ -526,6 +527,14 @@ class SupplierPart(models.Model):
     base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
 
     packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
+
+    pack_size = RoundingDecimalField(
+        verbose_name=_('Pack Quantity'),
+        help_text=_('Unit quantity supplied in a single pack'),
+        default=1,
+        max_digits=15, decimal_places=5,
+        validators=[MinValueValidator(0.001)],
+    )
 
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))
 

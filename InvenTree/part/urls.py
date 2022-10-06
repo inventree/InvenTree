@@ -21,16 +21,12 @@ part_detail_urls = [
 
     # Normal thumbnail with form
     re_path(r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'),
-    re_path(r'^thumb-download/', views.PartImageDownloadFromURL.as_view(), name='part-image-download'),
 
     # Any other URLs go to the part detail page
     re_path(r'^.*$', views.PartDetail.as_view(), name='part-detail'),
 ]
 
 category_urls = [
-
-    # Top level subcategory display
-    re_path(r'^subcategory/', views.PartIndex.as_view(template_name='part/subcategory.html'), name='category-index-subcategory'),
 
     # Category detail views
     re_path(r'(?P<pk>\d+)/', views.CategoryDetail.as_view(), name='category-detail'),

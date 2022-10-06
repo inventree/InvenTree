@@ -2,12 +2,14 @@
 
 import os
 import shutil
+from pathlib import Path
 
 from django.conf import settings
 from django.core.cache import cache
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.safestring import SafeString
 
 from PIL import Image
 
@@ -38,15 +40,18 @@ class ReportTagTest(TestCase):
                 report_tags.asset("bad_file.txt")
 
         # Create an asset file
-        asset_dir = os.path.join(settings.MEDIA_ROOT, 'report', 'assets')
-        os.makedirs(asset_dir, exist_ok=True)
-        asset_path = os.path.join(asset_dir, 'test.txt')
+        asset_dir = settings.MEDIA_ROOT.joinpath('report', 'assets')
+        asset_dir.mkdir(parents=True, exist_ok=True)
+        asset_path = asset_dir.joinpath('test.txt')
 
-        with open(asset_path, 'w') as f:
-            f.write("dummy data")
+        asset_path.write_text("dummy data")
 
         self.debug_mode(True)
         asset = report_tags.asset('test.txt')
+        self.assertEqual(asset, '/media/report/assets/test.txt')
+
+        # Ensure that a 'safe string' also works
+        asset = report_tags.asset(SafeString('test.txt'))
         self.assertEqual(asset, '/media/report/assets/test.txt')
 
         self.debug_mode(False)
@@ -68,13 +73,11 @@ class ReportTagTest(TestCase):
 
         # Create a dummy image
         img_path = 'part/images/'
-        img_path = os.path.join(settings.MEDIA_ROOT, img_path)
-        img_file = os.path.join(img_path, 'test.jpg')
+        img_path = settings.MEDIA_ROOT.joinpath(img_path)
+        img_file = img_path.joinpath('test.jpg')
 
-        os.makedirs(img_path, exist_ok=True)
-
-        with open(img_file, 'w') as f:
-            f.write("dummy data")
+        img_path.mkdir(parents=True, exist_ok=True)
+        img_file.write_text("dummy data")
 
         # Test in debug mode. Returns blank image as dummy file is not a valid image
         self.debug_mode(True)
@@ -89,9 +92,16 @@ class ReportTagTest(TestCase):
         img = report_tags.uploaded_image('part/images/test.jpg')
         self.assertEqual(img, '/media/part/images/test.jpg')
 
+        # Ensure that a 'safe string' also works
+        img = report_tags.uploaded_image(SafeString('part/images/test.jpg'))
+        self.assertEqual(img, '/media/part/images/test.jpg')
+
         self.debug_mode(False)
         img = report_tags.uploaded_image('part/images/test.jpg')
-        self.assertEqual(img, f'file://{img_path}test.jpg')
+        self.assertEqual(img, f'file://{img_path.joinpath("test.jpg")}')
+
+        img = report_tags.uploaded_image(SafeString('part/images/test.jpg'))
+        self.assertEqual(img, f'file://{img_path.joinpath("test.jpg")}')
 
     def test_part_image(self):
         """Unit tests for the 'part_image' tag"""
@@ -178,8 +188,7 @@ class ReportTest(InvenTreeAPITestCase):
 
     def copyReportTemplate(self, filename, description):
         """Copy the provided report template into the required media directory."""
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
+        src_dir = Path(__file__).parent.joinpath(
             'templates',
             'report'
         )
@@ -190,18 +199,15 @@ class ReportTest(InvenTreeAPITestCase):
             self.model.getSubdir(),
         )
 
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
-            template_dir
-        )
+        dst_dir = settings.MEDIA_ROOT.joinpath(template_dir)
 
-        if not os.path.exists(dst_dir):  # pragma: no cover
-            os.makedirs(dst_dir, exist_ok=True)
+        if not dst_dir.exists():  # pragma: no cover
+            dst_dir.mkdir(parents=True, exist_ok=True)
 
-        src_file = os.path.join(src_dir, filename)
-        dst_file = os.path.join(dst_dir, filename)
+        src_file = src_dir.joinpath(filename)
+        dst_file = dst_dir.joinpath(filename)
 
-        if not os.path.exists(dst_file):  # pragma: no cover
+        if not dst_file.exists():  # pragma: no cover
             shutil.copyfile(src_file, dst_file)
 
         # Convert to an "internal" filename

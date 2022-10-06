@@ -10,9 +10,9 @@ import hmac
 import json
 import logging
 import math
-import os
 import uuid
 from datetime import datetime, timedelta
+from enum import Enum
 from secrets import compare_digest
 
 from django.apps import apps
@@ -24,7 +24,8 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.exceptions import AppRegistryNotReady, ValidationError
-from django.core.validators import MinValueValidator, URLValidator
+from django.core.validators import (MaxValueValidator, MinValueValidator,
+                                    URLValidator)
 from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
 from django.urls import reverse
@@ -130,7 +131,7 @@ class BaseInvenTreeSetting(models.Model):
         for k, v in kwargs.items():
             key += f"_{k}:{v}"
 
-        return key
+        return key.replace(" ", "")
 
     @classmethod
     def allValues(cls, user=None, exclude_hidden=False):
@@ -856,11 +857,33 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
         },
 
+        'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE': {
+            'name': _('Download Size Limit'),
+            'description': _('Maximum allowable download size for remote image'),
+            'units': 'MB',
+            'default': 1,
+            'validator': [
+                int,
+                MinValueValidator(1),
+                MaxValueValidator(25),
+            ]
+        },
+
         'INVENTREE_REQUIRE_CONFIRM': {
             'name': _('Require confirm'),
             'description': _('Require explicit user confirmation for certain action.'),
             'validator': bool,
             'default': True,
+        },
+
+        'INVENTREE_TREE_DEPTH': {
+            'name': _('Tree Depth'),
+            'description': _('Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed.'),
+            'default': 1,
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ]
         },
 
         'BARCODE_ENABLE': {
@@ -1047,6 +1070,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': InvenTree.validators.validate_part_name_format
         },
 
+        'PART_CATEGORY_DEFAULT_ICON': {
+            'name': _('Part Category Default Icon'),
+            'description': _('Part category default icon (empty means no icon)'),
+            'default': '',
+        },
+
         'LABEL_ENABLE': {
             'name': _('Enable label printing'),
             'description': _('Enable label printing from the web interface'),
@@ -1143,6 +1172,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable ownership control over stock locations and items'),
             'default': False,
             'validator': bool,
+        },
+
+        'STOCK_LOCATION_DEFAULT_ICON': {
+            'name': _('Stock Location Default Icon'),
+            'description': _('Stock location default icon (empty means no icon)'),
+            'default': '',
         },
 
         'BUILDORDER_REFERENCE_PATTERN': {
@@ -1245,6 +1280,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
 
+        'PLUGIN_CHECK_SIGNATURES': {
+            'name': _('Check plugin signatures'),
+            'description': _('Check and show signatures for plugins'),
+            'default': False,
+            'validator': bool,
+        },
+
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
@@ -1286,6 +1328,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
     }
+
+    typ = 'inventree'
 
     class Meta:
         """Meta options for InvenTreeSetting."""
@@ -1598,7 +1642,19 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
+        'TABLE_STRING_MAX_LENGTH': {
+            'name': _('Table String Length'),
+            'description': _('Maximimum length limit for strings displayed in table views'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 100,
+        }
     }
+
+    typ = 'user'
 
     class Meta:
         """Meta options for InvenTreeUserSetting."""
@@ -1761,14 +1817,15 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """Get all color themes from static folder."""
-        if settings.TESTING and not os.path.exists(settings.STATIC_COLOR_THEMES_DIR):
+        if not settings.STATIC_COLOR_THEMES_DIR.exists():
             logger.error('Theme directory does not exsist')
             return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
-        for file in os.listdir(settings.STATIC_COLOR_THEMES_DIR):
-            files_list.append(os.path.splitext(file))
+
+        for file in settings.STATIC_COLOR_THEMES_DIR.iterdir():
+            files_list.append([file.stem, file.suffix])
 
         # Get color themes choices (CSS sheets)
         choices = [(file_name.lower(), _(file_name.replace('-', ' ').title()))
@@ -1792,9 +1849,8 @@ class ColorTheme(models.Model):
         return False
 
 
-class VerificationMethod:
+class VerificationMethod(Enum):
     """Class to hold method references."""
-
     NONE = 0
     TOKEN = 1
     HMAC = 2

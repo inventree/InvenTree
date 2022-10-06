@@ -31,6 +31,57 @@ class StockListTest(StockViewTestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class StockDetailTest(StockViewTestCase):
+    """Unit test for the 'stock detail' page"""
+
+    def test_basic_info(self):
+        """Test that basic stock item info is rendered"""
+
+        url = reverse('stock-item-detail', kwargs={'pk': 1})
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        html = str(response.content)
+
+        # Part name
+        self.assertIn('Stock Item: M2x4 LPHS', html)
+
+        # Quantity
+        self.assertIn('<h5>Available Quantity</h5>', html)
+        self.assertIn('<h5>4000', html)
+
+        # Batch code
+        self.assertIn('Batch', html)
+        self.assertIn('<td>B123</td>', html)
+
+        # Actions to check
+        actions = [
+            "id=\\\'stock-count\\\' title=\\\'Count stock\\\'",
+            "id=\\\'stock-add\\\' title=\\\'Add stock\\\'",
+            "id=\\\'stock-remove\\\' title=\\\'Remove stock\\\'",
+            "id=\\\'stock-move\\\' title=\\\'Transfer stock\\\'",
+            "id=\\\'stock-duplicate\\\'",
+            "id=\\\'stock-edit\\\'",
+            "id=\\\'stock-delete\\\'",
+        ]
+
+        # Initially we should not have any of the required permissions
+        for act in actions:
+            self.assertNotIn(act, html)
+
+        # Give the user all the permissions
+        self.assignRole('stock.add')
+        self.assignRole('stock.change')
+        self.assignRole('stock.delete')
+
+        response = self.client.get(url)
+        html = str(response.content)
+
+        for act in actions:
+            self.assertIn(act, html)
+
+
 class StockOwnershipTest(StockViewTestCase):
     """Tests for stock ownership views."""
 

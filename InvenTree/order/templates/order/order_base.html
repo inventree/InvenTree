@@ -42,9 +42,18 @@
         <span class='fas fa-tools'></span> <span class='caret'></span>
     </button>
     <ul class='dropdown-menu' role='menu'>
-        <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='edit-order'>
+            <span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}
+        </a></li>
         {% if order.can_cancel %}
-        <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='cancel-order'>
+            <span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}
+        </a></li>
+        {% endif %}
+        {% if roles.purchase_order.add %}
+        <li><a class='dropdown-item' href='#' id='duplicate-order'>
+            <span class='fas fa-clone'></span> {% trans "Duplicate order" %}
+        </a></li>
         {% endif %}
     </ul>
 </div>
@@ -217,30 +226,14 @@ $('#print-order-report').click(function() {
 });
 {% endif %}
 
+{% if roles.purchase_order.change %}
+
 $("#edit-order").click(function() {
 
-    constructForm('{% url "api-po-detail" order.pk %}', {
-        fields: {
-            reference: {
-                icon: 'fa-hashtag',
-            },
-            {% if order.lines.count == 0 and order.status == PurchaseOrderStatus.PENDING %}
-            supplier: {
-            },
-            {% endif %}
-            supplier_reference: {},
-            description: {},
-            target_date: {
-                icon: 'fa-calendar-alt',
-            },
-            link: {
-                icon: 'fa-link',
-            },
-            responsible: {
-                icon: 'fa-user',
-            },
-        },
-        title: '{% trans "Edit Purchase Order" %}',
+    editPurchaseOrder({{ order.pk }}, {
+        {% if order.lines.count > 0 or order.status != PurchaseOrderStatus.PENDING %}
+        hide_supplier: true,
+        {% endif %}
         reload: true,
     });
 });
@@ -248,19 +241,11 @@ $("#edit-order").click(function() {
 $("#receive-order").click(function() {
 
     // Auto select items which have not been fully allocated
-    var items = $("#po-line-table").bootstrapTable('getData');
-
-    var items_to_receive = [];
-
-    items.forEach(function(item) {
-        if (item.received < item.quantity) {
-            items_to_receive.push(item);
-        }
-    });
+    var items = getTableData('#po-line-table');
 
     receivePurchaseOrderItems(
         {{ order.id }},
-        items_to_receive,
+        items,
         {
             success: function() {
                 $("#po-line-table").bootstrapTable('refresh');
@@ -292,6 +277,16 @@ $("#cancel-order").click(function() {
         },
     );
 });
+
+{% endif %}
+
+{% if roles.purchase_order.add %}
+$('#duplicate-order').click(function() {
+    duplicatePurchaseOrder(
+        {{ order.pk }},
+    );
+});
+{% endif %}
 
 $("#export-order").click(function() {
     exportOrder('{% url "po-export" order.id %}');

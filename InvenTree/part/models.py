@@ -43,7 +43,7 @@ from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
-                              InvenTreeTree)
+                              InvenTreeBarcodeMixin, InvenTreeTree)
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from order import models as OrderModels
@@ -100,6 +100,13 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     )
 
     default_keywords = models.CharField(null=True, blank=True, max_length=250, verbose_name=_('Default keywords'), help_text=_('Default keywords for parts in this category'))
+
+    icon = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_("Icon"),
+        help_text=_("Icon (optional)")
+    )
 
     @staticmethod
     def get_api_url():
@@ -293,7 +300,7 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(MetadataMixin, MPTTModel):
+class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -934,18 +941,6 @@ class Part(MetadataMixin, MPTTModel):
 
     responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
 
-    def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a barcode for this Part object."""
-        return helpers.MakeBarcode(
-            "part",
-            self.id,
-            {
-                "name": self.full_name,
-                "url": reverse('api-part-detail', kwargs={'pk': self.id}),
-            },
-            **kwargs
-        )
-
     @property
     def category_path(self):
         """Return the category path of this Part instance"""
@@ -1139,7 +1134,12 @@ class Part(MetadataMixin, MPTTModel):
         total = None
 
         # Prefetch related tables, to reduce query expense
-        queryset = self.get_bom_items().prefetch_related(
+        queryset = self.get_bom_items()
+
+        # Ignore 'consumable' BOM items for this calculation
+        queryset = queryset.filter(consumable=False)
+
+        queryset = queryset.prefetch_related(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
@@ -1428,6 +1428,45 @@ class Part(MetadataMixin, MPTTModel):
                 parts.add(bom_item.sub_part)
 
         return parts
+
+    def get_used_in_bom_item_filter(self, include_variants=True, include_substitutes=True):
+        """Return a BomItem queryset which returns all BomItem instances which refer to *this* part.
+
+        As the BOM allocation logic is somewhat complicted, there are some considerations:
+
+        A) This part may be directly specified in a BomItem instance
+        B) This part may be a *variant* of a part which is directly specified in a BomItem instance
+        C) This part may be a *substitute* for a part which is directly specifed in a BomItem instance
+
+        So we construct a query for each case, and combine them...
+        """
+
+        # Cache all *parent* parts
+        parents = self.get_ancestors(include_self=False)
+
+        # Case A: This part is directly specified in a BomItem (we always use this case)
+        query = Q(
+            sub_part=self,
+        )
+
+        if include_variants:
+            # Case B: This part is a *variant* of a part which is specified in a BomItem which allows variants
+            query |= Q(
+                allow_variants=True,
+                sub_part__in=parents,
+            )
+
+        # Case C: This part is a *substitute* of a part which is directly specified in a BomItem
+        if include_substitutes:
+
+            # Grab a list of BomItem substitutes which reference this part
+            substitutes = self.substitute_items.all()
+
+            query |= Q(
+                pk__in=[substitute.bom_item.pk for substitute in substitutes],
+            )
+
+        return query
 
     def get_used_in_filter(self, include_inherited=True):
         """Return a query filter for all parts that this part is used in.
@@ -1990,22 +2029,30 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def on_order(self):
-        """Return the total number of items on order for this part."""
-        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN).aggregate(
-            quantity=Sum('purchase_order_line_items__quantity'),
-            received=Sum('purchase_order_line_items__received')
-        )
+        """Return the total number of items on order for this part.
 
-        quantity = orders['quantity']
-        received = orders['received']
+        Note that some supplier parts may have a different pack_size attribute,
+        and this needs to be taken into account!
+        """
 
-        if quantity is None:
-            quantity = 0
+        quantity = 0
 
-        if received is None:
-            received = 0
+        # Iterate through all supplier parts
+        for sp in self.supplier_parts.all():
 
-        return quantity - received
+            # Look at any incomplete line item for open orders
+            lines = sp.purchase_order_line_items.filter(
+                order__status__in=PurchaseOrderStatus.OPEN,
+                quantity__gt=F('received'),
+            )
+
+            for line in lines:
+                remaining = line.quantity - line.received
+
+                if remaining > 0:
+                    quantity += remaining * sp.pack_size
+
+        return quantity
 
     def get_parameters(self):
         """Return all parameters for this part, ordered by name."""
@@ -2323,7 +2370,7 @@ class PartTestTemplate(models.Model):
 
 def validate_template_name(name):
     """Prevent illegal characters in "name" field for PartParameterTemplate."""
-    for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":  # noqa: P103
+    for c in "\"\'`!?|":  # noqa: P103
         if c in str(name):
             raise ValidationError(_(f"Illegal character in template name ({c})"))
 
@@ -2377,6 +2424,13 @@ class PartParameterTemplate(models.Model):
     )
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Parameter description'),
+        blank=True,
+    )
 
 
 class PartParameter(models.Model):
@@ -2477,6 +2531,7 @@ class BomItem(DataImportMixin, models.Model):
         sub_part: Link to the child part (the part that will be consumed)
         quantity: Number of 'sub_parts' consumed to produce one 'part'
         optional: Boolean field describing if this BomItem is optional
+        consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
@@ -2495,6 +2550,7 @@ class BomItem(DataImportMixin, models.Model):
         'allow_variants': {},
         'inherited': {},
         'optional': {},
+        'consumable': {},
         'note': {},
         'part': {
             'label': _('Part'),
@@ -2600,7 +2656,17 @@ class BomItem(DataImportMixin, models.Model):
     # Quantity required
     quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], verbose_name=_('Quantity'), help_text=_('BOM quantity for this BOM item'))
 
-    optional = models.BooleanField(default=False, verbose_name=_('Optional'), help_text=_("This BOM item is optional"))
+    optional = models.BooleanField(
+        default=False,
+        verbose_name=_('Optional'),
+        help_text=_("This BOM item is optional")
+    )
+
+    consumable = models.BooleanField(
+        default=False,
+        verbose_name=_('Consumable'),
+        help_text=_("This BOM item is consumable (it is not tracked in build orders)")
+    )
 
     overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
                                verbose_name=_('Overage'),
@@ -2648,6 +2714,14 @@ class BomItem(DataImportMixin, models.Model):
         result_hash.update(str(self.reference).encode())
         result_hash.update(str(self.optional).encode())
         result_hash.update(str(self.inherited).encode())
+
+        # Optionally encoded for backwards compatibility
+        if self.consumable:
+            result_hash.update(str(self.consumable).encode())
+
+        # Optionally encoded for backwards compatibility
+        if self.allow_variants:
+            result_hash.update(str(self.allow_variants).encode())
 
         return str(result_hash.digest())
 

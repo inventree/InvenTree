@@ -110,7 +110,7 @@ function inventreeDocReady() {
         launchModalForm(`/about/`, {
             no_post: true,
             after_render: function() {
-                attachClipboard('.clip-btn', 'modal-form');
+                attachClipboard('.clip-btn', 'modal-form', 'about-copy-text');
             }
         });
     });
@@ -121,9 +121,6 @@ function inventreeDocReady() {
             no_post: true,
         });
     });
-
-    // Initialize clipboard-buttons
-    attachClipboard('.clip-btn');
 
     // Generate brand-icons
     $('.brand-icon').each(function(i, obj) {
@@ -142,6 +139,8 @@ function inventreeDocReady() {
 
     // start watcher
     startNotificationWatcher();
+
+    attachClipboard('.clip-btn');
 
     // always refresh when the focus returns
     $(document).focus(function(){
@@ -208,13 +207,12 @@ function enableDragAndDrop(element, url, options) {
                 formData,
                 {
                     success: function(data, status, xhr) {
-                        console.log('Uploaded file via drag-and-drop');
                         if (options.success) {
                             options.success(data, status, xhr);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.log('File upload failed');
+                        console.error('File upload failed');
                         if (options.error) {
                             options.error(xhr, status, error);
                         }
@@ -223,7 +221,7 @@ function enableDragAndDrop(element, url, options) {
                 }
             );
         } else {
-            console.log('Ignoring drag-and-drop event (not a file)');
+            console.warn('Ignoring drag-and-drop event (not a file)');
         }
     });
 }

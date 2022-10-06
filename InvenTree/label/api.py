@@ -95,6 +95,7 @@ class LabelPrintMixin:
         label_name = "label.pdf"
 
         label_names = []
+        label_instances = []
 
         # Merge one or more PDF files into a single download
         for item in items_to_print:
@@ -104,6 +105,7 @@ class LabelPrintMixin:
             label_name = label.generate_filename(request)
 
             label_names.append(label_name)
+            label_instances.append(label)
 
             if debug_mode:
                 outputs.append(label.render_as_string(request))
@@ -123,9 +125,6 @@ class LabelPrintMixin:
             - Return a JSON response indicating that the printing has been offloaded
             """
 
-            # Label instance
-            label_instance = self.get_object()
-
             for idx, output in enumerate(outputs):
                 """For each output, we generate a temporary image file, which will then get sent to the printer."""
 
@@ -138,7 +137,7 @@ class LabelPrintMixin:
                     plugin.plugin_slug(),
                     pdf,
                     filename=label_names[idx],
-                    label_instance=label_instance,
+                    label_instance=label_instances[idx],
                     user=request.user,
                 )
 
@@ -159,16 +158,12 @@ class LabelPrintMixin:
 
             pages = []
 
-            if len(outputs) > 1:
-                # If more than one output is generated, merge them into a single file
-                for output in outputs:
-                    doc = output.get_document()
-                    for page in doc.pages:
-                        pages.append(page)
+            for output in outputs:
+                doc = output.get_document()
+                for page in doc.pages:
+                    pages.append(page)
 
-                pdf = outputs[0].get_document().copy(pages).write_pdf()
-            else:
-                pdf = outputs[0].get_document().write_pdf()
+            pdf = outputs[0].get_document().copy(pages).write_pdf()
 
             inline = common.models.InvenTreeUserSetting.get_setting('LABEL_INLINE', user=request.user)
 

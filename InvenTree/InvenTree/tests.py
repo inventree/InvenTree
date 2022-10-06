@@ -13,14 +13,17 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
+import requests
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 
 import InvenTree.format
+import InvenTree.helpers
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
+from InvenTree.sanitizer import sanitize_svg
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
@@ -250,6 +253,45 @@ class TestHelpers(TestCase):
 
         logo = helpers.getLogoImage(as_file=True)
         self.assertEqual(logo, f'file://{settings.STATIC_ROOT}/img/inventree.png')
+
+    def test_download_image(self):
+        """Test function for downloading image from remote URL"""
+
+        # Run check with a sequency of bad URLs
+        for url in [
+            "blog",
+            "htp://test.com/?",
+            "google",
+            "\\invalid-url"
+        ]:
+            with self.assertRaises(django_exceptions.ValidationError):
+                helpers.download_image_from_url(url)
+
+        # Attempt to download an image which throws a 404
+        with self.assertRaises(requests.exceptions.HTTPError):
+            helpers.download_image_from_url("https://httpstat.us/404", timeout=10)
+
+        # Attempt to download, but timeout
+        with self.assertRaises(requests.exceptions.Timeout):
+            helpers.download_image_from_url("https://httpstat.us/200?sleep=5000")
+
+        # Attempt to download, but not a valid image
+        with self.assertRaises(TypeError):
+            helpers.download_image_from_url("https://httpstat.us/200", timeout=10)
+
+        large_img = "https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg"
+
+        InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 1, change_user=None)
+
+        # Attempt to download an image which is too large
+        with self.assertRaises(ValueError):
+            helpers.download_image_from_url(large_img, timeout=10)
+
+        # Increase allowable download size
+        InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None)
+
+        # Download a valid image (should not throw an error)
+        helpers.download_image_from_url(large_img, timeout=10)
 
 
 class TestQuoteWrap(TestCase):
@@ -705,11 +747,11 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/config.yaml',
         ]
 
-        self.assertTrue(any([opt in config.get_config_file().lower() for opt in valid]))
+        self.assertTrue(any([opt in str(config.get_config_file()).lower() for opt in valid]))
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
-            self.assertIn('inventree/my_special_conf.yaml', config.get_config_file().lower())
+            self.assertIn('inventree/my_special_conf.yaml', str(config.get_config_file()).lower())
 
     def test_helpers_plugin_file(self):
         """Test get_plugin_file."""
@@ -720,11 +762,11 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/plugins.txt',
         ]
 
-        self.assertTrue(any([opt in config.get_plugin_file().lower() for opt in valid]))
+        self.assertTrue(any([opt in str(config.get_plugin_file()).lower() for opt in valid]))
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
-            self.assertIn('my_special_plugins.txt', config.get_plugin_file())
+            self.assertIn('my_special_plugins.txt', str(config.get_plugin_file()))
 
     def test_helpers_setting(self):
         """Test get_setting."""
@@ -808,3 +850,49 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             1, 2, 3, 4, 5,
             force_async=True
         )
+
+
+class BarcodeMixinTest(helpers.InvenTreeTestCase):
+    """Tests for the InvenTreeBarcodeMixin mixin class"""
+
+    def test_barcode_model_type(self):
+        """Test that the barcode_model_type property works for each class"""
+
+        from part.models import Part
+        from stock.models import StockItem, StockLocation
+
+        self.assertEqual(Part.barcode_model_type(), 'part')
+        self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
+        self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
+
+    def test_bacode_hash(self):
+        """Test that the barcode hashing function provides correct results"""
+
+        # Test multiple values for the hashing function
+        # This is to ensure that the hash function is always "backwards compatible"
+        hashing_tests = {
+            'abcdefg': '7ac66c0f148de9519b8bd264312c4d64',
+            'ABCDEFG': 'bb747b3df3130fe1ca4afa93fb7d97c9',
+            '1234567': 'fcea920f7412b5da7be0cf42b8c93759',
+            '{"part": 17, "stockitem": 12}': 'c88c11ed0628eb7fef0d59b098b96975',
+        }
+
+        for barcode, hash in hashing_tests.items():
+            self.assertEqual(InvenTree.helpers.hash_barcode(barcode), hash)
+
+
+class SanitizerTest(TestCase):
+    """Simple tests for sanitizer functions."""
+
+    def test_svg_sanitizer(self):
+        """Test that SVGs are sanitized acordingly."""
+        valid_string = """<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" height="400" width="400">{0}
+        <path id="path1" d="m -151.78571,359.62883 v 112.76373 l 97.068507,-56.04253 V 303.14815 Z" style="fill:#ddbc91;"></path>
+        </svg>"""
+        dangerous_string = valid_string.format('<script>alert();</script>')
+
+        # Test that valid string
+        self.assertEqual(valid_string, sanitize_svg(valid_string))
+
+        # Test that invalid string is cleanded
+        self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))

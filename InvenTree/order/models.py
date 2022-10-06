@@ -248,6 +248,11 @@ class PurchaseOrder(Order):
     status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),
                                          help_text=_('Purchase order status'))
 
+    @property
+    def status_text(self):
+        """Return the text representation of the status field"""
+        return PurchaseOrderStatus.text(self.status)
+
     supplier = models.ForeignKey(
         Company, on_delete=models.SET_NULL,
         null=True,
@@ -450,11 +455,11 @@ class PurchaseOrder(Order):
         notes = kwargs.get('notes', '')
 
         # Extract optional barcode field
-        barcode = kwargs.get('barcode', None)
+        barcode_hash = kwargs.get('barcode', None)
 
         # Prevent null values for barcode
-        if barcode is None:
-            barcode = ''
+        if barcode_hash is None:
+            barcode_hash = ''
 
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
@@ -475,6 +480,9 @@ class PurchaseOrder(Order):
         # Create a new stock item
         if line.part and quantity > 0:
 
+            # Take the 'pack_size' of the SupplierPart into account
+            pack_quantity = Decimal(quantity) * Decimal(line.part.pack_size)
+
             # Determine if we should individually serialize the items, or not
             if type(serials) is list and len(serials) > 0:
                 serialize = True
@@ -488,13 +496,13 @@ class PurchaseOrder(Order):
                     part=line.part.part,
                     supplier_part=line.part,
                     location=location,
-                    quantity=1 if serialize else quantity,
+                    quantity=1 if serialize else pack_quantity,
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
                     serial=sn,
                     purchase_price=line.purchase_price,
-                    uid=barcode
+                    barcode_hash=barcode_hash
                 )
 
                 stock.save(add_note=False)
@@ -515,6 +523,7 @@ class PurchaseOrder(Order):
                 )
 
         # Update the number of parts received against the particular line item
+        # Note that this quantity does *not* take the pack_size into account, it is "number of packs"
         line.received += quantity
         line.save()
 
@@ -641,6 +650,11 @@ class SalesOrder(Order):
     status = models.PositiveIntegerField(default=SalesOrderStatus.PENDING, choices=SalesOrderStatus.items(),
                                          verbose_name=_('Status'), help_text=_('Purchase order status'))
 
+    @property
+    def status_text(self):
+        """Return the text representation of the status field"""
+        return SalesOrderStatus.text(self.status)
+
     customer_reference = models.CharField(max_length=64, blank=True, verbose_name=_('Customer Reference '), help_text=_("Customer order reference code"))
 
     target_date = models.DateField(
@@ -702,7 +716,7 @@ class SalesOrder(Order):
         """Check if this order is "shipped" (all line items delivered)."""
         return self.lines.count() > 0 and all([line.is_completed() for line in self.lines.all()])
 
-    def can_complete(self, raise_error=False):
+    def can_complete(self, raise_error=False, allow_incomplete_lines=False):
         """Test if this SalesOrder can be completed.
 
         Throws a ValidationError if cannot be completed.
@@ -720,7 +734,7 @@ class SalesOrder(Order):
             elif self.pending_shipment_count > 0:
                 raise ValidationError(_("Order cannot be completed as there are incomplete shipments"))
 
-            elif self.pending_line_count > 0:
+            elif not allow_incomplete_lines and self.pending_line_count > 0:
                 raise ValidationError(_("Order cannot be completed as there are incomplete line items"))
 
         except ValidationError as e:
@@ -732,9 +746,9 @@ class SalesOrder(Order):
 
         return True
 
-    def complete_order(self, user):
+    def complete_order(self, user, **kwargs):
         """Mark this order as "complete."""
-        if not self.can_complete():
+        if not self.can_complete(**kwargs):
             return False
 
         self.status = SalesOrderStatus.SHIPPED
@@ -1376,7 +1390,7 @@ class SalesOrderAllocation(models.Model):
 
         # TODO: The logic here needs improving. Do we need to subtract our own amount, or something?
         if self.item.quantity - self.item.allocation_count() + self.quantity < self.quantity:
-            errors['quantity'] = _('StockItem is over-allocated')
+            errors['quantity'] = _('Stock item is over-allocated')
 
         if self.quantity <= 0:
             errors['quantity'] = _('Allocation quantity must be greater than zero')

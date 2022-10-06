@@ -1,8 +1,10 @@
 """DRF data serializers for Part app."""
 
 import imghdr
+import io
 from decimal import Decimal
 
+from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, FloatField, Q
 from django.db.models.functions import Coalesce
@@ -22,7 +24,7 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer)
+                                   InvenTreeMoneySerializer, RemoteImageMixin)
 from InvenTree.status_codes import BuildStatus
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
@@ -39,9 +41,20 @@ class CategorySerializer(InvenTreeModelSerializer):
         """Return True if the category is directly "starred" by the current user."""
         return category in self.context.get('starred_categories', [])
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate extra information to the queryset"""
+
+        # Annotate the number of 'parts' which exist in each category (including subcategories!)
+        queryset = queryset.annotate(
+            part_count=part.filters.annotate_category_parts()
+        )
+
+        return queryset
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    parts = serializers.IntegerField(source='item_count', read_only=True)
+    part_count = serializers.IntegerField(read_only=True)
 
     level = serializers.IntegerField(read_only=True)
 
@@ -58,10 +71,11 @@ class CategorySerializer(InvenTreeModelSerializer):
             'default_keywords',
             'level',
             'parent',
-            'parts',
+            'part_count',
             'pathstring',
             'starred',
             'url',
+            'icon',
         ]
 
 
@@ -75,6 +89,7 @@ class CategoryTree(InvenTreeModelSerializer):
             'pk',
             'name',
             'parent',
+            'icon',
         ]
 
 
@@ -225,11 +240,25 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
             'pk',
             'name',
             'units',
+            'description',
         ]
 
 
 class PartParameterSerializer(InvenTreeModelSerializer):
     """JSON serializers for the PartParameter model."""
+
+    def __init__(self, *args, **kwargs):
+        """Custom initialization method for the serializer.
+
+        Allows us to optionally include or exclude particular information
+        """
+
+        template_detail = kwargs.pop('template_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not template_detail:
+            self.fields.pop('template_detail')
 
     template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
 
@@ -273,7 +302,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
-class PartSerializer(InvenTreeModelSerializer):
+class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for complete detail information of a part.
 
     Used when displaying all details of a single component.
@@ -424,6 +453,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'parameters',
             'pk',
             'purchaseable',
+            'remote_image',
             'revision',
             'salable',
             'starred',
@@ -436,6 +466,31 @@ class PartSerializer(InvenTreeModelSerializer):
             'variant_of',
             'virtual',
         ]
+
+    def save(self):
+        """Save the Part instance"""
+
+        super().save()
+
+        part = self.instance
+
+        # Check if an image was downloaded from a remote URL
+        remote_img = getattr(self, 'remote_image_file', None)
+
+        if remote_img and part:
+            fmt = remote_img.format or 'PNG'
+            buffer = io.BytesIO()
+            remote_img.save(buffer, format=fmt)
+
+            # Construct a simplified name for the image
+            filename = f"part_{part.pk}_image.{fmt.lower()}"
+
+            part.image.save(
+                filename,
+                ContentFile(buffer.getvalue()),
+            )
+
+        return self.instance
 
 
 class PartRelationSerializer(InvenTreeModelSerializer):
@@ -705,6 +760,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'inherited',
             'note',
             'optional',
+            'consumable',
             'overage',
             'pk',
             'part',

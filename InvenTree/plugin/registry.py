@@ -4,13 +4,14 @@
 - Manages setup and teardown of plugin class instances
 """
 
+import imp
 import importlib
 import logging
 import os
-import pathlib
 import subprocess
-from importlib import metadata, reload
-from typing import OrderedDict
+from importlib import reload
+from pathlib import Path
+from typing import Dict, List, OrderedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -22,8 +23,10 @@ from django.utils.text import slugify
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
-from .helpers import (IntegrationPluginError, get_plugins, handle_error,
-                      log_error)
+from InvenTree.config import get_setting
+
+from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
+                      handle_error, log_error)
 from .plugin import InvenTreePlugin
 
 logger = logging.getLogger('inventree')
@@ -38,19 +41,20 @@ class PluginsRegistry:
         Set up all needed references for internal and external states.
         """
         # plugin registry
-        self.plugins = {}
-        self.plugins_inactive = {}
+        self.plugins: Dict[str, InvenTreePlugin] = {}           # List of active instances
+        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}  # List of inactive instances
+        self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
 
-        self.plugin_modules = []         # Holds all discovered plugins
+        self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
 
-        self.errors = {}                 # Holds discovering errors
+        self.errors = {}                                        # Holds discovering errors
 
         # flags
-        self.is_loading = False
-        self.apps_loading = True        # Marks if apps were reloaded yet
-        self.git_is_modern = True       # Is a modern version of git available
+        self.is_loading = False                                 # Are plugins beeing loaded right now
+        self.apps_loading = True                                # Marks if apps were reloaded yet
+        self.git_is_modern = True                               # Is a modern version of git available
 
-        self.installed_apps = []         # Holds all added plugin_paths
+        self.installed_apps = []                                # Holds all added plugin_paths
 
         # mixins
         self.mixins_settings = {}
@@ -187,35 +191,109 @@ class PluginsRegistry:
 
         logger.info('Finished reloading plugins')
 
+    def plugin_dirs(self):
+        """Construct a list of directories from where plugins can be loaded"""
+
+        dirs = ['plugin.builtin', ]
+
+        if settings.TESTING or settings.DEBUG:
+            # If in TEST or DEBUG mode, load plugins from the 'samples' directory
+            dirs.append('plugin.samples')
+
+        if settings.TESTING:
+            custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
+        else:  # pragma: no cover
+            custom_dirs = get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
+
+            # Load from user specified directories (unless in testing mode)
+            dirs.append('plugins')
+
+        if custom_dirs is not None:
+            # Allow multiple plugin directories to be specified
+            for pd_text in custom_dirs.split(','):
+                pd = Path(pd_text.strip()).absolute()
+
+                # Attempt to create the directory if it does not already exist
+                if not pd.exists():
+                    try:
+                        pd.mkdir(exist_ok=True)
+                    except Exception:  # pragma: no cover
+                        logger.error(f"Could not create plugin directory '{pd}'")
+                        continue
+
+                # Ensure the directory has an __init__.py file
+                init_filename = pd.joinpath('__init__.py')
+
+                if not init_filename.exists():
+                    try:
+                        init_filename.write_text("# InvenTree plugin directory\n")
+                    except Exception:  # pragma: no cover
+                        logger.error(f"Could not create file '{init_filename}'")
+                        continue
+
+                # By this point, we have confirmed that the directory at least exists
+                if pd.exists() and pd.is_dir():
+                    # Convert to python dot-path
+                    if pd.is_relative_to(settings.BASE_DIR):
+                        pd_path = '.'.join(pd.relative_to(settings.BASE_DIR).parts)
+                    else:
+                        pd_path = str(pd)
+
+                    # Add path
+                    dirs.append(pd_path)
+                    logger.info(f"Added plugin directory: '{pd}' as '{pd_path}'")
+
+        return dirs
+
     def collect_plugins(self):
-        """Collect plugins from all possible ways of loading."""
+        """Collect plugins from all possible ways of loading. Returned as list."""
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return  # pragma: no cover
 
-        self.plugin_modules = []  # clear
+        collected_plugins = []
 
         # Collect plugins from paths
-        for plugin in settings.PLUGIN_DIRS:
-            modules = get_plugins(importlib.import_module(plugin), InvenTreePlugin)
+        for plugin in self.plugin_dirs():
+
+            logger.info(f"Loading plugins from directory '{plugin}'")
+
+            parent_path = None
+            parent_obj = Path(plugin)
+
+            # If a "path" is provided, some special handling is required
+            if parent_obj.name is not plugin and len(parent_obj.parts) > 1:
+                # Ensure PosixPath object is converted to a string, before passing to get_plugins
+                parent_path = str(parent_obj.parent)
+                plugin = parent_obj.name
+
+            # Gather Modules
+            if parent_path:
+                raw_module = imp.load_source(plugin, str(parent_obj.joinpath('__init__.py')))
+            else:
+                raw_module = importlib.import_module(plugin)
+            modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
+
             if modules:
-                [self.plugin_modules.append(item) for item in modules]
+                [collected_plugins.append(item) for item in modules]
 
         # Check if not running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
             # Collect plugins from setup entry points
-            for entry in metadata.entry_points().get('inventree_plugins', []):  # pragma: no cover
+            for entry in get_entrypoints():
                 try:
                     plugin = entry.load()
                     plugin.is_package = True
                     plugin._get_package_metadata()
-                    self.plugin_modules.append(plugin)
-                except Exception as error:
+                    collected_plugins.append(plugin)
+                except Exception as error:  # pragma: no cover
                     handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
-        logger.info(f'Collected {len(self.plugin_modules)} plugins!')
-        logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
+        logger.info(f'Collected {len(collected_plugins)} plugins!')
+        logger.info(", ".join([a.__module__ for a in collected_plugins]))
+
+        return collected_plugins
 
     def install_plugin_file(self):
         """Make sure all plugins are installed in the current enviroment."""
@@ -224,7 +302,7 @@ class PluginsRegistry:
             return True
 
         try:
-            output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
+            output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=settings.BASE_DIR.parent), 'utf-8')
         except subprocess.CalledProcessError as error:  # pragma: no cover
             logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
             return False
@@ -262,74 +340,77 @@ class PluginsRegistry:
     # endregion
 
     # region general internal loading /activating / deactivating / deloading
-    def _init_plugins(self, disabled=None):
+    def _init_plugins(self, disabled: str = None):
         """Initialise all found plugins.
 
-        :param disabled: loading path of disabled app, defaults to None
-        :type disabled: str, optional
-        :raises error: IntegrationPluginError
+        Args:
+            disabled (str, optional): Loading path of disabled app. Defaults to None.
+
+        Raises:
+            error: IntegrationPluginError
         """
         from plugin.models import PluginConfig
+
+        def safe_reference(plugin, key: str, active: bool = True):
+            """Safe reference to plugin dicts."""
+            if active:
+                self.plugins[key] = plugin
+            else:
+                # Deactivate plugin in db
+                if not settings.PLUGIN_TESTING:  # pragma: no cover
+                    plugin.db.active = False
+                    plugin.db.save(no_reload=True)
+                self.plugins_inactive[key] = plugin.db
+            self.plugins_full[key] = plugin
 
         logger.info('Starting plugin initialisation')
 
         # Initialize plugins
-        for plugin in self.plugin_modules:
-            # Check if package
-            was_packaged = getattr(plugin, 'is_package', False)
-
-            # Check if activated
+        for plg in self.plugin_modules:
             # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
-            plug_name = plugin.NAME
-            plug_key = plugin.SLUG if getattr(plugin, 'SLUG', None) else plug_name
-            plug_key = slugify(plug_key)  # keys are slugs!
+            plg_name = plg.NAME
+            plg_key = slugify(plg.SLUG if getattr(plg, 'SLUG', None) else plg_name)  # keys are slugs!
+
             try:
-                plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
+                plg_db, _ = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
                     raise error  # pragma: no cover
-                plugin_db_setting = None
+                plg_db = None
             except (IntegrityError) as error:  # pragma: no cover
-                logger.error(f"Error initializing plugin: {error}")
+                logger.error(f"Error initializing plugin `{plg_name}`: {error}")
+
+            # Append reference to plugin
+            plg.db = plg_db
 
             # Always activate if testing
-            if settings.PLUGIN_TESTING or (plugin_db_setting and plugin_db_setting.active):
-                # Check if the plugin was blocked -> threw an error
-                if disabled:
-                    # option1: package, option2: file-based
-                    if (plugin.__name__ == disabled) or (plugin.__module__ == disabled):
-                        # Errors are bad so disable the plugin in the database
-                        if not settings.PLUGIN_TESTING:  # pragma: no cover
-                            plugin_db_setting.active = False
-                            plugin_db_setting.save(no_reload=True)
+            if settings.PLUGIN_TESTING or (plg_db and plg_db.active):
+                # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
+                if disabled and ((plg.__name__ == disabled) or (plg.__module__ == disabled)):
+                    safe_reference(plugin=plg, key=plg_key, active=False)
+                    continue  # continue -> the plugin is not loaded
 
-                        # Add to inactive plugins so it shows up in the ui
-                        self.plugins_inactive[plug_key] = plugin_db_setting
-                        continue  # continue -> the plugin is not loaded
-
-                # Initialize package
-                # now we can be sure that an admin has activated the plugin
-                logger.info(f'Loading plugin {plug_name}')
-
+                # Initialize package - we can be sure that an admin has activated the plugin
+                logger.info(f'Loading plugin `{plg_name}`')
                 try:
-                    plugin = plugin()
+                    plg_i: InvenTreePlugin = plg()
+                    logger.info(f'Loaded plugin `{plg_name}`')
                 except Exception as error:
-                    # log error and raise it -> disable plugin
-                    handle_error(error, log_name='init')
+                    handle_error(error, log_name='init')  # log error and raise it -> disable plugin
 
-                logger.debug(f'Loaded plugin {plug_name}')
+                # Safe extra attributes
+                plg_i.is_package = getattr(plg_i, 'is_package', False)
+                plg_i.pk = plg_db.pk if plg_db else None
+                plg_i.db = plg_db
 
-                plugin.is_package = was_packaged
-
-                if plugin_db_setting:
-                    plugin.pk = plugin_db_setting.pk
-
-                # safe reference
-                self.plugins[plugin.slug] = plugin
-            else:
-                # save for later reference
-                self.plugins_inactive[plug_key] = plugin_db_setting  # pragma: no cover
+                # Run version check for plugin
+                if (plg_i.MIN_VERSION or plg_i.MAX_VERSION) and not plg_i.check_version():
+                    safe_reference(plugin=plg_i, key=plg_key, active=False)
+                else:
+                    safe_reference(plugin=plg_i, key=plg_key)
+            else:  # pragma: no cover
+                safe_reference(plugin=plg, key=plg_key, active=False)
 
     def _activate_plugins(self, force_reload=False, full_reload: bool = False):
         """Run activation functions for all plugins.
@@ -506,10 +587,10 @@ class PluginsRegistry:
         """
         try:
             # for local path plugins
-            plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
+            plugin_path = '.'.join(plugin.path().relative_to(settings.BASE_DIR).parts)
         except ValueError:  # pragma: no cover
-            # plugin is shipped as package
-            plugin_path = plugin.NAME
+            # plugin is shipped as package - extract plugin module name
+            plugin_path = plugin.__module__.split('.')[0]
         return plugin_path
 
     def deactivate_plugin_app(self):
@@ -563,24 +644,25 @@ class PluginsRegistry:
         self.installed_apps = []
 
     def _clean_registry(self):
-        # remove all plugins from registry
-        self.plugins = {}
-        self.plugins_inactive = {}
+        """Remove all plugins from registry."""
+        self.plugins: Dict[str, InvenTreePlugin] = {}
+        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}
+        self.plugins_full: Dict[str, InvenTreePlugin] = {}
 
     def _update_urls(self):
-        from InvenTree.urls import frontendpatterns as urlpatterns
+        from InvenTree.urls import frontendpatterns as urlpattern
         from InvenTree.urls import urlpatterns as global_pattern
         from plugin.urls import get_plugin_urls
 
-        for index, a in enumerate(urlpatterns):
-            if hasattr(a, 'app_name'):
-                if a.app_name == 'admin':
-                    urlpatterns[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
-                elif a.app_name == 'plugin':
-                    urlpatterns[index] = get_plugin_urls()
+        for index, url in enumerate(urlpattern):
+            if hasattr(url, 'app_name'):
+                if url.app_name == 'admin':
+                    urlpattern[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
+                elif url.app_name == 'plugin':
+                    urlpattern[index] = get_plugin_urls()
 
-        # replace frontendpatterns
-        global_pattern[0] = re_path('', include(urlpatterns))
+        # Replace frontendpatterns
+        global_pattern[0] = re_path('', include(urlpattern))
         clear_url_caches()
 
     def _reload_apps(self, force_reload: bool = False, full_reload: bool = False):
@@ -616,7 +698,7 @@ class PluginsRegistry:
     # endregion
 
 
-registry = PluginsRegistry()
+registry: PluginsRegistry = PluginsRegistry()
 
 
 def call_function(plugin_name, function_name, *args, **kwargs):

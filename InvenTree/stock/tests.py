@@ -14,8 +14,8 @@ from .models import (StockItem, StockItemTestResult, StockItemTracking,
                      StockLocation)
 
 
-class StockTest(InvenTreeTestCase):
-    """Tests to ensure that the stock location tree functions correcly."""
+class StockTestBase(InvenTreeTestCase):
+    """Base class for running Stock tests"""
 
     fixtures = [
         'category',
@@ -43,6 +43,125 @@ class StockTest(InvenTreeTestCase):
         # Ensure the MPTT objects are correctly rebuild
         Part.objects.rebuild()
         StockItem.objects.rebuild()
+
+
+class StockTest(StockTestBase):
+    """Tests to ensure that the stock location tree functions correcly."""
+
+    def test_pathstring(self):
+        """Check that pathstring updates occur as expected"""
+
+        a = StockLocation.objects.create(name="A")
+        b = StockLocation.objects.create(name="B", parent=a)
+        c = StockLocation.objects.create(name="C", parent=b)
+        d = StockLocation.objects.create(name="D", parent=c)
+
+        def refresh():
+            a.refresh_from_db()
+            b.refresh_from_db()
+            c.refresh_from_db()
+            d.refresh_from_db()
+
+        # Initial checks
+        self.assertEqual(a.pathstring, "A")
+        self.assertEqual(b.pathstring, "A/B")
+        self.assertEqual(c.pathstring, "A/B/C")
+        self.assertEqual(d.pathstring, "A/B/C/D")
+
+        c.name = "Cc"
+        c.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "A")
+        self.assertEqual(b.pathstring, "A/B")
+        self.assertEqual(c.pathstring, "A/B/Cc")
+        self.assertEqual(d.pathstring, "A/B/Cc/D")
+
+        b.name = "Bb"
+        b.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "A")
+        self.assertEqual(b.pathstring, "A/Bb")
+        self.assertEqual(c.pathstring, "A/Bb/Cc")
+        self.assertEqual(d.pathstring, "A/Bb/Cc/D")
+
+        a.name = "Aa"
+        a.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "Aa")
+        self.assertEqual(b.pathstring, "Aa/Bb")
+        self.assertEqual(c.pathstring, "Aa/Bb/Cc")
+        self.assertEqual(d.pathstring, "Aa/Bb/Cc/D")
+
+        d.name = "Dd"
+        d.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "Aa")
+        self.assertEqual(b.pathstring, "Aa/Bb")
+        self.assertEqual(c.pathstring, "Aa/Bb/Cc")
+        self.assertEqual(d.pathstring, "Aa/Bb/Cc/Dd")
+
+        # Test a really long name
+        # (it will be clipped to < 250 characters)
+        a.name = "A" * 100
+        a.save()
+        b.name = "B" * 100
+        b.save()
+        c.name = "C" * 100
+        c.save()
+        d.name = "D" * 100
+        d.save()
+
+        refresh()
+        self.assertEqual(len(a.pathstring), 100)
+        self.assertEqual(len(b.pathstring), 201)
+        self.assertEqual(len(c.pathstring), 249)
+        self.assertEqual(len(d.pathstring), 249)
+
+        self.assertTrue(d.pathstring.startswith("AAAAAAAA"))
+        self.assertTrue(d.pathstring.endswith("DDDDDDDD"))
+
+    def test_link(self):
+        """Test the link URL field validation"""
+
+        item = StockItem.objects.get(pk=1)
+
+        # Check that invalid URLs fail
+        for bad_url in [
+            'test.com',
+            'httpx://abc.xyz',
+            'https:google.com',
+        ]:
+            with self.assertRaises(ValidationError):
+                item.link = bad_url
+                item.save()
+                item.full_clean()
+
+        # Check that valid URLs pass
+        for good_url in [
+            'https://test.com',
+            'https://digikey.com/datasheets?file=1010101010101.bin',
+            'ftp://download.com:8080/file.aspx',
+        ]:
+            item.link = good_url
+            item.save()
+            item.full_clean()
+
+        # A long URL should fail
+        long_url = 'https://website.co.uk?query=' + 'a' * 173
+
+        with self.assertRaises(ValidationError):
+            item.link = long_url
+            item.full_clean()
+
+        # Shorten by a single character, will pass
+        long_url = long_url[:-1]
+
+        item.link = long_url
+        item.save()
 
     def test_expiry(self):
         """Test expiry date functionality for StockItem model."""
@@ -112,12 +231,6 @@ class StockTest(InvenTreeTestCase):
 
         self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
 
-    def test_barcode(self):
-        """Test format_barcode."""
-        barcode = self.office.format_barcode(brief=False)
-
-        self.assertIn('"name": "Office"', barcode)
-
     def test_strings(self):
         """Test str function."""
         it = StockItem.objects.get(pk=1)
@@ -125,6 +238,10 @@ class StockTest(InvenTreeTestCase):
 
     def test_parent_locations(self):
         """Test parent."""
+
+        # Ensure pathstring gets updated
+        self.drawer3.save()
+
         self.assertEqual(self.office.parent, None)
         self.assertEqual(self.drawer1.parent, self.office)
         self.assertEqual(self.drawer2.parent, self.office)
@@ -681,7 +798,38 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(C22.get_ancestors().count(), 1)
 
 
-class VariantTest(StockTest):
+class StockBarcodeTest(StockTestBase):
+    """Run barcode tests for the stock app"""
+
+    def test_stock_item_barcode_basics(self):
+        """Simple tests for the StockItem barcode integration"""
+
+        item = StockItem.objects.get(pk=1)
+
+        self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
+
+        # Call format_barcode method
+        barcode = item.format_barcode(brief=False)
+
+        for key in ['tool', 'version', 'instance', 'stockitem']:
+            self.assertIn(key, barcode)
+
+        # Render simple barcode data for the StockItem
+        barcode = item.barcode
+        self.assertEqual(barcode, '{"stockitem": 1}')
+
+    def test_location_barcode_basics(self):
+        """Simple tests for the StockLocation barcode integration"""
+
+        self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
+
+        loc = StockLocation.objects.get(pk=1)
+
+        barcode = loc.format_barcode(brief=True)
+        self.assertEqual('{"stocklocation": 1}', barcode)
+
+
+class VariantTest(StockTestBase):
     """Tests for calculation stock counts against templates / variants."""
 
     def test_variant_stock(self):
@@ -762,7 +910,7 @@ class VariantTest(StockTest):
         item.save()
 
 
-class TestResultTest(StockTest):
+class TestResultTest(StockTestBase):
     """Tests for the StockItemTestResult model."""
 
     def test_test_count(self):

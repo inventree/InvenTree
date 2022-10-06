@@ -154,7 +154,7 @@ function enableBreadcrumbTree(options) {
     var label = options.label;
 
     if (!label) {
-        console.log('ERROR: enableBreadcrumbTree called without supplying label');
+        console.error('enableBreadcrumbTree called without supplying label');
         return;
     }
 
@@ -216,6 +216,7 @@ function enableBreadcrumbTree(options) {
                     enableLinks: true,
                     expandIcon: 'fas fa-chevron-right',
                     collapseIcon: 'fa fa-chevron-down',
+                    nodeIcon: options.defaultIcon,
                 });
 
             }

@@ -1,21 +1,29 @@
 """Provides helper functions used throughout the InvenTree project."""
 
+import hashlib
 import io
 import json
 import logging
+import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
+from django.core.validators import URLValidator
 from django.http import StreamingHttpResponse
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 
+import regex
+import requests
+from bleach import clean
 from djmoney.money import Money
 from PIL import Image
 
@@ -48,6 +56,24 @@ def generateTestKey(test_name):
     key = re.sub(r'[^a-zA-Z0-9]', '', key)
 
     return key
+
+
+def constructPathString(path, max_chars=250):
+    """Construct a 'path string' for the given path.
+
+    Arguments:
+        path: A list of strings e.g. ['path', 'to', 'location']
+        max_chars: Maximum number of characters
+    """
+
+    pathstring = '/'.join(path)
+
+    # Replace middle elements to limit the pathstring
+    if len(pathstring) > max_chars:
+        n = int(max_chars / 2 - 2)
+        pathstring = pathstring[:n] + "..." + pathstring[-n:]
+
+    return pathstring
 
 
 def getMediaUrl(filename):
@@ -87,6 +113,95 @@ def construct_absolute_url(*arg):
     return url
 
 
+def download_image_from_url(remote_url, timeout=2.5):
+    """Download an image file from a remote URL.
+
+    This is a potentially dangerous operation, so we must perform some checks:
+
+    - The remote URL is available
+    - The Content-Length is provided, and is not too large
+    - The file is a valid image file
+
+    Arguments:
+        remote_url: The remote URL to retrieve image
+        max_size: Maximum allowed image size (default = 1MB)
+        timeout: Connection timeout in seconds (default = 5)
+
+    Returns:
+        An in-memory PIL image file, if the download was successful
+
+    Raises:
+        requests.exceptions.ConnectionError: Connection could not be established
+        requests.exceptions.Timeout: Connection timed out
+        requests.exceptions.HTTPError: Server responded with invalid response code
+        ValueError: Server responded with invalid 'Content-Length' value
+        TypeError: Response is not a valid image
+    """
+
+    # Check that the provided URL at least looks valid
+    validator = URLValidator()
+    validator(remote_url)
+
+    # Calculate maximum allowable image size (in bytes)
+    max_size = int(InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
+
+    try:
+        response = requests.get(
+            remote_url,
+            timeout=timeout,
+            allow_redirects=True,
+            stream=True,
+        )
+        # Throw an error if anything goes wrong
+        response.raise_for_status()
+    except requests.exceptions.ConnectionError as exc:
+        raise Exception(_("Connection error") + f": {str(exc)}")
+    except requests.exceptions.Timeout as exc:
+        raise exc
+    except requests.exceptions.HTTPError:
+        raise requests.exceptions.HTTPError(_("Server responded with invalid status code") + f": {response.status_code}")
+    except Exception as exc:
+        raise Exception(_("Exception occurred") + f": {str(exc)}")
+
+    if response.status_code != 200:
+        raise Exception(_("Server responded with invalid status code") + f": {response.status_code}")
+
+    try:
+        content_length = int(response.headers.get('Content-Length', 0))
+    except ValueError:
+        raise ValueError(_("Server responded with invalid Content-Length value"))
+
+    if content_length > max_size:
+        raise ValueError(_("Image size is too large"))
+
+    # Download the file, ensuring we do not exceed the reported size
+    fo = io.BytesIO()
+
+    dl_size = 0
+    chunk_size = 64 * 1024
+
+    for chunk in response.iter_content(chunk_size=chunk_size):
+        dl_size += len(chunk)
+
+        if dl_size > max_size:
+            raise ValueError(_("Image download exceeded maximum size"))
+
+        fo.write(chunk)
+
+    if dl_size == 0:
+        raise ValueError(_("Remote server returned empty response"))
+
+    # Now, attempt to convert the downloaded data to a valid image file
+    # img.verify() will throw an exception if the image is not valid
+    try:
+        img = Image.open(fo).convert()
+        img.verify()
+    except Exception:
+        raise TypeError(_("Supplied URL is not a valid image file"))
+
+    return img
+
+
 def TestIfImage(img):
     """Test if an image file is indeed an image."""
     try:
@@ -112,17 +227,41 @@ def getLogoImage(as_file=False, custom=True):
     """Return the path to the logo-file."""
     if custom and settings.CUSTOM_LOGO:
 
-        if as_file:
-            return f"file://{default_storage.path(settings.CUSTOM_LOGO)}"
-        else:
-            return default_storage.url(settings.CUSTOM_LOGO)
+        static_storage = StaticFilesStorage()
 
-    else:
-        if as_file:
-            path = os.path.join(settings.STATIC_ROOT, 'img/inventree.png')
-            return f"file://{path}"
+        if static_storage.exists(settings.CUSTOM_LOGO):
+            storage = static_storage
+        elif default_storage.exists(settings.CUSTOM_LOGO):
+            storage = default_storage
         else:
-            return getStaticUrl('img/inventree.png')
+            storage = None
+
+        if storage is not None:
+            if as_file:
+                return f"file://{storage.path(settings.CUSTOM_LOGO)}"
+            else:
+                return storage.url(settings.CUSTOM_LOGO)
+
+    # If we have got to this point, return the default logo
+    if as_file:
+        path = settings.STATIC_ROOT.joinpath('img/inventree.png')
+        return f"file://{path}"
+    else:
+        return getStaticUrl('img/inventree.png')
+
+
+def getSplashScren(custom=True):
+    """Return the InvenTree splash screen, or a custom splash if available"""
+
+    static_storage = StaticFilesStorage()
+
+    if custom and settings.CUSTOM_SPLASH:
+
+        if static_storage.exists(settings.CUSTOM_SPLASH):
+            return static_storage.url(settings.CUSTOM_SPLASH)
+
+    # No custom splash screen
+    return static_storage.url("img/inventree_splash.jpg")
 
 
 def TestIfImageURL(url):
@@ -152,6 +291,22 @@ def str2bool(text, test=True):
         return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', 'on', ]
     else:
         return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
+
+
+def str2int(text, default=None):
+    """Convert a string to int if possible
+
+    Args:
+        text: Int like string
+        default: Return value if str is no int like
+
+    Returns:
+        Converted int value
+    """
+    try:
+        return int(text)
+    except Exception:
+        return default
 
 
 def is_bool(text):
@@ -595,20 +750,17 @@ def addUserPermissions(user, permissions):
 
 def getMigrationFileNames(app):
     """Return a list of all migration filenames for provided app."""
-    local_dir = os.path.dirname(os.path.abspath(__file__))
-
-    migration_dir = os.path.join(local_dir, '..', app, 'migrations')
-
-    files = os.listdir(migration_dir)
+    local_dir = Path(__file__).parent
+    files = local_dir.joinpath('..', app, 'migrations').iterdir()
 
     # Regex pattern for migration files
-    pattern = r"^[\d]+_.*\.py$"
+    regex = re.compile(r"^[\d]+_.*\.py$")
 
     migration_files = []
 
     for f in files:
-        if re.match(pattern, f):
-            migration_files.append(f)
+        if regex.match(f.name):
+            migration_files.append(f.name)
 
     return migration_files
 
@@ -687,6 +839,72 @@ def clean_decimal(number):
         return Decimal(0)
 
     return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
+
+
+def strip_html_tags(value: str, raise_error=True, field_name=None):
+    """Strip HTML tags from an input string using the bleach library.
+
+    If raise_error is True, a ValidationError will be thrown if HTML tags are detected
+    """
+
+    cleaned = clean(
+        value,
+        strip=True,
+        tags=[],
+        attributes=[],
+    )
+
+    # Add escaped characters back in
+    replacements = {
+        '&gt;': '>',
+        '&lt;': '<',
+        '&amp;': '&',
+    }
+
+    for o, r in replacements.items():
+        cleaned = cleaned.replace(o, r)
+
+    # If the length changed, it means that HTML tags were removed!
+    if len(cleaned) != len(value) and raise_error:
+
+        field = field_name or 'non_field_errors'
+
+        raise ValidationError({
+            field: [_("Remove HTML tags from this value")]
+        })
+
+    return cleaned
+
+
+def remove_non_printable_characters(value: str, remove_ascii=True, remove_unicode=True):
+    """Remove non-printable / control characters from the provided string"""
+
+    if remove_ascii:
+        # Remove ASCII control characters
+        cleaned = regex.sub(u'[\x01-\x1F]+', '', value)
+
+    if remove_unicode:
+        # Remove Unicode control characters
+        cleaned = regex.sub(u'[^\P{C}]+', '', value)
+
+    return cleaned
+
+
+def hash_barcode(barcode_data):
+    """Calculate a 'unique' hash for a barcode string.
+
+    This hash is used for comparison / lookup.
+
+    We first remove any non-printable characters from the barcode data,
+    as some browsers have issues scanning characters in.
+    """
+
+    barcode_data = str(barcode_data).strip()
+    barcode_data = remove_non_printable_characters(barcode_data)
+
+    hash = hashlib.md5(str(barcode_data).encode())
+
+    return str(hash.hexdigest())
 
 
 def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = 'object_id'):

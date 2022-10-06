@@ -1,6 +1,6 @@
 """Provides a JSON API for the Part app."""
 
-import datetime
+import functools
 from decimal import Decimal, InvalidOperation
 
 from django.db import transaction
@@ -25,7 +25,8 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
-from InvenTree.helpers import DownloadFile, increment, isNull, str2bool
+from InvenTree.helpers import (DownloadFile, increment, isNull, str2bool,
+                               str2int)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
@@ -53,6 +54,13 @@ class CategoryList(ListCreateAPI):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
 
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the CategoryList endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
+        return queryset
+
     def get_serializer_context(self):
         """Add extra context data to the serializer for the PartCategoryList endpoint"""
         ctx = super().get_serializer_context()
@@ -78,6 +86,8 @@ class CategoryList(ListCreateAPI):
 
         cascade = str2bool(params.get('cascade', False))
 
+        depth = str2int(params.get('depth', None))
+
         # Do not filter by category
         if cat_id is None:
             pass
@@ -87,12 +97,18 @@ class CategoryList(ListCreateAPI):
             if not cascade:
                 queryset = queryset.filter(parent=None)
 
+            if cascade and depth is not None:
+                queryset = queryset.filter(level__lte=depth)
+
         else:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
 
                 if cascade:
                     parents = category.get_descendants(include_self=True)
+                    if depth is not None:
+                        parents = parents.filter(level__lte=category.level + depth)
+
                     parent_ids = [p.id for p in parents]
 
                     queryset = queryset.filter(parent__in=parent_ids)
@@ -141,9 +157,11 @@ class CategoryList(ListCreateAPI):
 
     ordering_fields = [
         'name',
+        'pathstring',
         'level',
         'tree_id',
         'lft',
+        'part_count',
     ]
 
     # Use hierarchical ordering by default
@@ -164,6 +182,13 @@ class CategoryDetail(RetrieveUpdateDestroyAPI):
 
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the CategoryDetail endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
+        return queryset
 
     def get_serializer_context(self):
         """Add extra context to the serializer for the CategoryDetail endpoint"""
@@ -449,27 +474,27 @@ class PartScheduling(RetrieveAPI):
 
     def retrieve(self, request, *args, **kwargs):
         """Return scheduling information for the referenced Part instance"""
-        today = datetime.datetime.now().date()
 
         part = self.get_object()
 
         schedule = []
 
-        def add_schedule_entry(date, quantity, title, label, url):
+        def add_schedule_entry(date, quantity, title, label, url, speculative_quantity=0):
             """Check if a scheduled entry should be added:
 
             - date must be non-null
             - date cannot be in the "past"
             - quantity must not be zero
             """
-            if date and date >= today and quantity != 0:
-                schedule.append({
-                    'date': date,
-                    'quantity': quantity,
-                    'title': title,
-                    'label': label,
-                    'url': url,
-                })
+
+            schedule.append({
+                'date': date,
+                'quantity': quantity,
+                'speculative_quantity': speculative_quantity,
+                'title': title,
+                'label': label,
+                'url': url,
+            })
 
         # Add purchase order (incoming stock) information
         po_lines = order.models.PurchaseOrderLineItem.objects.filter(
@@ -546,25 +571,130 @@ class PartScheduling(RetrieveAPI):
         and just looking at what stock items the user has actually allocated against the Build.
         """
 
-        build_allocations = BuildItem.objects.filter(
-            stock_item__part=part,
-            build__status__in=BuildStatus.ACTIVE_CODES,
-        )
+        # Grab a list of BomItem objects that this part might be used in
+        bom_items = BomItem.objects.filter(part.get_used_in_bom_item_filter())
 
-        for allocation in build_allocations:
+        # Track all outstanding build orders
+        seen_builds = set()
 
-            add_schedule_entry(
-                allocation.build.target_date,
-                -allocation.quantity,
-                _('Stock required for Build Order'),
-                str(allocation.build),
-                allocation.build.get_absolute_url(),
-            )
+        for bom_item in bom_items:
+            # Find a list of active builds for this BomItem
+
+            if bom_item.inherited:
+                # An "inherited" BOM item filters down to variant parts also
+                childs = bom_item.part.get_descendants(include_self=True)
+                builds = Build.objects.filter(
+                    status__in=BuildStatus.ACTIVE_CODES,
+                    part__in=childs,
+                )
+            else:
+                builds = Build.objects.filter(
+                    status__in=BuildStatus.ACTIVE_CODES,
+                    part=bom_item.part,
+                )
+
+            for build in builds:
+
+                # Ensure we don't double-count any builds
+                if build in seen_builds:
+                    continue
+
+                seen_builds.add(build)
+
+                if bom_item.sub_part.trackable:
+                    # Trackable parts are allocated against the outputs
+                    required_quantity = build.remaining * bom_item.quantity
+                else:
+                    # Non-trackable parts are allocated against the build itself
+                    required_quantity = build.quantity * bom_item.quantity
+
+                # Grab all allocations against the spefied BomItem
+                allocations = BuildItem.objects.filter(
+                    bom_item=bom_item,
+                    build=build,
+                )
+
+                # Total allocated for *this* part
+                part_allocated_quantity = 0
+
+                # Total allocated for *any* part
+                total_allocated_quantity = 0
+
+                for allocation in allocations:
+                    total_allocated_quantity += allocation.quantity
+
+                    if allocation.stock_item.part == part:
+                        part_allocated_quantity += allocation.quantity
+
+                speculative_quantity = 0
+
+                # Consider the case where the build order is *not* fully allocated
+                if required_quantity > total_allocated_quantity:
+                    speculative_quantity = -1 * (required_quantity - total_allocated_quantity)
+
+                add_schedule_entry(
+                    build.target_date,
+                    -part_allocated_quantity,
+                    _('Stock required for Build Order'),
+                    str(build),
+                    build.get_absolute_url(),
+                    speculative_quantity=speculative_quantity
+                )
+
+        def compare(entry_1, entry_2):
+            """Comparison function for sorting entries by date.
+
+            Account for the fact that either date might be None
+            """
+
+            date_1 = entry_1['date']
+            date_2 = entry_2['date']
+
+            if date_1 is None:
+                return -1
+            elif date_2 is None:
+                return 1
+
+            return -1 if date_1 < date_2 else 1
 
         # Sort by incrementing date values
-        schedule = sorted(schedule, key=lambda entry: entry['date'])
+        schedule = sorted(schedule, key=functools.cmp_to_key(compare))
 
         return Response(schedule)
+
+
+class PartRequirements(RetrieveAPI):
+    """API endpoint detailing 'requirements' information for a particular part.
+
+    This endpoint returns information on upcoming requirements for:
+
+    - Sales Orders
+    - Build Orders
+    - Total requirements
+
+    As this data is somewhat complex to calculate, is it not included in the default API
+    """
+
+    queryset = Part.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        """Construct a response detailing Part requirements"""
+
+        part = self.get_object()
+
+        data = {
+            "available_stock": part.available_stock,
+            "on_order": part.on_order,
+            "required_build_order_quantity": part.required_build_order_quantity(),
+            "allocated_build_order_quantity": part.build_order_allocation_count(),
+            "required_sales_order_quantity": part.required_sales_order_quantity(),
+            "allocated_sales_order_quantity": part.sales_order_allocation_count(pending=True),
+        }
+
+        data["allocated"] = data["allocated_build_order_quantity"] + data["allocated_sales_order_quantity"]
+        data["required"] = data["required_build_order_quantity"] + data["required_sales_order_quantity"]
+
+        return Response(data)
 
 
 class PartMetadata(RetrieveUpdateAPI):
@@ -1475,6 +1605,20 @@ class PartParameterList(ListCreateAPI):
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
 
+    def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this API endpoint.
+
+        If requested, extra detail fields are annotated to the queryset:
+        - template_detail
+        """
+
+        try:
+            kwargs['template_detail'] = str2bool(self.request.GET.get('template_detail', True))
+        except AttributeError:
+            pass
+
+        return self.serializer_class(*args, **kwargs)
+
     filter_backends = [
         DjangoFilterBackend
     ]
@@ -1496,8 +1640,9 @@ class BomFilter(rest_filters.FilterSet):
     """Custom filters for the BOM list."""
 
     # Boolean filters for BOM item
-    optional = rest_filters.BooleanFilter(label='BOM line is optional')
-    inherited = rest_filters.BooleanFilter(label='BOM line is inherited')
+    optional = rest_filters.BooleanFilter(label='BOM item is optional')
+    consumable = rest_filters.BooleanFilter(label='BOM item is consumable')
+    inherited = rest_filters.BooleanFilter(label='BOM item is inherited')
     allow_variants = rest_filters.BooleanFilter(label='Variants are allowed')
 
     # Filters for linked 'part'
@@ -1687,28 +1832,7 @@ class BomList(ListCreateDestroyAPIView):
                 # Extract the part we are interested in
                 uses_part = Part.objects.get(pk=uses)
 
-                # Construct the database query in multiple parts
-
-                # A) Direct specification of sub_part
-                q_A = Q(sub_part=uses_part)
-
-                # B) BomItem is inherited and points to a "parent" of this part
-                parents = uses_part.get_ancestors(include_self=False)
-
-                q_B = Q(
-                    inherited=True,
-                    sub_part__in=parents
-                )
-
-                # C) Substitution of variant parts
-                # TODO
-
-                # D) Specification of individual substitutes
-                # TODO
-
-                q = q_A | q_B
-
-                queryset = queryset.filter(q)
+                queryset = queryset.filter(uses_part.get_used_in_bom_item_filter())
 
             except (ValueError, Part.DoesNotExist):
                 pass
@@ -1996,6 +2120,8 @@ part_api_urls = [
 
         # Endpoint for future scheduling information
         re_path(r'^scheduling/', PartScheduling.as_view(), name='api-part-scheduling'),
+
+        re_path(r'^requirements/', PartRequirements.as_view(), name='api-part-requirements'),
 
         # Endpoint for duplicating a BOM for the specific Part
         re_path(r'^bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),

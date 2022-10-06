@@ -1,11 +1,11 @@
 version: "3.8"
 
-# Docker compose recipe for InvenTree production server, with the following containerized processes
+# Docker compose recipe for a production-ready InvenTree setup, with the following containers:
 # - PostgreSQL as the database backend
 # - gunicorn as the InvenTree web server
 # - django-q as the InvenTree background worker process
 # - nginx as a reverse proxy
-# - redis as the cache manager
+# - redis as the cache manager (optional, disabled by default)
 
 # ---------------------
 # READ BEFORE STARTING!
@@ -18,10 +18,8 @@ version: "3.8"
 # Changes made to this file are reflected across all containers!
 #
 # IMPORTANT NOTE:
-# You should not have to change *anything* within the docker-compose.yml file!
+# You should not have to change *anything* within this docker-compose.yml file!
 # Instead, make any changes in the .env file!
-# The only *mandatory* change is to set the INVENTREE_EXT_VOLUME variable,
-# which defines the directory (on your local machine) where persistent data are stored.
 
 # ------------------------
 # InvenTree Image Versions
@@ -29,15 +27,12 @@ version: "3.8"
 # By default, this docker-compose script targets the STABLE version of InvenTree,
 # image: inventree/inventree:stable
 #
-# To run the LATEST (development) version of InvenTree, change the target image to:
-# image: inventree/inventree:latest
+# To run the LATEST (development) version of InvenTree,
+# change the INVENTREE_TAG variable (in the .env file) to "latest"
 #
 # Alternatively, you could target a specific tagged release version with (for example):
-# image: inventree/inventree:0.5.3
+# INVENTREE_TAG=0.7.5
 #
-# NOTE: If you change the target image, ensure it is the same for the following containers:
-# - inventree-server
-# - inventree-worker
 
 services:
     # Database service
@@ -58,18 +53,21 @@ services:
         restart: unless-stopped
 
     # redis acts as database cache manager
+    # only runs under the "redis" profile : https://docs.docker.com/compose/profiles/
     inventree-cache:
         container_name: inventree-cache
         image: redis:7.0
         depends_on:
             - inventree-db
+        profiles:
+            - redis
         env_file:
             - .env
         expose:
             - ${INVENTREE_CACHE_PORT:-6379}
         restart: always
 
-    # InvenTree web server services
+    # InvenTree web server service
     # Uses gunicorn as the web server
     inventree-server:
         container_name: inventree-server
@@ -79,13 +77,11 @@ services:
             - 8000
         depends_on:
             - inventree-db
-            - inventree-cache
         env_file:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
             - inventree_data:/home/inventree/data
-            - inventree_plugins:/home/inventree/InvenTree/plugins
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -101,7 +97,6 @@ services:
         volumes:
             # Data volume must map to /home/inventree/data
             - inventree_data:/home/inventree/data
-            - inventree_plugins:/home/inventree/InvenTree/plugins
         restart: unless-stopped
 
     # nginx acts as a reverse proxy
@@ -136,10 +131,3 @@ volumes:
             o: bind
             # This directory specified where InvenTree data are stored "outside" the docker containers
             device: ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}
-    inventree_plugins:
-        driver: local
-        driver_opts:
-          type: none
-          o: bind
-          # This directory specified where the optional local plugin directory is stored "outside" the docker containers
-          device: ${INVENTREE_EXT_PLUGINS:-./}

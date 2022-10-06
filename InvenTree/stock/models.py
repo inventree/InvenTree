@@ -30,7 +30,8 @@ import report.models
 from company import models as CompanyModels
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               InvenTreeURLField)
-from InvenTree.models import InvenTreeAttachment, InvenTreeTree, extract_int
+from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
+                              InvenTreeTree, extract_int)
 from InvenTree.status_codes import StockHistoryCode, StockStatus
 from part import models as PartModels
 from plugin.events import trigger_event
@@ -38,7 +39,7 @@ from plugin.models import MetadataMixin
 from users.models import Owner
 
 
-class StockLocation(MetadataMixin, InvenTreeTree):
+class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     """Organization tree for StockItem objects.
 
     A "StockLocation" can be considered a warehouse, or storage location
@@ -77,6 +78,13 @@ class StockLocation(MetadataMixin, InvenTreeTree):
     def get_api_url():
         """Return API url."""
         return reverse('api-location-list')
+
+    icon = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_("Icon"),
+        help_text=_("Icon (optional)")
+    )
 
     owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
                               verbose_name=_('Owner'),
@@ -118,27 +126,6 @@ class StockLocation(MetadataMixin, InvenTreeTree):
     def get_absolute_url(self):
         """Return url for instance."""
         return reverse('stock-location-detail', kwargs={'pk': self.id})
-
-    def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a barcode for this StockLocation object."""
-        return InvenTree.helpers.MakeBarcode(
-            'stocklocation',
-            self.pk,
-            {
-                "name": self.name,
-                "url": reverse('api-location-detail', kwargs={'pk': self.id}),
-            },
-            **kwargs
-        )
-
-    @property
-    def barcode(self) -> str:
-        """Get Brief payload data (e.g. for labels).
-
-        Returns:
-            str: Brief pyload data
-        """
-        return self.format_barcode(brief=True)
 
     def get_stock_items(self, cascade=True):
         """Return a queryset for all stock items under this category.
@@ -214,12 +201,11 @@ def generate_batch_code():
     return Template(batch_template).render(context)
 
 
-class StockItem(MetadataMixin, MPTTModel):
+class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     """A StockItem object represents a quantity of physical instances of a part.
 
     Attributes:
         parent: Link to another StockItem from which this StockItem was created
-        uid: Field containing a unique-id which is mapped to a third-party identifier (e.g. a barcode)
         part: Link to the master abstract part that this StockItem is an instance of
         supplier_part: Link to a specific SupplierPart (optional)
         location: Where this StockItem is located
@@ -238,7 +224,6 @@ class StockItem(MetadataMixin, MPTTModel):
         build: Link to a Build (if this stock item was created from a build)
         is_building: Boolean field indicating if this stock item is currently being built (or is "in production")
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
-        infinite: If True this StockItem can never be exhausted
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
         purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
@@ -545,38 +530,6 @@ class StockItem(MetadataMixin, MPTTModel):
         """Returns part name."""
         return self.part.full_name
 
-    def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a barcode for this StockItem.
-
-        Can be used to perform lookup of a stockitem using barcode.
-
-        Contains the following data:
-        `{ type: 'StockItem', stock_id: <pk>, part_id: <part_pk> }`
-
-        Voltagile data (e.g. stock quantity) should be looked up using the InvenTree API (as it may change)
-        """
-        return InvenTree.helpers.MakeBarcode(
-            "stockitem",
-            self.id,
-            {
-                "request": kwargs.get('request', None),
-                "item_url": reverse('stock-item-detail', kwargs={'pk': self.id}),
-                "url": reverse('api-stock-detail', kwargs={'pk': self.id}),
-            },
-            **kwargs
-        )
-
-    @property
-    def barcode(self):
-        """Get Brief payload data (e.g. for labels).
-
-        Returns:
-            str: Brief pyload data
-        """
-        return self.format_barcode(brief=True)
-
-    uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
-
     # Note: When a StockItem is deleted, a pre_delete signal handles the parent/child relationship
     parent = TreeForeignKey(
         'self',
@@ -647,7 +600,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     link = InvenTreeURLField(
         verbose_name=_('External Link'),
-        max_length=125, blank=True,
+        blank=True, max_length=200,
         help_text=_("Link to external URL")
     )
 
@@ -716,6 +669,11 @@ class StockItem(MetadataMixin, MPTTModel):
         default=StockStatus.OK,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
+
+    @property
+    def status_text(self):
+        """Return the text representation of the status field"""
+        return StockStatus.text(self.status)
 
     notes = InvenTreeNotesField(help_text=_('Stock Item Notes'))
 
@@ -927,11 +885,6 @@ class StockItem(MetadataMixin, MPTTModel):
         )
 
         self.save()
-
-    # If stock item is incoming, an (optional) ETA field
-    # expected_arrival = models.DateField(null=True, blank=True)
-
-    infinite = models.BooleanField(default=False)
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""
@@ -1611,7 +1564,7 @@ class StockItem(MetadataMixin, MPTTModel):
         except InvalidOperation:
             return False
 
-        if count < 0 or self.infinite:
+        if count < 0:
             return False
 
         self.stocktake_date = datetime.now().date()
@@ -1647,7 +1600,7 @@ class StockItem(MetadataMixin, MPTTModel):
             return False
 
         # Ignore amounts that do not make sense
-        if quantity <= 0 or self.infinite:
+        if quantity <= 0:
             return False
 
         if self.updateQuantity(self.quantity + quantity):
@@ -1676,7 +1629,7 @@ class StockItem(MetadataMixin, MPTTModel):
         except InvalidOperation:
             return False
 
-        if quantity <= 0 or self.infinite:
+        if quantity <= 0:
             return False
 
         if self.updateQuantity(self.quantity - quantity):

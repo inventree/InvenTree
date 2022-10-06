@@ -1,15 +1,17 @@
 """Middleware for InvenTree."""
 
 import logging
+import sys
 
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.urls import Resolver404, include, re_path, reverse_lazy
+from django.urls import Resolver404, include, re_path, resolve, reverse_lazy
 
 from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
                                     BaseRequire2FAMiddleware)
+from error_report.middleware import ExceptionProcessor
 from rest_framework.authtoken.models import Token
 
 from common.models import InvenTreeSetting
@@ -37,6 +39,11 @@ class AuthRequiredMiddleware(object):
 
         # API requests are handled by the DRF library
         if request.path_info.startswith('/api/'):
+            return self.get_response(request)
+
+        # Is the function exempt from auth requirements?
+        path_func = resolve(request.path).func
+        if getattr(path_func, 'auth_exempt', False) is True:
             return self.get_response(request)
 
         if not request.user.is_authenticated:
@@ -145,3 +152,17 @@ class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
             return
 
         return super().process_request(request)
+
+
+class InvenTreeExceptionProcessor(ExceptionProcessor):
+    """Custom exception processor that respects blocked errors."""
+
+    def process_exception(self, request, exception):
+        """Check if kind is ignored before procesing."""
+        kind, info, data = sys.exc_info()
+
+        # Check if the eror is on the ignore list
+        if kind in settings.IGNORED_ERRORS:
+            return
+
+        return super().process_exception(request, exception)

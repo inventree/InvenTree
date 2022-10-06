@@ -43,7 +43,9 @@ function makeBarcodeInput(placeholderText='', hintText='') {
                     <span class='fas fa-qrcode'></span>
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
-                <button id='barcode_scan_btn' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'><span class='fas fa-camera'></span></button>
+                <button id='barcode_scan_btn' type='button' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'>
+                    <span class='fas fa-camera'></span>
+                </button>
             </div>
             <div id='hint_barcode_data' class='help-block'>${hintText}</div>
         </div>
@@ -129,9 +131,25 @@ function postBarcodeData(barcode_data, options={}) {
         data,
         {
             method: 'POST',
-            error: function() {
+            error: function(xhr) {
+
                 enableBarcodeInput(modal, true);
-                showBarcodeMessage(modal, '{% trans "Server error" %}');
+
+                switch (xhr.status || 0) {
+                case 400:
+                    // No match for barcode, most likely
+                    console.log(xhr);
+
+                    data = xhr.responseJSON || {};
+                    showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
+
+                    break;
+                default:
+                    // Any other error code means something went wrong
+                    $(modal).modal('hide');
+
+                    showApiError(xhr, url);
+                }
             },
             success: function(response, status) {
                 modalEnable(modal, false);
@@ -166,6 +184,9 @@ function postBarcodeData(barcode_data, options={}) {
 }
 
 
+/*
+ * Display a message within the barcode scanning dialog
+ */
 function showBarcodeMessage(modal, message, style='danger') {
 
     var html = `<div class='alert alert-block alert-${style}'>`;
@@ -179,7 +200,10 @@ function showBarcodeMessage(modal, message, style='danger') {
 
 
 function showInvalidResponseError(modal, response, status) {
-    showBarcodeMessage(modal, `{% trans "Invalid server response" %}<br>{% trans "Status" %}: '${status}'`);
+    showBarcodeMessage(
+        modal,
+        `{% trans "Invalid server response" %}<br>{% trans "Status" %}: '${status}'`
+    );
 }
 
 
@@ -320,12 +344,11 @@ function barcodeDialog(title, options={}) {
     $(modal).modal('show');
 }
 
-
+/*
+* Perform a barcode scan,
+* and (potentially) redirect the browser
+*/
 function barcodeScanDialog() {
-    /*
-     * Perform a barcode scan,
-     * and (potentially) redirect the browser
-     */
 
     var modal = '#modal-form';
 
@@ -333,11 +356,12 @@ function barcodeScanDialog() {
         '{% trans "Scan Barcode" %}',
         {
             onScan: function(response) {
-                if ('url' in response) {
-                    $(modal).modal('hide');
 
-                    // Redirect to the URL!
-                    window.location.href = response.url;
+                var url = response.url;
+
+                if (url) {
+                    $(modal).modal('hide');
+                    window.location.href = url;
                 } else {
                     showBarcodeMessage(
                         modal,
@@ -352,19 +376,17 @@ function barcodeScanDialog() {
 
 
 /*
- * Dialog for linking a particular barcode to a stock item.
+ * Dialog for linking a particular barcode to a database model instsance
  */
-function linkBarcodeDialog(stockitem) {
+function linkBarcodeDialog(data, options={}) {
 
     var modal = '#modal-form';
 
     barcodeDialog(
-        '{% trans "Link Barcode to Stock Item" %}',
+        options.title,
         {
             url: '/api/barcode/link/',
-            data: {
-                stockitem: stockitem,
-            },
+            data: data,
             onScan: function() {
 
                 $(modal).modal('hide');
@@ -376,13 +398,13 @@ function linkBarcodeDialog(stockitem) {
 
 
 /*
- * Remove barcode association from a device.
+ * Remove barcode association from a database model instance.
  */
-function unlinkBarcode(stockitem) {
+function unlinkBarcode(data, options={}) {
 
     var html = `<b>{% trans "Unlink Barcode" %}</b><br>`;
 
-    html += '{% trans "This will remove the association between this stock item and the barcode" %}';
+    html += '{% trans "This will remove the link to the associated barcode" %}';
 
     showQuestionDialog(
         '{% trans "Unlink Barcode" %}',
@@ -391,13 +413,10 @@ function unlinkBarcode(stockitem) {
             accept_text: '{% trans "Unlink" %}',
             accept: function() {
                 inventreePut(
-                    `/api/stock/${stockitem}/`,
+                    '/api/barcode/unlink/',
+                    data,
                     {
-                        // Clear the UID field
-                        uid: '',
-                    },
-                    {
-                        method: 'PATCH',
+                        method: 'POST',
                         success: function() {
                             location.reload();
                         },
@@ -554,33 +573,40 @@ function barcodeCheckIn(location_id, options={}) {
             },
             onScan: function(response) {
                 if ('stockitem' in response) {
-                    var stockitem = response.stockitem;
+                    var pk = response.stockitem.pk;
 
-                    var duplicate = false;
+                    inventreeGet(
+                        `/api/stock/${pk}/`,
+                        {},
+                        {
+                            success: function(stockitem) {
+                                var duplicate = false;
 
-                    items.forEach(function(item) {
-                        if (item.pk == stockitem.pk) {
-                            duplicate = true;
+                                items.forEach(function(item) {
+                                    if (item.pk == stockitem.pk) {
+                                        duplicate = true;
+                                    }
+                                });
+
+                                if (duplicate) {
+                                    showBarcodeMessage(modal, '{% trans "Stock Item already scanned" %}', 'warning');
+                                } else {
+
+                                    if (stockitem.location == location_id) {
+                                        showBarcodeMessage(modal, '{% trans "Stock Item already in this location" %}');
+                                        return;
+                                    }
+
+                                    // Add this stock item to the list
+                                    items.push(stockitem);
+
+                                    showBarcodeMessage(modal, '{% trans "Added stock item" %}', 'success');
+
+                                    reloadTable();
+                                }
+                            }
                         }
-                    });
-
-                    if (duplicate) {
-                        showBarcodeMessage(modal, '{% trans "Stock Item already scanned" %}', 'warning');
-                    } else {
-
-                        if (stockitem.location == location_id) {
-                            showBarcodeMessage(modal, '{% trans "Stock Item already in this location" %}');
-                            return;
-                        }
-
-                        // Add this stock item to the list
-                        items.push(stockitem);
-
-                        showBarcodeMessage(modal, '{% trans "Added stock item" %}', 'success');
-
-                        reloadTable();
-                    }
-
+                    );
                 } else {
                     // Barcode does not match a stock item
                     showBarcodeMessage(modal, '{% trans "Barcode does not match Stock Item" %}', 'warning');
@@ -679,12 +705,26 @@ function scanItemsIntoLocation(item_list, options={}) {
             onScan: function(response) {
                 updateLocationInfo(null);
                 if ('stocklocation' in response) {
-                    // Barcode corresponds to a StockLocation
-                    stock_location = response.stocklocation;
 
-                    updateLocationInfo(stock_location);
-                    modalEnable(modal, true);
+                    var pk = response.stocklocation.pk;
 
+                    inventreeGet(`/api/stock/location/${pk}/`, {}, {
+                        success: function(response) {
+
+                            stock_location = response;
+
+                            updateLocationInfo(stock_location);
+                            modalEnable(modal, true);
+                        },
+                        error: function() {
+                            // Barcode does *NOT* correspond to a StockLocation
+                            showBarcodeMessage(
+                                modal,
+                                '{% trans "Barcode does not match a valid location" %}',
+                                'warning',
+                            );
+                        }
+                    });
                 } else {
                     // Barcode does *NOT* correspond to a StockLocation
                     showBarcodeMessage(

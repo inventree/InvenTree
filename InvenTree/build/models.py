@@ -22,7 +22,7 @@ from mptt.exceptions import InvalidMove
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, normalize, MakeBarcode, notify_responsible
+from InvenTree.helpers import increment, normalize, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
@@ -109,17 +109,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         """Metaclass options for the BuildOrder model"""
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
-
-    def format_barcode(self, **kwargs):
-        """Return a JSON string to represent this build as a barcode."""
-        return MakeBarcode(
-            "buildorder",
-            self.pk,
-            {
-                "reference": self.title,
-                "url": self.get_absolute_url(),
-            }
-        )
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -246,6 +235,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         validators=[MinValueValidator(0)],
         help_text=_('Build status code')
     )
+
+    @property
+    def status_text(self):
+        """Return the text representation of the status field"""
+        return BuildStatus.text(self.status)
 
     batch = models.CharField(
         verbose_name=_('Batch Code'),
@@ -674,28 +668,26 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
                         parts = bom_item.get_valid_parts_for_allocation()
 
-                        for part in parts:
+                        items = StockModels.StockItem.objects.filter(
+                            part__in=parts,
+                            serial=str(serial),
+                            quantity=1,
+                        ).filter(StockModels.StockItem.IN_STOCK_FILTER)
 
-                            items = StockModels.StockItem.objects.filter(
-                                part=part,
-                                serial=str(serial),
+                        """
+                        Test if there is a matching serial number!
+                        """
+                        if items.exists() and items.count() == 1:
+                            stock_item = items[0]
+
+                            # Allocate the stock item
+                            BuildItem.objects.create(
+                                build=self,
+                                bom_item=bom_item,
+                                stock_item=stock_item,
                                 quantity=1,
-                            ).filter(StockModels.StockItem.IN_STOCK_FILTER)
-
-                            """
-                            Test if there is a matching serial number!
-                            """
-                            if items.exists() and items.count() == 1:
-                                stock_item = items[0]
-
-                                # Allocate the stock item
-                                BuildItem.objects.create(
-                                    build=self,
-                                    bom_item=bom_item,
-                                    stock_item=stock_item,
-                                    quantity=1,
-                                    install_into=output,
-                                )
+                                install_into=output,
+                            )
 
         else:
             """Create a single build output of the given quantity."""
@@ -735,6 +727,34 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         # Remove the build output from the database
         output.delete()
+
+    @transaction.atomic
+    def trim_allocated_stock(self):
+        """Called after save to reduce allocated stock if the build order is now overallocated."""
+        allocations = BuildItem.objects.filter(build=self)
+
+        # Only need to worry about untracked stock here
+        for bom_item in self.untracked_bom_items:
+            reduce_by = self.allocated_quantity(bom_item) - self.required_quantity(bom_item)
+            if reduce_by <= 0:
+                continue  # all OK
+
+            # find builditem(s) to trim
+            for a in allocations.filter(bom_item=bom_item):
+                # Previous item completed the job
+                if reduce_by == 0:
+                    break
+
+                # Easy case - this item can just be reduced.
+                if a.quantity > reduce_by:
+                    a.quantity -= reduce_by
+                    a.save()
+                    break
+
+                # Harder case, this item needs to be deleted, and any remainder
+                # taken from the next items in the list.
+                reduce_by -= a.quantity
+                a.delete()
 
     @transaction.atomic
     def subtract_allocated_stock(self, user):
@@ -823,6 +843,10 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         # Get a list of all 'untracked' BOM items
         for bom_item in self.untracked_bom_items:
+
+            if bom_item.consumable:
+                # Do not auto-allocate stock to consumable BOM items
+                continue
 
             variant_parts = bom_item.sub_part.get_descendants(include_self=False)
 
@@ -957,7 +981,12 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return max(required - allocated, 0)
 
     def is_bom_item_allocated(self, bom_item, output=None):
-        """Test if the supplied BomItem has been fully allocated!"""
+        """Test if the supplied BomItem has been fully allocated"""
+
+        if bom_item.consumable:
+            # Consumable BOM items do not need to be allocated
+            return True
+
         return self.unallocated_quantity(bom_item, output) == 0
 
     def is_fully_allocated(self, output):

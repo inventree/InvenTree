@@ -1,15 +1,16 @@
 """Mixins for (API) views in the whole project."""
 
-from bleach import clean
 from rest_framework import generics, status
 from rest_framework.response import Response
 
+from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
+
 
 class CleanMixin():
-    """Model mixin class which cleans inputs."""
+    """Model mixin class which cleans inputs using the Mozilla bleach tools."""
 
-    # Define a map of fields avaialble for import
-    SAFE_FIELDS = {}
+    # Define a list of field names which will *not* be cleaned
+    SAFE_FIELDS = []
 
     def create(self, request, *args, **kwargs):
         """Override to clean data before processing it."""
@@ -34,6 +35,22 @@ class CleanMixin():
 
         return Response(serializer.data)
 
+    def clean_string(self, field: str, data: str) -> str:
+        """Clean / sanitize a single input string.
+
+        Note that this function will *allow* orphaned <>& characters,
+        which would normally be escaped by bleach.
+
+        Nominally, the only thing that will be "cleaned" will be HTML tags
+
+        Ref: https://github.com/mozilla/bleach/issues/192
+        """
+
+        cleaned = strip_html_tags(data, field_name=field)
+        cleaned = remove_non_printable_characters(cleaned)
+
+        return cleaned
+
     def clean_data(self, data: dict) -> dict:
         """Clean / sanitize data.
 
@@ -46,17 +63,24 @@ class CleanMixin():
             data (dict): Data that should be sanatized.
 
         Returns:
-            dict: Profided data sanatized; still in the same order.
+            dict: Provided data sanatized; still in the same order.
         """
+
         clean_data = {}
+
         for k, v in data.items():
-            if isinstance(v, str):
-                ret = clean(v)
+
+            if k in self.SAFE_FIELDS:
+                ret = v
+            elif isinstance(v, str):
+                ret = self.clean_string(k, v)
             elif isinstance(v, dict):
                 ret = self.clean_data(v)
             else:
                 ret = v
+
             clean_data[k] = ret
+
         return clean_data
 
 

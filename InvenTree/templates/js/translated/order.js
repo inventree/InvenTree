@@ -24,12 +24,15 @@
     cancelPurchaseOrder,
     cancelSalesOrder,
     completePurchaseOrder,
+    completeSalesOrder,
     completeShipment,
     completePendingShipments,
     createPurchaseOrder,
     createPurchaseOrderLineItem,
     createSalesOrder,
     createSalesOrderShipment,
+    duplicatePurchaseOrder,
+    editPurchaseOrder,
     editPurchaseOrderLineItem,
     exportOrder,
     issuePurchaseOrder,
@@ -280,6 +283,17 @@ function completePurchaseOrder(order_id, options={}) {
             method: 'POST',
             title: '{% trans "Complete Purchase Order" %}',
             confirm: true,
+            fieldsFunction: function(opts) {
+                var fields = {
+                    accept_incomplete: {},
+                };
+
+                if (opts.context.is_complete) {
+                    delete fields['accept_incomplete'];
+                }
+
+                return fields;
+            },
             preFormContent: function(opts) {
 
                 var html = `
@@ -360,6 +374,59 @@ function issuePurchaseOrder(order_id, options={}) {
                 <div class='alert alert-block alert-warning'>
                 {% trans 'After placing this purchase order, line items will no longer be editable.' %}
                 </div>`;
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
+}
+
+
+/*
+ * Launches a modal form to mark a SalesOrder as "complete"
+ */
+function completeSalesOrder(order_id, options={}) {
+
+    constructForm(
+        `/api/order/so/${order_id}/complete/`,
+        {
+            method: 'POST',
+            title: '{% trans "Complete Sales Order" %}',
+            confirm: true,
+            fieldsFunction: function(opts) {
+                var fields = {
+                    accept_incomplete: {},
+                };
+
+                if (opts.context.is_complete) {
+                    delete fields['accept_incomplete'];
+                }
+
+                return fields;
+            },
+            preFormContent: function(opts) {
+                var html = `
+                <div class='alert alert-block alert-info'>
+                    {% trans "Mark this order as complete?" %}
+                </div>`;
+
+                if (opts.context.pending_shipments) {
+                    html += `
+                    <div class='alert alert-block alert-danger'>
+                    {% trans "Order cannot be completed as there are incomplete shipments" %}<br>
+                    </div>`;
+                }
+
+                if (!opts.context.is_complete) {
+                    html += `
+                    <div class='alert alert-block alert-warning'>
+                    {% trans "This order has line items which have not been completed." %}<br>
+                    {% trans "Completing this order means that the order and line items will no longer be editable." %}
+                    </div>`;
+                }
 
                 return html;
             },
@@ -493,41 +560,123 @@ function createSalesOrder(options={}) {
     });
 }
 
+
+/*
+ * Construct a set of fields for a purchase order form
+ */
+function purchaseOrderFields(options={}) {
+
+    var fields = {
+        reference: {
+            icon: 'fa-hashtag',
+        },
+        supplier: {
+            icon: 'fa-building',
+            secondary: {
+                title: '{% trans "Add Supplier" %}',
+                fields: function() {
+                    var fields = companyFormFields();
+
+                    fields.is_supplier.value = true;
+
+                    return fields;
+                }
+            }
+        },
+        description: {},
+        supplier_reference: {},
+        target_date: {
+            icon: 'fa-calendar-alt',
+        },
+        link: {
+            icon: 'fa-link',
+        },
+        responsible: {
+            icon: 'fa-user',
+        },
+    };
+
+    if (options.supplier) {
+        fields.supplier.value = options.supplier;
+    }
+
+    if (options.hide_supplier) {
+        fields.supplier.hidden = true;
+    }
+
+    // Add fields for order duplication (only if required)
+    if (options.duplicate_order) {
+        fields.duplicate_order = {
+            value: options.duplicate_order,
+            group: 'duplicate',
+            required: 'true',
+            type: 'related field',
+            model: 'purchaseorder',
+            filters: {
+                supplier_detail: true,
+            },
+            api_url: '{% url "api-po-list" %}',
+            label: '{% trans "Purchase Order" %}',
+            help_text: '{% trans "Select purchase order to duplicate" %}',
+        };
+
+        fields.duplicate_line_items = {
+            value: true,
+            group: 'duplicate',
+            type: 'boolean',
+            label: '{% trans "Duplicate Line Items" %}',
+            help_text: '{% trans "Duplicate all line items from the selected order" %}',
+        };
+
+        fields.duplicate_extra_lines = {
+            value: true,
+            group: 'duplicate',
+            type: 'boolean',
+            label: '{% trans "Duplicate Extra Lines" %}',
+            help_text: '{% trans "Duplicate extra line items from the selected order" %}',
+        };
+    }
+
+    return fields;
+}
+
+
+/*
+ * Edit an existing PurchaseOrder
+ */
+function editPurchaseOrder(pk, options={}) {
+
+    var fields = purchaseOrderFields(options);
+
+    constructForm(`/api/order/po/${pk}/`, {
+        fields: fields,
+        title: '{% trans "Edit Purchase Order" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
 // Create a new PurchaseOrder
 function createPurchaseOrder(options={}) {
 
+    var fields = purchaseOrderFields(options);
+
+    var groups = {};
+
+    if (options.duplicate_order) {
+        groups.duplicate = {
+            title: '{% trans "Duplication Options" %}',
+            collapsible: false,
+        };
+    };
+
     constructForm('{% url "api-po-list" %}', {
         method: 'POST',
-        fields: {
-            reference: {
-                icon: 'fa-hashtag',
-            },
-            supplier: {
-                icon: 'fa-building',
-                value: options.supplier,
-                secondary: {
-                    title: '{% trans "Add Supplier" %}',
-                    fields: function() {
-                        var fields = companyFormFields();
-
-                        fields.is_supplier.value = true;
-
-                        return fields;
-                    }
-                }
-            },
-            description: {},
-            supplier_reference: {},
-            target_date: {
-                icon: 'fa-calendar-alt',
-            },
-            link: {
-                icon: 'fa-link',
-            },
-            responsible: {
-                icon: 'fa-user',
-            }
-        },
+        fields: fields,
+        groups: groups,
+        data: options.data,
         onSuccess: function(data) {
 
             if (options.onSuccess) {
@@ -537,7 +686,29 @@ function createPurchaseOrder(options={}) {
                 location.href = `/order/purchase-order/${data.pk}/`;
             }
         },
-        title: '{% trans "Create Purchase Order" %}',
+        title: options.title || '{% trans "Create Purchase Order" %}',
+    });
+}
+
+/*
+ * Duplicate an existing PurchaseOrder
+ * Provides user with option to duplicate line items for the order also.
+ */
+function duplicatePurchaseOrder(order_id, options={}) {
+
+    options.duplicate_order = order_id;
+
+    inventreeGet(`/api/order/po/${order_id}/`, {}, {
+        success: function(data) {
+
+            // Clear out data we do not want to be duplicated
+            delete data['pk'];
+            delete data['reference'];
+
+            options.data = data;
+
+            createPurchaseOrder(options);
+        }
     });
 }
 
@@ -622,6 +793,35 @@ function poLineItemFields(options={}) {
                 part_detail: true,
                 supplier_detail: true,
                 supplier: options.supplier,
+            },
+            onEdit: function(value, name, field, opts) {
+                // If the pack_size != 1, add a note to the field
+                var pack_size = 1;
+                var units = '';
+
+                // Remove any existing note fields
+                $(opts.modal).find('#info-pack-size').remove();
+
+                if (value != null) {
+                    inventreeGet(`/api/company/part/${value}/`,
+                        {
+                            part_detail: true,
+                        },
+                        {
+                            success: function(response) {
+                                // Extract information from the returned query
+                                pack_size = response.pack_size || 1;
+                                units = response.part_detail.units || '';
+                            },
+                        }
+                    ).then(function() {
+
+                        if (pack_size != 1) {
+                            var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_size} ${units}`;
+                            $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
+                        }
+                    });
+                }
             },
             secondary: {
                 method: 'POST',
@@ -817,7 +1017,7 @@ function orderParts(parts_list, options={}) {
 
         var thumb = thumbnailImage(part.thumbnail || part.image);
 
-        // The "quantity" field should have been provided for each part
+        // Default quantity value
         var quantity = part.quantity || 1;
 
         if (quantity < 0) {
@@ -980,16 +1180,46 @@ function orderParts(parts_list, options={}) {
         afterRender: function(fields, opts) {
             parts.forEach(function(part) {
 
+                var pk = part.pk;
+
                 // Filter by base part
-                supplier_part_filters.part = part.pk;
+                supplier_part_filters.part = pk;
 
                 if (part.manufacturer_part) {
                     // Filter by manufacturer part
                     supplier_part_filters.manufacturer_part = part.manufacturer_part;
                 }
 
-                // Configure the "supplier part" field
-                initializeRelatedField({
+                // Callback function when supplier part is changed
+                // This is used to update the "pack size" attribute
+                var onSupplierPartChanged = function(value, name, field, opts) {
+                    var pack_size = 1;
+                    var units = '';
+
+                    $(opts.modal).find(`#info-pack-size-${pk}`).remove();
+
+                    if (value != null) {
+                        inventreeGet(
+                            `/api/company/part/${value}/`,
+                            {
+                                part_detail: true,
+                            },
+                            {
+                                success: function(response) {
+                                    pack_size = response.pack_size || 1;
+                                    units = response.part_detail.units || '';
+                                }
+                            }
+                        ).then(function() {
+                            if (pack_size != 1) {
+                                var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_size} ${units}`;
+                                $(opts.modal).find(`#id_quantity_${pk}`).after(`<div class='form-info-message' id='info-pack-size-${pk}'>${txt}</div>`);
+                            }
+                        });
+                    }
+                };
+
+                var supplier_part_field = {
                     name: `part_${part.pk}`,
                     model: 'supplierpart',
                     api_url: '{% url "api-supplier-part-list" %}',
@@ -998,10 +1228,15 @@ function orderParts(parts_list, options={}) {
                     auto_fill: true,
                     value: options.supplier_part,
                     filters: supplier_part_filters,
+                    onEdit: onSupplierPartChanged,
                     noResults: function(query) {
                         return '{% trans "No matching supplier parts" %}';
                     }
-                }, null, opts);
+                };
+
+                // Configure the "supplier part" field
+                initializeRelatedField(supplier_part_field, null, opts);
+                addFieldCallback(`part_${part.pk}`, supplier_part_field, opts);
 
                 // Configure the "purchase order" field
                 initializeRelatedField({
@@ -1017,6 +1252,29 @@ function orderParts(parts_list, options={}) {
                         return '{% trans "No matching purchase orders" %}';
                     }
                 }, null, opts);
+
+                // Request 'requirements' information for each part
+                inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
+                    success: function(response) {
+                        var required = response.required || 0;
+                        var allocated = response.allocated || 0;
+                        var available = response.available_stock || 0;
+
+                        // Based on what we currently 'have' on hand, what do we need to order?
+                        var deficit = Math.max(required - allocated, 0);
+
+                        if (available < deficit) {
+                            var q = deficit - available;
+
+                            updateFieldValue(
+                                `quantity_${part.pk}`,
+                                q,
+                                {},
+                                opts
+                            );
+                        }
+                    }
+                });
             });
 
             // Add callback for "add to purchase order" button
@@ -1200,6 +1458,20 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             </span>
         `;
 
+        var units = line_item.part_detail.units || '';
+        var pack_size = line_item.supplier_part_detail.pack_size || 1;
+        var pack_size_div = '';
+
+        var received = quantity * pack_size;
+
+        if (pack_size != 1) {
+            pack_size_div = `
+            <div class='alert alert-block alert-info'>
+                {% trans "Pack Quantity" %}: ${pack_size} ${units}<br>
+                {% trans "Received Quantity" %}: <span class='pack_received_quantity' id='items_received_quantity_${pk}'>${received}</span> ${units}
+            </div>`;
+        }
+
         // Quantity to Receive
         var quantity_input = constructField(
             `items_quantity_${pk}`,
@@ -1239,7 +1511,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         );
 
         // Hidden inputs below the "quantity" field
-        var quantity_input_group = `${quantity_input}<div class='collapse' id='div-batch-${pk}'>${batch_input}</div>`;
+        var quantity_input_group = `${quantity_input}${pack_size_div}<div class='collapse' id='div-batch-${pk}'>${batch_input}</div>`;
 
         if (line_item.part_detail.trackable) {
             quantity_input_group += `<div class='collapse' id='div-serials-${pk}'>${sn_input}</div>`;
@@ -1351,7 +1623,9 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
     var table_entries = '';
 
     line_items.forEach(function(item) {
-        table_entries += renderLineItem(item);
+        if (item.received < item.quantity) {
+            table_entries += renderLineItem(item);
+        }
     });
 
     var html = ``;
@@ -1387,7 +1661,8 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         confirmMessage: '{% trans "Confirm receipt of items" %}',
         title: '{% trans "Receive Purchase Order Items" %}',
         afterRender: function(fields, opts) {
-            // Initialize the "destination" field for each item
+
+            // Run initialization routines for each line in the form
             line_items.forEach(function(item) {
 
                 var pk = item.pk;
@@ -1408,18 +1683,21 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                     render_description: false,
                 };
 
+                // Initialize the location field
                 initializeRelatedField(
                     field_details,
                     null,
                     opts,
                 );
 
+                // Add 'clear' button callback for the location field
                 addClearCallback(
                     name,
                     field_details,
                     opts
                 );
 
+                // Setup stock item status field
                 initializeChoiceField(
                     {
                         name: `items_status_${pk}`,
@@ -1427,6 +1705,19 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                     null,
                     opts
                 );
+
+                // Add change callback for quantity field
+                if (item.supplier_part_detail.pack_size != 1) {
+                    $(opts.modal).find(`#id_items_quantity_${pk}`).change(function() {
+                        var value = $(opts.modal).find(`#id_items_quantity_${pk}`).val();
+
+                        var el = $(opts.modal).find(`#quantity_${pk}`).find('.pack_received_quantity');
+
+                        var actual = value * item.supplier_part_detail.pack_size;
+                        actual = formatDecimal(actual);
+                        el.text(actual);
+                    });
+                }
             });
 
             // Add callbacks to remove rows
@@ -1964,12 +2255,44 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 switchable: false,
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
+                formatter: function(value, row) {
+                    var units = '';
+
+                    if (row.part_detail.units) {
+                        units = ` ${row.part_detail.units}`;
+                    }
+
+                    var data = value;
+
+                    if (row.supplier_part_detail.pack_size != 1.0) {
+                        var pack_size = row.supplier_part_detail.pack_size;
+                        var total = value * pack_size;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size}${units} - {% trans "Total Quantity" %}: ${total}${units}'></span>`;
+                    }
+
+                    return data;
+                },
                 footerFormatter: function(data) {
                     return data.map(function(row) {
                         return +row['quantity'];
                     }).reduce(function(sum, i) {
                         return sum + i;
                     }, 0);
+                }
+            },
+            {
+                sortable: false,
+                switchable: true,
+                field: 'supplier_part_detail.pack_size',
+                title: '{% trans "Pack Quantity" %}',
+                formatter: function(value, row) {
+                    var units = row.part_detail.units;
+
+                    if (units) {
+                        value += ` ${units}`;
+                    }
+
+                    return value;
                 }
             },
             {
@@ -2442,7 +2765,7 @@ function loadSalesOrderTable(table, options) {
             return `<div id='purchase-order-calendar'></div>`;
         },
         onRefresh: function() {
-            loadPurchaseOrderTable(table, options);
+            loadSalesOrderTable(table, options);
         },
         onLoadSuccess: function() {
 

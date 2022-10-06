@@ -208,7 +208,7 @@ class InvenTreeUserAdmin(UserAdmin):
 
     (And it's confusing!)
     """
-
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'last_login')  # display last connection for each user in user admin panel.
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),

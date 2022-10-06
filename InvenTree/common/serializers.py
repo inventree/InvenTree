@@ -1,10 +1,12 @@
 """JSON serializers for common components."""
 
+from django.urls import reverse
+
 from rest_framework import serializers
 
 from common.models import (InvenTreeSetting, InvenTreeUserSetting,
                            NotificationMessage)
-from InvenTree.helpers import get_objectreference
+from InvenTree.helpers import construct_absolute_url, get_objectreference
 from InvenTree.serializers import InvenTreeModelSerializer
 
 
@@ -68,6 +70,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'choices',
             'model_name',
             'api_url',
+            'typ',
         ]
 
 
@@ -91,6 +94,7 @@ class UserSettingsSerializer(SettingsSerializer):
             'choices',
             'model_name',
             'api_url',
+            'typ',
         ]
 
 
@@ -120,6 +124,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'choices',
                 'model_name',
                 'api_url',
+                'typ',
             ]
 
         # set Meta class
@@ -157,7 +162,23 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
 
     def get_target(self, obj):
         """Function to resolve generic object reference to target."""
-        return get_objectreference(obj, 'target_content_type', 'target_object_id')
+        target = get_objectreference(obj, 'target_content_type', 'target_object_id')
+
+        if target and 'link' not in target:
+            # Check if object has an absolute_url function
+            if hasattr(obj.target_object, 'get_absolute_url'):
+                target['link'] = obj.target_object.get_absolute_url()
+            else:
+                # check if user is staff - link to admin
+                request = self.context['request']
+                if request.user and request.user.is_staff:
+                    meta = obj.target_object._meta
+                    target['link'] = construct_absolute_url(reverse(
+                        f'admin:{meta.db_table}_change',
+                        kwargs={'object_id': obj.target_object_id}
+                    ))
+
+        return target
 
     def get_source(self, obj):
         """Function to resolve generic object reference to source."""

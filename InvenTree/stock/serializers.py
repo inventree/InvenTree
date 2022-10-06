@@ -18,6 +18,7 @@ import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import part.models as part_models
+import stock.filters
 from common.settings import currency_code_default, currency_code_mappings
 from company.serializers import SupplierPartSerializer
 from InvenTree.models import extract_int
@@ -45,7 +46,6 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
     """Brief serializers for a StockItem."""
 
-    location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
 
     quantity = InvenTreeDecimalField()
@@ -59,11 +59,10 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'part_name',
             'pk',
             'location',
-            'location_name',
             'quantity',
             'serial',
             'supplier_part',
-            'uid',
+            'barcode_hash',
         ]
 
     def validate_serial(self, value):
@@ -246,7 +245,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'supplier_part',
             'supplier_part_detail',
             'tracking_items',
-            'uid',
+            'barcode_hash',
             'updated',
             'purchase_price',
             'purchase_price_currency',
@@ -569,15 +568,27 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pk',
             'name',
             'parent',
+            'icon',
         ]
 
 
 class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Detailed information about a stock location."""
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate extra information to the queryset"""
+
+        # Annotate the number of stock items which exist in this category (including subcategories)
+        queryset = queryset.annotate(
+            items=stock.filters.annotate_location_items()
+        )
+
+        return queryset
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    items = serializers.IntegerField(source='item_count', read_only=True)
+    items = serializers.IntegerField(read_only=True)
 
     level = serializers.IntegerField(read_only=True)
 
@@ -595,6 +606,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pathstring',
             'items',
             'owner',
+            'icon',
         ]
 
 

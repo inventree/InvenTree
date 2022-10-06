@@ -5,7 +5,6 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
 
 import json
-import os
 
 from django.conf import settings
 from django.contrib.auth import password_validation
@@ -25,7 +24,8 @@ from django.views.generic.base import RedirectView, TemplateView
 
 from allauth.account.forms import AddEmailForm
 from allauth.account.models import EmailAddress
-from allauth.account.views import EmailView, PasswordResetFromKeyView
+from allauth.account.views import (EmailView, LoginView,
+                                   PasswordResetFromKeyView)
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
 from allauth_2fa.views import TwoFactorRemove
@@ -38,6 +38,7 @@ from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
 from .forms import EditUserForm, SetPasswordForm
+from .helpers import remove_non_printable_characters, strip_html_tags
 
 
 def auth_request(request):
@@ -600,6 +601,9 @@ class SearchView(TemplateView):
 
         query = request.POST.get('search', '')
 
+        query = strip_html_tags(query, raise_error=False)
+        query = remove_non_printable_characters(query)
+
         context['query'] = query
 
         return super(TemplateView, self).render_to_response(context)
@@ -638,7 +642,8 @@ class SettingsView(TemplateView):
             ctx["rates_updated"] = None
 
         # load locale stats
-        STAT_FILE = os.path.abspath(os.path.join(settings.BASE_DIR, 'InvenTree/locale_stats.json'))
+        STAT_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').absolute()
+
         try:
             ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
         except Exception:
@@ -698,6 +703,23 @@ class CustomSessionDeleteView(UserSessionOverride, SessionDeleteView):
 class CustomSessionDeleteOtherView(UserSessionOverride, SessionDeleteOtherView):
     """Revert to settings after session delete."""
     pass
+
+
+class CustomLoginView(LoginView):
+    """Custom login view that allows login with urlargs."""
+
+    def get(self, request, *args, **kwargs):
+        """Extendend get to allow for auth via url args."""
+        # Check if login is present
+        if 'login' in request.GET:
+            # Initiate form
+            form = self.get_form_class()(request.GET.dict(), request=request)
+
+            # Try to login
+            form.full_clean()
+            return form.login(request)
+
+        return super().get(request, *args, **kwargs)
 
 
 class CurrencyRefreshView(RedirectView):
@@ -765,7 +787,6 @@ class NotificationsView(TemplateView):
 
 
 # Custom 2FA removal form to allow custom redirect URL
-
 class CustomTwoFactorRemove(TwoFactorRemove):
     """Specify custom URL redirect."""
     success_url = reverse_lazy("settings")

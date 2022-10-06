@@ -4,6 +4,7 @@ import logging
 import os
 import re
 from datetime import datetime
+from io import BytesIO
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -24,6 +25,7 @@ import InvenTree.format
 import InvenTree.helpers
 from common.models import InvenTreeSetting
 from InvenTree.fields import InvenTreeURLField
+from InvenTree.sanitizer import sanitize_svg
 
 logger = logging.getLogger('inventree')
 
@@ -383,7 +385,15 @@ class InvenTreeAttachment(models.Model):
                 'link': _('Missing external link'),
             })
 
+        if self.attachment.name.lower().endswith('.svg'):
+            self.attachment.file.file = self.clean_svg(self.attachment)
+
         super().save(*args, **kwargs)
+
+    def clean_svg(self, field):
+        """Sanitize SVG file before saving."""
+        cleaned = sanitize_svg(field.file.read())
+        return BytesIO(bytes(cleaned, 'utf8'))
 
     def __str__(self):
         """Human name for attachment."""
@@ -437,26 +447,12 @@ class InvenTreeAttachment(models.Model):
         if len(fn) == 0:
             raise ValidationError(_('Filename must not be empty'))
 
-        attachment_dir = os.path.join(
-            settings.MEDIA_ROOT,
-            self.getSubdir()
-        )
-
-        old_file = os.path.join(
-            settings.MEDIA_ROOT,
-            self.attachment.name
-        )
-
-        new_file = os.path.join(
-            settings.MEDIA_ROOT,
-            self.getSubdir(),
-            fn
-        )
-
-        new_file = os.path.abspath(new_file)
+        attachment_dir = settings.MEDIA_ROOT.joinpath(self.getSubdir())
+        old_file = settings.MEDIA_ROOT.joinpath(self.attachment.name)
+        new_file = settings.MEDIA_ROOT.joinpath(self.getSubdir(), fn).resolve()
 
         # Check that there are no directory tricks going on...
-        if os.path.dirname(new_file) != attachment_dir:
+        if new_file.parent != attachment_dir:
             logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
             raise ValidationError(_("Invalid attachment directory"))
 
@@ -473,11 +469,11 @@ class InvenTreeAttachment(models.Model):
         if len(fn.split('.')) < 2:
             raise ValidationError(_("Filename missing extension"))
 
-        if not os.path.exists(old_file):
+        if not old_file.exists():
             logger.error(f"Trying to rename attachment '{old_file}' which does not exist")
             return
 
-        if os.path.exists(new_file):
+        if new_file.exists():
             raise ValidationError(_("Attachment with this filename already exists"))
 
         try:
@@ -514,13 +510,34 @@ class InvenTreeTree(MPTTModel):
         }
 
     def save(self, *args, **kwargs):
-        """Provide better error for invalid moves."""
+        """Custom save method for InvenTreeTree abstract model"""
+
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
+            # Provide better error for parent selection
             raise ValidationError({
                 'parent': _("Invalid choice"),
             })
+
+        # Re-calculate the 'pathstring' field
+        pathstring = InvenTree.helpers.constructPathString(
+            [item.name for item in self.path]
+        )
+
+        if pathstring != self.pathstring:
+
+            if 'force_insert' in kwargs:
+                del kwargs['force_insert']
+
+            kwargs['force_update'] = True
+
+            self.pathstring = pathstring
+            super().save(*args, **kwargs)
+
+            # Ensure that the pathstring changes are propagated down the tree also
+            for child in self.get_children():
+                child.save(*args, **kwargs)
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -555,6 +572,14 @@ class InvenTreeTree(MPTTModel):
                             null=True,
                             verbose_name=_("parent"),
                             related_name='children')
+
+    # The 'pathstring' field is calculated each time the model is saved
+    pathstring = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Path'),
+        help_text=_('Path')
+    )
 
     @property
     def item_count(self):
@@ -626,17 +651,106 @@ class InvenTreeTree(MPTTModel):
         """
         return self.parentpath + [self]
 
-    @property
-    def pathstring(self):
-        """Get a string representation for the path of this item.
-
-        e.g. "Top/Second/Third/This"
-        """
-        return '/'.join([item.name for item in self.path])
-
     def __str__(self):
         """String representation of a category is the full path to that category."""
         return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
+
+
+class InvenTreeBarcodeMixin(models.Model):
+    """A mixin class for adding barcode functionality to a model class.
+
+    Two types of barcodes are supported:
+
+    - Internal barcodes (QR codes using a strictly defined format)
+    - External barcodes (assign third party barcode data to a model instance)
+
+    The following fields are added to any model which implements this mixin:
+
+    - barcode_data : Raw data associated with an assigned barcode
+    - barcode_hash : A 'hash' of the assigned barcode data used to improve matching
+    """
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+        abstract = True
+
+    barcode_data = models.CharField(
+        blank=True, max_length=500,
+        verbose_name=_('Barcode Data'),
+        help_text=_('Third party barcode data'),
+    )
+
+    barcode_hash = models.CharField(
+        blank=True, max_length=128,
+        verbose_name=_('Barcode Hash'),
+        help_text=_('Unique hash of barcode data')
+    )
+
+    @classmethod
+    def barcode_model_type(cls):
+        """Return the model 'type' for creating a custom QR code."""
+
+        # By default, use the name of the class
+        return cls.__name__.lower()
+
+    def format_barcode(self, **kwargs):
+        """Return a JSON string for formatting a QR code for this model instance."""
+
+        return InvenTree.helpers.MakeBarcode(
+            self.__class__.barcode_model_type(),
+            self.pk,
+            **kwargs
+        )
+
+    @property
+    def barcode(self):
+        """Format a minimal barcode string (e.g. for label printing)"""
+
+        return self.format_barcode(brief=True)
+
+    @classmethod
+    def lookup_barcode(cls, barcode_hash):
+        """Check if a model instance exists with the specified third-party barcode hash."""
+
+        return cls.objects.filter(barcode_hash=barcode_hash).first()
+
+    def assign_barcode(self, barcode_hash=None, barcode_data=None, raise_error=True):
+        """Assign an external (third-party) barcode to this object."""
+
+        # Must provide either barcode_hash or barcode_data
+        if barcode_hash is None and barcode_data is None:
+            raise ValueError("Provide either 'barcode_hash' or 'barcode_data'")
+
+        # If barcode_hash is not provided, create from supplier barcode_data
+        if barcode_hash is None:
+            barcode_hash = InvenTree.helpers.hash_barcode(barcode_data)
+
+        # Check for existing item
+        if self.__class__.lookup_barcode(barcode_hash) is not None:
+            if raise_error:
+                raise ValidationError(_("Existing barcode found"))
+            else:
+                return False
+
+        if barcode_data is not None:
+            self.barcode_data = barcode_data
+
+        self.barcode_hash = barcode_hash
+
+        self.save()
+
+        return True
+
+    def unassign_barcode(self):
+        """Unassign custom barcode from this model"""
+
+        self.barcode_data = ''
+        self.barcode_hash = ''
+
+        self.save()
 
 
 @receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')
@@ -664,13 +778,15 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
             users = get_user_model().objects.filter(is_staff=True)
 
+            link = InvenTree.helpers.construct_absolute_url(
+                reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
+            )
+
             context = {
                 'error': instance,
                 'name': _('Server Error'),
                 'message': _('An error has been logged by the server.'),
-                'link': InvenTree.helpers.construct_absolute_url(
-                    reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
-                )
+                'link': link
             }
 
             common.notifications.trigger_notification(
