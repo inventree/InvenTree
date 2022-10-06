@@ -19,6 +19,7 @@ purchase_order_detail_urls = [
 purchase_order_urls = [
 
     re_path(r'^pricing/', views.LineItemPricing.as_view(), name='line-pricing'),
+    re_path(r'^calendar.ics', views.PurchaseOrderCalendarExport(), name='calendar'),
 
     # Display detail view for a single purchase order
     re_path(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),

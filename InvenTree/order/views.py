@@ -12,10 +12,13 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
+from django_ical.views import ICalFeed
 from common.files import FileManager
 from common.forms import MatchFieldForm, UploadFileForm
 from common.views import FileManagementFormView
 from company.models import SupplierPart  # ManufacturerPart
+from common.models import InvenTreeSetting
+from common.settings import settings
 from InvenTree.helpers import DownloadFile
 from InvenTree.views import AjaxView, InvenTreeRoleMixin
 from part.models import Part
@@ -403,3 +406,82 @@ class LineItemPricing(PartPricing):
 
         # let the normal pricing view run
         return super().post(request, *args, **kwargs)
+
+
+class PurchaseOrderCalendarExport(ICalFeed):
+    """Calendar export for Purchase Orders
+
+    Optional parameters:
+    -
+    """
+
+    instance_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL").replace("http://", "").replace("https://", "")
+    timezone = settings.TIME_ZONE
+    file_name = "calendar.ics"
+
+    def __call__(self,request,*args,**kwargs):
+        """Overload call in order to check for authentication.
+        This is required to force Django to look for the authentication,
+        otherwise login request with Basic auth via curl or similar are ignored,
+        and login via a calendar client will not work.
+        """
+        if not request.user.is_authenticated:
+            # This will return an error message
+            return HttpResponse(status=401)
+        else:
+            return super().__call__(request,*args,**kwargs)
+
+    def get_object(self, request, *args, **kwargs):
+        """This is where settings from the URL etc will be obtained"""
+        # Help:
+        # https://django.readthedocs.io/en/stable/ref/contrib/syndication.html
+        return f"Username: {str(request.user)}, logged in ({request.user.is_authenticated}).)"
+
+    def title(self, obj):
+        """Return calendar title."""
+        return f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {"PurchaseOrders"} {obj}'
+
+    def product_id(self, obj):
+        """Return calendar product id."""
+        return f'//{self.instance_url}//{self.title(obj)}//EN'
+
+    def items(self):
+        """Return a list of PurchaseOrders.
+
+        Filters:
+        - Only return those which have a target_date set
+        """
+        return PurchaseOrder.objects.filter(target_date__isnull=False)
+
+    def item_title(self, item):
+        """Set the event title to the purchase order reference"""
+        return item.reference
+
+    def item_description(self, item):
+        """Set the event description"""
+        return item.description
+
+    def item_start_datetime(self, item):
+        """Set event start to target date. Goal is all-day event."""
+        return item.target_date
+
+    def item_end_datetime(self, item):
+        """Set event end to target date. Goal is all-day event."""
+        return item.target_date
+
+    def item_created(self, item):
+        """Use creation date of PO as creation date of event."""
+        return item.creation_date
+
+    def item_class(self, item):
+        """Set item class to PUBLIC"""
+        return 'PUBLIC'
+
+    def item_guid(self, item):
+        """Return globally unique UID for event"""
+        return f'po_{item.pk}_{item.reference.replace(" ","-")}@{self.instance_url}'
+
+    def item_link(self, item):
+        """Set the item link."""
+        site_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL")
+        return f'{site_url}{item.get_absolute_url()}'
