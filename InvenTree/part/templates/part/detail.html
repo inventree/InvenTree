@@ -286,6 +286,12 @@
     </div>
     <div class='panel-content'>
         {% include "part/bom.html" with part=part %}
+         {% if roles.part.change %}
+                <button class='btn btn-success' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new-footer'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
+                </button>
+             <br/>
+         {% endif %}
     </div>
 </div>
 
@@ -611,7 +617,7 @@
             });
         });
 
-        $("#bom-item-new").click(function () {
+        $("[id^=bom-item-new]").click(function () {
 
             var fields = bomItemFields();
 
