@@ -705,12 +705,26 @@ function scanItemsIntoLocation(item_list, options={}) {
             onScan: function(response) {
                 updateLocationInfo(null);
                 if ('stocklocation' in response) {
-                    // Barcode corresponds to a StockLocation
-                    stock_location = response.stocklocation;
 
-                    updateLocationInfo(stock_location);
-                    modalEnable(modal, true);
+                    var pk = response.stocklocation.pk;
 
+                    inventreeGet(`/api/stock/location/${pk}/`, {}, {
+                        success: function(response) {
+
+                            stock_location = response;
+
+                            updateLocationInfo(stock_location);
+                            modalEnable(modal, true);
+                        },
+                        error: function() {
+                            // Barcode does *NOT* correspond to a StockLocation
+                            showBarcodeMessage(
+                                modal,
+                                '{% trans "Barcode does not match a valid location" %}',
+                                'warning',
+                            );
+                        }
+                    });
                 } else {
                     // Barcode does *NOT* correspond to a StockLocation
                     showBarcodeMessage(
