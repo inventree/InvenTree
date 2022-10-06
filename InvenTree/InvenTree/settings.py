@@ -186,6 +186,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+
+    'django_ical',                          # For exporting calendars
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
