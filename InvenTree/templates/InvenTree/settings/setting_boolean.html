@@ -8,6 +8,7 @@
         type='checkbox'
         {% if setting.as_bool %}checked=''{% endif %}
         {{ reference }}
+        {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}
         {% if user_setting or notification_setting %}user='{{ request.user.pk }}'{% endif %}
         {% if notification_setting %}
         notification=true

@@ -39,7 +39,18 @@
             </span>
             {{ setting.units }}
             <div class='btn-group float-right'>
-                <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}>
+                <button
+                    class='btn btn-outline-secondary btn-small btn-edit-setting'
+                    title='{% trans "Edit setting" %}'
+                    pk='{{ setting.pk }}'
+                    setting='{{ setting.key.upper }}'
+                    {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}
+                    {% if user_setting or notification_setting %}user='{{request.user.id}}'{% endif %}
+                    {% if notification_setting %}
+                    notification=true
+                    method='{{ setting.method }}'
+                    {% endif %}
+                >
                     <span class='fas fa-edit icon-green'></span>
                 </button>
             </div>
