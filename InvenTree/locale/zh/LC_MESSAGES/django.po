@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-07 02:25+0000\n"
-"PO-Revision-Date: 2022-10-07 11:41\n"
+"POT-Creation-Date: 2022-10-08 12:47+0000\n"
+"PO-Revision-Date: 2022-10-08 13:13\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -7160,7 +7160,7 @@ msgstr "采购订单设置"
 msgid "Report Settings"
 msgstr "报表设置"
 
-#: templates/InvenTree/settings/setting.html:39
+#: templates/InvenTree/settings/setting.html:37
 msgid "No value set"
 msgstr "未设置值"
 
