@@ -23,9 +23,7 @@
     </td>
     <td>
         {% if setting.is_bool %}
-        <div class='form-check form-switch'>
-            <input class='form-check-input boolean-setting' fieldname='{{ setting.key.upper }}' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' {% if setting.as_bool %}checked=''{% endif %} {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}{% if notification_setting %}notification='{{request.user.id}}'{% endif %}>
-        </div>
+        {% include "InvenTree/settings/setting_boolean.html" %}
         {% else %}
         <div id='setting-{{ setting.pk }}'>
             <span id='setting-value-{{ setting.key.upper }}' fieldname='{{ setting.key.upper }}'>
@@ -41,7 +39,18 @@
             </span>
             {{ setting.units }}
             <div class='btn-group float-right'>
-                <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}>
+                <button
+                    class='btn btn-outline-secondary btn-small btn-edit-setting'
+                    title='{% trans "Edit setting" %}'
+                    pk='{{ setting.pk }}'
+                    setting='{{ setting.key.upper }}'
+                    {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}
+                    {% if user_setting or notification_setting %}user='{{request.user.id}}'{% endif %}
+                    {% if notification_setting %}
+                    notification=true
+                    method='{{ setting.method }}'
+                    {% endif %}
+                >
                     <span class='fas fa-edit icon-green'></span>
                 </button>
             </div>
