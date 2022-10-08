@@ -78,12 +78,12 @@ $('table').find('.boolean-setting').change(function() {
     // Global setting by default
     var url = `/api/settings/global/${setting}/`;
 
-    if (plugin) {
+    if (notification) {
+        url = `/api/settings/notification/${pk}/`;
+    } else if (plugin) {
         url = `/api/plugin/settings/${plugin}/${setting}/`;
     } else if (user) {
         url = `/api/settings/user/${setting}/`;
-    } else if (notification) {
-        url = `/api/settings/notification/${pk}/`;
     }
 
     inventreePut(
