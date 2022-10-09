@@ -54,6 +54,22 @@ function create_initscripts () {
   ${INIT_CMD} enable inventree
 }
 
+function create_admin () {
+  # Create data for admin user
+
+  echo "# Creating admin user data"
+
+  # Static admin data
+  export INVENTREE_ADMIN_USER=${INVENTREE_ADMIN_USER:-admin}
+  export INVENTREE_ADMIN_EMAIL=${INVENTREE_ADMIN_EMAIL:-admin@example.com}
+
+  # Create password if not set
+  if [ -z "${INVENTREE_ADMIN_PASSWORD}" ]; then
+    openssl rand -base64 32 > ${CONF_DIR}/admin_password.txt
+    export INVENTREE_ADMIN_PASSWORD=$(cat ${CONF_DIR}/admin_password.txt)
+  fi
+}
+
 function start_inventree () {
   echo "# Starting InvenTree"
   ${INIT_CMD} start inventree
@@ -106,5 +122,8 @@ function final_message () {
   echo -e "nginx, if this installation is done on a remote server. You have to change:"
   echo -e "/etc/nginx/sites-available/default and restart nginx process."
   echo -e "Otherwise just open http://localhost/ in your browser to start using InvenTree.\n"
+  echo -e "   Email: ${INVENTREE_ADMIN_EMAIL}"
+  echo -e "   Username: ${INVENTREE_ADMIN_USER}"
+  echo -e "   Password: ${INVENTREE_ADMIN_PASSWORD}"
   echo -e "####################################################################################"
 }

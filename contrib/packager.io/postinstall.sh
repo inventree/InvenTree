@@ -24,6 +24,7 @@ detect_docker
 detect_initcmd
 
 create_initscripts
+create_admin
 
 stop_inventree
 update_or_install
