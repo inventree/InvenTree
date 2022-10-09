@@ -101,6 +101,7 @@ function update_or_install () {
     cd ${APP_HOME} && invoke update
     echo "# Set permissions for data dir and media: ${DATA_DIR}"
     chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} -R
+    chown ${APP_USER}:${APP_GROUP} ${CONF_DIR} -R
 }
 
 function set_env () {
