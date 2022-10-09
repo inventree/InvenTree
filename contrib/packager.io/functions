@@ -147,9 +147,9 @@ function set_env () {
 
 function final_message () {
   echo -e "####################################################################################"
-  echo -e "\nThis InvenTree install uses nginx, the settings for the webserver can be found in"
+  echo -e "This InvenTree install uses nginx, the settings for the webserver can be found in"
   echo -e "/etc/nginx/sites-available/default"
-  echo -e "If you are installing InvenTree on the current machine open\nhttp://localhost/ or http://$INVENTREE_IP/\n"
+  echo -e "Try opening InvenTree with either\nhttp://localhost/ or http://$INVENTREE_IP/\n"
   echo -e "Admin user data:"
   echo -e "   Email: ${INVENTREE_ADMIN_EMAIL}"
   echo -e "   Username: ${INVENTREE_ADMIN_USER}"
