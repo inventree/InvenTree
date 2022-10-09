@@ -1,4 +1,8 @@
 
+# Secret key for backend
+# Use the environment variable INVENTREE_SECRET_KEY_FILE
+#secret_key_file: /etc/inventree/secret_key.txt
+
 # Database backend selection - Configure backend database settings
 # Documentation: https://inventree.readthedocs.io/en/latest/start/config/
 
@@ -22,6 +26,9 @@ database:
   # HOST: Database host address (if required)
   # PORT: Database host port (if required)
 
+  # --- Database settings ---
+  # ENGINE: sampleengine
+  # NAME: '/path/to/database'
 
   # --- Example Configuration - MySQL ---
   #ENGINE: mysql

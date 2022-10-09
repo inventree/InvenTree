@@ -74,14 +74,24 @@ function update_or_install () {
 function set_env () {
   echo "# Setting up InvenTree config values"
 
-  inventree config:set INVENTREE_MEDIA_ROOT=${INVENTREE_MEDIA_ROOT}
-  inventree config:set INVENTREE_STATIC_ROOT=${INVENTREE_STATIC_ROOT}
-  inventree config:set INVENTREE_PLUGIN_FILE=${INVENTREE_PLUGIN_FILE}
   inventree config:set INVENTREE_CONFIG_FILE=${INVENTREE_CONFIG_FILE}
-  inventree config:set INVENTREE_SECRET_KEY_FILE=${INVENTREE_SECRET_KEY_FILE}
-  inventree config:set INVENTREE_DB_NAME=${INVENTREE_DB_NAME}
-  inventree config:set INVENTREE_DB_ENGINE=${INVENTREE_DB_ENGINE}
-  inventree config:set INVENTREE_PLUGINS_ENABLED=${INVENTREE_PLUGINS_ENABLED}
+
+  # Changing the config file
+  echo "# Writing the settings to the config file ${INVENTREE_CONFIG_FILE}"
+  # Media Root
+  sed -i s=#media_root: '/home/inventree/data/media'=media_root: ${INVENTREE_MEDIA_ROOT}=g ${INVENTREE_CONFIG_FILE}
+  # Static Root
+  sed -i s=#static_root: '/home/inventree/data/static'=static_root: ${INVENTREE_STATIC_ROOT}=g ${INVENTREE_CONFIG_FILE}
+  # Plugins enabled
+  sed -i s=plugins_enabled: False=plugins_enabled: ${INVENTREE_PLUGINS_ENABLED}=g ${INVENTREE_CONFIG_FILE}
+  # Plugin file
+  sed -i s=#plugin_file: /path/to/plugins.txt=plugin_file: ${INVENTREE_PLUGIN_FILE}=g ${INVENTREE_CONFIG_FILE}
+  # Secret key file
+  sed -i s=#secret_key_file: /etc/inventree/secret_key.txt=secret_key_file: ${INVENTREE_SECRET_KEY_FILE}=g ${INVENTREE_CONFIG_FILE}
+  # Database name
+  sed -i s=# NAME: '/path/to/database'=NAME: ${INVENTREE_DB_NAME}=g ${INVENTREE_CONFIG_FILE}
+  # Database engine
+  sed -i s=# ENGINE: sampleengine=ENGINE: ${INVENTREE_DB_ENGINE}=g ${INVENTREE_CONFIG_FILE}
 }
 
 
