@@ -46,10 +46,12 @@ function detect_ip () {
 
 function create_initscripts () {
   echo "# Setting up python enviroment"
+  sudo -i -u ${APP_USER} bash << EOF
   cd ${APP_HOME}
   python3 -m venv env
   # Install invoke for later ci tasks
   pip install invoke
+EOF
 
   echo "# Stopping nginx"
   ${INIT_CMD} stop nginx
@@ -103,9 +105,11 @@ function update_or_install () {
 
     # Run update as app user
     echo "# Updating InvenTree"
-    su - ${APP_USER} -c "PATH=${APP_HOME}/env/bin:${APP_HOME}/:/sbin:/bin:/usr/sbin:/usr/bin: && \
-    cd ${APP_HOME} && \
-    invoke update"
+    sudo -i -u ${APP_USER} bash << EOF
+    PATH=${APP_HOME}/env/bin:${APP_HOME}/:/sbin:/bin:/usr/sbin:/usr/bin:
+    cd ${APP_HOME}
+    invoke update
+EOF
 
     # Make sure permissions are correct again
     echo "# Set permissions for data dir and media: ${DATA_DIR}"
