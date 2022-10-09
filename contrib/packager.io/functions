@@ -38,7 +38,7 @@ function detect_ip () {
   else
     # Use web service to get the IP address
     echo "# Getting the IP address of the server via web service"
-    export INVENTREE_IP=$(curl https://checkip.amazonaws.com)
+    export INVENTREE_IP=$(curl -s https://checkip.amazonaws.com)
   fi
 
   echo "IP address is ${INVENTREE_IP}"
