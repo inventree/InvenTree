@@ -95,6 +95,8 @@ function set_env () {
   # Debug mode
   sed -i s=debug:\ True=debug:\ False=g ${INVENTREE_CONFIG_FILE}
 
+  # Fixing the permissions
+  chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} ${INVENTREE_CONFIG_FILE}
 }
 
 
