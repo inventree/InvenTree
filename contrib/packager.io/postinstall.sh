@@ -20,8 +20,6 @@ export INVENTREE_DB_ENGINE=sqlite3
 . ${APP_HOME}/contrib/packager.io/functions
 
 # exec postinstall
-debug
-detect_os
 detect_docker
 detect_initcmd
 
