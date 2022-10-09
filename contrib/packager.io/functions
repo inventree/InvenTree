@@ -105,10 +105,8 @@ function update_or_install () {
 
     # Run update as app user
     echo "# Updating InvenTree"
-    sudo -i -u ${APP_USER} bash << EOF
-    PATH=${APP_HOME}/env/bin:${APP_HOME}/:/sbin:/bin:/usr/sbin:/usr/bin:
-    cd ${APP_HOME}
-    invoke update
+    sudo -i -E -u ${APP_USER} bash << EOF
+    cd ${APP_HOME} && invoke update
 EOF
 
     # Make sure permissions are correct again
