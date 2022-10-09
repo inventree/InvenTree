@@ -57,9 +57,9 @@ EOF
   ${INIT_CMD} stop nginx
   echo "# Setting up nginx"
   rm /etc/nginx/sites-enabled/default
-  cp ${APP_HOME}/docker/production/nginx.prod.conf /etc/nginx/sites-enabled/inventree.conf
-  sed -i s/inventree-server:8000/localhost:6000/g /etc/nginx/sites-enabled/inventree.conf
-  sed -i s=var/www=opt/inventree/data=g /etc/nginx/sites-enabled/inventree.conf
+  cp ${APP_HOME}/docker/production/nginx.prod.conf ${SETUP_NGINX_FILE}
+  sed -i s/inventree-server:8000/localhost:6000/g ${SETUP_NGINX_FILE}
+  sed -i s=var/www=opt/inventree/data=g ${SETUP_NGINX_FILE}
 
   # Restart nginx
   echo "# Restarting nginx"
@@ -148,8 +148,8 @@ function set_env () {
 function final_message () {
   echo -e "####################################################################################"
   echo -e "This InvenTree install uses nginx, the settings for the webserver can be found in"
-  echo -e "/etc/nginx/sites-available/default"
-  echo -e "Try opening InvenTree with either\nhttp://localhost/ or http://$INVENTREE_IP/\n"
+  echo -e "`${SETUP_NGINX_FILE}`"
+  echo -e "Try opening InvenTree with either\nhttp://localhost/ or http://${INVENTREE_IP}/\n"
   echo -e "Admin user data:"
   echo -e "   Email: ${INVENTREE_ADMIN_EMAIL}"
   echo -e "   Username: ${INVENTREE_ADMIN_USER}"
