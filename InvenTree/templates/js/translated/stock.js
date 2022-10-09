@@ -971,7 +971,7 @@ function adjustStock(action, items, options={}) {
 
         var item = items[idx];
 
-        if ((item.serial != null) && !allowSerializedStock) {
+        if ((item.serial != null) && (item.serial != '') && !allowSerializedStock) {
             continue;
         }
 
@@ -1729,7 +1729,11 @@ function loadStockTable(table, options) {
         switchable: params['part_detail'],
         formatter: function(value, row) {
             var ipn = row.part_detail.IPN;
-            return withTitle(shortenString(ipn), ipn);
+            if (ipn) {
+                return withTitle(shortenString(ipn), ipn);
+            } else {
+                return '-';
+            }
         },
     };
 

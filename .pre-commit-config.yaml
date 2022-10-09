@@ -15,7 +15,7 @@ repos:
     -   id: check-added-large-files
     -   id: mixed-line-ending
 -   repo: https://github.com/pycqa/flake8
-    rev: '5.0.0'
+    rev: '5.0.4'
     hooks:
     -   id: flake8
         additional_dependencies: [

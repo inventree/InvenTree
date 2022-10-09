@@ -236,6 +236,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         help_text=_('Build status code')
     )
 
+    @property
+    def status_text(self):
+        """Return the text representation of the status field"""
+        return BuildStatus.text(self.status)
+
     batch = models.CharField(
         verbose_name=_('Batch Code'),
         max_length=100,
