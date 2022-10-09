@@ -15,9 +15,15 @@ export INVENTREE_CONFIG_FILE=${CONF_DIR}/config.yaml
 export INVENTREE_SECRET_KEY_FILE=${CONF_DIR}/secret_key.txt
 export INVENTREE_DB_NAME=${DATA_DIR}/database.sqlite3
 export INVENTREE_DB_ENGINE=sqlite3
+# get setup log path
+export SETUP_LOG=${CONF_DIR}/setup_$(date +"%F_%H_%M_%S").log
 
 # import functions
 . ${APP_HOME}/contrib/packager.io/functions
+
+# start log
+script $SETUP_LOG -q
+echo "# Starting log"
 
 # get base info
 detect_docker
@@ -33,6 +39,10 @@ stop_inventree
 update_or_install
 set_env
 start_inventree
+
+# end log
+echo "# Ending log"
+exit 0
 
 # show info
 final_message
