@@ -22,6 +22,7 @@ export INVENTREE_DB_ENGINE=sqlite3
 # exec postinstall
 detect_docker
 detect_initcmd
+detect_ip
 
 create_initscripts
 create_admin

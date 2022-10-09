@@ -28,6 +28,22 @@ function detect_initcmd () {
   fi
 }
 
+function detect_ip () {
+  # Get the IP address of the server
+
+  if [ "${SETUP_NO_CALLS}" == "yes" ]; then
+    # Use local IP address
+    echo "# Getting the IP address of the first local IP address"
+    export INVENTREE_IP=$(hostname -I | awk '{print $1}')
+  else
+    # Use web service to get the IP address
+    echo "# Getting the IP address of the server via web service"
+    export INVENTREE_IP=$(curl https://checkip.amazonaws.com)
+  fi
+
+  echo "IP address is ${INVENTREE_IP}"
+}
+
 function create_initscripts () {
   echo "# Setting up python enviroment"
   cd ${APP_HOME}
@@ -118,10 +134,9 @@ function set_env () {
 
 function final_message () {
   echo -e "####################################################################################"
-  echo -e "\nAdd your fully qualified domain name or public IP to servername directive of"
-  echo -e "nginx, if this installation is done on a remote server. You have to change:"
-  echo -e "/etc/nginx/sites-available/default and restart nginx process."
-  echo -e "Otherwise just open http://localhost/ in your browser to start using InvenTree.\n"
+  echo -e "\nThis InvenTree install uses nginx, the settings for the webserver can be found in"
+  echo -e "/etc/nginx/sites-available/default"
+  echo -e "If you are installing InvenTree on the current machine open\nhttp://localhost/ or http://$INVENTREE_IP/\n"
   echo -e "   Email: ${INVENTREE_ADMIN_EMAIL}"
   echo -e "   Username: ${INVENTREE_ADMIN_USER}"
   echo -e "   Password: ${INVENTREE_ADMIN_PASSWORD}"
