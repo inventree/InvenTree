@@ -106,6 +106,7 @@ function update_or_install () {
     # Run update as app user
     echo "# Updating InvenTree"
     sudo -u ${APP_USER} --preserve-env=SETUP_ENVS bash << EOF
+    printenv
     cd ${APP_HOME} && invoke update
 EOF
 
