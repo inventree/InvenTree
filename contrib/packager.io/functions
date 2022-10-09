@@ -99,7 +99,7 @@ function stop_inventree () {
 function update_or_install () {
 
     # Set permissions so app user can write there
-    chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} -R
+    chown ${APP_USER}:${APP_GROUP} ${APP_HOME} -R
 
     # Run update as app user
     echo "# Updating InvenTree"
