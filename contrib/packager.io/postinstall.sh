@@ -19,17 +19,20 @@ export INVENTREE_DB_ENGINE=sqlite3
 # import functions
 . ${APP_HOME}/contrib/packager.io/functions
 
-# exec postinstall
+# get base info
 detect_docker
 detect_initcmd
 detect_ip
 
+# create processes
 create_initscripts
 create_admin
 
+# run updates
 stop_inventree
 update_or_install
 set_env
 start_inventree
 
+# show info
 final_message
