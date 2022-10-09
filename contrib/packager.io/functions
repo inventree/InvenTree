@@ -75,16 +75,20 @@ EOF
 function create_admin () {
   # Create data for admin user
 
-  echo "# Creating admin user data"
+  if test -f "${SETUP_ADMIN_PASSWORD_FILE}"; then
+    echo "# Admin data already exists - skipping"
+  else
+    echo "# Creating admin user data"
 
-  # Static admin data
-  export INVENTREE_ADMIN_USER=${INVENTREE_ADMIN_USER:-admin}
-  export INVENTREE_ADMIN_EMAIL=${INVENTREE_ADMIN_EMAIL:-admin@example.com}
+    # Static admin data
+    export INVENTREE_ADMIN_USER=${INVENTREE_ADMIN_USER:-admin}
+    export INVENTREE_ADMIN_EMAIL=${INVENTREE_ADMIN_EMAIL:-admin@example.com}
 
-  # Create password if not set
-  if [ -z "${INVENTREE_ADMIN_PASSWORD}" ]; then
-    openssl rand -base64 32 > ${CONF_DIR}/admin_password.txt
-    export INVENTREE_ADMIN_PASSWORD=$(cat ${CONF_DIR}/admin_password.txt)
+    # Create password if not set
+    if [ -z "${INVENTREE_ADMIN_PASSWORD}" ]; then
+      openssl rand -base64 32 > ${SETUP_ADMIN_PASSWORD_FILE}
+      export INVENTREE_ADMIN_PASSWORD=$(cat ${SETUP_ADMIN_PASSWORD_FILE})
+    fi
   fi
 }
 
