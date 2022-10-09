@@ -46,7 +46,7 @@ function detect_ip () {
 
 function create_initscripts () {
   echo "# Setting up python enviroment"
-  sudo -u ${APP_USER} --preserve-env=SETUP_ENVS bash << EOF
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash << EOF
   cd ${APP_HOME}
   python3 -m venv env
   # Install invoke for later ci tasks
@@ -105,7 +105,7 @@ function update_or_install () {
 
     # Run update as app user
     echo "# Updating InvenTree"
-    sudo -u ${APP_USER} --preserve-env=SETUP_ENVS bash << EOF
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash << EOF
     printenv
     cd ${APP_HOME} && invoke update
 EOF
