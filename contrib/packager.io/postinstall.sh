@@ -22,8 +22,8 @@ export SETUP_LOG=${CONF_DIR}/setup_$(date +"%F_%H_%M_%S").log
 . ${APP_HOME}/contrib/packager.io/functions
 
 # start log
-script $SETUP_LOG -q
-echo "# Starting log"
+# script $SETUP_LOG -q
+# echo "# Starting log"
 
 # get base info
 detect_docker
@@ -41,8 +41,8 @@ set_env
 start_inventree
 
 # end log
-echo "# Ending log"
-exit 0
+# echo "# Ending log"
+# exit 0
 
 # show info
 final_message
