@@ -53,10 +53,10 @@ function create_initscripts () {
   pip install invoke
 EOF
 
-  # Remove default config if it exists
+  # Unlink default config if it exists
   if test -f "/etc/nginx/sites-enabled/default"; then
-    echo "# Removing default nginx config"
-    rm /etc/nginx/sites-enabled/default
+    echo "# Unlinking default nginx config\n# Old file still in /etc/nginx/sites-available/default"
+    sudo unlink /etc/nginx/sites-enabled/default
   fi
 
   # Create InvenTree specific nginx config
