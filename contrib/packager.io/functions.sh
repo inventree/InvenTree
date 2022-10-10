@@ -84,12 +84,7 @@ function create_admin () {
   # Create data for admin user
 
   if test -f "${SETUP_ADMIN_PASSWORD_FILE}"; then
-    echo "# Admin data already exists - deleting configs"
-
-    # Read admin data from config
-    inventree config:set INVENTREE_ADMIN_USER=""
-    inventree config:set INVENTREE_ADMIN_EMAIL=""
-    inventree config:set INVENTREE_ADMIN_PASSWORD=""
+    echo "# Admin data already exists - skipping"
   else
     echo "# Creating admin user data"
 
@@ -134,13 +129,6 @@ function set_env () {
   echo "# Setting up InvenTree config values"
 
   inventree config:set INVENTREE_CONFIG_FILE=${INVENTREE_CONFIG_FILE}
-  # Admin user data
-  if [[ ${INVENTREE_ADMIN_USER} ]]; then
-    echo "# Setting admin user to ${INVENTREE_ADMIN_USER}"
-    inventree config:set INVENTREE_ADMIN_USER=${INVENTREE_ADMIN_USER}
-    inventree config:set INVENTREE_ADMIN_EMAIL=${INVENTREE_ADMIN_EMAIL}
-    inventree config:set INVENTREE_ADMIN_PASSWORD=${INVENTREE_ADMIN_PASSWORD}
-  fi
 
   # Changing the config file
   echo "# Writing the settings to the config file ${INVENTREE_CONFIG_FILE}"
