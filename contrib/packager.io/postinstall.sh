@@ -17,7 +17,7 @@ export INVENTREE_DB_NAME=${DATA_DIR}/database.sqlite3
 export INVENTREE_DB_ENGINE=sqlite3
 
 # Setup variables
-export SETUP_NGINX_FILE=/etc/nginx/sites-enabled/inventree.conf
+export SETUP_NGINX_FILE=${SETUP_NGINX_FILE:-/etc/nginx/sites-enabled/inventree.conf}
 export SETUP_ADMIN_PASSWORD_FILE=${CONF_DIR}/admin_password.txt
 export SETUP_NO_CALLS=${SETUP_NO_CALLS:-false}
 # Envs that should be passed to setup commands
