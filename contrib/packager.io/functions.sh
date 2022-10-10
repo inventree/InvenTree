@@ -31,7 +31,7 @@ function detect_initcmd () {
 function detect_ip () {
   # Get the IP address of the server
 
-  if [ "${SETUP_NO_CALLS}" == "yes" ]; then
+  if [ "${SETUP_NO_CALLS}" == "true" ]; then
     # Use local IP address
     echo "# Getting the IP address of the first local IP address"
     export INVENTREE_IP=$(hostname -I | awk '{print $1}')
