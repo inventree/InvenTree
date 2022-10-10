@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 22:08+0000\n"
-"PO-Revision-Date: 2022-10-08 13:13\n"
+"POT-Creation-Date: 2022-10-08 12:47+0000\n"
+"PO-Revision-Date: 2022-10-10 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -47,7 +47,7 @@ msgstr "Masukkan tanggal"
 #: templates/js/translated/order.js:4402 templates/js/translated/stock.js:1374
 #: templates/js/translated/stock.js:1982
 msgid "Notes"
-msgstr ""
+msgstr "Catatan"
 
 #: InvenTree/format.py:142
 #, python-brace-format
@@ -290,7 +290,7 @@ msgstr ""
 #: templates/js/translated/part.js:686 templates/js/translated/part.js:838
 #: templates/js/translated/part.js:1960 templates/js/translated/stock.js:2394
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 #: InvenTree/models.py:564 build/models.py:163
 #: build/templates/build/detail.html:24 company/models.py:282
@@ -315,11 +315,11 @@ msgstr ""
 #: templates/js/translated/part.js:2071 templates/js/translated/stock.js:1748
 #: templates/js/translated/stock.js:2426 templates/js/translated/stock.js:2486
 msgid "Description"
-msgstr ""
+msgstr "Keterangan"
 
 #: InvenTree/models.py:565
 msgid "Description (optional)"
-msgstr ""
+msgstr "Keterangan (opsional)"
 
 #: InvenTree/models.py:573
 msgid "parent"
@@ -340,11 +340,11 @@ msgstr ""
 
 #: InvenTree/models.py:688 order/serializers.py:486
 msgid "Barcode Hash"
-msgstr ""
+msgstr "Barcode Hash"
 
 #: InvenTree/models.py:689
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Hash unik data barcode"
 
 #: InvenTree/models.py:734
 msgid "Existing barcode found"
@@ -7603,16 +7603,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10659,3 +10657,4 @@ msgstr ""
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr ""
+
