@@ -53,16 +53,22 @@ function create_initscripts () {
   pip install invoke
 EOF
 
+  # Remove default config if it exists
+  if test -f "/etc/nginx/sites-enabled/default"; then
+    echo "# Removing default nginx config"
+    rm /etc/nginx/sites-enabled/default
+  fi
+
+  # Create InvenTree specific nginx config
   echo "# Stopping nginx"
   ${INIT_CMD} stop nginx
-  echo "# Setting up nginx"
-  rm /etc/nginx/sites-enabled/default
+  echo "# Setting up nginx to ${SETUP_NGINX_FILE}"
+  # Always use the latest nginx config; important if new headers are added / needed for security
   cp ${APP_HOME}/docker/production/nginx.prod.conf ${SETUP_NGINX_FILE}
   sed -i s/inventree-server:8000/localhost:6000/g ${SETUP_NGINX_FILE}
   sed -i s=var/www=opt/inventree/data=g ${SETUP_NGINX_FILE}
-
-  # Restart nginx
-  echo "# Restarting nginx"
+  # Start nginx
+  echo "# Starting nginx"
   ${INIT_CMD} start nginx
 
   echo "# (Re)creating init scripts"
