@@ -45,13 +45,14 @@ function detect_ip () {
 }
 
 function create_initscripts () {
-  echo "# Setting up python enviroment"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash << EOF
-  cd ${APP_HOME}
-  python3 -m venv env
-  # Install invoke for later ci tasks
-  pip install invoke
-EOF
+
+  # Make sure python env exsists
+  if test -f "${APP_HOME}/env"; then
+    echo "# python enviroment already present - skipping"
+  else
+    echo "# Setting up python enviroment"
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS -c "cd ${APP_HOME} && python3 -m venv env && pip install invoke"
+  fi
 
   # Unlink default config if it exists
   if test -f "/etc/nginx/sites-enabled/default"; then
@@ -72,6 +73,7 @@ EOF
   ${INIT_CMD} start nginx
 
   echo "# (Re)creating init scripts"
+  # This reset scale parameters to a known state
   inventree scale web="1" worker="1"
 
   echo "# Enabling InvenTree on boot"
@@ -115,10 +117,7 @@ function update_or_install () {
 
     # Run update as app user
     echo "# Updating InvenTree"
-    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash << EOF
-    printenv
-    cd ${APP_HOME} && invoke update
-EOF
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS -c "cd ${APP_HOME} && invoke update"
 
     # Make sure permissions are correct again
     echo "# Set permissions for data dir and media: ${DATA_DIR}"
