@@ -1,17 +1,22 @@
 """JSON API for the Order app."""
 
+from django.contrib.auth import authenticate, login
 from django.db import transaction
 from django.db.models import F, Q
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
+from django.http.response import JsonResponse
 from django_filters import rest_framework as rest_filters
+from django_ical.views import ICalFeed
 from rest_framework import filters, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 import order.models as models
 import order.serializers as serializers
+from common.models import InvenTreeSetting
+from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
@@ -1120,6 +1125,141 @@ class PurchaseOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = serializers.PurchaseOrderAttachmentSerializer
 
 
+class OrderCalendarExport(ICalFeed):
+    """Calendar export for Purchase/Sales Orders
+
+    Optional parameters:
+    - po: True | False (Default: True)
+        choose whether or not to show purchase-orders in calendar
+    - so: True | False (Default: True)
+        choose whether or not to show sales-orders in calendar
+    - include_completed: true/false
+        whether or not to show completed orders. Defaults to false
+    """
+
+    instance_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL").replace("http://", "").replace("https://", "")
+    timezone = settings.TIME_ZONE
+    file_name = "calendar.ics"
+
+    def __call__(self, request, *args, **kwargs):
+        """Overload call in order to check for authentication.
+        This is required to force Django to look for the authentication,
+        otherwise login request with Basic auth via curl or similar are ignored,
+        and login via a calendar client will not work.
+        
+        See:
+        https://stackoverflow.com/questions/3817694/django-rss-feed-authentication
+        https://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django
+        https://www.djangosnippets.org/snippets/243/
+        """
+        
+        import base64
+        print(f"{request.user = }")
+        print(f"{request.method = }")
+
+        if request.user.is_authenticated:
+            # Authenticated on first try - maybe normal browser call?
+            print("Auth. on first try")
+            return super().__call__(request, *args, **kwargs)
+        
+        print(f"{request.META = }")
+        
+        # No login yet - check in headers
+        if 'HTTP_AUTHORIZATION' in request.META:
+            auth = request.META['HTTP_AUTHORIZATION'].split()
+            if len(auth) == 2:
+                # NOTE: We are only support basic authentication for now.
+                #
+                if auth[0].lower() == "basic":
+                    uname, passwd = base64.b64decode(auth[1]).decode("ascii").split(':')
+                    user = authenticate(username=uname, password=passwd)
+                    if user is not None:
+                        if user.is_active:
+                            login(request, user)
+                            request.user = user
+        
+        print(f"{request.user = }")
+        
+        # Check again
+        if request.user.is_authenticated:
+            # Authenticated after second try
+            print("Auth. on second try")
+            return super().__call__(request, *args, **kwargs)
+        
+        # Still  nothing
+        response = JsonResponse({"detail": "Authentication credentials were not provided."})
+        response['WWW-Authenticate'] = 'Basic realm="api"'
+        response.status_code = 401
+        return response
+
+    def get_object(self, request, *args, **kwargs):
+        """This is where settings from the URL etc will be obtained"""
+        # Help:
+        # https://django.readthedocs.io/en/stable/ref/contrib/syndication.html
+        # ~ return f"Username: {str(request.user)}, logged in ({request.user.is_authenticated}).)"
+
+        obj = dict()
+        obj['ordertype'] = kwargs['ordertype']
+        obj['include_completed'] = bool(request.GET.get('include_completed', False))
+        print(f"{args = }, {kwargs = }")
+
+        return obj
+
+    def title(self, obj):
+        """Return calendar title."""
+        return f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {obj["ordertype"]}'
+
+    def product_id(self, obj):
+        """Return calendar product id."""
+        return f'//{self.instance_url}//{self.title(obj)}//EN'
+
+    def items(self, obj):
+        """Return a list of PurchaseOrders.
+
+        Filters:
+        - Only return those which have a target_date set
+        """
+        if obj['ordertype'] == 'purchase-order':
+            outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
+        else:
+            outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
+
+        return outlist
+
+    def item_title(self, item):
+        """Set the event title to the purchase order reference"""
+        return item.reference
+
+    def item_description(self, item):
+        """Set the event description"""
+        return item.description
+
+    def item_start_datetime(self, item):
+        """Set event start to target date. Goal is all-day event."""
+        return item.target_date
+
+    def item_end_datetime(self, item):
+        """Set event end to target date. Goal is all-day event."""
+        return item.target_date
+
+    def item_created(self, item):
+        """Use creation date of PO as creation date of event."""
+        return item.creation_date
+
+    def item_class(self, item):
+        """Set item class to PUBLIC"""
+        return 'PUBLIC'
+
+    def item_guid(self, item):
+        """Return globally unique UID for event"""
+        return f'po_{item.pk}_{item.reference.replace(" ","-")}@{self.instance_url}'
+
+    def item_link(self, item):
+        """Set the item link."""
+        site_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL")
+        return f'{site_url}{item.get_absolute_url()}'
+
+
 order_api_urls = [
 
     # API endpoints for purchase orders
@@ -1207,4 +1347,6 @@ order_api_urls = [
         path('<int:pk>/', SalesOrderAllocationDetail.as_view(), name='api-so-allocation-detail'),
         re_path(r'^.*$', SalesOrderAllocationList.as_view(), name='api-so-allocation-list'),
     ])),
+
+    re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order)/', OrderCalendarExport(), name='calendar'),
 ]
