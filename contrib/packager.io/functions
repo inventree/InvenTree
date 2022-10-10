@@ -51,7 +51,7 @@ function create_initscripts () {
     echo "# python enviroment already present - skipping"
   else
     echo "# Setting up python enviroment"
-    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS "cd ${APP_HOME} && python3 -m venv env && pip install invoke"
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && python3 -m venv env && pip install invoke"
   fi
 
   # Unlink default config if it exists
@@ -117,7 +117,7 @@ function update_or_install () {
 
     # Run update as app user
     echo "# Updating InvenTree"
-    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS "cd ${APP_HOME} && invoke update"
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke update"
 
     # Make sure permissions are correct again
     echo "# Set permissions for data dir and media: ${DATA_DIR}"
