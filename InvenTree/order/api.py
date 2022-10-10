@@ -1129,10 +1129,6 @@ class OrderCalendarExport(ICalFeed):
     """Calendar export for Purchase/Sales Orders
 
     Optional parameters:
-    - po: True | False (Default: True)
-        choose whether or not to show purchase-orders in calendar
-    - so: True | False (Default: True)
-        choose whether or not to show sales-orders in calendar
     - include_completed: true/false
         whether or not to show completed orders. Defaults to false
     """
@@ -1154,16 +1150,11 @@ class OrderCalendarExport(ICalFeed):
         """
         
         import base64
-        print(f"{request.user = }")
-        print(f"{request.method = }")
 
         if request.user.is_authenticated:
             # Authenticated on first try - maybe normal browser call?
-            print("Auth. on first try")
             return super().__call__(request, *args, **kwargs)
-        
-        print(f"{request.META = }")
-        
+
         # No login yet - check in headers
         if 'HTTP_AUTHORIZATION' in request.META:
             auth = request.META['HTTP_AUTHORIZATION'].split()
@@ -1177,16 +1168,14 @@ class OrderCalendarExport(ICalFeed):
                         if user.is_active:
                             login(request, user)
                             request.user = user
-        
-        print(f"{request.user = }")
-        
+
         # Check again
         if request.user.is_authenticated:
             # Authenticated after second try
-            print("Auth. on second try")
             return super().__call__(request, *args, **kwargs)
         
-        # Still  nothing
+        # Still nothing - return Unauth. header with info on how to authenticate
+        # Information is needed by client, eg Thunderbird
         response = JsonResponse({"detail": "Authentication credentials were not provided."})
         response['WWW-Authenticate'] = 'Basic realm="api"'
         response.status_code = 401
@@ -1196,12 +1185,10 @@ class OrderCalendarExport(ICalFeed):
         """This is where settings from the URL etc will be obtained"""
         # Help:
         # https://django.readthedocs.io/en/stable/ref/contrib/syndication.html
-        # ~ return f"Username: {str(request.user)}, logged in ({request.user.is_authenticated}).)"
 
         obj = dict()
         obj['ordertype'] = kwargs['ordertype']
         obj['include_completed'] = bool(request.GET.get('include_completed', False))
-        print(f"{args = }, {kwargs = }")
 
         return obj
 
@@ -1218,11 +1205,12 @@ class OrderCalendarExport(ICalFeed):
 
         Filters:
         - Only return those which have a target_date set
+        - Only return incomplete orders, unless include_completed is set to True
         """
         if obj['ordertype'] == 'purchase-order':
-            outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
+            outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False) # Implement filter on complete/incomplete!
         else:
-            outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
+            outlist = models.SalesOrder.objects.filter(target_date__isnull=False)# Implement filter on complete/incomplete!
 
         return outlist
 
