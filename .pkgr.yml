@@ -29,6 +29,7 @@ targets:
       - libpangoft2-1.0-0
       - gettext
       - nginx
+      - jc
   debian-11:
     dependencies:
       - curl
@@ -42,3 +43,4 @@ targets:
       - libpangoft2-1.0-0
       - gettext
       - nginx
+      - jc
