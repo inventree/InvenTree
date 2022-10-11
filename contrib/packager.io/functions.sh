@@ -96,6 +96,11 @@ function create_initscripts() {
   else
     echo "# Setting up python enviroment"
     sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && python3 -m venv env && pip install invoke"
+
+    if [ -n "${SETUP_EXTRA_PIP}" ]; then
+      echo "# Installing extra pip packages"
+      sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install ${SETUP_EXTRA_PIP}"
+    fi
   fi
 
   # Unlink default config if it exists
