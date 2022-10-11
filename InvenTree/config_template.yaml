@@ -29,6 +29,10 @@ database:
   # --- Database settings ---
   #ENGINE: sampleengine
   #NAME: '/path/to/database'
+  #USER: sampleuser
+  #PASSWORD: samplepassword
+  #HOST: samplehost
+  #PORT: sampleport
 
   # --- Example Configuration - MySQL ---
   #ENGINE: mysql

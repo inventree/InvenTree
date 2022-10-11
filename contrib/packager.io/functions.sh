@@ -55,6 +55,10 @@ function detect_envs () {
     export INVENTREE_SECRET_KEY_FILE=${CONF_DIR}/secret_key.txt
     export INVENTREE_DB_ENGINE=${INVENTREE_DB_ENGINE:-sqlite3}
     export INVENTREE_DB_NAME=${INVENTREE_DB_NAME:-${DATA_DIR}/database.sqlite3}
+    export INVENTREE_DB_USER=${INVENTREE_DB_USER:-sampleuser}
+    export INVENTREE_DB_PASSWORD=${INVENTREE_DB_PASSWORD:-samplepassword}
+    export INVENTREE_DB_HOST=${INVENTREE_DB_HOST:-samplehost}
+    export INVENTREE_DB_PORT=${INVENTREE_DB_PORT:-sampleport}
 
 }
 
@@ -156,12 +160,21 @@ function set_env () {
   sed -i s=#plugin_file:\ \'/path/to/plugins.txt\'=plugin_file:\ \'${INVENTREE_PLUGIN_FILE}\'=g ${INVENTREE_CONFIG_FILE}
   # Secret key file
   sed -i s=#secret_key_file:\ \'/etc/inventree/secret_key.txt\'=secret_key_file:\ \'${INVENTREE_SECRET_KEY_FILE}\'=g ${INVENTREE_CONFIG_FILE}
-  # Database name
-  sed -i s=#NAME:\ \'/path/to/database\'=NAME:\ \'${INVENTREE_DB_NAME}\'=g ${INVENTREE_CONFIG_FILE}
-  # Database engine
-  sed -i s=#ENGINE:\ sampleengine=ENGINE:\ ${INVENTREE_DB_ENGINE}=g ${INVENTREE_CONFIG_FILE}
   # Debug mode
   sed -i s=debug:\ True=debug:\ False=g ${INVENTREE_CONFIG_FILE}
+
+  # Database engine
+  sed -i s=#ENGINE:\ sampleengine=ENGINE:\ ${INVENTREE_DB_ENGINE}=g ${INVENTREE_CONFIG_FILE}
+  # Database name
+  sed -i s=#NAME:\ \'/path/to/database\'=NAME:\ \'${INVENTREE_DB_NAME}\'=g ${INVENTREE_CONFIG_FILE}
+  # Database user
+  sed -i s=#USER:\ sampleuser=USER:\ ${INVENTREE_DB_USER}=g ${INVENTREE_CONFIG_FILE}
+  # Database password
+  sed -i s=#PASSWORD:\ samplepassword=PASSWORD:\ ${INVENTREE_DB_PASSWORD}=g ${INVENTREE_CONFIG_FILE}
+  # Database host
+  sed -i s=#HOST:\ samplehost=HOST:\ ${INVENTREE_DB_HOST}=g ${INVENTREE_CONFIG_FILE}
+  # Database port
+  sed -i s=#PORT:\ sampleport=PORT:\ ${INVENTREE_DB_PORT}=g ${INVENTREE_CONFIG_FILE}
 
   # Fixing the permissions
   chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} ${INVENTREE_CONFIG_FILE}
