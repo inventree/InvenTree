@@ -340,9 +340,14 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         # Try simple metadata lookup
         try:
             meta = metadata(cls.__name__)
-        # Simpel lookup did not work - get data from module
+        # Simple lookup did not work - get data from module
         except PackageNotFoundError:
-            meta = metadata(cls.__module__.split('.')[0])
+
+            try:
+                meta = metadata(cls.__module__.split('.')[0])
+            except PackageNotFoundError:
+                # Not much information we can extract at this point
+                return {}
 
         return {
             'author': meta['Author-email'],
