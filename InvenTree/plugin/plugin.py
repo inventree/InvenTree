@@ -6,7 +6,7 @@ import os
 import pathlib
 import warnings
 from datetime import datetime
-from importlib.metadata import metadata
+from importlib.metadata import PackageNotFoundError, metadata
 
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
@@ -294,7 +294,18 @@ class InvenTreePlugin(MixinBase, MetaBase):
     @classmethod
     def _get_package_metadata(cls):
         """Get package metadata for plugin."""
-        meta = metadata(cls.__name__)
+
+        # Try simple metadata lookup
+        try:
+            meta = metadata(cls.__name__)
+        # Simple lookup did not work - get data from module
+        except PackageNotFoundError:
+
+            try:
+                meta = metadata(cls.__module__.split('.')[0])
+            except PackageNotFoundError:
+                # Not much information we can extract at this point
+                return {}
 
         return {
             'author': meta['Author-email'],
