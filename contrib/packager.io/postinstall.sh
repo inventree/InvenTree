@@ -2,10 +2,15 @@
 #
 # packager.io postinstall script
 #
+
+
 PATH=${APP_HOME}/env/bin:${APP_HOME}/:/sbin:/bin:/usr/sbin:/usr/bin:
 
 # import functions
 . ${APP_HOME}/contrib/packager.io/functions.sh
+
+# Get the envs
+detect_local_env
 
 # default config
 export CONF_DIR=/etc/inventree

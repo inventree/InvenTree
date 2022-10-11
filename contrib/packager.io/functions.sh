@@ -44,6 +44,19 @@ function detect_ip() {
   echo "IP address is ${INVENTREE_IP}"
 }
 
+function detect_local_env() {
+  pid=$$
+  while [ -z "$YOUR_EVAR" -a $pid != 1 ]; do
+      ppid=`ps -oppid -p$pid|tail -1|awk '{print $1}'`
+      env=`strings /proc/$ppid/environ`
+      YOUR_EVAR=`echo "$env"|awk -F= '$1 == "YOUR_EVAR" { print $2; }'`
+      pid=$ppid
+  done
+
+  echo "# Printing local envs"
+  printenv
+}
+
 function detect_envs() {
   # Detect all envs that should be passed to setup commands
 
