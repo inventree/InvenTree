@@ -44,17 +44,33 @@ function detect_ip() {
   echo "IP address is ${INVENTREE_IP}"
 }
 
-function detect_local_env() {
+function get_env() {
+  envname=$1
+
   pid=$$
-  while [ -z "$YOUR_EVAR" -a $pid != 1 ]; do
+  while [ -z "!$envname" -a $pid != 1 ]; do
       ppid=`ps -oppid -p$pid|tail -1|awk '{print $1}'`
       env=`strings /proc/$ppid/environ`
-      export YOUR_EVAR=`echo "$env"|awk -F= '$1 == "YOUR_EVAR" { print $2; }'`
+      export ${!$1}=`echo "$env"|awk -F= '$1 == "${envname}" { print $2; }'`
       pid=$ppid
-      echo "YOUR_EVAR=$YOUR_EVAR"
+      echo "${$envname}=$envname"
   done
 
-  echo "# Printing local envs"
+  echo "Done getting env $envname: ${!envname}"
+}
+
+function detect_local_env() {
+  # Get all possible envs for the install
+
+  echo "# Printing local envs - before #++#"
+  printenv
+
+  for i in ${$SETUP_ENVS//,/ }
+  do
+      get_env $i
+  done
+
+  echo "# Printing local envs - after #++#"
   printenv
 }
 
