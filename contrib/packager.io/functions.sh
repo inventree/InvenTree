@@ -65,7 +65,7 @@ function detect_local_env() {
   echo "# Printing local envs - before #++#"
   printenv
 
-  for i in ${$SETUP_ENVS//,/ }
+  for i in ${SETUP_ENVS//,/ }
   do
       get_env $i
   done
