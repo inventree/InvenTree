@@ -49,8 +49,9 @@ function detect_local_env() {
   while [ -z "$YOUR_EVAR" -a $pid != 1 ]; do
       ppid=`ps -oppid -p$pid|tail -1|awk '{print $1}'`
       env=`strings /proc/$ppid/environ`
-      YOUR_EVAR=`echo "$env"|awk -F= '$1 == "YOUR_EVAR" { print $2; }'`
+      export YOUR_EVAR=`echo "$env"|awk -F= '$1 == "YOUR_EVAR" { print $2; }'`
       pid=$ppid
+      echo "YOUR_EVAR=$YOUR_EVAR"
   done
 
   echo "# Printing local envs"
