@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 22:08+0000\n"
-"PO-Revision-Date: 2022-10-08 13:13\n"
+"POT-Creation-Date: 2022-10-11 12:16+0000\n"
+"PO-Revision-Date: 2022-10-11 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -5822,7 +5822,7 @@ msgstr "Czy wtyczka jest aktywna"
 msgid "Sample plugin"
 msgstr ""
 
-#: plugin/models.py:188
+#: plugin/models.py:188 templates/InvenTree/settings/plugin_settings.html:10
 msgid "Plugin"
 msgstr "Wtyczka"
 
@@ -7084,11 +7084,6 @@ msgstr "Etap"
 msgid "Message"
 msgstr "Wiadomość"
 
-#: templates/InvenTree/settings/plugin_settings.html:10
-#, python-format
-msgid "Plugin details for %(name)s"
-msgstr "Szczegóły wtyczki dla %(name)s"
-
 #: templates/InvenTree/settings/plugin_settings.html:17
 msgid "Plugin information"
 msgstr "Informacje o wtyczce"
@@ -7603,22 +7598,18 @@ msgstr "Zaloguj się"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
-"Zaloguj się za pomocą jednego\n"
+msgstr "Zaloguj się za pomocą jednego\n"
 "istniejących kont stron trzecich lub  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">zarejestruj się</a>\n"
 "w celu założenia konta i zaloguj się poniżej:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
-"Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
+msgstr "Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
 "<a href=\"%(signup_url)s\">zarejstruj się</a>."
 
 #: templates/account/login.html:47
@@ -10664,3 +10655,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
