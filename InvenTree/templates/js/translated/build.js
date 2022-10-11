@@ -1231,7 +1231,7 @@ function loadBuildOutputTable(build_info, options={}) {
                         text += ` <small>({% trans "Batch" %}: ${row.batch})</small>`;
                     }
 
-                    text += stockStatusDisplay(row.status, {classes: 'float-right'})
+                    text += stockStatusDisplay(row.status, {classes: 'float-right'});
 
                     return renderLink(text, url);
                 },
