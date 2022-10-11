@@ -53,7 +53,11 @@ function get_env() {
       env=`strings /proc/$ppid/environ`
       export ${!$1}=`echo "$env"|awk -F= '$1 == "${envname}" { print $2; }'`
       pid=$ppid
-      echo "${$envname}=$envname"
+
+      # Print for debugging
+      if [ -n "${SETUP_DEBUG}" ]; then
+        echo "${$envname}=$envname"
+      fi
   done
 
   echo "Done getting env $envname: ${!envname}"
@@ -62,16 +66,20 @@ function get_env() {
 function detect_local_env() {
   # Get all possible envs for the install
 
-  echo "# Printing local envs - before #++#"
-  printenv
+  if [ -n "${SETUP_DEBUG}" ]; then
+    echo "# Printing local envs - before #++#"
+    printenv
+  fi
 
   for i in ${SETUP_ENVS//,/ }
   do
       get_env $i
   done
 
-  echo "# Printing local envs - after #++#"
-  printenv
+  if [ -n "${SETUP_DEBUG}" ]; then
+    echo "# Printing local envs - after #++#"
+    printenv
+  fi
 }
 
 function detect_envs() {
