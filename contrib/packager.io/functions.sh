@@ -44,6 +44,20 @@ function detect_ip () {
   echo "IP address is ${INVENTREE_IP}"
 }
 
+function detect_envs () {
+  # Detect all envs that should be passed to setup commands
+
+  export INVENTREE_CONFIG_FILE=${CONF_DIR}/config.yaml
+    export INVENTREE_MEDIA_ROOT=${INVENTREE_MEDIA_ROOT:-${DATA_DIR}/media}
+    export INVENTREE_STATIC_ROOT=${DATA_DIR}/static
+    export INVENTREE_PLUGINS_ENABLED=true
+    export INVENTREE_PLUGIN_FILE=${CONF_DIR}/plugins.txt
+    export INVENTREE_SECRET_KEY_FILE=${CONF_DIR}/secret_key.txt
+    export INVENTREE_DB_ENGINE=${INVENTREE_DB_ENGINE:-sqlite3}
+    export INVENTREE_DB_NAME=${INVENTREE_DB_NAME:-${DATA_DIR}/database.sqlite3}
+
+}
+
 function create_initscripts () {
 
   # Make sure python env exsists
