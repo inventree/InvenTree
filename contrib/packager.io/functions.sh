@@ -76,6 +76,12 @@ function detect_envs() {
   else
     echo "# No config file found: ${INVENTREE_CONFIG_FILE}, using envs or defaults"
 
+    if [ -n "${SETUP_DEBUG}" ]; then
+      echo "# Print current envs"
+      printenv | grep INVENTREE_
+      printenv | grep SETUP_
+    fi
+
     export INVENTREE_MEDIA_ROOT=${INVENTREE_MEDIA_ROOT:-${DATA_DIR}/media}
     export INVENTREE_STATIC_ROOT=${DATA_DIR}/static
     export INVENTREE_PLUGINS_ENABLED=true
@@ -102,8 +108,9 @@ function detect_envs() {
   echo "#    INVENTREE_DB_ENGINE=${INVENTREE_DB_ENGINE}"
   echo "#    INVENTREE_DB_NAME=${INVENTREE_DB_NAME}"
   echo "#    INVENTREE_DB_USER=${INVENTREE_DB_USER}"
-  # TODO add a debug flag
-  # echo "#    INVENTREE_DB_PASSWORD=${INVENTREE_DB_PASSWORD}"
+  if [ -n "${SETUP_DEBUG}" ]; then
+    echo "#    INVENTREE_DB_PASSWORD=${INVENTREE_DB_PASSWORD}"
+  fi
   echo "#    INVENTREE_DB_HOST=${INVENTREE_DB_HOST}"
   echo "#    INVENTREE_DB_PORT=${INVENTREE_DB_PORT}"
 }
@@ -119,6 +126,9 @@ function create_initscripts() {
 
     if [ -n "${SETUP_EXTRA_PIP}" ]; then
       echo "# Installing extra pip packages"
+      if [ -n "${SETUP_DEBUG}" ]; then
+        echo "# Extra pip packages: ${SETUP_EXTRA_PIP}"
+      fi
       sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install ${SETUP_EXTRA_PIP}"
     fi
   fi
