@@ -47,9 +47,13 @@ function detect_ip() {
 function detect_envs() {
   # Detect all envs that should be passed to setup commands
 
+  echo "# Setting base environment variables"
+
   export INVENTREE_CONFIG_FILE=${CONF_DIR}/config.yaml
 
   if test -f "${INVENTREE_CONFIG_FILE}"; then
+    echo "# Using existing config file: ${INVENTREE_CONFIG_FILE}"
+
     # Install parser
     pip install jc
 
@@ -65,12 +69,13 @@ function detect_envs() {
 
     export INVENTREE_DB_ENGINE=$conf | jq '.[].database.ENGINE'
     export INVENTREE_DB_NAME=$conf | jq '.[].database.NAME'
-    # Maybe those are set
     export INVENTREE_DB_USER=$conf | jq '.[].database.USER'
     export INVENTREE_DB_PASSWORD=$conf | jq '.[].database.PASSWORD'
     export INVENTREE_DB_HOST=$conf | jq '.[].database.HOST'
     export INVENTREE_DB_PORT=$conf | jq '.[].database.PORT'
   else
+    echo "# No config file found: ${INVENTREE_CONFIG_FILE}, using envs or defaults"
+
     export INVENTREE_MEDIA_ROOT=${INVENTREE_MEDIA_ROOT:-${DATA_DIR}/media}
     export INVENTREE_STATIC_ROOT=${DATA_DIR}/static
     export INVENTREE_PLUGINS_ENABLED=true
@@ -86,6 +91,21 @@ function detect_envs() {
 
     export SETUP_CONF_LOADED=true
   fi
+
+  # For debugging pass out the envs
+  echo "# Collected environment variables:"
+  echo "#    INVENTREE_MEDIA_ROOT=${INVENTREE_MEDIA_ROOT}"
+  echo "#    INVENTREE_STATIC_ROOT=${INVENTREE_STATIC_ROOT}"
+  echo "#    INVENTREE_PLUGINS_ENABLED=${INVENTREE_PLUGINS_ENABLED}"
+  echo "#    INVENTREE_PLUGIN_FILE=${INVENTREE_PLUGIN_FILE}"
+  echo "#    INVENTREE_SECRET_KEY_FILE=${INVENTREE_SECRET_KEY_FILE}"
+  echo "#    INVENTREE_DB_ENGINE=${INVENTREE_DB_ENGINE}"
+  echo "#    INVENTREE_DB_NAME=${INVENTREE_DB_NAME}"
+  echo "#    INVENTREE_DB_USER=${INVENTREE_DB_USER}"
+  # TODO add a debug flag
+  # echo "#    INVENTREE_DB_PASSWORD=${INVENTREE_DB_PASSWORD}"
+  echo "#    INVENTREE_DB_HOST=${INVENTREE_DB_HOST}"
+  echo "#    INVENTREE_DB_PORT=${INVENTREE_DB_PORT}"
 }
 
 function create_initscripts() {
