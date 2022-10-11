@@ -7,7 +7,7 @@
 
 
 {% block heading %}
-{% blocktrans with name=plugin.human_name %}Plugin details for {{name}}{% endblocktrans %}
+{% trans "Plugin" %}: <em>{{ plugin.human_name }}</em>
 {% endblock %}
 
 {% block content %}
