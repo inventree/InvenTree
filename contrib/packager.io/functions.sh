@@ -4,20 +4,20 @@
 #
 
 function detect_docker() {
-  if [ -n "$(grep docker < /proc/1/cgroup)" ]; then
+  if [ -n "$(grep docker </proc/1/cgroup)" ]; then
     DOCKER="yes"
   else
     DOCKER="no"
   fi
 }
 
-function detect_initcmd () {
-  if [ -n "$(which systemctl 2> /dev/null)" ]; then
+function detect_initcmd() {
+  if [ -n "$(which systemctl 2>/dev/null)" ]; then
     INIT_CMD="systemctl"
-  elif [ -n "$(which initctl 2> /dev/null)" ]; then
+  elif [ -n "$(which initctl 2>/dev/null)" ]; then
     INIT_CMD="initctl"
   else
-    function sysvinit () {
+    function sysvinit() {
       service $2 $1
     }
     INIT_CMD="sysvinit"
@@ -28,7 +28,7 @@ function detect_initcmd () {
   fi
 }
 
-function detect_ip () {
+function detect_ip() {
   # Get the IP address of the server
 
   if [ "${SETUP_NO_CALLS}" == "true" ]; then
@@ -44,7 +44,7 @@ function detect_ip () {
   echo "IP address is ${INVENTREE_IP}"
 }
 
-function detect_envs () {
+function detect_envs() {
   # Detect all envs that should be passed to setup commands
 
   export INVENTREE_CONFIG_FILE=${CONF_DIR}/config.yaml
@@ -88,7 +88,7 @@ function detect_envs () {
   fi
 }
 
-function create_initscripts () {
+function create_initscripts() {
 
   # Make sure python env exsists
   if test -f "${APP_HOME}/env"; then
@@ -124,7 +124,7 @@ function create_initscripts () {
   ${INIT_CMD} enable inventree
 }
 
-function create_admin () {
+function create_admin() {
   # Create data for admin user
 
   if test -f "${SETUP_ADMIN_PASSWORD_FILE}"; then
@@ -138,38 +138,38 @@ function create_admin () {
 
     # Create password if not set
     if [ -z "${INVENTREE_ADMIN_PASSWORD}" ]; then
-      openssl rand -base64 32 > ${SETUP_ADMIN_PASSWORD_FILE}
+      openssl rand -base64 32 >${SETUP_ADMIN_PASSWORD_FILE}
       export INVENTREE_ADMIN_PASSWORD=$(cat ${SETUP_ADMIN_PASSWORD_FILE})
     fi
   fi
 }
 
-function start_inventree () {
+function start_inventree() {
   echo "# Starting InvenTree"
   ${INIT_CMD} start inventree
 }
 
-function stop_inventree () {
+function stop_inventree() {
   echo "# Stopping InvenTree"
   ${INIT_CMD} stop inventree
 }
 
-function update_or_install () {
+function update_or_install() {
 
-    # Set permissions so app user can write there
-    chown ${APP_USER}:${APP_GROUP} ${APP_HOME} -R
+  # Set permissions so app user can write there
+  chown ${APP_USER}:${APP_GROUP} ${APP_HOME} -R
 
-    # Run update as app user
-    echo "# Updating InvenTree"
-    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke update"
+  # Run update as app user
+  echo "# Updating InvenTree"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke update"
 
-    # Make sure permissions are correct again
-    echo "# Set permissions for data dir and media: ${DATA_DIR}"
-    chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} -R
-    chown ${APP_USER}:${APP_GROUP} ${CONF_DIR} -R
+  # Make sure permissions are correct again
+  echo "# Set permissions for data dir and media: ${DATA_DIR}"
+  chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} -R
+  chown ${APP_USER}:${APP_GROUP} ${CONF_DIR} -R
 }
 
-function set_env () {
+function set_env() {
   echo "# Setting up InvenTree config values"
 
   inventree config:set INVENTREE_CONFIG_FILE=${INVENTREE_CONFIG_FILE}
@@ -206,8 +206,7 @@ function set_env () {
   chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} ${INVENTREE_CONFIG_FILE}
 }
 
-
-function final_message () {
+function final_message() {
   echo -e "####################################################################################"
   echo -e "This InvenTree install uses nginx, the settings for the webserver can be found in"
   echo -e "${SETUP_NGINX_FILE}"
