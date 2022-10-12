@@ -214,6 +214,51 @@ class ScheduleMixin:
             logger.warning("unregister_tasks failed, database not ready")
 
 
+class ValidationMixin:
+    """Mixin class that allows custom validation for various parts of InvenTree
+
+    Custom generation and validation functionality can be provided for:
+
+    - Part names
+    - Part IPN (internal part number) values
+    - Serial numbers
+    - Batch codes
+
+    Notes:
+    - Multiple ValidationMixin plugins can be used simultaneously
+    - The stub methods provided here generally return None (null value).
+    - The "first" plugin to return a non-null value for a particular method "wins"
+    - In the case of "validation" functions, all loaded plugins are checked until an exception is thrown
+
+    Implementing plugins may override any of the following methods which are of interest.
+    """
+
+    class MixinMeta:
+        """Metaclass for this mixin"""
+        MIXIN_NAME = "Validation"
+
+    def __init__(self):
+        """Register the mixin"""
+        super().__init__()
+        self.add_mixin('validation', True, __class__)
+
+    def validate_part_name(self, name: str, part=None, category=None):
+        """Perform validation on a proposed 'part' name.
+
+        Arguments:
+            name: The proposed part name
+            part: (optional) the Part instance for the proposed name. May be omitted by the caller
+            category: (optional) the PartCategory instance for the proposed name. May be omitted by the caller
+
+        Returns:
+            None
+
+        Raises:
+            django.core.exceptions.ValidationError if the proposed name is objectionable
+        """
+        ...
+
+
 class UrlsMixin:
     """Mixin that enables custom URLs for the plugin."""
 
