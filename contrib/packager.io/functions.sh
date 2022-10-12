@@ -53,14 +53,11 @@ function get_env() {
       env=`strings /proc/$ppid/environ`
       export $envname=`echo "$env"|awk -F= '$1 == "'$envname'" { print $2; }'`
       pid=$ppid
-
-      # Print for debugging
-      if [ -n "${SETUP_DEBUG}" ]; then
-        echo "${$envname}=$envname"
-      fi
   done
 
-  echo "Done getting env $envname: ${!envname}"
+  if [ -n "${SETUP_DEBUG}" ]; then
+    echo "Done getting env $envname: ${!envname}"
+  fi
 }
 
 function detect_local_env() {
