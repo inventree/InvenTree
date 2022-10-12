@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 12:47+0000\n"
-"PO-Revision-Date: 2022-10-08 13:13\n"
+"POT-Creation-Date: 2022-10-11 12:16+0000\n"
+"PO-Revision-Date: 2022-10-11 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -47,7 +47,7 @@ msgstr "Masukkan tanggal"
 #: templates/js/translated/order.js:4402 templates/js/translated/stock.js:1374
 #: templates/js/translated/stock.js:1982
 msgid "Notes"
-msgstr ""
+msgstr "Catatan"
 
 #: InvenTree/format.py:142
 #, python-brace-format
@@ -76,7 +76,7 @@ msgstr "Konfirmasi sandi baru"
 
 #: InvenTree/forms.py:148
 msgid "Old password"
-msgstr ""
+msgstr "Kata sandi lama"
 
 #: InvenTree/forms.py:177
 msgid "Email (again)"
@@ -88,7 +88,7 @@ msgstr "Konfirmasi alamat email"
 
 #: InvenTree/forms.py:202
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Masukkan email yang sama."
 
 #: InvenTree/helpers.py:158
 msgid "Connection error"
@@ -108,7 +108,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:175
 msgid "Image size is too large"
-msgstr ""
+msgstr "Ukuran gambar terlalu besar"
 
 #: InvenTree/helpers.py:187
 msgid "Image download exceeded maximum size"
@@ -120,44 +120,44 @@ msgstr ""
 
 #: InvenTree/helpers.py:200
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "URL yang diberikan bukan file gambar yang valid"
 
 #: InvenTree/helpers.py:583
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Nomor seri duplikat: {sn}"
 
 #: InvenTree/helpers.py:590 order/models.py:325 order/models.py:477
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Jumlah yang diberikan tidak valid"
 
 #: InvenTree/helpers.py:593
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Nomor seri kosong"
 
 #: InvenTree/helpers.py:625
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "Jangkauan grup tidak valid: {g}"
 
 #: InvenTree/helpers.py:628
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Grup tidak valid: {g}"
 
 #: InvenTree/helpers.py:656
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "Urutan grup tidak valid: {g}"
 
 #: InvenTree/helpers.py:664
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Grup {group} invalid/tidak ada"
 
 #: InvenTree/helpers.py:670
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Tidak ada nomor seri ditemukan"
 
 #: InvenTree/helpers.py:674
 #, python-brace-format
@@ -194,21 +194,21 @@ msgstr ""
 
 #: InvenTree/models.py:384
 msgid "Missing file"
-msgstr ""
+msgstr "File tidak ditemukan"
 
 #: InvenTree/models.py:385
 msgid "Missing external link"
-msgstr ""
+msgstr "Tautan eksternal tidak ditemukan"
 
 #: InvenTree/models.py:405 stock/models.py:2048
 #: templates/js/translated/attachment.js:103
 #: templates/js/translated/attachment.js:241
 msgid "Attachment"
-msgstr ""
+msgstr "Lampiran"
 
 #: InvenTree/models.py:406
 msgid "Select file to attach"
-msgstr ""
+msgstr "Pilih file untuk dilampirkan"
 
 #: InvenTree/models.py:412 company/models.py:124 company/models.py:276
 #: company/models.py:511 order/models.py:84 order/models.py:1259
@@ -218,21 +218,21 @@ msgstr ""
 #: templates/js/translated/company.js:1011
 #: templates/js/translated/order.js:3042 templates/js/translated/part.js:1567
 msgid "Link"
-msgstr ""
+msgstr "Tautan"
 
 #: InvenTree/models.py:413 build/models.py:290 part/models.py:803
 #: stock/models.py:604
 msgid "Link to external URL"
-msgstr ""
+msgstr "Tautan menuju URL eksternal"
 
 #: InvenTree/models.py:416 templates/js/translated/attachment.js:104
 #: templates/js/translated/attachment.js:285
 msgid "Comment"
-msgstr ""
+msgstr "Komentar"
 
 #: InvenTree/models.py:416
 msgid "File comment"
-msgstr ""
+msgstr "Komentar file"
 
 #: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1679
 #: common/models.py:1680 common/models.py:1903 common/models.py:1904
@@ -241,40 +241,40 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2649
 msgid "User"
-msgstr ""
+msgstr "Pengguna"
 
 #: InvenTree/models.py:426
 msgid "upload date"
-msgstr ""
+msgstr "tanggal diunggah"
 
 #: InvenTree/models.py:448
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Nama file tidak boleh kosong"
 
 #: InvenTree/models.py:457
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Direktori lampiran tidak valid"
 
 #: InvenTree/models.py:467
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Nama file mengandung karakter yang tidak diperkenankan '{c}'"
 
 #: InvenTree/models.py:470
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Nama file tidak memiliki ekstensi"
 
 #: InvenTree/models.py:477
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Lampiran dengan nama file ini sudah ada"
 
 #: InvenTree/models.py:484
 msgid "Error renaming file"
-msgstr ""
+msgstr "Kesalahan merubah nama file"
 
 #: InvenTree/models.py:520
 msgid "Invalid choice"
-msgstr ""
+msgstr "Pilihan tidak valid"
 
 #: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:1889
 #: company/models.py:358 label/models.py:101 part/models.py:746
@@ -290,7 +290,7 @@ msgstr ""
 #: templates/js/translated/part.js:686 templates/js/translated/part.js:838
 #: templates/js/translated/part.js:1960 templates/js/translated/stock.js:2394
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 #: InvenTree/models.py:564 build/models.py:163
 #: build/templates/build/detail.html:24 company/models.py:282
@@ -315,215 +315,215 @@ msgstr ""
 #: templates/js/translated/part.js:2071 templates/js/translated/stock.js:1748
 #: templates/js/translated/stock.js:2426 templates/js/translated/stock.js:2486
 msgid "Description"
-msgstr ""
+msgstr "Keterangan"
 
 #: InvenTree/models.py:565
 msgid "Description (optional)"
-msgstr ""
+msgstr "Keterangan (opsional)"
 
 #: InvenTree/models.py:573
 msgid "parent"
-msgstr ""
+msgstr "induk"
 
 #: InvenTree/models.py:580 InvenTree/models.py:581
 #: templates/js/translated/part.js:2005 templates/js/translated/stock.js:2435
 msgid "Path"
-msgstr ""
+msgstr "Direktori"
 
 #: InvenTree/models.py:682
 msgid "Barcode Data"
-msgstr ""
+msgstr "Data Barcode"
 
 #: InvenTree/models.py:683
 msgid "Third party barcode data"
-msgstr ""
+msgstr "Data barcode pihak ketiga"
 
 #: InvenTree/models.py:688 order/serializers.py:486
 msgid "Barcode Hash"
-msgstr ""
+msgstr "Barcode Hash"
 
 #: InvenTree/models.py:689
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Hash unik data barcode"
 
 #: InvenTree/models.py:734
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Sudah ada barcode yang sama"
 
 #: InvenTree/models.py:787
 msgid "Server Error"
-msgstr ""
+msgstr "Terjadi Kesalahan Server"
 
 #: InvenTree/models.py:788
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Sebuah kesalahan telah dicatat oleh server."
 
 #: InvenTree/serializers.py:55 part/models.py:2766
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Harus berupa angka yang valid"
 
 #: InvenTree/serializers.py:262
 msgid "Filename"
-msgstr ""
+msgstr "Nama File"
 
 #: InvenTree/serializers.py:297
 msgid "Invalid value"
-msgstr ""
+msgstr "Nilai tidak valid"
 
 #: InvenTree/serializers.py:319
 msgid "Data File"
-msgstr ""
+msgstr "File data"
 
 #: InvenTree/serializers.py:320
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Pilih file untuk diunggah"
 
 #: InvenTree/serializers.py:341
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Jenis file tidak didukung"
 
 #: InvenTree/serializers.py:347
 msgid "File is too large"
-msgstr ""
+msgstr "Ukuran file terlalu besar"
 
 #: InvenTree/serializers.py:368
 msgid "No columns found in file"
-msgstr ""
+msgstr "Tidak ditemukan kolom dalam file"
 
 #: InvenTree/serializers.py:371
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Tidak ditemukan barisan data dalam file"
 
 #: InvenTree/serializers.py:494
 msgid "No data rows provided"
-msgstr ""
+msgstr "Tidak ada barisan data tersedia"
 
 #: InvenTree/serializers.py:497
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Tidak ada kolom data tersedia"
 
 #: InvenTree/serializers.py:574
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Kolom yang diperlukan kurang: '{name}'"
 
 #: InvenTree/serializers.py:583
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Kolom duplikat: '{col}'"
 
 #: InvenTree/serializers.py:602
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: InvenTree/serializers.py:603
 msgid "URL of remote image file"
-msgstr ""
+msgstr "URL file gambar external"
 
 #: InvenTree/serializers.py:617
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "Unduhan gambar dari URL external tidak aktif"
 
 #: InvenTree/settings.py:613
 msgid "Czech"
-msgstr ""
+msgstr "Ceko"
 
 #: InvenTree/settings.py:614
 msgid "Danish"
-msgstr ""
+msgstr "Denmark"
 
 #: InvenTree/settings.py:615
 msgid "German"
-msgstr ""
+msgstr "Jerman"
 
 #: InvenTree/settings.py:616
 msgid "Greek"
-msgstr ""
+msgstr "Yunani"
 
 #: InvenTree/settings.py:617
 msgid "English"
-msgstr ""
+msgstr "Inggris"
 
 #: InvenTree/settings.py:618
 msgid "Spanish"
-msgstr ""
+msgstr "Spanyol"
 
 #: InvenTree/settings.py:619
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spanyol (Meksiko)"
 
 #: InvenTree/settings.py:620
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Persia"
 
 #: InvenTree/settings.py:621
 msgid "French"
-msgstr ""
+msgstr "Perancis"
 
 #: InvenTree/settings.py:622
 msgid "Hebrew"
-msgstr ""
+msgstr "Ibrani"
 
 #: InvenTree/settings.py:623
 msgid "Hungarian"
-msgstr ""
+msgstr "Hungaria"
 
 #: InvenTree/settings.py:624
 msgid "Italian"
-msgstr ""
+msgstr "Itali"
 
 #: InvenTree/settings.py:625
 msgid "Japanese"
-msgstr ""
+msgstr "Jepang"
 
 #: InvenTree/settings.py:626
 msgid "Korean"
-msgstr ""
+msgstr "Korea"
 
 #: InvenTree/settings.py:627
 msgid "Dutch"
-msgstr ""
+msgstr "Belanda"
 
 #: InvenTree/settings.py:628
 msgid "Norwegian"
-msgstr ""
+msgstr "Norwegia"
 
 #: InvenTree/settings.py:629
 msgid "Polish"
-msgstr ""
+msgstr "Polandia"
 
 #: InvenTree/settings.py:630
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugis"
 
 #: InvenTree/settings.py:631
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugis (Brasil)"
 
 #: InvenTree/settings.py:632
 msgid "Russian"
-msgstr ""
+msgstr "Rusia"
 
 #: InvenTree/settings.py:633
 msgid "Swedish"
-msgstr ""
+msgstr "Swedia"
 
 #: InvenTree/settings.py:634
 msgid "Thai"
-msgstr ""
+msgstr "Thai"
 
 #: InvenTree/settings.py:635
 msgid "Turkish"
-msgstr ""
+msgstr "Turki"
 
 #: InvenTree/settings.py:636
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnam"
 
 #: InvenTree/settings.py:637
 msgid "Chinese"
-msgstr ""
+msgstr "Cina"
 
 #: InvenTree/status.py:99
 msgid "Background worker check failed"
@@ -544,53 +544,53 @@ msgstr ""
 
 #: InvenTree/status_codes.py:100
 msgid "Placed"
-msgstr ""
+msgstr "Diletakkan"
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:309
 #: order/templates/order/order_base.html:143
 #: order/templates/order/sales_order_base.html:133
 msgid "Complete"
-msgstr ""
+msgstr "Selesai"
 
 #: InvenTree/status_codes.py:102 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:308
 msgid "Cancelled"
-msgstr ""
+msgstr "Dibatalkan"
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:143
 #: InvenTree/status_codes.py:183
 msgid "Lost"
-msgstr ""
+msgstr "Hilang"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:186
 msgid "Returned"
-msgstr ""
+msgstr "Dikembalikan"
 
 #: InvenTree/status_codes.py:141 order/models.py:1142
 #: templates/js/translated/order.js:3630 templates/js/translated/order.js:3979
 msgid "Shipped"
-msgstr ""
+msgstr "Dikirim"
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
-msgstr ""
+msgstr "Butuh perhatian"
 
 #: InvenTree/status_codes.py:181
 msgid "Damaged"
-msgstr ""
+msgstr "Rusak"
 
 #: InvenTree/status_codes.py:182
 msgid "Destroyed"
-msgstr ""
+msgstr "Hancur"
 
 #: InvenTree/status_codes.py:184
 msgid "Rejected"
-msgstr ""
+msgstr "Ditolak"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
@@ -602,153 +602,153 @@ msgstr ""
 
 #: InvenTree/status_codes.py:261
 msgid "Stock item created"
-msgstr ""
+msgstr "Item stok dibuat"
 
 #: InvenTree/status_codes.py:263
 msgid "Edited stock item"
-msgstr ""
+msgstr "Item stok diubah"
 
 #: InvenTree/status_codes.py:264
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Nomor seri yang ditetapkan"
 
 #: InvenTree/status_codes.py:266
 msgid "Stock counted"
-msgstr ""
+msgstr "Stok terhitung"
 
 #: InvenTree/status_codes.py:267
 msgid "Stock manually added"
-msgstr ""
+msgstr "Stok yang ditambahkan manual"
 
 #: InvenTree/status_codes.py:268
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Stok yang dikurangi manual"
 
 #: InvenTree/status_codes.py:270
 msgid "Location changed"
-msgstr ""
+msgstr "Lokasi berubah"
 
 #: InvenTree/status_codes.py:272
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Dirakit ke"
 
 #: InvenTree/status_codes.py:273
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Diambil dari"
 
 #: InvenTree/status_codes.py:275
 msgid "Installed component item"
-msgstr ""
+msgstr "Komponen terpasang"
 
 #: InvenTree/status_codes.py:276
 msgid "Removed component item"
-msgstr ""
+msgstr "Komponen terlepas"
 
 #: InvenTree/status_codes.py:278
 msgid "Split from parent item"
-msgstr ""
+msgstr "Dipisah dari item induk"
 
 #: InvenTree/status_codes.py:279
 msgid "Split child item"
-msgstr ""
+msgstr "Pisah item dari barang induk"
 
 #: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2086
 msgid "Merged stock items"
-msgstr ""
+msgstr "Stok item digabungkan"
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
-msgstr ""
+msgstr "Dikonversi ke variasi"
 
 #: InvenTree/status_codes.py:285 templates/js/translated/table_filters.js:229
 msgid "Sent to customer"
-msgstr ""
+msgstr "Terkirim ke pelanggan"
 
 #: InvenTree/status_codes.py:286
 msgid "Returned from customer"
-msgstr ""
+msgstr "Dikembalikan pelanggan"
 
 #: InvenTree/status_codes.py:288
 msgid "Build order output created"
-msgstr ""
+msgstr "Output order produksi dibuat"
 
 #: InvenTree/status_codes.py:289
 msgid "Build order output completed"
-msgstr ""
+msgstr "Order output produksi selesai"
 
 #: InvenTree/status_codes.py:290
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Terpakai oleh order produksi"
 
 #: InvenTree/status_codes.py:292
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Diterima dari order pembelian"
 
 #: InvenTree/status_codes.py:307
 msgid "Production"
-msgstr ""
+msgstr "Produksi"
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Bukan kode mata uang yang valid"
 
 #: InvenTree/validators.py:45
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Terdapat karater yang tidak sah dalam nama bagian"
 
 #: InvenTree/validators.py:57
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "IPN harus sesuai dengan pola regex {pat}"
 
 #: InvenTree/validators.py:68 InvenTree/validators.py:79
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "Referensi harus sesuai dengan pola {pattern}"
 
 #: InvenTree/validators.py:102 InvenTree/validators.py:118
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Nilai kelebihan tidak boleh negatif"
 
 #: InvenTree/validators.py:120
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Kelebihan tidak boleh melebihi 100%"
 
 #: InvenTree/validators.py:127
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Nilai kelebihan tidak valid"
 
 #: InvenTree/views.py:520 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
-msgstr ""
+msgstr "Ubah Informasi User"
 
 #: InvenTree/views.py:532 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "Atur Kata Sandi"
 
 #: InvenTree/views.py:554
 msgid "Password fields must match"
-msgstr ""
+msgstr "Bidang kata sandi tidak cocok"
 
 #: InvenTree/views.py:563
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Kata sandi yang salah"
 
 #: InvenTree/views.py:773 templates/navbar.html:152
 msgid "System Information"
-msgstr ""
+msgstr "Informasi Sistem"
 
 #: InvenTree/views.py:780 templates/navbar.html:163
 msgid "About InvenTree"
-msgstr ""
+msgstr "Tentang InvenTree"
 
 #: build/api.py:219
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "Pesanan harus dibatalkan sebelum dapat dihapus"
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Pilihan produksi induk tidak valid"
 
 #: build/models.py:110 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -757,7 +757,7 @@ msgstr ""
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:780
 msgid "Build Order"
-msgstr ""
+msgstr "Order Produksi"
 
 #: build/models.py:111 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -767,11 +767,11 @@ msgstr ""
 #: templates/InvenTree/search.html:141
 #: templates/InvenTree/settings/sidebar.html:47 users/models.py:41
 msgid "Build Orders"
-msgstr ""
+msgstr "Order Produksi"
 
 #: build/models.py:154
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Referensi Order Produksi"
 
 #: build/models.py:155 order/models.py:240 order/models.py:632
 #: order/models.py:918 part/models.py:2676
@@ -783,20 +783,20 @@ msgstr ""
 #: templates/js/translated/order.js:2484 templates/js/translated/order.js:3823
 #: templates/js/translated/order.js:4331
 msgid "Reference"
-msgstr ""
+msgstr "Referensi"
 
 #: build/models.py:166
 msgid "Brief description of the build"
-msgstr ""
+msgstr "Deskripsi singkat produksi"
 
 #: build/models.py:174 build/templates/build/build_base.html:172
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr ""
+msgstr "Produksi Induk"
 
 #: build/models.py:175
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "Produksi induk dari produksi ini"
 
 #: build/models.py:180 build/templates/build/build_base.html:80
 #: build/templates/build/detail.html:29 company/models.py:679
@@ -833,99 +833,99 @@ msgstr ""
 #: templates/js/translated/stock.js:1700 templates/js/translated/stock.js:2512
 #: templates/js/translated/stock.js:2707 templates/js/translated/stock.js:2841
 msgid "Part"
-msgstr ""
+msgstr "Bagian"
 
 #: build/models.py:188
 msgid "Select part to build"
-msgstr ""
+msgstr "Pilih bagian untuk diproduksi"
 
 #: build/models.py:193
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Referensi Order Penjualan"
 
 #: build/models.py:197
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Order penjualan yang teralokasikan ke pesanan ini"
 
 #: build/models.py:202 build/serializers.py:819
 #: templates/js/translated/build.js:2144 templates/js/translated/order.js:3173
 msgid "Source Location"
-msgstr ""
+msgstr "Lokasi Sumber"
 
 #: build/models.py:206
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Pilih dari lokasi mana stok akan diambil untuk produksi ini (kosongkan untuk mengambil stok dari mana pun)"
 
 #: build/models.py:211
 msgid "Destination Location"
-msgstr ""
+msgstr "Lokasi Tujuan"
 
 #: build/models.py:215
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Pilih lokasi di mana item selesai akan disimpan"
 
 #: build/models.py:219
 msgid "Build Quantity"
-msgstr ""
+msgstr "Jumlah Produksi"
 
 #: build/models.py:222
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Jumlah item stok yang akan dibuat"
 
 #: build/models.py:226
 msgid "Completed items"
-msgstr ""
+msgstr "Item selesai"
 
 #: build/models.py:228
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Jumlah stok item yang telah diselesaikan"
 
 #: build/models.py:232
 msgid "Build Status"
-msgstr ""
+msgstr "Status pembuatan"
 
 #: build/models.py:236
 msgid "Build status code"
-msgstr ""
+msgstr "Kode status pembuatan"
 
 #: build/models.py:245 build/serializers.py:225 order/serializers.py:464
 #: stock/models.py:608 templates/js/translated/order.js:1496
 msgid "Batch Code"
-msgstr ""
+msgstr "Kode Kelompok"
 
 #: build/models.py:249 build/serializers.py:226
 msgid "Batch code for this build output"
-msgstr ""
+msgstr "Kode kelompok untuk hasil produksi ini"
 
 #: build/models.py:252 order/models.py:86 part/models.py:938
 #: part/templates/part/part_base.html:318 templates/js/translated/order.js:2844
 msgid "Creation Date"
-msgstr ""
+msgstr "Tanggal Pembuatan"
 
 #: build/models.py:256 order/models.py:662
 msgid "Target completion date"
-msgstr ""
+msgstr "Target tanggal selesai"
 
 #: build/models.py:257
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Target tanggal selesai produksi. Produksi akan menjadi terlambat setelah tanggal ini."
 
 #: build/models.py:260 order/models.py:291
 #: templates/js/translated/build.js:2624
 msgid "Completion Date"
-msgstr ""
+msgstr "Tanggal selesai"
 
 #: build/models.py:266
 msgid "completed by"
-msgstr ""
+msgstr "diselesaikan oleh"
 
 #: build/models.py:274 templates/js/translated/build.js:2592
 msgid "Issued by"
-msgstr ""
+msgstr "Diserahkan oleh"
 
 #: build/models.py:275
 msgid "User who issued this build order"
-msgstr ""
+msgstr "Pengguna yang menyerahkan order ini"
 
 #: build/models.py:283 build/templates/build/build_base.html:193
 #: build/templates/build/detail.html:115 order/models.py:100
@@ -934,11 +934,11 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:158
 #: templates/js/translated/build.js:2604 templates/js/translated/order.js:2022
 msgid "Responsible"
-msgstr ""
+msgstr "Penanggung Jawab"
 
 #: build/models.py:284
 msgid "User responsible for this build order"
-msgstr ""
+msgstr "Pengguna yang bertanggung jawab atas order ini"
 
 #: build/models.py:289 build/templates/build/detail.html:101
 #: company/templates/company/manufacturer_part.html:107
@@ -946,11 +946,11 @@ msgstr ""
 #: part/templates/part/part_base.html:359 stock/models.py:602
 #: stock/templates/stock/item_base.html:203
 msgid "External Link"
-msgstr ""
+msgstr "Tautan eksternal"
 
 #: build/models.py:294
 msgid "Extra build notes"
-msgstr ""
+msgstr "Catatan tambahan produksi"
 
 #: build/models.py:532
 #, python-brace-format
@@ -963,19 +963,19 @@ msgstr ""
 
 #: build/models.py:717
 msgid "No build output specified"
-msgstr ""
+msgstr "Tidak ada hasil produksi yang ditentukan"
 
 #: build/models.py:720
 msgid "Build output is already completed"
-msgstr ""
+msgstr "Hasil produksi sudah selesai"
 
 #: build/models.py:723
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "Hasil produksi tidak sesuai dengan order produksi"
 
 #: build/models.py:1172
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "Item produksi harus menentukan hasil produksi karena bagian utama telah ditandai sebagai dapat dilacak"
 
 #: build/models.py:1181
 #, python-brace-format
@@ -984,25 +984,25 @@ msgstr ""
 
 #: build/models.py:1191 order/models.py:1393
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "Item stok teralokasikan terlalu banyak"
 
 #: build/models.py:1197 order/models.py:1396
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Jumlah yang dialokasikan harus lebih dari nol"
 
 #: build/models.py:1203
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "Jumlah harus 1 untuk stok dengan nomor seri"
 
 #: build/models.py:1260
 msgid "Selected stock item not found in BOM"
-msgstr ""
+msgstr "Item stok yang dipilih tidak ditemukan dalam daftar barang order"
 
 #: build/models.py:1329 stock/templates/stock/item_base.html:175
 #: templates/InvenTree/search.html:139 templates/js/translated/build.js:2526
 #: templates/navbar.html:38
 msgid "Build"
-msgstr ""
+msgstr "Produksi"
 
 #: build/models.py:1330
 msgid "Build to allocate parts"
@@ -1021,11 +1021,11 @@ msgstr ""
 #: templates/js/translated/stock.js:587 templates/js/translated/stock.js:752
 #: templates/js/translated/stock.js:2585
 msgid "Stock Item"
-msgstr ""
+msgstr "Stok Item"
 
 #: build/models.py:1347
 msgid "Source stock item"
-msgstr ""
+msgstr "Sumber stok item"
 
 #: build/models.py:1359 build/serializers.py:193
 #: build/templates/build/build_base.html:85
@@ -1062,85 +1062,85 @@ msgstr ""
 #: templates/js/translated/stock.js:612 templates/js/translated/stock.js:782
 #: templates/js/translated/stock.js:2634 templates/js/translated/stock.js:2719
 msgid "Quantity"
-msgstr ""
+msgstr "Jumlah"
 
 #: build/models.py:1360
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Jumlah stok yang dialokasikan ke produksi"
 
 #: build/models.py:1368
 msgid "Install into"
-msgstr ""
+msgstr "Pasang ke"
 
 #: build/models.py:1369
 msgid "Destination stock item"
-msgstr ""
+msgstr "Tujuan stok item"
 
 #: build/serializers.py:138 build/serializers.py:689
 #: templates/js/translated/build.js:1215
 msgid "Build Output"
-msgstr ""
+msgstr "Hasil Produksi"
 
 #: build/serializers.py:150
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Hasil produksi tidak sesuai dengan produksi induk"
 
 #: build/serializers.py:154
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "Hasil bagian tidak sesuai dengan bagian dalam order produksi"
 
 #: build/serializers.py:158
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "Hasil produksi ini sudah diselesaikan"
 
 #: build/serializers.py:169
 msgid "This build output is not fully allocated"
-msgstr ""
+msgstr "Hasil produksi tidak dialokasikan sepenuhnya"
 
 #: build/serializers.py:194
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Masukkan jumlah hasil pesanan"
 
 #: build/serializers.py:208 build/serializers.py:680 order/models.py:323
 #: order/serializers.py:304 order/serializers.py:459 part/serializers.py:558
 #: part/serializers.py:991 stock/models.py:462 stock/models.py:1197
 #: stock/serializers.py:300
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "Jumlah harus lebih besar daripada nol"
 
 #: build/serializers.py:215
 msgid "Integer quantity required for trackable parts"
-msgstr ""
+msgstr "Jumlah bagian yang dapat dilacak harus berupa angka bulat"
 
 #: build/serializers.py:218
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr ""
+msgstr "Jumlah harus angka bulat karena terdapat bagian yang dapat dilacak dalam daftar barang"
 
 #: build/serializers.py:232 order/serializers.py:472 order/serializers.py:1213
 #: stock/serializers.py:309 templates/js/translated/order.js:1507
 #: templates/js/translated/stock.js:271 templates/js/translated/stock.js:459
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Nomor Seri"
 
 #: build/serializers.py:233
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Masukkan nomor seri untuk hasil pesanan"
 
 #: build/serializers.py:246
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "Alokasikan nomor seri secara otomatis"
 
 #: build/serializers.py:247
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr ""
+msgstr "Alokasikan item yang diperlukan dengan nomor seri yang sesuai secara otomatis"
 
 #: build/serializers.py:278 stock/api.py:577
 msgid "The following serial numbers already exist"
-msgstr ""
+msgstr "Nomor seri berikut sudah ada"
 
 #: build/serializers.py:327 build/serializers.py:396
 msgid "A list of build outputs must be provided"
-msgstr ""
+msgstr "Daftar hasil pesanan harus disediakan"
 
 #: build/serializers.py:366 order/serializers.py:445 order/serializers.py:552
 #: stock/serializers.py:320 stock/serializers.py:451 stock/serializers.py:532
@@ -1155,11 +1155,11 @@ msgstr ""
 #: templates/js/translated/stock.js:753 templates/js/translated/stock.js:960
 #: templates/js/translated/stock.js:1856 templates/js/translated/stock.js:2526
 msgid "Location"
-msgstr ""
+msgstr "Lokasi"
 
 #: build/serializers.py:367
 msgid "Location for completed build outputs"
-msgstr ""
+msgstr "Lokasi hasil pesanan yang selesai"
 
 #: build/serializers.py:373 build/templates/build/build_base.html:145
 #: build/templates/build/detail.html:62 order/models.py:651
@@ -1169,11 +1169,11 @@ msgstr ""
 #: templates/js/translated/order.js:2836 templates/js/translated/stock.js:1831
 #: templates/js/translated/stock.js:2603 templates/js/translated/stock.js:2735
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: build/serializers.py:379
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "Terima Alokasi Tidak Lengkap"
 
 #: build/serializers.py:380
 msgid "Complete outputs if stock has not been fully allocated"
@@ -1217,105 +1217,105 @@ msgstr ""
 
 #: build/serializers.py:526
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "Terima Tidak Teralokasikan"
 
 #: build/serializers.py:527
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr ""
+msgstr "Terima bahwa stok item tidak teralokasikan sepenuhnya ke pesanan ini"
 
 #: build/serializers.py:537 templates/js/translated/build.js:258
 msgid "Required stock has not been fully allocated"
-msgstr ""
+msgstr "Stok yang diperlukan belum teralokasikan sepenuhnya"
 
 #: build/serializers.py:542 order/serializers.py:208 order/serializers.py:1103
 msgid "Accept Incomplete"
-msgstr ""
+msgstr "Terima Tidak Selesai"
 
 #: build/serializers.py:543
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr ""
+msgstr "Terima bahwa jumlah hasil produksi yang diperlukan belum selesai"
 
 #: build/serializers.py:553 templates/js/translated/build.js:262
 msgid "Required build quantity has not been completed"
-msgstr ""
+msgstr "Jumlah produksi yang diperlukan masih belum cukup"
 
 #: build/serializers.py:562 templates/js/translated/build.js:246
 msgid "Build order has incomplete outputs"
-msgstr ""
+msgstr "Order memiliki hasil produksi yang belum dilengkapi"
 
 #: build/serializers.py:592 build/serializers.py:637 part/models.py:2793
 #: part/models.py:2927
 msgid "BOM Item"
-msgstr ""
+msgstr "Item tagihan material"
 
 #: build/serializers.py:602
 msgid "Build output"
-msgstr ""
+msgstr "Hasil produksi"
 
 #: build/serializers.py:610
 msgid "Build output must point to the same build"
-msgstr ""
+msgstr "Hasil pesanan harus mengarah ke pesanan yang sama"
 
 #: build/serializers.py:651
 msgid "bom_item.part must point to the same part as the build order"
-msgstr ""
+msgstr "bom_item.part harus mengarah ke bagian yang sesuai dengan order produksi"
 
 #: build/serializers.py:666 stock/serializers.py:767
 msgid "Item must be in stock"
-msgstr ""
+msgstr "Item harus tersedia dalam stok"
 
 #: build/serializers.py:724 order/serializers.py:1093
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr ""
+msgstr "Jumlah tersedia ({q}) terlampaui"
 
 #: build/serializers.py:730
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr ""
+msgstr "Hasil produksi harus ditentukan untuk mengalokasikan bagian yang terlacak"
 
 #: build/serializers.py:737
 msgid "Build output cannot be specified for allocation of untracked parts"
-msgstr ""
+msgstr "Hasil produksi tidak dapat ditentukan untuk alokasi barang yang tidak terlacak"
 
 #: build/serializers.py:742
 msgid "This stock item has already been allocated to this build output"
-msgstr ""
+msgstr "Stok item ini telah dialokasikan ke hasil produksi ini"
 
 #: build/serializers.py:765 order/serializers.py:1373
 msgid "Allocation items must be provided"
-msgstr ""
+msgstr "Item yang dialokasikan harus disediakan"
 
 #: build/serializers.py:820
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr ""
+msgstr "Lokasi stok, dari mana bahan/bagian akan diambilkan (kosongkan untuk mengambil dari lokasi mana pun)"
 
 #: build/serializers.py:828
 msgid "Exclude Location"
-msgstr ""
+msgstr "Lokasi tidak termasuk"
 
 #: build/serializers.py:829
 msgid "Exclude stock items from this selected location"
-msgstr ""
+msgstr "Jangan ambil stok item dari lokasi yang dipilih"
 
 #: build/serializers.py:834
 msgid "Interchangeable Stock"
-msgstr ""
+msgstr "Stok bergantian"
 
 #: build/serializers.py:835
 msgid "Stock items in multiple locations can be used interchangeably"
-msgstr ""
+msgstr "Item stok di beberapa lokasi dapat digunakan secara bergantian"
 
 #: build/serializers.py:840
 msgid "Substitute Stock"
-msgstr ""
+msgstr "Stok pengganti"
 
 #: build/serializers.py:841
 msgid "Allow allocation of substitute parts"
-msgstr ""
+msgstr "Izinkan alokasi bagian pengganti"
 
 #: build/tasks.py:100
 msgid "Stock required for build order"
-msgstr ""
+msgstr "Stok dibutuhkan untuk order produksi"
 
 #: build/tasks.py:118
 msgid "Overdue Build Order"
@@ -1330,23 +1330,23 @@ msgstr ""
 #: order/templates/order/order_base.html:28
 #: order/templates/order/sales_order_base.html:38
 msgid "Print actions"
-msgstr ""
+msgstr "Cetak aksi"
 
 #: build/templates/build/build_base.html:43
 msgid "Print build order report"
-msgstr ""
+msgstr "Cetak laporan order produksi"
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
-msgstr ""
+msgstr "Aksi produksi"
 
 #: build/templates/build/build_base.html:54
 msgid "Edit Build"
-msgstr ""
+msgstr "Ubah Produksi"
 
 #: build/templates/build/build_base.html:56
 msgid "Cancel Build"
-msgstr ""
+msgstr "Batalkan Produksi"
 
 #: build/templates/build/build_base.html:59
 msgid "Duplicate Build"
@@ -1354,20 +1354,20 @@ msgstr ""
 
 #: build/templates/build/build_base.html:62
 msgid "Delete Build"
-msgstr ""
+msgstr "Hapus Produksi"
 
 #: build/templates/build/build_base.html:67
 #: build/templates/build/build_base.html:68
 msgid "Complete Build"
-msgstr ""
+msgstr "Selesaikan Produksi"
 
 #: build/templates/build/build_base.html:90
 msgid "Build Description"
-msgstr ""
+msgstr "Deskripsi Produksi"
 
 #: build/templates/build/build_base.html:98
 msgid "No build outputs have been created for this build order"
-msgstr ""
+msgstr "Tidak ada hasil pesanan yang dibuat oleh pesanan ini"
 
 #: build/templates/build/build_base.html:104
 #, python-format
@@ -5822,7 +5822,7 @@ msgstr ""
 msgid "Sample plugin"
 msgstr ""
 
-#: plugin/models.py:188
+#: plugin/models.py:188 templates/InvenTree/settings/plugin_settings.html:10
 msgid "Plugin"
 msgstr ""
 
@@ -7082,11 +7082,6 @@ msgstr ""
 #: templates/InvenTree/settings/plugin.html:135
 #: templates/js/translated/notification.js:75
 msgid "Message"
-msgstr ""
-
-#: templates/InvenTree/settings/plugin_settings.html:10
-#, python-format
-msgid "Plugin details for %(name)s"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:17

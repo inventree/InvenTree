@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-07 02:25+0000\n"
+"POT-Creation-Date: 2022-10-08 22:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7161,7 +7161,7 @@ msgstr ""
 msgid "Report Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/setting.html:39
+#: templates/InvenTree/settings/setting.html:37
 msgid "No value set"
 msgstr ""
 

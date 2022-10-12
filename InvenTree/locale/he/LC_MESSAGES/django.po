@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 12:47+0000\n"
-"PO-Revision-Date: 2022-10-08 13:13\n"
+"POT-Creation-Date: 2022-10-11 12:16+0000\n"
+"PO-Revision-Date: 2022-10-11 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -5822,7 +5822,7 @@ msgstr ""
 msgid "Sample plugin"
 msgstr ""
 
-#: plugin/models.py:188
+#: plugin/models.py:188 templates/InvenTree/settings/plugin_settings.html:10
 msgid "Plugin"
 msgstr ""
 
@@ -7082,11 +7082,6 @@ msgstr ""
 #: templates/InvenTree/settings/plugin.html:135
 #: templates/js/translated/notification.js:75
 msgid "Message"
-msgstr ""
-
-#: templates/InvenTree/settings/plugin_settings.html:10
-#, python-format
-msgid "Plugin details for %(name)s"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:17
