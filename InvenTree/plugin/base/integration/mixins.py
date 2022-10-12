@@ -231,6 +231,12 @@ class ValidationMixin:
     - In the case of "validation" functions, all loaded plugins are checked until an exception is thrown
 
     Implementing plugins may override any of the following methods which are of interest.
+
+    For 'validation' methods, there are three 'acceptable' outcomes:
+    - The method determines that the value is 'invalid' and raises a django.core.exceptions.ValidationError
+    - The method passes and returns None (the code then moves on to the next plugin)
+    - The method passes and returns True (and no subsequent plugins are checked)
+
     """
 
     class MixinMeta:
@@ -249,10 +255,10 @@ class ValidationMixin:
             name: The proposed part name
 
         Returns:
-            True if validation passes and any subsequent validation steps should be skipped
+            None or True
 
         Raises:
-            django.core.exceptions.ValidationError if the proposed name is objectionable
+            ValidationError if the proposed name is objectionable
         """
         ...
 
@@ -263,52 +269,25 @@ class ValidationMixin:
             ipn: The proposed part IPN
 
         Returns:
-            True if validation passes and any subsequent validation steps should be skipped
+            None or True
 
         Raises:
-            django.core.exceptions.ValidationError if the proposed IPN is objectionable
+            ValidationError if the proposed IPN is objectionable
         """
         ...
 
-    def validate_purchase_order_reference(self, reference: str):
-        """Perform custom validation on a proposed PurchaseOrder reference field
+    def validate_serial_number(self, serial: str, part):
+        """Validate the supplied serial number and part combination.
 
         Arguments:
-            reference: The proposed reference value
+            serial: The proposed serial number (string)
+            part: The Part instance
 
         Returns:
-            True if validation passes and any subsequent validation steps should be skipped
+            None or True
 
         Raises:
-            django.core.exceptions.ValidationError if the proposed reference value is objectionale
-        """
-        ...
-
-    def validate_sales_order_reference(self, reference: str):
-        """Perform custom validation on a proposed SalesOrder reference field
-
-        Arguments:
-            reference: The proposed reference value
-
-        Returns:
-            True if validation passes and any subsequent validation steps should be skipped
-
-        Raises:
-            django.core.exceptions.ValidationError if the proposed reference value is objectionale
-        """
-        ...
-
-    def validate_build_order_reference(self, reference: str):
-        """Perform custom validation on a proposed Build reference field
-
-        Arguments:
-            reference: The proposed reference value
-
-        Returns:
-            True if validation passes and any subsequent validation steps should be skipped
-
-        Raises:
-            django.core.exceptions.ValidationError if the proposed reference value is objectionale
+            ValidationError if the proposed serial is objectionable
         """
         ...
 

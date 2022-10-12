@@ -90,15 +90,6 @@ def validate_purchase_order_reference(value):
     """
 
     from order.models import PurchaseOrder
-    from plugin.registry import registry
-
-    plugins = registry.with_mixin('validation')
-
-    for plugin in plugins:
-        # Run the reference through each custom validator
-        # If the plugin returns 'True' we will skip any subsequent validation
-        if plugin.validate_purchase_order_reference(value):
-            return
 
     # If we get to here, run the "default" validation routine
     PurchaseOrder.validate_reference_field(value)
@@ -111,15 +102,6 @@ def validate_sales_order_reference(value):
     """
 
     from order.models import SalesOrder
-    from plugin.registry import registry
-
-    plugins = registry.with_mixin('validation')
-
-    for plugin in plugins:
-        # Run the reference through each custom validator
-        # If the plugin returns 'True' we will skip any subsequent validation
-        if plugin.validate_sales_order_reference(value):
-            return
 
     # If we get to here, run the "default" validation routine
     SalesOrder.validate_reference_field(value)
