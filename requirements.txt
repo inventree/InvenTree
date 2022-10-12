@@ -141,7 +141,7 @@ markuppy==1.14
     # via tablib
 markupsafe==2.1.1
     # via jinja2
-oauthlib==3.2.0
+oauthlib==3.2.1
     # via requests-oauthlib
 odfpy==1.4.1
     # via tablib
