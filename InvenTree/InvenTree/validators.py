@@ -38,16 +38,38 @@ def allowable_url_schemes():
 
 
 def validate_part_name(value):
-    """Prevent some illegal characters in part names."""
-    for c in ['|', '#', '$', '{', '}']:
-        if c in str(value):
-            raise ValidationError(
-                _('Invalid character in part name')
-            )
+    """Validate the name field for a Part instance
+
+    This function is exposed to any Validation plugins, and thus can be customized.
+    """
+
+    from plugin.registry import registry
+
+    plugins = registry.with_mixin('validation')
+
+    for plugin in plugins:
+        # Run the name through each custom validator
+        plugin.validate_part_name(value)
 
 
 def validate_part_ipn(value):
-    """Validate the Part IPN against regex rule."""
+    """Validate the IPN field for a Part instance.
+
+    This function is exposed to any Validation plugins, and thus can be customized.
+
+    If no validation errors are raised, the IPN is also validated against a configurable regex pattern.
+    """
+
+    from plugin.registry import registry
+
+    plugins = registry.with_mixin('validation')
+
+    for plugin in plugins:
+        # Run the IPN through each custom validator
+        plugin.validate_part_ipn(value)
+
+    # If we get to here, none of the plugins have raised an error
+
     pattern = common.models.InvenTreeSetting.get_setting('PART_IPN_REGEX')
 
     if pattern:

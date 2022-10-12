@@ -242,19 +242,31 @@ class ValidationMixin:
         super().__init__()
         self.add_mixin('validation', True, __class__)
 
-    def validate_part_name(self, name: str, part=None, category=None):
-        """Perform validation on a proposed 'part' name.
+    def validate_part_name(self, name: str):
+        """Perform validation on a proposed Part name
 
         Arguments:
             name: The proposed part name
-            part: (optional) the Part instance for the proposed name. May be omitted by the caller
-            category: (optional) the PartCategory instance for the proposed name. May be omitted by the caller
 
         Returns:
             None
 
         Raises:
             django.core.exceptions.ValidationError if the proposed name is objectionable
+        """
+        ...
+
+    def validate_part_ipn(self, ipn: str):
+        """Perform validation on a proposed Part IPN (internal part number)
+
+        Arguments:
+            ipn: The proposed part IPN
+
+        Returns:
+            None
+
+        Raises:
+            django.core.exceptions.ValidationError if the proposed IPN is objectionable
         """
         ...
 
