@@ -851,17 +851,17 @@ class VariantTest(StockTestBase):
         chair = Part.objects.get(pk=10000)
 
         # Operations on the top-level object
-        self.assertTrue(chair.checkIfSerialNumberExists(1))
-        self.assertTrue(chair.checkIfSerialNumberExists(2))
-        self.assertTrue(chair.checkIfSerialNumberExists(3))
-        self.assertTrue(chair.checkIfSerialNumberExists(4))
-        self.assertTrue(chair.checkIfSerialNumberExists(5))
+        self.assertFalse(chair.validate_serial_number(1))
+        self.assertFalse(chair.validate_serial_number(2))
+        self.assertFalse(chair.validate_serial_number(3))
+        self.assertFalse(chair.validate_serial_number(4))
+        self.assertFalse(chair.validate_serial_number(5))
 
-        self.assertTrue(chair.checkIfSerialNumberExists(20))
-        self.assertTrue(chair.checkIfSerialNumberExists(21))
-        self.assertTrue(chair.checkIfSerialNumberExists(22))
+        self.assertFalse(chair.validate_serial_number(20))
+        self.assertFalse(chair.validate_serial_number(21))
+        self.assertFalse(chair.validate_serial_number(22))
 
-        self.assertFalse(chair.checkIfSerialNumberExists(30))
+        self.assertTrue(chair.validate_serial_number(30))
 
         self.assertEqual(chair.getLatestSerialNumber(), '22')
 

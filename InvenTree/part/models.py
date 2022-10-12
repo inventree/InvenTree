@@ -529,26 +529,82 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return result
 
-    def checkIfSerialNumberExists(self, sn, exclude_self=False):
-        """Check if a serial number exists for this Part.
+    def validate_serial_number(self, serial: str, stock_item=None, raise_error=False):
+        """Validate a serial number against this Part instance.
 
-        Note: Serial numbers must be unique across an entire Part "tree", so here we filter by the entire tree.
+        Note: This function is exposed to any Validation plugins, and thus can be customized.
+
+        Any plugins which implement the 'validate_serial_number' method have three possible outcomes:
+
+        - Decide the serial is objectionable and raise a django.core.exceptions.ValidationError
+        - Decide the serial is acceptable, and return None to proceed to other tests
+        - Decide the serial is acceptable, and return True to skip any further tests
+
+        Arguments:
+            serial: The proposed serial number
+            stock_item: (optional) A StockItem instance which has this serial number assigned (e.g. testing for duplicates)
+            raise_error: If False, and ValidationError(s) will be handled
+
+        Returns:
+            True if serial number is 'valid' else False
+
+        Raises:
+            ValidationError if serial number is invalid and raise_error = True
         """
+
+        serial = str(serial).strip()
+
+        # First, throw the serial number against each of the loaded validation plugins
+        from plugin.registry import registry
+
+        plugins = registry.with_mixin('validation')
+
+        try:
+            for plugin in plugins:
+                # Run the serial number through each custom validator
+                # If the plugin returns 'True' we will skip any subsequent validation
+                if plugin.validate_serial_number(serial, self, stock_item=stock_item):
+                    return True
+        except ValidationError as exc:
+            if raise_error:
+                # Re-throw the error
+                raise exc
+            else:
+                return False
+
+        """
+        If we are here, none of the loaded plugins (if any) threw an error or exited early
+
+        Now, we run the "default" serial number validation routine,
+        which checks that serial numbers are unique within a "tree"
+        """
+
+        from part.models import Part
+        from stock.models import StockItem
+
         parts = Part.objects.filter(tree_id=self.tree_id)
+        stock = StockItem.objects.filter(part__in=parts, serial=serial)
 
-        stock = StockModels.StockItem.objects.filter(part__in=parts, serial=sn)
+        if stock_item:
+            # Exclude existing StockItem from query
+            stock = stock.exclude(pk=stock_item.pk)
 
-        if exclude_self:
-            stock = stock.exclude(pk=self.pk)
+        if stock.exists():
+            if raise_error:
+                raise ValidationError(_("Stock item with this serial number already exists"))
+            else:
+                return False
+        else:
+            # This serial number is perfectly valid
+            return True
 
-        return stock.exists()
-
-    def find_conflicting_serial_numbers(self, serials):
+    def find_conflicting_serial_numbers(self, serials: list):
         """For a provided list of serials, return a list of those which are conflicting."""
+
         conflicts = []
 
         for serial in serials:
-            if self.checkIfSerialNumberExists(serial, exclude_self=True):
+            if not self.validate_serial_number(serial):
                 conflicts.append(serial)
 
         return conflicts
@@ -565,7 +621,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         parts = Part.objects.filter(tree_id=self.tree_id)
         stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None)
 
-        # There are no matchin StockItem objects (skip further tests)
+        # There are no matching StockItem objects (skip further tests)
         if not stock.exists():
             return None
 

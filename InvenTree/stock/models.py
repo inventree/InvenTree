@@ -408,16 +408,15 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         # If the serial number is set, make sure it is not a duplicate
         if self.serial:
-            # Query to look for duplicate serial numbers
-            parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
-            stock = StockItem.objects.filter(part__in=parts, serial=self.serial)
 
-            # Exclude myself from the search
-            if self.pk is not None:
-                stock = stock.exclude(pk=self.pk)
+            self.serial = str(self.serial).strip()
 
-            if stock.exists():
-                raise ValidationError({"serial": _("StockItem with this serial number already exists")})
+            try:
+                self.part.validate_serial_number(self.serial, self, raise_error=True)
+            except ValidationError as exc:
+                raise ValidationError({
+                    'serial': exc.message,
+                })
 
     def clean(self):
         """Validate the StockItem object (separate to field validation).

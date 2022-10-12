@@ -270,12 +270,12 @@ class BuildOutputCreateSerializer(serializers.Serializer):
             existing = []
 
             for serial in self.serials:
-                if part.checkIfSerialNumberExists(serial):
+                if not part.validate_serial_number(serial):
                     existing.append(serial)
 
             if len(existing) > 0:
 
-                msg = _("The following serial numbers already exist")
+                msg = _("The following serial numbers already exist or are invalid")
                 msg += " : "
                 msg += ",".join([str(e) for e in existing])
 

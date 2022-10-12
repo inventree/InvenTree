@@ -276,12 +276,13 @@ class ValidationMixin:
         """
         ...
 
-    def validate_serial_number(self, serial: str, part):
+    def validate_serial_number(self, serial: str, part, stock_item):
         """Validate the supplied serial number and part combination.
 
         Arguments:
             serial: The proposed serial number (string)
             part: The Part instance
+            stock_item: (optional) a StockItem instance which already has this serial number
 
         Returns:
             None or True

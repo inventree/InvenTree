@@ -26,7 +26,13 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             'description': 'Part IPN field must contain the character Q',
             'default': False,
             'validator': bool,
-        }
+        },
+        'SERIAL_MUST_BE_PALINDROME': {
+            'name': 'Palindromic Serials',
+            'description': 'Serial numbers must be palindromic',
+            'default': False,
+            'validator': bool,
+        },
     }
 
     def validate_part_name(self, name: str):
@@ -43,3 +49,10 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         if self.get_setting('IPN_MUST_CONTAIN_Q') and 'Q' not in ipn:
             raise ValidationError("IPN must contain 'Q'")
+
+    def validate_serial_number(self, serial: str, part, stock_item=None):
+        """Validate serial number for a given StockItem"""
+
+        if self.get_setting('SERIAL_MUST_BE_PALINDROME'):
+            if serial != serial[::-1]:
+                raise ValidationError("Serial must be a palindrome")
