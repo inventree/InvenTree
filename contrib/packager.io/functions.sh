@@ -93,7 +93,7 @@ function detect_envs() {
     echo "# Using existing config file: ${INVENTREE_CONFIG_FILE}"
 
     # Install parser
-    pip install jc
+    pip install jc -q
 
     # Load config
     local conf=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)
