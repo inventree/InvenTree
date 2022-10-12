@@ -72,7 +72,7 @@ class UserMixin:
 
         for ruleset in self.group.rule_sets.all():
 
-            if ruleset.name == rule:
+            if assign_all or ruleset.name == rule:
 
                 if assign_all or perm == 'view':
                     ruleset.can_view = True
