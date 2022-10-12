@@ -49,7 +49,9 @@ def validate_part_name(value):
 
     for plugin in plugins:
         # Run the name through each custom validator
-        plugin.validate_part_name(value)
+        # If the plugin returns 'True' we will skip any subsequent validation
+        if plugin.validate_part_name(value):
+            return
 
 
 def validate_part_ipn(value):
@@ -66,7 +68,9 @@ def validate_part_ipn(value):
 
     for plugin in plugins:
         # Run the IPN through each custom validator
-        plugin.validate_part_ipn(value)
+        # If the plugin returns 'True' we will skip any subsequent validation
+        if plugin.validate_part_ipn(value):
+            return
 
     # If we get to here, none of the plugins have raised an error
 
@@ -80,29 +84,50 @@ def validate_part_ipn(value):
 
 
 def validate_purchase_order_reference(value):
-    """Validate the 'reference' field of a PurchaseOrder."""
-    pattern = common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_REGEX')
+    """Validate the 'reference' field of a PurchaseOrder.
 
-    if pattern:
-        match = re.search(pattern, value)
+    This function is exposed to any Validation plugins, and thus can be customized.
+    """
 
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
+    from order.models import PurchaseOrder
+    from plugin.registry import registry
+
+    plugins = registry.with_mixin('validation')
+
+    for plugin in plugins:
+        # Run the reference through each custom validator
+        # If the plugin returns 'True' we will skip any subsequent validation
+        if plugin.validate_purchase_order_reference(value):
+            return
+
+    # If we get to here, run the "default" validation routine
+    PurchaseOrder.validate_reference_field(value)
 
 
 def validate_sales_order_reference(value):
-    """Validate the 'reference' field of a SalesOrder."""
-    pattern = common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_REGEX')
+    """Validate the 'reference' field of a SalesOrder.
 
-    if pattern:
-        match = re.search(pattern, value)
+    This function is exposed to any Validation plugins, and thus can be customized.
+    """
 
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
+    from order.models import SalesOrder
+    from plugin.registry import registry
+
+    plugins = registry.with_mixin('validation')
+
+    for plugin in plugins:
+        # Run the reference through each custom validator
+        # If the plugin returns 'True' we will skip any subsequent validation
+        if plugin.validate_sales_order_reference(value):
+            return
+
+    # If we get to here, run the "default" validation routine
+    SalesOrder.validate_reference_field(value)
 
 
 def validate_tree_name(value):
     """Placeholder for legacy function used in migrations."""
+    ...
 
 
 def validate_overage(value):

@@ -249,7 +249,7 @@ class ValidationMixin:
             name: The proposed part name
 
         Returns:
-            None
+            True if validation passes and any subsequent validation steps should be skipped
 
         Raises:
             django.core.exceptions.ValidationError if the proposed name is objectionable
@@ -263,10 +263,52 @@ class ValidationMixin:
             ipn: The proposed part IPN
 
         Returns:
-            None
+            True if validation passes and any subsequent validation steps should be skipped
 
         Raises:
             django.core.exceptions.ValidationError if the proposed IPN is objectionable
+        """
+        ...
+
+    def validate_purchase_order_reference(self, reference: str):
+        """Perform custom validation on a proposed PurchaseOrder reference field
+
+        Arguments:
+            reference: The proposed reference value
+
+        Returns:
+            True if validation passes and any subsequent validation steps should be skipped
+
+        Raises:
+            django.core.exceptions.ValidationError if the proposed reference value is objectionale
+        """
+        ...
+
+    def validate_sales_order_reference(self, reference: str):
+        """Perform custom validation on a proposed SalesOrder reference field
+
+        Arguments:
+            reference: The proposed reference value
+
+        Returns:
+            True if validation passes and any subsequent validation steps should be skipped
+
+        Raises:
+            django.core.exceptions.ValidationError if the proposed reference value is objectionale
+        """
+        ...
+
+    def validate_build_order_reference(self, reference: str):
+        """Perform custom validation on a proposed Build reference field
+
+        Arguments:
+            reference: The proposed reference value
+
+        Returns:
+            True if validation passes and any subsequent validation steps should be skipped
+
+        Raises:
+            django.core.exceptions.ValidationError if the proposed reference value is objectionale
         """
         ...
 
