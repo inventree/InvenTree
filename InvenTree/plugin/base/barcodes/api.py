@@ -5,7 +5,7 @@ from django.urls import path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import permissions
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -139,6 +139,17 @@ class BarcodeAssign(APIView):
                 try:
                     instance = model.objects.get(pk=data[label])
 
+                    # Check that the user has the required permission
+                    app_label = model._meta.app_label
+                    model_name = model._meta.model_name
+
+                    permission = f'{app_label}.can_change_{model_name}'
+
+                    if not self.request.user.has_perm(permission):
+                        raise PermissionDenied({
+                            "error": f"You do not have the required permissions for {app_label}.{model}"
+                        })
+
                     instance.assign_barcode(
                         barcode_data=barcode_data,
                         barcode_hash=barcode_hash,
@@ -208,6 +219,17 @@ class BarcodeUnassign(APIView):
                 except (ValueError, model.DoesNotExist):
                     raise ValidationError({
                         label: _('No match found for provided value')
+                    })
+
+                # Check that the user has the required permission
+                app_label = model._meta.app_label
+                model_name = model._meta.model_name
+
+                permission = f'{app_label}.can_change_{model_name}'
+
+                if not self.request.user.has_perm(permission):
+                    raise PermissionDenied({
+                        "error": f"You do not have the required permissions for {app_label}.{model}"
                     })
 
                 # Unassign the barcode data from the model instance
