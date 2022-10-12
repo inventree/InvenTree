@@ -135,6 +135,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=403
         )
 
+        self.assignRole('part.change')
         self.assignRole('stock.change')
 
         # Provide too many fields
@@ -282,6 +283,17 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         """Test that we can assign a unique barcode to a StockLocation instance"""
 
         barcode = '555555555555555555555555'
+
+        # Assign random barcode data to a StockLocation instance
+        response = self.assign(
+            data={
+                'barcode': barcode,
+                'stocklocation': 1,
+            },
+            expected_code=403,
+        )
+
+        self.assignRole('stock_location.change')
 
         # Assign random barcode data to a StockLocation instance
         response = self.assign(

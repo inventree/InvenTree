@@ -13,6 +13,7 @@ from InvenTree.helpers import hash_barcode
 from plugin import registry
 from plugin.builtin.barcodes.inventree_barcode import (
     InvenTreeExternalBarcodePlugin, InvenTreeInternalBarcodePlugin)
+from users.models import RuleSet
 
 
 class BarcodeScan(APIView):
@@ -143,11 +144,11 @@ class BarcodeAssign(APIView):
                     app_label = model._meta.app_label
                     model_name = model._meta.model_name
 
-                    permission = f'{app_label}.can_change_{model_name}'
+                    table = f"{app_label}_{model_name}"
 
-                    if not self.request.user.has_perm(permission):
+                    if not RuleSet.check_table_permission(request.user, table, "change"):
                         raise PermissionDenied({
-                            "error": f"You do not have the required permissions for {app_label}.{model}"
+                            "error": f"You do not have the required permissions for {table}"
                         })
 
                     instance.assign_barcode(
@@ -225,11 +226,11 @@ class BarcodeUnassign(APIView):
                 app_label = model._meta.app_label
                 model_name = model._meta.model_name
 
-                permission = f'{app_label}.can_change_{model_name}'
+                table = f"{app_label}_{model_name}"
 
-                if not self.request.user.has_perm(permission):
+                if not RuleSet.check_table_permission(request.user, table, "change"):
                     raise PermissionDenied({
-                        "error": f"You do not have the required permissions for {app_label}.{model}"
+                        "error": f"You do not have the required permissions for {table}"
                     })
 
                 # Unassign the barcode data from the model instance
