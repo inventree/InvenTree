@@ -48,10 +48,10 @@ function get_env() {
   envname=$1
 
   pid=$$
-  while [ -z "!$envname" -a $pid != 1 ]; do
+  while [ -z "${!envname}" -a $pid != 1 ]; do
       ppid=`ps -oppid -p$pid|tail -1|awk '{print $1}'`
       env=`strings /proc/$ppid/environ`
-      export ${!$1}=`echo "$env"|awk -F= '$1 == "${envname}" { print $2; }'`
+      export $envname=`echo "$env"|awk -F= '$1 == "'$envname'" { print $2; }'`
       pid=$ppid
 
       # Print for debugging
