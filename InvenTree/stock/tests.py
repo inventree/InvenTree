@@ -906,7 +906,7 @@ class VariantTest(StockTestBase):
         with self.assertRaises(ValidationError):
             item.save()
 
-        item.serial += 1
+        item.serial = int(n) + 2
         item.save()
 
 
