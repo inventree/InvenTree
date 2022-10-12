@@ -3,6 +3,7 @@
 # packager.io postinstall script
 #
 
+exec > >(tee ${APP_HOME}/log/setup.log) 2>&1
 
 PATH=${APP_HOME}/env/bin:${APP_HOME}/:/sbin:/bin:/usr/sbin:/usr/bin:
 
