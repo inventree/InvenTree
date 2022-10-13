@@ -582,7 +582,13 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         from part.models import Part
         from stock.models import StockItem
 
-        parts = Part.objects.filter(tree_id=self.tree_id)
+        if common.models.InvenTreeSetting.get_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE'):
+            # Serial number must be unique across *all* parts
+            parts = Part.objects.all()
+        else:
+            # Serial number must only be unique across this part "tree"
+            parts = Part.objects.filter(tree_id=self.tree_id)
+
         stock = StockItem.objects.filter(part__in=parts, serial=serial)
 
         if stock_item:
