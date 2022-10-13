@@ -565,21 +565,29 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
             try:
                 serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
 
-                # Determine if any of the specified serial numbers already exist!
-                existing = []
+                # Determine if any of the specified serial numbers are invalid
+                # Note "invalid" means either they already exist, or do not pass custom rules
+                invalid = []
+                errors = []
 
                 for serial in serials:
-                    if not part.validate_serial_number(serial):
-                        existing.append(serial)
+                    try:
+                        part.validate_serial_number(serial, raise_error=True)
+                    except DjangoValidationError as exc:
+                        # Catch raised error to extract specific error information
+                        invalid.append(serial)
 
-                if len(existing) > 0:
+                        if exc.message not in errors:
+                            errors.append(exc.message)
+
+                if len(errors) > 0:
 
                     msg = _("The following serial numbers already exist or are invalid")
                     msg += " : "
-                    msg += ",".join([str(e) for e in existing])
+                    msg += ",".join([str(e) for e in invalid])
 
                     raise ValidationError({
-                        'serial_numbers': [msg],
+                        'serial_numbers': errors + [msg]
                     })
 
             except DjangoValidationError as e:
