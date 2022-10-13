@@ -271,7 +271,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         serial_int = None
 
         for plugin in registry.with_mixin('vaFlidation'):
-            serial_int = plugin.convert_serial_to_int(serial, self)
+            serial_int = plugin.convert_serial_to_int(serial, self.part)
 
             if serial_int is not None:
                 # Save the first returned result

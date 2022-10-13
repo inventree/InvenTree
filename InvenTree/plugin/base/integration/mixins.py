@@ -260,7 +260,7 @@ class ValidationMixin:
         Raises:
             ValidationError if the proposed name is objectionable
         """
-        ...
+        return None
 
     def validate_part_ipn(self, ipn: str):
         """Perform validation on a proposed Part IPN (internal part number)
@@ -274,7 +274,7 @@ class ValidationMixin:
         Raises:
             ValidationError if the proposed IPN is objectionable
         """
-        ...
+        return None
 
     def validate_serial_number(self, serial: str, part, stock_item):
         """Validate the supplied serial number and part combination.
@@ -290,9 +290,9 @@ class ValidationMixin:
         Raises:
             ValidationError if the proposed serial is objectionable
         """
-        ...
+        return None
 
-    def convert_serial_to_int(self, serial: str, stock_item):
+    def convert_serial_to_int(self, serial: str, part):
         """Convert a serial number (string) into an integer representation.
 
         This integer value is used for efficient sorting based on serial numbers.
@@ -306,13 +306,41 @@ class ValidationMixin:
         Note that there is no requirement for the returned integer value to be unique.
 
         Arguments:
-            serial: Stringified serial number
-            stock_item: The StockItem model instance for which this serial number is being generated
+            serial: Serial value (string)
+            part: The Part model instance for which this serial number is being generated
 
         Returns:
             integer representation of the serial number, or None
         """
-        ...
+        return None
+
+    def increment_serial_number(self, serial: str, part):
+        """Return the next sequential serial based on the provided value.
+
+        A plugin which implements this method can either return:
+
+        - A string which represents the "next" serial number in the sequence
+        - None (null value) if the next value could not be determined
+
+        Arguments:
+            serial: Current serial value (string)
+            part: The Part model instsance for which the serial number is being generated
+        """
+        return None
+
+    def decrement_serial_number(self, serial: str, part):
+        """Return the previous sequential serial based on the provided value.
+
+        A plugin which implements this method can either return:
+
+        - A string which represents the "previous" serial number in the sequence
+        - None (null value) if the previous value could not be determined
+
+        Arguments:
+            serial: Current serial value (string)
+            part: The Part model instance for which the serial number is being generated
+        """
+        return None
 
 
 class UrlsMixin:
