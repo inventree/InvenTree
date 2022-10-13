@@ -613,6 +613,61 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return conflicts
 
+    def get_latest_serial_number(self):
+        """Find the 'latest' serial number for this Part.
+
+        Here we attempt to find the "highest" serial number which exists for this Part.
+        There are a number of edge cases where this method can fail,
+        but this is accepted to keep database performance at a reasonable level.
+
+        Note: Serial numbers must be unique across an entire Part "tree",
+        so we filter by the entire tree.
+
+        Returns:
+            The latest serial number specified for this part, or None
+
+        """
+
+        # Generate a query for any stock items for this part variant tree with non-empty serial numbers
+        parts = Part.objects.filter(tree_id=self.tree_id)
+        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None).exclude(serial='')
+
+        # There are no matching StockItem objects (skip further tests)
+        if not stock.exists():
+            return None
+
+        # Sort in descending order
+        stock = stock.order_by('-serial_int', '-serial', '-pk')
+
+        # Return the first serial value
+        return stock[0].serial
+
+    def increment_serial_number(self, serial: str):
+        """Given a serial number, (attempt to) generate the *next* serial number.
+
+        Note: This method is exposed to custom plugins.
+
+        Arguments:
+            serial: The serial number which should be incremented
+
+        Returns:
+            incremented value, or None if incrementing could not be performed.
+        """
+
+        from plugin.registry import registry
+
+        serial = serial.strip()
+
+        # First, let any plugins attempt to increment the serial number
+        for plugin in registry.with_mixin('validation'):
+            result = plugin.increment_serial_number(serial, self)
+            if result is not None:
+                return str(result)
+
+        # If we get to here, no plugins were able to "increment" the provided serial value
+        # Attempt to perform increment according to some basic rules
+        return helpers.increment(serial)
+
     def getLatestSerialNumber(self):
         """Return the "latest" serial number for this Part.
 
