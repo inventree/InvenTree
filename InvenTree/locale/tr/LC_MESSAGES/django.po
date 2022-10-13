@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-12 05:36+0000\n"
-"PO-Revision-Date: 2022-10-12 14:55\n"
+"POT-Creation-Date: 2022-10-13 01:15+0000\n"
+"PO-Revision-Date: 2022-10-13 14:50\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -425,103 +425,103 @@ msgstr ""
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/settings.py:613
+#: InvenTree/settings.py:615
 msgid "Czech"
 msgstr ""
 
-#: InvenTree/settings.py:614
+#: InvenTree/settings.py:616
 msgid "Danish"
 msgstr ""
 
-#: InvenTree/settings.py:615
+#: InvenTree/settings.py:617
 msgid "German"
 msgstr "Almanca"
 
-#: InvenTree/settings.py:616
+#: InvenTree/settings.py:618
 msgid "Greek"
 msgstr "Yunanca"
 
-#: InvenTree/settings.py:617
+#: InvenTree/settings.py:619
 msgid "English"
 msgstr "İngilizce"
 
-#: InvenTree/settings.py:618
+#: InvenTree/settings.py:620
 msgid "Spanish"
 msgstr "İspanyolca"
 
-#: InvenTree/settings.py:619
+#: InvenTree/settings.py:621
 msgid "Spanish (Mexican)"
 msgstr "İspanyolca(Meksika)"
 
-#: InvenTree/settings.py:620
+#: InvenTree/settings.py:622
 msgid "Farsi / Persian"
 msgstr ""
 
-#: InvenTree/settings.py:621
+#: InvenTree/settings.py:623
 msgid "French"
 msgstr "Fransızca"
 
-#: InvenTree/settings.py:622
+#: InvenTree/settings.py:624
 msgid "Hebrew"
 msgstr "İbranice"
 
-#: InvenTree/settings.py:623
+#: InvenTree/settings.py:625
 msgid "Hungarian"
 msgstr "Macarca"
 
-#: InvenTree/settings.py:624
+#: InvenTree/settings.py:626
 msgid "Italian"
 msgstr "İtalyanca"
 
-#: InvenTree/settings.py:625
+#: InvenTree/settings.py:627
 msgid "Japanese"
 msgstr "Japonca"
 
-#: InvenTree/settings.py:626
+#: InvenTree/settings.py:628
 msgid "Korean"
 msgstr "Korece"
 
-#: InvenTree/settings.py:627
+#: InvenTree/settings.py:629
 msgid "Dutch"
 msgstr "Flemenkçe"
 
-#: InvenTree/settings.py:628
+#: InvenTree/settings.py:630
 msgid "Norwegian"
 msgstr "Norveççe"
 
-#: InvenTree/settings.py:629
+#: InvenTree/settings.py:631
 msgid "Polish"
 msgstr "Polonyaca"
 
-#: InvenTree/settings.py:630
+#: InvenTree/settings.py:632
 msgid "Portuguese"
 msgstr ""
 
-#: InvenTree/settings.py:631
+#: InvenTree/settings.py:633
 msgid "Portuguese (Brazilian)"
 msgstr ""
 
-#: InvenTree/settings.py:632
+#: InvenTree/settings.py:634
 msgid "Russian"
 msgstr "Rusça"
 
-#: InvenTree/settings.py:633
+#: InvenTree/settings.py:635
 msgid "Swedish"
 msgstr "İsveççe"
 
-#: InvenTree/settings.py:634
+#: InvenTree/settings.py:636
 msgid "Thai"
 msgstr "Tay dili"
 
-#: InvenTree/settings.py:635
+#: InvenTree/settings.py:637
 msgid "Turkish"
 msgstr "Türkçe"
 
-#: InvenTree/settings.py:636
+#: InvenTree/settings.py:638
 msgid "Vietnamese"
 msgstr "Vietnamca"
 
-#: InvenTree/settings.py:637
+#: InvenTree/settings.py:639
 msgid "Chinese"
 msgstr "Çince"
 
@@ -5737,23 +5737,23 @@ msgstr "İşlem belirtilmedi"
 msgid "No matching action found"
 msgstr "Eşleşen eylem bulunamadı"
 
-#: plugin/base/barcodes/api.py:51 plugin/base/barcodes/api.py:109
+#: plugin/base/barcodes/api.py:52 plugin/base/barcodes/api.py:110
 msgid "Must provide barcode_data parameter"
 msgstr "Barcode_data parametresini sağlamalıdır"
 
-#: plugin/base/barcodes/api.py:81
+#: plugin/base/barcodes/api.py:82
 msgid "No match found for barcode data"
 msgstr "Barkod verisi için eşleşme bulunamadı"
 
-#: plugin/base/barcodes/api.py:85
+#: plugin/base/barcodes/api.py:86
 msgid "Match found for barcode data"
 msgstr "Barkod verisi için eşleşme bulundu"
 
-#: plugin/base/barcodes/api.py:124
+#: plugin/base/barcodes/api.py:125
 msgid "Barcode matches existing item"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:210
+#: plugin/base/barcodes/api.py:222
 msgid "No match found for provided value"
 msgstr ""
 
