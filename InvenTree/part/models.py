@@ -668,44 +668,12 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         # Attempt to perform increment according to some basic rules
         return helpers.increment(serial)
 
-    def getLatestSerialNumber(self):
-        """Return the "latest" serial number for this Part.
-
-        If *all* the serial numbers are integers, then this will return the highest one.
-        Otherwise, it will simply return the serial number most recently added.
-
-        Note: Serial numbers must be unique across an entire Part "tree",
-        so we filter by the entire tree.
-        """
-        parts = Part.objects.filter(tree_id=self.tree_id)
-        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None)
-
-        # There are no matching StockItem objects (skip further tests)
-        if not stock.exists():
-            return None
-
-        # Attempt to coerce the returned serial numbers to integers
-        # If *any* are not integers, fail!
-        try:
-            ordered = sorted(stock.all(), reverse=True, key=lambda n: int(n.serial))
-
-            if len(ordered) > 0:
-                return ordered[0].serial
-
-        # One or more of the serial numbers was non-numeric
-        # In this case, the "best" we can do is return the most recent
-        except ValueError:
-            return stock.last().serial
-
-        # No serial numbers found
-        return None
-
     def getLatestSerialNumberInt(self):
         """Return the "latest" serial number for this Part as a integer.
 
         If it is not an integer the result is 0
         """
-        latest = self.getLatestSerialNumber()
+        latest = self.get_latest_serial_number()
 
         # No serial number = > 0
         if latest is None:
@@ -721,7 +689,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     def getSerialNumberString(self, quantity=1):
         """Return a formatted string representing the next available serial numbers, given a certain quantity of items."""
-        latest = self.getLatestSerialNumber()
+        latest = self.get_latest_serial_number()
 
         quantity = int(quantity)
 

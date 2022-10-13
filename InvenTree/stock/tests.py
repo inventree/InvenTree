@@ -893,7 +893,7 @@ class VariantTest(StockTestBase):
 
         self.assertTrue(chair.validate_serial_number(30))
 
-        self.assertEqual(chair.getLatestSerialNumber(), '22')
+        self.assertEqual(chair.get_latest_serial_number(), '22')
 
         # Check for conflicting serial numbers
         to_check = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -904,10 +904,10 @@ class VariantTest(StockTestBase):
 
         # Same operations on a sub-item
         variant = Part.objects.get(pk=10003)
-        self.assertEqual(variant.getLatestSerialNumber(), '22')
+        self.assertEqual(variant.get_latest_serial_number(), '22')
 
         # Create a new serial number
-        n = variant.getLatestSerialNumber()
+        n = variant.get_latest_serial_number()
 
         item = StockItem(
             part=variant,
@@ -923,7 +923,7 @@ class VariantTest(StockTestBase):
         item.serial = "string"
         item.save()
 
-        self.assertEqual(variant.getLatestSerialNumber(), "string")
+        self.assertEqual(variant.get_latest_serial_number(), "string")
 
         # This should pass, although not strictly an int field now.
         item.serial = int(n) + 1
