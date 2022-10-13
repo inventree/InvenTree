@@ -48,6 +48,7 @@ django==3.2.15
     #   django-allauth
     #   django-allauth-2fa
     #   django-cors-headers
+    #   django-dbbackup
     #   django-error-report
     #   django-filter
     #   django-formtools
@@ -78,6 +79,8 @@ django-cleanup==6.0.0
 django-cors-headers==3.13.0
     # via -r requirements.in
 django-crispy-forms==1.14.0
+    # via -r requirements.in
+django-dbbackup==4.0.2
     # via -r requirements.in
 django-error-report==0.2.0
     # via -r requirements.in
@@ -181,6 +184,7 @@ pytz==2022.1
     # via
     #   babel
     #   django
+    #   django-dbbackup
     #   djangorestframework
 pyyaml==6.0
     # via tablib
