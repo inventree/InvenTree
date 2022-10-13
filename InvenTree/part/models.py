@@ -557,10 +557,8 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         # First, throw the serial number against each of the loaded validation plugins
         from plugin.registry import registry
 
-        plugins = registry.with_mixin('validation')
-
         try:
-            for plugin in plugins:
+            for plugin in registry.with_mixin('validation'):
                 # Run the serial number through each custom validator
                 # If the plugin returns 'True' we will skip any subsequent validation
                 if plugin.validate_serial_number(serial, self, stock_item=stock_item):

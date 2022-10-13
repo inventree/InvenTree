@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Sum
 
 from build.models import Build
+from common.models import InvenTreeSetting
 from InvenTree.helpers import InvenTreeTestCase
 from InvenTree.status_codes import StockHistoryCode
 from part.models import Part
@@ -162,6 +163,39 @@ class StockTest(StockTestBase):
 
         item.link = long_url
         item.save()
+
+    def test_serial_numbers(self):
+        """Test serial number uniqueness"""
+
+        # Ensure that 'global uniqueness' setting is enabled
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', True, self.user)
+
+        part_a = Part.objects.create(name='A', description='A', trackable=True)
+        part_b = Part.objects.create(name='B', description='B', trackable=True)
+
+        # Create a StockItem for part_a
+        StockItem.objects.create(
+            part=part_a,
+            quantity=1,
+            serial='ABCDE',
+        )
+
+        # Create a StockItem for part_a (but, will error due to identical serial)
+        with self.assertRaises(ValidationError):
+            StockItem.objects.create(
+                part=part_b,
+                quantity=1,
+                serial='ABCDE',
+            )
+
+        # Now, allow serial numbers to be duplicated between different parts
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, self.user)
+
+        StockItem.objects.create(
+            part=part_b,
+            quantity=1,
+            serial='ABCDE',
+        )
 
     def test_expiry(self):
         """Test expiry date functionality for StockItem model."""
@@ -851,7 +885,7 @@ class VariantTest(StockTestBase):
         chair = Part.objects.get(pk=10000)
 
         # Operations on the top-level object
-        [self.assertFalse(chair.validate_serial_number(i)) for i in [1,2,3,4,5,20,21,22]]
+        [self.assertFalse(chair.validate_serial_number(i)) for i in [1, 2, 3, 4, 5, 20, 21, 22]]
 
         self.assertFalse(chair.validate_serial_number(20))
         self.assertFalse(chair.validate_serial_number(21))
