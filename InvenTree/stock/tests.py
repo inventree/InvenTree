@@ -851,11 +851,7 @@ class VariantTest(StockTestBase):
         chair = Part.objects.get(pk=10000)
 
         # Operations on the top-level object
-        self.assertFalse(chair.validate_serial_number(1))
-        self.assertFalse(chair.validate_serial_number(2))
-        self.assertFalse(chair.validate_serial_number(3))
-        self.assertFalse(chair.validate_serial_number(4))
-        self.assertFalse(chair.validate_serial_number(5))
+        [self.assertFalse(chair.validate_serial_number(i)) for i in [1,2,3,4,5,20,21,22]]
 
         self.assertFalse(chair.validate_serial_number(20))
         self.assertFalse(chair.validate_serial_number(21))
