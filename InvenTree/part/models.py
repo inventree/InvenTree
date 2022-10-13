@@ -597,7 +597,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         if stock.exists():
             if raise_error:
-                raise ValidationError(_("Stock item with this serial number already exists"))
+                raise ValidationError(_("Stock item with this serial number already exists") + ": " + serial)
             else:
                 return False
         else:
