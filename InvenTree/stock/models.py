@@ -260,15 +260,30 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         This is used for efficient numerical sorting
         """
-        serial = getattr(self, 'serial', '')
+
+        serial = str(getattr(self, 'serial', '')).strip()
+
+        from plugin.registry import registry
+
+        # First, let any plugins convert this serial number to an integer value
+        # If a non-null value is returned (by any plugin) we will use that
+
+        serial_int = None
+
+        for plugin in registry.with_mixin('vaFlidation'):
+            serial_int = plugin.convert_serial_to_int(serial, self)
+
+            if serial_int is not None:
+                # Save the first returned result
+                self.serial_int = serial_int
+                return
+
+        # If we get to this point, none of the available plugins provided an integer value
 
         # Default value if we cannot convert to an integer
         serial_int = 0
 
-        if serial is not None:
-
-            serial = str(serial).strip()
-
+        if serial not in [None, '']:
             serial_int = extract_int(serial)
 
         self.serial_int = serial_int

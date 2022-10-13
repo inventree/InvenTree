@@ -292,6 +292,28 @@ class ValidationMixin:
         """
         ...
 
+    def convert_serial_to_int(self, serial: str, stock_item):
+        """Convert a serial number (string) into an integer representation.
+
+        This integer value is used for efficient sorting based on serial numbers.
+
+        A plugin which implements this method can either return:
+
+        - An integer based on the serial string, according to some algorithm
+        - A fixed value, such that serial number sorting reverts to the string representation
+        - None (null value) to let any other plugins perform the converrsion
+
+        Note that there is no requirement for the returned integer value to be unique.
+
+        Arguments:
+            serial: Stringified serial number
+            stock_item: The StockItem model instance for which this serial number is being generated
+
+        Returns:
+            integer representation of the serial number, or None
+        """
+        ...
+
 
 class UrlsMixin:
     """Mixin that enables custom URLs for the plugin."""
