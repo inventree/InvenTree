@@ -50,7 +50,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if self.get_setting('IPN_MUST_CONTAIN_Q') and 'Q' not in ipn:
             raise ValidationError("IPN must contain 'Q'")
 
-    def validate_serial_number(self, serial: str, part, stock_item=None):
+    def validate_serial_number(self, serial: str, part):
         """Validate serial number for a given StockItem"""
 
         if self.get_setting('SERIAL_MUST_BE_PALINDROME'):

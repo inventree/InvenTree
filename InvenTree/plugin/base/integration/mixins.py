@@ -276,7 +276,7 @@ class ValidationMixin:
         """
         return None
 
-    def validate_serial_number(self, serial: str, part, stock_item):
+    def validate_serial_number(self, serial: str, part):
         """Validate the supplied serial number and part combination.
 
         Arguments:

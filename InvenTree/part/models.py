@@ -529,7 +529,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return result
 
-    def validate_serial_number(self, serial: str, stock_item=None, raise_error=False):
+    def validate_serial_number(self, serial: str, stock_item=None, check_duplicates=True, raise_error=False):
         """Validate a serial number against this Part instance.
 
         Note: This function is exposed to any Validation plugins, and thus can be customized.
@@ -561,7 +561,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             for plugin in registry.with_mixin('validation'):
                 # Run the serial number through each custom validator
                 # If the plugin returns 'True' we will skip any subsequent validation
-                if plugin.validate_serial_number(serial, self, stock_item=stock_item):
+                if plugin.validate_serial_number(serial, self):
                     return True
         except ValidationError as exc:
             if raise_error:
@@ -574,8 +574,11 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         If we are here, none of the loaded plugins (if any) threw an error or exited early
 
         Now, we run the "default" serial number validation routine,
-        which checks that serial numbers are unique within a "tree"
+        which checks that the serial number is not duplicated
         """
+
+        if not check_duplicates:
+            return
 
         from part.models import Part
         from stock.models import StockItem
