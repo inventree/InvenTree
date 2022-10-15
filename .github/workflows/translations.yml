@@ -17,6 +17,7 @@ jobs:
       INVENTREE_DEBUG: info
       INVENTREE_MEDIA_ROOT: ./media
       INVENTREE_STATIC_ROOT: ./static
+      INVENTREE_BACKUP_ROOT: ./backup
 
     steps:
       - name: Checkout Code
