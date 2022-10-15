@@ -583,7 +583,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         from part.models import Part
         from stock.models import StockItem
 
-        if common.models.InvenTreeSetting.get_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE'):
+        if common.models.InvenTreeSetting.get_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
             # Serial number must be unique across *all* parts
             parts = Part.objects.all()
         else:
@@ -628,12 +628,17 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         Returns:
             The latest serial number specified for this part, or None
-
         """
 
+        stock = StockModels.StockItem.objects.all().exclude(serial=None).exclude(serial='')
+
         # Generate a query for any stock items for this part variant tree with non-empty serial numbers
-        parts = Part.objects.filter(tree_id=self.tree_id)
-        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None).exclude(serial='')
+        if common.models.InvenTreeSetting.get_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # Serial numbers are unique across all parts
+            pass
+        else:
+            # Serial numbers are unique acros part trees
+            stock = stock.filter(part__tree_id=self.tree_id)
 
         # There are no matching StockItem objects (skip further tests)
         if not stock.exists():
