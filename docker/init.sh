@@ -13,9 +13,9 @@ if [[ ! -d "$INVENTREE_MEDIA_ROOT" ]]; then
     mkdir -p $INVENTREE_MEDIA_ROOT
 fi
 
-if [[ ! -d "$INVENTREE_BACKUP_ROOT" ]]; then
-    echo "Creating directory $INVENTREE_BACKUP_ROOT"
-    mkdir -p $INVENTREE_BACKUP_ROOT
+if [[ ! -d "$INVENTREE_BACKUP_DIR" ]]; then
+    echo "Creating directory $INVENTREE_BACKUP_DIR"
+    mkdir -p $INVENTREE_BACKUP_DIR
 fi
 
 # Check if "config.yaml" has been copied into the correct location

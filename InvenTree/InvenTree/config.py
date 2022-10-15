@@ -152,10 +152,10 @@ def get_static_dir(create=True):
 def get_backup_dir(create=True):
     """Return the absolute path for the backup directory"""
 
-    bd = get_setting('INVENTREE_BACKUP_ROOT', 'backup_root')
+    bd = get_setting('INVENTREE_BACKUP_DIR', 'backup_dir')
 
     if not bd:
-        raise FileNotFoundError('INVENTREE_BACKUP_ROOT not specified')
+        raise FileNotFoundError('INVENTREE_BACKUP_DIR not specified')
 
     bd = Path(bd).resolve()
 

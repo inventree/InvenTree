@@ -131,8 +131,8 @@ cors:
 # STATIC_ROOT is the local filesystem location for storing static files
 #static_root: '/home/inventree/data/static'
 
-# BACKUP_ROOT is the local filesystem location for storing backups
-#backup_root: '/home/inventree/data/backup'
+# BACKUP_DIR is the local filesystem location for storing backups
+#backup_dir: '/home/inventree/data/backup'
 
 # Background worker options
 background:
