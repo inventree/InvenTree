@@ -457,7 +457,7 @@ class TestSerialNumberExtraction(TestCase):
         self.assertEqual(sn, ['1', "A-2", '3', '4', '5'])
 
         # Test multiple placeholders
-        sn = e("1 2 ~ ~ ~", 5, 3)
+        sn = e("1 2 ~ ~ ~", 5, 2)
         self.assertEqual(len(sn), 5)
         self.assertEqual(sn, ['1', '2', '3', '4', '5'])
 
@@ -475,17 +475,17 @@ class TestSerialNumberExtraction(TestCase):
 
         sn = e("~", 1, 1)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, ['1'])
+        self.assertEqual(sn, ['2'])
 
         sn = e("~", 1, 3)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, ['3'])
+        self.assertEqual(sn, ['4'])
 
-        sn = e("~+", 2, 5)
+        sn = e("~+", 2, 4)
         self.assertEqual(len(sn), 2)
         self.assertEqual(sn, ['5', '6'])
 
-        sn = e("~+3", 4, 5)
+        sn = e("~+3", 4, 4)
         self.assertEqual(len(sn), 4)
         self.assertEqual(sn, ['5', '6', '7', '8'])
 

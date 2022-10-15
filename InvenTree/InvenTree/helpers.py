@@ -342,7 +342,7 @@ def normalize(d):
     return d.quantize(Decimal(1)) if d == d.to_integral() else d.normalize()
 
 
-def increment(value: str):
+def increment(value):
     """Attempt to increment an integer (or a string that looks like an integer).
 
     e.g.
@@ -573,7 +573,7 @@ def increment_serial_number(serial: str):
     return increment(serial)
 
 
-def extract_serial_numbers(input_string: str, expected_quantity: int, starting_value=None):
+def extract_serial_numbers(input_string, expected_quantity: int, starting_value=None):
     """Extract a list of serial numbers from a provided input string.
 
     The input string can be specified using the following concepts:
@@ -588,7 +588,7 @@ def extract_serial_numbers(input_string: str, expected_quantity: int, starting_v
     allowing custom plugins to determine how serial values are incremented.
 
     Arguments:
-        input_string: Input string with specified serial numbers
+        input_string: Input string with specified serial numbers (string, or integer)
         expected_quantity: The number of (unique) serial numbers we expect
         starting_value: Provide a starting value for the sequence (or None)
     """
@@ -601,7 +601,10 @@ def extract_serial_numbers(input_string: str, expected_quantity: int, starting_v
     except ValueError:
         raise ValidationError(_("Invalid quantity provided"))
 
-    input_string = input_string.strip()
+    if input_string:
+        input_string = str(input_string).strip()
+    else:
+        input_string = ''
 
     if len(input_string) == 0:
         raise ValidationError(_("Empty serial number string"))
