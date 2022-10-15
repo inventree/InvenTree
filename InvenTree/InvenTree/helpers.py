@@ -606,7 +606,7 @@ def extract_serial_numbers(input_string: str, expected_quantity: int, starting_v
     if len(input_string) == 0:
         raise ValidationError(_("Empty serial number string"))
 
-    next_value = starting_value
+    next_value = increment_serial_number(starting_value)
 
     # Substitute ~ character with latest value
     while '~' in input_string and next_value:
