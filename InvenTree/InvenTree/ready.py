@@ -35,6 +35,7 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False):
         'collectstatic',
         'makemessages',
         'compilemessages',
+        'backup',
     ]
 
     if not allow_test:
