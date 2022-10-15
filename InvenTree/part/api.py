@@ -25,7 +25,8 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
-from InvenTree.helpers import DownloadFile, isNull, str2bool, str2int
+from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
+                               str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
@@ -723,7 +724,7 @@ class PartSerialNumberDetail(RetrieveAPI):
         }
 
         if latest is not None:
-            next_serial = part.increment_serial_number(latest)
+            next_serial = increment_serial_number(latest)
 
             if next_serial != latest:
                 data['next'] = next_serial

@@ -276,13 +276,11 @@ class ValidationMixin:
         """
         return None
 
-    def validate_serial_number(self, serial: str, part):
+    def validate_serial_number(self, serial: str):
         """Validate the supplied serial number and part combination.
 
         Arguments:
             serial: The proposed serial number (string)
-            part: The Part instance
-            stock_item: (optional) a StockItem instance which already has this serial number
 
         Returns:
             None or True
@@ -292,7 +290,7 @@ class ValidationMixin:
         """
         return None
 
-    def convert_serial_to_int(self, serial: str, part):
+    def convert_serial_to_int(self, serial: str):
         """Convert a serial number (string) into an integer representation.
 
         This integer value is used for efficient sorting based on serial numbers.
@@ -307,14 +305,13 @@ class ValidationMixin:
 
         Arguments:
             serial: Serial value (string)
-            part: The Part model instance for which this serial number is being generated
 
         Returns:
             integer representation of the serial number, or None
         """
         return None
 
-    def increment_serial_number(self, serial: str, part):
+    def increment_serial_number(self, serial: str):
         """Return the next sequential serial based on the provided value.
 
         A plugin which implements this method can either return:
@@ -324,21 +321,6 @@ class ValidationMixin:
 
         Arguments:
             serial: Current serial value (string)
-            part: The Part model instsance for which the serial number is being generated
-        """
-        return None
-
-    def decrement_serial_number(self, serial: str, part):
-        """Return the previous sequential serial based on the provided value.
-
-        A plugin which implements this method can either return:
-
-        - A string which represents the "previous" serial number in the sequence
-        - None (null value) if the previous value could not be determined
-
-        Arguments:
-            serial: Current serial value (string)
-            part: The Part model instance for which the serial number is being generated
         """
         return None
 

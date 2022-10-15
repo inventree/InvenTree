@@ -418,7 +418,11 @@ class TestMPTT(TestCase):
 
 
 class TestSerialNumberExtraction(TestCase):
-    """Tests for serial number extraction code."""
+    """Tests for serial number extraction code.
+
+    Note that while serial number extraction is made available to custom plugins,
+    only simple integer-based extraction is tested here.
+    """
 
     def test_simple(self):
         """Test simple serial numbers."""
@@ -427,7 +431,7 @@ class TestSerialNumberExtraction(TestCase):
         sn = e("1-5", 5, 1)
         self.assertEqual(len(sn), 5, 1)
         for i in range(1, 6):
-            self.assertIn(i, sn)
+            self.assertIn(str(i), sn)
 
         sn = e("1, 2, 3, 4, 5", 5, 1)
         self.assertEqual(len(sn), 5)
@@ -435,55 +439,55 @@ class TestSerialNumberExtraction(TestCase):
         # Test partially specifying serials
         sn = e("1, 2, 4+", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 4, 5, 6])
+        self.assertEqual(sn, ['1', '2', '4', '5', '6'])
 
         # Test groups are not interpolated if enough serials are supplied
         sn = e("1, 2, 3, AF5-69H, 5", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 3, "AF5-69H", 5])
+        self.assertEqual(sn, ['1', '2', '3', 'AF5-69H', '5'])
 
         # Test groups are not interpolated with more than one hyphen in a word
         sn = e("1, 2, TG-4SR-92, 4+", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, "TG-4SR-92", 4, 5])
+        self.assertEqual(sn, ['1', '2', "TG-4SR-92", '4', '5'])
 
         # Test groups are not interpolated with alpha characters
         sn = e("1, A-2, 3+", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, "A-2", 3, 4, 5])
+        self.assertEqual(sn, ['1', "A-2", '3', '4', '5'])
 
         # Test multiple placeholders
         sn = e("1 2 ~ ~ ~", 5, 3)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 3, 4, 5])
+        self.assertEqual(sn, ['1', '2', '3', '4', '5'])
 
         sn = e("1-5, 10-15", 11, 1)
-        self.assertIn(3, sn)
-        self.assertIn(13, sn)
+        self.assertIn('3', sn)
+        self.assertIn('13', sn)
 
         sn = e("1+", 10, 1)
         self.assertEqual(len(sn), 10)
-        self.assertEqual(sn, [_ for _ in range(1, 11)])
+        self.assertEqual(sn, [str(_) for _ in range(1, 11)])
 
         sn = e("4, 1+2", 4, 1)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, [4, 1, 2, 3])
+        self.assertEqual(sn, ['4', '1', '2', '3'])
 
         sn = e("~", 1, 1)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, [1])
+        self.assertEqual(sn, ['1'])
 
         sn = e("~", 1, 3)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, [3])
+        self.assertEqual(sn, ['3'])
 
         sn = e("~+", 2, 5)
         self.assertEqual(len(sn), 2)
-        self.assertEqual(sn, [5, 6])
+        self.assertEqual(sn, ['5', '6'])
 
         sn = e("~+3", 4, 5)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, [5, 6, 7, 8])
+        self.assertEqual(sn, ['5', '6', '7', '8'])
 
     def test_failures(self):
         """Test wron serial numbers."""

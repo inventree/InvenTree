@@ -342,7 +342,7 @@ def normalize(d):
     return d.quantize(Decimal(1)) if d == d.to_integral() else d.normalize()
 
 
-def increment(n):
+def increment(value: str):
     """Attempt to increment an integer (or a string that looks like an integer).
 
     e.g.
@@ -351,12 +351,14 @@ def increment(n):
     2 -> 3
     AB01 -> AB02
     QQQ -> QQQ
+
     """
-    value = str(n).strip()
+    value = str(value).strip()
 
     # Ignore empty strings
-    if not value:
-        return value
+    if value in ['', None]:
+        # Provide a default value if provided with a null input
+        return '1'
 
     pattern = r"(.*?)(\d+)?$"
 
@@ -542,138 +544,208 @@ def DownloadFile(data, filename, content_type='application/text', inline=False) 
     return response
 
 
-def extract_serial_numbers(serials, expected_quantity, next_number: int):
-    """Attempt to extract serial numbers from an input string.
+def increment_serial_number(serial: str):
+    """Given a serial number, (attempt to) generate the *next* serial number.
 
-    Requirements:
-        - Serial numbers can be either strings, or integers
-        - Serial numbers can be split by whitespace / newline / commma chars
-        - Serial numbers can be supplied as an inclusive range using hyphen char e.g. 10-20
-        - Serial numbers can be defined as ~ for getting the next available serial number
-        - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
-        - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
+    Note: This method is exposed to custom plugins.
 
-    Args:
-        serials: input string with patterns
-        expected_quantity: The number of (unique) serial numbers we expect
-        next_number(int): the next possible serial number
+    Arguments:
+        serial: The serial number which should be incremented
+
+    Returns:
+        incremented value, or None if incrementing could not be performed.
     """
-    serials = serials.strip()
 
-    # fill in the next serial number into the serial
-    while '~' in serials:
-        serials = serials.replace('~', str(next_number), 1)
-        next_number += 1
+    from plugin.registry import registry
 
-    # Split input string by whitespace or comma (,) characters
-    groups = re.split(r"[\s,]+", serials)
+    # Ensure we start with a string value
+    if serial is not None:
+        serial = str(serial).strip()
 
-    numbers = []
-    errors = []
+    # First, let any plugins attempt to increment the serial number
+    for plugin in registry.with_mixin('validation'):
+        result = plugin.increment_serial_number(serial)
+        if result is not None:
+            return str(result)
 
-    # Helper function to check for duplicated numbers
-    def add_sn(sn):
-        # Attempt integer conversion first, so numerical strings are never stored
-        try:
-            sn = int(sn)
-        except ValueError:
-            pass
+    # If we get to here, no plugins were able to "increment" the provided serial value
+    # Attempt to perform increment according to some basic rules
+    return increment(serial)
 
-        if sn in numbers:
-            errors.append(_('Duplicate serial: {sn}').format(sn=sn))
-        else:
-            numbers.append(sn)
+
+def extract_serial_numbers(input_string: str, expected_quantity: int, starting_value=None):
+    """Extract a list of serial numbers from a provided input string.
+
+    The input string can be specified using the following concepts:
+
+    - Individual serials are separated by comma: 1, 2, 3, 6,22
+    - Sequential ranges with provided limits are separated by hyphens: 1-5, 20 - 40
+    - The "next" available serial number can be specified with the tilde (~) character
+    - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
+    - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
+
+    Actual generation of sequential serials is passed to the 'validation' plugin mixin,
+    allowing custom plugins to determine how serial values are incremented.
+
+    Arguments:
+        input_string: Input string with specified serial numbers
+        expected_quantity: The number of (unique) serial numbers we expect
+        starting_value: Provide a starting value for the sequence (or None)
+    """
+
+    if starting_value is None:
+        starting_value = increment_serial_number(None)
 
     try:
         expected_quantity = int(expected_quantity)
     except ValueError:
-        raise ValidationError([_("Invalid quantity provided")])
+        raise ValidationError(_("Invalid quantity provided"))
 
-    if len(serials) == 0:
-        raise ValidationError([_("Empty serial number string")])
+    input_string = input_string.strip()
 
-    # If the user has supplied the correct number of serials, don't process them for groups
-    # just add them so any duplicates (or future validations) are checked
+    if len(input_string) == 0:
+        raise ValidationError(_("Empty serial number string"))
+
+    next_value = starting_value
+
+    # Substitute ~ character with latest value
+    while '~' in input_string and next_value:
+        input_string = input_string.replace('~', str(next_value), 1)
+        next_value = increment_serial_number(next_value)
+
+    # Split input string by whitespace or comma (,) characters
+    groups = re.split(r"[\s,]+", input_string)
+
+    serials = []
+    errors = []
+
+    def add_error(error: str):
+        """Helper function for adding an error message"""
+        if error not in errors:
+            errors.append(error)
+
+    def add_serial(serial):
+        """Helper function to check for duplicated values"""
+        if serial in serials:
+            add_error(_("Duplicate serial") + f": {serial}")
+        else:
+            serials.append(serial)
+
+    # If the user has supplied the correct number of serials, do not split into groups
     if len(groups) == expected_quantity:
         for group in groups:
-            add_sn(group)
+            add_serial(group)
 
         if len(errors) > 0:
             raise ValidationError(errors)
-
-        return numbers
+        else:
+            return serials
 
     for group in groups:
         group = group.strip()
 
-        # Hyphen indicates a range of numbers
         if '-' in group:
+            """Hyphen indicates a range of values:
+            e.g. 10-20
+            """
             items = group.split('-')
 
-            if len(items) == 2 and all([i.isnumeric() for i in items]):
-                a = items[0].strip()
-                b = items[1].strip()
+            if len(items) == 2:
+                a = items[0]
+                b = items[1]
 
-                try:
-                    a = int(a)
-                    b = int(b)
-
-                    if a < b:
-                        for n in range(a, b + 1):
-                            add_sn(n)
-                    else:
-                        errors.append(_("Invalid group range: {g}").format(g=group))
-
-                except ValueError:
-                    errors.append(_("Invalid group: {g}").format(g=group))
+                if a == b:
+                    # Invalid group
+                    add_error(_("Invalid group range: {g}").format(g=group))
                     continue
-            else:
-                # More than 2 hyphens or non-numeric group so add without interpolating
-                add_sn(group)
 
-        # plus signals either
-        # 1:  'start+':  expected number of serials, starting at start
-        # 2:  'start+number': number of serials, starting at start
+                group_items = []
+
+                count = 0
+
+                a_next = a
+
+                while a_next is not None and a_next not in group_items:
+                    group_items.append(a_next)
+                    count += 1
+
+                    # Progress to the 'next' sequential value
+                    a_next = str(increment_serial_number(a_next))
+
+                    if a_next == b:
+                        # Successfully got to the end of the range
+                        group_items.append(b)
+                        break
+
+                    elif count > expected_quantity:
+                        # More than the allowed number of items
+                        break
+
+                    elif a_next is None:
+                        break
+
+                if len(group_items) > 0 and group_items[0] == a and group_items[-1] == b:
+                    # In this case, the range extraction looks like it has worked
+                    for item in group_items:
+                        add_serial(item)
+                else:
+                    add_serial(group)
+                    # add_error(_("Invalid group range: {g}").format(g=group))
+
+            else:
+                # In the case of a different number of hyphens, simply add the entire group
+                add_serial(group)
+
         elif '+' in group:
+            """Plus character (+) indicates either:
+            - <start>+ - Expected number of serials, beginning at the specified 'start' character
+            - <start>+<num> - Specified number of serials, beginning at the specified 'start' character
+            """
             items = group.split('+')
 
-            # case 1, 2
-            if len(items) == 2:
-                start = int(items[0])
+            sequence_items = []
+            counter = 0
+            sequence_count = max(0, expected_quantity - len(serials))
 
-                # case 2
-                if bool(items[1]):
-                    end = start + int(items[1]) + 1
+            if len(items) > 2 or len(items) == 0:
+                add_error(_("Invalid group sequence: {g}").format(g=group))
+                continue
+            elif len(items) == 2:
+                try:
+                    if items[1] not in ['', None]:
+                        sequence_count = int(items[1]) + 1
+                except ValueError:
+                    add_error(_("Invalid group sequence: {g}").format(g=group))
+                    continue
 
-                # case 1
-                else:
-                    end = start + (expected_quantity - len(numbers))
+            value = items[0]
 
-                for n in range(start, end):
-                    add_sn(n)
-            # no case
+            # Keep incrementing up to the specified quantity
+            while value is not None and value not in sequence_items and counter < sequence_count:
+                sequence_items.append(value)
+                value = increment_serial_number(value)
+                counter += 1
+
+            if len(sequence_items) == sequence_count:
+                for item in sequence_items:
+                    add_serial(item)
             else:
-                errors.append(_("Invalid group sequence: {g}").format(g=group))
+                add_error(_("Invalid group sequence: {g}").format(g=group))
 
-        # At this point, we assume that the "group" is just a single serial value
-        elif group:
-            add_sn(group)
-
-        # No valid input group detected
         else:
-            raise ValidationError(_(f"Invalid/no group {group}"))
+            # At this point, we assume that the 'group' is just a single serial value
+            add_serial(group)
 
     if len(errors) > 0:
         raise ValidationError(errors)
 
-    if len(numbers) == 0:
+    if len(serials) == 0:
         raise ValidationError([_("No serial numbers found")])
 
-    # The number of extracted serial numbers must match the expected quantity
-    if expected_quantity != len(numbers):
-        raise ValidationError([_("Number of unique serial numbers ({s}) must match quantity ({q})").format(s=len(numbers), q=expected_quantity)])
+    if len(serials) != expected_quantity:
+        raise ValidationError([_("Number of unique serial numbers ({s}) must match quantity ({q})").format(s=len(serials), q=expected_quantity)])
 
-    return numbers
+    return serials
 
 
 def validateFilterString(value, model=None):
