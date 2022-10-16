@@ -567,6 +567,9 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
             registry.reload_plugins()
             fixtures = PluginConfig.objects.all()
 
+        # Activate plugin
+        registry.set_plugin_state('sample', True)
+
         # get data
         url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'sample', 'key': 'API_KEY'})
         response = self.get(url, expected_code=200)
