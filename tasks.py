@@ -5,7 +5,9 @@ import os
 import pathlib
 import re
 import shutil
+import socket
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from invoke import task
@@ -200,10 +202,12 @@ def translate(c):
 def backup(c):
     """Backup the database and media files."""
 
+    bkp_name = f'{socket.getfqdn()}_{datetime.now().strftime("%Y-%m-%d-%H%M%S")}'
+
     print("Backing up InvenTree database...")
-    manage(c, "dbbackup --noinput --clean --compress")
+    manage(c, f"dbbackup --noinput --clean --compress -o {bkp_name}.dump.gz")
     print("Backing up InvenTree media files...")
-    manage(c, "mediabackup --noinput --clean --compress")
+    manage(c, f"mediabackup --noinput --clean --compress -o {bkp_name}.tar.gz")
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
