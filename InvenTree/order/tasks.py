@@ -12,6 +12,7 @@ from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from plugin.events import trigger_event
 
 
+@InvenTree.tasks.scheduled_task(InvenTree.tasks.Schedule.DAILY)
 def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
     """Notify users that a PurchaseOrder has just become 'overdue'"""
 
@@ -55,6 +56,7 @@ def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
     )
 
 
+@InvenTree.tasks.scheduled_task(InvenTree.tasks.Schedule.DAILY)
 def check_overdue_purchase_orders():
     """Check if any outstanding PurchaseOrders have just become overdue:
 

@@ -181,6 +181,7 @@ def scheduled_task(interval: Schedule, minutes: int = None):
     return _task_wrapper
 
 
+@scheduled_task(Schedule.MINUTES, 15)
 def heartbeat():
     """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
 
@@ -204,6 +205,7 @@ def heartbeat():
     heartbeats.delete()
 
 
+@scheduled_task(Schedule.DAILY)
 def delete_successful_tasks():
     """Delete successful task logs which are more than a month old."""
     try:
@@ -223,6 +225,7 @@ def delete_successful_tasks():
         results.delete()
 
 
+@scheduled_task(Schedule.DAILY)
 def delete_old_error_logs():
     """Delete old error logs from the server."""
     try:
@@ -245,6 +248,7 @@ def delete_old_error_logs():
         return
 
 
+@scheduled_task(Schedule.DAILY)
 def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
@@ -287,6 +291,7 @@ def check_for_updates():
     )
 
 
+@scheduled_task(Schedule.DAILY)
 def update_exchange_rates():
     """Update currency exchange rates."""
     try:
