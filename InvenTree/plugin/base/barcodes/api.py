@@ -5,7 +5,7 @@ from django.urls import path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import permissions
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,6 +13,7 @@ from InvenTree.helpers import hash_barcode
 from plugin import registry
 from plugin.builtin.barcodes.inventree_barcode import (
     InvenTreeExternalBarcodePlugin, InvenTreeInternalBarcodePlugin)
+from users.models import RuleSet
 
 
 class BarcodeScan(APIView):
@@ -139,6 +140,17 @@ class BarcodeAssign(APIView):
                 try:
                     instance = model.objects.get(pk=data[label])
 
+                    # Check that the user has the required permission
+                    app_label = model._meta.app_label
+                    model_name = model._meta.model_name
+
+                    table = f"{app_label}_{model_name}"
+
+                    if not RuleSet.check_table_permission(request.user, table, "change"):
+                        raise PermissionDenied({
+                            "error": f"You do not have the required permissions for {table}"
+                        })
+
                     instance.assign_barcode(
                         barcode_data=barcode_data,
                         barcode_hash=barcode_hash,
@@ -208,6 +220,17 @@ class BarcodeUnassign(APIView):
                 except (ValueError, model.DoesNotExist):
                     raise ValidationError({
                         label: _('No match found for provided value')
+                    })
+
+                # Check that the user has the required permission
+                app_label = model._meta.app_label
+                model_name = model._meta.model_name
+
+                table = f"{app_label}_{model_name}"
+
+                if not RuleSet.check_table_permission(request.user, table, "change"):
+                    raise PermissionDenied({
+                        "error": f"You do not have the required permissions for {table}"
                     })
 
                 # Unassign the barcode data from the model instance
