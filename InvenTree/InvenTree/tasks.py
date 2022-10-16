@@ -15,7 +15,6 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.utils import timezone
 
 import requests
-from django_q.models import Schedule
 
 logger = logging.getLogger("inventree")
 
@@ -138,8 +137,17 @@ class ScheduledTask:
     """
 
     func: Callable
-    interval: Schedule
+    interval: str
     minutes: int = None
+
+    MINUTES = "I"
+    HOURLY = "H"
+    DAILY = "D"
+    WEEKLY = "W"
+    MONTHLY = "M"
+    QUARTERLY = "Q"
+    YEARLY = "Y"
+    TYPE = [MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY]
 
 
 class TaskRegister:
@@ -154,7 +162,7 @@ class TaskRegister:
 tasks = TaskRegister()
 
 
-def scheduled_task(interval: Schedule, minutes: int = None):
+def scheduled_task(interval: str, minutes: int = None):
     """Register the given task as a scheduled task.
 
     - interval: The interval at which the task should be run
@@ -162,7 +170,7 @@ def scheduled_task(interval: Schedule, minutes: int = None):
 
     Example:
     ```python
-    @register(Schedule.)
+    @register(ScheduledTask.DAILY)
     def my_custom_funciton():
         ...
     ```
@@ -172,8 +180,8 @@ def scheduled_task(interval: Schedule, minutes: int = None):
         if not isinstance(admin_class, Callable):
             raise ValueError('Wrapped object must be a function')
 
-        if interval not in Schedule.TYPE:
-            raise ValueError(f'Invalid interval. Must be one of {Schedule.TYPE}')
+        if interval not in ScheduledTask.TYPE:
+            raise ValueError(f'Invalid interval. Must be one of {ScheduledTask.TYPE}')
 
         tasks.register(admin_class, interval, minutes=minutes)
 
@@ -181,7 +189,7 @@ def scheduled_task(interval: Schedule, minutes: int = None):
     return _task_wrapper
 
 
-@scheduled_task(Schedule.MINUTES, 15)
+@scheduled_task(ScheduledTask.MINUTES, 15)
 def heartbeat():
     """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
 
@@ -205,7 +213,7 @@ def heartbeat():
     heartbeats.delete()
 
 
-@scheduled_task(Schedule.DAILY)
+@scheduled_task(ScheduledTask.DAILY)
 def delete_successful_tasks():
     """Delete successful task logs which are more than a month old."""
     try:
@@ -225,7 +233,7 @@ def delete_successful_tasks():
         results.delete()
 
 
-@scheduled_task(Schedule.DAILY)
+@scheduled_task(ScheduledTask.DAILY)
 def delete_old_error_logs():
     """Delete old error logs from the server."""
     try:
@@ -248,7 +256,7 @@ def delete_old_error_logs():
         return
 
 
-@scheduled_task(Schedule.DAILY)
+@scheduled_task(ScheduledTask.DAILY)
 def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
@@ -291,7 +299,7 @@ def check_for_updates():
     )
 
 
-@scheduled_task(Schedule.DAILY)
+@scheduled_task(ScheduledTask.DAILY)
 def update_exchange_rates():
     """Update currency exchange rates."""
     try:
