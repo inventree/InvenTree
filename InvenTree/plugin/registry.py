@@ -23,7 +23,9 @@ from django.utils.text import slugify
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
+from common.notifications import trigger_superuser_notification
 from InvenTree.config import get_setting
+from InvenTree.version import inventreeVersion
 
 from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
                       handle_error, log_error)
@@ -406,10 +408,15 @@ class PluginsRegistry:
 
                 # Run version check for plugin
                 if (plg_i.MIN_VERSION or plg_i.MAX_VERSION) and not plg_i.check_version():
-                    # Version check failed -> disable plugin and send admins a warning
+                    # Disable plugin
                     safe_reference(plugin=plg_i, key=plg_key, active=False)
 
-                    # TODO -> send warning to admins
+                    _msg = _(f'Plugin `{plg_name}` is not compatible with the current InvenTree version {inventreeVersion()}!')
+                    if plg_i.MIN_VERSION:
+                        _msg += _(f'Plugin requires at least version {plg_i.MIN_VERSION}')
+                    if plg_i.MAX_VERSION:
+                        _msg += _(f'Plugin requires at most version {plg_i.MAX_VERSION}')
+                    trigger_superuser_notification(plg_i, _msg)
                 else:
                     safe_reference(plugin=plg_i, key=plg_key)
             else:  # pragma: no cover
