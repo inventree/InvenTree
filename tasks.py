@@ -392,14 +392,22 @@ def delete_data(c, force=False):
         manage(c, 'flush')
 
 
-@task
-def restore(c):
+@task(help={'name': 'name of the backup that should be restored'})
+def restore(c, name=''):
     """Restore the database and media files."""
 
+    # delete_data(c, force=True)
+
     print("Restoring InvenTree database...")
-    manage(c, "dbrestore --noinput --uncompress")
+    if name:
+        manage(c, f"dbrestore --noinput --uncompress -i {name}.dump.gz")
+    else:
+        manage(c, "dbrestore --noinput --uncompress")
     print("Restoring InvenTree media files...")
-    manage(c, "mediarestore --noinput --uncompress")
+    if name:
+        manage(c, f"mediarestore --noinput --uncompress -i {name}.tar.gz")
+    else:
+        manage(c, "mediarestore --noinput --uncompress")
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
