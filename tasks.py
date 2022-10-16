@@ -395,19 +395,24 @@ def delete_data(c, force=False):
 @task(help={'name': 'name of the backup that should be restored'})
 def restore(c, name=''):
     """Restore the database and media files."""
+    from InvenTree.InvenTree.config import get_backup_dir
 
     # delete_data(c, force=True)
+    # Discover latest db backup if nothing is specified
+    MATCH_STR = '.dump.gz'
+    MATCH_L = len(MATCH_STR)
+    if not name:
+        possibke_backups = {}
+        for file in get_backup_dir().glob(f'**/*{MATCH_STR}'):
+            possibke_backups[file.name] = file.name[-(17 + MATCH_L):-MATCH_L]
+        latest = sorted(possibke_backups.values())[-1]
+
+        name = [k for k, v in possibke_backups.items() if v == latest][0][:-MATCH_L]
 
     print("Restoring InvenTree database...")
-    if name:
-        manage(c, f"dbrestore --noinput --uncompress -i {name}.dump.gz")
-    else:
-        manage(c, "dbrestore --noinput --uncompress")
+    manage(c, f"dbrestore --noinput --uncompress -i {name}.dump.gz")
     print("Restoring InvenTree media files...")
-    if name:
-        manage(c, f"mediarestore --noinput --uncompress -i {name}.tar.gz")
-    else:
-        manage(c, "mediarestore --noinput --uncompress")
+    manage(c, f"mediarestore --noinput --uncompress -i {name}.tar.gz")
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
