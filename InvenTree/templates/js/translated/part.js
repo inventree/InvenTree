@@ -803,7 +803,7 @@ function loadSimplePartTable(table, url, options={}) {
 }
 
 
-function loadPartParameterTable(table, url, options) {
+function loadPartParameterTable(table, options) {
 
     var params = options.params || {};
 
@@ -819,7 +819,7 @@ function loadPartParameterTable(table, url, options) {
     setupFilterList('part-parameters', $(table), filterTarget);
 
     $(table).inventreeTable({
-        url: url,
+        url: '{% url "api-part-parameter-list" %}',
         original: params,
         queryParams: filters,
         name: 'partparameters',
@@ -1292,13 +1292,12 @@ function loadParametricPartTable(table, options={}) {
         },
         columns: columns,
         showColumns: true,
-        // filterControl: true,
         sidePagination: 'server',
         idField: 'pk',
         uniqueId: 'pk',
-        onLoadSuccess: function() {
+        onLoadSuccess: function(response) {
 
-            var data = $(table).bootstrapTable('getData');
+            var data = response.results;
 
             for (var idx = 0; idx < data.length; idx++) {
                 var row = data[idx];
@@ -1309,7 +1308,7 @@ function loadParametricPartTable(table, options={}) {
                     row[`parameter_${parameter.template}`] = parameter.data;
                 });
 
-                $(table).bootstrapTable('updateRow', pk, row);
+                $(table).bootstrapTable('updateByUniqueId', pk, row);
             }
         }
     });
@@ -1356,7 +1355,7 @@ function partGridTile(part) {
             <div class='panel-content'>
                 <div class='row'>
                     <div class='col-sm-4'>
-                        <img src='${part.thumbnail}' style='width: 100%;' class='card-thumb' onclick='showModalImage("${part.image}")'>
+                        <img src='${part.thumbnail}' class='card-thumb' onclick='showModalImage("${part.image}")'>
                     </div>
                     <div class='col-sm-8'>
                         <table class='table table-striped table-condensed'>
@@ -1442,13 +1441,13 @@ function loadPartTable(table, url, options={}) {
         switchable: false,
         formatter: function(value, row) {
 
-            var name = row.full_name;
+            var name = shortenString(row.full_name);
 
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, `/part/${row.pk}/`);
 
             display += makePartIcons(row);
 
-            return display;
+            return withTitle(display, row.full_name);
         }
     };
 
@@ -1463,11 +1462,13 @@ function loadPartTable(table, url, options={}) {
         title: '{% trans "Description" %}',
         formatter: function(value, row) {
 
+            var text = shortenString(value);
+
             if (row.is_template) {
-                value = `<i>${value}</i>`;
+                text = `<i>${text}</i>`;
             }
 
-            return value;
+            return withTitle(text, row.description);
         }
     });
 
@@ -1476,8 +1477,11 @@ function loadPartTable(table, url, options={}) {
         field: 'category_detail',
         title: '{% trans "Category" %}',
         formatter: function(value, row) {
+
+            var text = shortenString(row.category_detail.pathstring);
+
             if (row.category) {
-                return renderLink(value.pathstring, `/part/category/${row.category}/`);
+                return withTitle(renderLink(text, `/part/category/${row.category}/`), row.category_detail.pathstring);
             } else {
                 return '{% trans "No category" %}';
             }
@@ -1563,10 +1567,11 @@ function loadPartTable(table, url, options={}) {
         title: '{% trans "Link" %}',
         formatter: function(value) {
             return renderLink(
-                value, value,
+                value,
+                value,
                 {
-                    max_length: 32,
                     remove_http: true,
+                    tooltip: true,
                 }
             );
         }
@@ -1976,7 +1981,7 @@ function loadPartCategoryTable(table, options) {
 
                     html += renderLink(
                         value,
-                        `/part/category/${row.pk}/`
+                        `/part/category/${row.pk}/`,
                     );
 
                     if (row.starred) {
@@ -1991,6 +1996,9 @@ function loadPartCategoryTable(table, options) {
                 title: '{% trans "Description" %}',
                 switchable: true,
                 sortable: false,
+                formatter: function(value) {
+                    return withTitle(shortenString(value), value);
+                }
             },
             {
                 field: 'pathstring',
@@ -1998,6 +2006,9 @@ function loadPartCategoryTable(table, options) {
                 switchable: !tree_view,
                 visible: !tree_view,
                 sortable: true,
+                formatter: function(value) {
+                    return withTitle(shortenString(value), value);
+                }
             },
             {
                 field: 'part_count',

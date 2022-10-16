@@ -18,7 +18,7 @@ body:
     attributes:
       label: "Problem statement"
       description: "A clear and concise description of what the solved problem or feature request is."
-      placeholder: "I am always struggeling with ..."
+      placeholder: "I am always struggling with ..."
   - type: textarea
     id: solution
     validations:

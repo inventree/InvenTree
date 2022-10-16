@@ -1727,7 +1727,8 @@ function initializeRelatedField(field, fields, options={}) {
                 var query = field.filters || {};
 
                 // Add search and pagination options
-                query.search = params.term;
+                query.search = sanitizeInputString(params.term);
+
                 query.offset = offset;
                 query.limit = pageSize;
 

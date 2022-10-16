@@ -79,6 +79,14 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Allow Variant Stock" %}',
             },
+            optional: {
+                type: 'bool',
+                title: '{% trans "Optional" %}',
+            },
+            consumable: {
+                type: 'bool',
+                title: '{% trans "Consumable" %}',
+            },
         };
     }
 

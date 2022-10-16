@@ -1,4 +1,8 @@
 
+# Secret key for backend
+# Use the environment variable INVENTREE_SECRET_KEY_FILE
+#secret_key_file: '/etc/inventree/secret_key.txt'
+
 # Database backend selection - Configure backend database settings
 # Documentation: https://inventree.readthedocs.io/en/latest/start/config/
 
@@ -22,6 +26,13 @@ database:
   # HOST: Database host address (if required)
   # PORT: Database host port (if required)
 
+  # --- Database settings ---
+  #ENGINE: sampleengine
+  #NAME: '/path/to/database'
+  #USER: sampleuser
+  #PASSWORD: samplepassword
+  #HOST: samplehost
+  #PORT: sampleport
 
   # --- Example Configuration - MySQL ---
   #ENGINE: mysql
@@ -105,8 +116,8 @@ sentry_enabled: False
 # Set this variable to True to enable InvenTree Plugins
 # Alternatively, use the environment variable INVENTREE_PLUGINS_ENABLED
 plugins_enabled: False
-#plugin_file: /path/to/plugins.txt
-#plugin_dir: /path/to/plugins/
+#plugin_file: '/path/to/plugins.txt'
+#plugin_dir: '/path/to/plugins/'
 
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
@@ -126,10 +137,10 @@ cors:
   # - https://sub.example.com
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
-# media_root: '/home/inventree/data/media'
+#media_root: '/home/inventree/data/media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
-# static_root: '/home/inventree/data/static'
+#static_root: '/home/inventree/data/static'
 
 # Background worker options
 background:
