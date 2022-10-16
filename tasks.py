@@ -228,8 +228,8 @@ def migrate(c):
     print("InvenTree database migrations completed!")
 
 
-@task
-def update(c):
+@task(help={'no_backup': 'Do not backup the database before migrating'})
+def update(c, no_backup=False):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -245,7 +245,8 @@ def update(c):
     - translate_stats
     """
     install(c)
-    backup(c)
+    if not no_backup:
+        backup(c)
     migrate(c)
     static(c)
     clean_settings(c)
