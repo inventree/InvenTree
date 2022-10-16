@@ -144,6 +144,7 @@ def notify_overdue_build_order(bo: build.models.Build):
     trigger_event(event_name, build_order=bo.pk)
 
 
+@InvenTree.tasks.scheduled_task(InvenTree.tasks.ScheduledTask.DAILY)
 def check_overdue_build_orders():
     """Check if any outstanding BuildOrders have just become overdue
 
