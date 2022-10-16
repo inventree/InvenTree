@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.urls import clear_url_caches, include, re_path
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
@@ -375,7 +376,7 @@ class PluginsRegistry:
             plg_key = slugify(plg.SLUG if getattr(plg, 'SLUG', None) else plg_name)  # keys are slugs!
 
             try:
-                plg_db, _ = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
+                plg_db, _created = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
@@ -481,7 +482,7 @@ class PluginsRegistry:
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SCHEDULE'):
 
-            for _, plugin in plugins:
+            for _key, plugin in plugins:
 
                 if plugin.mixin_enabled('schedule'):
                     config = plugin.plugin_config()
@@ -536,7 +537,7 @@ class PluginsRegistry:
             apps_changed = False
 
             # add them to the INSTALLED_APPS
-            for _, plugin in plugins:
+            for _key, plugin in plugins:
                 if plugin.mixin_enabled('app'):
                     plugin_path = self._get_plugin_path(plugin)
                     if plugin_path not in settings.INSTALLED_APPS:
