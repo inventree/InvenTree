@@ -99,14 +99,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         }, follow=True)
         self.assertEqual(response.status_code, 200)
 
-        # activate everything
-        response = self.client.post(url, {
-            'action': 'plugin_activate',
-            'index': 0,
-            '_selected_action': [f.pk for f in self.plugin_confs],
-        }, follow=True)
-        self.assertEqual(response.status_code, 200)
-
         # save to deactivate a plugin
         response = self.client.post(reverse('admin:plugin_pluginconfig_change', args=(test_plg.pk, )), {
             '_save': 'Save',
