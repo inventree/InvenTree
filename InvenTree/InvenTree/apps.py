@@ -65,12 +65,6 @@ class InvenTreeConfig(AppConfig):
             )
         logger.info("Started background tasks...")
 
-        # Make regular backups
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.run_backup',
-            schedule_type=Schedule.DAILY,
-        )
-
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.
 
