@@ -9,6 +9,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.core import mail as django_mail
 from django.core.exceptions import AppRegistryNotReady
+from django.core.management import call_command
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils import timezone
 
@@ -270,6 +271,12 @@ def update_exchange_rates():
         Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
     except Exception as e:  # pragma: no cover
         logger.error(f"Error updating exchange rates: {e}")
+
+
+def run_backup():
+    """Run the backup command."""
+    call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
+    call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
