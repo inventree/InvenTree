@@ -25,5 +25,10 @@ manufacturer_part_urls = [
 ]
 
 supplier_part_urls = [
-    re_path(r'^(?P<pk>\d+)/', views.SupplierPartDetail.as_view(template_name='company/supplier_part.html'), name='supplier-part-detail'),
+    re_path(r'^(?P<pk>\d+)/', include([
+        re_path('^qr_code/?', views.SupplierPartQRCode.as_view(), name='supplier-part-qr'),
+        re_path('^.*$', views.SupplierPartDetail.as_view(template_name='company/supplier_part.html'), name='supplier-part-detail'),
+    ]))
+
+
 ]
