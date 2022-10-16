@@ -65,6 +65,7 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
     """Handles an error and casts it as an IntegrationPluginError."""
     package_path = traceback.extract_tb(error.__traceback__)[-1].filename
     install_path = sysconfig.get_paths()["purelib"]
+
     try:
         package_name = pathlib.Path(package_path).relative_to(install_path).parts[0]
     except ValueError:
@@ -92,9 +93,10 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
         log_error({package_name: str(error)}, **log_kwargs)
 
     if do_raise:
-        # do a straight raise if we are playing with enviroment variables at execution time, ignore the broken sample
+        # do a straight raise if we are playing with environment variables at execution time, ignore the broken sample
         if settings.TESTING_ENV and package_name != 'integration.broken_sample' and isinstance(error, IntegrityError):
             raise error  # pragma: no cover
+
         raise IntegrationPluginError(package_name, str(error))
 
 

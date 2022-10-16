@@ -670,6 +670,11 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
+    @property
+    def status_text(self):
+        """Return the text representation of the status field"""
+        return StockStatus.text(self.status)
+
     notes = InvenTreeNotesField(help_text=_('Stock Item Notes'))
 
     purchase_price = InvenTreeModelMoneyField(

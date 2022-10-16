@@ -607,6 +607,8 @@ if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
+# Store language settings for 30 days
+LANGUAGE_COOKIE_AGE = 2592000
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [

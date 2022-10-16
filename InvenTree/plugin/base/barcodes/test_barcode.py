@@ -190,6 +190,8 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         """Test that a barcode can be associated with a StockItem."""
         item = StockItem.objects.get(pk=522)
 
+        self.assignRole('stock.change')
+
         self.assertEqual(len(item.barcode_hash), 0)
 
         barcode_data = 'A-TEST-BARCODE-STRING'
