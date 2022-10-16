@@ -275,6 +275,14 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
             if serial_int is not None:
                 # Save the first returned result
+                # Ensure that it is clipped within a range allowed in the database schema
+                clip = 0x7fffffff
+
+                serial_int = abs(serial_int)
+
+                if serial_int > clip:
+                    serial_int = clip
+
                 self.serial_int = serial_int
                 return
 
