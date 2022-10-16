@@ -349,6 +349,8 @@ class PluginsRegistry:
         Raises:
             error: IntegrationPluginError
         """
+        # Imports need to be in this level to prevent early db model imports
+        from common.notifications import trigger_superuser_notification
         from InvenTree import version
         from plugin.models import PluginConfig
 
@@ -415,6 +417,9 @@ class PluginsRegistry:
                         _msg += _(f'Plugin requires at least version {plg_i.MIN_VERSION}')
                     if plg_i.MAX_VERSION:
                         _msg += _(f'Plugin requires at most version {plg_i.MAX_VERSION}')
+                    # Issue notification
+                    trigger_superuser_notification(plg_i, _msg)
+                    # Log to error stack
                     log_error(_msg, reference='init')
                 else:
                     safe_reference(plugin=plg_i, key=plg_key)
