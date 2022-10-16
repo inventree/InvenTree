@@ -117,6 +117,16 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY
         )
 
+        # Run through registered tasks
+        for task in InvenTree.tasks.tasks.tasks:
+            InvenTree.tasks.schedule_task(
+                task.func,
+                schedule_type=task.interval,
+                minutes=task.minutes,
+            )
+
+        logger.info("Started background tasks...")
+
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.
 

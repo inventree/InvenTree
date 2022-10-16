@@ -4,7 +4,9 @@ import json
 import logging
 import re
 import warnings
+from dataclasses import dataclass
 from datetime import timedelta
+from typing import Callable
 
 from django.conf import settings
 from django.core import mail as django_mail
@@ -13,6 +15,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.utils import timezone
 
 import requests
+from django_q.models import Schedule
 
 logger = logging.getLogger("inventree")
 
@@ -123,6 +126,59 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
 
         # Workers are not running: run it as synchronous task
         _func(*args, **kwargs)
+
+
+@dataclass()
+class ScheduledTask:
+    """A scheduled task.
+
+    - interval: The interval at which the task should be run
+    - minutes: The number of minutes between task runs
+    - func: The function to be run
+    """
+
+    func: Callable
+    interval: Schedule
+    minutes: int = None
+
+
+class TaskRegister:
+    """Registery for periodicall tasks."""
+    tasks: list[ScheduledTask] = []
+
+    def register(self, task, schedule, minutes: int = None):
+        """Register a task with the que."""
+        tasks.append(ScheduledTask(task, schedule, minutes))
+
+
+tasks = TaskRegister()
+
+
+def scheduled_task(interval: Schedule, minutes: int = None):
+    """Register the given task as a scheduled task.
+
+    - interval: The interval at which the task should be run
+    - minutes: The number of minutes between task runs
+
+    Example:
+    ```python
+    @register(Schedule.)
+    def my_custom_funciton():
+        ...
+    ```
+    """
+
+    def _task_wrapper(admin_class):
+        if not isinstance(admin_class, Callable):
+            raise ValueError('Wrapped object must be a function')
+
+        if interval not in Schedule.TYPE:
+            raise ValueError(f'Invalid interval. Must be one of {Schedule.TYPE}')
+
+        tasks.register(admin_class, interval, minutes=minutes)
+
+        return admin_class
+    return _task_wrapper
 
 
 def heartbeat():
