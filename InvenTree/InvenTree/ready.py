@@ -35,6 +35,12 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False):
         'collectstatic',
         'makemessages',
         'compilemessages',
+        'backup',
+        'dbbackup',
+        'mediabackup',
+        'restore',
+        'dbrestore',
+        'mediarestore',
     ]
 
     if not allow_test:
