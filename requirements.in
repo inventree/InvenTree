@@ -7,6 +7,7 @@ django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
 django-crispy-forms                     # Form helpers
+django-dbbackup                         # Backup / restore of database and media files
 django-error-report                     # Error report viewer for the admin interface
 django-filter                           # Extended filtering options
 django-formtools                        # Form wizard tools

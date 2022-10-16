@@ -5,6 +5,7 @@ tasks:
       export INVENTREE_DB_NAME='/workspace/InvenTree/dev/database.sqlite3'
       export INVENTREE_MEDIA_ROOT='/workspace/InvenTree/inventree-data/media'
       export INVENTREE_STATIC_ROOT='/workspace/InvenTree/dev/static'
+      export INVENTREE_BACKUP_DIR='/workspace/InvenTree/dev/backup'
       export PIP_USER='no'
 
       sudo apt install -y gettext
@@ -24,6 +25,7 @@ tasks:
       export INVENTREE_DB_NAME='/workspace/InvenTree/dev/database.sqlite3'
       export INVENTREE_MEDIA_ROOT='/workspace/InvenTree/inventree-data/media'
       export INVENTREE_STATIC_ROOT='/workspace/InvenTree/dev/static'
+      export INVENTREE_BACKUP_DIR='/workspace/InvenTree/dev/backup'
 
       source venv/bin/activate
       inv server
