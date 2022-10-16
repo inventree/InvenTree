@@ -136,6 +136,11 @@ There are several options to deploy InvenTree.
     <a href="https://inventree.readthedocs.io/en/latest/start/install/">Bare Metal</a>
 </h4></div>
 
+Single line install:
+```bash
+curl https://raw.githubusercontent.com/InvenTree/InvenTree/master/contrib/install.sh | sh
+```
+
 <!-- Contributing -->
 ## :wave: Contributing
 

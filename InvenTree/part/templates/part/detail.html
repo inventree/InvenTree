@@ -277,7 +277,7 @@
                 </div>
 
                 {% if roles.part.change %}
-                <button class='btn btn-success' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
+                <button class='btn btn-success' type='button' title='{% trans "Add BOM Item" %}' id='bom-item-new'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
                 </button>
                 {% endif %}
@@ -611,20 +611,8 @@
             });
         });
 
-        $("#bom-item-new").click(function () {
-
-            var fields = bomItemFields();
-
-            fields.part.value = {{ part.pk }};
-            fields.sub_part.filters = {
-                active: true,
-            };
-
-            constructForm('{% url "api-bom-list" %}', {
-                fields: fields,
-                method: 'POST',
-                title: '{% trans "Create BOM Item" %}',
-                focus: 'sub_part',
+        $("[id^=bom-item-new]").click(function () {
+            addBomItem({{ part.pk }}, {
                 onSuccess: function() {
                     $('#bom-table').bootstrapTable('refresh');
                 }
@@ -813,7 +801,6 @@
     onPanelLoad("part-parameters", function() {
         loadPartParameterTable(
             '#parameter-table',
-            '{% url "api-part-parameter-list" %}',
             {
                 params: {
                     part: {{ part.pk }},

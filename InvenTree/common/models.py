@@ -1642,6 +1642,16 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
+        'TABLE_STRING_MAX_LENGTH': {
+            'name': _('Table String Length'),
+            'description': _('Maximimum length limit for strings displayed in table views'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 100,
+        }
     }
 
     typ = 'user'

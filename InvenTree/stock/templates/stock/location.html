@@ -48,6 +48,11 @@
     <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
     <ul class='dropdown-menu'>
         <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if location.barcode_hash %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
         {% if labels_enabled %}
         <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
         {% endif %}
@@ -133,6 +138,13 @@
             </span>
             {% endif %}
         </td>
+    </tr>
+    {% endif %}
+    {% if location and location.barcode_hash %}
+    <tr>
+        <td><span class='fas fa-barcode'></span></td>
+        <td>{% trans "Barcode Identifier" %}</td>
+        <td {% if location.barcode_data %}title='{{ location.barcode_data }}'{% endif %}>{{ location.barcode_hash }}</td>
     </tr>
     {% endif %}
 </table>
@@ -335,12 +347,33 @@
         adjustLocationStock('move');
     });
 
+    {% if barcodes %}
     $('#show-qr-code').click(function() {
         launchModalForm("{% url 'stock-location-qr' location.id %}",
         {
             no_post: true,
         });
     });
+
+    $("#barcode-link").click(function() {
+        linkBarcodeDialog(
+            {
+                stocklocation: {{ location.pk }},
+            },
+            {
+                title: '{% trans "Link Barcode to Stock Location" %}',
+            }
+        );
+    });
+
+    $("#barcode-unlink").click(function() {
+        unlinkBarcode({
+            stocklocation: {{ location.pk }},
+        });
+    });
+
+
+    {% endif %}
 
     {% endif %}
 
