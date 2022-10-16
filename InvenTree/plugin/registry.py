@@ -419,7 +419,7 @@ class PluginsRegistry:
                     if plg_i.MAX_VERSION:
                         _msg += _(f'Plugin requires at most version {plg_i.MAX_VERSION}')
                     # Issue notification
-                    trigger_superuser_notification(plg_i, _msg)
+                    trigger_superuser_notification(plg_db, _msg)
                     # Log to error stack
                     log_error(_msg, reference='init')
                 else:
