@@ -11,6 +11,7 @@ env:
   - INVENTREE_PLUGINS_ENABLED
   - INVENTREE_MEDIA_ROOT=/opt/inventree/media
   - INVENTREE_STATIC_ROOT=/opt/inventree/static
+  - INVENTREE_BACKUP_DIR=/opt/inventree/backup
   - INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
   - INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
 after_install: contrib/packager.io/postinstall.sh
