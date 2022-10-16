@@ -23,7 +23,6 @@ from django.utils.text import slugify
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
-from common.notifications import trigger_superuser_notification
 from InvenTree.config import get_setting
 from InvenTree.version import inventreeVersion
 
@@ -416,7 +415,7 @@ class PluginsRegistry:
                         _msg += _(f'Plugin requires at least version {plg_i.MIN_VERSION}')
                     if plg_i.MAX_VERSION:
                         _msg += _(f'Plugin requires at most version {plg_i.MAX_VERSION}')
-                    trigger_superuser_notification(plg_i, _msg)
+                    log_error(_msg, reference='init')
                 else:
                     safe_reference(plugin=plg_i, key=plg_key)
             else:  # pragma: no cover
