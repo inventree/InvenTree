@@ -599,7 +599,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     try:
         expected_quantity = int(expected_quantity)
     except ValueError:
-        raise ValidationError(_("Invalid quantity provided"))
+        raise ValidationError([_("Invalid quantity provided")])
 
     if input_string:
         input_string = str(input_string).strip()
@@ -607,7 +607,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         input_string = ''
 
     if len(input_string) == 0:
-        raise ValidationError(_("Empty serial number string"))
+        raise ValidationError([_("Empty serial number string")])
 
     next_value = increment_serial_number(starting_value)
 

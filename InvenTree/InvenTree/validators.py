@@ -84,10 +84,7 @@ def validate_part_ipn(value):
 
 
 def validate_purchase_order_reference(value):
-    """Validate the 'reference' field of a PurchaseOrder.
-
-    This function is exposed to any Validation plugins, and thus can be customized.
-    """
+    """Validate the 'reference' field of a PurchaseOrder."""
 
     from order.models import PurchaseOrder
 
@@ -96,10 +93,7 @@ def validate_purchase_order_reference(value):
 
 
 def validate_sales_order_reference(value):
-    """Validate the 'reference' field of a SalesOrder.
-
-    This function is exposed to any Validation plugins, and thus can be customized.
-    """
+    """Validate the 'reference' field of a SalesOrder."""
 
     from order.models import SalesOrder
 

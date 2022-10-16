@@ -526,19 +526,19 @@ class TestSerialNumberExtraction(TestCase):
 
         sn = e("1 3-5 9+2", 7, 1)
         self.assertEqual(len(sn), 7)
-        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+        self.assertEqual(sn, ['1', '3', '4', '5', '9', '10', '11'])
 
         sn = e("1,3-5,9+2", 7, 1)
         self.assertEqual(len(sn), 7)
-        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+        self.assertEqual(sn, ['1', '3', '4', '5', '9', '10', '11'])
 
-        sn = e("~+2", 3, 14)
+        sn = e("~+2", 3, 13)
         self.assertEqual(len(sn), 3)
-        self.assertEqual(sn, [14, 15, 16])
+        self.assertEqual(sn, ['14', '15', '16'])
 
-        sn = e("~+", 2, 14)
+        sn = e("~+", 2, 13)
         self.assertEqual(len(sn), 2)
-        self.assertEqual(sn, [14, 15])
+        self.assertEqual(sn, ['14', '15'])
 
 
 class TestVersionNumber(TestCase):

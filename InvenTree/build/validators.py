@@ -18,10 +18,7 @@ def validate_build_order_reference_pattern(pattern):
 
 
 def validate_build_order_reference(value):
-    """Validate that the BuildOrder reference field matches the required pattern.
-
-    This function is exposed to any Validation plugins, and thus can be customized.
-    """
+    """Validate that the BuildOrder reference field matches the required pattern."""
 
     from build.models import Build
 
