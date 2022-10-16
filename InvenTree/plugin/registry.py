@@ -23,7 +23,6 @@ from django.utils.text import slugify
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
-from InvenTree import version
 from InvenTree.config import get_setting
 
 from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
@@ -350,6 +349,7 @@ class PluginsRegistry:
         Raises:
             error: IntegrationPluginError
         """
+        from InvenTree import version
         from plugin.models import PluginConfig
 
         def safe_reference(plugin, key: str, active: bool = True):
