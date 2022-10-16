@@ -4,3 +4,9 @@
 # plugins are co-owned
 /InvenTree/plugin/      @SchrodingersGat @matmair
 /InvenTree/plugins/     @SchrodingersGat @matmair
+
+# Installer functions
+.pkgr.yml               @matmair
+Procfile                @matmair
+runtime.txt             @matmair
+/contrib/               @matmair

@@ -43,7 +43,9 @@ function makeBarcodeInput(placeholderText='', hintText='') {
                     <span class='fas fa-qrcode'></span>
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
-                <button id='barcode_scan_btn' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'><span class='fas fa-camera'></span></button>
+                <button id='barcode_scan_btn' type='button' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'>
+                    <span class='fas fa-camera'></span>
+                </button>
             </div>
             <div id='hint_barcode_data' class='help-block'>${hintText}</div>
         </div>
@@ -571,33 +573,40 @@ function barcodeCheckIn(location_id, options={}) {
             },
             onScan: function(response) {
                 if ('stockitem' in response) {
-                    var stockitem = response.stockitem;
+                    var pk = response.stockitem.pk;
 
-                    var duplicate = false;
+                    inventreeGet(
+                        `/api/stock/${pk}/`,
+                        {},
+                        {
+                            success: function(stockitem) {
+                                var duplicate = false;
 
-                    items.forEach(function(item) {
-                        if (item.pk == stockitem.pk) {
-                            duplicate = true;
+                                items.forEach(function(item) {
+                                    if (item.pk == stockitem.pk) {
+                                        duplicate = true;
+                                    }
+                                });
+
+                                if (duplicate) {
+                                    showBarcodeMessage(modal, '{% trans "Stock Item already scanned" %}', 'warning');
+                                } else {
+
+                                    if (stockitem.location == location_id) {
+                                        showBarcodeMessage(modal, '{% trans "Stock Item already in this location" %}');
+                                        return;
+                                    }
+
+                                    // Add this stock item to the list
+                                    items.push(stockitem);
+
+                                    showBarcodeMessage(modal, '{% trans "Added stock item" %}', 'success');
+
+                                    reloadTable();
+                                }
+                            }
                         }
-                    });
-
-                    if (duplicate) {
-                        showBarcodeMessage(modal, '{% trans "Stock Item already scanned" %}', 'warning');
-                    } else {
-
-                        if (stockitem.location == location_id) {
-                            showBarcodeMessage(modal, '{% trans "Stock Item already in this location" %}');
-                            return;
-                        }
-
-                        // Add this stock item to the list
-                        items.push(stockitem);
-
-                        showBarcodeMessage(modal, '{% trans "Added stock item" %}', 'success');
-
-                        reloadTable();
-                    }
-
+                    );
                 } else {
                     // Barcode does not match a stock item
                     showBarcodeMessage(modal, '{% trans "Barcode does not match Stock Item" %}', 'warning');
@@ -696,12 +705,26 @@ function scanItemsIntoLocation(item_list, options={}) {
             onScan: function(response) {
                 updateLocationInfo(null);
                 if ('stocklocation' in response) {
-                    // Barcode corresponds to a StockLocation
-                    stock_location = response.stocklocation;
 
-                    updateLocationInfo(stock_location);
-                    modalEnable(modal, true);
+                    var pk = response.stocklocation.pk;
 
+                    inventreeGet(`/api/stock/location/${pk}/`, {}, {
+                        success: function(response) {
+
+                            stock_location = response;
+
+                            updateLocationInfo(stock_location);
+                            modalEnable(modal, true);
+                        },
+                        error: function() {
+                            // Barcode does *NOT* correspond to a StockLocation
+                            showBarcodeMessage(
+                                modal,
+                                '{% trans "Barcode does not match a valid location" %}',
+                                'warning',
+                            );
+                        }
+                    });
                 } else {
                     // Barcode does *NOT* correspond to a StockLocation
                     showBarcodeMessage(
