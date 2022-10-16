@@ -406,7 +406,10 @@ class PluginsRegistry:
 
                 # Run version check for plugin
                 if (plg_i.MIN_VERSION or plg_i.MAX_VERSION) and not plg_i.check_version():
+                    # Version check failed -> disable plugin and send admins a warning
                     safe_reference(plugin=plg_i, key=plg_key, active=False)
+
+                    # TODO -> send warning to admins
                 else:
                     safe_reference(plugin=plg_i, key=plg_key)
             else:  # pragma: no cover
