@@ -238,7 +238,6 @@ def update(c, no_backup=False):
     The following tasks are performed, in order:
 
     - install
-    - backup
     - migrate
     - static
     - clean_settings
