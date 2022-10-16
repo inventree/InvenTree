@@ -2,10 +2,10 @@
 
 from django.urls import reverse
 
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.api_tester import InvenTreeAPITestCase, PluginMixin
 
 
-class PluginDetailAPITest(InvenTreeAPITestCase):
+class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
     """Tests the plugin API endpoints."""
 
     roles = [
@@ -72,26 +72,14 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
 
     def test_admin_action(self):
         """Test the PluginConfig action commands."""
-        from plugin import registry
-        from plugin.models import PluginConfig
-
         url = reverse('admin:plugin_pluginconfig_changelist')
-        fixtures = PluginConfig.objects.all()
 
-        # check if plugins were registered -> in some test setups the startup has no db access
-        print(f'[PLUGIN-TEST] currently {len(fixtures)} plugin entries found')
-        if not fixtures:
-            registry.reload_plugins()
-            fixtures = PluginConfig.objects.all()
-            print(f'Reloaded plugins - now {len(fixtures)} entries found')
-
-        print([str(a) for a in fixtures])
-        fixtures = fixtures[0:1]
+        test_plg = self.plugin_confs.first()
         # deactivate plugin
         response = self.client.post(url, {
             'action': 'plugin_deactivate',
             'index': 0,
-            '_selected_action': [f.pk for f in fixtures],
+            '_selected_action': [test_plg.pk],
         }, follow=True)
         self.assertEqual(response.status_code, 200)
 
@@ -99,7 +87,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         response = self.client.post(url, {
             'action': 'plugin_deactivate',
             'index': 0,
-            '_selected_action': [f.pk for f in fixtures],
+            '_selected_action': [test_plg.pk],
         }, follow=True)
         self.assertEqual(response.status_code, 200)
 
@@ -107,47 +95,35 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         response = self.client.post(url, {
             'action': 'plugin_activate',
             'index': 0,
-            '_selected_action': [f.pk for f in fixtures],
+            '_selected_action': [test_plg.pk],
         }, follow=True)
         self.assertEqual(response.status_code, 200)
 
         # activate everything
-        fixtures = PluginConfig.objects.all()
         response = self.client.post(url, {
             'action': 'plugin_activate',
             'index': 0,
-            '_selected_action': [f.pk for f in fixtures],
+            '_selected_action': [f.pk for f in self.plugin_confs],
         }, follow=True)
         self.assertEqual(response.status_code, 200)
 
-        fixtures = PluginConfig.objects.filter(active=True)
         # save to deactivate a plugin
-        response = self.client.post(reverse('admin:plugin_pluginconfig_change', args=(fixtures.first().pk, )), {
+        response = self.client.post(reverse('admin:plugin_pluginconfig_change', args=(test_plg.pk, )), {
             '_save': 'Save',
         }, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_model(self):
         """Test the PluginConfig model."""
-        from plugin import registry
-        from plugin.models import PluginConfig
-
-        fixtures = PluginConfig.objects.all()
-
-        # check if plugins were registered
-        if not fixtures:
-            registry.reload_plugins()
-            fixtures = PluginConfig.objects.all()
-
         # check mixin registry
-        plg = fixtures.first()
+        plg = self.plugin_confs.first()
         mixin_dict = plg.mixins()
         self.assertIn('base', mixin_dict)
         self.assertDictContainsSubset({'base': {'key': 'base', 'human_name': 'base'}}, mixin_dict)
 
         # check reload on save
         with self.assertWarns(Warning) as cm:
-            plg_inactive = fixtures.filter(active=False).first()
+            plg_inactive = self.plugin_confs.filter(active=False).first()
             plg_inactive.active = True
             plg_inactive.save()
         self.assertEqual(cm.warning.args[0], 'A reload was triggered')
