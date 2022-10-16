@@ -1,25 +1,16 @@
-"""
-URL lookup for Part app. Provides URL endpoints for:
+"""URL lookup for Part app. Provides URL endpoints for:
 
 - Display / Create / Edit / Delete PartCategory
 - Display / Create / Edit / Delete Part
 - Create / Edit / Delete PartAttachment
 - Display / Create / Edit / Delete SupplierPart
-
 """
 
 from django.urls import include, re_path
 
 from . import views
 
-part_parameter_urls = [
-    re_path(r'^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
-    re_path(r'^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),
-    re_path(r'^template/(?P<pk>\d+)/delete/', views.PartParameterTemplateDelete.as_view(), name='part-param-template-edit'),
-]
-
 part_detail_urls = [
-    re_path(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     re_path(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
 
     re_path(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
@@ -30,31 +21,15 @@ part_detail_urls = [
 
     # Normal thumbnail with form
     re_path(r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'),
-    re_path(r'^thumb-download/', views.PartImageDownloadFromURL.as_view(), name='part-image-download'),
 
     # Any other URLs go to the part detail page
     re_path(r'^.*$', views.PartDetail.as_view(), name='part-detail'),
 ]
 
-category_parameter_urls = [
-    re_path(r'^new/', views.CategoryParameterTemplateCreate.as_view(), name='category-param-template-create'),
-    re_path(r'^(?P<pid>\d+)/edit/', views.CategoryParameterTemplateEdit.as_view(), name='category-param-template-edit'),
-    re_path(r'^(?P<pid>\d+)/delete/', views.CategoryParameterTemplateDelete.as_view(), name='category-param-template-delete'),
-]
-
 category_urls = [
 
-    # Top level subcategory display
-    re_path(r'^subcategory/', views.PartIndex.as_view(template_name='part/subcategory.html'), name='category-index-subcategory'),
-
     # Category detail views
-    re_path(r'(?P<pk>\d+)/', include([
-        re_path(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
-        re_path(r'^parameters/', include(category_parameter_urls)),
-
-        # Anything else
-        re_path(r'^.*$', views.CategoryDetail.as_view(), name='category-detail'),
-    ]))
+    re_path(r'(?P<pk>\d+)/', views.CategoryDetail.as_view(), name='category-detail'),
 ]
 
 # URL list for part web interface
@@ -72,12 +47,6 @@ part_urls = [
 
     # Part category
     re_path(r'^category/', include(category_urls)),
-
-    # Part parameters
-    re_path(r'^parameter/', include(part_parameter_urls)),
-
-    # Change category for multiple parts
-    re_path(r'^set-category/?', views.PartSetCategory.as_view(), name='part-set-category'),
 
     # Individual part using IPN as slug
     re_path(r'^(?P<slug>[-\w]+)/', views.PartDetailFromIPN.as_view(), name='part-detail-from-ipn'),

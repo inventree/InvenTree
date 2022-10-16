@@ -1,4 +1,4 @@
-"""Unit tests for helpers.py"""
+"""Unit tests for helpers.py."""
 
 from django.test import TestCase
 
@@ -6,10 +6,10 @@ from .helpers import render_template
 
 
 class HelperTests(TestCase):
-    """Tests for helpers"""
+    """Tests for helpers."""
 
     def test_render_template(self):
-        """Check if render_template helper works"""
+        """Check if render_template helper works."""
         class ErrorSource:
             slug = 'sampleplg'
 

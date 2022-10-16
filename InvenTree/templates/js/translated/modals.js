@@ -11,11 +11,12 @@
     clearFieldOptions,
     closeModal,
     enableField,
+    enableSubmitButton,
     getFieldValue,
     reloadFieldOptions,
     showModalImage,
-    removeRowFromModalForm,
     showQuestionDialog,
+    showModalSpinner,
 */
 
 /*
@@ -142,6 +143,24 @@ function createNewModal(options={}) {
 
     // Return the "name" of the modal
     return modal_name;
+}
+
+
+/*
+ * Convenience function to enable (or disable) the "submit" button on a modal form
+ */
+function enableSubmitButton(options, enable=true) {
+
+    if (!options || !options.modal) {
+        console.warn('enableSubmitButton() called without modal reference');
+        return;
+    }
+
+    if (enable) {
+        $(options.modal).find('#modal-form-submit').prop('disabled', false);
+    } else {
+        $(options.modal).find('#modal-form-submit').prop('disabled', true);
+    }
 }
 
 
@@ -532,18 +551,6 @@ function modalSubmit(modal, callback) {
         $('.js-modal-form').append(input);
         callback();
     });
-}
-
-
-function removeRowFromModalForm(e) {
-    /* Remove a row from a table in a modal form */
-    e = e || window.event;
-
-    var src = e.target || e.srcElement;
-
-    var row = $(src).attr('row');
-
-    $('#' + row).remove();
 }
 
 
@@ -1145,4 +1152,14 @@ function showModalImage(image_url) {
     modal.click(function() {
         hideModalImage();
     });
+}
+
+
+/* Show (or hide) a progress spinner icon in the dialog */
+function showModalSpinner(modal, show=true) {
+    if (show) {
+        $(modal).find('#modal-progress-spinner').show();
+    } else {
+        $(modal).find('#modal-progress-spinner').hide();
+    }
 }

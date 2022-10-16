@@ -1,17 +1,18 @@
+"""Admin functionality for the BuildOrder app"""
+
 from django.contrib import admin
 
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-from import_export.resources import ModelResource
 import import_export.widgets as widgets
 
 from build.models import Build, BuildItem
-
+from InvenTree.admin import InvenTreeResource
 import part.models
 
 
-class BuildResource(ModelResource):
-    """Class for managing import/export of Build data"""
+class BuildResource(InvenTreeResource):
+    """Class for managing import/export of Build data."""
     # For some reason, we need to specify the fields individually for this ModelResource,
     # but we don't for other ones.
     # TODO: 2022-05-12 - Need to investigate why this is the case!
@@ -39,6 +40,7 @@ class BuildResource(ModelResource):
     notes = Field(attribute='notes')
 
     class Meta:
+        """Metaclass options"""
         models = Build
         skip_unchanged = True
         report_skipped = False
@@ -50,6 +52,7 @@ class BuildResource(ModelResource):
 
 
 class BuildAdmin(ImportExportModelAdmin):
+    """Class for managing the Build model via the admin interface"""
 
     exclude = [
         'reference_int',
@@ -81,6 +84,7 @@ class BuildAdmin(ImportExportModelAdmin):
 
 
 class BuildItemAdmin(admin.ModelAdmin):
+    """Class for managing the BuildItem model via the admin interface"""
 
     list_display = (
         'build',

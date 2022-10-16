@@ -7,7 +7,7 @@
 {% settings_value 'REPORT_ENABLE_TEST_REPORT' as test_report_enabled %}
 {% settings_value "REPORT_ENABLE" as report_enabled %}
 {% settings_value "SERVER_RESTART_REQUIRED" as server_restart_required %}
-{% settings_value "LABEL_ENABLE" with user=user as labels_enabled %}
+{% settings_value "LABEL_ENABLE" as labels_enabled %}
 {% inventree_show_about user as show_about %}
 
 <!DOCTYPE html>
@@ -39,15 +39,15 @@
 
 <!-- CSS -->
 <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static 'bootstrap-table/bootstrap-table.css' %}">
-<link rel="stylesheet" href="{% static 'bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap-table/bootstrap-table.min.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.min.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css' %}">
 <link rel='stylesheet' href='{% static "treegrid/css/jquery.treegrid.css" %}'>
 <link rel="stylesheet" href="{% static 'fontawesome/css/brands.min.css' %}">
 <link rel="stylesheet" href="{% static 'fontawesome/css/solid.min.css' %}">
-<link rel="stylesheet" href="{% static 'select2/css/select2.css' %}">
+<link rel="stylesheet" href="{% static 'select2/css/select2.min.css' %}">
 <link rel="stylesheet" href="{% static 'select2/css/select2-bootstrap-5-theme.css' %}">
-<link rel="stylesheet" href="{% static 'fullcalendar/main.css' %}">
+<link rel="stylesheet" href="{% static 'fullcalendar/main.min.css' %}">
 <link rel="stylesheet" href="{% static 'script/jquery-ui/jquery-ui.min.css' %}">
 <link rel="stylesheet" href="{% static 'easymde/easymde.min.css' %}">
 
@@ -132,83 +132,49 @@
     </div>
 
     {% include 'modals.html' %}
-    {% if show_about %}{% include 'about.html' %}{% endif %}
     {% include "notifications.html" %}
     {% include "search.html" %}
 </div>
 
-<!-- Scripts -->
-<script type="text/javascript" src="{% static 'script/jquery_3.3.1_jquery.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/jquery.form.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/jquery-ui/jquery-ui.min.js' %}"></script>
+{% include "third_party_js.html" %}
 
-<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-treeview.js' %}"></script>
-<script type='text/javascript' src="{% static 'bootstrap-table/bootstrap-table.js' %}"></script>
-
-<!-- jquery-treegrid -->
-<script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.js" %}'></script>
-<script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.bootstrap3.js" %}'></script>
-
-<!-- boostrap-table extensions -->
-<script type='text/javascript' src='{% static "bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.js" %}'></script>
-<script type='text/javascript' src='{% static "bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.js" %}'></script>
-<script type='text/javascript' src='{% static "bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.js" %}'></script>
-<script type='text/javascript' src='{% static "bootstrap-table/extensions/custom-view/bootstrap-table-custom-view.js" %}'></script>
-
-<!-- 3rd party general js -->
-<script type="text/javascript" src="{% static 'fullcalendar/main.js' %}"></script>
-<script type="text/javascript" src="{% static 'fullcalendar/locales-all.js' %}"></script>
-<script type="text/javascript" src="{% static 'select2/js/select2.full.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/chart.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/chartjs-adapter-moment.js' %}"></script>
-<script type='text/javascript' src="{% static 'easymde/easymde.min.js' %}"></script>
-
-<script type='text/javascript' src="{% static 'script/clipboard.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/randomColor.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/qr-scanner.umd.min.js' %}"></script>
 
 <!-- general JS -->
-<script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
+<script defer type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
+<script defer type='text/javascript' src="{% static 'script/inventree/message.js' %}"></script>
 
 <!-- dynamic javascript templates -->
-<script type='text/javascript' src="{% url 'calendar.js' %}"></script>
-<script type='text/javascript' src="{% url 'nav.js' %}"></script>
-<script type='text/javascript' src="{% url 'settings.js' %}"></script>
+<script defer type='text/javascript' src="{% url 'calendar.js' %}"></script>
+<script defer type='text/javascript' src="{% url 'nav.js' %}"></script>
+<script defer type='text/javascript' src="{% url 'settings.js' %}"></script>
 
 <!-- translated javascript templates-->
-<script type='text/javascript' src="{% i18n_static 'api.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'attachment.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'barcode.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'bom.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'build.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'company.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'filters.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'forms.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'helpers.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'label.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'modals.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'model_renderers.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'order.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'part.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'report.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'search.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'stock.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'plugin.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'tables.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'table_filters.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'notification.js' %}"></script>
-
-<script type='text/javascript' src="{% static 'fontawesome/js/solid.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/regular.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/brands.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.min.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'api.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'attachment.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'barcode.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'bom.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'build.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'company.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'filters.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'forms.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'helpers.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'label.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'modals.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'model_renderers.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'order.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'part.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'report.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'search.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'stock.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'plugin.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'tables.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'table_filters.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'notification.js' %}"></script>
 
 {% block js_load %}
 {% endblock %}
 
-<script type='text/javascript'>
+<script defer type='text/javascript'>
 
 $(document).ready(function () {
 

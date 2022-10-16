@@ -1,21 +1,26 @@
-"""Tests for middleware functions"""
+"""Tests for middleware functions."""
 
+from django.conf import settings
+from django.http import Http404
 from django.urls import reverse
 
+from error_report.models import Error
+
+from InvenTree.exceptions import log_error
 from InvenTree.helpers import InvenTreeTestCase
 
 
 class MiddlewareTests(InvenTreeTestCase):
-    """Test for middleware functions"""
+    """Test for middleware functions."""
 
     def check_path(self, url, code=200, **kwargs):
+        """Helper function to run a request."""
         response = self.client.get(url, HTTP_ACCEPT='application/json', **kwargs)
         self.assertEqual(response.status_code, code)
         return response
 
     def test_AuthRequiredMiddleware(self):
-        """Test the auth middleware"""
-
+        """Test the auth middleware."""
         # test that /api/ routes go through
         self.check_path(reverse('api-inventree-info'))
 
@@ -40,7 +45,7 @@ class MiddlewareTests(InvenTreeTestCase):
         self.check_path(reverse('settings.js'), 401)
 
     def test_token_auth(self):
-        """Test auth with token auth"""
+        """Test auth with token auth."""
         # get token
         response = self.client.get(reverse('api-token'), format='json', data={})
         token = response.data['token']
@@ -58,3 +63,35 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # should still fail without token
         self.check_path(reverse('settings.js'), 401)
+
+    def test_error_exceptions(self):
+        """Test that ignored errors are not logged."""
+        def check(excpected_nbr=0):
+            # Check that errors are empty
+            errors = Error.objects.all()
+            self.assertEqual(len(errors), excpected_nbr)
+
+        # Test normal setup
+        check()
+        response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
+        self.assertEqual(response.status_code, 404)
+        check()
+
+        # Test manual logging
+        try:
+            raise Http404
+        except Http404:
+            log_error('testpath')
+
+        # Test setup without ignored errors
+        settings.IGNORED_ERRORS = []
+        response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
+        self.assertEqual(response.status_code, 404)
+        check(1)
+
+        # Test manual logging
+        try:
+            raise Http404
+        except Http404:
+            log_error('testpath')
+        check(2)

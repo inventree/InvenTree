@@ -1,3 +1,5 @@
+"""Functions for tasks and a few general async tasks."""
+
 import json
 import logging
 import re
@@ -16,11 +18,10 @@ logger = logging.getLogger("inventree")
 
 
 def schedule_task(taskname, **kwargs):
-    """
-    Create a scheduled task.
+    """Create a scheduled task.
+
     If the task has already been scheduled, ignore!
     """
-
     # If unspecified, repeat indefinitely
     repeats = kwargs.pop('repeats', -1)
     kwargs['repeats'] = repeats
@@ -52,7 +53,7 @@ def schedule_task(taskname, **kwargs):
 
 
 def raise_warning(msg):
-    """Log and raise a warning"""
+    """Log and raise a warning."""
     logger.warning(msg)
 
     # If testing is running raise a warning that can be asserted
@@ -60,16 +61,12 @@ def raise_warning(msg):
         warnings.warn(msg)
 
 
-def offload_task(taskname, *args, force_sync=False, **kwargs):
-    """
-        Create an AsyncTask if workers are running.
-        This is different to a 'scheduled' task,
-        in that it only runs once!
+def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs):
+    """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
-        If workers are not running or force_sync flag
-        is set then the task is ran synchronously.
+    If workers are not running or force_sync flag
+    is set then the task is ran synchronously.
     """
-
     try:
         import importlib
 
@@ -82,7 +79,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
     except (OperationalError, ProgrammingError):  # pragma: no cover
         raise_warning(f"Could not offload task '{taskname}' - database not ready")
 
-    if is_worker_running() and not force_sync:  # pragma: no cover
+    if force_async or (is_worker_running() and not force_sync):
         # Running as asynchronous task
         try:
             task = AsyncTask(taskname, *args, **kwargs)
@@ -129,14 +126,10 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
 
 
 def heartbeat():
-    """
-    Simple task which runs at 5 minute intervals,
-    so we can determine that the background worker
-    is actually running.
+    """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
 
     (There is probably a less "hacky" way of achieving this)?
     """
-
     try:
         from django_q.models import Success
     except AppRegistryNotReady:  # pragma: no cover
@@ -156,11 +149,7 @@ def heartbeat():
 
 
 def delete_successful_tasks():
-    """
-    Delete successful task logs
-    which are more than a month old.
-    """
-
+    """Delete successful task logs which are more than a month old."""
     try:
         from django_q.models import Success
     except AppRegistryNotReady:  # pragma: no cover
@@ -179,10 +168,7 @@ def delete_successful_tasks():
 
 
 def delete_old_error_logs():
-    """
-    Delete old error logs from the server
-    """
-
+    """Delete old error logs from the server."""
     try:
         from error_report.models import Error
 
@@ -204,10 +190,7 @@ def delete_old_error_logs():
 
 
 def check_for_updates():
-    """
-    Check if there is an update for InvenTree
-    """
-
+    """Check if there is an update for InvenTree."""
     try:
         import common.models
     except AppRegistryNotReady:  # pragma: no cover
@@ -249,10 +232,7 @@ def check_for_updates():
 
 
 def update_exchange_rates():
-    """
-    Update currency exchange rates
-    """
-
+    """Update currency exchange rates."""
     try:
         from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 
@@ -262,7 +242,7 @@ def update_exchange_rates():
         # Apps not yet loaded!
         logger.info("Could not perform 'update_exchange_rates' - App registry not ready")
         return
-    except:  # pragma: no cover
+    except Exception:  # pragma: no cover
         # Other error?
         return
 
@@ -271,7 +251,7 @@ def update_exchange_rates():
         backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
     except ExchangeBackend.DoesNotExist:
         pass
-    except:  # pragma: no cover
+    except Exception:  # pragma: no cover
         # Some other error
         logger.warning("update_exchange_rates: Database not ready")
         return
@@ -293,11 +273,7 @@ def update_exchange_rates():
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
-    """
-    Send an email with the specified subject and body,
-    to the specified recipients list.
-    """
-
+    """Send an email with the specified subject and body, to the specified recipients list."""
     if type(recipients) == str:
         recipients = [recipients]
 

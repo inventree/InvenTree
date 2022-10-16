@@ -24,6 +24,7 @@
     part: 100
     sub_part: 5
     quantity: 25
+    reference: ABCDE
 
 # 3 x Orphan
 - model: part.bomitem
@@ -32,6 +33,7 @@
     part: 100
     sub_part: 50
     quantity: 3
+    reference: VWXYZ
 
 - model: part.bomitem
   pk: 5
@@ -39,6 +41,7 @@
     part: 1
     sub_part: 5
     quantity: 3
+    reference: LMNOP
 
 # Make "Assembly" from "Bob"
 - model: part.bomitem

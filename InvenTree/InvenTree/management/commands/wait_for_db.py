@@ -1,6 +1,4 @@
-"""
-Custom management command, wait for the database to be ready!
-"""
+"""Custom management command, wait for the database to be ready!"""
 
 import time
 
@@ -10,12 +8,10 @@ from django.db.utils import ImproperlyConfigured, OperationalError
 
 
 class Command(BaseCommand):
-    """
-    django command to pause execution until the database is ready
-    """
+    """Django command to pause execution until the database is ready."""
 
     def handle(self, *args, **kwargs):
-
+        """Wait till the database is ready."""
         self.stdout.write("Waiting for database...")
 
         connected = False

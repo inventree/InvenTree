@@ -1,0 +1,27 @@
+{% extends "email/email.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block title %}
+{{ message }}
+{% if link %}
+<p>{% trans "Click on the following link to view this order" %}: <a href="{{ link }}">{{ link }}</a></p>
+{% endif %}
+{% endblock title %}
+
+{% block body %}
+
+<tr style="height: 3rem; border-bottom: 1px solid">
+    <th>{% trans "Build Order" %}</th>
+    <th>{% trans "Part" %}</th>
+    <th>{% trans "Quantity" %}</th>
+</tr>
+
+<tr style="height: 3rem">
+    <td style="text-align: center;">{{ build }}</td>
+    <td style="text-align: center;">{{ build.part.full_name }}</td>
+    <td style="text-align: center;">{{ build.quantity }}</td>
+</tr>
+
+{% endblock body %}

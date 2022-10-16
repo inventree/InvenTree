@@ -13,7 +13,9 @@
     inventreeDocReady,
     inventreeLoad,
     inventreeSave,
+    sanitizeData,
 */
+
 
 function attachClipboard(selector, containerselector, textElement) {
     // set container
@@ -38,8 +40,7 @@ function attachClipboard(selector, containerselector, textElement) {
     }
 
     // create Clipboard
-    // eslint-disable-next-line no-unused-vars
-    var cis = new ClipboardJS(selector, {
+    new ClipboardJS(selector, {
         text: text,
         container: containerselector
     });
@@ -106,14 +107,12 @@ function inventreeDocReady() {
 
     // Callback to launch the 'About' window
     $('#launch-about').click(function() {
-        var modal = $('#modal-about');
-
-        modal.modal({
-            backdrop: 'static',
-            keyboard: true,
+        launchModalForm(`/about/`, {
+            no_post: true,
+            after_render: function() {
+                attachClipboard('.clip-btn', 'modal-form', 'about-copy-text');
+            }
         });
-
-        modal.modal('show');
     });
 
     // Callback to launch the 'Database Stats' window
@@ -122,11 +121,6 @@ function inventreeDocReady() {
             no_post: true,
         });
     });
-
-    // Initialize clipboard-buttons
-    attachClipboard('.clip-btn');
-    attachClipboard('.clip-btn', 'modal-about');
-    attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');
 
     // Generate brand-icons
     $('.brand-icon').each(function(i, obj) {
@@ -145,6 +139,8 @@ function inventreeDocReady() {
 
     // start watcher
     startNotificationWatcher();
+
+    attachClipboard('.clip-btn');
 
     // always refresh when the focus returns
     $(document).focus(function(){
@@ -211,13 +207,12 @@ function enableDragAndDrop(element, url, options) {
                 formData,
                 {
                     success: function(data, status, xhr) {
-                        console.log('Uploaded file via drag-and-drop');
                         if (options.success) {
                             options.success(data, status, xhr);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.log('File upload failed');
+                        console.error('File upload failed');
                         if (options.error) {
                             options.error(xhr, status, error);
                         }
@@ -226,7 +221,7 @@ function enableDragAndDrop(element, url, options) {
                 }
             );
         } else {
-            console.log('Ignoring drag-and-drop event (not a file)');
+            console.warn('Ignoring drag-and-drop event (not a file)');
         }
     });
 }
@@ -272,6 +267,42 @@ function loadBrandIcon(element, name) {
         element.addClass('fab fa-' + name);
     }
 }
+
+
+/*
+ * Function to sanitize a (potentially nested) object.
+ * Iterates through all levels, and sanitizes each primitive string.
+ *
+ * Note that this function effectively provides a "deep copy" of the provided data,
+ * and the original data structure is unaltered.
+ */
+function sanitizeData(data) {
+    if (data == null) {
+        return null;
+    } else if (Array.isArray(data)) {
+        // Handle arrays
+        var arr = [];
+        data.forEach(function(val) {
+            arr.push(sanitizeData(val));
+        });
+
+        return arr;
+    } else if (typeof(data) === 'object') {
+        // Handle nested structures
+        var nested = {};
+        $.each(data, function(k, v) {
+            nested[k] = sanitizeData(v);
+        });
+
+        return nested;
+    } else if (typeof(data) === 'string') {
+        // Perform string replacement
+        return data.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/`/g, '&#x60;');
+    } else {
+        return data;
+    }
+}
+
 
 // Convenience function to determine if an element exists
 $.fn.exists = function() {

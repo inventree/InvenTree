@@ -5,7 +5,6 @@ import company.models
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import markdownx.models
 import stdimage.models
 
 
@@ -44,7 +43,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='company',
             name='notes',
-            field=markdownx.models.MarkdownxField(blank=True, verbose_name='Notes'),
+            field=models.TextField(blank=True, verbose_name='Notes'),
         ),
         migrations.AlterField(
             model_name='supplierpart',

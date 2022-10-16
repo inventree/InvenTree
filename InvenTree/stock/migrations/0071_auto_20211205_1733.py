@@ -20,9 +20,9 @@ def delete_scheduled(apps, schema_editor):
 
     items = StockItem.objects.filter(scheduled_for_deletion=True)
 
-    logger.info(f"Removing {items.count()} stock items scheduled for deletion")
-
-    items.delete()
+    if items.count() > 0:
+        logger.info(f"Removing {items.count()} stock items scheduled for deletion")
+        items.delete()
 
     Task = apps.get_model('django_q', 'schedule')
 

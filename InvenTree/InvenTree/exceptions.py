@@ -1,6 +1,4 @@
-"""
-Custom exception handling for the DRF API
-"""
+"""Custom exception handling for the DRF API."""
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
@@ -11,7 +9,6 @@ import traceback
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
-from django.views.debug import ExceptionReporter
 
 import rest_framework.views as drfviews
 from error_report.models import Error
@@ -20,14 +17,35 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 
 
-def exception_handler(exc, context):
-    """
-    Custom exception handler for DRF framework.
-    Ref: https://www.django-rest-framework.org/api-guide/exceptions/#custom-exception-handling
+def log_error(path):
+    """Log an error to the database.
 
+    - Uses python exception handling to extract error details
+
+    Arguments:
+        path: The 'path' (most likely a URL) associated with this error (optional)
+    """
+
+    kind, info, data = sys.exc_info()
+
+    # Check if the eror is on the ignore list
+    if kind in settings.IGNORED_ERRORS:
+        return
+
+    Error.objects.create(
+        kind=kind.__name__,
+        info=info,
+        data='\n'.join(traceback.format_exception(kind, info, data)),
+        path=path,
+    )
+
+
+def exception_handler(exc, context):
+    """Custom exception handler for DRF framework.
+
+    Ref: https://www.django-rest-framework.org/api-guide/exceptions/#custom-exception-handling
     Catches any errors not natively handled by DRF, and re-throws as an error DRF can handle
     """
-
     response = None
 
     # Catch any django validation error, and re-throw a DRF validation error
@@ -40,7 +58,11 @@ def exception_handler(exc, context):
     if response is None:
         # DRF handler did not provide a default response for this exception
 
-        if settings.DEBUG:
+        if settings.TESTING:
+            # If in TESTING mode, re-throw the exception for traceback
+            raise exc
+        elif settings.DEBUG:
+            # If in DEBUG mode, provide error information in the response
             error_detail = str(exc)
         else:
             error_detail = _("Error details can be found in the admin panel")
@@ -55,16 +77,7 @@ def exception_handler(exc, context):
 
         response = Response(response_data, status=500)
 
-        # Log the exception to the database, too
-        kind, info, data = sys.exc_info()
-
-        Error.objects.create(
-            kind=kind.__name__,
-            info=info,
-            data='\n'.join(traceback.format_exception(kind, info, data)),
-            path=context['request'].path,
-            html=ExceptionReporter(context['request'], kind, info, data).get_traceback_html(),
-        )
+        log_error(context['request'].path)
 
     if response is not None:
         # Convert errors returned under the label '__all__' to 'non_field_errors'

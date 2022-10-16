@@ -1,4 +1,5 @@
-"""APIs for action plugins"""
+"""APIs for action plugins."""
+
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import permissions
@@ -9,16 +10,14 @@ from plugin import registry
 
 
 class ActionPluginView(APIView):
-    """
-    Endpoint for running custom action plugins.
-    """
+    """Endpoint for running custom action plugins."""
 
     permission_classes = [
         permissions.IsAuthenticated,
     ]
 
     def post(self, request, *args, **kwargs):
-
+        """This function checks if all required info was submitted and then performs a plugin_action or returns an error."""
         action = request.data.get('action', None)
 
         data = request.data.get('data', None)

@@ -1,3 +1,5 @@
+"""part app specification"""
+
 import logging
 
 from django.apps import AppConfig
@@ -9,24 +11,19 @@ logger = logging.getLogger("inventree")
 
 
 class PartConfig(AppConfig):
+    """Config class for the 'part' app"""
     name = 'part'
 
     def ready(self):
-        """
-        This function is called whenever the Part app is loaded.
-        """
-
+        """This function is called whenever the Part app is loaded."""
         if canAppAccessDatabase():
             self.update_trackable_status()
 
     def update_trackable_status(self):
-        """
-        Check for any instances where a trackable part is used in the BOM
-        for a non-trackable part.
+        """Check for any instances where a trackable part is used in the BOM for a non-trackable part.
 
         In such a case, force the top-level part to be trackable too.
         """
-
         from .models import BomItem
 
         try:

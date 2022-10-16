@@ -223,7 +223,7 @@ addHeaderTitle('{% trans "Build Orders" %}');
 {% if setting_build_pending %}
 addHeaderAction('build-pending', '{% trans "Build Orders In Progress" %}', 'fa-cogs');
 loadBuildTable("#table-build-pending", {
-    url: "{% url 'api-build-list' %}",
+    locale: '{{ request.LANGUAGE_CODE }}',
     params: {
         active: true,
     },
@@ -234,7 +234,7 @@ loadBuildTable("#table-build-pending", {
 {% if setting_build_overdue %}
 addHeaderAction('build-overdue', '{% trans "Overdue Build Orders" %}', 'fa-calendar-times');
 loadBuildTable("#table-build-overdue", {
-    url: "{% url 'api-build-list' %}",
+    locale: '{{ request.LANGUAGE_CODE }}',
     params: {
         overdue: true,
     },

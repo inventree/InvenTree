@@ -6,7 +6,7 @@
 <!-- Badges -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)
 ![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
-![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker_latest.yaml/badge.svg)
+![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
 
 [![Coveralls](https://img.shields.io/coveralls/github/inventree/InvenTree)](https://coveralls.io/github/inventree/InvenTree)
 [![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
@@ -101,9 +101,9 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
 <details>
 <summary>DevOps</summary>
   <ul>
-    <li><a href="https://www.docker.com/">Docker</a></li>
-    <li><a href="https://crowdin.com/">Crowdin</a></li>
-    <li><a href="https://coveralls.io/">Coveralls</a></li>
+    <li><a href="https://hub.docker.com/r/inventree/inventree">Docker</a></li>
+    <li><a href="https://crowdin.com/project/inventree">Crowdin</a></li>
+    <li><a href="https://coveralls.io/github/inventree/InvenTree">Coveralls</a></li>
   </ul>
 </details>
 
@@ -135,6 +135,11 @@ There are several options to deploy InvenTree.
     <span> · </span>
     <a href="https://inventree.readthedocs.io/en/latest/start/install/">Bare Metal</a>
 </h4></div>
+
+Single line install:
+```bash
+curl https://raw.githubusercontent.com/InvenTree/InvenTree/master/contrib/install.sh | sh
+```
 
 <!-- Contributing -->
 ## :wave: Contributing

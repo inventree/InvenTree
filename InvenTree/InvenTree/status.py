@@ -1,6 +1,4 @@
-"""
-Provides system status functionality checks.
-"""
+"""Provides system status functionality checks."""
 # -*- coding: utf-8 -*-
 
 import logging
@@ -19,10 +17,7 @@ logger = logging.getLogger("inventree")
 
 
 def is_worker_running(**kwargs):
-    """
-    Return True if the background worker process is oprational
-    """
-
+    """Return True if the background worker process is oprational."""
     clusters = Stat.get_all()
 
     if len(clusters) > 0:
@@ -48,12 +43,10 @@ def is_worker_running(**kwargs):
 
 
 def is_email_configured():
-    """
-    Check if email backend is configured.
+    """Check if email backend is configured.
 
     NOTE: This does not check if the configuration is valid!
     """
-
     configured = True
 
     if InvenTree.ready.isInTestMode():
@@ -87,12 +80,10 @@ def is_email_configured():
 
 
 def check_system_health(**kwargs):
-    """
-    Check that the InvenTree system is running OK.
+    """Check that the InvenTree system is running OK.
 
     Returns True if all system checks pass.
     """
-
     result = True
 
     if InvenTree.ready.isInTestMode():

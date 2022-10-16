@@ -1,3 +1,5 @@
+"""Gunicorn configuration for InvenTree."""
+
 import logging
 import multiprocessing
 import os

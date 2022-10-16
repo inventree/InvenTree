@@ -1,10 +1,13 @@
+{% load l10n %}
 {% load report %}
 {% load barcode %}
 
 <head>
     <style>
         @page {
+            {% localize off %}
             size: {{ width }}mm {{ height }}mm;
+            {% endlocalize %}
             {% block margin %}
             margin: 0mm;
             {% endblock %}
@@ -15,6 +18,8 @@
             margin: 0mm;
             color: #000;
             background-color: #FFF;
+            page-break-before: always;
+            page-break-after: always;
         }
 
         img {
@@ -22,14 +27,23 @@
             image-rendering: pixelated;
         }
 
+        .content {
+            width: 100%;
+            break-after: always;
+            position: relative;
+        }
+
         {% block style %}
+        /* User-defined styles can go here */
         {% endblock %}
 
     </style>
 </head>
 
 <body>
-    {% block content %}
-    <!-- Label data rendered here! -->
-    {% endblock %}
+    <div class='content'>
+        {% block content %}
+        <!-- Label data rendered here! -->
+        {% endblock %}
+    </div>
 </body>

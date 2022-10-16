@@ -1,5 +1,4 @@
-"""
-Sample plugin for locating stock items / locations.
+"""Sample plugin for locating stock items / locations.
 
 Note: This plugin does not *actually* locate anything!
 """
@@ -13,8 +12,8 @@ logger = logging.getLogger('inventree')
 
 
 class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
-    """
-    A very simple example of the 'locate' plugin.
+    """A very simple example of the 'locate' plugin.
+
     This plugin class simply prints location information to the logger.
     """
 
@@ -25,7 +24,11 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
     VERSION = "0.2"
 
     def locate_stock_item(self, item_pk):
+        """Locate a StockItem.
 
+        Args:
+            item_pk: primary key for item
+        """
         from stock.models import StockItem
 
         logger.info(f"SampleLocatePlugin attempting to locate item ID {item_pk}")
@@ -41,7 +44,11 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
             logger.error(f"StockItem ID {item_pk} does not exist!")
 
     def locate_stock_location(self, location_pk):
+        """Locate a StockLocation.
 
+        Args:
+            location_pk: primary key for location
+        """
         from stock.models import StockLocation
 
         logger.info(f"SampleLocatePlugin attempting to locate location ID {location_pk}")

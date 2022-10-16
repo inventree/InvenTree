@@ -1,3 +1,5 @@
+"""Test general functions and helpers."""
+
 import json
 import os
 import time
@@ -7,37 +9,41 @@ from unittest import mock
 import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
+import requests
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 
+import InvenTree.format
+import InvenTree.helpers
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
-from stock.models import StockLocation
+from InvenTree.sanitizer import sanitize_svg
+from part.models import Part, PartCategory
+from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, status, version
+from .tasks import offload_task
 from .validators import validate_overage, validate_part_name
 
 
 class ValidatorTest(TestCase):
-
-    """ Simple tests for custom field validators """
+    """Simple tests for custom field validators."""
 
     def test_part_name(self):
-        """ Test part name validator """
-
+        """Test part name validator."""
         validate_part_name('hello world')
 
         with self.assertRaises(django_exceptions.ValidationError):
             validate_part_name('This | name is not } valid')
 
     def test_overage(self):
-        """ Test overage validator """
-
+        """Test overage validator."""
         validate_overage("100%")
         validate_overage("10")
         validate_overage("45.2 %")
@@ -58,12 +64,142 @@ class ValidatorTest(TestCase):
             validate_overage("aaaa")
 
 
+class FormatTest(TestCase):
+    """Unit tests for custom string formatting functionality"""
+
+    def test_parse(self):
+        """Tests for the 'parse_format_string' function"""
+
+        # Extract data from a valid format string
+        fmt = "PO-{abc:02f}-{ref:04d}-{date}-???"
+
+        info = InvenTree.format.parse_format_string(fmt)
+
+        self.assertIn('abc', info)
+        self.assertIn('ref', info)
+        self.assertIn('date', info)
+
+        # Try with invalid strings
+        for fmt in [
+            'PO-{{xyz}',
+            'PO-{xyz}}',
+            'PO-{xyz}-{',
+        ]:
+
+            with self.assertRaises(ValueError):
+                InvenTree.format.parse_format_string(fmt)
+
+    def test_create_regex(self):
+        """Test function for creating a regex from a format string"""
+
+        tests = {
+            "PO-123-{ref:04f}": r"^PO\-123\-(?P<ref>.+)$",
+            "{PO}-???-{ref}-{date}-22": r"^(?P<PO>.+)\-...\-(?P<ref>.+)\-(?P<date>.+)\-22$",
+            "ABC-123-###-{ref}": r"^ABC\-123\-\d\d\d\-(?P<ref>.+)$",
+            "ABC-123": r"^ABC\-123$",
+        }
+
+        for fmt, reg in tests.items():
+            self.assertEqual(InvenTree.format.construct_format_regex(fmt), reg)
+
+    def test_validate_format(self):
+        """Test that string validation works as expected"""
+
+        # These tests should pass
+        for value, pattern in {
+            "ABC-hello-123": "???-{q}-###",
+            "BO-1234": "BO-{ref}",
+            "111.222.fred.china": "???.###.{name}.{place}",
+            "PO-1234": "PO-{ref:04d}"
+        }.items():
+            self.assertTrue(InvenTree.format.validate_string(value, pattern))
+
+        # These tests should fail
+        for value, pattern in {
+            "ABC-hello-123": "###-{q}-???",
+            "BO-1234": "BO.{ref}",
+            "BO-####": "BO-{pattern}-{next}",
+            "BO-123d": "BO-{ref:04d}"
+        }.items():
+            self.assertFalse(InvenTree.format.validate_string(value, pattern))
+
+    def test_extract_value(self):
+        """Test that we can extract named values based on a format string"""
+
+        # Simple tests based on a straight-forward format string
+        fmt = "PO-###-{ref:04d}"
+
+        tests = {
+            "123": "PO-123-123",
+            "456": "PO-123-456",
+            "789": "PO-123-789",
+        }
+
+        for k, v in tests.items():
+            self.assertEqual(InvenTree.format.extract_named_group('ref', v, fmt), k)
+
+        # However these ones should fail
+        tests = {
+            'abc': 'PO-123-abc',
+            'xyz': 'PO-123-xyz',
+        }
+
+        for v in tests.values():
+            with self.assertRaises(ValueError):
+                InvenTree.format.extract_named_group('ref', v, fmt)
+
+        # More complex tests
+        fmt = "PO-{date}-{test}-???-{ref}-###"
+        val = "PO-2022-02-01-hello-ABC-12345-222"
+
+        data = {
+            'date': '2022-02-01',
+            'test': 'hello',
+            'ref': '12345',
+        }
+
+        for k, v in data.items():
+            self.assertEqual(InvenTree.format.extract_named_group(k, val, fmt), v)
+
+        # Test for error conditions
+
+        # Raises a ValueError as the format string is bad
+        with self.assertRaises(ValueError):
+            InvenTree.format.extract_named_group(
+                "test",
+                "PO-1234-5",
+                "PO-{test}-{"
+            )
+
+        # Raises a NameError as the named group does not exist in the format string
+        with self.assertRaises(NameError):
+            InvenTree.format.extract_named_group(
+                "missing",
+                "PO-12345",
+                "PO-{test}",
+            )
+
+        # Raises a ValueError as the value does not match the format string
+        with self.assertRaises(ValueError):
+            InvenTree.format.extract_named_group(
+                "test",
+                "PO-1234",
+                "PO-{test}-1234",
+            )
+
+        with self.assertRaises(ValueError):
+            InvenTree.format.extract_named_group(
+                "test",
+                "PO-ABC-xyz",
+                "PO-###-{test}",
+            )
+
+
 class TestHelpers(TestCase):
-    """ Tests for InvenTree helper functions """
+    """Tests for InvenTree helper functions."""
 
     def test_image_url(self):
-        """ Test if a filename looks like an image """
-
+        """Test if a filename looks like an image."""
         for name in ['ape.png', 'bat.GiF', 'apple.WeBP', 'BiTMap.Bmp']:
             self.assertTrue(helpers.TestIfImageURL(name))
 
@@ -71,8 +207,7 @@ class TestHelpers(TestCase):
             self.assertFalse(helpers.TestIfImageURL(name))
 
     def test_str2bool(self):
-        """ Test string to boolean conversion """
-
+        """Test string to boolean conversion."""
         for s in ['yes', 'Y', 'ok', '1', 'OK', 'Ok', 'tRuE', 'oN']:
             self.assertTrue(helpers.str2bool(s))
             self.assertFalse(helpers.str2bool(s, test=False))
@@ -86,7 +221,7 @@ class TestHelpers(TestCase):
             self.assertFalse(helpers.str2bool(s, test=False))
 
     def test_isnull(self):
-
+        """Test isNull."""
         for s in ['null', 'none', '', '-1', 'false']:
             self.assertTrue(helpers.isNull(s))
 
@@ -94,35 +229,85 @@ class TestHelpers(TestCase):
             self.assertFalse(helpers.isNull(s))
 
     def testStaticUrl(self):
-
+        """Test static url helpers."""
         self.assertEqual(helpers.getStaticUrl('test.jpg'), '/static/test.jpg')
         self.assertEqual(helpers.getBlankImage(), '/static/img/blank_image.png')
         self.assertEqual(helpers.getBlankThumbnail(), '/static/img/blank_image.thumbnail.png')
 
     def testMediaUrl(self):
-
+        """Test getMediaUrl."""
         self.assertEqual(helpers.getMediaUrl('xx/yy.png'), '/media/xx/yy.png')
 
     def testDecimal2String(self):
-
+        """Test decimal2string."""
         self.assertEqual(helpers.decimal2string(Decimal('1.2345000')), '1.2345')
         self.assertEqual(helpers.decimal2string('test'), 'test')
 
+    def test_logo_image(self):
+        """Test for retrieving logo image"""
+
+        # By default, there is no custom logo provided
+
+        logo = helpers.getLogoImage()
+        self.assertEqual(logo, '/static/img/inventree.png')
+
+        logo = helpers.getLogoImage(as_file=True)
+        self.assertEqual(logo, f'file://{settings.STATIC_ROOT}/img/inventree.png')
+
+    def test_download_image(self):
+        """Test function for downloading image from remote URL"""
+
+        # Run check with a sequency of bad URLs
+        for url in [
+            "blog",
+            "htp://test.com/?",
+            "google",
+            "\\invalid-url"
+        ]:
+            with self.assertRaises(django_exceptions.ValidationError):
+                helpers.download_image_from_url(url)
+
+        # Attempt to download an image which throws a 404
+        with self.assertRaises(requests.exceptions.HTTPError):
+            helpers.download_image_from_url("https://httpstat.us/404", timeout=10)
+
+        # Attempt to download, but timeout
+        with self.assertRaises(requests.exceptions.Timeout):
+            helpers.download_image_from_url("https://httpstat.us/200?sleep=5000")
+
+        # Attempt to download, but not a valid image
+        with self.assertRaises(TypeError):
+            helpers.download_image_from_url("https://httpstat.us/200", timeout=10)
+
+        large_img = "https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg"
+
+        InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 1, change_user=None)
+
+        # Attempt to download an image which is too large
+        with self.assertRaises(ValueError):
+            helpers.download_image_from_url(large_img, timeout=10)
+
+        # Increase allowable download size
+        InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None)
+
+        # Download a valid image (should not throw an error)
+        helpers.download_image_from_url(large_img, timeout=10)
+
 
 class TestQuoteWrap(TestCase):
-    """ Tests for string wrapping """
+    """Tests for string wrapping."""
 
     def test_single(self):
-
+        """Test WrapWithQuotes."""
         self.assertEqual(helpers.WrapWithQuotes('hello'), '"hello"')
         self.assertEqual(helpers.WrapWithQuotes('hello"'), '"hello"')
 
 
 class TestIncrement(TestCase):
+    """Tests for increment function."""
 
     def tests(self):
-        """ Test 'intelligent' incrementing function """
-
+        """Test 'intelligent' incrementing function."""
         tests = [
             ("", ""),
             (1, "2"),
@@ -142,10 +327,10 @@ class TestIncrement(TestCase):
 
 
 class TestMakeBarcode(TestCase):
-    """ Tests for barcode string creation """
+    """Tests for barcode string creation."""
 
     def test_barcode_extended(self):
-
+        """Test creation of barcode with extended data."""
         bc = helpers.MakeBarcode(
             "part",
             3,
@@ -166,7 +351,7 @@ class TestMakeBarcode(TestCase):
         self.assertEqual(data['part']['url'], 'www.google.com')
 
     def test_barcode_brief(self):
-
+        """Test creation of simple barcode."""
         bc = helpers.MakeBarcode(
             "stockitem",
             7,
@@ -178,27 +363,29 @@ class TestMakeBarcode(TestCase):
 
 
 class TestDownloadFile(TestCase):
+    """Tests for DownloadFile."""
 
     def test_download(self):
+        """Tests for DownloadFile."""
         helpers.DownloadFile("hello world", "out.txt")
         helpers.DownloadFile(bytes(b"hello world"), "out.bin")
 
 
 class TestMPTT(TestCase):
-    """ Tests for the MPTT tree models """
+    """Tests for the MPTT tree models."""
 
     fixtures = [
         'location',
     ]
 
     def setUp(self):
+        """Setup for all tests."""
         super().setUp()
 
         StockLocation.objects.rebuild()
 
     def test_self_as_parent(self):
-        """ Test that we cannot set self as parent """
-
+        """Test that we cannot set self as parent."""
         loc = StockLocation.objects.get(pk=4)
         loc.parent = loc
 
@@ -206,8 +393,7 @@ class TestMPTT(TestCase):
             loc.save()
 
     def test_child_as_parent(self):
-        """ Test that we cannot set a child as parent """
-
+        """Test that we cannot set a child as parent."""
         parent = StockLocation.objects.get(pk=4)
         child = StockLocation.objects.get(pk=5)
 
@@ -217,8 +403,7 @@ class TestMPTT(TestCase):
             parent.save()
 
     def test_move(self):
-        """ Move an item to a different tree """
-
+        """Move an item to a different tree."""
         drawer = StockLocation.objects.get(name='Drawer_1')
 
         # Record the tree ID
@@ -233,10 +418,10 @@ class TestMPTT(TestCase):
 
 
 class TestSerialNumberExtraction(TestCase):
-    """ Tests for serial number extraction code """
+    """Tests for serial number extraction code."""
 
     def test_simple(self):
-
+        """Test simple serial numbers."""
         e = helpers.extract_serial_numbers
 
         sn = e("1-5", 5, 1)
@@ -301,7 +486,7 @@ class TestSerialNumberExtraction(TestCase):
         self.assertEqual(sn, [5, 6, 7, 8])
 
     def test_failures(self):
-
+        """Test wron serial numbers."""
         e = helpers.extract_serial_numbers
 
         # Test duplicates
@@ -332,6 +517,7 @@ class TestSerialNumberExtraction(TestCase):
             e("1, 2, 3, E-5", 5, 1)
 
     def test_combinations(self):
+        """Test complex serial number combinations."""
         e = helpers.extract_serial_numbers
 
         sn = e("1 3-5 9+2", 7, 1)
@@ -352,12 +538,10 @@ class TestSerialNumberExtraction(TestCase):
 
 
 class TestVersionNumber(TestCase):
-    """
-    Unit tests for version number functions
-    """
+    """Unit tests for version number functions."""
 
     def test_tuple(self):
-
+        """Test inventreeVersionTuple."""
         v = version.inventreeVersionTuple()
         self.assertEqual(len(v), 3)
 
@@ -366,10 +550,7 @@ class TestVersionNumber(TestCase):
         self.assertTrue(s in version.inventreeVersion())
 
     def test_comparison(self):
-        """
-        Test direct comparison of version numbers
-        """
-
+        """Test direct comparison of version numbers."""
         v_a = version.inventreeVersionTuple('1.2.0')
         v_b = version.inventreeVersionTuple('1.2.3')
         v_c = version.inventreeVersionTuple('1.2.4')
@@ -380,14 +561,35 @@ class TestVersionNumber(TestCase):
         self.assertTrue(v_d > v_c)
         self.assertTrue(v_d > v_a)
 
+    def test_commit_info(self):
+        """Test that the git commit information is extracted successfully."""
+        envs = {
+            'INVENTREE_COMMIT_HASH': 'abcdef',
+            'INVENTREE_COMMIT_DATE': '2022-12-31'
+        }
+
+        # Check that the environment variables take priority
+
+        with mock.patch.dict(os.environ, envs):
+            self.assertEqual(version.inventreeCommitHash(), 'abcdef')
+            self.assertEqual(version.inventreeCommitDate(), '2022-12-31')
+
+        import subprocess
+
+        # Check that the current .git values work too
+
+        hash = str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
+        self.assertEqual(hash, version.inventreeCommitHash())
+
+        d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip().split(' ')[0]
+        self.assertEqual(d, version.inventreeCommitDate())
+
 
 class CurrencyTests(TestCase):
-    """
-    Unit tests for currency / exchange rate functionality
-    """
+    """Unit tests for currency / exchange rate functionality."""
 
     def test_rates(self):
-
+        """Test exchange rate update."""
         # Initially, there will not be any exchange rate information
         rates = Rate.objects.all()
 
@@ -403,7 +605,7 @@ class CurrencyTests(TestCase):
         update_successful = False
 
         # Note: the update sometimes fails in CI, let's give it a few chances
-        for idx in range(10):
+        for _ in range(10):
             InvenTree.tasks.update_exchange_rates()
 
             rates = Rate.objects.all()
@@ -435,33 +637,40 @@ class CurrencyTests(TestCase):
 
 
 class TestStatus(TestCase):
-    """
-    Unit tests for status functions
-    """
+    """Unit tests for status functions."""
 
     def test_check_system_healt(self):
-        """test that the system health check is false in testing -> background worker not running"""
+        """Test that the system health check is false in testing -> background worker not running."""
         self.assertEqual(status.check_system_health(), False)
 
     def test_TestMode(self):
+        """Test isInTestMode check."""
         self.assertTrue(ready.isInTestMode())
 
     def test_Importing(self):
+        """Test isImportingData check."""
         self.assertEqual(ready.isImportingData(), False)
 
 
 class TestSettings(helpers.InvenTreeTestCase):
-    """
-    Unit tests for settings
-    """
+    """Unit tests for settings."""
 
     superuser = True
 
-    def in_env_context(self, envs={}):
-        """Patch the env to include the given dict"""
+    def in_env_context(self, envs=None):
+        """Patch the env to include the given dict."""
+        # Set default - see B006
+        if envs is None:
+            envs = {}
+
         return mock.patch.dict(os.environ, envs)
 
-    def run_reload(self, envs={}):
+    def run_reload(self, envs=None):
+        """Helper function to reload InvenTree."""
+        # Set default - see B006
+        if envs is None:
+            envs = {}
+
         from plugin import registry
 
         with self.in_env_context(envs):
@@ -470,6 +679,7 @@ class TestSettings(helpers.InvenTreeTestCase):
 
     @override_settings(TESTING_ENV=True)
     def test_set_user_to_few(self):
+        """Test adding an admin user via env variables."""
         user_model = get_user_model()
         # add shortcut
         user_count = user_model.objects.count
@@ -513,7 +723,7 @@ class TestSettings(helpers.InvenTreeTestCase):
         settings.TESTING_ENV = False
 
     def test_initial_install(self):
-        """Test if install of plugins on startup works"""
+        """Test if install of plugins on startup works."""
         from plugin import registry
 
         # Check an install run
@@ -522,41 +732,44 @@ class TestSettings(helpers.InvenTreeTestCase):
 
         # Set dynamic setting to True and rerun to launch install
         InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-        registry.reload_plugins()
+        registry.reload_plugins(full_reload=True)
 
         # Check that there was anotehr run
         response = registry.install_plugin_file()
         self.assertEqual(response, True)
 
     def test_helpers_cfg_file(self):
+        """Test get_config_file."""
         # normal run - not configured
 
         valid = [
             'inventree/config.yaml',
-            'inventree/dev/config.yaml',
+            'inventree/data/config.yaml',
         ]
 
-        self.assertTrue(any([opt in config.get_config_file().lower() for opt in valid]))
+        self.assertTrue(any([opt in str(config.get_config_file()).lower() for opt in valid]))
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
-            self.assertIn('inventree/my_special_conf.yaml', config.get_config_file().lower())
+            self.assertIn('inventree/my_special_conf.yaml', str(config.get_config_file()).lower())
 
     def test_helpers_plugin_file(self):
+        """Test get_plugin_file."""
         # normal run - not configured
 
         valid = [
             'inventree/plugins.txt',
-            'inventree/dev/plugins.txt',
+            'inventree/data/plugins.txt',
         ]
 
-        self.assertTrue(any([opt in config.get_plugin_file().lower() for opt in valid]))
+        self.assertTrue(any([opt in str(config.get_plugin_file()).lower() for opt in valid]))
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
-            self.assertIn('my_special_plugins.txt', config.get_plugin_file())
+            self.assertIn('my_special_plugins.txt', str(config.get_plugin_file()))
 
     def test_helpers_setting(self):
+        """Test get_setting."""
         TEST_ENV_NAME = '123TEST'
         # check that default gets returned if not present
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
@@ -567,12 +780,10 @@ class TestSettings(helpers.InvenTreeTestCase):
 
 
 class TestInstanceName(helpers.InvenTreeTestCase):
-    """
-    Unit tests for instance name
-    """
+    """Unit tests for instance name."""
 
     def test_instance_name(self):
-
+        """Test instance name settings."""
         # default setting
         self.assertEqual(version.inventreeInstanceTitle(), 'InvenTree')
 
@@ -581,3 +792,107 @@ class TestInstanceName(helpers.InvenTreeTestCase):
         InvenTreeSetting.set_setting("INVENTREE_INSTANCE", "Testing title", self.user)
 
         self.assertEqual(version.inventreeInstanceTitle(), 'Testing title')
+
+        # The site should also be changed
+        site_obj = Site.objects.all().order_by('id').first()
+        self.assertEqual(site_obj.name, 'Testing title')
+
+    def test_instance_url(self):
+        """Test instance url settings."""
+        # Set up required setting
+        InvenTreeSetting.set_setting("INVENTREE_BASE_URL", "http://127.1.2.3", self.user)
+
+        # The site should also be changed
+        site_obj = Site.objects.all().order_by('id').first()
+        self.assertEqual(site_obj.domain, 'http://127.1.2.3')
+
+
+class TestOffloadTask(helpers.InvenTreeTestCase):
+    """Tests for offloading tasks to the background worker"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'stock',
+    ]
+
+    def test_offload_tasks(self):
+        """Test that we can offload various tasks to the background worker thread.
+
+        This set of tests also ensures that various types of objects
+        can be encoded by the django-q serialization layer!
+
+        Note that as the background worker is not actually running for the tests,
+        the call to 'offload_task' won't really *do* anything!
+
+        However, it serves as a validation that object serialization works!
+
+        Ref: https://github.com/inventree/InvenTree/pull/3273
+        """
+
+        offload_task(
+            'dummy_tasks.parts',
+            part=Part.objects.get(pk=1),
+            cat=PartCategory.objects.get(pk=1),
+            force_async=True
+        )
+
+        offload_task(
+            'dummy_tasks.stock',
+            item=StockItem.objects.get(pk=1),
+            loc=StockLocation.objects.get(pk=1),
+            force_async=True
+        )
+
+        offload_task(
+            'dummy_task.numbers',
+            1, 2, 3, 4, 5,
+            force_async=True
+        )
+
+
+class BarcodeMixinTest(helpers.InvenTreeTestCase):
+    """Tests for the InvenTreeBarcodeMixin mixin class"""
+
+    def test_barcode_model_type(self):
+        """Test that the barcode_model_type property works for each class"""
+
+        from part.models import Part
+        from stock.models import StockItem, StockLocation
+
+        self.assertEqual(Part.barcode_model_type(), 'part')
+        self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
+        self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
+
+    def test_bacode_hash(self):
+        """Test that the barcode hashing function provides correct results"""
+
+        # Test multiple values for the hashing function
+        # This is to ensure that the hash function is always "backwards compatible"
+        hashing_tests = {
+            'abcdefg': '7ac66c0f148de9519b8bd264312c4d64',
+            'ABCDEFG': 'bb747b3df3130fe1ca4afa93fb7d97c9',
+            '1234567': 'fcea920f7412b5da7be0cf42b8c93759',
+            '{"part": 17, "stockitem": 12}': 'c88c11ed0628eb7fef0d59b098b96975',
+        }
+
+        for barcode, hash in hashing_tests.items():
+            self.assertEqual(InvenTree.helpers.hash_barcode(barcode), hash)
+
+
+class SanitizerTest(TestCase):
+    """Simple tests for sanitizer functions."""
+
+    def test_svg_sanitizer(self):
+        """Test that SVGs are sanitized acordingly."""
+        valid_string = """<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" height="400" width="400">{0}
+        <path id="path1" d="m -151.78571,359.62883 v 112.76373 l 97.068507,-56.04253 V 303.14815 Z" style="fill:#ddbc91;"></path>
+        </svg>"""
+        dangerous_string = valid_string.format('<script>alert();</script>')
+
+        # Test that valid string
+        self.assertEqual(valid_string, sanitize_svg(valid_string))
+
+        # Test that invalid string is cleanded
+        self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))

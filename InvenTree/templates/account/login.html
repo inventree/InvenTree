@@ -39,7 +39,9 @@ for a account and sign in below:{% endblocktrans %}</p>
   <div>{{ login_message | safe }}<hr></div>
   {% endif %}
   <div class="btn-group float-right" role="group">
-    <button class="btn btn-success" type="submit">{% trans "Sign In" %}</button>
+    <button class="btn btn-success" type="submit">
+      <span class='fas fa-sign-in-alt'></span> {% trans "Sign In" %}
+    </button>
   </div>
   {% if mail_conf and enable_pwd_forgot %}
   <a class="" href="{% url 'account_reset_password' %}"><small>{% trans "Forgot Password?" %}</small></a>

@@ -13,7 +13,7 @@
 {% block content %}
 
 <div class='alert alert-block alert-danger'>
-    {% trans "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage." %}
+    {% trans "Changing the settings below require you to immediately restart the server. Do not change this while under active usage." %}
 </div>
 
 <div class='table-responsive'>
@@ -25,6 +25,8 @@
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_NAVIGATION" icon="fa-sitemap" %}
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_APP" icon="fa-rocket" %}
         {% include "InvenTree/settings/setting.html" with key="PLUGIN_ON_STARTUP" %}
+        <tr><td colspan='5'></td></tr>
+        {% include "InvenTree/settings/setting.html" with key="PLUGIN_CHECK_SIGNATURES" %}
     </tbody>
 </table>
 </div>

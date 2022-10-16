@@ -1,0 +1,107 @@
+# Build, test and push InvenTree docker image
+# This workflow runs under any of the following conditions:
+#
+# - Push to the master branch
+# - Publish release
+#
+# The following actions are performed:
+#
+# - Check that the version number matches the current branch or tag
+# - Build the InvenTree docker image
+# - Run suite of unit tests against the build image
+# - Push the compiled, tested image to dockerhub
+
+name: Docker
+
+on:
+  release:
+    types: [ published ]
+
+  push:
+    branches:
+      - 'master'
+
+jobs:
+
+  # Build the docker image
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
+      - name: Version Check
+        run: |
+          pip install requests
+          python3 ci/version_check.py
+          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
+      - name: Build Docker Image
+        # Build the development docker image (using docker-compose.yml)
+        run: |
+          docker-compose build
+      - name: Run Unit Tests
+        run: |
+          docker-compose run inventree-dev-server invoke update
+          docker-compose run inventree-dev-server invoke setup-dev
+          docker-compose up -d
+          docker-compose run inventree-dev-server invoke wait
+          docker-compose run inventree-dev-server invoke test
+          docker-compose down
+      - name: Check Data Directory
+        # The following file structure should have been created by the docker image
+        run: |
+          test -d data
+          test -d data/env
+          test -d data/pgdb
+          test -d data/media
+          test -d data/static
+          test -d data/plugins
+          test -f data/config.yaml
+          test -f data/plugins.txt
+          test -f data/secret_key.txt
+      - name: Set up QEMU
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480 # pin@v1
+      - name: Set up Docker Buildx
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-buildx-action@f211e3e9ded2d9377c8cadc4489a4e38014bc4c9 # pin@v1
+      - name: Set up cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@09a077b27eb1310dcfb21981bee195b30ce09de0 # pin@v2.5.0
+      - name: Login to Dockerhub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7 # pin@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Extract Docker metadata
+        if: github.event_name != 'pull_request'
+        id: meta
+        uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a # pin@v4.0.1
+        with:
+          images: |
+            inventree/inventree
+      - name: Build and Push
+        id: build-and-push
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a # pin@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          target: production
+          tags: ${{ env.docker_tags }}
+          build-args: |
+            commit_hash=${{ env.git_commit_hash }}
+            commit_date=${{ env.git_commit_date }}
+      - name: Sign the published image
+        if: github.event_name != 'pull_request'
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+        run: cosign sign ${{ steps.meta.outputs.tags }}@${{
+          steps.build-and-push.outputs.digest }}

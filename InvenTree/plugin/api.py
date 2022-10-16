@@ -1,17 +1,17 @@
-"""
-JSON API for the plugin app
-"""
+"""JSON API for the plugin app."""
 
 from django.conf import settings
 from django.urls import include, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, permissions, status
+from rest_framework import filters, permissions, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
+from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
+                              RetrieveUpdateDestroyAPI)
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
@@ -19,8 +19,8 @@ from plugin.models import PluginConfig, PluginSetting
 from plugin.registry import registry
 
 
-class PluginList(generics.ListAPIView):
-    """ API endpoint for list of PluginConfig objects
+class PluginList(ListAPI):
+    """API endpoint for list of PluginConfig objects.
 
     - GET: Return a list of all PluginConfig objects
     """
@@ -34,6 +34,10 @@ class PluginList(generics.ListAPIView):
     queryset = PluginConfig.objects.all()
 
     def filter_queryset(self, queryset):
+        """Filter for API requests.
+
+        Filter by mixin with the `mixin` flag
+        """
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -58,7 +62,7 @@ class PluginList(generics.ListAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'active',
     ]
 
@@ -78,8 +82,8 @@ class PluginList(generics.ListAPIView):
     ]
 
 
-class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API detail endpoint for PluginConfig object
+class PluginDetail(RetrieveUpdateDestroyAPI):
+    """API detail endpoint for PluginConfig object.
 
     get:
     Return a single PluginConfig object
@@ -95,15 +99,18 @@ class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PluginSerializers.PluginConfigSerializer
 
 
-class PluginInstall(generics.CreateAPIView):
-    """
-    Endpoint for installing a new plugin
-    """
+class PluginInstall(CreateAPI):
+    """Endpoint for installing a new plugin."""
+
     queryset = PluginConfig.objects.none()
     serializer_class = PluginSerializers.PluginConfigInstallSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        """Install a plugin via the API"""
+        # Clean up input data
+        data = self.clean_data(request.data)
+
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         result = self.perform_create(serializer)
         result['input'] = serializer.data
@@ -111,12 +118,12 @@ class PluginInstall(generics.CreateAPIView):
         return Response(result, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
+        """Saving the serializer instance performs plugin installation"""
         return serializer.save()
 
 
-class PluginSettingList(generics.ListAPIView):
-    """
-    List endpoint for all plugin related settings.
+class PluginSettingList(ListAPI):
+    """List endpoint for all plugin related settings.
 
     - read only
     - only accessible by staff users
@@ -133,15 +140,14 @@ class PluginSettingList(generics.ListAPIView):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'plugin__active',
         'plugin__key',
     ]
 
 
-class PluginSettingDetail(generics.RetrieveUpdateAPIView):
-    """
-    Detail endpoint for a plugin-specific setting.
+class PluginSettingDetail(RetrieveUpdateAPI):
+    """Detail endpoint for a plugin-specific setting.
 
     Note that these cannot be created or deleted via the API
     """
@@ -150,13 +156,11 @@ class PluginSettingDetail(generics.RetrieveUpdateAPIView):
     serializer_class = PluginSerializers.PluginSettingSerializer
 
     def get_object(self):
-        """
-        Lookup the plugin setting object, based on the URL.
-        The URL provides the 'slug' of the plugin, and the 'key' of the setting.
+        """Lookup the plugin setting object, based on the URL.
 
+        The URL provides the 'slug' of the plugin, and the 'key' of the setting.
         Both the 'slug' and 'key' must be valid, else a 404 error is raised
         """
-
         plugin_slug = self.kwargs['plugin']
         key = self.kwargs['key']
 

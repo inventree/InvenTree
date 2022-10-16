@@ -1,19 +1,17 @@
-"""
-JSON serializers for common components
-"""
+"""JSON serializers for common components."""
+
+from django.urls import reverse
 
 from rest_framework import serializers
 
 from common.models import (InvenTreeSetting, InvenTreeUserSetting,
                            NotificationMessage)
-from InvenTree.helpers import get_objectreference
+from InvenTree.helpers import construct_absolute_url, get_objectreference
 from InvenTree.serializers import InvenTreeModelSerializer
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
-    """
-    Base serializer for a settings object
-    """
+    """Base serializer for a settings object."""
 
     key = serializers.CharField(read_only=True)
 
@@ -30,10 +28,7 @@ class SettingsSerializer(InvenTreeModelSerializer):
     api_url = serializers.CharField(read_only=True)
 
     def get_choices(self, obj):
-        """
-        Returns the choices available for a given item
-        """
-
+        """Returns the choices available for a given item."""
         results = []
 
         choices = obj.choices()
@@ -48,10 +43,7 @@ class SettingsSerializer(InvenTreeModelSerializer):
         return results
 
     def get_value(self, obj):
-        """
-        Make sure protected values are not returned
-        """
-
+        """Make sure protected values are not returned."""
         # never return protected values
         if obj.protected:
             result = '***'
@@ -62,11 +54,11 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
 
 class GlobalSettingsSerializer(SettingsSerializer):
-    """
-    Serializer for the InvenTreeSetting model
-    """
+    """Serializer for the InvenTreeSetting model."""
 
     class Meta:
+        """Meta options for GlobalSettingsSerializer."""
+
         model = InvenTreeSetting
         fields = [
             'pk',
@@ -78,17 +70,18 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'choices',
             'model_name',
             'api_url',
+            'typ',
         ]
 
 
 class UserSettingsSerializer(SettingsSerializer):
-    """
-    Serializer for the InvenTreeUserSetting model
-    """
+    """Serializer for the InvenTreeUserSetting model."""
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
+        """Meta options for UserSettingsSerializer."""
+
         model = InvenTreeUserSetting
         fields = [
             'pk',
@@ -101,12 +94,12 @@ class UserSettingsSerializer(SettingsSerializer):
             'choices',
             'model_name',
             'api_url',
+            'typ',
         ]
 
 
 class GenericReferencedSettingSerializer(SettingsSerializer):
-    """
-    Serializer for a GenericReferencedSetting model
+    """Serializer for a GenericReferencedSetting model.
 
     Args:
         MODEL: model class for the serializer
@@ -118,9 +111,9 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
     EXTRA_FIELDS = None
 
     def __init__(self, *args, **kwargs):
-        """Init overrides the Meta class to make it dynamic"""
+        """Init overrides the Meta class to make it dynamic."""
         class CustomMeta:
-            """Scaffold for custom Meta class"""
+            """Scaffold for custom Meta class."""
             fields = [
                 'pk',
                 'key',
@@ -131,6 +124,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'choices',
                 'model_name',
                 'api_url',
+                'typ',
             ]
 
         # set Meta class
@@ -144,9 +138,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
 
 
 class NotificationMessageSerializer(InvenTreeModelSerializer):
-    """
-    Serializer for the InvenTreeUserSetting model
-    """
+    """Serializer for the InvenTreeUserSetting model."""
 
     target = serializers.SerializerMethodField(read_only=True)
 
@@ -169,12 +161,32 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
     read = serializers.BooleanField(read_only=True)
 
     def get_target(self, obj):
-        return get_objectreference(obj, 'target_content_type', 'target_object_id')
+        """Function to resolve generic object reference to target."""
+        target = get_objectreference(obj, 'target_content_type', 'target_object_id')
+
+        if target and 'link' not in target:
+            # Check if object has an absolute_url function
+            if hasattr(obj.target_object, 'get_absolute_url'):
+                target['link'] = obj.target_object.get_absolute_url()
+            else:
+                # check if user is staff - link to admin
+                request = self.context['request']
+                if request.user and request.user.is_staff:
+                    meta = obj.target_object._meta
+                    target['link'] = construct_absolute_url(reverse(
+                        f'admin:{meta.db_table}_change',
+                        kwargs={'object_id': obj.target_object_id}
+                    ))
+
+        return target
 
     def get_source(self, obj):
+        """Function to resolve generic object reference to source."""
         return get_objectreference(obj, 'source_content_type', 'source_object_id')
 
     class Meta:
+        """Meta options for NotificationMessageSerializer."""
+
         model = NotificationMessage
         fields = [
             'pk',
@@ -192,8 +204,10 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
 
 
 class NotificationReadSerializer(NotificationMessageSerializer):
+    """Serializer for reading a notification."""
 
     def is_valid(self, raise_exception=False):
+        """Ensure instance data is available for view and let validation pass."""
         self.instance = self.context['instance']  # set instance that should be returned
         self._validated_data = True
         return True

@@ -1,4 +1,4 @@
-# Tests for labels
+"""Unit tests for label API"""
 
 from django.urls import reverse
 
@@ -6,9 +6,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 
 
 class TestReportTests(InvenTreeAPITestCase):
-    """
-    Tests for the StockItem TestReport templates
-    """
+    """Tests for the StockItem TestReport templates."""
 
     fixtures = [
         'category',
@@ -24,11 +22,11 @@ class TestReportTests(InvenTreeAPITestCase):
 
     list_url = reverse('api-stockitem-testreport-list')
 
-    def setUp(self):
-
-        super().setUp()
-
-    def do_list(self, filters={}):
+    def do_list(self, filters=None):
+        """Helper function to request list of labels with provided filters"""
+        # Set default - see B006
+        if filters is None:
+            filters = {}
 
         response = self.client.get(self.list_url, filters, format='json')
 
@@ -37,7 +35,7 @@ class TestReportTests(InvenTreeAPITestCase):
         return response.data
 
     def test_list(self):
-
+        """Test the API list endpoint"""
         response = self.do_list()
 
         # TODO - Add some report templates to the fixtures

@@ -15,6 +15,7 @@
 */
 
 /* exported
+    addBomItem,
     constructBomUploadTable,
     deleteBomItems,
     downloadBomTemplate,
@@ -26,6 +27,30 @@
     removeColFromBomWizard,
     submitBomTable
 */
+
+
+/*
+ * Launch a dialog to add a new BOM line item to a Bill of Materials
+ */
+function addBomItem(part_id, options={}) {
+
+    var fields = bomItemFields();
+
+    fields.part.value = part_id;
+    fields.sub_part.filters = {
+        active: true,
+    };
+
+    constructForm('{% url "api-bom-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Create BOM Item" %}',
+        focus: 'sub_part',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
 
 
 /* Construct a table of data extracted from a BOM file.
@@ -292,8 +317,8 @@ function exportBom(part_id, options={}) {
                 choices: exportFormatOptions(),
             },
             cascade: {
-                label: '{% trans "Cascading" %}',
-                help_text: '{% trans "Download cascading / multi-level BOM" %}',
+                label: '{% trans "Multi Level BOM" %}',
+                help_text: '{% trans "Include BOM data for subassemblies" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-cascading', true),
             },
@@ -302,6 +327,7 @@ function exportBom(part_id, options={}) {
                 help_text: '{% trans "Select maximum number of BOM levels to export (0 = all levels)" %}',
                 type: 'integer',
                 value: 0,
+                required: true,
                 min_value: 0,
             },
             parameter_data: {
@@ -381,6 +407,7 @@ function bomItemFields() {
         note: {},
         allow_variants: {},
         inherited: {},
+        consumable: {},
         optional: {},
     };
 
@@ -518,7 +545,6 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
                 </a>
             </td>
             <td id='description-${pk}'><em>${part.description}</em></td>
-            <td id='stock-${pk}'><em>${part.stock}</em></td>
             <td>${buttons}</td>
         </tr>
         `;
@@ -551,7 +577,6 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             <tr>
                 <th>{% trans "Part" %}</th>
                 <th>{% trans "Description" %}</th>
-                <th>{% trans "Stock" %}</th>
                 <th><!-- Actions --></th>
             </tr>
         </thead>
@@ -642,7 +667,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             addRemoveCallback(opts.modal, `#button-row-remove-${response.pk}`);
 
             // Re-enable the "submit" button
-            $(opts.modal).find('#modal-form-submit').prop('disabled', false);
+            enableSubmitButton(opts, true);
 
             // Reload the parent BOM table
             reloadParentTable();
@@ -651,9 +676,10 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 }
 
 
+/*
+ * Delete the selected BOM items from the database
+ */
 function deleteBomItems(items, options={}) {
-    /* Delete the selected BOM items from the database
-     */
 
     function renderItem(item, opts={}) {
 
@@ -672,9 +698,11 @@ function deleteBomItems(items, options={}) {
     }
 
     var rows = '';
+    var ids = [];
 
     items.forEach(function(item) {
         rows += renderItem(item);
+        ids.push(item.pk);
     });
 
     var html = `
@@ -692,43 +720,15 @@ function deleteBomItems(items, options={}) {
     </table>
     `;
 
-    constructFormBody({}, {
+    constructForm('{% url "api-bom-list"  %}', {
+        method: 'DELETE',
+        multi_delete: true,
         title: '{% trans "Delete selected BOM items?" %}',
-        fields: {},
-        preFormContent: html,
-        submitText: '{% trans "Delete" %}',
-        submitClass: 'danger',
-        confirm: true,
-        onSubmit: function(fields, opts) {
-            // Individually send DELETE requests for each BOM item
-            // We do *not* send these all at once, to prevent overloading the server
-
-            // Show the progress spinner
-            $(opts.modal).find('#modal-progress-spinner').show();
-
-            function deleteNextBomItem() {
-
-                if (items.length > 0) {
-
-                    var item = items.shift();
-
-                    inventreeDelete(`/api/bom/${item.pk}/`,
-                        {
-                            complete: deleteNextBomItem,
-                        }
-                    );
-                } else {
-                    // Destroy this modal once all items are deleted
-                    $(opts.modal).modal('hide');
-
-                    if (options.success) {
-                        options.success();
-                    }
-                }
-            }
-
-            deleteNextBomItem();
+        form_data: {
+            items: ids,
         },
+        preFormContent: html,
+        onSuccess: options.success,
     });
 }
 
@@ -787,7 +787,22 @@ function loadBomTable(table, options={}) {
         }
 
         return available;
+    }
 
+    function canBuildQuantity(row) {
+        // Calculate how many of each row we can make, given current stock
+
+        if (row.consumable) {
+            // If the row is "consumable" we do not 'track' the quantity
+            return Infinity;
+        }
+
+        // Prevent div-by-zero or negative errors
+        if ((row.quantity || 0) <= 0) {
+            return 0;
+        }
+
+        return availableQuantity(row) / row.quantity;
     }
 
     // Construct the table columns
@@ -870,6 +885,9 @@ function loadBomTable(table, options={}) {
         {
             field: 'sub_part_detail.description',
             title: '{% trans "Description" %}',
+            formatter: function(value) {
+                return withTitle(shortenString(value), value);
+            }
         }
     );
 
@@ -894,8 +912,16 @@ function loadBomTable(table, options={}) {
             // Let's make it a bit more pretty
             text = parseFloat(text);
 
+            if (row.sub_part_detail && row.sub_part_detail.units) {
+                text += ` <small>${row.sub_part_detail.units}</small>`;
+            }
+
+            if (row.consumable) {
+                text += ` <small>({% trans "Consumable" %})</small>`;
+            }
+
             if (row.optional) {
-                text += ' ({% trans "Optional" %})';
+                text += ' <small>({% trans "Optional" %})</small>';
             }
 
             if (row.overage) {
@@ -904,6 +930,32 @@ function loadBomTable(table, options={}) {
 
             return text;
         },
+        footerFormatter: function(data) {
+
+            // Top-level BOM count
+            var top_total = 0;
+
+            // Total BOM count
+            var all_total = 0;
+
+            data.forEach(function(row) {
+                var q = +row['quantity'] || 0;
+
+                all_total += q;
+
+                if (row.part == options.parent_id) {
+                    top_total += q;
+                }
+            });
+
+            var total = `${top_total}`;
+
+            if (top_total != all_total) {
+                total += ` / ${all_total}`;
+            }
+
+            return total;
+        }
     });
 
     cols.push({
@@ -923,10 +975,15 @@ function loadBomTable(table, options={}) {
 
             var text = `${available_stock}`;
 
+            if (row.sub_part_detail && row.sub_part_detail.units) {
+                text += ` <small>${row.sub_part_detail.units}</small>`;
+            }
+
             if (available_stock <= 0) {
-                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "No Stock Available" %}'></span>`;
             } else {
                 var extra = '';
+
                 if ((substitute_stock > 0) && (variant_stock > 0)) {
                     extra = '{% trans "Includes variant and substitute stock" %}';
                 } else if (variant_stock > 0) {
@@ -938,6 +995,10 @@ function loadBomTable(table, options={}) {
                 if (extra) {
                     text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
                 }
+            }
+
+            if (row.on_order && row.on_order > 0) {
+                text += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
             }
 
             return renderLink(text, url);
@@ -953,43 +1014,23 @@ function loadBomTable(table, options={}) {
             if (row.substitutes && row.substitutes.length > 0) {
                 return row.substitutes.length;
             } else {
-                return `-`;
+                return yesNoLabel(false);
             }
         }
     });
 
-    if (show_pricing) {
-        cols.push({
-            field: 'purchase_price_range',
-            title: '{% trans "Purchase Price Range" %}',
-            searchable: false,
-            sortable: true,
-        });
-
-        cols.push({
-            field: 'purchase_price_avg',
-            title: '{% trans "Purchase Price Average" %}',
-            searchable: false,
-            sortable: true,
-        });
-
-        cols.push({
-            field: 'price_range',
-            title: '{% trans "Supplier Cost" %}',
-            sortable: true,
-            formatter: function(value) {
-                if (value) {
-                    return value;
-                } else {
-                    return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
-                }
-            }
-        });
-    }
-
     cols.push({
         field: 'optional',
         title: '{% trans "Optional" %}',
+        searchable: false,
+        formatter: function(value) {
+            return yesNoLabel(value);
+        }
+    });
+
+    cols.push({
+        field: 'consumable',
+        title: '{% trans "Consumable" %}',
         searchable: false,
         formatter: function(value) {
             return yesNoLabel(value);
@@ -1024,37 +1065,77 @@ function loadBomTable(table, options={}) {
         }
     });
 
+    if (show_pricing) {
+        cols.push({
+            field: 'purchase_price_range',
+            title: '{% trans "Purchase Price Range" %}',
+            searchable: false,
+            sortable: true,
+        });
+
+        cols.push({
+            field: 'purchase_price_avg',
+            title: '{% trans "Purchase Price Average" %}',
+            searchable: false,
+            sortable: true,
+        });
+
+        cols.push({
+            field: 'price_range',
+            title: '{% trans "Supplier Cost" %}',
+            sortable: true,
+            formatter: function(value) {
+                if (value) {
+                    return value;
+                } else {
+                    return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
+                }
+            }
+        });
+    }
+
     cols.push(
         {
             field: 'can_build',
             title: '{% trans "Can Build" %}',
+            sortable: true,
             formatter: function(value, row) {
-                var can_build = 0;
 
-                var available = availableQuantity(row);
-
-                if (row.quantity > 0) {
-                    can_build = available / row.quantity;
+                // "Consumable" parts are not tracked in the build
+                if (row.consumable) {
+                    return `<em>{% trans "Consumable item" %}</em>`;
                 }
+
+                var can_build = canBuildQuantity(row);
 
                 return +can_build.toFixed(2);
             },
             sorter: function(valA, valB, rowA, rowB) {
                 // Function to sort the "can build" quantity
-                var cb_a = 0;
-                var cb_b = 0;
-
-                if (rowA.quantity > 0) {
-                    cb_a = availableQuantity(rowA) / rowA.quantity;
-                }
-
-                if (rowB.quantity > 0) {
-                    cb_b = availableQuantity(rowB) / rowB.quantity;
-                }
+                var cb_a = canBuildQuantity(rowA);
+                var cb_b = canBuildQuantity(rowB);
 
                 return (cb_a > cb_b) ? 1 : -1;
             },
-            sortable: true,
+            footerFormatter: function(data) {
+                var can_build = null;
+
+                data.forEach(function(row) {
+                    if (row.quantity > 0 && !row.consumable) {
+                        var cb = availableQuantity(row) / row.quantity;
+
+                        if (can_build == null || cb < can_build) {
+                            can_build = cb;
+                        }
+                    }
+                });
+
+                if (can_build == null) {
+                    return '-';
+                } else {
+                    return formatDecimal(can_build, 2);
+                }
+            }
         }
     );
 
@@ -1065,6 +1146,9 @@ function loadBomTable(table, options={}) {
             title: '{% trans "Notes" %}',
             searchable: true,
             sortable: true,
+            formatter: function(value) {
+                return withTitle(shortenString(value), value);
+            }
         }
     );
 
@@ -1112,6 +1196,13 @@ function loadBomTable(table, options={}) {
                         `/part/${row.part}/bom/`
                     );
                 }
+            },
+            footerFormatter: function(data) {
+                return `
+                <button class='btn btn-success float-right' type='button' title='{% trans "Add BOM Item" %}' id='bom-item-new-footer'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
+                </button>
+                `;
             }
         });
     }
@@ -1135,12 +1226,15 @@ function loadBomTable(table, options={}) {
                         response[idx].parentId = bom_pk;
                     }
 
-                    var row = $(table).bootstrapTable('getRowByUniqueId', bom_pk);
+                    var row = table.bootstrapTable('getRowByUniqueId', bom_pk);
                     row.sub_assembly_received = true;
 
-                    $(table).bootstrapTable('updateByUniqueId', bom_pk, row, true);
+                    table.bootstrapTable('updateByUniqueId', bom_pk, row, true);
 
                     table.bootstrapTable('append', response);
+
+                    // Auto-expand the newly added row
+                    $(`.treegrid-${bom_pk}`).treegrid('expand');
                 },
                 error: function(xhr) {
                     console.error('Error requesting BOM for part=' + part_pk);
@@ -1158,6 +1252,7 @@ function loadBomTable(table, options={}) {
         parentIdField: 'parentId',
         treeShowField: 'sub_part',
         showColumns: true,
+        showFooter: true,
         name: 'bom',
         sortable: true,
         search: true,
@@ -1192,28 +1287,39 @@ function loadBomTable(table, options={}) {
 
             table.treegrid({
                 treeColumn: 1,
-                onExpand: function() {
-                }
             });
 
             table.treegrid('collapseAll');
 
             // Callback for 'load sub assembly' button
-            $(table).find('.load-sub-assembly').click(function(event) {
+            table.find('.load-sub-assembly').click(function(event) {
 
                 event.preventDefault();
 
                 var pk = $(this).attr('pk');
-                var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+                var row = table.bootstrapTable('getRowByUniqueId', pk);
 
                 // Request BOM data for this subassembly
                 requestSubItems(row.pk, row.sub_part);
 
                 row.sub_assembly_requested = true;
-                $(table).bootstrapTable('updateByUniqueId', pk, row, true);
+                table.bootstrapTable('updateByUniqueId', pk, row, true);
             });
+
+            var data = table.bootstrapTable('getData');
+
+            for (var idx = 0; idx < data.length; idx++) {
+                var row = data[idx];
+
+                if (!row.parentId) {
+                    row.parentId = parent_id;
+
+                    table.bootstrapTable('updateByUniqueId', row.pk, row, true);
+                }
+            }
         },
-        onLoadSuccess: function() {
+        onLoadSuccess: function(data) {
+
             if (options.editable) {
                 table.bootstrapTable('uncheckAll');
             }
@@ -1222,6 +1328,15 @@ function loadBomTable(table, options={}) {
 
     // In editing mode, attached editables to the appropriate table elements
     if (options.editable) {
+
+        // Callback for "new bom item" button in footer
+        table.on('click', '#bom-item-new-footer', function() {
+            addBomItem(options.parent_id, {
+                onSuccess: function() {
+                    table.bootstrapTable('refresh');
+                }
+            });
+        });
 
         // Callback for "delete" button
         table.on('click', '.bom-delete-button', function() {
@@ -1446,6 +1561,10 @@ function loadUsedInTable(table, part_id, options={}) {
                 title: '{% trans "Required Quantity" %}',
                 formatter: function(value, row) {
                     var html = value;
+
+                    if (row.sub_part_detail && row.sub_part_detail.units) {
+                        html += ` <small>${row.sub_part_detail.units}</small>`;
+                    }
 
                     if (row.parent && row.parent != 'top-level-item') {
                         html += ` <em>({% trans "Inherited from parent BOM" %})</em>`;

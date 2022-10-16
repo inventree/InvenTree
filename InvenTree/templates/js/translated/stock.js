@@ -11,7 +11,6 @@
     global_settings,
     handleFormErrors,
     imageHoverIcon,
-    inventreeDelete,
     inventreeGet,
     inventreePut,
     launchModalForm,
@@ -40,6 +39,8 @@
     assignStockToCustomer,
     createNewStockItem,
     createStockLocation,
+    deleteStockItem,
+    deleteStockLocation,
     duplicateStockItem,
     editStockItem,
     editStockLocation,
@@ -113,6 +114,10 @@ function stockLocationFields(options={}) {
         name: {},
         description: {},
         owner: {},
+        icon: {
+            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
+            placeholder: 'fas fa-box',
+        },
     };
 
     if (options.parent) {
@@ -155,6 +160,34 @@ function createStockLocation(options={}) {
 
     constructForm(url, options);
 }
+
+
+/*
+ * Launch an API form to delete a StockLocation
+ */
+function deleteStockLocation(pk, options={}) {
+    var url = `/api/stock/location/${pk}/`;
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this stock location?" %}
+    <ul>
+        <li>{% trans "Any child locations will be moved to the parent of this location" %}</li>
+        <li>{% trans "Any stock items in this location will be moved to the parent of this location" %}</li>
+    </ul>
+    </div>
+    `;
+
+    constructForm(url, {
+        title: '{% trans "Delete Stock Location" %}',
+        method: 'DELETE',
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
 
 
 function stockItemFields(options={}) {
@@ -324,6 +357,28 @@ function duplicateStockItem(pk, options) {
             options.title = '{% trans "Duplicate Stock Item" %}';
 
             constructForm('{% url "api-stock-list" %}', options);
+        }
+    });
+}
+
+
+/*
+ * Launch a modal form to delete a given StockItem
+ */
+function deleteStockItem(pk, options={}) {
+    var url = `/api/stock/${pk}/`;
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this stock item?" %}
+    </div>`;
+
+    constructForm(url, {
+        method: 'DELETE',
+        title: '{% trans "Delete Stock Item" %}',
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
         }
     });
 }
@@ -916,7 +971,7 @@ function adjustStock(action, items, options={}) {
 
         var item = items[idx];
 
-        if ((item.serial != null) && !allowSerializedStock) {
+        if ((item.serial != null) && (item.serial != '') && !allowSerializedStock) {
             continue;
         }
 
@@ -1106,25 +1161,26 @@ function adjustStock(action, items, options={}) {
 
             // Delete action is handled differently
             if (action == 'delete') {
-                var requests = [];
 
-                item_pk_values.forEach(function(pk) {
-                    requests.push(
-                        inventreeDelete(
-                            `/api/stock/${pk}/`,
-                        )
-                    );
+                var ids = [];
+
+                items.forEach(function(item) {
+                    ids.push(item.pk);
                 });
 
-                // Wait for *all* the requests to complete
-                $.when.apply($, requests).done(function() {
-                    // Destroy the modal window
-                    $(opts.modal).modal('hide');
-
-                    if (options.success) {
-                        options.success();
+                showModalSpinner(opts.modal, true);
+                inventreeDelete(
+                    '{% url "api-stock-list" %}',
+                    {
+                        data: {
+                            items: ids,
+                        },
+                        success: function(response) {
+                            $(opts.modal).modal('hide');
+                            options.success(response);
+                        }
                     }
-                });
+                );
 
                 return;
             }
@@ -1191,7 +1247,7 @@ function noResultBadge() {
 
 function formatDate(row) {
     // Function for formatting date field
-    var html = row.date;
+    var html = renderDate(row.date);
 
     if (row.user_detail) {
         html += `<span class='badge badge-right rounded-pill bg-secondary'>${row.user_detail.username}</span>`;
@@ -1306,7 +1362,8 @@ function loadStockTestResultsTable(table, options) {
                     var html = value;
 
                     if (row.attachment) {
-                        html += `<a href='${row.attachment}'><span class='fas fa-file-alt float-right'></span></a>`;
+                        var text = `<span class='fas fa-file-alt float-right'></span>`;
+                        html += renderLink(text, row.attachment, {download: true});
                     }
 
                     return html;
@@ -1549,7 +1606,7 @@ function locationDetail(row, showLink=true) {
         text = '{% trans "Assigned to Sales Order" %}';
         url = `/order/sales-order/${row.sales_order}/`;
     } else if (row.location && row.location_detail) {
-        text = row.location_detail.pathstring;
+        text = shortenString(row.location_detail.pathstring);
         url = `/stock/location/${row.location}/`;
     } else {
         text = '<i>{% trans "No stock location set" %}</i>';
@@ -1646,11 +1703,11 @@ function loadStockTable(table, options) {
         switchable: params['part_detail'],
         formatter: function(value, row) {
 
-            var url = `/stock/item/${row.pk}/`;
+            var url = `/part/${row.part}/`;
             var thumb = row.part_detail.thumbnail;
             var name = row.part_detail.full_name;
 
-            var html = imageHoverIcon(thumb) + renderLink(name, url);
+            var html = imageHoverIcon(thumb) + renderLink(shortenString(name), url);
 
             html += makePartIcons(row.part_detail);
 
@@ -1671,7 +1728,12 @@ function loadStockTable(table, options) {
         visible: params['part_detail'],
         switchable: params['part_detail'],
         formatter: function(value, row) {
-            return row.part_detail.IPN;
+            var ipn = row.part_detail.IPN;
+            if (ipn) {
+                return withTitle(shortenString(ipn), ipn);
+            } else {
+                return '-';
+            }
         },
     };
 
@@ -1687,7 +1749,8 @@ function loadStockTable(table, options) {
         visible: params['part_detail'],
         switchable: params['part_detail'],
         formatter: function(value, row) {
-            return row.part_detail.description;
+            var description = row.part_detail.description;
+            return withTitle(shortenString(description), description);
         }
     });
 
@@ -1700,20 +1763,16 @@ function loadStockTable(table, options) {
 
             var val = '';
 
-            var available = Math.max(0, (row.quantity || 0) - (row.allocated || 0));
-
             if (row.serial && row.quantity == 1) {
                 // If there is a single unit with a serial number, use the serial number
                 val = '# ' + row.serial;
-            } else if (row.quantity != available) {
-                // Some quantity is available, show available *and* quantity
-                var ava = +parseFloat(available).toFixed(5);
-                var tot = +parseFloat(row.quantity).toFixed(5);
-
-                val = `${ava} / ${tot}`;
             } else {
                 // Format floating point numbers with this one weird trick
-                val = +parseFloat(value).toFixed(5);
+                val = formatDecimal(value);
+
+                if (row.part_detail && row.part_detail.units) {
+                    val += ` ${row.part_detail.units}`;
+                }
             }
 
             var html = renderLink(val, `/stock/item/${row.pk}/`);
@@ -1863,10 +1922,7 @@ function loadStockTable(table, options) {
             var text = `${row.purchase_order}`;
 
             if (row.purchase_order_reference) {
-
-                var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-
-                text = prefix + row.purchase_order_reference;
+                text = row.purchase_order_reference;
             }
 
             return renderLink(text, link);
@@ -1955,7 +2011,7 @@ function loadStockTable(table, options) {
     );
 
     function stockAdjustment(action) {
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         adjustStock(action, items, {
             success: function() {
@@ -1967,7 +2023,7 @@ function loadStockTable(table, options) {
     // Automatically link button callbacks
 
     $('#multi-item-print-label').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 
@@ -1979,7 +2035,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-print-test-report').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 
@@ -1992,7 +2048,7 @@ function loadStockTable(table, options) {
 
     if (global_settings.BARCODE_ENABLE) {
         $('#multi-item-barcode-scan-into-location').click(function() {
-            var selections = $(table).bootstrapTable('getSelections');
+            var selections = getTableData(table);
 
             var items = [];
 
@@ -2021,7 +2077,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-merge').click(function() {
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         mergeStockItems(items, {
             success: function(response) {
@@ -2036,7 +2092,7 @@ function loadStockTable(table, options) {
 
     $('#multi-item-assign').click(function() {
 
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         assignStockToCustomer(items, {
             success: function() {
@@ -2046,7 +2102,8 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-order').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+
+        var selections = getTableData(table);
 
         var parts = [];
 
@@ -2063,7 +2120,7 @@ function loadStockTable(table, options) {
 
     $('#multi-item-set-status').click(function() {
         // Select and set the STATUS field for selected stock items
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         // Select stock status
         var modal = '#modal-form';
@@ -2149,7 +2206,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-delete').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var stock = [];
 
@@ -2175,6 +2232,7 @@ function loadStockLocationTable(table, options) {
 
     if (tree_view) {
         params.cascade = true;
+        params.depth = global_settings.INVENTREE_TREE_DEPTH;
     }
 
     var filters = {};
@@ -2197,6 +2255,35 @@ function loadStockLocationTable(table, options) {
         filters[key] = params[key];
     }
 
+    // Function to request sub-location items
+    function requestSubItems(parent_pk) {
+        inventreeGet(
+            options.url || '{% url "api-location-list" %}',
+            {
+                parent: parent_pk,
+            },
+            {
+                success: function(response) {
+                    // Add the returned sub-items to the table
+                    for (var idx = 0; idx < response.length; idx++) {
+                        response[idx].parent = parent_pk;
+                    }
+
+                    const row = $(table).bootstrapTable('getRowByUniqueId', parent_pk);
+                    row.subReceived = true;
+
+                    $(table).bootstrapTable('updateByUniqueId', parent_pk, row, true);
+
+                    table.bootstrapTable('append', response);
+                },
+                error: function(xhr) {
+                    console.error('Error requesting sub-locations for location=' + parent_pk);
+                    showApiError(xhr);
+                }
+            }
+        );
+    }
+
     table.inventreeTable({
         treeEnable: tree_view,
         rootParentId: tree_view ? options.params.parent : null,
@@ -2213,6 +2300,7 @@ function loadStockLocationTable(table, options) {
         queryParams: filters,
         name: 'location',
         original: original,
+        sortable: true,
         showColumns: true,
         onPostBody: function() {
 
@@ -2233,6 +2321,20 @@ function loadStockLocationTable(table, options) {
                         onExpand: function() {
 
                         }
+                    });
+
+                    // Callback for 'load sub location' button
+                    $(table).find('.load-sub-location').click(function(event) {
+                        event.preventDefault();
+
+                        const pk = $(this).attr('pk');
+                        const row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                        // Request sub-location for this location
+                        requestSubItems(row.pk);
+
+                        row.subRequested = true;
+                        $(table).bootstrapTable('updateByUniqueId', pk, row, true);
                     });
                 } else {
                     $('#view-location-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
@@ -2293,10 +2395,30 @@ function loadStockLocationTable(table, options) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    return renderLink(
+                    let html = '';
+
+                    if (row._level >= global_settings.INVENTREE_TREE_DEPTH && !row.subReceived) {
+                        if (row.subRequested) {
+                            html += `<a href='#'><span class='fas fa-sync fa-spin'></span></a>`;
+                        } else {
+                            html += `
+                                <a href='#' pk='${row.pk}' class='load-sub-location'>
+                                    <span class='fas fa-sync-alt' title='{% trans "Load Subloactions" %}'></span>
+                                </a> `;
+                        }
+                    }
+
+                    const icon = row.icon || global_settings.STOCK_LOCATION_DEFAULT_ICON;
+                    if (icon) {
+                        html += `<span class="${icon} me-1"></span>`;
+                    }
+
+                    html += renderLink(
                         value,
                         `/stock/location/${row.pk}/`
                     );
+
+                    return html;
                 },
             },
             {
@@ -2304,19 +2426,24 @@ function loadStockLocationTable(table, options) {
                 title: '{% trans "Description" %}',
                 switchable: true,
                 sortable: false,
+                formatter: function(value) {
+                    return withTitle(shortenString(value), value);
+                }
             },
             {
                 field: 'pathstring',
                 title: '{% trans "Path" %}',
                 switchable: true,
-                sortable: false,
+                sortable: true,
+                formatter: function(value) {
+                    return withTitle(shortenString(value), value);
+                }
             },
             {
                 field: 'items',
                 title: '{% trans "Stock Items" %}',
                 switchable: true,
-                sortable: false,
-                sortName: 'item_count',
+                sortable: true,
             }
         ]
     });

@@ -1,3 +1,8 @@
+"""Apps file for plugin app.
+
+This initializes the plugin mechanisms and handles reloading throught the lifecycle.
+The main code for plugin special sauce is in the plugin registry in `InvenTree/plugin/registry.py`.
+"""
 
 import logging
 
@@ -15,11 +20,14 @@ logger = logging.getLogger('inventree')
 
 
 class PluginAppConfig(AppConfig):
+    """AppConfig for plugins."""
+
     name = 'plugin'
 
     def ready(self):
+        """The ready method is extended to initialize plugins."""
         if settings.PLUGINS_ENABLED:
-            if not canAppAccessDatabase(allow_test=True):
+            if not canAppAccessDatabase(allow_test=True, allow_plugins=True):
                 logger.info("Skipping plugin loading sequence")  # pragma: no cover
             else:
                 logger.info('Loading InvenTree plugins')
@@ -28,14 +36,14 @@ class PluginAppConfig(AppConfig):
                     # this is the first startup
                     try:
                         from common.models import InvenTreeSetting
-                        if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False):
+                        if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False, cache=False):
                             # make sure all plugins are installed
                             registry.install_plugin_file()
-                    except:  # pragma: no cover
+                    except Exception:  # pragma: no cover
                         pass
 
                     # get plugins and init them
-                    registry.collect_plugins()
+                    registry.plugin_modules = registry.collect_plugins()
                     registry.load_plugins()
 
                     # drop out of maintenance

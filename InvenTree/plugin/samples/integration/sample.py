@@ -1,6 +1,4 @@
-"""
-Sample implementations for IntegrationPlugin
-"""
+"""Sample implementations for IntegrationPlugin."""
 
 from django.http import HttpResponse
 from django.urls import include, re_path
@@ -11,9 +9,7 @@ from plugin.mixins import AppMixin, NavigationMixin, SettingsMixin, UrlsMixin
 
 
 class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, InvenTreePlugin):
-    """
-    A full plugin example
-    """
+    """A full plugin example."""
 
     NAME = "SampleIntegrationPlugin"
     SLUG = "sample"
@@ -23,10 +19,11 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
     NAVIGATION_TAB_ICON = 'fas fa-plus'
 
     def view_test(self, request):
-        """very basic view"""
+        """Very basic view."""
         return HttpResponse(f'Hi there {request.user.username} this works')
 
     def setup_urls(self):
+        """Urls that are exposed by this plugin."""
         he_urls = [
             re_path(r'^he/', self.view_test, name='he'),
             re_path(r'^ha/', self.view_test, name='ha'),

@@ -20,17 +20,17 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
       - name: Set up Python 3.9
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@152ba7c4dd6521b8e9c93f72d362ce03bf6c4f20 # pin@v1
         with:
           python-version: 3.9
       - name: Install Dependencies
         run: |
-            sudo apt-get update
-            sudo apt-get install -y gettext
-            pip3 install invoke
-            invoke install
+          sudo apt-get update
+          sudo apt-get install -y gettext
+          pip3 install invoke
+          invoke install
       - name: Make Translations
         run: |
           invoke translate
@@ -42,7 +42,7 @@ jobs:
           git add "*.po"
           git commit -m "updated translation base"
       - name: Push changes
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@9a46ba8d86d3171233e861a4351b1278a2805c83 # pin@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: l10

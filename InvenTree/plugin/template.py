@@ -1,6 +1,4 @@
-"""Load templates for loaded plugins"""
-
-from pathlib import Path
+"""Load templates for loaded plugins."""
 
 from django.template.loaders.filesystem import Loader as FilesystemLoader
 
@@ -8,8 +6,7 @@ from plugin import registry
 
 
 class PluginTemplateLoader(FilesystemLoader):
-    """
-    A custom template loader which allows loading of templates from installed plugins.
+    """A custom template loader which allows loading of templates from installed plugins.
 
     Each plugin can register templates simply by providing a 'templates' directory in its root path.
 
@@ -22,12 +19,13 @@ class PluginTemplateLoader(FilesystemLoader):
     """
 
     def get_dirs(self):
+        """Returns all template dir paths in plugins."""
         dirname = 'templates'
         template_dirs = []
 
         for plugin in registry.plugins.values():
-            new_path = Path(plugin.path) / dirname
-            if Path(new_path).is_dir():
+            new_path = plugin.path().joinpath(dirname)
+            if new_path.is_dir():
                 template_dirs.append(new_path)
 
         return tuple(template_dirs)

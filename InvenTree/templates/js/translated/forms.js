@@ -6,6 +6,7 @@
     inventreeFormDataUpload,
     inventreeGet,
     inventreePut,
+    global_settings,
     modalEnable,
     modalShowSubmitButton,
     renderBuild,
@@ -204,6 +205,9 @@ function constructChangeForm(fields, options) {
         },
         success: function(data) {
 
+            // Ensure the data are fully sanitized before we operate on it
+            data = sanitizeData(data);
+
             // An optional function can be provided to process the returned results,
             // before they are rendered to the form
             if (options.processResults) {
@@ -247,35 +251,40 @@ function constructChangeForm(fields, options) {
  */
 function constructDeleteForm(fields, options) {
 
-    // Force the "confirm" property if not set
-    if (!('confirm' in options)) {
-        options.confirm = true;
+    // If we are deleting a specific "instance" (i.e. a single object)
+    // then we request the instance information first
+
+    // However we may be performing a "multi-delete" (against a list endpoint),
+    // in which case we do not want to perform such a request!
+
+    if (options.multi_delete) {
+        constructFormBody(fields, options);
+    } else {
+        // Request existing data from the API endpoint
+        // This data can be used to render some information on the form
+        $.ajax({
+            url: options.url,
+            type: 'GET',
+            contentType: 'application/json',
+            dataType: 'json',
+            accepts: {
+                json: 'application/json',
+            },
+            success: function(data) {
+
+                // Store the instance data
+                options.instance = data;
+
+                constructFormBody(fields, options);
+            },
+            error: function(xhr) {
+                // TODO: Handle error here
+                console.error(`Error in constructDeleteForm at '${options.url}`);
+
+                showApiError(xhr, options.url);
+            }
+        });
     }
-
-    // Request existing data from the API endpoint
-    // This data can be used to render some information on the form
-    $.ajax({
-        url: options.url,
-        type: 'GET',
-        contentType: 'application/json',
-        dataType: 'json',
-        accepts: {
-            json: 'application/json',
-        },
-        success: function(data) {
-
-            // Store the instance data
-            options.instance = data;
-
-            constructFormBody(fields, options);
-        },
-        error: function(xhr) {
-            // TODO: Handle error here
-            console.error(`Error in constructDeleteForm at '${options.url}`);
-
-            showApiError(xhr, options.url);
-        }
-    });
 }
 
 
@@ -319,8 +328,6 @@ function constructForm(url, options) {
         constructFormBody({}, options);
     }
 
-    options.fields = options.fields || {};
-
     // Save the URL
     options.url = url;
 
@@ -341,6 +348,13 @@ function constructForm(url, options) {
 
         // Extract any custom 'context' information from the OPTIONS data
         options.context = OPTIONS.context || {};
+
+        // Construct fields (can be a static parameter or a function)
+        if (options.fieldsFunction) {
+            options.fields = options.fieldsFunction(options);
+        } else {
+            options.fields = options.fields || {};
+        }
 
         /*
          * Determine what "type" of form we want to construct,
@@ -429,6 +443,21 @@ function constructFormBody(fields, options) {
     // Client must provide set of fields to be displayed,
     // otherwise *all* fields will be displayed
     var displayed_fields = options.fields || fields;
+
+    // Override default option values if a 'DELETE' form is specified
+    if (options.method == 'DELETE') {
+        if (!('confirm' in options)) {
+            options.confirm = true;
+        }
+
+        if (!('submitClass' in options)) {
+            options.submitClass = 'danger';
+        }
+
+        if (!('submitText' in options)) {
+            options.submitText = '{% trans "Delete" %}';
+        }
+    }
 
     // Handle initial data overrides
     if (options.data) {
@@ -552,7 +581,7 @@ function constructFormBody(fields, options) {
     $(modal).find('#modal-footer-buttons').html('');
 
     // Insert "confirm" button (if required)
-    if (options.confirm) {
+    if (options.confirm && global_settings.INVENTREE_REQUIRE_CONFIRM) {
         insertConfirmButton(options);
     }
 
@@ -586,7 +615,7 @@ function constructFormBody(fields, options) {
 
         // Immediately disable the "submit" button,
         // to prevent the form being submitted multiple times!
-        $(options.modal).find('#modal-form-submit').prop('disabled', true);
+        enableSubmitButton(options, false);
 
         // Run custom code before normal form submission
         if (options.beforeSubmit) {
@@ -629,13 +658,13 @@ function insertConfirmButton(options) {
     $(options.modal).find('#modal-footer-buttons').append(html);
 
     // Disable the 'submit' button
-    $(options.modal).find('#modal-form-submit').prop('disabled', true);
+    enableSubmitButton(options, false);
 
     // Trigger event
     $(options.modal).find('#modal-confirm').change(function() {
         var enabled = this.checked;
 
-        $(options.modal).find('#modal-form-submit').prop('disabled', !enabled);
+        enableSubmitButton(options, enabled);
     });
 }
 
@@ -715,7 +744,8 @@ function submitFormData(fields, options) {
     // Only used if file / image upload is required
     var form_data = new FormData();
 
-    var data = {};
+    // We can (optionally) provide a "starting point" for the submitted data
+    var data = options.form_data || {};
 
     var has_files = false;
 
@@ -797,7 +827,7 @@ function submitFormData(fields, options) {
     }
 
     // Show the progress spinner
-    $(options.modal).find('#modal-progress-spinner').show();
+    showModalSpinner(options.modal);
 
     // Submit data
     upload_func(
@@ -924,7 +954,7 @@ function getFormFieldElement(name, options) {
 /*
  * Check that a "numerical" input field has a valid number in it.
  * An invalid number is expunged at the client side by the getFormFieldValue() function,
- * which means that an empty string '' is sent to the server if the number is not valud.
+ * which means that an empty string '' is sent to the server if the number is not valid.
  * This can result in confusing error messages displayed under the form field.
  *
  * So, we can invalid numbers and display errors *before* the form is submitted!
@@ -933,7 +963,8 @@ function validateFormField(name, options) {
 
     if (getFormFieldElement(name, options)) {
 
-        var el = document.getElementById(`id_${name}`);
+        var field_name = getFieldName(name, options);
+        var el = document.getElementById(`id_${field_name}`);
 
         if (el.validity.valueMissing) {
             // Accept empty strings (server will validate)
@@ -980,6 +1011,11 @@ function getFormFieldValue(name, field={}, options={}) {
         if (!value || value.length == 0) {
             value = null;
         }
+        break;
+    case 'string':
+    case 'url':
+    case 'email':
+        value = sanitizeInputString(el.val());
         break;
     default:
         value = el.val();
@@ -1053,7 +1089,7 @@ function handleFormSuccess(response, options) {
 
         // Reset the status of the "submit" button
         if (options.modal) {
-            $(options.modal).find('#modal-form-submit').prop('disabled', false);
+            enableSubmitButton(options, true);
         }
 
         // Remove any error flags from the form
@@ -1218,7 +1254,7 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     // Reset the status of the "submit" button
     if (options.modal) {
-        $(options.modal).find('#modal-form-submit').prop('disabled', false);
+        enableSubmitButton(options, true);
     }
 
     // Remove any existing error messages from the form
@@ -1691,7 +1727,8 @@ function initializeRelatedField(field, fields, options={}) {
                 var query = field.filters || {};
 
                 // Add search and pagination options
-                query.search = params.term;
+                query.search = sanitizeInputString(params.term);
+
                 query.offset = offset;
                 query.limit = pageSize;
 
@@ -2625,7 +2662,7 @@ function selectImportFields(url, data={}, options={}) {
                 columns.push(getFormFieldValue(`column_${idx}`, {}, opts));
             }
 
-            $(opts.modal).find('#modal-progress-spinner').show();
+            showModalSpinner(opts.modal);
 
             inventreePut(
                 opts.url,

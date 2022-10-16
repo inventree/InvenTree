@@ -1,4 +1,4 @@
-"""API for location plugins"""
+"""API for location plugins."""
 
 from rest_framework import permissions
 from rest_framework.exceptions import NotFound, ParseError
@@ -11,16 +11,14 @@ from stock.models import StockItem, StockLocation
 
 
 class LocatePluginView(APIView):
-    """
-    Endpoint for using a custom plugin to identify or 'locate' a stock item or location
-    """
+    """Endpoint for using a custom plugin to identify or 'locate' a stock item or location."""
 
     permission_classes = [
         permissions.IsAuthenticated,
     ]
 
     def post(self, request, *args, **kwargs):
-
+        """Check inputs and offload the task to the plugin."""
         # Which plugin to we wish to use?
         plugin = request.data.get('plugin', None)
 
