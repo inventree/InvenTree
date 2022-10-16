@@ -152,11 +152,11 @@ class ScheduledTask:
 
 class TaskRegister:
     """Registery for periodicall tasks."""
-    tasks: list[ScheduledTask] = []
+    task_list: list[ScheduledTask] = []
 
     def register(self, task, schedule, minutes: int = None):
         """Register a task with the que."""
-        tasks.append(ScheduledTask(task, schedule, minutes))
+        self.task_list.append(ScheduledTask(task, schedule, minutes))
 
 
 tasks = TaskRegister()

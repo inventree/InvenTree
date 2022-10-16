@@ -57,7 +57,7 @@ class InvenTreeConfig(AppConfig):
 
         logger.info("Starting background tasks...")
         # Run through registered tasks
-        for task in InvenTree.tasks.tasks.tasks:
+        for task in InvenTree.tasks.tasks.task_list:
             InvenTree.tasks.schedule_task(
                 task.func,
                 schedule_type=task.interval,
