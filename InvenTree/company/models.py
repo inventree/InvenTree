@@ -21,7 +21,7 @@ import InvenTree.helpers
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
-from InvenTree.models import InvenTreeAttachment
+from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin
 from InvenTree.status_codes import PurchaseOrderStatus
 
 
@@ -391,7 +391,7 @@ class SupplierPartManager(models.Manager):
         )
 
 
-class SupplierPart(models.Model):
+class SupplierPart(InvenTreeBarcodeMixin, models.Model):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 
     Attributes:

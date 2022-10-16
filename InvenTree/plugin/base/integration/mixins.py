@@ -426,7 +426,8 @@ class APICallMixin:
             endpoint (str): Path to current endpoint. Either the endpoint or the full or if the flag is set
             method (str, optional): HTTP method that should be uses - capitalized. Defaults to 'GET'.
             url_args (dict, optional): arguments that should be appended to the url. Defaults to None.
-            data (Any, optional): Data that should be transmitted in the body - must be JSON serializable. Defaults to None.
+            data (Any, optional): Data that should be transmitted in the body - url-encoded. Defaults to None.
+            json (Any, optional): Data that should be transmitted in the body - must be JSON serializable. Defaults to None.
             headers (dict, optional): Headers that should be used for the request. Defaults to self.api_headers.
             simple_response (bool, optional): Return the response as JSON. Defaults to True.
             endpoint_is_url (bool, optional): The provided endpoint is the full url - do not use self.api_url as base. Defaults to False.

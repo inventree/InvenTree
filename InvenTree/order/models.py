@@ -248,6 +248,11 @@ class PurchaseOrder(Order):
     status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),
                                          help_text=_('Purchase order status'))
 
+    @property
+    def status_text(self):
+        """Return the text representation of the status field"""
+        return PurchaseOrderStatus.text(self.status)
+
     supplier = models.ForeignKey(
         Company, on_delete=models.SET_NULL,
         null=True,
@@ -450,11 +455,11 @@ class PurchaseOrder(Order):
         notes = kwargs.get('notes', '')
 
         # Extract optional barcode field
-        barcode = kwargs.get('barcode', None)
+        barcode_hash = kwargs.get('barcode', None)
 
         # Prevent null values for barcode
-        if barcode is None:
-            barcode = ''
+        if barcode_hash is None:
+            barcode_hash = ''
 
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
@@ -497,7 +502,7 @@ class PurchaseOrder(Order):
                     batch=batch_code,
                     serial=sn,
                     purchase_price=line.purchase_price,
-                    uid=barcode
+                    barcode_hash=barcode_hash
                 )
 
                 stock.save(add_note=False)
@@ -644,6 +649,11 @@ class SalesOrder(Order):
 
     status = models.PositiveIntegerField(default=SalesOrderStatus.PENDING, choices=SalesOrderStatus.items(),
                                          verbose_name=_('Status'), help_text=_('Purchase order status'))
+
+    @property
+    def status_text(self):
+        """Return the text representation of the status field"""
+        return SalesOrderStatus.text(self.status)
 
     customer_reference = models.CharField(max_length=64, blank=True, verbose_name=_('Customer Reference '), help_text=_("Customer order reference code"))
 

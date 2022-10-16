@@ -44,7 +44,7 @@
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
         {% if roles.stock.change %}
-        {% if item.uid %}
+        {% if item.barcode_hash %}
         <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
         {% else %}
         <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
@@ -155,11 +155,11 @@
         </td>
     </tr>
 
-    {% if item.uid %}
+    {% if item.barcode_hash %}
     <tr>
         <td><span class='fas fa-barcode'></span></td>
         <td>{% trans "Barcode Identifier" %}</td>
-        <td>{{ item.uid }}</td>
+        <td {% if item.barcode_data %}title='{{ item.barcode_data }}'{% endif %}>{{ item.barcode_hash }}</td>
     </tr>
     {% endif %}
     {% if item.batch %}
@@ -529,12 +529,22 @@ $("#show-qr-code").click(function() {
     });
 });
 
+{% if barcodes %}
 $("#barcode-link").click(function() {
-    linkBarcodeDialog({{ item.id }});
+    linkBarcodeDialog(
+        {
+            stockitem: {{ item.pk }},
+        },
+        {
+            title: '{% trans "Link Barcode to Stock Item" %}',
+        }
+    );
 });
 
 $("#barcode-unlink").click(function() {
-    unlinkBarcode({{ item.id }});
+    unlinkBarcode({
+        stockitem: {{ item.pk }},
+    });
 });
 
 $("#barcode-scan-into-location").click(function() {
@@ -545,6 +555,7 @@ $("#barcode-scan-into-location").click(function() {
         }
     });
 });
+{% endif %}
 
 {% if plugins_enabled %}
 $('#locate-item-button').click(function() {
