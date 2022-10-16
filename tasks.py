@@ -206,17 +206,7 @@ def backup(c):
     manage(c, "mediabackup --noinput --clean --compress")
 
 
-@task
-def restore(c):
-    """Restore the database and media files."""
-
-    print("Restoring InvenTree database...")
-    manage(c, "dbrestore --noinput --uncompress")
-    print("Restoring InvenTree media files...")
-    manage(c, "mediarestore --noinput --uncompress")
-
-
-@task(pre=[backup, ], post=[rebuild_models, rebuild_thumbnails])
+@task(post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
     """Performs database migrations.
 
@@ -234,7 +224,7 @@ def migrate(c):
     print("InvenTree database migrations completed!")
 
 
-@task(pre=[install, migrate, static, clean_settings, translate_stats])
+@task
 def update(c):
     """Update InvenTree installation.
 
@@ -244,11 +234,19 @@ def update(c):
     The following tasks are performed, in order:
 
     - install
+    - backup
     - migrate
     - static
     - clean_settings
     - translate_stats
     """
+    install(c)
+    backup(c)
+    migrate(c)
+    static(c)
+    clean_settings(c)
+    translate_stats(c)
+
     # Recompile the translation files (.mo)
     # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
     try:
@@ -388,6 +386,16 @@ def delete_data(c, force=False):
         manage(c, 'flush --noinput')
     else:
         manage(c, 'flush')
+
+
+@task
+def restore(c):
+    """Restore the database and media files."""
+
+    print("Restoring InvenTree database...")
+    manage(c, "dbrestore --noinput --uncompress")
+    print("Restoring InvenTree media files...")
+    manage(c, "mediarestore --noinput --uncompress")
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
