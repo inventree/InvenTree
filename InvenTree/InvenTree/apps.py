@@ -80,7 +80,7 @@ class InvenTreeConfig(AppConfig):
             if Path(app.path).joinpath('tasks.py').exists():
                 try:
                     import_module(f'{app.module.__package__}.tasks')
-                except Exception as e:
+                except Exception as e:  # pragma: no cover
                     logger.error(f"Error loading tasks for {app_name}: {e}")
 
     def update_exchange_rates(self):  # pragma: no cover
