@@ -140,6 +140,9 @@ class InvenTreeTaskTests(TestCase):
             InvenTree.tasks.check_for_migrations()
 
         # Cleanup
-        migration_name = InvenTree.tasks.get_migration_plan()[0][0].name + '.py'
-        migration_path = settings.BASE_DIR / 'InvenTree' / 'migrations' / migration_name
-        migration_path.unlink()
+        try:
+            migration_name = InvenTree.tasks.get_migration_plan()[0][0].name + '.py'
+            migration_path = settings.BASE_DIR / 'InvenTree' / 'migrations' / migration_name
+            migration_path.unlink()
+        except IndexError:
+            pass
