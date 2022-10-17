@@ -4,6 +4,7 @@ import re
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
+from django.core import validators
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -35,6 +36,14 @@ def allowable_url_schemes():
             schemes.append(e.lower())
 
     return schemes
+
+
+class AllowedURLValidator(validators.URLValidator):
+    """Custom URL validator to allow for custom schemes."""
+    def __call__(self, value):
+        """Validate the URL."""
+        self.schemes = allowable_url_schemes()
+        super().__call__(value)
 
 
 def validate_part_name(value):
