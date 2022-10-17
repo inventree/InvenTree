@@ -98,6 +98,7 @@ function detect_envs() {
     # Parse the config file
     export INVENTREE_MEDIA_ROOT=$conf | jq '.[].media_root'
     export INVENTREE_STATIC_ROOT=$conf | jq '.[].static_root'
+    export INVENTREE_BACKUP_DIR=$conf | jq '.[].backup_dir'
     export INVENTREE_PLUGINS_ENABLED=$conf | jq '.[].plugins_enabled'
     export INVENTREE_PLUGIN_FILE=$conf | jq '.[].plugin_file'
     export INVENTREE_SECRET_KEY_FILE=$conf | jq '.[].secret_key_file'
@@ -119,6 +120,7 @@ function detect_envs() {
 
     export INVENTREE_MEDIA_ROOT=${INVENTREE_MEDIA_ROOT:-${DATA_DIR}/media}
     export INVENTREE_STATIC_ROOT=${DATA_DIR}/static
+    export INVENTREE_BACKUP_DIR=${DATA_DIR}/backup
     export INVENTREE_PLUGINS_ENABLED=true
     export INVENTREE_PLUGIN_FILE=${CONF_DIR}/plugins.txt
     export INVENTREE_SECRET_KEY_FILE=${CONF_DIR}/secret_key.txt
@@ -137,6 +139,7 @@ function detect_envs() {
   echo "# Collected environment variables:"
   echo "#    INVENTREE_MEDIA_ROOT=${INVENTREE_MEDIA_ROOT}"
   echo "#    INVENTREE_STATIC_ROOT=${INVENTREE_STATIC_ROOT}"
+  echo "#    INVENTREE_BACKUP_DIR=${INVENTREE_BACKUP_DIR}"
   echo "#    INVENTREE_PLUGINS_ENABLED=${INVENTREE_PLUGINS_ENABLED}"
   echo "#    INVENTREE_PLUGIN_FILE=${INVENTREE_PLUGIN_FILE}"
   echo "#    INVENTREE_SECRET_KEY_FILE=${INVENTREE_SECRET_KEY_FILE}"
@@ -250,6 +253,8 @@ function set_env() {
   sed -i s=#media_root:\ \'/home/inventree/data/media\'=media_root:\ \'${INVENTREE_MEDIA_ROOT}\'=g ${INVENTREE_CONFIG_FILE}
   # Static Root
   sed -i s=#static_root:\ \'/home/inventree/data/static\'=static_root:\ \'${INVENTREE_STATIC_ROOT}\'=g ${INVENTREE_CONFIG_FILE}
+  # Backup dir
+  sed -i s=#backup_dir:\ \'/home/inventree/data/backup\'=backup_dir:\ \'${INVENTREE_BACKUP_DIR}\'=g ${INVENTREE_CONFIG_FILE}
   # Plugins enabled
   sed -i s=plugins_enabled:\ False=plugins_enabled:\ ${INVENTREE_PLUGINS_ENABLED}=g ${INVENTREE_CONFIG_FILE}
   # Plugin file

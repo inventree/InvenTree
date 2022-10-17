@@ -71,6 +71,7 @@
     "INVENTREE_DB_NAME": "/workspaces/InvenTree/dev/database.sqlite3",
     "INVENTREE_MEDIA_ROOT": "/workspaces/InvenTree/dev/media",
     "INVENTREE_STATIC_ROOT": "/workspaces/InvenTree/dev/static",
+    "INVENTREE_BACKUP_DIR": "/workspaces/InvenTree/dev/backup",
     "INVENTREE_CONFIG_FILE": "/workspaces/InvenTree/dev/config.yaml",
     "INVENTREE_SECRET_KEY_FILE": "/workspaces/InvenTree/dev/secret_key.txt",
     "INVENTREE_PLUGIN_DIR": "/workspaces/InvenTree/dev/plugins",

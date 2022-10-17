@@ -160,6 +160,22 @@ def get_static_dir(create=True):
     return sd
 
 
+def get_backup_dir(create=True):
+    """Return the absolute path for the backup directory"""
+
+    bd = get_setting('INVENTREE_BACKUP_DIR', 'backup_dir')
+
+    if not bd:
+        raise FileNotFoundError('INVENTREE_BACKUP_DIR not specified')
+
+    bd = Path(bd).resolve()
+
+    if create:
+        bd.mkdir(parents=True, exist_ok=True)
+
+    return bd
+
+
 def get_plugin_file():
     """Returns the path of the InvenTree plugins specification file.
 

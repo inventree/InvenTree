@@ -5,9 +5,12 @@ from datetime import datetime, timedelta
 
 from django.core.exceptions import AppRegistryNotReady
 
+from InvenTree.tasks import ScheduledTask, scheduled_task
+
 logger = logging.getLogger('inventree')
 
 
+@scheduled_task(ScheduledTask.DAILY)
 def delete_old_notifications():
     """Remove old notifications from the database.
 
