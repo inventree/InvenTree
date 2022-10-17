@@ -11,6 +11,7 @@ from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase, PluginMixin
 from InvenTree.helpers import InvenTreeTestCase, str2bool
+from plugin import registry
 from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
@@ -560,6 +561,9 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 
     def test_valid_plugin_slug(self):
         """Test that an valid plugin slug runs through."""
+        # Activate plugin
+        registry.set_plugin_state('sample', True)
+
         # get data
         url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'sample', 'key': 'API_KEY'})
         response = self.get(url, expected_code=200)

@@ -68,6 +68,21 @@ class PluginsRegistry:
 
         return self.plugins[slug]
 
+    def set_plugin_state(self, slug, state):
+        """Set the state(active/inactive) of a plugin.
+
+        Args:
+            slug (str): Plugin slug
+            state (bool): Plugin state - true = active, false = inactive
+        """
+        if slug not in self.plugins_full:
+            logger.warning(f"Plugin registry has no record of plugin '{slug}'")
+            return
+
+        plugin = self.plugins_full[slug].db
+        plugin.active = state
+        plugin.save()
+
     def call_plugin_function(self, slug, func, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
 
