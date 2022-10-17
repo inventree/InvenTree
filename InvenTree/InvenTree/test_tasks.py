@@ -1,5 +1,6 @@
 """Unit tests for task management."""
 
+import os
 from datetime import timedelta
 
 from django.conf import settings
@@ -123,11 +124,10 @@ class InvenTreeTaskTests(TestCase):
     def test_task_check_for_migrations(self):
         """Test the task check_for_migrations."""
         # Update disabled
-        InvenTreeSetting.set_setting('INVENTREE_AUTO_UPDATE', False, change_user=None)
         InvenTree.tasks.check_for_migrations()
 
         # Update enabled - no migrations
-        InvenTreeSetting.set_setting('INVENTREE_AUTO_UPDATE', True, change_user=None)
+        os.environ['INVENTREE_AUTO_UPDATE'] = 'True'
         InvenTree.tasks.check_for_migrations()
 
         # Create migration
