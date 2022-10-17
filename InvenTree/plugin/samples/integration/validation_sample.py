@@ -1,5 +1,7 @@
 """Sample plugin which demonstrates custom validation functionality"""
 
+from datetime import datetime
+
 from django.core.exceptions import ValidationError
 
 from plugin import InvenTreePlugin
@@ -56,3 +58,15 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if self.get_setting('SERIAL_MUST_BE_PALINDROME'):
             if serial != serial[::-1]:
                 raise ValidationError("Serial must be a palindrome")
+
+    def validate_batch_code(self, batch_code: str):
+        """Ensure that a particular batch code meets specification"""
+
+        if not batch_code.startswith('BATCH'):
+            raise ValidationError('Batch code must start with BATCH')
+
+    def generate_batch_code(self):
+        """Generate a new batch code."""
+
+        now = datetime.now()
+        return f"BATCH-{now.year}:{now.month}:{now.day}"

@@ -45,9 +45,7 @@ def validate_part_name(value):
 
     from plugin.registry import registry
 
-    plugins = registry.with_mixin('validation')
-
-    for plugin in plugins:
+    for plugin in registry.with_mixin('validation'):
         # Run the name through each custom validator
         # If the plugin returns 'True' we will skip any subsequent validation
         if plugin.validate_part_name(value):
