@@ -54,16 +54,68 @@ class InvenTreeConfig(AppConfig):
 
     def start_background_tasks(self):
         """Start all background tests for InvenTree."""
+        try:
+            from django_q.models import Schedule
+        except AppRegistryNotReady:  # pragma: no cover
+            logger.warning("Cannot start background tasks - app registry not ready")
+            return
 
         logger.info("Starting background tasks...")
-        # Run through registered tasks
-        for task in InvenTree.tasks.tasks.task_list:
-            InvenTree.tasks.schedule_task(
-                task.func,
-                schedule_type=task.interval,
-                minutes=task.minutes,
-            )
-        logger.info("Started background tasks...")
+
+        # Remove successful task results from the database
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.delete_successful_tasks',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Check for InvenTree updates
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.check_for_updates',
+            schedule_type=Schedule.DAILY
+        )
+
+        # Heartbeat to let the server know the background worker is running
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.heartbeat',
+            schedule_type=Schedule.MINUTES,
+            minutes=15
+        )
+
+        # Keep exchange rates up to date
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.update_exchange_rates',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Delete old error messages
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.delete_old_error_logs',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Delete old notification records
+        InvenTree.tasks.schedule_task(
+            'common.tasks.delete_old_notifications',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Check for overdue purchase orders
+        InvenTree.tasks.schedule_task(
+            'order.tasks.check_overdue_purchase_orders',
+            schedule_type=Schedule.DAILY
+        )
+
+        # Check for overdue sales orders
+        InvenTree.tasks.schedule_task(
+            'order.tasks.check_overdue_sales_orders',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Check for overdue build orders
+        InvenTree.tasks.schedule_task(
+            'build.tasks.check_overdue_build_orders',
+            schedule_type=Schedule.DAILY
+        )
 
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.
