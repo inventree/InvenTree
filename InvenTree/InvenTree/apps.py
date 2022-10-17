@@ -25,7 +25,7 @@ class InvenTreeConfig(AppConfig):
 
     def ready(self):
         """Setup background tasks and update exchange rates."""
-        if canAppAccessDatabase():
+        if canAppAccessDatabase() or settings.TESTING_ENV:
 
             self.remove_obsolete_tasks()
 
