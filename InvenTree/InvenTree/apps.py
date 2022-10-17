@@ -1,8 +1,10 @@
 """AppConfig for inventree app."""
 
+import imp
 import logging
+from pathlib import Path
 
-from django.apps import AppConfig
+from django.apps import AppConfig, apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
@@ -27,6 +29,7 @@ class InvenTreeConfig(AppConfig):
 
             self.remove_obsolete_tasks()
 
+            self.collect_tasks()
             self.start_background_tasks()
 
             if not isInTestMode():  # pragma: no cover
@@ -56,7 +59,6 @@ class InvenTreeConfig(AppConfig):
         """Start all background tests for InvenTree."""
 
         logger.info("Starting background tasks...")
-        # Run through registered tasks
         for task in InvenTree.tasks.tasks.task_list:
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
             InvenTree.tasks.schedule_task(
@@ -65,6 +67,17 @@ class InvenTreeConfig(AppConfig):
                 minutes=task.minutes,
             )
         logger.info("Started background tasks...")
+
+    def collect_tasks(self):
+        """Collect all background tasks."""
+
+        for app_name, app in apps.app_configs.items():
+            tasks_path = Path(app.path) / 'tasks.py'
+            if tasks_path.exists():
+                try:
+                    imp.load_source('tasks', str(tasks_path))
+                except Exception as e:
+                    logger.error(f"Error loading tasks for {app_name}: {e}")
 
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.
