@@ -14,7 +14,8 @@ from django.core.exceptions import AppRegistryNotReady
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.db.migrations.executor import MigrationExecutor
-from django.db.utils import OperationalError, ProgrammingError
+from django.db.utils import (NotSupportedError, OperationalError,
+                             ProgrammingError)
 from django.utils import timezone
 
 import requests
@@ -410,7 +411,14 @@ def check_for_migrations(worker: bool = True):
     with maintenance_mode_on():
         logger.info('Starting migrations')
         print('Starting migrations')
-        call_command('migrate', interactive=False)
+
+        try:
+            call_command('migrate', interactive=False)
+        except NotSupportedError as e:  # pragma: no cover
+            if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
+                raise e
+            logger.error(f'Error during migrations: {e}')
+
         print('Migrations done')
         logger.info('Ran migrations')
 

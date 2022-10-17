@@ -5,6 +5,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.core.management import call_command
+from django.db.utils import NotSupportedError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -135,14 +136,17 @@ class InvenTreeTaskTests(TestCase):
         call_command('makemigrations', ['InvenTree', '--empty'], interactive=False)
         self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 1)
 
-        # Run with migrations - but not on sqlite3 as that does not like the foreign checks inline
-        if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
+        # Run with migrations - catch no foreigner error
+        try:
             InvenTree.tasks.check_for_migrations()
+        except NotSupportedError as e:  # pragma: no cover
+            if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
+                raise e
 
         # Cleanup
         try:
             migration_name = InvenTree.tasks.get_migration_plan()[0][0].name + '.py'
             migration_path = settings.BASE_DIR / 'InvenTree' / 'migrations' / migration_name
             migration_path.unlink()
-        except IndexError:
+        except IndexError:  # pragma: no cover
             pass
