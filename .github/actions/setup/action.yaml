@@ -35,12 +35,12 @@ runs:
     using: 'composite'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
       # Python installs
       - name: Set up Python ${{ env.python_version }}
         if: ${{ inputs.python == 'true' }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
         with:
           python-version: ${{ env.python_version }}
           cache: pip
@@ -58,7 +58,7 @@ runs:
       # NPM installs
       - name: Install node.js ${{ env.node_version }}
         if: ${{ inputs.npm == 'true' }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@969bd2663942d722d85b6a8626225850c2f7be4b  # pin to v3.5.0
         with:
           node-version: ${{ env.node_version }}
           cache: 'npm'
