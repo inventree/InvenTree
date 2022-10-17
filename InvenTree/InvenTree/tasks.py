@@ -166,15 +166,24 @@ tasks = TaskRegister()
 def scheduled_task(interval: str, minutes: int = None, tasklist: TaskRegister = None):
     """Register the given task as a scheduled task.
 
-    - interval: The interval at which the task should be run
-    - minutes: The number of minutes between task runs
-
     Example:
     ```python
     @register(ScheduledTask.DAILY)
     def my_custom_funciton():
         ...
     ```
+
+    Args:
+        interval (str): The interval at which the task should be run
+        minutes (int, optional): The number of minutes between task runs. Defaults to None.
+        tasklist (TaskRegister, optional): The list the tasks should be registered to. Defaults to None.
+
+    Raises:
+        ValueError: If decorated object is not callable
+        ValueError: If interval is not valid
+
+    Returns:
+        _type_: _description_
     """
 
     def _task_wrapper(admin_class):
