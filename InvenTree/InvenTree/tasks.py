@@ -273,7 +273,6 @@ def update_exchange_rates():
         logger.error(f"Error updating exchange rates: {e}")
 
 
-@scheduled_task(ScheduledTask.DAILY)
 def run_backup():
     """Run the backup command."""
     call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
