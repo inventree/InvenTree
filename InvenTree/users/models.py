@@ -76,6 +76,9 @@ class RuleSet(models.Model):
             'plugin_pluginconfig',
             'plugin_pluginsetting',
             'plugin_notificationusersetting',
+            'common_webconnection',
+            'common_webconnectiontransaction',
+            'plugin_connectionsetting',
         ],
         'part_category': [
             'part_partcategory',
