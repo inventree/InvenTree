@@ -59,6 +59,7 @@ class InvenTreeConfig(AppConfig):
         """Start all background tests for InvenTree."""
 
         logger.info("Starting background tasks...")
+
         for task in InvenTree.tasks.tasks.task_list:
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
             InvenTree.tasks.schedule_task(
@@ -66,6 +67,7 @@ class InvenTreeConfig(AppConfig):
                 schedule_type=task.interval,
                 minutes=task.minutes,
             )
+
         logger.info("Started background tasks...")
 
     def collect_tasks(self):
