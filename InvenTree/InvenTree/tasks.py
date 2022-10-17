@@ -275,8 +275,11 @@ def update_exchange_rates():
 
 def run_backup():
     """Run the backup command."""
-    call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
-    call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
+    from common.models import InvenTreeSetting
+
+    if InvenTreeSetting.get_setting('INVENTREE_BACKUP_ENABLE'):
+        call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
+        call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
