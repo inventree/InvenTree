@@ -4,6 +4,7 @@ import datetime
 
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
+from django.test import override_settings
 
 from build.models import Build
 from InvenTree.helpers import InvenTreeTestCase
@@ -140,7 +141,7 @@ class StockTest(StockTestBase):
                 item.save()
                 item.full_clean()
 
-        # Check that valid URLs pass
+        # Check that valid URLs pass - and check custon schemes
         for good_url in [
             'https://test.com',
             'https://digikey.com/datasheets?file=1010101010101.bin',
@@ -162,6 +163,14 @@ class StockTest(StockTestBase):
 
         item.link = long_url
         item.save()
+
+    @override_settings(EXTRA_URL_SCHEMES=['ssh'])
+    def test_exteneded_schema(self):
+        """Test that extended URL schemes are allowed"""
+        item = StockItem.objects.get(pk=1)
+        item.link = 'ssh://user:pwd@deb.org:223'
+        item.save()
+        item.full_clean()
 
     def test_expiry(self):
         """Test expiry date functionality for StockItem model."""
