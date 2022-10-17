@@ -276,8 +276,30 @@ class ValidationMixin:
         """
         return None
 
+    def validate_batch_code(self, batch_code: str):
+        """Validate the supplied batch code
+
+        Arguments:
+            batch_code: The proposed batch code (string)
+
+        Returns:
+            None or True
+
+        Raises:
+            ValidationError if the proposed batch code is objectionable
+        """
+        return None
+
+    def generate_batch_code(self):
+        """Generate a new batch code
+
+        Returns:
+            A new batch code (string) or None
+        """
+        return None
+
     def validate_serial_number(self, serial: str):
-        """Validate the supplied serial number and part combination.
+        """Validate the supplied serial number
 
         Arguments:
             serial: The proposed serial number (string)
