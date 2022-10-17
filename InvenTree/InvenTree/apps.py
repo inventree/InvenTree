@@ -1,7 +1,7 @@
 """AppConfig for inventree app."""
 
-import imp
 import logging
+from importlib import import_module
 from pathlib import Path
 
 from django.apps import AppConfig, apps
@@ -74,10 +74,12 @@ class InvenTreeConfig(AppConfig):
         """Collect all background tasks."""
 
         for app_name, app in apps.app_configs.items():
-            tasks_path = Path(app.path) / 'tasks.py'
-            if tasks_path.exists():
+            if app_name == 'InvenTree':
+                continue
+
+            if Path(app.path).joinpath('tasks.py').exists():
                 try:
-                    imp.load_source('tasks', str(tasks_path))
+                    import_module(f'{app.module.__package__}.tasks')
                 except Exception as e:
                     logger.error(f"Error loading tasks for {app_name}: {e}")
 
