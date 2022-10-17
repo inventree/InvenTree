@@ -135,8 +135,9 @@ class InvenTreeTaskTests(TestCase):
         call_command('makemigrations', ['InvenTree', '--empty'], interactive=False)
         self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 1)
 
-        # Run with migrations
-        InvenTree.tasks.check_for_migrations()
+        # Run with migrations - but not on sqlite3 as that does not like the foreign checks inline
+        if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
+            InvenTree.tasks.check_for_migrations()
 
         # Cleanup
         migration_name = InvenTree.tasks.get_migration_plan()[0][0].name + '.py'
