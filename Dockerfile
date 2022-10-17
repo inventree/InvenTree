@@ -68,7 +68,7 @@ RUN apt-get install -y  --no-install-recommends \
     # SQLite support
     sqlite3 \
     # PostgreSQL support
-    libpq-dev \
+    libpq-dev postgresql-client \
     # MySQL / MariaDB support
     default-libmysqlclient-dev mariadb-client && \
     apt-get autoclean && apt-get autoremove
