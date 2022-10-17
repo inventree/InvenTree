@@ -595,10 +595,10 @@ def coverage(c):
     manage(c, 'check')
 
     # Run coverage tests
-    c.run('coverage run {manage} test {apps}'.format(
+    c.run('coverage run {manage} test {apps} -i'.format(
         manage=managePyPath(),
         apps=' '.join(apps())
     ))
 
     # Generate coverage report
-    c.run('coverage html')
+    c.run('coverage html -i')
