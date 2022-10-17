@@ -163,7 +163,7 @@ class TaskRegister:
 tasks = TaskRegister()
 
 
-def scheduled_task(interval: str, minutes: int = None):
+def scheduled_task(interval: str, minutes: int = None, tasklist: TaskRegister = None):
     """Register the given task as a scheduled task.
 
     - interval: The interval at which the task should be run
@@ -184,7 +184,8 @@ def scheduled_task(interval: str, minutes: int = None):
         if interval not in ScheduledTask.TYPE:
             raise ValueError(f'Invalid interval. Must be one of {ScheduledTask.TYPE}')
 
-        tasks.register(admin_class, interval, minutes=minutes)
+        _tasks = tasklist if tasklist else tasks
+        _tasks.register(admin_class, interval, minutes=minutes)
 
         return admin_class
     return _task_wrapper
