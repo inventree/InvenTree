@@ -882,6 +882,9 @@ class VariantTest(StockTestBase):
 
     def test_serial_numbers(self):
         """Test serial number functionality for variant / template parts."""
+
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, self.user)
+
         chair = Part.objects.get(pk=10000)
 
         # Operations on the top-level object
@@ -918,12 +921,6 @@ class VariantTest(StockTestBase):
         # This should fail
         with self.assertRaises(ValidationError):
             item.save()
-
-        # Verify items with a non-numeric serial don't offer a next serial.
-        item.serial = "string"
-        item.save()
-
-        self.assertEqual(variant.get_latest_serial_number(), "string")
 
         # This should pass, although not strictly an int field now.
         item.serial = int(n) + 1

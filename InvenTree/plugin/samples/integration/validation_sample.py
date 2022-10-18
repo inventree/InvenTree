@@ -35,6 +35,11 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             'default': False,
             'validator': bool,
         },
+        'BATCH_CODE_PREFIX': {
+            'name': 'Batch prefix',
+            'description': 'Required prefix for batch code',
+            'default': '',
+        }
     }
 
     def validate_part_name(self, name: str):
@@ -62,8 +67,10 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
     def validate_batch_code(self, batch_code: str):
         """Ensure that a particular batch code meets specification"""
 
-        if not batch_code.startswith('BATCH'):
-            raise ValidationError('Batch code must start with BATCH')
+        prefix = self.get_setting('BATCH_CODE_PREFIX')
+
+        if not batch_code.startswith(prefix):
+            raise ValidationError(f"Batch code must start with '{prefix}'")
 
     def generate_batch_code(self):
         """Generate a new batch code."""

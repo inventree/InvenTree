@@ -309,7 +309,7 @@ class TestIncrement(TestCase):
     def tests(self):
         """Test 'intelligent' incrementing function."""
         tests = [
-            ("", ""),
+            ("", '1'),
             (1, "2"),
             ("001", "002"),
             ("1001", "1002"),
