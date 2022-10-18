@@ -1139,6 +1139,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
+            'name': _('Globally Unique Serials'),
+            'description': _('Serial numbers for stock items must be globally unique'),
+            'default': False,
+            'validator': bool,
+        },
+
         'STOCK_BATCH_CODE_TEMPLATE': {
             'name': _('Batch Code Template'),
             'description': _('Template for generating default batch codes for stock items'),

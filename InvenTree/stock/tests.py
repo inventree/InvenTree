@@ -7,6 +7,7 @@ from django.db.models import Sum
 from django.test import override_settings
 
 from build.models import Build
+from common.models import InvenTreeSetting
 from InvenTree.helpers import InvenTreeTestCase
 from InvenTree.status_codes import StockHistoryCode
 from part.models import Part
@@ -171,6 +172,39 @@ class StockTest(StockTestBase):
         item.link = 'ssh://user:pwd@deb.org:223'
         item.save()
         item.full_clean()
+
+    def test_serial_numbers(self):
+        """Test serial number uniqueness"""
+
+        # Ensure that 'global uniqueness' setting is enabled
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', True, self.user)
+
+        part_a = Part.objects.create(name='A', description='A', trackable=True)
+        part_b = Part.objects.create(name='B', description='B', trackable=True)
+
+        # Create a StockItem for part_a
+        StockItem.objects.create(
+            part=part_a,
+            quantity=1,
+            serial='ABCDE',
+        )
+
+        # Create a StockItem for part_a (but, will error due to identical serial)
+        with self.assertRaises(ValidationError):
+            StockItem.objects.create(
+                part=part_b,
+                quantity=1,
+                serial='ABCDE',
+            )
+
+        # Now, allow serial numbers to be duplicated between different parts
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, self.user)
+
+        StockItem.objects.create(
+            part=part_b,
+            quantity=1,
+            serial='ABCDE',
+        )
 
     def test_expiry(self):
         """Test expiry date functionality for StockItem model."""
@@ -857,22 +891,21 @@ class VariantTest(StockTestBase):
 
     def test_serial_numbers(self):
         """Test serial number functionality for variant / template parts."""
+
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, self.user)
+
         chair = Part.objects.get(pk=10000)
 
         # Operations on the top-level object
-        self.assertTrue(chair.checkIfSerialNumberExists(1))
-        self.assertTrue(chair.checkIfSerialNumberExists(2))
-        self.assertTrue(chair.checkIfSerialNumberExists(3))
-        self.assertTrue(chair.checkIfSerialNumberExists(4))
-        self.assertTrue(chair.checkIfSerialNumberExists(5))
+        [self.assertFalse(chair.validate_serial_number(i)) for i in [1, 2, 3, 4, 5, 20, 21, 22]]
 
-        self.assertTrue(chair.checkIfSerialNumberExists(20))
-        self.assertTrue(chair.checkIfSerialNumberExists(21))
-        self.assertTrue(chair.checkIfSerialNumberExists(22))
+        self.assertFalse(chair.validate_serial_number(20))
+        self.assertFalse(chair.validate_serial_number(21))
+        self.assertFalse(chair.validate_serial_number(22))
 
-        self.assertFalse(chair.checkIfSerialNumberExists(30))
+        self.assertTrue(chair.validate_serial_number(30))
 
-        self.assertEqual(chair.getLatestSerialNumber(), '22')
+        self.assertEqual(chair.get_latest_serial_number(), '22')
 
         # Check for conflicting serial numbers
         to_check = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -883,10 +916,10 @@ class VariantTest(StockTestBase):
 
         # Same operations on a sub-item
         variant = Part.objects.get(pk=10003)
-        self.assertEqual(variant.getLatestSerialNumber(), '22')
+        self.assertEqual(variant.get_latest_serial_number(), '22')
 
         # Create a new serial number
-        n = variant.getLatestSerialNumber()
+        n = variant.get_latest_serial_number()
 
         item = StockItem(
             part=variant,
@@ -897,12 +930,6 @@ class VariantTest(StockTestBase):
         # This should fail
         with self.assertRaises(ValidationError):
             item.save()
-
-        # Verify items with a non-numeric serial don't offer a next serial.
-        item.serial = "string"
-        item.save()
-
-        self.assertEqual(variant.getLatestSerialNumber(), "string")
 
         # This should pass, although not strictly an int field now.
         item.serial = int(n) + 1
@@ -915,7 +942,7 @@ class VariantTest(StockTestBase):
         with self.assertRaises(ValidationError):
             item.save()
 
-        item.serial += 1
+        item.serial = int(n) + 2
         item.save()
 
 

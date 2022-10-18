@@ -389,7 +389,7 @@ class BuildTest(BuildAPITest):
             expected_code=400,
         )
 
-        self.assertIn('The following serial numbers already exist : 1,2,3', str(response.data))
+        self.assertIn('The following serial numbers already exist or are invalid : 1,2,3', str(response.data))
 
         # Double check no new outputs have been created
         self.assertEqual(n_outputs + 5, bo.output_count)
