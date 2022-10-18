@@ -886,6 +886,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_BACKUP_ENABLE': {
+            'name': _('Automatic Backup'),
+            'description': _('Enable automatic backup of database and media files'),
+            'validator': bool,
+            'default': True,
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),

@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 76
+INVENTREE_API_VERSION = 77
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v77 -> 2022-10-12 : https://github.com/inventree/InvenTree/pull/3772
+    - Adds model permission checks for barcode assignment actions
 
 v76 -> 2022-09-10 : https://github.com/inventree/InvenTree/pull/3640
     - Refactor of barcode data on the API

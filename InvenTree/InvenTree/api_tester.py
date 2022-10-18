@@ -10,6 +10,9 @@ from django.http.response import StreamingHttpResponse
 
 from rest_framework.test import APITestCase
 
+from plugin import registry
+from plugin.models import PluginConfig
+
 
 class UserMixin:
     """Mixin to setup a user and login for tests.
@@ -85,6 +88,21 @@ class UserMixin:
 
                 ruleset.save()
                 break
+
+
+class PluginMixin:
+    """Mixin to ensure that all plugins are loaded for tests."""
+
+    def setUp(self):
+        """Setup for plugin tests."""
+        super().setUp()
+
+        # Load plugin configs
+        self.plugin_confs = PluginConfig.objects.all()
+        # Reload if not present
+        if not self.plugin_confs:
+            registry.reload_plugins()
+            self.plugin_confs = PluginConfig.objects.all()
 
 
 class InvenTreeAPITestCase(UserMixin, APITestCase):

@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.urls import clear_url_caches, include, re_path
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
@@ -66,6 +67,21 @@ class PluginsRegistry:
             return None
 
         return self.plugins[slug]
+
+    def set_plugin_state(self, slug, state):
+        """Set the state(active/inactive) of a plugin.
+
+        Args:
+            slug (str): Plugin slug
+            state (bool): Plugin state - true = active, false = inactive
+        """
+        if slug not in self.plugins_full:
+            logger.warning(f"Plugin registry has no record of plugin '{slug}'")
+            return
+
+        plugin = self.plugins_full[slug].db
+        plugin.active = state
+        plugin.save()
 
     def call_plugin_function(self, slug, func, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
@@ -349,6 +365,8 @@ class PluginsRegistry:
         Raises:
             error: IntegrationPluginError
         """
+        # Imports need to be in this level to prevent early db model imports
+        from InvenTree import version
         from plugin.models import PluginConfig
 
         def safe_reference(plugin, key: str, active: bool = True):
@@ -372,7 +390,7 @@ class PluginsRegistry:
             plg_key = slugify(plg.SLUG if getattr(plg, 'SLUG', None) else plg_name)  # keys are slugs!
 
             try:
-                plg_db, _ = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
+                plg_db, _created = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
@@ -407,7 +425,16 @@ class PluginsRegistry:
 
                 # Run version check for plugin
                 if (plg_i.MIN_VERSION or plg_i.MAX_VERSION) and not plg_i.check_version():
+                    # Disable plugin
                     safe_reference(plugin=plg_i, key=plg_key, active=False)
+
+                    _msg = _(f'Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!')
+                    if plg_i.MIN_VERSION:
+                        _msg += _(f'Plugin requires at least version {plg_i.MIN_VERSION}')
+                    if plg_i.MAX_VERSION:
+                        _msg += _(f'Plugin requires at most version {plg_i.MAX_VERSION}')
+                    # Log to error stack
+                    log_error(_msg, reference='init')
                 else:
                     safe_reference(plugin=plg_i, key=plg_key)
             else:  # pragma: no cover
@@ -468,7 +495,7 @@ class PluginsRegistry:
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SCHEDULE'):
 
-            for _, plugin in plugins:
+            for _key, plugin in plugins:
 
                 if plugin.mixin_enabled('schedule'):
                     config = plugin.plugin_config()
@@ -523,7 +550,7 @@ class PluginsRegistry:
             apps_changed = False
 
             # add them to the INSTALLED_APPS
-            for _, plugin in plugins:
+            for _key, plugin in plugins:
                 if plugin.mixin_enabled('app'):
                     plugin_path = self._get_plugin_path(plugin)
                     if plugin_path not in settings.INSTALLED_APPS:

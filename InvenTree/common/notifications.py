@@ -12,7 +12,7 @@ import InvenTree.helpers
 from common.models import NotificationEntry, NotificationMessage
 from InvenTree.ready import isImportingData
 from plugin import registry
-from plugin.models import NotificationUserSetting
+from plugin.models import NotificationUserSetting, PluginConfig
 from users.models import Owner
 
 logger = logging.getLogger('inventree')
@@ -395,6 +395,28 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
         NotificationEntry.notify(category, obj_ref_value)
     else:
         logger.info(f"No possible users for notification '{category}'")
+
+
+def trigger_superuser_notification(plugin: PluginConfig, msg: str):
+    """Trigger a notification to all superusers.
+
+    Args:
+        plugin (PluginConfig): Plugin that is raising the notification
+        msg (str): Detailed message that should be attached
+    """
+    users = get_user_model().objects.filter(is_superuser=True)
+
+    trigger_notification(
+        plugin,
+        'inventree.plugin',
+        context={
+            'error': plugin,
+            'name': _('Error raised by plugin'),
+            'message': msg,
+        },
+        targets=users,
+        delivery_methods=set([UIMessageNotification]),
+    )
 
 
 def deliver_notification(cls: NotificationMethod, obj, category: str, targets, context: dict):
