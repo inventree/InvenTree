@@ -40,7 +40,8 @@ class ValidatorTest(TestCase):
         validate_part_name('hello world')
 
         # Validate with some strange chars
-        validate_part_name('### <> This | name is not } valid')
+        with self.assertRaises(django_exceptions.ValidationError):
+            validate_part_name('### <> This | name is not } valid')
 
     def test_overage(self):
         """Test overage validator."""
