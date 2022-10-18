@@ -380,6 +380,7 @@ class PluginsRegistry:
                 plg_db = None
             except (IntegrityError) as error:  # pragma: no cover
                 logger.error(f"Error initializing plugin `{plg_name}`: {error}")
+                handle_error(error, log_name='init')
 
             # Append reference to plugin
             plg.db = plg_db
