@@ -385,7 +385,7 @@ class InvenTreeAttachment(models.Model):
                 'link': _('Missing external link'),
             })
 
-        if self.attachment.name.lower().endswith('.svg'):
+        if self.attachment and self.attachment.name.lower().endswith('.svg'):
             self.attachment.file.file = self.clean_svg(self.attachment)
 
         super().save(*args, **kwargs)
