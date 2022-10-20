@@ -886,6 +886,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_BACKUP_ENABLE': {
+            'name': _('Automatic Backup'),
+            'description': _('Enable automatic backup of database and media files'),
+            'validator': bool,
+            'default': True,
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),
@@ -1128,6 +1135,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'REPORT_ATTACH_TEST_REPORT': {
             'name': _('Attach Test Reports'),
             'description': _('When printing a Test Report, attach a copy of the Test Report to the associated Stock Item'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
+            'name': _('Globally Unique Serials'),
+            'description': _('Serial numbers for stock items must be globally unique'),
             'default': False,
             'validator': bool,
         },

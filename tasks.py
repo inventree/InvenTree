@@ -196,7 +196,27 @@ def translate(c):
     manage(c, "compilemessages")
 
 
-@task(post=[rebuild_models, rebuild_thumbnails])
+@task
+def backup(c):
+    """Backup the database and media files."""
+
+    print("Backing up InvenTree database...")
+    manage(c, "dbbackup --noinput --clean --compress")
+    print("Backing up InvenTree media files...")
+    manage(c, "mediabackup --noinput --clean --compress")
+
+
+@task
+def restore(c):
+    """Restore the database and media files."""
+
+    print("Restoring InvenTree database...")
+    manage(c, "dbrestore --noinput --uncompress")
+    print("Restoring InvenTree media files...")
+    manage(c, "mediarestore --noinput --uncompress")
+
+
+@task(pre=[backup, ], post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
     """Performs database migrations.
 

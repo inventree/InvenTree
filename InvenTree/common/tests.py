@@ -9,10 +9,10 @@ from django.core.cache import cache
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.api_tester import InvenTreeAPITestCase, PluginMixin
 from InvenTree.helpers import InvenTreeTestCase, str2bool
 from plugin import registry
-from plugin.models import NotificationUserSetting, PluginConfig
+from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
@@ -540,7 +540,7 @@ class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
         self.assertEqual(str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): True')
 
 
-class PluginSettingsApiTest(InvenTreeAPITestCase):
+class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
     """Tests for the plugin settings API."""
 
     def test_plugin_list(self):
@@ -561,11 +561,8 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
 
     def test_valid_plugin_slug(self):
         """Test that an valid plugin slug runs through."""
-        # load plugin configs
-        fixtures = PluginConfig.objects.all()
-        if not fixtures:
-            registry.reload_plugins()
-            fixtures = PluginConfig.objects.all()
+        # Activate plugin
+        registry.set_plugin_state('sample', True)
 
         # get data
         url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'sample', 'key': 'API_KEY'})

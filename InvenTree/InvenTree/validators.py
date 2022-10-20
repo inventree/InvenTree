@@ -4,6 +4,7 @@ import re
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
+from django.core import validators
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -37,17 +38,49 @@ def allowable_url_schemes():
     return schemes
 
 
+class AllowedURLValidator(validators.URLValidator):
+    """Custom URL validator to allow for custom schemes."""
+    def __call__(self, value):
+        """Validate the URL."""
+        self.schemes = allowable_url_schemes()
+        super().__call__(value)
+
+
 def validate_part_name(value):
-    """Prevent some illegal characters in part names."""
-    for c in ['|', '#', '$', '{', '}']:
-        if c in str(value):
-            raise ValidationError(
-                _('Invalid character in part name')
-            )
+    """Validate the name field for a Part instance
+
+    This function is exposed to any Validation plugins, and thus can be customized.
+    """
+
+    from plugin.registry import registry
+
+    for plugin in registry.with_mixin('validation'):
+        # Run the name through each custom validator
+        # If the plugin returns 'True' we will skip any subsequent validation
+        if plugin.validate_part_name(value):
+            return
 
 
 def validate_part_ipn(value):
-    """Validate the Part IPN against regex rule."""
+    """Validate the IPN field for a Part instance.
+
+    This function is exposed to any Validation plugins, and thus can be customized.
+
+    If no validation errors are raised, the IPN is also validated against a configurable regex pattern.
+    """
+
+    from plugin.registry import registry
+
+    plugins = registry.with_mixin('validation')
+
+    for plugin in plugins:
+        # Run the IPN through each custom validator
+        # If the plugin returns 'True' we will skip any subsequent validation
+        if plugin.validate_part_ipn(value):
+            return
+
+    # If we get to here, none of the plugins have raised an error
+
     pattern = common.models.InvenTreeSetting.get_setting('PART_IPN_REGEX')
 
     if pattern:
@@ -59,28 +92,25 @@ def validate_part_ipn(value):
 
 def validate_purchase_order_reference(value):
     """Validate the 'reference' field of a PurchaseOrder."""
-    pattern = common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_REGEX')
 
-    if pattern:
-        match = re.search(pattern, value)
+    from order.models import PurchaseOrder
 
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
+    # If we get to here, run the "default" validation routine
+    PurchaseOrder.validate_reference_field(value)
 
 
 def validate_sales_order_reference(value):
     """Validate the 'reference' field of a SalesOrder."""
-    pattern = common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_REGEX')
 
-    if pattern:
-        match = re.search(pattern, value)
+    from order.models import SalesOrder
 
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
+    # If we get to here, run the "default" validation routine
+    SalesOrder.validate_reference_field(value)
 
 
 def validate_tree_name(value):
     """Placeholder for legacy function used in migrations."""
+    ...
 
 
 def validate_overage(value):

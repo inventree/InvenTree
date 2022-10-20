@@ -531,7 +531,11 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         if serial_numbers:
             try:
                 # Pass the serial numbers through to the parent serializer once validated
-                data['serials'] = extract_serial_numbers(serial_numbers, pack_quantity, base_part.getLatestSerialNumberInt())
+                data['serials'] = extract_serial_numbers(
+                    serial_numbers,
+                    pack_quantity,
+                    base_part.get_latest_serial_number()
+                )
             except DjangoValidationError as e:
                 raise ValidationError({
                     'serial_numbers': e.messages,
@@ -1256,7 +1260,11 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         part = line_item.part
 
         try:
-            data['serials'] = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+            data['serials'] = extract_serial_numbers(
+                serial_numbers,
+                quantity,
+                part.get_latest_serial_number()
+            )
         except DjangoValidationError as e:
             raise ValidationError({
                 'serial_numbers': e.messages,

@@ -342,7 +342,11 @@ class SerializeStockItemSerializer(serializers.Serializer):
         serial_numbers = data['serial_numbers']
 
         try:
-            serials = InvenTree.helpers.extract_serial_numbers(serial_numbers, quantity, item.part.getLatestSerialNumberInt())
+            serials = InvenTree.helpers.extract_serial_numbers(
+                serial_numbers,
+                quantity,
+                item.part.get_latest_serial_number()
+            )
         except DjangoValidationError as e:
             raise ValidationError({
                 'serial_numbers': e.messages,
@@ -371,7 +375,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
         serials = InvenTree.helpers.extract_serial_numbers(
             data['serial_numbers'],
             data['quantity'],
-            item.part.getLatestSerialNumberInt()
+            item.part.get_latest_serial_number()
         )
 
         item.serializeStock(
