@@ -226,22 +226,53 @@ def heartbeat():
 
 @scheduled_task(ScheduledTask.DAILY)
 def delete_successful_tasks():
-    """Delete successful task logs which are more than a month old."""
+    """Delete successful task logs which are older than a specified period"""
     try:
         from django_q.models import Success
+
+        from common.models import InvenTreeSetting
+
+        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_TASKS_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        # Delete successful tasks
+        results = Success.objects.filter(
+            started__lte=threshold
+        )
+
+        if results.count() > 0:
+            logger.info(f"Deleting {results.count()} successful task records")
+            results.delete()
+
     except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not perform 'delete_successful_tasks' - App registry not ready")
         return
 
-    threshold = timezone.now() - timedelta(days=30)
 
-    results = Success.objects.filter(
-        started__lte=threshold
-    )
+@scheduled_task(ScheduledTask.DAILY)
+def delete_failed_tasks():
+    """Delete failed task logs which are older than a specified period"""
 
-    if results.count() > 0:
-        logger.info(f"Deleting {results.count()} successful task records")
-        results.delete()
+    try:
+        from django_q.models import Failure
+
+        from common.models import InvenTreeSetting
+
+        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_TASKS_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        # Delete failed tasks
+        results = Failure.objects.filter(
+            started__lte=threshold
+        )
+
+        if results.count() > 0:
+            logger.info(f"Deleting {results.count()} failed task records")
+            results.delete()
+
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.info("Could not perform 'delete_failed_tasks' - App registry not ready")
+        return
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -250,8 +281,10 @@ def delete_old_error_logs():
     try:
         from error_report.models import Error
 
-        # Delete any error logs more than 30 days old
-        threshold = timezone.now() - timedelta(days=30)
+        from common.models import InvenTreeSetting
+
+        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_ERRORS_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
 
         errors = Error.objects.filter(
             when__lte=threshold,
