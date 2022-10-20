@@ -246,7 +246,6 @@ def delete_successful_tasks():
 
     except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not perform 'delete_successful_tasks' - App registry not ready")
-        return
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -272,7 +271,6 @@ def delete_failed_tasks():
 
     except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not perform 'delete_failed_tasks' - App registry not ready")
-        return
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -297,7 +295,37 @@ def delete_old_error_logs():
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded
         logger.info("Could not perform 'delete_old_error_logs' - App registry not ready")
-        return
+
+
+@scheduled_task(ScheduledTask.DAILY)
+def delete_old_notifications():
+    """Delete old notification logs"""
+
+    try:
+        from common.models import (InvenTreeSetting, NotificationEntry,
+                                   NotificationMessage)
+
+        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_NOTIFICATIONS_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        items = NotificationEntry.objects.filter(
+            updated__lte=threshold
+        )
+
+        if items.count() > 0:
+            logger.info(f"Deleted {items.count()} old notification entries")
+            items.delete()
+
+        items = NotificationMessage.objects.filter(
+            creation__lte=threshold
+        )
+
+        if items.count() > 0:
+            logger.info(f"Deleted {items.count()} old notification messages")
+            items.delete()
+
+    except AppRegistryNotReady:
+        logger.info("Could not perform 'delete_old_notifications' - App registry not ready")
 
 
 @scheduled_task(ScheduledTask.DAILY)
