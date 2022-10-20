@@ -893,6 +893,39 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
         },
 
+        'INVENTREE_DELETE_TASKS_DAYS': {
+            'name': _('Delete Old Tasks'),
+            'description': _('Background task results will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
+        'INVENTREE_DELETE_ERRORS_DAYS': {
+            'name': _('Delete Error Logs'),
+            'description': _('Error logs will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7)
+            ]
+        },
+
+        'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
+            'name': _('Delete Noficiations'),
+            'description': _('User notifications will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),
