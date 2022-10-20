@@ -84,7 +84,7 @@ The HEAD of the "stable" branch represents the latest stable release code.
 We are currently targeting:
 | Name | Minimum version |
 |---|---|
-| Python | 3.9 |
+| Python | 3.8 |
 | Django | 3.2 |
 
 ### Auto creating updates

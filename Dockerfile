@@ -10,7 +10,7 @@
 # - Monitors source files for any changes, and live-reloads server
 
 
-FROM python:3.9-slim as base
+FROM python:3.8-slim as base
 
 # Build arguments for this image
 ARG commit_hash=""
