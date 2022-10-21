@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-21 06:06+0000\n"
-"PO-Revision-Date: 2022-10-18 14:44\n"
+"PO-Revision-Date: 2022-10-21 11:54\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1793,30 +1793,24 @@ msgid "Enable automatic backup of database and media files"
 msgstr ""
 
 #: common/models.py:897
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Delete Old Tasks"
-msgstr "Verwijder Productie"
+msgstr ""
 
 #: common/models.py:898
 msgid "Background task results will be deleted after specified number of days"
 msgstr ""
 
 #: common/models.py:908
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete Error Logs"
-msgstr "Verwijder onderdelen"
+msgstr ""
 
 #: common/models.py:909
 msgid "Error logs will be deleted after specified number of days"
 msgstr ""
 
 #: common/models.py:919
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Noficiations"
-msgstr "Verwijder locatie"
+msgstr ""
 
 #: common/models.py:920
 msgid "User notifications will be deleted after specified number of days"
@@ -7623,16 +7617,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10683,3 +10675,4 @@ msgstr ""
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr ""
+
