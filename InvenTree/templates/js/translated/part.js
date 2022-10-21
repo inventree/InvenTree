@@ -1308,8 +1308,11 @@ function loadParametricPartTable(table, options={}) {
                     row[`parameter_${parameter.template}`] = parameter.data;
                 });
 
-                $(table).bootstrapTable('updateByUniqueId', pk, row);
+                data[idx] = row;
             }
+
+            // Update the table
+            $(table).bootstrapTable('load', data);
         }
     });
 }
