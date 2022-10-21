@@ -543,7 +543,7 @@ function customGroupSorter(sortName, sortOrder, sortData) {
     // Allows us to escape any nasty HTML tags which are rendered to the DOM
     $.fn.bootstrapTable.utils._calculateObjectValue = $.fn.bootstrapTable.utils.calculateObjectValue;
 
-    $.fn.bootstrapTable.utils.calculateObjectValue2 = function escapeCellValue(self, name, args, defaultValue) {
+    $.fn.bootstrapTable.utils.calculateObjectValue = function escapeCellValue(self, name, args, defaultValue) {
 
         var args_list = [];
 
