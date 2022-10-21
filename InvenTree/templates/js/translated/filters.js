@@ -324,7 +324,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 
     // Callback for reloading the table
     element.find(`#reload-${tableKey}`).click(function() {
-        $(table).bootstrapTable('refresh');
+        reloadTableFilters(table);
     });
 
     // Add a callback for downloading table data
