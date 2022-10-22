@@ -1114,6 +1114,7 @@ function loadBuildOutputTable(build_info, options={}) {
             {
                 success: function(results) {
 
+                    var data = [];
                     // Iterate through each row and find matching test results
                     rows.forEach(function(row) {
                         var test_results = {};
@@ -1130,8 +1131,10 @@ function loadBuildOutputTable(build_info, options={}) {
 
                         row.passed_tests = test_results;
 
-                        $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+                        data.push(row);
                     });
+
+                    $(table).bootstrapTable('load', row);
                 }
             }
         );
