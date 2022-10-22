@@ -557,11 +557,13 @@ class BuildTest(BuildTestBase):
             category='build.new_build',
         )
 
-        self.assertEqual(messages.count(), 2)
+        self.assertEqual(messages.count(), 1)
 
         self.assertFalse(messages.filter(user__pk=2).exists())
 
-        self.assertTrue(messages.filter(user__pk=3).exists())
+        # Inactive users do not receive notifications
+        self.assertFalse(messages.filter(user__pk=3).exists())
+
         self.assertTrue(messages.filter(user__pk=4).exists())
 
 
