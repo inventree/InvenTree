@@ -778,7 +778,8 @@ class NotificationTest(InvenTreeAPITestCase):
         messages = NotificationMessage.objects.all()
 
         # As there are three staff users (including the 'test' user) we expect 30 notifications
-        self.assertEqual(messages.count(), 30)
+        # However, one user is marked as i nactive
+        self.assertEqual(messages.count(), 20)
 
         # Only 10 messages related to *this* user
         my_notifications = messages.filter(user=self.user)
@@ -822,7 +823,7 @@ class NotificationTest(InvenTreeAPITestCase):
 
         # Only 7 notifications should have been deleted,
         # as the notifications associated with other users must remain untouched
-        self.assertEqual(NotificationMessage.objects.count(), 23)
+        self.assertEqual(NotificationMessage.objects.count(), 13)
         self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 3)
 
 
