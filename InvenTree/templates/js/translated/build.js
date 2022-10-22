@@ -1466,7 +1466,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     function redrawAllocationData() {
         // Force a refresh of each row in the table
         // Note we cannot call 'refresh' because we are passing data from memory
-        // var rows = $(table).bootstrapTable('getData');
 
         // How many rows are fully allocated?
         var allocated_rows = 0;
@@ -1678,7 +1677,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             setupCallbacks();
         },
         sortable: true,
-        showColumns: false,
+        showColumns: true,
         detailView: true,
         detailFilter: function(index, row) {
             return allocatedQuantity(row) > 0;
@@ -1809,6 +1808,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 field: 'sub_part_detail.full_name',
                 title: '{% trans "Required Part" %}',
                 sortable: true,
+                switchable: false,
                 formatter: function(value, row) {
                     var url = `/part/${row.sub_part}/`;
                     var thumb = row.sub_part_detail.thumbnail;
@@ -1833,16 +1833,37 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 field: 'reference',
                 title: '{% trans "Reference" %}',
                 sortable: true,
+                switchable: true,
+            },
+            {
+                field: 'consumable',
+                title: '{% trans "Consumable" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
+            },
+            {
+                field: 'optional',
+                title: '{% trans "Optional" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
             },
             {
                 field: 'quantity',
                 title: '{% trans "Quantity Per" %}',
                 sortable: true,
+                switchable: false,
             },
             {
                 field: 'available_stock',
                 title: '{% trans "Available" %}',
                 sortable: true,
+                switchable: true,
                 formatter: function(value, row) {
 
                     var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
@@ -1906,6 +1927,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 field: 'allocated',
                 title: '{% trans "Allocated" %}',
                 sortable: true,
+                switchable: false,
                 formatter: function(value, row) {
                     var required = requiredQuantity(row);
                     var allocated = row.consumable ? required : allocatedQuantity(row);
@@ -1946,6 +1968,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             {
                 field: 'actions',
                 title: '{% trans "Actions" %}',
+                switchable: false,
+                sortable: false,
                 formatter: function(value, row) {
 
                     if (row.consumable) {
