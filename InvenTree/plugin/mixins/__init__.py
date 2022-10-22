@@ -8,7 +8,8 @@ from ..base.barcodes.mixins import BarcodeMixin
 from ..base.event.mixins import EventMixin
 from ..base.integration.mixins import (APICallMixin, AppMixin, NavigationMixin,
                                        PanelMixin, ScheduleMixin,
-                                       SettingsMixin, UrlsMixin)
+                                       SettingsMixin, UrlsMixin,
+                                       ValidationMixin)
 from ..base.label.mixins import LabelPrintingMixin
 from ..base.locate.mixins import LocateMixin
 
@@ -25,6 +26,7 @@ __all__ = [
     'ActionMixin',
     'BarcodeMixin',
     'LocateMixin',
+    'ValidationMixin',
     'SingleNotificationMethod',
     'BulkNotificationMethod',
 ]

@@ -1301,15 +1301,17 @@ function loadParametricPartTable(table, options={}) {
 
             for (var idx = 0; idx < data.length; idx++) {
                 var row = data[idx];
-                var pk = row.pk;
 
                 // Make each parameter accessible, based on the "template" columns
                 row.parameters.forEach(function(parameter) {
                     row[`parameter_${parameter.template}`] = parameter.data;
                 });
 
-                $(table).bootstrapTable('updateByUniqueId', pk, row);
+                data[idx] = row;
             }
+
+            // Update the table
+            $(table).bootstrapTable('load', data);
         }
     });
 }

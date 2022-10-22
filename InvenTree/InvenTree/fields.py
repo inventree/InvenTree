@@ -4,7 +4,6 @@ import sys
 from decimal import Decimal
 
 from django import forms
-from django.core import validators
 from django.db import models as models
 from django.utils.translation import gettext_lazy as _
 
@@ -15,7 +14,7 @@ from rest_framework.fields import URLField as RestURLField
 
 import InvenTree.helpers
 
-from .validators import allowable_url_schemes
+from .validators import AllowedURLValidator, allowable_url_schemes
 
 
 class InvenTreeRestURLField(RestURLField):
@@ -34,7 +33,7 @@ class InvenTreeRestURLField(RestURLField):
 class InvenTreeURLField(models.URLField):
     """Custom URL field which has custom scheme validators."""
 
-    default_validators = [validators.URLValidator(schemes=allowable_url_schemes())]
+    default_validators = [AllowedURLValidator()]
 
     def __init__(self, **kwargs):
         """Initialization method for InvenTreeURLField"""

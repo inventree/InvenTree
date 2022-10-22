@@ -4,7 +4,9 @@ import json
 import logging
 import re
 import warnings
+from dataclasses import dataclass
 from datetime import timedelta
+from typing import Callable
 
 from django.conf import settings
 from django.core import mail as django_mail
@@ -126,6 +128,79 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
         _func(*args, **kwargs)
 
 
+@dataclass()
+class ScheduledTask:
+    """A scheduled task.
+
+    - interval: The interval at which the task should be run
+    - minutes: The number of minutes between task runs
+    - func: The function to be run
+    """
+
+    func: Callable
+    interval: str
+    minutes: int = None
+
+    MINUTES = "I"
+    HOURLY = "H"
+    DAILY = "D"
+    WEEKLY = "W"
+    MONTHLY = "M"
+    QUARTERLY = "Q"
+    YEARLY = "Y"
+    TYPE = [MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY]
+
+
+class TaskRegister:
+    """Registery for periodicall tasks."""
+    task_list: list[ScheduledTask] = []
+
+    def register(self, task, schedule, minutes: int = None):
+        """Register a task with the que."""
+        self.task_list.append(ScheduledTask(task, schedule, minutes))
+
+
+tasks = TaskRegister()
+
+
+def scheduled_task(interval: str, minutes: int = None, tasklist: TaskRegister = None):
+    """Register the given task as a scheduled task.
+
+    Example:
+    ```python
+    @register(ScheduledTask.DAILY)
+    def my_custom_funciton():
+        ...
+    ```
+
+    Args:
+        interval (str): The interval at which the task should be run
+        minutes (int, optional): The number of minutes between task runs. Defaults to None.
+        tasklist (TaskRegister, optional): The list the tasks should be registered to. Defaults to None.
+
+    Raises:
+        ValueError: If decorated object is not callable
+        ValueError: If interval is not valid
+
+    Returns:
+        _type_: _description_
+    """
+
+    def _task_wrapper(admin_class):
+        if not isinstance(admin_class, Callable):
+            raise ValueError('Wrapped object must be a function')
+
+        if interval not in ScheduledTask.TYPE:
+            raise ValueError(f'Invalid interval. Must be one of {ScheduledTask.TYPE}')
+
+        _tasks = tasklist if tasklist else tasks
+        _tasks.register(admin_class, interval, minutes=minutes)
+
+        return admin_class
+    return _task_wrapper
+
+
+@scheduled_task(ScheduledTask.MINUTES, 15)
 def heartbeat():
     """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
 
@@ -149,32 +224,65 @@ def heartbeat():
     heartbeats.delete()
 
 
+@scheduled_task(ScheduledTask.DAILY)
 def delete_successful_tasks():
-    """Delete successful task logs which are more than a month old."""
+    """Delete successful task logs which are older than a specified period"""
     try:
         from django_q.models import Success
+
+        from common.models import InvenTreeSetting
+
+        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_TASKS_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        # Delete successful tasks
+        results = Success.objects.filter(
+            started__lte=threshold
+        )
+
+        if results.count() > 0:
+            logger.info(f"Deleting {results.count()} successful task records")
+            results.delete()
+
     except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not perform 'delete_successful_tasks' - App registry not ready")
-        return
-
-    threshold = timezone.now() - timedelta(days=30)
-
-    results = Success.objects.filter(
-        started__lte=threshold
-    )
-
-    if results.count() > 0:
-        logger.info(f"Deleting {results.count()} successful task records")
-        results.delete()
 
 
+@scheduled_task(ScheduledTask.DAILY)
+def delete_failed_tasks():
+    """Delete failed task logs which are older than a specified period"""
+
+    try:
+        from django_q.models import Failure
+
+        from common.models import InvenTreeSetting
+
+        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_TASKS_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        # Delete failed tasks
+        results = Failure.objects.filter(
+            started__lte=threshold
+        )
+
+        if results.count() > 0:
+            logger.info(f"Deleting {results.count()} failed task records")
+            results.delete()
+
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.info("Could not perform 'delete_failed_tasks' - App registry not ready")
+
+
+@scheduled_task(ScheduledTask.DAILY)
 def delete_old_error_logs():
     """Delete old error logs from the server."""
     try:
         from error_report.models import Error
 
-        # Delete any error logs more than 30 days old
-        threshold = timezone.now() - timedelta(days=30)
+        from common.models import InvenTreeSetting
+
+        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_ERRORS_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
 
         errors = Error.objects.filter(
             when__lte=threshold,
@@ -187,9 +295,40 @@ def delete_old_error_logs():
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded
         logger.info("Could not perform 'delete_old_error_logs' - App registry not ready")
-        return
 
 
+@scheduled_task(ScheduledTask.DAILY)
+def delete_old_notifications():
+    """Delete old notification logs"""
+
+    try:
+        from common.models import (InvenTreeSetting, NotificationEntry,
+                                   NotificationMessage)
+
+        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_NOTIFICATIONS_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        items = NotificationEntry.objects.filter(
+            updated__lte=threshold
+        )
+
+        if items.count() > 0:
+            logger.info(f"Deleted {items.count()} old notification entries")
+            items.delete()
+
+        items = NotificationMessage.objects.filter(
+            creation__lte=threshold
+        )
+
+        if items.count() > 0:
+            logger.info(f"Deleted {items.count()} old notification messages")
+            items.delete()
+
+    except AppRegistryNotReady:
+        logger.info("Could not perform 'delete_old_notifications' - App registry not ready")
+
+
+@scheduled_task(ScheduledTask.DAILY)
 def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
@@ -232,6 +371,7 @@ def check_for_updates():
     )
 
 
+@scheduled_task(ScheduledTask.DAILY)
 def update_exchange_rates():
     """Update currency exchange rates."""
     try:
@@ -273,10 +413,14 @@ def update_exchange_rates():
         logger.error(f"Error updating exchange rates: {e}")
 
 
+@scheduled_task(ScheduledTask.DAILY)
 def run_backup():
     """Run the backup command."""
-    call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
-    call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
+    from common.models import InvenTreeSetting
+
+    if InvenTreeSetting.get_setting('INVENTREE_BACKUP_ENABLE'):
+        call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
+        call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):

@@ -11,13 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
       - name: Version Check
         run: |
           pip install requests
           python3 ci/version_check.py
       - name: Push to Stable Branch
-        uses: ad-m/github-push-action@9a46ba8d86d3171233e861a4351b1278a2805c83 # pin@master
+        uses: ad-m/github-push-action@4dcce6dea3e3c8187237fc86b7dfdc93e5aaae58 # pin@master
         if: env.stable_release == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -27,7 +27,7 @@ jobs:
   tweet:
     runs-on: ubuntu-latest
     steps:
-      - uses: Eomm/why-don-t-you-tweet@f61f2a86c30c46528c1398a1abb1f64aa0988f69 # pin@v1
+      - uses: Eomm/why-don-t-you-tweet@5936bb1fd0096b1c2bbbb7518746638261bb4dae # pin@v1.0.1
         with:
           tweet-message: "InvenTree release ${{ github.event.release.tag_name }} is out
             now! Release notes: ${{ github.event.release.html_url }} #opensource
@@ -41,7 +41,7 @@ jobs:
   reddit:
     runs-on: ubuntu-latest
     steps:
-      - uses: bluwy/release-for-reddit-action@4d948192aff856da22f19f9806b00b46ca384547 # pin@v1
+      - uses: bluwy/release-for-reddit-action@4b2d034b5c86a24db24363f1064149a8c2db69b4 # pin@v1.2.0
         with:
           username: ${{ secrets.REDDIT_USERNAME }}
           password: ${{ secrets.REDDIT_PASSWORD }}

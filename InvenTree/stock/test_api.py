@@ -495,7 +495,7 @@ class StockItemTest(StockAPITestCase):
 
         # Check that each serial number was created
         for i in range(1, 11):
-            self.assertTrue(i in sn)
+            self.assertTrue(str(i) in sn)
 
             # Check the unique stock item has been created
 
