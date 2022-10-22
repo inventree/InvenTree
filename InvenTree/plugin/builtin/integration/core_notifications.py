@@ -63,6 +63,10 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
 
             for user in self.targets:
 
+                if not user.is_active:
+                    # Ignore any users who have been deactivated
+                    continue
+
                 allows_emails = InvenTree.helpers.str2bool(self.usersetting(user))
 
                 if allows_emails:
