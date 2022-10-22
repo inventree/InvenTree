@@ -15,7 +15,7 @@ name: Docker
 
 on:
   release:
-    types: [published]
+    types: [ published ]
 
   push:
     branches:
@@ -30,10 +30,15 @@ jobs:
       id-token: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      python_version: 3.9
     steps:
       - name: Check out repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Set Up Python ${{ env.python_version }}
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        with:
+          python-version: ${{ env.python_version }}
+          cache: 'pip'
       - name: Version Check
         run: |
           pip install requests
@@ -66,30 +71,30 @@ jobs:
           test -f data/secret_key.txt
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18 # pin@v2.1.0
       - name: Set up Docker Buildx
         if: github.event_name != 'pull_request'
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@95cb08cb2672c73d4ffd2f422e6d11953d2a9c70 # pin@v2.1.0
       - name: Set up cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@48866aa521d8bf870604709cd43ec2f602d03ff2
+        uses: sigstore/cosign-installer@7cc35d7fdbe70d4278a0c96779081e6fac665f88 # pin@v2.8.0
       - name: Login to Dockerhub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # pin@v2.1.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Extract Docker metadata
         if: github.event_name != 'pull_request'
         id: meta
-        uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a
+        uses: docker/metadata-action@12cce9efe0d49980455aaaca9b071c0befcdd702 # pin@v4.1.0
         with:
           images: |
             inventree/inventree
       - name: Build and Push
         id: build-and-push
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # pin@v3.2.0
         with:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
@@ -103,11 +108,5 @@ jobs:
         if: github.event_name != 'pull_request'
         env:
           COSIGN_EXPERIMENTAL: "true"
-        run: cosign sign ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
-      - name: Push to Stable Branch
-        uses: ad-m/github-push-action@master
-        if: env.stable_release == 'true' && github.event_name != 'pull_request'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: stable
-          force: true
+        run: cosign sign ${{ steps.meta.outputs.tags }}@${{
+          steps.build-and-push.outputs.digest }}

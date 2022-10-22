@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView
+from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 
@@ -338,11 +339,29 @@ class SupplierPartList(ListCreateDestroyAPIView):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
     filterset_fields = [
     ]
+
+    ordering_fields = [
+        'SKU',
+        'part',
+        'supplier',
+        'manufacturer',
+        'MPN',
+        'packaging',
+        'pack_size',
+        'in_stock',
+    ]
+
+    ordering_field_aliases = {
+        'part': 'part__name',
+        'supplier': 'supplier__name',
+        'manufacturer': 'manufacturer_part__manufacturer__name',
+        'MPN': 'manufacturer_part__MPN',
+    }
 
     search_fields = [
         'SKU',

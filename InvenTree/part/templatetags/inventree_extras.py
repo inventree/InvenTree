@@ -17,6 +17,7 @@ import InvenTree.helpers
 from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
 from common.settings import currency_code_default
 from InvenTree import settings, version
+from plugin import registry
 from plugin.models import NotificationUserSetting, PluginSetting
 
 register = template.Library()
@@ -150,6 +151,25 @@ def plugins_enabled(*args, **kwargs):
 
 
 @register.simple_tag()
+def plugins_info(*args, **kwargs):
+    """Return information about activated plugins."""
+    # Check if plugins are even enabled
+    if not djangosettings.PLUGINS_ENABLED:
+        return False
+
+    # Fetch plugins
+    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Format list
+    return [
+        {
+            'name': plg.name,
+            'slug': plg.slug,
+            'version': plg.version
+        } for plg in plug_list
+    ]
+
+
+@register.simple_tag()
 def inventree_db_engine(*args, **kwargs):
     """Return the InvenTree database backend e.g. 'postgresql'."""
     db = djangosettings.DATABASES['default']
@@ -175,12 +195,19 @@ def inventree_title(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_logo(**kwargs):
-    """Return the InvenTree logo, *or* a custom logo if the user has uploaded one.
+    """Return the InvenTree logo, *or* a custom logo if the user has provided one.
 
     Returns a path to an image file, which can be rendered in the web interface
     """
 
     return InvenTree.helpers.getLogoImage(**kwargs)
+
+
+@register.simple_tag()
+def inventree_splash(**kwargs):
+    """Return the URL for the InvenTree splash screen, *or* a custom screen if the user has provided one."""
+
+    return InvenTree.helpers.getSplashScren(**kwargs)
 
 
 @register.simple_tag()

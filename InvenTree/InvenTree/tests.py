@@ -19,9 +19,11 @@ from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 
 import InvenTree.format
+import InvenTree.helpers
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
+from InvenTree.sanitizer import sanitize_svg
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
@@ -37,8 +39,9 @@ class ValidatorTest(TestCase):
         """Test part name validator."""
         validate_part_name('hello world')
 
+        # Validate with some strange chars
         with self.assertRaises(django_exceptions.ValidationError):
-            validate_part_name('This | name is not } valid')
+            validate_part_name('### <> This | name is not } valid')
 
     def test_overage(self):
         """Test overage validator."""
@@ -307,7 +310,7 @@ class TestIncrement(TestCase):
     def tests(self):
         """Test 'intelligent' incrementing function."""
         tests = [
-            ("", ""),
+            ("", '1'),
             (1, "2"),
             ("001", "002"),
             ("1001", "1002"),
@@ -416,7 +419,11 @@ class TestMPTT(TestCase):
 
 
 class TestSerialNumberExtraction(TestCase):
-    """Tests for serial number extraction code."""
+    """Tests for serial number extraction code.
+
+    Note that while serial number extraction is made available to custom plugins,
+    only simple integer-based extraction is tested here.
+    """
 
     def test_simple(self):
         """Test simple serial numbers."""
@@ -425,7 +432,7 @@ class TestSerialNumberExtraction(TestCase):
         sn = e("1-5", 5, 1)
         self.assertEqual(len(sn), 5, 1)
         for i in range(1, 6):
-            self.assertIn(i, sn)
+            self.assertIn(str(i), sn)
 
         sn = e("1, 2, 3, 4, 5", 5, 1)
         self.assertEqual(len(sn), 5)
@@ -433,55 +440,55 @@ class TestSerialNumberExtraction(TestCase):
         # Test partially specifying serials
         sn = e("1, 2, 4+", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 4, 5, 6])
+        self.assertEqual(sn, ['1', '2', '4', '5', '6'])
 
         # Test groups are not interpolated if enough serials are supplied
         sn = e("1, 2, 3, AF5-69H, 5", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 3, "AF5-69H", 5])
+        self.assertEqual(sn, ['1', '2', '3', 'AF5-69H', '5'])
 
         # Test groups are not interpolated with more than one hyphen in a word
         sn = e("1, 2, TG-4SR-92, 4+", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, "TG-4SR-92", 4, 5])
+        self.assertEqual(sn, ['1', '2', "TG-4SR-92", '4', '5'])
 
         # Test groups are not interpolated with alpha characters
         sn = e("1, A-2, 3+", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, "A-2", 3, 4, 5])
+        self.assertEqual(sn, ['1', "A-2", '3', '4', '5'])
 
         # Test multiple placeholders
-        sn = e("1 2 ~ ~ ~", 5, 3)
+        sn = e("1 2 ~ ~ ~", 5, 2)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 3, 4, 5])
+        self.assertEqual(sn, ['1', '2', '3', '4', '5'])
 
         sn = e("1-5, 10-15", 11, 1)
-        self.assertIn(3, sn)
-        self.assertIn(13, sn)
+        self.assertIn('3', sn)
+        self.assertIn('13', sn)
 
         sn = e("1+", 10, 1)
         self.assertEqual(len(sn), 10)
-        self.assertEqual(sn, [_ for _ in range(1, 11)])
+        self.assertEqual(sn, [str(_) for _ in range(1, 11)])
 
         sn = e("4, 1+2", 4, 1)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, [4, 1, 2, 3])
+        self.assertEqual(sn, ['4', '1', '2', '3'])
 
         sn = e("~", 1, 1)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, [1])
+        self.assertEqual(sn, ['2'])
 
         sn = e("~", 1, 3)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, [3])
+        self.assertEqual(sn, ['4'])
 
-        sn = e("~+", 2, 5)
+        sn = e("~+", 2, 4)
         self.assertEqual(len(sn), 2)
-        self.assertEqual(sn, [5, 6])
+        self.assertEqual(sn, ['5', '6'])
 
-        sn = e("~+3", 4, 5)
+        sn = e("~+3", 4, 4)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, [5, 6, 7, 8])
+        self.assertEqual(sn, ['5', '6', '7', '8'])
 
     def test_failures(self):
         """Test wron serial numbers."""
@@ -520,19 +527,19 @@ class TestSerialNumberExtraction(TestCase):
 
         sn = e("1 3-5 9+2", 7, 1)
         self.assertEqual(len(sn), 7)
-        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+        self.assertEqual(sn, ['1', '3', '4', '5', '9', '10', '11'])
 
         sn = e("1,3-5,9+2", 7, 1)
         self.assertEqual(len(sn), 7)
-        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+        self.assertEqual(sn, ['1', '3', '4', '5', '9', '10', '11'])
 
-        sn = e("~+2", 3, 14)
+        sn = e("~+2", 3, 13)
         self.assertEqual(len(sn), 3)
-        self.assertEqual(sn, [14, 15, 16])
+        self.assertEqual(sn, ['14', '15', '16'])
 
-        sn = e("~+", 2, 14)
+        sn = e("~+", 2, 13)
         self.assertEqual(len(sn), 2)
-        self.assertEqual(sn, [14, 15])
+        self.assertEqual(sn, ['14', '15'])
 
 
 class TestVersionNumber(TestCase):
@@ -848,3 +855,49 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             1, 2, 3, 4, 5,
             force_async=True
         )
+
+
+class BarcodeMixinTest(helpers.InvenTreeTestCase):
+    """Tests for the InvenTreeBarcodeMixin mixin class"""
+
+    def test_barcode_model_type(self):
+        """Test that the barcode_model_type property works for each class"""
+
+        from part.models import Part
+        from stock.models import StockItem, StockLocation
+
+        self.assertEqual(Part.barcode_model_type(), 'part')
+        self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
+        self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
+
+    def test_bacode_hash(self):
+        """Test that the barcode hashing function provides correct results"""
+
+        # Test multiple values for the hashing function
+        # This is to ensure that the hash function is always "backwards compatible"
+        hashing_tests = {
+            'abcdefg': '7ac66c0f148de9519b8bd264312c4d64',
+            'ABCDEFG': 'bb747b3df3130fe1ca4afa93fb7d97c9',
+            '1234567': 'fcea920f7412b5da7be0cf42b8c93759',
+            '{"part": 17, "stockitem": 12}': 'c88c11ed0628eb7fef0d59b098b96975',
+        }
+
+        for barcode, hash in hashing_tests.items():
+            self.assertEqual(InvenTree.helpers.hash_barcode(barcode), hash)
+
+
+class SanitizerTest(TestCase):
+    """Simple tests for sanitizer functions."""
+
+    def test_svg_sanitizer(self):
+        """Test that SVGs are sanitized acordingly."""
+        valid_string = """<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" height="400" width="400">{0}
+        <path id="path1" d="m -151.78571,359.62883 v 112.76373 l 97.068507,-56.04253 V 303.14815 Z" style="fill:#ddbc91;"></path>
+        </svg>"""
+        dangerous_string = valid_string.format('<script>alert();</script>')
+
+        # Test that valid string
+        self.assertEqual(valid_string, sanitize_svg(valid_string))
+
+        # Test that invalid string is cleanded
+        self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))

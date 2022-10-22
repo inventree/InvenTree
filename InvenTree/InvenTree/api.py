@@ -12,6 +12,7 @@ from rest_framework.serializers import ValidationError
 
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
+from part.templatetags.inventree_extras import plugins_info
 
 from .status import is_worker_running
 from .version import (inventreeApiVersion, inventreeInstanceName,
@@ -36,6 +37,7 @@ class InfoView(AjaxView):
             'apiVersion': inventreeApiVersion(),
             'worker_running': is_worker_running(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
+            'active_plugins': plugins_info(),
         }
 
         return JsonResponse(data)

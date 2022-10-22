@@ -43,7 +43,7 @@ from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
-                              InvenTreeTree)
+                              InvenTreeBarcodeMixin, InvenTreeTree)
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from order import models as OrderModels
@@ -188,6 +188,13 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     )
 
     default_keywords = models.CharField(null=True, blank=True, max_length=250, verbose_name=_('Default keywords'), help_text=_('Default keywords for parts in this category'))
+
+    icon = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_("Icon"),
+        help_text=_("Icon (optional)")
+    )
 
     @staticmethod
     def get_api_url():
@@ -381,7 +388,7 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(MetadataMixin, MPTTModel):
+class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -610,112 +617,126 @@ class Part(MetadataMixin, MPTTModel):
 
         return result
 
-    def checkIfSerialNumberExists(self, sn, exclude_self=False):
-        """Check if a serial number exists for this Part.
+    def validate_serial_number(self, serial: str, stock_item=None, check_duplicates=True, raise_error=False):
+        """Validate a serial number against this Part instance.
 
-        Note: Serial numbers must be unique across an entire Part "tree", so here we filter by the entire tree.
+        Note: This function is exposed to any Validation plugins, and thus can be customized.
+
+        Any plugins which implement the 'validate_serial_number' method have three possible outcomes:
+
+        - Decide the serial is objectionable and raise a django.core.exceptions.ValidationError
+        - Decide the serial is acceptable, and return None to proceed to other tests
+        - Decide the serial is acceptable, and return True to skip any further tests
+
+        Arguments:
+            serial: The proposed serial number
+            stock_item: (optional) A StockItem instance which has this serial number assigned (e.g. testing for duplicates)
+            raise_error: If False, and ValidationError(s) will be handled
+
+        Returns:
+            True if serial number is 'valid' else False
+
+        Raises:
+            ValidationError if serial number is invalid and raise_error = True
         """
-        parts = Part.objects.filter(tree_id=self.tree_id)
 
-        stock = StockModels.StockItem.objects.filter(part__in=parts, serial=sn)
+        serial = str(serial).strip()
 
-        if exclude_self:
-            stock = stock.exclude(pk=self.pk)
+        # First, throw the serial number against each of the loaded validation plugins
+        from plugin.registry import registry
 
-        return stock.exists()
+        try:
+            for plugin in registry.with_mixin('validation'):
+                # Run the serial number through each custom validator
+                # If the plugin returns 'True' we will skip any subsequent validation
+                if plugin.validate_serial_number(serial):
+                    return True
+        except ValidationError as exc:
+            if raise_error:
+                # Re-throw the error
+                raise exc
+            else:
+                return False
 
-    def find_conflicting_serial_numbers(self, serials):
+        """
+        If we are here, none of the loaded plugins (if any) threw an error or exited early
+
+        Now, we run the "default" serial number validation routine,
+        which checks that the serial number is not duplicated
+        """
+
+        if not check_duplicates:
+            return
+
+        from part.models import Part
+        from stock.models import StockItem
+
+        if common.models.InvenTreeSetting.get_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # Serial number must be unique across *all* parts
+            parts = Part.objects.all()
+        else:
+            # Serial number must only be unique across this part "tree"
+            parts = Part.objects.filter(tree_id=self.tree_id)
+
+        stock = StockItem.objects.filter(part__in=parts, serial=serial)
+
+        if stock_item:
+            # Exclude existing StockItem from query
+            stock = stock.exclude(pk=stock_item.pk)
+
+        if stock.exists():
+            if raise_error:
+                raise ValidationError(_("Stock item with this serial number already exists") + ": " + serial)
+            else:
+                return False
+        else:
+            # This serial number is perfectly valid
+            return True
+
+    def find_conflicting_serial_numbers(self, serials: list):
         """For a provided list of serials, return a list of those which are conflicting."""
+
         conflicts = []
 
         for serial in serials:
-            if self.checkIfSerialNumberExists(serial, exclude_self=True):
+            if not self.validate_serial_number(serial):
                 conflicts.append(serial)
 
         return conflicts
 
-    def getLatestSerialNumber(self):
-        """Return the "latest" serial number for this Part.
+    def get_latest_serial_number(self):
+        """Find the 'latest' serial number for this Part.
 
-        If *all* the serial numbers are integers, then this will return the highest one.
-        Otherwise, it will simply return the serial number most recently added.
+        Here we attempt to find the "highest" serial number which exists for this Part.
+        There are a number of edge cases where this method can fail,
+        but this is accepted to keep database performance at a reasonable level.
 
         Note: Serial numbers must be unique across an entire Part "tree",
         so we filter by the entire tree.
-        """
-        parts = Part.objects.filter(tree_id=self.tree_id)
-        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None)
 
-        # There are no matchin StockItem objects (skip further tests)
+        Returns:
+            The latest serial number specified for this part, or None
+        """
+
+        stock = StockModels.StockItem.objects.all().exclude(serial=None).exclude(serial='')
+
+        # Generate a query for any stock items for this part variant tree with non-empty serial numbers
+        if common.models.InvenTreeSetting.get_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # Serial numbers are unique across all parts
+            pass
+        else:
+            # Serial numbers are unique acros part trees
+            stock = stock.filter(part__tree_id=self.tree_id)
+
+        # There are no matching StockItem objects (skip further tests)
         if not stock.exists():
             return None
 
-        # Attempt to coerce the returned serial numbers to integers
-        # If *any* are not integers, fail!
-        try:
-            ordered = sorted(stock.all(), reverse=True, key=lambda n: int(n.serial))
+        # Sort in descending order
+        stock = stock.order_by('-serial_int', '-serial', '-pk')
 
-            if len(ordered) > 0:
-                return ordered[0].serial
-
-        # One or more of the serial numbers was non-numeric
-        # In this case, the "best" we can do is return the most recent
-        except ValueError:
-            return stock.last().serial
-
-        # No serial numbers found
-        return None
-
-    def getLatestSerialNumberInt(self):
-        """Return the "latest" serial number for this Part as a integer.
-
-        If it is not an integer the result is 0
-        """
-        latest = self.getLatestSerialNumber()
-
-        # No serial number = > 0
-        if latest is None:
-            latest = 0
-
-        # Attempt to turn into an integer and return
-        try:
-            latest = int(latest)
-            return latest
-        except Exception:
-            # not an integer so 0
-            return 0
-
-    def getSerialNumberString(self, quantity=1):
-        """Return a formatted string representing the next available serial numbers, given a certain quantity of items."""
-        latest = self.getLatestSerialNumber()
-
-        quantity = int(quantity)
-
-        # No serial numbers can be found, assume 1 as the first serial
-        if latest is None:
-            latest = 0
-
-        # Attempt to turn into an integer
-        try:
-            latest = int(latest)
-        except Exception:
-            pass
-
-        if type(latest) is int:
-
-            if quantity >= 2:
-                text = '{n} - {m}'.format(n=latest + 1, m=latest + 1 + quantity)
-
-                return _('Next available serial numbers are') + ' ' + text
-            else:
-                text = str(latest + 1)
-
-                return _('Next available serial number is') + ' ' + text
-
-        else:
-            # Non-integer values, no option but to return latest
-
-            return _('Most recent serial number is') + ' ' + str(latest)
+        # Return the first serial value
+        return stock[0].serial
 
     @property
     def full_name(self):
@@ -1022,18 +1043,6 @@ class Part(MetadataMixin, MPTTModel):
 
     responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
 
-    def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a barcode for this Part object."""
-        return helpers.MakeBarcode(
-            "part",
-            self.id,
-            {
-                "name": self.full_name,
-                "url": reverse('api-part-detail', kwargs={'pk': self.id}),
-            },
-            **kwargs
-        )
-
     @property
     def category_path(self):
         """Return the category path of this Part instance"""
@@ -1227,7 +1236,12 @@ class Part(MetadataMixin, MPTTModel):
         total = None
 
         # Prefetch related tables, to reduce query expense
-        queryset = self.get_bom_items().prefetch_related(
+        queryset = self.get_bom_items()
+
+        # Ignore 'consumable' BOM items for this calculation
+        queryset = queryset.filter(consumable=False)
+
+        queryset = queryset.prefetch_related(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
@@ -1516,6 +1530,45 @@ class Part(MetadataMixin, MPTTModel):
                 parts.add(bom_item.sub_part)
 
         return parts
+
+    def get_used_in_bom_item_filter(self, include_variants=True, include_substitutes=True):
+        """Return a BomItem queryset which returns all BomItem instances which refer to *this* part.
+
+        As the BOM allocation logic is somewhat complicted, there are some considerations:
+
+        A) This part may be directly specified in a BomItem instance
+        B) This part may be a *variant* of a part which is directly specified in a BomItem instance
+        C) This part may be a *substitute* for a part which is directly specifed in a BomItem instance
+
+        So we construct a query for each case, and combine them...
+        """
+
+        # Cache all *parent* parts
+        parents = self.get_ancestors(include_self=False)
+
+        # Case A: This part is directly specified in a BomItem (we always use this case)
+        query = Q(
+            sub_part=self,
+        )
+
+        if include_variants:
+            # Case B: This part is a *variant* of a part which is specified in a BomItem which allows variants
+            query |= Q(
+                allow_variants=True,
+                sub_part__in=parents,
+            )
+
+        # Case C: This part is a *substitute* of a part which is directly specified in a BomItem
+        if include_substitutes:
+
+            # Grab a list of BomItem substitutes which reference this part
+            substitutes = self.substitute_items.all()
+
+            query |= Q(
+                pk__in=[substitute.bom_item.pk for substitute in substitutes],
+            )
+
+        return query
 
     def get_used_in_filter(self, include_inherited=True):
         """Return a query filter for all parts that this part is used in.
@@ -2078,22 +2131,30 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def on_order(self):
-        """Return the total number of items on order for this part."""
-        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN).aggregate(
-            quantity=Sum('purchase_order_line_items__quantity'),
-            received=Sum('purchase_order_line_items__received')
-        )
+        """Return the total number of items on order for this part.
 
-        quantity = orders['quantity']
-        received = orders['received']
+        Note that some supplier parts may have a different pack_size attribute,
+        and this needs to be taken into account!
+        """
 
-        if quantity is None:
-            quantity = 0
+        quantity = 0
 
-        if received is None:
-            received = 0
+        # Iterate through all supplier parts
+        for sp in self.supplier_parts.all():
 
-        return quantity - received
+            # Look at any incomplete line item for open orders
+            lines = sp.purchase_order_line_items.filter(
+                order__status__in=PurchaseOrderStatus.OPEN,
+                quantity__gt=F('received'),
+            )
+
+            for line in lines:
+                remaining = line.quantity - line.received
+
+                if remaining > 0:
+                    quantity += remaining * sp.pack_size
+
+        return quantity
 
     def get_parameters(self):
         """Return all parameters for this part, ordered by name."""
@@ -2411,7 +2472,7 @@ class PartTestTemplate(models.Model):
 
 def validate_template_name(name):
     """Prevent illegal characters in "name" field for PartParameterTemplate."""
-    for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":  # noqa: P103
+    for c in "\"\'`!?|":  # noqa: P103
         if c in str(name):
             raise ValidationError(_(f"Illegal character in template name ({c})"))
 
@@ -2465,6 +2526,13 @@ class PartParameterTemplate(models.Model):
     )
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Parameter description'),
+        blank=True,
+    )
 
 
 class PartParameter(models.Model):
@@ -2565,6 +2633,7 @@ class BomItem(DataImportMixin, models.Model):
         sub_part: Link to the child part (the part that will be consumed)
         quantity: Number of 'sub_parts' consumed to produce one 'part'
         optional: Boolean field describing if this BomItem is optional
+        consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
@@ -2583,6 +2652,7 @@ class BomItem(DataImportMixin, models.Model):
         'allow_variants': {},
         'inherited': {},
         'optional': {},
+        'consumable': {},
         'note': {},
         'part': {
             'label': _('Part'),
@@ -2688,7 +2758,17 @@ class BomItem(DataImportMixin, models.Model):
     # Quantity required
     quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], verbose_name=_('Quantity'), help_text=_('BOM quantity for this BOM item'))
 
-    optional = models.BooleanField(default=False, verbose_name=_('Optional'), help_text=_("This BOM item is optional"))
+    optional = models.BooleanField(
+        default=False,
+        verbose_name=_('Optional'),
+        help_text=_("This BOM item is optional")
+    )
+
+    consumable = models.BooleanField(
+        default=False,
+        verbose_name=_('Consumable'),
+        help_text=_("This BOM item is consumable (it is not tracked in build orders)")
+    )
 
     overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
                                verbose_name=_('Overage'),
@@ -2736,6 +2816,14 @@ class BomItem(DataImportMixin, models.Model):
         result_hash.update(str(self.reference).encode())
         result_hash.update(str(self.optional).encode())
         result_hash.update(str(self.inherited).encode())
+
+        # Optionally encoded for backwards compatibility
+        if self.consumable:
+            result_hash.update(str(self.consumable).encode())
+
+        # Optionally encoded for backwards compatibility
+        if self.allow_variants:
+            result_hash.update(str(self.allow_variants).encode())
 
         return str(result_hash.digest())
 

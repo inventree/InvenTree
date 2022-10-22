@@ -44,7 +44,7 @@ function printLabels(url, plugin=null) {
             }
         });
     } else {
-        window.location.href = url;
+        window.open(url);
     }
 
 }

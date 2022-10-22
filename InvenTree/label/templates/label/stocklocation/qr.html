@@ -1,5 +1,6 @@
 {% extends "label/label_base.html" %}
 
+{% load l10n %}
 {% load barcode %}
 
 {% block style %}
@@ -8,8 +9,10 @@
     position: fixed;
     left: 0mm;
     top: 0mm;
+    {% localize off %}
     height: {{ height }}mm;
     width: {{ height }}mm;
+    {% endlocalize %}
 }
 
 {% endblock %}

@@ -1,7 +1,5 @@
 """Load templates for loaded plugins."""
 
-from pathlib import Path
-
 from django.template.loaders.filesystem import Loader as FilesystemLoader
 
 from plugin import registry
@@ -26,8 +24,8 @@ class PluginTemplateLoader(FilesystemLoader):
         template_dirs = []
 
         for plugin in registry.plugins.values():
-            new_path = Path(plugin.path) / dirname
-            if Path(new_path).is_dir():
+            new_path = plugin.path().joinpath(dirname)
+            if new_path.is_dir():
                 template_dirs.append(new_path)
 
         return tuple(template_dirs)

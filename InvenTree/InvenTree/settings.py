@@ -16,7 +16,6 @@ import sys
 from pathlib import Path
 
 import django.conf.locale
-from django.core.files.storage import default_storage
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
@@ -25,7 +24,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from . import config
-from .config import get_boolean_setting, get_setting
+from .config import get_boolean_setting, get_custom_file, get_setting
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
@@ -132,9 +131,16 @@ STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
+# Backup directories
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
+DBBACKUP_SEND_EMAIL = False
+
 # Application definition
 
 INSTALLED_APPS = [
+    # Admin site integration
+    'django.contrib.admin',
 
     # InvenTree apps
     'build.apps.BuildConfig',
@@ -150,7 +156,6 @@ INSTALLED_APPS = [
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Core django modules
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'user_sessions',                # db user sessions
@@ -176,6 +181,7 @@ INSTALLED_APPS = [
     'error_report',                         # Error reporting in the admin interface
     'django_q',
     'formtools',                            # Form wizard tools
+    'dbbackup',                             # Backups - django-dbbackup
 
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
@@ -346,6 +352,12 @@ for key in db_keys:
     env_var = os.environ.get(env_key, None)
 
     if env_var:
+        # Make use PORT is int
+        if key == 'PORT':
+            try:
+                env_var = int(env_var)
+            except ValueError:
+                logger.error(f"Invalid number for {env_key}: {env_var}")
         # Override configuration value
         db_config[key] = env_var
 
@@ -503,7 +515,7 @@ DATABASES = {
 
 # Cache configuration
 cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)
-cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379')
+cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379', typecast=int)
 
 if cache_host:  # pragma: no cover
     # We are going to rely upon a possibly non-localhost for our cache,
@@ -601,10 +613,13 @@ if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
+# Store language settings for 30 days
+LANGUAGE_COOKIE_AGE = 2592000
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
     ('cs', _('Czech')),
+    ('da', _('Danish')),
     ('de', _('German')),
     ('el', _('Greek')),
     ('en', _('English')),
@@ -669,14 +684,14 @@ EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 # Email configuration options
 EMAIL_BACKEND = get_setting('INVENTREE_EMAIL_BACKEND', 'email.backend', 'django.core.mail.backends.smtp.EmailBackend')
 EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
-EMAIL_PORT = int(get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25))
+EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
 EMAIL_HOST_USER = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
 EMAIL_HOST_PASSWORD = get_setting('INVENTREE_EMAIL_PASSWORD', 'email.password', '')
 EMAIL_SUBJECT_PREFIX = get_setting('INVENTREE_EMAIL_PREFIX', 'email.prefix', '[InvenTree] ')
 EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
 EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
 
-DEFUALT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_SENDER', 'email.sender', '')
+DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_SENDER', 'email.sender', '')
 
 EMAIL_USE_LOCALTIME = False
 EMAIL_TIMEOUT = 60
@@ -718,8 +733,8 @@ SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
 SOCIALACCOUNT_STORE_TOKENS = True
 
 # settings for allauth
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3)
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int)
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int)
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
 
@@ -816,17 +831,13 @@ PLUGIN_RETRY = CONFIG.get('PLUGIN_RETRY', 5)  # how often should plugin loading 
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
 
 # User interface customization values
+CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True)
+CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
+
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
-
-CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', None)
-
-# check that the logo-file exsists in media
-if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):  # pragma: no cover
-    logger.warning(f"The custom logo file '{CUSTOM_LOGO}' could not be found in the default media storage")
-    CUSTOM_LOGO = False
 
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 
-logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
-logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
+logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
+logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")

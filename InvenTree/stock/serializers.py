@@ -46,7 +46,6 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
     """Brief serializers for a StockItem."""
 
-    location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
 
     quantity = InvenTreeDecimalField()
@@ -60,11 +59,10 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'part_name',
             'pk',
             'location',
-            'location_name',
             'quantity',
             'serial',
             'supplier_part',
-            'uid',
+            'barcode_hash',
         ]
 
     def validate_serial(self, value):
@@ -247,7 +245,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'supplier_part',
             'supplier_part_detail',
             'tracking_items',
-            'uid',
+            'barcode_hash',
             'updated',
             'purchase_price',
             'purchase_price_currency',
@@ -344,7 +342,11 @@ class SerializeStockItemSerializer(serializers.Serializer):
         serial_numbers = data['serial_numbers']
 
         try:
-            serials = InvenTree.helpers.extract_serial_numbers(serial_numbers, quantity, item.part.getLatestSerialNumberInt())
+            serials = InvenTree.helpers.extract_serial_numbers(
+                serial_numbers,
+                quantity,
+                item.part.get_latest_serial_number()
+            )
         except DjangoValidationError as e:
             raise ValidationError({
                 'serial_numbers': e.messages,
@@ -373,7 +375,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
         serials = InvenTree.helpers.extract_serial_numbers(
             data['serial_numbers'],
             data['quantity'],
-            item.part.getLatestSerialNumberInt()
+            item.part.get_latest_serial_number()
         )
 
         item.serializeStock(
@@ -570,6 +572,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pk',
             'name',
             'parent',
+            'icon',
         ]
 
 
@@ -607,6 +610,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pathstring',
             'items',
             'owner',
+            'icon',
         ]
 
 

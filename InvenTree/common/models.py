@@ -131,7 +131,7 @@ class BaseInvenTreeSetting(models.Model):
         for k, v in kwargs.items():
             key += f"_{k}:{v}"
 
-        return key
+        return key.replace(" ", "")
 
     @classmethod
     def allValues(cls, user=None, exclude_hidden=False):
@@ -876,6 +876,56 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
         },
 
+        'INVENTREE_TREE_DEPTH': {
+            'name': _('Tree Depth'),
+            'description': _('Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed.'),
+            'default': 1,
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ]
+        },
+
+        'INVENTREE_BACKUP_ENABLE': {
+            'name': _('Automatic Backup'),
+            'description': _('Enable automatic backup of database and media files'),
+            'validator': bool,
+            'default': True,
+        },
+
+        'INVENTREE_DELETE_TASKS_DAYS': {
+            'name': _('Delete Old Tasks'),
+            'description': _('Background task results will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
+        'INVENTREE_DELETE_ERRORS_DAYS': {
+            'name': _('Delete Error Logs'),
+            'description': _('Error logs will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7)
+            ]
+        },
+
+        'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
+            'name': _('Delete Noficiations'),
+            'description': _('User notifications will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),
@@ -1060,6 +1110,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': InvenTree.validators.validate_part_name_format
         },
 
+        'PART_CATEGORY_DEFAULT_ICON': {
+            'name': _('Part Category Default Icon'),
+            'description': _('Part category default icon (empty means no icon)'),
+            'default': '',
+        },
+
         'LABEL_ENABLE': {
             'name': _('Enable label printing'),
             'description': _('Enable label printing from the web interface'),
@@ -1116,6 +1172,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
+            'name': _('Globally Unique Serials'),
+            'description': _('Serial numbers for stock items must be globally unique'),
+            'default': False,
+            'validator': bool,
+        },
+
         'STOCK_BATCH_CODE_TEMPLATE': {
             'name': _('Batch Code Template'),
             'description': _('Template for generating default batch codes for stock items'),
@@ -1156,6 +1219,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable ownership control over stock locations and items'),
             'default': False,
             'validator': bool,
+        },
+
+        'STOCK_LOCATION_DEFAULT_ICON': {
+            'name': _('Stock Location Default Icon'),
+            'description': _('Stock location default icon (empty means no icon)'),
+            'default': '',
         },
 
         'BUILDORDER_REFERENCE_PATTERN': {
@@ -1258,6 +1327,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
 
+        'PLUGIN_CHECK_SIGNATURES': {
+            'name': _('Check plugin signatures'),
+            'description': _('Check and show signatures for plugins'),
+            'default': False,
+            'validator': bool,
+        },
+
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
@@ -1299,6 +1375,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
     }
+
+    typ = 'inventree'
 
     class Meta:
         """Meta options for InvenTreeSetting."""
@@ -1611,7 +1689,19 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
+        'TABLE_STRING_MAX_LENGTH': {
+            'name': _('Table String Length'),
+            'description': _('Maximimum length limit for strings displayed in table views'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 100,
+        }
     }
+
+    typ = 'user'
 
     class Meta:
         """Meta options for InvenTreeUserSetting."""

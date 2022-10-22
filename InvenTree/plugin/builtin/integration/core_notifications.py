@@ -1,11 +1,12 @@
 """Core set of Notifications as a Plugin."""
 
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from allauth.account.models import EmailAddress
 
 import common.models
+import InvenTree.helpers
 import InvenTree.tasks
 from plugin import InvenTreePlugin
 from plugin.mixins import BulkNotificationMethod, SettingsMixin
@@ -61,7 +62,12 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
             allowed_users = []
 
             for user in self.targets:
-                allows_emails = self.usersetting(user)
+
+                if not user.is_active:
+                    # Ignore any users who have been deactivated
+                    continue
+
+                allows_emails = InvenTree.helpers.str2bool(self.usersetting(user))
 
                 if allows_emails:
                     allowed_users.append(user)

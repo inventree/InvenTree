@@ -75,6 +75,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'pathstring',
             'starred',
             'url',
+            'icon',
         ]
 
 
@@ -88,6 +89,7 @@ class CategoryTree(InvenTreeModelSerializer):
             'pk',
             'name',
             'parent',
+            'icon',
         ]
 
 
@@ -238,11 +240,25 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
             'pk',
             'name',
             'units',
+            'description',
         ]
 
 
 class PartParameterSerializer(InvenTreeModelSerializer):
     """JSON serializers for the PartParameter model."""
+
+    def __init__(self, *args, **kwargs):
+        """Custom initialization method for the serializer.
+
+        Allows us to optionally include or exclude particular information
+        """
+
+        template_detail = kwargs.pop('template_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not template_detail:
+            self.fields.pop('template_detail')
 
     template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
 
@@ -744,6 +760,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'inherited',
             'note',
             'optional',
+            'consumable',
             'overage',
             'pk',
             'part',

@@ -43,6 +43,7 @@ def content_excludes():
         "exchange.rate",
         "exchange.exchangebackend",
         "common.notificationentry",
+        "common.notificationmessage",
         "user_sessions.session",
     ]
 
@@ -195,7 +196,27 @@ def translate(c):
     manage(c, "compilemessages")
 
 
-@task(post=[rebuild_models, rebuild_thumbnails])
+@task
+def backup(c):
+    """Backup the database and media files."""
+
+    print("Backing up InvenTree database...")
+    manage(c, "dbbackup --noinput --clean --compress")
+    print("Backing up InvenTree media files...")
+    manage(c, "mediabackup --noinput --clean --compress")
+
+
+@task
+def restore(c):
+    """Restore the database and media files."""
+
+    print("Restoring InvenTree database...")
+    manage(c, "dbrestore --noinput --uncompress")
+    print("Restoring InvenTree media files...")
+    manage(c, "mediarestore --noinput --uncompress")
+
+
+@task(pre=[backup, ], post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
     """Performs database migrations.
 
@@ -230,7 +251,10 @@ def update(c):
     """
     # Recompile the translation files (.mo)
     # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
-    manage(c, 'compilemessages', pty=True)
+    try:
+        manage(c, 'compilemessages', pty=True)
+    except Exception:
+        print("WARNING: Translation files could not be compiled:")
 
 
 # Data tasks
@@ -264,7 +288,7 @@ def export_records(c, filename='data.json', overwrite=False, include_permissions
 
     print(f"Exporting database records to file '{filename}'")
 
-    if filename.exists() and overwrite is False:
+    if Path(filename).is_file() and overwrite is False:
         response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
         response = str(response).strip().lower()
 

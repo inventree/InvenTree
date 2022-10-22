@@ -14,7 +14,6 @@ from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentS
 from InvenTree.serializers import UserSerializer
 
 import InvenTree.helpers
-from InvenTree.helpers import extract_serial_numbers
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.status_codes import StockStatus
 
@@ -260,7 +259,11 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         if serial_numbers:
 
             try:
-                self.serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+                self.serials = InvenTree.helpers.extract_serial_numbers(
+                    serial_numbers,
+                    quantity,
+                    part.get_latest_serial_number()
+                )
             except DjangoValidationError as e:
                 raise ValidationError({
                     'serial_numbers': e.messages,
@@ -270,12 +273,12 @@ class BuildOutputCreateSerializer(serializers.Serializer):
             existing = []
 
             for serial in self.serials:
-                if part.checkIfSerialNumberExists(serial):
+                if not part.validate_serial_number(serial):
                     existing.append(serial)
 
             if len(existing) > 0:
 
-                msg = _("The following serial numbers already exist")
+                msg = _("The following serial numbers already exist or are invalid")
                 msg += " : "
                 msg += ",".join([str(e) for e in existing])
 
@@ -473,21 +476,51 @@ class BuildCancelSerializer(serializers.Serializer):
         )
 
 
+class OverallocationChoice():
+    """Utility class to contain options for handling over allocated stock items."""
+
+    REJECT = 'reject'
+    ACCEPT = 'accept'
+    TRIM = 'trim'
+
+    OPTIONS = {
+        REJECT: ('Not permitted'),
+        ACCEPT: _('Accept as consumed by this build order'),
+        TRIM: _('Deallocate before completing this build order'),
+    }
+
+
 class BuildCompleteSerializer(serializers.Serializer):
     """DRF serializer for marking a BuildOrder as complete."""
 
-    accept_overallocated = serializers.BooleanField(
-        label=_('Accept Overallocated'),
-        help_text=_('Accept stock items which have been overallocated to this build order'),
+    def get_context_data(self):
+        """Retrieve extra context data for this serializer.
+
+        This is so we can determine (at run time) whether the build is ready to be completed.
+        """
+
+        build = self.context['build']
+
+        return {
+            'overallocated': build.has_overallocated_parts(),
+            'allocated': build.are_untracked_parts_allocated(),
+            'remaining': build.remaining,
+            'incomplete': build.incomplete_count,
+        }
+
+    accept_overallocated = serializers.ChoiceField(
+        label=_('Overallocated Stock'),
+        choices=list(OverallocationChoice.OPTIONS.items()),
+        help_text=_('How do you want to handle extra stock items assigned to the build order'),
         required=False,
-        default=False,
+        default=OverallocationChoice.REJECT,
     )
 
     def validate_accept_overallocated(self, value):
         """Check if the 'accept_overallocated' field is required"""
         build = self.context['build']
 
-        if build.has_overallocated_parts(output=None) and not value:
+        if build.has_overallocated_parts(output=None) and value == OverallocationChoice.REJECT:
             raise ValidationError(_('Some stock items have been overallocated'))
 
         return value
@@ -531,15 +564,16 @@ class BuildCompleteSerializer(serializers.Serializer):
         if build.incomplete_count > 0:
             raise ValidationError(_("Build order has incomplete outputs"))
 
-        if not build.has_build_outputs():
-            raise ValidationError(_("No build outputs have been created for this build order"))
-
         return data
 
     def save(self):
         """Complete the specified build output"""
         request = self.context['request']
         build = self.context['build']
+
+        data = self.validated_data
+        if data.get('accept_overallocated', OverallocationChoice.REJECT) == OverallocationChoice.TRIM:
+            build.trim_allocated_stock()
 
         build.complete_build(request.user)
 
@@ -750,6 +784,10 @@ class BuildAllocationSerializer(serializers.Serializer):
                 quantity = item['quantity']
                 output = item.get('output', None)
 
+                # Ignore allocation for consumable BOM items
+                if bom_item.consumable:
+                    continue
+
                 try:
                     # Create a new BuildItem to allocate stock
                     BuildItem.objects.create(
@@ -840,6 +878,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
         build_detail = kwargs.pop('build_detail', False)
         part_detail = kwargs.pop('part_detail', False)
         location_detail = kwargs.pop('location_detail', False)
+        stock_detail = kwargs.pop('stock_detail', False)
 
         super().__init__(*args, **kwargs)
 
@@ -851,6 +890,9 @@ class BuildItemSerializer(InvenTreeModelSerializer):
 
         if not location_detail:
             self.fields.pop('location_detail')
+
+        if not stock_detail:
+            self.fields.pop('stock_item_detail')
 
     class Meta:
         """Serializer metaclass"""

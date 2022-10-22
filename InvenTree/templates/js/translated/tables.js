@@ -169,42 +169,6 @@ function downloadTableData(table, opts={}) {
 
 
 
-
-/**
- * Render a URL for display
- * @param {String} text
- * @param {String} url
- * @param {object} options
- * @returns link text
- */
-function renderLink(text, url, options={}) {
-    if (url === null || url === undefined || url === '') {
-        return text;
-    }
-
-    var max_length = options.max_length || -1;
-
-    var extra = '';
-
-    if (options.download) {
-        var fn = url.split('/').at(-1);
-        extra += ` download='${fn}'`;
-    }
-
-    // Shorten the displayed length if required
-    if ((max_length > 0) && (text.length > max_length)) {
-        var slice_length = (max_length - 3) / 2;
-
-        var text_start = text.slice(0, slice_length);
-        var text_end = text.slice(-slice_length);
-
-        text = `${text_start}...${text_end}`;
-    }
-
-    return `<a href='${url}'${extra}>${text}</a>`;
-}
-
-
 function enableButtons(elements, enabled) {
     for (let item of elements) {
         $(item).prop('disabled', !enabled);
@@ -346,7 +310,9 @@ function convertQueryParameters(params, filters) {
     if ('original_search' in params) {
         var search = params['search'] || '';
 
-        params['search'] = search + ' ' + params['original_search'];
+        var clean_search = sanitizeInputString(search + ' ' + params['original_search']);
+
+        params['search'] = clean_search;
 
         delete params['original_search'];
     }

@@ -2,10 +2,37 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 69
+INVENTREE_API_VERSION = 77
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v77 -> 2022-10-12 : https://github.com/inventree/InvenTree/pull/3772
+    - Adds model permission checks for barcode assignment actions
+
+v76 -> 2022-09-10 : https://github.com/inventree/InvenTree/pull/3640
+    - Refactor of barcode data on the API
+    - StockItem.uid renamed to StockItem.barcode_hash
+
+v75 -> 2022-09-05 : https://github.com/inventree/InvenTree/pull/3644
+    - Adds "pack_size" attribute to SupplierPart API serializer
+
+v74 -> 2022-08-28 : https://github.com/inventree/InvenTree/pull/3615
+    - Add confirmation field for completing PurchaseOrder if the order has incomplete lines
+    - Add confirmation field for completing SalesOrder if the order has incomplete lines
+
+v73 -> 2022-08-24 : https://github.com/inventree/InvenTree/pull/3605
+    - Add 'description' field to PartParameterTemplate model
+
+v72 -> 2022-08-18 : https://github.com/inventree/InvenTree/pull/3567
+    - Allow PurchaseOrder to be duplicated via the API
+
+v71 -> 2022-08-18 : https://github.com/inventree/InvenTree/pull/3564
+    - Updates to the "part scheduling" API endpoint
+
+v70 -> 2022-08-02 : https://github.com/inventree/InvenTree/pull/3451
+    - Adds a 'depth' parameter to the PartCategory list API
+    - Adds a 'depth' parameter to the StockLocation list API
 
 v69 -> 2022-08-01 : https://github.com/inventree/InvenTree/pull/3443
     - Updates the PartCategory list API:

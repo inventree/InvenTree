@@ -4,8 +4,10 @@ import datetime
 
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
+from django.test import override_settings
 
 from build.models import Build
+from common.models import InvenTreeSetting
 from InvenTree.helpers import InvenTreeTestCase
 from InvenTree.status_codes import StockHistoryCode
 from part.models import Part
@@ -14,8 +16,8 @@ from .models import (StockItem, StockItemTestResult, StockItemTracking,
                      StockLocation)
 
 
-class StockTest(InvenTreeTestCase):
-    """Tests to ensure that the stock location tree functions correcly."""
+class StockTestBase(InvenTreeTestCase):
+    """Base class for running Stock tests"""
 
     fixtures = [
         'category',
@@ -43,6 +45,166 @@ class StockTest(InvenTreeTestCase):
         # Ensure the MPTT objects are correctly rebuild
         Part.objects.rebuild()
         StockItem.objects.rebuild()
+
+
+class StockTest(StockTestBase):
+    """Tests to ensure that the stock location tree functions correcly."""
+
+    def test_pathstring(self):
+        """Check that pathstring updates occur as expected"""
+
+        a = StockLocation.objects.create(name="A")
+        b = StockLocation.objects.create(name="B", parent=a)
+        c = StockLocation.objects.create(name="C", parent=b)
+        d = StockLocation.objects.create(name="D", parent=c)
+
+        def refresh():
+            a.refresh_from_db()
+            b.refresh_from_db()
+            c.refresh_from_db()
+            d.refresh_from_db()
+
+        # Initial checks
+        self.assertEqual(a.pathstring, "A")
+        self.assertEqual(b.pathstring, "A/B")
+        self.assertEqual(c.pathstring, "A/B/C")
+        self.assertEqual(d.pathstring, "A/B/C/D")
+
+        c.name = "Cc"
+        c.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "A")
+        self.assertEqual(b.pathstring, "A/B")
+        self.assertEqual(c.pathstring, "A/B/Cc")
+        self.assertEqual(d.pathstring, "A/B/Cc/D")
+
+        b.name = "Bb"
+        b.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "A")
+        self.assertEqual(b.pathstring, "A/Bb")
+        self.assertEqual(c.pathstring, "A/Bb/Cc")
+        self.assertEqual(d.pathstring, "A/Bb/Cc/D")
+
+        a.name = "Aa"
+        a.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "Aa")
+        self.assertEqual(b.pathstring, "Aa/Bb")
+        self.assertEqual(c.pathstring, "Aa/Bb/Cc")
+        self.assertEqual(d.pathstring, "Aa/Bb/Cc/D")
+
+        d.name = "Dd"
+        d.save()
+
+        refresh()
+        self.assertEqual(a.pathstring, "Aa")
+        self.assertEqual(b.pathstring, "Aa/Bb")
+        self.assertEqual(c.pathstring, "Aa/Bb/Cc")
+        self.assertEqual(d.pathstring, "Aa/Bb/Cc/Dd")
+
+        # Test a really long name
+        # (it will be clipped to < 250 characters)
+        a.name = "A" * 100
+        a.save()
+        b.name = "B" * 100
+        b.save()
+        c.name = "C" * 100
+        c.save()
+        d.name = "D" * 100
+        d.save()
+
+        refresh()
+        self.assertEqual(len(a.pathstring), 100)
+        self.assertEqual(len(b.pathstring), 201)
+        self.assertEqual(len(c.pathstring), 249)
+        self.assertEqual(len(d.pathstring), 249)
+
+        self.assertTrue(d.pathstring.startswith("AAAAAAAA"))
+        self.assertTrue(d.pathstring.endswith("DDDDDDDD"))
+
+    def test_link(self):
+        """Test the link URL field validation"""
+
+        item = StockItem.objects.get(pk=1)
+
+        # Check that invalid URLs fail
+        for bad_url in [
+            'test.com',
+            'httpx://abc.xyz',
+            'https:google.com',
+        ]:
+            with self.assertRaises(ValidationError):
+                item.link = bad_url
+                item.save()
+                item.full_clean()
+
+        # Check that valid URLs pass - and check custon schemes
+        for good_url in [
+            'https://test.com',
+            'https://digikey.com/datasheets?file=1010101010101.bin',
+            'ftp://download.com:8080/file.aspx',
+        ]:
+            item.link = good_url
+            item.save()
+            item.full_clean()
+
+        # A long URL should fail
+        long_url = 'https://website.co.uk?query=' + 'a' * 173
+
+        with self.assertRaises(ValidationError):
+            item.link = long_url
+            item.full_clean()
+
+        # Shorten by a single character, will pass
+        long_url = long_url[:-1]
+
+        item.link = long_url
+        item.save()
+
+    @override_settings(EXTRA_URL_SCHEMES=['ssh'])
+    def test_exteneded_schema(self):
+        """Test that extended URL schemes are allowed"""
+        item = StockItem.objects.get(pk=1)
+        item.link = 'ssh://user:pwd@deb.org:223'
+        item.save()
+        item.full_clean()
+
+    def test_serial_numbers(self):
+        """Test serial number uniqueness"""
+
+        # Ensure that 'global uniqueness' setting is enabled
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', True, self.user)
+
+        part_a = Part.objects.create(name='A', description='A', trackable=True)
+        part_b = Part.objects.create(name='B', description='B', trackable=True)
+
+        # Create a StockItem for part_a
+        StockItem.objects.create(
+            part=part_a,
+            quantity=1,
+            serial='ABCDE',
+        )
+
+        # Create a StockItem for part_a (but, will error due to identical serial)
+        with self.assertRaises(ValidationError):
+            StockItem.objects.create(
+                part=part_b,
+                quantity=1,
+                serial='ABCDE',
+            )
+
+        # Now, allow serial numbers to be duplicated between different parts
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, self.user)
+
+        StockItem.objects.create(
+            part=part_b,
+            quantity=1,
+            serial='ABCDE',
+        )
 
     def test_expiry(self):
         """Test expiry date functionality for StockItem model."""
@@ -111,12 +273,6 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
 
         self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
-
-    def test_barcode(self):
-        """Test format_barcode."""
-        barcode = self.office.format_barcode(brief=False)
-
-        self.assertIn('"name": "Office"', barcode)
 
     def test_strings(self):
         """Test str function."""
@@ -685,7 +841,38 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(C22.get_ancestors().count(), 1)
 
 
-class VariantTest(StockTest):
+class StockBarcodeTest(StockTestBase):
+    """Run barcode tests for the stock app"""
+
+    def test_stock_item_barcode_basics(self):
+        """Simple tests for the StockItem barcode integration"""
+
+        item = StockItem.objects.get(pk=1)
+
+        self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
+
+        # Call format_barcode method
+        barcode = item.format_barcode(brief=False)
+
+        for key in ['tool', 'version', 'instance', 'stockitem']:
+            self.assertIn(key, barcode)
+
+        # Render simple barcode data for the StockItem
+        barcode = item.barcode
+        self.assertEqual(barcode, '{"stockitem": 1}')
+
+    def test_location_barcode_basics(self):
+        """Simple tests for the StockLocation barcode integration"""
+
+        self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
+
+        loc = StockLocation.objects.get(pk=1)
+
+        barcode = loc.format_barcode(brief=True)
+        self.assertEqual('{"stocklocation": 1}', barcode)
+
+
+class VariantTest(StockTestBase):
     """Tests for calculation stock counts against templates / variants."""
 
     def test_variant_stock(self):
@@ -704,22 +891,21 @@ class VariantTest(StockTest):
 
     def test_serial_numbers(self):
         """Test serial number functionality for variant / template parts."""
+
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, self.user)
+
         chair = Part.objects.get(pk=10000)
 
         # Operations on the top-level object
-        self.assertTrue(chair.checkIfSerialNumberExists(1))
-        self.assertTrue(chair.checkIfSerialNumberExists(2))
-        self.assertTrue(chair.checkIfSerialNumberExists(3))
-        self.assertTrue(chair.checkIfSerialNumberExists(4))
-        self.assertTrue(chair.checkIfSerialNumberExists(5))
+        [self.assertFalse(chair.validate_serial_number(i)) for i in [1, 2, 3, 4, 5, 20, 21, 22]]
 
-        self.assertTrue(chair.checkIfSerialNumberExists(20))
-        self.assertTrue(chair.checkIfSerialNumberExists(21))
-        self.assertTrue(chair.checkIfSerialNumberExists(22))
+        self.assertFalse(chair.validate_serial_number(20))
+        self.assertFalse(chair.validate_serial_number(21))
+        self.assertFalse(chair.validate_serial_number(22))
 
-        self.assertFalse(chair.checkIfSerialNumberExists(30))
+        self.assertTrue(chair.validate_serial_number(30))
 
-        self.assertEqual(chair.getLatestSerialNumber(), '22')
+        self.assertEqual(chair.get_latest_serial_number(), '22')
 
         # Check for conflicting serial numbers
         to_check = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -730,10 +916,10 @@ class VariantTest(StockTest):
 
         # Same operations on a sub-item
         variant = Part.objects.get(pk=10003)
-        self.assertEqual(variant.getLatestSerialNumber(), '22')
+        self.assertEqual(variant.get_latest_serial_number(), '22')
 
         # Create a new serial number
-        n = variant.getLatestSerialNumber()
+        n = variant.get_latest_serial_number()
 
         item = StockItem(
             part=variant,
@@ -744,12 +930,6 @@ class VariantTest(StockTest):
         # This should fail
         with self.assertRaises(ValidationError):
             item.save()
-
-        # Verify items with a non-numeric serial don't offer a next serial.
-        item.serial = "string"
-        item.save()
-
-        self.assertEqual(variant.getLatestSerialNumber(), "string")
 
         # This should pass, although not strictly an int field now.
         item.serial = int(n) + 1
@@ -762,11 +942,11 @@ class VariantTest(StockTest):
         with self.assertRaises(ValidationError):
             item.save()
 
-        item.serial += 1
+        item.serial = int(n) + 2
         item.save()
 
 
-class TestResultTest(StockTest):
+class TestResultTest(StockTestBase):
     """Tests for the StockItemTestResult model."""
 
     def test_test_count(self):

@@ -66,8 +66,15 @@ secret_key.txt
 # IDE / development files
 .idea/
 *.code-workspace
-.vscode/
 .bash_history
+
+# https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
+.vscode/*
+#!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+#!.vscode/extensions.json
+#!.vscode/*.code-snippets
 
 # Coverage reports
 .coverage

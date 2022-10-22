@@ -222,6 +222,10 @@ $("#new-po-extra-line").click(function() {
         order: {{ order.pk }},
     });
 
+    {% if order.supplier.currency %}
+    fields.price_currency.value = '{{ order.supplier.currency }}';
+    {% endif %}
+
     constructForm('{% url "api-po-extra-line-list" %}', {
         fields: fields,
         method: 'POST',

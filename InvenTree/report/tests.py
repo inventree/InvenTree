@@ -9,6 +9,7 @@ from django.core.cache import cache
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.safestring import SafeString
 
 from PIL import Image
 
@@ -49,6 +50,10 @@ class ReportTagTest(TestCase):
         asset = report_tags.asset('test.txt')
         self.assertEqual(asset, '/media/report/assets/test.txt')
 
+        # Ensure that a 'safe string' also works
+        asset = report_tags.asset(SafeString('test.txt'))
+        self.assertEqual(asset, '/media/report/assets/test.txt')
+
         self.debug_mode(False)
         asset = report_tags.asset('test.txt')
         self.assertEqual(asset, f'file://{asset_dir}/test.txt')
@@ -87,8 +92,15 @@ class ReportTagTest(TestCase):
         img = report_tags.uploaded_image('part/images/test.jpg')
         self.assertEqual(img, '/media/part/images/test.jpg')
 
+        # Ensure that a 'safe string' also works
+        img = report_tags.uploaded_image(SafeString('part/images/test.jpg'))
+        self.assertEqual(img, '/media/part/images/test.jpg')
+
         self.debug_mode(False)
         img = report_tags.uploaded_image('part/images/test.jpg')
+        self.assertEqual(img, f'file://{img_path.joinpath("test.jpg")}')
+
+        img = report_tags.uploaded_image(SafeString('part/images/test.jpg'))
         self.assertEqual(img, f'file://{img_path.joinpath("test.jpg")}')
 
     def test_part_image(self):

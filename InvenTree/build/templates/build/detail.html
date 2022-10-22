@@ -455,7 +455,9 @@ function loadUntrackedStockTable() {
     );
 }
 
-loadUntrackedStockTable();
+onPanelLoad('allocate', function() {
+    loadUntrackedStockTable();
+});
 
 {% endif %}
 

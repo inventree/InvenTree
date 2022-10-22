@@ -70,6 +70,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'choices',
             'model_name',
             'api_url',
+            'typ',
         ]
 
 
@@ -93,6 +94,7 @@ class UserSettingsSerializer(SettingsSerializer):
             'choices',
             'model_name',
             'api_url',
+            'typ',
         ]
 
 
@@ -122,6 +124,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'choices',
                 'model_name',
                 'api_url',
+                'typ',
             ]
 
         # set Meta class

@@ -328,8 +328,6 @@ function constructForm(url, options) {
         constructFormBody({}, options);
     }
 
-    options.fields = options.fields || {};
-
     // Save the URL
     options.url = url;
 
@@ -350,6 +348,13 @@ function constructForm(url, options) {
 
         // Extract any custom 'context' information from the OPTIONS data
         options.context = OPTIONS.context || {};
+
+        // Construct fields (can be a static parameter or a function)
+        if (options.fieldsFunction) {
+            options.fields = options.fieldsFunction(options);
+        } else {
+            options.fields = options.fields || {};
+        }
 
         /*
          * Determine what "type" of form we want to construct,
@@ -1007,6 +1012,11 @@ function getFormFieldValue(name, field={}, options={}) {
             value = null;
         }
         break;
+    case 'string':
+    case 'url':
+    case 'email':
+        value = sanitizeInputString(el.val());
+        break;
     default:
         value = el.val();
         break;
@@ -1220,12 +1230,7 @@ function handleNestedErrors(errors, field_name, options={}) {
             // Find the target (nested) field
             var target = `${field_name}_${sub_field_name}_${nest_id}`;
 
-            for (var ii = errors.length-1; ii >= 0; ii--) {
-
-                var error_text = errors[ii];
-
-                addFieldErrorMessage(target, error_text, ii, options);
-            }
+            addFieldErrorMessage(target, errors, options);
         }
     }
 }
@@ -1302,13 +1307,7 @@ function handleFormErrors(errors, fields={}, options={}) {
                 first_error_field = field_name;
             }
 
-            // Add an entry for each returned error message
-            for (var ii = field_errors.length-1; ii >= 0; ii--) {
-
-                var error_text = field_errors[ii];
-
-                addFieldErrorMessage(field_name, error_text, ii, options);
-            }
+            addFieldErrorMessage(field_name, field_errors, options);
         }
     }
 
@@ -1330,6 +1329,16 @@ function handleFormErrors(errors, fields={}, options={}) {
  * Add a rendered error message to the provided field
  */
 function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
+
+    // Handle a 'list' of error message recursively
+    if (typeof(error_text) == 'object') {
+        // Iterate backwards through the list
+        for (var ii = error_text.length - 1; ii >= 0; ii--) {
+            addFieldErrorMessage(name, error_text[ii], ii, options);
+        }
+
+        return;
+    }
 
     field_name = getFieldName(name, options);
 
@@ -1717,7 +1726,8 @@ function initializeRelatedField(field, fields, options={}) {
                 var query = field.filters || {};
 
                 // Add search and pagination options
-                query.search = params.term;
+                query.search = sanitizeInputString(params.term);
+
                 query.offset = offset;
                 query.limit = pageSize;
 

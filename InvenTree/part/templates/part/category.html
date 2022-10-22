@@ -1,6 +1,7 @@
 {% extends "part/part_app_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block sidebar %}
 {% include 'part/category_sidebar.html' %}
@@ -12,7 +13,12 @@
 
 {% block heading %}
 {% if category %}
-{% trans "Part Category" %}: {{ category.name }}
+{% trans "Part Category" %}:
+{% settings_value "PART_CATEGORY_DEFAULT_ICON" as default_icon %}
+{% if category.icon or default_icon %}
+<span class="{{ category.icon|default:default_icon }}"></span>
+{% endif %}
+{{ category.name }}
 {% else %}
 {% trans "Parts" %}
 {% endif %}
@@ -288,7 +294,8 @@
             node.href = `/part/category/${node.pk}/`;
 
             return node;
-        }
+        },
+        defaultIcon: global_settings.PART_CATEGORY_DEFAULT_ICON,
     });
 
     onPanelLoad('subcategories', function() {

@@ -32,7 +32,7 @@ from users.api import user_urls
 
 from .api import InfoView, NotFoundView
 from .views import (AboutView, AppearanceSelectView, CurrencyRefreshView,
-                    CustomConnectionsView, CustomEmailView,
+                    CustomConnectionsView, CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
                     CustomSessionDeleteOtherView, CustomSessionDeleteView,
                     CustomTwoFactorRemove, DatabaseStatsView, DynamicJsView,
@@ -167,6 +167,9 @@ frontendpatterns = [
     # Temporary fix for django-allauth-2fa # TODO remove
     # See https://github.com/inventree/InvenTree/security/advisories/GHSA-8j76-mm54-52xq
     re_path(r'^accounts/two_factor/remove/?$', CustomTwoFactorRemove.as_view(), name='two-factor-remove'),
+
+    # Override login page
+    re_path("accounts/login/", CustomLoginView.as_view(), name="account_login"),
 
     re_path(r'^accounts/', include('allauth_2fa.urls')),    # MFA support
     re_path(r'^accounts/', include('allauth.urls')),        # included urlpatterns

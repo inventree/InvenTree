@@ -225,6 +225,64 @@ class PurchaseOrderTest(OrderTest):
             expected_code=201
         )
 
+    def test_po_duplicate(self):
+        """Test that we can duplicate a PurchaseOrder via the API"""
+
+        self.assignRole('purchase_order.add')
+
+        po = models.PurchaseOrder.objects.get(pk=1)
+
+        self.assertTrue(po.lines.count() > 0)
+
+        # Add some extra line items to this order
+        for idx in range(5):
+            models.PurchaseOrderExtraLine.objects.create(
+                order=po,
+                quantity=idx + 10,
+                reference='some reference',
+            )
+
+        data = self.get(reverse('api-po-detail', kwargs={'pk': 1})).data
+
+        del data['pk']
+        del data['reference']
+
+        data['duplicate_order'] = 1
+        data['duplicate_line_items'] = True
+        data['duplicate_extra_lines'] = False
+
+        data['reference'] = 'PO-9999'
+
+        # Duplicate via the API
+        response = self.post(
+            reverse('api-po-list'),
+            data,
+            expected_code=201
+        )
+
+        # Order is for the same supplier
+        self.assertEqual(response.data['supplier'], po.supplier.pk)
+
+        po_dup = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+
+        self.assertEqual(po_dup.extra_lines.count(), 0)
+        self.assertEqual(po_dup.lines.count(), po.lines.count())
+
+        data['reference'] = 'PO-9998'
+        data['duplicate_line_items'] = False
+        data['duplicate_extra_lines'] = True
+
+        response = self.post(
+            reverse('api-po-list'),
+            data,
+            expected_code=201,
+        )
+
+        po_dup = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+
+        self.assertEqual(po_dup.extra_lines.count(), po.extra_lines.count())
+        self.assertEqual(po_dup.lines.count(), 0)
+
     def test_po_cancel(self):
         """Test the PurchaseOrderCancel API endpoint."""
         po = models.PurchaseOrder.objects.get(pk=1)
@@ -264,7 +322,19 @@ class PurchaseOrderTest(OrderTest):
 
         self.assignRole('purchase_order.add')
 
-        self.post(url, {}, expected_code=201)
+        # Should fail due to incomplete lines
+        response = self.post(url, {}, expected_code=400)
+
+        self.assertIn('Order has incomplete line items', str(response.data['accept_incomplete']))
+
+        # Post again, accepting incomplete line items
+        self.post(
+            url,
+            {
+                'accept_incomplete': True,
+            },
+            expected_code=201
+        )
 
         po.refresh_from_db()
 
@@ -512,11 +582,11 @@ class PurchaseOrderReceiveTest(OrderTest):
         """Tests for checking in items with invalid barcodes:
 
         - Cannot check in "duplicate" barcodes
-        - Barcodes cannot match UID field for existing StockItem
+        - Barcodes cannot match 'barcode_hash' field for existing StockItem
         """
         # Set stock item barcode
         item = StockItem.objects.get(pk=1)
-        item.uid = 'MY-BARCODE-HASH'
+        item.barcode_hash = 'MY-BARCODE-HASH'
         item.save()
 
         response = self.post(
@@ -635,8 +705,8 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(stock_2.last().location.pk, 2)
 
         # Barcodes should have been assigned to the stock items
-        self.assertTrue(StockItem.objects.filter(uid='MY-UNIQUE-BARCODE-123').exists())
-        self.assertTrue(StockItem.objects.filter(uid='MY-UNIQUE-BARCODE-456').exists())
+        self.assertTrue(StockItem.objects.filter(barcode_hash='MY-UNIQUE-BARCODE-123').exists())
+        self.assertTrue(StockItem.objects.filter(barcode_hash='MY-UNIQUE-BARCODE-456').exists())
 
     def test_batch_code(self):
         """Test that we can supply a 'batch code' when receiving items."""

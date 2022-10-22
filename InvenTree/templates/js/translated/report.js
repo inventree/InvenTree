@@ -152,7 +152,7 @@ function printTestReports(items) {
                                 href += `item=${item}&`;
                             });
 
-                            window.location.href = href;
+                            window.open(href);
                         }
                     }
                 );
@@ -205,7 +205,7 @@ function printBuildReports(builds) {
                                 href += `build=${build}&`;
                             });
 
-                            window.location.href = href;
+                            window.open(href);
                         }
                     }
                 );
@@ -259,7 +259,7 @@ function printBomReports(parts) {
                                 href += `part=${part}&`;
                             });
 
-                            window.location.href = href;
+                            window.open(href);
                         }
                     }
                 );
@@ -313,7 +313,7 @@ function printPurchaseOrderReports(orders) {
                                 href += `order=${order}&`;
                             });
 
-                            window.location.href = href;
+                            window.open(href);
                         }
                     }
                 );
@@ -367,7 +367,7 @@ function printSalesOrderReports(orders) {
                                 href += `order=${order}&`;
                             });
 
-                            window.location.href = href;
+                            window.open(href);
                         }
                     }
                 );

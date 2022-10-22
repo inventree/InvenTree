@@ -27,7 +27,7 @@ class PluginAppConfig(AppConfig):
     def ready(self):
         """The ready method is extended to initialize plugins."""
         if settings.PLUGINS_ENABLED:
-            if not canAppAccessDatabase(allow_test=True):
+            if not canAppAccessDatabase(allow_test=True, allow_plugins=True):
                 logger.info("Skipping plugin loading sequence")  # pragma: no cover
             else:
                 logger.info('Loading InvenTree plugins')
@@ -43,7 +43,7 @@ class PluginAppConfig(AppConfig):
                         pass
 
                     # get plugins and init them
-                    registry.collect_plugins()
+                    registry.plugin_modules = registry.collect_plugins()
                     registry.load_plugins()
 
                     # drop out of maintenance

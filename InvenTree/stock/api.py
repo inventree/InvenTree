@@ -26,7 +26,7 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
-                               str2bool)
+                               str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
@@ -241,6 +241,8 @@ class StockLocationList(ListCreateAPI):
 
         cascade = str2bool(params.get('cascade', False))
 
+        depth = str2int(params.get('depth', None))
+
         # Do not filter by location
         if loc_id is None:
             pass
@@ -251,6 +253,9 @@ class StockLocationList(ListCreateAPI):
             if not cascade:
                 queryset = queryset.filter(parent=None)
 
+            if cascade and depth is not None:
+                queryset = queryset.filter(level__lte=depth)
+
         else:
 
             try:
@@ -259,6 +264,9 @@ class StockLocationList(ListCreateAPI):
                 # All sub-locations to be returned too?
                 if cascade:
                     parents = location.get_descendants(include_self=True)
+                    if depth is not None:
+                        parents = parents.filter(level__lte=location.level + depth)
+
                     parent_ids = [p.id for p in parents]
                     queryset = queryset.filter(parent__in=parent_ids)
 
@@ -555,23 +563,35 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
             # If serial numbers are specified, check that they match!
             try:
-                serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+                serials = extract_serial_numbers(
+                    serial_numbers,
+                    quantity,
+                    part.get_latest_serial_number()
+                )
 
-                # Determine if any of the specified serial numbers already exist!
-                existing = []
+                # Determine if any of the specified serial numbers are invalid
+                # Note "invalid" means either they already exist, or do not pass custom rules
+                invalid = []
+                errors = []
 
                 for serial in serials:
-                    if part.checkIfSerialNumberExists(serial):
-                        existing.append(serial)
+                    try:
+                        part.validate_serial_number(serial, raise_error=True)
+                    except DjangoValidationError as exc:
+                        # Catch raised error to extract specific error information
+                        invalid.append(serial)
 
-                if len(existing) > 0:
+                        if exc.message not in errors:
+                            errors.append(exc.message)
 
-                    msg = _("The following serial numbers already exist")
+                if len(errors) > 0:
+
+                    msg = _("The following serial numbers already exist or are invalid")
                     msg += " : "
-                    msg += ",".join([str(e) for e in existing])
+                    msg += ",".join([str(e) for e in invalid])
 
                     raise ValidationError({
-                        'serial_numbers': [msg],
+                        'serial_numbers': errors + [msg]
                     })
 
             except DjangoValidationError as e:
