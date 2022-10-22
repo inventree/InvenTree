@@ -1471,13 +1471,16 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         // How many rows are fully allocated?
         var allocated_rows = 0;
 
-        bom_items.forEach(function(row) {
-            $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+        for (var idx = 0; idx < bom_items.length; idx++) {
+            var row = bom_items[idx];
 
             if (isRowFullyAllocated(row)) {
-                allocated_rows += 1;
+                allocated_rows++;
             }
-        });
+        }
+
+        // Reload table data
+        $(table).bootstrapTable('load', bom_items);
 
         // Find the top-level progess bar for this build output
         var output_progress_bar = $(`#output-progress-${outputId}`);
