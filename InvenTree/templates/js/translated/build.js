@@ -1036,9 +1036,12 @@ function loadBuildOutputTable(build_info, options={}) {
                     // Now that the allocations have been grouped by stock item,
                     // we can update each row in the table,
                     // using the pk value of each row (stock item)
+
+                    var data = [];
+
                     rows.forEach(function(row) {
                         row.allocations = allocations[row.pk] || [];
-                        $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+                        data.push(row);
 
                         var n_completed_lines = 0;
 
@@ -1066,6 +1069,9 @@ function loadBuildOutputTable(build_info, options={}) {
                             }
                         });
                     });
+
+                    // Reload table with updated data
+                    $(table).bootstrapTable('load', data);
                 }
             }
         );
