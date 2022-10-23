@@ -1,5 +1,5 @@
-name: installer
-help: Installer for InvenTree
+name: install
+help: Interactive installer for InvenTree
 version: 2.0
 
 args:
@@ -23,6 +23,6 @@ flags:
   help: Dry run (do not install anything)
 
 examples:
-- installer
-- installer master --no-call
-- installer master matmair --dry-run
+- install
+- install master --no-call
+- install master matmair --dry-run

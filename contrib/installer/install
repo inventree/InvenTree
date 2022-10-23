@@ -122,21 +122,21 @@ version_command() {
 }
 
 # :command.usage
-installer_usage() {
+install_usage() {
   if [[ -n $long_usage ]]; then
-    printf "installer - Installer for InvenTree\n"
+    printf "install - Interactive installer for InvenTree\n"
     echo
 
   else
-    printf "installer - Installer for InvenTree\n"
+    printf "install - Interactive installer for InvenTree\n"
     echo
 
   fi
 
   printf "Usage:\n"
-  printf "  installer [SOURCE] [PUBLISHER] [OPTIONS]\n"
-  printf "  installer --help | -h\n"
-  printf "  installer --version | -v\n"
+  printf "  install [SOURCE] [PUBLISHER] [OPTIONS]\n"
+  printf "  install --help | -h\n"
+  printf "  install --version | -v\n"
   echo
 
   # :command.long_usage
@@ -180,9 +180,9 @@ installer_usage() {
 
     # :command.usage_examples
     printf "Examples:\n"
-    printf "  installer\n"
-    printf "  installer master --no-call\n"
-    printf "  installer master matmair --dry-run\n"
+    printf "  install\n"
+    printf "  install master --no-call\n"
+    printf "  install master matmair --dry-run\n"
     echo
 
   fi
@@ -245,7 +245,7 @@ parse_requirements() {
 
   --help | -h )
     long_usage=yes
-    installer_usage
+    install_usage
     exit
     ;;
 
