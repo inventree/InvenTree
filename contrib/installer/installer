@@ -19,6 +19,8 @@ root_command() {
   no_call=${args[--no-call]}
   dry_run=${args[--dry-run]}
 
+  REQS="wget apt-transport-https"
+
   function do_call() {
       if [[ $dry_run ]]; then
           echo -e "### DRY RUN: \n$1"
@@ -54,11 +56,43 @@ root_command() {
 
   echo "### Installer for InvenTree - source: $publisher/$source_url"
 
+  # Check if os and version is supported
   get_distribution
   echo "### Detected distribution: $OS $VER"
+  NOT_SUPPORTED=false
+  case "$OS" in
+      Ubuntu)
+          if [[ $VER != "20.04" ]]; then
+              NOT_SUPPORTED=true
+          fi
+          ;;
+      Debian | Raspbian))
+          if [[ $VER != "11" ]]; then
+              NOT_SUPPORTED=true
+          fi
+          ;;
+      *)
+          echo "### Distribution not supported"
+          NOT_SUPPORTED=true
+          ;;
+  esac
+
+  if [[ $NOT_SUPPORTED ]]; then
+      echo "This OS is currently not supported"
+      echo "please install manually using https://inventree.readthedocs.io/en/stable/start/install/"
+      echo "or check https://github.com/inventree/InvenTree/issues/3836 for packaging for your OS"
+
+      exit 1
+  fi
 
   echo "### Installing required packages for download"
-  do_call "sudo apt-get install wget apt-transport-https -y"
+  for pkg in $REQS; do
+      if dpkg-query -W -f'${Status}' "$pkg" 2>/dev/null | grep -q "ok installed"; then
+          true
+      else
+          do_call "sudo apt-get -yqq install $pkg"
+      fi
+  done
 
   echo "### Adding key and package source"
   # Add key
