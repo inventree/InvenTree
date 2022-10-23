@@ -5,6 +5,8 @@ publisher=${args[publisher]}
 no_call=${args[--no-call]}
 dry_run=${args[--dry-run]}
 
+REQS="wget apt-transport-https"
+
 function do_call() {
     if [[ $dry_run ]]; then
         echo -e "### DRY RUN: \n$1"
@@ -44,7 +46,13 @@ get_distribution
 echo "### Detected distribution: $OS $VER"
 
 echo "### Installing required packages for download"
-do_call "sudo apt-get install wget apt-transport-https -y"
+for pkg in $REQS; do
+    if dpkg-query -W -f'${Status}' "$pkg" 2>/dev/null | grep -q "ok installed"; then
+        true
+    else
+        do_call "sudo apt-get -yqq install $pkg"
+    fi
+done
 
 echo "### Adding key and package source"
 # Add key
