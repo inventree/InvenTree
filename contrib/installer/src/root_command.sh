@@ -52,7 +52,7 @@ case "$OS" in
             NOT_SUPPORTED=true
         fi
         ;;
-    Debian | Raspbian))
+    Debian | Raspbian)
         if [[ $VER != "11" ]]; then
             NOT_SUPPORTED=true
         fi
