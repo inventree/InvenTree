@@ -38,7 +38,7 @@ function get_distribution {
     fi
 }
 
-echo "Installer for InvenTree - source: $publisher/$source_url"
+echo "### Installer for InvenTree - source: $publisher/$source_url"
 
 get_distribution
 echo "### Detected distribution: $OS $VER"
