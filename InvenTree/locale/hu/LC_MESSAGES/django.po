@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-22 07:58+0000\n"
-"PO-Revision-Date: 2022-10-22 12:01\n"
+"PO-Revision-Date: 2022-10-23 11:56\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -132,7 +132,7 @@ msgstr "Üres sorozatszám"
 
 #: InvenTree/helpers.py:633
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Duplikált sorozatszám"
 
 #: InvenTree/helpers.py:662
 #, python-brace-format
@@ -1116,7 +1116,7 @@ msgstr "Szükséges tételek automatikus hozzárendelése a megfelelő sorozatsz
 
 #: build/serializers.py:281 stock/api.py:589
 msgid "The following serial numbers already exist or are invalid"
-msgstr ""
+msgstr "A következő sorozatszámok már léteznek vagy nem megfelelőek"
 
 #: build/serializers.py:330 build/serializers.py:399
 msgid "A list of build outputs must be provided"
@@ -1787,35 +1787,35 @@ msgstr "Alapértelmezett mélység a fa nézetekben. A mélyebb szintek betölt�
 
 #: common/models.py:890
 msgid "Automatic Backup"
-msgstr ""
+msgstr "Automatikus biztonsági mentés"
 
 #: common/models.py:891
 msgid "Enable automatic backup of database and media files"
-msgstr ""
+msgstr "Adatbázis és média fájlok automatikus biztonsági mentése"
 
 #: common/models.py:897
 msgid "Delete Old Tasks"
-msgstr ""
+msgstr "Régi feladatok törlése"
 
 #: common/models.py:898
 msgid "Background task results will be deleted after specified number of days"
-msgstr ""
+msgstr "Háttérfolyamat eredmények törlése megadott nap eltelte után"
 
 #: common/models.py:908
 msgid "Delete Error Logs"
-msgstr ""
+msgstr "Hibanapló törlése"
 
 #: common/models.py:909
 msgid "Error logs will be deleted after specified number of days"
-msgstr ""
+msgstr "Hibanapló bejegyzések törlése megadott nap eltelte után"
 
 #: common/models.py:919
 msgid "Delete Noficiations"
-msgstr ""
+msgstr "Értesítések törlése"
 
 #: common/models.py:920
 msgid "User notifications will be deleted after specified number of days"
-msgstr ""
+msgstr "Felhasználói értesítések törlése megadott nap eltelte után"
 
 #: common/models.py:930 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
@@ -2095,11 +2095,11 @@ msgstr "Teszt riport nyomtatáskor egy másolat hozzáadása a készlet tételhe
 
 #: common/models.py:1176
 msgid "Globally Unique Serials"
-msgstr ""
+msgstr "Globálisan egyedi sorozatszámok"
 
 #: common/models.py:1177
 msgid "Serial numbers for stock items must be globally unique"
-msgstr ""
+msgstr "A sorozatszámoknak egyedinek kell lennie a teljes készletre vonatkozóan"
 
 #: common/models.py:1183
 msgid "Batch Code Template"
@@ -2762,7 +2762,7 @@ msgstr "Készlet érkezett egy beszerzési megrendeléshez"
 
 #: common/notifications.py:415
 msgid "Error raised by plugin"
-msgstr ""
+msgstr "Plugin hiba"
 
 #: common/views.py:85 order/templates/order/purchase_order_detail.html:23
 #: order/views.py:102 part/views.py:112
@@ -4502,7 +4502,7 @@ msgstr "A '{p1}' alkatrész a '{p2}' alkatrészjegyzékében már szerepel (reku
 
 #: part/models.py:601
 msgid "Stock item with this serial number already exists"
-msgstr ""
+msgstr "Létezik már készlet tétel ilyen a sorozatszámmal"
 
 #: part/models.py:732
 msgid "Duplicate IPN not allowed in part settings"
@@ -5851,17 +5851,17 @@ msgstr "Nincs dátum"
 
 #: plugin/registry.py:431
 msgid "Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!"
-msgstr ""
+msgstr "A {plg_name} plugin nem kompatibilis az aktuális applikáció verzióval {version.inventreeVersion()}!"
 
 #: plugin/registry.py:433
 #, python-brace-format
 msgid "Plugin requires at least version {plg_i.MIN_VERSION}"
-msgstr ""
+msgstr "A pluginhoz minimum {plg_i.MIN_VERSION} verzió kell"
 
 #: plugin/registry.py:435
 #, python-brace-format
 msgid "Plugin requires at most version {plg_i.MAX_VERSION}"
-msgstr ""
+msgstr "A pluginhoz maximum {plg_i.MAX_VERSION} verzió kell"
 
 #: plugin/samples/integration/sample.py:39
 msgid "Enable PO"
