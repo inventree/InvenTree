@@ -130,7 +130,7 @@ function detect_envs() {
     export INVENTREE_DB_USER=${INVENTREE_DB_USER:-sampleuser}
     export INVENTREE_DB_PASSWORD=${INVENTREE_DB_PASSWORD:-samplepassword}
     export INVENTREE_DB_HOST=${INVENTREE_DB_HOST:-samplehost}
-    export INVENTREE_DB_PORT=${INVENTREE_DB_PORT:-sampleport}
+    export INVENTREE_DB_PORT=${INVENTREE_DB_PORT:-12543}
 
     export SETUP_CONF_LOADED=true
   fi
@@ -275,7 +275,7 @@ function set_env() {
   # Database host
   sed -i s=#HOST:\ samplehost=HOST:\ ${INVENTREE_DB_HOST}=g ${INVENTREE_CONFIG_FILE}
   # Database port
-  sed -i s=#PORT:\ sampleport=PORT:\ ${INVENTREE_DB_PORT}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#PORT:\ 12543=PORT:\ ${INVENTREE_DB_PORT}=g ${INVENTREE_CONFIG_FILE}
 
   # Fixing the permissions
   chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} ${INVENTREE_CONFIG_FILE}

@@ -32,7 +32,7 @@ database:
   #USER: sampleuser
   #PASSWORD: samplepassword
   #HOST: samplehost
-  #PORT: sampleport
+  #PORT: 12543
 
   # --- Example Configuration - MySQL ---
   #ENGINE: mysql
