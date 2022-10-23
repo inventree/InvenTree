@@ -13,7 +13,35 @@ function do_call() {
     fi
 }
 
+function get_distribution {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        OS=$NAME
+        VER=$VERSION_ID
+    elif type lsb_release >/dev/null 2>&1; then
+        OS=$(lsb_release -si)
+        VER=$(lsb_release -sr)
+    elif [ -f /etc/lsb-release ]; then
+        . /etc/lsb-release
+        OS=$DISTRIB_ID
+        VER=$DISTRIB_RELEASE
+    elif [ -f /etc/debian_version ]; then
+        OS=Debian
+        VER=$(cat /etc/debian_version)
+    elif [ -f /etc/SuSe-release ]; then
+        OS=SEL
+    elif [ -f /etc/redhat-release ]; then
+        OS=RedHat
+    else
+        OS=$(uname -s)
+        VER=$(uname -r)
+    fi
+}
+
 echo "Installer for InvenTree - source: $publisher/$source_url"
+
+get_distribution
+echo "### Detected distribution: $OS $VER"
 
 echo "### Installing required packages for download"
 do_call "sudo apt-get install wget apt-transport-https -y"
