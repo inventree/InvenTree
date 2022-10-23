@@ -138,7 +138,7 @@ There are several options to deploy InvenTree.
 
 Single line install:
 ```bash
-curl https://raw.githubusercontent.com/InvenTree/InvenTree/master/contrib/install.sh | sh
+wget -Nq https://raw.githubusercontent.com/InvenTree/InvenTree/mater/contrib/installer.sh && bash installer.sh
 ```
 
 <!-- Contributing -->
