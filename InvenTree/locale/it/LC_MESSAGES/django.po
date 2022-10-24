@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-22 07:58+0000\n"
-"PO-Revision-Date: 2022-10-22 12:01\n"
+"PO-Revision-Date: 2022-10-24 17:08\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -92,15 +92,15 @@ msgstr "È necessario digitare la stessa e-mail ogni volta."
 
 #: InvenTree/helpers.py:158
 msgid "Connection error"
-msgstr ""
+msgstr "Errore di connessione"
 
 #: InvenTree/helpers.py:162 InvenTree/helpers.py:167
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "Il server ha risposto con un codice di stato non valido"
 
 #: InvenTree/helpers.py:164
 msgid "Exception occurred"
-msgstr ""
+msgstr "Si è verificata un'eccezione"
 
 #: InvenTree/helpers.py:172
 msgid "Server responded with invalid Content-Length value"
