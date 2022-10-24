@@ -219,11 +219,13 @@ class CategoryDetail(CustomRetrieveUpdateDestroyAPI):
     def destroy(self, request, *args, **kwargs):
         """Delete a Part category instance via the API
         """
+        delete_parts = 'delete_parts' in request.data and request.data['delete_parts'] == '1'
+        delete_child_categories = 'delete_child_categories' in request.data and request.data['delete_child_categories'] == '1'
         return super(CategoryDetail, self).destroy(request,
                                                    *args,
                                                    **dict(kwargs,
-                                                          delete_parts=request.POST.get('delete_parts', False),
-                                                          delete_child_categories=request.POST.get('delete_child_categories', False)))
+                                                          delete_parts=delete_parts,
+                                                          delete_child_categories=delete_child_categories))
 
 
 class CategoryMetadata(RetrieveUpdateAPI):
