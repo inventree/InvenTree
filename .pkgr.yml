@@ -2,7 +2,7 @@ name: inventree
 description: Open Source Inventory Management System
 homepage: https://inventree.org
 notifications: false
-buildpack: https://github.com/mjmair/heroku-buildpack-python#v216-mjmair_2204
+buildpack: https://github.com/mjmair/heroku-buildpack-python#v216-mjmair
 env:
   - STACK=heroku-20
   - DISABLE_COLLECTSTATIC=1
@@ -31,11 +31,6 @@ targets:
       - gettext
       - nginx
       - jq
-      - libreadline-gplv2-dev
-      - libncursesw5-dev
       - libssl-dev
-      - libsqlite3-dev
-      - tk-dev
-      - libgdbm-dev
-      - libc6-dev
-      - libbz2-dev
+    before:
+      - apt-get -y install libssl-dev python3-openssl
