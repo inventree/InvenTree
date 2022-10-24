@@ -33,4 +33,4 @@ targets:
       - jq
       - libssl-dev
     before:
-      - sudo apt-get -y install libssl-dev python3-openssl
+      - sudo apt-get -y install libssl-dev
