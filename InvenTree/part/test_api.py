@@ -1,7 +1,7 @@
 """Unit tests for the various part API endpoints"""
 
-from random import randint
 from enum import IntEnum
+from random import randint
 
 from django.urls import reverse
 
@@ -295,6 +295,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             self.assertEqual(response.data['description'], 'A part category')
 
     def test_category_delete(self):
+        """Test category deletion with different parameters"""
+
         class Target(IntEnum):
             move_subcategories_to_parent_move_parts_to_parent = 0,
             move_subcategories_to_parent_delete_parts = 1,

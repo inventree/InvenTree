@@ -29,7 +29,7 @@ repos:
     hooks:
     -   id: isort
 -   repo: https://github.com/jazzband/pip-tools
-    rev: 6.8.0
+    rev: 6.9.0
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
