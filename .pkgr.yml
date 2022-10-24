@@ -36,5 +36,5 @@ targets:
       - sudo apt-get -y install libssl-dev
       - wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/openssl_1.1.1f-1ubuntu2.16_amd64.deb
       - wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2.16_amd64.deb
-      - sudo dpkg --force-confold -i libssl-dev_1.1.1f-1ubuntu2.16_amd64.deb
-      - sudo dpkg --force-confold -i openssl_1.1.1f-1ubuntu2.16_amd64.deb
+      - dpkg --force-confold -i libssl-dev_1.1.1f-1ubuntu2.16_amd64.deb
+      - dpkg --force-confold -i openssl_1.1.1f-1ubuntu2.16_amd64.deb
