@@ -46,6 +46,7 @@ targets:
       - gettext
       - nginx
       - jq
+      - libssl-dev
   debian-11:
     dependencies:
       - curl
