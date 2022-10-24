@@ -34,4 +34,7 @@ targets:
       - libssl-dev
     before:
       - sudo apt-get -y install libssl-dev
-      - sudo apt-get -y install libssl1.1
+      - sudo wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/openssl_1.1.1f-1ubuntu2.16_amd64.deb
+      - sudo wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2.16_amd64.deb
+      - sudo dpkg -i libssl-dev_1.1.1f-1ubuntu2.16_amd64.deb
+      - sudo sudo dpkg -i openssl_1.1.1f-1ubuntu2.16_amd64.deb
