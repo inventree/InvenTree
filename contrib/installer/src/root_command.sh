@@ -66,7 +66,9 @@ esac
 if [[ $NOT_SUPPORTED ]]; then
     echo "This OS is currently not supported"
     echo "please install manually using https://inventree.readthedocs.io/en/stable/start/install/"
-    echo "or check https://github.com/inventree/InvenTree/issues/3836 for packaging for your OS"
+    echo "or check https://github.com/inventree/InvenTree/issues/3836 for packaging for your OS."
+    echo "If you think this is a bug please file an issue at"
+    echo "https://github.com/inventree/InvenTree/issues/new?template=install.yaml"
 
     exit 1
 fi
