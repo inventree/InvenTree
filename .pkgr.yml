@@ -34,3 +34,4 @@ targets:
       - libssl-dev
     before:
       - sudo apt-get -y install libssl-dev
+      - sudo apt-get -y install libssl1.1
