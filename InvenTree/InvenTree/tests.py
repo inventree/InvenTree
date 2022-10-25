@@ -287,6 +287,7 @@ class TestHelpers(TestCase):
                             raise exc
 
                     retries -= 1
+                    time.sleep(5)
 
         # Attempt to download an image which throws a 404
         dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
