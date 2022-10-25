@@ -293,7 +293,7 @@ class TestHelpers(TestCase):
         dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
 
         # Attempt to download, but timeout
-        dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.Timeout)
+        dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.Timeout, timeout=1)
 
         # Attempt to download, but not a valid image
         dl_helper("https://httpstat.us/200", TypeError, timeout=10)
