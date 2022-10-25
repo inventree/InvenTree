@@ -48,7 +48,9 @@ class BarcodeScan(APIView):
         """
         data = request.data
 
-        if 'barcode' not in data:
+        barcode_data = data.get('barcode', None)
+
+        if not barcode_data:
             raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
 
         # Ensure that the default barcode handlers are run first
@@ -57,7 +59,6 @@ class BarcodeScan(APIView):
             InvenTreeExternalBarcodePlugin(),
         ] + registry.with_mixin('barcode')
 
-        barcode_data = data.get('barcode')
         barcode_hash = hash_barcode(barcode_data)
 
         # Look for a barcode plugin which knows how to deal with this barcode
