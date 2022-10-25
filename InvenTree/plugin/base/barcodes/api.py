@@ -48,8 +48,10 @@ class BarcodeScan(APIView):
         """
         data = request.data
 
-        if 'barcode' not in data:
-            raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
+        barcode_data = data.get('barcode', None)
+
+        if not barcode_data:
+            raise ValidationError({'barcode': _('Missing barcode data')})
 
         # Ensure that the default barcode handlers are run first
         plugins = [
@@ -57,7 +59,6 @@ class BarcodeScan(APIView):
             InvenTreeExternalBarcodePlugin(),
         ] + registry.with_mixin('barcode')
 
-        barcode_data = data.get('barcode')
         barcode_hash = hash_barcode(barcode_data)
 
         # Look for a barcode plugin which knows how to deal with this barcode
@@ -106,10 +107,10 @@ class BarcodeAssign(APIView):
 
         data = request.data
 
-        if 'barcode' not in data:
-            raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
+        barcode_data = data.get('barcode', None)
 
-        barcode_data = data['barcode']
+        if not barcode_data:
+            raise ValidationError({'barcode': _('Missing barcode data')})
 
         # Here we only check against 'InvenTree' plugins
         plugins = [
