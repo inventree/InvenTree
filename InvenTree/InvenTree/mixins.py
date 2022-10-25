@@ -1,8 +1,7 @@
 """Mixins for (API) views in the whole project."""
 
-from rest_framework import generics, status
+from rest_framework import generics, mixins, status
 from rest_framework.response import Response
-from rest_framework import mixins
 
 from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
 
@@ -110,15 +109,15 @@ class RetrieveUpdateAPI(CleanMixin, generics.RetrieveUpdateAPIView):
 # The CustomDestroyModelMixin, CustomRetrieveUpdateDestroyAPIView, CustomRetrieveUpdateDestroyAPI
 # classes were created to being able to pass the kwargs from the API to the models
 class CustomDestroyModelMixin:
-    """
-    Destroy a model instance.
-    """
+    """Destroy a model instance"""
     def destroy(self, request, *args, **kwargs):
+        """Custom destroy method to pass kwargs"""
         instance = self.get_object()
         self.perform_destroy(instance, **kwargs)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_destroy(self, instance, **kwargs):
+        """Custom destroy method to pass kwargs"""
         instance.delete(**kwargs)
 
 
@@ -126,19 +125,21 @@ class CustomRetrieveUpdateDestroyAPIView(mixins.RetrieveModelMixin,
                                          mixins.UpdateModelMixin,
                                          CustomDestroyModelMixin,
                                          generics.GenericAPIView):
-    """
-    Concrete view for retrieving, updating or deleting a model instance.
-    """
+    """Concrete view for retrieving, updating or deleting a model instance"""
     def get(self, request, *args, **kwargs):
+        """Custom get method to pass kwargs"""
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
+        """Custom put method to pass kwargs"""
         return self.update(request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
+        """Custom patch method to pass kwargs"""
         return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        """Custom delete method to pass kwargs"""
         return self.destroy(request, *args, **kwargs)
 
 

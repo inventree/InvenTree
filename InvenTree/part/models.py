@@ -64,35 +64,33 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     """
 
     def delete_recursive(self, *args, **kwargs):
+        """This function handles the recursive deletion of subcategories depending on kwargs contents"""
         delete_parts = kwargs.get('delete_parts', False)
         parent_category = kwargs.get('parent_category', None)
         if parent_category is None:
             # First iteration, (no part_category kwargs passed)
             parent_category = self.parent
-        try:
-            for child_part in self.parts.all():
-                if delete_parts:
-                    child_part.delete()
-                else:
-                    child_part.category = parent_category
-                    child_part.save()
+        for child_part in self.parts.all():
+            if delete_parts:
+                child_part.delete()
+            else:
+                child_part.category = parent_category
+                child_part.save()
 
-            for child in self.children.all():
-                if kwargs.get('delete_child_categories', False):
-                    child.delete_recursive(**dict(delete_child_categories=True,
-                                                  delete_parts=delete_parts,
-                                                  parent_category=parent_category))
-                else:
-                    child.parent = parent_category
-                    child.save()
+        for child in self.children.all():
+            if kwargs.get('delete_child_categories', False):
+                child.delete_recursive(**dict(delete_child_categories=True,
+                                              delete_parts=delete_parts,
+                                              parent_category=parent_category))
+            else:
+                child.parent = parent_category
+                child.save()
 
-            super().delete(*args, **dict())
-
-        except:
-            pass
+        super().delete(*args, **dict())
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
+
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
         with transaction.atomic():
