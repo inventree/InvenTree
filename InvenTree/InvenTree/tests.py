@@ -258,7 +258,7 @@ class TestHelpers(TestCase):
     def test_download_image(self):
         """Test function for downloading image from remote URL"""
 
-        # Run check with a sequency of bad URLs
+        # Run check with a sequence of bad URLs
         for url in [
             "blog",
             "htp://test.com/?",
@@ -286,14 +286,14 @@ class TestHelpers(TestCase):
                             # Re-throw this error
                             raise exc
 
+                    time.sleep(30)
                     retries -= 1
-                    time.sleep(5)
 
         # Attempt to download an image which throws a 404
         dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
 
         # Attempt to download, but timeout
-        dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.Timeout, timeout=1)
+        dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.ReadTimeout, timeout=1)
 
         # Attempt to download, but not a valid image
         dl_helper("https://httpstat.us/200", TypeError, timeout=10)
