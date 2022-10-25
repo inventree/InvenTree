@@ -106,10 +106,10 @@ class BarcodeAssign(APIView):
 
         data = request.data
 
-        if 'barcode' not in data:
-            raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
+        barcode_data = data.get('barcode', None)
 
-        barcode_data = data['barcode']
+        if not barcode_data:
+            raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
 
         # Here we only check against 'InvenTree' plugins
         plugins = [
