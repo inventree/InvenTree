@@ -12,13 +12,10 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-from django_ical.views import ICalFeed
 from common.files import FileManager
 from common.forms import MatchFieldForm, UploadFileForm
 from common.views import FileManagementFormView
 from company.models import SupplierPart  # ManufacturerPart
-from common.models import InvenTreeSetting
-from common.settings import settings
 from InvenTree.helpers import DownloadFile
 from InvenTree.views import AjaxView, InvenTreeRoleMixin
 from part.models import Part
@@ -406,4 +403,3 @@ class LineItemPricing(PartPricing):
 
         # let the normal pricing view run
         return super().post(request, *args, **kwargs)
-
