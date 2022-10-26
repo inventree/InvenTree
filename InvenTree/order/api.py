@@ -3,10 +3,10 @@
 from django.contrib.auth import authenticate, login
 from django.db import transaction
 from django.db.models import F, Q
+from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-from django.http.response import JsonResponse
 from django_filters import rest_framework as rest_filters
 from django_ical.views import ICalFeed
 from rest_framework import filters, status
