@@ -1341,5 +1341,5 @@ order_api_urls = [
     ])),
 
     # API endpoint for subscribing to ICS calendar of purchase/sales orders
-    re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order)/', OrderCalendarExport(), name='calendar'),
+    re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order)/calendar.ics', OrderCalendarExport(), name='calendar'),
 ]
