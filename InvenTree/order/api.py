@@ -1208,13 +1208,19 @@ class OrderCalendarExport(ICalFeed):
         - Only return incomplete orders, unless include_completed is set to True
         """
         if obj['ordertype'] == 'purchase-order':
-            outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
+            if obj['include_completed'] is False:
+                # Do not include completed orders from list in this case
+                # Completed status = 30
+                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt='30')
+            else:
+                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
         else:
-            outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
-
-        if obj['include_completed'] is False:
-            # Remove completed orders from list in this case
-            outlist.filter(status__lt='30')
+            if obj['include_completed'] is False:
+                # Do not include completed (=shipped) orders from list in this case
+                # Shipped status = 20
+                outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt='20')
+            else:
+                outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
 
         return outlist
 
