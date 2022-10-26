@@ -139,6 +139,8 @@ html5lib==1.1
 idna==3.4
 icalendar==4.1.0
     # via django-ical
+icalendar==4.1.0
+    # via django-ical
 idna==3.3
     # via requests
 importlib-metadata==5.0.0
