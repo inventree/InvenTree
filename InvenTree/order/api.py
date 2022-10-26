@@ -1336,5 +1336,6 @@ order_api_urls = [
         re_path(r'^.*$', SalesOrderAllocationList.as_view(), name='api-so-allocation-list'),
     ])),
 
+    # API endpoint for subscribing to ICS calendar of purchase/sales orders
     re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order)/', OrderCalendarExport(), name='calendar'),
 ]
