@@ -112,8 +112,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         help_text=_('Default location for parts in this category')
     )
 
-    default_keywords = models.CharField(null=True, blank=True, max_length=250, verbose_name=_('Default keywords'),
-                                        help_text=_('Default keywords for parts in this category'))
+    default_keywords = models.CharField(null=True, blank=True, max_length=250, verbose_name=_('Default keywords'), help_text=_('Default keywords for parts in this category'))
 
     icon = models.CharField(
         blank=True,
@@ -956,22 +955,18 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     notes = InvenTreeNotesField(help_text=_('Part notes'))
 
-    bom_checksum = models.CharField(max_length=128, blank=True, verbose_name=_('BOM checksum'),
-                                    help_text=_('Stored BOM checksum'))
+    bom_checksum = models.CharField(max_length=128, blank=True, verbose_name=_('BOM checksum'), help_text=_('Stored BOM checksum'))
 
     bom_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
                                        verbose_name=_('BOM checked by'), related_name='boms_checked')
 
     bom_checked_date = models.DateField(blank=True, null=True, verbose_name=_('BOM checked date'))
 
-    creation_date = models.DateField(auto_now_add=True, editable=False, blank=True, null=True,
-                                     verbose_name=_('Creation Date'))
+    creation_date = models.DateField(auto_now_add=True, editable=False, blank=True, null=True, verbose_name=_('Creation Date'))
 
-    creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
-                                      verbose_name=_('Creation User'), related_name='parts_created')
+    creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Creation User'), related_name='parts_created')
 
-    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
-                                    verbose_name=_('Responsible'), related_name='parts_responible')
+    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
 
     @property
     def category_path(self):
@@ -1019,6 +1014,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
             # Match BOM item to build
             for bom_item in bom_items:
+
                 build_quantity = build.quantity * bom_item.quantity
 
                 quantity += build_quantity
@@ -1214,10 +1210,8 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         queryset = queryset.alias(
             var_total_stock=part_filters.annotate_variant_quantity(variant_stock_query, reference='quantity'),
-            var_bo_allocations=part_filters.annotate_variant_quantity(variant_stock_query,
-                                                                      reference='allocations__quantity'),
-            var_so_allocations=part_filters.annotate_variant_quantity(variant_stock_query,
-                                                                      reference='sales_order_allocations__quantity'),
+            var_bo_allocations=part_filters.annotate_variant_quantity(variant_stock_query, reference='allocations__quantity'),
+            var_so_allocations=part_filters.annotate_variant_quantity(variant_stock_query, reference='sales_order_allocations__quantity'),
         )
 
         queryset = queryset.annotate(
@@ -1423,6 +1417,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
             # There are parents available
             if parents.exists():
+
                 parent_filter = Q(
                     part__in=parents,
                     inherited=True
@@ -1490,6 +1485,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         # Case C: This part is a *substitute* of a part which is directly specified in a BomItem
         if include_substitutes:
+
             # Grab a list of BomItem substitutes which reference this part
             substitutes = self.substitute_items.all()
 
@@ -1802,11 +1798,9 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
                 max(buy_price_range[1], bom_price_range[1])
             )
 
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)],
-                                    verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
+    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
 
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'),
-                                           help_text=_('Sell multiple'))
+    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Sell multiple'))
 
     get_price = common.models.get_price
 
@@ -1864,8 +1858,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         """
         currency = currency_code_default()
         try:
-            prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if
-                      item.purchase_price]
+            prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if item.purchase_price]
         except MissingRate:
             prices = None
 
@@ -2289,8 +2282,7 @@ class PartCategoryStar(models.Model):
         user: Link to a User object
     """
 
-    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE, verbose_name=_('Category'),
-                                 related_name='starred_users')
+    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE, verbose_name=_('Category'), related_name='starred_users')
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
 
@@ -2496,11 +2488,9 @@ class PartParameter(models.Model):
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'),
-                             help_text=_('Parent Part'))
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'), help_text=_('Parent Part'))
 
-    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances',
-                                 verbose_name=_('Template'), help_text=_('Parameter Template'))
+    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', verbose_name=_('Template'), help_text=_('Parameter Template'))
 
     data = models.CharField(max_length=500, verbose_name=_('Data'), help_text=_('Parameter Value'))
 
@@ -2691,8 +2681,7 @@ class BomItem(DataImportMixin, models.Model):
                                  })
 
     # Quantity required
-    quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)],
-                                   verbose_name=_('Quantity'), help_text=_('BOM quantity for this BOM item'))
+    quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], verbose_name=_('Quantity'), help_text=_('BOM quantity for this BOM item'))
 
     optional = models.BooleanField(
         default=False,
@@ -2711,14 +2700,12 @@ class BomItem(DataImportMixin, models.Model):
                                help_text=_('Estimated build wastage quantity (absolute or percentage)')
                                )
 
-    reference = models.CharField(max_length=500, blank=True, verbose_name=_('Reference'),
-                                 help_text=_('BOM item reference'))
+    reference = models.CharField(max_length=500, blank=True, verbose_name=_('Reference'), help_text=_('BOM item reference'))
 
     # Note attached to this BOM line item
     note = models.CharField(max_length=500, blank=True, verbose_name=_('Note'), help_text=_('BOM item notes'))
 
-    checksum = models.CharField(max_length=128, blank=True, verbose_name=_('Checksum'),
-                                help_text=_('BOM line checksum'))
+    checksum = models.CharField(max_length=128, blank=True, verbose_name=_('Checksum'), help_text=_('BOM line checksum'))
 
     inherited = models.BooleanField(
         default=False,
