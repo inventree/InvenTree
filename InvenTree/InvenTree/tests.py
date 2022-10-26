@@ -447,10 +447,14 @@ class TestSerialNumberExtraction(TestCase):
         """Test simple serial numbers."""
         e = helpers.extract_serial_numbers
 
+        # Test a range of numbers
         sn = e("1-5", 5, 1)
-        self.assertEqual(len(sn), 5, 1)
+        self.assertEqual(len(sn), 5)
         for i in range(1, 6):
             self.assertIn(str(i), sn)
+
+        sn = e("11-30", 20, 1)
+        self.assertEqual(len(sn), 20)
 
         sn = e("1, 2, 3, 4, 5", 5, 1)
         self.assertEqual(len(sn), 5)
