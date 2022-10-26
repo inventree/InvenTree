@@ -1214,7 +1214,7 @@ class OrderCalendarExport(ICalFeed):
 
         if obj['include_completed'] is False:
             # Remove completed orders from list in this case
-            outlist.filter(status < 30)
+            outlist.filter(status__lt='30')
 
         return outlist
 
