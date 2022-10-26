@@ -1139,6 +1139,7 @@ class OrderCalendarExport(ICalFeed):
 
     def __call__(self, request, *args, **kwargs):
         """Overload call in order to check for authentication.
+
         This is required to force Django to look for the authentication,
         otherwise login request with Basic auth via curl or similar are ignored,
         and login via a calendar client will not work.
