@@ -1142,13 +1142,13 @@ class OrderCalendarExport(ICalFeed):
         This is required to force Django to look for the authentication,
         otherwise login request with Basic auth via curl or similar are ignored,
         and login via a calendar client will not work.
-        
+
         See:
         https://stackoverflow.com/questions/3817694/django-rss-feed-authentication
         https://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django
         https://www.djangosnippets.org/snippets/243/
         """
-        
+
         import base64
 
         if request.user.is_authenticated:
@@ -1173,7 +1173,7 @@ class OrderCalendarExport(ICalFeed):
         if request.user.is_authenticated:
             # Authenticated after second try
             return super().__call__(request, *args, **kwargs)
-        
+
         # Still nothing - return Unauth. header with info on how to authenticate
         # Information is needed by client, eg Thunderbird
         response = JsonResponse({"detail": "Authentication credentials were not provided."})
