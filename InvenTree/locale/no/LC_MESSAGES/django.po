@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-26 02:09+0000\n"
-"PO-Revision-Date: 2022-10-26 17:06\n"
+"POT-Creation-Date: 2022-10-27 03:01+0000\n"
+"PO-Revision-Date: 2022-10-27 17:40\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -130,30 +130,35 @@ msgstr "Ugyldig mengde oppgitt"
 msgid "Empty serial number string"
 msgstr "Tom serienummerstreng"
 
-#: InvenTree/helpers.py:633
+#: InvenTree/helpers.py:640
 msgid "Duplicate serial"
 msgstr ""
 
-#: InvenTree/helpers.py:662
+#: InvenTree/helpers.py:673 InvenTree/helpers.py:708
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "Ugyldig gruppeserie: {g}"
 
-#: InvenTree/helpers.py:714 InvenTree/helpers.py:721 InvenTree/helpers.py:736
+#: InvenTree/helpers.py:702
+#, python-brace-format
+msgid "Group range {g} exceeds allowed quantity ({q})"
+msgstr ""
+
+#: InvenTree/helpers.py:726 InvenTree/helpers.py:733 InvenTree/helpers.py:748
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr "Ugyldig gruppesekvense: {g}"
 
-#: InvenTree/helpers.py:746
+#: InvenTree/helpers.py:758
 msgid "No serial numbers found"
 msgstr "Ingen serienummer funnet"
 
-#: InvenTree/helpers.py:749
+#: InvenTree/helpers.py:761
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "Antall unike serienumre ({s}) må samsvare med antall ({q})"
 
-#: InvenTree/helpers.py:948
+#: InvenTree/helpers.py:960
 msgid "Remove HTML tags from this value"
 msgstr ""
 
