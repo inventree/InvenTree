@@ -572,7 +572,7 @@ class TestSerialNumberExtraction(TestCase):
         sn = e("~+4, 20+4, 30+4", 15, 10)
         self.assertEqual(len(sn), 15)
 
-        for v in [5, 25, 35]:
+        for v in [14, 24, 34]:
             self.assertIn(str(v), sn)
 
         # Test multiple range groups

@@ -629,6 +629,13 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
     def add_serial(serial):
         """Helper function to check for duplicated values"""
+
+        serial = serial.strip()
+
+        # Ignore blank / emtpy serials
+        if len(serial) == 0:
+            return
+
         if serial in serials:
             add_error(_("Duplicate serial") + f": {serial}")
         else:
@@ -720,7 +727,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 continue
             elif len(items) == 2:
                 try:
-                    if items[1] not in ['', None]:
+                    if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
                     add_error(_("Invalid group sequence: {g}").format(g=group))
