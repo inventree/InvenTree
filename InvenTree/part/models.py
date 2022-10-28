@@ -671,7 +671,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
             return full_name
 
-        except AttributeError as attr_err:
+        except Exception as attr_err:
 
             logger.warning(f"exception while trying to create full name for part {self.name}", attr_err)
 
