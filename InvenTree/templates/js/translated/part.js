@@ -337,11 +337,11 @@ function deletePartCategory(pk, options={}) {
     var subChoices = [
         {
             value: 0,
-            display_name: '{% trans "Move them under the parent category" %}',
+            display_name: '{% trans "Move to parent category" %}',
         },
         {
             value: 1,
-            display_name: '{% trans "Delete them" %}',
+            display_name: '{% trans "Delete" %}',
         }
     ];
 
@@ -350,12 +350,12 @@ function deletePartCategory(pk, options={}) {
         method: 'DELETE',
         fields: {
             'delete_parts': {
-                label: '{% trans "What to do with the parts associated to this category:" %}',
+                label: '{% trans "Action for parts in this category" %}',
                 choices: subChoices,
                 type: 'choice'
             },
             'delete_child_categories': {
-                label: '{% trans "What to do with the child categories (and parts associated to them):" %}',
+                label: '{% trans "Action for child categories" %}',
                 choices: subChoices,
                 type: 'choice'
             },

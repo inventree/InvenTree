@@ -67,9 +67,11 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         """This function handles the recursive deletion of subcategories depending on kwargs contents"""
         delete_parts = kwargs.get('delete_parts', False)
         parent_category = kwargs.get('parent_category', None)
+
         if parent_category is None:
             # First iteration, (no part_category kwargs passed)
             parent_category = self.parent
+
         for child_part in self.parts.all():
             if delete_parts:
                 child_part.delete()
@@ -77,14 +79,14 @@ class PartCategory(MetadataMixin, InvenTreeTree):
                 child_part.category = parent_category
                 child_part.save()
 
-        for child in self.children.all():
+        for child_category in self.children.all():
             if kwargs.get('delete_child_categories', False):
-                child.delete_recursive(**dict(delete_child_categories=True,
-                                              delete_parts=delete_parts,
-                                              parent_category=parent_category))
+                child_category.delete_recursive(**dict(delete_child_categories=True,
+                                                       delete_parts=delete_parts,
+                                                       parent_category=parent_category))
             else:
-                child.parent = parent_category
-                child.save()
+                child_category.parent = parent_category
+                child_category.save()
 
         super().delete(*args, **dict())
 

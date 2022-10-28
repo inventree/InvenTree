@@ -394,6 +394,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                         self.assertEqual(part.category, parent_category)
 
             if delete_child_categories:
+                # Check if all categories are deleted
                 self.assertEqual(PartCategory.objects.count(), category_count_before)
             else:
                 #  Check if all subcategories to parent moved to parent and all parts deleted

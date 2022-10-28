@@ -106,18 +106,16 @@ class RetrieveUpdateAPI(CleanMixin, generics.RetrieveUpdateAPIView):
     pass
 
 
-# The CustomDestroyModelMixin, CustomRetrieveUpdateDestroyAPIView, CustomRetrieveUpdateDestroyAPI
-# classes were created to being able to pass the kwargs from the API to the models
 class CustomDestroyModelMixin:
-    """Destroy a model instance"""
+    """This mixin was created pass the kwargs from the API to the models."""
     def destroy(self, request, *args, **kwargs):
-        """Custom destroy method to pass kwargs"""
+        """Custom destroy method to pass kwargs."""
         instance = self.get_object()
         self.perform_destroy(instance, **kwargs)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_destroy(self, instance, **kwargs):
-        """Custom destroy method to pass kwargs"""
+        """Custom destroy method to pass kwargs."""
         instance.delete(**kwargs)
 
 
@@ -125,26 +123,26 @@ class CustomRetrieveUpdateDestroyAPIView(mixins.RetrieveModelMixin,
                                          mixins.UpdateModelMixin,
                                          CustomDestroyModelMixin,
                                          generics.GenericAPIView):
-    """Concrete view for retrieving, updating or deleting a model instance"""
+    """This APIView was created pass the kwargs from the API to the models."""
     def get(self, request, *args, **kwargs):
-        """Custom get method to pass kwargs"""
+        """Custom get method to pass kwargs."""
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        """Custom put method to pass kwargs"""
+        """Custom put method to pass kwargs."""
         return self.update(request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
-        """Custom patch method to pass kwargs"""
+        """Custom patch method to pass kwargs."""
         return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        """Custom delete method to pass kwargs"""
+        """Custom delete method to pass kwargs."""
         return self.destroy(request, *args, **kwargs)
 
 
 class CustomRetrieveUpdateDestroyAPI(CleanMixin, CustomRetrieveUpdateDestroyAPIView):
-    """Custom view for retrieve, update and destroy API for passing the kwargs down to the model"""
+    """This APIView was created pass the kwargs from the API to the models."""
 
 
 class RetrieveUpdateDestroyAPI(CleanMixin, generics.RetrieveUpdateDestroyAPIView):
