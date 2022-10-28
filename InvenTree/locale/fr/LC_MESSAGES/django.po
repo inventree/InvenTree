@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-27 03:01+0000\n"
+"POT-Creation-Date: 2022-10-28 07:18+0000\n"
 "PO-Revision-Date: 2022-10-27 17:39\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -682,24 +682,24 @@ msgstr "Reçu contre bon de commande"
 msgid "Production"
 msgstr "Fabrication"
 
-#: InvenTree/validators.py:19
+#: InvenTree/validators.py:20
 msgid "Not a valid currency code"
 msgstr "Code de devise invalide"
 
-#: InvenTree/validators.py:90
+#: InvenTree/validators.py:91
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
 msgstr "L'IPN doit correspondre au modèle de regex {pat}"
 
-#: InvenTree/validators.py:132 InvenTree/validators.py:148
+#: InvenTree/validators.py:133 InvenTree/validators.py:149
 msgid "Overage value must not be negative"
 msgstr "La valeur de surplus ne doit pas être négative"
 
-#: InvenTree/validators.py:150
+#: InvenTree/validators.py:151
 msgid "Overage must not exceed 100%"
 msgstr "Le surplus ne doit pas dépasser 100%"
 
-#: InvenTree/validators.py:157
+#: InvenTree/validators.py:158
 msgid "Invalid value for overage"
 msgstr "Valeur invalide pour le dépassement"
 
@@ -3334,7 +3334,7 @@ msgstr "Supprimer les pièces du fournisseur"
 #: company/templates/company/manufacturer_part.html:136
 #: company/templates/company/manufacturer_part.html:183
 #: part/templates/part/detail.html:371 part/templates/part/detail.html:401
-#: templates/js/translated/forms.js:458 templates/js/translated/helpers.js:36
+#: templates/js/translated/forms.js:455 templates/js/translated/helpers.js:36
 #: users/models.py:222
 msgid "Delete"
 msgstr "Supprimer"
@@ -7616,7 +7616,7 @@ msgstr ""
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr ""
 
-#: templates/account/email_confirm.html:22 templates/js/translated/forms.js:649
+#: templates/account/email_confirm.html:22 templates/js/translated/forms.js:646
 msgid "Confirm"
 msgstr "Confirmer"
 
@@ -7632,14 +7632,16 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8664,61 +8666,61 @@ msgstr ""
 msgid "Create filter"
 msgstr ""
 
-#: templates/js/translated/forms.js:372 templates/js/translated/forms.js:387
-#: templates/js/translated/forms.js:401 templates/js/translated/forms.js:415
+#: templates/js/translated/forms.js:369 templates/js/translated/forms.js:384
+#: templates/js/translated/forms.js:398 templates/js/translated/forms.js:412
 msgid "Action Prohibited"
 msgstr ""
 
-#: templates/js/translated/forms.js:374
+#: templates/js/translated/forms.js:371
 msgid "Create operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:389
+#: templates/js/translated/forms.js:386
 msgid "Update operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:403
+#: templates/js/translated/forms.js:400
 msgid "Delete operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:417
+#: templates/js/translated/forms.js:414
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:675
+#: templates/js/translated/forms.js:672
 msgid "Keep this form open"
 msgstr ""
 
-#: templates/js/translated/forms.js:776
+#: templates/js/translated/forms.js:773
 msgid "Enter a valid number"
 msgstr ""
 
-#: templates/js/translated/forms.js:1269 templates/modals.html:19
+#: templates/js/translated/forms.js:1266 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1706
+#: templates/js/translated/forms.js:1703
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:1922 templates/search.html:29
+#: templates/js/translated/forms.js:1919 templates/search.html:29
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:2175
+#: templates/js/translated/forms.js:2172
 msgid "Clear input"
 msgstr ""
 
-#: templates/js/translated/forms.js:2641
+#: templates/js/translated/forms.js:2638
 msgid "File Column"
 msgstr ""
 
-#: templates/js/translated/forms.js:2641
+#: templates/js/translated/forms.js:2638
 msgid "Field Name"
 msgstr ""
 
-#: templates/js/translated/forms.js:2653
+#: templates/js/translated/forms.js:2650
 msgid "Select Columns"
 msgstr ""
 
@@ -10690,4 +10692,3 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
-

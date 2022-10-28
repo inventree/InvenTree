@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-27 03:01+0000\n"
+"POT-Creation-Date: 2022-10-28 07:18+0000\n"
 "PO-Revision-Date: 2022-10-27 17:40\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -682,24 +682,24 @@ msgstr "Megrendelésre érkezett"
 msgid "Production"
 msgstr "Folyamatban"
 
-#: InvenTree/validators.py:19
+#: InvenTree/validators.py:20
 msgid "Not a valid currency code"
 msgstr "Érvénytelen pénznem kód"
 
-#: InvenTree/validators.py:90
+#: InvenTree/validators.py:91
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
 msgstr "IPN mezőnek egyeznie kell a '{pat}' mintával"
 
-#: InvenTree/validators.py:132 InvenTree/validators.py:148
+#: InvenTree/validators.py:133 InvenTree/validators.py:149
 msgid "Overage value must not be negative"
 msgstr "Túlszállítás nem lehet negatív"
 
-#: InvenTree/validators.py:150
+#: InvenTree/validators.py:151
 msgid "Overage must not exceed 100%"
 msgstr "Túlszállítás nem lehet több mint 100%"
 
-#: InvenTree/validators.py:157
+#: InvenTree/validators.py:158
 msgid "Invalid value for overage"
 msgstr "Érvénytelen érték a túlszállításra"
 
@@ -1163,7 +1163,8 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:383
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr ""
+"Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:452
@@ -3335,7 +3336,7 @@ msgstr "Beszállítói alkatrész törlése"
 #: company/templates/company/manufacturer_part.html:136
 #: company/templates/company/manufacturer_part.html:183
 #: part/templates/part/detail.html:371 part/templates/part/detail.html:401
-#: templates/js/translated/forms.js:458 templates/js/translated/helpers.js:36
+#: templates/js/translated/forms.js:455 templates/js/translated/helpers.js:36
 #: users/models.py:222
 msgid "Delete"
 msgstr "Törlés"
@@ -7617,7 +7618,7 @@ msgstr "Email cím megerősítése"
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr "Erősítsd meg hogy a <a href=\"mailto:%(email)s\">%(email)s</a> email a %(user_display)s felhasználó email címe."
 
-#: templates/account/email_confirm.html:22 templates/js/translated/forms.js:649
+#: templates/account/email_confirm.html:22 templates/js/translated/forms.js:646
 msgid "Confirm"
 msgstr "Megerősítés"
 
@@ -7633,14 +7634,16 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -8665,61 +8668,61 @@ msgstr "Összes szűrő törlése"
 msgid "Create filter"
 msgstr "Szűrő létrehozása"
 
-#: templates/js/translated/forms.js:372 templates/js/translated/forms.js:387
-#: templates/js/translated/forms.js:401 templates/js/translated/forms.js:415
+#: templates/js/translated/forms.js:369 templates/js/translated/forms.js:384
+#: templates/js/translated/forms.js:398 templates/js/translated/forms.js:412
 msgid "Action Prohibited"
 msgstr "Művelet tiltva"
 
-#: templates/js/translated/forms.js:374
+#: templates/js/translated/forms.js:371
 msgid "Create operation not allowed"
 msgstr "Létrehozás nem engedélyezett"
 
-#: templates/js/translated/forms.js:389
+#: templates/js/translated/forms.js:386
 msgid "Update operation not allowed"
 msgstr "Módosítás nem engedélyezett"
 
-#: templates/js/translated/forms.js:403
+#: templates/js/translated/forms.js:400
 msgid "Delete operation not allowed"
 msgstr "Törlés nem engedélyezett"
 
-#: templates/js/translated/forms.js:417
+#: templates/js/translated/forms.js:414
 msgid "View operation not allowed"
 msgstr "Megtekintés nem engedélyezett"
 
-#: templates/js/translated/forms.js:675
+#: templates/js/translated/forms.js:672
 msgid "Keep this form open"
 msgstr "Form nyitva tartása"
 
-#: templates/js/translated/forms.js:776
+#: templates/js/translated/forms.js:773
 msgid "Enter a valid number"
 msgstr "Adj meg egy érvényes számot"
 
-#: templates/js/translated/forms.js:1269 templates/modals.html:19
+#: templates/js/translated/forms.js:1266 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr "Form hibák vannak"
 
-#: templates/js/translated/forms.js:1706
+#: templates/js/translated/forms.js:1703
 msgid "No results found"
 msgstr "Nincs eredmény"
 
-#: templates/js/translated/forms.js:1922 templates/search.html:29
+#: templates/js/translated/forms.js:1919 templates/search.html:29
 msgid "Searching"
 msgstr "Keresés"
 
-#: templates/js/translated/forms.js:2175
+#: templates/js/translated/forms.js:2172
 msgid "Clear input"
 msgstr "Bevitel törlése"
 
-#: templates/js/translated/forms.js:2641
+#: templates/js/translated/forms.js:2638
 msgid "File Column"
 msgstr "Fájl oszlop"
 
-#: templates/js/translated/forms.js:2641
+#: templates/js/translated/forms.js:2638
 msgid "Field Name"
 msgstr "Mező név"
 
-#: templates/js/translated/forms.js:2653
+#: templates/js/translated/forms.js:2650
 msgid "Select Columns"
 msgstr "Oszlopok kiválasztása"
 
@@ -10691,4 +10694,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
-
