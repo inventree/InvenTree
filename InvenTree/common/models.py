@@ -1612,6 +1612,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_SHOW_BUILD_ORDERS': {
+            'name': _('Search Build Orders'),
+            'description': _('Display build orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS': {
             'name': _('Search Purchase Orders'),
             'description': _('Display purchase orders in search preview window'),

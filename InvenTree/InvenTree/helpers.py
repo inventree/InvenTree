@@ -629,6 +629,13 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
     def add_serial(serial):
         """Helper function to check for duplicated values"""
+
+        serial = serial.strip()
+
+        # Ignore blank / emtpy serials
+        if len(serial) == 0:
+            return
+
         if serial in serials:
             add_error(_("Duplicate serial") + f": {serial}")
         else:
@@ -645,6 +652,10 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             return serials
 
     for group in groups:
+
+        # Calculate the "remaining" quantity of serial numbers
+        remaining = expected_quantity - len(serials)
+
         group = group.strip()
 
         if '-' in group:
@@ -680,20 +691,21 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                         group_items.append(b)
                         break
 
-                    elif count > expected_quantity:
+                    elif count > remaining:
                         # More than the allowed number of items
                         break
 
                     elif a_next is None:
                         break
 
-                if len(group_items) > 0 and group_items[0] == a and group_items[-1] == b:
+                if len(group_items) > remaining:
+                    add_error(_("Group range {g} exceeds allowed quantity ({q})".format(g=group, q=expected_quantity)))
+                elif len(group_items) > 0 and group_items[0] == a and group_items[-1] == b:
                     # In this case, the range extraction looks like it has worked
                     for item in group_items:
                         add_serial(item)
                 else:
-                    add_serial(group)
-                    # add_error(_("Invalid group range: {g}").format(g=group))
+                    add_error(_("Invalid group range: {g}").format(g=group))
 
             else:
                 # In the case of a different number of hyphens, simply add the entire group
@@ -715,7 +727,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 continue
             elif len(items) == 2:
                 try:
-                    if items[1] not in ['', None]:
+                    if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
                     add_error(_("Invalid group sequence: {g}").format(g=group))
@@ -745,7 +757,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     if len(serials) == 0:
         raise ValidationError([_("No serial numbers found")])
 
-    if len(serials) != expected_quantity:
+    if len(errors) == 0 and len(serials) != expected_quantity:
         raise ValidationError([_("Number of unique serial numbers ({s}) must match quantity ({q})").format(s=len(serials), q=expected_quantity)])
 
     return serials
