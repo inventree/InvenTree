@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-28 04:57+0000\n"
-"PO-Revision-Date: 2022-10-28 17:46\n"
+"POT-Creation-Date: 2022-10-29 03:19+0000\n"
+"PO-Revision-Date: 2022-10-29 17:42\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -25,11 +25,11 @@ msgstr "API endpoint nebyl nalezen"
 msgid "Error details can be found in the admin panel"
 msgstr "Podrobnosti o chybě lze nalézt v panelu administrace"
 
-#: InvenTree/fields.py:108
+#: InvenTree/fields.py:120
 msgid "Enter date"
 msgstr "Zadejte datum"
 
-#: InvenTree/fields.py:182 build/serializers.py:387
+#: InvenTree/fields.py:195 build/serializers.py:387
 #: build/templates/build/sidebar.html:21 company/models.py:524
 #: company/templates/company/sidebar.html:25 order/models.py:920
 #: order/templates/order/po_sidebar.html:11
@@ -352,70 +352,70 @@ msgstr "Chyba serveru"
 msgid "An error has been logged by the server."
 msgstr ""
 
-#: InvenTree/serializers.py:55 part/models.py:2780
+#: InvenTree/serializers.py:58 part/models.py:2780
 msgid "Must be a valid number"
 msgstr "Musí být platné číslo"
 
-#: InvenTree/serializers.py:262
+#: InvenTree/serializers.py:265
 msgid "Filename"
 msgstr "Název souboru"
 
-#: InvenTree/serializers.py:297
+#: InvenTree/serializers.py:300
 msgid "Invalid value"
 msgstr "Neplatná hodnota"
 
-#: InvenTree/serializers.py:319
+#: InvenTree/serializers.py:322
 msgid "Data File"
 msgstr "Datový soubor"
 
-#: InvenTree/serializers.py:320
+#: InvenTree/serializers.py:323
 msgid "Select data file for upload"
 msgstr "Vyberte datový soubor k nahrání"
 
-#: InvenTree/serializers.py:341
+#: InvenTree/serializers.py:344
 msgid "Unsupported file type"
 msgstr "Nepodporovaný typ souboru"
 
-#: InvenTree/serializers.py:347
+#: InvenTree/serializers.py:350
 msgid "File is too large"
 msgstr "Soubor je příliš velký"
 
-#: InvenTree/serializers.py:368
+#: InvenTree/serializers.py:371
 msgid "No columns found in file"
 msgstr "V souboru nebyly nalezeny žádné sloupce"
 
-#: InvenTree/serializers.py:371
+#: InvenTree/serializers.py:374
 msgid "No data rows found in file"
 msgstr "V souboru nebyly nalezeny žádné řádky s daty"
 
-#: InvenTree/serializers.py:494
+#: InvenTree/serializers.py:497
 msgid "No data rows provided"
 msgstr "Nebyly zadány žádné řádky s daty"
 
-#: InvenTree/serializers.py:497
+#: InvenTree/serializers.py:500
 msgid "No data columns supplied"
 msgstr "Nebyly zadány žádné sloupce s daty"
 
-#: InvenTree/serializers.py:574
+#: InvenTree/serializers.py:577
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "Chybí povinný sloupec: '{name}'"
 
-#: InvenTree/serializers.py:583
+#: InvenTree/serializers.py:586
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Duplicitní sloupec: '{col}'"
 
-#: InvenTree/serializers.py:602
+#: InvenTree/serializers.py:605
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
 msgstr "URL"
 
-#: InvenTree/serializers.py:603
+#: InvenTree/serializers.py:606
 msgid "URL of remote image file"
 msgstr ""
 
-#: InvenTree/serializers.py:617
+#: InvenTree/serializers.py:620
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
