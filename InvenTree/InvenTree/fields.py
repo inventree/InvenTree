@@ -91,6 +91,18 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         kwargs['form_class'] = InvenTreeMoneyField
         return super().formfield(**kwargs)
 
+    def to_python(self, value):
+        """Convert value to python type."""
+        value = super().to_python(value)
+        return round_decimal(value, self.decimal_places)
+
+    def prepare_value(self, value):
+        """Override the 'prepare_value' method, to remove trailing zeros when displaying.
+
+        Why? It looks nice!
+        """
+        return round_decimal(value, self.decimal_places, normalize=True)
+
 
 class InvenTreeMoneyField(MoneyField):
     """Custom MoneyField for clean migrations while using dynamic currency settings."""
@@ -126,11 +138,16 @@ class DatePickerFormField(forms.DateField):
         )
 
 
-def round_decimal(value, places):
+def round_decimal(value, places, normalize=False):
     """Round value to the specified number of places."""
-    if value is not None:
-        # see https://docs.python.org/2/library/decimal.html#decimal.Decimal.quantize for options
-        return value.quantize(Decimal(10) ** -places)
+
+    if type(value) in [Decimal, float]:
+        value = round(value, places)
+
+        if normalize:
+            # Remove any trailing zeroes
+            value = InvenTree.helpers.normalize(value)
+
     return value
 
 
@@ -140,18 +157,14 @@ class RoundingDecimalFormField(forms.DecimalField):
     def to_python(self, value):
         """Convert value to python type."""
         value = super().to_python(value)
-        value = round_decimal(value, self.decimal_places)
-        return value
+        return round_decimal(value, self.decimal_places)
 
     def prepare_value(self, value):
         """Override the 'prepare_value' method, to remove trailing zeros when displaying.
 
         Why? It looks nice!
         """
-        if type(value) == Decimal:
-            return InvenTree.helpers.normalize(value)
-        else:
-            return value
+        return round_decimal(value, self.decimal_places, normalize=True)
 
 
 class RoundingDecimalField(models.DecimalField):

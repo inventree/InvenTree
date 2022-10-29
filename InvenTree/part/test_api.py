@@ -2485,5 +2485,11 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
             ).data
 
             self.assertEqual(data['part'], 1)
-            self.assertEqual(Decimal(data['quantity']), Decimal(q))
-            self.assertEqual(Decimal(data['price']), Decimal(p))
+            self.assertEqual(
+                round(Decimal(data['quantity']), 4),
+                round(Decimal(q), 4)
+            )
+            self.assertEqual(
+                round(Decimal(data['price']), 4),
+                round(Decimal(p), 4)
+            )
