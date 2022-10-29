@@ -55,7 +55,8 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 400)
 
         data = response.data
-        self.assertIn('error', data)
+        self.assertIn('barcode', data)
+        self.assertIn('Missing barcode data', str(response.data['barcode']))
 
     def test_find_part(self):
         """Test that we can lookup a part based on ID."""
@@ -189,6 +190,8 @@ class BarcodeAPITest(InvenTreeAPITestCase):
     def test_association(self):
         """Test that a barcode can be associated with a StockItem."""
         item = StockItem.objects.get(pk=522)
+
+        self.assignRole('stock.change')
 
         self.assertEqual(len(item.barcode_hash), 0)
 

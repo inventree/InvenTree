@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
       - name: Setup
         run: pip install -r requirements-dev.txt
       - name: Update requirements.txt
@@ -17,7 +17,7 @@ jobs:
       - name: Update requirements-dev.txt
         run: pip-compile --generate-hashes --output-file=requirements-dev.txt
           requirements-dev.in -U
-      - uses: stefanzweifel/git-auto-commit-action@49620cd3ed21ee620a48530e81dba0d139c9cb80 # pin@v4
+      - uses: stefanzweifel/git-auto-commit-action@fd157da78fa13d9383e5580d1fd1184d89554b51 # pin@v4.15.1
         with:
           commit_message: "[Bot] Updated dependency"
           branch: dep-update

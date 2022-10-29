@@ -131,6 +131,11 @@ STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
+# Backup directories
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
+DBBACKUP_SEND_EMAIL = False
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -176,6 +181,7 @@ INSTALLED_APPS = [
     'error_report',                         # Error reporting in the admin interface
     'django_q',
     'formtools',                            # Form wizard tools
+    'dbbackup',                             # Backups - django-dbbackup
 
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
@@ -607,6 +613,8 @@ if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
+# Store language settings for 30 days
+LANGUAGE_COOKIE_AGE = 2592000
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [

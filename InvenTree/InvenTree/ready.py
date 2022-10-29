@@ -13,7 +13,7 @@ def isImportingData():
     return 'loaddata' in sys.argv
 
 
-def canAppAccessDatabase(allow_test=False):
+def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False):
     """Returns True if the apps.py file can access database records.
 
     There are some circumstances where we don't want the ready function in apps.py
@@ -25,8 +25,6 @@ def canAppAccessDatabase(allow_test=False):
         'flush',
         'loaddata',
         'dumpdata',
-        'makemigrations',
-        'migrate',
         'check',
         'shell',
         'createsuperuser',
@@ -37,11 +35,23 @@ def canAppAccessDatabase(allow_test=False):
         'collectstatic',
         'makemessages',
         'compilemessages',
+        'backup',
+        'dbbackup',
+        'mediabackup',
+        'restore',
+        'dbrestore',
+        'mediarestore',
     ]
 
     if not allow_test:
         # Override for testing mode?
         excluded_commands.append('test')
+
+    if not allow_plugins:
+        excluded_commands.extend([
+            'makemigrations',
+            'migrate',
+        ])
 
     for cmd in excluded_commands:
         if cmd in sys.argv:

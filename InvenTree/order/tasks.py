@@ -6,9 +6,9 @@ from django.utils.translation import gettext_lazy as _
 
 import common.notifications
 import InvenTree.helpers
-import InvenTree.tasks
 import order.models
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from InvenTree.tasks import ScheduledTask, scheduled_task
 from plugin.events import trigger_event
 
 
@@ -55,6 +55,7 @@ def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
     )
 
 
+@scheduled_task(ScheduledTask.DAILY)
 def check_overdue_purchase_orders():
     """Check if any outstanding PurchaseOrders have just become overdue:
 
@@ -117,6 +118,7 @@ def notify_overdue_sales_order(so: order.models.SalesOrder):
     )
 
 
+@scheduled_task(ScheduledTask.DAILY)
 def check_overdue_sales_orders():
     """Check if any outstanding SalesOrders have just become overdue
 

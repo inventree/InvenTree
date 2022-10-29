@@ -5,7 +5,7 @@ from django.urls import path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import permissions
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,6 +13,7 @@ from InvenTree.helpers import hash_barcode
 from plugin import registry
 from plugin.builtin.barcodes.inventree_barcode import (
     InvenTreeExternalBarcodePlugin, InvenTreeInternalBarcodePlugin)
+from users.models import RuleSet
 
 
 class BarcodeScan(APIView):
@@ -47,8 +48,10 @@ class BarcodeScan(APIView):
         """
         data = request.data
 
-        if 'barcode' not in data:
-            raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
+        barcode_data = data.get('barcode', None)
+
+        if not barcode_data:
+            raise ValidationError({'barcode': _('Missing barcode data')})
 
         # Ensure that the default barcode handlers are run first
         plugins = [
@@ -56,7 +59,6 @@ class BarcodeScan(APIView):
             InvenTreeExternalBarcodePlugin(),
         ] + registry.with_mixin('barcode')
 
-        barcode_data = data.get('barcode')
         barcode_hash = hash_barcode(barcode_data)
 
         # Look for a barcode plugin which knows how to deal with this barcode
@@ -105,10 +107,10 @@ class BarcodeAssign(APIView):
 
         data = request.data
 
-        if 'barcode' not in data:
-            raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
+        barcode_data = data.get('barcode', None)
 
-        barcode_data = data['barcode']
+        if not barcode_data:
+            raise ValidationError({'barcode': _('Missing barcode data')})
 
         # Here we only check against 'InvenTree' plugins
         plugins = [
@@ -138,6 +140,17 @@ class BarcodeAssign(APIView):
             if label in data:
                 try:
                     instance = model.objects.get(pk=data[label])
+
+                    # Check that the user has the required permission
+                    app_label = model._meta.app_label
+                    model_name = model._meta.model_name
+
+                    table = f"{app_label}_{model_name}"
+
+                    if not RuleSet.check_table_permission(request.user, table, "change"):
+                        raise PermissionDenied({
+                            "error": f"You do not have the required permissions for {table}"
+                        })
 
                     instance.assign_barcode(
                         barcode_data=barcode_data,
@@ -208,6 +221,17 @@ class BarcodeUnassign(APIView):
                 except (ValueError, model.DoesNotExist):
                     raise ValidationError({
                         label: _('No match found for provided value')
+                    })
+
+                # Check that the user has the required permission
+                app_label = model._meta.app_label
+                model_name = model._meta.model_name
+
+                table = f"{app_label}_{model_name}"
+
+                if not RuleSet.check_table_permission(request.user, table, "change"):
+                    raise PermissionDenied({
+                        "error": f"You do not have the required permissions for {table}"
                     })
 
                 # Unassign the barcode data from the model instance

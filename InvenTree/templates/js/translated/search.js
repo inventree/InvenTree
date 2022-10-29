@@ -247,6 +247,22 @@ function updateSearch() {
         );
     }
 
+    if (checkPermission('build') && user_settings.SEARCH_PREVIEW_SHOW_BUILD_ORDERS) {
+        // Search for matching build orders
+        addSearchQuery(
+            'build',
+            '{% trans "Build Orders" %}',
+            '{% url "api-build-list" %}',
+            {
+                part_detail: true,
+            },
+            renderBuild,
+            {
+                url: '/build',
+            }
+        );
+    }
+
     if ((checkPermission('sales_order') || checkPermission('purchase_order')) && user_settings.SEARCH_PREVIEW_SHOW_COMPANIES) {
         // Search for matching companies
         addSearchQuery(

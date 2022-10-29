@@ -886,6 +886,46 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_BACKUP_ENABLE': {
+            'name': _('Automatic Backup'),
+            'description': _('Enable automatic backup of database and media files'),
+            'validator': bool,
+            'default': True,
+        },
+
+        'INVENTREE_DELETE_TASKS_DAYS': {
+            'name': _('Delete Old Tasks'),
+            'description': _('Background task results will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
+        'INVENTREE_DELETE_ERRORS_DAYS': {
+            'name': _('Delete Error Logs'),
+            'description': _('Error logs will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7)
+            ]
+        },
+
+        'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
+            'name': _('Delete Noficiations'),
+            'description': _('User notifications will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),
@@ -1128,6 +1168,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'REPORT_ATTACH_TEST_REPORT': {
             'name': _('Attach Test Reports'),
             'description': _('When printing a Test Report, attach a copy of the Test Report to the associated Stock Item'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
+            'name': _('Globally Unique Serials'),
+            'description': _('Serial numbers for stock items must be globally unique'),
             'default': False,
             'validator': bool,
         },
@@ -1561,6 +1608,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         'SEARCH_PREVIEW_SHOW_COMPANIES': {
             'name': _('Search Companies'),
             'description': _('Display companies in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_BUILD_ORDERS': {
+            'name': _('Search Build Orders'),
+            'description': _('Display build orders in search preview window'),
             'default': True,
             'validator': bool,
         },

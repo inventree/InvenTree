@@ -104,6 +104,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
     <li><a href="https://hub.docker.com/r/inventree/inventree">Docker</a></li>
     <li><a href="https://crowdin.com/project/inventree">Crowdin</a></li>
     <li><a href="https://coveralls.io/github/inventree/InvenTree">Coveralls</a></li>
+    <li><a href="https://packager.io/gh/inventree/InvenTree">Packager.io</a></li>
   </ul>
 </details>
 
@@ -135,6 +136,11 @@ There are several options to deploy InvenTree.
     <span> · </span>
     <a href="https://inventree.readthedocs.io/en/latest/start/install/">Bare Metal</a>
 </h4></div>
+
+Single line install - read [the docs](https://inventree.readthedocs.io/en/latest/start/installer/) for supported distros and details about the function:
+```bash
+curl https://raw.githubusercontent.com/InvenTree/InvenTree/master/contrib/install.sh | sh
+```
 
 <!-- Contributing -->
 ## :wave: Contributing

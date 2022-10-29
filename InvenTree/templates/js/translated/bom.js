@@ -15,6 +15,7 @@
 */
 
 /* exported
+    addBomItem,
     constructBomUploadTable,
     deleteBomItems,
     downloadBomTemplate,
@@ -26,6 +27,30 @@
     removeColFromBomWizard,
     submitBomTable
 */
+
+
+/*
+ * Launch a dialog to add a new BOM line item to a Bill of Materials
+ */
+function addBomItem(part_id, options={}) {
+
+    var fields = bomItemFields();
+
+    fields.part.value = part_id;
+    fields.sub_part.filters = {
+        active: true,
+    };
+
+    constructForm('{% url "api-bom-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Create BOM Item" %}',
+        focus: 'sub_part',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
 
 
 /* Construct a table of data extracted from a BOM file.
@@ -1171,6 +1196,13 @@ function loadBomTable(table, options={}) {
                         `/part/${row.part}/bom/`
                     );
                 }
+            },
+            footerFormatter: function(data) {
+                return `
+                <button class='btn btn-success float-right' type='button' title='{% trans "Add BOM Item" %}' id='bom-item-new-footer'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
+                </button>
+                `;
             }
         });
     }
@@ -1276,14 +1308,19 @@ function loadBomTable(table, options={}) {
 
             var data = table.bootstrapTable('getData');
 
+            var update_required = false;
+
             for (var idx = 0; idx < data.length; idx++) {
-                var row = data[idx];
 
-                if (!row.parentId) {
-                    row.parentId = parent_id;
-
-                    table.bootstrapTable('updateByUniqueId', row.pk, row, true);
+                if (!data[idx].parentId) {
+                    data[idx].parentId = parent_id;
+                    update_required = true;
                 }
+            }
+
+            // Re-load the table back data
+            if (update_required) {
+                table.bootstrapTable('load', data);
             }
         },
         onLoadSuccess: function(data) {
@@ -1296,6 +1333,15 @@ function loadBomTable(table, options={}) {
 
     // In editing mode, attached editables to the appropriate table elements
     if (options.editable) {
+
+        // Callback for "new bom item" button in footer
+        table.on('click', '#bom-item-new-footer', function() {
+            addBomItem(options.parent_id, {
+                onSuccess: function() {
+                    table.bootstrapTable('refresh');
+                }
+            });
+        });
 
         // Callback for "delete" button
         table.on('click', '.bom-delete-button', function() {

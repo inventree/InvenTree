@@ -125,6 +125,19 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
         self.assertIn('Missing data:', str(response.data))
 
+        # Permission error check
+        response = self.assign(
+            {
+                'barcode': 'abcdefg',
+                'part': 1,
+                'stockitem': 1,
+            },
+            expected_code=403
+        )
+
+        self.assignRole('part.change')
+        self.assignRole('stock.change')
+
         # Provide too many fields
         response = self.assign(
             {
@@ -188,6 +201,8 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
         barcode = 'xyz-123'
 
+        self.assignRole('part.change')
+
         # Test that an initial scan yields no results
         response = self.scan(
             {
@@ -195,6 +210,8 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             },
             expected_code=400
         )
+
+        self.assignRole('part.change')
 
         # Attempt to assign to an invalid part ID
         response = self.assign(
@@ -247,6 +264,8 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
         self.assertIn('Barcode matches existing item', str(response.data['error']))
 
+        self.assignRole('part.change')
+
         # Now test that we can unassign the barcode data also
         response = self.unassign(
             {
@@ -264,6 +283,17 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         """Test that we can assign a unique barcode to a StockLocation instance"""
 
         barcode = '555555555555555555555555'
+
+        # Assign random barcode data to a StockLocation instance
+        response = self.assign(
+            data={
+                'barcode': barcode,
+                'stocklocation': 1,
+            },
+            expected_code=403,
+        )
+
+        self.assignRole('stock_location.change')
 
         # Assign random barcode data to a StockLocation instance
         response = self.assign(
