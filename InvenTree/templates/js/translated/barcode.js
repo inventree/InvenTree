@@ -14,7 +14,8 @@
 */
 
 /* exported
-    barcodeCheckIn,
+    barcodeCheckInStockItems,
+    barcodeCheckInStockLocations,
     barcodeScanDialog,
     linkBarcodeDialog,
     scanItemsIntoLocation,
@@ -27,7 +28,7 @@ function makeBarcodeInput(placeholderText='', hintText='') {
      * Generate HTML for a barcode input
      */
 
-    placeholderText = placeholderText || '{% trans "Scan barcode data here using wedge scanner" %}';
+    placeholderText = placeholderText || '{% trans "Scan barcode data here using barcode scanner" %}';
 
     hintText = hintText || '{% trans "Enter barcode data" %}';
 
@@ -43,7 +44,7 @@ function makeBarcodeInput(placeholderText='', hintText='') {
                     <span class='fas fa-qrcode'></span>
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
-                <button id='barcode_scan_btn' type='button' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'>
+                <button title='{% trans "Scan barcode using connected webcam" %}' id='barcode_scan_btn' type='button' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'>
                     <span class='fas fa-camera'></span>
                 </button>
             </div>
@@ -233,10 +234,10 @@ function getBarcodeData(modal) {
 }
 
 
+/*
+ * Handle a barcode display dialog.
+ */
 function barcodeDialog(title, options={}) {
-    /*
-     * Handle a barcode display dialog.
-     */
 
     var modal = '#modal-form';
 
@@ -305,9 +306,11 @@ function barcodeDialog(title, options={}) {
         modalShowSubmitButton(modal, false);
     }
 
+    var details = options.details || '{% trans "Scan barcode data" %}';
+
     var content = '';
 
-    content += `<div class='alert alert-info alert-block'>{% trans "Scan barcode data below" %}</div>`;
+    content += `<div class='alert alert-info alert-block'>${details}</div>`;
 
     content += `<div id='barcode-error-message'></div>`;
     content += `<form class='js-modal-form' method='post'>`;
@@ -431,7 +434,7 @@ function unlinkBarcode(data, options={}) {
 /*
  * Display dialog to check multiple stock items in to a stock location.
  */
-function barcodeCheckIn(location_id, options={}) {
+function barcodeCheckInStockItems(location_id, options={}) {
 
     var modal = '#modal-form';
 
@@ -514,11 +517,12 @@ function barcodeCheckIn(location_id, options={}) {
     var extra = makeNotesField();
 
     barcodeDialog(
-        '{% trans "Check Stock Items into Location" %}',
+        '{% trans "Scan Stock Items Into Location" %}',
         {
+            details: '{% trans "Scan stock item barcode to check in to this location" %}',
             headerContent: table,
             preShow: function() {
-                modalSetSubmitText(modal, '{% trans "Check In" %}');
+                modalSetSubmitText(modal, '{% trans "Scan In" %}');
                 modalEnable(modal, false);
                 reloadTable();
             },
@@ -612,6 +616,41 @@ function barcodeCheckIn(location_id, options={}) {
                     showBarcodeMessage(modal, '{% trans "Barcode does not match Stock Item" %}', 'warning');
                 }
             },
+        }
+    );
+}
+
+
+/*
+ * Display dialog to scan stock locations into the current location
+ */
+function barcodeCheckInStockLocations(location_id, options={}) {
+
+    // List of locations we are going to scan-in
+    var locations = [];
+
+    var header = '';
+
+    var extra = makeNotesField();
+
+    barcodeDialog(
+        '{% trans "Scan Stock Containers Into Location" %}',
+        {
+            details: '{% trans "Scan stock container barcode to check in to this location" %}',
+            headerContent: header,
+            preShow: function() {
+                // TODO
+            },
+            onShow: function() {
+                // TODO
+            },
+            extraFields: extra,
+            onScan: function(response) {
+                // TODO
+            },
+            onSubmit: function() {
+                // TODO
+            }
         }
     );
 }

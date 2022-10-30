@@ -53,7 +53,8 @@
         {% else %}
         <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
         {% endif %}
-        <li><a class='dropdown-item' href='#' id='barcode-check-in'><span class='fas fa-arrow-right'></span> {% trans "Check-in Items" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='barcode-scan-in-items' title='{% trans "Scan stock items into this location" %}'><span class='fas fa-boxes'></span> {% trans "Scan In Stock Items" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='barcode-scan-in-containers' title='{% trans "Scan stock containers into this location" %}'><span class='fas fa-sitemap'></span> {% trans "Scan In Containers" %}</a></li>
     </ul>
 </div>
 <!-- Printing action -->
@@ -297,13 +298,16 @@
     {% endif %}
 
     {% if location %}
-    $("#barcode-check-in").click(function() {
-        barcodeCheckIn({{ location.id }});
+    $("#barcode-scan-in-items").click(function() {
+        barcodeCheckInStockItems({{ location.id }});
+    });
+
+    $('#barcode-scan-in-containers').click(function() {
+        barcodeCheckInStockLocations({{ location.id }});
     });
     {% endif %}
 
     $('#location-create').click(function () {
-
         createStockLocation({
             {% if location %}
             parent: {{ location.pk }},
