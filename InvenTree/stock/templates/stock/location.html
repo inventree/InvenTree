@@ -53,12 +53,20 @@
         {% else %}
         <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
         {% endif %}
-        {% if labels_enabled %}
-        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
-        {% endif %}
         <li><a class='dropdown-item' href='#' id='barcode-check-in'><span class='fas fa-arrow-right'></span> {% trans "Check-in Items" %}</a></li>
     </ul>
 </div>
+<!-- Printing action -->
+{% if labels_enabled %}
+<div class='btn-group' role='group'>
+    <button id='printing-options' title='{% trans "Printing actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-print'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu'>
+        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-print'></span> {% trans "Print Label" %}</a>
+    </ul>
+</div>
+{% endif %}
 <!-- Check permissions and owner -->
 {% if user_owns_location %}
 {% if roles.stock.change %}
