@@ -23,10 +23,10 @@
     onBarcodeScanClicked,
 */
 
+/*
+ * Generate HTML for a barcode scan input
+ */
 function makeBarcodeInput(placeholderText='', hintText='') {
-    /*
-     * Generate HTML for a barcode input
-     */
 
     placeholderText = placeholderText || '{% trans "Scan barcode data here using barcode scanner" %}';
 
@@ -93,6 +93,9 @@ function onBarcodeScanCompleted(result, options) {
     postBarcodeData(result.data, options);
 }
 
+/*
+ * Construct a generic "notes" field for barcode scanning operations
+ */
 function makeNotesField(options={}) {
 
     var tooltip = options.tooltip || '{% trans "Enter optional notes for stock transfer" %}';
@@ -200,6 +203,9 @@ function showBarcodeMessage(modal, message, style='danger') {
 }
 
 
+/*
+ * Display an error message when the server indicates an error
+ */
 function showInvalidResponseError(modal, response, status) {
     showBarcodeMessage(
         modal,
@@ -208,6 +214,9 @@ function showInvalidResponseError(modal, response, status) {
 }
 
 
+/*
+ * Enable (or disable) the barcode scanning input
+ */
 function enableBarcodeInput(modal, enabled=true) {
 
     var barcode = $(modal + ' #barcode');
@@ -219,6 +228,10 @@ function enableBarcodeInput(modal, enabled=true) {
     barcode.focus();
 }
 
+
+/*
+ * Extract scanned data from the barcode input
+ */
 function getBarcodeData(modal) {
 
     modal = modal || '#modal-form';
@@ -245,7 +258,6 @@ function barcodeDialog(title, options={}) {
         var barcode = getBarcodeData(modal);
 
         if (barcode && barcode.length > 0) {
-
             postBarcodeData(barcode, options);
         }
     }
@@ -489,6 +501,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
 
         $(modal + ' #barcode').focus();
 
+        // Callback to remove the scanned item from the table
         $(modal + ' .button-item-remove').unbind('click').on('mouseup', function() {
             var pk = $(this).attr('pk');
 
@@ -522,7 +535,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
             details: '{% trans "Scan stock item barcode to check in to this location" %}',
             headerContent: table,
             preShow: function() {
-                modalSetSubmitText(modal, '{% trans "Scan In" %}');
+                modalSetSubmitText(modal, '{% trans "Check In" %}');
                 modalEnable(modal, false);
                 reloadTable();
             },
@@ -613,7 +626,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
                     );
                 } else {
                     // Barcode does not match a stock item
-                    showBarcodeMessage(modal, '{% trans "Barcode does not match Stock Item" %}', 'warning');
+                    showBarcodeMessage(modal, '{% trans "Barcode does not match valid stock item" %}', 'warning');
                 }
             },
         }
@@ -626,12 +639,8 @@ function barcodeCheckInStockItems(location_id, options={}) {
  */
 function barcodeCheckInStockLocations(location_id, options={}) {
 
-    // List of locations we are going to scan-in
-    var locations = [];
-
+    var modal = '#modal-form';
     var header = '';
-
-    var extra = makeNotesField();
 
     barcodeDialog(
         '{% trans "Scan Stock Containers Into Location" %}',
@@ -639,17 +648,39 @@ function barcodeCheckInStockLocations(location_id, options={}) {
             details: '{% trans "Scan stock container barcode to check in to this location" %}',
             headerContent: header,
             preShow: function() {
-                // TODO
+                modalEnable(modal, false);
             },
             onShow: function() {
                 // TODO
             },
-            extraFields: extra,
             onScan: function(response) {
-                // TODO
-            },
-            onSubmit: function() {
-                // TODO
+                if ('stocklocation' in response) {
+                    var pk = response.stocklocation.pk;
+
+                    var url = `/api/stock/location/${pk}/`;
+
+                    // Move the scanned location into *this* location
+                    inventreePut(
+                        url,
+                        {
+                            parent: location_id,
+                        },
+                        {
+                            method: 'PATCH',
+                            success: function(response) {
+                                $(modal).modal('hide');
+                                handleFormSuccess(response, options);
+                            },
+                            error: function(xhr) {
+                                $(modal).modal('hide');
+                                showApiError(xhr, url);
+                            },
+                        }
+                    );
+                } else {
+                    // Barcode does not match a valid stock location
+                    showBarcodeMessage(modal, '{% trans "Barcode does not match valid stock location" %}', 'warning');
+                }
             }
         }
     );

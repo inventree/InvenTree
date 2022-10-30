@@ -54,7 +54,7 @@
         <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
         {% endif %}
         <li><a class='dropdown-item' href='#' id='barcode-scan-in-items' title='{% trans "Scan stock items into this location" %}'><span class='fas fa-boxes'></span> {% trans "Scan In Stock Items" %}</a></li>
-        <li><a class='dropdown-item' href='#' id='barcode-scan-in-containers' title='{% trans "Scan stock containers into this location" %}'><span class='fas fa-sitemap'></span> {% trans "Scan In Containers" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='barcode-scan-in-containers' title='{% trans "Scan stock container into this location" %}'><span class='fas fa-sitemap'></span> {% trans "Scan In Container" %}</a></li>
     </ul>
 </div>
 <!-- Printing action -->
@@ -303,7 +303,20 @@
     });
 
     $('#barcode-scan-in-containers').click(function() {
-        barcodeCheckInStockLocations({{ location.id }});
+        barcodeCheckInStockLocations({{ location.id }},
+            {
+                onSuccess: function() {
+                    showMessage(
+                        '{% trans "Scanned stock container into this location" %}',
+                        {
+                            style: 'success',
+                        }
+                    );
+
+                    $('#sublocation-table').bootstrapTable('refresh');
+                }
+            }
+        );
     });
     {% endif %}
 
