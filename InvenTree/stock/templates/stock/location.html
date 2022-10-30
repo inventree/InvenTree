@@ -104,11 +104,6 @@
 {% endif %}
 {% endif %}
 {% endif %}
-{% if user_owns_location and roles.stock_location.add %}
-<button class='btn btn-success' id='location-create' type='button' title='{% trans "Create new stock location" %}'>
-    <span class='fas fa-plus-circle'></span> {% trans "New Location" %}
-</button>
-{% endif %}
 {% endblock %}
 
 {% block details_left %}
@@ -211,7 +206,17 @@
 
 <div class='panel panel-hidden' id='panel-sublocations'>
     <div class='panel-heading'>
-        <h4>{% trans "Sublocations" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Sublocations" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if user_owns_location and roles.stock_location.add %}
+                <button class='btn btn-success' id='location-create' type='button' title='{% trans "Create new stock location" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Location" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='sublocation-button-toolbar'>
