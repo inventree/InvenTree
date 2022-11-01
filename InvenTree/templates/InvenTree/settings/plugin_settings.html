@@ -94,7 +94,14 @@
                 <td>{% trans "Installation path" %}</td>
                 <td>{{ plugin.package_path }}</td>
             </tr>
-            {% if plugin.is_package == False %}
+            {% if plugin.is_package %}
+            {% elif plugin.is_builtin %}
+            <tr>
+                <td><span class='fas fa-check-circle icon-green'></span></td>
+                <td>{% trans "Builtin" %}</td>
+                <td>{% trans "This is a builtin plugin which cannot be disabled" %}</td>
+            </tr>
+            {% else %}
             <tr>
                 <td><span class='fas fa-user'></span></td>
                 <td>{% trans "Commit Author" %}</td><td>{{ plugin.package.author }} - {{ plugin.package.mail }}{% include "clip.html" %}</td>
