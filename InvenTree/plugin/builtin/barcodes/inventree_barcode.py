@@ -65,7 +65,8 @@ class InvenTreeInternalBarcodePlugin(InvenTreeBarcodePlugin):
     """Builtin BarcodePlugin for matching and generating internal barcodes."""
 
     NAME = "InvenTreeInternalBarcode"
-    TITLE = "Inventree Barcodes"
+    TITLE = _("Inventree Barcodes")
+    DESCRIPTION = _("Provides native support for barcodes")
     VERSION = "2.0"
     AUTHOR = _("InvenTree contributors")
 
