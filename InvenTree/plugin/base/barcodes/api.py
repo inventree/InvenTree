@@ -11,8 +11,8 @@ from rest_framework.views import APIView
 
 from InvenTree.helpers import hash_barcode
 from plugin import registry
-from plugin.builtin.barcodes.inventree_barcode import (
-    InvenTreeExternalBarcodePlugin, InvenTreeInternalBarcodePlugin)
+from plugin.builtin.barcodes.inventree_barcode import \
+    InvenTreeInternalBarcodePlugin
 from users.models import RuleSet
 
 
@@ -56,7 +56,6 @@ class BarcodeScan(APIView):
         # Ensure that the default barcode handlers are run first
         plugins = [
             InvenTreeInternalBarcodePlugin(),
-            InvenTreeExternalBarcodePlugin(),
         ] + registry.with_mixin('barcode')
 
         barcode_hash = hash_barcode(barcode_data)
@@ -115,7 +114,6 @@ class BarcodeAssign(APIView):
         # Here we only check against 'InvenTree' plugins
         plugins = [
             InvenTreeInternalBarcodePlugin(),
-            InvenTreeExternalBarcodePlugin(),
         ]
 
         # First check if the provided barcode matches an existing database entry
@@ -133,7 +131,7 @@ class BarcodeAssign(APIView):
 
         valid_labels = []
 
-        for model in InvenTreeExternalBarcodePlugin.get_supported_barcode_models():
+        for model in InvenTreeInternalBarcodePlugin.get_supported_barcode_models():
             label = model.barcode_model_type()
             valid_labels.append(label)
 
@@ -188,7 +186,7 @@ class BarcodeUnassign(APIView):
         """Respond to a barcode unassign POST request"""
 
         # The following database models support assignment of third-party barcodes
-        supported_models = InvenTreeExternalBarcodePlugin.get_supported_barcode_models()
+        supported_models = InvenTreeInternalBarcodePlugin.get_supported_barcode_models()
 
         supported_labels = [model.barcode_model_type() for model in supported_models]
         model_names = ', '.join(supported_labels)

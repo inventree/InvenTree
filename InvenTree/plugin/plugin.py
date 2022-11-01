@@ -108,7 +108,7 @@ class MetaBase:
         """Return True if this plugin is currently active."""
 
         # Builtin plugins are always considered "active"
-        if self.is_builtin():
+        if self.is_builtin:
             return True
 
         cfg = self.plugin_config()

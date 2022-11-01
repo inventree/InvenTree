@@ -63,6 +63,7 @@ class InvenTreeInternalBarcodePlugin(InvenTreeBarcodePlugin):
     """Builtin BarcodePlugin for matching and generating internal barcodes."""
 
     NAME = "InvenTreeInternalBarcode"
+    TITLE = "Inventree Barcodes"
 
     def scan(self, barcode_data):
         """Scan a barcode against this plugin.
@@ -83,6 +84,8 @@ class InvenTreeInternalBarcodePlugin(InvenTreeBarcodePlugin):
         if type(barcode_data) is not dict:
             return None
 
+        barcode_hash = hash_barcode(barcode_data)
+
         # Look for various matches. First good match will be returned
         for model in self.get_supported_barcode_models():
             label = model.barcode_model_type()
@@ -93,22 +96,9 @@ class InvenTreeInternalBarcodePlugin(InvenTreeBarcodePlugin):
                 except (ValueError, model.DoesNotExist):
                     pass
 
-
-class InvenTreeExternalBarcodePlugin(InvenTreeBarcodePlugin):
-    """Builtin BarcodePlugin for matching arbitrary external barcodes."""
-
-    NAME = "InvenTreeExternalBarcode"
-
-    def scan(self, barcode_data):
-        """Scan a barcode against this plugin.
-
-        Here we are looking for a dict object which contains a reference to a particular InvenTree databse object
-        """
-
+        # If no "direct" hits are found, look for assigned third-party barcodes
         for model in self.get_supported_barcode_models():
-            label = model.barcode_model_type()
-
-            barcode_hash = hash_barcode(barcode_data)
+            label = model.get_barcode_model_type()
 
             instance = model.lookup_barcode(barcode_hash)
 

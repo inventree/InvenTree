@@ -58,14 +58,16 @@
 
     <tbody>
         {% plugin_list as pl_list %}
+        {% if pl_list %}
+        <tr><td colspan="6"><h6>{% trans 'Active plugins' %}</h6></td></tr>
         {% for plugin_key, plugin in pl_list.items %}
             {% include "InvenTree/settings/plugin_details.html" with plugin=plugin plugin_key=plugin_key %}
         {% endfor %}
+        {% endif %}
 
         {% inactive_plugin_list as in_pl_list %}
         {% if in_pl_list %}
-        <tr><td colspan="5"></td></tr>
-        <tr><td colspan="5"><h6>{% trans 'Inactive plugins' %}</h6></td></tr>
+        <tr><td colspan="6"><h6>{% trans 'Inactive plugins' %}</h6></td></tr>
         {% for plugin_key, plugin in in_pl_list.items %}
             {% include "InvenTree/settings/plugin_details.html" with plugin=plugin plugin_key=plugin_key %}
         {% endfor %}
