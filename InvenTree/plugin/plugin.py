@@ -111,10 +111,10 @@ class MetaBase:
         if self.is_builtin:
             return True
 
-        cfg = self.plugin_config()
+        config = self.plugin_config()
 
-        if cfg:
-            return cfg.active
+        if config:
+            return config.active
         else:
             return False  # pragma: no cover
 

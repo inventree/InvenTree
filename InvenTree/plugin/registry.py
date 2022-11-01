@@ -342,10 +342,7 @@ class PluginsRegistry:
             if plugin.mixin_enabled(mixin):
 
                 if active is not None:
-                    # Filter by 'enabled' status
-                    config = plugin.plugin_config()
-
-                    if config.active != active:
+                    if active != plugin.is_active():
                         continue
 
                 result.append(plugin)
@@ -402,8 +399,14 @@ class PluginsRegistry:
             # Append reference to plugin
             plg.db = plg_db
 
-            # Always activate if testing
-            if settings.PLUGIN_TESTING or (plg_db and plg_db.active):
+            # Check if this is a 'builtin' plugin
+            builtin = plg.check_is_builtin()
+
+            # Determine if this plugin should be loaded:
+            # - If PLUGIN_TESTING is enabled
+            # - If this is a 'builtin' plugin
+            # - If this plugin has been explicitly enabled by the user
+            if settings.PLUGIN_TESTING or builtin or (plg_db and plg_db.active):
                 # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
                 if disabled and ((plg.__name__ == disabled) or (plg.__module__ == disabled)):
                     safe_reference(plugin=plg, key=plg_key, active=False)
@@ -497,10 +500,9 @@ class PluginsRegistry:
             for _key, plugin in plugins:
 
                 if plugin.mixin_enabled('schedule'):
-                    config = plugin.plugin_config()
 
-                    # Only active tasks for plugins which are enabled
-                    if config and config.active:
+                    if plugin.is_active():
+                        # Only active tasks for plugins which are enabled
                         plugin.register_tasks()
                         task_keys += plugin.get_task_names()
 

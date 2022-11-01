@@ -9,6 +9,8 @@ references model objects actually exist in the database.
 
 import json
 
+from django.utils.translation import gettext_lazy as _
+
 from company.models import SupplierPart
 from InvenTree.helpers import hash_barcode
 from part.models import Part
@@ -64,6 +66,8 @@ class InvenTreeInternalBarcodePlugin(InvenTreeBarcodePlugin):
 
     NAME = "InvenTreeInternalBarcode"
     TITLE = "Inventree Barcodes"
+    VERSION = "2.0"
+    AUTHOR = _("InvenTree contributors")
 
     def scan(self, barcode_data):
         """Scan a barcode against this plugin.
