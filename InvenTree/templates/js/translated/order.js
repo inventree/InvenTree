@@ -4400,26 +4400,24 @@ function loadSalesOrderExtraLineTable(table, options={}) {
         title: '{% trans "Notes" %}',
     });
 
-    if (pending) {
-        columns.push({
-            field: 'buttons',
-            switchable: false,
-            formatter: function(value, row, index, field) {
+    columns.push({
+        field: 'buttons',
+        switchable: false,
+        formatter: function(value, row, index, field) {
 
-                var html = `<div class='btn-group float-right' role='group'>`;
+            var html = `<div class='btn-group float-right' role='group'>`;
 
-                var pk = row.pk;
+            var pk = row.pk;
 
-                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
-                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
-                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
+            html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
+            html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
+            html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
 
-                html += `</div>`;
+            html += `</div>`;
 
-                return html;
-            }
-        });
-    }
+            return html;
+        }
+    });
 
     function reloadTable() {
         $(table).bootstrapTable('refresh');

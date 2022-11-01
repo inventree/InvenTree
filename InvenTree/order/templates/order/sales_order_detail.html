@@ -42,7 +42,7 @@
             <h4>{% trans "Extra Lines" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.sales_order.change and order.is_pending %}
+                {% if roles.sales_order.change %}
                 <button type='button' class='btn btn-success' id='new-so-extra-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
                 </button>
