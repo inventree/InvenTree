@@ -933,6 +933,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'BARCODE_INPUT_DELAY': {
+            'name': _('Barcode Input Delay'),
+            'description': _('Barcode input processing delay time'),
+            'default': 50,
+            'validator': [
+                int,
+                MinValueValidator(1),
+            ],
+            'units': 'ms',
+        },
+
         'BARCODE_WEBCAM_SUPPORT': {
             'name': _('Barcode Webcam Support'),
             'description': _('Allow barcode scanning via webcam in browser'),

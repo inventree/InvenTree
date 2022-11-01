@@ -23,6 +23,8 @@
     onBarcodeScanClicked,
 */
 
+var barcodeInputTimer = null;
+
 /*
  * Generate HTML for a barcode scan input
  */
@@ -277,7 +279,15 @@ function barcodeDialog(title, options={}) {
             event.preventDefault();
 
             if (event.which == 10 || event.which == 13) {
+                clearTimeout(barcodeInputTimer);
                 sendBarcode();
+            } else {
+                // Start a timer to automatically send barcode after input is complete
+                clearTimeout(barcodeInputTimer);
+
+                barcodeInputTimer = setTimeout(function() {
+                    sendBarcode();
+                }, global_settings.BARCODE_INPUT_DELAY);
             }
         });
 
@@ -643,7 +653,7 @@ function barcodeCheckInStockLocations(location_id, options={}) {
     var header = '';
 
     barcodeDialog(
-        '{% trans "Scan Stock Containers Into Location" %}',
+        '{% trans "Scan Stock Container Into Location" %}',
         {
             details: '{% trans "Scan stock container barcode to check in to this location" %}',
             headerContent: header,
