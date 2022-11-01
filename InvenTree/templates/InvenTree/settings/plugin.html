@@ -38,7 +38,10 @@
         <div class='btn-group' role='group'>
             {% url 'admin:plugin_pluginconfig_changelist' as url %}
             {% include "admin_button.html" with url=url %}
+            {% plugins_enabled as plug %}
+            {% if plug %}
             <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"><span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}</button>
+            {% endif %}
         </div>
     </div>
 </div>
