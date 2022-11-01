@@ -2473,9 +2473,6 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
     setupFilterList('purchaseorderextraline', $(table), filter_target);
 
-    // Is the order pending?
-    var pending = options.status == {{ SalesOrderStatus.PENDING }};
-
     // Table columns to display
     var columns = [
         {
@@ -4317,9 +4314,6 @@ function loadSalesOrderExtraLineTable(table, options={}) {
     var filter_target = options.filter_target || '#filter-list-sales-order-extra-lines';
 
     setupFilterList('salesorderextraline', $(table), filter_target);
-
-    // Is the order pending?
-    var pending = options.status == {{ SalesOrderStatus.PENDING }};
 
     // Table columns to display
     var columns = [
