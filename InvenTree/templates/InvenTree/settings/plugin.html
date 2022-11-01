@@ -31,6 +31,8 @@
 </table>
 </div>
 
+{% plugins_enabled as plug %}
+
 <div class='panel-heading'>
     <div class='d-flex flex-wrap'>
         <h4>{% trans "Plugins" %}</h4>
@@ -38,13 +40,18 @@
         <div class='btn-group' role='group'>
             {% url 'admin:plugin_pluginconfig_changelist' as url %}
             {% include "admin_button.html" with url=url %}
-            {% plugins_enabled as plug %}
             {% if plug %}
             <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"><span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}</button>
             {% endif %}
         </div>
     </div>
 </div>
+
+{% if not plug %}
+<div class='alert alert-warning alert-block'>
+    {% trans "External plugins are not enabled for this InvenTree installation" %}<br>
+</div>
+{% endif %}
 
 <div class='table-responsive'>
 <table class='table table-striped table-condensed'>
