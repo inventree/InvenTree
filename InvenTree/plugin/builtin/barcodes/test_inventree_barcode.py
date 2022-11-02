@@ -22,14 +22,15 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     def test_assign_errors(self):
         """Test error cases for assigment action."""
 
-        def test_assert_error(barcode_data):
+        def test_assert_error(barcode_data, timeout=0.5):
             response = self.post(
                 reverse('api-barcode-link'), format='json',
                 data={
                     'barcode': barcode_data,
                     'stockitem': 521
                 },
-                expected_code=400
+                expected_code=400,
+                timeout=timeout,
             )
 
             self.assertIn('error', response.data)

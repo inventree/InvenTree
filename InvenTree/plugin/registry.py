@@ -334,7 +334,7 @@ class PluginsRegistry:
     # endregion
 
     # region registry functions
-    def with_mixin(self, mixin: str, active=None):
+    def with_mixin(self, mixin: str, active=None, builtin=None):
         """Returns reference to all plugins that have a specified mixin enabled."""
         result = []
 
@@ -342,7 +342,13 @@ class PluginsRegistry:
             if plugin.mixin_enabled(mixin):
 
                 if active is not None:
+                    # Filter by 'active' status of plugin
                     if active != plugin.is_active():
+                        continue
+
+                if builtin is not None:
+                    # Filter by 'builtin' status of plugin
+                    if builtin != plugin.is_builtin:
                         continue
 
                 result.append(plugin)

@@ -3,6 +3,7 @@
 import csv
 import io
 import re
+import time
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -123,30 +124,42 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
 
         return actions
 
-    def get(self, url, data=None, expected_code=200):
+    def get(self, url, data=None, expected_code=200, timeout=0.1):
         """Issue a GET request."""
         # Set default - see B006
         if data is None:
             data = {}
 
+        t_start = time.time()
         response = self.client.get(url, data, format='json')
+        t_end = time.time()
 
         if expected_code is not None:
 
             if response.status_code != expected_code:
-                print(f"Unexpected response at '{url}':")
+                print(f"Unexpected response at '{url}': status_code = {response.status_code}")
                 print(response.data)
 
             self.assertEqual(response.status_code, expected_code)
 
+        if timeout is not None:
+            t_delta = round(t_end - t_start, 2)
+
+            if t_delta > timeout:
+                raise TimeoutError(f"GET to {url} exceeded allowed time of {timeout}s (took {t_delta}s)")
+
         return response
 
-    def post(self, url, data=None, expected_code=None, format='json'):
+    def post(self, url, data=None, expected_code=None, format='json', timeout=0.1):
         """Issue a POST request."""
-        response = self.client.post(url, data=data, format=format)
 
+        # Set default value - see B006
         if data is None:
             data = {}
+
+        t_start = time.time()
+        response = self.client.post(url, data=data, format=format)
+        t_end = time.time()
 
         if expected_code is not None:
 
@@ -159,6 +172,12 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
                     print(f"(response object {type(response)} has no 'data' attribute")
 
             self.assertEqual(response.status_code, expected_code)
+
+        if timeout is not None:
+            t_delta = round(t_end - t_start, 2)
+
+            if t_delta > timeout:
+                raise TimeoutError(f"POST to {url} exceeded allowed time of {timeout}s (took {t_delta}s)")
 
         return response
 

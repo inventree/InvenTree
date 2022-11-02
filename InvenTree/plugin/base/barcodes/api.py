@@ -110,9 +110,7 @@ class BarcodeAssign(APIView):
             raise ValidationError({'barcode': _('Missing barcode data')})
 
         # Here we only check against 'InvenTree' plugins
-        plugins = [
-            InvenTreeInternalBarcodePlugin(),
-        ]
+        plugins = registry.with_mixin('barcode', builtin=True)
 
         # First check if the provided barcode matches an existing database entry
         for plugin in plugins:
