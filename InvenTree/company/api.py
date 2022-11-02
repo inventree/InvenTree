@@ -10,7 +10,7 @@ from rest_framework import filters
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
-from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import ListCreateAPI, RetrieveUpdateAPI, RetrieveUpdateDestroyAPI
 
 from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
                      ManufacturerPartParameter, SupplierPart,
@@ -20,7 +20,7 @@ from .serializers import (CompanySerializer,
                           ManufacturerPartParameterSerializer,
                           ManufacturerPartSerializer, SupplierPartSerializer,
                           SupplierPriceBreakSerializer)
-
+from plugin.serializers import MetadataSerializer
 
 class CompanyList(ListCreateAPI):
     """API endpoint for accessing a list of Company objects.
@@ -81,6 +81,16 @@ class CompanyDetail(RetrieveUpdateDestroyAPI):
         queryset = CompanySerializer.annotate_queryset(queryset)
 
         return queryset
+
+
+class CompanyMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating Company metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a Company"""
+        return MetadataSerializer(Company, *args, **kwargs)
+
+    queryset = Company.objects.all()
 
 
 class ManufacturerPartFilter(rest_filters.FilterSet):
@@ -460,7 +470,11 @@ company_api_urls = [
         re_path(r'^.*$', SupplierPriceBreakList.as_view(), name='api-part-supplier-price-list'),
     ])),
 
-    re_path(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
+    re_path(r'^(?P<pk>\d+)/?', include([
+        re_path(r'^metadata/', CompanyMetadata.as_view(), name='api-company-metadata'),
+        re_path(r'^.*$', CompanyDetail.as_view(), name='api-company-detail'),
+    ])),
 
     re_path(r'^.*$', CompanyList.as_view(), name='api-company-list'),
+    
 ]
