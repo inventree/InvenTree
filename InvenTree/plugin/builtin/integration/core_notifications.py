@@ -30,7 +30,7 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
     TITLE = _("InvenTree Notifications")
     AUTHOR = _('InvenTree contributors')
     DESCRIPTION = _('Integrated outgoing notificaton methods')
-    VERSION = "0.1"
+    VERSION = "1.0"
 
     SETTINGS = {
         'ENABLE_NOTIFICATION_EMAILS': {

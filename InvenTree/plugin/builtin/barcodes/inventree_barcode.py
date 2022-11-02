@@ -19,8 +19,14 @@ from plugin.mixins import BarcodeMixin
 from stock.models import StockItem, StockLocation
 
 
-class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
-    """Generic base class for handling InvenTree barcodes"""
+class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
+    """Builtin BarcodePlugin for matching and generating internal barcodes."""
+
+    NAME = "InvenTreeInternalBarcode"
+    TITLE = _("Inventree Barcodes")
+    DESCRIPTION = _("Provides native support for barcodes")
+    VERSION = "2.0"
+    AUTHOR = _("InvenTree contributors")
 
     @staticmethod
     def get_supported_barcode_models():
@@ -59,16 +65,6 @@ class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             response['url'] = url
 
         return response
-
-
-class InvenTreeInternalBarcodePlugin(InvenTreeBarcodePlugin):
-    """Builtin BarcodePlugin for matching and generating internal barcodes."""
-
-    NAME = "InvenTreeInternalBarcode"
-    TITLE = _("Inventree Barcodes")
-    DESCRIPTION = _("Provides native support for barcodes")
-    VERSION = "2.0"
-    AUTHOR = _("InvenTree contributors")
 
     def scan(self, barcode_data):
         """Scan a barcode against this plugin.
