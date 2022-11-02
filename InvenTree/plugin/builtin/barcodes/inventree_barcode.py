@@ -99,7 +99,7 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
         # If no "direct" hits are found, look for assigned third-party barcodes
         for model in self.get_supported_barcode_models():
-            label = model.get_barcode_model_type()
+            label = model.barcode_model_type()
 
             instance = model.lookup_barcode(barcode_hash)
 
