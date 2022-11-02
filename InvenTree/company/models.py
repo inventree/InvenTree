@@ -25,6 +25,7 @@ from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin
 from InvenTree.status_codes import PurchaseOrderStatus
 from plugin.models import MetadataMixin
 
+
 def rename_company_image(instance, filename):
     """Function to rename a company image after upload.
 

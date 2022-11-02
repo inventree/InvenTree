@@ -22,6 +22,7 @@ from .serializers import (CompanySerializer,
                           SupplierPriceBreakSerializer)
 from plugin.serializers import MetadataSerializer
 
+
 class CompanyList(ListCreateAPI):
     """API endpoint for accessing a list of Company objects.
 
@@ -476,5 +477,5 @@ company_api_urls = [
     ])),
 
     re_path(r'^.*$', CompanyList.as_view(), name='api-company-list'),
-    
+
 ]
