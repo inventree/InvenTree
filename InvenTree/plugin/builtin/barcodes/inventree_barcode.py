@@ -22,7 +22,7 @@ from stock.models import StockItem, StockLocation
 class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     """Builtin BarcodePlugin for matching and generating internal barcodes."""
 
-    NAME = "InvenTreeInternalBarcode"
+    NAME = "InvenTreeBarcode"
     TITLE = _("Inventree Barcodes")
     DESCRIPTION = _("Provides native support for barcodes")
     VERSION = "2.0"
@@ -72,30 +72,32 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
         Here we are looking for a dict object which contains a reference to a particular InvenTree database object
         """
 
-        if type(barcode_data) is dict:
-            pass
-        elif type(barcode_data) is str:
-            try:
-                barcode_data = json.loads(barcode_data)
-            except json.JSONDecodeError:
-                return None
-        else:
-            return None
-
-        if type(barcode_data) is not dict:
-            return None
-
+        # Create hash from raw barcode data
         barcode_hash = hash_barcode(barcode_data)
 
-        # Look for various matches. First good match will be returned
-        for model in self.get_supported_barcode_models():
-            label = model.barcode_model_type()
-            if label in barcode_data:
-                try:
-                    instance = model.objects.get(pk=barcode_data[label])
-                    return self.format_matched_response(label, model, instance)
-                except (ValueError, model.DoesNotExist):
-                    pass
+        # Attempt to coerce the barcode data into a dict object
+        # This is the internal barcode representation that InvenTree uses
+        barcode_dict = None
+
+        if type(barcode_data) is dict:
+            barcode_dict = barcode_data
+        elif type(barcode_data) is str:
+            try:
+                barcode_dict = json.loads(barcode_data)
+            except json.JSONDecodeError:
+                pass
+
+        if barcode_dict is not None and type(barcode_dict) is dict:
+            # Look for various matches. First good match will be returned
+            for model in self.get_supported_barcode_models():
+                label = model.barcode_model_type()
+
+                if label in barcode_dict:
+                    try:
+                        instance = model.objects.get(pk=barcode_dict[label])
+                        return self.format_matched_response(label, model, instance)
+                    except (ValueError, model.DoesNotExist):
+                        pass
 
         # If no "direct" hits are found, look for assigned third-party barcodes
         for model in self.get_supported_barcode_models():

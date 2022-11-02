@@ -53,10 +53,8 @@ class BarcodeScan(APIView):
         if not barcode_data:
             raise ValidationError({'barcode': _('Missing barcode data')})
 
-        # Ensure that the default barcode handlers are run first
-        plugins = [
-            InvenTreeInternalBarcodePlugin(),
-        ] + registry.with_mixin('barcode')
+        # Note: the default barcode handlers are loaded (and thus run) first
+        plugins = registry.with_mixin('barcode')
 
         barcode_hash = hash_barcode(barcode_data)
 
