@@ -10,7 +10,9 @@ from rest_framework import filters
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
-from InvenTree.mixins import ListCreateAPI, RetrieveUpdateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import ListCreateAPI, RetrieveUpdateAPI,
+                             RetrieveUpdateDestroyAPI
+from plugin.serializers import MetadataSerializer
 
 from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
                      ManufacturerPartParameter, SupplierPart,
@@ -20,7 +22,7 @@ from .serializers import (CompanySerializer,
                           ManufacturerPartParameterSerializer,
                           ManufacturerPartSerializer, SupplierPartSerializer,
                           SupplierPriceBreakSerializer)
-from plugin.serializers import MetadataSerializer
+
 
 
 class CompanyList(ListCreateAPI):
