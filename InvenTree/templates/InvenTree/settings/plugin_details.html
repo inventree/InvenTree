@@ -8,7 +8,12 @@
         {% else %}
         <span class='fas fa-times-circle icon-red'></span>
         {% endif %}
+
+        {% if plugin.human_name %}
         {{ plugin.human_name }}
+        {% elif plugin.name %}
+        {{ plugin.name }}
+        {% endif %}
 
         {% define plugin.registered_mixins as mixin_list %}
 
