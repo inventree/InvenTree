@@ -11,6 +11,8 @@
 
         {% if plugin.human_name %}
         {{ plugin.human_name }}
+        {% elif plugin.title %}
+        {{ plugin.title }}
         {% elif plugin.name %}
         {{ plugin.name }}
         {% endif %}
