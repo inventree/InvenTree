@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 78
+INVENTREE_API_VERSION = 79
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v79 -> 2022-11-03 : https://github.com/inventree/InvenTree/pull/3895
+    - Add metadata to Company
 
 v78 -> 2022-10-25 : https://github.com/inventree/InvenTree/pull/3854
     - Make PartCategory to be filtered by name and description
