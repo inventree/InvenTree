@@ -25,7 +25,7 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     NAME = "InvenTreeBarcode"
     TITLE = _("Inventree Barcodes")
     DESCRIPTION = _("Provides native support for barcodes")
-    VERSION = "2.0"
+    VERSION = "2.0.0"
     AUTHOR = _("InvenTree contributors")
 
     @staticmethod
