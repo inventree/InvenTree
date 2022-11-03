@@ -593,7 +593,8 @@ class PartAPITest(InvenTreeAPITestCase):
                 {
                     'convert_from': variant.pk,
                 },
-                expected_code=200
+                expected_code=200,
+                timeout=0.5,
             )
 
             # There should be the same number of results for each request
@@ -980,6 +981,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 'ancestor': 10003,
             },
             expected_code=200,
+            timeout=0.5,
         )
 
         self.assertEqual(len(response.data), 101)
@@ -1854,7 +1856,8 @@ class BomItemTest(InvenTreeAPITestCase):
             data={
                 'validated': True,
             },
-            expected_code=200
+            expected_code=200,
+            timeout=0.5,
         )
 
         # Check that the expected response is returned

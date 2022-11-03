@@ -290,7 +290,7 @@ class TestReportTest(ReportTest):
         # Now print with a valid StockItem
         item = StockItem.objects.first()
 
-        response = self.get(url, {'item': item.pk}, expected_code=200)
+        response = self.get(url, {'item': item.pk}, expected_code=200, timeout=1.0)
 
         # Response should be a StreamingHttpResponse (PDF file)
         self.assertEqual(type(response), StreamingHttpResponse)
@@ -343,7 +343,7 @@ class BuildReportTest(ReportTest):
 
         build = Build.objects.first()
 
-        response = self.get(url, {'build': build.pk})
+        response = self.get(url, {'build': build.pk}, timeout=1.0)
 
         self.assertEqual(type(response), StreamingHttpResponse)
 

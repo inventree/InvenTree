@@ -486,6 +486,7 @@ class StockItemTest(StockAPITestCase):
                 'serial_numbers': '1-10',
             },
             expected_code=201,
+            timeout=0.5,
         )
 
         data = response.data

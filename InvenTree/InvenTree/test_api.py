@@ -134,7 +134,7 @@ class APITests(InvenTreeAPITestCase):
         # Now log in!
         self.basicAuth()
 
-        response = self.get(url)
+        response = self.get(url, timeout=0.5)
 
         data = response.data
 
