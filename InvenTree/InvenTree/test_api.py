@@ -178,11 +178,15 @@ class APITests(InvenTreeAPITestCase):
     def test_with_roles(self):
         """Assign some roles to the user."""
         self.basicAuth()
-        response = self.get(reverse('api-user-roles'))
+
+        url = reverse('api-user-roles')
+
+        response = self.get(url, timeout=0.25)
 
         self.assignRole('part.delete')
         self.assignRole('build.change')
-        response = self.get(reverse('api-user-roles'))
+
+        response = self.get(url, timeout=0.25)
 
         roles = response.data['roles']
 

@@ -124,7 +124,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
 
         return actions
 
-    def get(self, url, data=None, expected_code=200, timeout=0.1):
+    def get(self, url, data=None, expected_code=200, timeout=0.2):
         """Issue a GET request."""
         # Set default - see B006
         if data is None:
@@ -150,7 +150,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
 
         return response
 
-    def post(self, url, data=None, expected_code=None, format='json', timeout=0.1):
+    def post(self, url, data=None, expected_code=None, format='json', timeout=0.2):
         """Issue a POST request."""
 
         # Set default value - see B006
