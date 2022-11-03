@@ -28,25 +28,41 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         url = reverse('api-plugin-install')
 
         # valid - Pypi
-        data = self.post(url, {
-            'confirm': True,
-            'packagename': self.PKG_NAME
-        }, expected_code=201).data
+        data = self.post(
+            url,
+            {
+                'confirm': True,
+                'packagename': self.PKG_NAME
+            },
+            expected_code=201,
+            timeout=None,
+        ).data
+
         self.assertEqual(data['success'], True)
 
         # valid - github url
-        data = self.post(url, {
-            'confirm': True,
-            'url': self.PKG_URL
-        }, expected_code=201).data
+        data = self.post(
+            url,
+            {
+                'confirm': True,
+                'url': self.PKG_URL
+            },
+            expected_code=201,
+            timeout=None,
+        ).data
         self.assertEqual(data['success'], True)
 
         # valid - github url and packagename
-        data = self.post(url, {
-            'confirm': True,
-            'url': self.PKG_URL,
-            'packagename': 'minimal',
-        }, expected_code=201).data
+        data = self.post(
+            url,
+            {
+                'confirm': True,
+                'url': self.PKG_URL,
+                'packagename': 'minimal',
+            },
+            expected_code=201,
+            timeout=None,
+        ).data
         self.assertEqual(data['success'], True)
 
         # invalid tries
@@ -57,17 +73,20 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         data = self.post(url, {
             'confirm': True,
         }, expected_code=400).data
+
         self.assertEqual(data['url'][0].title().upper(), self.MSG_NO_PKG.upper())
         self.assertEqual(data['packagename'][0].title().upper(), self.MSG_NO_PKG.upper())
 
         # not confirmed
         self.post(url, {
             'packagename': self.PKG_NAME
-        }, expected_code=400).data
+        }, expected_code=400)
+
         data = self.post(url, {
             'packagename': self.PKG_NAME,
             'confirm': False,
         }, expected_code=400).data
+
         self.assertEqual(data['confirm'][0].title().upper(), 'Installation not confirmed'.upper())
 
     def test_admin_action(self):
