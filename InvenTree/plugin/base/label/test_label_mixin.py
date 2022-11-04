@@ -151,7 +151,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.do_activate_plugin()
 
         # Print one part
-        self.get(url, expected_code=200, timeout=0.5)
+        self.get(url, expected_code=200, timeout=1.0)
 
         # Print multiple parts
         self.get(self.do_url(Part.objects.all()[:2], plugin_ref, label), expected_code=200, timeout=1.0)
