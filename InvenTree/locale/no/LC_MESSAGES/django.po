@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-03 11:22+0000\n"
-"PO-Revision-Date: 2022-11-03 19:04\n"
+"POT-Creation-Date: 2022-11-04 14:07+0000\n"
+"PO-Revision-Date: 2022-11-04 19:02\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -231,7 +231,7 @@ msgstr "Kommentar til fil"
 #: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1744
 #: common/models.py:1745 common/models.py:1968 common/models.py:1969
 #: common/models.py:2231 common/models.py:2232 part/models.py:2254
-#: part/models.py:2274 plugin/models.py:260 plugin/models.py:261
+#: part/models.py:2274 plugin/models.py:264 plugin/models.py:265
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2651
 msgid "User"
@@ -274,10 +274,10 @@ msgstr "Ugyldig valg"
 #: company/models.py:359 label/models.py:101 part/models.py:760
 #: part/models.py:2429 plugin/models.py:94 report/models.py:152
 #: templates/InvenTree/settings/mixins/urls.html:13
-#: templates/InvenTree/settings/plugin.html:51
-#: templates/InvenTree/settings/plugin.html:134
+#: templates/InvenTree/settings/plugin.html:60
+#: templates/InvenTree/settings/plugin.html:104
 #: templates/InvenTree/settings/plugin_settings.html:23
-#: templates/InvenTree/settings/settings.html:347
+#: templates/InvenTree/settings/settings.html:344
 #: templates/js/translated/company.js:580
 #: templates/js/translated/company.js:793
 #: templates/js/translated/notification.js:71
@@ -297,8 +297,8 @@ msgstr "Navn"
 #: report/models.py:507 report/models.py:551
 #: report/templates/report/inventree_build_order_base.html:117
 #: stock/templates/stock/location.html:117
-#: templates/InvenTree/settings/plugin_settings.html:33
-#: templates/InvenTree/settings/settings.html:358
+#: templates/InvenTree/settings/plugin_settings.html:28
+#: templates/InvenTree/settings/settings.html:355
 #: templates/js/translated/bom.js:579 templates/js/translated/bom.js:887
 #: templates/js/translated/build.js:2580 templates/js/translated/company.js:444
 #: templates/js/translated/company.js:702
@@ -2283,7 +2283,7 @@ msgid "Check plugins on startup"
 msgstr ""
 
 #: common/models.py:1335
-msgid "Check that all plugins are installed on startup - enable in container enviroments"
+msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr ""
 
 #: common/models.py:1342
@@ -2986,7 +2986,7 @@ msgstr ""
 
 #: company/models.py:373 part/models.py:902 part/models.py:2434
 #: part/templates/part/part_base.html:286
-#: templates/InvenTree/settings/settings.html:352
+#: templates/InvenTree/settings/settings.html:349
 #: templates/js/translated/company.js:805 templates/js/translated/part.js:853
 msgid "Units"
 msgstr ""
@@ -4564,7 +4564,7 @@ msgstr ""
 
 #: part/models.py:797 part/models.py:2272 part/models.py:2516
 #: part/templates/part/part_base.html:263
-#: templates/InvenTree/settings/settings.html:232
+#: templates/InvenTree/settings/settings.html:229
 #: templates/js/translated/notification.js:50
 #: templates/js/translated/part.js:1480 templates/js/translated/part.js:1724
 msgid "Category"
@@ -4752,7 +4752,7 @@ msgid "Parent Part"
 msgstr ""
 
 #: part/models.py:2474 part/models.py:2522 part/models.py:2523
-#: templates/InvenTree/settings/settings.html:227
+#: templates/InvenTree/settings/settings.html:224
 msgid "Parameter Template"
 msgstr ""
 
@@ -4764,7 +4764,7 @@ msgstr ""
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:2527 templates/InvenTree/settings/settings.html:236
+#: part/models.py:2527 templates/InvenTree/settings/settings.html:233
 msgid "Default Value"
 msgstr ""
 
@@ -5571,7 +5571,7 @@ msgstr ""
 
 #: part/templates/part/part_scheduling.html:13
 #: report/templates/report/inventree_test_report_base.html:97
-#: templates/InvenTree/settings/plugin.html:53
+#: templates/InvenTree/settings/plugin.html:63
 #: templates/InvenTree/settings/plugin_settings.html:38
 #: templates/js/translated/order.js:2001 templates/js/translated/stock.js:2478
 msgid "Date"
@@ -5759,8 +5759,8 @@ msgstr ""
 msgid "Part Pricing"
 msgstr ""
 
-#: plugin/apps.py:56
-msgid "Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details."
+#: plugin/apps.py:55
+msgid "Your environment has an outdated git version. This prevents InvenTree from loading plugin details."
 msgstr ""
 
 #: plugin/base/action/api.py:27
@@ -5771,23 +5771,23 @@ msgstr "Ingen handling spesifisert"
 msgid "No matching action found"
 msgstr "Ingen samsvarende handling funnet"
 
-#: plugin/base/barcodes/api.py:54 plugin/base/barcodes/api.py:113
+#: plugin/base/barcodes/api.py:54 plugin/base/barcodes/api.py:110
 msgid "Missing barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:83
+#: plugin/base/barcodes/api.py:80
 msgid "No match found for barcode data"
 msgstr "Ingen treff funnet for strekkodedata"
 
-#: plugin/base/barcodes/api.py:87
+#: plugin/base/barcodes/api.py:84
 msgid "Match found for barcode data"
 msgstr "Treff funnet for strekkodedata"
 
-#: plugin/base/barcodes/api.py:126
+#: plugin/base/barcodes/api.py:120
 msgid "Barcode matches existing item"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:223
+#: plugin/base/barcodes/api.py:217
 msgid "No match found for provided value"
 msgstr ""
 
@@ -5795,21 +5795,34 @@ msgstr ""
 msgid "Label printing failed"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:30
+#: plugin/builtin/barcodes/inventree_barcode.py:26
+msgid "Inventree Barcodes"
+msgstr ""
+
+#: plugin/builtin/barcodes/inventree_barcode.py:27
+msgid "Provides native support for barcodes"
+msgstr ""
+
+#: plugin/builtin/barcodes/inventree_barcode.py:29
+#: plugin/builtin/integration/core_notifications.py:31
 msgid "InvenTree contributors"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:31
+#: plugin/builtin/integration/core_notifications.py:30
+msgid "InvenTree Notifications"
+msgstr ""
+
+#: plugin/builtin/integration/core_notifications.py:32
 msgid "Integrated outgoing notificaton methods"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:35
-#: plugin/builtin/integration/core_notifications.py:54
+#: plugin/builtin/integration/core_notifications.py:37
+#: plugin/builtin/integration/core_notifications.py:56
 msgid "Enable email notifications"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:36
-#: plugin/builtin/integration/core_notifications.py:55
+#: plugin/builtin/integration/core_notifications.py:38
+#: plugin/builtin/integration/core_notifications.py:57
 msgid "Allow sending of emails for event notifications"
 msgstr ""
 
@@ -5829,7 +5842,7 @@ msgstr ""
 msgid "Plugin Configurations"
 msgstr ""
 
-#: plugin/models.py:86
+#: plugin/models.py:86 templates/InvenTree/settings/plugin.html:61
 msgid "Key"
 msgstr ""
 
@@ -5849,32 +5862,36 @@ msgstr ""
 msgid "Sample plugin"
 msgstr ""
 
-#: plugin/models.py:188 templates/InvenTree/settings/plugin_settings.html:10
+#: plugin/models.py:167
+msgid "Builtin Plugin"
+msgstr ""
+
+#: plugin/models.py:192 templates/InvenTree/settings/plugin_settings.html:10
 msgid "Plugin"
 msgstr ""
 
-#: plugin/models.py:253
+#: plugin/models.py:257
 msgid "Method"
 msgstr ""
 
-#: plugin/plugin.py:252
+#: plugin/plugin.py:257
 msgid "No author found"
 msgstr ""
 
-#: plugin/plugin.py:264
+#: plugin/plugin.py:269
 msgid "No date found"
 msgstr ""
 
-#: plugin/registry.py:431
+#: plugin/registry.py:439
 msgid "Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!"
 msgstr ""
 
-#: plugin/registry.py:433
+#: plugin/registry.py:441
 #, python-brace-format
 msgid "Plugin requires at least version {plg_i.MIN_VERSION}"
 msgstr ""
 
-#: plugin/registry.py:435
+#: plugin/registry.py:443
 #, python-brace-format
 msgid "Plugin requires at most version {plg_i.MAX_VERSION}"
 msgstr ""
@@ -7086,7 +7103,7 @@ msgid "Part Parameter Templates"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:10
-#: templates/InvenTree/settings/sidebar.html:56
+#: templates/InvenTree/settings/sidebar.html:55
 msgid "Plugin Settings"
 msgstr ""
 
@@ -7094,50 +7111,62 @@ msgstr ""
 msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:36
-#: templates/InvenTree/settings/sidebar.html:58
+#: templates/InvenTree/settings/plugin.html:38
+#: templates/InvenTree/settings/sidebar.html:57
 msgid "Plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:41
+#: templates/InvenTree/settings/plugin.html:44
 #: templates/js/translated/plugin.js:16
 msgid "Install Plugin"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:50 templates/navbar.html:137
-#: users/models.py:36
-msgid "Admin"
+#: templates/InvenTree/settings/plugin.html:52
+msgid "External plugins are not enabled for this InvenTree installation"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:52
-#: templates/InvenTree/settings/plugin_settings.html:28
+#: templates/InvenTree/settings/plugin.html:62
+#: templates/InvenTree/settings/plugin_settings.html:33
 msgid "Author"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:54
+#: templates/InvenTree/settings/plugin.html:64
 #: templates/InvenTree/settings/plugin_settings.html:43
 msgid "Version"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:76
-msgid "Sample"
+#: templates/InvenTree/settings/plugin.html:72
+msgid "Active plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:101
+#: templates/InvenTree/settings/plugin.html:80
 msgid "Inactive plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:124
+#: templates/InvenTree/settings/plugin.html:94
 msgid "Plugin Error Stack"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:133
+#: templates/InvenTree/settings/plugin.html:103
 msgid "Stage"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:135
+#: templates/InvenTree/settings/plugin.html:105
 #: templates/js/translated/notification.js:75
 msgid "Message"
+msgstr ""
+
+#: templates/InvenTree/settings/plugin_details.html:32
+#: templates/InvenTree/settings/plugin_settings.html:101
+msgid "Builtin"
+msgstr ""
+
+#: templates/InvenTree/settings/plugin_details.html:38
+msgid "Sample"
+msgstr ""
+
+#: templates/InvenTree/settings/plugin_details.html:47
+msgid "Unvailable"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:17
@@ -7176,29 +7205,33 @@ msgstr ""
 msgid "Installation path"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:100
+#: templates/InvenTree/settings/plugin_settings.html:102
+msgid "This is a builtin plugin which cannot be disabled"
+msgstr ""
+
+#: templates/InvenTree/settings/plugin_settings.html:107
 msgid "Commit Author"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:104
+#: templates/InvenTree/settings/plugin_settings.html:111
 #: templates/about.html:36
 msgid "Commit Date"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:108
+#: templates/InvenTree/settings/plugin_settings.html:115
 #: templates/about.html:29
 msgid "Commit Hash"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:112
+#: templates/InvenTree/settings/plugin_settings.html:119
 msgid "Commit Message"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:120
+#: templates/InvenTree/settings/plugin_settings.html:127
 msgid "Sign Status"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:125
+#: templates/InvenTree/settings/plugin_settings.html:132
 msgid "Sign Key"
 msgstr ""
 
@@ -7219,66 +7252,66 @@ msgstr ""
 msgid "Edit setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:120
+#: templates/InvenTree/settings/settings.html:117
 msgid "Edit Plugin Setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:122
+#: templates/InvenTree/settings/settings.html:119
 msgid "Edit Notification Setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:125
+#: templates/InvenTree/settings/settings.html:122
 msgid "Edit Global Setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:127
+#: templates/InvenTree/settings/settings.html:124
 msgid "Edit User Setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:217
+#: templates/InvenTree/settings/settings.html:214
 msgid "No category parameter templates found"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:239
-#: templates/InvenTree/settings/settings.html:364
+#: templates/InvenTree/settings/settings.html:236
+#: templates/InvenTree/settings/settings.html:361
 msgid "Edit Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:240
-#: templates/InvenTree/settings/settings.html:365
+#: templates/InvenTree/settings/settings.html:237
+#: templates/InvenTree/settings/settings.html:362
 msgid "Delete Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:280
+#: templates/InvenTree/settings/settings.html:277
 msgid "Create Category Parameter Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:325
+#: templates/InvenTree/settings/settings.html:322
 msgid "Delete Category Parameter Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:337
+#: templates/InvenTree/settings/settings.html:334
 msgid "No part parameter templates found"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:341
+#: templates/InvenTree/settings/settings.html:338
 #: templates/js/translated/notification.js:36
 msgid "ID"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:383
+#: templates/InvenTree/settings/settings.html:380
 msgid "Create Part Parameter Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:402
+#: templates/InvenTree/settings/settings.html:399
 msgid "Edit Part Parameter Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:416
+#: templates/InvenTree/settings/settings.html:413
 msgid "Any parameters which reference this template will also be deleted"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:424
+#: templates/InvenTree/settings/settings.html:421
 msgid "Delete Part Parameter Template"
 msgstr ""
 
@@ -7734,7 +7767,7 @@ msgstr ""
 msgid "Or use a SSO-provider for signup"
 msgstr ""
 
-#: templates/admin_button.html:2
+#: templates/admin_button.html:8
 msgid "View in administration panel"
 msgstr ""
 
@@ -10503,6 +10536,10 @@ msgstr ""
 
 #: templates/navbar.html:119
 msgid "New Notifications"
+msgstr ""
+
+#: templates/navbar.html:137 users/models.py:36
+msgid "Admin"
 msgstr ""
 
 #: templates/navbar.html:140
