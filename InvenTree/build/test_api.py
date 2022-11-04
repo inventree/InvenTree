@@ -214,7 +214,6 @@ class BuildTest(BuildAPITest):
                 "status": 50,  # Item requires attention
             },
             expected_code=201,
-            timeout=0.5,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)

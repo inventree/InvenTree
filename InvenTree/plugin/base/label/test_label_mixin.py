@@ -151,17 +151,17 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.do_activate_plugin()
 
         # Print one part
-        self.get(url, expected_code=200, timeout=1.0)
+        self.get(url, expected_code=200)
 
         # Print multiple parts
-        self.get(self.do_url(Part.objects.all()[:2], plugin_ref, label), expected_code=200, timeout=1.0)
+        self.get(self.do_url(Part.objects.all()[:2], plugin_ref, label), expected_code=200)
 
         # Print multiple parts without a plugin
-        self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200, timeout=1.0)
+        self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
 
         # Print multiple parts without a plugin in debug mode
         InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', True, None)
-        response = self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200, timeout=1.0)
+        response = self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
         self.assertIn('@page', str(response.content))
 
         # Print no part
@@ -209,10 +209,10 @@ class LabelMixinTests(InvenTreeAPITestCase):
             self.get(self.do_url(qs[:2], None, None, f'{url_name}-list', url_single, invalid=True), expected_code=200)
 
             # Single page printing
-            self.get(self.do_url(qs[:1], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200, timeout=0.25)
+            self.get(self.do_url(qs[:1], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200)
 
             # Multi page printing
-            self.get(self.do_url(qs[:2], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200, timeout=0.5)
+            self.get(self.do_url(qs[:2], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200)
 
         # Test StockItemLabels
         run_print_test(StockItemLabel, StockItem, 'api-stockitem-label', 'item')

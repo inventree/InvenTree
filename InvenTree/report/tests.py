@@ -290,7 +290,7 @@ class TestReportTest(ReportTest):
         # Now print with a valid StockItem
         item = StockItem.objects.first()
 
-        response = self.get(url, {'item': item.pk}, expected_code=200, timeout=1.0)
+        response = self.get(url, {'item': item.pk}, expected_code=200)
 
         # Response should be a StreamingHttpResponse (PDF file)
         self.assertEqual(type(response), StreamingHttpResponse)
@@ -304,7 +304,7 @@ class TestReportTest(ReportTest):
         # Change the setting, now the test report should be attached automatically
         InvenTreeSetting.set_setting('REPORT_ATTACH_TEST_REPORT', True, None)
 
-        response = self.get(url, {'item': item.pk}, expected_code=200, timeout=1.0)
+        response = self.get(url, {'item': item.pk}, expected_code=200)
 
         headers = response.headers
         self.assertEqual(headers['Content-Type'], 'application/pdf')
@@ -344,7 +344,7 @@ class BuildReportTest(ReportTest):
 
         build = Build.objects.first()
 
-        response = self.get(url, {'build': build.pk}, timeout=1.0)
+        response = self.get(url, {'build': build.pk})
 
         self.assertEqual(type(response), StreamingHttpResponse)
 
@@ -358,7 +358,7 @@ class BuildReportTest(ReportTest):
         inline.value = True
         inline.save()
 
-        response = self.get(url, {'build': 1}, timeout=1.0)
+        response = self.get(url, {'build': 1})
         headers = response.headers
         self.assertEqual(headers['Content-Type'], 'application/pdf')
         self.assertEqual(headers['Content-Disposition'], 'inline; filename="report.pdf"')

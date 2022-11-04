@@ -35,7 +35,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
                 'packagename': self.PKG_NAME
             },
             expected_code=201,
-            timeout=None,
         ).data
 
         self.assertEqual(data['success'], True)
@@ -48,7 +47,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
                 'url': self.PKG_URL
             },
             expected_code=201,
-            timeout=None,
         ).data
         self.assertEqual(data['success'], True)
 
@@ -61,7 +59,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
                 'packagename': 'minimal',
             },
             expected_code=201,
-            timeout=None,
         ).data
         self.assertEqual(data['success'], True)
 

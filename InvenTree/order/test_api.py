@@ -780,7 +780,6 @@ class PurchaseOrderReceiveTest(OrderTest):
             self.url,
             data,
             expected_code=201,
-            timeout=0.5,
         )
 
         # Check that the expected number of stock items has been created
