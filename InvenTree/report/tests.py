@@ -304,7 +304,8 @@ class TestReportTest(ReportTest):
         # Change the setting, now the test report should be attached automatically
         InvenTreeSetting.set_setting('REPORT_ATTACH_TEST_REPORT', True, None)
 
-        response = self.get(url, {'item': item.pk}, expected_code=200)
+        response = self.get(url, {'item': item.pk}, expected_code=200, timeout=1.0)
+
         headers = response.headers
         self.assertEqual(headers['Content-Type'], 'application/pdf')
 
@@ -357,7 +358,7 @@ class BuildReportTest(ReportTest):
         inline.value = True
         inline.save()
 
-        response = self.get(url, {'build': 1})
+        response = self.get(url, {'build': 1}, timeout=1.0)
         headers = response.headers
         self.assertEqual(headers['Content-Type'], 'application/pdf')
         self.assertEqual(headers['Content-Disposition'], 'inline; filename="report.pdf"')
