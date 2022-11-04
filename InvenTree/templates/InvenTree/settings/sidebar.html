@@ -51,10 +51,11 @@
 {% trans "Sales Orders" as text %}
 {% include "sidebar_item.html" with label='sales-order' text=text icon="fa-truck" %}
 
-{% plugins_enabled as plug %}
-{% if plug %}
-{% include "sidebar_header.html" with text="Plugin Settings" %}
-{% include "sidebar_item.html" with label='plugin' text="Plugins" icon="fa-plug" %}
+
+{% trans "Plugin Settings" as text %}
+{% include "sidebar_header.html" with text=text %}
+{% trans "Plugins" as text %}
+{% include "sidebar_item.html" with label='plugin' text=text icon="fa-plug" %}
 
 {% plugin_list as pl_list %}
 {% for plugin_key, plugin in pl_list.items %}
@@ -62,6 +63,5 @@
 {% include "sidebar_item.html" with label='plugin-'|add:plugin_key text=plugin.human_name %}
 {% endif %}
 {% endfor %}
-{% endif %}
 
 {% endif %}

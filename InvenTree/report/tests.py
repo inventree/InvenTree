@@ -305,6 +305,7 @@ class TestReportTest(ReportTest):
         InvenTreeSetting.set_setting('REPORT_ATTACH_TEST_REPORT', True, None)
 
         response = self.get(url, {'item': item.pk}, expected_code=200)
+
         headers = response.headers
         self.assertEqual(headers['Content-Type'], 'application/pdf')
 

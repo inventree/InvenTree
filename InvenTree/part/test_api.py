@@ -593,7 +593,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 {
                     'convert_from': variant.pk,
                 },
-                expected_code=200
+                expected_code=200,
             )
 
             # There should be the same number of results for each request
@@ -1854,7 +1854,7 @@ class BomItemTest(InvenTreeAPITestCase):
             data={
                 'validated': True,
             },
-            expected_code=200
+            expected_code=200,
         )
 
         # Check that the expected response is returned
