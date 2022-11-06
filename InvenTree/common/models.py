@@ -1266,6 +1266,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': order.validators.validate_purchase_order_reference_pattern,
         },
 
+        'PURCHASEORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Purchase Orders'),
+            'description': _('Allow editing of purchase orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
+        },
+
         # login / SSO
         'LOGIN_ENABLE_PWD_FORGOT': {
             'name': _('Enable password forgot'),

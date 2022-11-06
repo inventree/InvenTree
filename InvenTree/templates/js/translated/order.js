@@ -2084,6 +2084,11 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
     options.params['order'] = options.order;
     options.params['part_detail'] = true;
 
+    // Override 'editing' if order is not pending
+    if (!options.pending && !global_settings.PURCHASEORDER_EDIT_COMPLETED_ORDERS) {
+        options.allow_edit = false;
+    }
+
     var filters = loadTableFilters('purchaseorderlineitem');
 
     for (var key in options.params) {
