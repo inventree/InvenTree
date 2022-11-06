@@ -2450,6 +2450,10 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
     options.table = table;
 
+    if (!options.pending && !global_settings.PURCHASEORDER_EDIT_COMPLETED_ORDERS) {
+        options.allow_edit = false;
+    }
+
     options.params = options.params || {};
 
     if (!options.order) {
@@ -2566,9 +2570,11 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
             var pk = row.pk;
 
-            html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
-            html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
-            html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
+            if (options.allow_edit) {
+                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
+                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
+            }
 
             html += `</div>`;
 

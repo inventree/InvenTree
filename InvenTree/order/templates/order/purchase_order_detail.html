@@ -248,6 +248,14 @@ loadPurchaseOrderExtraLineTable(
     {
         order: {{ order.pk }},
         status: {{ order.status }},
+        {% if order.is_pending %}
+        pending: true,
+        {% endif %}
+        {% if roles.purchase_order.change %}
+        allow_edit: true,
+        {% else %},
+        allow_edit: false,
+        {% endif %}
     }
 );
 
