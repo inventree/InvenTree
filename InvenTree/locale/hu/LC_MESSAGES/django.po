@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-01 22:23+0000\n"
-"PO-Revision-Date: 2022-11-02 18:25\n"
+"POT-Creation-Date: 2022-11-04 14:07+0000\n"
+"PO-Revision-Date: 2022-11-04 19:03\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -30,7 +30,7 @@ msgid "Enter date"
 msgstr "Dátum megadása"
 
 #: InvenTree/fields.py:195 build/serializers.py:387
-#: build/templates/build/sidebar.html:21 company/models.py:524
+#: build/templates/build/sidebar.html:21 company/models.py:525
 #: company/templates/company/sidebar.html:25 order/models.py:920
 #: order/templates/order/po_sidebar.html:11
 #: order/templates/order/so_sidebar.html:17
@@ -204,8 +204,8 @@ msgstr "Melléklet"
 msgid "Select file to attach"
 msgstr "Válaszd ki a mellekelni kívánt fájlt"
 
-#: InvenTree/models.py:412 company/models.py:124 company/models.py:276
-#: company/models.py:511 order/models.py:84 order/models.py:1259
+#: InvenTree/models.py:412 company/models.py:125 company/models.py:277
+#: company/models.py:512 order/models.py:84 order/models.py:1259
 #: part/models.py:816 part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
 #: templates/js/translated/company.js:691
@@ -231,7 +231,7 @@ msgstr "Leírás, bővebb infó"
 #: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1744
 #: common/models.py:1745 common/models.py:1968 common/models.py:1969
 #: common/models.py:2231 common/models.py:2232 part/models.py:2254
-#: part/models.py:2274 plugin/models.py:260 plugin/models.py:261
+#: part/models.py:2274 plugin/models.py:264 plugin/models.py:265
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2651
 msgid "User"
@@ -271,13 +271,13 @@ msgid "Invalid choice"
 msgstr "Érvénytelen választás"
 
 #: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:1954
-#: company/models.py:358 label/models.py:101 part/models.py:760
+#: company/models.py:359 label/models.py:101 part/models.py:760
 #: part/models.py:2429 plugin/models.py:94 report/models.py:152
 #: templates/InvenTree/settings/mixins/urls.html:13
-#: templates/InvenTree/settings/plugin.html:51
-#: templates/InvenTree/settings/plugin.html:134
+#: templates/InvenTree/settings/plugin.html:60
+#: templates/InvenTree/settings/plugin.html:104
 #: templates/InvenTree/settings/plugin_settings.html:23
-#: templates/InvenTree/settings/settings.html:347
+#: templates/InvenTree/settings/settings.html:344
 #: templates/js/translated/company.js:580
 #: templates/js/translated/company.js:793
 #: templates/js/translated/notification.js:71
@@ -287,8 +287,8 @@ msgid "Name"
 msgstr "Név"
 
 #: InvenTree/models.py:564 build/models.py:163
-#: build/templates/build/detail.html:24 company/models.py:282
-#: company/models.py:517 company/templates/company/company_base.html:71
+#: build/templates/build/detail.html:24 company/models.py:283
+#: company/models.py:518 company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:108 label/models.py:108
 #: order/models.py:82 part/models.py:783 part/models.py:2438
@@ -297,8 +297,8 @@ msgstr "Név"
 #: report/models.py:507 report/models.py:551
 #: report/templates/report/inventree_build_order_base.html:117
 #: stock/templates/stock/location.html:117
-#: templates/InvenTree/settings/plugin_settings.html:33
-#: templates/InvenTree/settings/settings.html:358
+#: templates/InvenTree/settings/plugin_settings.html:28
+#: templates/InvenTree/settings/settings.html:355
 #: templates/js/translated/bom.js:579 templates/js/translated/bom.js:887
 #: templates/js/translated/build.js:2580 templates/js/translated/company.js:444
 #: templates/js/translated/company.js:702
@@ -785,7 +785,7 @@ msgid "BuildOrder to which this build is allocated"
 msgstr "Gyártás, amihez ez a gyártás hozzá van rendelve"
 
 #: build/models.py:180 build/templates/build/build_base.html:80
-#: build/templates/build/detail.html:29 company/models.py:679
+#: build/templates/build/detail.html:29 company/models.py:680
 #: order/models.py:1015 order/models.py:1126 order/models.py:1127
 #: part/models.py:343 part/models.py:2200 part/models.py:2215
 #: part/models.py:2234 part/models.py:2252 part/models.py:2351
@@ -1735,7 +1735,7 @@ msgstr "Verzió infók megjelenítésének tiltása"
 msgid "Show the `about` modal only to superusers"
 msgstr "Verzió infók megjelenítése csak admin felhasználóknak"
 
-#: common/models.py:833 company/models.py:93 company/models.py:94
+#: common/models.py:833 company/models.py:94 company/models.py:95
 msgid "Company name"
 msgstr "Cég neve"
 
@@ -2284,8 +2284,8 @@ msgid "Check plugins on startup"
 msgstr "Pluginok ellenőrzése indításkor"
 
 #: common/models.py:1335
-msgid "Check that all plugins are installed on startup - enable in container enviroments"
-msgstr "Ellenőrizze induláskor hogy minden plugin telepítve van - engedélyezd konténer környezetben (docker)"
+msgid "Check that all plugins are installed on startup - enable in container environments"
+msgstr ""
 
 #: common/models.py:1342
 msgid "Check plugin signatures"
@@ -2817,114 +2817,114 @@ msgstr "Importált alkatrészek"
 msgid "Previous Step"
 msgstr "Előző lépés"
 
-#: company/models.py:98
+#: company/models.py:99
 msgid "Company description"
 msgstr "Cég leírása"
 
-#: company/models.py:99
+#: company/models.py:100
 msgid "Description of the company"
 msgstr "A cég leírása"
 
-#: company/models.py:105 company/templates/company/company_base.html:100
+#: company/models.py:106 company/templates/company/company_base.html:100
 #: templates/InvenTree/settings/plugin_settings.html:55
 #: templates/js/translated/company.js:448
 msgid "Website"
 msgstr "Weboldal"
 
-#: company/models.py:106
+#: company/models.py:107
 msgid "Company website URL"
 msgstr "Cég weboldala"
 
-#: company/models.py:110 company/templates/company/company_base.html:118
+#: company/models.py:111 company/templates/company/company_base.html:118
 msgid "Address"
 msgstr "Cím"
 
-#: company/models.py:111
+#: company/models.py:112
 msgid "Company address"
 msgstr "Cég címe"
 
-#: company/models.py:114
+#: company/models.py:115
 msgid "Phone number"
 msgstr "Telefonszám"
 
-#: company/models.py:115
+#: company/models.py:116
 msgid "Contact phone number"
 msgstr "Kapcsolattartó telefonszáma"
 
-#: company/models.py:118 company/templates/company/company_base.html:132
+#: company/models.py:119 company/templates/company/company_base.html:132
 #: templates/InvenTree/settings/user.html:48
 msgid "Email"
 msgstr "Email"
 
-#: company/models.py:118
+#: company/models.py:119
 msgid "Contact email address"
 msgstr "Kapcsolattartó email címe"
 
-#: company/models.py:121 company/templates/company/company_base.html:139
+#: company/models.py:122 company/templates/company/company_base.html:139
 msgid "Contact"
 msgstr "Kapcsolattartó"
 
-#: company/models.py:122
+#: company/models.py:123
 msgid "Point of contact"
 msgstr "Kapcsolattartó"
 
-#: company/models.py:124
+#: company/models.py:125
 msgid "Link to external company information"
 msgstr "Link a külső céginformációhoz"
 
-#: company/models.py:135 part/models.py:829
+#: company/models.py:136 part/models.py:829
 msgid "Image"
 msgstr "Kép"
 
-#: company/models.py:138 company/templates/company/detail.html:185
+#: company/models.py:139 company/templates/company/detail.html:185
 msgid "Company Notes"
 msgstr "Cég megjegyzések"
 
-#: company/models.py:140
+#: company/models.py:141
 msgid "is customer"
 msgstr "vevő-e"
 
-#: company/models.py:140
+#: company/models.py:141
 msgid "Do you sell items to this company?"
 msgstr "Értékesítesz alkatrészeket ennek a cégnek?"
 
-#: company/models.py:142
+#: company/models.py:143
 msgid "is supplier"
 msgstr "beszállító-e"
 
-#: company/models.py:142
+#: company/models.py:143
 msgid "Do you purchase items from this company?"
 msgstr "Vásárolsz alkatrészeket ettől a cégtől?"
 
-#: company/models.py:144
+#: company/models.py:145
 msgid "is manufacturer"
 msgstr "gyártó-e"
 
-#: company/models.py:144
+#: company/models.py:145
 msgid "Does this company manufacture parts?"
 msgstr "Gyárt ez a cég alkatrészeket?"
 
-#: company/models.py:148 company/serializers.py:378
+#: company/models.py:149 company/serializers.py:378
 #: company/templates/company/company_base.html:106 part/serializers.py:153
 #: part/serializers.py:184 stock/serializers.py:178
 msgid "Currency"
 msgstr "Pénznem"
 
-#: company/models.py:151
+#: company/models.py:152
 msgid "Default currency used for this company"
 msgstr "Cég által használt alapértelmezett pénznem"
 
-#: company/models.py:248 company/models.py:482 stock/models.py:600
+#: company/models.py:249 company/models.py:483 stock/models.py:600
 #: stock/serializers.py:85 stock/templates/stock/item_base.html:143
 #: templates/js/translated/bom.js:568
 msgid "Base Part"
 msgstr "Kiindulási alkatrész"
 
-#: company/models.py:252 company/models.py:486
+#: company/models.py:253 company/models.py:487
 msgid "Select part"
 msgstr "Válassz alkatrészt"
 
-#: company/models.py:263 company/templates/company/company_base.html:76
+#: company/models.py:264 company/templates/company/company_base.html:76
 #: company/templates/company/manufacturer_part.html:90
 #: company/templates/company/supplier_part.html:152
 #: stock/templates/stock/item_base.html:210
@@ -2936,11 +2936,11 @@ msgstr "Válassz alkatrészt"
 msgid "Manufacturer"
 msgstr "Gyártó"
 
-#: company/models.py:264 templates/js/translated/part.js:237
+#: company/models.py:265 templates/js/translated/part.js:237
 msgid "Select manufacturer"
 msgstr "Gyártó kiválasztása"
 
-#: company/models.py:270 company/templates/company/manufacturer_part.html:101
+#: company/models.py:271 company/templates/company/manufacturer_part.html:101
 #: company/templates/company/supplier_part.html:160
 #: templates/js/translated/company.js:304
 #: templates/js/translated/company.js:532
@@ -2950,30 +2950,30 @@ msgstr "Gyártó kiválasztása"
 msgid "MPN"
 msgstr "MPN"
 
-#: company/models.py:271 templates/js/translated/part.js:248
+#: company/models.py:272 templates/js/translated/part.js:248
 msgid "Manufacturer Part Number"
 msgstr "Gyártói cikkszám"
 
-#: company/models.py:277
+#: company/models.py:278
 msgid "URL for external manufacturer part link"
 msgstr "URL link a gyártói alkatrészhez"
 
-#: company/models.py:283
+#: company/models.py:284
 msgid "Manufacturer part description"
 msgstr "Gyártói alkatrész leírása"
 
-#: company/models.py:328 company/models.py:352 company/models.py:505
+#: company/models.py:329 company/models.py:353 company/models.py:506
 #: company/templates/company/manufacturer_part.html:7
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:220
 msgid "Manufacturer Part"
 msgstr "Gyártói alkatrész"
 
-#: company/models.py:359
+#: company/models.py:360
 msgid "Parameter name"
 msgstr "Paraméter neve"
 
-#: company/models.py:365
+#: company/models.py:366
 #: report/templates/report/inventree_test_report_base.html:95
 #: stock/models.py:2097 templates/js/translated/company.js:581
 #: templates/js/translated/company.js:799 templates/js/translated/part.js:847
@@ -2981,26 +2981,26 @@ msgstr "Paraméter neve"
 msgid "Value"
 msgstr "Érték"
 
-#: company/models.py:366
+#: company/models.py:367
 msgid "Parameter value"
 msgstr "Paraméter értéke"
 
-#: company/models.py:372 part/models.py:902 part/models.py:2434
+#: company/models.py:373 part/models.py:902 part/models.py:2434
 #: part/templates/part/part_base.html:286
-#: templates/InvenTree/settings/settings.html:352
+#: templates/InvenTree/settings/settings.html:349
 #: templates/js/translated/company.js:805 templates/js/translated/part.js:853
 msgid "Units"
 msgstr "Mértékegységek"
 
-#: company/models.py:373
+#: company/models.py:374
 msgid "Parameter units"
 msgstr "Paraméter mértékegység"
 
-#: company/models.py:450
+#: company/models.py:451
 msgid "Linked manufacturer part must reference the same base part"
 msgstr "Kapcsolódó gyártói alkatrésznek ugyanarra a kiindulási alkatrészre kell hivatkoznia"
 
-#: company/models.py:492 company/templates/company/company_base.html:81
+#: company/models.py:493 company/templates/company/company_base.html:81
 #: company/templates/company/supplier_part.html:136 order/models.py:263
 #: order/templates/order/order_base.html:121 part/bom.py:237 part/bom.py:265
 #: stock/templates/stock/item_base.html:227
@@ -3013,59 +3013,59 @@ msgstr "Kapcsolódó gyártói alkatrésznek ugyanarra a kiindulási alkatrészr
 msgid "Supplier"
 msgstr "Beszállító"
 
-#: company/models.py:493 templates/js/translated/part.js:218
+#: company/models.py:494 templates/js/translated/part.js:218
 msgid "Select supplier"
 msgstr "Beszállító kiválasztása"
 
-#: company/models.py:498 company/templates/company/supplier_part.html:146
+#: company/models.py:499 company/templates/company/supplier_part.html:146
 #: part/bom.py:238 part/bom.py:266 templates/js/translated/company.js:302
 #: templates/js/translated/order.js:2226 templates/js/translated/part.js:228
 #: templates/js/translated/part.js:1011
 msgid "SKU"
 msgstr "SKU"
 
-#: company/models.py:499 templates/js/translated/part.js:229
+#: company/models.py:500 templates/js/translated/part.js:229
 msgid "Supplier stock keeping unit"
 msgstr "Beszállítói cikkszám"
 
-#: company/models.py:506
+#: company/models.py:507
 msgid "Select manufacturer part"
 msgstr "Gyártói alkatrész kiválasztása"
 
-#: company/models.py:512
+#: company/models.py:513
 msgid "URL for external supplier part link"
 msgstr "URL link a beszállítói alkatrészhez"
 
-#: company/models.py:518
+#: company/models.py:519
 msgid "Supplier part description"
 msgstr "Beszállítói alkatrész leírása"
 
-#: company/models.py:523 company/templates/company/supplier_part.html:181
+#: company/models.py:524 company/templates/company/supplier_part.html:181
 #: part/models.py:2687 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:93 stock/serializers.py:403
 msgid "Note"
 msgstr "Megjegyzés"
 
-#: company/models.py:527 part/models.py:1788
+#: company/models.py:528 part/models.py:1788
 msgid "base cost"
 msgstr "alap költség"
 
-#: company/models.py:527 part/models.py:1788
+#: company/models.py:528 part/models.py:1788
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Minimális díj (pl. tárolási díj)"
 
-#: company/models.py:529 company/templates/company/supplier_part.html:167
+#: company/models.py:530 company/templates/company/supplier_part.html:167
 #: stock/models.py:626 stock/templates/stock/item_base.html:243
 #: templates/js/translated/company.js:991 templates/js/translated/stock.js:1978
 msgid "Packaging"
 msgstr "Csomagolás"
 
-#: company/models.py:529
+#: company/models.py:530
 msgid "Part packaging"
 msgstr "Alkatrész csomagolás"
 
-#: company/models.py:532 company/serializers.py:242
+#: company/models.py:533 company/serializers.py:242
 #: company/templates/company/supplier_part.html:174
 #: templates/js/translated/company.js:996 templates/js/translated/order.js:820
 #: templates/js/translated/order.js:1215 templates/js/translated/order.js:1470
@@ -3074,19 +3074,19 @@ msgstr "Alkatrész csomagolás"
 msgid "Pack Quantity"
 msgstr "Csomagolási mennyiség"
 
-#: company/models.py:533
+#: company/models.py:534
 msgid "Unit quantity supplied in a single pack"
 msgstr "Egy csomagban lévő mennyiség"
 
-#: company/models.py:539 part/models.py:1790
+#: company/models.py:540 part/models.py:1790
 msgid "multiple"
 msgstr "többszörös"
 
-#: company/models.py:539
+#: company/models.py:540
 msgid "Order multiple"
 msgstr "Többszörös rendelés"
 
-#: company/models.py:547 company/templates/company/supplier_part.html:115
+#: company/models.py:548 company/templates/company/supplier_part.html:115
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:18
 #: templates/js/translated/bom.js:963 templates/js/translated/build.js:1873
@@ -3096,19 +3096,19 @@ msgstr "Többszörös rendelés"
 msgid "Available"
 msgstr "Elérhető"
 
-#: company/models.py:548
+#: company/models.py:549
 msgid "Quantity available from supplier"
 msgstr "Beszállítónál elérhető mennyiség"
 
-#: company/models.py:552
+#: company/models.py:553
 msgid "Availability Updated"
 msgstr "Elérhetőség frissítve"
 
-#: company/models.py:553
+#: company/models.py:554
 msgid "Date of last update of availability data"
 msgstr "Utolsó elérhetőségi adat frissítés"
 
-#: company/models.py:681
+#: company/models.py:682
 msgid "last updated"
 msgstr "utoljára módosítva"
 
@@ -4565,7 +4565,7 @@ msgstr "Alkatrész kulcsszavak amik segítik a megjelenést a keresési eredmén
 
 #: part/models.py:797 part/models.py:2272 part/models.py:2516
 #: part/templates/part/part_base.html:263
-#: templates/InvenTree/settings/settings.html:232
+#: templates/InvenTree/settings/settings.html:229
 #: templates/js/translated/notification.js:50
 #: templates/js/translated/part.js:1480 templates/js/translated/part.js:1724
 msgid "Category"
@@ -4753,7 +4753,7 @@ msgid "Parent Part"
 msgstr "Szülő alkatrész"
 
 #: part/models.py:2474 part/models.py:2522 part/models.py:2523
-#: templates/InvenTree/settings/settings.html:227
+#: templates/InvenTree/settings/settings.html:224
 msgid "Parameter Template"
 msgstr "Paraméter sablon"
 
@@ -4765,7 +4765,7 @@ msgstr "Adat"
 msgid "Parameter Value"
 msgstr "Paraméter értéke"
 
-#: part/models.py:2527 templates/InvenTree/settings/settings.html:236
+#: part/models.py:2527 templates/InvenTree/settings/settings.html:233
 msgid "Default Value"
 msgstr "Alapértelmezett érték"
 
@@ -5572,7 +5572,7 @@ msgstr "Az alkatrészhez nem áll rendelkezésre árinformáció."
 
 #: part/templates/part/part_scheduling.html:13
 #: report/templates/report/inventree_test_report_base.html:97
-#: templates/InvenTree/settings/plugin.html:53
+#: templates/InvenTree/settings/plugin.html:63
 #: templates/InvenTree/settings/plugin_settings.html:38
 #: templates/js/translated/order.js:2001 templates/js/translated/stock.js:2478
 msgid "Date"
@@ -5760,9 +5760,9 @@ msgstr "Az alkatrész képe nem található"
 msgid "Part Pricing"
 msgstr "Alkatrész árak"
 
-#: plugin/apps.py:56
-msgid "Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details."
-msgstr "A környezeted egy elavult git verziót használ. Ez megakadályozza hogy az InvenTree betöltse a plugin részleteit."
+#: plugin/apps.py:55
+msgid "Your environment has an outdated git version. This prevents InvenTree from loading plugin details."
+msgstr ""
 
 #: plugin/base/action/api.py:27
 msgid "No action specified"
@@ -5772,23 +5772,23 @@ msgstr "Nincs megadva művelet"
 msgid "No matching action found"
 msgstr "Nincs egyező művelet"
 
-#: plugin/base/barcodes/api.py:54 plugin/base/barcodes/api.py:113
+#: plugin/base/barcodes/api.py:54 plugin/base/barcodes/api.py:110
 msgid "Missing barcode data"
 msgstr "Hiányzó vonalkód adat"
 
-#: plugin/base/barcodes/api.py:83
+#: plugin/base/barcodes/api.py:80
 msgid "No match found for barcode data"
 msgstr "Nincs egyező vonalkód"
 
-#: plugin/base/barcodes/api.py:87
+#: plugin/base/barcodes/api.py:84
 msgid "Match found for barcode data"
 msgstr "Egyezés vonalkódra"
 
-#: plugin/base/barcodes/api.py:126
+#: plugin/base/barcodes/api.py:120
 msgid "Barcode matches existing item"
 msgstr "Ez a vonalkód már egy másik tételé"
 
-#: plugin/base/barcodes/api.py:223
+#: plugin/base/barcodes/api.py:217
 msgid "No match found for provided value"
 msgstr "Nincs találat a megadott értékre"
 
@@ -5796,21 +5796,34 @@ msgstr "Nincs találat a megadott értékre"
 msgid "Label printing failed"
 msgstr "Címkenyomtatás sikertelen"
 
-#: plugin/builtin/integration/core_notifications.py:30
+#: plugin/builtin/barcodes/inventree_barcode.py:26
+msgid "Inventree Barcodes"
+msgstr ""
+
+#: plugin/builtin/barcodes/inventree_barcode.py:27
+msgid "Provides native support for barcodes"
+msgstr ""
+
+#: plugin/builtin/barcodes/inventree_barcode.py:29
+#: plugin/builtin/integration/core_notifications.py:31
 msgid "InvenTree contributors"
 msgstr "InvenTree fejlesztők"
 
-#: plugin/builtin/integration/core_notifications.py:31
+#: plugin/builtin/integration/core_notifications.py:30
+msgid "InvenTree Notifications"
+msgstr ""
+
+#: plugin/builtin/integration/core_notifications.py:32
 msgid "Integrated outgoing notificaton methods"
 msgstr "Integrált kimenő értesítési módszerek"
 
-#: plugin/builtin/integration/core_notifications.py:35
-#: plugin/builtin/integration/core_notifications.py:54
+#: plugin/builtin/integration/core_notifications.py:37
+#: plugin/builtin/integration/core_notifications.py:56
 msgid "Enable email notifications"
 msgstr "Email értesítések engedélyezése"
 
-#: plugin/builtin/integration/core_notifications.py:36
-#: plugin/builtin/integration/core_notifications.py:55
+#: plugin/builtin/integration/core_notifications.py:38
+#: plugin/builtin/integration/core_notifications.py:57
 msgid "Allow sending of emails for event notifications"
 msgstr "Email küldés engedélyezése esemény értesítésekre"
 
@@ -5830,7 +5843,7 @@ msgstr "Plugin beállítás"
 msgid "Plugin Configurations"
 msgstr "Plugin beállítások"
 
-#: plugin/models.py:86
+#: plugin/models.py:86 templates/InvenTree/settings/plugin.html:61
 msgid "Key"
 msgstr "Kulcs"
 
@@ -5850,32 +5863,36 @@ msgstr "Aktív-e a plugin"
 msgid "Sample plugin"
 msgstr "Példa plugin"
 
-#: plugin/models.py:188 templates/InvenTree/settings/plugin_settings.html:10
+#: plugin/models.py:167
+msgid "Builtin Plugin"
+msgstr ""
+
+#: plugin/models.py:192 templates/InvenTree/settings/plugin_settings.html:10
 msgid "Plugin"
 msgstr "Plugin"
 
-#: plugin/models.py:253
+#: plugin/models.py:257
 msgid "Method"
 msgstr "Módszer"
 
-#: plugin/plugin.py:252
+#: plugin/plugin.py:257
 msgid "No author found"
 msgstr "Nincs szerző"
 
-#: plugin/plugin.py:264
+#: plugin/plugin.py:269
 msgid "No date found"
 msgstr "Nincs dátum"
 
-#: plugin/registry.py:431
+#: plugin/registry.py:439
 msgid "Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!"
 msgstr "A {plg_name} plugin nem kompatibilis az aktuális applikáció verzióval {version.inventreeVersion()}!"
 
-#: plugin/registry.py:433
+#: plugin/registry.py:441
 #, python-brace-format
 msgid "Plugin requires at least version {plg_i.MIN_VERSION}"
 msgstr "A pluginhoz minimum {plg_i.MIN_VERSION} verzió kell"
 
-#: plugin/registry.py:435
+#: plugin/registry.py:443
 #, python-brace-format
 msgid "Plugin requires at most version {plg_i.MAX_VERSION}"
 msgstr "A pluginhoz maximum {plg_i.MAX_VERSION} verzió kell"
@@ -7087,7 +7104,7 @@ msgid "Part Parameter Templates"
 msgstr "Alkatrész paraméter sablonok"
 
 #: templates/InvenTree/settings/plugin.html:10
-#: templates/InvenTree/settings/sidebar.html:56
+#: templates/InvenTree/settings/sidebar.html:55
 msgid "Plugin Settings"
 msgstr "Plugin beállítások"
 
@@ -7095,51 +7112,63 @@ msgstr "Plugin beállítások"
 msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 msgstr "Az alábbi beállítások módosításához a kiszolgáló azonnali újraindítása szükséges. Aktív használat közben ne változtass ezeken."
 
-#: templates/InvenTree/settings/plugin.html:36
-#: templates/InvenTree/settings/sidebar.html:58
+#: templates/InvenTree/settings/plugin.html:38
+#: templates/InvenTree/settings/sidebar.html:57
 msgid "Plugins"
 msgstr "Pluginok"
 
-#: templates/InvenTree/settings/plugin.html:41
+#: templates/InvenTree/settings/plugin.html:44
 #: templates/js/translated/plugin.js:16
 msgid "Install Plugin"
 msgstr "Plugin Telepítése"
 
-#: templates/InvenTree/settings/plugin.html:50 templates/navbar.html:137
-#: users/models.py:36
-msgid "Admin"
-msgstr "Admin"
-
 #: templates/InvenTree/settings/plugin.html:52
-#: templates/InvenTree/settings/plugin_settings.html:28
+msgid "External plugins are not enabled for this InvenTree installation"
+msgstr ""
+
+#: templates/InvenTree/settings/plugin.html:62
+#: templates/InvenTree/settings/plugin_settings.html:33
 msgid "Author"
 msgstr "Szerző"
 
-#: templates/InvenTree/settings/plugin.html:54
+#: templates/InvenTree/settings/plugin.html:64
 #: templates/InvenTree/settings/plugin_settings.html:43
 msgid "Version"
 msgstr "Verzió"
 
-#: templates/InvenTree/settings/plugin.html:76
-msgid "Sample"
-msgstr "Minta"
+#: templates/InvenTree/settings/plugin.html:72
+msgid "Active plugins"
+msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:101
+#: templates/InvenTree/settings/plugin.html:80
 msgid "Inactive plugins"
 msgstr "Inaktív pluginok"
 
-#: templates/InvenTree/settings/plugin.html:124
+#: templates/InvenTree/settings/plugin.html:94
 msgid "Plugin Error Stack"
 msgstr "Plugin hibatároló"
 
-#: templates/InvenTree/settings/plugin.html:133
+#: templates/InvenTree/settings/plugin.html:103
 msgid "Stage"
 msgstr "Szakasz"
 
-#: templates/InvenTree/settings/plugin.html:135
+#: templates/InvenTree/settings/plugin.html:105
 #: templates/js/translated/notification.js:75
 msgid "Message"
 msgstr "Üzenet"
+
+#: templates/InvenTree/settings/plugin_details.html:32
+#: templates/InvenTree/settings/plugin_settings.html:101
+msgid "Builtin"
+msgstr ""
+
+#: templates/InvenTree/settings/plugin_details.html:38
+msgid "Sample"
+msgstr "Minta"
+
+#: templates/InvenTree/settings/plugin_details.html:47
+msgid "Unvailable"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:17
 msgid "Plugin information"
@@ -7177,29 +7206,33 @@ msgstr "Ez a plugin a lokális kiszolgáló útvonalon található"
 msgid "Installation path"
 msgstr "Telepítési útvonal"
 
-#: templates/InvenTree/settings/plugin_settings.html:100
+#: templates/InvenTree/settings/plugin_settings.html:102
+msgid "This is a builtin plugin which cannot be disabled"
+msgstr ""
+
+#: templates/InvenTree/settings/plugin_settings.html:107
 msgid "Commit Author"
 msgstr "Commit szerzője"
 
-#: templates/InvenTree/settings/plugin_settings.html:104
+#: templates/InvenTree/settings/plugin_settings.html:111
 #: templates/about.html:36
 msgid "Commit Date"
 msgstr "Commit dátuma"
 
-#: templates/InvenTree/settings/plugin_settings.html:108
+#: templates/InvenTree/settings/plugin_settings.html:115
 #: templates/about.html:29
 msgid "Commit Hash"
 msgstr "Commit hash"
 
-#: templates/InvenTree/settings/plugin_settings.html:112
+#: templates/InvenTree/settings/plugin_settings.html:119
 msgid "Commit Message"
 msgstr "Commit üzenet"
 
-#: templates/InvenTree/settings/plugin_settings.html:120
+#: templates/InvenTree/settings/plugin_settings.html:127
 msgid "Sign Status"
 msgstr "Aláírás státusza"
 
-#: templates/InvenTree/settings/plugin_settings.html:125
+#: templates/InvenTree/settings/plugin_settings.html:132
 msgid "Sign Key"
 msgstr "Aláíró kulcs"
 
@@ -7220,66 +7253,66 @@ msgstr "Nincsenek értékek"
 msgid "Edit setting"
 msgstr "Beállítások módosítása"
 
-#: templates/InvenTree/settings/settings.html:120
+#: templates/InvenTree/settings/settings.html:117
 msgid "Edit Plugin Setting"
 msgstr "Plugin beállítások módosítása"
 
-#: templates/InvenTree/settings/settings.html:122
+#: templates/InvenTree/settings/settings.html:119
 msgid "Edit Notification Setting"
 msgstr "Értesítési beállítások szerkesztése"
 
-#: templates/InvenTree/settings/settings.html:125
+#: templates/InvenTree/settings/settings.html:122
 msgid "Edit Global Setting"
 msgstr "Általános beállítások szerkesztése"
 
-#: templates/InvenTree/settings/settings.html:127
+#: templates/InvenTree/settings/settings.html:124
 msgid "Edit User Setting"
 msgstr "Felhasználói beállítások szerkesztése"
 
-#: templates/InvenTree/settings/settings.html:217
+#: templates/InvenTree/settings/settings.html:214
 msgid "No category parameter templates found"
 msgstr "Nincs kategória paraméter sablon"
 
-#: templates/InvenTree/settings/settings.html:239
-#: templates/InvenTree/settings/settings.html:364
+#: templates/InvenTree/settings/settings.html:236
+#: templates/InvenTree/settings/settings.html:361
 msgid "Edit Template"
 msgstr "Sablon szerkesztése"
 
-#: templates/InvenTree/settings/settings.html:240
-#: templates/InvenTree/settings/settings.html:365
+#: templates/InvenTree/settings/settings.html:237
+#: templates/InvenTree/settings/settings.html:362
 msgid "Delete Template"
 msgstr "Sablon törlése"
 
-#: templates/InvenTree/settings/settings.html:280
+#: templates/InvenTree/settings/settings.html:277
 msgid "Create Category Parameter Template"
 msgstr "Kategória paraméter sablon létrehozása"
 
-#: templates/InvenTree/settings/settings.html:325
+#: templates/InvenTree/settings/settings.html:322
 msgid "Delete Category Parameter Template"
 msgstr "Kategória paraméter sablon törlése"
 
-#: templates/InvenTree/settings/settings.html:337
+#: templates/InvenTree/settings/settings.html:334
 msgid "No part parameter templates found"
 msgstr "Nincs alkatrész paraméter sablon"
 
-#: templates/InvenTree/settings/settings.html:341
+#: templates/InvenTree/settings/settings.html:338
 #: templates/js/translated/notification.js:36
 msgid "ID"
 msgstr "Azonosító"
 
-#: templates/InvenTree/settings/settings.html:383
+#: templates/InvenTree/settings/settings.html:380
 msgid "Create Part Parameter Template"
 msgstr "Alkatrész paraméter sablon létrehozása"
 
-#: templates/InvenTree/settings/settings.html:402
+#: templates/InvenTree/settings/settings.html:399
 msgid "Edit Part Parameter Template"
 msgstr "Alkatrész paraméter sablon módosítása"
 
-#: templates/InvenTree/settings/settings.html:416
+#: templates/InvenTree/settings/settings.html:413
 msgid "Any parameters which reference this template will also be deleted"
 msgstr "Az összes erre a sablonra hivatkozó paraméter is törlésre kerül"
 
-#: templates/InvenTree/settings/settings.html:424
+#: templates/InvenTree/settings/settings.html:421
 msgid "Delete Part Parameter Template"
 msgstr "Alkatrész paraméter sablon törlése"
 
@@ -7735,7 +7768,7 @@ msgstr "Van már fiókod? akkor kérlek <a href=\"%(login_url)s\">jelentkezz be<
 msgid "Or use a SSO-provider for signup"
 msgstr "Vagy használj SSO kiszolgálót a regisztrációhoz"
 
-#: templates/admin_button.html:2
+#: templates/admin_button.html:8
 msgid "View in administration panel"
 msgstr "Adminisztrációs panel megnyitása"
 
@@ -10505,6 +10538,10 @@ msgstr "Értesítések megjelenítése"
 #: templates/navbar.html:119
 msgid "New Notifications"
 msgstr "Új értesítések"
+
+#: templates/navbar.html:137 users/models.py:36
+msgid "Admin"
+msgstr "Admin"
 
 #: templates/navbar.html:140
 msgid "Logout"
