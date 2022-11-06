@@ -3751,6 +3751,10 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     options.table = table;
 
+    if (!options.pending && !global_settings.SALESORDER_EDIT_COMPLETED_ORDERS) {
+        options.allow_edit = false;
+    }
+
     options.params = options.params || {};
 
     if (!options.order) {
@@ -3780,7 +3784,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
     setupFilterList('salesorderlineitem', $(table), filter_target);
 
     // Is the order pending?
-    var pending = options.status == {{ SalesOrderStatus.PENDING }};
+    var pending = options.pending;
 
     // Has the order shipped?
     var shipped = options.status == {{ SalesOrderStatus.SHIPPED }};
@@ -4298,6 +4302,10 @@ function loadSalesOrderExtraLineTable(table, options={}) {
 
     options.table = table;
 
+    if (!options.pending && !global_settings.SALESORDER_EDIT_COMPLETED_ORDERS) {
+        options.allow_edit = false;
+    }
+
     options.params = options.params || {};
 
     if (!options.order) {
@@ -4412,14 +4420,14 @@ function loadSalesOrderExtraLineTable(table, options={}) {
 
             var html = `<div class='btn-group float-right' role='group'>`;
 
-            var pk = row.pk;
-
-            html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
-            html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
-            html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
+            if (options.allow_edit) {
+                var pk = row.pk;
+                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
+                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
+            }
 
             html += `</div>`;
-
             return html;
         }
     });
