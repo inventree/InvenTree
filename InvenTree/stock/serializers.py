@@ -65,6 +65,10 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'barcode_hash',
         ]
 
+        read_only_fields = [
+            'barcode_hash',
+        ]
+
     def validate_serial(self, value):
         """Make sure serial is not to big."""
         if abs(extract_int(value)) > 0x7fffffff:
@@ -258,6 +262,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """
         read_only_fields = [
             'allocated',
+            'barcode_hash',
             'stocktake_date',
             'stocktake_user',
             'updated',
@@ -612,6 +617,10 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'items',
             'owner',
             'icon',
+        ]
+
+        read_only_fields = [
+            'barcode_hash',
         ]
 
 

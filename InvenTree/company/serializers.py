@@ -308,6 +308,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
         read_only_fields = [
             'availability_updated',
+            'barcode_hash',
         ]
 
     @staticmethod

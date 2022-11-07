@@ -302,6 +302,10 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'units',
         ]
 
+        read_only_fields = [
+            'barcode_hash',
+        ]
+
 
 class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for complete detail information of a part.
@@ -468,6 +472,10 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'variant_of',
             'virtual',
         ]
+
+    read_only_fields = [
+        'barcode_hash',
+    ]
 
     def save(self):
         """Save the Part instance"""
