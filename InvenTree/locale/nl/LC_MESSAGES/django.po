@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-07 02:58+0000\n"
-"PO-Revision-Date: 2022-11-04 19:02\n"
+"PO-Revision-Date: 2022-11-07 03:59\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -2199,10 +2199,8 @@ msgid "Enable creation of default shipment with sales orders"
 msgstr "Aanmaken standaard verzending bij verkooporders inschakelen"
 
 #: common/models.py:1263
-#, fuzzy
-#| msgid "Complete Sales Order"
 msgid "Edit Completed Sales Orders"
-msgstr "Voltooi Verkooporder"
+msgstr ""
 
 #: common/models.py:1264
 msgid "Allow editing of sales orders after they have been shipped or completed"
@@ -2217,10 +2215,8 @@ msgid "Required pattern for generating Purchase Order reference field"
 msgstr "Vereist patroon voor het genereren van het Inkooporderreferentieveld"
 
 #: common/models.py:1277
-#, fuzzy
-#| msgid "Complete Purchase Order"
 msgid "Edit Completed Purchase Orders"
-msgstr "Voltooi Inkooporder"
+msgstr ""
 
 #: common/models.py:1278
 msgid "Allow editing of purchase orders after they have been shipped or completed"
@@ -7707,16 +7703,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10791,3 +10785,4 @@ msgstr ""
 #: users/models.py:222
 msgid "Permission to delete items"
 msgstr ""
+
