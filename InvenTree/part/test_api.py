@@ -1,5 +1,6 @@
 """Unit tests for the various part API endpoints"""
 
+from decimal import Decimal
 from enum import IntEnum
 from random import randint
 
@@ -701,7 +702,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 {
                     'convert_from': variant.pk,
                 },
-                expected_code=200
+                expected_code=200,
             )
 
             # There should be the same number of results for each request
@@ -1962,7 +1963,7 @@ class BomItemTest(InvenTreeAPITestCase):
             data={
                 'validated': True,
             },
-            expected_code=200
+            expected_code=200,
         )
 
         # Check that the expected response is returned
@@ -2539,3 +2540,65 @@ class PartAttachmentTest(InvenTreeAPITestCase):
         self.assertEqual(data['part'], 1)
         self.assertEqual(data['link'], link)
         self.assertEqual(data['comment'], 'Hello world')
+
+
+class PartInternalPriceBreakTest(InvenTreeAPITestCase):
+    """Unit tests for the PartInternalPrice API endpoints"""
+
+    fixtures = [
+        'category',
+        'part',
+        'params',
+        'location',
+        'bom',
+        'company',
+        'test_templates',
+        'manufacturer_part',
+        'supplier_part',
+        'order',
+        'stock',
+    ]
+
+    roles = [
+        'part.change',
+        'part.add',
+        'part.delete',
+        'part_category.change',
+        'part_category.add',
+        'part_category.delete',
+    ]
+
+    def test_create_price_breaks(self):
+        """Test we can create price breaks at various quantities"""
+
+        url = reverse('api-part-internal-price-list')
+
+        breaks = [
+            (1.0, 101),
+            (1.1, 92.555555555),
+            (1.5, 90.999999999),
+            (1.756, 89),
+            (2, 86),
+            (25, 80)
+        ]
+
+        for q, p in breaks:
+            data = self.post(
+                url,
+                {
+                    'part': 1,
+                    'quantity': q,
+                    'price': p,
+                },
+                expected_code=201
+            ).data
+
+            self.assertEqual(data['part'], 1)
+            self.assertEqual(
+                round(Decimal(data['quantity']), 4),
+                round(Decimal(q), 4)
+            )
+            self.assertEqual(
+                round(Decimal(data['price']), 4),
+                round(Decimal(p), 4)
+            )

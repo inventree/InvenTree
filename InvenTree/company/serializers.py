@@ -294,6 +294,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'MPN',
             'note',
             'pk',
+            'barcode_hash',
             'packaging',
             'pack_size',
             'part',
@@ -307,6 +308,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
         read_only_fields = [
             'availability_updated',
+            'barcode_hash',
         ]
 
     @staticmethod

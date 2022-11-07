@@ -154,6 +154,8 @@ class CategoryList(ListCreateAPI):
     ]
 
     filterset_fields = [
+        'name',
+        'description'
     ]
 
     ordering_fields = [

@@ -30,7 +30,7 @@ def print_label(plugin_slug: str, pdf_data, filename=None, label_instance=None, 
     """
     logger.info(f"Plugin '{plugin_slug}' is printing a label '{filename}'")
 
-    plugin = registry.plugins.get(plugin_slug, None)
+    plugin = registry.get_plugin(plugin_slug)
 
     if plugin is None:  # pragma: no cover
         logger.error(f"Could not find matching plugin for '{plugin_slug}'")

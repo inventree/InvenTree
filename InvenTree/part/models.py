@@ -686,7 +686,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
             return full_name
 
-        except AttributeError as attr_err:
+        except Exception as attr_err:
 
             logger.warning(f"exception while trying to create full name for part {self.name}", attr_err)
 
@@ -2398,10 +2398,7 @@ class PartTestTemplate(models.Model):
 
 
 def validate_template_name(name):
-    """Prevent illegal characters in "name" field for PartParameterTemplate."""
-    for c in "\"\'`!?|":  # noqa: P103
-        if c in str(name):
-            raise ValidationError(_(f"Illegal character in template name ({c})"))
+    """Placeholder for legacy function used in migrations."""
 
 
 class PartParameterTemplate(models.Model):
@@ -2446,10 +2443,7 @@ class PartParameterTemplate(models.Model):
         max_length=100,
         verbose_name=_('Name'),
         help_text=_('Parameter Name'),
-        unique=True,
-        validators=[
-            validate_template_name,
-        ]
+        unique=True
     )
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)

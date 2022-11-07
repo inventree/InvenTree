@@ -285,6 +285,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'IPN',
+            'barcode_hash',
             'default_location',
             'name',
             'revision',
@@ -299,6 +300,10 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'trackable',
             'virtual',
             'units',
+        ]
+
+        read_only_fields = [
+            'barcode_hash',
         ]
 
 
@@ -430,6 +435,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
             'assembly',
+            'barcode_hash',
             'category',
             'category_detail',
             'component',
@@ -465,6 +471,10 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'units',
             'variant_of',
             'virtual',
+        ]
+
+        read_only_fields = [
+            'barcode_hash',
         ]
 
     def save(self):
