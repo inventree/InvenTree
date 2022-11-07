@@ -25,8 +25,8 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
-from InvenTree.helpers import (DownloadFile, increment, isNull, str2bool,
-                               str2int)
+from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
+                               str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
@@ -153,6 +153,8 @@ class CategoryList(ListCreateAPI):
     ]
 
     filterset_fields = [
+        'name',
+        'description'
     ]
 
     ordering_fields = [
@@ -717,16 +719,16 @@ class PartSerialNumberDetail(RetrieveAPI):
         part = self.get_object()
 
         # Calculate the "latest" serial number
-        latest = part.getLatestSerialNumber()
+        latest = part.get_latest_serial_number()
 
         data = {
             'latest': latest,
         }
 
         if latest is not None:
-            next_serial = increment(latest)
+            next_serial = increment_serial_number(latest)
 
-            if next_serial != increment:
+            if next_serial != latest:
                 data['next'] = next_serial
 
         return Response(data)

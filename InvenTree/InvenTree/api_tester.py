@@ -10,6 +10,9 @@ from django.http.response import StreamingHttpResponse
 
 from rest_framework.test import APITestCase
 
+from plugin import registry
+from plugin.models import PluginConfig
+
 
 class UserMixin:
     """Mixin to setup a user and login for tests.
@@ -87,6 +90,21 @@ class UserMixin:
                 break
 
 
+class PluginMixin:
+    """Mixin to ensure that all plugins are loaded for tests."""
+
+    def setUp(self):
+        """Setup for plugin tests."""
+        super().setUp()
+
+        # Load plugin configs
+        self.plugin_confs = PluginConfig.objects.all()
+        # Reload if not present
+        if not self.plugin_confs:
+            registry.reload_plugins()
+            self.plugin_confs = PluginConfig.objects.all()
+
+
 class InvenTreeAPITestCase(UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
@@ -116,7 +134,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         if expected_code is not None:
 
             if response.status_code != expected_code:
-                print(f"Unexpected response at '{url}':")
+                print(f"Unexpected response at '{url}': status_code = {response.status_code}")
                 print(response.data)
 
             self.assertEqual(response.status_code, expected_code)
@@ -125,10 +143,12 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
 
     def post(self, url, data=None, expected_code=None, format='json'):
         """Issue a POST request."""
-        response = self.client.post(url, data=data, format=format)
 
+        # Set default value - see B006
         if data is None:
             data = {}
+
+        response = self.client.post(url, data=data, format=format)
 
         if expected_code is not None:
 

@@ -886,11 +886,62 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_BACKUP_ENABLE': {
+            'name': _('Automatic Backup'),
+            'description': _('Enable automatic backup of database and media files'),
+            'validator': bool,
+            'default': True,
+        },
+
+        'INVENTREE_DELETE_TASKS_DAYS': {
+            'name': _('Delete Old Tasks'),
+            'description': _('Background task results will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
+        'INVENTREE_DELETE_ERRORS_DAYS': {
+            'name': _('Delete Error Logs'),
+            'description': _('Error logs will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7)
+            ]
+        },
+
+        'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
+            'name': _('Delete Noficiations'),
+            'description': _('User notifications will be deleted after specified number of days'),
+            'default': 30,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),
             'default': True,
             'validator': bool,
+        },
+
+        'BARCODE_INPUT_DELAY': {
+            'name': _('Barcode Input Delay'),
+            'description': _('Barcode input processing delay time'),
+            'default': 50,
+            'validator': [
+                int,
+                MinValueValidator(1),
+            ],
+            'units': 'ms',
         },
 
         'BARCODE_WEBCAM_SUPPORT': {
@@ -1132,6 +1183,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
+            'name': _('Globally Unique Serials'),
+            'description': _('Serial numbers for stock items must be globally unique'),
+            'default': False,
+            'validator': bool,
+        },
+
         'STOCK_BATCH_CODE_TEMPLATE': {
             'name': _('Batch Code Template'),
             'description': _('Template for generating default batch codes for stock items'),
@@ -1201,11 +1259,25 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SALESORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Sales Orders'),
+            'description': _('Allow editing of sales orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PURCHASEORDER_REFERENCE_PATTERN': {
             'name': _('Purchase Order Reference Pattern'),
             'description': _('Required pattern for generating Purchase Order reference field'),
             'default': 'PO-{ref:04d}',
             'validator': order.validators.validate_purchase_order_reference_pattern,
+        },
+
+        'PURCHASEORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Purchase Orders'),
+            'description': _('Allow editing of purchase orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
         },
 
         # login / SSO
@@ -1274,7 +1346,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'PLUGIN_ON_STARTUP': {
             'name': _('Check plugins on startup'),
-            'description': _('Check that all plugins are installed on startup - enable in container enviroments'),
+            'description': _('Check that all plugins are installed on startup - enable in container environments'),
             'default': False,
             'validator': bool,
             'requires_restart': True,
@@ -1568,6 +1640,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         'SEARCH_PREVIEW_SHOW_COMPANIES': {
             'name': _('Search Companies'),
             'description': _('Display companies in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_BUILD_ORDERS': {
+            'name': _('Search Build Orders'),
+            'description': _('Display build orders in search preview window'),
             'default': True,
             'validator': bool,
         },

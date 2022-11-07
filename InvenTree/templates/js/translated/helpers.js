@@ -185,14 +185,14 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var options = opts || {};
 
-    value = parseFloat(value);
+    value = formatDecimal(parseFloat(value));
 
     var percent = 100;
 
     // Prevent div-by-zero or null value
     if (maximum && maximum > 0) {
-        maximum = parseFloat(maximum);
-        percent = parseInt(value / maximum * 100);
+        maximum = formatDecimal(parseFloat(maximum));
+        percent = formatDecimal(parseInt(value / maximum * 100));
     }
 
     if (percent > 100) {

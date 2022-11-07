@@ -133,6 +133,11 @@ STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
+# Backup directories
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
+DBBACKUP_SEND_EMAIL = False
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -178,6 +183,7 @@ INSTALLED_APPS = [
     'error_report',                         # Error reporting in the admin interface
     'django_q',
     'formtools',                            # Form wizard tools
+    'dbbackup',                             # Backups - django-dbbackup
 
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts

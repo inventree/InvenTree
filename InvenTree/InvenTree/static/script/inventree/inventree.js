@@ -127,13 +127,6 @@ function inventreeDocReady() {
         loadBrandIcon($(this), $(this).attr('brand_name'));
     });
 
-    // Callback for "admin view" button
-    $('#admin-button, .admin-button').click(function() {
-        var url = $(this).attr('url');
-
-        location.href = url;
-    });
-
     // Display any cached alert messages
     showCachedAlerts();
 

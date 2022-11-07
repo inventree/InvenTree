@@ -1,5 +1,6 @@
 """Unit tests for the various part API endpoints"""
 
+from decimal import Decimal
 from random import randint
 
 from django.urls import reverse
@@ -592,7 +593,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 {
                     'convert_from': variant.pk,
                 },
-                expected_code=200
+                expected_code=200,
             )
 
             # There should be the same number of results for each request
@@ -1853,7 +1854,7 @@ class BomItemTest(InvenTreeAPITestCase):
             data={
                 'validated': True,
             },
-            expected_code=200
+            expected_code=200,
         )
 
         # Check that the expected response is returned
@@ -2350,3 +2351,145 @@ class PartParameterTest(InvenTreeAPITestCase):
         data = response.data
 
         self.assertEqual(data['data'], '15')
+
+
+class PartAttachmentTest(InvenTreeAPITestCase):
+    """Unit tests for the PartAttachment API endpoint"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+    ]
+
+    def test_add_attachment(self):
+        """Test that we can create a new PartAttachment via the API"""
+
+        url = reverse('api-part-attachment-list')
+
+        # Upload without permission
+        response = self.post(
+            url,
+            {},
+            expected_code=403,
+        )
+
+        # Add required permission
+        self.assignRole('part.add')
+
+        # Upload without specifying part (will fail)
+        response = self.post(
+            url,
+            {
+                'comment': 'Hello world',
+            },
+            expected_code=400
+        )
+
+        self.assertIn('This field is required', str(response.data['part']))
+
+        # Upload without file OR link (will fail)
+        response = self.post(
+            url,
+            {
+                'part': 1,
+                'comment': 'Hello world',
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Missing file', str(response.data['attachment']))
+        self.assertIn('Missing external link', str(response.data['link']))
+
+        # Upload an invalid link (will fail)
+        response = self.post(
+            url,
+            {
+                'part': 1,
+                'link': 'not-a-link.py',
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Enter a valid URL', str(response.data['link']))
+
+        link = 'https://www.google.com/test'
+
+        # Upload a valid link (will pass)
+        response = self.post(
+            url,
+            {
+                'part': 1,
+                'link': link,
+                'comment': 'Hello world',
+            },
+            expected_code=201
+        )
+
+        data = response.data
+
+        self.assertEqual(data['part'], 1)
+        self.assertEqual(data['link'], link)
+        self.assertEqual(data['comment'], 'Hello world')
+
+
+class PartInternalPriceBreakTest(InvenTreeAPITestCase):
+    """Unit tests for the PartInternalPrice API endpoints"""
+
+    fixtures = [
+        'category',
+        'part',
+        'params',
+        'location',
+        'bom',
+        'company',
+        'test_templates',
+        'manufacturer_part',
+        'supplier_part',
+        'order',
+        'stock',
+    ]
+
+    roles = [
+        'part.change',
+        'part.add',
+        'part.delete',
+        'part_category.change',
+        'part_category.add',
+        'part_category.delete',
+    ]
+
+    def test_create_price_breaks(self):
+        """Test we can create price breaks at various quantities"""
+
+        url = reverse('api-part-internal-price-list')
+
+        breaks = [
+            (1.0, 101),
+            (1.1, 92.555555555),
+            (1.5, 90.999999999),
+            (1.756, 89),
+            (2, 86),
+            (25, 80)
+        ]
+
+        for q, p in breaks:
+            data = self.post(
+                url,
+                {
+                    'part': 1,
+                    'quantity': q,
+                    'price': p,
+                },
+                expected_code=201
+            ).data
+
+            self.assertEqual(data['part'], 1)
+            self.assertEqual(
+                round(Decimal(data['quantity']), 4),
+                round(Decimal(q), 4)
+            )
+            self.assertEqual(
+                round(Decimal(data['price']), 4),
+                round(Decimal(p), 4)
+            )

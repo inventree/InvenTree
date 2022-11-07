@@ -1308,14 +1308,19 @@ function loadBomTable(table, options={}) {
 
             var data = table.bootstrapTable('getData');
 
+            var update_required = false;
+
             for (var idx = 0; idx < data.length; idx++) {
-                var row = data[idx];
 
-                if (!row.parentId) {
-                    row.parentId = parent_id;
-
-                    table.bootstrapTable('updateByUniqueId', row.pk, row, true);
+                if (!data[idx].parentId) {
+                    data[idx].parentId = parent_id;
+                    update_required = true;
                 }
+            }
+
+            // Re-load the table back data
+            if (update_required) {
+                table.bootstrapTable('load', data);
             }
         },
         onLoadSuccess: function(data) {

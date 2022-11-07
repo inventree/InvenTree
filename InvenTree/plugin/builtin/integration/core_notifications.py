@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from allauth.account.models import EmailAddress
 
 import common.models
+import InvenTree.helpers
 import InvenTree.tasks
 from plugin import InvenTreePlugin
 from plugin.mixins import BulkNotificationMethod, SettingsMixin
@@ -26,8 +27,10 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
     """Core notification methods for InvenTree."""
 
     NAME = "CoreNotificationsPlugin"
+    TITLE = _("InvenTree Notifications")
     AUTHOR = _('InvenTree contributors')
     DESCRIPTION = _('Integrated outgoing notificaton methods')
+    VERSION = "1.0.0"
 
     SETTINGS = {
         'ENABLE_NOTIFICATION_EMAILS': {
@@ -61,7 +64,12 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
             allowed_users = []
 
             for user in self.targets:
-                allows_emails = self.usersetting(user)
+
+                if not user.is_active:
+                    # Ignore any users who have been deactivated
+                    continue
+
+                allows_emails = InvenTree.helpers.str2bool(self.usersetting(user))
 
                 if allows_emails:
                     allowed_users.append(user)

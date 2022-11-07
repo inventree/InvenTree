@@ -1301,15 +1301,17 @@ function loadParametricPartTable(table, options={}) {
 
             for (var idx = 0; idx < data.length; idx++) {
                 var row = data[idx];
-                var pk = row.pk;
 
                 // Make each parameter accessible, based on the "template" columns
                 row.parameters.forEach(function(parameter) {
                     row[`parameter_${parameter.template}`] = parameter.data;
                 });
 
-                $(table).bootstrapTable('updateByUniqueId', pk, row);
+                data[idx] = row;
             }
+
+            // Update the table
+            $(table).bootstrapTable('load', data);
         }
     });
 }
@@ -1876,15 +1878,16 @@ function loadPartCategoryTable(table, options) {
                 },
                 event: () => {
                     inventreeSave('category-tree-view', 0);
-                    table.bootstrapTable(
-                        'refreshOptions',
-                        {
-                            treeEnable: false,
-                            serverSort: true,
-                            search: true,
-                            pagination: true,
-                        }
-                    );
+
+                    // Adjust table options
+                    options.treeEnable = false;
+                    options.serverSort = false;
+                    options.search = true;
+                    options.pagination = true;
+
+                    // Destroy and re-create the table
+                    table.bootstrapTable('destroy');
+                    loadPartCategoryTable(table, options);
                 }
             },
             {
@@ -1895,15 +1898,16 @@ function loadPartCategoryTable(table, options) {
                 },
                 event: () => {
                     inventreeSave('category-tree-view', 1);
-                    table.bootstrapTable(
-                        'refreshOptions',
-                        {
-                            treeEnable: true,
-                            serverSort: false,
-                            search: false,
-                            pagination: false,
-                        }
-                    );
+
+                    // Adjust table options
+                    options.treeEnable = true;
+                    options.serverSort = false;
+                    options.search = false;
+                    options.pagination = false;
+
+                    // Destroy and re-create the table
+                    table.bootstrapTable('destroy');
+                    loadPartCategoryTable(table, options);
                 }
             }
         ] : [],

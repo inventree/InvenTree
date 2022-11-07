@@ -529,112 +529,126 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return result
 
-    def checkIfSerialNumberExists(self, sn, exclude_self=False):
-        """Check if a serial number exists for this Part.
+    def validate_serial_number(self, serial: str, stock_item=None, check_duplicates=True, raise_error=False):
+        """Validate a serial number against this Part instance.
 
-        Note: Serial numbers must be unique across an entire Part "tree", so here we filter by the entire tree.
+        Note: This function is exposed to any Validation plugins, and thus can be customized.
+
+        Any plugins which implement the 'validate_serial_number' method have three possible outcomes:
+
+        - Decide the serial is objectionable and raise a django.core.exceptions.ValidationError
+        - Decide the serial is acceptable, and return None to proceed to other tests
+        - Decide the serial is acceptable, and return True to skip any further tests
+
+        Arguments:
+            serial: The proposed serial number
+            stock_item: (optional) A StockItem instance which has this serial number assigned (e.g. testing for duplicates)
+            raise_error: If False, and ValidationError(s) will be handled
+
+        Returns:
+            True if serial number is 'valid' else False
+
+        Raises:
+            ValidationError if serial number is invalid and raise_error = True
         """
-        parts = Part.objects.filter(tree_id=self.tree_id)
 
-        stock = StockModels.StockItem.objects.filter(part__in=parts, serial=sn)
+        serial = str(serial).strip()
 
-        if exclude_self:
-            stock = stock.exclude(pk=self.pk)
+        # First, throw the serial number against each of the loaded validation plugins
+        from plugin.registry import registry
 
-        return stock.exists()
+        try:
+            for plugin in registry.with_mixin('validation'):
+                # Run the serial number through each custom validator
+                # If the plugin returns 'True' we will skip any subsequent validation
+                if plugin.validate_serial_number(serial):
+                    return True
+        except ValidationError as exc:
+            if raise_error:
+                # Re-throw the error
+                raise exc
+            else:
+                return False
 
-    def find_conflicting_serial_numbers(self, serials):
+        """
+        If we are here, none of the loaded plugins (if any) threw an error or exited early
+
+        Now, we run the "default" serial number validation routine,
+        which checks that the serial number is not duplicated
+        """
+
+        if not check_duplicates:
+            return
+
+        from part.models import Part
+        from stock.models import StockItem
+
+        if common.models.InvenTreeSetting.get_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # Serial number must be unique across *all* parts
+            parts = Part.objects.all()
+        else:
+            # Serial number must only be unique across this part "tree"
+            parts = Part.objects.filter(tree_id=self.tree_id)
+
+        stock = StockItem.objects.filter(part__in=parts, serial=serial)
+
+        if stock_item:
+            # Exclude existing StockItem from query
+            stock = stock.exclude(pk=stock_item.pk)
+
+        if stock.exists():
+            if raise_error:
+                raise ValidationError(_("Stock item with this serial number already exists") + ": " + serial)
+            else:
+                return False
+        else:
+            # This serial number is perfectly valid
+            return True
+
+    def find_conflicting_serial_numbers(self, serials: list):
         """For a provided list of serials, return a list of those which are conflicting."""
+
         conflicts = []
 
         for serial in serials:
-            if self.checkIfSerialNumberExists(serial, exclude_self=True):
+            if not self.validate_serial_number(serial):
                 conflicts.append(serial)
 
         return conflicts
 
-    def getLatestSerialNumber(self):
-        """Return the "latest" serial number for this Part.
+    def get_latest_serial_number(self):
+        """Find the 'latest' serial number for this Part.
 
-        If *all* the serial numbers are integers, then this will return the highest one.
-        Otherwise, it will simply return the serial number most recently added.
+        Here we attempt to find the "highest" serial number which exists for this Part.
+        There are a number of edge cases where this method can fail,
+        but this is accepted to keep database performance at a reasonable level.
 
         Note: Serial numbers must be unique across an entire Part "tree",
         so we filter by the entire tree.
-        """
-        parts = Part.objects.filter(tree_id=self.tree_id)
-        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None)
 
-        # There are no matchin StockItem objects (skip further tests)
+        Returns:
+            The latest serial number specified for this part, or None
+        """
+
+        stock = StockModels.StockItem.objects.all().exclude(serial=None).exclude(serial='')
+
+        # Generate a query for any stock items for this part variant tree with non-empty serial numbers
+        if common.models.InvenTreeSetting.get_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # Serial numbers are unique across all parts
+            pass
+        else:
+            # Serial numbers are unique acros part trees
+            stock = stock.filter(part__tree_id=self.tree_id)
+
+        # There are no matching StockItem objects (skip further tests)
         if not stock.exists():
             return None
 
-        # Attempt to coerce the returned serial numbers to integers
-        # If *any* are not integers, fail!
-        try:
-            ordered = sorted(stock.all(), reverse=True, key=lambda n: int(n.serial))
+        # Sort in descending order
+        stock = stock.order_by('-serial_int', '-serial', '-pk')
 
-            if len(ordered) > 0:
-                return ordered[0].serial
-
-        # One or more of the serial numbers was non-numeric
-        # In this case, the "best" we can do is return the most recent
-        except ValueError:
-            return stock.last().serial
-
-        # No serial numbers found
-        return None
-
-    def getLatestSerialNumberInt(self):
-        """Return the "latest" serial number for this Part as a integer.
-
-        If it is not an integer the result is 0
-        """
-        latest = self.getLatestSerialNumber()
-
-        # No serial number = > 0
-        if latest is None:
-            latest = 0
-
-        # Attempt to turn into an integer and return
-        try:
-            latest = int(latest)
-            return latest
-        except Exception:
-            # not an integer so 0
-            return 0
-
-    def getSerialNumberString(self, quantity=1):
-        """Return a formatted string representing the next available serial numbers, given a certain quantity of items."""
-        latest = self.getLatestSerialNumber()
-
-        quantity = int(quantity)
-
-        # No serial numbers can be found, assume 1 as the first serial
-        if latest is None:
-            latest = 0
-
-        # Attempt to turn into an integer
-        try:
-            latest = int(latest)
-        except Exception:
-            pass
-
-        if type(latest) is int:
-
-            if quantity >= 2:
-                text = '{n} - {m}'.format(n=latest + 1, m=latest + 1 + quantity)
-
-                return _('Next available serial numbers are') + ' ' + text
-            else:
-                text = str(latest + 1)
-
-                return _('Next available serial number is') + ' ' + text
-
-        else:
-            # Non-integer values, no option but to return latest
-
-            return _('Most recent serial number is') + ' ' + str(latest)
+        # Return the first serial value
+        return stock[0].serial
 
     @property
     def full_name(self):
@@ -657,7 +671,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
             return full_name
 
-        except AttributeError as attr_err:
+        except Exception as attr_err:
 
             logger.warning(f"exception while trying to create full name for part {self.name}", attr_err)
 
@@ -2369,10 +2383,7 @@ class PartTestTemplate(models.Model):
 
 
 def validate_template_name(name):
-    """Prevent illegal characters in "name" field for PartParameterTemplate."""
-    for c in "\"\'`!?|":  # noqa: P103
-        if c in str(name):
-            raise ValidationError(_(f"Illegal character in template name ({c})"))
+    """Placeholder for legacy function used in migrations."""
 
 
 class PartParameterTemplate(models.Model):
@@ -2417,10 +2428,7 @@ class PartParameterTemplate(models.Model):
         max_length=100,
         verbose_name=_('Name'),
         help_text=_('Parameter Name'),
-        unique=True,
-        validators=[
-            validate_template_name,
-        ]
+        unique=True
     )
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)

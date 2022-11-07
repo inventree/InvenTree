@@ -679,6 +679,10 @@ main {
     color: #A94442;
 }
 
+.form-error-message {
+    display: block;
+}
+
 .modal input {
     width: 100%;
 }

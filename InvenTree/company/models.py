@@ -23,6 +23,7 @@ from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin
 from InvenTree.status_codes import PurchaseOrderStatus
+from plugin.models import MetadataMixin
 
 
 def rename_company_image(instance, filename):
@@ -50,7 +51,7 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-class Company(models.Model):
+class Company(MetadataMixin, models.Model):
     """A Company object represents an external company.
 
     It may be a supplier or a customer or a manufacturer (or a combination)

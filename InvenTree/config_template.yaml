@@ -142,6 +142,9 @@ cors:
 # STATIC_ROOT is the local filesystem location for storing static files
 #static_root: '/home/inventree/data/static'
 
+# BACKUP_DIR is the local filesystem location for storing backups
+#backup_dir: '/home/inventree/data/backup'
+
 # Background worker options
 background:
   workers: 4
@@ -162,8 +165,10 @@ login_attempts: 5
 # Remote / proxy login
 # These settings can introduce security problems if configured incorrectly. Please read
 # https://docs.djangoproject.com/en/4.0/howto/auth-remote-user/ for more details
+# The header name should be prefixed by `HTTP`. Please read the docs for more details
+# https://docs.djangoproject.com/en/stable/ref/request-response/#django.http.HttpRequest.META
 remote_login_enabled: False
-remote_login_header: REMOTE_USER
+remote_login_header: HTTP_REMOTE_USER
 
 # Permit custom authentication backends
 #authentication_backends:

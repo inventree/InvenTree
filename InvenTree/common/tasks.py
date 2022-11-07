@@ -8,9 +8,12 @@ from django.core.exceptions import AppRegistryNotReady
 
 import feedparser
 
+from InvenTree.tasks import ScheduledTask, scheduled_task
+
 logger = logging.getLogger('inventree')
 
 
+@scheduled_task(ScheduledTask.DAILY)
 def delete_old_notifications():
     """Remove old notifications from the database.
 
@@ -28,6 +31,7 @@ def delete_old_notifications():
     NotificationEntry.objects.filter(updated__lte=before).delete()
 
 
+@scheduled_task(ScheduledTask.DAILY)
 def update_news_feed():
     """Update the newsfeed."""
     try:

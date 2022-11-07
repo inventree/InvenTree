@@ -31,6 +31,7 @@ ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
 ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
+ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
 
 # InvenTree configuration files
@@ -67,7 +68,7 @@ RUN apt-get install -y  --no-install-recommends \
     # SQLite support
     sqlite3 \
     # PostgreSQL support
-    libpq-dev \
+    libpq-dev postgresql-client \
     # MySQL / MariaDB support
     default-libmysqlclient-dev mariadb-client && \
     apt-get autoclean && apt-get autoremove

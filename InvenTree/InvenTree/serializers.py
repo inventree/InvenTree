@@ -34,13 +34,14 @@ class InvenTreeMoneySerializer(MoneyField):
     def __init__(self, *args, **kwargs):
         """Overrite default values."""
         kwargs["max_digits"] = kwargs.get("max_digits", 19)
-        kwargs["decimal_places"] = kwargs.get("decimal_places", 4)
+        self.decimal_places = kwargs["decimal_places"] = kwargs.get("decimal_places", 4)
         kwargs["required"] = kwargs.get("required", False)
 
         super().__init__(*args, **kwargs)
 
     def get_value(self, data):
         """Test that the returned amount is a valid Decimal."""
+
         amount = super(DecimalField, self).get_value(data)
 
         # Convert an empty string to None
@@ -49,7 +50,9 @@ class InvenTreeMoneySerializer(MoneyField):
 
         try:
             if amount is not None and amount is not empty:
+                # Convert to a Decimal instance, and round to maximum allowed decimal places
                 amount = Decimal(amount)
+                amount = round(amount, self.decimal_places)
         except Exception:
             raise ValidationError({
                 self.field_name: [_("Must be a valid number")],

@@ -65,6 +65,10 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'barcode_hash',
         ]
 
+        read_only_fields = [
+            'barcode_hash',
+        ]
+
     def validate_serial(self, value):
         """Make sure serial is not to big."""
         if abs(extract_int(value)) > 0x7fffffff:
@@ -258,6 +262,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """
         read_only_fields = [
             'allocated',
+            'barcode_hash',
             'stocktake_date',
             'stocktake_user',
             'updated',
@@ -342,7 +347,11 @@ class SerializeStockItemSerializer(serializers.Serializer):
         serial_numbers = data['serial_numbers']
 
         try:
-            serials = InvenTree.helpers.extract_serial_numbers(serial_numbers, quantity, item.part.getLatestSerialNumberInt())
+            serials = InvenTree.helpers.extract_serial_numbers(
+                serial_numbers,
+                quantity,
+                item.part.get_latest_serial_number()
+            )
         except DjangoValidationError as e:
             raise ValidationError({
                 'serial_numbers': e.messages,
@@ -371,7 +380,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
         serials = InvenTree.helpers.extract_serial_numbers(
             data['serial_numbers'],
             data['quantity'],
-            item.part.getLatestSerialNumberInt()
+            item.part.get_latest_serial_number()
         )
 
         item.serializeStock(
@@ -598,6 +607,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         model = StockLocation
         fields = [
             'pk',
+            'barcode_hash',
             'url',
             'name',
             'level',
@@ -607,6 +617,10 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'items',
             'owner',
             'icon',
+        ]
+
+        read_only_fields = [
+            'barcode_hash',
         ]
 
 
