@@ -473,9 +473,9 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'virtual',
         ]
 
-    read_only_fields = [
-        'barcode_hash',
-    ]
+        read_only_fields = [
+            'barcode_hash',
+        ]
 
     def save(self):
         """Save the Part instance"""
