@@ -275,8 +275,10 @@ class TestHelpers(TestCase):
             we will simply try multiple times
             """
 
+            tries = 0
+
             with self.assertRaises(expected_error):
-                while retries > 0:
+                while tries < retries:
 
                     try:
                         helpers.download_image_from_url(url, timeout=timeout)
@@ -285,18 +287,17 @@ class TestHelpers(TestCase):
                         if type(exc) is expected_error:
                             # Re-throw this error
                             raise exc
+                        else:
+                            print("Unexpected error:", type(exc), exc)
 
-                    time.sleep(30)
-                    retries -= 1
+                    tries += 1
+                    time.sleep(10 * tries)
 
         # Attempt to download an image which throws a 404
         dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
 
         # Attempt to download, but timeout
         dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.ReadTimeout, timeout=1)
-
-        # Attempt to download, but not a valid image
-        dl_helper("https://httpstat.us/200", TypeError, timeout=10)
 
         large_img = "https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg"
 
