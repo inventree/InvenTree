@@ -19,6 +19,20 @@ logger = logging.getLogger('inventree')
 
 
 @register.simple_tag()
+def getkey(value: dict, arg):
+    """Perform key lookup in the provided dict object.
+
+    This function is provided to get around template rendering limitations.
+    Ref: https://stackoverflow.com/questions/1906129/dict-keys-with-spaces-in-django-templates
+
+    Arguments:
+        value: A python dict object
+        arg: The 'key' to be found within the dict
+    """
+    return value[arg]
+
+
+@register.simple_tag()
 def asset(filename):
     """Return fully-qualified path for an upload report asset file.
 
