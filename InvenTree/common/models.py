@@ -1259,11 +1259,25 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SALESORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Sales Orders'),
+            'description': _('Allow editing of sales orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PURCHASEORDER_REFERENCE_PATTERN': {
             'name': _('Purchase Order Reference Pattern'),
             'description': _('Required pattern for generating Purchase Order reference field'),
             'default': 'PO-{ref:04d}',
             'validator': order.validators.validate_purchase_order_reference_pattern,
+        },
+
+        'PURCHASEORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Purchase Orders'),
+            'description': _('Allow editing of purchase orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
         },
 
         # login / SSO
