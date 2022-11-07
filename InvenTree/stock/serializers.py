@@ -602,6 +602,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         model = StockLocation
         fields = [
             'pk',
+            'barcode_hash',
             'url',
             'name',
             'level',

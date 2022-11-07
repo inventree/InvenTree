@@ -285,6 +285,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'IPN',
+            'barcode_hash',
             'default_location',
             'name',
             'revision',
@@ -430,6 +431,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
             'assembly',
+            'barcode_hash',
             'category',
             'category_detail',
             'component',

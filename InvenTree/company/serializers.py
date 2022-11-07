@@ -294,6 +294,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'MPN',
             'note',
             'pk',
+            'barcode_hash',
             'packaging',
             'pack_size',
             'part',
