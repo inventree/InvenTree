@@ -27,7 +27,8 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
                                str2bool, str2int)
-from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
+from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
+                              ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
@@ -179,7 +180,7 @@ class CategoryList(ListCreateAPI):
     ]
 
 
-class CategoryDetail(RetrieveUpdateDestroyAPI):
+class CategoryDetail(CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartCategory object."""
 
     serializer_class = part_serializers.CategorySerializer
@@ -217,6 +218,16 @@ class CategoryDetail(RetrieveUpdateDestroyAPI):
         response = super().update(request, *args, **kwargs)
 
         return response
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete a Part category instance via the API"""
+        delete_parts = 'delete_parts' in request.data and request.data['delete_parts'] == '1'
+        delete_child_categories = 'delete_child_categories' in request.data and request.data['delete_child_categories'] == '1'
+        return super().destroy(request,
+                               *args,
+                               **dict(kwargs,
+                                      delete_parts=delete_parts,
+                                      delete_child_categories=delete_child_categories))
 
 
 class CategoryMetadata(RetrieveUpdateAPI):
