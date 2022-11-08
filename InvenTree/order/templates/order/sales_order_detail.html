@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block page_content %}
+{% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
 
 <div class='panel panel-hidden' id='panel-order-items'>
     <div class='panel-heading'>
@@ -17,10 +18,12 @@
             <h4>{% trans "Sales Order Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.sales_order.change and order.is_pending %}
+                {% if roles.sales_order.change %}
+                {% if order.is_pending or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-so-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -42,10 +45,12 @@
             <h4>{% trans "Extra Lines" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.sales_order.change and order.is_pending %}
+                {% if roles.sales_order.change %}
+                {% if order.is_pending or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-so-extra-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
                 </button>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -265,6 +270,12 @@
             order: {{ order.pk }},
             reference: '{{ order.reference }}',
             status: {{ order.status }},
+            {% if roles.sales_order.change %}
+            allow_edit: true,
+            {% endif %}
+            {% if order.is_pending %}
+            pending: true,
+            {% endif %}
         }
     );
 
@@ -289,6 +300,8 @@
         {
             order: {{ order.pk }},
             status: {{ order.status }},
+            {% if roles.sales_order.change %}allow_edit: true,{% endif %}
+            {% if order.is_pending %}pending: true,{% endif %}
         }
     );
 

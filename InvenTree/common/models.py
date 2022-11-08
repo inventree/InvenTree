@@ -933,6 +933,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'BARCODE_INPUT_DELAY': {
+            'name': _('Barcode Input Delay'),
+            'description': _('Barcode input processing delay time'),
+            'default': 50,
+            'validator': [
+                int,
+                MinValueValidator(1),
+            ],
+            'units': 'ms',
+        },
+
         'BARCODE_WEBCAM_SUPPORT': {
             'name': _('Barcode Webcam Support'),
             'description': _('Allow barcode scanning via webcam in browser'),
@@ -1248,11 +1259,25 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SALESORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Sales Orders'),
+            'description': _('Allow editing of sales orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PURCHASEORDER_REFERENCE_PATTERN': {
             'name': _('Purchase Order Reference Pattern'),
             'description': _('Required pattern for generating Purchase Order reference field'),
             'default': 'PO-{ref:04d}',
             'validator': order.validators.validate_purchase_order_reference_pattern,
+        },
+
+        'PURCHASEORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Purchase Orders'),
+            'description': _('Allow editing of purchase orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
         },
 
         # login / SSO
@@ -1321,7 +1346,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'PLUGIN_ON_STARTUP': {
             'name': _('Check plugins on startup'),
-            'description': _('Check that all plugins are installed on startup - enable in container enviroments'),
+            'description': _('Check that all plugins are installed on startup - enable in container environments'),
             'default': False,
             'validator': bool,
             'requires_restart': True,

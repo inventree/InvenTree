@@ -67,9 +67,7 @@ class LabelPrintMixin:
         plugin = registry.get_plugin(plugin_key)
 
         if plugin:
-            config = plugin.plugin_config()
-
-            if config and config.active:
+            if plugin.is_active():
                 # Only return the plugin if it is enabled!
                 return plugin
             else:

@@ -1,6 +1,7 @@
 """Unit tests for the various part API endpoints"""
 
 from decimal import Decimal
+from enum import IntEnum
 from random import randint
 
 from django.urls import reverse
@@ -293,6 +294,114 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             )
 
             self.assertEqual(response.data['description'], 'A part category')
+
+    def test_category_delete(self):
+        """Test category deletion with different parameters"""
+
+        class Target(IntEnum):
+            move_subcategories_to_parent_move_parts_to_parent = 0,
+            move_subcategories_to_parent_delete_parts = 1,
+            delete_subcategories_move_parts_to_parent = 2,
+            delete_subcategories_delete_parts = 3,
+
+        for i in range(4):
+            delete_child_categories: bool = False
+            delete_parts: bool = False
+
+            if i == Target.move_subcategories_to_parent_delete_parts \
+                    or i == Target.delete_subcategories_delete_parts:
+                delete_parts = True
+            if i == Target.delete_subcategories_move_parts_to_parent \
+                    or i == Target.delete_subcategories_delete_parts:
+                delete_child_categories = True
+
+            # Create a parent category
+            parent_category = PartCategory.objects.create(
+                name='Parent category',
+                description='This is the parent category where the child categories and parts are moved to',
+                parent=None
+            )
+
+            category_count_before = PartCategory.objects.count()
+            part_count_before = Part.objects.count()
+
+            # Create a category to delete
+            cat_to_delete = PartCategory.objects.create(
+                name='Category to delete',
+                description='This is the category to be deleted',
+                parent=parent_category
+            )
+
+            url = reverse('api-part-category-detail', kwargs={'pk': cat_to_delete.id})
+
+            parts = []
+            # Create parts in the category to be deleted
+            for jj in range(3):
+                parts.append(Part.objects.create(
+                    name=f"Part xyz {jj}",
+                    description="Child part of the deleted category",
+                    category=cat_to_delete
+                ))
+
+            child_categories = []
+            child_categories_parts = []
+            # Create child categories under the category to be deleted
+            for ii in range(3):
+                child = PartCategory.objects.create(
+                    name=f"Child parent_cat {ii}",
+                    description="A child category of the deleted category",
+                    parent=cat_to_delete
+                )
+                child_categories.append(child)
+
+                # Create parts in the child categories
+                for jj in range(3):
+                    child_categories_parts.append(Part.objects.create(
+                        name=f"Part xyz {jj}",
+                        description="Child part in the child category of the deleted category",
+                        category=child
+                    ))
+
+            # Delete the created category (sub categories and their parts will be moved under the parent)
+            params = {}
+            if delete_parts:
+                params['delete_parts'] = '1'
+            if delete_child_categories:
+                params['delete_child_categories'] = '1'
+            response = self.delete(
+                url,
+                params,
+                expected_code=204,
+            )
+
+            self.assertEqual(response.status_code, 204)
+
+            if delete_parts:
+                if i == Target.delete_subcategories_delete_parts:
+                    # Check if all parts deleted
+                    self.assertEqual(Part.objects.count(), part_count_before)
+                elif i == Target.move_subcategories_to_parent_delete_parts:
+                    # Check if all parts deleted
+                    self.assertEqual(Part.objects.count(), part_count_before + len(child_categories_parts))
+            else:
+                # parts moved to the parent category
+                for part in parts:
+                    part.refresh_from_db()
+                    self.assertEqual(part.category, parent_category)
+
+                if delete_child_categories:
+                    for part in child_categories_parts:
+                        part.refresh_from_db()
+                        self.assertEqual(part.category, parent_category)
+
+            if delete_child_categories:
+                # Check if all categories are deleted
+                self.assertEqual(PartCategory.objects.count(), category_count_before)
+            else:
+                #  Check if all subcategories to parent moved to parent and all parts deleted
+                for child in child_categories:
+                    child.refresh_from_db()
+                    self.assertEqual(child.parent, parent_category)
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
@@ -593,7 +702,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 {
                     'convert_from': variant.pk,
                 },
-                expected_code=200
+                expected_code=200,
             )
 
             # There should be the same number of results for each request
@@ -1854,7 +1963,7 @@ class BomItemTest(InvenTreeAPITestCase):
             data={
                 'validated': True,
             },
-            expected_code=200
+            expected_code=200,
         )
 
         # Check that the expected response is returned
