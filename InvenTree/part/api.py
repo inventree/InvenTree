@@ -720,6 +720,21 @@ class PartMetadata(RetrieveUpdateAPI):
     queryset = Part.objects.all()
 
 
+class PartPricingDetail(RetrieveAPI):
+    """API endpoint for viewing part pricing data"""
+
+    serializer_class = part_serializers.PartPricingSerializer
+    queryset = Part.objects.all()
+
+    def get_serializer(self, *args, **kwargs):
+        """Return a part pricing serializer object"""
+
+        part = self.get_object()
+        pricing = part.pricing
+
+        return self.serializer_class(pricing)
+
+
 class PartSerialNumberDetail(RetrieveAPI):
     """API endpoint for returning extra serial number information about a particular part."""
 
@@ -1063,7 +1078,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
 
-        # Pass a list of "starred" parts fo the current user to the serializer
+        # Pass a list of "starred" parts to the current user to the serializer
         # We do this to reduce the number of database queries required!
         if self.starred_parts is None and self.request is not None:
             self.starred_parts = [star.part for star in self.request.user.starred_parts.all()]
@@ -2144,6 +2159,9 @@ part_api_urls = [
 
         # Part metadata
         re_path(r'^metadata/', PartMetadata.as_view(), name='api-part-metadata'),
+
+        # Part pricing
+        re_path(r'^pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
 
         # Part detail endpoint
         re_path(r'^.*$', PartDetail.as_view(), name='api-part-detail'),

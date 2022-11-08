@@ -30,8 +30,8 @@ from InvenTree.status_codes import BuildStatus
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
-                     PartParameterTemplate, PartRelated, PartSellPriceBreak,
-                     PartStar, PartTestTemplate)
+                     PartParameterTemplate, PartPricing, PartRelated,
+                     PartSellPriceBreak, PartStar, PartTestTemplate)
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -501,6 +501,26 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             )
 
         return self.instance
+
+
+class PartPricingSerializer(InvenTreeModelSerializer):
+    """Serializer for Part pricing information"""
+
+    class Meta:
+        """Metaclass defining serializer fields"""
+        model = PartPricing
+        fields = [
+            'bom_cost_min',
+            'bom_cost_max',
+            'purchase_cost_min',
+            'purchase_cost_max',
+            'internal_cost_min',
+            'internal_cost_max',
+            'supplier_price_min',
+            'supplier_price_max',
+            'overall_min',
+            'overall_max',
+        ]
 
 
 class PartRelationSerializer(InvenTreeModelSerializer):
