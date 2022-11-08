@@ -1561,6 +1561,56 @@ class PartDetailTests(InvenTreeAPITestCase):
         self.assertIn('Ensure this field has no more than 50000 characters', str(response.data['notes']))
 
 
+class PartPricingDetailTests(InvenTreeAPITestCase):
+    """Tests for the part pricing API endpoint"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+    ]
+
+    roles = [
+        'part.change',
+    ]
+
+    def url(self, pk):
+        """Construct a pricing URL"""
+
+        return reverse('api-part-pricing', kwargs={'pk': pk})
+
+    def test_pricing_detail(self):
+        """Test an empty pricing detail"""
+
+        response = self.get(
+            self.url(1),
+            expected_code=200
+        )
+
+        # Check for expected fields
+        expected_fields = [
+            'currency',
+            'updated',
+            'bom_cost_min',
+            'bom_cost_max',
+            'purchase_cost_min',
+            'purchase_cost_max',
+            'internal_cost_min',
+            'internal_cost_max',
+            'supplier_price_min',
+            'supplier_price_max',
+            'overall_min',
+            'overall_max',
+        ]
+
+        for field in expected_fields:
+            self.assertIn(field, response.data)
+
+        # Empty fields (no pricing by default)
+        for field in expected_fields[2:]:
+            self.assertIsNone(response.data[field])
+
+
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """Tests to ensure that the various aggregation annotations are working correctly..."""
 

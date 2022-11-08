@@ -506,10 +506,28 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 class PartPricingSerializer(InvenTreeModelSerializer):
     """Serializer for Part pricing information"""
 
+    # Custom serializers
+    bom_cost_min = InvenTreeMoneySerializer(allow_null=True)
+    bom_cost_max = InvenTreeMoneySerializer(allow_null=True)
+
+    purchase_cost_min = InvenTreeMoneySerializer(allow_null=True)
+    purchase_cost_max = InvenTreeMoneySerializer(allow_null=True)
+
+    internal_cost_min = InvenTreeMoneySerializer(allow_null=True)
+    internal_cost_max = InvenTreeMoneySerializer(allow_null=True)
+
+    supplier_price_min = InvenTreeMoneySerializer(allow_null=True)
+    supplier_price_max = InvenTreeMoneySerializer(allow_null=True)
+
+    overall_min = InvenTreeMoneySerializer(allow_null=True)
+    overall_max = InvenTreeMoneySerializer(allow_null=True)
+
     class Meta:
         """Metaclass defining serializer fields"""
         model = PartPricing
         fields = [
+            'currency',
+            'updated',
             'bom_cost_min',
             'bom_cost_max',
             'purchase_cost_min',
