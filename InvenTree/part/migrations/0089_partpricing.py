@@ -10,7 +10,7 @@ import djmoney.models.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('part', '0087_bomitem_consumable'),
+        ('part', '0088_alter_partparametertemplate_name'),
     ]
 
     operations = [
