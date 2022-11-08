@@ -29,7 +29,7 @@ from .config import get_boolean_setting, get_custom_file, get_setting
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
-# Are enviroment variables manipulated by tests? Needs to be set by testing code
+# Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
 
 # New requirement for django 3.2+

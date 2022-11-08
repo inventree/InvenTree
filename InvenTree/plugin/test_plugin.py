@@ -198,7 +198,7 @@ class RegistryTests(TestCase):
     def run_package_test(self, directory):
         """General runner for testing package based installs."""
 
-        # Patch enviroment varible to add dir
+        # Patch environment varible to add dir
         envs = {'INVENTREE_PLUGIN_TEST_DIR': directory}
         with mock.patch.dict(os.environ, envs):
             # Reload to redicsover plugins

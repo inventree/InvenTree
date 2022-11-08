@@ -543,7 +543,7 @@ def test(c, database=None):
     manage(c, 'test', pty=True)
 
 
-@task(help={'dev': 'Set up development enviroment at the end'})
+@task(help={'dev': 'Set up development environment at the end'})
 def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
     """Setup a testing enviroment."""
 

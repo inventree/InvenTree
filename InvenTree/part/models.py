@@ -24,6 +24,7 @@ from django.utils.translation import gettext_lazy as _
 from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
 from jinja2 import Template
 from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
@@ -31,6 +32,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
 
 import common.models
+import common.settings
 import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
@@ -2233,12 +2235,18 @@ class PartPricing(models.Model):
     - Supplier price (based on supplier part data)
     - Overall best / worst (based on the values listed above)
 
-    Note that this pricing information does not take "quantity" into account.
-    Quantity pricing still needs to be calculated.
+    Note that this pricing information does not take "quantity" into account:
+    - This provides a simple min / max pricing range, which is quite valuable in a lot of situations
+    - Quantity pricing still needs to be calculated
+    - Quantity pricing can be viewed from the part detail page
+    - Detailed pricing information is very context specific in any case
     """
 
     def save(self, *args, **kwargs):
         """Whenever pricing model is saved, automatically update overall prices"""
+
+        # Update the currency which was used to perform the calculation
+        self.currency = currency_code_default()
 
         self.update_overall_cost()
 
@@ -2248,45 +2256,155 @@ class PartPricing(models.Model):
 
         # If the linked Part is used in any assemblies, schedule a pricing update for those assemblies
 
-    def update_all_costs(self):
+    def update_all_costs(self, save=True):
         """Recalculate all cost data for the referenced Part instance"""
 
-        self.update_bom_cost()
-        self.update_purchase_cost()
-        self.update_internal_cost()
-        self.update_supplier_cost()
+        self.update_bom_cost(save=False)
+        self.update_purchase_cost(save=False)
+        self.update_internal_cost(save=False)
+        self.update_supplier_cost(save=False)
 
-        self.update_overall_cost()
+        if save:
+            # Call to save here will call update_overall_cost() internally
+            self.save()
+        else:
+            self.update_overall_cost()
 
-    def update_bom_cost(self):
-        """Recalculate BOM cost for the referenced Part instance"""
+    def update_bom_cost(self, save=True):
+        """Recalculate BOM cost for the referenced Part instance.
 
-        # TODO - Implement this function
-        pass
+        Iterate through the Bill of Materials, and calculate cumulative pricing:
 
-    def update_purchase_cost(self):
+        cumulative_min: The sum of minimum costs for each line in the BOM
+        cumulative_max: The sum of maximum costs for each line in the BOM
+
+        Note: The cumulative costs are calculated based on the specified default currency
+        """
+
+        if not self.part.assembly:
+            # Not an assembly - no BOM pricing
+            self.bom_cost_min = None
+            self.bom_cost_max = None
+
+            if save:
+                self.save()
+
+            # Short circuit - no further operations required
+            return
+
+        currency_code = common.settings.currency_code_default()
+
+        cumulative_min = Money(0, currency_code)
+        cumulative_max = Money(0, currency_code)
+
+        for bom_item in self.part.get_bom_items():
+            # Loop through each BOM item which is used to assemble this part
+
+            bom_item_min = None
+            bom_item_max = None
+
+            for sub_part in bom_item.get_valid_parts_for_allocation():
+                # Check each part which *could* be used
+
+                sub_part_pricing = sub_part.pricing
+
+                sub_part_min = convert_money(sub_part_pricing.overall_min, currency_code)
+                sub_part_max = convert_money(sub_part_pricing.overall_max, currency_code)
+
+                if sub_part_min:
+                    if bom_item_min is None or sub_part_min < bom_item_min:
+                        bom_item_min = sub_part_min
+
+                if sub_part_max:
+                    if bom_item_max is None or sub_part_pricing.overall_max > bom_item_max:
+                        bom_item_max = sub_part_pricing.overall_max
+
+            # Update cumulative totals
+            if bom_item_min is not None:
+                bom_item_min *= bom_item.quantity
+                cumulative_min += convert_money(bom_item_min, currency_code)
+
+            if bom_item_max is not None:
+                bom_item_max *= bom_item.quantity
+                cumulative_max += convert_money(bom_item_max, currency_code)
+
+        self.bom_cost_min = cumulative_min
+        self.bom_cost_max = cumulative_max
+
+        if save:
+            self.save()
+
+    def update_purchase_cost(self, save=True):
         """Recalculate historical purchase cost for the referenced Part instance"""
 
         # TODO - Implement this function
-        pass
 
-    def update_internal_cost(self):
+        if save:
+            self.save()
+
+    def update_internal_cost(self, save=True):
         """Recalculate internal cost for the referenced Part instance"""
 
-        # TODO - Implement this function
-        pass
+        min_int_cost = None
+        max_int_cost = None
 
-    def update_supplier_cost(self):
-        """Recalculate supplier cost for the referenced Part instance"""
+        currency = currency_code_default()
 
-        # TODO - Implement this function
-        pass
+        for pb in self.part.internalpricebreaks.all():
+            cost = convert_money(pb.price, currency)
+
+            if min_int_cost is None or cost < min_int_cost:
+                min_int_cost = cost
+
+            if max_int_cost is None or cost > max_int_cost:
+                max_int_cost = cost
+
+        self.internal_cost_min = min_int_cost
+        self.internal_cost_max = max_int_cost
+
+        if save:
+            self.save()
+
+    def update_supplier_cost(self, save=True):
+        """Recalculate supplier cost for the referenced Part instance.
+
+        - The limits are simply the lower and upper bounds of available SupplierPriceBreaks
+        - We do not take "quantity" into account here
+        """
+
+        min_sup_cost = None
+        max_sup_cost = None
+
+        currency = currency_code_default()
+
+        if self.part.purchaseable:
+
+            # Iterate through each available SupplierPart instance
+            for sp in self.part.supplier_parts.all():
+
+                # Iterate through each available SupplierPriceBreak instance
+                for pb in sp.pricebreaks.all():
+                    cost = convert_money(pb.price, currency)
+
+                    if min_sup_cost is None or cost < min_sup_cost:
+                        min_sup_cost = cost
+
+                    if max_sup_cost is None or cost > max_sup_cost:
+                        max_sup_cost = cost
+
+        self.supplier_price_min = min_sup_cost
+        self.supplier_price_max = max_sup_cost
+
+        if save:
+            self.save()
 
     def update_overall_cost(self):
         """Update overall cost values.
 
         Here we simply take the minimum / maximum values of the other calculated fields.
         """
+
+        currency = currency_code_default()
 
         overall_min = None
         overall_max = None
@@ -2301,6 +2419,9 @@ class PartPricing(models.Model):
             if cost is None:
                 continue
 
+            # Ensure we are working in a common currency
+            cost = convert_money(cost, currency)
+
             if overall_min is None or cost < overall_min:
                 overall_min = cost
 
@@ -2314,11 +2435,28 @@ class PartPricing(models.Model):
             if cost is None:
                 continue
 
+            # Ensure we are working in a common currency
+            cost = convert_money(cost, currency)
+
             if overall_max is None or cost > overall_max:
                 overall_max = cost
 
         self.overall_min = overall_min
         self.overall_max = overall_max
+
+    currency = models.CharField(
+        default=currency_code_default,
+        max_length=10,
+        verbose_name=_('Currency'),
+        help_text=_('Currency used to cache pricing calculations'),
+        choices=common.settings.currency_code_mappings(),
+    )
+
+    updated = models.DateTimeField(
+        verbose_name=_('Updated'),
+        help_text=_('Timestamp of last pricing update'),
+        auto_now=True
+    )
 
     part = models.OneToOneField(
         Part,
