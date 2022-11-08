@@ -2305,14 +2305,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'purchase_price',
                 title: '{% trans "Unit Price" %}',
                 formatter: function(value, row) {
-                    var formatter = new Intl.NumberFormat(
-                        'en-US',
-                        {
-                            style: 'currency',
-                            currency: row.purchase_price_currency
-                        }
-                    );
-                    return formatter.format(row.purchase_price);
+                    return formatCurrency(row.purchase_price, {
+                        currency: row.purchase_price_currency,
+                    });
                 }
             },
             {
@@ -2320,14 +2315,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 sortable: true,
                 title: '{% trans "Total Price" %}',
                 formatter: function(value, row) {
-                    var formatter = new Intl.NumberFormat(
-                        'en-US',
-                        {
-                            style: 'currency',
-                            currency: row.purchase_price_currency
-                        }
-                    );
-                    return formatter.format(row.purchase_price * row.quantity);
+                    return formatCurrency(row.purchase_price * row.quantity, {
+                        currency: row.purchase_price_currency
+                    });
                 },
                 footerFormatter: function(data) {
                     var total = data.map(function(row) {
@@ -2338,15 +2328,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
                     var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency) || 'USD';
 
-                    var formatter = new Intl.NumberFormat(
-                        'en-US',
-                        {
-                            style: 'currency',
-                            currency: currency
-                        }
-                    );
-
-                    return formatter.format(total);
+                    return formatCurrency(total, {
+                        currency: currency
+                    });
                 }
             },
             {
@@ -2508,15 +2492,9 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
             field: 'price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.price_currency
-                    }
-                );
-
-                return formatter.format(row.price);
+                return formatCurrency(row.price, {
+                    currency: row.price_currency,
+                });
             }
         },
         {
@@ -2524,15 +2502,9 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
             sortable: true,
             title: '{% trans "Total Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.price_currency
-                    }
-                );
-
-                return formatter.format(row.price * row.quantity);
+                return formatCurrency(row.price * row.quantity, {
+                    currency: row.price_currency,
+                });
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
@@ -2543,15 +2515,9 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
                 var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
 
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: currency
-                    }
-                );
-
-                return formatter.format(total);
+                return formatCurrency(total, {
+                    currency: currency,
+                });
             }
         }
     ];
@@ -3732,7 +3698,7 @@ function reloadTotal() {
         {},
         {
             success: function(data) {
-                $(TotalPriceRef).html(data.total_price_string);
+                $(TotalPriceRef).html(formatCurrency(data.price, {currency: data.price_currency}));
             }
         }
     );
@@ -3851,15 +3817,9 @@ function loadSalesOrderLineItemTable(table, options={}) {
             field: 'sale_price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.sale_price_currency
-                    }
-                );
-
-                return formatter.format(row.sale_price);
+                return formatCurrency(row.sale_price, {
+                    currency: row.sale_price_currency
+                });
             }
         },
         {
@@ -3867,15 +3827,9 @@ function loadSalesOrderLineItemTable(table, options={}) {
             sortable: true,
             title: '{% trans "Total Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.sale_price_currency
-                    }
-                );
-
-                return formatter.format(row.sale_price * row.quantity);
+                return formatCurrency(row.sale_price * row.quantity, {
+                    currency: row.sale_price_currency,
+                });
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
@@ -3886,15 +3840,9 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                 var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
 
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: currency
-                    }
-                );
-
-                return formatter.format(total);
+                return formatCurrency(total, {
+                    currency: currency,
+                });
             }
         },
         {
@@ -4360,15 +4308,9 @@ function loadSalesOrderExtraLineTable(table, options={}) {
             field: 'price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.price_currency
-                    }
-                );
-
-                return formatter.format(row.price);
+                return formatCurrency(row.price, {
+                    currency: row.price_currency,
+                });
             }
         },
         {
@@ -4376,15 +4318,9 @@ function loadSalesOrderExtraLineTable(table, options={}) {
             sortable: true,
             title: '{% trans "Total Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.price_currency
-                    }
-                );
-
-                return formatter.format(row.price * row.quantity);
+                return formatCurrency(row.price * row.quantity, {
+                    currency: row.price_currency,
+                });
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
@@ -4395,15 +4331,9 @@ function loadSalesOrderExtraLineTable(table, options={}) {
 
                 var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
 
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: currency
-                    }
-                );
-
-                return formatter.format(total);
+                return formatCurrency(total, {
+                    currency: currency,
+                });
             }
         }
     ];

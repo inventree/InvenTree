@@ -1961,17 +1961,16 @@ function loadStockTable(table, options) {
 
     columns.push(col);
 
-    col = {
-        field: 'purchase_price_string',
+    columns.push({
+        field: 'purchase_price',
         title: '{% trans "Purchase Price" %}',
-    };
-
-    if (!options.params.ordering) {
-        col.sortable = true;
-        col.sortName = 'purchase_price';
-    }
-
-    columns.push(col);
+        sortable: false,
+        formatter: function(value, row) {
+            return formatCurrency(value, {
+                currency: row.purchase_price_currency,
+            });
+        }
+    })
 
     columns.push({
         field: 'packaging',

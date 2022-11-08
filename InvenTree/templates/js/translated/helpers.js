@@ -39,6 +39,40 @@ function deleteButton(url, text='{% trans "Delete" %}') {
 
 
 /*
+ * format currency (money) value based on current settings
+ *
+ * Options:
+ * - currency: Currency code (uses default value if none provided)
+ * - locale: Locale specified (uses default value if none provided)
+ */
+function formatCurrency(value, options={}) {
+
+    if (value == null) {
+        return null;
+    }
+
+    // Strip out any trailing zeros, etc
+    value = formatDecimal(value);
+
+    // Extract default currency information
+    var currency = options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
+
+    // Exctract locale information
+    var locale = options.locale || navigator.language || 'en-US';
+
+    var formatter = new Intl.NumberFormat(
+        locale,
+        {
+            style: 'currency',
+            currency: currency,
+        }
+    );
+
+    return formatter.format(value);
+}
+
+
+/*
  * Ensure a string does not exceed a maximum length.
  * Useful for displaying long strings in tables,
  * to ensure a very long string does not "overflow" the table

@@ -154,8 +154,6 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
         help_text=_('Purchase currency of this stock item'),
     )
 
-    price_string = serializers.CharField(source='price', read_only=True)
-
     class Meta:
         """Metaclass defining serializer fields"""
         model = PartSellPriceBreak
@@ -165,7 +163,6 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
             'quantity',
             'price',
             'price_currency',
-            'price_string',
         ]
 
 
@@ -185,8 +182,6 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
         help_text=_('Purchase currency of this stock item'),
     )
 
-    price_string = serializers.CharField(source='price', read_only=True)
-
     class Meta:
         """Metaclass defining serializer fields"""
         model = PartInternalPriceBreak
@@ -196,7 +191,6 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
             'quantity',
             'price',
             'price_currency',
-            'price_string',
         ]
 
 

@@ -813,6 +813,9 @@ function loadPartVariantTable(table, partId, options={}) {
 }
 
 
+/*
+ * Load a "simplified" part table without filtering
+ */
 function loadSimplePartTable(table, url, options={}) {
 
     options.disableFilters = true;
@@ -1121,15 +1124,9 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 title: '{% trans "Price" %}',
                 switchable: true,
                 formatter: function(value, row) {
-                    var formatter = new Intl.NumberFormat(
-                        'en-US',
-                        {
-                            style: 'currency',
-                            currency: row.purchase_price_currency,
-                        }
-                    );
-
-                    return formatter.format(row.purchase_price);
+                    return formatCurrency(row.purchase_price, {
+                        currency: row.purchase_price_currency,
+                    });
                 }
             },
             {
@@ -1392,19 +1389,19 @@ function partGridTile(part) {
 }
 
 
+/* Load part listing data into specified table.
+ *
+ * Args:
+ *  - table: HTML reference to the table
+ *  - url: Base URL for API query
+ *  - options: object containing following (optional) fields
+ *      checkbox: Show the checkbox column
+ *      query: extra query params for API request
+ *      buttons: If provided, link buttons to selection status of this table
+ *      disableFilters: If true, disable custom filters
+ *      actions: Provide a callback function to construct an "actions" column
+ */
 function loadPartTable(table, url, options={}) {
-    /* Load part listing data into specified table.
-     *
-     * Args:
-     *  - table: HTML reference to the table
-     *  - url: Base URL for API query
-     *  - options: object containing following (optional) fields
-     *      checkbox: Show the checkbox column
-     *      query: extra query params for API request
-     *      buttons: If provided, link buttons to selection status of this table
-     *      disableFilters: If true, disable custom filters
-     *      actions: Provide a callback function to construct an "actions" column
-     */
 
     // Ensure category detail is included
     options.params['category_detail'] = true;
@@ -1581,6 +1578,38 @@ function loadPartTable(table, url, options={}) {
     }
 
     columns.push(col);
+
+    // Pricing information
+    columns.push({
+        field: 'pricing_min',
+        sortable: false,
+        title: '{% trans "Pricing Data" %}',
+        formatter: function(value, row) {
+            var min_price = row.pricing_min;
+            var max_price = row.pricing_max;
+
+            if (min_price == null && max_price == null) {
+                // No pricing information available at all
+                return null;
+            }
+
+            var output = '';
+
+            if (min_price != null) {
+                output += formatCurrency(min_price);
+
+                if (max_price != null) {
+                    output += ' - ';
+                }
+            }
+
+            if (max_price != null) {
+                output += formatCurrency(max_price);
+            }
+
+            return output;
+        }
+    });
 
     columns.push({
         field: 'link',

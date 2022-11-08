@@ -1495,7 +1495,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
     ordering_fields = [

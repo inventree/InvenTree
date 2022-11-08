@@ -39,8 +39,6 @@ class AbstractOrderSerializer(serializers.Serializer):
         read_only=True,
     )
 
-    total_price_string = serializers.CharField(source='get_total_price', read_only=True)
-
 
 class AbstractExtraLineSerializer(serializers.Serializer):
     """Abstract Serializer for a ExtraLine object."""
@@ -59,8 +57,6 @@ class AbstractExtraLineSerializer(serializers.Serializer):
     price = InvenTreeMoneySerializer(
         allow_null=True
     )
-
-    price_string = serializers.CharField(source='price', read_only=True)
 
     price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),
@@ -81,7 +77,6 @@ class AbstractExtraLineMeta:
         'order_detail',
         'price',
         'price_currency',
-        'price_string',
     ]
 
 
@@ -164,7 +159,6 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
             'target_date',
             'notes',
             'total_price',
-            'total_price_string',
         ]
 
         read_only_fields = [
@@ -326,8 +320,6 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         allow_null=True
     )
 
-    purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
-
     destination_detail = stock.serializers.LocationBriefSerializer(source='get_destination', read_only=True)
 
     purchase_price_currency = serializers.ChoiceField(
@@ -387,7 +379,6 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
             'received',
             'purchase_price',
             'purchase_price_currency',
-            'purchase_price_string',
             'destination',
             'destination_detail',
             'target_date',
@@ -745,7 +736,6 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
             'shipment_date',
             'target_date',
             'total_price',
-            'total_price_string',
         ]
 
         read_only_fields = [
@@ -900,8 +890,6 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         allow_null=True
     )
 
-    sale_price_string = serializers.CharField(source='sale_price', read_only=True)
-
     sale_price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),
         help_text=_('Sale price currency'),
@@ -927,7 +915,6 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
             'part_detail',
             'sale_price',
             'sale_price_currency',
-            'sale_price_string',
             'shipped',
             'target_date',
         ]

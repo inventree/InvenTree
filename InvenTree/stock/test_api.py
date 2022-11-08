@@ -569,7 +569,6 @@ class StockItemTest(StockAPITestCase):
         # Check fixture values
         self.assertEqual(data['purchase_price'], '123.0000')
         self.assertEqual(data['purchase_price_currency'], 'AUD')
-        self.assertEqual(data['purchase_price_string'], 'A$123.0000')
 
         # Update just the amount
         data = self.patch(
@@ -604,7 +603,6 @@ class StockItemTest(StockAPITestCase):
         ).data
 
         self.assertEqual(data['purchase_price'], None)
-        self.assertEqual(data['purchase_price_string'], '-')
 
         # Invalid currency code
         data = self.patch(

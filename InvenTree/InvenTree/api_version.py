@@ -9,6 +9,7 @@ Increment this API version number whenever there is a significant change to the 
 
 v81 -> 2022-11-08 : https://github.com/inventree/InvenTree/pull/3710
     - Adds cached pricing information to Part API
+    - Remove calculated 'purchase_price_string' from API endpoints
 
 v80 -> 2022-11-07 : https://github.com/inventree/InvenTree/pull/3906
     - Adds 'barcode_hash' to Part API serializer
