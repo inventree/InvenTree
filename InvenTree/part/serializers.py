@@ -421,6 +421,10 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
     category = serializers.PrimaryKeyRelatedField(queryset=PartCategory.objects.all())
 
+    # Pricing fields
+    pricing_min = InvenTreeMoneySerializer(source='pricing_data.overall_min', allow_null=True, read_only=True)
+    pricing_max = InvenTreeMoneySerializer(source='pricing_data.overall_max', allow_null=True, read_only=True)
+
     parameters = PartParameterSerializer(
         many=True,
         read_only=True,
@@ -471,6 +475,8 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'units',
             'variant_of',
             'virtual',
+            'pricing_min',
+            'pricing_max',
         ]
 
         read_only_fields = [

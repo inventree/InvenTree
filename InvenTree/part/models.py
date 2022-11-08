@@ -311,6 +311,7 @@ class PartManager(TreeManager):
         """Perform default prefetch operations when accessing Part model from the database"""
         return super().get_queryset().prefetch_related(
             'category',
+            'pricing_data',
             'category__parent',
             'stock_items',
             'builds',
