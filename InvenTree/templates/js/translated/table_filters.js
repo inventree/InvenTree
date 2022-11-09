@@ -502,7 +502,11 @@ function getAvailableTableFilters(tableKey) {
             virtual: {
                 type: 'bool',
                 title: '{% trans "Virtual" %}',
-            }
+            },
+            has_pricing: {
+                type: 'bool',
+                title: '{% trans "Has Pricing" %}',
+            },
         };
     }
 

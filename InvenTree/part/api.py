@@ -1025,6 +1025,21 @@ class PartFilter(rest_filters.FilterSet):
         queryset = queryset.filter(id__in=[p.pk for p in bom_parts])
         return queryset
 
+    has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method="filter_has_pricing")
+
+    def filter_has_pricing(self, queryset, name, value):
+        """Filter the queryset based on whether pricing information is available for the sub_part"""
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.exclude(pricing_data=None)
+            queryset = queryset.exclude(pricing_data__overall_min=None, pricing_data__overall_max=None)
+        else:
+            queryset = queryset.filter(pricing_data=None)
+
+        return queryset
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
