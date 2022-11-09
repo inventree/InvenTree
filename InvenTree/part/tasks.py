@@ -53,3 +53,17 @@ def notify_low_stock_if_required(part: part.models.Part):
                 notify_low_stock,
                 p
             )
+
+
+def update_part_pricing(part: part.models.Part, originator: part.models.Part = None):
+    """Update cached pricing data for the specified Part instance
+
+    Arguments:
+        part: The target Part to be updated
+        originator: The original Part instance which called for this part to be updated
+    """
+
+    logger.info(f"Updating part pricing for Part <{part.pk}> : {part.name}")
+
+    pricing = part.pricing
+    pricing.update_all_costs()

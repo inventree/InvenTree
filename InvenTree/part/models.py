@@ -1667,10 +1667,10 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         """
 
         try:
-            pricing_data = self.pricing_data
+            pricing_data = PartPricing.objects.get(part=self)
         except ObjectDoesNotExist:
             # Return a new PartPricing object (but do not save into the database)
-            pricing_data = PartPricing(part=self)
+            pricing_data = PartPricing.objects.create(part=self)
 
         return pricing_data
 
@@ -2266,6 +2266,25 @@ class PartPricing(models.Model):
 
         return result
 
+    def update_assemblies(self, originator):
+        """Schedule updates for any assemblies which use this part"""
+
+        # If the linked Part is used in any assemblies, schedule a pricing update for those assemblies
+        used_in_parts = self.part.get_used_in()
+
+        if originator is None:
+            originator = self
+
+        import part.tasks as part_tasks
+
+        for p in used_in_parts:
+            # Offload task to update the pricing for the assembled part
+            InvenTree.tasks.offload_task(
+                part_tasks.update_part_pricing,
+                p,
+                originator=originator
+            )
+
     def save(self, *args, **kwargs):
         """Whenever pricing model is saved, automatically update overall prices"""
 
@@ -2274,13 +2293,15 @@ class PartPricing(models.Model):
 
         self.update_overall_cost()
 
+        originator = kwargs.pop('originator', None)
+
         super().save(*args, **kwargs)
 
-        # TODO: Implement this background task
+        # Check that the originator is not this part (to prevent infinite loop)
+        if originator != self:
+            self.update_assemblies(originator)
 
-        # If the linked Part is used in any assemblies, schedule a pricing update for those assemblies
-
-    def update_all_costs(self, save=True):
+    def update_all_costs(self, save=True, originator=None):
         """Recalculate all cost data for the referenced Part instance"""
 
         self.update_bom_cost(save=False)
@@ -2290,7 +2311,7 @@ class PartPricing(models.Model):
 
         if save:
             # Call to save here will call update_overall_cost() internally
-            self.save()
+            self.save(originator=originator)
         else:
             self.update_overall_cost()
 
