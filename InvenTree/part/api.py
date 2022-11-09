@@ -4,23 +4,19 @@ import functools
 from decimal import Decimal, InvalidOperation
 
 from django.db import transaction
-from django.db.models import Avg, Count, F, Max, Min, Q
+from django.db.models import Count, F, Q
 from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from djmoney.contrib.exchange.exceptions import MissingRate
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
 from rest_framework import filters, serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 import order.models
 from build.models import Build, BuildItem
-from common.models import InvenTreeSetting
 from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
@@ -1776,7 +1772,6 @@ class BomList(ListCreateDestroyAPIView):
         If requested, extra detail fields are annotated to the queryset:
         - part_detail
         - sub_part_detail
-        - include_pricing
         """
 
         # Do we wish to include extra detail?
@@ -1787,12 +1782,6 @@ class BomList(ListCreateDestroyAPIView):
 
         try:
             kwargs['sub_part_detail'] = str2bool(self.request.GET.get('sub_part_detail', None))
-        except AttributeError:
-            pass
-
-        try:
-            # Include or exclude pricing information in the serialized data
-            kwargs['include_pricing'] = self.include_pricing()
         except AttributeError:
             pass
 
@@ -1864,73 +1853,6 @@ class BomList(ListCreateDestroyAPIView):
 
             except (ValueError, Part.DoesNotExist):
                 pass
-
-        if self.include_pricing():
-            queryset = self.annotate_pricing(queryset)
-
-        return queryset
-
-    def include_pricing(self):
-        """Determine if pricing information should be included in the response."""
-        pricing_default = InvenTreeSetting.get_setting('PART_SHOW_PRICE_IN_BOM')
-
-        return str2bool(self.request.query_params.get('include_pricing', pricing_default))
-
-    def annotate_pricing(self, queryset):
-        """Add part pricing information to the queryset."""
-        # Annotate with purchase prices
-        queryset = queryset.annotate(
-            purchase_price_min=Min('sub_part__stock_items__purchase_price'),
-            purchase_price_max=Max('sub_part__stock_items__purchase_price'),
-            purchase_price_avg=Avg('sub_part__stock_items__purchase_price'),
-        )
-
-        # Get values for currencies
-        currencies = queryset.annotate(
-            purchase_price=F('sub_part__stock_items__purchase_price'),
-            purchase_price_currency=F('sub_part__stock_items__purchase_price_currency'),
-        ).values('pk', 'sub_part', 'purchase_price', 'purchase_price_currency')
-
-        def convert_price(price, currency, decimal_places=4):
-            """Convert price field, returns Money field."""
-            price_adjusted = None
-
-            # Get default currency from settings
-            default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-
-            if price:
-                if currency and default_currency:
-                    try:
-                        # Get adjusted price
-                        price_adjusted = convert_money(Money(price, currency), default_currency)
-                    except MissingRate:
-                        # No conversion rate set
-                        price_adjusted = Money(price, currency)
-                else:
-                    # Currency exists
-                    if currency:
-                        price_adjusted = Money(price, currency)
-                    # Default currency exists
-                    if default_currency:
-                        price_adjusted = Money(price, default_currency)
-
-            if price_adjusted and decimal_places:
-                price_adjusted.decimal_places = decimal_places
-
-            return price_adjusted
-
-        # Convert prices to default currency (using backend conversion rates)
-        for bom_item in queryset:
-            # Find associated currency (select first found)
-            purchase_price_currency = None
-            for currency_item in currencies:
-                if currency_item['pk'] == bom_item.pk and currency_item['sub_part'] == bom_item.sub_part.pk and currency_item['purchase_price']:
-                    purchase_price_currency = currency_item['purchase_price_currency']
-                    break
-            # Convert prices
-            bom_item.purchase_price_min = convert_price(bom_item.purchase_price_min, purchase_price_currency)
-            bom_item.purchase_price_max = convert_price(bom_item.purchase_price_max, purchase_price_currency)
-            bom_item.purchase_price_avg = convert_price(bom_item.purchase_price_avg, purchase_price_currency)
 
         return queryset
 

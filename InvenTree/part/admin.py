@@ -97,6 +97,10 @@ class PartPricingAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'overall_min', 'overall_max')
 
+    autcomplete_fields = [
+        'part',
+    ]
+
 
 class PartCategoryResource(InvenTreeResource):
     """Class for managing PartCategory data import/export."""

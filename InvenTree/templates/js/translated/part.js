@@ -1583,7 +1583,7 @@ function loadPartTable(table, url, options={}) {
     columns.push({
         field: 'pricing_min',
         sortable: false,
-        title: '{% trans "Pricing Data" %}',
+        title: '{% trans "Price Range" %}',
         formatter: function(value, row) {
             var min_price = row.pricing_min;
             var max_price = row.pricing_max;
@@ -1591,6 +1591,11 @@ function loadPartTable(table, url, options={}) {
             if (min_price == null && max_price == null) {
                 // No pricing information available at all
                 return null;
+            }
+
+            // If pricing is the same, return single value
+            if (min_price == max_price) {
+                return formatCurrency(min_price);
             }
 
             var output = '';

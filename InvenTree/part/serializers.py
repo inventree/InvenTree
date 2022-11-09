@@ -11,7 +11,6 @@ from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 
@@ -596,8 +595,6 @@ class BomItemSubstituteSerializer(InvenTreeModelSerializer):
 class BomItemSerializer(InvenTreeModelSerializer):
     """Serializer for BomItem object."""
 
-    price_range = serializers.CharField(read_only=True)
-
     quantity = InvenTreeDecimalField(required=True)
 
     def validate_quantity(self, quantity):
@@ -619,15 +616,11 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
 
-    purchase_price_min = MoneyField(max_digits=19, decimal_places=4, read_only=True)
-
-    purchase_price_max = MoneyField(max_digits=19, decimal_places=4, read_only=True)
-
-    purchase_price_avg = serializers.SerializerMethodField()
-
-    purchase_price_range = serializers.SerializerMethodField()
-
     on_order = serializers.FloatField(read_only=True)
+
+    # Cached pricing fields
+    pricing_min = InvenTreeMoneySerializer(source='sub_part.pricing.overall_min', allow_null=True, read_only=True)
+    pricing_max = InvenTreeMoneySerializer(source='sub_part.pricing.overall_max', allow_null=True, read_only=True)
 
     # Annotated fields for available stock
     available_stock = serializers.FloatField(read_only=True)
@@ -642,7 +635,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
         """
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', False)
-        include_pricing = kwargs.pop('include_pricing', False)
 
         super(BomItemSerializer, self).__init__(*args, **kwargs)
 
@@ -651,14 +643,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         if sub_part_detail is not True:
             self.fields.pop('sub_part_detail')
-
-        if not include_pricing:
-            # Remove all pricing related fields
-            self.fields.pop('price_range')
-            self.fields.pop('purchase_price_min')
-            self.fields.pop('purchase_price_max')
-            self.fields.pop('purchase_price_avg')
-            self.fields.pop('purchase_price_range')
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -681,7 +665,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'substitutes__part__stock_items',
         )
 
-        queryset = queryset.prefetch_related('sub_part__supplier_parts__pricebreaks')
         return queryset
 
     @staticmethod
@@ -755,51 +738,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         return queryset
 
-    def get_purchase_price_range(self, obj):
-        """Return purchase price range."""
-        try:
-            purchase_price_min = obj.purchase_price_min
-        except AttributeError:
-            return None
-
-        try:
-            purchase_price_max = obj.purchase_price_max
-        except AttributeError:
-            return None
-
-        if purchase_price_min and not purchase_price_max:
-            # Get price range
-            purchase_price_range = str(purchase_price_max)
-        elif not purchase_price_min and purchase_price_max:
-            # Get price range
-            purchase_price_range = str(purchase_price_max)
-        elif purchase_price_min and purchase_price_max:
-            # Get price range
-            if purchase_price_min >= purchase_price_max:
-                # If min > max: use min only
-                purchase_price_range = str(purchase_price_min)
-            else:
-                purchase_price_range = str(purchase_price_min) + " - " + str(purchase_price_max)
-        else:
-            purchase_price_range = '-'
-
-        return purchase_price_range
-
-    def get_purchase_price_avg(self, obj):
-        """Return purchase price average."""
-        try:
-            purchase_price_avg = obj.purchase_price_avg
-        except AttributeError:
-            return None
-
-        if purchase_price_avg:
-            # Get string representation of price average
-            purchase_price_avg = str(purchase_price_avg)
-        else:
-            purchase_price_avg = '-'
-
-        return purchase_price_avg
-
     class Meta:
         """Metaclass defining serializer fields"""
         model = BomItem
@@ -813,16 +751,13 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'pk',
             'part',
             'part_detail',
-            'purchase_price_avg',
-            'purchase_price_max',
-            'purchase_price_min',
-            'purchase_price_range',
+            'pricing_min',
+            'pricing_max',
             'quantity',
             'reference',
             'sub_part',
             'sub_part_detail',
             'substitutes',
-            'price_range',
             'validated',
 
             # Annotated fields describing available quantity

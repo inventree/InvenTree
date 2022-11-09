@@ -750,11 +750,6 @@ function loadBomTable(table, options={}) {
         ordering: 'name',
     };
 
-    // Do we show part pricing in the BOM table?
-    var show_pricing = global_settings.PART_SHOW_PRICE_IN_BOM;
-
-    params.include_pricing = show_pricing == true;
-
     if (options.part_detail) {
         params.part_detail = true;
     }
@@ -959,53 +954,6 @@ function loadBomTable(table, options={}) {
     });
 
     cols.push({
-        field: 'available_stock',
-        title: '{% trans "Available" %}',
-        searchable: false,
-        sortable: true,
-        formatter: function(value, row) {
-
-            var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
-
-            // Calculate total "available" (unallocated) quantity
-            var substitute_stock = row.available_substitute_stock || 0;
-            var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
-
-            var available_stock = availableQuantity(row);
-
-            var text = `${available_stock}`;
-
-            if (row.sub_part_detail && row.sub_part_detail.units) {
-                text += ` <small>${row.sub_part_detail.units}</small>`;
-            }
-
-            if (available_stock <= 0) {
-                text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "No Stock Available" %}'></span>`;
-            } else {
-                var extra = '';
-
-                if ((substitute_stock > 0) && (variant_stock > 0)) {
-                    extra = '{% trans "Includes variant and substitute stock" %}';
-                } else if (variant_stock > 0) {
-                    extra = '{% trans "Includes variant stock" %}';
-                } else if (substitute_stock > 0) {
-                    extra = '{% trans "Includes substitute stock" %}';
-                }
-
-                if (extra) {
-                    text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
-                }
-            }
-
-            if (row.on_order && row.on_order > 0) {
-                text += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
-            }
-
-            return renderLink(text, url);
-        }
-    });
-
-    cols.push({
         field: 'substitutes',
         title: '{% trans "Substitutes" %}',
         searchable: false,
@@ -1065,34 +1013,144 @@ function loadBomTable(table, options={}) {
         }
     });
 
-    if (show_pricing) {
-        cols.push({
-            field: 'purchase_price_range',
-            title: '{% trans "Purchase Price Range" %}',
-            searchable: false,
-            sortable: true,
-        });
+    cols.push({
+        field: 'price_range',
+        title: '{% trans "Price Range" %}',
+        sortable: true,
+        formatter: function(value, row) {
 
-        cols.push({
-            field: 'purchase_price_avg',
-            title: '{% trans "Purchase Price Average" %}',
-            searchable: false,
-            sortable: true,
-        });
+            var min_price = row.pricing_min;
+            var max_price = row.pricing_max;
 
-        cols.push({
-            field: 'price_range',
-            title: '{% trans "Supplier Cost" %}',
-            sortable: true,
-            formatter: function(value) {
-                if (value) {
-                    return value;
-                } else {
-                    return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
+            if (min_price == null && max_price == null) {
+                // No pricing information available at all
+                return null;
+            }
+
+            // If pricing is the same, return single value
+            if (min_price == max_price) {
+                return formatCurrency(min_price);
+            }
+
+            var output = '';
+
+            if (min_price != null) {
+                output += formatCurrency(min_price);
+
+                if (max_price != null) {
+                    output += ' - ';
                 }
             }
-        });
-    }
+
+            if (max_price != null) {
+                output += formatCurrency(max_price);
+            }
+
+            return output;
+        },
+        footerFormatter: function(data) {
+            // Display overall price range the "footer" of the price_range column
+
+            var min_price = 0;
+            var max_price = 0;
+
+            var any_pricing = false;
+            var complete_pricing = true;
+
+            for (var idx = 0; idx < data.length; idx++) {
+
+                var row = data[idx];
+
+                // No pricing data available for this row
+                if (row.pricing_min == null && row.pricing_max == null) {
+                    complete_pricing = false;
+                    continue;
+                }
+
+                // At this point, we have at least *some* information
+                any_pricing = true;
+
+                // Extract min/max values for this row
+                var row_min = row.pricing_min || row.pricing_max;
+                var row_max = row.pricing_max || row.pricing_min;
+
+                min_price += parseFloat(row_min) * row.quantity;
+                max_price += parseFloat(row_max) * row.quantity;
+            }
+
+            if (any_pricing) {
+                var html = formatCurrency(min_price) + ' - ' + formatCurrency(max_price);
+
+                if (complete_pricing) {
+                    html += makeIconBadge(
+                        'fa-tick-circle icon-green',
+                        '{% trans "BOM pricing is complete" %}',
+                    );
+                } else {
+                    html += makeIconBadge(
+                        'fa-exclamation-circle icon-yellow',
+                        '{% trans "BOM pricing is incomplete" %}',
+                    );
+                }
+
+                return html;
+
+            } else {
+                var html = '<em>{% trans "No pricing available" %}</em>';
+                html += makeIconBadge('fa-times-circle icon-red');
+
+                return html;
+            }
+        }
+    });
+
+
+    cols.push({
+        field: 'available_stock',
+        title: '{% trans "Available" %}',
+        searchable: false,
+        sortable: true,
+        formatter: function(value, row) {
+
+            var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
+
+            // Calculate total "available" (unallocated) quantity
+            var substitute_stock = row.available_substitute_stock || 0;
+            var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
+
+            var available_stock = availableQuantity(row);
+
+            var text = `${available_stock}`;
+
+            if (row.sub_part_detail && row.sub_part_detail.units) {
+                text += ` <small>${row.sub_part_detail.units}</small>`;
+            }
+
+            if (available_stock <= 0) {
+                text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "No Stock Available" %}'></span>`;
+            } else {
+                var extra = '';
+
+                if ((substitute_stock > 0) && (variant_stock > 0)) {
+                    extra = '{% trans "Includes variant and substitute stock" %}';
+                } else if (variant_stock > 0) {
+                    extra = '{% trans "Includes variant stock" %}';
+                } else if (substitute_stock > 0) {
+                    extra = '{% trans "Includes substitute stock" %}';
+                }
+
+                if (extra) {
+                    text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                }
+            }
+
+            if (row.on_order && row.on_order > 0) {
+                text += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
+            }
+
+            return renderLink(text, url);
+        }
+    });
 
     cols.push(
         {
@@ -1216,7 +1274,6 @@ function loadBomTable(table, options={}) {
             {
                 part: part_pk,
                 sub_part_detail: true,
-                include_pricing: show_pricing == true,
             },
             {
                 success: function(response) {
@@ -1434,8 +1491,7 @@ function loadUsedInTable(table, part_id, options={}) {
 
     params.uses = part_id;
     params.part_detail = true;
-    params.sub_part_detail = true,
-    params.show_pricing = global_settings.PART_SHOW_PRICE_IN_BOM;
+    params.sub_part_detail = true;
 
     var filters = {};
 
