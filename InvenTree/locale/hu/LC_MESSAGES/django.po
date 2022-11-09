@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-08 00:58+0000\n"
-"PO-Revision-Date: 2022-11-08 03:59\n"
+"PO-Revision-Date: 2022-11-09 14:18\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2221,7 +2221,7 @@ msgstr ""
 
 #: common/models.py:1278
 msgid "Allow editing of purchase orders after they have been shipped or completed"
-msgstr ""
+msgstr "Beszérzési rendelések szerkesztésének engedélyezése kiküldés vagy befejzés után"
 
 #: common/models.py:1285
 msgid "Enable password forgot"
@@ -5778,7 +5778,7 @@ msgstr "Alkatrész árak"
 
 #: plugin/apps.py:55
 msgid "Your environment has an outdated git version. This prevents InvenTree from loading plugin details."
-msgstr ""
+msgstr "A környezeted egy elavult git verziót használ. Ez megakadályozza hogy az InvenTree betöltse a plugin részleteit."
 
 #: plugin/base/action/api.py:27
 msgid "No action specified"
@@ -5814,7 +5814,7 @@ msgstr "Címkenyomtatás sikertelen"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:26
 msgid "Inventree Barcodes"
-msgstr ""
+msgstr "Inventree vonalkódok"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:27
 msgid "Provides native support for barcodes"
@@ -5827,7 +5827,7 @@ msgstr "InvenTree fejlesztők"
 
 #: plugin/builtin/integration/core_notifications.py:30
 msgid "InvenTree Notifications"
-msgstr ""
+msgstr "InvenTree értesítések"
 
 #: plugin/builtin/integration/core_notifications.py:32
 msgid "Integrated outgoing notificaton methods"
@@ -5881,7 +5881,7 @@ msgstr "Példa plugin"
 
 #: plugin/models.py:167
 msgid "Builtin Plugin"
-msgstr ""
+msgstr "Beépített plugin"
 
 #: plugin/models.py:192 templates/InvenTree/settings/plugin_settings.html:10
 msgid "Plugin"
@@ -7140,7 +7140,7 @@ msgstr "Plugin Telepítése"
 
 #: templates/InvenTree/settings/plugin.html:52
 msgid "External plugins are not enabled for this InvenTree installation"
-msgstr ""
+msgstr "Külső pluginok nincsenek engedélyezve"
 
 #: templates/InvenTree/settings/plugin.html:62
 #: templates/InvenTree/settings/plugin_settings.html:33
@@ -7154,7 +7154,7 @@ msgstr "Verzió"
 
 #: templates/InvenTree/settings/plugin.html:72
 msgid "Active plugins"
-msgstr ""
+msgstr "Aktív pluginok"
 
 #: templates/InvenTree/settings/plugin.html:80
 msgid "Inactive plugins"
@@ -7176,7 +7176,7 @@ msgstr "Üzenet"
 #: templates/InvenTree/settings/plugin_details.html:32
 #: templates/InvenTree/settings/plugin_settings.html:101
 msgid "Builtin"
-msgstr ""
+msgstr "Beépített"
 
 #: templates/InvenTree/settings/plugin_details.html:38
 msgid "Sample"
@@ -7184,7 +7184,7 @@ msgstr "Minta"
 
 #: templates/InvenTree/settings/plugin_details.html:47
 msgid "Unvailable"
-msgstr ""
+msgstr "Nem elérhető"
 
 #: templates/InvenTree/settings/plugin_settings.html:17
 msgid "Plugin information"
@@ -7224,7 +7224,7 @@ msgstr "Telepítési útvonal"
 
 #: templates/InvenTree/settings/plugin_settings.html:102
 msgid "This is a builtin plugin which cannot be disabled"
-msgstr ""
+msgstr "Ez egy beépített plugin amit nem lehet letiltani"
 
 #: templates/InvenTree/settings/plugin_settings.html:107
 msgid "Commit Author"
@@ -9514,7 +9514,7 @@ msgstr "Biztos hogy törölni szeretnéd ezt az alkatrész kategóriát?"
 
 #: templates/js/translated/part.js:340
 msgid "Move to parent category"
-msgstr ""
+msgstr "Áthelyezés fentebbi kategóriába"
 
 #: templates/js/translated/part.js:349
 msgid "Delete Part Category"
@@ -9522,11 +9522,11 @@ msgstr "Alkatrész kategória törlése"
 
 #: templates/js/translated/part.js:353
 msgid "Action for parts in this category"
-msgstr ""
+msgstr "A kategóriában lévő alkatrészek kezelése"
 
 #: templates/js/translated/part.js:358
 msgid "Action for child categories"
-msgstr ""
+msgstr "Alkategóriák kezelése"
 
 #: templates/js/translated/part.js:387
 msgid "Edit Part"
