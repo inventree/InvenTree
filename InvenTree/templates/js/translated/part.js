@@ -2277,7 +2277,7 @@ function loadPriceBreakTable(table, options) {
                 title: '{% trans "Price" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var html = value;
+                    var html = formatCurrency(value, {currency: row.price_currency});
 
                     html += `<div class='btn-group float-right' role='group'>`;
 
