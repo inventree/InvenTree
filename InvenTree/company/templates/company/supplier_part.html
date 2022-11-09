@@ -346,24 +346,22 @@ $('#price-break-table').inventreeTable({
             title: '{% trans "Price" %}',
             sortable: true,
             formatter: function(value, row, index) {
-                var html = value;
-
-                html += `<div class='btn-group float-right' role='group'>`
-
-                html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
-                html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
-
-                html += `</div>`;
-
-                return html;
+                return formatCurrency(value, row.price_currency);
             }
         },
         {
             field: 'updated',
             title: '{% trans "Last updated" %}',
             sortable: true,
-            formatter: function(value) {
-                return renderDate(value);
+            formatter: function(value, row) {
+                var html = renderDate(value);
+
+                html += `<div class='btn-group float-right' role='group'>`
+                html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
+                html += `</div>`;
+
+                return html;
             }
         },
     ]
