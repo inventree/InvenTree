@@ -66,4 +66,4 @@ def update_part_pricing(part: part.models.Part, originator: part.models.Part = N
     logger.info(f"Updating part pricing for Part <{part.pk}> : {part.name}")
 
     pricing = part.pricing
-    pricing.update_all_costs()
+    pricing.update_all_costs(originator=originator)

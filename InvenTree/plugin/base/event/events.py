@@ -123,7 +123,7 @@ def allow_table_event(table_name):
         'common_notificationentry',
         'common_webhookendpoint',
         'common_webhookmessage',
-        'part_pricing',
+        'part_partpricing',
     ]
 
     if table_name in ignore_tables:

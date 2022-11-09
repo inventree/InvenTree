@@ -2269,13 +2269,14 @@ class PartPricing(models.Model):
     def update_assemblies(self, originator):
         """Schedule updates for any assemblies which use this part"""
 
+        import part.tasks as part_tasks
+
         # If the linked Part is used in any assemblies, schedule a pricing update for those assemblies
         used_in_parts = self.part.get_used_in()
 
         if originator is None:
+            # If no originator is specified, use this part
             originator = self
-
-        import part.tasks as part_tasks
 
         for p in used_in_parts:
             # Offload task to update the pricing for the assembled part

@@ -900,6 +900,7 @@ function loadBomTable(table, options={}) {
         title: '{% trans "Quantity" %}',
         searchable: false,
         sortable: true,
+        switchable: false,
         formatter: function(value, row) {
             var text = value;
 
@@ -1016,7 +1017,7 @@ function loadBomTable(table, options={}) {
     cols.push({
         field: 'price_range',
         title: '{% trans "Price Range" %}',
-        sortable: true,
+        sortable: false,
         formatter: function(value, row) {
 
             var min_price = row.pricing_min;
