@@ -1653,6 +1653,11 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         """Return the number of supplier parts available for this part."""
         return self.supplier_parts.count()
 
+    def update_pricing(self):
+        """Recalculate cached pricing for this Part instance"""
+
+        self.pricing.update_all_costs()
+
     @property
     def pricing(self):
         """Return the PartPricing information for this Part instance.
@@ -1666,8 +1671,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         except ObjectDoesNotExist:
             # Return a new PartPricing object (but do not save into the database)
             pricing_data = PartPricing(part=self)
-
-            # TODO: Schedule some background tasks to calculate pricing data
 
         return pricing_data
 
@@ -2244,6 +2247,25 @@ class PartPricing(models.Model):
     - Detailed pricing information is very context specific in any case
     """
 
+    def convert(self, money):
+        """Attempt to convert money value to default currency.
+
+        If a MissingRate error is raised, ignore it and return None
+        """
+
+        if money is None:
+            return None
+
+        target_currency = currency_code_default()
+
+        try:
+            result = convert_money(money, target_currency)
+        except MissingRate:
+            logger.warning(f"No currency conversion rate available for {money.currency} -> {target_currency}")
+            result = None
+
+        return result
+
     def save(self, *args, **kwargs):
         """Whenever pricing model is saved, automatically update overall prices"""
 
@@ -2310,25 +2332,25 @@ class PartPricing(models.Model):
 
                 sub_part_pricing = sub_part.pricing
 
-                sub_part_min = convert_money(sub_part_pricing.overall_min, currency_code)
-                sub_part_max = convert_money(sub_part_pricing.overall_max, currency_code)
+                sub_part_min = self.convert(sub_part_pricing.overall_min)
+                sub_part_max = self.convert(sub_part_pricing.overall_max)
 
-                if sub_part_min:
+                if sub_part_min is not None:
                     if bom_item_min is None or sub_part_min < bom_item_min:
                         bom_item_min = sub_part_min
 
-                if sub_part_max:
-                    if bom_item_max is None or sub_part_pricing.overall_max > bom_item_max:
-                        bom_item_max = sub_part_pricing.overall_max
+                if sub_part_max is not None:
+                    if bom_item_max is None or sub_part_max > bom_item_max:
+                        bom_item_max = sub_part_max
 
             # Update cumulative totals
             if bom_item_min is not None:
                 bom_item_min *= bom_item.quantity
-                cumulative_min += convert_money(bom_item_min, currency_code)
+                cumulative_min += self.convert(bom_item_min)
 
             if bom_item_max is not None:
                 bom_item_max *= bom_item.quantity
-                cumulative_max += convert_money(bom_item_max, currency_code)
+                cumulative_max += self.convert(bom_item_max)
 
         self.bom_cost_min = cumulative_min
         self.bom_cost_max = cumulative_max
@@ -2350,10 +2372,12 @@ class PartPricing(models.Model):
         min_int_cost = None
         max_int_cost = None
 
-        currency = currency_code_default()
-
         for pb in self.part.internalpricebreaks.all():
-            cost = convert_money(pb.price, currency)
+            cost = self.convert(pb.price)
+
+            if cost is None:
+                # Ignore if cost could not be converted for some reason
+                continue
 
             if min_int_cost is None or cost < min_int_cost:
                 min_int_cost = cost
@@ -2377,8 +2401,6 @@ class PartPricing(models.Model):
         min_sup_cost = None
         max_sup_cost = None
 
-        currency = currency_code_default()
-
         if self.part.purchaseable:
 
             # Iterate through each available SupplierPart instance
@@ -2386,7 +2408,10 @@ class PartPricing(models.Model):
 
                 # Iterate through each available SupplierPriceBreak instance
                 for pb in sp.pricebreaks.all():
-                    cost = convert_money(pb.price, currency)
+                    cost = self.convert(pb.price)
+
+                    if cost is None:
+                        continue
 
                     if min_sup_cost is None or cost < min_sup_cost:
                         min_sup_cost = cost

@@ -716,7 +716,7 @@ class PartMetadata(RetrieveUpdateAPI):
     queryset = Part.objects.all()
 
 
-class PartPricingDetail(RetrieveAPI):
+class PartPricingDetail(RetrieveUpdateAPI):
     """API endpoint for viewing part pricing data"""
 
     serializer_class = part_serializers.PartPricingSerializer
@@ -726,9 +726,9 @@ class PartPricingDetail(RetrieveAPI):
         """Return a part pricing serializer object"""
 
         part = self.get_object()
-        pricing = part.pricing
+        kwargs['instance'] = part.pricing
 
-        return self.serializer_class(pricing)
+        return self.serializer_class(**kwargs)
 
 
 class PartSerialNumberDetail(RetrieveAPI):

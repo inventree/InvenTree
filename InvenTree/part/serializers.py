@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 
+import InvenTree.helpers
 import part.filters
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.serializers import (DataFileExtractSerializer,
@@ -521,6 +522,14 @@ class PartPricingSerializer(InvenTreeModelSerializer):
     overall_min = InvenTreeMoneySerializer(allow_null=True)
     overall_max = InvenTreeMoneySerializer(allow_null=True)
 
+    update = serializers.BooleanField(
+        write_only=True,
+        label=_('Update'),
+        help_text=_('Update pricing for this part'),
+        default=False,
+        required=False,
+    )
+
     class Meta:
         """Metaclass defining serializer fields"""
         model = PartPricing
@@ -537,7 +546,17 @@ class PartPricingSerializer(InvenTreeModelSerializer):
             'supplier_price_max',
             'overall_min',
             'overall_max',
+            'update',
         ]
+
+    def save(self):
+        """Called when the serializer is saved"""
+        data = self.validated_data
+
+        if InvenTree.helpers.str2bool(data.get('update', False)):
+            # Update part pricing
+            pricing = self.instance
+            pricing.update_all_costs()
 
 
 class PartRelationSerializer(InvenTreeModelSerializer):
