@@ -876,6 +876,21 @@
     });
 
     onPanelLoad('pricing', function() {
+
+        $('#part-pricing-refresh').click(function() {
+            inventreePut(
+                '{% url "api-part-pricing" part.pk %}',
+                {
+                    update: true,
+                },
+                {
+                    success: function(response) {
+                        location.reload();
+                    }
+                }
+            );
+        });
+
         {% default_currency as currency %}
 
         // Load the BOM table data in the pricing view
