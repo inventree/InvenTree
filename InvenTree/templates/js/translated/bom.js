@@ -1083,7 +1083,7 @@ function loadBomTable(table, options={}) {
 
                 if (complete_pricing) {
                     html += makeIconBadge(
-                        'fa-tick-circle icon-green',
+                        'fa-check-circle icon-green',
                         '{% trans "BOM pricing is complete" %}',
                     );
                 } else {

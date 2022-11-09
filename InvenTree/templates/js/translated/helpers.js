@@ -44,6 +44,7 @@ function deleteButton(url, text='{% trans "Delete" %}') {
  * Options:
  * - currency: Currency code (uses default value if none provided)
  * - locale: Locale specified (uses default value if none provided)
+ * - digits: Maximum number of significant digits (default = 10)
  */
 function formatCurrency(value, options={}) {
 
@@ -51,8 +52,10 @@ function formatCurrency(value, options={}) {
         return null;
     }
 
+    var digits = options.digits || 10;
+
     // Strip out any trailing zeros, etc
-    value = formatDecimal(value);
+    value = formatDecimal(value, digits);
 
     // Extract default currency information
     var currency = options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
@@ -60,11 +63,13 @@ function formatCurrency(value, options={}) {
     // Exctract locale information
     var locale = options.locale || navigator.language || 'en-US';
 
+
     var formatter = new Intl.NumberFormat(
         locale,
         {
             style: 'currency',
             currency: currency,
+            maximumSignificantDigits: digits,
         }
     );
 
