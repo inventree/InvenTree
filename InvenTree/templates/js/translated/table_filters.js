@@ -87,6 +87,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Consumable" %}',
             },
+            has_pricing: {
+                type: 'bool',
+                title: '{% trans "Has Pricing" %}',
+            },
         };
     }
 

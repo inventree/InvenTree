@@ -1664,7 +1664,8 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         try:
             pricing_data = self.pricing_data
         except ObjectDoesNotExist:
-            pricing_data = PartPricing.objects.create(part=self)
+            # Return a new PartPricing object (but do not save into the database)
+            pricing_data = PartPricing(part=self)
 
             # TODO: Schedule some background tasks to calculate pricing data
 

@@ -1728,6 +1728,21 @@ class BomFilter(rest_filters.FilterSet):
 
         return queryset
 
+    has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method="filter_has_pricing")
+
+    def filter_has_pricing(self, queryset, name, value):
+        """Filter the queryset based on whether pricing information is available for the sub_part"""
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.exclude(sub_part__pricing_data=None)
+            queryset = queryset.exclude(sub_part__pricing_data__overall_min=None, sub_part__pricing_data__overall_max=None)
+        else:
+            queryset = queryset.filter(sub_part__pricing_data=None)
+
+        return queryset
+
 
 class BomList(ListCreateDestroyAPIView):
     """API endpoint for accessing a list of BomItem objects.
