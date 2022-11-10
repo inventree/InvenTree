@@ -38,10 +38,8 @@ class InvenTreeURLField(models.URLField):
     def __init__(self, **kwargs):
         """Initialization method for InvenTreeURLField"""
 
-        # Max length for InvenTreeURLField defaults to 200
-        if 'max_length' not in kwargs:
-            kwargs['max_length'] = 200
-
+        # Max length for InvenTreeURLField is set to 200
+        kwargs['max_length'] = 200
         super().__init__(**kwargs)
 
 
