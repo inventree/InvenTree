@@ -16,29 +16,57 @@ from stock.models import StockLocation
 class PartResource(InvenTreeResource):
     """Class for managing Part data import/export."""
 
-    # ForeignKey fields
-    category = Field(attribute='category', widget=widgets.ForeignKeyWidget(models.PartCategory))
+    id = Field(attribute='pk', column_name=_('Part ID'), widget=widgets.IntegerWidget())
+    name = Field(attribute='name', column_name=_('Part Name'), widget=widgets.CharWidget())
+    description = Field(attribute='description', column_name=_('Part Description'), widget=widgets.CharWidget())
+    IPN = Field(attribute='IPN', column_name=_('IPN'), widget=widgets.CharWidget())
+    revision = Field(attribute='revision', column_name=_('Revision'), widget=widgets.CharWidget())
+    keywords = Field(attribute='keywords', column_name=_('Keywords'), widget=widgets.CharWidget())
+    link = Field(attribute='link', column_name=_('Link'), widget=widgets.CharWidget())
+    units = Field(attribute='units', column_name=_('Units'), widget=widgets.CharWidget())
+    notes = Field(attribute='notes', column_name=_('Notes'))
+    category = Field(attribute='category', column_name=_('Category ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
+    category_name = Field(attribute='category__name', column_name=_('Category Name'), readonly=True)
+    default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    default_supplier = Field(attribute='default_supplier', column_name=_('Default Supplier ID'), widget=widgets.ForeignKeyWidget(SupplierPart))
+    variant_of = Field(attribute='variant_of', column_name=('Variant Of'), widget=widgets.ForeignKeyWidget(models.Part))
+    minimum_stock = Field(attribute='minimum_stock', column_name=_('Minimum Stock'))
 
-    default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
-
-    default_supplier = Field(attribute='default_supplier', widget=widgets.ForeignKeyWidget(SupplierPart))
-
-    category_name = Field(attribute='category__name', readonly=True)
-
-    variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(models.Part))
-
-    suppliers = Field(attribute='supplier_count', readonly=True)
+    # Part Attributes
+    active = Field(attribute='active', column_name=_('Active'), widget=widgets.BooleanWidget())
+    assembly = Field(attribute='assembly', column_name=_('Assembly'), widget=widgets.BooleanWidget())
+    component = Field(attribute='component', column_name=_('Component'), widget=widgets.BooleanWidget())
+    purchaseable = Field(attribute='purchaseable', column_name=_('Purchaseable'), widget=widgets.BooleanWidget())
+    salable = Field(attribute='salable', column_name=_('Salable'), widget=widgets.BooleanWidget())
+    is_template = Field(attribute='is_template', column_name=_('Template'), widget=widgets.BooleanWidget())
+    trackable = Field(attribute='trackable', column_name=_('Trackable'), widget=widgets.BooleanWidget())
+    virtual = Field(attribute='virtual', column_name=_('Virtual'), widget=widgets.BooleanWidget())
 
     # Extra calculated meta-data (readonly)
-    in_stock = Field(attribute='total_stock', readonly=True, widget=widgets.IntegerWidget())
+    suppliers = Field(attribute='supplier_count', column_name=_('Suppliers'), readonly=True)
+    in_stock = Field(attribute='total_stock', column_name=_('In Stock'), readonly=True, widget=widgets.IntegerWidget())
+    on_order = Field(attribute='on_order', column_name=_('On Order'), readonly=True, widget=widgets.IntegerWidget())
+    used_in = Field(attribute='used_in_count', column_name=_('Used In'), readonly=True, widget=widgets.IntegerWidget())
+    allocated = Field(attribute='allocation_count', column_name=_('Allocated'), readonly=True, widget=widgets.IntegerWidget())
+    building = Field(attribute='quantity_being_built', column_name=_('Building'), readonly=True, widget=widgets.IntegerWidget())
+    min_cost = Field(attribute='pricing__overall_min', column_name=_('Minimum Cost'), readonly=True)
+    max_cost = Field(attribute='pricing__overall_max', column_name=_('Maximum Cost'), readonly=True)
 
-    on_order = Field(attribute='on_order', readonly=True, widget=widgets.IntegerWidget())
+    def dehydrate_min_cost(self, part):
+        """Render minimum cost value for this Part"""
 
-    used_in = Field(attribute='used_in_count', readonly=True, widget=widgets.IntegerWidget())
+        min_cost = part.pricing.overall_min if part.pricing else None
 
-    allocated = Field(attribute='allocation_count', readonly=True, widget=widgets.IntegerWidget())
+        if min_cost is not None:
+            return float(min_cost.amount)
 
-    building = Field(attribute='quantity_being_built', readonly=True, widget=widgets.IntegerWidget())
+    def dehydrate_max_cost(self, part):
+        """Render maximum cost value for this Part"""
+
+        max_cost = part.pricing.overall_max if part.pricing else None
+
+        if max_cost is not None:
+            return float(max_cost.amount)
 
     class Meta:
         """Metaclass definition"""
@@ -49,7 +77,9 @@ class PartResource(InvenTreeResource):
         exclude = [
             'bom_checksum', 'bom_checked_by', 'bom_checked_date',
             'lft', 'rght', 'tree_id', 'level',
+            'image',
             'metadata',
+            'barcode_data', 'barcode_hash',
         ]
 
     def get_queryset(self):
@@ -208,9 +238,7 @@ class BomItemResource(InvenTreeResource):
 
         min_price = item.sub_part.pricing.overall_min if item.sub_part.pricing else None
 
-        if min_price is None:
-            return None
-        else:
+        if min_price is not None:
             return float(min_price.amount) * float(item.quantity)
 
     def dehydrate_max_cost(self, item):
@@ -218,9 +246,7 @@ class BomItemResource(InvenTreeResource):
 
         max_price = item.sub_part.pricing.overall_max if item.sub_part.pricing else None
 
-        if max_price is None:
-            return None
-        else:
+        if max_price is not None:
             return float(max_price.amount) * float(item.quantity)
 
     def dehydrate_quantity(self, item):
