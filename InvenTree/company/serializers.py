@@ -247,9 +247,13 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         # Check if 'available' quantity was supplied
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
-        part_detail = kwargs.pop('part_detail', True)
-        supplier_detail = kwargs.pop('supplier_detail', True)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', True)
+        brief = kwargs.pop('brief', False)
+
+        detail_default = not brief
+
+        part_detail = kwargs.pop('part_detail', detail_default)
+        supplier_detail = kwargs.pop('supplier_detail', detail_default)
+        manufacturer_detail = kwargs.pop('manufacturer_detail', detail_default)
 
         prettify = kwargs.pop('pretty', False)
 
@@ -263,6 +267,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
         if manufacturer_detail is not True:
             self.fields.pop('manufacturer_detail')
+            self.fields.pop('manufacturer_part_detail')
 
         if prettify is not True:
             self.fields.pop('pretty_name')
@@ -380,6 +385,13 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
         label=_('Currency'),
     )
 
+    supplier = serializers.PrimaryKeyRelatedField(source='part.supplier', many=False, read_only=True)
+
+    supplier_detail = CompanyBriefSerializer(source='part.supplier', many=False, read_only=True)
+
+    # Detail serializer for SupplierPart
+    part_detail = SupplierPartSerializer(source='part', brief=True, many=False, read_only=True)
+
     class Meta:
         """Metaclass options."""
 
@@ -387,8 +399,11 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'part',
+            'part_detail',
             'quantity',
             'price',
             'price_currency',
+            'supplier',
+            'supplier_detail',
             'updated',
         ]

@@ -12,6 +12,8 @@ v81 -> 2022-11-08 : https://github.com/inventree/InvenTree/pull/3710
     - Adds cached pricing information to BomItem API
     - Allows Part and BomItem list endpoints to be filtered by 'has_pricing'
     - Remove calculated 'price_string' values from API endpoints
+    - Allows PurchaseOrderLineItem API endpoint to be filtered by 'has_pricing'
+    - Adds more information to SupplierPriceBreak serializer
 
 v80 -> 2022-11-07 : https://github.com/inventree/InvenTree/pull/3906
     - Adds 'barcode_hash' to Part API serializer

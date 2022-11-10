@@ -346,7 +346,9 @@ $('#price-break-table').inventreeTable({
             title: '{% trans "Price" %}',
             sortable: true,
             formatter: function(value, row, index) {
-                return formatCurrency(value, row.price_currency);
+                return formatCurrency(value, {
+                    currency: row.price_currency
+                });
             }
         },
         {

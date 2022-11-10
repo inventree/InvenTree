@@ -445,6 +445,19 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
 
         return queryset
 
+    has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method='filter_has_pricing')
+
+    def filter_has_pricing(self, queryset, name, value):
+        """Filter by whether or not the line item has pricing information"""
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.exclude(purchase_price=None)
+        else:
+            queryset = queryset.filter(purchase_price=None)
+
+        return queryset
+
 
 class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrderLineItem objects.

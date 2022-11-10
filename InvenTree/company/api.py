@@ -7,6 +7,7 @@ from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
+import part.models
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
@@ -354,9 +355,6 @@ class SupplierPartList(ListCreateDestroyAPIView):
         InvenTreeOrderingFilter,
     ]
 
-    filterset_fields = [
-    ]
-
     ordering_fields = [
         'SKU',
         'part',
@@ -403,6 +401,30 @@ class SupplierPartDetail(RetrieveUpdateDestroyAPI):
     ]
 
 
+class SupplierPriceBreakFilter(rest_filters.FilterSet):
+    """Custom API filters for the SupplierPriceBreak list endpoint"""
+
+    base_part = rest_filters.ModelChoiceFilter(
+        label='Base Part',
+        queryset=part.models.Part.objects.all(),
+        field_name='part__part',
+    )
+
+    supplier = rest_filters.ModelChoiceFilter(
+        label='Supplier',
+        queryset=Company.objects.all(),
+        field_name='part__supplier',
+    )
+
+    class Meta:
+        """Metaclass options"""
+
+        model = SupplierPriceBreak
+        fields = [
+            'part',
+        ]
+
+
 class SupplierPriceBreakList(ListCreateAPI):
     """API endpoint for list view of SupplierPriceBreak object.
 
@@ -412,13 +434,10 @@ class SupplierPriceBreakList(ListCreateAPI):
 
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
+    filterset_class = SupplierPriceBreakFilter
 
     filter_backends = [
         DjangoFilterBackend,
-    ]
-
-    filterset_fields = [
-        'part',
     ]
 
 

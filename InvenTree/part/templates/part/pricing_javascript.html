@@ -1,0 +1,128 @@
+{% load inventree_extras %}
+{% load i18n %}
+
+{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
+{% default_currency as currency %}
+
+// Callback for "part pricing" button
+$('#part-pricing-refresh').click(function() {
+    inventreePut(
+        '{% url "api-part-pricing" part.pk %}',
+        {
+            update: true,
+        },
+        {
+            success: function(response) {
+                location.reload();
+            }
+        }
+    );
+});
+
+// Internal Pricebreaks
+{% if show_internal_price and roles.sales_order.view %}
+initPriceBreakSet($('#internal-price-break-table'), {
+    part_id: {{part.id}},
+    pb_human_name: 'internal price break',
+    pb_url_slug: 'internal-price',
+    pb_url: '{% url 'api-part-internal-price-list' %}',
+    pb_new_btn: $('#new-internal-price-break'),
+    pb_new_url: '{% url 'api-part-internal-price-list' %}',
+    linkedGraph: $('#InternalPriceBreakChart'),
+});
+{% endif %}
+
+{% if show_price_history %}
+// Purchase price history
+loadPurchasePriceHistoryTable({
+    part: {{ part.pk }},
+});
+{% endif %}
+
+{% if part.purchaseable and roles.purchase_order.view %}
+// Supplier pricing information
+loadPartSupplierPricingTable({
+    part: {{ part.pk }},
+});
+{% endif %}
+
+// Load the BOM table data in the pricing view
+{% if part.has_bom and roles.sales_order.view %}
+loadBomTable($("#bom-pricing-table"), {
+    editable: false,
+    bom_url: "{% url 'api-bom-list' %}",
+    part_url: "{% url 'api-part-list' %}",
+    parent_id: {{ part.id }} ,
+    sub_part_detail: true,
+});
+{% endif %}
+
+{% if bom_parts %}
+    var bom_colors =  randomColor({hue: 'green', count: {{ bom_parts|length }} })
+    var bomdata = {
+        labels: [{% for line in bom_parts %}'{{ line.name|escapejs }}',{% endfor %}],
+        datasets:  [
+        {
+        label: 'Price',
+        data: [{% for line in bom_parts %}{{ line.min_price }},{% endfor %}],
+            backgroundColor: bom_colors,
+        },
+        {% if bom_pie_max %}
+        {
+            label: 'Max Price',
+            data: [{% for line in bom_parts %}{{ line.max_price }},{% endfor %}],
+            backgroundColor: bom_colors,
+        },
+        {% endif %}
+        ]
+    };
+    var BomChart = loadBomChart(document.getElementById('BomChart'), bomdata)
+{% endif %}
+
+
+// Sales pricebreaks
+{% if part.salable and roles.sales_order.view %}
+    initPriceBreakSet(
+        $('#price-break-table'),
+        {
+            part_id: {{part.id}},
+            pb_human_name: 'sale price break',
+            pb_url_slug: 'sale-price',
+            pb_url: "{% url 'api-part-sale-price-list' %}",
+            pb_new_btn: $('#new-price-break'),
+            pb_new_url: '{% url 'api-part-sale-price-list' %}',
+            linkedGraph: $('#SalePriceBreakChart'),
+        },
+    );
+{% endif %}
+
+// Sale price history
+{% if sale_history %}
+        var salepricedata = {
+                labels: [
+                    {% for line in sale_history %}'{% render_date line.date %}',{% endfor %}
+                ],
+                datasets: [{
+                    label: '{% blocktrans %}Unit Price - {{currency}}{% endblocktrans %}',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    yAxisID: 'y',
+                    data: [
+                        {% for line in sale_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
+                    ],
+                    borderWidth: 1,
+                },
+                {
+                    label: '{% trans "Quantity" %}',
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    borderColor: 'rgb(255, 206, 86)',
+                    yAxisID: 'y1',
+                    data: [
+                        {% for line in sale_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
+                    ],
+                    borderWidth: 1,
+                    type: 'bar',
+                }]
+            }
+        var SalePriceChart = loadSellPricingChart($('#SalePriceChart'), salepricedata)
+{% endif %}
