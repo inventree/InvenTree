@@ -1030,13 +1030,13 @@ function loadBomTable(table, options={}) {
 
             // If pricing is the same, return single value
             if (min_price == max_price) {
-                return formatCurrency(min_price);
+                return formatCurrency(min_price * row.quantity);
             }
 
             var output = '';
 
             if (min_price != null) {
-                output += formatCurrency(min_price);
+                output += formatCurrency(min_price * row.quantity);
 
                 if (max_price != null) {
                     output += ' - ';
@@ -1044,7 +1044,7 @@ function loadBomTable(table, options={}) {
             }
 
             if (max_price != null) {
-                output += formatCurrency(max_price);
+                output += formatCurrency(max_price * row.quantity);
             }
 
             return output;

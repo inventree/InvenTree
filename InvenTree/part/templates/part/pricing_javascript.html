@@ -46,39 +46,12 @@ loadPartSupplierPricingTable({
 });
 {% endif %}
 
-// Load the BOM table data in the pricing view
-{% if part.has_bom and roles.sales_order.view %}
-loadBomTable($("#bom-pricing-table"), {
-    editable: false,
-    bom_url: "{% url 'api-bom-list' %}",
-    part_url: "{% url 'api-part-list' %}",
-    parent_id: {{ part.id }} ,
-    sub_part_detail: true,
+{% if part.assembly and part.has_bom %}
+// BOM Pricing Data
+loadBomPricingChart({
+    part: {{ part.pk }}
 });
 {% endif %}
-
-{% if bom_parts %}
-    var bom_colors =  randomColor({hue: 'green', count: {{ bom_parts|length }} })
-    var bomdata = {
-        labels: [{% for line in bom_parts %}'{{ line.name|escapejs }}',{% endfor %}],
-        datasets:  [
-        {
-        label: 'Price',
-        data: [{% for line in bom_parts %}{{ line.min_price }},{% endfor %}],
-            backgroundColor: bom_colors,
-        },
-        {% if bom_pie_max %}
-        {
-            label: 'Max Price',
-            data: [{% for line in bom_parts %}{{ line.max_price }},{% endfor %}],
-            backgroundColor: bom_colors,
-        },
-        {% endif %}
-        ]
-    };
-    var BomChart = loadBomChart(document.getElementById('BomChart'), bomdata)
-{% endif %}
-
 
 // Sales pricebreaks
 {% if part.salable and roles.sales_order.view %}

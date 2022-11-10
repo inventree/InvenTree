@@ -121,6 +121,7 @@ def allow_table_event(table_name):
 
     ignore_tables = [
         'common_notificationentry',
+        'common_notificationmessage',
         'common_webhookendpoint',
         'common_webhookmessage',
         'part_partpricing',

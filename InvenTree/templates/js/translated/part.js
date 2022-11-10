@@ -26,7 +26,6 @@
     duplicatePart,
     editCategory,
     editPart,
-    loadBomChart,
     loadParametricPartTable,
     loadPartCategoryTable,
     loadPartParameterTable,
@@ -2581,33 +2580,6 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     }
                 },
             },
-        }
-    });
-}
-
-
-function loadBomChart(context, data) {
-    return new Chart(context, {
-        type: 'doughnut',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                },
-                scales: {
-                    xAxes: [
-                        {
-                            beginAtZero: true,
-                            ticks: {
-                                autoSkip: false,
-                            }
-                        }
-                    ]
-                }
-            }
         }
     });
 }

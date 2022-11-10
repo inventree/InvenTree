@@ -7,11 +7,173 @@
 */
 
 /* exported
+    loadBomPricingChart,
     loadPartSupplierPricingTable,
     initPriceBreakSet,
     loadPriceBreakTable,
     loadPurchasePriceHistoryTable,
 */
+
+
+/*
+ * Load BOM pricing chart
+ */
+function loadBomPricingChart(options={}) {
+
+    var part = options.part;
+
+    if (!part) {
+        console.error("No part provided to loadPurchasePriceHistoryTable");
+        return;
+    }
+
+    var table = options.table || $('#bom-pricing-table');
+    var chartElement = options.table || $('#bom-pricing-chart');
+
+    var chart = null;
+
+    options.params = options.params || {};
+
+    options.params.part = part;
+    options.params.sub_part_detail = true;
+    options.params.ordering = 'name';
+
+    table.inventreeTable({
+        url: '{% url "api-bom-list" %}',
+        name: 'bompricingtable',
+        queryParams: options.params,
+        original: options.params,
+        paginationVAlign: 'bottom',
+        pageSize: 10,
+        search: false,
+        showColumns: false,
+        formatNoMatches: function() {
+            return '{% trans "No BOM data available" %}';
+        },
+        onLoadSuccess: function(data) {
+            // Construct BOM pricing chart
+            // Note here that we use stacked bars to denote "min" and "max" costs
+
+            // Sort in increasing order of "maximum price"
+            data = data.sort((a, b) => (a.pricing_max - b.pricing_max));
+
+            var graphLabels = Array.from(data, (x) => x.sub_part_detail.full_name);
+            var minValues = Array.from(data, (x) => x.pricing_min);
+            var maxValues = Array.from(data, (x) => x.pricing_max);
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = loadBarChart(chartElement, {
+                labels: graphLabels,
+                datasets: [
+                    {
+                        label: '{% trans "Minimum Price" %}',
+                        data: minValues,
+                        backgroundColor: 'rgba(200, 250, 200, 0.75)',
+                        borderColor: 'rgba(200, 250, 200)',
+                        stepped: true,
+                        fill: true,
+                    },
+                    {
+                        label: '{% trans "Maximum Price" %}',
+                        data: maxValues,
+                        backgroundColor: 'rgba(250, 220, 220, 0.75)',
+                        borderColor: 'rgba(250, 220, 220)',
+                        stepped: true,
+                        fill: true,
+                    }
+                ]
+            });
+
+        },
+        columns: [
+            {
+                field: 'sub_part',
+                title: '{% trans "Part" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    var url = `/part/${row.sub_part}/`;
+
+                    var part = row.sub_part_detail;
+
+                    return imageHoverIcon(part.thumbnail) + renderLink(part.full_name, url);
+                },
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+                sortable: true,
+            },
+            {
+                field: 'reference',
+                title: '{% trans "Reference" %}',
+                sortable: true,
+            },
+            {
+                field: 'pricing',
+                title: '{% trans "Price Range" %}',
+                formatter: function(value, row) {
+                    var min_price = row.pricing_min;
+                    var max_price = row.pricing_max;
+
+                    if (min_price == null && max_price == null) {
+                        // No pricing information available at all
+                        return null;
+                    }
+
+                    // If pricing is the same, return single value
+                    if (min_price == max_price) {
+                        return formatCurrency(min_price * row.quantity);
+                    }
+
+                    var output = '';
+
+                    if (min_price != null) {
+                        output += formatCurrency(min_price * row.quantity);
+
+                        if (max_price != null) {
+                            output += ' - ';
+                        }
+                    }
+
+                    if (max_price != null) {
+                        output += formatCurrency(max_price * row.quantity);
+                    }
+
+                    return output;
+                }
+            }
+        ]
+    });
+
+    return;
+
+    return new Chart(context, {
+        type: 'doughnut',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            beginAtZero: true,
+                            ticks: {
+                                autoSkip: false,
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    });
+}
 
 
 /*
@@ -37,18 +199,10 @@ function loadPartSupplierPricingTable(options={}) {
     options.params.supplier_detail = true;
     options.params.supplier_part_detail = true;
 
-    var filters = loadTableFilters('partsupplierpricing');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
-
-    setupFilterList('partsupplierpricing', table, '#filter-list-partsupplierpricing');
-
     table.inventreeTable({
         url: '{% url "api-part-supplier-price-list" %}',
         name: 'partsupplierprice',
-        queryParams: filters,
+        queryParams: options.params,
         original: options.params,
         paginationVAlign: 'bottom',
         pageSize: 10,
@@ -319,18 +473,10 @@ function loadPurchasePriceHistoryTable(options={}) {
     // Purchase order must be 'COMPLETE'
     options.params.order_status = {{ PurchaseOrderStatus.COMPLETE }};
 
-    var filters = loadTableFilters('purchasepricehistory');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
-
-    setupFilterList('purchasepricehistory', table, '#filter-list-purchasepricehistory');
-
     table.inventreeTable({
         url: '{% url "api-po-line-list" %}',
         name: 'partpurchasehistory',
-        queryParams: filters,
+        queryParams: options.params,
         original: options.params,
         paginationVAlign: 'bottom',
         pageSize: 10,
