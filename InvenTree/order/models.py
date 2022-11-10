@@ -381,6 +381,11 @@ class PurchaseOrder(Order):
             trigger_event('purchaseorder.completed', id=self.pk)
 
     @property
+    def is_pending(self):
+        """Return True if the PurchaseOrder is 'pending'"""
+        return self.status == PurchaseOrderStatus.PENDING
+
+    @property
     def is_overdue(self):
         """Returns True if this PurchaseOrder is "overdue".
 
