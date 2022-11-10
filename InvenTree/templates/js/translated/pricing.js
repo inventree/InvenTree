@@ -54,8 +54,8 @@ function loadBomPricingChart(options={}) {
             // Construct BOM pricing chart
             // Note here that we use stacked bars to denote "min" and "max" costs
 
-            // Sort in increasing order of "maximum price"
-            data = data.sort((a, b) => (a.pricing_max - b.pricing_max));
+            // Sort in decreasing order of "maximum price"
+            data = data.sort((a, b) => (b.pricing_max - a.pricing_max));
 
             var graphLabels = Array.from(data, (x) => x.sub_part_detail.full_name);
             var minValues = Array.from(data, (x) => x.pricing_min);
