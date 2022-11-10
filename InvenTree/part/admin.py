@@ -203,6 +203,26 @@ class BomItemResource(InvenTreeResource):
     min_cost = Field(attribute='sub_part__pricing__overall_min', column_name=_('Minimum Price'), readonly=True)
     max_cost = Field(attribute='sub_part__pricing__overall_max', column_name=_('Maximum Price'), readonly=True)
 
+    def dehydrate_min_cost(self, item):
+        """Render minimum cost value for the BOM line item"""
+
+        min_price = item.sub_part.pricing.overall_min if item.sub_part.pricing else None
+
+        if min_price is None:
+            return None
+        else:
+            return float(min_price.amount) * float(item.quantity)
+
+    def dehydrate_max_cost(self, item):
+        """Render maximum cost value for the BOM line item"""
+
+        max_price = item.sub_part.pricing.overall_max if item.sub_part.pricing else None
+
+        if max_price is None:
+            return None
+        else:
+            return float(max_price.amount) * float(item.quantity)
+
     def dehydrate_quantity(self, item):
         """Special consideration for the 'quantity' field on data export. We do not want a spreadsheet full of "1.0000" (we'd rather "1")
 
