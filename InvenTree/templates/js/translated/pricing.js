@@ -37,6 +37,7 @@ function loadBomPricingChart(options={}) {
     options.params.part = part;
     options.params.sub_part_detail = true;
     options.params.ordering = 'name';
+    options.params.has_pricing = true;
 
     table.inventreeTable({
         url: '{% url "api-bom-list" %}',
@@ -54,12 +55,15 @@ function loadBomPricingChart(options={}) {
             // Construct BOM pricing chart
             // Note here that we use stacked bars to denote "min" and "max" costs
 
+            // Ignore any entries without pricing information
+            data = data.filter((x) => x.pricing_min != null || x.pricing_max != null);
+
             // Sort in decreasing order of "maximum price"
             data = data.sort((a, b) => (b.pricing_max - a.pricing_max));
 
             var graphLabels = Array.from(data, (x) => x.sub_part_detail.full_name);
-            var minValues = Array.from(data, (x) => x.pricing_min);
-            var maxValues = Array.from(data, (x) => x.pricing_max);
+            var minValues = Array.from(data, (x) => x.pricing_min || x.pricing_max);
+            var maxValues = Array.from(data, (x) => x.pricing_max || x.pricing_min);
 
             if (chart) {
                 chart.destroy();
