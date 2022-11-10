@@ -1,6 +1,7 @@
 """Admin class definitions for the 'part' app"""
 
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
@@ -170,33 +171,37 @@ class PartTestTemplateAdmin(admin.ModelAdmin):
 class BomItemResource(InvenTreeResource):
     """Class for managing BomItem data import/export."""
 
-    level = Field(attribute='level', readonly=True)
+    level = Field(attribute='level', column_name=_('BOM Level'), readonly=True)
 
-    bom_id = Field(attribute='pk')
+    bom_id = Field(attribute='pk', column_name=_('BOM Item ID'))
 
     # ID of the parent part
-    parent_part_id = Field(attribute='part', widget=widgets.ForeignKeyWidget(models.Part))
+    parent_part_id = Field(attribute='part', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.Part))
 
     # IPN of the parent part
-    parent_part_ipn = Field(attribute='part__IPN', readonly=True)
+    parent_part_ipn = Field(attribute='part__IPN', column_name=_('Parent IPN'), readonly=True)
 
     # Name of the parent part
-    parent_part_name = Field(attribute='part__name', readonly=True)
+    parent_part_name = Field(attribute='part__name', column_name=_('Parent Name'), readonly=True)
 
     # ID of the sub-part
-    part_id = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(models.Part))
+    part_id = Field(attribute='sub_part', column_name=_('Part ID'), widget=widgets.ForeignKeyWidget(models.Part))
 
     # IPN of the sub-part
-    part_ipn = Field(attribute='sub_part__IPN', readonly=True)
+    part_ipn = Field(attribute='sub_part__IPN', column_name=_('Part IPN'), readonly=True)
 
     # Name of the sub-part
-    part_name = Field(attribute='sub_part__name', readonly=True)
+    part_name = Field(attribute='sub_part__name', column_name=_('Part Name'), readonly=True)
 
     # Description of the sub-part
-    part_description = Field(attribute='sub_part__description', readonly=True)
+    part_description = Field(attribute='sub_part__description', column_name=_('Description'), readonly=True)
 
     # Is the sub-part itself an assembly?
-    sub_assembly = Field(attribute='sub_part__assembly', readonly=True)
+    sub_assembly = Field(attribute='sub_part__assembly', column_name=_('Assembly'), readonly=True)
+
+    # Part pricing fields
+    min_cost = Field(attribute='sub_part__pricing__overall_min', column_name=_('Minimum Price'), readonly=True)
+    max_cost = Field(attribute='sub_part__pricing__overall_max', column_name=_('Maximum Price'), readonly=True)
 
     def dehydrate_quantity(self, item):
         """Special consideration for the 'quantity' field on data export. We do not want a spreadsheet full of "1.0000" (we'd rather "1")
@@ -207,34 +212,43 @@ class BomItemResource(InvenTreeResource):
 
     def before_export(self, queryset, *args, **kwargs):
         """Perform before exporting data"""
+
         self.is_importing = kwargs.get('importing', False)
+        self.include_pricing = kwargs.pop('include_pricing', False)
 
     def get_fields(self, **kwargs):
         """If we are exporting for the purposes of generating a 'bom-import' template, there are some fields which we are not interested in."""
         fields = super().get_fields(**kwargs)
 
-        # If we are not generating an "import" template,
-        # just return the complete list of fields
-        if not getattr(self, 'is_importing', False):
-            return fields
+        is_importing = getattr(self, 'is_importing', False)
+        include_pricing = getattr(self, 'include_pricing', False)
 
-        # Otherwise, remove some fields we are not interested in
+        to_remove = []
+
+        if is_importing or not include_pricing:
+            # Remove pricing fields in this instance
+            to_remove += [
+                'sub_part__pricing__overall_min',
+                'sub_part__pricing__overall_max',
+            ]
+
+        if is_importing:
+            to_remove += [
+                'level',
+                'pk',
+                'part',
+                'part__IPN',
+                'part__name',
+                'sub_part__name',
+                'sub_part__description',
+                'sub_part__assembly'
+            ]
 
         idx = 0
 
-        to_remove = [
-            'level',
-            'bom_id',
-            'parent_part_id',
-            'parent_part_ipn',
-            'parent_part_name',
-            'part_description',
-            'sub_assembly'
-        ]
-
         while idx < len(fields):
 
-            if fields[idx].column_name.lower() in to_remove:
+            if fields[idx].attribute in to_remove:
                 del fields[idx]
             else:
                 idx += 1

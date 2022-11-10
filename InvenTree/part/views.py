@@ -454,6 +454,8 @@ class BomDownload(AjaxView):
 
         manufacturer_data = str2bool(request.GET.get('manufacturer_data', False))
 
+        pricing_data = str2bool(request.GET.get('pricing_data', False))
+
         levels = request.GET.get('levels', None)
 
         if levels is not None:
@@ -477,6 +479,7 @@ class BomDownload(AjaxView):
                          stock_data=stock_data,
                          supplier_data=supplier_data,
                          manufacturer_data=manufacturer_data,
+                         pricing_data=pricing_data,
                          )
 
     def get_data(self):

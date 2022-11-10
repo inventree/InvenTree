@@ -353,12 +353,25 @@ function exportBom(part_id, options={}) {
                 help_text: '{% trans "Include part supplier data in exported BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-supplier_data', false),
+            },
+            pricing_data: {
+                label: '{% trans "Include Pricing Data" %}',
+                help_text: '{% trans "Include part pricing data in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-pricing_data', false),
             }
         },
         onSubmit: function(fields, opts) {
 
             // Extract values from the form
-            var field_names = ['format', 'cascade', 'levels', 'parameter_data', 'stock_data', 'manufacturer_data', 'supplier_data'];
+            var field_names = [
+                'format', 'cascade', 'levels',
+                'parameter_data',
+                'stock_data',
+                'manufacturer_data',
+                'supplier_data',
+                'pricing_data',
+            ];
 
             var url = `/part/${part_id}/bom-download/?`;
 
