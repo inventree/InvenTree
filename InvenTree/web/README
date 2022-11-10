@@ -10,3 +10,6 @@ Tools:
 1. Install yarn
 2. Install packages (from src) `yarn`
 3. Run dev server with `yarn dev`
+
+## Material used
+https://github.com/mantinedev/ui.mantine.dev
