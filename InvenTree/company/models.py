@@ -8,6 +8,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q, Sum, UniqueConstraint
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -18,6 +20,8 @@ import common.models
 import common.settings
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.ready
+import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
@@ -691,3 +695,33 @@ class SupplierPriceBreak(common.models.PriceBreak):
     def __str__(self):
         """Format a string representation of a SupplierPriceBreak instance"""
         return f'{self.part.SKU} - {self.price} @ {self.quantity}'
+
+
+@receiver(post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break')
+def after_save_supplier_price(sender, instance, created, **kwargs):
+    """Callback function when a SupplierPriceBreak is created or updated"""
+
+    from part import tasks as part_tasks
+
+    if not InvenTree.ready.isImportingData():
+
+        if instance.part and instance.part.part:
+            InvenTree.tasks.offload_task(
+                part_tasks.update_part_pricing,
+                instance.part.part
+            )
+
+
+@receiver(post_delete, sender=SupplierPriceBreak, dispatch_uid='post_delete_supplier_price_break')
+def after_delete_supplier_price(sender, instance, **kwargs):
+    """Callback function when a SupplierPriceBreak is deleted"""
+
+    from part import tasks as part_tasks
+
+    if not InvenTree.ready.isImportingData():
+
+        if instance.part and instance.part.part:
+            InvenTree.tasks.offload_task(
+                part_tasks.update_part_pricing,
+                instance.part.part
+            )
