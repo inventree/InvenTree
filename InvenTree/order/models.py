@@ -776,6 +776,16 @@ class SalesOrder(Order):
 
         self.save()
 
+        # Schedule pricing update for any referenced parts
+        from part.tasks import update_part_pricing
+
+        for line in self.lines.all():
+
+            InvenTree.tasks.offload_task(
+                update_part_pricing,
+                line.part
+            )
+
         trigger_event('salesorder.completed', id=self.pk)
 
         return True
