@@ -24,87 +24,144 @@
     <div class='alert alert-info alert-block'>
         {% trans "Last Updated" %}: {% render_date pricing.updated %}
     </div>
-    <table class='table table-striped table-condensed'>
-        <col width='25'>
-        <thead>
-            <tr>
-                <th></th>
-                <th>{% trans "Price Category" %}</th>
-                <th>{% trans "Minimum" %}</th>
-                <th>{% trans "Maximum" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    {% if show_internal_price and roles.sales_order.view %}
-                    <a href='#internal-cost'>
-                        <span class='fas fa-dollar-sign'></span>
-                    </a>
+    <div class='row full-height'>
+        <div class='col col-md-6'>
+            <table class='table table-striped table-condensed'>
+                <col width='25'>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>{% trans "Price Category" %}</th>
+                        <th>{% trans "Minimum" %}</th>
+                        <th>{% trans "Maximum" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            {% if show_internal_price and roles.sales_order.view %}
+                            <a href='#internal-cost'>
+                                <span class='fas fa-dollar-sign'></span>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <th>
+                            {% trans "Internal Price" %}
+                        </th>
+                        <td>{% include "price_data.html" with price=pricing.internal_cost_min %}</td>
+                        <td>{% include "price_data.html" with price=pricing.internal_cost_max %}</td>
+                    </tr>
+                    {% if part.purchaseable %}
+                    <tr>
+                        <td>
+                            {% if show_price_history and roles.purchase_order.view %}
+                            <a href='#purchase-price-history'>
+                                <span class='fas fa-chart-line'></span>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <th>
+                            {% trans "Purchase History" %}
+                        </th>
+                        <td>{% include "price_data.html" with price=pricing.purchase_cost_min %}</td>
+                        <td>{% include "price_data.html" with price=pricing.purchase_cost_max %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if roles.purchase_order.view %}
+                            <a href='#supplier-prices'>
+                                <span class='fas fa-building'></span>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <th>
+                            {% trans "Supplier Price" %}
+                        </th>
+                        <td>{% include "price_data.html" with price=pricing.supplier_price_min %}</td>
+                        <td>{% include "price_data.html" with price=pricing.supplier_price_max %}</td>
+                    </tr>
                     {% endif %}
-                </td>
-                <th>
-                    {% trans "Internal Price" %}
-                </th>
-                <td>{% include "price_data.html" with price=pricing.internal_cost_min %}</td>
-                <td>{% include "price_data.html" with price=pricing.internal_cost_max %}</td>
-            </tr>
-            {% if part.purchaseable %}
-            <tr>
-                <td>
-                    {% if show_price_history and roles.purchase_order.view %}
-                    <a href='#purchase-price-history'>
-                        <span class='fas fa-shopping-cart'></span>
-                    </a>
+                    {% if part.assembly %}
+                    <tr>
+                        <td>
+                            {% if part.has_bom %}
+                            <a href='#bom-cost'>
+                                <span class='fas fa-tools'></span>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <th>
+                            {% trans "BOM Cost" %}
+                        </th>
+                        <td>{% include "price_data.html" with price=pricing.bom_cost_min %}</td>
+                        <td>{% include "price_data.html" with price=pricing.bom_cost_max %}</td>
+                    </tr>
                     {% endif %}
-                </td>
-                <th>
-                    {% trans "Purchase Cost" %}
-                </th>
-                <td>{% include "price_data.html" with price=pricing.purchase_cost_min %}</td>
-                <td>{% include "price_data.html" with price=pricing.purchase_cost_max %}</td>
-            </tr>
-            <tr>
-                <td>
-                    {% if roles.purchase_order.view %}
-                    <a href='#supplier-prices'>
-                        <span class='fas fa-building'></span>
-                    </a>
-                    {% endif %}
-                </td>
-                <th>
-                    {% trans "Supplier Price" %}
-                </th>
-                <td>{% include "price_data.html" with price=pricing.supplier_price_min %}</td>
-                <td>{% include "price_data.html" with price=pricing.supplier_price_max %}</td>
-            </tr>
+                    <tr>
+                        <td></td>
+                        <th>
+                            {% trans "Overall Cost" %}
+                        </th>
+                        <th>{% include "price_data.html" with price=pricing.overall_min %}</th>
+                        <th>{% include "price_data.html" with price=pricing.overall_max %}</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class='col col-md-6'>
+            {% if part.salable and roles.sales_order.view %}
+            <table class='table table-striped table-condensed'>
+                <col width='25'>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>{% trans "Price Category" %}</th>
+                        <th>{% trans "Minimum" %}</th>
+                        <th>{% trans "Maximum" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href='#sale-cost'>
+                                <span class='fas fa-dollar-sign'></span>
+                            </a>
+                        </td>
+                        <td>
+                            {% trans "Sale Price" %}
+                        </td>
+                        <td>
+                            {% include "price_data.html" with price=pricing.sale_price_min %}
+                        </td>
+                        <td>
+                            {% include "price_data.html" with price=pricing.sale_price_max %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href='#sale-price-history'>
+                                <span class='fas fa-chart-line'></span>
+                            </a>
+                        </td>
+                        <td>
+                            {% trans "Sale History" %}
+                        </td>
+                        <td>
+                            {% include "price_data.html" with price=pricing.sale_history_min %}
+                        </td>
+                        <td>
+                            {% include "price_data.html" with price=pricing.sale_history_max %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            {% else %}
+            <div class='alert alert-block alert-info'>
+                {% trans "Sale price data is not available for this part" %}
+            </div>
             {% endif %}
-            {% if part.assembly %}
-            <tr>
-                <td>
-                    {% if part.has_bom %}
-                    <a href='#bom-cost'>
-                        <span class='fas fa-tools'></span>
-                    </a>
-                    {% endif %}
-                </td>
-                <th>
-                    {% trans "BOM Cost" %}
-                </th>
-                <td>{% include "price_data.html" with price=pricing.bom_cost_min %}</td>
-                <td>{% include "price_data.html" with price=pricing.bom_cost_max %}</td>
-            </tr>
-            {% endif %}
-            <tr>
-                <td></td>
-                <th>
-                    {% trans "Overall Cost" %}
-                </th>
-                <th>{% include "price_data.html" with price=pricing.overall_min %}</th>
-                <th>{% include "price_data.html" with price=pricing.overall_max %}</th>
-            </tr>
-        </tbody>
-    </table>
+        </div>
+    </div>
     {% else %}
     <div class='alert alert-warning alert-block'>
         {% trans "Price range data is not available for this part." %}
@@ -138,8 +195,7 @@
         </div>
         <div class="col col-md-6">
 
-            <table class='table table-striped table-condensed' id='internal-price-break-table' data-toolbar='#internal-price-break-toolbar'
-                data-sort-name="quantity" data-sort-order="asc">
+            <table class='table table-striped table-condensed' id='internal-price-break-table'>
             </table>
         </div>
     </div>
@@ -163,7 +219,7 @@
             </div>
         </div>
         <div class="col col-md-6">
-            <table class='table table-striped table-condensed' id='part-purchase-history-table' data-toolbar='#internal-price-break-toolbar'>
+            <table class='table table-striped table-condensed' id='part-purchase-history-table'>
             </table>
         </div>
     </div>
@@ -186,7 +242,7 @@
             </div>
         </div>
         <div class="col col-md-6">
-            <table class='table table-striped table-condensed' id='part-supplier-pricing-table' data-toolbar='#internal-price-break-toolbar'>
+            <table class='table table-striped table-condensed' id='part-supplier-pricing-table'>
             </table>
         </div>
     </div>
@@ -210,7 +266,7 @@
             </div>
         </div>
         <div class="col col-md-6">
-            <table class='table table-striped table-condensed' id='bom-pricing-table' data-toolbar='#internal-price-break-toolbar'>
+            <table class='table table-striped table-condensed' id='bom-pricing-table'>
             </table>
         </div>
     </div>
@@ -220,50 +276,54 @@
 {% if part.salable and roles.sales_order.view %}
 <a class="anchor" id="sale-cost"></a>
 <div class='panel-heading'>
-    <h4>{% trans "Sale Cost" %}
-        <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
-    </h4>
+    <div class='d-flex flex-wrap'>
+        <h4>{% trans "Sale Pricing" %}
+            <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+        </h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            <button class='btn btn-success' id='new-price-break' type='button'>
+                <span class='fas fa-plus-circle'></span> {% trans "Add Sell Price Break" %}
+            </button>
+        </div>
+    </div>
 </div>
 
 <div class='panel-content'>
     <div class="row full-height">
-        <div class="col col-md-8">
+        <div class="col col-md-6">
             <div style="max-width: 99%; height: 100%;">
                 <canvas id="SalePriceBreakChart"></canvas>
             </div>
         </div>
-        <div class="col col-md-4">
-            <div id='price-break-toolbar' class='btn-group'>
-                <button class='btn btn-success' id='new-price-break' type='button'>
-                    <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
-                </button>
-            </div>
-
-            <table class='table table-striped table-condensed' id='price-break-table' data-toolbar='#price-break-toolbar'
-            data-sort-name="quantity" data-sort-order="asc">
+        <div class="col col-md-6">
+            <table class='table table-striped table-condensed' id='price-break-table'>
             </table>
         </div>
     </div>
 </div>
 
 {% if show_price_history %}
-<a class="anchor" id="sale-price"></a>
+<a class="anchor" id="sale-price-history"></a>
 <div class='panel-heading'>
-    <h4>{% trans "Sale Price" %}
+    <div class='d-flex flex-wrap'></div>
+    <h4>{% trans "Sales History" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
 
 <div class='panel-content'>
-    {% if sale_history|length > 0 %}
-        <div style="max-width: 99%; min-height: 300px">
-            <canvas id="SalePriceChart"></canvas>
+    <div class="row full-height">
+        <div class="col col-md-6">
+            <div style="max-width: 99%; height: 100%;">
+                <canvas id="part-sales-history-chart"></canvas>
+            </div>
         </div>
-    {% else %}
-        <div class='alert alert-danger alert-block'>
-            {% trans 'No sale pice history available for this part.' %}
+        <div class="col col-md-6">
+            <table class='table table-striped table-condensed' id='part-sales-history-table'>
+            </table>
         </div>
-    {% endif %}
+    </div>
 </div>
 {% endif %}
 {% endif %}

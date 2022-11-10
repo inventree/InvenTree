@@ -789,6 +789,22 @@ class SalesOrderLineItemFilter(rest_filters.FilterSet):
             'part',
         ]
 
+    has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method='filter_has_pricing')
+
+    def filter_has_pricing(self, queryset, name, value):
+        """Filter by whether or not the line item has pricing information"""
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.exclude(sale_price=None)
+        else:
+            queryset = queryset.filter(sale_price=None)
+
+        return queryset
+
+    order_status = rest_filters.NumberFilter(label='Order Status', field_name='order__status')
+
     completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
 
     def filter_completed(self, queryset, name, value):
@@ -823,6 +839,8 @@ class SalesOrderLineItemList(ListCreateAPI):
             kwargs['part_detail'] = str2bool(params.get('part_detail', False))
             kwargs['order_detail'] = str2bool(params.get('order_detail', False))
             kwargs['allocations'] = str2bool(params.get('allocations', False))
+            kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
+
         except AttributeError:
             pass
 
@@ -864,11 +882,6 @@ class SalesOrderLineItemList(ListCreateAPI):
         'part__name',
         'quantity',
         'reference',
-    ]
-
-    filterset_fields = [
-        'order',
-        'part',
     ]
 
 

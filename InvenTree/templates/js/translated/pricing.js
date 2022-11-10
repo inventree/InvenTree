@@ -12,6 +12,7 @@
     initPriceBreakSet,
     loadPriceBreakTable,
     loadPurchasePriceHistoryTable,
+    loadSalesPriceHistoryTable,
 */
 
 
@@ -557,6 +558,113 @@ function loadPurchasePriceHistoryTable(options={}) {
                     });
                 }
             },
+        ]
+    });
+}
+
+
+/*
+ * Load sales price history for the given part
+ */
+function loadSalesPriceHistoryTable(options={}) {
+
+    var part = options.part;
+
+    if (!part) {
+        console.error("No part provided to loadPurchasePriceHistoryTable");
+        return;
+    }
+
+    var table = options.table || $('#part-sales-history-table');
+    var chartElement = options.chart || $('#part-sales-history-chart');
+
+    var chart = null;
+
+    options.params = options.params || {};
+
+    options.params.part = part;
+    options.params.order_detail = true;
+    options.params.customer_detail = true;
+
+    // Only return results which have pricing information
+    options.params.has_pricing = true;
+
+    // Sales order must be 'SHIPPED'
+    options.params.order_status = {{ SalesOrderStatus.SHIPPED }};
+
+    table.inventreeTable({
+        url: '{% url "api-so-line-list" %}',
+        name: 'partsaleshistory',
+        queryParams: options.params,
+        original: options.params,
+        paginationVAlign: 'bottom',
+        pageSize: 10,
+        search: false,
+        showColumns: false,
+        formatNoMatches: function() {
+            return '{% trans "No sales history data available" %}';
+        },
+        onLoadSuccess: function(data) {
+            // Update sales price history chart
+
+            // Ignore any orders which have not shipped
+            data = data.filter((x) => x.order_detail.shipment_date != null);
+
+            // Sort in increasing date order
+            data = data.sort((a, b) => (a.order_detail.shipment_date - b.order_detail.shipment_date));
+
+            var graphLabels = Array.from(data, (x) => x.order_detail.shipment_date);
+            var graphValues = Array.from(data, (x) => x.sale_price);
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = loadBarChart(chartElement, {
+                labels: graphLabels,
+                datasets: [
+                    {
+                        label: '{% trans "Sale Price History" %}',
+                        data: graphValues,
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgb(255, 206, 86)',
+                        stepped: true,
+                        fill: true,
+                    }
+                ]
+            });
+        },
+        columns: [
+            {
+                field: 'order',
+                title: '{% trans "Sales Order" %}',
+                formatter: function(value, row) {
+                    var order = row.order_detail;
+                    var customer = row.customer_detail;
+
+                    if (!order) {
+                        return '-';
+                    }
+
+                    var html = '';
+
+                    html += imageHoverIcon(customer.thumbnail || customer.image);
+                    html += renderLink(order.reference, `/order/sales-order/${order.pk}/`);
+                    html += ' - ';
+                    html += renderLink(customer.name, `/company/${customer.pk}/`);
+
+                    return html;
+                }
+            },
+            {
+                field: 'sale_price',
+                title: '{% trans "Sale Price" %}',
+                formatter: function(value, row) {
+                    return formatCurrency(value, {
+                        currency: row.sale_price_currency
+                    });
+                }
+            }
         ]
     });
 }

@@ -35,7 +35,6 @@
     loadPartSchedulingChart,
     loadPartVariantTable,
     loadRelatedPartsTable,
-    loadSellPricingChart,
     loadSimplePartTable,
     partStockLabel,
     toggleStar,
@@ -2577,48 +2576,6 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                         filter: function(item, chart) {
                             return !item.text.includes('zero-stock-level');
                         }
-                    }
-                },
-            },
-        }
-    });
-}
-
-
-function loadSellPricingChart(context, data) {
-    return new Chart(context, {
-        type: 'line',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            },
-            scales: {
-                y: {
-                    type: 'linear',
-                    position: 'left',
-                    grid: {
-                        display: false
-                    },
-                    title: {
-                        display: true,
-                        text: '{% trans "Unit Price" %}',
-                    }
-                },
-                y1: {
-                    type: 'linear',
-                    position: 'right',
-                    grid: {
-                        display: false
-                    },
-                    titel: {
-                        display: true,
-                        text: '{% trans "Quantity" %}',
-                        position: 'right'
                     }
                 },
             },

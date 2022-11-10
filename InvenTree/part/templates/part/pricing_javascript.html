@@ -53,8 +53,8 @@ loadBomPricingChart({
 });
 {% endif %}
 
-// Sales pricebreaks
 {% if part.salable and roles.sales_order.view %}
+    // Sales pricebreaks
     initPriceBreakSet(
         $('#price-break-table'),
         {
@@ -67,35 +67,9 @@ loadBomPricingChart({
             linkedGraph: $('#SalePriceBreakChart'),
         },
     );
-{% endif %}
 
-// Sale price history
-{% if sale_history %}
-        var salepricedata = {
-                labels: [
-                    {% for line in sale_history %}'{% render_date line.date %}',{% endfor %}
-                ],
-                datasets: [{
-                    label: '{% blocktrans %}Unit Price - {{currency}}{% endblocktrans %}',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    yAxisID: 'y',
-                    data: [
-                        {% for line in sale_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
-                    ],
-                    borderWidth: 1,
-                },
-                {
-                    label: '{% trans "Quantity" %}',
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                    borderColor: 'rgb(255, 206, 86)',
-                    yAxisID: 'y1',
-                    data: [
-                        {% for line in sale_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
-                    ],
-                    borderWidth: 1,
-                    type: 'bar',
-                }]
-            }
-        var SalePriceChart = loadSellPricingChart($('#SalePriceChart'), salepricedata)
+    loadSalesPriceHistoryTable({
+        part: {{ part.pk }}
+    });
+
 {% endif %}
