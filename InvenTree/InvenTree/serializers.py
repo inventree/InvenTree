@@ -21,7 +21,7 @@ from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 
 from common.models import InvenTreeSetting
-from InvenTree.fields import InvenTreeRestURLField
+from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers import download_image_from_url
 
 
@@ -73,6 +73,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
     serializer_field_mapping = {
         **serializers.ModelSerializer.serializer_field_mapping,
         models.URLField: InvenTreeRestURLField,
+        InvenTreeURLField: InvenTreeRestURLField,
     }
 
     def __init__(self, instance=None, data=empty, **kwargs):

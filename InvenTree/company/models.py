@@ -101,7 +101,7 @@ class Company(MetadataMixin, models.Model):
         blank=True,
     )
 
-    website = models.URLField(
+    website = InvenTreeURLField(
         blank=True,
         verbose_name=_('Website'),
         help_text=_('Company website URL')
