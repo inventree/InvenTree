@@ -1,0 +1,8 @@
+{% load djmoney %}
+{% load i18n %}
+
+{% if price %}
+{% money_localize price.amount price.currency %}
+{% else %}
+<em>{% trans "No data" %}</em>
+{% endif %}

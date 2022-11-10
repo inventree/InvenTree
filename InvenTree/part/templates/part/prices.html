@@ -15,6 +15,7 @@
     </div>
 </div>
 {% with part.pricing as pricing %}
+{% if pricing.is_valid %}
 <!-- Part pricing table -->
 <table class='table table-striped table-condensed'>
     <thead>
@@ -25,37 +26,47 @@
         </tr>
     </thead>
     <tbody>
+        <tr>
+            <th>{% trans "Internal Price" %}</th>
+            <td>{% include "price_data.html" with price=pricing.internal_cost_min %}</td>
+            <td>{% include "price_data.html" with price=pricing.internal_cost_max %}</td>
+        </tr>
         {% if part.assembly %}
         <tr>
             <th>{% trans "BOM Cost" %}</th>
-            <td>{{ pricing.bom_cost_min }}</td>
-            <td>{{ pricing.bom_cost_max }}</td>
+            <td>{% include "price_data.html" with price=pricing.bom_cost_min %}</td>
+            <td>{% include "price_data.html" with price=pricing.bom_cost_max %}</td>
         </tr>
         {% endif %}
         {% if part.purchaseable %}
         <tr>
             <th>{% trans "Purchase Cost" %}</th>
-            <td>{{ pricing.purchase_cost_min }}</td>
-            <td>{{ pricing.purchase_cost_max }}</td>
+            <td>{% include "price_data.html" with price=pricing.purchase_cost_min %}</td>
+            <td>{% include "price_data.html" with price=pricing.purchase_cost_max %}</td>
         </tr>
         <tr>
             <th>{% trans "Supplier Price" %}</th>
-            <td>{{ pricing.supplier_price_min }}</td>
-            <td>{{ pricing.supplier_price_max }}</td>
+            <td>{% include "price_data.html" with price=pricing.supplier_price_min %}</td>
+            <td>{% include "price_data.html" with price=pricing.supplier_price_max %}</td>
         </tr>
         {% endif %}
         <tr>
-            <th>{% trans "Internal Price" %}</th>
-            <td>{{ pricing.internal_cost_min }}</td>
-            <td>{{ pricing.internal_cost_max }}</td>
-        </tr>
-        <tr>
-            <th>{% trans "Overall Cost" %}</th>
-            <th>{{ pricing.overall_min }}</th>
-            <th>{{ pricing.overall_max }}</th>
+            <th>
+                {% trans "Overall Cost" %}
+                <span class='badge badge-right rounded-pill bg-dark'>
+                    {% trans "Last Updated" %}: {% render_date pricing.updated %}
+                </span>
+            </th>
+            <th>{% include "price_data.html" with price=pricing.overall_min %}</th>
+            <th>{% include "price_data.html" with price=pricing.overall_max %}</th>
         </tr>
     </tbody>
 </table>
+{% else %}
+<div class='alert alert-warning alert-block'>
+    {% trans "Price range data is not available for this part." %}
+</div>
+{% endif %}
 {% endwith %}
 
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
@@ -258,7 +269,7 @@
 <a class="anchor" id="internal-cost"></a>
 <div class='panel-heading'>
     <div class='d-flex flex-wrap'>
-        <h4>{% trans "Internal Cost" %}
+        <h4>{% trans "Internal Pricing" %}
             <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
         </h4>
         {% include "spacer.html" %}

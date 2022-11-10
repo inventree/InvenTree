@@ -2247,6 +2247,18 @@ class PartPricing(models.Model):
     - Detailed pricing information is very context specific in any case
     """
 
+    @property
+    def is_valid(self):
+        """Return True if the cached pricing is valid"""
+
+        if self.updated is None:
+            return False
+
+        if self.overall_min is not None or self.overall_max is not None:
+            return True
+        else:
+            return False
+
     def convert(self, money):
         """Attempt to convert money value to default currency.
 
