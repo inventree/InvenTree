@@ -1868,7 +1868,7 @@ function loadPartCategoryTable(table, options) {
         filters[key] = params[key];
     }
 
-    setupFilterList(filterKey, table, filterListElement);
+    setupFilterList(filterKey, table, filterListElement, {download: true});
 
     // Function to request sub-category items
     function requestSubItems(parent_pk) {

@@ -136,11 +136,17 @@ class PartPricingAdmin(admin.ModelAdmin):
 class PartCategoryResource(InvenTreeResource):
     """Class for managing PartCategory data import/export."""
 
-    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(models.PartCategory))
+    id = Field(attribute='pk', column_name=_('Category ID'))
+    name = Field(attribute='name', column_name=_('Category Name'))
+    description = Field(attribute='description', column_name=_('Description'))
+    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
+    parent_name = Field(attribute='parent__name', column_name=_('Parent Name'), readonly=True)
+    default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    default_keywords = Field(attribute='default_keywords', column_name=_('Keywords'))
+    pathstring = Field(attribute='pathstring', column_name=_('Category Path'))
 
-    parent_name = Field(attribute='parent__name', readonly=True)
-
-    default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
+    # Calculated fields
+    parts = Field(attribute='item_count', column_name=_('Parts'), widget=widgets.IntegerWidget(), readonly=True)
 
     class Meta:
         """Metaclass definition"""
@@ -153,6 +159,7 @@ class PartCategoryResource(InvenTreeResource):
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
             'metadata',
+            'icon',
         ]
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):

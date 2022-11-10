@@ -29,7 +29,7 @@ from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               UpdateAPI)
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
-from part.admin import PartResource
+from part.admin import PartCategoryResource, PartResource
 from plugin.serializers import MetadataSerializer
 from stock.models import StockItem, StockLocation
 
@@ -41,7 +41,7 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartTestTemplate)
 
 
-class CategoryList(ListCreateAPI):
+class CategoryList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -50,6 +50,15 @@ class CategoryList(ListCreateAPI):
 
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
+
+    def download_queryset(self, queryset, export_format):
+        """Download the filtered queryset as a data file"""
+
+        dataset = PartCategoryResource().export(queryset=queryset)
+        filedata = dataset.export(export_format)
+        filename = f"InvenTree_Categories.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryList endpoint"""
