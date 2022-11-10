@@ -257,9 +257,17 @@
 {% if show_internal_price and roles.sales_order.view %}
 <a class="anchor" id="internal-cost"></a>
 <div class='panel-heading'>
-    <h4>{% trans "Internal Cost" %}
-        <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
-    </h4>
+    <div class='d-flex flex-wrap'>
+        <h4>{% trans "Internal Cost" %}
+            <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+        </h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            <button class='btn btn-success' id='new-internal-price-break' type='button'>
+                <span class='fas fa-plus-circle'></span> {% trans "Add Internal Price Break" %}
+            </button>
+        </div>
+    </div>
 </div>
 
 <div class='panel-content'>
@@ -270,11 +278,6 @@
             </div>
         </div>
         <div class="col col-md-4">
-            <div id='internal-price-break-toolbar' class='btn-group'>
-                <button class='btn btn-success' id='new-internal-price-break' type='button'>
-                    <span class='fas fa-plus-circle'></span> {% trans "Add Internal Price Break" %}
-                </button>
-            </div>
 
             <table class='table table-striped table-condensed' id='internal-price-break-table' data-toolbar='#internal-price-break-toolbar'
                 data-sort-name="quantity" data-sort-order="asc">
