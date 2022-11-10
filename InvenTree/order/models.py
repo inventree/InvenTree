@@ -24,6 +24,7 @@ from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
 import InvenTree.ready
+import InvenTree.tasks
 import order.validators
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
@@ -383,7 +384,18 @@ class PurchaseOrder(Order):
         if self.status == PurchaseOrderStatus.PLACED:
             self.status = PurchaseOrderStatus.COMPLETE
             self.complete_date = datetime.now().date()
+
             self.save()
+
+            # Schedule pricing update for any referenced parts
+            from part.tasks import update_part_pricing
+
+            for line in self.lines.all():
+                if line.part and line.part.part:
+                    InvenTree.tasks.offload_task(
+                        update_part_pricing,
+                        line.part.part,
+                    )
 
             trigger_event('purchaseorder.completed', id=self.pk)
 
