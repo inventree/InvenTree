@@ -7,8 +7,10 @@ from djmoney.money import Money
 
 import common.settings
 import company.models
+import order.models
 import part.models
 from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.status_codes import PurchaseOrderStatus
 
 
 class PartPricingTests(InvenTreeTestCase):
@@ -57,38 +59,46 @@ class PartPricingTests(InvenTreeTestCase):
         """Create some price breaks for the part, in various currencies"""
 
         # First supplier part (CAD)
-        supplier_1 = company.models.Company.objects.create(
+        self.supplier_1 = company.models.Company.objects.create(
             name='Supplier 1',
             is_supplier=True
         )
 
-        sp_1 = company.models.SupplierPart.objects.create(
-            supplier=supplier_1,
+        self.sp_1 = company.models.SupplierPart.objects.create(
+            supplier=self.supplier_1,
             part=self.part,
             SKU='SUP_1',
         )
 
         company.models.SupplierPriceBreak.objects.create(
-            part=sp_1,
+            part=self.sp_1,
             quantity=1,
             price=10.4,
             price_currency='CAD',
         )
 
         # Second supplier part (AUD)
-        supplier_2 = company.models.Company.objects.create(
+        self.supplier_2 = company.models.Company.objects.create(
             name='Supplier 2',
             is_supplier=True
         )
 
-        sp_2 = company.models.SupplierPart.objects.create(
-            supplier=supplier_2,
+        self.sp_2 = company.models.SupplierPart.objects.create(
+            supplier=self.supplier_2,
             part=self.part,
             SKU='SUP_2',
+            pack_size=2.5,
+        )
+
+        self.sp_3 = company.models.SupplierPart.objects.create(
+            supplier=self.supplier_2,
+            part=self.part,
+            SKU='SUP_3',
+            pack_size=10
         )
 
         company.models.SupplierPriceBreak.objects.create(
-            part=sp_2,
+            part=self.sp_2,
             quantity=5,
             price=7.555,
             price_currency='AUD',
@@ -96,7 +106,7 @@ class PartPricingTests(InvenTreeTestCase):
 
         # Third supplier part (GBP)
         company.models.SupplierPriceBreak.objects.create(
-            part=sp_2,
+            part=self.sp_2,
             quantity=10,
             price=4.55,
             price_currency='GBP',
@@ -177,7 +187,7 @@ class PartPricingTests(InvenTreeTestCase):
         pricing.update_supplier_cost()
         pricing.refresh_from_db()
 
-        self.assertEqual(pricing.overall_min, Money('5.036667', 'USD'))
+        self.assertEqual(pricing.overall_min, Money('2.014667', 'USD'))
         self.assertEqual(pricing.overall_max, Money('6.117647', 'USD'))
 
         # Delete all supplier parts and re-calculate
@@ -260,5 +270,58 @@ class PartPricingTests(InvenTreeTestCase):
             self.assertEqual(pricing.currency, 'USD')
 
         # Final overall pricing checks
-        self.assertEqual(pricing.overall_min, Money('366.666667', 'USD'))
+        self.assertEqual(pricing.overall_min, Money('366.666665', 'USD'))
         self.assertEqual(pricing.overall_max, Money('550', 'USD'))
+
+    def test_purchase_pricing(self):
+        """Unit tests for historical purchase pricing"""
+
+        self.create_price_breaks()
+
+        pricing = self.part.pricing
+
+        # Pre-calculation, pricing should be null
+
+        self.assertIsNone(pricing.purchase_cost_min)
+        self.assertIsNone(pricing.purchase_cost_max)
+
+        # Generate some purchase orders
+        po = order.models.PurchaseOrder.objects.create(
+            supplier=self.supplier_2,
+            reference='PO-009',
+        )
+
+        # Add some line items to the order
+
+        # $5 AUD each
+        line_1 = po.add_line_item(self.sp_2, quantity=10, purchase_price=Money(5, 'AUD'))
+
+        # $30 CAD each (but pack_size is 10, so really $3 CAD each)
+        line_2 = po.add_line_item(self.sp_3, quantity=5, purchase_price=Money(30, 'CAD'))
+
+        pricing.update_purchase_cost()
+
+        # Cost is still null, as the order is not complete
+        self.assertIsNone(pricing.purchase_cost_min)
+        self.assertIsNone(pricing.purchase_cost_max)
+
+        po.status = PurchaseOrderStatus.COMPLETE
+        po.save()
+
+        pricing.update_purchase_cost()
+
+        # Cost is still null, as the lines have not been received
+        self.assertIsNone(pricing.purchase_cost_min)
+        self.assertIsNone(pricing.purchase_cost_max)
+
+        # Mark items as received
+        line_1.received = 4
+        line_1.save()
+
+        line_2.received = 5
+        line_2.save()
+
+        pricing.update_purchase_cost()
+
+        self.assertEqual(pricing.purchase_cost_min, Money('1.333333', 'USD'))
+        self.assertEqual(pricing.purchase_cost_max, Money('1.764706', 'USD'))

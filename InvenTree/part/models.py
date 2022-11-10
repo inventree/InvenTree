@@ -2381,9 +2381,43 @@ class PartPricing(models.Model):
             self.save()
 
     def update_purchase_cost(self, save=True):
-        """Recalculate historical purchase cost for the referenced Part instance"""
+        """Recalculate historical purchase cost for the referenced Part instance.
 
-        # TODO - Implement this function
+        Purchase history only takes into account "completed" purchase orders.
+        """
+
+        # Find all line items for completed orders which reference this part
+        line_items = OrderModels.PurchaseOrderLineItem.objects.filter(
+            order__status=PurchaseOrderStatus.COMPLETE,
+            received__gt=0,
+            part__part=self.part,
+        )
+
+        # Exclude line items which do not have an associated price
+        line_items = line_items.exclude(purchase_price=None)
+
+        purchase_min = None
+        purchase_max = None
+
+        for line in line_items:
+
+            if line.purchase_price is None:
+                continue
+
+            # Take supplier part pack size into account
+            purchase_cost = self.convert(line.purchase_price / line.part.pack_size)
+
+            if purchase_cost is None:
+                continue
+
+            if purchase_min is None or purchase_cost < purchase_min:
+                purchase_min = purchase_cost
+
+            if purchase_max is None or purchase_cost > purchase_max:
+                purchase_max = purchase_cost
+
+        self.purchase_cost_min = purchase_min
+        self.purchase_cost_max = purchase_max
 
         if save:
             self.save()
@@ -2430,7 +2464,12 @@ class PartPricing(models.Model):
 
                 # Iterate through each available SupplierPriceBreak instance
                 for pb in sp.pricebreaks.all():
-                    cost = self.convert(pb.price)
+
+                    if pb.price is None:
+                        continue
+
+                    # Ensure we take supplier part pack size into account
+                    cost = self.convert(pb.price / sp.pack_size)
 
                     if cost is None:
                         continue
@@ -2453,8 +2492,6 @@ class PartPricing(models.Model):
         Here we simply take the minimum / maximum values of the other calculated fields.
         """
 
-        currency = currency_code_default()
-
         overall_min = None
         overall_max = None
 
@@ -2469,7 +2506,7 @@ class PartPricing(models.Model):
                 continue
 
             # Ensure we are working in a common currency
-            cost = convert_money(cost, currency)
+            cost = self.convert(cost)
 
             if overall_min is None or cost < overall_min:
                 overall_min = cost
@@ -2485,7 +2522,7 @@ class PartPricing(models.Model):
                 continue
 
             # Ensure we are working in a common currency
-            cost = convert_money(cost, currency)
+            cost = self.convert(cost)
 
             if overall_max is None or cost > overall_max:
                 overall_max = cost

@@ -311,6 +311,9 @@ class PurchaseOrder(Order):
             reference (str, optional): Reference to item. Defaults to ''.
             purchase_price (optional): Price of item. Defaults to None.
 
+        Returns:
+            The newly created PurchaseOrderLineItem instance
+
         Raises:
             ValidationError: quantity is smaller than 0
             ValidationError: quantity is not type int
@@ -338,11 +341,13 @@ class PurchaseOrder(Order):
                 quantity_new = line.quantity + quantity
                 line.quantity = quantity_new
                 supplier_price = supplier_part.get_price(quantity_new)
+
                 if line.purchase_price and supplier_price:
                     line.purchase_price = supplier_price / quantity_new
+
                 line.save()
 
-                return
+                return line
 
         line = PurchaseOrderLineItem(
             order=self,
@@ -353,6 +358,8 @@ class PurchaseOrder(Order):
         )
 
         line.save()
+
+        return line
 
     @transaction.atomic
     def place_order(self):
