@@ -1,0 +1,32 @@
+{
+    "name": "InvenTreeUI",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@emotion/react": "^11.10.5",
+        "@mantine/core": "^5.7.1",
+        "@mantine/dates": "^5.7.1",
+        "@mantine/dropzone": "^5.7.1",
+        "@mantine/form": "^5.7.1",
+        "@mantine/hooks": "^5.7.1",
+        "@mantine/modals": "^5.7.1",
+        "@mantine/notifications": "^5.7.1",
+        "@mantine/rte": "^5.7.1",
+        "dayjs": "^1.11.6",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "devDependencies": {
+        "@types/react": "^18.0.24",
+        "@types/react-dom": "^18.0.8",
+        "@vitejs/plugin-react": "^2.2.0",
+        "typescript": "^4.6.4",
+        "vite": "^3.2.3"
+    }
+}
