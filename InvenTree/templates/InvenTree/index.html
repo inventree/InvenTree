@@ -306,6 +306,17 @@ loadSalesOrderTable("#table-so-overdue", {
 
 {% endif %}
 
+{% settings_value 'HOMEPAGE_NEWS' user=request.user as setting_news %}
+{% if setting_news and user.is_staff %}
+
+addHeaderTitle('{% trans "InvenTree News" %}');
+
+addHeaderAction('news', '{% trans "Current News" %}', 'fa-newspaper');
+loadNewsFeedTable("#table-news", {
+    url: "{% url 'api-news-list' %}",
+});
+{% endif %}
+
 enableSidebar(
     'index',
     {

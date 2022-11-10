@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import serializers
 
 from common.models import (InvenTreeSetting, InvenTreeUserSetting,
-                           NotificationMessage)
+                           NewsFeedEntry, NotificationMessage)
 from InvenTree.helpers import construct_absolute_url, get_objectreference
 from InvenTree.serializers import InvenTreeModelSerializer
 
@@ -211,3 +211,24 @@ class NotificationReadSerializer(NotificationMessageSerializer):
         self.instance = self.context['instance']  # set instance that should be returned
         self._validated_data = True
         return True
+
+
+class NewsFeedEntrySerializer(InvenTreeModelSerializer):
+    """Serializer for the NewsFeedEntry model."""
+
+    read = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        """Meta options for NewsFeedEntrySerializer."""
+
+        model = NewsFeedEntry
+        fields = [
+            'pk',
+            'feed_id',
+            'title',
+            'link',
+            'published',
+            'author',
+            'summary',
+            'read',
+        ]

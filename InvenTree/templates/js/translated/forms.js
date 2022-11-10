@@ -2330,16 +2330,6 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
         opts.push(`value='${parameters.default}'`);
     }
 
-    // Maximum input length
-    if (parameters.max_length != null) {
-        opts.push(`maxlength='${parameters.max_length}'`);
-    }
-
-    // Minimum input length
-    if (parameters.min_length != null) {
-        opts.push(`minlength='${parameters.min_length}'`);
-    }
-
     // Maximum value
     if (parameters.max_value != null) {
         opts.push(`max='${parameters.max_value}'`);

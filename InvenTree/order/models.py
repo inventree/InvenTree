@@ -31,7 +31,7 @@ from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
-                              RoundingDecimalField)
+                              InvenTreeURLField, RoundingDecimalField)
 from InvenTree.helpers import decimal2string, getSetting, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
@@ -82,7 +82,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
-    link = models.URLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
+    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 
     creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation Date'))
 
@@ -398,6 +398,11 @@ class PurchaseOrder(Order):
                     )
 
             trigger_event('purchaseorder.completed', id=self.pk)
+
+    @property
+    def is_pending(self):
+        """Return True if the PurchaseOrder is 'pending'"""
+        return self.status == PurchaseOrderStatus.PENDING
 
     @property
     def is_overdue(self):
@@ -1283,7 +1288,7 @@ class SalesOrderShipment(models.Model):
         help_text=_('Reference number for associated invoice'),
     )
 
-    link = models.URLField(
+    link = InvenTreeURLField(
         blank=True,
         verbose_name=_('Link'),
         help_text=_('Link to external page')
