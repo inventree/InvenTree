@@ -1134,7 +1134,7 @@ function loadBuildOutputTable(build_info, options={}) {
                         data.push(row);
                     });
 
-                    $(table).bootstrapTable('load', row);
+                    $(table).bootstrapTable('load', data);
                 }
             }
         );

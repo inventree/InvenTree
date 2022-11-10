@@ -333,15 +333,33 @@ function deletePartCategory(pk, options={}) {
     var html = `
     <div class='alert alert-block alert-danger'>
     {% trans "Are you sure you want to delete this part category?" %}
-    <ul>
-        <li>{% trans "Any child categories will be moved to the parent of this category" %}</li>
-        <li>{% trans "Any parts in this category will be moved to the parent of this category" %}</li>
-    </ul>
     </div>`;
+    var subChoices = [
+        {
+            value: 0,
+            display_name: '{% trans "Move to parent category" %}',
+        },
+        {
+            value: 1,
+            display_name: '{% trans "Delete" %}',
+        }
+    ];
 
     constructForm(url, {
         title: '{% trans "Delete Part Category" %}',
         method: 'DELETE',
+        fields: {
+            'delete_parts': {
+                label: '{% trans "Action for parts in this category" %}',
+                choices: subChoices,
+                type: 'choice'
+            },
+            'delete_child_categories': {
+                label: '{% trans "Action for child categories" %}',
+                choices: subChoices,
+                type: 'choice'
+            },
+        },
         preFormContent: html,
         onSuccess: function(response) {
             handleFormSuccess(response, options);
@@ -1878,15 +1896,16 @@ function loadPartCategoryTable(table, options) {
                 },
                 event: () => {
                     inventreeSave('category-tree-view', 0);
-                    table.bootstrapTable(
-                        'refreshOptions',
-                        {
-                            treeEnable: false,
-                            serverSort: true,
-                            search: true,
-                            pagination: true,
-                        }
-                    );
+
+                    // Adjust table options
+                    options.treeEnable = false;
+                    options.serverSort = false;
+                    options.search = true;
+                    options.pagination = true;
+
+                    // Destroy and re-create the table
+                    table.bootstrapTable('destroy');
+                    loadPartCategoryTable(table, options);
                 }
             },
             {
@@ -1897,15 +1916,16 @@ function loadPartCategoryTable(table, options) {
                 },
                 event: () => {
                     inventreeSave('category-tree-view', 1);
-                    table.bootstrapTable(
-                        'refreshOptions',
-                        {
-                            treeEnable: true,
-                            serverSort: false,
-                            search: false,
-                            pagination: false,
-                        }
-                    );
+
+                    // Adjust table options
+                    options.treeEnable = true;
+                    options.serverSort = false;
+                    options.search = false;
+                    options.pagination = false;
+
+                    // Destroy and re-create the table
+                    table.bootstrapTable('destroy');
+                    loadPartCategoryTable(table, options);
                 }
             }
         ] : [],

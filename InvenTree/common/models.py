@@ -933,6 +933,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'BARCODE_INPUT_DELAY': {
+            'name': _('Barcode Input Delay'),
+            'description': _('Barcode input processing delay time'),
+            'default': 50,
+            'validator': [
+                int,
+                MinValueValidator(1),
+            ],
+            'units': 'ms',
+        },
+
         'BARCODE_WEBCAM_SUPPORT': {
             'name': _('Barcode Webcam Support'),
             'description': _('Allow barcode scanning via webcam in browser'),
@@ -1248,11 +1259,25 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SALESORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Sales Orders'),
+            'description': _('Allow editing of sales orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PURCHASEORDER_REFERENCE_PATTERN': {
             'name': _('Purchase Order Reference Pattern'),
             'description': _('Required pattern for generating Purchase Order reference field'),
             'default': 'PO-{ref:04d}',
             'validator': order.validators.validate_purchase_order_reference_pattern,
+        },
+
+        'PURCHASEORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Purchase Orders'),
+            'description': _('Allow editing of purchase orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
         },
 
         # login / SSO
@@ -1321,7 +1346,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'PLUGIN_ON_STARTUP': {
             'name': _('Check plugins on startup'),
-            'description': _('Check that all plugins are installed on startup - enable in container enviroments'),
+            'description': _('Check that all plugins are installed on startup - enable in container environments'),
             'default': False,
             'validator': bool,
             'requires_restart': True,
@@ -1535,6 +1560,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'HOMEPAGE_NEWS': {
+            'name': _('Show News'),
+            'description': _('Show news on the homepage'),
+            'default': False,
+            'validator': bool,
+        },
+
         "LABEL_INLINE": {
             'name': _('Inline label display'),
             'description': _('Display PDF labels in the browser, instead of downloading as a file'),
@@ -1608,6 +1640,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         'SEARCH_PREVIEW_SHOW_COMPANIES': {
             'name': _('Search Companies'),
             'description': _('Display companies in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_BUILD_ORDERS': {
+            'name': _('Search Build Orders'),
+            'description': _('Display build orders in search preview window'),
             'default': True,
             'validator': bool,
         },
@@ -2253,3 +2292,54 @@ class NotificationMessage(models.Model):
     def age_human(self):
         """Humanized age."""
         return naturaltime(self.creation)
+
+
+class NewsFeedEntry(models.Model):
+    """A NewsFeedEntry represents an entry on the RSS/Atom feed that is generated for InvenTree news.
+
+    Attributes:
+    - feed_id: Unique id for the news item
+    - title: Title for the news item
+    - link: Link to the news item
+    - published: Date of publishing of the news item
+    - author: Author of news item
+    - summary: Summary of the news items content
+    - read: Was this iteam already by a superuser?
+    """
+
+    feed_id = models.CharField(
+        verbose_name=_('Id'),
+        unique=True,
+        max_length=250,
+    )
+
+    title = models.CharField(
+        verbose_name=_('Title'),
+        max_length=250,
+    )
+
+    link = models.URLField(
+        verbose_name=_('Link'),
+        max_length=250,
+    )
+
+    published = models.DateTimeField(
+        verbose_name=_('Published'),
+        max_length=250,
+    )
+
+    author = models.CharField(
+        verbose_name=_('Author'),
+        max_length=250,
+    )
+
+    summary = models.CharField(
+        verbose_name=_('Summary'),
+        max_length=250,
+    )
+
+    read = models.BooleanField(
+        verbose_name=_('Read'),
+        help_text=_('Was this news item read?'),
+        default=False
+    )

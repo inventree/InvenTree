@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.contrib.sites.models import Site
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -227,7 +228,16 @@ class RegistratonMixin:
         return user
 
 
-class CustomAccountAdapter(RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
+class CustomUrlMixin:
+    """Mixin to set urls."""
+
+    def get_email_confirmation_url(self, request, emailconfirmation):
+        """Custom email confirmation (activation) url."""
+        url = reverse("account_confirm_email", args=[emailconfirmation.key])
+        return Site.objects.get_current().domain + url
+
+
+class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
     """Override of adapter to use dynamic settings."""
     def send_mail(self, template_prefix, email, context):
         """Only send mail if backend configured."""
@@ -236,7 +246,7 @@ class CustomAccountAdapter(RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
         return False
 
 
-class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
+class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def is_auto_signup_allowed(self, request, sociallogin):

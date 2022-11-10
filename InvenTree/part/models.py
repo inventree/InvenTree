@@ -63,31 +63,46 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         default_keywords: Default keywords for parts created in this category
     """
 
+    def delete_recursive(self, *args, **kwargs):
+        """This function handles the recursive deletion of subcategories depending on kwargs contents"""
+        delete_parts = kwargs.get('delete_parts', False)
+        parent_category = kwargs.get('parent_category', None)
+
+        if parent_category is None:
+            # First iteration, (no part_category kwargs passed)
+            parent_category = self.parent
+
+        for child_part in self.parts.all():
+            if delete_parts:
+                child_part.delete()
+            else:
+                child_part.category = parent_category
+                child_part.save()
+
+        for child_category in self.children.all():
+            if kwargs.get('delete_child_categories', False):
+                child_category.delete_recursive(**dict(delete_child_categories=True,
+                                                       delete_parts=delete_parts,
+                                                       parent_category=parent_category))
+            else:
+                child_category.parent = parent_category
+                child_category.save()
+
+        super().delete(*args, **dict())
+
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
 
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
         with transaction.atomic():
+            self.delete_recursive(**dict(delete_parts=kwargs.get('delete_parts', False),
+                                         delete_child_categories=kwargs.get('delete_child_categories', False),
+                                         parent_category=self.parent))
 
-            parent = self.parent
-            tree_id = self.tree_id
-
-            # Update each part in this category to point to the parent category
-            for p in self.parts.all():
-                p.category = self.parent
-                p.save()
-
-            # Update each child category
-            for child in self.children.all():
-                child.parent = self.parent
-                child.save()
-
-            super().delete(*args, **kwargs)
-
-            if parent is not None:
+            if self.parent is not None:
                 # Partially rebuild the tree (cheaper than a complete rebuild)
-                PartCategory.objects.partial_rebuild(tree_id)
+                PartCategory.objects.partial_rebuild(self.tree_id)
             else:
                 PartCategory.objects.rebuild()
 
@@ -671,7 +686,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
             return full_name
 
-        except AttributeError as attr_err:
+        except Exception as attr_err:
 
             logger.warning(f"exception while trying to create full name for part {self.name}", attr_err)
 
@@ -2383,10 +2398,7 @@ class PartTestTemplate(models.Model):
 
 
 def validate_template_name(name):
-    """Prevent illegal characters in "name" field for PartParameterTemplate."""
-    for c in "\"\'`!?|":  # noqa: P103
-        if c in str(name):
-            raise ValidationError(_(f"Illegal character in template name ({c})"))
+    """Placeholder for legacy function used in migrations."""
 
 
 class PartParameterTemplate(models.Model):
@@ -2431,10 +2443,7 @@ class PartParameterTemplate(models.Model):
         max_length=100,
         verbose_name=_('Name'),
         help_text=_('Parameter Name'),
-        unique=True,
-        validators=[
-            validate_template_name,
-        ]
+        unique=True
     )
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)

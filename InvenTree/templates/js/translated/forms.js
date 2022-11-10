@@ -205,9 +205,6 @@ function constructChangeForm(fields, options) {
         },
         success: function(data) {
 
-            // Ensure the data are fully sanitized before we operate on it
-            data = sanitizeData(data);
-
             // An optional function can be provided to process the returned results,
             // before they are rendered to the form
             if (options.processResults) {
@@ -2331,16 +2328,6 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
     } else if (parameters.default != null) {
         // Otherwise, a defualt value?
         opts.push(`value='${parameters.default}'`);
-    }
-
-    // Maximum input length
-    if (parameters.max_length != null) {
-        opts.push(`maxlength='${parameters.max_length}'`);
-    }
-
-    // Minimum input length
-    if (parameters.min_length != null) {
-        opts.push(`minlength='${parameters.min_length}'`);
     }
 
     // Maximum value

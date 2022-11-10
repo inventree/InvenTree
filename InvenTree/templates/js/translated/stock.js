@@ -2351,15 +2351,16 @@ function loadStockLocationTable(table, options) {
                 },
                 event: () => {
                     inventreeSave('location-tree-view', 0);
-                    table.bootstrapTable(
-                        'refreshOptions',
-                        {
-                            treeEnable: false,
-                            serverSort: true,
-                            search: true,
-                            pagination: true,
-                        }
-                    );
+
+                    // Adjust table options
+                    options.treeEnable = false;
+                    options.serverSort = true;
+                    options.search = true;
+                    options.pagination = true;
+
+                    // Destroy and re-create the table
+                    table.bootstrapTable('destroy');
+                    loadStockLocationTable(table, options);
                 }
             },
             {
@@ -2370,15 +2371,16 @@ function loadStockLocationTable(table, options) {
                 },
                 event: () => {
                     inventreeSave('location-tree-view', 1);
-                    table.bootstrapTable(
-                        'refreshOptions',
-                        {
-                            treeEnable: true,
-                            serverSort: false,
-                            search: false,
-                            pagination: false,
-                        }
-                    );
+
+                    // Adjust table options
+                    options.treeEnable = true;
+                    options.serverSort = false;
+                    options.search = false;
+                    options.pagination = false;
+
+                    // Destroy and re-create the table
+                    table.bootstrapTable('destroy');
+                    loadStockLocationTable(table, options);
                 }
             }
         ] : [],
