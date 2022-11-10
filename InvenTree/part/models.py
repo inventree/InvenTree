@@ -1674,16 +1674,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return pricing_data
 
-    @property
-    def has_complete_bom_pricing(self):
-        """Return true if there is pricing information for each item in the BOM."""
-        use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-        for item in self.get_bom_items().select_related('sub_part'):
-            if item.sub_part.get_price_range(internal=use_internal) is None:
-                return False
-
-        return True
-
     def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
         """Return a simplified pricing string for this part.
 
