@@ -15,7 +15,7 @@ from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
 from django.urls import reverse
@@ -2757,6 +2757,36 @@ class PartInternalPriceBreak(common.models.PriceBreak):
     class Meta:
         """Metaclass providing extra model definition"""
         unique_together = ('part', 'quantity')
+
+
+@receiver(post_save, sender=PartSellPriceBreak, dispatch_uid='post_save_sale_price_break')
+@receiver(post_save, sender=PartInternalPriceBreak, dispatch_uid='post_save_internal_price_break')
+def after_save_part_price_break(sender, instance, created, **kwargs):
+    """Callback function when a part price break is created or updated"""
+
+    from part import tasks as part_tasks
+
+    # Update part pricing *unless* we are importing data
+    if not InvenTree.ready.isImportingData():
+        InvenTree.tasks.offload_task(
+            part_tasks.update_part_pricing,
+            instance.part,
+        )
+
+
+@receiver(post_delete, sender=PartSellPriceBreak, dispatch_uid='post_delete_sale_price_break')
+@receiver(post_delete, sender=PartInternalPriceBreak, dispatch_uid='post_delete_internal_price_break')
+def after_delete_price_break(sender, instance, **kwargs):
+    """Callback function when a part price break is deleted"""
+
+    from part import tasks as part_tasks
+
+    # Update part pricing *unless* we are importing data
+    if not InvenTree.ready.isImportingData():
+        InvenTree.tasks.offload_task(
+            part_tasks.update_part_pricing,
+            instance.part,
+        )
 
 
 class PartStar(models.Model):
