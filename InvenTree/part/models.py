@@ -2589,13 +2589,13 @@ class PartPricing(models.Model):
 
     internal_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
         null=True, blank=True,
-        verbose_name=_('Minimum Internal Cost'),
+        verbose_name=_('Minimum Internal Price'),
         help_text=_('Minimum cost based on internal price breaks'),
     )
 
     internal_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
         null=True, blank=True,
-        verbose_name=_('Maximum Internal Cost'),
+        verbose_name=_('Maximum Internal Price'),
         help_text=_('Maximum cost based on internal price breaks'),
     )
 
@@ -2621,6 +2621,30 @@ class PartPricing(models.Model):
         null=True, blank=True,
         verbose_name=_('Maximum Cost'),
         help_text=_('Calculated overall maximum cost'),
+    )
+
+    sale_price_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Sale Price'),
+        help_text=_('Minimum sale price based on price breaks'),
+    )
+
+    sale_price_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Sale Price'),
+        help_text=_('Maximum sale price based on price breaks'),
+    )
+
+    sale_history_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Sale Cost'),
+        help_text=_('Minimum historical sale price'),
+    )
+
+    sale_history_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Sale Cost'),
+        help_text=_('Maximum historical sale price'),
     )
 
 
