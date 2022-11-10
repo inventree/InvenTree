@@ -2321,6 +2321,7 @@ class PartPricing(models.Model):
         self.update_purchase_cost(save=False)
         self.update_internal_cost(save=False)
         self.update_supplier_cost(save=False)
+        self.update_sale_cost(save=False)
 
         if save:
             # Call to save here will call update_overall_cost() internally
@@ -2541,6 +2542,61 @@ class PartPricing(models.Model):
 
         self.overall_min = overall_min
         self.overall_max = overall_max
+
+    def update_sale_cost(self, save=True):
+        """Recalculate sale cost data"""
+
+        # Iterate through the sell price breaks
+        min_sell_price = None
+        max_sell_price = None
+
+        for pb in self.part.salepricebreaks.all():
+
+            cost = self.convert(pb.price)
+
+            if cost is None:
+                continue
+
+            if min_sell_price is None or cost < min_sell_price:
+                min_sell_price = cost
+
+            if max_sell_price is None or cost > max_sell_price:
+                max_sell_price = cost
+
+        # Record min/max values
+        self.sale_price_min = min_sell_price
+        self.sale_price_max = max_sell_price
+
+        min_sell_history = None
+        max_sell_history = None
+
+        # Find all line items for shipped sales orders which reference this part
+        line_items = OrderModels.SalesOrderLineItem.objects.filter(
+            order__status=SalesOrderStatus.SHIPPED,
+            part=self.part
+        )
+
+        # Exclude line items which do not have associated pricing data
+        line_items = line_items.exclude(sale_price=None)
+
+        for line in line_items:
+
+            cost = self.convert(line.sale_price)
+
+            if cost is None:
+                continue
+
+            if min_sell_history is None or cost < min_sell_history:
+                min_sell_history = cost
+
+            if max_sell_history is None or cost > max_sell_history:
+                max_sell_history = cost
+
+        self.sale_history_min = min_sell_history
+        self.sale_history_max = max_sell_history
+
+        if save:
+            self.save()
 
     currency = models.CharField(
         default=currency_code_default,
