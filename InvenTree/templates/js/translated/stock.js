@@ -2248,7 +2248,7 @@ function loadStockLocationTable(table, options) {
         original[k] = params[k];
     }
 
-    setupFilterList(filterKey, table, filterListElement);
+    setupFilterList(filterKey, table, filterListElement, {download: true});
 
     for (var key in params) {
         filters[key] = params[key];

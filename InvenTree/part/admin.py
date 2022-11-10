@@ -214,29 +214,13 @@ class BomItemResource(InvenTreeResource):
 
     # ID of the parent part
     parent_part_id = Field(attribute='part', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.Part))
-
-    # IPN of the parent part
     parent_part_ipn = Field(attribute='part__IPN', column_name=_('Parent IPN'), readonly=True)
-
-    # Name of the parent part
     parent_part_name = Field(attribute='part__name', column_name=_('Parent Name'), readonly=True)
-
-    # ID of the sub-part
     part_id = Field(attribute='sub_part', column_name=_('Part ID'), widget=widgets.ForeignKeyWidget(models.Part))
-
-    # IPN of the sub-part
     part_ipn = Field(attribute='sub_part__IPN', column_name=_('Part IPN'), readonly=True)
-
-    # Name of the sub-part
     part_name = Field(attribute='sub_part__name', column_name=_('Part Name'), readonly=True)
-
-    # Description of the sub-part
     part_description = Field(attribute='sub_part__description', column_name=_('Description'), readonly=True)
-
-    # Is the sub-part itself an assembly?
     sub_assembly = Field(attribute='sub_part__assembly', column_name=_('Assembly'), readonly=True)
-
-    # Part pricing fields
     min_cost = Field(attribute='sub_part__pricing__overall_min', column_name=_('Minimum Price'), readonly=True)
     max_cost = Field(attribute='sub_part__pricing__overall_max', column_name=_('Maximum Price'), readonly=True)
 

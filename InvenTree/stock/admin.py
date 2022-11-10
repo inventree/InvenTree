@@ -1,6 +1,7 @@
 """Admin for stock app."""
 
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
@@ -19,9 +20,15 @@ from .models import (StockItem, StockItemAttachment, StockItemTestResult,
 class LocationResource(InvenTreeResource):
     """Class for managing StockLocation data import/export."""
 
-    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(StockLocation))
+    id = Field(attribute='pk', column_name=_('Location ID'))
+    name = Field(attribute='name', column_name=_('Location Name'))
+    description = Field(attribute='description', column_name=_('Description'))
+    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    parent_name = Field(attribute='parent__name', column_name=_('Parent Name'), readonly=True)
+    pathstring = Field(attribute='pathstring', column_name=_('Location Path'))
 
-    parent_name = Field(attribute='parent__name', readonly=True)
+    # Calculated fields
+    items = Field(attribute='item_count', column_name=_('Stock Items'), widget=widgets.IntegerWidget())
 
     class Meta:
         """Metaclass options."""
@@ -35,6 +42,8 @@ class LocationResource(InvenTreeResource):
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
             'metadata',
+            'barcode_data', 'barcode_hash',
+            'owner', 'icon',
         ]
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
