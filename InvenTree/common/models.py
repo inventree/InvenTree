@@ -1061,18 +1061,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        # 2022-02-03
-        # This setting exists as an interim solution for extremely slow part page load times when the part has a complex BOM
-        # In an upcoming release, pricing history (and BOM pricing) will be cached,
-        # rather than having to be re-calculated every time the page is loaded!
-        # For now, we will simply hide part pricing by default
-        'PART_SHOW_PRICE_HISTORY': {
-            'name': _('Show Price History'),
-            'description': _('Display historical pricing for Part'),
-            'default': False,
-            'validator': bool,
-        },
-
         'PART_SHOW_RELATED': {
             'name': _('Show related parts'),
             'description': _('Display related parts for a part'),

@@ -287,10 +287,6 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
         context.update(**ctx)
 
-        show_price_history = InvenTreeSetting.get_setting('PART_SHOW_PRICE_HISTORY', False)
-
-        context['show_price_history'] = show_price_history
-
         return context
 
     def get_quantity(self):

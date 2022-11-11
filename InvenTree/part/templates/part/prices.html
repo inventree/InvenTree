@@ -54,7 +54,7 @@
                     {% if part.purchaseable %}
                     <tr>
                         <td>
-                            {% if show_price_history and roles.purchase_order.view %}
+                            {% if roles.purchase_order.view %}
                             <a href='#purchase-price-history'>
                                 <span class='fas fa-chart-line'></span>
                             </a>
@@ -211,7 +211,6 @@
 {% endif %}
 
 {% if part.purchaseable and roles.purchase_order.view %}
-{% if show_price_history %}
 <a class="anchor" id="purchase-price-history"></a>
 <div class='panel-heading'>
     <h4>
@@ -232,7 +231,6 @@
         </div>
     </div>
 </div>
-{% endif %}
 
 <a class="anchor" id="supplier-prices"></a>
 <div class='panel-heading'>
@@ -334,7 +332,6 @@
     </div>
 </div>
 
-{% if show_price_history %}
 <a class="anchor" id="sale-price-history"></a>
 <div class='panel-heading'>
     <div class='d-flex flex-wrap'></div>
@@ -356,5 +353,4 @@
         </div>
     </div>
 </div>
-{% endif %}
 {% endif %}

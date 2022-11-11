@@ -32,12 +32,10 @@ initPriceBreakSet($('#internal-price-break-table'), {
 });
 {% endif %}
 
-{% if show_price_history %}
 // Purchase price history
 loadPurchasePriceHistoryTable({
     part: {{ part.pk }},
 });
-{% endif %}
 
 {% if part.purchaseable and roles.purchase_order.view %}
 // Supplier pricing information
