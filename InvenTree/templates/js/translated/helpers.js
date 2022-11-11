@@ -4,6 +4,7 @@
     blankImage,
     deleteButton,
     editButton,
+    formatCurrency,
     formatDecimal,
     imageHoverIcon,
     makeIconBadge,

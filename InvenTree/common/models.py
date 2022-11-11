@@ -1787,7 +1787,7 @@ class PriceBreak(models.Model):
 
     price = InvenTree.fields.InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True,
         verbose_name=_('Price'),
         help_text=_('Unit price at specified quantity'),

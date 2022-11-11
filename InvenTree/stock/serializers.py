@@ -171,7 +171,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
-        max_digits=19, decimal_places=4,
+        max_digits=19, decimal_places=6,
         allow_null=True,
         help_text=_('Purchase price of this stock item'),
     )

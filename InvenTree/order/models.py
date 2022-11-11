@@ -980,7 +980,7 @@ class OrderExtraLine(OrderLineItem):
 
     price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True, blank=True,
         allow_negative=True,
         verbose_name=_('Price'),
@@ -1060,7 +1060,7 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True, blank=True,
         verbose_name=_('Purchase Price'),
         help_text=_('Unit purchase price'),
@@ -1166,7 +1166,7 @@ class SalesOrderLineItem(OrderLineItem):
 
     sale_price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True, blank=True,
         verbose_name=_('Sale Price'),
         help_text=_('Unit sale price'),

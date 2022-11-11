@@ -25,7 +25,7 @@ function loadBomPricingChart(options={}) {
     var part = options.part;
 
     if (!part) {
-        console.error("No part provided to loadPurchasePriceHistoryTable");
+        console.error('No part provided to loadPurchasePriceHistoryTable');
         return;
     }
 
@@ -190,7 +190,7 @@ function loadPartSupplierPricingTable(options={}) {
     var part = options.part;
 
     if (!part) {
-        console.error("No part provided to loadPurchasePriceHistoryTable");
+        console.error('No part provided to loadPurchasePriceHistoryTable');
         return;
     }
 
@@ -460,7 +460,7 @@ function loadPurchasePriceHistoryTable(options={}) {
     var part = options.part;
 
     if (!part) {
-        console.error("No part provided to loadPurchasePriceHistoryTable");
+        console.error('No part provided to loadPurchasePriceHistoryTable');
         return;
     }
 
@@ -572,7 +572,7 @@ function loadSalesPriceHistoryTable(options={}) {
     var part = options.part;
 
     if (!part) {
-        console.error("No part provided to loadPurchasePriceHistoryTable");
+        console.error('No part provided to loadPurchasePriceHistoryTable');
         return;
     }
 
@@ -679,7 +679,7 @@ function loadVariantPricingChart(options={}) {
     var part = options.part;
 
     if (!part) {
-        console.error("No part provided to loadPurchasePriceHistoryTable");
+        console.error('No part provided to loadPurchasePriceHistoryTable');
         return;
     }
 
@@ -784,5 +784,5 @@ function loadVariantPricingChart(options={}) {
                 }
             }
         ]
-    })
+    });
 }
