@@ -1176,7 +1176,7 @@ function loadSupplierPriceBreakTable(options={}) {
                 formatter: function(value, row) {
                     var html = renderDate(value);
 
-                    html += `<div class='btn-group float-right' role='group'>`
+                    html += `<div class='btn-group float-right' role='group'>`;
                     html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
                     html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
                     html += `</div>`;
