@@ -200,7 +200,7 @@ def scheduled_task(interval: str, minutes: int = None, tasklist: TaskRegister = 
     return _task_wrapper
 
 
-@scheduled_task(ScheduledTask.MINUTES, 15)
+@scheduled_task(ScheduledTask.MINUTES, 5)
 def heartbeat():
     """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
 
