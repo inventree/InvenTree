@@ -220,9 +220,13 @@ class BomItemResource(InvenTreeResource):
     part_ipn = Field(attribute='sub_part__IPN', column_name=_('Part IPN'), readonly=True)
     part_name = Field(attribute='sub_part__name', column_name=_('Part Name'), readonly=True)
     part_description = Field(attribute='sub_part__description', column_name=_('Description'), readonly=True)
-    sub_assembly = Field(attribute='sub_part__assembly', column_name=_('Assembly'), readonly=True)
+    quantity = Field(attribute='quantity', column_name=_('Quantity'))
+    reference = Field(attribute='reference', column_name=_('Reference'))
+    note = Field(attribute='note', column_name=_('Note'))
     min_cost = Field(attribute='sub_part__pricing__overall_min', column_name=_('Minimum Price'), readonly=True)
     max_cost = Field(attribute='sub_part__pricing__overall_max', column_name=_('Maximum Price'), readonly=True)
+
+    sub_assembly = Field(attribute='sub_part__assembly', column_name=_('Assembly'), readonly=True)
 
     def dehydrate_min_cost(self, item):
         """Render minimum cost value for the BOM line item"""
