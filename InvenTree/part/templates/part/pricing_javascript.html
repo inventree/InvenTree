@@ -53,6 +53,13 @@ loadBomPricingChart({
 });
 {% endif %}
 
+{% if part.is_template %}
+// Variant pricing data
+loadVariantPricingChart({
+    part: {{ part.pk }}
+});
+{% endif %}
+
 {% if part.salable and roles.sales_order.view %}
     // Sales pricebreaks
     initPriceBreakSet(

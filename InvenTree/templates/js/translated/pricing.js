@@ -13,6 +13,7 @@
     loadPriceBreakTable,
     loadPurchasePriceHistoryTable,
     loadSalesPriceHistoryTable,
+    loadVariantPricingChart,
 */
 
 
@@ -667,4 +668,121 @@ function loadSalesPriceHistoryTable(options={}) {
             }
         ]
     });
+}
+
+
+/*
+ * Load chart and table for part variant pricing
+ */
+function loadVariantPricingChart(options={}) {
+
+    var part = options.part;
+
+    if (!part) {
+        console.error("No part provided to loadPurchasePriceHistoryTable");
+        return;
+    }
+
+    var table = options.table || $('#variant-pricing-table');
+    var chartElement = options.chart || $('#variant-pricing-chart');
+
+    var chart = null;
+
+    options.params = options.params || {};
+
+    options.params.ancestor = part;
+
+    table.inventreeTable({
+        url: '{% url "api-part-list" %}',
+        name: 'variantpricingtable',
+        queryParams: options.params,
+        original: options.params,
+        paginationVAlign: 'bottom',
+        pageSize: 10,
+        search: false,
+        showColumns: false,
+        formatNoMatches: function() {
+            return '{% trans "No variant data available" %}';
+        },
+        onLoadSuccess: function(data) {
+            // Construct variant pricing chart
+
+            data = data.filter((x) => x.pricing_min != null || x.pricing_max != null);
+
+            var graphLabels = Array.from(data, (x) => x.full_name);
+            var minValues = Array.from(data, (x) => x.pricing_min || x.pricing_max);
+            var maxValues = Array.from(data, (x) => x.pricing_max || x.pricing_min);
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = loadBarChart(chartElement, {
+                labels: graphLabels,
+                datasets: [
+                    {
+                        label: '{% trans "Minimum Price" %}',
+                        data: minValues,
+                        backgroundColor: 'rgba(200, 250, 200, 0.75)',
+                        borderColor: 'rgba(200, 250, 200)',
+                        stepped: true,
+                        fill: true,
+                    },
+                    {
+                        label: '{% trans "Maximum Price" %}',
+                        data: maxValues,
+                        backgroundColor: 'rgba(250, 220, 220, 0.75)',
+                        borderColor: 'rgba(250, 220, 220)',
+                        stepped: true,
+                        fill: true,
+                    }
+                ]
+            });
+        },
+        columns: [
+            {
+                field: 'part',
+                title: '{% trans "Variant Part" %}',
+                formatter: function(value, row) {
+                    var name = shortenString(row.full_name);
+                    var display = imageHoverIcon(row.thumbnail) + renderLink(name, `/part/${row.pk}/`);
+                    return withTitle(display, row.full_name);
+                }
+            },
+            {
+                field: 'pricing',
+                title: '{% trans "Price Range" %}',
+                formatter: function(value, row) {
+                    var min_price = row.pricing_min;
+                    var max_price = row.pricing_max;
+
+                    if (min_price == null && max_price == null) {
+                        // No pricing information available at all
+                        return null;
+                    }
+
+                    // If pricing is the same, return single value
+                    if (min_price == max_price) {
+                        return formatCurrency(min_price);
+                    }
+
+                    var output = '';
+
+                    if (min_price != null) {
+                        output += formatCurrency(min_price);
+
+                        if (max_price != null) {
+                            output += ' - ';
+                        }
+                    }
+
+                    if (max_price != null) {
+                        output += formatCurrency(max_price);
+                    }
+
+                    return output;
+                }
+            }
+        ]
+    })
 }

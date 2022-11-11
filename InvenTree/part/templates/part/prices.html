@@ -97,6 +97,14 @@
                         <td>{% include "price_data.html" with price=pricing.bom_cost_max %}</td>
                     </tr>
                     {% endif %}
+                    {% if part.is_template %}
+                    <tr>
+                        <td><a href='#variant-cost'><span class='fas fa-shapes'></span></a></td>
+                        <th>{% trans "Variant Cost" %}</th>
+                        <td>{% include "price_data.html" with price=pricing.variant_cost_min %}</td>
+                        <td>{% include "price_data.html" with price=pricing.variant_cost_max %}</td>
+                    </tr>
+                    {% endif %}
                     <tr>
                         <td></td>
                         <th>
@@ -267,6 +275,29 @@
         </div>
         <div class="col col-md-6">
             <table class='table table-striped table-condensed' id='bom-pricing-table'>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if part.is_template %}
+<a class='anchor' id='variant-cost'></a>
+<div class='panel-heading'>
+    <h4>
+        {% trans "Variant Cost" %}
+        <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+    </h4>
+</div>
+<div class='panel-content'>
+    <div class="row full-height">
+        <div class="col col-md-6">
+            <div style="max-width: 99%; height: 100%;">
+                <canvas id="variant-pricing-chart"></canvas>
+            </div>
+        </div>
+        <div class="col col-md-6">
+            <table class='table table-striped table-condensed' id='variant-pricing-table'>
             </table>
         </div>
     </div>

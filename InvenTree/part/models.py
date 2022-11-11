@@ -2280,10 +2280,27 @@ class PartPricing(models.Model):
 
         if originator is None:
             # If no originator is specified, use this part
-            originator = self
+            originator = self.part
 
         for p in used_in_parts:
             # Offload task to update the pricing for the assembled part
+            InvenTree.tasks.offload_task(
+                part_tasks.update_part_pricing,
+                p,
+                originator=originator
+            )
+
+    def update_templates(self, originator):
+        """Schedule updates for any template parts above this part"""
+
+        import part.tasks as part_tasks
+
+        if originator is None:
+            originator = self.part
+
+        templates = self.part.get_ancestors(include_self=False)
+
+        for p in templates:
             InvenTree.tasks.offload_task(
                 part_tasks.update_part_pricing,
                 p,
@@ -2303,8 +2320,9 @@ class PartPricing(models.Model):
         super().save(*args, **kwargs)
 
         # Check that the originator is not this part (to prevent infinite loop)
-        if originator != self:
+        if originator != self.part:
             self.update_assemblies(originator)
+            self.update_templates(originator)
 
     def update_all_costs(self, save=True, originator=None):
         """Recalculate all cost data for the referenced Part instance"""
@@ -2313,6 +2331,7 @@ class PartPricing(models.Model):
         self.update_purchase_cost(save=False)
         self.update_internal_cost(save=False)
         self.update_supplier_cost(save=False)
+        self.update_variant_cost(save=False)
         self.update_sale_cost(save=False)
 
         if save:
@@ -2348,6 +2367,9 @@ class PartPricing(models.Model):
         cumulative_min = Money(0, currency_code)
         cumulative_max = Money(0, currency_code)
 
+        any_min_elements = False
+        any_max_elements = False
+
         for bom_item in self.part.get_bom_items():
             # Loop through each BOM item which is used to assemble this part
 
@@ -2375,12 +2397,23 @@ class PartPricing(models.Model):
                 bom_item_min *= bom_item.quantity
                 cumulative_min += self.convert(bom_item_min)
 
+                any_min_elements = True
+
             if bom_item_max is not None:
                 bom_item_max *= bom_item.quantity
                 cumulative_max += self.convert(bom_item_max)
 
-        self.bom_cost_min = cumulative_min
-        self.bom_cost_max = cumulative_max
+                any_max_elements = True
+
+        if any_min_elements:
+            self.bom_cost_min = cumulative_min
+        else:
+            self.bom_cost_min = None
+
+        if any_max_elements:
+            self.bom_cost_max = cumulative_max
+        else:
+            self.bom_cost_max = None
 
         if save:
             self.save()
@@ -2487,6 +2520,36 @@ class PartPricing(models.Model):
 
         self.supplier_price_min = min_sup_cost
         self.supplier_price_max = max_sup_cost
+
+        if save:
+            self.save()
+
+    def update_variant_cost(self, save=True):
+        """Update variant cost values.
+
+        Here we track the min/max costs of any variant parts.
+        """
+
+        variant_min = None
+        variant_max = None
+
+        if self.part.is_template:
+            variants = self.part.get_descendants(include_self=False)
+
+            for v in variants:
+                v_min = self.convert(v.pricing.overall_min)
+                v_max = self.convert(v.pricing.overall_max)
+
+                if v_min is not None:
+                    if variant_min is None or v_min < variant_min:
+                        variant_min = v_min
+
+                if v_max is not None:
+                    if variant_max is None or v_max > variant_max:
+                        variant_max = v_max
+
+        self.variant_cost_min = variant_min
+        self.variant_cost_max = variant_max
 
         if save:
             self.save()
@@ -2657,6 +2720,18 @@ class PartPricing(models.Model):
         null=True, blank=True,
         verbose_name=_('Maximum Supplier Price'),
         help_text=_('Maximum price of part from external suppliers'),
+    )
+
+    variant_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Variant Cost'),
+        help_text=_('Calculated minimum cost of variant parts'),
+    )
+
+    variant_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Variant Cost'),
+        help_text=_('Calculated maximum cost of variant parts'),
     )
 
     overall_min = InvenTree.fields.InvenTreeModelMoneyField(

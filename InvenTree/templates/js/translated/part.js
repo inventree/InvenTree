@@ -1437,21 +1437,11 @@ function loadPartTable(table, url, options={}) {
         });
     }
 
-    col = {
-        field: 'IPN',
-        title: '{% trans "IPN" %}',
-    };
-
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
-
-    columns.push(col);
-
-    col = {
+    columns.push({
         field: 'name',
         title: '{% trans "Part" %}',
         switchable: false,
+        sortable: !options.params.ordering,
         formatter: function(value, row) {
 
             var name = shortenString(row.full_name);
@@ -1462,13 +1452,13 @@ function loadPartTable(table, url, options={}) {
 
             return withTitle(display, row.full_name);
         }
-    };
+    });
 
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
-
-    columns.push(col);
+    columns.push({
+        field: 'IPN',
+        title: '{% trans "IPN" %}',
+        sortable: !options.params.ordering
+    });
 
     columns.push({
         field: 'description',
