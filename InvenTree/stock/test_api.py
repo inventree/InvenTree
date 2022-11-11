@@ -580,7 +580,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=200
         ).data
 
-        self.assertEqual(data['purchase_price'], '456.0000')
+        self.assertEqual(data['purchase_price'], '456.000000')
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update the currency

@@ -1184,7 +1184,7 @@ class PartAPITest(InvenTreeAPITestCase):
         required_cols = [
             'Part ID',
             'Part Name',
-            'Part description',
+            'Part Description',
             'In Stock',
             'Category Name',
             'Keywords',
