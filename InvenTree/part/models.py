@@ -2466,18 +2466,20 @@ class PartPricing(models.Model):
         min_int_cost = None
         max_int_cost = None
 
-        for pb in self.part.internalpricebreaks.all():
-            cost = self.convert(pb.price)
+        if InvenTreeSetting.get_setting('PART_INTERNAL_PRICE', False):
+            # Only calculate internal pricing if internal pricing is enabled
+            for pb in self.part.internalpricebreaks.all():
+                cost = self.convert(pb.price)
 
-            if cost is None:
-                # Ignore if cost could not be converted for some reason
-                continue
+                if cost is None:
+                    # Ignore if cost could not be converted for some reason
+                    continue
 
-            if min_int_cost is None or cost < min_int_cost:
-                min_int_cost = cost
+                if min_int_cost is None or cost < min_int_cost:
+                    min_int_cost = cost
 
-            if max_int_cost is None or cost > max_int_cost:
-                max_int_cost = cost
+                if max_int_cost is None or cost > max_int_cost:
+                    max_int_cost = cost
 
         self.internal_cost_min = min_int_cost
         self.internal_cost_max = max_int_cost
@@ -2594,6 +2596,14 @@ class PartPricing(models.Model):
 
             if overall_max is None or cost > overall_max:
                 overall_max = cost
+
+        if InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False):
+            # Check if internal pricing should override other pricing
+            if self.internal_cost_min is not None:
+                overall_min = self.internal_cost_min
+
+            if self.internal_cost_max is not None:
+                overall_max = self.internal_cost_max
 
         self.overall_min = overall_min
         self.overall_max = overall_max
