@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-10 03:40+0000\n"
-"PO-Revision-Date: 2022-11-10 14:24\n"
+"POT-Creation-Date: 2022-11-11 04:11+0000\n"
+"PO-Revision-Date: 2022-11-11 14:27\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
-#: InvenTree/api.py:54
+#: InvenTree/api.py:61
 msgid "API endpoint not found"
 msgstr "Το API endpoint δε βρέθηκε"
 
