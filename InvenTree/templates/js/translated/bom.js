@@ -1028,9 +1028,23 @@ function loadBomTable(table, options={}) {
     });
 
     cols.push({
-        field: 'price_range',
+        field: 'pricing',
         title: '{% trans "Price Range" %}',
-        sortable: false,
+        sortable: true,
+        sorter: function(valA, valB, rowA, rowB) {
+            var a = rowA.pricing_min || rowA.pricing_max;
+            var b = rowB.pricing_min || rowB.pricing_max;
+
+            if (a != null) {
+                a = parseFloat(a) * rowA.quantity;
+            }
+
+            if (b != null) {
+                b = parseFloat(b) * rowB.quantity;
+            }
+
+            return (a > b) ? 1 : -1;
+        },
         formatter: function(value, row) {
 
             var min_price = row.pricing_min;
