@@ -114,6 +114,10 @@ class InvenTreeMoneyField(MoneyField):
     def __init__(self, *args, **kwargs):
         """Override initial values with the real info from database."""
         kwargs.update(money_kwargs())
+
+        kwargs['max_digits'] = 19
+        kwargs['decimal_places'] = 6
+
         super().__init__(*args, **kwargs)
 
 
