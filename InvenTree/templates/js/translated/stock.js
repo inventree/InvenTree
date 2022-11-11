@@ -1970,7 +1970,7 @@ function loadStockTable(table, options) {
                 currency: row.purchase_price_currency,
             });
         }
-    })
+    });
 
     columns.push({
         field: 'packaging',
