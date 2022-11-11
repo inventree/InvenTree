@@ -1217,16 +1217,16 @@ class PartAPITest(InvenTreeAPITestCase):
             )
 
             for row in data:
-                part = Part.objects.get(pk=row['id'])
+                part = Part.objects.get(pk=row['Part ID'])
 
                 if part.IPN:
                     self.assertEqual(part.IPN, row['IPN'])
 
-                self.assertEqual(part.name, row['name'])
-                self.assertEqual(part.description, row['description'])
+                self.assertEqual(part.name, row['Part Name'])
+                self.assertEqual(part.description, row['Part Description'])
 
                 if part.category:
-                    self.assertEqual(part.category.name, row['category_name'])
+                    self.assertEqual(part.category.name, row['Category Name'])
 
 
 class PartDetailTests(InvenTreeAPITestCase):

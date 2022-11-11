@@ -58,14 +58,14 @@ class BomExportTest(InvenTreeTestCase):
                 break
 
             expected = [
-                'part_id',
-                'part_ipn',
-                'part_name',
-                'quantity',
+                'Part ID',
+                'Part IPN',
+                'Part Name',
+                'Quantity',
+                'Reference',
+                'Note',
                 'optional',
                 'overage',
-                'reference',
-                'note',
                 'inherited',
                 'allow_variants',
             ]
