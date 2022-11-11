@@ -119,6 +119,8 @@ def render_currency(money, decimal_places=6, include_symbol=True):
             decimals = min(decimals, decimal_places)
 
             decimal_places = decimals
+        else:
+            decimal_places = 2
 
     return moneyed.localization.format_money(
         money,
