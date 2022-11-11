@@ -674,6 +674,9 @@ CURRENCIES = CONFIG.get(
     ],
 )
 
+# Maximum number of decimal places for currency rendering
+CURRENCY_DECIMAL_PLACES = 6
+
 # Check that each provided currency is supported
 for currency in CURRENCIES:
     if currency not in moneyed.CURRENCIES:  # pragma: no cover
