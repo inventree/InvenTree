@@ -18,6 +18,15 @@
 {% endblock %}
 
 {% block content %}
+{% if rates_updated %}
+<div class='alert alert-block alert-info'>
+    {% trans "Last Update" %} - {{ rates_updated }}
+</div>
+{% else %}
+<div class='alert alert-block alert-warning'>
+    {% trans "Last Update" %} - {% trans "Never" %}
+</div>
+{% endif %}
 
 <table class='table table-striped table-condensed'>
     <tbody>
@@ -30,30 +39,19 @@
         </tr>
         <tr>
             <td></td>
-            <th colspan='4'>{% trans "Exchange Rates" %}</th>
+            <th>{% trans "Exchange Rates" %}</th>
+            <th>{% trans "Currency" %}</th>
+            <th>{% trans "Rate" %}</th>
         </tr>
         {% for rate in rates %}
         <tr>
             <td></td>
-            <td>{{ rate.value }}</td>
-            <td>{{ rate.currency }}</td>
             <td></td>
+            <td>{{ rate.currency }}</td>
+            <td>{{ rate.value }}</td>
             <td></td>
         </tr>
         {% endfor %}
-        <tr>
-            <th></th>
-            <th>
-                {% trans "Last Update" %}
-            </th>
-            <td colspan="3">
-                {% if rates_updated %}
-                {{ rates_updated }}
-                {% else %}
-                <em>{% trans "Never" %}</em>
-                {% endif %}
-            </td>
-        </tr>
     </tbody>
 </table>
 

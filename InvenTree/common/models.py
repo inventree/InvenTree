@@ -1075,20 +1075,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'PART_INTERNAL_PRICE': {
-            'name': _('Internal Prices'),
-            'description': _('Enable internal prices for parts'),
-            'default': False,
-            'validator': bool
-        },
-
-        'PART_BOM_USE_INTERNAL_PRICE': {
-            'name': _('Internal Price as BOM-Price'),
-            'description': _('Use the internal price (if set) in BOM-price calculations'),
-            'default': False,
-            'validator': bool
-        },
-
         'PART_NAME_FORMAT': {
             'name': _('Part Name Display Format'),
             'description': _('Format to display the part name'),
@@ -1101,6 +1087,31 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Part Category Default Icon'),
             'description': _('Part category default icon (empty means no icon)'),
             'default': '',
+        },
+
+        'PRICING_UPDATE_DAYS': {
+            'name': _('Pricing Rebuild Time'),
+            'description': _('Number of days before part pricing is automatically updated'),
+            'units': _('days'),
+            'default': 30,
+            'validator': [
+                int,
+                MinValueValidator(10),
+            ]
+        },
+
+        'PART_INTERNAL_PRICE': {
+            'name': _('Internal Prices'),
+            'description': _('Enable internal prices for parts'),
+            'default': False,
+            'validator': bool
+        },
+
+        'PART_BOM_USE_INTERNAL_PRICE': {
+            'name': _('Internal Price Override'),
+            'description': _('If available, internal prices override price range calculations'),
+            'default': False,
+            'validator': bool
         },
 
         'LABEL_ENABLE': {

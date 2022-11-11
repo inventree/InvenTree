@@ -1,13 +1,17 @@
 """Background task definitions for the 'part' app"""
 
 import logging
+from datetime import datetime, timedelta
 
 from django.utils.translation import gettext_lazy as _
 
+import common.models
 import common.notifications
+import common.settings
 import InvenTree.helpers
 import InvenTree.tasks
 import part.models
+from InvenTree.tasks import ScheduledTask, scheduled_task
 
 logger = logging.getLogger("inventree")
 
@@ -67,3 +71,56 @@ def update_part_pricing(part: part.models.Part, originator: part.models.Part = N
 
     pricing = part.pricing
     pricing.update_all_costs(originator=originator)
+
+
+@scheduled_task(ScheduledTask.DAILY)
+def check_missing_pricing():
+    """Check for parts with missing or outdated pricing information:
+
+    - Pricing information does not exist
+    - Pricing information is "old"
+    - Pricing information is in the wrong currency
+    """
+
+    # We do not want to overload the background worker, so limit the number of parts we update at once
+    limit = 150
+
+    # Find any parts which do not have pricing information
+    results = part.models.Part.objects.filter(pricing_data=None)[:limit]
+
+    if results.count() > 0:
+        logger.info(f"Found {results.count()} parts without pricing")
+
+        for p in results:
+            InvenTree.tasks.offload_task(
+                update_part_pricing,
+                p
+            )
+
+    # Find any parts which have 'old' pricing information
+    days = int(common.models.InvenTreeSetting.get_setting('PRICING_UPDATE_DAYS', 30))
+    stale_date = datetime.now().date() - timedelta(days=days)
+
+    results = part.models.PartPricing.objects.filter(updated__lte=stale_date)[:limit]
+
+    if results.count() > 0:
+        logger.info(f"Found {results.count()} stale pricing entries")
+
+        for pp in results:
+            InvenTree.tasks.offload_task(
+                update_part_pricing,
+                pp.part,
+            )
+
+    # Find any pricing data which is in the wrong currency
+    currency = common.settings.currency_code_default()
+    results = part.models.PartPricing.objects.exclude(currency=currency)
+
+    if results.count() > 0:
+        logger.info(f"Found {results.count()} pricing entries in the wrong currency")
+
+        for pp in results:
+            InvenTree.tasks.offload_task(
+                update_part_pricing,
+                pp.part,
+            )
