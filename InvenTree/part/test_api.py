@@ -1182,17 +1182,17 @@ class PartAPITest(InvenTreeAPITestCase):
         url = reverse('api-part-list')
 
         required_cols = [
-            'id',
-            'name',
-            'description',
-            'in_stock',
-            'category_name',
-            'keywords',
-            'is_template',
-            'virtual',
-            'trackable',
-            'active',
-            'notes',
+            'Part ID',
+            'Part Name',
+            'Part description',
+            'In Stock',
+            'Category Name',
+            'Keywords',
+            'Template',
+            'Virtual',
+            'Trackable',
+            'Active',
+            'Notes',
             'creation_date',
         ]
 

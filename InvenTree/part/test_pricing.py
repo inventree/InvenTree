@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from djmoney.money import Money
 
+import common.models
 import common.settings
 import company.models
 import order.models
@@ -173,8 +174,6 @@ class PartPricingTests(InvenTreeTestCase):
     def test_supplier_part_pricing(self):
         """Test for supplier part pricing"""
 
-        self.create_price_breaks()
-
         pricing = self.part.pricing
 
         # Initially, no information (not yet calculated)
@@ -183,8 +182,8 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertIsNone(pricing.overall_min)
         self.assertIsNone(pricing.overall_max)
 
-        # Re-calculate internal pricing
-        pricing.update_supplier_cost()
+        # Creating price breaks will cause the pricing to be updated
+        self.create_price_breaks()
         pricing.refresh_from_db()
 
         self.assertEqual(pricing.overall_min, Money('2.014667', 'USD'))
@@ -193,13 +192,16 @@ class PartPricingTests(InvenTreeTestCase):
         # Delete all supplier parts and re-calculate
         self.part.supplier_parts.all().delete()
         pricing.update_all_costs()
-
         pricing.refresh_from_db()
+
         self.assertIsNone(pricing.supplier_price_min)
         self.assertIsNone(pricing.supplier_price_max)
 
     def test_internal_pricing(self):
         """Tests for internal price breaks"""
+
+        # Ensure internal pricing is enabled
+        common.models.InvenTreeSetting.set_setting('PART_INTERNAL_PRICE', True, None)
 
         pricing = self.part.pricing
 
