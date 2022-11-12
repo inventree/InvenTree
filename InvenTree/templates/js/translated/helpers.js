@@ -6,6 +6,7 @@
     editButton,
     formatCurrency,
     formatDecimal,
+    formatPriceRange,
     imageHoverIcon,
     makeIconBadge,
     makeIconButton,
@@ -75,6 +76,36 @@ function formatCurrency(value, options={}) {
     );
 
     return formatter.format(value);
+}
+
+
+/*
+ * Format a range of prices
+ */
+function formatPriceRange(price_min, price_max, options={}) {
+
+    var p_min = price_min || price_max;
+    var p_max = price_max || price_min;
+
+    var quantity = options.quantity || 1;
+
+    if (p_min == null && p_max == null) {
+        return null;
+    }
+
+    p_min = parseFloat(p_min) * quantity;
+    p_max = parseFloat(p_max) * quantity;
+
+    var output = '';
+
+    output += formatCurrency(p_min, options);
+
+    if (p_min != p_max) {
+        output += ' - ';
+        output += formatCurrency(p_max, options);
+    }
+
+    return output;
 }
 
 

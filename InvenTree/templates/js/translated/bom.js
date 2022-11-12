@@ -1047,34 +1047,13 @@ function loadBomTable(table, options={}) {
         },
         formatter: function(value, row) {
 
-            var min_price = row.pricing_min;
-            var max_price = row.pricing_max;
-
-            if (min_price == null && max_price == null) {
-                // No pricing information available at all
-                return null;
-            }
-
-            // If pricing is the same, return single value
-            if (min_price == max_price) {
-                return formatCurrency(min_price * row.quantity);
-            }
-
-            var output = '';
-
-            if (min_price != null) {
-                output += formatCurrency(min_price * row.quantity);
-
-                if (max_price != null) {
-                    output += ' - ';
+            return formatPriceRange(
+                row.pricing_min,
+                row.pricing_max,
+                {
+                    quantity: row.quantity
                 }
-            }
-
-            if (max_price != null) {
-                output += formatCurrency(max_price * row.quantity);
-            }
-
-            return output;
+            );
         },
         footerFormatter: function(data) {
             // Display overall price range the "footer" of the price_range column

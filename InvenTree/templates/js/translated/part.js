@@ -777,6 +777,16 @@ function loadPartVariantTable(table, partId, options={}) {
 
                 return renderLink(text, `/part/${row.pk}/?display=part-stock`);
             }
+        },
+        {
+            field: 'price_range',
+            title: '{% trans "Price Range" %}',
+            formatter: function(value, row) {
+                return formatPriceRange(
+                    row.pricing_min,
+                    row.pricing_max,
+                );
+            }
         }
     ];
 
@@ -1571,34 +1581,10 @@ function loadPartTable(table, url, options={}) {
         sortable: false,
         title: '{% trans "Price Range" %}',
         formatter: function(value, row) {
-            var min_price = row.pricing_min;
-            var max_price = row.pricing_max;
-
-            if (min_price == null && max_price == null) {
-                // No pricing information available at all
-                return null;
-            }
-
-            // If pricing is the same, return single value
-            if (min_price == max_price) {
-                return formatCurrency(min_price);
-            }
-
-            var output = '';
-
-            if (min_price != null) {
-                output += formatCurrency(min_price);
-
-                if (max_price != null) {
-                    output += ' - ';
-                }
-            }
-
-            if (max_price != null) {
-                output += formatCurrency(max_price);
-            }
-
-            return output;
+            return formatPriceRange(
+                row.pricing_min,
+                row.pricing_max
+            );
         }
     });
 
