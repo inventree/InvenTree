@@ -3,10 +3,6 @@
 In particular these views provide base functionality for rendering Django forms
 as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
-
-import json
-
-from django.conf import settings
 from django.contrib.auth import password_validation
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
@@ -15,30 +11,21 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
-from django.views.generic.base import RedirectView, TemplateView
-
-from allauth.account.forms import AddEmailForm
-from allauth.account.models import EmailAddress
+from django.views.generic.base import RedirectView
 from allauth.account.views import (EmailView, LoginView,
                                    PasswordResetFromKeyView)
-from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
 from allauth_2fa.views import TwoFactorRemove
-from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
-from common.models import ColorTheme, InvenTreeSetting
-from common.settings import currency_code_default, currency_codes
-from part.models import PartCategory
+from common.models import ColorTheme
 from users.models import RuleSet, check_user_role
 
 from .forms import EditUserForm, SetPasswordForm
-from .helpers import remove_non_printable_characters, strip_html_tags
 
 
 def auth_request(request):
@@ -577,6 +564,7 @@ class SetPasswordView(AjaxUpdateView):
 
         return self.renderJsonResponse(request, form, data={'form_valid': valid})
 
+
 class AllauthOverrides(LoginRequiredMixin):
     """Override allauths views to always redirect to success_url."""
 
@@ -691,6 +679,7 @@ class AboutView(AjaxView):
 
     ajax_template_name = "about.html"
     ajax_form_title = _("About InvenTree")
+
 
 # Custom 2FA removal form to allow custom redirect URL
 class CustomTwoFactorRemove(TwoFactorRemove):
