@@ -120,6 +120,7 @@ function loadBomPricingChart(options={}) {
             {
                 field: 'pricing',
                 title: '{% trans "Price Range" %}',
+                sortable: false,
                 formatter: function(value, row) {
                     var min_price = row.pricing_min;
                     var max_price = row.pricing_max;

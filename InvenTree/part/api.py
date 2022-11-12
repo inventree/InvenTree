@@ -1762,7 +1762,7 @@ class BomFilter(rest_filters.FilterSet):
         value = str2bool(value)
 
         q_a = Q(sub_part__pricing_data=None)
-        q_b = Q(sub_part__pricing_data__overall_min=None, pricing_data__overall_max=None)
+        q_b = Q(sub_part__pricing_data__overall_min=None, sub_part__pricing_data__overall_max=None)
 
         if value:
             queryset = queryset.exclude(q_a | q_b)
