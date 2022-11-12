@@ -659,6 +659,13 @@ function loadSalesPriceHistoryTable(options={}) {
                 }
             },
             {
+                field: 'shipment_date',
+                title: '{% trans "Date" %}',
+                formatter: function(value, row) {
+                    return renderDate(row.order_detail.shipment_date);
+                }
+            },
+            {
                 field: 'sale_price',
                 title: '{% trans "Sale Price" %}',
                 formatter: function(value, row) {
