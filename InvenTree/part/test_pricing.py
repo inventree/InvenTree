@@ -191,7 +191,7 @@ class PartPricingTests(InvenTreeTestCase):
 
         # Delete all supplier parts and re-calculate
         self.part.supplier_parts.all().delete()
-        pricing.update_all_costs()
+        pricing.update()
         pricing.refresh_from_db()
 
         self.assertIsNone(pricing.supplier_price_min)

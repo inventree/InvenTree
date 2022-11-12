@@ -1656,7 +1656,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     def update_pricing(self):
         """Recalculate cached pricing for this Part instance"""
 
-        self.pricing.update_all_costs()
+        self.pricing.update_pricing()
 
     @property
     def pricing(self):
@@ -2270,61 +2270,27 @@ class PartPricing(models.Model):
 
         return result
 
-    def update_assemblies(self, originator):
-        """Schedule updates for any assemblies which use this part"""
+    def schedule_for_update(self, counter: int = 0):
+        """Schedule this pricing to be updated"""
+
+        if self.scheduled_for_update:
+            # Ignore if the pricing is already scheduled to be updated
+            logger.info(f"Pricing for {self.part} already scheduled for update - skipping")
+            return
+
+        self.scheduled_for_update = True
+        self.save()
 
         import part.tasks as part_tasks
 
-        # If the linked Part is used in any assemblies, schedule a pricing update for those assemblies
-        used_in_parts = self.part.get_used_in()
+        # Offload task to update the pricing
+        InvenTree.tasks.offload_task(
+            part_tasks.update_part_pricing,
+            self,
+            counter=counter
+        )
 
-        if originator is None:
-            # If no originator is specified, use this part
-            originator = self.part
-
-        for p in used_in_parts:
-            # Offload task to update the pricing for the assembled part
-            InvenTree.tasks.offload_task(
-                part_tasks.update_part_pricing,
-                p,
-                originator=originator
-            )
-
-    def update_templates(self, originator):
-        """Schedule updates for any template parts above this part"""
-
-        import part.tasks as part_tasks
-
-        if originator is None:
-            originator = self.part
-
-        templates = self.part.get_ancestors(include_self=False)
-
-        for p in templates:
-            InvenTree.tasks.offload_task(
-                part_tasks.update_part_pricing,
-                p,
-                originator=originator
-            )
-
-    def save(self, *args, **kwargs):
-        """Whenever pricing model is saved, automatically update overall prices"""
-
-        # Update the currency which was used to perform the calculation
-        self.currency = currency_code_default()
-
-        self.update_overall_cost()
-
-        originator = kwargs.pop('originator', None)
-
-        super().save(*args, **kwargs)
-
-        # Check that the originator is not this part (to prevent infinite loop)
-        if originator != self.part:
-            self.update_assemblies(originator)
-            self.update_templates(originator)
-
-    def update_all_costs(self, save=True, originator=None):
+    def update_pricing(self, counter: int = 0):
         """Recalculate all cost data for the referenced Part instance"""
 
         self.update_bom_cost(save=False)
@@ -2334,11 +2300,42 @@ class PartPricing(models.Model):
         self.update_variant_cost(save=False)
         self.update_sale_cost(save=False)
 
-        if save:
-            # Call to save here will call update_overall_cost() internally
-            self.save(originator=originator)
-        else:
-            self.update_overall_cost()
+        # Clear scheduling flag
+        self.scheduled_for_update = False
+
+        # Note: save method calls update_overall_cost
+        self.save()
+
+        # Update parent assemblies and templates
+        self.update_assemblies(counter)
+        self.update_templates(counter)
+
+    def update_assemblies(self, counter: int = 0):
+        """Schedule updates for any assemblies which use this part"""
+
+        # If the linked Part is used in any assemblies, schedule a pricing update for those assemblies
+        used_in_parts = self.part.get_used_in()
+
+        for p in used_in_parts:
+            p.pricing.schedule_for_update(counter)
+
+    def update_templates(self, counter: int = 0):
+        """Schedule updates for any template parts above this part"""
+
+        templates = self.part.get_ancestors(include_self=False)
+
+        for p in templates:
+            p.pricing.schedule_for_update(counter)
+
+    def save(self, *args, **kwargs):
+        """Whenever pricing model is saved, automatically update overall prices"""
+
+        # Update the currency which was used to perform the calculation
+        self.currency = currency_code_default()
+
+        self.update_overall_cost()
+
+        super().save(*args, **kwargs)
 
     def update_bom_cost(self, save=True):
         """Recalculate BOM cost for the referenced Part instance.
@@ -2675,6 +2672,10 @@ class PartPricing(models.Model):
         verbose_name=_('Updated'),
         help_text=_('Timestamp of last pricing update'),
         auto_now=True
+    )
+
+    scheduled_for_update = models.BooleanField(
+        default=False,
     )
 
     part = models.OneToOneField(
@@ -3492,14 +3493,9 @@ class BomItem(DataImportMixin, models.Model):
 def update_pricing_after_edit(sender, instance, created, **kwargs):
     """Callback function when a part price break is created or updated"""
 
-    from part import tasks as part_tasks
-
     # Update part pricing *unless* we are importing data
     if not InvenTree.ready.isImportingData():
-        InvenTree.tasks.offload_task(
-            part_tasks.update_part_pricing,
-            instance.part,
-        )
+        instance.part.pricing.schedule_for_update()
 
 
 @receiver(post_delete, sender=BomItem, dispatch_uid='post_delete_bom_item')
@@ -3508,14 +3504,9 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
 def update_pricing_after_delete(sender, instance, **kwargs):
     """Callback function when a part price break is deleted"""
 
-    from part import tasks as part_tasks
-
     # Update part pricing *unless* we are importing data
     if not InvenTree.ready.isImportingData():
-        InvenTree.tasks.offload_task(
-            part_tasks.update_part_pricing,
-            instance.part,
-        )
+        instance.part.pricing.schedule_for_update()
 
 
 class BomItemSubstitute(models.Model):

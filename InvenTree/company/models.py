@@ -701,27 +701,17 @@ class SupplierPriceBreak(common.models.PriceBreak):
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated"""
 
-    from part import tasks as part_tasks
-
     if not InvenTree.ready.isImportingData():
 
         if instance.part and instance.part.part:
-            InvenTree.tasks.offload_task(
-                part_tasks.update_part_pricing,
-                instance.part.part
-            )
+            instance.part.part.pricing.schedule_for_update()
 
 
 @receiver(post_delete, sender=SupplierPriceBreak, dispatch_uid='post_delete_supplier_price_break')
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted"""
 
-    from part import tasks as part_tasks
-
     if not InvenTree.ready.isImportingData():
 
         if instance.part and instance.part.part:
-            InvenTree.tasks.offload_task(
-                part_tasks.update_part_pricing,
-                instance.part.part
-            )
+            instance.part.part.pricing.schedule_for_update()

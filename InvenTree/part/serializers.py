@@ -556,7 +556,7 @@ class PartPricingSerializer(InvenTreeModelSerializer):
         if InvenTree.helpers.str2bool(data.get('update', False)):
             # Update part pricing
             pricing = self.instance
-            pricing.update_all_costs()
+            pricing.update_pricing()
 
 
 class PartRelationSerializer(InvenTreeModelSerializer):

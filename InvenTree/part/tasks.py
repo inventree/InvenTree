@@ -59,18 +59,23 @@ def notify_low_stock_if_required(part: part.models.Part):
             )
 
 
-def update_part_pricing(part: part.models.Part, originator: part.models.Part = None):
-    """Update cached pricing data for the specified Part instance
+def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
+    """Update cached pricing data for the specified PartPricing instance
 
     Arguments:
-        part: The target Part to be updated
-        originator: The original Part instance which called for this part to be updated
+        pricing: The target PartPricing instance to be updated
+        counter: How many times this function has been called in sequence
     """
 
-    logger.info(f"Updating part pricing for Part <{part.pk}> : {part.name}")
+    # Do not ascend too many levels (prevent recursion or CPU overload)
+    if counter > 15:
+        logger.warning("update_part_pricing maximum depth reached")
+        return
 
-    pricing = part.pricing
-    pricing.update_all_costs(originator=originator)
+    logger.info(f"Updating part pricing for {pricing.part}")
+
+    counter += 1
+    pricing.update_pricing(counter=counter)
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -92,10 +97,7 @@ def check_missing_pricing():
         logger.info(f"Found {results.count()} parts without pricing")
 
         for p in results:
-            InvenTree.tasks.offload_task(
-                update_part_pricing,
-                p
-            )
+            p.pricing.schedule_for_update()
 
     # Find any parts which have 'old' pricing information
     days = int(common.models.InvenTreeSetting.get_setting('PRICING_UPDATE_DAYS', 30))
@@ -107,10 +109,7 @@ def check_missing_pricing():
         logger.info(f"Found {results.count()} stale pricing entries")
 
         for pp in results:
-            InvenTree.tasks.offload_task(
-                update_part_pricing,
-                pp.part,
-            )
+            pp.schedule_for_update()
 
     # Find any pricing data which is in the wrong currency
     currency = common.settings.currency_code_default()
@@ -120,7 +119,4 @@ def check_missing_pricing():
         logger.info(f"Found {results.count()} pricing entries in the wrong currency")
 
         for pp in results:
-            InvenTree.tasks.offload_task(
-                update_part_pricing,
-                pp.part,
-            )
+            pp.schedule_for_update()

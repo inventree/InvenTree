@@ -388,14 +388,9 @@ class PurchaseOrder(Order):
             self.save()
 
             # Schedule pricing update for any referenced parts
-            from part.tasks import update_part_pricing
-
             for line in self.lines.all():
                 if line.part and line.part.part:
-                    InvenTree.tasks.offload_task(
-                        update_part_pricing,
-                        line.part.part,
-                    )
+                    line.part.part.pricing.schedule_for_update()
 
             trigger_event('purchaseorder.completed', id=self.pk)
 
@@ -782,14 +777,8 @@ class SalesOrder(Order):
         self.save()
 
         # Schedule pricing update for any referenced parts
-        from part.tasks import update_part_pricing
-
         for line in self.lines.all():
-
-            InvenTree.tasks.offload_task(
-                update_part_pricing,
-                line.part
-            )
+            line.part.pricing.schedule_for_update()
 
         trigger_event('salesorder.completed', id=self.pk)
 
