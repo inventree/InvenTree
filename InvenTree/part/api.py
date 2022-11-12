@@ -1041,11 +1041,13 @@ class PartFilter(rest_filters.FilterSet):
 
         value = str2bool(value)
 
+        q_a = Q(pricing_data=None)
+        q_b = Q(pricing_data__overall_min=None, pricing_data__overall_max=None)
+
         if value:
-            queryset = queryset.exclude(pricing_data=None)
-            queryset = queryset.exclude(pricing_data__overall_min=None, pricing_data__overall_max=None)
+            queryset = queryset.exclude(q_a | q_b)
         else:
-            queryset = queryset.filter(pricing_data=None)
+            queryset = queryset.filter(q_a | q_b)
 
         return queryset
 
@@ -1759,11 +1761,13 @@ class BomFilter(rest_filters.FilterSet):
 
         value = str2bool(value)
 
+        q_a = Q(sub_part__pricing_data=None)
+        q_b = Q(sub_part__pricing_data__overall_min=None, pricing_data__overall_max=None)
+
         if value:
-            queryset = queryset.exclude(sub_part__pricing_data=None)
-            queryset = queryset.exclude(sub_part__pricing_data__overall_min=None, sub_part__pricing_data__overall_max=None)
+            queryset = queryset.exclude(q_a | q_b)
         else:
-            queryset = queryset.filter(sub_part__pricing_data=None)
+            queryset = queryset.filter(q_a | q_b)
 
         return queryset
 
