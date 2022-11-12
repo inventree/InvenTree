@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-11 04:11+0000\n"
-"PO-Revision-Date: 2022-11-11 14:27\n"
+"POT-Creation-Date: 2022-11-12 03:16+0000\n"
+"PO-Revision-Date: 2022-11-12 14:31\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -420,115 +420,115 @@ msgstr "Διεύθυνση URL του αρχείου απομακρυσμένη�
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Η λήψη εικόνων από απομακρυσμένο URL δεν είναι ενεργοποιημένη"
 
-#: InvenTree/settings.py:623
+#: InvenTree/settings.py:627
 msgid "Czech"
 msgstr "Τσέχικα"
 
-#: InvenTree/settings.py:624
+#: InvenTree/settings.py:628
 msgid "Danish"
 msgstr ""
 
-#: InvenTree/settings.py:625
+#: InvenTree/settings.py:629
 msgid "German"
 msgstr "Γερμανικά"
 
-#: InvenTree/settings.py:626
+#: InvenTree/settings.py:630
 msgid "Greek"
 msgstr "Ελληνικά"
 
-#: InvenTree/settings.py:627
+#: InvenTree/settings.py:631
 msgid "English"
 msgstr "Αγγλικά"
 
-#: InvenTree/settings.py:628
+#: InvenTree/settings.py:632
 msgid "Spanish"
 msgstr "Ισπανικά"
 
-#: InvenTree/settings.py:629
+#: InvenTree/settings.py:633
 msgid "Spanish (Mexican)"
 msgstr "Ισπανικά (Μεξικό)"
 
-#: InvenTree/settings.py:630
+#: InvenTree/settings.py:634
 msgid "Farsi / Persian"
 msgstr "Φαρσί / Περσικά"
 
-#: InvenTree/settings.py:631
+#: InvenTree/settings.py:635
 msgid "French"
 msgstr "Γαλλικά"
 
-#: InvenTree/settings.py:632
+#: InvenTree/settings.py:636
 msgid "Hebrew"
 msgstr "Εβραϊκά"
 
-#: InvenTree/settings.py:633
+#: InvenTree/settings.py:637
 msgid "Hungarian"
 msgstr "Ούγγρικα"
 
-#: InvenTree/settings.py:634
+#: InvenTree/settings.py:638
 msgid "Italian"
 msgstr "Ιταλικά"
 
-#: InvenTree/settings.py:635
+#: InvenTree/settings.py:639
 msgid "Japanese"
 msgstr "Ιαπωνικά"
 
-#: InvenTree/settings.py:636
+#: InvenTree/settings.py:640
 msgid "Korean"
 msgstr "Κορεάτικα"
 
-#: InvenTree/settings.py:637
+#: InvenTree/settings.py:641
 msgid "Dutch"
 msgstr "Dutch"
 
-#: InvenTree/settings.py:638
+#: InvenTree/settings.py:642
 msgid "Norwegian"
 msgstr "Νορβηγικά"
 
-#: InvenTree/settings.py:639
+#: InvenTree/settings.py:643
 msgid "Polish"
 msgstr "Πολωνικά"
 
-#: InvenTree/settings.py:640
+#: InvenTree/settings.py:644
 msgid "Portuguese"
 msgstr "Πορτογαλικά"
 
-#: InvenTree/settings.py:641
+#: InvenTree/settings.py:645
 msgid "Portuguese (Brazilian)"
 msgstr "Πορτογαλικά (Βραζιλίας)"
 
-#: InvenTree/settings.py:642
+#: InvenTree/settings.py:646
 msgid "Russian"
 msgstr "Ρωσικά"
 
-#: InvenTree/settings.py:643
+#: InvenTree/settings.py:647
 msgid "Swedish"
 msgstr "Σουηδικά"
 
-#: InvenTree/settings.py:644
+#: InvenTree/settings.py:648
 msgid "Thai"
 msgstr "Ταϊλανδέζικα"
 
-#: InvenTree/settings.py:645
+#: InvenTree/settings.py:649
 msgid "Turkish"
 msgstr "Τούρκικα"
 
-#: InvenTree/settings.py:646
+#: InvenTree/settings.py:650
 msgid "Vietnamese"
 msgstr "Βιετναμέζικα"
 
-#: InvenTree/settings.py:647
+#: InvenTree/settings.py:651
 msgid "Chinese"
 msgstr "Κινέζικα"
 
-#: InvenTree/status.py:99
+#: InvenTree/status.py:98
 msgid "Background worker check failed"
 msgstr "Ο έλεγχος εργασίας στο παρασκήνιο απέτυχε"
 
-#: InvenTree/status.py:103
+#: InvenTree/status.py:102
 msgid "Email backend not configured"
 msgstr "Δεν έχει ρυθμιστεί διεύθυνση ηλεκτρονικού ταχυδρομείου"
 
-#: InvenTree/status.py:106
+#: InvenTree/status.py:105
 msgid "InvenTree system health checks failed"
 msgstr "Ο έλεγχος συστήματος για το Inventree απέτυχε"
 
