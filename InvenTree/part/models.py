@@ -2463,7 +2463,7 @@ class PartPricing(models.Model):
         min_int_cost = None
         max_int_cost = None
 
-        if InvenTreeSetting.get_setting('PART_INTERNAL_PRICE', False):
+        if InvenTreeSetting.get_setting('PART_INTERNAL_PRICE', False, cache=False):
             # Only calculate internal pricing if internal pricing is enabled
             for pb in self.part.internalpricebreaks.all():
                 cost = self.convert(pb.price)
@@ -2596,7 +2596,7 @@ class PartPricing(models.Model):
             if overall_max is None or cost > overall_max:
                 overall_max = cost
 
-        if InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False):
+        if InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False, cache=False):
             # Check if internal pricing should override other pricing
             if self.internal_cost_min is not None:
                 overall_min = self.internal_cost_min
@@ -3471,7 +3471,7 @@ class BomItem(DataImportMixin, models.Model):
     def price_range(self, internal=False):
         """Return the price-range for this BOM item."""
         # get internal price setting
-        use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+        use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False, cache=False)
         prange = self.sub_part.get_price_range(self.quantity, internal=use_internal and internal)
 
         if prange is None:
