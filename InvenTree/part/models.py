@@ -2568,6 +2568,7 @@ class PartPricing(models.Model):
             self.purchase_cost_min,
             self.internal_cost_min,
             self.supplier_price_min,
+            self.variant_cost_min,
         ]:
             if cost is None:
                 continue
@@ -2584,6 +2585,7 @@ class PartPricing(models.Model):
             self.purchase_cost_max,
             self.internal_cost_max,
             self.supplier_price_max,
+            self.variant_cost_max,
         ]:
             if cost is None:
                 continue
