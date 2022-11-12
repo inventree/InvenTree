@@ -153,6 +153,11 @@ class PartTest(TestCase):
         barcode = p.format_barcode(brief=True)
         self.assertEqual(barcode, '{"part": 1}')
 
+        # Generate a URL
+        barcode = p.format_barcode(url=True, request=True)
+
+        self.assertEqual(barcode, '/part/1/')
+
     def test_tree(self):
         """Test that the part variant tree is working properly"""
         chair = Part.objects.get(pk=10000)
