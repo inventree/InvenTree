@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-11 04:11+0000\n"
-"PO-Revision-Date: 2022-11-11 14:26\n"
+"POT-Creation-Date: 2022-11-12 03:16+0000\n"
+"PO-Revision-Date: 2022-11-12 14:30\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -420,115 +420,115 @@ msgstr "URL file gambar external"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Unduhan gambar dari URL external tidak aktif"
 
-#: InvenTree/settings.py:623
+#: InvenTree/settings.py:627
 msgid "Czech"
 msgstr "Ceko"
 
-#: InvenTree/settings.py:624
+#: InvenTree/settings.py:628
 msgid "Danish"
 msgstr "Denmark"
 
-#: InvenTree/settings.py:625
+#: InvenTree/settings.py:629
 msgid "German"
 msgstr "Jerman"
 
-#: InvenTree/settings.py:626
+#: InvenTree/settings.py:630
 msgid "Greek"
 msgstr "Yunani"
 
-#: InvenTree/settings.py:627
+#: InvenTree/settings.py:631
 msgid "English"
 msgstr "Inggris"
 
-#: InvenTree/settings.py:628
+#: InvenTree/settings.py:632
 msgid "Spanish"
 msgstr "Spanyol"
 
-#: InvenTree/settings.py:629
+#: InvenTree/settings.py:633
 msgid "Spanish (Mexican)"
 msgstr "Spanyol (Meksiko)"
 
-#: InvenTree/settings.py:630
+#: InvenTree/settings.py:634
 msgid "Farsi / Persian"
 msgstr "Farsi / Persia"
 
-#: InvenTree/settings.py:631
+#: InvenTree/settings.py:635
 msgid "French"
 msgstr "Perancis"
 
-#: InvenTree/settings.py:632
+#: InvenTree/settings.py:636
 msgid "Hebrew"
 msgstr "Ibrani"
 
-#: InvenTree/settings.py:633
+#: InvenTree/settings.py:637
 msgid "Hungarian"
 msgstr "Hungaria"
 
-#: InvenTree/settings.py:634
+#: InvenTree/settings.py:638
 msgid "Italian"
 msgstr "Itali"
 
-#: InvenTree/settings.py:635
+#: InvenTree/settings.py:639
 msgid "Japanese"
 msgstr "Jepang"
 
-#: InvenTree/settings.py:636
+#: InvenTree/settings.py:640
 msgid "Korean"
 msgstr "Korea"
 
-#: InvenTree/settings.py:637
+#: InvenTree/settings.py:641
 msgid "Dutch"
 msgstr "Belanda"
 
-#: InvenTree/settings.py:638
+#: InvenTree/settings.py:642
 msgid "Norwegian"
 msgstr "Norwegia"
 
-#: InvenTree/settings.py:639
+#: InvenTree/settings.py:643
 msgid "Polish"
 msgstr "Polandia"
 
-#: InvenTree/settings.py:640
+#: InvenTree/settings.py:644
 msgid "Portuguese"
 msgstr "Portugis"
 
-#: InvenTree/settings.py:641
+#: InvenTree/settings.py:645
 msgid "Portuguese (Brazilian)"
 msgstr "Portugis (Brasil)"
 
-#: InvenTree/settings.py:642
+#: InvenTree/settings.py:646
 msgid "Russian"
 msgstr "Rusia"
 
-#: InvenTree/settings.py:643
+#: InvenTree/settings.py:647
 msgid "Swedish"
 msgstr "Swedia"
 
-#: InvenTree/settings.py:644
+#: InvenTree/settings.py:648
 msgid "Thai"
 msgstr "Thai"
 
-#: InvenTree/settings.py:645
+#: InvenTree/settings.py:649
 msgid "Turkish"
 msgstr "Turki"
 
-#: InvenTree/settings.py:646
+#: InvenTree/settings.py:650
 msgid "Vietnamese"
 msgstr "Vietnam"
 
-#: InvenTree/settings.py:647
+#: InvenTree/settings.py:651
 msgid "Chinese"
 msgstr "Cina"
 
-#: InvenTree/status.py:99
+#: InvenTree/status.py:98
 msgid "Background worker check failed"
 msgstr ""
 
-#: InvenTree/status.py:103
+#: InvenTree/status.py:102
 msgid "Email backend not configured"
 msgstr ""
 
-#: InvenTree/status.py:106
+#: InvenTree/status.py:105
 msgid "InvenTree system health checks failed"
 msgstr ""
 
