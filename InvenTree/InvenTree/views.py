@@ -577,93 +577,6 @@ class SetPasswordView(AjaxUpdateView):
 
         return self.renderJsonResponse(request, form, data={'form_valid': valid})
 
-
-class IndexView(TemplateView):
-    """View for InvenTree index page."""
-
-    template_name = 'InvenTree/index.html'
-
-
-class SearchView(TemplateView):
-    """View for InvenTree search page.
-
-    Displays results of search query
-    """
-
-    template_name = 'InvenTree/search.html'
-
-    def post(self, request, *args, **kwargs):
-        """Handle POST request (which contains search query).
-
-        Pass the search query to the page template
-        """
-        context = self.get_context_data()
-
-        query = request.POST.get('search', '')
-
-        query = strip_html_tags(query, raise_error=False)
-        query = remove_non_printable_characters(query)
-
-        context['query'] = query
-
-        return super(TemplateView, self).render_to_response(context)
-
-
-class DynamicJsView(TemplateView):
-    """View for returning javacsript files, which instead of being served dynamically, are passed through the django translation engine!"""
-
-    template_name = ""
-    content_type = 'text/javascript'
-
-
-class SettingsView(TemplateView):
-    """View for configuring User settings."""
-
-    template_name = "InvenTree/settings/settings.html"
-
-    def get_context_data(self, **kwargs):
-        """Add data for template."""
-        ctx = super().get_context_data(**kwargs).copy()
-
-        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
-
-        ctx["base_currency"] = currency_code_default()
-        ctx["currencies"] = currency_codes
-
-        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
-
-        ctx["categories"] = PartCategory.objects.all().order_by('tree_id', 'lft', 'name')
-
-        # When were the rates last updated?
-        try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-            ctx["rates_updated"] = backend.last_update
-        except Exception:
-            ctx["rates_updated"] = None
-
-        # load locale stats
-        STAT_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').absolute()
-
-        try:
-            ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
-        except Exception:
-            ctx["locale_stats"] = {}
-
-        # Forms and context for allauth
-        ctx['add_email_form'] = AddEmailForm
-        ctx["can_add_email"] = EmailAddress.objects.can_add_email(self.request.user)
-
-        # Form and context for allauth social-accounts
-        ctx["request"] = self.request
-        ctx['social_form'] = DisconnectForm(request=self.request)
-
-        # user db sessions
-        ctx['session_key'] = self.request.session.session_key
-        ctx['session_list'] = self.request.user.session_set.filter(expire_date__gt=now()).order_by('-last_activity')
-
-        return ctx
-
-
 class AllauthOverrides(LoginRequiredMixin):
     """Override allauths views to always redirect to success_url."""
 
@@ -778,13 +691,6 @@ class AboutView(AjaxView):
 
     ajax_template_name = "about.html"
     ajax_form_title = _("About InvenTree")
-
-
-class NotificationsView(TemplateView):
-    """View for showing notifications."""
-
-    template_name = "InvenTree/notifications/notifications.html"
-
 
 # Custom 2FA removal form to allow custom redirect URL
 class CustomTwoFactorRemove(TwoFactorRemove):
