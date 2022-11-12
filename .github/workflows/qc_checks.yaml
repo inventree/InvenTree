@@ -118,7 +118,7 @@ jobs:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: [ 'javascript', 'html', 'pre-commit' ]
+    needs: ['pre-commit' ]
     continue-on-error: true # continue if a step fails so that coverage gets pushed
 
     env:
@@ -153,7 +153,7 @@ jobs:
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-    needs: [ 'javascript', 'html', 'pre-commit' ]
+    needs: ['pre-commit' ]
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -197,7 +197,7 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: [ 'javascript', 'html', 'pre-commit' ]
+    needs: ['pre-commit' ]
     if: github.event_name == 'push'
 
     env:
