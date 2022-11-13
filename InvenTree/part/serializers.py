@@ -506,21 +506,36 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 class PartPricingSerializer(InvenTreeModelSerializer):
     """Serializer for Part pricing information"""
 
+    currency = serializers.CharField(allow_null=True, read_only=True)
+
+    updated = serializers.DateTimeField(allow_null=True, read_only=True)
+
+    scheduled_for_update = serializers.BooleanField(read_only=True)
+
     # Custom serializers
-    bom_cost_min = InvenTreeMoneySerializer(allow_null=True)
-    bom_cost_max = InvenTreeMoneySerializer(allow_null=True)
+    bom_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    bom_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
 
-    purchase_cost_min = InvenTreeMoneySerializer(allow_null=True)
-    purchase_cost_max = InvenTreeMoneySerializer(allow_null=True)
+    purchase_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    purchase_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
 
-    internal_cost_min = InvenTreeMoneySerializer(allow_null=True)
-    internal_cost_max = InvenTreeMoneySerializer(allow_null=True)
+    internal_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    internal_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
 
-    supplier_price_min = InvenTreeMoneySerializer(allow_null=True)
-    supplier_price_max = InvenTreeMoneySerializer(allow_null=True)
+    supplier_price_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    supplier_price_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
 
-    overall_min = InvenTreeMoneySerializer(allow_null=True)
-    overall_max = InvenTreeMoneySerializer(allow_null=True)
+    variant_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    variant_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    overall_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    overall_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    sale_price_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    sale_price_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    sale_history_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    sale_history_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
 
     update = serializers.BooleanField(
         write_only=True,
@@ -536,6 +551,7 @@ class PartPricingSerializer(InvenTreeModelSerializer):
         fields = [
             'currency',
             'updated',
+            'scheduled_for_update',
             'bom_cost_min',
             'bom_cost_max',
             'purchase_cost_min',
@@ -544,8 +560,14 @@ class PartPricingSerializer(InvenTreeModelSerializer):
             'internal_cost_max',
             'supplier_price_min',
             'supplier_price_max',
+            'variant_cost_min',
+            'variant_cost_max',
             'overall_min',
             'overall_max',
+            'sale_price_min',
+            'sale_price_max',
+            'sale_history_min',
+            'sale_history_max',
             'update',
         ]
 

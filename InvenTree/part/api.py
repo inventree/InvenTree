@@ -731,7 +731,13 @@ class PartPricingDetail(RetrieveUpdateAPI):
     serializer_class = part_serializers.PartPricingSerializer
     queryset = Part.objects.all()
 
-    def get_serializer(self, *args, **kwargs):
+    def get_object(self):
+        """Return the PartPricing object associated with the linked Part"""
+
+        part = super().get_object()
+        return part.pricing
+
+    def _get_serializer(self, *args, **kwargs):
         """Return a part pricing serializer object"""
 
         part = self.get_object()

@@ -2228,6 +2228,7 @@ class PartPricing(models.Model):
     - Purchase cost (based on purchase history)
     - Internal cost (based on user-specified InternalPriceBreak data)
     - Supplier price (based on supplier part data)
+    - Variant price (min / max cost of any variants)
     - Overall best / worst (based on the values listed above)
     - Sale price break min / max values
     - Historical sale pricing min / max values
