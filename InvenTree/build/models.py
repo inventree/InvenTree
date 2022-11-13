@@ -145,7 +145,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     def get_absolute_url(self):
         """Return the web URL associated with this BuildOrder"""
-        return reverse('build-detail', kwargs={'pk': self.id})
+        # TODO@matmair set new url
+        # return reverse('build-detail', kwargs={'pk': self.id})
+        return reverse('api-build-detail', kwargs={'pk': self.id})
 
     reference = models.CharField(
         unique=True,

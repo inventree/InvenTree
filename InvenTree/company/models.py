@@ -173,7 +173,9 @@ class Company(MetadataMixin, models.Model):
 
     def get_absolute_url(self):
         """Get the web URL for the detail view for this Company."""
-        return reverse('company-detail', kwargs={'pk': self.id})
+        # # TODO@matmair set new url
+        # return reverse('company-detail', kwargs={'pk': self.id})
+        return reverse('api-company-detail', kwargs={'pk': self.id})
 
     def get_image_url(self):
         """Return the URL of the image for this company."""
@@ -419,7 +421,9 @@ class SupplierPart(InvenTreeBarcodeMixin, models.Model):
 
     def get_absolute_url(self):
         """Return the web URL of the detail view for this SupplierPart"""
-        return reverse('supplier-part-detail', kwargs={'pk': self.id})
+        # # TODO@matmair set new url
+        # return reverse('supplier-part-detail', kwargs={'pk': self.id})
+        return reverse('api-supplier-part-detail', kwargs={'pk': self.part.id})
 
     def api_instance_filters(self):
         """Return custom API filters for this particular instance"""

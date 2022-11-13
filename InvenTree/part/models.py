@@ -130,7 +130,9 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
     def get_absolute_url(self):
         """Return the web URL associated with the detail view for this PartCategory instance"""
-        return reverse('category-detail', kwargs={'pk': self.id})
+        # # TODO@matmair set new url
+        # return reverse('category-detail', kwargs={'pk': self.id})
+        return reverse('api-category-detail', kwargs={'pk': self.id})
 
     class Meta:
         """Metaclass defines extra model properties"""
@@ -705,7 +707,9 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     def get_absolute_url(self):
         """Return the web URL for viewing this part."""
-        return reverse('part-detail', kwargs={'pk': self.id})
+        # # TODO@matmair set new url
+        # return reverse('part-detail', kwargs={'pk': self.id})
+        return reverse('api-part-detail', kwargs={'pk': self.id})
 
     def get_image_url(self):
         """Return the URL of the image for this part."""
