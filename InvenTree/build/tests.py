@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from InvenTree.helpers import InvenTreeTestCase
 
 from .models import Build
-from stock.models import StockItem
 
 from InvenTree.status_codes import BuildStatus
 
@@ -82,34 +81,3 @@ class BuildTestSimple(InvenTreeTestCase):
         build.cancel_build(self.user)
 
         self.assertEqual(build.status, BuildStatus.CANCELLED)
-
-
-class TestBuildViews(InvenTreeTestCase):
-    """Tests for Build app views."""
-
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'build',
-    ]
-
-    roles = [
-        'build.change',
-        'build.add',
-        'build.delete',
-    ]
-
-    def setUp(self):
-        """Fixturing for this suite of unit tests"""
-        super().setUp()
-
-        # Create a build output for build # 1
-        self.build = Build.objects.get(pk=1)
-
-        self.output = StockItem.objects.create(
-            part=self.build.part,
-            quantity=self.build.quantity,
-            build=self.build,
-            is_building=True,
-        )
