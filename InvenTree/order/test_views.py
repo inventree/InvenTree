@@ -28,24 +28,8 @@ class OrderViewTestCase(InvenTreeTestCase):
     ]
 
 
-class OrderListTest(OrderViewTestCase):
-    """Unit tests for the PurchaseOrder index page"""
-    def test_order_list(self):
-        """Tests for the PurchaseOrder index page"""
-        response = self.client.get(reverse('po-index'))
-
-        self.assertEqual(response.status_code, 200)
-
-
 class PurchaseOrderTests(OrderViewTestCase):
     """Tests for PurchaseOrder views."""
-
-    def test_detail_view(self):
-        """Retrieve PO detail view."""
-        response = self.client.get(reverse('po-detail', args=(1,)))
-        self.assertEqual(response.status_code, 200)
-        keys = response.context.keys()
-        self.assertIn('PurchaseOrderStatus', keys)
 
     def test_po_export(self):
         """Export PurchaseOrder."""

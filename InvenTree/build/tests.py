@@ -1,7 +1,5 @@
 """Basic unit tests for the BuildOrder app"""
 
-from django.urls import reverse
-
 from datetime import datetime, timedelta
 
 from InvenTree.helpers import InvenTreeTestCase
@@ -115,21 +113,3 @@ class TestBuildViews(InvenTreeTestCase):
             build=self.build,
             is_building=True,
         )
-
-    def test_build_index(self):
-        """Test build index view."""
-        response = self.client.get(reverse('build-index'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_build_detail(self):
-        """Test the detail view for a Build object."""
-        pk = 1
-
-        response = self.client.get(reverse('build-detail', args=(pk,)))
-        self.assertEqual(response.status_code, 200)
-
-        build = Build.objects.get(pk=pk)
-
-        content = str(response.content)
-
-        self.assertIn(build.title, content)
