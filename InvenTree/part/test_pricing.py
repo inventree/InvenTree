@@ -184,7 +184,8 @@ class PartPricingTests(InvenTreeTestCase):
 
         # Creating price breaks will cause the pricing to be updated
         self.create_price_breaks()
-        pricing.refresh_from_db()
+
+        pricing.update_pricing()
 
         self.assertEqual(pricing.overall_min, Money('2.014667', 'USD'))
         self.assertEqual(pricing.overall_max, Money('6.117647', 'USD'))
