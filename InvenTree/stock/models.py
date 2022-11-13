@@ -127,7 +127,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         """Return url for instance."""
         # # TODO@matmair set new url
         # return reverse('stock-location-detail', kwargs={'pk': self.id})
-        return reverse('api-stock-location-detail', kwargs={'pk': self.id})
+        return reverse('api-location-detail', kwargs={'pk': self.id})
 
     def get_stock_items(self, cascade=True):
         """Return a queryset for all stock items under this category.
@@ -584,7 +584,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         """Return url for instance."""
         # # TODO@matmair set new url
         # return reverse('stock-item-detail', kwargs={'pk': self.id})
-        return reverse('api-stock-item-detail', kwargs={'pk': self.id})
+        return reverse('api-stock-detail', kwargs={'pk': self.id})
 
     def get_part_name(self):
         """Returns part name."""

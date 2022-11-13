@@ -132,7 +132,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         """Return the web URL associated with the detail view for this PartCategory instance"""
         # # TODO@matmair set new url
         # return reverse('category-detail', kwargs={'pk': self.id})
-        return reverse('api-category-detail', kwargs={'pk': self.id})
+        return reverse('api-part-category-detail', kwargs={'pk': self.id})
 
     class Meta:
         """Metaclass defines extra model properties"""

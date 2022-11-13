@@ -73,7 +73,7 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # Test normal setup
         check()
-        response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
+        response = self.client.get(reverse('api-part-detail', kwargs={'pk': 9999}))
         self.assertEqual(response.status_code, 404)
         check()
 
@@ -85,7 +85,7 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # Test setup without ignored errors
         settings.IGNORED_ERRORS = []
-        response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
+        response = self.client.get(reverse('api-part-detail', kwargs={'pk': 9999}))
         self.assertEqual(response.status_code, 404)
         check(1)
 
