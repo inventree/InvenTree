@@ -134,7 +134,7 @@ class PluginConfig(models.Model):
         self.meta = {
             key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author',
                                                   'pub_date', 'version', 'website', 'license',
-                                                  'package_path', 'settings_url', ]
+                                                  'package_path', ]
         }
 
         # Save plugin

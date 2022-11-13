@@ -10,7 +10,6 @@ from pathlib import Path
 
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
-from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -330,11 +329,6 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     def package_path(self):
         """Path to the plugin."""
         return self.check_package_path()
-
-    @property
-    def settings_url(self):
-        """URL to the settings panel for this plugin."""
-        return f'{reverse("settings")}#select-plugin-{self.slug}'
 
     # region package info
     def _get_package_commit(self):
