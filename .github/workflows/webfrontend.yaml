@@ -26,8 +26,6 @@ jobs:
           node-version: "16"
           cache: yarn
           cache-dependency-path: InvenTree/web/src
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
       - name: Restore cache
         uses: actions/cache@v3
         with:
