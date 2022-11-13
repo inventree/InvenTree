@@ -3,13 +3,13 @@ name: Deploy new UI to Pages
 on:
   push:
     branches: ["vite-base"]
-
   workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -17,6 +17,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -26,8 +29,6 @@ jobs:
           node-version: "16"
           cache: yarn
           cache-dependency-path: InvenTree/web/src
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
       - name: Restore cache
         uses: actions/cache@v3
         with:
@@ -39,6 +40,8 @@ jobs:
         run: cd InvenTree/web/src && yarn install
       - name: Build
         run: cd InvenTree/web/src && yarn build
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
