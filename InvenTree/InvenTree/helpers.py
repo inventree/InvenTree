@@ -456,7 +456,7 @@ def WrapWithQuotes(text, quote='"'):
     return text
 
 
-def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
+def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
     """Generate a string for a barcode. Adds some global InvenTree parameters.
 
     Args:
@@ -468,29 +468,16 @@ def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
     Returns:
         json string of the supplied data plus some other data
     """
+
     if object_data is None:
         object_data = {}
 
-    url = kwargs.get('url', False)
     brief = kwargs.get('brief', True)
 
     data = {}
 
-    if url:
-        request = object_data.get('request', None)
-        item_url = object_data.get('item_url', None)
-        absolute_url = None
-
-        if request and item_url:
-            absolute_url = request.build_absolute_uri(item_url)
-            # Return URL (No JSON)
-            return absolute_url
-
-        if item_url:
-            # Return URL (No JSON)
-            return item_url
-    elif brief:
-        data[object_name] = object_pk
+    if brief:
+        data[cls_name] = object_pk
     else:
         data['tool'] = 'InvenTree'
         data['version'] = InvenTree.version.inventreeVersion()
@@ -498,7 +485,7 @@ def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
 
         # Ensure PK is included
         object_data['id'] = object_pk
-        data[object_name] = object_data
+        data[cls_name] = object_data
 
     return json.dumps(data, sort_keys=True)
 
