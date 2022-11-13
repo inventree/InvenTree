@@ -126,10 +126,3 @@ class URLTest(TestCase):
 
         for f in template_files:
             self.check_file(f)
-
-    def test_js_templates(self):
-        """Test all JS templates for broken url tags."""
-        template_files = self.find_files("*.js")
-
-        for f in template_files:
-            self.check_file(f)
