@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-12 03:16+0000\n"
-"PO-Revision-Date: 2022-11-12 14:30\n"
+"POT-Creation-Date: 2022-11-13 04:44+0000\n"
+"PO-Revision-Date: 2022-11-13 14:52\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -122,43 +122,43 @@ msgstr "Ekstern server returnerte tomt svar"
 msgid "Supplied URL is not a valid image file"
 msgstr "Angitt URL er ikke en gyldig bildefil"
 
-#: InvenTree/helpers.py:602 order/models.py:325 order/models.py:482
+#: InvenTree/helpers.py:589 order/models.py:325 order/models.py:482
 msgid "Invalid quantity provided"
 msgstr "Ugyldig mengde oppgitt"
 
-#: InvenTree/helpers.py:610
+#: InvenTree/helpers.py:597
 msgid "Empty serial number string"
 msgstr "Tom serienummerstreng"
 
-#: InvenTree/helpers.py:640
+#: InvenTree/helpers.py:627
 msgid "Duplicate serial"
 msgstr ""
 
-#: InvenTree/helpers.py:673 InvenTree/helpers.py:708
+#: InvenTree/helpers.py:660 InvenTree/helpers.py:695
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "Ugyldig gruppeserie: {g}"
 
-#: InvenTree/helpers.py:702
+#: InvenTree/helpers.py:689
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
 msgstr ""
 
-#: InvenTree/helpers.py:726 InvenTree/helpers.py:733 InvenTree/helpers.py:748
+#: InvenTree/helpers.py:713 InvenTree/helpers.py:720 InvenTree/helpers.py:735
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr "Ugyldig gruppesekvense: {g}"
 
-#: InvenTree/helpers.py:758
+#: InvenTree/helpers.py:745
 msgid "No serial numbers found"
 msgstr "Ingen serienummer funnet"
 
-#: InvenTree/helpers.py:761
+#: InvenTree/helpers.py:748
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "Antall unike serienumre ({s}) må samsvare med antall ({q})"
 
-#: InvenTree/helpers.py:960
+#: InvenTree/helpers.py:947
 msgid "Remove HTML tags from this value"
 msgstr ""
 
@@ -426,7 +426,7 @@ msgstr "Tsjekkisk"
 
 #: InvenTree/settings.py:628
 msgid "Danish"
-msgstr ""
+msgstr "Dansk"
 
 #: InvenTree/settings.py:629
 msgid "German"
@@ -569,7 +569,7 @@ msgstr "Sendt"
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
@@ -589,7 +589,7 @@ msgstr "Avvist"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
-msgstr ""
+msgstr "Karantene"
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
@@ -726,7 +726,7 @@ msgstr "Systeminformasjon"
 
 #: InvenTree/views.py:780 templates/navbar.html:163
 msgid "About InvenTree"
-msgstr ""
+msgstr "Om InvenTree"
 
 #: build/api.py:219
 msgid "Build must be cancelled before it can be deleted"
@@ -1115,11 +1115,11 @@ msgstr "Angi serienummer for bygge-utganger"
 
 #: build/serializers.py:245
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "Automatisk tildeling av serienummere"
 
 #: build/serializers.py:246
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr ""
+msgstr "Automatisk allokering av nødvendige elementer med tilsvarende serienummer"
 
 #: build/serializers.py:281 stock/api.py:589
 msgid "The following serial numbers already exist or are invalid"
@@ -1156,19 +1156,19 @@ msgstr ""
 #: templates/js/translated/order.js:2842 templates/js/translated/stock.js:1831
 #: templates/js/translated/stock.js:2605 templates/js/translated/stock.js:2737
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: build/serializers.py:382
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "Godta ufullstendig tildeling"
 
 #: build/serializers.py:383
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
+msgstr "Fullstendig produkt dersom lagerbeholdning ikke er fullt tildelt"
 
 #: build/serializers.py:452
 msgid "Remove Allocated Stock"
-msgstr ""
+msgstr "Fjern tildelt lagerbeholdning"
 
 #: build/serializers.py:453
 msgid "Subtract any stock which has already been allocated to this build"
@@ -1325,7 +1325,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
-msgstr ""
+msgstr "Bygg handlinger"
 
 #: build/templates/build/build_base.html:54
 msgid "Edit Build"
@@ -1511,7 +1511,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:180
 msgid "Auto Allocate"
-msgstr ""
+msgstr "Automatisk tildeling"
 
 #: build/templates/build/detail.html:182
 msgid "Manually allocate stock to build"
@@ -2677,7 +2677,7 @@ msgstr ""
 
 #: common/models.py:1726 part/templates/part/detail.html:41
 msgid "Part Scheduling"
-msgstr ""
+msgstr "Del planlegging"
 
 #: common/models.py:1727
 msgid "Display part scheduling information"
@@ -3006,7 +3006,7 @@ msgstr ""
 
 #: company/models.py:272 templates/js/translated/part.js:248
 msgid "Manufacturer Part Number"
-msgstr ""
+msgstr "Produsentens varenummer"
 
 #: company/models.py:278
 msgid "URL for external manufacturer part link"
@@ -3021,7 +3021,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:220
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Produsentdeler"
 
 #: company/models.py:360
 msgid "Parameter name"
@@ -3447,7 +3447,7 @@ msgstr "Tildelt lagervarer"
 #: templates/js/translated/company.js:945 templates/js/translated/order.js:1135
 #: templates/js/translated/stock.js:1935
 msgid "Supplier Part"
-msgstr ""
+msgstr "Leverandør deler"
 
 #: company/templates/company/supplier_part.html:36
 #: part/templates/part/part_base.html:43
@@ -3480,14 +3480,14 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:51
 msgid "Supplier part actions"
-msgstr ""
+msgstr "Handlinger for leverandørdeler"
 
 #: company/templates/company/supplier_part.html:56
 #: company/templates/company/supplier_part.html:57
 #: company/templates/company/supplier_part.html:222
 #: part/templates/part/detail.html:88
 msgid "Order Part"
-msgstr ""
+msgstr "Bestill del"
 
 #: company/templates/company/supplier_part.html:61
 #: company/templates/company/supplier_part.html:62
@@ -3498,21 +3498,21 @@ msgstr ""
 #: company/templates/company/supplier_part.html:65
 #: templates/js/translated/company.js:247
 msgid "Edit Supplier Part"
-msgstr ""
+msgstr "Rediger Leverandørdel"
 
 #: company/templates/company/supplier_part.html:69
 #: company/templates/company/supplier_part.html:70
 #: templates/js/translated/company.js:222
 msgid "Duplicate Supplier Part"
-msgstr ""
+msgstr "Dupliser leverandørdelen"
 
 #: company/templates/company/supplier_part.html:74
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "Slett Leverandørdel"
 
 #: company/templates/company/supplier_part.html:75
 msgid "Delete Supplier  Part"
-msgstr ""
+msgstr "Slett Leverandørdel"
 
 #: company/templates/company/supplier_part.html:122
 #: part/templates/part/part_base.html:307
@@ -3528,7 +3528,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:200
 #: company/templates/company/supplier_part_navbar.html:12
 msgid "Supplier Part Stock"
-msgstr ""
+msgstr "Leverandør lager"
 
 #: company/templates/company/supplier_part.html:203
 #: part/templates/part/detail.html:24 stock/templates/stock/location.html:197
@@ -3544,7 +3544,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:217
 #: company/templates/company/supplier_part_navbar.html:19
 msgid "Supplier Part Orders"
-msgstr ""
+msgstr "Leverandørordre"
 
 #: company/templates/company/supplier_part.html:242
 #: part/templates/part/prices.html:10
@@ -3559,7 +3559,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:282
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Koble strekkode til leverandørdelen"
 
 #: company/templates/company/supplier_part.html:300
 msgid "No price break information found"
@@ -3589,7 +3589,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:444
 msgid "Update Part Availability"
-msgstr ""
+msgstr "Oppdater tilgjengelighet"
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:14
