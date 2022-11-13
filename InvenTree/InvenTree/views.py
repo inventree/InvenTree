@@ -596,16 +596,13 @@ class CurrencyRefreshView(RedirectView):
 
 class IndexView(AjaxView):
     """View for InvenTree index page."""
-
     def get(self, request, *args, **kwargs):
         """Return a simple ok message."""
-        print("IndexView get")
-        return self.renderJsonResponse(request, data={'status': 'ok'})
+        return JsonResponse(data={'status': 'ok'})
 
     def post(self, request, *args, **kwargs):
         """Return a simple ok message."""
-        print("IndexView post")
-        return self.renderJsonResponse(request, data={'status': 'ok'})
+        return self.get(request, *args, **kwargs)
 
 
 class AppearanceSelectView(RedirectView):
