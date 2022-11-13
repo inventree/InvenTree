@@ -26,13 +26,15 @@ jobs:
           node-version: "16"
           cache: yarn
           cache-dependency-path: InvenTree/web/src
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
       - name: Restore cache
         uses: actions/cache@v3
         with:
           path: |
             .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+          key: ${{ runner.os }}-vite-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: ${{ runner.os }}-vite-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: cd InvenTree/web/src && yarn install
       - name: Build
