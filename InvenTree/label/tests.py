@@ -125,7 +125,7 @@ class LabelTest(InvenTreeAPITestCase):
 
         # Test that each element has been rendered correctly
         self.assertIn("part: 1 - M2x4 LPHS", content)
-        self.assertIn('data: {"part": 1, "url": "/part/1/"}', content)
+        self.assertIn('data: {"part": 1}', content)
         self.assertIn("http://testserver/part/1/", content)
         self.assertIn("image: /static/img/blank_image.png", content)
         self.assertIn("logo: /static/img/inventree.png", content)
