@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
+from django.views.generic.base import RedirectView
 
 from rest_framework.documentation import include_docs_urls
 
@@ -26,8 +27,8 @@ from users.api import user_urls
 from .api import InfoView, NotFoundView
 from .views import (AboutView, AppearanceSelectView, CurrencyRefreshView,
                     CustomLoginView, CustomPasswordResetFromKeyView,
-                    DatabaseStatsView, EditUserView, SetPasswordView,
-                    auth_request)
+                    DatabaseStatsView, EditUserView, IndexView,
+                    SetPasswordView, auth_request)
 
 admin.site.site_header = "InvenTree Admin"
 
@@ -81,6 +82,7 @@ frontendpatterns = [
     re_path(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     re_path(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
 
+    re_path(r'^index/', IndexView.as_view(), name='index'),
     re_path(r'^settings/', include(settings_urls)),
     re_path(r'^about/', AboutView.as_view(), name='about'),
     re_path(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
@@ -113,3 +115,6 @@ if settings.DEBUG:
 
     # Media file access
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Send any unknown URLs to the parts page
+urlpatterns += [re_path(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]
