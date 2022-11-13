@@ -16,6 +16,7 @@ from company.api import company_api_urls
 from label.api import label_api_urls
 from order.api import order_api_urls
 from part.api import bom_api_urls, part_api_urls
+from part.urls import part_urls
 from plugin.api import plugin_api_urls
 from plugin.urls import get_plugin_urls
 from report.api import report_api_urls
@@ -74,6 +75,9 @@ backendpatterns = [
 ]
 
 frontendpatterns = [
+    # Apps
+    re_path(r'^part/', include(part_urls)),
+
     re_path(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     re_path(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
 
