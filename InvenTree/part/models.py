@@ -1665,7 +1665,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         If there is no PartPricing database entry defined for this Part,
         it will first be created, and then returned.
         """
-        return PartPricing.objects.get_or_create(part=self)
+        return PartPricing.objects.get_or_create(part=self)[0]
 
     def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
         """Return a simplified pricing string for this part.
