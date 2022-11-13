@@ -4,11 +4,9 @@ In particular these views provide base functionality for rendering Django forms
 as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
 from django.contrib.auth import password_validation
-from django.contrib.auth.mixins import (LoginRequiredMixin,
-                                        PermissionRequiredMixin)
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -17,11 +15,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from django.views.generic.base import RedirectView
 
-from allauth.account.views import (EmailView, LoginView,
-                                   PasswordResetFromKeyView)
-from allauth.socialaccount.views import ConnectionsView
-from allauth_2fa.views import TwoFactorRemove
-from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
+from allauth.account.views import LoginView, PasswordResetFromKeyView
 
 from common.models import ColorTheme
 from users.models import RuleSet, check_user_role
@@ -566,45 +560,9 @@ class SetPasswordView(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data={'form_valid': valid})
 
 
-class AllauthOverrides(LoginRequiredMixin):
-    """Override allauths views to always redirect to success_url."""
-
-    def get(self, request, *args, **kwargs):
-        """Always redirect to success_url (set to settings)."""
-        return HttpResponseRedirect(self.success_url)
-
-
-class CustomEmailView(AllauthOverrides, EmailView):
-    """Override of allauths EmailView to always show the settings but leave the functions allow."""
-    success_url = reverse_lazy("settings")
-
-
-class CustomConnectionsView(AllauthOverrides, ConnectionsView):
-    """Override of allauths ConnectionsView to always show the settings but leave the functions allow."""
-    success_url = reverse_lazy("settings")
-
-
 class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
     """Override of allauths PasswordResetFromKeyView to always show the settings but leave the functions allow."""
     success_url = reverse_lazy("account_login")
-
-
-class UserSessionOverride():
-    """Overrides sucessurl to lead to settings."""
-
-    def get_success_url(self):
-        """Revert to settings page after success."""
-        return str(reverse_lazy('settings'))
-
-
-class CustomSessionDeleteView(UserSessionOverride, SessionDeleteView):
-    """Revert to settings after session delete."""
-    pass
-
-
-class CustomSessionDeleteOtherView(UserSessionOverride, SessionDeleteOtherView):
-    """Revert to settings after session delete."""
-    pass
 
 
 class CustomLoginView(LoginView):
@@ -635,8 +593,6 @@ class CurrencyRefreshView(RedirectView):
 
         offload_task(update_exchange_rates, force_sync=True)
 
-        return redirect(reverse_lazy('settings'))
-
 
 class AppearanceSelectView(RedirectView):
     """View for selecting a color theme."""
@@ -665,8 +621,6 @@ class AppearanceSelectView(RedirectView):
         user_theme.name = theme
         user_theme.save()
 
-        return redirect(reverse_lazy('settings'))
-
 
 class DatabaseStatsView(AjaxView):
     """View for displaying database statistics."""
@@ -680,9 +634,3 @@ class AboutView(AjaxView):
 
     ajax_template_name = "about.html"
     ajax_form_title = _("About InvenTree")
-
-
-# Custom 2FA removal form to allow custom redirect URL
-class CustomTwoFactorRemove(TwoFactorRemove):
-    """Specify custom URL redirect."""
-    success_url = reverse_lazy("settings")
