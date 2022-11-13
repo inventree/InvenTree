@@ -10,7 +10,7 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
@@ -1665,14 +1665,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         If there is no PartPricing database entry defined for this Part,
         it will first be created, and then returned.
         """
-
-        try:
-            pricing_data = PartPricing.objects.get(part=self)
-        except ObjectDoesNotExist:
-            # Return a new PartPricing object (but do not save into the database)
-            pricing_data = PartPricing.objects.create(part=self)
-
-        return pricing_data
+        return PartPricing.objects.get_or_create(part=self)
 
     def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
         """Return a simplified pricing string for this part.
@@ -3497,7 +3490,7 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
     """Callback function when a part price break is created or updated"""
 
     # Update part pricing *unless* we are importing data
-    if not InvenTree.ready.isImportingData():
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
         instance.part.pricing.schedule_for_update()
 
 
@@ -3508,7 +3501,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
     """Callback function when a part price break is deleted"""
 
     # Update part pricing *unless* we are importing data
-    if not InvenTree.ready.isImportingData():
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
         instance.part.pricing.schedule_for_update()
 
 
