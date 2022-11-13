@@ -294,7 +294,9 @@ class PurchaseOrder(Order):
 
     def get_absolute_url(self):
         """Return the web URL of the detail view for this order"""
-        return reverse('po-detail', kwargs={'pk': self.id})
+        # TODO@matmair set new url
+        # return reverse('po-detail', kwargs={'pk': self.id})
+        return reverse('api-po-detail', kwargs={'pk': self.id})
 
     @transaction.atomic
     def add_line_item(self, supplier_part, quantity, group: bool = True, reference: str = '', purchase_price=None):
@@ -628,7 +630,9 @@ class SalesOrder(Order):
 
     def get_absolute_url(self):
         """Return the web URL for the detail view of this order"""
-        return reverse('so-detail', kwargs={'pk': self.id})
+        # TODO@matmair set new url
+        # return reverse('so-detail', kwargs={'pk': self.id})
+        return reverse('api-so-detail', kwargs={'pk': self.id})
 
     reference = models.CharField(
         unique=True,
