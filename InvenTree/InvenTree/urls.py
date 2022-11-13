@@ -27,8 +27,7 @@ from .views import (AboutView, AppearanceSelectView, CurrencyRefreshView,
                     CustomConnectionsView, CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
                     CustomSessionDeleteOtherView, CustomSessionDeleteView,
-                    CustomTwoFactorRemove, DatabaseStatsView,
-                    EditUserView,
+                    CustomTwoFactorRemove, DatabaseStatsView, EditUserView,
                     SetPasswordView, auth_request)
 
 admin.site.site_header = "InvenTree Admin"

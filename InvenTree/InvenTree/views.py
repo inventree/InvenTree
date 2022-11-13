@@ -16,6 +16,7 @@ from django.views import View
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from django.views.generic.base import RedirectView
+
 from allauth.account.views import (EmailView, LoginView,
                                    PasswordResetFromKeyView)
 from allauth.socialaccount.views import ConnectionsView
