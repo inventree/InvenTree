@@ -99,6 +99,15 @@ def check_missing_pricing():
         for p in results:
             p.pricing.schedule_for_update()
 
+    # Find parts for which pricing information has never been updated
+    results = part.models.PartPricing.objects.filter(updated=None)[:limit]
+
+    if results.count() > 0:
+        logger.info(f"Found {results.count()} parts with empty pricing")
+
+        for pp in results:
+            pp.schedule_for_update()
+
     # Find any parts which have 'old' pricing information
     days = int(common.models.InvenTreeSetting.get_setting('PRICING_UPDATE_DAYS', 30))
     stale_date = datetime.now().date() - timedelta(days=days)

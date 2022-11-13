@@ -2278,10 +2278,12 @@ class PartPricing(models.Model):
         import part.tasks as part_tasks
 
         # Offload task to update the pricing
+        # Force async, to prevent running in the foreground
         InvenTree.tasks.offload_task(
             part_tasks.update_part_pricing,
             self,
-            counter=counter
+            counter=counter,
+            force_async=True
         )
 
     def update_pricing(self, counter: int = 0):
