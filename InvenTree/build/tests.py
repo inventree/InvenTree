@@ -37,7 +37,7 @@ class BuildTestSimple(InvenTreeTestCase):
     def test_url(self):
         """Test URL lookup"""
         b1 = Build.objects.get(pk=1)
-        self.assertEqual(b1.get_absolute_url(), '/build/1/')
+        self.assertEqual(b1.get_absolute_url(), '/api/build/1/')
 
     def test_is_complete(self):
         """Test build completion status"""
