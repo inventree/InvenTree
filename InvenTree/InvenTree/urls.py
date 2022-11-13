@@ -117,4 +117,4 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Send any unknown URLs to the parts page
-urlpatterns += [re_path(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]
+urlpatterns += [re_path(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='redir')]
