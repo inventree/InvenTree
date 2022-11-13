@@ -272,7 +272,7 @@ class StockTest(StockTestBase):
         it = StockItem.objects.get(pk=2)
         self.assertEqual(it.get_absolute_url(), '/api/stock/2/')
 
-        self.assertEqual(self.home.get_absolute_url(), '/stock/location/1')
+        self.assertEqual(self.home.get_absolute_url(), '/api/stock/location/1')
 
     def test_strings(self):
         """Test str function."""
