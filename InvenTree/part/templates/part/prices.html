@@ -46,7 +46,7 @@
                             {% endif %}
                         </td>
                         <th>
-                            {% trans "Internal Price" %}
+                            {% trans "Internal Pricing" %}
                         </th>
                         <td>{% include "price_data.html" with price=pricing.internal_cost_min %}</td>
                         <td>{% include "price_data.html" with price=pricing.internal_cost_max %}</td>
@@ -75,7 +75,7 @@
                             {% endif %}
                         </td>
                         <th>
-                            {% trans "Supplier Price" %}
+                            {% trans "Supplier Pricing" %}
                         </th>
                         <td>{% include "price_data.html" with price=pricing.supplier_price_min %}</td>
                         <td>{% include "price_data.html" with price=pricing.supplier_price_max %}</td>
@@ -91,7 +91,7 @@
                             {% endif %}
                         </td>
                         <th>
-                            {% trans "BOM Cost" %}
+                            {% trans "BOM Pricing" %}
                         </th>
                         <td>{% include "price_data.html" with price=pricing.bom_cost_min %}</td>
                         <td>{% include "price_data.html" with price=pricing.bom_cost_max %}</td>
@@ -100,7 +100,7 @@
                     {% if part.is_template %}
                     <tr>
                         <td><a href='#variant-cost'><span class='fas fa-shapes'></span></a></td>
-                        <th>{% trans "Variant Cost" %}</th>
+                        <th>{% trans "Variant Pricing" %}</th>
                         <td>{% include "price_data.html" with price=pricing.variant_cost_min %}</td>
                         <td>{% include "price_data.html" with price=pricing.variant_cost_max %}</td>
                     </tr>
@@ -108,7 +108,7 @@
                     <tr>
                         <td></td>
                         <th>
-                            {% trans "Overall Cost" %}
+                            {% trans "Overall Pricing" %}
                         </th>
                         <th>{% include "price_data.html" with price=pricing.overall_min %}</th>
                         <th>{% include "price_data.html" with price=pricing.overall_max %}</th>
@@ -235,7 +235,7 @@
 <a class="anchor" id="supplier-prices"></a>
 <div class='panel-heading'>
     <h4>
-        {% trans "Supplier Prices" %}
+        {% trans "Supplier Pricing" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
@@ -259,7 +259,7 @@
 {% if part.assembly and part.has_bom %}
 <a class="anchor" id="bom-cost"></a>
 <div class='panel-heading'>
-    <h4>{% trans "BOM Cost" %}
+    <h4>{% trans "BOM Pricing" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
@@ -283,7 +283,7 @@
 <a class='anchor' id='variant-cost'></a>
 <div class='panel-heading'>
     <h4>
-        {% trans "Variant Cost" %}
+        {% trans "Variant Pricing" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
@@ -335,7 +335,7 @@
 <a class="anchor" id="sale-price-history"></a>
 <div class='panel-heading'>
     <div class='d-flex flex-wrap'></div>
-    <h4>{% trans "Sales History" %}
+    <h4>{% trans "Sale History" %}
         <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
     </h4>
 </div>
