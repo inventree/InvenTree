@@ -27,7 +27,8 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool, str2int)
-from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
+from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
+                              ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
 from order.serializers import PurchaseOrderSerializer
@@ -1357,7 +1358,7 @@ class LocationMetadata(RetrieveUpdateAPI):
     queryset = StockLocation.objects.all()
 
 
-class LocationDetail(RetrieveUpdateDestroyAPI):
+class LocationDetail(CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of StockLocation object.
 
     - GET: Return a single StockLocation object
@@ -1374,6 +1375,16 @@ class LocationDetail(RetrieveUpdateDestroyAPI):
         queryset = super().get_queryset(*args, **kwargs)
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete a Stock location instance via the API"""
+        delete_stock_items = 'delete_stock_items' in request.data and request.data['delete_stock_items'] == '1'
+        delete_sub_locations = 'delete_sub_locations' in request.data and request.data['delete_sub_locations'] == '1'
+        return super().destroy(request,
+                               *args,
+                               **dict(kwargs,
+                                      delete_sub_locations=delete_sub_locations,
+                                      delete_stock_items=delete_stock_items))
 
 
 stock_api_urls = [
