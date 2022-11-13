@@ -63,7 +63,7 @@ function loadBomPricingChart(options={}) {
             // Sort in decreasing order of "maximum price"
             data = data.sort((a, b) => (b.pricing_max - a.pricing_max));
 
-            var graphLabels = Array.from(data, (x) => x.sub_part_detail.full_name);
+            var graphLabels = Array.from(data, (x) => x.sub_part_detail.name);
             var minValues = Array.from(data, (x) => x.quantity * (x.pricing_min || x.pricing_max));
             var maxValues = Array.from(data, (x) => x.quantity * (x.pricing_max || x.pricing_min));
 
@@ -71,25 +71,22 @@ function loadBomPricingChart(options={}) {
                 chart.destroy();
             }
 
-            chart = loadBarChart(chartElement, {
+            // Generate colors
+            var colors = Array.from(data, (x) => randomColor());
+
+            chart = loadDoughnutChart(chartElement, {
                 labels: graphLabels,
                 datasets: [
                     {
-                        label: '{% trans "Minimum Price" %}',
-                        data: minValues,
-                        backgroundColor: 'rgba(200, 250, 200, 0.75)',
-                        borderColor: 'rgba(200, 250, 200)',
-                        stepped: true,
-                        fill: true,
-                    },
-                    {
                         label: '{% trans "Maximum Price" %}',
                         data: maxValues,
-                        backgroundColor: 'rgba(250, 220, 220, 0.75)',
-                        borderColor: 'rgba(250, 220, 220)',
-                        stepped: true,
-                        fill: true,
-                    }
+                        backgroundColor: colors,
+                    },
+                    {
+                        label: '{% trans "Minimum Price" %}',
+                        data: minValues,
+                        backgroundColor: colors,
+                    },
                 ]
             });
 
