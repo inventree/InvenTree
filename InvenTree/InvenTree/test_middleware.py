@@ -12,6 +12,7 @@ from InvenTree.helpers import InvenTreeTestCase
 
 class MiddlewareTests(InvenTreeTestCase):
     """Test for middleware functions."""
+    test_url = 'api-user-roles'
 
     def check_path(self, url, code=200, **kwargs):
         """Helper function to run a request."""
@@ -42,7 +43,7 @@ class MiddlewareTests(InvenTreeTestCase):
         self.assertEqual(response.url, '/accounts/login/?next=/stats/')
 
         # check that a 401 is raised
-        self.check_path(reverse('settings.js'), 401)
+        self.check_path(reverse(self.test_url), 401)
 
     def test_token_auth(self):
         """Test auth with token auth."""
@@ -53,16 +54,16 @@ class MiddlewareTests(InvenTreeTestCase):
         # logout
         self.client.logout()
         # this should raise a 401
-        self.check_path(reverse('settings.js'), 401)
+        self.check_path(reverse(self.test_url), 401)
 
         # request with token
-        self.check_path(reverse('settings.js'), HTTP_Authorization=f'Token {token}')
+        self.check_path(reverse(self.test_url), HTTP_Authorization=f'Token {token}')
 
         # Request with broken token
-        self.check_path(reverse('settings.js'), 401, HTTP_Authorization='Token abcd123')
+        self.check_path(reverse(self.test_url), 401, HTTP_Authorization='Token abcd123')
 
         # should still fail without token
-        self.check_path(reverse('settings.js'), 401)
+        self.check_path(reverse(self.test_url), 401)
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""
