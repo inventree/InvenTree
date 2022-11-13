@@ -9,7 +9,6 @@ import {
   Menu,
   Tabs,
   Burger,
-  ActionIcon,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -25,7 +24,8 @@ import {
   IconChevronDown,
 } from '@tabler/icons';
 import { ColorToggle } from './ColorToggle';
-import InvenTreeIcon from '../assets/inventree.svg';
+import { InvenTreeLogo } from './InvenTreeLogo';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -94,17 +94,19 @@ const useStyles = createStyles((theme) => ({
 
 interface HeaderTabsProps {
   user: { name: string; };
-  tabs: string[];
+  tabs: { name: string; text:string;}[];
 }
 
 export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
   const { classes, theme, cx } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
+  const navigate = useNavigate();
+  const { tabValue } = useParams();
 
   const items = tabs.map((tab) => (
-    <Tabs.Tab value={tab} key={tab}>
-      {tab}
+    <Tabs.Tab value={tab.name} key={tab.name}>
+      {tab.text}
     </Tabs.Tab>
   ));
 
@@ -112,42 +114,39 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
     <div className={classes.header}>
       <Container className={classes.mainSection}>
         <Group position="apart">
-          <ActionIcon size={28}><img src={InvenTreeIcon} alt="InvenTree Logo" height={28}/></ActionIcon>
-
+          <InvenTreeLogo/>
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
+          <Group>
+            <ColorToggle />
+            <Menu
+              width={260}
+              position="bottom-end"
+              transition="pop-top-right"
+              onClose={() => setUserMenuOpened(false)}
+              onOpen={() => setUserMenuOpened(true)}
+            >
+              <Menu.Target>
+                <UnstyledButton
+                  className={cx(classes.user, { [classes.userActive]: userMenuOpened })}
+                >
+                  <Group spacing={7}>
+                    <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
+                      {user.name}
+                    </Text>
+                    <IconChevronDown size={12} stroke={1.5} />
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>
+                  Notifications
+                </Menu.Item>
 
-            <Group>
-          <ColorToggle />
-
-          <Menu
-            width={260}
-            position="bottom-end"
-            transition="pop-top-right"
-            onClose={() => setUserMenuOpened(false)}
-            onOpen={() => setUserMenuOpened(true)}
-          >
-            <Menu.Target>
-              <UnstyledButton
-                className={cx(classes.user, { [classes.userActive]: userMenuOpened })}
-              >
-                <Group spacing={7}>
-                  <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                    {user.name}
-                  </Text>
-                  <IconChevronDown size={12} stroke={1.5} />
-                </Group>
-              </UnstyledButton>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>
-                Notifications
-              </Menu.Item>
-
-              <Menu.Label>Settings</Menu.Label>
-              <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>Account settings</Menu.Item>
-              <Menu.Item icon={<IconLogout size={14} stroke={1.5} />}>Logout</Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+                <Menu.Label>Settings</Menu.Label>
+                <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>Account settings</Menu.Item>
+                <Menu.Item icon={<IconLogout size={14} stroke={1.5} />}>Logout</Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
           </Group>
         </Group>
       </Container>
@@ -160,6 +159,7 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
             tabsList: classes.tabsList,
             tab: classes.tab,
           }}
+          value={tabValue} onTabChange={(value) => navigate(`/${value}`)}
         >
           <Tabs.List>{items}</Tabs.List>
         </Tabs>
