@@ -15,7 +15,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
@@ -26,10 +25,9 @@ jobs:
         with:
           node-version: "16"
           cache: yarn
+          cache-dependency-path: InvenTree/web/src
       - name: Setup Pages
         uses: actions/configure-pages@v2
-        with:
-          static_site_generator: next
       - name: Restore cache
         uses: actions/cache@v3
         with:
@@ -38,9 +36,9 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
-        run: yarn install
+        run: cd InvenTree/web/src && yarn install
       - name: Build
-        run: yarn build
+        run: cd InvenTree/web/src && yarn build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
