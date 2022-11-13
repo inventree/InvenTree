@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-12 03:16+0000\n"
-"PO-Revision-Date: 2022-11-12 14:30\n"
+"POT-Creation-Date: 2022-11-13 04:44+0000\n"
+"PO-Revision-Date: 2022-11-13 14:52\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -122,43 +122,43 @@ msgstr ""
 msgid "Supplied URL is not a valid image file"
 msgstr ""
 
-#: InvenTree/helpers.py:602 order/models.py:325 order/models.py:482
+#: InvenTree/helpers.py:589 order/models.py:325 order/models.py:482
 msgid "Invalid quantity provided"
 msgstr "Podano nieprawidłową ilość"
 
-#: InvenTree/helpers.py:610
+#: InvenTree/helpers.py:597
 msgid "Empty serial number string"
 msgstr "Pusty ciąg numeru seryjnego"
 
-#: InvenTree/helpers.py:640
+#: InvenTree/helpers.py:627
 msgid "Duplicate serial"
 msgstr ""
 
-#: InvenTree/helpers.py:673 InvenTree/helpers.py:708
+#: InvenTree/helpers.py:660 InvenTree/helpers.py:695
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "Nieprawidłowy zakres grupy: {g}"
 
-#: InvenTree/helpers.py:702
+#: InvenTree/helpers.py:689
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
 msgstr ""
 
-#: InvenTree/helpers.py:726 InvenTree/helpers.py:733 InvenTree/helpers.py:748
+#: InvenTree/helpers.py:713 InvenTree/helpers.py:720 InvenTree/helpers.py:735
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr "Nieprawidłowa sekwencja grupy: {g}"
 
-#: InvenTree/helpers.py:758
+#: InvenTree/helpers.py:745
 msgid "No serial numbers found"
 msgstr "Nie znaleziono numerów seryjnych"
 
-#: InvenTree/helpers.py:761
+#: InvenTree/helpers.py:748
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "Liczba unikalnych numerów seryjnych ({s}) musi odpowiadać ilości ({q})"
 
-#: InvenTree/helpers.py:960
+#: InvenTree/helpers.py:947
 msgid "Remove HTML tags from this value"
 msgstr ""
 
