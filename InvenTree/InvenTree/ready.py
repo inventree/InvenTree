@@ -29,7 +29,6 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False):
         'shell',
         'createsuperuser',
         'wait_for_db',
-        'prerender',
         'rebuild_models',
         'rebuild_thumbnails',
         'collectstatic',
