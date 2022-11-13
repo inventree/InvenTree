@@ -472,24 +472,16 @@ def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
     if object_data is None:
         object_data = {}
 
-    url = kwargs.get('url', False)
     brief = kwargs.get('brief', True)
 
     data = {}
 
+    url = kwargs.get('url', None)
+
     if url:
-        # Format a raw URL
-        request = kwargs.get('request', None)
-        item_url = kwargs.get('item_url', None)
+        data['url'] = url
 
-        if item_url:
-            if request is not None:
-                if hasattr(request, 'build_absolute_uri'):
-                    return request.build_absolute_uri(item_url)
-
-            return item_url
-
-    elif brief:
+    if brief:
         data[cls_name] = object_pk
     else:
         data['tool'] = 'InvenTree'
