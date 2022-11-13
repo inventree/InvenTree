@@ -702,7 +702,6 @@ class InvenTreeBarcodeMixin(models.Model):
         return InvenTree.helpers.MakeBarcode(
             self.__class__.barcode_model_type(),
             self.pk,
-            url=self.get_absolute_url(),
             **kwargs
         )
 

@@ -476,11 +476,6 @@ def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
 
     data = {}
 
-    url = kwargs.get('url', None)
-
-    if url:
-        data['url'] = url
-
     if brief:
         data[cls_name] = object_pk
     else:
