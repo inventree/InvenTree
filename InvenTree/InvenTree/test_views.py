@@ -2,8 +2,6 @@
 
 import os
 
-from django.urls import reverse
-
 from InvenTree.helpers import InvenTreeTestCase
 
 
@@ -15,7 +13,7 @@ class ViewTests(InvenTreeTestCase):
 
     def test_api_doc(self):
         """Test that the api-doc view works."""
-        api_url = os.path.join(reverse('index'), 'api-doc') + '/'
+        api_url = os.path.join('/api-doc') + '/'
 
         response = self.client.get(api_url)
         self.assertEqual(response.status_code, 200)
@@ -25,20 +23,6 @@ class ViewTests(InvenTreeTestCase):
         response = self.client.get("/")
 
         self.assertEqual(response.status_code, 302)
-
-    def get_index_page(self):
-        """Retrieve the index page (used for subsequent unit tests)"""
-        response = self.client.get("/index/")
-
-        self.assertEqual(response.status_code, 200)
-
-        return str(response.content.decode())
-
-    def test_panels(self):
-        """Test that the required 'panels' are present."""
-        content = self.get_index_page()
-
-        self.assertIn("<div id='detail-panels'>", content)
 
     def test_url_login(self):
         """Test logging in via arguments"""
