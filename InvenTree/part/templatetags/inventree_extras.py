@@ -104,11 +104,14 @@ def render_date(context, date_object):
 
 
 @register.simple_tag
-def render_currency(money, decimal_places=6, include_symbol=True):
+def render_currency(money, decimal_places=None, include_symbol=True):
     """Render a currency / Money object"""
 
     if money is None or money.amount is None:
         return '-'
+
+    if decimal_places is None:
+        decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
 
     value = Decimal(str(money.amount)).normalize()
     value = str(value)

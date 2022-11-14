@@ -1089,6 +1089,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'PRICING_DECIMAL_PLACES': {
+            'name': _('Pricing Decimal Places'),
+            'description': _('Number of decimal places to display when rendering pricing data'),
+            'default': 6,
+            'validator': [
+                int,
+                MinValueValidator(2),
+                MaxValueValidator(6)
+            ]
+        },
+
         'PRICING_UPDATE_DAYS': {
             'name': _('Pricing Rebuild Time'),
             'description': _('Number of days before part pricing is automatically updated'),

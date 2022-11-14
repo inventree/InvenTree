@@ -54,7 +54,7 @@ function formatCurrency(value, options={}) {
         return null;
     }
 
-    var digits = options.digits || 10;
+    var digits = options.digits || global_settings.PRICING_DECIMAL_PLACES || 6;
 
     // Strip out any trailing zeros, etc
     value = formatDecimal(value, digits);
