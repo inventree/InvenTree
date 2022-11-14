@@ -1665,7 +1665,13 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         If there is no PartPricing database entry defined for this Part,
         it will first be created, and then returned.
         """
-        return PartPricing.objects.get_or_create(part=self)[0]
+
+        try:
+            pricing = PartPricing.objects.get(part=self)
+        except PartPricing.DoesNotExist:
+            pricing = PartPricing(part=self)
+
+        return pricing
 
     def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
         """Return a simplified pricing string for this part.
@@ -2237,13 +2243,7 @@ class PartPricing(models.Model):
     def is_valid(self):
         """Return True if the cached pricing is valid"""
 
-        if self.updated is None:
-            return False
-
-        if self.overall_min is not None or self.overall_max is not None:
-            return True
-        else:
-            return False
+        return self.updated is not None
 
     def convert(self, money):
         """Attempt to convert money value to default currency.
@@ -2267,9 +2267,19 @@ class PartPricing(models.Model):
     def schedule_for_update(self, counter: int = 0):
         """Schedule this pricing to be updated"""
 
+        if self.pk is None:
+            self.save()
+
+        self.refresh_from_db()
+
         if self.scheduled_for_update:
             # Ignore if the pricing is already scheduled to be updated
             logger.info(f"Pricing for {self.part} already scheduled for update - skipping")
+            return
+
+        if counter > 25:
+            # Prevent infinite recursion / stack depth issues
+            logger.info(counter, f"Skipping pricing update for {self.part} - maximum depth exceeded")
             return
 
         self.scheduled_for_update = True
@@ -2289,6 +2299,9 @@ class PartPricing(models.Model):
     def update_pricing(self, counter: int = 0):
         """Recalculate all cost data for the referenced Part instance"""
 
+        if self.pk is not None:
+            self.refresh_from_db()
+
         self.update_bom_cost(save=False)
         self.update_purchase_cost(save=False)
         self.update_internal_cost(save=False)
@@ -2300,7 +2313,11 @@ class PartPricing(models.Model):
         self.scheduled_for_update = False
 
         # Note: save method calls update_overall_cost
-        self.save()
+        try:
+            self.save()
+        except IntegrityError:
+            # Background worker processes may try to concurrently update
+            pass
 
         # Update parent assemblies and templates
         self.update_assemblies(counter)
@@ -2313,7 +2330,7 @@ class PartPricing(models.Model):
         used_in_parts = self.part.get_used_in()
 
         for p in used_in_parts:
-            p.pricing.schedule_for_update(counter)
+            p.pricing.schedule_for_update(counter + 1)
 
     def update_templates(self, counter: int = 0):
         """Schedule updates for any template parts above this part"""
@@ -2321,7 +2338,7 @@ class PartPricing(models.Model):
         templates = self.part.get_ancestors(include_self=False)
 
         for p in templates:
-            p.pricing.schedule_for_update(counter)
+            p.pricing.schedule_for_update(counter + 1)
 
     def save(self, *args, **kwargs):
         """Whenever pricing model is saved, automatically update overall prices"""

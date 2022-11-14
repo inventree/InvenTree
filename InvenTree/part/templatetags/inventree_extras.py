@@ -107,20 +107,21 @@ def render_date(context, date_object):
 def render_currency(money, decimal_places=6, include_symbol=True):
     """Render a currency / Money object"""
 
-    # Work out how many decimal places we *actually* want
-    if money.amount is not None:
-        value = Decimal(str(money.amount)).normalize()
-        value = str(value)
+    if money is None or money.amount is None:
+        return '-'
 
-        if '.' in value:
-            decimals = len(value.split('.')[-1])
+    value = Decimal(str(money.amount)).normalize()
+    value = str(value)
 
-            decimals = max(decimals, 2)
-            decimals = min(decimals, decimal_places)
+    if '.' in value:
+        decimals = len(value.split('.')[-1])
 
-            decimal_places = decimals
-        else:
-            decimal_places = 2
+        decimals = max(decimals, 2)
+        decimals = min(decimals, decimal_places)
+
+        decimal_places = decimals
+    else:
+        decimal_places = 2
 
     return moneyed.localization.format_money(
         money,

@@ -67,37 +67,22 @@ def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
         counter: How many times this function has been called in sequence
     """
 
-    # Do not ascend too many levels (prevent recursion or CPU overload)
-    if counter > 15:
-        logger.warning("update_part_pricing maximum depth reached")
-        return
-
     logger.info(f"Updating part pricing for {pricing.part}")
 
-    counter += 1
     pricing.update_pricing(counter=counter)
 
 
 @scheduled_task(ScheduledTask.DAILY)
-def check_missing_pricing():
+def check_missing_pricing(limit=250):
     """Check for parts with missing or outdated pricing information:
 
     - Pricing information does not exist
     - Pricing information is "old"
     - Pricing information is in the wrong currency
+
+    Arguments:
+        limit: Maximum number of parts to process at once
     """
-
-    # We do not want to overload the background worker, so limit the number of parts we update at once
-    limit = 150
-
-    # Find any parts which do not have pricing information
-    results = part.models.Part.objects.filter(pricing_data=None)[:limit]
-
-    if results.count() > 0:
-        logger.info(f"Found {results.count()} parts without pricing")
-
-        for p in results:
-            p.pricing.schedule_for_update()
 
     # Find parts for which pricing information has never been updated
     results = part.models.PartPricing.objects.filter(updated=None)[:limit]
@@ -129,3 +114,13 @@ def check_missing_pricing():
 
         for pp in results:
             pp.schedule_for_update()
+
+    # Find any parts which do not have pricing information
+    results = part.models.Part.objects.filter(pricing_data=None)[:limit]
+
+    if results.count() > 0:
+        logger.info(f"Found {results.count()} parts without pricing")
+
+        for p in results:
+            pricing = p.pricing
+            pricing.schedule_for_update()

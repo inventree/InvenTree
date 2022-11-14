@@ -61,7 +61,12 @@ function loadBomPricingChart(options={}) {
             data = data.filter((x) => x.pricing_min != null || x.pricing_max != null);
 
             // Sort in decreasing order of "maximum price"
-            data = data.sort((a, b) => (b.pricing_max - a.pricing_max));
+            data = data.sort(function(a, b) {
+                var pa = parseFloat(a.quantity * (a.pricing_max || a.pricing_min));
+                var pb = parseFloat(b.quantity * (b.pricing_max || b.pricing_min));
+
+                return pb - pa;
+            });
 
             var graphLabels = Array.from(data, (x) => x.sub_part_detail.name);
             var minValues = Array.from(data, (x) => x.quantity * (x.pricing_min || x.pricing_max));
