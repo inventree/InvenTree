@@ -1054,37 +1054,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'PART_SHOW_PRICE_IN_FORMS': {
-            'name': _('Show Price in Forms'),
-            'description': _('Display part price in some forms'),
-            'default': True,
-            'validator': bool,
-        },
-
-        # 2021-10-08
-        # This setting exists as an interim solution for https://github.com/inventree/InvenTree/issues/2042
-        # The BOM API can be extremely slow when calculating pricing information "on the fly"
-        # A future solution will solve this properly,
-        # but as an interim step we provide a global to enable / disable BOM pricing
-        'PART_SHOW_PRICE_IN_BOM': {
-            'name': _('Show Price in BOM'),
-            'description': _('Include pricing information in BOM tables'),
-            'default': True,
-            'validator': bool,
-        },
-
-        # 2022-02-03
-        # This setting exists as an interim solution for extremely slow part page load times when the part has a complex BOM
-        # In an upcoming release, pricing history (and BOM pricing) will be cached,
-        # rather than having to be re-calculated every time the page is loaded!
-        # For now, we will simply hide part pricing by default
-        'PART_SHOW_PRICE_HISTORY': {
-            'name': _('Show Price History'),
-            'description': _('Display historical pricing for Part'),
-            'default': False,
-            'validator': bool,
-        },
-
         'PART_SHOW_RELATED': {
             'name': _('Show related parts'),
             'description': _('Display related parts for a part'),
@@ -1099,20 +1068,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'PART_INTERNAL_PRICE': {
-            'name': _('Internal Prices'),
-            'description': _('Enable internal prices for parts'),
-            'default': False,
-            'validator': bool
-        },
-
-        'PART_BOM_USE_INTERNAL_PRICE': {
-            'name': _('Internal Price as BOM-Price'),
-            'description': _('Use the internal price (if set) in BOM-price calculations'),
-            'default': False,
-            'validator': bool
-        },
-
         'PART_NAME_FORMAT': {
             'name': _('Part Name Display Format'),
             'description': _('Format to display the part name'),
@@ -1125,6 +1080,42 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Part Category Default Icon'),
             'description': _('Part category default icon (empty means no icon)'),
             'default': '',
+        },
+
+        'PRICING_DECIMAL_PLACES': {
+            'name': _('Pricing Decimal Places'),
+            'description': _('Number of decimal places to display when rendering pricing data'),
+            'default': 6,
+            'validator': [
+                int,
+                MinValueValidator(2),
+                MaxValueValidator(6)
+            ]
+        },
+
+        'PRICING_UPDATE_DAYS': {
+            'name': _('Pricing Rebuild Time'),
+            'description': _('Number of days before part pricing is automatically updated'),
+            'units': _('days'),
+            'default': 30,
+            'validator': [
+                int,
+                MinValueValidator(10),
+            ]
+        },
+
+        'PART_INTERNAL_PRICE': {
+            'name': _('Internal Prices'),
+            'description': _('Enable internal prices for parts'),
+            'default': False,
+            'validator': bool
+        },
+
+        'PART_BOM_USE_INTERNAL_PRICE': {
+            'name': _('Internal Price Override'),
+            'description': _('If available, internal prices override price range calculations'),
+            'default': False,
+            'validator': bool
         },
 
         'LABEL_ENABLE': {
@@ -1800,7 +1791,7 @@ class PriceBreak(models.Model):
 
     price = InvenTree.fields.InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True,
         verbose_name=_('Price'),
         help_text=_('Unit price at specified quantity'),

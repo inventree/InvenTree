@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 from datetime import date, datetime
+from decimal import Decimal
 
 from django import template
 from django.conf import settings as djangosettings
@@ -12,6 +13,8 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+
+import moneyed.localization
 
 import InvenTree.helpers
 from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
@@ -35,6 +38,12 @@ def define(value, *args, **kwargs):
     Ref: https://stackoverflow.com/questions/1070398/how-to-set-a-value-of-a-variable-inside-a-template-code
     """
     return value
+
+
+@register.simple_tag()
+def decimal(x, *args, **kwargs):
+    """Simplified rendering of a decimal number."""
+    return InvenTree.helpers.decimal2string(x)
 
 
 @register.simple_tag(takes_context=True)
@@ -94,10 +103,34 @@ def render_date(context, date_object):
     return date_object
 
 
-@register.simple_tag()
-def decimal(x, *args, **kwargs):
-    """Simplified rendering of a decimal number."""
-    return InvenTree.helpers.decimal2string(x)
+@register.simple_tag
+def render_currency(money, decimal_places=None, include_symbol=True):
+    """Render a currency / Money object"""
+
+    if money is None or money.amount is None:
+        return '-'
+
+    if decimal_places is None:
+        decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
+
+    value = Decimal(str(money.amount)).normalize()
+    value = str(value)
+
+    if '.' in value:
+        decimals = len(value.split('.')[-1])
+
+        decimals = max(decimals, 2)
+        decimals = min(decimals, decimal_places)
+
+        decimal_places = decimals
+    else:
+        decimal_places = 2
+
+    return moneyed.localization.format_money(
+        money,
+        decimal_places=decimal_places,
+        include_symbol=include_symbol,
+    )
 
 
 @register.simple_tag()

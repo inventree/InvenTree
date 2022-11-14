@@ -60,8 +60,6 @@ def check_prohibited_tags(data):
 
     err_count = 0
 
-    has_trans = False
-
     for idx, line in enumerate(data):
 
         for tag in re.findall(pattern, line):
@@ -69,13 +67,6 @@ def check_prohibited_tags(data):
             if tag not in allowed_tags:
                 print(f" > Line {idx+1} contains prohibited template tag '{tag}'")
                 err_count += 1
-
-            if tag == 'trans':
-                has_trans = True
-
-    if not has_trans:
-        print(" > file is missing 'trans' tags")
-        err_count += 1
 
     return err_count
 

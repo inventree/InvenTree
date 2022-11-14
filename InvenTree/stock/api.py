@@ -35,7 +35,7 @@ from order.serializers import PurchaseOrderSerializer
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from plugin.serializers import MetadataSerializer
-from stock.admin import StockItemResource
+from stock.admin import LocationResource, StockItemResource
 from stock.models import (StockItem, StockItemAttachment, StockItemTestResult,
                           StockItemTracking, StockLocation)
 
@@ -215,7 +215,7 @@ class StockMerge(CreateAPI):
         return ctx
 
 
-class StockLocationList(ListCreateAPI):
+class StockLocationList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for list view of StockLocation objects.
 
     - GET: Return list of StockLocation objects
@@ -224,6 +224,15 @@ class StockLocationList(ListCreateAPI):
 
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
+
+    def download_queryset(self, queryset, export_format):
+        """Download the filtered queryset as a data file"""
+
+        dataset = LocationResource().export(queryset=queryset)
+        filedata = dataset.export(export_format)
+        filename = f"InvenTree_Locations.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint"""

@@ -239,12 +239,6 @@ class ManufacturerTest(InvenTreeAPITestCase):
         # Check link is not modified
         self.assertEqual(response.data['link'], 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E')
 
-        # Check manufacturer part
-        manufacturer_part_id = int(response.data['manufacturer_part_detail']['pk'])
-        url = reverse('api-manufacturer-part-detail', kwargs={'pk': manufacturer_part_id})
-        response = self.get(url)
-        self.assertEqual(response.data['MPN'], 'PART_NUMBER')
-
         # Check link is not modified
         self.assertEqual(response.data['link'], 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E')
 

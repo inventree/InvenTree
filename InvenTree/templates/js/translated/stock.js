@@ -1980,17 +1980,16 @@ function loadStockTable(table, options) {
 
     columns.push(col);
 
-    col = {
-        field: 'purchase_price_string',
+    columns.push({
+        field: 'purchase_price',
         title: '{% trans "Purchase Price" %}',
-    };
-
-    if (!options.params.ordering) {
-        col.sortable = true;
-        col.sortName = 'purchase_price';
-    }
-
-    columns.push(col);
+        sortable: false,
+        formatter: function(value, row) {
+            return formatCurrency(value, {
+                currency: row.purchase_price_currency,
+            });
+        }
+    });
 
     columns.push({
         field: 'packaging',
@@ -2268,7 +2267,7 @@ function loadStockLocationTable(table, options) {
         original[k] = params[k];
     }
 
-    setupFilterList(filterKey, table, filterListElement);
+    setupFilterList(filterKey, table, filterListElement, {download: true});
 
     for (var key in params) {
         filters[key] = params[key];

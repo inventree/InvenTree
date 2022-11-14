@@ -438,12 +438,13 @@ class StockItemListTest(StockAPITestCase):
 
         # Expected headers
         headers = [
-            'part',
-            'customer',
-            'location',
-            'parent',
-            'quantity',
-            'status',
+            'Part ID',
+            'Customer ID',
+            'Location ID',
+            'Location Name',
+            'Parent ID',
+            'Quantity',
+            'Status',
         ]
 
         for h in headers:
@@ -685,9 +686,8 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url, expected_code=200).data
 
         # Check fixture values
-        self.assertEqual(data['purchase_price'], '123.0000')
+        self.assertEqual(data['purchase_price'], '123.000000')
         self.assertEqual(data['purchase_price_currency'], 'AUD')
-        self.assertEqual(data['purchase_price_string'], 'A$123.0000')
 
         # Update just the amount
         data = self.patch(
@@ -698,7 +698,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=200
         ).data
 
-        self.assertEqual(data['purchase_price'], '456.0000')
+        self.assertEqual(data['purchase_price'], '456.000000')
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update the currency
@@ -722,7 +722,6 @@ class StockItemTest(StockAPITestCase):
         ).data
 
         self.assertEqual(data['purchase_price'], None)
-        self.assertEqual(data['purchase_price_string'], '-')
 
         # Invalid currency code
         data = self.patch(

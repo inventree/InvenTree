@@ -1,6 +1,7 @@
 """Admin class definitions for the 'part' app"""
 
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
@@ -15,29 +16,57 @@ from stock.models import StockLocation
 class PartResource(InvenTreeResource):
     """Class for managing Part data import/export."""
 
-    # ForeignKey fields
-    category = Field(attribute='category', widget=widgets.ForeignKeyWidget(models.PartCategory))
+    id = Field(attribute='pk', column_name=_('Part ID'), widget=widgets.IntegerWidget())
+    name = Field(attribute='name', column_name=_('Part Name'), widget=widgets.CharWidget())
+    description = Field(attribute='description', column_name=_('Part Description'), widget=widgets.CharWidget())
+    IPN = Field(attribute='IPN', column_name=_('IPN'), widget=widgets.CharWidget())
+    revision = Field(attribute='revision', column_name=_('Revision'), widget=widgets.CharWidget())
+    keywords = Field(attribute='keywords', column_name=_('Keywords'), widget=widgets.CharWidget())
+    link = Field(attribute='link', column_name=_('Link'), widget=widgets.CharWidget())
+    units = Field(attribute='units', column_name=_('Units'), widget=widgets.CharWidget())
+    notes = Field(attribute='notes', column_name=_('Notes'))
+    category = Field(attribute='category', column_name=_('Category ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
+    category_name = Field(attribute='category__name', column_name=_('Category Name'), readonly=True)
+    default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    default_supplier = Field(attribute='default_supplier', column_name=_('Default Supplier ID'), widget=widgets.ForeignKeyWidget(SupplierPart))
+    variant_of = Field(attribute='variant_of', column_name=('Variant Of'), widget=widgets.ForeignKeyWidget(models.Part))
+    minimum_stock = Field(attribute='minimum_stock', column_name=_('Minimum Stock'))
 
-    default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
-
-    default_supplier = Field(attribute='default_supplier', widget=widgets.ForeignKeyWidget(SupplierPart))
-
-    category_name = Field(attribute='category__name', readonly=True)
-
-    variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(models.Part))
-
-    suppliers = Field(attribute='supplier_count', readonly=True)
+    # Part Attributes
+    active = Field(attribute='active', column_name=_('Active'), widget=widgets.BooleanWidget())
+    assembly = Field(attribute='assembly', column_name=_('Assembly'), widget=widgets.BooleanWidget())
+    component = Field(attribute='component', column_name=_('Component'), widget=widgets.BooleanWidget())
+    purchaseable = Field(attribute='purchaseable', column_name=_('Purchaseable'), widget=widgets.BooleanWidget())
+    salable = Field(attribute='salable', column_name=_('Salable'), widget=widgets.BooleanWidget())
+    is_template = Field(attribute='is_template', column_name=_('Template'), widget=widgets.BooleanWidget())
+    trackable = Field(attribute='trackable', column_name=_('Trackable'), widget=widgets.BooleanWidget())
+    virtual = Field(attribute='virtual', column_name=_('Virtual'), widget=widgets.BooleanWidget())
 
     # Extra calculated meta-data (readonly)
-    in_stock = Field(attribute='total_stock', readonly=True, widget=widgets.IntegerWidget())
+    suppliers = Field(attribute='supplier_count', column_name=_('Suppliers'), readonly=True)
+    in_stock = Field(attribute='total_stock', column_name=_('In Stock'), readonly=True, widget=widgets.IntegerWidget())
+    on_order = Field(attribute='on_order', column_name=_('On Order'), readonly=True, widget=widgets.IntegerWidget())
+    used_in = Field(attribute='used_in_count', column_name=_('Used In'), readonly=True, widget=widgets.IntegerWidget())
+    allocated = Field(attribute='allocation_count', column_name=_('Allocated'), readonly=True, widget=widgets.IntegerWidget())
+    building = Field(attribute='quantity_being_built', column_name=_('Building'), readonly=True, widget=widgets.IntegerWidget())
+    min_cost = Field(attribute='pricing__overall_min', column_name=_('Minimum Cost'), readonly=True)
+    max_cost = Field(attribute='pricing__overall_max', column_name=_('Maximum Cost'), readonly=True)
 
-    on_order = Field(attribute='on_order', readonly=True, widget=widgets.IntegerWidget())
+    def dehydrate_min_cost(self, part):
+        """Render minimum cost value for this Part"""
 
-    used_in = Field(attribute='used_in_count', readonly=True, widget=widgets.IntegerWidget())
+        min_cost = part.pricing.overall_min if part.pricing else None
 
-    allocated = Field(attribute='allocation_count', readonly=True, widget=widgets.IntegerWidget())
+        if min_cost is not None:
+            return float(min_cost.amount)
 
-    building = Field(attribute='quantity_being_built', readonly=True, widget=widgets.IntegerWidget())
+    def dehydrate_max_cost(self, part):
+        """Render maximum cost value for this Part"""
+
+        max_cost = part.pricing.overall_max if part.pricing else None
+
+        if max_cost is not None:
+            return float(max_cost.amount)
 
     class Meta:
         """Metaclass definition"""
@@ -48,7 +77,9 @@ class PartResource(InvenTreeResource):
         exclude = [
             'bom_checksum', 'bom_checked_by', 'bom_checked_date',
             'lft', 'rght', 'tree_id', 'level',
+            'image',
             'metadata',
+            'barcode_data', 'barcode_hash',
         ]
 
     def get_queryset(self):
@@ -92,14 +123,30 @@ class PartAdmin(ImportExportModelAdmin):
     ]
 
 
+class PartPricingAdmin(admin.ModelAdmin):
+    """Admin class for PartPricing model"""
+
+    list_display = ('part', 'overall_min', 'overall_max')
+
+    autcomplete_fields = [
+        'part',
+    ]
+
+
 class PartCategoryResource(InvenTreeResource):
     """Class for managing PartCategory data import/export."""
 
-    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(models.PartCategory))
+    id = Field(attribute='pk', column_name=_('Category ID'))
+    name = Field(attribute='name', column_name=_('Category Name'))
+    description = Field(attribute='description', column_name=_('Description'))
+    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
+    parent_name = Field(attribute='parent__name', column_name=_('Parent Name'), readonly=True)
+    default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    default_keywords = Field(attribute='default_keywords', column_name=_('Keywords'))
+    pathstring = Field(attribute='pathstring', column_name=_('Category Path'))
 
-    parent_name = Field(attribute='parent__name', readonly=True)
-
-    default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
+    # Calculated fields
+    parts = Field(attribute='item_count', column_name=_('Parts'), widget=widgets.IntegerWidget(), readonly=True)
 
     class Meta:
         """Metaclass definition"""
@@ -112,6 +159,7 @@ class PartCategoryResource(InvenTreeResource):
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
             'metadata',
+            'icon',
         ]
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
@@ -160,33 +208,41 @@ class PartTestTemplateAdmin(admin.ModelAdmin):
 class BomItemResource(InvenTreeResource):
     """Class for managing BomItem data import/export."""
 
-    level = Field(attribute='level', readonly=True)
+    level = Field(attribute='level', column_name=_('BOM Level'), readonly=True)
 
-    bom_id = Field(attribute='pk')
+    bom_id = Field(attribute='pk', column_name=_('BOM Item ID'))
 
     # ID of the parent part
-    parent_part_id = Field(attribute='part', widget=widgets.ForeignKeyWidget(models.Part))
+    parent_part_id = Field(attribute='part', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.Part))
+    parent_part_ipn = Field(attribute='part__IPN', column_name=_('Parent IPN'), readonly=True)
+    parent_part_name = Field(attribute='part__name', column_name=_('Parent Name'), readonly=True)
+    part_id = Field(attribute='sub_part', column_name=_('Part ID'), widget=widgets.ForeignKeyWidget(models.Part))
+    part_ipn = Field(attribute='sub_part__IPN', column_name=_('Part IPN'), readonly=True)
+    part_name = Field(attribute='sub_part__name', column_name=_('Part Name'), readonly=True)
+    part_description = Field(attribute='sub_part__description', column_name=_('Description'), readonly=True)
+    quantity = Field(attribute='quantity', column_name=_('Quantity'))
+    reference = Field(attribute='reference', column_name=_('Reference'))
+    note = Field(attribute='note', column_name=_('Note'))
+    min_cost = Field(attribute='sub_part__pricing__overall_min', column_name=_('Minimum Price'), readonly=True)
+    max_cost = Field(attribute='sub_part__pricing__overall_max', column_name=_('Maximum Price'), readonly=True)
 
-    # IPN of the parent part
-    parent_part_ipn = Field(attribute='part__IPN', readonly=True)
+    sub_assembly = Field(attribute='sub_part__assembly', column_name=_('Assembly'), readonly=True)
 
-    # Name of the parent part
-    parent_part_name = Field(attribute='part__name', readonly=True)
+    def dehydrate_min_cost(self, item):
+        """Render minimum cost value for the BOM line item"""
 
-    # ID of the sub-part
-    part_id = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(models.Part))
+        min_price = item.sub_part.pricing.overall_min if item.sub_part.pricing else None
 
-    # IPN of the sub-part
-    part_ipn = Field(attribute='sub_part__IPN', readonly=True)
+        if min_price is not None:
+            return float(min_price.amount) * float(item.quantity)
 
-    # Name of the sub-part
-    part_name = Field(attribute='sub_part__name', readonly=True)
+    def dehydrate_max_cost(self, item):
+        """Render maximum cost value for the BOM line item"""
 
-    # Description of the sub-part
-    part_description = Field(attribute='sub_part__description', readonly=True)
+        max_price = item.sub_part.pricing.overall_max if item.sub_part.pricing else None
 
-    # Is the sub-part itself an assembly?
-    sub_assembly = Field(attribute='sub_part__assembly', readonly=True)
+        if max_price is not None:
+            return float(max_price.amount) * float(item.quantity)
 
     def dehydrate_quantity(self, item):
         """Special consideration for the 'quantity' field on data export. We do not want a spreadsheet full of "1.0000" (we'd rather "1")
@@ -197,34 +253,43 @@ class BomItemResource(InvenTreeResource):
 
     def before_export(self, queryset, *args, **kwargs):
         """Perform before exporting data"""
+
         self.is_importing = kwargs.get('importing', False)
+        self.include_pricing = kwargs.pop('include_pricing', False)
 
     def get_fields(self, **kwargs):
         """If we are exporting for the purposes of generating a 'bom-import' template, there are some fields which we are not interested in."""
         fields = super().get_fields(**kwargs)
 
-        # If we are not generating an "import" template,
-        # just return the complete list of fields
-        if not getattr(self, 'is_importing', False):
-            return fields
+        is_importing = getattr(self, 'is_importing', False)
+        include_pricing = getattr(self, 'include_pricing', False)
 
-        # Otherwise, remove some fields we are not interested in
+        to_remove = []
+
+        if is_importing or not include_pricing:
+            # Remove pricing fields in this instance
+            to_remove += [
+                'sub_part__pricing__overall_min',
+                'sub_part__pricing__overall_max',
+            ]
+
+        if is_importing:
+            to_remove += [
+                'level',
+                'pk',
+                'part',
+                'part__IPN',
+                'part__name',
+                'sub_part__name',
+                'sub_part__description',
+                'sub_part__assembly'
+            ]
 
         idx = 0
 
-        to_remove = [
-            'level',
-            'bom_id',
-            'parent_part_id',
-            'parent_part_ipn',
-            'parent_part_name',
-            'part_description',
-            'sub_assembly'
-        ]
-
         while idx < len(fields):
 
-            if fields[idx].column_name.lower() in to_remove:
+            if fields[idx].attribute in to_remove:
                 del fields[idx]
             else:
                 idx += 1
@@ -334,3 +399,4 @@ admin.site.register(models.PartCategoryParameterTemplate, PartCategoryParameterA
 admin.site.register(models.PartTestTemplate, PartTestTemplateAdmin)
 admin.site.register(models.PartSellPriceBreak, PartSellPriceBreakAdmin)
 admin.site.register(models.PartInternalPriceBreak, PartInternalPriceBreakAdmin)
+admin.site.register(models.PartPricing, PartPricingAdmin)

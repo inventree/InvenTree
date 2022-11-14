@@ -751,7 +751,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         blank=True,
         null=True,
         verbose_name=_('Purchase Price'),

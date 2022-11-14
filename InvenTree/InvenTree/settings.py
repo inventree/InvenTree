@@ -31,7 +31,7 @@ INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
-# Are enviroment variables manipulated by tests? Needs to be set by testing code
+# Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
 
 # New requirement for django 3.2+
@@ -677,6 +677,9 @@ CURRENCIES = CONFIG.get(
         'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
     ],
 )
+
+# Maximum number of decimal places for currency rendering
+CURRENCY_DECIMAL_PLACES = 6
 
 # Check that each provided currency is supported
 for currency in CURRENCIES:

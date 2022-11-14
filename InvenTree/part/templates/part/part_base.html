@@ -323,6 +323,21 @@
                         {% endif %}
                     </td>
                 </tr>
+                {% with part.pricing as pricing %}
+                {% if pricing.is_valid %}
+                <tr>
+                    <td><span class='fas fa-dollar-sign'></span></td>
+                    <td>{% trans "Price Range" %}</td>
+                    <td>
+                        {% if pricing.overall_min == pricing.overall_max %}
+                        {% render_currency pricing.overall_max %}
+                        {% else %}
+                        {% render_currency pricing.overall_min %} - {% render_currency pricing.overall_max %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endwith %}
                 {% with part.get_latest_serial_number as sn %}
                 {% if part.trackable and sn %}
                 <tr>

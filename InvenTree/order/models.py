@@ -24,6 +24,7 @@ from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
 import InvenTree.ready
+import InvenTree.tasks
 import order.validators
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
@@ -311,6 +312,9 @@ class PurchaseOrder(Order):
             reference (str, optional): Reference to item. Defaults to ''.
             purchase_price (optional): Price of item. Defaults to None.
 
+        Returns:
+            The newly created PurchaseOrderLineItem instance
+
         Raises:
             ValidationError: quantity is smaller than 0
             ValidationError: quantity is not type int
@@ -338,11 +342,13 @@ class PurchaseOrder(Order):
                 quantity_new = line.quantity + quantity
                 line.quantity = quantity_new
                 supplier_price = supplier_part.get_price(quantity_new)
+
                 if line.purchase_price and supplier_price:
                     line.purchase_price = supplier_price / quantity_new
+
                 line.save()
 
-                return
+                return line
 
         line = PurchaseOrderLineItem(
             order=self,
@@ -353,6 +359,8 @@ class PurchaseOrder(Order):
         )
 
         line.save()
+
+        return line
 
     @transaction.atomic
     def place_order(self):
@@ -376,7 +384,13 @@ class PurchaseOrder(Order):
         if self.status == PurchaseOrderStatus.PLACED:
             self.status = PurchaseOrderStatus.COMPLETE
             self.complete_date = datetime.now().date()
+
             self.save()
+
+            # Schedule pricing update for any referenced parts
+            for line in self.lines.all():
+                if line.part and line.part.part:
+                    line.part.part.pricing.schedule_for_update()
 
             trigger_event('purchaseorder.completed', id=self.pk)
 
@@ -762,6 +776,10 @@ class SalesOrder(Order):
 
         self.save()
 
+        # Schedule pricing update for any referenced parts
+        for line in self.lines.all():
+            line.part.pricing.schedule_for_update()
+
         trigger_event('salesorder.completed', id=self.pk)
 
         return True
@@ -951,7 +969,7 @@ class OrderExtraLine(OrderLineItem):
 
     price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True, blank=True,
         allow_negative=True,
         verbose_name=_('Price'),
@@ -1031,7 +1049,7 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True, blank=True,
         verbose_name=_('Purchase Price'),
         help_text=_('Unit purchase price'),
@@ -1137,7 +1155,7 @@ class SalesOrderLineItem(OrderLineItem):
 
     sale_price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True, blank=True,
         verbose_name=_('Sale Price'),
         help_text=_('Unit sale price'),

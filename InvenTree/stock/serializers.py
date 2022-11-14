@@ -171,7 +171,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
-        max_digits=19, decimal_places=4,
+        max_digits=19, decimal_places=6,
         allow_null=True,
         help_text=_('Purchase price of this stock item'),
     )
@@ -182,16 +182,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         label=_('Currency'),
         help_text=_('Purchase currency of this stock item'),
     )
-
-    purchase_price_string = serializers.SerializerMethodField()
-
-    def get_purchase_price_string(self, obj):
-        """Return purchase price as string."""
-        if obj.purchase_price:
-            obj.purchase_price.decimal_places_display = 4
-            return str(obj.purchase_price)
-
-        return '-'
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
@@ -253,7 +243,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'updated',
             'purchase_price',
             'purchase_price_currency',
-            'purchase_price_string',
         ]
 
         """
