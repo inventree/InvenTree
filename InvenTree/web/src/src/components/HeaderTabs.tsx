@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   createStyles,
   Container,
-  Avatar,
   UnstyledButton,
   Group,
   Text,
@@ -12,15 +11,9 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-    IconAlien,
   IconLogout,
   IconHeart,
-  IconStar,
-  IconMessage,
   IconSettings,
-  IconPlayerPause,
-  IconTrash,
-  IconSwitchHorizontal,
   IconChevronDown,
 } from '@tabler/icons';
 import { ColorToggle } from './ColorToggle';

@@ -1,21 +1,15 @@
 import { useState } from 'react';
 import { MantineProvider, ColorSchemeProvider, ColorScheme } from '@mantine/core';
 import { useColorScheme } from '@mantine/hooks';
-import { Text } from '@mantine/core';
-import { ColorToggle } from './components/ColorToggle';
-import { HeaderTabs } from './components/HeaderTabs';
 import {
   createBrowserRouter,
   RouterProvider,
-  Route,
 } from "react-router-dom";
 import ErrorPage from './pages/error';
 import Layout, { Home, Part } from './pages/layout';
 
 const routes = {
   base: 'https://demo.inventree.org/api',
-  home: '/',
-  error: '/error',
 };
 
 const user = {

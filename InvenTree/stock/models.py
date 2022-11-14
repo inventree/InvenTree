@@ -43,8 +43,35 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     """Organization tree for StockItem objects.
 
     A "StockLocation" can be considered a warehouse, or storage location
-    Stock locations can be heirarchical as required
+    Stock locations can be hierarchical as required
     """
+
+    def delete_recursive(self, *args, **kwargs):
+        """This function handles the recursive deletion of sub-locations depending on kwargs contents"""
+        delete_stock_items = kwargs.get('delete_stock_items', False)
+        parent_location = kwargs.get('parent_location', None)
+
+        if parent_location is None:
+            # First iteration, (no parent_location kwargs passed)
+            parent_location = self.parent
+
+        for child_item in self.get_stock_items(False):
+            if delete_stock_items:
+                child_item.delete()
+            else:
+                child_item.location = parent_location
+                child_item.save()
+
+        for child_location in self.children.all():
+            if kwargs.get('delete_sub_locations', False):
+                child_location.delete_recursive(**dict(delete_sub_locations=True,
+                                                       delete_stock_items=delete_stock_items,
+                                                       parent_location=parent_location))
+            else:
+                child_location.parent = parent_location
+                child_location.save()
+
+        super().delete(*args, **dict())
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child locations or items.
@@ -53,24 +80,13 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         """
         with transaction.atomic():
 
-            parent = self.parent
-            tree_id = self.tree_id
+            self.delete_recursive(**dict(delete_stock_items=kwargs.get('delete_stock_items', False),
+                                         delete_sub_locations=kwargs.get('delete_sub_locations', False),
+                                         parent_category=self.parent))
 
-            # Update each stock item in the stock location
-            for item in self.stock_items.all():
-                item.location = self.parent
-                item.save()
-
-            # Update each child category
-            for child in self.children.all():
-                child.parent = self.parent
-                child.save()
-
-            super().delete(*args, **kwargs)
-
-            if parent is not None:
+            if self.parent is not None:
                 # Partially rebuild the tree (cheaper than a complete rebuild)
-                StockLocation.objects.partial_rebuild(tree_id)
+                StockLocation.objects.partial_rebuild(self.tree_id)
             else:
                 StockLocation.objects.rebuild()
 
