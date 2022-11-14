@@ -1,9 +1,10 @@
 import { Outlet } from "react-router-dom";
 import { HeaderTabs } from "../components/HeaderTabs";
-import { Container, Flex, Space, Text } from "@mantine/core";
+import { Container, Flex, Space } from "@mantine/core";
 
 import { FooterSimple, FooterSimpleProps } from "../components/FooterSimple";
 import { useStyles } from "../globalStyle";
+import { StylishText } from "../components/StylishText";
 
 
 export default function Layout({ user, tabs, links }: { user: any, tabs: any, links: FooterSimpleProps }) {
@@ -22,7 +23,7 @@ export default function Layout({ user, tabs, links }: { user: any, tabs: any, li
 export function Home() {
 
     return (<>
-        <Text>Home</Text>
+        <StylishText>Home</StylishText>
     </>);
 }
 
@@ -30,6 +31,6 @@ export function Home() {
 export function Part() {
 
     return (<>
-        <Text>Part</Text>
+        <StylishText>Part</StylishText>
     </>);
 }

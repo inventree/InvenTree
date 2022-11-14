@@ -1,7 +1,8 @@
-import { Group, Text } from "@mantine/core";
+import { Group } from "@mantine/core";
 import { SimpleGrid, Chip } from "@mantine/core";
 import { useState } from "react";
 import { DashboardItem } from "./DashboardItem";
+import { StylishText } from "../components/StylishText";
 
 
 export function Dashboard() {
@@ -28,7 +29,10 @@ export function Dashboard() {
     ]
 
     return (<>
-        <Group><Text>Dashboard</Text><Chip checked={checked} onChange={() => setChecked((v) => !v)}>Autoupdate</Chip></Group>
+        <Group>
+            <StylishText>Dashboard</StylishText>
+            <Chip checked={checked} onChange={() => setChecked((v) => !v)}>Autoupdate</Chip>
+        </Group>
         <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem {...item} autoupdate={checked}/>)}</SimpleGrid>
     </>);
 }
