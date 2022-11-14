@@ -12,15 +12,19 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import axios from 'axios';
 
-const routes = {
-  base: 'https://demo.inventree.org/api',
-};
-
-const user = {
+export const user = {
   "name": "Matthias Mair",
   "email": "code@mjmair.com",
+  "username": "mjmair",
+  "token": "8a19402acdac08bfa9fe6bf95dad8f5b83e702b3",
 }
+
+export const api = axios.create({
+  baseURL: `https://demo.inventree.org/api/`,
+  headers: {'Authorization': `Token ${user.token}`},
+});
 
 const tabs = [
   { text: "Home", name: "home" },
