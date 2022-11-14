@@ -1054,13 +1054,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'PART_SHOW_PRICE_IN_FORMS': {
-            'name': _('Show Price in Forms'),
-            'description': _('Display part price in some forms'),
-            'default': True,
-            'validator': bool,
-        },
-
         'PART_SHOW_RELATED': {
             'name': _('Show related parts'),
             'description': _('Display related parts for a part'),
