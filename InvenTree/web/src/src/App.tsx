@@ -18,24 +18,26 @@ const user = {
 }
 
 const tabs = [
-  {text: "Home", name:"home"},
-  {text: "Part", name:"part"},
+  { text: "Home", name: "home" },
+  { text: "Part", name: "part" },
 ]
 
-const links = [
-  {
-    "link": "https://inventree.org/",
-    "label": "Website"
-  },
-  {
-    "link": "https://github.com/invenhost/InvenTree",
-    "label": "GitHub"
-  },
-  {
-    "link": "https://demo.inventree.org/",
-    "label": "Demo"
-  }
-]
+const links = {
+  links: [
+    {
+      "link": "https://inventree.org/",
+      "label": "Website"
+    },
+    {
+      "link": "https://github.com/invenhost/InvenTree",
+      "label": "GitHub"
+    },
+    {
+      "link": "https://demo.inventree.org/",
+      "label": "Demo"
+    }
+  ]
+}
 
 const router = createBrowserRouter([
   {

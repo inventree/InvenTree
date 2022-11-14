@@ -5,14 +5,14 @@ import { Container, Text } from "@mantine/core";
 import { FooterSimple, FooterSimpleProps } from "../components/FooterSimple";
 
 
-export default function Layout({ user, tabs, links }: {user: any, tabs: any, links: FooterSimpleProps}) {
+export default function Layout({ user, tabs, links }: { user: any, tabs: any, links: FooterSimpleProps }) {
 
     return (<>
-        <HeaderTabs tabs={tabs} user={user}/>
+        <HeaderTabs tabs={tabs} user={user} />
         <Container>
-        <Outlet />
+            <Outlet />
         </Container>
-        <FooterSimple links={links} />
+        <FooterSimple links={links.links} />
     </>);
 }
 
