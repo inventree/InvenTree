@@ -12,7 +12,7 @@ export function Dashboard() {
     if (isLoading)
         return <>Loading...</>;
     if (error)
-        return <>An error has occurred: {error.message}</>;
+        return <>An error has occurred: {error}</>;
     return (<>
         <Text>Dashboard</Text>
         <div>{isFetching ? "Updating..." : ""}</div>
