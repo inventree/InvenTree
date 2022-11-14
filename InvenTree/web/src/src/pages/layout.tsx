@@ -3,7 +3,7 @@ import { HeaderTabs } from "../components/HeaderTabs";
 import { Container, Flex, Space, Text } from "@mantine/core";
 
 import { FooterSimple, FooterSimpleProps } from "../components/FooterSimple";
-import { useStyles } from "../components/globalStyle";
+import { useStyles } from "../globalStyle";
 
 
 export default function Layout({ user, tabs, links }: { user: any, tabs: any, links: FooterSimpleProps }) {

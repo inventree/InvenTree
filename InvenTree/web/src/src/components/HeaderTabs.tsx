@@ -19,7 +19,7 @@ import {
 import { ColorToggle } from './ColorToggle';
 import { InvenTreeLogo } from './InvenTreeLogo';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useStyles } from './globalStyle';
+import { useStyles } from '../globalStyle';
 
 interface HeaderTabsProps {
   user: { name: string; };

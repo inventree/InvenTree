@@ -90,4 +90,9 @@ export const useStyles = createStyles((theme) => ({
     flex: 1,
     width: '100%',
   },
+
+  signText: {
+    fontSize: "xl",
+    fontWeight: 700,
+  },
 }));

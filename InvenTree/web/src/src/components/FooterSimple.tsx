@@ -1,6 +1,6 @@
 import { InvenTreeLogo } from "./InvenTreeLogo";
 import {Container, Group, Anchor } from '@mantine/core';
-import { useStyles } from "./globalStyle";
+import { useStyles } from "../globalStyle";
 
 
 export interface FooterSimpleProps {
