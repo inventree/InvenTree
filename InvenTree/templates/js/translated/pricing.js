@@ -156,32 +156,6 @@ function loadBomPricingChart(options={}) {
             }
         ]
     });
-
-    return;
-
-    return new Chart(context, {
-        type: 'doughnut',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                },
-                scales: {
-                    xAxes: [
-                        {
-                            beginAtZero: true,
-                            ticks: {
-                                autoSkip: false,
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-    });
 }
 
 
@@ -508,11 +482,14 @@ function loadPurchasePriceHistoryTable(options={}) {
         onLoadSuccess: function(data) {
             // Update purchase price history chart
 
+            // Only allow values with pricing information
+            data = data.filter((x) => x.purchase_price != null);
+
             // Sort in increasing date order
             data = data.sort((a, b) => (a.order_detail.complete_date - b.order_detail.complete_date));
 
-            var graphLabels = Array.from(data, (x) => (x.order_detail.complete_date));
-            var graphValues = Array.from(data, (x) => (x.purchase_price));
+            var graphLabels = Array.from(data, (x) => (`${x.order_detail.reference} - ${x.order_detail.complete_date}`));
+            var graphValues = Array.from(data, (x) => (x.purchase_price / x.supplier_part_detail.pack_size));
 
             if (chart) {
                 chart.destroy();
@@ -565,10 +542,15 @@ function loadPurchasePriceHistoryTable(options={}) {
             },
             {
                 field: 'purchase_price',
-                title: '{% trans "Purchase Price" %}',
+                title: '{% trans "Unit Price" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    return formatCurrency(value, {
+
+                    if (row.purchase_price == null) {
+                        return '-';
+                    }
+
+                    return formatCurrency(row.purchase_price / row.supplier_part_detail.pack_size, {
                         currency: row.purchase_price_currency
                     });
                 }
