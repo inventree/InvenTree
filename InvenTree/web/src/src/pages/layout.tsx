@@ -16,13 +16,6 @@ export default function Layout({ user, tabs, links }: { user: any, tabs: any, li
     </>);
 }
 
-export function Dashboard() {
-
-    return (<>
-        <Text>Dashboard</Text>
-    </>);
-}
-
 export function Home() {
 
     return (<>

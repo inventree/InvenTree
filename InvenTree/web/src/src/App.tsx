@@ -6,7 +6,12 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import ErrorPage from './pages/error';
-import Layout, { Dashboard, Home, Part } from './pages/layout';
+import Layout, { Home, Part } from './pages/layout';
+import { Dashboard } from "./pages/Dashboard";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 const routes = {
   base: 'https://demo.inventree.org/api',
@@ -39,6 +44,8 @@ const links = {
   ]
 }
 
+const queryClient = new QueryClient()
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -67,7 +74,9 @@ export default function App() {
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-        <RouterProvider router={router} />
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
       </MantineProvider>
     </ColorSchemeProvider>
   );
