@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { HeaderTabs } from "../components/HeaderTabs";
-import { Text } from "@mantine/core";
+import { Container, Text } from "@mantine/core";
 
 import { FooterSimple, FooterSimpleProps } from "../components/FooterSimple";
 
@@ -9,7 +9,9 @@ export default function Layout({ user, tabs, links }: {user: any, tabs: any, lin
 
     return (<>
         <HeaderTabs tabs={tabs} user={user}/>
+        <Container>
         <Outlet />
+        </Container>
         <FooterSimple links={links} />
     </>);
 }
