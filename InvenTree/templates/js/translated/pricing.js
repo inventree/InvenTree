@@ -205,7 +205,7 @@ function loadPartSupplierPricingTable(options={}) {
             data = data.sort((a, b) => (a.quantity - b.quantity));
 
             var graphLabels = Array.from(data, (x) => (`${x.part_detail.SKU} - {% trans "Quantity" %} ${x.quantity}`));
-                var graphValues = Array.from(data, (x) => (x.price / x.part_detail.pack_size));
+            var graphValues = Array.from(data, (x) => (x.price / x.part_detail.pack_size));
 
             if (chart) {
                 chart.destroy();
