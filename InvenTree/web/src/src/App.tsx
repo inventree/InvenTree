@@ -7,6 +7,11 @@ import {
 } from "react-router-dom";
 import ErrorPage from './pages/error';
 import Layout, { Home, Part } from './pages/layout';
+import { Dashboard } from "./pages/Dashboard";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 const routes = {
   base: 'https://demo.inventree.org/api',
@@ -18,24 +23,28 @@ const user = {
 }
 
 const tabs = [
-  {text: "Home", name:"home"},
-  {text: "Part", name:"part"},
+  { text: "Home", name: "home" },
+  { text: "Part", name: "part" },
 ]
 
-const links = [
-  {
-    "link": "https://inventree.org/",
-    "label": "Website"
-  },
-  {
-    "link": "https://github.com/invenhost/InvenTree",
-    "label": "GitHub"
-  },
-  {
-    "link": "https://demo.inventree.org/",
-    "label": "Demo"
-  }
-]
+const links = {
+  links: [
+    {
+      "link": "https://inventree.org/",
+      "label": "Website"
+    },
+    {
+      "link": "https://github.com/invenhost/InvenTree",
+      "label": "GitHub"
+    },
+    {
+      "link": "https://demo.inventree.org/",
+      "label": "Demo"
+    }
+  ]
+}
+
+const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
@@ -43,6 +52,7 @@ const router = createBrowserRouter([
     element: <Layout tabs={tabs} links={links} user={user} />,
     errorElement: <ErrorPage />,
     children: [
+      { index: true, element: <Dashboard /> },
       {
         path: "home/",
         element: <Home />,
@@ -64,7 +74,9 @@ export default function App() {
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-        <RouterProvider router={router} />
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
       </MantineProvider>
     </ColorSchemeProvider>
   );

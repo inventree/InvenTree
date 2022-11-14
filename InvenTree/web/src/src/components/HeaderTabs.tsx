@@ -15,6 +15,7 @@ import {
   IconHeart,
   IconSettings,
   IconChevronDown,
+  IconDashboard
 } from '@tabler/icons';
 import { ColorToggle } from './ColorToggle';
 import { InvenTreeLogo } from './InvenTreeLogo';
@@ -152,9 +153,10 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
             tabsList: classes.tabsList,
             tab: classes.tab,
           }}
-          value={tabValue} onTabChange={(value) => navigate(`/${value}`)}
+          value={tabValue}
+          onTabChange={(value) => value=='/' ? navigate('/') : navigate(`/${value}`)}
         >
-          <Tabs.List>{items}</Tabs.List>
+          <Tabs.List><Tabs.Tab value={'/'} key={'dash'} icon={<IconDashboard size={14} />}/>{items}</Tabs.List>
         </Tabs>
       </Container>
     </div>
