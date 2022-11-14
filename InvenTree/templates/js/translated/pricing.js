@@ -224,11 +224,14 @@ function loadPartSupplierPricingTable(options={}) {
         onLoadSuccess: function(data) {
             // Update supplier pricing chart
 
+            // Only allow values with pricing information
+            data = data.filter((x) => x.price != null);
+
             // Sort in increasing order of quantity
             data = data.sort((a, b) => (a.quantity - b.quantity));
 
-            var graphLabels = Array.from(data, (x) => (x.quantity));
-            var graphValues = Array.from(data, (x) => (x.price));
+            var graphLabels = Array.from(data, (x) => (`${x.part_detail.SKU} - {% trans "Quantity" %} ${x.quantity}`));
+                var graphValues = Array.from(data, (x) => (x.price / x.part_detail.pack_size));
 
             if (chart) {
                 chart.destroy();
@@ -280,9 +283,17 @@ function loadPartSupplierPricingTable(options={}) {
             {
                 sortable: true,
                 field: 'price',
-                title: '{% trans "Price" %}',
+                title: '{% trans "Unit Price" %}',
                 formatter: function(value, row) {
-                    var html = formatCurrency(row.price, {
+
+                    if (row.price == null) {
+                        return '-';
+                    }
+
+                    // Convert to unit pricing
+                    var unit_price = row.price / row.part_detail.pack_size;
+
+                    var html = formatCurrency(unit_price, {
                         currency: row.price_currency
                     });
 
