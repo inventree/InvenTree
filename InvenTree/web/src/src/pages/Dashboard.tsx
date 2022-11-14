@@ -1,8 +1,9 @@
 import { Text } from "@mantine/core";
 import { useQuery } from '@tanstack/react-query';
+import api from "../api";
 
 export function fetchTodos() {
-    return fetch('https://jsonplaceholder.typicode.com/todos/1').then((res) => res.json())
+    return api.get('/todos/1').then((res) => res.data);
 }
 
 export function Dashboard() {
