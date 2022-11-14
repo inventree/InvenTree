@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import ErrorPage from './pages/error';
-import Layout, { Home, Part } from './pages/layout';
+import Layout, { Dashboard, Home, Part } from './pages/layout';
 
 const routes = {
   base: 'https://demo.inventree.org/api',
@@ -43,6 +43,7 @@ const router = createBrowserRouter([
     element: <Layout tabs={tabs} links={links} user={user} />,
     errorElement: <ErrorPage />,
     children: [
+      { index: true, element: <Dashboard /> },
       {
         path: "home/",
         element: <Home />,
