@@ -1,9 +1,12 @@
-import { Text } from "@mantine/core";
-import { SimpleGrid } from "@mantine/core";
+import { Group, Text } from "@mantine/core";
+import { SimpleGrid, Chip } from "@mantine/core";
+import { useState } from "react";
 import { DashboardItem } from "./DashboardItem";
 
 
 export function Dashboard() {
+    const [checked, setChecked] = useState(false);
+
     const items = [
         { id: "starred-parts", text: "Subscribed Parts", icon: "fa-bell", url: "part", params: { starred: true } },
         { id: "starred-categories", text: "Subscribed Categories", icon: "fa-bell", url: "part/category", params: { starred: true } },
@@ -25,7 +28,7 @@ export function Dashboard() {
     ]
 
     return (<>
-        <Text>Dashboard</Text>
-        <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem {...item} />)}</SimpleGrid>
+        <Group><Text>Dashboard</Text><Chip checked={checked} onChange={() => setChecked((v) => !v)}>Autoupdate</Chip></Group>
+        <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem {...item} autoupdate={checked}/>)}</SimpleGrid>
     </>);
 }
