@@ -141,7 +141,7 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
         manufacturer_detail = kwargs.pop('manufacturer_detail', True)
         prettify = kwargs.pop('pretty', False)
 
-        super(ManufacturerPartSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if part_detail is not True:
             self.fields.pop('part_detail')
@@ -205,7 +205,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
         """Initialize this serializer with extra detail fields as required"""
         man_detail = kwargs.pop('manufacturer_part_detail', False)
 
-        super(ManufacturerPartParameterSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not man_detail:
             self.fields.pop('manufacturer_part_detail')
@@ -257,7 +257,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
         prettify = kwargs.pop('pretty', False)
 
-        super(SupplierPartSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if part_detail is not True:
             self.fields.pop('part_detail')
@@ -370,6 +370,20 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
 class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
     """Serializer for SupplierPriceBreak object."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize this serializer with extra fields as required"""
+
+        supplier_detail = kwargs.pop('supplier_detail', False)
+        part_detail = kwargs.pop('part_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not supplier_detail:
+            self.fields.pop('supplier_detail')
+
+        if not part_detail:
+            self.fields.pop('part_detail')
 
     quantity = InvenTreeDecimalField()
 

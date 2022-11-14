@@ -422,6 +422,7 @@ class SupplierPriceBreakFilter(rest_filters.FilterSet):
         model = SupplierPriceBreak
         fields = [
             'part',
+            'quantity',
         ]
 
 
@@ -436,9 +437,32 @@ class SupplierPriceBreakList(ListCreateAPI):
     serializer_class = SupplierPriceBreakSerializer
     filterset_class = SupplierPriceBreakFilter
 
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer instance for this endpoint"""
+
+        try:
+            params = self.request.query_params
+
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', False))
+
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
     filter_backends = [
         DjangoFilterBackend,
+        filters.OrderingFilter,
     ]
+
+    ordering_fields = [
+        'quantity',
+    ]
+
+    ordering = 'quantity'
 
 
 class SupplierPriceBreakDetail(RetrieveUpdateDestroyAPI):

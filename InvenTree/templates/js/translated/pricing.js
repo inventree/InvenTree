@@ -206,7 +206,7 @@ function loadPartSupplierPricingTable(options={}) {
 
     options.params.base_part = part;
     options.params.supplier_detail = true;
-    options.params.supplier_part_detail = true;
+    options.params.part_detail = true;
 
     table.inventreeTable({
         url: '{% url "api-part-supplier-price-list" %}',

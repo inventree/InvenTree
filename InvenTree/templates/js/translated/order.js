@@ -798,30 +798,64 @@ function poLineItemFields(options={}) {
                 // If the pack_size != 1, add a note to the field
                 var pack_size = 1;
                 var units = '';
+                var supplier_part_id = value;
+                var quantity = getFormFieldValue('quantity', {}, opts);
 
                 // Remove any existing note fields
                 $(opts.modal).find('#info-pack-size').remove();
 
-                if (value != null) {
-                    inventreeGet(`/api/company/part/${value}/`,
+                if (value == null) {
+                    return;
+                }
+
+                // Request information about the particular supplier part
+                inventreeGet(`/api/company/part/${value}/`,
+                    {
+                        part_detail: true,
+                    },
+                    {
+                        success: function(response) {
+                            // Extract information from the returned query
+                            pack_size = response.pack_size || 1;
+                            units = response.part_detail.units || '';
+                        },
+                    }
+                ).then(function() {
+                    // Update pack size information
+                    if (pack_size != 1) {
+                        var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_size} ${units}`;
+                        $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
+                    }
+                }).then(function() {
+                    // Update pricing data (if available)
+                    inventreeGet(
+                        '{% url "api-part-supplier-price-list" %}',
                         {
-                            part_detail: true,
+                            part: supplier_part_id,
+                            ordering: 'quantity',
                         },
                         {
                             success: function(response) {
-                                // Extract information from the returned query
-                                pack_size = response.pack_size || 1;
-                                units = response.part_detail.units || '';
-                            },
-                        }
-                    ).then(function() {
+                                // Returned prices are in increasing order of quantity
+                                if (response.length > 0) {
+                                    var idx = 0;
 
-                        if (pack_size != 1) {
-                            var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_size} ${units}`;
-                            $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
+                                    for (var idx = 0; idx < response.length; idx++) {
+                                        if (response[idx].quantity > quantity) {
+                                            break;
+                                        }
+
+                                        index = idx;
+                                    }
+
+                                    // Update price and currency data in the form
+                                    updateFieldValue('purchase_price', response[index].price, {}, opts);
+                                    updateFieldValue('purchase_price_currency', response[index].price_currency, {}, opts);
+                                }
+                            }
                         }
-                    });
-                }
+                    );
+                });
             },
             secondary: {
                 method: 'POST',
