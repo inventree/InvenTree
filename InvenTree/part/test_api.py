@@ -4,6 +4,7 @@ from decimal import Decimal
 from enum import IntEnum
 from random import randint
 
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 import PIL
@@ -402,6 +403,54 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 for child in child_categories:
                     child.refresh_from_db()
                     self.assertEqual(child.parent, parent_category)
+
+    def test_structural(self):
+        """Test the effectiveness of structural categories
+
+        Make sure:
+        - Parts cannot be created in structural categories
+        - Parts cannot be assigned to structural categories
+        """
+        structural_category = PartCategory.objects.create(
+            name='Structural category',
+            description='This is the structural category',
+            parent=None,
+            structural=True
+        )
+
+        part_count_before = Part.objects.count()
+        try:
+            part = Part.objects.create(
+                name="Part which shall not be created",
+                description="-",
+                category=structural_category
+            )
+        except ValidationError:
+            pass
+
+        self.assertEqual(part_count_before, Part.objects.count())
+
+        non_structural_category = PartCategory.objects.create(
+            name='Non-structural category',
+            description='This is a non-structural category',
+            parent=None,
+            structural=False
+        )
+
+        part = Part.objects.create(
+            name="Part which category will be changed to structural",
+            description="-",
+            category=non_structural_category
+        )
+
+        part.category = non_structural_category
+
+        try:
+            part.save()
+        except ValidationError:
+            pass
+
+        self.assertEqual(part.category.pk, non_structural_category.pk)
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):

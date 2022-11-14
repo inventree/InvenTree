@@ -117,6 +117,14 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         help_text=_('Default location for parts in this category')
     )
 
+    structural = models.BooleanField(
+        default=False,
+        verbose_name=_('Structural'),
+        help_text=_(
+            'Parts may not be directly assigned to a structural category, '
+            'but may be assigned to it\'s child categories.'),
+    )
+
     default_keywords = models.CharField(null=True, blank=True, max_length=250, verbose_name=_('Default keywords'), help_text=_('Default keywords for parts in this category'))
 
     icon = models.CharField(
@@ -134,6 +142,17 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     def get_absolute_url(self):
         """Return the web URL associated with the detail view for this PartCategory instance"""
         return reverse('category-detail', kwargs={'pk': self.id})
+
+    def clean(self):
+        """Custom clean action for the PartCategory model:
+
+        - Ensure that the structural parameter cannot get set if products already assigned to the category
+        """
+        if self.pk and self.structural and self.item_count > 0:
+            raise ValidationError(
+                _("You cannot make this part category structural because some parts "
+                  "are already assigned to it!"))
+        super().clean()
 
     class Meta:
         """Metaclass defines extra model properties"""
@@ -754,11 +773,18 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     def clean(self):
         """Perform cleaning operations for the Part model.
 
-        Update trackable status:
+        - Check if the PartCategory is not structural
+
+        - Update trackable status:
             If this part is trackable, and it is used in the BOM
             for a parent part which is *not* trackable,
             then we will force the parent part to be trackable.
         """
+
+        if self.category is not None and self.category.structural:
+            raise ValidationError(
+                _("Parts cannot be assigned to structural part categories!"))
+
         super().clean()
 
         # Strip IPN field
