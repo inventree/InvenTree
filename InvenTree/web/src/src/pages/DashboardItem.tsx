@@ -8,7 +8,7 @@ export function DashboardItem({ id, text, url, params, autoupdate=true }: { id: 
         return api.get(`${url}/?search=&offset=0&limit=25`, { params: params }).then((res) => res.data);
     }
     const { isLoading, error, data, isFetching } = useQuery({ queryKey: [`dash_${id}`], queryFn: fetchData, refetchOnWindowFocus: autoupdate, });
-    const [dashdata, setDashData] = useState({});
+    const [dashdata, setDashData] = useState({title: '', value: ''});
 
     useEffect(() => { if (data) { setDashData({ title: text, value: data.count }); } }, [data]);
 
