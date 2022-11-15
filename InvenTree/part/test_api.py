@@ -411,6 +411,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         - Parts cannot be created in structural categories
         - Parts cannot be assigned to structural categories
         """
+
+        # Create our structural part category
         structural_category = PartCategory.objects.create(
             name='Structural category',
             description='This is the structural category',
@@ -419,17 +421,19 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         )
 
         part_count_before = Part.objects.count()
-        try:
+
+        # Make sure that we get an error if we try to create part in the structural category
+        with self.assertRaises(ValidationError):
             part = Part.objects.create(
                 name="Part which shall not be created",
                 description="-",
                 category=structural_category
             )
-        except ValidationError:
-            pass
 
+        # Ensure that the part really did not get created in the structural category
         self.assertEqual(part_count_before, Part.objects.count())
 
+        # Create a non structural category for test part category change
         non_structural_category = PartCategory.objects.create(
             name='Non-structural category',
             description='This is a non-structural category',
@@ -437,19 +441,20 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             structural=False
         )
 
+        # Create the test part assigned to a non-structural category
         part = Part.objects.create(
             name="Part which category will be changed to structural",
             description="-",
             category=non_structural_category
         )
 
-        part.category = non_structural_category
-
-        try:
+        # Assign the test part to a structural category and make sure it gives an error
+        part.category = structural_category
+        with self.assertRaises(ValidationError):
             part.save()
-        except ValidationError:
-            pass
 
+        # Ensure that the part did not get saved to the DB
+        part.refresh_from_db()
         self.assertEqual(part.category.pk, non_structural_category.pk)
 
 

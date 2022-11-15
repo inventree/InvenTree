@@ -443,6 +443,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         If not, it is considered "orphaned" and will be deleted.
         """
         # Get category templates settings
+
         add_category_templates = kwargs.pop('add_category_templates', False)
 
         if self.pk:
@@ -780,10 +781,9 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             for a parent part which is *not* trackable,
             then we will force the parent part to be trackable.
         """
-
         if self.category is not None and self.category.structural:
             raise ValidationError(
-                _("Parts cannot be assigned to structural part categories!"))
+                {'category': _("Parts cannot be assigned to structural part categories!")})
 
         super().clean()
 
