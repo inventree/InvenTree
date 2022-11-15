@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-14 22:22+0000\n"
-"PO-Revision-Date: 2022-11-14 14:51\n"
+"POT-Creation-Date: 2022-11-14 04:59+0000\n"
+"PO-Revision-Date: 2022-11-15 14:49\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -132,7 +132,7 @@ msgstr "Tom serienummerstreng"
 
 #: InvenTree/helpers.py:627
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Dupliserte serienr"
 
 #: InvenTree/helpers.py:660 InvenTree/helpers.py:695
 #, python-brace-format
@@ -142,7 +142,7 @@ msgstr "Ugyldig gruppeserie: {g}"
 #: InvenTree/helpers.py:689
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
-msgstr ""
+msgstr "Gruppeutvalg {g} overskrider tillatt antall ({q})"
 
 #: InvenTree/helpers.py:713 InvenTree/helpers.py:720 InvenTree/helpers.py:735
 #, python-brace-format
@@ -160,7 +160,7 @@ msgstr "Antall unike serienumre ({s}) må samsvare med antall ({q})"
 
 #: InvenTree/helpers.py:947
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Fjern HTML-koder fra denne verdien"
 
 #: InvenTree/models.py:238
 msgid "Improperly formatted pattern"
@@ -180,11 +180,11 @@ msgstr "Referansefeltet kan ikke være tomt"
 
 #: InvenTree/models.py:270
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "Referansen må samsvare påkrevet mønster"
 
 #: InvenTree/models.py:306
 msgid "Reference number is too large"
-msgstr ""
+msgstr "Referansenummeret er for stort"
 
 #: InvenTree/models.py:384
 msgid "Missing file"
@@ -324,35 +324,35 @@ msgstr "overkategori"
 #: InvenTree/models.py:580 InvenTree/models.py:581
 #: templates/js/translated/part.js:2033 templates/js/translated/stock.js:2455
 msgid "Path"
-msgstr ""
+msgstr "Sti"
 
 #: InvenTree/models.py:682
 msgid "Barcode Data"
-msgstr ""
+msgstr "Strekkode data"
 
 #: InvenTree/models.py:683
 msgid "Third party barcode data"
-msgstr ""
+msgstr "Tredjeparts strekkode-data"
 
 #: InvenTree/models.py:688 order/serializers.py:477
 msgid "Barcode Hash"
-msgstr ""
+msgstr "Strekkode hash"
 
 #: InvenTree/models.py:689
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Unik hash av strekkode-data"
 
 #: InvenTree/models.py:734
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Eksisterende strekkode funnet"
 
 #: InvenTree/models.py:787
 msgid "Server Error"
-msgstr ""
+msgstr "Serverfeil"
 
 #: InvenTree/models.py:788
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "En feil har blitt logget av serveren."
 
 #: InvenTree/serializers.py:58 part/models.py:3387
 msgid "Must be a valid number"
@@ -411,15 +411,15 @@ msgstr "Dupliser kolonne: '{col}'"
 #: InvenTree/serializers.py:606
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: InvenTree/serializers.py:607
 msgid "URL of remote image file"
-msgstr ""
+msgstr "URL-adressen til ekstern bildefil"
 
 #: InvenTree/serializers.py:621
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "Nedlasting av bilder fra ekstern URL er ikke aktivert"
 
 #: InvenTree/settings.py:627
 msgid "Czech"
@@ -674,7 +674,7 @@ msgstr "Build ordreutg fullført"
 
 #: InvenTree/status_codes.py:290
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Antatt som byggeordre"
 
 #: InvenTree/status_codes.py:292
 msgid "Received against purchase order"
@@ -703,7 +703,7 @@ msgstr "Overde må ikke overstige 100%"
 
 #: InvenTree/validators.py:158
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "ugyldig verdi for rad"
 
 #: InvenTree/views.py:520 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
@@ -719,7 +719,7 @@ msgstr "Passordfeltene må samsvare"
 
 #: InvenTree/views.py:563
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Feil passord angitt"
 
 #: InvenTree/views.py:773 templates/navbar.html:152
 msgid "System Information"
@@ -731,7 +731,7 @@ msgstr "Om InvenTree"
 
 #: build/api.py:219
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "Bygningen må avbrytes før den kan slettes"
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
@@ -944,11 +944,11 @@ msgstr "Ekstra prosjekt notater"
 #: build/models.py:532
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "Byggeordre {build} er fullført"
 
 #: build/models.py:538
 msgid "A build order has been completed"
-msgstr ""
+msgstr "Byggeordre er fullført"
 
 #: build/models.py:717
 msgid "No build output specified"
@@ -969,7 +969,7 @@ msgstr "Prosjektvare må spesifisere en prosjekt utdata, siden hovedvaren er mar
 #: build/models.py:1181
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
-msgstr ""
+msgstr "Tildelt antall ({q}) kan ikke overstige tilgjengelige lager mengde ({a})"
 
 #: build/models.py:1191 order/models.py:1416
 msgid "Stock item is over-allocated"
@@ -1057,7 +1057,7 @@ msgstr "Antall"
 
 #: build/models.py:1360
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Lagerantall å allokere til bygging"
 
 #: build/models.py:1368
 msgid "Install into"
@@ -1070,23 +1070,23 @@ msgstr "Målets lagervare"
 #: build/serializers.py:137 build/serializers.py:692
 #: templates/js/translated/build.js:1224
 msgid "Build Output"
-msgstr ""
+msgstr "Byggresultat"
 
 #: build/serializers.py:149
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Byggresultat samsvarer ikke med det overordnede bygget"
 
 #: build/serializers.py:153
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "Resultatdel samsvarer ikke med byggordre del"
 
 #: build/serializers.py:157
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "Jobben er allerede fullført"
 
 #: build/serializers.py:168
 msgid "This build output is not fully allocated"
-msgstr ""
+msgstr "Denne produksjonen er ikke fullt tildelt"
 
 #: build/serializers.py:193
 msgid "Enter quantity for build output"
@@ -1101,11 +1101,11 @@ msgstr "Mengden må være større enn null"
 
 #: build/serializers.py:214
 msgid "Integer quantity required for trackable parts"
-msgstr ""
+msgstr "Heltallsverdi kreves for sporbare deler"
 
 #: build/serializers.py:217
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr ""
+msgstr "Heltallsverdi kreves, materialene inneholder sporbare deler"
 
 #: build/serializers.py:231 order/serializers.py:463 order/serializers.py:1210
 #: stock/serializers.py:303 templates/js/translated/order.js:1541
@@ -1127,11 +1127,11 @@ msgstr "Automatisk allokering av nødvendige elementer med tilsvarende serienumm
 
 #: build/serializers.py:281 stock/api.py:599
 msgid "The following serial numbers already exist or are invalid"
-msgstr ""
+msgstr "Følgende serienumre finnes allerede eller er ugyldige"
 
 #: build/serializers.py:330 build/serializers.py:399
 msgid "A list of build outputs must be provided"
-msgstr ""
+msgstr "En liste over byggeresultater må oppgis"
 
 #: build/serializers.py:369 order/serializers.py:436 order/serializers.py:547
 #: stock/serializers.py:314 stock/serializers.py:449 stock/serializers.py:530
@@ -1150,7 +1150,7 @@ msgstr "Beliggenhet"
 
 #: build/serializers.py:370
 msgid "Location for completed build outputs"
-msgstr ""
+msgstr "Sted for ferdige byggeresultater"
 
 #: build/serializers.py:376 build/templates/build/build_base.html:145
 #: build/templates/build/detail.html:62 order/models.py:670
@@ -1177,43 +1177,43 @@ msgstr "Fjern tildelt lagerbeholdning"
 
 #: build/serializers.py:453
 msgid "Subtract any stock which has already been allocated to this build"
-msgstr ""
+msgstr "Trekk fra alle varer som allerede er tildelt dette bygget"
 
 #: build/serializers.py:459
 msgid "Remove Incomplete Outputs"
-msgstr ""
+msgstr "Fjern ufullstendige resultater"
 
 #: build/serializers.py:460
 msgid "Delete any build outputs which have not been completed"
-msgstr ""
+msgstr "Slett alle byggresultater som ikke er fullført"
 
 #: build/serializers.py:488
 msgid "Accept as consumed by this build order"
-msgstr ""
+msgstr "Godta som brukt av denne byggeordren"
 
 #: build/serializers.py:489
 msgid "Deallocate before completing this build order"
-msgstr ""
+msgstr "Fjern før du fullfører denne ordren"
 
 #: build/serializers.py:512
 msgid "Overallocated Stock"
-msgstr ""
+msgstr "Overtildelt lager"
 
 #: build/serializers.py:514
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr ""
+msgstr "Hvordan vil du håndtere ekstra lagervarer tildelt for byggeordre"
 
 #: build/serializers.py:524
 msgid "Some stock items have been overallocated"
-msgstr ""
+msgstr "Noen varer i lager har blitt overskredet"
 
 #: build/serializers.py:529
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "Godta ikke tildelt"
 
 #: build/serializers.py:530
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr ""
+msgstr "Godta at lagervarer ikke er fullt tildelt til denne byggeordren"
 
 #: build/serializers.py:540 templates/js/translated/build.js:258
 msgid "Required stock has not been fully allocated"
@@ -1221,19 +1221,19 @@ msgstr "Påkrevd varer er ikke fullt tildelt"
 
 #: build/serializers.py:545 order/serializers.py:202 order/serializers.py:1100
 msgid "Accept Incomplete"
-msgstr ""
+msgstr "Godta ufullstendig"
 
 #: build/serializers.py:546
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr ""
+msgstr "Godta at antallet byggprodukter som kreves, ikke er gjennomført"
 
 #: build/serializers.py:556 templates/js/translated/build.js:262
 msgid "Required build quantity has not been completed"
-msgstr ""
+msgstr "Antall nødvendige bygg er ikke fullført"
 
 #: build/serializers.py:565 templates/js/translated/build.js:246
 msgid "Build order has incomplete outputs"
-msgstr ""
+msgstr "Bestillingen har ufullstendige resultater"
 
 #: build/serializers.py:595 build/serializers.py:640 part/models.py:3414
 #: part/models.py:3570
@@ -1242,11 +1242,11 @@ msgstr "BOM varer"
 
 #: build/serializers.py:605
 msgid "Build output"
-msgstr ""
+msgstr "Byggresultat"
 
 #: build/serializers.py:613
 msgid "Build output must point to the same build"
-msgstr ""
+msgstr "Byggresultat må peke til samme byggversjon"
 
 #: build/serializers.py:654
 msgid "bom_item.part must point to the same part as the build order"
@@ -1583,21 +1583,21 @@ msgstr ""
 
 #: build/templates/build/detail.html:259
 msgid "Delete outputs"
-msgstr ""
+msgstr "Slett resultat"
 
 #: build/templates/build/detail.html:267
 #: stock/templates/stock/location.html:228 templates/stock_table.html:27
 msgid "Printing Actions"
-msgstr ""
+msgstr "Utskrifts handlinger"
 
 #: build/templates/build/detail.html:271 build/templates/build/detail.html:272
 #: stock/templates/stock/location.html:232 templates/stock_table.html:31
 msgid "Print labels"
-msgstr ""
+msgstr "Skriv ut etiketter"
 
 #: build/templates/build/detail.html:294
 msgid "Completed Build Outputs"
-msgstr ""
+msgstr "Fullførte byggeresultater"
 
 #: build/templates/build/detail.html:306 build/templates/build/sidebar.html:19
 #: company/templates/company/manufacturer_part.html:151
@@ -1613,7 +1613,7 @@ msgstr "Vedlegg"
 
 #: build/templates/build/detail.html:321
 msgid "Build Notes"
-msgstr ""
+msgstr "Bygg notater"
 
 #: build/templates/build/detail.html:504
 msgid "Allocation Complete"
@@ -1625,23 +1625,23 @@ msgstr "Alle usporbar lagervarer har tildelt"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:316
 msgid "New Build Order"
-msgstr ""
+msgstr "Ny byggeordre"
 
 #: build/templates/build/index.html:37 build/templates/build/index.html:38
 msgid "Print Build Orders"
-msgstr ""
+msgstr "Skriv ut byggeordre"
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
-msgstr ""
+msgstr "Byggordre detaljer"
 
 #: build/templates/build/sidebar.html:12
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Ufullstendige resultater"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Outputs"
-msgstr ""
+msgstr "Fullførte byggeresultater"
 
 #: common/files.py:62
 msgid "Unsupported file format: {ext.upper()}"
@@ -1673,7 +1673,7 @@ msgstr "Velg fil å laste opp"
 
 #: common/forms.py:44
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} Fil"
 
 #: common/forms.py:45
 #, python-brace-format
@@ -1686,7 +1686,7 @@ msgstr "Innstillingsnøkkel (må være unik - ufølsom for store of små bokstav
 
 #: common/models.py:453
 msgid "Settings value"
-msgstr ""
+msgstr "Innstillings verdi"
 
 #: common/models.py:494
 msgid "Chosen value is not a valid option"
@@ -1698,11 +1698,11 @@ msgstr "Verdien må være en boolsk verdi"
 
 #: common/models.py:522
 msgid "Value must be an integer value"
-msgstr ""
+msgstr "Verdien må være et heltall"
 
 #: common/models.py:567
 msgid "Key string must be unique"
-msgstr ""
+msgstr "Nøkkelstreng må være unik"
 
 #: common/models.py:751
 msgid "No group"
@@ -1718,27 +1718,27 @@ msgstr "En innstilling har blitt endrett som krever en serveromstart"
 
 #: common/models.py:812
 msgid "Server Instance Name"
-msgstr ""
+msgstr "Server Instans navn"
 
 #: common/models.py:814
 msgid "String descriptor for the server instance"
-msgstr ""
+msgstr "Strengbeskrivelse for serverinstansen"
 
 #: common/models.py:819
 msgid "Use instance name"
-msgstr ""
+msgstr "Bruk forekomstnavn"
 
 #: common/models.py:820
 msgid "Use the instance name in the title-bar"
-msgstr ""
+msgstr "Bruk forekomstnavnet i tittellinjen"
 
 #: common/models.py:826
 msgid "Restrict showing `about`"
-msgstr ""
+msgstr "Begrens visning av 'about'"
 
 #: common/models.py:827
 msgid "Show the `about` modal only to superusers"
-msgstr ""
+msgstr "Vis bare `about` modal til superbrukere"
 
 #: common/models.py:833 company/models.py:98 company/models.py:99
 msgid "Company name"
@@ -1750,11 +1750,11 @@ msgstr "Internt firmanavn"
 
 #: common/models.py:839
 msgid "Base URL"
-msgstr ""
+msgstr "Base-URL"
 
 #: common/models.py:840
 msgid "Base URL for server instance"
-msgstr ""
+msgstr "Base URL for server instans"
 
 #: common/models.py:847
 msgid "Default Currency"
@@ -1774,59 +1774,59 @@ msgstr "Tilat nedlastning av eksterne bilder og filer fra ekstern URL"
 
 #: common/models.py:861
 msgid "Download Size Limit"
-msgstr ""
+msgstr "Nedlastingsgrense"
 
 #: common/models.py:862
 msgid "Maximum allowable download size for remote image"
-msgstr ""
+msgstr "Maksimal tillatt nedlastingsstørrelse for eksternt bilde"
 
 #: common/models.py:873
 msgid "Require confirm"
-msgstr ""
+msgstr "Krever bekreftelse"
 
 #: common/models.py:874
 msgid "Require explicit user confirmation for certain action."
-msgstr ""
+msgstr "Krev eksplisitt brukerbekreftelse for visse handlinger."
 
 #: common/models.py:880
 msgid "Tree Depth"
-msgstr ""
+msgstr "Tre dybde"
 
 #: common/models.py:881
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
-msgstr ""
+msgstr "Standard tredybde for trevisning. Dypere nivåer kan lastes inn ved behov."
 
 #: common/models.py:890
 msgid "Automatic Backup"
-msgstr ""
+msgstr "Automatisk sikkerhetskopiering"
 
 #: common/models.py:891
 msgid "Enable automatic backup of database and media files"
-msgstr ""
+msgstr "Aktiver automatisk sikkerhetskopiering av database og mediafiler"
 
 #: common/models.py:897
 msgid "Delete Old Tasks"
-msgstr ""
+msgstr "Slett gamle oppgaver"
 
 #: common/models.py:898
 msgid "Background task results will be deleted after specified number of days"
-msgstr ""
+msgstr "Bakgrunnsoppgaveresultater vil bli slettet etter antall angitte dager"
 
 #: common/models.py:908
 msgid "Delete Error Logs"
-msgstr ""
+msgstr "Slett feillogger"
 
 #: common/models.py:909
 msgid "Error logs will be deleted after specified number of days"
-msgstr ""
+msgstr "Feilloggene vil bli slettet etter et angitt antall dager"
 
 #: common/models.py:919
 msgid "Delete Noficiations"
-msgstr ""
+msgstr "Slett varsler"
 
 #: common/models.py:920
 msgid "User notifications will be deleted after specified number of days"
-msgstr ""
+msgstr "Brukervarsler slettes etter antall angitte dager"
 
 #: common/models.py:930 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
@@ -1838,27 +1838,27 @@ msgstr "Aktiver skrekkodeleser støtte"
 
 #: common/models.py:937
 msgid "Barcode Input Delay"
-msgstr ""
+msgstr "Strekkode registrering forsinkelse"
 
 #: common/models.py:938
 msgid "Barcode input processing delay time"
-msgstr ""
+msgstr "Strekkode tidsforsinkelse i behandling"
 
 #: common/models.py:948
 msgid "Barcode Webcam Support"
-msgstr ""
+msgstr "Strekkode webcam støtte"
 
 #: common/models.py:949
 msgid "Allow barcode scanning via webcam in browser"
-msgstr ""
+msgstr "Tillat strekkodelesning via webkamera i nettleseren"
 
 #: common/models.py:955
 msgid "IPN Regex"
-msgstr ""
+msgstr "IPN regex"
 
 #: common/models.py:956
 msgid "Regular expression pattern for matching Part IPN"
-msgstr ""
+msgstr "Regulært uttrykksmønster for matchende del IPN"
 
 #: common/models.py:960
 msgid "Allow Duplicate IPN"
@@ -1878,23 +1878,23 @@ msgstr "Tillat å endre IPN-verdien mens du redigerer en del"
 
 #: common/models.py:974
 msgid "Copy Part BOM Data"
-msgstr ""
+msgstr "Kopier BOM data fra del"
 
 #: common/models.py:975
 msgid "Copy BOM data by default when duplicating a part"
-msgstr ""
+msgstr "Kopier BOM-data som standard når du dupliserer en del"
 
 #: common/models.py:981
 msgid "Copy Part Parameter Data"
-msgstr ""
+msgstr "Kopier del parameterdata"
 
 #: common/models.py:982
 msgid "Copy parameter data by default when duplicating a part"
-msgstr ""
+msgstr "Kopier parameterdata som standard ved duplisering av en del"
 
 #: common/models.py:988
 msgid "Copy Part Test Data"
-msgstr ""
+msgstr "Kopier del test data"
 
 #: common/models.py:989
 msgid "Copy test data by default when duplicating a part"
@@ -1902,7 +1902,7 @@ msgstr "Kopier testdata som standard ved duplisering av en del"
 
 #: common/models.py:995
 msgid "Copy Category Parameter Templates"
-msgstr ""
+msgstr "Kopier designmaler for kategoriparametere"
 
 #: common/models.py:996
 msgid "Copy category parameter templates when creating a part"
@@ -1987,11 +1987,11 @@ msgstr "Vis importveiviseren i noen deler visninger"
 
 #: common/models.py:1058
 msgid "Show related parts"
-msgstr ""
+msgstr "Vis relaterte deler"
 
 #: common/models.py:1059
 msgid "Display related parts for a part"
-msgstr ""
+msgstr "Vis relaterte deler i en del"
 
 #: common/models.py:1065
 msgid "Create initial stock"
@@ -2195,31 +2195,31 @@ msgstr ""
 
 #: common/models.py:1248
 msgid "Enable creation of default shipment with sales orders"
-msgstr ""
+msgstr "Aktiver opprettelse av standard forsendelse med salgsordrer"
 
 #: common/models.py:1254
 msgid "Edit Completed Sales Orders"
-msgstr ""
+msgstr "Rediger fullførte salgsordrer"
 
 #: common/models.py:1255
 msgid "Allow editing of sales orders after they have been shipped or completed"
-msgstr ""
+msgstr "Tillat redigering av salgsordrer etter de har blitt sendt eller fullført"
 
 #: common/models.py:1261
 msgid "Purchase Order Reference Pattern"
-msgstr ""
+msgstr "Referansemønster for innkjøpsordre"
 
 #: common/models.py:1262
 msgid "Required pattern for generating Purchase Order reference field"
-msgstr ""
+msgstr "Obligatorisk mønster for generering av referansefelt for innkjøpsordre"
 
 #: common/models.py:1268
 msgid "Edit Completed Purchase Orders"
-msgstr ""
+msgstr "Rediger fullførte innkjøpsordre"
 
 #: common/models.py:1269
 msgid "Allow editing of purchase orders after they have been shipped or completed"
-msgstr ""
+msgstr "Tillat redigering av innkjøpsordre etter at de har blitt sendt eller fullført"
 
 #: common/models.py:1276
 msgid "Enable password forgot"
@@ -2279,7 +2279,7 @@ msgstr "Ved registrerting, spør brukere to ganger for passord"
 
 #: common/models.py:1325
 msgid "Group on signup"
-msgstr ""
+msgstr "Gruppe på registrering"
 
 #: common/models.py:1326
 msgid "Group to which new users are assigned on registration"
@@ -2287,7 +2287,7 @@ msgstr "Gruppe for hvilke nye brukere som er tilknyttet registrering"
 
 #: common/models.py:1332
 msgid "Enforce MFA"
-msgstr ""
+msgstr "Krev MFA"
 
 #: common/models.py:1333
 msgid "Users must use multifactor security."
@@ -2295,19 +2295,19 @@ msgstr "Brukere må bruke flerfaktorsikkerhet."
 
 #: common/models.py:1339
 msgid "Check plugins on startup"
-msgstr ""
+msgstr "Sjekk utvidelser ved oppstart"
 
 #: common/models.py:1340
 msgid "Check that all plugins are installed on startup - enable in container environments"
-msgstr ""
+msgstr "Sjekk at alle programtillegg er installert ved oppstart - aktiver i containermiljøer"
 
 #: common/models.py:1347
 msgid "Check plugin signatures"
-msgstr ""
+msgstr "Sjekk plugin signaturer"
 
 #: common/models.py:1348
 msgid "Check and show signatures for plugins"
-msgstr ""
+msgstr "Kontroller og vis signaturer for plugins"
 
 #: common/models.py:1355
 msgid "Enable URL integration"
@@ -2315,7 +2315,7 @@ msgstr "Aktiver URL integrering"
 
 #: common/models.py:1356
 msgid "Enable plugins to add URL routes"
-msgstr ""
+msgstr "Aktiver tillegg for å legge til URL"
 
 #: common/models.py:1363
 msgid "Enable navigation integration"
@@ -2323,7 +2323,7 @@ msgstr "Aktiver navigasjonsintegrering"
 
 #: common/models.py:1364
 msgid "Enable plugins to integrate into navigation"
-msgstr ""
+msgstr "Aktiver plugins for å integrere inn i navigasjon"
 
 #: common/models.py:1371
 msgid "Enable app integration"
@@ -2331,27 +2331,27 @@ msgstr "Aktiver app integrasjon"
 
 #: common/models.py:1372
 msgid "Enable plugins to add apps"
-msgstr ""
+msgstr "Aktiver plugins for å legge til apper"
 
 #: common/models.py:1379
 msgid "Enable schedule integration"
-msgstr ""
+msgstr "Aktiver integrering av tidsplan"
 
 #: common/models.py:1380
 msgid "Enable plugins to run scheduled tasks"
-msgstr ""
+msgstr "Aktiver utvidelser for å kjøre planlagte oppgaver"
 
 #: common/models.py:1387
 msgid "Enable event integration"
-msgstr ""
+msgstr "Aktiver hendelsesintegrering"
 
 #: common/models.py:1388
 msgid "Enable plugins to respond to internal events"
-msgstr ""
+msgstr "Aktiver plugins til å svare på interne hendelser"
 
 #: common/models.py:1407 common/models.py:1749
 msgid "Settings key (must be unique - case insensitive"
-msgstr ""
+msgstr "Innstillingsnøkkel (må være unik - ufølsom for store og små bokstaver"
 
 #: common/models.py:1429
 msgid "Show subscribed parts"
@@ -2383,7 +2383,7 @@ msgstr "Antall nylig deler"
 
 #: common/models.py:1451
 msgid "Number of recent parts to display on index page"
-msgstr ""
+msgstr "Antall nylige deler som skal vises på indeks-side"
 
 #: common/models.py:1457
 msgid "Show unvalidated BOMs"
@@ -2423,23 +2423,23 @@ msgstr "Vis tom lagervarer"
 
 #: common/models.py:1486
 msgid "Show depleted stock items on the homepage"
-msgstr ""
+msgstr "Vis lav lagerbeholdning på hjemmesiden"
 
 #: common/models.py:1492
 msgid "Show needed stock"
-msgstr ""
+msgstr "Vis nødvendig lagervare"
 
 #: common/models.py:1493
 msgid "Show stock items needed for builds on the homepage"
-msgstr ""
+msgstr "Vis lagervarer som trengs for å bygge på hjemmesiden"
 
 #: common/models.py:1499
 msgid "Show expired stock"
-msgstr ""
+msgstr "Vis utløpt lager"
 
 #: common/models.py:1500
 msgid "Show expired stock items on the homepage"
-msgstr ""
+msgstr "Vis utløpte lagerbeholdninger på hjemmesiden"
 
 #: common/models.py:1506
 msgid "Show stale stock"
@@ -7959,16 +7959,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -11102,3 +11100,4 @@ msgstr ""
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr ""
+
