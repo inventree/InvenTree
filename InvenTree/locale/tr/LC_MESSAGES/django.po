@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-14 22:22+0000\n"
-"PO-Revision-Date: 2022-11-14 14:51\n"
+"POT-Creation-Date: 2022-11-14 04:59+0000\n"
+"PO-Revision-Date: 2022-11-15 14:49\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -23,7 +23,7 @@ msgstr "API uç noktası bulunamadı"
 
 #: InvenTree/exceptions.py:68
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "Hata detaylarını admin panelinde bulabilirsiniz"
 
 #: InvenTree/fields.py:129
 msgid "Enter date"
@@ -76,7 +76,7 @@ msgstr "Yeni parolayı doğrulayın"
 
 #: InvenTree/forms.py:149
 msgid "Old password"
-msgstr ""
+msgstr "Eski parola"
 
 #: InvenTree/forms.py:178
 msgid "Email (again)"
@@ -92,15 +92,15 @@ msgstr "Her seferind eaynı e-posta adresini yazmalısınız."
 
 #: InvenTree/helpers.py:158
 msgid "Connection error"
-msgstr ""
+msgstr "Bağlantı hatası"
 
 #: InvenTree/helpers.py:162 InvenTree/helpers.py:167
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "Sunucu geçersiz durum kodu ile cevap verdi"
 
 #: InvenTree/helpers.py:164
 msgid "Exception occurred"
-msgstr ""
+msgstr "İstisna oluştu"
 
 #: InvenTree/helpers.py:172
 msgid "Server responded with invalid Content-Length value"
@@ -108,15 +108,15 @@ msgstr ""
 
 #: InvenTree/helpers.py:175
 msgid "Image size is too large"
-msgstr ""
+msgstr "Resim boyutu çok büyük"
 
 #: InvenTree/helpers.py:187
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "Resim indirme boyutu izin verilenden büyük"
 
 #: InvenTree/helpers.py:192
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "Uzak sunucu boş cevap döndü"
 
 #: InvenTree/helpers.py:200
 msgid "Supplied URL is not a valid image file"
@@ -7959,16 +7959,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -11102,3 +11100,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
