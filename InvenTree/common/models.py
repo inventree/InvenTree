@@ -1453,10 +1453,10 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(1)]
         },
 
-        'HOMEPAGE_BOM_VALIDATION': {
+        'HOMEPAGE_BOM_REQUIRES_VALIDATION': {
             'name': _('Show unvalidated BOMs'),
             'description': _('Show BOMs that await validation on the homepage'),
-            'default': True,
+            'default': False,
             'validator': bool,
         },
 
@@ -1481,17 +1481,17 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'HOMEPAGE_STOCK_DEPLETED': {
+        'HOMEPAGE_SHOW_STOCK_DEPLETED': {
             'name': _('Show depleted stock'),
             'description': _('Show depleted stock items on the homepage'),
-            'default': True,
+            'default': False,
             'validator': bool,
         },
 
-        'HOMEPAGE_STOCK_NEEDED': {
+        'HOMEPAGE_BUILD_STOCK_NEEDED': {
             'name': _('Show needed stock'),
             'description': _('Show stock items needed for builds on the homepage'),
-            'default': True,
+            'default': False,
             'validator': bool,
         },
 
