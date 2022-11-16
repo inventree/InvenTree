@@ -128,7 +128,7 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 
 {% settings_value 'HOMEPAGE_STOCK_RECENT' user=request.user as setting_stock_recent %}
 {% settings_value 'HOMEPAGE_STOCK_LOW' user=request.user as setting_stock_low %}
-{% settings_value 'HOMEPAGE_STOCK_DEPLETED' user=request.user as setting_stock_depleted %}
+{% settings_value 'HOMEPAGE_SHOW_STOCK_DEPLETED' user=request.user as setting_stock_depleted %}
 {% settings_value 'HOMEPAGE_BUILD_STOCK_NEEDED' user=request.user as setting_stock_needed %}
 {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
 {% if expiry %}

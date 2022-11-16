@@ -1481,10 +1481,10 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'HOMEPAGE_STOCK_DEPLETED': {
+        'HOMEPAGE_SHOW_STOCK_DEPLETED': {
             'name': _('Show depleted stock'),
             'description': _('Show depleted stock items on the homepage'),
-            'default': True,
+            'default': False,
             'validator': bool,
         },
 
