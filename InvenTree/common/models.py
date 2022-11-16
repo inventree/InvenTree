@@ -1093,6 +1093,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'PRICING_USE_SUPPLIER_PRICING': {
+            'name': _('Use Supplier Pricing'),
+            'description': _('Include supplier price breaks in overall pricing calculations'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PRICING_UPDATE_DAYS': {
             'name': _('Pricing Rebuild Time'),
             'description': _('Number of days before part pricing is automatically updated'),
