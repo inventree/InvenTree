@@ -2679,7 +2679,7 @@ function loadBuildTable(table, options) {
                     treeColumn: 1,
                 });
 
-                table.treegrid('expandAll');
+                $(table).treegrid('expandAll');
             } else if (display_mode == 'calendar') {
 
                 if (!loaded_calendar) {
