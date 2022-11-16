@@ -1453,10 +1453,10 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(1)]
         },
 
-        'HOMEPAGE_BOM_VALIDATION': {
+        'HOMEPAGE_BOM_REQUIRES_VALIDATION': {
             'name': _('Show unvalidated BOMs'),
             'description': _('Show BOMs that await validation on the homepage'),
-            'default': True,
+            'default': False,
             'validator': bool,
         },
 
