@@ -1488,10 +1488,10 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'HOMEPAGE_STOCK_NEEDED': {
+        'HOMEPAGE_BUILD_STOCK_NEEDED': {
             'name': _('Show needed stock'),
             'description': _('Show stock items needed for builds on the homepage'),
-            'default': True,
+            'default': False,
             'validator': bool,
         },
 
