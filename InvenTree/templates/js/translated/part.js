@@ -81,6 +81,9 @@ function partFields(options={}) {
 
                     return fields;
                 }
+            },
+            filters: {
+                structural: false,
             }
         },
         name: {},

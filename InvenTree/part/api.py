@@ -160,7 +160,8 @@ class CategoryList(APIDownloadMixin, ListCreateAPI):
 
     filterset_fields = [
         'name',
-        'description'
+        'description',
+        'structural'
     ]
 
     ordering_fields = [
