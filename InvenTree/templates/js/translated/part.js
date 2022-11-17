@@ -99,6 +99,9 @@ function partFields(options={}) {
             icon: 'fa-link',
         },
         default_location: {
+            filters: {
+                structural: false,
+            }
         },
         default_supplier: {
             filters: {
@@ -297,7 +300,11 @@ function categoryFields() {
         },
         name: {},
         description: {},
-        default_location: {},
+        default_location: {
+            filters: {
+                structural: false,
+            }
+        },
         default_keywords: {
             icon: 'fa-key',
         },

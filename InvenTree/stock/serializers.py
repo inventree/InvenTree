@@ -606,6 +606,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'items',
             'owner',
             'icon',
+            'structural',
         ]
 
         read_only_fields = [
