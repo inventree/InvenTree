@@ -26,10 +26,12 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from . import config
 from .config import get_boolean_setting, get_custom_file, get_setting
 
+INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
+
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
-# Are enviroment variables manipulated by tests? Needs to be set by testing code
+# Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
 
 # New requirement for django 3.2+
@@ -562,12 +564,16 @@ else:
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
+    'label': 'Background Tasks',
     'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
     'timeout': int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)),
     'retry': 120,
+    'max_attempts': 5,
     'queue_limit': 50,
+    'catch_up': False,
     'bulk': 10,
     'orm': 'default',
+    'cache': 'default',
     'sync': False,
 }
 
@@ -671,6 +677,9 @@ CURRENCIES = CONFIG.get(
         'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
     ],
 )
+
+# Maximum number of decimal places for currency rendering
+CURRENCY_DECIMAL_PLACES = 6
 
 # Check that each provided currency is supported
 for currency in CURRENCIES:

@@ -26,8 +26,6 @@
     duplicatePart,
     editCategory,
     editPart,
-    initPriceBreakSet,
-    loadBomChart,
     loadParametricPartTable,
     loadPartCategoryTable,
     loadPartParameterTable,
@@ -37,9 +35,7 @@
     loadPartSchedulingChart,
     loadPartVariantTable,
     loadRelatedPartsTable,
-    loadSellPricingChart,
     loadSimplePartTable,
-    loadStockPricingChart,
     partStockLabel,
     toggleStar,
     validateBom,
@@ -333,15 +329,33 @@ function deletePartCategory(pk, options={}) {
     var html = `
     <div class='alert alert-block alert-danger'>
     {% trans "Are you sure you want to delete this part category?" %}
-    <ul>
-        <li>{% trans "Any child categories will be moved to the parent of this category" %}</li>
-        <li>{% trans "Any parts in this category will be moved to the parent of this category" %}</li>
-    </ul>
     </div>`;
+    var subChoices = [
+        {
+            value: 0,
+            display_name: '{% trans "Move to parent category" %}',
+        },
+        {
+            value: 1,
+            display_name: '{% trans "Delete" %}',
+        }
+    ];
 
     constructForm(url, {
         title: '{% trans "Delete Part Category" %}',
         method: 'DELETE',
+        fields: {
+            'delete_parts': {
+                label: '{% trans "Action for parts in this category" %}',
+                choices: subChoices,
+                type: 'choice'
+            },
+            'delete_child_categories': {
+                label: '{% trans "Action for child categories" %}',
+                choices: subChoices,
+                type: 'choice'
+            },
+        },
         preFormContent: html,
         onSuccess: function(response) {
             handleFormSuccess(response, options);
@@ -763,6 +777,16 @@ function loadPartVariantTable(table, partId, options={}) {
 
                 return renderLink(text, `/part/${row.pk}/?display=part-stock`);
             }
+        },
+        {
+            field: 'price_range',
+            title: '{% trans "Price Range" %}',
+            formatter: function(value, row) {
+                return formatPriceRange(
+                    row.pricing_min,
+                    row.pricing_max,
+                );
+            }
         }
     ];
 
@@ -795,6 +819,9 @@ function loadPartVariantTable(table, partId, options={}) {
 }
 
 
+/*
+ * Load a "simplified" part table without filtering
+ */
 function loadSimplePartTable(table, url, options={}) {
 
     options.disableFilters = true;
@@ -1103,15 +1130,9 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 title: '{% trans "Price" %}',
                 switchable: true,
                 formatter: function(value, row) {
-                    var formatter = new Intl.NumberFormat(
-                        'en-US',
-                        {
-                            style: 'currency',
-                            currency: row.purchase_price_currency,
-                        }
-                    );
-
-                    return formatter.format(row.purchase_price);
+                    return formatCurrency(row.purchase_price, {
+                        currency: row.purchase_price_currency,
+                    });
                 }
             },
             {
@@ -1374,19 +1395,19 @@ function partGridTile(part) {
 }
 
 
+/* Load part listing data into specified table.
+ *
+ * Args:
+ *  - table: HTML reference to the table
+ *  - url: Base URL for API query
+ *  - options: object containing following (optional) fields
+ *      checkbox: Show the checkbox column
+ *      query: extra query params for API request
+ *      buttons: If provided, link buttons to selection status of this table
+ *      disableFilters: If true, disable custom filters
+ *      actions: Provide a callback function to construct an "actions" column
+ */
 function loadPartTable(table, url, options={}) {
-    /* Load part listing data into specified table.
-     *
-     * Args:
-     *  - table: HTML reference to the table
-     *  - url: Base URL for API query
-     *  - options: object containing following (optional) fields
-     *      checkbox: Show the checkbox column
-     *      query: extra query params for API request
-     *      buttons: If provided, link buttons to selection status of this table
-     *      disableFilters: If true, disable custom filters
-     *      actions: Provide a callback function to construct an "actions" column
-     */
 
     // Ensure category detail is included
     options.params['category_detail'] = true;
@@ -1426,21 +1447,11 @@ function loadPartTable(table, url, options={}) {
         });
     }
 
-    col = {
-        field: 'IPN',
-        title: '{% trans "IPN" %}',
-    };
-
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
-
-    columns.push(col);
-
-    col = {
+    columns.push({
         field: 'name',
         title: '{% trans "Part" %}',
         switchable: false,
+        sortable: !options.params.ordering,
         formatter: function(value, row) {
 
             var name = shortenString(row.full_name);
@@ -1451,13 +1462,13 @@ function loadPartTable(table, url, options={}) {
 
             return withTitle(display, row.full_name);
         }
-    };
+    });
 
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
-
-    columns.push(col);
+    columns.push({
+        field: 'IPN',
+        title: '{% trans "IPN" %}',
+        sortable: !options.params.ordering
+    });
 
     columns.push({
         field: 'description',
@@ -1563,6 +1574,19 @@ function loadPartTable(table, url, options={}) {
     }
 
     columns.push(col);
+
+    // Pricing information
+    columns.push({
+        field: 'pricing_min',
+        sortable: false,
+        title: '{% trans "Price Range" %}',
+        formatter: function(value, row) {
+            return formatPriceRange(
+                row.pricing_min,
+                row.pricing_max
+            );
+        }
+    });
 
     columns.push({
         field: 'link',
@@ -1820,7 +1844,7 @@ function loadPartCategoryTable(table, options) {
         filters[key] = params[key];
     }
 
-    setupFilterList(filterKey, table, filterListElement);
+    setupFilterList(filterKey, table, filterListElement, {download: true});
 
     // Function to request sub-category items
     function requestSubItems(parent_pk) {
@@ -2154,173 +2178,6 @@ function loadPartTestTemplateTable(table, options) {
                 });
             });
         }
-    });
-}
-
-
-function loadPriceBreakTable(table, options) {
-    /*
-     * Load PriceBreak table.
-     */
-
-    var name = options.name || 'pricebreak';
-    var human_name = options.human_name || 'price break';
-    var linkedGraph = options.linkedGraph || null;
-    var chart = null;
-
-    table.inventreeTable({
-        name: name,
-        method: 'get',
-        formatNoMatches: function() {
-            return `{% trans "No ${human_name} information found" %}`;
-        },
-        queryParams: {
-            part: options.part
-        },
-        url: options.url,
-        onLoadSuccess: function(tableData) {
-            if (linkedGraph) {
-                // sort array
-                tableData = tableData.sort((a, b) => (a.quantity - b.quantity));
-
-                // split up for graph definition
-                var graphLabels = Array.from(tableData, (x) => (x.quantity));
-                var graphData = Array.from(tableData, (x) => (x.price));
-
-                // destroy chart if exists
-                if (chart) {
-                    chart.destroy();
-                }
-                chart = loadLineChart(linkedGraph,
-                    {
-                        labels: graphLabels,
-                        datasets: [
-                            {
-                                label: '{% trans "Unit Price" %}',
-                                data: graphData,
-                                backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                                borderColor: 'rgb(255, 206, 86)',
-                                stepped: true,
-                                fill: true,
-                            },
-                        ],
-                    }
-                );
-            }
-        },
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-                switchable: false,
-            },
-            {
-                field: 'quantity',
-                title: '{% trans "Quantity" %}',
-                sortable: true,
-            },
-            {
-                field: 'price',
-                title: '{% trans "Price" %}',
-                sortable: true,
-                formatter: function(value, row) {
-                    var html = value;
-
-                    html += `<div class='btn-group float-right' role='group'>`;
-
-                    html += makeIconButton('fa-edit icon-blue', `button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
-                    html += makeIconButton('fa-trash-alt icon-red', `button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
-
-                    html += `</div>`;
-
-                    return html;
-                }
-            },
-        ]
-    });
-}
-
-function loadLineChart(context, data) {
-    return new Chart(context, {
-        type: 'line',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {position: 'bottom'},
-            }
-        }
-    });
-}
-
-function initPriceBreakSet(table, options) {
-
-    var part_id = options.part_id;
-    var pb_human_name = options.pb_human_name;
-    var pb_url_slug = options.pb_url_slug;
-    var pb_url = options.pb_url;
-    var pb_new_btn = options.pb_new_btn;
-    var pb_new_url = options.pb_new_url;
-
-    var linkedGraph = options.linkedGraph || null;
-
-    loadPriceBreakTable(
-        table,
-        {
-            name: pb_url_slug,
-            human_name: pb_human_name,
-            url: pb_url,
-            linkedGraph: linkedGraph,
-            part: part_id,
-        }
-    );
-
-    function reloadPriceBreakTable() {
-        table.bootstrapTable('refresh');
-    }
-
-    pb_new_btn.click(function() {
-
-        constructForm(pb_new_url, {
-            fields: {
-                part: {
-                    hidden: true,
-                    value: part_id,
-                },
-                quantity: {},
-                price: {},
-                price_currency: {},
-            },
-            method: 'POST',
-            title: '{% trans "Add Price Break" %}',
-            onSuccess: reloadPriceBreakTable,
-        });
-    });
-
-    table.on('click', `.button-${pb_url_slug}-delete`, function() {
-        var pk = $(this).attr('pk');
-
-        constructForm(`${pb_url}${pk}/`, {
-            method: 'DELETE',
-            title: '{% trans "Delete Price Break" %}',
-            onSuccess: reloadPriceBreakTable,
-        });
-    });
-
-    table.on('click', `.button-${pb_url_slug}-edit`, function() {
-        var pk = $(this).attr('pk');
-
-        constructForm(`${pb_url}${pk}/`, {
-            fields: {
-                quantity: {},
-                price: {},
-                price_currency: {},
-            },
-            title: '{% trans "Edit Price Break" %}',
-            onSuccess: reloadPriceBreakTable,
-        });
     });
 }
 
@@ -2695,118 +2552,6 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                         filter: function(item, chart) {
                             return !item.text.includes('zero-stock-level');
                         }
-                    }
-                },
-            },
-        }
-    });
-}
-
-
-function loadStockPricingChart(context, data) {
-    return new Chart(context, {
-        type: 'bar',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {legend: {position: 'bottom'}},
-            scales: {
-                y: {
-                    type: 'linear',
-                    position: 'left',
-                    grid: {display: false},
-                    title: {
-                        display: true,
-                        text: '{% trans "Single Price" %}'
-                    }
-                },
-                y1: {
-                    type: 'linear',
-                    position: 'right',
-                    grid: {display: false},
-                    titel: {
-                        display: true,
-                        text: '{% trans "Quantity" %}',
-                        position: 'right'
-                    }
-                },
-                y2: {
-                    type: 'linear',
-                    position: 'left',
-                    grid: {display: false},
-                    title: {
-                        display: true,
-                        text: '{% trans "Single Price Difference" %}'
-                    }
-                }
-            },
-        }
-    });
-}
-
-
-function loadBomChart(context, data) {
-    return new Chart(context, {
-        type: 'doughnut',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                },
-                scales: {
-                    xAxes: [
-                        {
-                            beginAtZero: true,
-                            ticks: {
-                                autoSkip: false,
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-    });
-}
-
-
-function loadSellPricingChart(context, data) {
-    return new Chart(context, {
-        type: 'line',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            },
-            scales: {
-                y: {
-                    type: 'linear',
-                    position: 'left',
-                    grid: {
-                        display: false
-                    },
-                    title: {
-                        display: true,
-                        text: '{% trans "Unit Price" %}',
-                    }
-                },
-                y1: {
-                    type: 'linear',
-                    position: 'right',
-                    grid: {
-                        display: false
-                    },
-                    titel: {
-                        display: true,
-                        text: '{% trans "Quantity" %}',
-                        position: 'right'
                     }
                 },
             },

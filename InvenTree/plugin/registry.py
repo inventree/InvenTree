@@ -311,7 +311,7 @@ class PluginsRegistry:
         return collected_plugins
 
     def install_plugin_file(self):
-        """Make sure all plugins are installed in the current enviroment."""
+        """Make sure all plugins are installed in the current environment."""
         if settings.PLUGIN_FILE_CHECKED:
             logger.info('Plugin file was already checked')
             return True

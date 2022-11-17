@@ -1,6 +1,7 @@
 """Admin for stock app."""
 
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
@@ -19,9 +20,15 @@ from .models import (StockItem, StockItemAttachment, StockItemTestResult,
 class LocationResource(InvenTreeResource):
     """Class for managing StockLocation data import/export."""
 
-    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(StockLocation))
+    id = Field(attribute='pk', column_name=_('Location ID'))
+    name = Field(attribute='name', column_name=_('Location Name'))
+    description = Field(attribute='description', column_name=_('Description'))
+    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    parent_name = Field(attribute='parent__name', column_name=_('Parent Name'), readonly=True)
+    pathstring = Field(attribute='pathstring', column_name=_('Location Path'))
 
-    parent_name = Field(attribute='parent__name', readonly=True)
+    # Calculated fields
+    items = Field(attribute='item_count', column_name=_('Stock Items'), widget=widgets.IntegerWidget())
 
     class Meta:
         """Metaclass options."""
@@ -35,6 +42,8 @@ class LocationResource(InvenTreeResource):
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
             'metadata',
+            'barcode_data', 'barcode_hash',
+            'owner', 'icon',
         ]
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
@@ -71,39 +80,32 @@ class LocationAdmin(ImportExportModelAdmin):
 class StockItemResource(InvenTreeResource):
     """Class for managing StockItem data import/export."""
 
-    # Custom managers for ForeignKey fields
-    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
-
-    part_name = Field(attribute='part__full_name', readonly=True)
-
-    supplier_part = Field(attribute='supplier_part', widget=widgets.ForeignKeyWidget(SupplierPart))
-
-    supplier = Field(attribute='supplier_part__supplier__id', readonly=True)
-
-    customer = Field(attribute='customer', widget=widgets.ForeignKeyWidget(Company))
-
-    supplier_name = Field(attribute='supplier_part__supplier__name', readonly=True)
-
-    status_label = Field(attribute='status_label', readonly=True)
-
-    location = Field(attribute='location', widget=widgets.ForeignKeyWidget(StockLocation))
-
-    location_name = Field(attribute='location__name', readonly=True)
-
-    belongs_to = Field(attribute='belongs_to', widget=widgets.ForeignKeyWidget(StockItem))
-
-    build = Field(attribute='build', widget=widgets.ForeignKeyWidget(Build))
-
-    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(StockItem))
-
-    sales_order = Field(attribute='sales_order', widget=widgets.ForeignKeyWidget(SalesOrder))
-
-    purchase_order = Field(attribute='purchase_order', widget=widgets.ForeignKeyWidget(PurchaseOrder))
+    id = Field(attribute='pk', column_name=_('Stock Item ID'))
+    part = Field(attribute='part', column_name=_('Part ID'), widget=widgets.ForeignKeyWidget(Part))
+    part_name = Field(attribute='part__full_name', column_name=_('Part Name'), readonly=True)
+    quantity = Field(attribute='quantity', column_name=_('Quantity'))
+    serial = Field(attribute='serial', column_name=_('Serial'))
+    batch = Field(attribute='batch', column_name=_('Batch'))
+    status_label = Field(attribute='status_label', column_name=_('Status'), readonly=True)
+    location = Field(attribute='location', column_name=_('Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    location_name = Field(attribute='location__name', column_name=_('Location Name'), readonly=True)
+    supplier_part = Field(attribute='supplier_part', column_name=_('Supplier Part ID'), widget=widgets.ForeignKeyWidget(SupplierPart))
+    supplier = Field(attribute='supplier_part__supplier__id', column_name=_('Supplier ID'), readonly=True)
+    supplier_name = Field(attribute='supplier_part__supplier__name', column_name=_('Supplier Name'), readonly=True)
+    customer = Field(attribute='customer', column_name=_('Customer ID'), widget=widgets.ForeignKeyWidget(Company))
+    belongs_to = Field(attribute='belongs_to', column_name=_('Installed In'), widget=widgets.ForeignKeyWidget(StockItem))
+    build = Field(attribute='build', column_name=_('Build ID'), widget=widgets.ForeignKeyWidget(Build))
+    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(StockItem))
+    sales_order = Field(attribute='sales_order', column_name=_('Sales Order ID'), widget=widgets.ForeignKeyWidget(SalesOrder))
+    purchase_order = Field(attribute='purchase_order', column_name=_('Purchase Order ID'), widget=widgets.ForeignKeyWidget(PurchaseOrder))
+    packaging = Field(attribute='packaging', column_name=_('Packaging'))
+    link = Field(attribute='link', column_name=_('Link'))
+    notes = Field(attribute='notes', column_name=_('Notes'))
 
     # Date management
-    updated = Field(attribute='updated', widget=widgets.DateWidget())
-
-    stocktake_date = Field(attribute='stocktake_date', widget=widgets.DateWidget())
+    updated = Field(attribute='updated', column_name=_('Last Updated'), widget=widgets.DateWidget())
+    stocktake_date = Field(attribute='stocktake_date', column_name=_('Stocktake'), widget=widgets.DateWidget())
+    expiry_date = Field(attribute='expiry_date', column_name=_('Expiry Date'), widget=widgets.DateWidget())
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
         """Rebuild after import to keep tree intact."""
@@ -125,6 +127,8 @@ class StockItemResource(InvenTreeResource):
             'lft', 'rght', 'tree_id', 'level',
             # Exclude internal fields
             'serial_int', 'metadata',
+            'barcode_hash', 'barcode_data',
+            'owner',
         ]
 
 

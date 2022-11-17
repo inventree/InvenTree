@@ -11,10 +11,10 @@ from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 
+import InvenTree.helpers
 import part.filters
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.serializers import (DataFileExtractSerializer,
@@ -30,8 +30,8 @@ from InvenTree.status_codes import BuildStatus
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
-                     PartParameterTemplate, PartRelated, PartSellPriceBreak,
-                     PartStar, PartTestTemplate)
+                     PartParameterTemplate, PartPricing, PartRelated,
+                     PartSellPriceBreak, PartStar, PartTestTemplate)
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -154,8 +154,6 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
         help_text=_('Purchase currency of this stock item'),
     )
 
-    price_string = serializers.CharField(source='price', read_only=True)
-
     class Meta:
         """Metaclass defining serializer fields"""
         model = PartSellPriceBreak
@@ -165,7 +163,6 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
             'quantity',
             'price',
             'price_currency',
-            'price_string',
         ]
 
 
@@ -185,8 +182,6 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
         help_text=_('Purchase currency of this stock item'),
     )
 
-    price_string = serializers.CharField(source='price', read_only=True)
-
     class Meta:
         """Metaclass defining serializer fields"""
         model = PartInternalPriceBreak
@@ -196,7 +191,6 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
             'quantity',
             'price',
             'price_currency',
-            'price_string',
         ]
 
 
@@ -285,6 +279,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'IPN',
+            'barcode_hash',
             'default_location',
             'name',
             'revision',
@@ -299,6 +294,10 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'trackable',
             'virtual',
             'units',
+        ]
+
+        read_only_fields = [
+            'barcode_hash',
         ]
 
 
@@ -416,6 +415,10 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
     category = serializers.PrimaryKeyRelatedField(queryset=PartCategory.objects.all())
 
+    # Pricing fields
+    pricing_min = InvenTreeMoneySerializer(source='pricing_data.overall_min', allow_null=True, read_only=True)
+    pricing_max = InvenTreeMoneySerializer(source='pricing_data.overall_max', allow_null=True, read_only=True)
+
     parameters = PartParameterSerializer(
         many=True,
         read_only=True,
@@ -430,6 +433,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
             'assembly',
+            'barcode_hash',
             'category',
             'category_detail',
             'component',
@@ -465,6 +469,12 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'units',
             'variant_of',
             'virtual',
+            'pricing_min',
+            'pricing_max',
+        ]
+
+        read_only_fields = [
+            'barcode_hash',
         ]
 
     def save(self):
@@ -491,6 +501,84 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             )
 
         return self.instance
+
+
+class PartPricingSerializer(InvenTreeModelSerializer):
+    """Serializer for Part pricing information"""
+
+    currency = serializers.CharField(allow_null=True, read_only=True)
+
+    updated = serializers.DateTimeField(allow_null=True, read_only=True)
+
+    scheduled_for_update = serializers.BooleanField(read_only=True)
+
+    # Custom serializers
+    bom_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    bom_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    purchase_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    purchase_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    internal_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    internal_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    supplier_price_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    supplier_price_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    variant_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    variant_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    overall_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    overall_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    sale_price_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    sale_price_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    sale_history_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+    sale_history_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    update = serializers.BooleanField(
+        write_only=True,
+        label=_('Update'),
+        help_text=_('Update pricing for this part'),
+        default=False,
+        required=False,
+    )
+
+    class Meta:
+        """Metaclass defining serializer fields"""
+        model = PartPricing
+        fields = [
+            'currency',
+            'updated',
+            'scheduled_for_update',
+            'bom_cost_min',
+            'bom_cost_max',
+            'purchase_cost_min',
+            'purchase_cost_max',
+            'internal_cost_min',
+            'internal_cost_max',
+            'supplier_price_min',
+            'supplier_price_max',
+            'variant_cost_min',
+            'variant_cost_max',
+            'overall_min',
+            'overall_max',
+            'sale_price_min',
+            'sale_price_max',
+            'sale_history_min',
+            'sale_history_max',
+            'update',
+        ]
+
+    def save(self):
+        """Called when the serializer is saved"""
+        data = self.validated_data
+
+        if InvenTree.helpers.str2bool(data.get('update', False)):
+            # Update part pricing
+            pricing = self.instance
+            pricing.update_pricing()
 
 
 class PartRelationSerializer(InvenTreeModelSerializer):
@@ -548,8 +636,6 @@ class BomItemSubstituteSerializer(InvenTreeModelSerializer):
 class BomItemSerializer(InvenTreeModelSerializer):
     """Serializer for BomItem object."""
 
-    price_range = serializers.CharField(read_only=True)
-
     quantity = InvenTreeDecimalField(required=True)
 
     def validate_quantity(self, quantity):
@@ -571,15 +657,11 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
 
-    purchase_price_min = MoneyField(max_digits=19, decimal_places=4, read_only=True)
-
-    purchase_price_max = MoneyField(max_digits=19, decimal_places=4, read_only=True)
-
-    purchase_price_avg = serializers.SerializerMethodField()
-
-    purchase_price_range = serializers.SerializerMethodField()
-
     on_order = serializers.FloatField(read_only=True)
+
+    # Cached pricing fields
+    pricing_min = InvenTreeMoneySerializer(source='sub_part.pricing.overall_min', allow_null=True, read_only=True)
+    pricing_max = InvenTreeMoneySerializer(source='sub_part.pricing.overall_max', allow_null=True, read_only=True)
 
     # Annotated fields for available stock
     available_stock = serializers.FloatField(read_only=True)
@@ -594,7 +676,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
         """
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', False)
-        include_pricing = kwargs.pop('include_pricing', False)
 
         super(BomItemSerializer, self).__init__(*args, **kwargs)
 
@@ -603,14 +684,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         if sub_part_detail is not True:
             self.fields.pop('sub_part_detail')
-
-        if not include_pricing:
-            # Remove all pricing related fields
-            self.fields.pop('price_range')
-            self.fields.pop('purchase_price_min')
-            self.fields.pop('purchase_price_max')
-            self.fields.pop('purchase_price_avg')
-            self.fields.pop('purchase_price_range')
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -633,7 +706,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'substitutes__part__stock_items',
         )
 
-        queryset = queryset.prefetch_related('sub_part__supplier_parts__pricebreaks')
         return queryset
 
     @staticmethod
@@ -707,51 +779,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         return queryset
 
-    def get_purchase_price_range(self, obj):
-        """Return purchase price range."""
-        try:
-            purchase_price_min = obj.purchase_price_min
-        except AttributeError:
-            return None
-
-        try:
-            purchase_price_max = obj.purchase_price_max
-        except AttributeError:
-            return None
-
-        if purchase_price_min and not purchase_price_max:
-            # Get price range
-            purchase_price_range = str(purchase_price_max)
-        elif not purchase_price_min and purchase_price_max:
-            # Get price range
-            purchase_price_range = str(purchase_price_max)
-        elif purchase_price_min and purchase_price_max:
-            # Get price range
-            if purchase_price_min >= purchase_price_max:
-                # If min > max: use min only
-                purchase_price_range = str(purchase_price_min)
-            else:
-                purchase_price_range = str(purchase_price_min) + " - " + str(purchase_price_max)
-        else:
-            purchase_price_range = '-'
-
-        return purchase_price_range
-
-    def get_purchase_price_avg(self, obj):
-        """Return purchase price average."""
-        try:
-            purchase_price_avg = obj.purchase_price_avg
-        except AttributeError:
-            return None
-
-        if purchase_price_avg:
-            # Get string representation of price average
-            purchase_price_avg = str(purchase_price_avg)
-        else:
-            purchase_price_avg = '-'
-
-        return purchase_price_avg
-
     class Meta:
         """Metaclass defining serializer fields"""
         model = BomItem
@@ -765,16 +792,13 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'pk',
             'part',
             'part_detail',
-            'purchase_price_avg',
-            'purchase_price_max',
-            'purchase_price_min',
-            'purchase_price_range',
+            'pricing_min',
+            'pricing_max',
             'quantity',
             'reference',
             'sub_part',
             'sub_part_detail',
             'substitutes',
-            'price_range',
             'validated',
 
             # Annotated fields describing available quantity

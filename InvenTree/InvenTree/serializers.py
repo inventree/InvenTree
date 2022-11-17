@@ -21,7 +21,7 @@ from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 
 from common.models import InvenTreeSetting
-from InvenTree.fields import InvenTreeRestURLField
+from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers import download_image_from_url
 
 
@@ -34,7 +34,7 @@ class InvenTreeMoneySerializer(MoneyField):
     def __init__(self, *args, **kwargs):
         """Overrite default values."""
         kwargs["max_digits"] = kwargs.get("max_digits", 19)
-        self.decimal_places = kwargs["decimal_places"] = kwargs.get("decimal_places", 4)
+        self.decimal_places = kwargs["decimal_places"] = kwargs.get("decimal_places", 6)
         kwargs["required"] = kwargs.get("required", False)
 
         super().__init__(*args, **kwargs)
@@ -73,6 +73,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
     serializer_field_mapping = {
         **serializers.ModelSerializer.serializer_field_mapping,
         models.URLField: InvenTreeRestURLField,
+        InvenTreeURLField: InvenTreeRestURLField,
     }
 
     def __init__(self, instance=None, data=empty, **kwargs):

@@ -57,6 +57,12 @@ class SupplierPartResource(InvenTreeResource):
         clean_model_instances = True
 
 
+class SupplierPriceBreakInline(admin.TabularInline):
+    """Inline for supplier-part pricing"""
+
+    model = SupplierPriceBreak
+
+
 class SupplierPartAdmin(ImportExportModelAdmin):
     """Admin class for the SupplierPart model"""
 
@@ -69,6 +75,10 @@ class SupplierPartAdmin(ImportExportModelAdmin):
         'part__name',
         'MPN',
         'SKU',
+    ]
+
+    inlines = [
+        SupplierPriceBreakInline,
     ]
 
     autocomplete_fields = ('part', 'supplier', 'manufacturer_part',)

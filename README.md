@@ -139,7 +139,7 @@ There are several options to deploy InvenTree.
 
 Single line install - read [the docs](https://inventree.readthedocs.io/en/latest/start/installer/) for supported distros and details about the function:
 ```bash
-curl https://raw.githubusercontent.com/InvenTree/InvenTree/master/contrib/install.sh | sh
+wget -Nq https://raw.githubusercontent.com/InvenTree/InvenTree/master/contrib/install.sh && bash install.sh
 ```
 
 <!-- Contributing -->

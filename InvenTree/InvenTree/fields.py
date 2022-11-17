@@ -38,10 +38,8 @@ class InvenTreeURLField(models.URLField):
     def __init__(self, **kwargs):
         """Initialization method for InvenTreeURLField"""
 
-        # Max length for InvenTreeURLField defaults to 200
-        if 'max_length' not in kwargs:
-            kwargs['max_length'] = 200
-
+        # Max length for InvenTreeURLField is set to 200
+        kwargs['max_length'] = 200
         super().__init__(**kwargs)
 
 
@@ -68,6 +66,13 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         else:
             # set defaults
             kwargs.update(money_kwargs())
+
+        # Default values (if not specified)
+        if 'max_digits' not in kwargs:
+            kwargs['max_digits'] = 19
+
+        if 'decimal_places' not in kwargs:
+            kwargs['decimal_places'] = 6
 
         # Set a minimum value validator
         validators = kwargs.get('validators', [])
@@ -109,6 +114,10 @@ class InvenTreeMoneyField(MoneyField):
     def __init__(self, *args, **kwargs):
         """Override initial values with the real info from database."""
         kwargs.update(money_kwargs())
+
+        kwargs['max_digits'] = 19
+        kwargs['decimal_places'] = 6
+
         super().__init__(*args, **kwargs)
 
 

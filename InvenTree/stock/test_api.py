@@ -3,6 +3,7 @@
 import io
 import os
 from datetime import datetime, timedelta
+from enum import IntEnum
 
 import django.http
 from django.urls import reverse
@@ -15,6 +16,7 @@ import part.models
 from common.models import InvenTreeSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import StockStatus
+from part.models import Part
 from stock.models import StockItem, StockItemTestResult, StockLocation
 
 
@@ -37,6 +39,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock.add',
         'stock_location.change',
         'stock_location.add',
+        'stock_location.delete',
         'stock.delete',
     ]
 
@@ -106,6 +109,121 @@ class StockLocationTest(StockAPITestCase):
         }
         response = self.client.post(self.list_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_stock_location_delete(self):
+        """Test stock location deletion with different parameters"""
+
+        class Target(IntEnum):
+            move_sub_locations_to_parent_move_stockitems_to_parent = 0,
+            move_sub_locations_to_parent_delete_stockitems = 1,
+            delete_sub_locations_move_stockitems_to_parent = 2,
+            delete_sub_locations_delete_stockitems = 3,
+
+        # First, construct a set of template / variant parts
+        part = Part.objects.create(
+            name='Part for stock item creation', description='Part for stock item creation',
+            category=None,
+            is_template=False,
+        )
+
+        for i in range(4):
+            delete_sub_locations: bool = False
+            delete_stock_items: bool = False
+
+            if i == Target.move_sub_locations_to_parent_delete_stockitems \
+                    or i == Target.delete_sub_locations_delete_stockitems:
+                delete_stock_items = True
+            if i == Target.delete_sub_locations_move_stockitems_to_parent \
+                    or i == Target.delete_sub_locations_delete_stockitems:
+                delete_sub_locations = True
+
+            # Create a parent stock location
+            parent_stock_location = StockLocation.objects.create(
+                name='Parent stock location',
+                description='This is the parent stock location where the sub categories and stock items are moved to',
+                parent=None
+            )
+
+            stocklocation_count_before = StockLocation.objects.count()
+            stock_location_count_before = StockItem.objects.count()
+
+            # Create a stock location to be deleted
+            stock_location_to_delete = StockLocation.objects.create(
+                name='Stock location to delete',
+                description='This is the stock location to be deleted',
+                parent=parent_stock_location
+            )
+
+            url = reverse('api-location-detail', kwargs={'pk': stock_location_to_delete.id})
+
+            stock_items = []
+            # Create stock items in the location to be deleted
+            for jj in range(3):
+                stock_items.append(StockItem.objects.create(
+                    batch=f"Stock Item xyz {jj}",
+                    location=stock_location_to_delete,
+                    part=part
+                ))
+
+            child_stock_locations = []
+            child_stock_locations_items = []
+            # Create sub location under the stock location to be deleted
+            for ii in range(3):
+                child = StockLocation.objects.create(
+                    name=f"Sub-location {ii}",
+                    description="A sub-location of the deleted stock location",
+                    parent=stock_location_to_delete
+                )
+                child_stock_locations.append(child)
+
+                # Create stock items in the sub locations
+                for jj in range(3):
+                    child_stock_locations_items.append(StockItem.objects.create(
+                        batch=f"Stock item in sub location xyz {jj}",
+                        part=part,
+                        location=child
+                    ))
+
+            # Delete the created stock location
+            params = {}
+            if delete_stock_items:
+                params['delete_stock_items'] = '1'
+            if delete_sub_locations:
+                params['delete_sub_locations'] = '1'
+            response = self.delete(
+                url,
+                params,
+                expected_code=204,
+            )
+
+            self.assertEqual(response.status_code, 204)
+
+            if delete_stock_items:
+                if i == Target.delete_sub_locations_delete_stockitems:
+                    # Check if all sub-categories deleted
+                    self.assertEqual(StockItem.objects.count(), stock_location_count_before)
+                elif i == Target.move_sub_locations_to_parent_delete_stockitems:
+                    # Check if all stock locations deleted
+                    self.assertEqual(StockItem.objects.count(), stock_location_count_before + len(child_stock_locations_items))
+            else:
+                # Stock locations moved to the parent location
+                for stock_item in stock_items:
+                    stock_item.refresh_from_db()
+                    self.assertEqual(stock_item.location, parent_stock_location)
+
+                if delete_sub_locations:
+                    for child_stock_location_item in child_stock_locations_items:
+                        child_stock_location_item.refresh_from_db()
+                        self.assertEqual(child_stock_location_item.location, parent_stock_location)
+
+            if delete_sub_locations:
+                # Check if all sub-locations are deleted
+                self.assertEqual(StockLocation.objects.count(), stocklocation_count_before)
+            else:
+                #  Check if all sub-locations moved to the parent
+                for child in child_stock_locations:
+                    child.refresh_from_db()
+                    self.assertEqual(child.parent, parent_stock_location)
 
 
 class StockItemListTest(StockAPITestCase):
@@ -320,12 +438,13 @@ class StockItemListTest(StockAPITestCase):
 
         # Expected headers
         headers = [
-            'part',
-            'customer',
-            'location',
-            'parent',
-            'quantity',
-            'status',
+            'Part ID',
+            'Customer ID',
+            'Location ID',
+            'Location Name',
+            'Parent ID',
+            'Quantity',
+            'Status',
         ]
 
         for h in headers:
@@ -567,9 +686,8 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url, expected_code=200).data
 
         # Check fixture values
-        self.assertEqual(data['purchase_price'], '123.0000')
+        self.assertEqual(data['purchase_price'], '123.000000')
         self.assertEqual(data['purchase_price_currency'], 'AUD')
-        self.assertEqual(data['purchase_price_string'], 'A$123.0000')
 
         # Update just the amount
         data = self.patch(
@@ -580,7 +698,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=200
         ).data
 
-        self.assertEqual(data['purchase_price'], '456.0000')
+        self.assertEqual(data['purchase_price'], '456.000000')
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update the currency
@@ -604,7 +722,6 @@ class StockItemTest(StockAPITestCase):
         ).data
 
         self.assertEqual(data['purchase_price'], None)
-        self.assertEqual(data['purchase_price_string'], '-')
 
         # Invalid currency code
         data = self.patch(
