@@ -950,16 +950,27 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
     return cleaned
 
 
-def remove_non_printable_characters(value: str, remove_ascii=True, remove_unicode=True):
+def remove_non_printable_characters(value: str, remove_newline=True, remove_ascii=True, remove_unicode=True):
     """Remove non-printable / control characters from the provided string"""
+
+    cleaned = value
 
     if remove_ascii:
         # Remove ASCII control characters
-        cleaned = regex.sub(u'[\x01-\x1F]+', '', value)
+        # Note that we do not sub out 0x0A (\n) here, it is done separately below
+        cleaned = regex.sub(u'[\x01-\x09]+', '', cleaned)
+        cleaned = regex.sub(u'[\x0b-\x1F]+', '', cleaned)
+
+    if remove_newline:
+        cleaned = regex.sub(u'[\x0a]+', '', cleaned)
 
     if remove_unicode:
         # Remove Unicode control characters
-        cleaned = regex.sub(u'[^\P{C}]+', '', value)
+        if remove_newline:
+            cleaned = regex.sub(u'[^\P{C}]+', '', cleaned)
+        else:
+            # Use 'negative-lookahead' to exclude newline character
+            cleaned = regex.sub(u'(?![\x0A])[^\P{C}]+', '', cleaned)
 
     return cleaned
 
