@@ -14,6 +14,17 @@ import {
 } from '@tanstack/react-query'
 import axios from 'axios';
 
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
+
+// Error tracking
+Sentry.init({
+  dsn: "https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920",
+  integrations: [new BrowserTracing()],
+  tracesSampleRate: 1.0,
+});
+
+// Constants
 export const user = {
   "name": "Matthias Mair",
   "email": "code@mjmair.com",
@@ -69,6 +80,7 @@ const router = createBrowserRouter([
   },
 ]);
 
+// Main App
 export default function App() {
   const preferredColorScheme = useColorScheme();
   const [colorScheme, setColorScheme] = useState<ColorScheme>(preferredColorScheme);
