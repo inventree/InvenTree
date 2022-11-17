@@ -81,6 +81,9 @@ function partFields(options={}) {
 
                     return fields;
                 }
+            },
+            filters: {
+                structural: false,
             }
         },
         name: {},
@@ -298,6 +301,7 @@ function categoryFields() {
         default_keywords: {
             icon: 'fa-key',
         },
+        structural: {},
         icon: {
             help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-tag',

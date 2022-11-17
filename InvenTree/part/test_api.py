@@ -4,6 +4,7 @@ from decimal import Decimal
 from enum import IntEnum
 from random import randint
 
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 import PIL
@@ -402,6 +403,59 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 for child in child_categories:
                     child.refresh_from_db()
                     self.assertEqual(child.parent, parent_category)
+
+    def test_structural(self):
+        """Test the effectiveness of structural categories
+
+        Make sure:
+        - Parts cannot be created in structural categories
+        - Parts cannot be assigned to structural categories
+        """
+
+        # Create our structural part category
+        structural_category = PartCategory.objects.create(
+            name='Structural category',
+            description='This is the structural category',
+            parent=None,
+            structural=True
+        )
+
+        part_count_before = Part.objects.count()
+
+        # Make sure that we get an error if we try to create part in the structural category
+        with self.assertRaises(ValidationError):
+            part = Part.objects.create(
+                name="Part which shall not be created",
+                description="-",
+                category=structural_category
+            )
+
+        # Ensure that the part really did not get created in the structural category
+        self.assertEqual(part_count_before, Part.objects.count())
+
+        # Create a non structural category for test part category change
+        non_structural_category = PartCategory.objects.create(
+            name='Non-structural category',
+            description='This is a non-structural category',
+            parent=None,
+            structural=False
+        )
+
+        # Create the test part assigned to a non-structural category
+        part = Part.objects.create(
+            name="Part which category will be changed to structural",
+            description="-",
+            category=non_structural_category
+        )
+
+        # Assign the test part to a structural category and make sure it gives an error
+        part.category = structural_category
+        with self.assertRaises(ValidationError):
+            part.save()
+
+        # Ensure that the part did not get saved to the DB
+        part.refresh_from_db()
+        self.assertEqual(part.category.pk, non_structural_category.pk)
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):

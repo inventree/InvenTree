@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 81
+INVENTREE_API_VERSION = 82
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v82 -> 2022-11-16 : https://github.com/inventree/InvenTree/pull/3931
+    - Add support for structural Part categories
 
 v81 -> 2022-11-08 : https://github.com/inventree/InvenTree/pull/3710
     - Adds cached pricing information to Part API
