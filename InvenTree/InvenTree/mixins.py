@@ -56,18 +56,19 @@ class CleanMixin():
         remove_newline = True
 
         try:
-            model = self.get_serializer_class().Meta.model
-            field = model._meta.get_field(field)
+            if hasattr(self, 'get_serializer_class'):
+                model = self.get_serializer_class().Meta.model
+                field = model._meta.get_field(field)
 
-            # The following field types allow newline characters
-            allow_newline = [
-                InvenTreeNotesField,
-            ]
+                # The following field types allow newline characters
+                allow_newline = [
+                    InvenTreeNotesField,
+                ]
 
-            for field_type in allow_newline:
-                if issubclass(type(field), field_type):
-                    remove_newline = False
-                    break
+                for field_type in allow_newline:
+                    if issubclass(type(field), field_type):
+                        remove_newline = False
+                        break
 
         except AttributeError:
             pass
