@@ -33,6 +33,6 @@ export function Dashboard() {
             <StylishText>Dashboard</StylishText>
             <Chip checked={checked} onChange={() => setChecked((v) => !v)}>Autoupdate</Chip>
         </Group>
-        <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem {...item} autoupdate={checked}/>)}</SimpleGrid>
+        <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem key={item.id} {...item} autoupdate={checked}/>)}</SimpleGrid>
     </>);
 }
