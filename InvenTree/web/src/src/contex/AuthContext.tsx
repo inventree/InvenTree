@@ -5,18 +5,11 @@ import { createContext, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { api } from "../App";
 
-export type UserProps = {
-  name: string,
-  email: string,
-  username: string,
-}
+export interface UserProps { name: string, email: string, username: string }
 
-export type DefaultProps = {
-  user: UserProps,
-  host: string,
-}
+export interface DefaultProps { user: UserProps, host: string }
 
-export type AuthContextProps = {
+export interface AuthContextProps {
   token: string,
   host: string,
   handleLogin: (username: string, password: string) => Promise<void>,
@@ -39,14 +32,14 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 export const AuthProvider = ({ children }: { children: JSX.Element }) => {
-  const [token, setToken] = useLocalStorage<string>({key: 'token', defaultValue: ''});
+  const [token, setToken] = useLocalStorage<string>({ key: 'token', defaultValue: '' });
   // TODO make host a user selectable option
-  const [host, setHost] = useLocalStorage<string>({key: 'host', defaultValue: 'https://demo.inventree.org/api/'});
+  const [host, setHost] = useLocalStorage<string>({ key: 'host', defaultValue: 'https://demo.inventree.org/api/' });
 
   function login(username: string, password: string) {
-    return axios.get(`${host}user/token/`, {auth:{ username, password} })
+    return axios.get(`${host}user/token/`, { auth: { username, password } })
       .then((response) => response.data.token)
-      .catch((error) => {console.log(error);});
+      .catch((error) => { console.log(error); });
   }
 
   // TODO add types
@@ -58,7 +51,7 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
 
     // Set token in context
     setToken(token);
-    api.defaults.baseURL=host;
+    api.defaults.baseURL = host;
     api.defaults.headers.common['Authorization'] = `Token ${token}`;
 
     // Navigate to home page
