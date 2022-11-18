@@ -12,11 +12,9 @@ import {
   Anchor,
   Stack,
   Center,
-  Chip,
 } from '@mantine/core';
-import { useState } from 'react';
 
-export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any, navigate: any }) {
+export function AuthenticationForm({ handleLogin, navigate, hostname }: { handleLogin: any, navigate: any, hostname: string }) {
   const [action, toggleAction] = useToggle(['login', 'register']);
   const form = useForm({
     initialValues: {
@@ -35,21 +33,9 @@ export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any
     }
   };
 
-  const hostOptions = [
-    "https://demo.inventree.org",
-    "https://sample.app.invenhost.com",
-    "http://locahost:8000",
-  ];
-  const [formHost, setFormHost] = useState(hostOptions[0]);
-
-  return (<>
-    <Center>
-      <Chip.Group position="center" m="md" multiple={false} value={formHost} onChange={setFormHost}>
-        {hostOptions.map((host) => (<Chip key={host} value={host}>{host}</Chip>))}
-      </Chip.Group>
-    </Center>
+  return (
     <Paper radius="md" p="xl" withBorder>
-      <Text size="lg" weight={500}>Welcome to Mantine, {action} with</Text>
+      <Text size="lg" weight={500}>Welcome to {hostname}, {action} with</Text>
       <Center><Group grow mb="md" mt="md"><Text>Placeholder</Text></Group></Center>
       <Divider label="Or continue with email" labelPosition="center" my="lg" />
       <form onSubmit={form.onSubmit(() => { submit() })}>
@@ -100,5 +86,5 @@ export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any
         </Group>
       </form>
     </Paper>
-  </>);
+  );
 }

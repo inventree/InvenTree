@@ -14,6 +14,7 @@ export interface AuthContextProps {
   host: string,
   handleLogin: (username: string, password: string) => Promise<void>,
   handleLogout: () => void,
+  setHost: (host: string) => void,
 }
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -35,7 +36,7 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 export const AuthProvider = ({ children }: { children: JSX.Element }) => {
   const [token, setToken] = useLocalStorage<string>({ key: 'token', defaultValue: '' });
   // TODO make host a user selectable option
-  const [host, setHost] = useLocalStorage<string>({ key: 'host', defaultValue: 'https://demo.inventree.org/api/' });
+  const [host, setHost] = useLocalStorage<string>({ key: 'host', defaultValue: '' });
 
   function login(username: string, password: string) {
     return axios.get(`${host}user/token/`, { auth: { username, password } })
@@ -69,6 +70,7 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
     host,
     handleLogin,
     handleLogout,
+    setHost,
   };
 
   return (
