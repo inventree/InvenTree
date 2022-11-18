@@ -14,7 +14,7 @@ import {
   Stack,
 } from '@mantine/core';
 
-export function AuthenticationForm({props, handleLogin, navigate}: {props: PaperProps, handleLogin: any, navigate: any}) {
+export function AuthenticationForm({handleLogin, navigate}: {handleLogin: any, navigate: any}) {
   const [type, toggle] = useToggle(['login', 'register']);
   const form = useForm({
     initialValues: {
@@ -34,7 +34,7 @@ export function AuthenticationForm({props, handleLogin, navigate}: {props: Paper
   };
 
   return (
-    <Paper radius="md" p="xl" withBorder {...props}>
+    <Paper radius="md" p="xl" withBorder>
       <Text size="lg" weight={500}>Welcome to Mantine, {type} with</Text>
       <Group grow mb="md" mt="md"><Text>Social Buttons Here</Text></Group>
       <Divider label="Or continue with email" labelPosition="center" my="lg" />
