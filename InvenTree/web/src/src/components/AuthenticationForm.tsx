@@ -6,7 +6,6 @@ import {
   Text,
   Paper,
   Group,
-  PaperProps,
   Button,
   Divider,
   Checkbox,
@@ -14,7 +13,7 @@ import {
   Stack,
 } from '@mantine/core';
 
-export function AuthenticationForm({handleLogin, navigate}: {handleLogin: any, navigate: any}) {
+export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any, navigate: any }) {
   const [type, toggle] = useToggle(['login', 'register']);
   const form = useForm({
     initialValues: {
@@ -29,7 +28,7 @@ export function AuthenticationForm({handleLogin, navigate}: {handleLogin: any, n
   });
   const submit = () => {
     if (type === 'login') {
-      handleLogin({form: form.values, type: type, navigate: navigate});
+      handleLogin({ form: form.values, type: type, navigate: navigate });
     }
   };
 
@@ -38,7 +37,7 @@ export function AuthenticationForm({handleLogin, navigate}: {handleLogin: any, n
       <Text size="lg" weight={500}>Welcome to Mantine, {type} with</Text>
       <Group grow mb="md" mt="md"><Text>Social Buttons Here</Text></Group>
       <Divider label="Or continue with email" labelPosition="center" my="lg" />
-      <form onSubmit={form.onSubmit(() => {submit()})}>
+      <form onSubmit={form.onSubmit(() => { submit() })}>
         <Stack>
           {type === 'register' && (
             <TextInput
