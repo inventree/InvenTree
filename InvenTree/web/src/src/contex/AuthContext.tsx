@@ -6,16 +6,15 @@ import { Navigate } from "react-router-dom";
 import { api } from "../App";
 import { ReactNode } from "react";
 
-export const UserProps = {
-  name: String,
-  email: String,
-  username: String,
-  token: String,
+export type UserProps = {
+  name: string,
+  email: string,
+  username: string,
 }
 
-export const DefaultProps = {
+export type DefaultProps = {
   user: UserProps,
-  host: String,
+  host: string,
 }
 
 export type AuthContextProps = {
@@ -24,13 +23,13 @@ export type AuthContextProps = {
   handleLogin: (username: string, password: string) => Promise<void>,
 }
 
-const AuthContext = createContext<AuthContextProps>(null);
+const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
 
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export const ProtectedRoute = ({ children }) => {
+export const ProtectedRoute = (children: ReactNode) => {
   const { token } = useAuth();
 
   if (!token) {
@@ -40,7 +39,7 @@ export const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = (children: ReactNode) => {
   const [token, setToken] = useLocalStorage<string>({key: 'token', defaultValue: ''});
   // TODO make host a user selectable option
   const [host, setHost] = useLocalStorage<string>({key: 'host', defaultValue: 'http://127.0.0.1:8000/api/'});

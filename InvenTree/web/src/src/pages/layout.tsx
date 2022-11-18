@@ -5,11 +5,11 @@ import { Center, Container, Flex, Space } from "@mantine/core";
 import { FooterSimple, FooterSimpleProps } from "../components/FooterSimple";
 import { useStyles } from "../globalStyle";
 import { StylishText } from "../components/StylishText";
-import { ProtectedRoute, useAuth } from "../contex/AuthContext";
+import { ProtectedRoute, useAuth, UserProps } from "../contex/AuthContext";
 import { AuthenticationForm } from "../components/AuthenticationForm";
 
 
-export default function Layout({ user, tabs, links }: { user: any, tabs: any, links: FooterSimpleProps }) {
+export default function Layout({ user, tabs, links }: { user: UserProps, tabs: any, links: FooterSimpleProps }) {
     const { classes } = useStyles();
 
     return (
