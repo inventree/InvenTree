@@ -1,11 +1,9 @@
-import { InvenTreeLogo } from "./InvenTreeLogo";
-import {Container, Group, Anchor } from '@mantine/core';
-import { useStyles } from "../globalStyle";
+import { InvenTreeLogo } from "../InvenTreeLogo";
+import { Container, Group, Anchor } from '@mantine/core';
+import { useStyles } from "../../globalStyle";
 
 
-export interface FooterSimpleProps {
-  links: { link: string; label: string }[];
-}
+export interface FooterSimpleProps { links: { link: string; label: string }[] }
 
 export function FooterSimple({ links }: FooterSimpleProps) {
   const { classes } = useStyles();
