@@ -35,7 +35,7 @@ export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any
   return (
     <Paper radius="md" p="xl" withBorder>
       <Text size="lg" weight={500}>Welcome to Mantine, {action} with</Text>
-      <Group grow mb="md" mt="md"><Text>Social Buttons Here</Text></Group>
+      <Center><Group grow mb="md" mt="md"><Text>Placeholder</Text></Group></Center>
       <Divider label="Or continue with email" labelPosition="center" my="lg" />
       <form onSubmit={form.onSubmit(() => { submit() })}>
         <Stack>
