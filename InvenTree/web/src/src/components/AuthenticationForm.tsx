@@ -14,7 +14,7 @@ import {
 } from '@mantine/core';
 
 export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any, navigate: any }) {
-  const [type, toggle] = useToggle(['login', 'register']);
+  const [action, toggleAction] = useToggle(['login', 'register']);
   const form = useForm({
     initialValues: {
       email: '',
@@ -27,19 +27,19 @@ export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any
     },
   });
   const submit = () => {
-    if (type === 'login') {
-      handleLogin({ form: form.values, type: type, navigate: navigate });
+    if (action === 'login') {
+      handleLogin({ form: form.values, type: action, navigate: navigate });
     }
   };
 
   return (
     <Paper radius="md" p="xl" withBorder>
-      <Text size="lg" weight={500}>Welcome to Mantine, {type} with</Text>
+      <Text size="lg" weight={500}>Welcome to Mantine, {action} with</Text>
       <Group grow mb="md" mt="md"><Text>Social Buttons Here</Text></Group>
       <Divider label="Or continue with email" labelPosition="center" my="lg" />
       <form onSubmit={form.onSubmit(() => { submit() })}>
         <Stack>
-          {type === 'register' && (
+          {action === 'register' && (
             <TextInput
               label="Name"
               placeholder="Your name"
@@ -66,7 +66,7 @@ export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any
             error={form.errors.password && 'Password should include at least 6 characters'}
           />
 
-          {type === 'register' && (
+          {action === 'register' && (
             <Checkbox
               label="I accept terms and conditions"
               checked={form.values.terms}
@@ -76,12 +76,12 @@ export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any
         </Stack>
 
         <Group position="apart" mt="xl">
-          <Anchor component="button" type="button" color="dimmed" onClick={() => toggle()} size="xs">
-            {type === 'register'
+          <Anchor component="button" type="button" color="dimmed" onClick={() => toggleAction()} size="xs">
+            {action === 'register'
               ? 'Already have an account? Login'
               : "Don't have an account? Register"}
           </Anchor>
-          <Button type="submit">{upperFirst(type)}</Button>
+          <Button type="submit">{upperFirst(action)}</Button>
         </Group>
       </form>
     </Paper>
