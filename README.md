@@ -132,6 +132,8 @@ There are several options to deploy InvenTree.
 <div align="center"><h4>
     <a href="https://inventree.readthedocs.io/en/latest/start/docker/">Docker</a>
     <span> · </span>
+    <a href="https://marketplace.digitalocean.com/apps/inventree?refcode=d6172576d014"><img src="https://www.deploytodo.com/do-btn-blue-ghost.svg" alt="Deploy to DO" width="auto" height="40" /></a>
+    <span> · </span>
     <a href="https://inventree.readthedocs.io/en/latest/start/install/">Bare Metal</a>
 </h4></div>
 
