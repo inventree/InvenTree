@@ -1,8 +1,8 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { HeaderTabs } from "../components/HeaderTabs";
+import { HeaderTabs } from "../components/nav/HeaderTabs";
 import { Center, Container, Flex, Space } from "@mantine/core";
 
-import { FooterSimple, FooterSimpleProps } from "../components/FooterSimple";
+import { FooterSimple, FooterSimpleProps } from "../components/nav/FooterSimple";
 import { useStyles } from "../globalStyle";
 import { StylishText } from "../components/StylishText";
 import { ProtectedRoute, useAuth, UserProps } from "../contex/AuthContext";
