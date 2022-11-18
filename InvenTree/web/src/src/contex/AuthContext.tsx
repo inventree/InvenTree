@@ -4,6 +4,7 @@ import axios from "axios";
 import { createContext, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { api } from "../App";
+import { ReactNode } from "react";
 
 export const UserProps = {
   name: String,
@@ -17,7 +18,13 @@ export const DefaultProps = {
   host: String,
 }
 
-const AuthContext = createContext(null);
+export type AuthContextProps = {
+  token: string,
+  host: string,
+  handleLogin: (username: string, password: string) => Promise<void>,
+}
+
+const AuthContext = createContext<AuthContextProps>(null);
 
 export const useAuth = () => {
   return useContext(AuthContext);
@@ -62,7 +69,7 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogout = () => {
     console.log("Logout");
-    setToken(null);
+    setToken('');
   };
 
   const value = {
