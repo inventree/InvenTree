@@ -1598,8 +1598,24 @@ class PartDetailTests(InvenTreeAPITestCase):
         self.assertFalse('hello' in part.metadata)
         self.assertEqual(part.metadata['x'], 'y')
 
-    def test_part_notes(self):
-        """Unit tests for the part 'notes' field"""
+
+class PartNotesTests(InvenTreeAPITestCase):
+    """Tests for the 'notes' field (markdown field)"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'company',
+    ]
+
+    roles = [
+        'part.change',
+        'part.add',
+    ]
+
+    def test_long_notes(self):
+        """Test that very long notes field is rejected"""
 
         # Ensure that we cannot upload a very long piece of text
         url = reverse('api-part-detail', kwargs={'pk': 1})
@@ -1613,6 +1629,36 @@ class PartDetailTests(InvenTreeAPITestCase):
         )
 
         self.assertIn('Ensure this field has no more than 50000 characters', str(response.data['notes']))
+
+    def test_multiline_formatting(self):
+        """Ensure that markdown formatting is retained"""
+
+        url = reverse('api-part-detail', kwargs={'pk': 1})
+
+        notes = """
+        ### Title
+
+        1. Numbered list
+        2. Another item
+        3. Another item again
+
+        [A link](http://link.com.go)
+
+        """
+
+        response = self.patch(
+            url,
+            {
+                'notes': notes,
+            },
+            expected_code=200
+        )
+
+        # Ensure that newline chars have not been removed
+        self.assertIn('\n', response.data['notes'])
+
+        # Entire notes field should match original value
+        self.assertEqual(response.data['notes'], notes.strip())
 
 
 class PartPricingDetailTests(InvenTreeAPITestCase):
