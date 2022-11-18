@@ -41,7 +41,7 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 export const AuthProvider = ({ children }: { children: JSX.Element }) => {
   const [token, setToken] = useLocalStorage<string>({key: 'token', defaultValue: ''});
   // TODO make host a user selectable option
-  const [host, setHost] = useLocalStorage<string>({key: 'host', defaultValue: 'http://127.0.0.1:8000/api/'});
+  const [host, setHost] = useLocalStorage<string>({key: 'host', defaultValue: 'https://demo.inventree.org/api/'});
 
   function login(username: string, password: string) {
     return axios.get(`${host}user/token/`, {auth:{ username, password} })
