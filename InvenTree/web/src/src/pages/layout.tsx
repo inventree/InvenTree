@@ -51,3 +51,13 @@ export function Login() {
         </Center>
     );
 }
+
+export function Logout() {
+    const { handleLogout } = useAuth();
+    const navigate = useNavigate();
+
+    handleLogout();
+    navigate('/');
+
+    return (<></>);
+}

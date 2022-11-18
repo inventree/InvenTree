@@ -20,6 +20,7 @@ import { ColorToggle } from '../ColorToggle';
 import { InvenTreeLogo } from '../InvenTreeLogo';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStyles } from '../../globalStyle';
+import { Link } from 'react-router-dom';
 
 interface HeaderTabsProps {
   user: { name: string; };
@@ -73,7 +74,7 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
 
                 <Menu.Label>Settings</Menu.Label>
                 <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>Account settings</Menu.Item>
-                <Menu.Item icon={<IconLogout size={14} stroke={1.5} />}>Logout</Menu.Item>
+                <Menu.Item icon={<IconLogout size={14} stroke={1.5} />} component={Link} to="/logout">Logout</Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </Group>

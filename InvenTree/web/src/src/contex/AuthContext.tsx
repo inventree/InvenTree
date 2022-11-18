@@ -13,6 +13,7 @@ export interface AuthContextProps {
   token: string,
   host: string,
   handleLogin: (username: string, password: string) => Promise<void>,
+  handleLogout: () => void,
 }
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -66,9 +67,8 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
   const value = {
     token,
     host,
-    onLogin: handleLogin,
-    onLogout: handleLogout,
     handleLogin,
+    handleLogout,
   };
 
   return (

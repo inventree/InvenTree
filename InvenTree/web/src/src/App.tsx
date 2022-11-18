@@ -5,7 +5,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import ErrorPage from './pages/error';
-import Layout, { Home, Part, Login } from './pages/layout';
+import Layout, { Home, Part, Login, Logout } from './pages/layout';
 import { Dashboard } from "./pages/Dashboard";
 import {
   QueryClient,
@@ -65,6 +65,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />
+  },
+  {
+    path: "/logout",
+    element: <Logout />
   }
 ]);
 
