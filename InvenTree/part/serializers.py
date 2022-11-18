@@ -75,6 +75,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'pathstring',
             'starred',
             'url',
+            'structural',
             'icon',
         ]
 
