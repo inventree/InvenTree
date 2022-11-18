@@ -8,6 +8,7 @@ import { StylishText } from "../components/StylishText";
 import { ProtectedRoute, useAuth, UserProps } from "../contex/AuthContext";
 import { AuthenticationForm } from "../components/AuthenticationForm";
 import { useState } from "react";
+import { hosts } from "../App";
 
 
 export default function Layout({ user, tabs, links }: { user: UserProps, tabs: any, links: FooterSimpleProps }) {
@@ -43,10 +44,7 @@ export function Part() {
 export function Login() {
     const { handleLogin, host, setHost } = useAuth();
     const navigate = useNavigate();
-    const hostOptions = [
-        "https://demo.inventree.org",
-        "https://sample.app.invenhost.com",
-    ];
+    const hostOptions = hosts;
     const [hostname, setHostname] = useState((host === '') ? hostOptions[0] : host.replace('/api/', ''));
     function changeHost(newVal: string) {
         setHost(`${newVal}/api/`);

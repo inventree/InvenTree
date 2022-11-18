@@ -45,6 +45,11 @@ const links = {
   ]
 }
 
+export const hosts = [
+  "https://demo.inventree.org",
+  "https://sample.app.invenhost.com",
+];
+
 const router = createBrowserRouter([
   {
     path: "/",
