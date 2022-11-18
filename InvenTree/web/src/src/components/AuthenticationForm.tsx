@@ -11,7 +11,10 @@ import {
   Checkbox,
   Anchor,
   Stack,
+  Center,
+  Chip,
 } from '@mantine/core';
+import { useState } from 'react';
 
 export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any, navigate: any }) {
   const [action, toggleAction] = useToggle(['login', 'register']);
@@ -32,7 +35,19 @@ export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any
     }
   };
 
-  return (
+  const hostOptions = [
+    "https://demo.inventree.org",
+    "https://sample.app.invenhost.com",
+    "http://locahost:8000",
+  ];
+  const [formHost, setFormHost] = useState(hostOptions[0]);
+
+  return (<>
+    <Center>
+      <Chip.Group position="center" m="md" multiple={false} value={formHost} onChange={setFormHost}>
+        {hostOptions.map((host) => (<Chip key={host} value={host}>{host}</Chip>))}
+      </Chip.Group>
+    </Center>
     <Paper radius="md" p="xl" withBorder>
       <Text size="lg" weight={500}>Welcome to Mantine, {action} with</Text>
       <Center><Group grow mb="md" mt="md"><Text>Placeholder</Text></Group></Center>
@@ -85,5 +100,5 @@ export function AuthenticationForm({ handleLogin, navigate }: { handleLogin: any
         </Group>
       </form>
     </Paper>
-  );
+  </>);
 }
