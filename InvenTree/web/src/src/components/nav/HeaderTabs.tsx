@@ -21,10 +21,11 @@ import { InvenTreeLogo } from '../InvenTreeLogo';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStyles } from '../../globalStyle';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../contex/AuthContext';
 
 interface HeaderTabsProps {
   user: { name: string; };
-  tabs: { name: string; text:string;}[];
+  tabs: { name: string; text: string; }[];
 }
 
 export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
@@ -33,6 +34,7 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
   const { tabValue } = useParams();
+  const { host } = useAuth();
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name}>
@@ -44,7 +46,7 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
     <div className={classes.header}>
       <Container className={classes.mainSection}>
         <Group position="apart">
-          <InvenTreeLogo/>
+          <Group><InvenTreeLogo />{host}</Group>
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
           <Group>
             <ColorToggle />
@@ -90,9 +92,9 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
             tab: classes.tab,
           }}
           value={tabValue}
-          onTabChange={(value) => value=='/' ? navigate('/') : navigate(`/${value}`)}
+          onTabChange={(value) => value == '/' ? navigate('/') : navigate(`/${value}`)}
         >
-          <Tabs.List><Tabs.Tab value={'/'} key={'dash'} icon={<IconDashboard size={14} />}/>{items}</Tabs.List>
+          <Tabs.List><Tabs.Tab value={'/'} key={'dash'} icon={<IconDashboard size={14} />} />{items}</Tabs.List>
         </Tabs>
       </Container>
     </div>
