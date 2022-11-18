@@ -4,7 +4,6 @@ import axios from "axios";
 import { createContext, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { api } from "../App";
-import { ReactNode } from "react";
 
 export type UserProps = {
   name: string,
@@ -29,7 +28,7 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export const ProtectedRoute = (children: ReactNode) => {
+export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { token } = useAuth();
 
   if (!token) {
@@ -39,7 +38,7 @@ export const ProtectedRoute = (children: ReactNode) => {
   return children;
 };
 
-export const AuthProvider = (children: ReactNode) => {
+export const AuthProvider = ({ children }: { children: JSX.Element }) => {
   const [token, setToken] = useLocalStorage<string>({key: 'token', defaultValue: ''});
   // TODO make host a user selectable option
   const [host, setHost] = useLocalStorage<string>({key: 'host', defaultValue: 'http://127.0.0.1:8000/api/'});
