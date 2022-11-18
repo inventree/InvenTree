@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from "../App";
-import { StatsElement } from "../components/statsElement";
+import { StatElement } from "../components/StatElement";
 import { useEffect, useState } from "react";
 
 export function DashboardItem({ id, text, url, params, autoupdate=true }: { id: string; text: string; url: string; params: any; autoupdate: boolean }) {
@@ -15,6 +15,6 @@ export function DashboardItem({ id, text, url, params, autoupdate=true }: { id: 
     if (error)
         return <>An error has occurred: {error}</>;
     return (<div key={id}>
-        <StatsElement key={id} data={dashdata} isLoading={isLoading || isFetching} />
+        <StatElement key={id} data={dashdata} isLoading={isLoading || isFetching} />
     </div>);
 }
