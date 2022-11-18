@@ -22,10 +22,7 @@ export function AuthenticationForm({ handleLogin, navigate, hostname }: { handle
       name: '',
       password: '',
       terms: false,
-    },
-    validate: {
-      password: (val) => (val.length <= 5 ? 'Password should include at least 6 characters' : null),
-    },
+    }
   });
   const submit = () => {
     if (action === 'login') {
