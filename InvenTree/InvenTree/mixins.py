@@ -56,8 +56,8 @@ class CleanMixin():
         remove_newline = True
 
         try:
-            if hasattr(self, 'get_serializer_class'):
-                model = self.get_serializer_class().Meta.model
+            if hasattr(self, 'serializer_class'):
+                model = self.serializer_class.Meta.model
                 field = model._meta.get_field(field)
 
                 # The following field types allow newline characters
