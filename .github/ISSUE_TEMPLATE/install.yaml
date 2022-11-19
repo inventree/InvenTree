@@ -12,6 +12,8 @@ body:
         - label: "Docker Production"
         - label: "Bare metal Development"
         - label: "Bare metal Production"
+        - label: "Digital Ocean image"
+        - label: "Other (please provide a link `Steps to Reproduce`"
   - type: textarea
     id: description
     validations:
