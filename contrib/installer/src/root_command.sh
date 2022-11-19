@@ -83,9 +83,8 @@ for pkg in $REQS; do
 done
 
 echo "### Adding key and package source"
-# Add key
 do_call "wget -Nq -O ${publisher}_inventree.key https://dl.packager.io/srv/$publisher/InvenTree/key && sudo apt-key add ${publisher}_inventree.key"
-# Add packagelist
+echo "### Adding package source"
 do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/${OS,,}/${VER}.repo"
 
 echo "### Updateing package lists"
