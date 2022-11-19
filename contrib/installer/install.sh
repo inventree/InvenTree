@@ -124,21 +124,21 @@ version_command() {
 }
 
 # :command.usage
-install_usage() {
+install.sh_usage() {
   if [[ -n $long_usage ]]; then
-    printf "install - Interactive installer for InvenTree\n"
+    printf "install.sh - Interactive installer for InvenTree\n"
     echo
 
   else
-    printf "install - Interactive installer for InvenTree\n"
+    printf "install.sh - Interactive installer for InvenTree\n"
     echo
 
   fi
 
   printf "Usage:\n"
-  printf "  install [SOURCE] [PUBLISHER] [OPTIONS]\n"
-  printf "  install --help | -h\n"
-  printf "  install --version | -v\n"
+  printf "  install.sh [SOURCE] [PUBLISHER] [OPTIONS]\n"
+  printf "  install.sh --help | -h\n"
+  printf "  install.sh --version | -v\n"
   echo
 
   # :command.long_usage
@@ -247,7 +247,7 @@ parse_requirements() {
 
   --help | -h )
     long_usage=yes
-    install_usage
+    install.sh_usage
     exit
     ;;
 
