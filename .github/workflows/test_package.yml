@@ -13,4 +13,4 @@ jobs:
         run:
           wget https://raw.githubusercontent.com/matmair/InvenTree/matmair/issue3933/contrib/install.sh && bash install.sh master
       - name: Test
-        run: wget localhost:80
+        run: wget localhost/api/
