@@ -9,11 +9,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
       - name: Install package
         run: |
+          sudo apt install python3.9
           export SETUP_PYTHON=python3.9
           wget https://raw.githubusercontent.com/matmair/InvenTree/matmair/issue3933/contrib/install.sh && bash install.sh master matmair
           echo "native python"
