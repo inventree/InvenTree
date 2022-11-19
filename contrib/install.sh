@@ -96,7 +96,7 @@ root_command() {
   # Add key
   do_call "wget -Nq -O ${publisher}_inventree.key https://dl.packager.io/srv/$publisher/InvenTree/key && sudo apt-key add ${publisher}_inventree.key"
   # Add packagelist
-  do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/${lsb_dist}/${dist_version}.repo"
+  do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/${OS,,}/${VER}.repo"
 
   echo "### Updateing package lists"
   do_call "sudo apt-get update"
