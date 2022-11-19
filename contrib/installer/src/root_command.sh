@@ -81,14 +81,18 @@ for pkg in $REQS; do
         do_call "sudo apt-get -yqq install $pkg"
     fi
 done
+echo "@@0"
 
 echo "### Adding key and package source"
 # Add key
+echo "@@1"
 do_call "wget -qO- https://dl.packager.io/srv/$publisher/InvenTree/key | sudo apt-key add -"
 # Add packagelist
+echo "@@2"
 do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/${lsb_dist}/${dist_version}.repo"
 
 echo "### Updateing package lists"
+echo "@@3"
 do_call "sudo apt-get update"
 
 # Set up environment for install
