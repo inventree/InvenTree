@@ -19,3 +19,9 @@ jobs:
       - name: Test
         run: |
           wget localhost/api/
+          sleep 1m
+          wget localhost/api/
+          sleep 1m
+          wget localhost/api/
+          sleep 1m
+          wget localhost/api/
