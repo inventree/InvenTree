@@ -63,7 +63,7 @@ case "$OS" in
         ;;
 esac
 
-if [[ $SUPPORTED==false ]]; then
+if [[ $SUPPORTED != "true" ]]; then
     echo "This OS is currently not supported"
     echo "please install manually using https://inventree.readthedocs.io/en/stable/start/install/"
     echo "or check https://github.com/inventree/InvenTree/issues/3836 for packaging for your OS."
