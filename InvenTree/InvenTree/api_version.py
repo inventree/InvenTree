@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 82
+INVENTREE_API_VERSION = 83
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v83 -> 2022-11-19 : https://github.com/inventree/InvenTree/pull/3949
+    - Add support for structural Stock locations
 
 v82 -> 2022-11-16 : https://github.com/inventree/InvenTree/pull/3931
     - Add support for structural Part categories
