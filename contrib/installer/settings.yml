@@ -29,4 +29,4 @@ compact_short_flags: true
 # Set to 'production' or 'development':
 # - production    generate a smaller script, without file markers
 # - development   generate with file markers
-env: development
+env: production
