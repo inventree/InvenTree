@@ -9,13 +9,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Uninstall python
-        run: sudo apt-get remove --auto-remove python3.8
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: Detect version
-        run: python --version
       - name: Install package
         run: |
           export SETUP_PYTHON=python3.9
@@ -26,6 +22,4 @@ jobs:
           /opt/inventree/env/bin/python --version
       - name: Test
         run: |
-          python --version
           wget localhost/api/
-          python --version
