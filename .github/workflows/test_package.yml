@@ -11,6 +11,7 @@ jobs:
     steps:
       - name: Install package
         run: |
+          export SETUP_PYTHON=python3.9
           wget https://raw.githubusercontent.com/matmair/InvenTree/matmair/issue3933/contrib/install.sh && bash install.sh master matmair
           echo "native python"
           python --version
