@@ -17,14 +17,14 @@ jobs:
       - name: Detect version
         run: python --version
       - name: Install package
-        run:
+        run: |
           wget https://raw.githubusercontent.com/matmair/InvenTree/matmair/issue3933/contrib/install.sh && bash install.sh master matmair
           echo "native python"
           python --version
           echo "included env"
           /opt/inventree/env/bin/python --version
       - name: Test
-        run:
+        run: |
           python --version
           wget localhost/api/
           python --version
