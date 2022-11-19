@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Install package
         run:
-          wget -Nq https://raw.githubusercontent.com/matmair/InvenTree/matmair/issue3933/contrib/install.sh && bash install.sh -d
-          wget -Nq https://raw.githubusercontent.com/matmair/InvenTree/matmair/issue3933/contrib/install.sh && bash install.sh
+          wget https://raw.githubusercontent.com/matmair/InvenTree/matmair/issue3933/contrib/install.sh && bash install.sh -d
+          wget https://raw.githubusercontent.com/matmair/InvenTree/matmair/issue3933/contrib/install.sh && bash install.sh
       - name: Test
         run: wget localhost:80
