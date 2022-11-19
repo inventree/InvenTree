@@ -45,25 +45,25 @@ echo "### Installer for InvenTree - source: $publisher/$source_url"
 # Check if os and version is supported
 get_distribution
 echo "### Detected distribution: $OS $VER"
-NOT_SUPPORTED=false
+SUPPORTED=true
 case "$OS" in
     Ubuntu)
         if [[ $VER != "20.04" ]]; then
-            NOT_SUPPORTED=true
+            SUPPORTED=false
         fi
         ;;
     Debian | Raspbian)
         if [[ $VER != "11" ]]; then
-            NOT_SUPPORTED=true
+            SUPPORTED=false
         fi
         ;;
     *)
         echo "### Distribution not supported"
-        NOT_SUPPORTED=true
+        SUPPORTED=false
         ;;
 esac
 
-if [[ $NOT_SUPPORTED ]]; then
+if [[ $SUPPORTED==false ]]; then
     echo "This OS is currently not supported"
     echo "please install manually using https://inventree.readthedocs.io/en/stable/start/install/"
     echo "or check https://github.com/inventree/InvenTree/issues/3836 for packaging for your OS."
