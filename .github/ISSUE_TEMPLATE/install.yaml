@@ -4,6 +4,8 @@ labels: ["question", "triage:not-checked", "setup"]
 body:
   - type: checkboxes
     id: deployment
+    validations:
+      required: true
     attributes:
       label: "Deployment Method"
       options:
