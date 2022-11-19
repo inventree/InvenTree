@@ -160,7 +160,7 @@ function create_initscripts() {
     echo "# python enviroment already present - skipping"
   else
     echo "# Setting up python enviroment"
-    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && python3 -m venv env && pip install invoke"
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && ${SETUP_PYTHON} -m venv env && pip install invoke"
 
     if [ -n "${SETUP_EXTRA_PIP}" ]; then
       echo "# Installing extra pip packages"
