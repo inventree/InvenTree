@@ -112,7 +112,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         verbose_name=_('Structural'),
         help_text=_(
             'Stock items may not be directly located into a structural stock locations, '
-            'but may be located to it\'s child locations.'),
+            'but may be located to child locations.'),
     )
 
     def get_location_owner(self):

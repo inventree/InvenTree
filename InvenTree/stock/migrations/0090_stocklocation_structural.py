@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='stocklocation',
             name='structural',
-            field=models.BooleanField(default=False, help_text="Stock items may not be directly located into a structural stock locations, but may be located to it's child locations.", verbose_name='Structural'),
+            field=models.BooleanField(default=False, help_text="Stock items may not be directly located into a structural stock locations, but may be located to child locations.", verbose_name='Structural'),
         ),
     ]
