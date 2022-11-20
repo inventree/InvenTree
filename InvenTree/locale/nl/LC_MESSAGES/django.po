@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-19 12:11+0000\n"
-"PO-Revision-Date: 2022-11-19 15:26\n"
+"POT-Creation-Date: 2022-11-20 10:56+0000\n"
+"PO-Revision-Date: 2022-11-20 15:38\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -4670,7 +4670,7 @@ msgid "Structural"
 msgstr ""
 
 #: part/models.py:124
-msgid "Parts may not be directly assigned to a structural category, but may be assigned to it's child categories."
+msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
 msgstr ""
 
 #: part/models.py:128
@@ -6466,7 +6466,7 @@ msgid "Select Owner"
 msgstr ""
 
 #: stock/models.py:114
-msgid "Stock items may not be directly located into a structural stock locations, but may be located to it's child locations."
+msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr ""
 
 #: stock/models.py:157
