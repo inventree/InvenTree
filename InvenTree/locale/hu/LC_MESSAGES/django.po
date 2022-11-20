@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-19 12:11+0000\n"
-"PO-Revision-Date: 2022-11-19 15:26\n"
+"POT-Creation-Date: 2022-11-20 10:56+0000\n"
+"PO-Revision-Date: 2022-11-20 15:38\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -3230,7 +3230,7 @@ msgstr "Kép letöltése URL-ről"
 #: company/templates/company/company_base.html:62
 #: part/templates/part/part_thumb.html:17
 msgid "Delete image"
-msgstr ""
+msgstr "Kép törlése"
 
 #: company/templates/company/company_base.html:89 order/models.py:665
 #: order/templates/order/sales_order_base.html:116 stock/models.py:686
@@ -3254,7 +3254,7 @@ msgstr "Telefonszám"
 #: company/templates/company/company_base.html:204
 #: part/templates/part/part_base.html:508
 msgid "Remove Image"
-msgstr ""
+msgstr "Kép eltávolítása"
 
 #: company/templates/company/company_base.html:205
 msgid "Remove associated image from this company"
@@ -4671,8 +4671,8 @@ msgid "Structural"
 msgstr "Szerkezeti"
 
 #: part/models.py:124
-msgid "Parts may not be directly assigned to a structural category, but may be assigned to it's child categories."
-msgstr "A szerkezeti alkatrész kategóriákhoz nem lehet direktben alkatrészeket hozzáadni/hozzárendelni (csak az alkategóriáikhoz)."
+msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
+msgstr ""
 
 #: part/models.py:128
 msgid "Default keywords"
@@ -6408,7 +6408,7 @@ msgstr "Beszállítói cikkszám"
 
 #: stock/admin.py:93
 msgid "Supplier ID"
-msgstr ""
+msgstr "Beszállító azonosító"
 
 #: stock/admin.py:94
 msgid "Supplier Name"
@@ -6433,7 +6433,7 @@ msgstr ""
 
 #: stock/admin.py:100
 msgid "Purchase Order ID"
-msgstr ""
+msgstr "Vevői megrendelés azonosító"
 
 #: stock/admin.py:107 templates/js/translated/stock.js:1904
 msgid "Stocktake"
@@ -6467,7 +6467,7 @@ msgid "Select Owner"
 msgstr "Tulajdonos kiválasztása"
 
 #: stock/models.py:114
-msgid "Stock items may not be directly located into a structural stock locations, but may be located to it's child locations."
+msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr ""
 
 #: stock/models.py:157
