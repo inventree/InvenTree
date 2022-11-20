@@ -15,6 +15,6 @@ export function DashboardItem({ id, text, url, params, autoupdate=true }: { id: 
     if (error)
         return <>An error has occurred: {error}</>;
     return (<div key={id}>
-        <StatElement key={id} data={dashdata} isLoading={isLoading || isFetching} />
+        <StatElement id={id} data={dashdata} isLoading={isLoading || isFetching} />
     </div>);
 }

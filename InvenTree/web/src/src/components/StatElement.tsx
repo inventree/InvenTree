@@ -14,11 +14,11 @@ const useStyles = createStyles((theme) => ({
 
 export interface StatElementProps {title: string; value: string;}
 
-export function StatElement({ key, data, isLoading }: {key: string, data: StatElementProps, isLoading: boolean}) {
+export function StatElement({ id, data, isLoading }: {id: string, data: StatElementProps, isLoading: boolean}) {
   const { classes } = useStyles();
 
   return (
-    <Paper withBorder p="xs" radius="md" key={key} pos="relative">
+    <Paper withBorder p="xs" radius="md" key={id} pos="relative">
       <LoadingOverlay visible={isLoading} overlayBlur={2} />
       <Group position="apart">
         <Text size="xs" color="dimmed" className={classes.title}>
