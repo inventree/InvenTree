@@ -122,7 +122,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         verbose_name=_('Structural'),
         help_text=_(
             'Parts may not be directly assigned to a structural category, '
-            'but may be assigned to it\'s child categories.'),
+            'but may be assigned to child categories.'),
     )
 
     default_keywords = models.CharField(null=True, blank=True, max_length=250, verbose_name=_('Default keywords'), help_text=_('Default keywords for parts in this category'))
