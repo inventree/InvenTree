@@ -96,19 +96,19 @@ function detect_envs() {
     local CONF=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)
 
     # Parse the config file
-    export INVENTREE_MEDIA_ROOT=$(jq '.[].media_root' <<< ${CONF})
-    export INVENTREE_STATIC_ROOT=$(jq '.[].static_root' <<< ${CONF})
-    export INVENTREE_BACKUP_DIR=$(jq '.[].backup_dir' <<< ${CONF})
-    export INVENTREE_PLUGINS_ENABLED=$(jq '.[].plugins_enabled' <<< ${CONF})
-    export INVENTREE_PLUGIN_FILE=$(jq '.[].plugin_file' <<< ${CONF})
-    export INVENTREE_SECRET_KEY_FILE=$(jq '.[].secret_key_file' <<< ${CONF})
+    export INVENTREE_MEDIA_ROOT=$(jq -r '.[].media_root' <<< ${CONF})
+    export INVENTREE_STATIC_ROOT=$(jq -r '.[].static_root' <<< ${CONF})
+    export INVENTREE_BACKUP_DIR=$(jq -r '.[].backup_dir' <<< ${CONF})
+    export INVENTREE_PLUGINS_ENABLED=$(jq -r '.[].plugins_enabled' <<< ${CONF})
+    export INVENTREE_PLUGIN_FILE=$(jq -r '.[].plugin_file' <<< ${CONF})
+    export INVENTREE_SECRET_KEY_FILE=$(jq -r '.[].secret_key_file' <<< ${CONF})
 
-    export INVENTREE_DB_ENGINE=$(jq '.[].database.ENGINE' <<< ${CONF})
-    export INVENTREE_DB_NAME=$(jq '.[].database.NAME' <<< ${CONF})
-    export INVENTREE_DB_USER=$(jq '.[].database.USER' <<< ${CONF})
-    export INVENTREE_DB_PASSWORD=$(jq '.[].database.PASSWORD' <<< ${CONF})
-    export INVENTREE_DB_HOST=$(jq '.[].database.HOST' <<< ${CONF})
-    export INVENTREE_DB_PORT=$(jq '.[].database.PORT' <<< ${CONF})
+    export INVENTREE_DB_ENGINE=$(jq -r '.[].database.ENGINE' <<< ${CONF})
+    export INVENTREE_DB_NAME=$(jq -r '.[].database.NAME' <<< ${CONF})
+    export INVENTREE_DB_USER=$(jq -r '.[].database.USER' <<< ${CONF})
+    export INVENTREE_DB_PASSWORD=$(jq -r '.[].database.PASSWORD' <<< ${CONF})
+    export INVENTREE_DB_HOST=$(jq -r '.[].database.HOST' <<< ${CONF})
+    export INVENTREE_DB_PORT=$(jq -r '.[].database.PORT' <<< ${CONF})
   else
     echo "# No config file found: ${INVENTREE_CONFIG_FILE}, using envs or defaults"
 
