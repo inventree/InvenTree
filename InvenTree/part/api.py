@@ -286,12 +286,28 @@ class CategoryParameterList(ListCreateAPI):
 
         return queryset
 
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filterset_fields = [
+        'category',
+        'parameter_template'
+    ]
+
 
 class CategoryParameterDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint fro the PartCategoryParameterTemplate model"""
+    """Detail endpoint from the PartCategoryParameterTemplate model"""
 
     queryset = PartCategoryParameterTemplate.objects.all()
     serializer_class = part_serializers.CategoryParameterTemplateSerializer
+
+    filterset_fields = [
+        'category',
+        'parameter_template'
+    ]
 
 
 class CategoryTree(ListAPI):
@@ -1691,6 +1707,11 @@ class PartParameterDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
+
+    filterset_fields = [
+        'part',
+        'name'
+    ]
 
 
 class BomFilter(rest_filters.FilterSet):

@@ -3039,6 +3039,7 @@ class PartParameterTemplate(models.Model):
     Attributes:
         name: The name (key) of the Parameter [string]
         units: The units of the Parameter [string]
+        is_dropdown: The parameters could be selected from a dropdown [boolean]
     """
 
     @staticmethod
@@ -3078,12 +3079,58 @@ class PartParameterTemplate(models.Model):
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
 
+    is_dropdown = models.BooleanField(default=False, verbose_name=_('Dropdown'),
+                                      help_text=_('Only allow pre-defined values to be selected'))
+
     description = models.CharField(
         max_length=250,
         verbose_name=_('Description'),
         help_text=_('Parameter description'),
         blank=True,
     )
+
+    def save(self, *args, **kwargs):
+        """Clean the dropdown items (if they exists) in the case if the template was made to non-dropdown"""
+        if self.pk and not self.is_dropdown:
+            for drop_down_item in PartParameterTemplateDropDownItem.objects.filter(template=self.pk):
+                drop_down_item.delete()
+        super().save(*args, **kwargs)
+
+
+class PartParameterTemplateDropDownItem(models.Model):
+    """A PartParameterTemplateDropDownItem contains the possible values for a PartParameter for dropdown type templates"""
+
+    @staticmethod
+    def get_api_url():
+        """Return the list API endpoint URL associated with the PartParameterTemplateDropDownItem model"""
+        return reverse('api-part-parameter-template-dropdown-item')
+
+    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, verbose_name=_('Template'), help_text=_('Parameter Template'))
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Dropdown item name'),
+        help_text=_('Dropdown item name'),
+        unique=True
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Dropdown item description'),
+        blank=True,
+    )
+
+    def clean(self):
+        """Ensure that the dropdown item names are unique"""
+        if self.pk:
+            for other in PartParameterTemplateDropDownItem.objects\
+                    .filter(template=self.template).exclude(pk=self.pk):
+                if other.name == self.name:
+                    raise ValidationError({
+                        'name': _('The dropdown item names must be unique')
+                    })
+
+        super().clean()
 
 
 class PartParameter(models.Model):

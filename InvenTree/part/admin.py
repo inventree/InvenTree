@@ -10,6 +10,7 @@ from import_export.fields import Field
 import part.models as models
 from company.models import SupplierPart
 from InvenTree.admin import InvenTreeResource
+from part.models import PartParameterTemplateDropDownItem
 from stock.models import StockLocation
 
 
@@ -323,12 +324,31 @@ class BomItemAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('part', 'sub_part',)
 
 
+class ParameterTemplateDropDownInline(admin.TabularInline):
+    """Class for inlining the dropdown items to the template admin form"""
+    model = PartParameterTemplateDropDownItem
+
+
 class ParameterTemplateAdmin(ImportExportModelAdmin):
     """Admin class for the PartParameterTemplate model"""
+
+    class Media:
+        """For showing/hiding the dropdown item list based on the dropdown checkbox state"""
+        js = (
+            'script/inventree/partparametertemplate_admin.js',
+        )
 
     list_display = ('name', 'units')
 
     search_fields = ('name', 'units')
+
+    fieldsets = ((None, {'fields': ('name', 'units', 'description', 'is_dropdown')}),)
+
+    add_fieldsets = ((None, {'fields': ('name', 'units', 'description', 'is_dropdown')}),)
+
+    inlines = [
+        ParameterTemplateDropDownInline,
+    ]
 
 
 class ParameterResource(InvenTreeResource):
