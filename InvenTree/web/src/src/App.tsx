@@ -5,7 +5,8 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import ErrorPage from './pages/error';
-import Layout, { Home, Part, Login, Logout, Profile } from './pages/layout';
+import Layout, { Home, Part, Login, Logout } from './pages/layout';
+import { Profile } from "./pages/Profile";
 import { Dashboard } from "./pages/Dashboard";
 import {
   QueryClient,
@@ -65,11 +66,11 @@ const router = createBrowserRouter([
         path: "part/",
         element: <Part />,
       },
+      {
+        path: "/profile/:tabValue",
+        element: <Profile />
+      },
     ],
-  },
-  {
-    path: "/profile",
-    element: <Profile />
   },
   {
     path: "/login",
@@ -81,13 +82,13 @@ const router = createBrowserRouter([
   }
 ]);
 
+export const queryClient = new QueryClient()
+
 // Main App
 export default function App() {
   const preferredColorScheme = useColorScheme();
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({ key: 'scheme', defaultValue: preferredColorScheme });
   const toggleColorScheme = (value?: ColorScheme) => setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
-
-  const queryClient = new QueryClient()
 
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>

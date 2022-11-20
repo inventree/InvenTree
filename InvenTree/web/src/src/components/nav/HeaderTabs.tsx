@@ -74,7 +74,7 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
                 <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}>
                   Notifications
                 </Menu.Item>
-                <Menu.Item icon={<IconUserCircle size={14} stroke={1.5} />} component={Link} to="/profile">
+                <Menu.Item icon={<IconUserCircle size={14} stroke={1.5} />} component={Link} to="/profile/user">
                   Profile
                 </Menu.Item>
 
