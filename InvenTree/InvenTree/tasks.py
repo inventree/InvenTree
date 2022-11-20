@@ -6,7 +6,7 @@ import re
 import warnings
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Callable, List
+from typing import Callable
 
 from django.conf import settings
 from django.core import mail as django_mail
@@ -153,7 +153,7 @@ class ScheduledTask:
 
 class TaskRegister:
     """Registery for periodicall tasks."""
-    task_list: List[ScheduledTask] = []
+    task_list: list[ScheduledTask] = []
 
     def register(self, task, schedule, minutes: int = None):
         """Register a task with the que."""
