@@ -93,22 +93,22 @@ function detect_envs() {
     pip install jc -q
 
     # Load config
-    local conf=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)
+    local CONF=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)
 
     # Parse the config file
-    export INVENTREE_MEDIA_ROOT=$conf | jq '.[].media_root'
-    export INVENTREE_STATIC_ROOT=$conf | jq '.[].static_root'
-    export INVENTREE_BACKUP_DIR=$conf | jq '.[].backup_dir'
-    export INVENTREE_PLUGINS_ENABLED=$conf | jq '.[].plugins_enabled'
-    export INVENTREE_PLUGIN_FILE=$conf | jq '.[].plugin_file'
-    export INVENTREE_SECRET_KEY_FILE=$conf | jq '.[].secret_key_file'
+    export INVENTREE_MEDIA_ROOT=$(jq '.[].media_root' <<< ${CONF})
+    export INVENTREE_STATIC_ROOT=$(jq '.[].static_root' <<< ${CONF})
+    export INVENTREE_BACKUP_DIR=$(jq '.[].backup_dir' <<< ${CONF})
+    export INVENTREE_PLUGINS_ENABLED=$(jq '.[].plugins_enabled' <<< ${CONF})
+    export INVENTREE_PLUGIN_FILE=$(jq '.[].plugin_file' <<< ${CONF})
+    export INVENTREE_SECRET_KEY_FILE=$(jq '.[].secret_key_file' <<< ${CONF})
 
-    export INVENTREE_DB_ENGINE=$conf | jq '.[].database.ENGINE'
-    export INVENTREE_DB_NAME=$conf | jq '.[].database.NAME'
-    export INVENTREE_DB_USER=$conf | jq '.[].database.USER'
-    export INVENTREE_DB_PASSWORD=$conf | jq '.[].database.PASSWORD'
-    export INVENTREE_DB_HOST=$conf | jq '.[].database.HOST'
-    export INVENTREE_DB_PORT=$conf | jq '.[].database.PORT'
+    export INVENTREE_DB_ENGINE=$(jq '.[].database.ENGINE' <<< ${CONF})
+    export INVENTREE_DB_NAME=$(jq '.[].database.NAME' <<< ${CONF})
+    export INVENTREE_DB_USER=$(jq '.[].database.USER' <<< ${CONF})
+    export INVENTREE_DB_PASSWORD=$(jq '.[].database.PASSWORD' <<< ${CONF})
+    export INVENTREE_DB_HOST=$(jq '.[].database.HOST' <<< ${CONF})
+    export INVENTREE_DB_PORT=$(jq '.[].database.PORT' <<< ${CONF})
   else
     echo "# No config file found: ${INVENTREE_CONFIG_FILE}, using envs or defaults"
 
