@@ -72,3 +72,10 @@ export function Logout() {
 
     return (<></>);
 }
+
+export function Profile() {
+
+    return (<ProtectedRoute>
+        <StylishText>Profile</StylishText>
+    </ProtectedRoute>);
+}
