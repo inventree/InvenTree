@@ -84,7 +84,7 @@ function detect_envs() {
 
   echo "# Setting base environment variables"
 
-  export INVENTREE_CONFIG_FILE=${CONF_DIR}/config.yaml
+  export INVENTREE_CONFIG_FILE=${INVENTREE_CONFIG_FILE:-${CONF_DIR}/config.yaml}
 
   if test -f "${INVENTREE_CONFIG_FILE}"; then
     echo "# Using existing config file: ${INVENTREE_CONFIG_FILE}"
