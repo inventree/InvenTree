@@ -1,4 +1,4 @@
-name: install
+name: install.sh
 help: Interactive installer for InvenTree
 version: 2.0
 

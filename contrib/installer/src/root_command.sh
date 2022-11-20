@@ -45,25 +45,26 @@ echo "### Installer for InvenTree - source: $publisher/$source_url"
 # Check if os and version is supported
 get_distribution
 echo "### Detected distribution: $OS $VER"
-NOT_SUPPORTED=false
+SUPPORTED=true
 case "$OS" in
     Ubuntu)
         if [[ $VER != "20.04" ]]; then
-            NOT_SUPPORTED=true
+            SUPPORTED=false
         fi
         ;;
-    Debian | Raspbian)
+    "Debian GNU/Linux" | Raspbian)
         if [[ $VER != "11" ]]; then
-            NOT_SUPPORTED=true
+            SUPPORTED=false
         fi
+        OS=Debian
         ;;
     *)
         echo "### Distribution not supported"
-        NOT_SUPPORTED=true
+        SUPPORTED=false
         ;;
 esac
 
-if [[ $NOT_SUPPORTED ]]; then
+if [[ $SUPPORTED != "true" ]]; then
     echo "This OS is currently not supported"
     echo "please install manually using https://inventree.readthedocs.io/en/stable/start/install/"
     echo "or check https://github.com/inventree/InvenTree/issues/3836 for packaging for your OS."
@@ -82,11 +83,10 @@ for pkg in $REQS; do
     fi
 done
 
-echo "### Adding key and package source"
-# Add key
-do_call "wget -qO- https://dl.packager.io/srv/$publisher/InvenTree/key | sudo apt-key add -"
-# Add packagelist
-do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/${lsb_dist}/${dist_version}.repo"
+echo "### Getting and adding key"
+wget -qO- https://dl.packager.io/srv/$publisher/InvenTree/key | sudo apt-key add -
+echo "### Adding package source"
+do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/${OS,,}/${VER}.repo"
 
 echo "### Updateing package lists"
 do_call "sudo apt-get update"
