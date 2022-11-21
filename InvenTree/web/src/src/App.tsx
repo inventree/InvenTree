@@ -24,6 +24,7 @@ const user: UserProps = {
 };
 
 export const api = axios.create({});
+export const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
@@ -55,8 +56,6 @@ const router = createBrowserRouter([
     element: <Logout />
   }
 ]);
-
-export const queryClient = new QueryClient()
 
 // Main App
 export default function App() {
