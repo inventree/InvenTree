@@ -258,7 +258,12 @@ class BaseInvenTreeSetting(models.Model):
         """
         setting = cls.get_setting_definition(key, **kwargs)
 
-        return setting.get('default', '')
+        default = setting.get('default', '')
+
+        if callable(default):
+            return default()
+        else:
+            return default
 
     @classmethod
     def get_setting_choices(cls, key, **kwargs):
