@@ -957,10 +957,10 @@ function loadBomTable(table, options={}) {
                 }
             });
 
-            var total = `${top_total}`;
+            var total = `${formatDecimal(top_total)}`;
 
             if (top_total != all_total) {
-                total += ` / ${all_total}`;
+                total += ` / ${formatDecimal(all_total)}`;
             }
 
             return total;
