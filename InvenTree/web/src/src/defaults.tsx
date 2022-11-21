@@ -6,7 +6,6 @@ export const defaultHostList: HostList = {
   "http://localhost:8000": { host: "http://localhost:8000/api/", name: "Localhost" },
 };
 
-// Static Settings
 export const tabs = [
   { text: "Home", name: "home" },
   { text: "Part", name: "part" },

@@ -22,7 +22,7 @@ import { UserProps } from './contex/states';
 import { useLocalState } from "./contex/LocalState";
 import { useSessionState } from "./contex/SessionState";
 import { useApiState } from "./contex/ApiState";
-import { defaultHostList, tabs, links } from './defaults';
+import { defaultHostList } from './defaults';
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 import { useState } from 'react';
@@ -64,7 +64,7 @@ export async function fetchSession() {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout tabs={tabs} links={links} />,
+    element: <Layout />,
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Dashboard /> },

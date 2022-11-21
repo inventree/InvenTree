@@ -24,12 +24,10 @@ import { useStyles } from '../../globalStyle';
 import { Link } from 'react-router-dom';
 import { useLocalState } from "../../contex/LocalState";
 import { useApiState } from "../../contex/ApiState";
+import {tabs} from '../../defaults';
 
-interface HeaderProps {
-  tabs: { name: string; text: string; }[];
-}
 
-export function Header({tabs }: HeaderProps) {
+export function Header() {
   const { classes, theme, cx } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
