@@ -35,7 +35,7 @@ export function HeaderTabs({tabs }: HeaderTabsProps) {
   const navigate = useNavigate();
   const { tabValue } = useParams();
   const [hostKey, hostList] = useSessionSettings(state => [state.hostKey, state.hostList]);
-  const [username] = useApiState(state => [state.user.name]);
+  const [username, servername] = useApiState(state => [state.user.name, state.server.instance]);
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name}>
@@ -47,7 +47,7 @@ export function HeaderTabs({tabs }: HeaderTabsProps) {
     <div className={classes.header}>
       <Container className={classes.mainSection}>
         <Group position="apart">
-          <Group><InvenTreeLogo />{hostList[hostKey].name}</Group>
+          <Group><InvenTreeLogo />{hostList[hostKey].name}|{servername}</Group>
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
           <Group>
             <ColorToggle />

@@ -8,6 +8,7 @@ import { StylishText } from "../components/StylishText";
 import { ProtectedRoute, useAuth } from "../contex/AuthContext";
 import { AuthenticationForm } from "../components/AuthenticationForm";
 import { useSessionSettings } from "../states";
+import { fetchSession } from "../App";
 
 export default function Layout({tabs, links }: {tabs: any, links: FooterSimpleProps }) {
     const { classes } = useStyles();
@@ -53,6 +54,7 @@ export function Login() {
             useSessionSettings.setState({ lastUsername: username });
             navigate('/');
         });
+        fetchSession();
     }
     function Register(name: string, username: string, password: string) {
         // TODO: Register

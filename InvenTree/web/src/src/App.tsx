@@ -14,10 +14,11 @@ import {
 } from '@tanstack/react-query'
 import axios from 'axios';
 import { AuthProvider } from './contex/AuthContext';
-import { useSessionSettings, useSessionState } from './states';
+import { useApiState, UserProps, useSessionSettings, useSessionState } from './states';
 import { defaultHostList, tabs, links } from './defaults';
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
+import { useState } from 'react';
 
 // Error tracking
 Sentry.init({
@@ -36,6 +37,21 @@ export function setApiDefaults() {
   api.defaults.headers.common['Authorization'] = `Token ${token}`;
 }
 export const queryClient = new QueryClient()
+
+// States
+export async function fetchSession() {
+  // Fetch user data
+  await api.get('/user/me/').then((response) => {
+    const user: UserProps = {
+      name: `${response.data.first_name} ${response.data.last_name}`,
+      email: response.data.email,
+      username: response.data.username,
+    };
+    useApiState.getState().setUser(user);
+  });
+  // Fetch server data
+  await api.get('/').then((response) => {useApiState.getState().setServer(response.data)});
+}
 
 // Routes
 const router = createBrowserRouter([
@@ -83,6 +99,12 @@ export default function App() {
     useSessionSettings.setState({ hostList: defaultHostList });
   }
   setApiDefaults();
+  const [fetchedSession, setFetchedSession] = useState(false);
+  const [token] = useSessionState.getState().token;
+  if (token && !fetchedSession) {
+    setFetchedSession(true);
+    fetchSession();
+  }
 
   // Main App component
   return (
