@@ -6,10 +6,6 @@ import { Navigate } from "react-router-dom";
 import { api } from "../App";
 import { useSessionSettings } from "../states";
 
-export interface UserProps { name: string, email: string, username: string }
-
-export interface DefaultProps { user: UserProps, host: string }
-
 export interface AuthContextProps {
   token: string,
   host: string,

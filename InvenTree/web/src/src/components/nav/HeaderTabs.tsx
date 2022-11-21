@@ -22,20 +22,20 @@ import { InvenTreeLogo } from '../InvenTreeLogo';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStyles } from '../../globalStyle';
 import { Link } from 'react-router-dom';
-import { useSessionSettings } from '../../states';
+import { useSessionSettings, useUserState } from '../../states';
 
 interface HeaderTabsProps {
-  user: { name: string; };
   tabs: { name: string; text: string; }[];
 }
 
-export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
+export function HeaderTabs({tabs }: HeaderTabsProps) {
   const { classes, theme, cx } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
   const { tabValue } = useParams();
   const [hostKey, hostList] = useSessionSettings(state => [state.hostKey, state.hostList]);
+  const [username] = useUserState(state => [state.name]);
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name}>
@@ -63,9 +63,7 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
                   className={cx(classes.user, { [classes.userActive]: userMenuOpened })}
                 >
                   <Group spacing={7}>
-                    <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                      {user.name}
-                    </Text>
+                    <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>{username}</Text>
                     <IconChevronDown size={12} stroke={1.5} />
                   </Group>
                 </UnstyledButton>

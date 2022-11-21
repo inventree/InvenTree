@@ -13,15 +13,9 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import axios from 'axios';
-import { AuthProvider, UserProps } from './contex/AuthContext';
+import { AuthProvider } from './contex/AuthContext';
 import { useSessionSettings } from './states';
 import { defaultHostList, tabs, links } from './defaults';
-
-const user: UserProps = {
-  name: "Matthias Mair",
-  email: "code@mjmair.com",
-  username: "mjmair",
-};
 
 export const api = axios.create({});
 export const queryClient = new QueryClient()
@@ -29,7 +23,7 @@ export const queryClient = new QueryClient()
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout tabs={tabs} links={links} user={user} />,
+    element: <Layout tabs={tabs} links={links}/>,
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Dashboard /> },

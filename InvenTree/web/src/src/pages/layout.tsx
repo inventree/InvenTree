@@ -5,17 +5,17 @@ import { Center, Chip, Container, Flex, Space, Stack } from "@mantine/core";
 import { FooterSimple, FooterSimpleProps } from "../components/nav/FooterSimple";
 import { useStyles } from "../globalStyle";
 import { StylishText } from "../components/StylishText";
-import { ProtectedRoute, useAuth, UserProps } from "../contex/AuthContext";
+import { ProtectedRoute, useAuth } from "../contex/AuthContext";
 import { AuthenticationForm } from "../components/AuthenticationForm";
 import { useSessionSettings } from "../states";
 
-export default function Layout({ user, tabs, links }: { user: UserProps, tabs: any, links: FooterSimpleProps }) {
+export default function Layout({tabs, links }: {tabs: any, links: FooterSimpleProps }) {
     const { classes } = useStyles();
 
     return (
         <ProtectedRoute>
             <Flex direction="column" mih="100vh">
-                <HeaderTabs tabs={tabs} user={user} />
+                <HeaderTabs tabs={tabs}/>
                 <Container className={classes.content}><Outlet /></Container>
                 <Space h="xl" />
                 <FooterSimple links={links.links} />
