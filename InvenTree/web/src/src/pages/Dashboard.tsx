@@ -14,7 +14,7 @@ export function Dashboard() {
         { id: "starred-categories", text: "Subscribed Categories", icon: "fa-bell", url: "part/category", params: { starred: true } },
         { id: "latest-parts", text: "Latest Parts", icon: "fa-newspaper", url: "part", params: { ordering: "-creation_date", limit: 10 } },
         { id: "bom-validation", text: "BOM Waiting Validation", icon: "fa-times-circle", url: "part", params: { bom_valid: false } },
-        { id: "recently-updated-stock", text: "Recently Updated", icon: "fa-clock", url: "stock", params: { part_detail: true, ordering: "-updated", limit:10 } },
+        { id: "recently-updated-stock", text: "Recently Updated", icon: "fa-clock", url: "stock", params: { part_detail: true, ordering: "-updated", limit: 10 } },
         { id: "low-stock", text: "Low Stock", icon: "fa-flag", url: "part", params: { low_stock: true } },
         { id: "depleted-stock", text: "Depleted Stock", icon: "fa-times", url: "part", params: { depleted_stock: true } },
         { id: "stock-to-build", text: "Required for Build Orders", icon: "fa-bullhorn", url: "part", params: { stock_to_build: true } },
@@ -34,6 +34,6 @@ export function Dashboard() {
             <StylishText>Dashboard</StylishText>
             <Chip checked={autoupdate} onChange={() => toffleAutoupdate()}>Autoupdate</Chip>
         </Group>
-        <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem key={item.id} {...item} autoupdate={autoupdate}/>)}</SimpleGrid>
+        <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem key={item.id} {...item} autoupdate={autoupdate} />)}</SimpleGrid>
     </>);
 }
