@@ -328,3 +328,28 @@ class PartPricingTests(InvenTreeTestCase):
 
         self.assertEqual(pricing.purchase_cost_min, Money('1.333333', 'USD'))
         self.assertEqual(pricing.purchase_cost_max, Money('1.764706', 'USD'))
+
+    def test_delete(self):
+        """Test for deleting a part which has pricing information"""
+
+        # Create some pricing data
+        self.create_price_breaks()
+
+        # Check that pricing does exist
+        pricing = self.part.pricing
+
+        pricing.update_pricing()
+        pricing.save()
+
+        self.assertIsNotNone(pricing.overall_min)
+        self.assertIsNotNone(pricing.overall_max)
+
+        self.part.active = False
+        self.part.save()
+
+        # Remove the part from the database
+        self.part.delete()
+
+        # Check that the pricing was removed also
+        with self.assertRaises(part.models.PartPricing.DoesNotExist):
+            pricing.refresh_from_db()
