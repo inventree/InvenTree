@@ -2372,7 +2372,11 @@ class PartPricing(models.Model):
         # Update the currency which was used to perform the calculation
         self.currency = currency_code_default()
 
-        self.update_overall_cost()
+        try:
+            self.update_overall_cost()
+        except IntegrityError:
+            # If something has happened to the Part model, might throw an error
+            pass
 
         super().save(*args, **kwargs)
 
