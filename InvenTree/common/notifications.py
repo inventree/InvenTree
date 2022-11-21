@@ -173,7 +173,7 @@ class MethodStorageClass:
     user_settings = {}
 
     def collect(self, selected_classes=None):
-        """Collect all classes in the enviroment that are notification methods.
+        """Collect all classes in the environment that are notification methods.
 
         Can be filtered to only include provided classes for testing.
 

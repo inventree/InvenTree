@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from enum import IntEnum
 
 import django.http
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 import tablib
@@ -225,6 +226,71 @@ class StockLocationTest(StockAPITestCase):
                     child.refresh_from_db()
                     self.assertEqual(child.parent, parent_stock_location)
 
+    def test_stock_location_structural(self):
+        """Test the effectiveness of structural stock locations
+
+        Make sure:
+        - Stock items cannot be created in structural locations
+        - Stock items cannot be located to structural locations
+        - Check that stock location change to structural fails if items located into it
+        """
+
+        # Create our structural stock location
+        structural_location = StockLocation.objects.create(
+            name='Structural stock location',
+            description='This is the structural stock location',
+            parent=None,
+            structural=True
+        )
+
+        stock_item_count_before = StockItem.objects.count()
+
+        # Make sure that we get an error if we try to create a stock item in the structural location
+        with self.assertRaises(ValidationError):
+            item = StockItem.objects.create(
+                batch="Stock item which shall not be created",
+                location=structural_location
+            )
+
+        # Ensure that the stock item really did not get created in the structural location
+        self.assertEqual(stock_item_count_before, StockItem.objects.count())
+
+        # Create a non-structural location for test stock location change
+        non_structural_location = StockLocation.objects.create(
+            name='Non-structural category',
+            description='This is a non-structural category',
+            parent=None,
+            structural=False
+        )
+
+        # Construct a part for stock item creation
+        part = Part.objects.create(
+            name='Part for stock item creation', description='Part for stock item creation',
+            category=None,
+            is_template=False,
+        )
+
+        # Create the test stock item located to a non-structural category
+        item = StockItem.objects.create(
+            batch="Item which will be tried to relocated to a structural location",
+            location=non_structural_location,
+            part=part
+        )
+
+        # Try to relocate it to a structural location
+        item.location = structural_location
+        with self.assertRaises(ValidationError):
+            item.save()
+
+        # Ensure that the item did not get saved to the DB
+        item.refresh_from_db()
+        self.assertEqual(item.location.pk, non_structural_location.pk)
+
+        # Try to change the non-structural location to structural while items located into it
+        non_structural_location.structural = True
+        with self.assertRaises(ValidationError):
+            non_structural_location.full_clean()
+
 
 class StockItemListTest(StockAPITestCase):
     """Tests for the StockItem API LIST endpoint."""
@@ -438,12 +504,13 @@ class StockItemListTest(StockAPITestCase):
 
         # Expected headers
         headers = [
-            'part',
-            'customer',
-            'location',
-            'parent',
-            'quantity',
-            'status',
+            'Part ID',
+            'Customer ID',
+            'Location ID',
+            'Location Name',
+            'Parent ID',
+            'Quantity',
+            'Status',
         ]
 
         for h in headers:
@@ -685,9 +752,8 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url, expected_code=200).data
 
         # Check fixture values
-        self.assertEqual(data['purchase_price'], '123.0000')
+        self.assertEqual(data['purchase_price'], '123.000000')
         self.assertEqual(data['purchase_price_currency'], 'AUD')
-        self.assertEqual(data['purchase_price_string'], 'A$123.0000')
 
         # Update just the amount
         data = self.patch(
@@ -698,7 +764,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=200
         ).data
 
-        self.assertEqual(data['purchase_price'], '456.0000')
+        self.assertEqual(data['purchase_price'], '456.000000')
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update the currency
@@ -722,7 +788,6 @@ class StockItemTest(StockAPITestCase):
         ).data
 
         self.assertEqual(data['purchase_price'], None)
-        self.assertEqual(data['purchase_price_string'], '-')
 
         # Invalid currency code
         data = self.patch(

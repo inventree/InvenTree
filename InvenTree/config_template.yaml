@@ -161,6 +161,7 @@ background:
 # Login configuration
 login_confirm_days: 3
 login_attempts: 5
+login_default_protocol: http
 
 # Remote / proxy login
 # These settings can introduce security problems if configured incorrectly. Please read

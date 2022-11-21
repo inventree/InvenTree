@@ -67,6 +67,13 @@ class InvenTreeModelMoneyField(ModelMoneyField):
             # set defaults
             kwargs.update(money_kwargs())
 
+        # Default values (if not specified)
+        if 'max_digits' not in kwargs:
+            kwargs['max_digits'] = 19
+
+        if 'decimal_places' not in kwargs:
+            kwargs['decimal_places'] = 6
+
         # Set a minimum value validator
         validators = kwargs.get('validators', [])
 
@@ -107,6 +114,10 @@ class InvenTreeMoneyField(MoneyField):
     def __init__(self, *args, **kwargs):
         """Override initial values with the real info from database."""
         kwargs.update(money_kwargs())
+
+        kwargs['max_digits'] = 19
+        kwargs['decimal_places'] = 6
+
         super().__init__(*args, **kwargs)
 
 

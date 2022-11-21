@@ -3,23 +3,7 @@
 from django import forms
 from django.utils.translation import gettext as _
 
-from InvenTree.forms import HelperForm
-
 from .files import FileManager
-from .models import InvenTreeSetting
-
-
-class SettingEditForm(HelperForm):
-    """Form for creating / editing a settings object."""
-
-    class Meta:
-        """Metaclassoptions for SettingEditForm."""
-
-        model = InvenTreeSetting
-
-        fields = [
-            'value'
-        ]
 
 
 class UploadFileForm(forms.Form):

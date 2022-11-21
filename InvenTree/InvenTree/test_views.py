@@ -72,7 +72,7 @@ class ViewTests(InvenTreeTestCase):
             'server',
             'login',
             'barcodes',
-            'currencies',
+            'pricing',
             'parts',
             'stock',
         ]
