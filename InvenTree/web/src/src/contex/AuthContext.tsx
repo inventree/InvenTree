@@ -3,7 +3,7 @@ import { createContext, useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import { setApiDefaults } from '../App';
 import { useLocalState } from './LocalState';
-import { useSessionState } from './ApiState';
+import { useSessionState } from './SessionState';
 
 export interface AuthContextProps {
   token: string;
