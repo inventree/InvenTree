@@ -73,7 +73,7 @@ class SupplierPartAdmin(ImportExportModelAdmin):
     search_fields = [
         'supplier__name',
         'part__name',
-        'MPN',
+        'manufacturer_part__MPN',
         'SKU',
     ]
 
