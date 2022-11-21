@@ -4,7 +4,7 @@ import axios from "axios";
 import { createContext, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { api } from "../App";
-import { useSessionSettings } from "../states";
+import { useSessionSettings, useSessionState } from "../states";
 
 export interface AuthContextProps {
   token: string,
@@ -20,7 +20,7 @@ export const useAuth = () => {
 };
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { token } = useAuth();
+  const [token] = useSessionState(state => [state.token]);
 
   if (!token) {
     return <Navigate to="/login" replace />;
@@ -30,29 +30,20 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 export const AuthProvider = ({ children }: { children: JSX.Element }) => {
-  const [token, setToken] = useLocalStorage<string>({ key: 'token', defaultValue: '' });
+  const [token, setToken] = useSessionState(state => [state.token, state.setToken]);
   const [host] = useSessionSettings(state => [state.host]);
 
-  function login(username: string, password: string) {
-    return axios.get(`${host}user/token/`, { auth: { username, password } })
+  // TODO add types
+  const handleLogin = async (username: string, password: string) => {
+    // Get token from server
+    const token = await axios.get(`${host}user/token/`, { auth: { username, password } })
       .then((response) => response.data.token)
       .catch((error) => { console.log(error); });
-  }
-
-  // TODO add types
-  const handleLogin = async (props: any) => {
-    // Get token from server
-    const form = props.form;
-    const navigate = props.navigate;
-    const token = await login(form.email, form.password);
 
     // Set token in context
     setToken(token);
     api.defaults.baseURL = host;
     api.defaults.headers.common['Authorization'] = `Token ${token}`;
-
-    // Navigate to home page
-    navigate('/');
   }
 
   const handleLogout = () => {

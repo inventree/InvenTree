@@ -29,6 +29,7 @@ interface SesstionSettings {
     hostKey: string,
     hostList: HostList,
     setHost: (newHost: string, newHostKey: string) => void,
+    lastUsername: string,
 }
 
 
@@ -41,6 +42,7 @@ export const useSessionSettings = create<SesstionSettings>(
             hostKey: '',
             hostList: {},
             setHost: (newHost, newHostKey) => set({ host: newHost, hostKey: newHostKey }),
+            lastUsername: '',
         }),
         {
             name: 'session-settings'
@@ -56,4 +58,14 @@ interface ApiStateProps {
 export const useApiState = create<ApiStateProps>((set) => ({
     user: user,
     setUser: (newUser: UserProps) => set({ user: newUser }),
+}))
+
+interface SessionStateProps {
+    token: string,
+    setToken: (newToken: string) => void,
+}
+
+export const useSessionState = create<SessionStateProps>((set) => ({
+    token: '',
+    setToken: (newToken: string) => set({ token: newToken }),
 }))

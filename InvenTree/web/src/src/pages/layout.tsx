@@ -42,21 +42,32 @@ export function Part() {
 export function Login() {
     const { handleLogin } = useAuth();
     const navigate = useNavigate();
-    const [ hostKey, setHostValue, hostOptions ] = useSessionSettings(state => [state.hostKey, state.setHost, state.hostList]);
+    const [ hostKey, setHostValue, hostOptions, lastUsername ] = useSessionSettings(state => [state.hostKey, state.setHost, state.hostList, state.lastUsername]);
     function changeHost(newVal: string) {
-        console.log(newVal);
         setHostValue(hostOptions[newVal].host, newVal);
     }
     const hostname = (hostOptions[hostKey] === undefined) ? 'No selection' : hostOptions[hostKey].name;
+
+    function Login(username: string, password: string,) {
+        handleLogin(username, password).then(() => {
+            useSessionSettings.setState({ lastUsername: username });
+            navigate('/');
+        });
+    }
+    function Register(name: string, username: string, password: string) {
+        // TODO: Register
+        console.log('Registering is not implemented yet');
+        console.log(name, username, password);
+    }
 
     return (<Center mih='100vh'>
         <Stack>
             <Center>
                 <Chip.Group position="center" m="md" multiple={false} value={hostKey} onChange={changeHost}>
-                {Object.keys(hostOptions).map((key, index) => (<Chip key={key} value={key}>{hostOptions[key].name}</Chip>))}
+                {Object.keys(hostOptions).map((key) => (<Chip key={key} value={key}>{hostOptions[key].name}</Chip>))}
                 </Chip.Group>
             </Center>
-            <Container w='md'><AuthenticationForm handleLogin={handleLogin} navigate={navigate} hostname={hostname} /></Container>
+            <Container w='md'><AuthenticationForm Login={Login} Register={Register} hostname={hostname} lastUsername={lastUsername} /></Container>
         </Stack>
     </Center>);
 }
