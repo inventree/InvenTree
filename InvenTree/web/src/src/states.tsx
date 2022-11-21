@@ -1,6 +1,7 @@
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 import { setApiDefaults } from './App'
+import { defaultUser } from './defaults'
 
 // helpers
 export interface HostList {
@@ -15,13 +16,6 @@ export interface UserProps {
     email: string,
     username: string
 }
-
-const user = {
-    name: "Matthias Mair",
-    email: "code@mjmair.com",
-    username: "mjmair",
-};
-
 
 export interface ServerAPIProps {
     server: null | string;
@@ -88,7 +82,7 @@ interface ApiStateProps {
 }
 
 export const useApiState = create<ApiStateProps>((set) => ({
-    user: user,
+    user: defaultUser,
     setUser: (newUser: UserProps) => set({ user: newUser }),
     server: emptyServerAPI,
     setServer: (newServer: ServerAPIProps) => set({ server: newServer }),

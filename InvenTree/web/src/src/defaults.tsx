@@ -28,3 +28,9 @@ export const links = {
     }
   ]
 };
+
+export const defaultUser = {
+  name: "Matthias Mair",
+  email: "code@mjmair.com",
+  username: "mjmair",
+};
