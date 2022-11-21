@@ -4,17 +4,24 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import ErrorPage from './pages/error';
-import Layout, { Home, Part, Login, Logout } from './pages/layout';
-import { Profile } from './pages/Profile';
-import { Dashboard } from "./pages/Dashboard";
+import ErrorPage from './pages/ErrorPage';
+import Layout from './pages/Layout';
+import { Logout } from "./pages/Logout";
+import { Login } from "./pages/Login";
+import { Part } from "./pages/Index/Part";
+import { Home } from "./pages/Index/Home";
+import { Profile } from './pages/Index/Profile';
+import { Dashboard } from "./pages/Index/Dashboard";
 import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
 import axios from 'axios';
 import { AuthProvider } from './contex/AuthContext';
-import { useApiState, UserProps, useSessionSettings, useSessionState } from './states';
+import { UserProps } from './contex/states';
+import { useLocalState } from "./contex/LocalState";
+import { useSessionState } from "./contex/SessionState";
+import { useApiState } from "./contex/ApiState";
 import { defaultHostList, tabs, links } from './defaults';
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
@@ -30,7 +37,7 @@ Sentry.init({
 // API
 export const api = axios.create({});
 export function setApiDefaults() {
-  const host = useSessionSettings.getState().host;
+  const host = useLocalState.getState().host;
   const token = useSessionState.getState().token;
 
   api.defaults.baseURL = host;
@@ -93,10 +100,10 @@ export default function App() {
   const toggleColorScheme = (value?: ColorScheme) => setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
   // Session initialization
-  const [hostList] = useSessionSettings(state => [state.hostList]);
+  const [hostList] = useLocalState(state => [state.hostList]);
   if (Object.keys(hostList).length === 0) {
     console.log('Laoding default host list');
-    useSessionSettings.setState({ hostList: defaultHostList });
+    useLocalState.setState({ hostList: defaultHostList });
   }
   setApiDefaults();
   const [fetchedSession, setFetchedSession] = useState(false);

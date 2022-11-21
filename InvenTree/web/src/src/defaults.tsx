@@ -1,4 +1,4 @@
-import { HostList } from './states';
+import { HostList } from './contex/states';
 
 export const defaultHostList: HostList = {
   "https://demo.inventree.org": { host: "https://demo.inventree.org/api/", name: "InvenTree Demo" },
@@ -33,4 +33,15 @@ export const defaultUser = {
   name: "Matthias Mair",
   email: "code@mjmair.com",
   username: "mjmair",
+};
+
+export const emptyServerAPI = {
+    server: null,
+    version: null,
+    instance: null,
+    apiVersion: null,
+    worker_running: null,
+    worker_pending_tasks: null,
+    plugins_enabled: null,
+    active_plugins: [],
 };

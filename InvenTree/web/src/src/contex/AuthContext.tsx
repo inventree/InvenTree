@@ -3,7 +3,8 @@ import axios from "axios";
 import { createContext, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { setApiDefaults } from "../App";
-import { useSessionSettings, useSessionState } from "../states";
+import { useLocalState } from "./LocalState";
+import { useSessionState } from "./ApiState";
 
 export interface AuthContextProps {
   token: string,
@@ -30,7 +31,7 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 
 export const AuthProvider = ({ children }: { children: JSX.Element }) => {
   const [token, setToken] = useSessionState(state => [state.token, state.setToken]);
-  const [host] = useSessionSettings(state => [state.host]);
+  const [host] = useLocalState(state => [state.host]);
 
   // TODO add types
   const handleLogin = async (username: string, password: string) => {

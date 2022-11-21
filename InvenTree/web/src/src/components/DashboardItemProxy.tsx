@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from "../App";
-import { StatElement } from "../components/StatElement";
+import { StatisticItem } from "./items/DashboardItem";
 import { useEffect, useState } from "react";
 
-export function DashboardItem({ id, text, url, params, autoupdate=true }: { id: string; text: string; url: string; params: any; autoupdate: boolean }) {
+export function DashboardItemProxy({ id, text, url, params, autoupdate=true }: { id: string; text: string; url: string; params: any; autoupdate: boolean }) {
     function fetchData() {
         return api.get(`${url}/?search=&offset=0&limit=25`, { params: params }).then((res) => res.data);
     }
@@ -15,6 +15,6 @@ export function DashboardItem({ id, text, url, params, autoupdate=true }: { id: 
     if (error)
         return <>An error has occurred: {error}</>;
     return (<div key={id}>
-        <StatElement id={id} data={dashdata} isLoading={isLoading || isFetching} />
+        <StatisticItem id={id} data={dashdata} isLoading={isLoading || isFetching} />
     </div>);
 }

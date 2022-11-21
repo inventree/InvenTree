@@ -1,6 +1,6 @@
 import { ActionIcon } from '@mantine/core';
 import { NavLink } from 'react-router-dom';
-import InvenTreeIcon from '../assets/inventree.svg';
+import InvenTreeIcon from '../../assets/inventree.svg';
 
 
 export function InvenTreeLogo() {

@@ -17,24 +17,25 @@ import {
   IconDashboard,
   IconUserCircle,
 } from '@tabler/icons';
-import { ColorToggle } from '../ColorToggle';
-import { InvenTreeLogo } from '../InvenTreeLogo';
+import { ColorToggle } from '../items/ColorToggle';
+import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStyles } from '../../globalStyle';
 import { Link } from 'react-router-dom';
-import { useSessionSettings, useApiState } from '../../states';
+import { useLocalState } from "../../contex/LocalState";
+import { useApiState } from "../../contex/ApiState";
 
-interface HeaderTabsProps {
+interface HeaderProps {
   tabs: { name: string; text: string; }[];
 }
 
-export function HeaderTabs({tabs }: HeaderTabsProps) {
+export function Header({tabs }: HeaderProps) {
   const { classes, theme, cx } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
   const { tabValue } = useParams();
-  const [hostKey, hostList] = useSessionSettings(state => [state.hostKey, state.hostList]);
+  const [hostKey, hostList] = useLocalState(state => [state.hostKey, state.hostList]);
   const [username, servername] = useApiState(state => [state.user.name, state.server.instance]);
 
   const items = tabs.map((tab) => (

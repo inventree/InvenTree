@@ -1,12 +1,12 @@
 import { Group } from "@mantine/core";
 import { SimpleGrid, Chip } from "@mantine/core";
-import { DashboardItem } from "./DashboardItem";
-import { StylishText } from "../components/StylishText";
-import { useSessionSettings } from "../states";
+import { DashboardItemProxy } from "../../components/DashboardItemProxy";
+import { StylishText } from "../../components/items/StylishText";
+import { useLocalState } from "../../contex/LocalState";
 
 
 export function Dashboard() {
-    const [autoupdate, toggleAutoupdate] = useSessionSettings((state) => [state.autoupdate, state.toggleAutoupdate]);
+    const [autoupdate, toggleAutoupdate] = useLocalState((state) => [state.autoupdate, state.toggleAutoupdate]);
 
     const items = [
         { id: "starred-parts", text: "Subscribed Parts", icon: "fa-bell", url: "part", params: { starred: true } },
@@ -33,6 +33,6 @@ export function Dashboard() {
             <StylishText>Dashboard</StylishText>
             <Chip checked={autoupdate} onChange={() => toggleAutoupdate()}>Autoupdate</Chip>
         </Group>
-        <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem key={item.id} {...item} autoupdate={autoupdate} />)}</SimpleGrid>
+        <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItemProxy key={item.id} {...item} autoupdate={autoupdate} />)}</SimpleGrid>
     </>);
 }
