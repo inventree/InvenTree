@@ -23,7 +23,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useStyles } from '../../globalStyle';
 import { Link } from 'react-router-dom';
 import { useSessionSettings } from '../../states';
-import {hosts} from '../../App';
 
 interface HeaderTabsProps {
   user: { name: string; };
@@ -36,7 +35,7 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
   const { tabValue } = useParams();
-  const [hostKey] = useSessionSettings(state => [state.hostKey]);
+  const [hostKey, hostList] = useSessionSettings(state => [state.hostKey, state.hostList]);
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name}>
@@ -48,7 +47,7 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
     <div className={classes.header}>
       <Container className={classes.mainSection}>
         <Group position="apart">
-          <Group><InvenTreeLogo />{hosts[hostKey].name}</Group>
+          <Group><InvenTreeLogo />{hostList[hostKey].name}</Group>
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
           <Group>
             <ColorToggle />
