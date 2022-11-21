@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 
 // helpers
 export interface HostList {
-    [key: string]:  {
+    [key: string]: {
         host: string,
         name: string,
     }
@@ -33,7 +33,7 @@ interface SesstionSettings {
 }
 
 
-export const useSessionSettings = create<SesstionSettings>(
+export const useSessionSettings = create<SesstionSettings>()(
     persist(
         (set) => ({
             autoupdate: false,
