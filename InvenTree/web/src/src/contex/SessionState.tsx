@@ -2,24 +2,23 @@ import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { setApiDefaults } from '../App';
 
-
 interface SessionStateProps {
-    token: string,
-    setToken: (newToken: string) => void,
+  token: string;
+  setToken: (newToken: string) => void;
 }
 
 export const useSessionState = create<SessionStateProps>()(
-    persist(
-        (set) => ({
-            token: '',
-            setToken: (newToken) => {
-                set({ token: newToken });
-                setApiDefaults();
-            },
-        }),
-        {
-            name: 'session-state',
-            getStorage: () => sessionStorage,
-        }
-    )
+  persist(
+    (set) => ({
+      token: '',
+      setToken: (newToken) => {
+        set({ token: newToken });
+        setApiDefaults();
+      }
+    }),
+    {
+      name: 'session-state',
+      getStorage: () => sessionStorage
+    }
+  )
 );

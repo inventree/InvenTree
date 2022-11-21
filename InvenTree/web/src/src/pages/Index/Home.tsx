@@ -1,9 +1,9 @@
-import { StylishText } from "../../components/items/StylishText";
-
+import { StylishText } from '../../components/items/StylishText';
 
 export function Home() {
-
-    return (<>
-        <StylishText>Home</StylishText>
-    </>);
+  return (
+    <>
+      <StylishText>Home</StylishText>
+    </>
+  );
 }

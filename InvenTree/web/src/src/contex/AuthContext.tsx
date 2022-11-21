@@ -1,16 +1,15 @@
-
-import axios from "axios";
-import { createContext, useContext } from "react";
-import { Navigate } from "react-router-dom";
-import { setApiDefaults } from "../App";
-import { useLocalState } from "./LocalState";
-import { useSessionState } from "./ApiState";
+import axios from 'axios';
+import { createContext, useContext } from 'react';
+import { Navigate } from 'react-router-dom';
+import { setApiDefaults } from '../App';
+import { useLocalState } from './LocalState';
+import { useSessionState } from './ApiState';
 
 export interface AuthContextProps {
-  token: string,
-  host: string,
-  handleLogin: (username: string, password: string) => Promise<void>,
-  handleLogout: () => void,
+  token: string;
+  host: string;
+  handleLogin: (username: string, password: string) => Promise<void>;
+  handleLogout: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -20,7 +19,7 @@ export const useAuth = () => {
 };
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const [token] = useSessionState(state => [state.token]);
+  const [token] = useSessionState((state) => [state.token]);
 
   if (!token) {
     return <Navigate to="/login" replace />;
@@ -30,23 +29,29 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 export const AuthProvider = ({ children }: { children: JSX.Element }) => {
-  const [token, setToken] = useSessionState(state => [state.token, state.setToken]);
-  const [host] = useLocalState(state => [state.host]);
+  const [token, setToken] = useSessionState((state) => [
+    state.token,
+    state.setToken
+  ]);
+  const [host] = useLocalState((state) => [state.host]);
 
   // TODO add types
   const handleLogin = async (username: string, password: string) => {
     // Get token from server
-    const token = await axios.get(`${host}user/token/`, { auth: { username, password } })
+    const token = await axios
+      .get(`${host}user/token/`, { auth: { username, password } })
       .then((response) => response.data.token)
-      .catch((error) => { console.log(error); });
+      .catch((error) => {
+        console.log(error);
+      });
 
     // Set token in context
     setToken(token);
     setApiDefaults();
-  }
+  };
 
   const handleLogout = () => {
-    console.log("Logout");
+    console.log('Logout');
     setToken('');
   };
 
@@ -54,12 +59,8 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
     token,
     host,
     handleLogin,
-    handleLogout,
+    handleLogout
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -1,20 +1,37 @@
-import { createStyles, LoadingOverlay, Group, Paper, Text } from '@mantine/core';
+import {
+  createStyles,
+  LoadingOverlay,
+  Group,
+  Paper,
+  Text
+} from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
   value: {
     fontSize: 24,
     fontWeight: 700,
-    lineHeight: 1,
+    lineHeight: 1
   },
 
   title: {
-    fontWeight: 700,
-  },
+    fontWeight: 700
+  }
 }));
 
-export interface StatisticItemProps { title: string; value: string; }
+export interface StatisticItemProps {
+  title: string;
+  value: string;
+}
 
-export function StatisticItem({ id, data, isLoading }: { id: string, data: StatisticItemProps, isLoading: boolean }) {
+export function StatisticItem({
+  id,
+  data,
+  isLoading
+}: {
+  id: string;
+  data: StatisticItemProps;
+  isLoading: boolean;
+}) {
   const { classes } = useStyles();
 
   return (
