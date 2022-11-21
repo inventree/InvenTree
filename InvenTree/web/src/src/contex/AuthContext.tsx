@@ -1,9 +1,8 @@
 
-import { useLocalStorage } from "@mantine/hooks";
 import axios from "axios";
 import { createContext, useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { api } from "../App";
+import { setApiDefaults } from "../App";
 import { useSessionSettings, useSessionState } from "../states";
 
 export interface AuthContextProps {
@@ -42,8 +41,7 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
 
     // Set token in context
     setToken(token);
-    api.defaults.baseURL = host;
-    api.defaults.headers.common['Authorization'] = `Token ${token}`;
+    setApiDefaults();
   }
 
   const handleLogout = () => {

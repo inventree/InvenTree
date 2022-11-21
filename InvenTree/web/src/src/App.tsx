@@ -14,16 +14,24 @@ import {
 } from '@tanstack/react-query'
 import axios from 'axios';
 import { AuthProvider } from './contex/AuthContext';
-import { useSessionSettings } from './states';
+import { useSessionSettings, useSessionState } from './states';
 import { defaultHostList, tabs, links } from './defaults';
 
 export const api = axios.create({});
+export function setApiDefaults() {
+  const [host] = useSessionSettings(state => [state.host]);
+  const [token] = useSessionState(state => [state.token]);
+
+  api.defaults.baseURL = host;
+  api.defaults.headers.common['Authorization'] = `Token ${token}`;
+}
+
 export const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout tabs={tabs} links={links}/>,
+    element: <Layout tabs={tabs} links={links} />,
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Dashboard /> },
@@ -63,6 +71,7 @@ export default function App() {
     console.log('Laoding default host list');
     useSessionSettings.setState({ hostList: defaultHostList });
   }
+  setApiDefaults();
 
   // Main App component
   return (

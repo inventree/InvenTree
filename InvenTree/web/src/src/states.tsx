@@ -1,5 +1,6 @@
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
+import { setApiDefaults } from './App'
 
 // helpers
 export interface HostList {
@@ -69,7 +70,10 @@ export const useSessionState = create<SessionStateProps>()(
     persist(
         (set) => ({
             token: '',
-            setToken: (newToken) => set({ token: newToken }),
+            setToken: (newToken) => {
+                set({ token: newToken });
+                setApiDefaults();
+            },
         }),
         {
             name: 'session-state',
