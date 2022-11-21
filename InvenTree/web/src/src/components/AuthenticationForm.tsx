@@ -8,17 +8,16 @@ import {
   Group,
   Button,
   Divider,
-  Checkbox,
   Anchor,
   Stack,
   Center,
 } from '@mantine/core';
 
-export function AuthenticationForm({ handleLogin, navigate, hostname }: { handleLogin: any, navigate: any, hostname: string }) {
+export function AuthenticationForm({ Login, Register, hostname, lastUsername }: { Login: (username: string, password: string) => void, Register: (name: string, username: string, password: string) => void, hostname: string, lastUsername: string }) {
   const [action, toggleAction] = useToggle(['login', 'register']);
   const form = useForm({
     initialValues: {
-      email: '',
+      email: lastUsername,
       name: '',
       password: '',
       terms: false,
@@ -26,7 +25,9 @@ export function AuthenticationForm({ handleLogin, navigate, hostname }: { handle
   });
   const submit = () => {
     if (action === 'login') {
-      handleLogin({ form: form.values, type: action, navigate: navigate });
+      Login(form.values.email, form.values.password);
+    } else {
+      Register(form.values.name, form.values.email, form.values.password);
     }
   };
 
@@ -63,14 +64,6 @@ export function AuthenticationForm({ handleLogin, navigate, hostname }: { handle
             onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
             error={form.errors.password && 'Password should include at least 6 characters'}
           />
-
-          {action === 'register' && (
-            <Checkbox
-              label="I accept terms and conditions"
-              checked={form.values.terms}
-              onChange={(event) => form.setFieldValue('terms', event.currentTarget.checked)}
-            />
-          )}
         </Stack>
 
         <Group position="apart" mt="xl">
