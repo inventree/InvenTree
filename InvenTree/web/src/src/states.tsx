@@ -65,7 +65,15 @@ interface SessionStateProps {
     setToken: (newToken: string) => void,
 }
 
-export const useSessionState = create<SessionStateProps>((set) => ({
-    token: '',
-    setToken: (newToken: string) => set({ token: newToken }),
-}))
+export const useSessionState = create<SessionStateProps>()(
+    persist(
+        (set) => ({
+            token: '',
+            setToken: (newToken) => set({ token: newToken }),
+        }),
+        {
+            name: 'session-state',
+            getStorage: () => sessionStorage,
+        }
+    )
+)
