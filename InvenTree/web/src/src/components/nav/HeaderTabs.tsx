@@ -22,7 +22,7 @@ import { InvenTreeLogo } from '../InvenTreeLogo';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStyles } from '../../globalStyle';
 import { Link } from 'react-router-dom';
-import { useSessionSettings, useUserState } from '../../states';
+import { useSessionSettings, useApiState } from '../../states';
 
 interface HeaderTabsProps {
   tabs: { name: string; text: string; }[];
@@ -35,7 +35,7 @@ export function HeaderTabs({tabs }: HeaderTabsProps) {
   const navigate = useNavigate();
   const { tabValue } = useParams();
   const [hostKey, hostList] = useSessionSettings(state => [state.hostKey, state.hostList]);
-  const [username] = useUserState(state => [state.name]);
+  const [username] = useApiState(state => [state.user.name]);
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name}>

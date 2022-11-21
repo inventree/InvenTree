@@ -48,16 +48,12 @@ export const useSessionSettings = create<SesstionSettings>(
     )
 )
 
-interface UserStateProps {
-    name: string,
-    email: string,
-    username: string,
+interface ApiStateProps {
+    user: UserProps,
     setUser: (newUser: UserProps) => void,
 }
 
-export const useUserState = create<UserStateProps>((set) => ({
-    name: user.name,
-    email: user.email,
-    username: user.username,
-    setUser: (newUser: UserProps) => set({ name: newUser.name, email: newUser.email, username: newUser.username }),
+export const useApiState = create<ApiStateProps>((set) => ({
+    user: user,
+    setUser: (newUser: UserProps) => set({ user: newUser }),
 }))
