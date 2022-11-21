@@ -12,9 +12,9 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export interface StatisticItemProps {title: string; value: string;}
+export interface StatisticItemProps { title: string; value: string; }
 
-export function StatisticItem({ id, data, isLoading }: {id: string, data: StatisticItemProps, isLoading: boolean}) {
+export function StatisticItem({ id, data, isLoading }: { id: string, data: StatisticItemProps, isLoading: boolean }) {
   const { classes } = useStyles();
 
   return (

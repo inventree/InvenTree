@@ -35,12 +35,12 @@ export const defaultUser = {
 };
 
 export const emptyServerAPI = {
-    server: null,
-    version: null,
-    instance: null,
-    apiVersion: null,
-    worker_running: null,
-    worker_pending_tasks: null,
-    plugins_enabled: null,
-    active_plugins: [],
+  server: null,
+  version: null,
+  instance: null,
+  apiVersion: null,
+  worker_running: null,
+  worker_pending_tasks: null,
+  plugins_enabled: null,
+  active_plugins: [],
 };

@@ -57,7 +57,7 @@ export async function fetchSession() {
     useApiState.getState().setUser(user);
   });
   // Fetch server data
-  await api.get('/').then((response) => {useApiState.getState().setServer(response.data)});
+  await api.get('/').then((response) => { useApiState.getState().setServer(response.data) });
 }
 
 // Routes

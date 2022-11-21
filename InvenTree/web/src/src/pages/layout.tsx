@@ -12,10 +12,10 @@ export default function Layout() {
     return (
         <ProtectedRoute>
             <Flex direction="column" mih="100vh">
-                <Header/>
+                <Header />
                 <Container className={classes.content}><Outlet /></Container>
                 <Space h="xl" />
-                <Footer/>
+                <Footer />
             </Flex>
         </ProtectedRoute>
     );

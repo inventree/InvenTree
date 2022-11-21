@@ -24,7 +24,7 @@ import { useStyles } from '../../globalStyle';
 import { Link } from 'react-router-dom';
 import { useLocalState } from "../../contex/LocalState";
 import { useApiState } from "../../contex/ApiState";
-import {tabs} from '../../defaults';
+import { tabs } from '../../defaults';
 
 
 export function Header() {

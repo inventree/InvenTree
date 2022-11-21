@@ -73,7 +73,7 @@ function UserInfo({ data }: { data: any }) {
     return (<form onSubmit={form.onSubmit((values) => SaveData(values))}>
         <Group>
             <Text>Userinfo</Text>
-            <ActionIcon onClick={() => setEditing()}>{editing ? <IconDeviceFloppy />: <IconEdit /> }</ActionIcon>
+            <ActionIcon onClick={() => setEditing()}>{editing ? <IconDeviceFloppy /> : <IconEdit />}</ActionIcon>
         </Group>
         <Group>
             {editing ? <TextInput label="First name" placeholder="First name" {...form.getInputProps('first_name')} /> : <Text>First name: {form.values.first_name}</Text>}
