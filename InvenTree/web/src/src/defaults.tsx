@@ -20,22 +20,20 @@ export const tabs = [
   { text: 'Part', name: 'part' }
 ];
 
-export const links = {
-  links: [
-    {
-      link: 'https://inventree.org/',
-      label: 'Website'
-    },
-    {
-      link: 'https://github.com/invenhost/InvenTree',
-      label: 'GitHub'
-    },
-    {
-      link: 'https://demo.inventree.org/',
-      label: 'Demo'
-    }
-  ]
-};
+export const links = [
+  {
+    link: 'https://inventree.org/',
+    label: 'Website'
+  },
+  {
+    link: 'https://github.com/invenhost/InvenTree',
+    label: 'GitHub'
+  },
+  {
+    link: 'https://demo.inventree.org/',
+    label: 'Demo'
+  }
+];
 
 export const defaultUser = {
   name: 'Matthias Mair',
