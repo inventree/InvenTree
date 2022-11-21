@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partcategory',
             name='structural',
-            field=models.BooleanField(default=False, help_text="Parts may not be directly assigned to a structural category, but may be assigned to it's child categories.", verbose_name='Structural'),
+            field=models.BooleanField(default=False, help_text="Parts may not be directly assigned to a structural category, but may be assigned to child categories.", verbose_name='Structural'),
         ),
     ]

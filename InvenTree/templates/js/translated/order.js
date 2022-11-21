@@ -888,7 +888,11 @@ function poLineItemFields(options={}) {
         purchase_price: {},
         purchase_price_currency: {},
         target_date: {},
-        destination: {},
+        destination: {
+            filters: {
+                structural: false,
+            }
+        },
         notes: {},
     };
 
@@ -1688,7 +1692,11 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
     constructForm(`/api/order/po/${order_id}/receive/`, {
         method: 'POST',
         fields: {
-            location: {},
+            location: {
+                filters: {
+                    structural: false,
+                }
+            },
         },
         preFormContent: html,
         confirm: true,

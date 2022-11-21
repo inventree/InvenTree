@@ -58,6 +58,9 @@
             {% if allow_download %}
             <button type='button' class='btn btn-outline-secondary' title="{% trans 'Download image from URL' %}" id='company-image-url'><span class='fas fa-cloud-download-alt'></span></button>
             {% endif %}
+            {% if company.image %}
+            <button type='button' class='btn btn-outline-secondary' title='{% trans "Delete image" %}' id='company-image-delete'><span class='fas fa-trash-alt icon-red'></span></button>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -194,10 +197,37 @@
     $('#company-image').click(function() {
         showModalImage('{{ company.image.url }}');
     });
+
+    $('#company-image-delete').click(function(event) {
+        event.stopPropagation();
+        showQuestionDialog(
+            '{% trans "Remove Image" %}',
+            '{% trans "Remove associated image from this company" %}',
+            {
+                accept_text: '{% trans "Remove" %}',
+                submitClass: 'danger',
+                accept: function() {
+                    inventreePut(
+                        '{% url "api-company-detail" company.pk %}',
+                        {
+                            'image': null,
+                        },
+                        {
+                            method: 'PATCH',
+                            success: function() {
+                                location.reload();
+                            }
+                        }
+                    );
+                }
+            }
+        );
+    });
+
     {% endif %}
 
-    $("#company-image-upload").click(function() {
-
+    $("#company-image-upload").click(function(event) {
+        event.stopPropagation();
         constructForm(
             '{% url "api-company-detail" company.pk %}',
             {

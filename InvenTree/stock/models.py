@@ -107,6 +107,14 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
                               help_text=_('Select Owner'),
                               related_name='stock_locations')
 
+    structural = models.BooleanField(
+        default=False,
+        verbose_name=_('Structural'),
+        help_text=_(
+            'Stock items may not be directly located into a structural stock locations, '
+            'but may be located to child locations.'),
+    )
+
     def get_location_owner(self):
         """Get the closest "owner" for this location.
 
@@ -138,6 +146,17 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
             return True
 
         return user in owner.get_related_owners(include_group=True)
+
+    def clean(self):
+        """Custom clean action for the StockLocation model:
+
+        - Ensure stock location can't be made structural if stock items already located to them
+        """
+        if self.pk and self.structural and self.item_count > 0:
+            raise ValidationError(
+                _("You cannot make this stock location structural because some stock items "
+                  "are already located into it!"))
+        super().clean()
 
     def get_absolute_url(self):
         """Return url for instance."""
@@ -496,8 +515,14 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         - The 'part' and 'supplier_part.part' fields cannot point to the same Part object
         - The 'part' is not virtual
         - The 'part' does not belong to itself
+        - The location is not structural
         - Quantity must be 1 if the StockItem has a serial number
         """
+
+        if self.location is not None and self.location.structural:
+            raise ValidationError(
+                {'location': _("Stock items cannot be located into structural stock locations!")})
+
         super().clean()
 
         # Strip serial number field

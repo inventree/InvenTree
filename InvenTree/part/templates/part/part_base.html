@@ -502,8 +502,34 @@
         });
     });
 
-    $("#part-image-upload").click(function() {
+    $('#part-image-delete').click(function(event) {
+        event.stopPropagation();
+        showQuestionDialog(
+            '{% trans "Remove Image" %}',
+            '{% trans "Remove associated image from this part" %}',
+            {
+                accept_text: '{% trans "Remove" %}',
+                submitClass: 'danger',
+                accept: function() {
+                    inventreePut(
+                        '{% url "api-part-detail" part.pk %}',
+                        {
+                            'image': null,
+                        },
+                        {
+                            method: 'PATCH',
+                            success: function(data) {
+                                location.reload();
+                            }
+                        }
+                    );
+                }
+            }
+        );
+    });
 
+    $("#part-image-upload").click(function(event) {
+        event.stopPropagation();
         constructForm(
             '{% url "api-part-detail" part.pk %}',
             {
@@ -576,12 +602,12 @@
         });
     }
 
-    $("#part-image-select").click(function() {
-        launchModalForm("{% url 'part-image-select' part.id %}",
-                        {
-                            reload: true,
-                            after_render: onSelectImage
-                        });
+    $("#part-image-select").click(function(event) {
+        event.stopPropagation();
+        launchModalForm("{% url 'part-image-select' part.id %}", {
+            reload: true,
+            after_render: onSelectImage
+        });
     });
 
     $("#part-edit").click(function() {
