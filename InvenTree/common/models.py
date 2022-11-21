@@ -1350,7 +1350,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'PLUGIN_ON_STARTUP': {
             'name': _('Check plugins on startup'),
             'description': _('Check that all plugins are installed on startup - enable in container environments'),
-            'default': False,
+            'default': settings.DOCKER,
             'validator': bool,
             'requires_restart': True,
         },
