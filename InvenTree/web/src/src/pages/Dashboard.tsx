@@ -6,8 +6,7 @@ import { useSessionSettings } from "../states";
 
 
 export function Dashboard() {
-    const autoupdate = useSessionSettings((state) => state.autoupdate)
-    const toggleAutoupdate = useSessionSettings((state) => state.toggleAutoupdate)
+    const [autoupdate, toggleAutoupdate] = useSessionSettings((state) => [state.autoupdate, state.toggleAutoupdate]);
 
     const items = [
         { id: "starred-parts", text: "Subscribed Parts", icon: "fa-bell", url: "part", params: { starred: true } },
