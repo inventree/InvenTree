@@ -51,18 +51,20 @@ const router = createBrowserRouter([
   }
 ]);
 
-// Main App
 export default function App() {
+  // Color Scheme
   const preferredColorScheme = useColorScheme();
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({ key: 'scheme', defaultValue: preferredColorScheme });
   const toggleColorScheme = (value?: ColorScheme) => setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
+  // Session initialization
   const [hostList] = useSessionSettings(state => [state.hostList]);
   if (Object.keys(hostList).length === 0) {
     console.log('Laoding default host list');
-    useSessionSettings.setState({hostList: defaultHostList});
+    useSessionSettings.setState({ hostList: defaultHostList });
   }
 
+  // Main App component
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>

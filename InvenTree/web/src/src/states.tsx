@@ -2,14 +2,11 @@ import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
 // helpers
-
-export interface HostProps {
-    host: string,
-    name: string,
-}
-
 export interface HostList {
-    [key: string]: HostProps
+    [key: string]:  {
+        host: string,
+        name: string,
+    }
 }
 
 export interface UserProps {
