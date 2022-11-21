@@ -10,17 +10,27 @@ import {
   Divider,
   Anchor,
   Stack,
-  Center,
+  Center
 } from '@mantine/core';
 
-export function AuthenticationForm({ Login, Register, hostname, lastUsername }: { Login: (username: string, password: string) => void, Register: (name: string, username: string, password: string) => void, hostname: string, lastUsername: string }) {
+export function AuthenticationForm({
+  Login,
+  Register,
+  hostname,
+  lastUsername
+}: {
+  Login: (username: string, password: string) => void;
+  Register: (name: string, username: string, password: string) => void;
+  hostname: string;
+  lastUsername: string;
+}) {
   const [action, toggleAction] = useToggle(['login', 'register']);
   const form = useForm({
     initialValues: {
       email: lastUsername,
       name: '',
       password: '',
-      terms: false,
+      terms: false
     }
   });
   const submit = () => {
@@ -33,17 +43,29 @@ export function AuthenticationForm({ Login, Register, hostname, lastUsername }: 
 
   return (
     <Paper radius="md" p="xl" withBorder>
-      <Text size="lg" weight={500}>Welcome to {hostname}, {action} with</Text>
-      <Center><Group grow mb="md" mt="md"><Text>Placeholder</Text></Group></Center>
+      <Text size="lg" weight={500}>
+        Welcome to {hostname}, {action} with
+      </Text>
+      <Center>
+        <Group grow mb="md" mt="md">
+          <Text>Placeholder</Text>
+        </Group>
+      </Center>
       <Divider label="Or continue with email" labelPosition="center" my="lg" />
-      <form onSubmit={form.onSubmit(() => { submit() })}>
+      <form
+        onSubmit={form.onSubmit(() => {
+          submit();
+        })}
+      >
         <Stack>
           {action === 'register' && (
             <TextInput
               label="Name"
               placeholder="Your name"
               value={form.values.name}
-              onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
+              onChange={(event) =>
+                form.setFieldValue('name', event.currentTarget.value)
+              }
             />
           )}
 
@@ -52,7 +74,9 @@ export function AuthenticationForm({ Login, Register, hostname, lastUsername }: 
             label="Username"
             placeholder="hello@mantine.dev"
             value={form.values.email}
-            onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
+            onChange={(event) =>
+              form.setFieldValue('email', event.currentTarget.value)
+            }
             error={form.errors.email && 'Invalid email'}
           />
 
@@ -61,13 +85,24 @@ export function AuthenticationForm({ Login, Register, hostname, lastUsername }: 
             label="Password"
             placeholder="Your password"
             value={form.values.password}
-            onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
-            error={form.errors.password && 'Password should include at least 6 characters'}
+            onChange={(event) =>
+              form.setFieldValue('password', event.currentTarget.value)
+            }
+            error={
+              form.errors.password &&
+              'Password should include at least 6 characters'
+            }
           />
         </Stack>
 
         <Group position="apart" mt="xl">
-          <Anchor component="button" type="button" color="dimmed" onClick={() => toggleAction()} size="xs">
+          <Anchor
+            component="button"
+            type="button"
+            color="dimmed"
+            onClick={() => toggleAction()}
+            size="xs"
+          >
             {action === 'register'
               ? 'Already have an account? Login'
               : "Don't have an account? Register"}
