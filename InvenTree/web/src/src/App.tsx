@@ -15,7 +15,7 @@ import {
 import axios from 'axios';
 import { AuthProvider, UserProps } from './contex/AuthContext';
 import { useSessionSettings } from './states';
-import { defaultlist } from './defaults';
+import { defaultlist, tabs, links } from './defaults';
 
 const user: UserProps = {
   name: "Matthias Mair",
@@ -24,29 +24,6 @@ const user: UserProps = {
 };
 
 export const api = axios.create({});
-
-// Static Settings
-const tabs = [
-  { text: "Home", name: "home" },
-  { text: "Part", name: "part" },
-]
-
-const links = {
-  links: [
-    {
-      "link": "https://inventree.org/",
-      "label": "Website"
-    },
-    {
-      "link": "https://github.com/invenhost/InvenTree",
-      "label": "GitHub"
-    },
-    {
-      "link": "https://demo.inventree.org/",
-      "label": "Demo"
-    }
-  ]
-}
 
 const router = createBrowserRouter([
   {
