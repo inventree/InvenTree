@@ -258,7 +258,12 @@ class BaseInvenTreeSetting(models.Model):
         """
         setting = cls.get_setting_definition(key, **kwargs)
 
-        return setting.get('default', '')
+        default = setting.get('default', '')
+
+        if callable(default):
+            return default()
+        else:
+            return default
 
     @classmethod
     def get_setting_choices(cls, key, **kwargs):
@@ -1345,7 +1350,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'PLUGIN_ON_STARTUP': {
             'name': _('Check plugins on startup'),
             'description': _('Check that all plugins are installed on startup - enable in container environments'),
-            'default': False,
+            'default': settings.DOCKER,
             'validator': bool,
             'requires_restart': True,
         },
