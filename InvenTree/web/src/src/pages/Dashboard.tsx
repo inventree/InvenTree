@@ -1,12 +1,13 @@
 import { Group } from "@mantine/core";
 import { SimpleGrid, Chip } from "@mantine/core";
-import { useState } from "react";
 import { DashboardItem } from "./DashboardItem";
 import { StylishText } from "../components/StylishText";
+import { useSessionSettings } from "../states";
 
 
 export function Dashboard() {
-    const [checked, setChecked] = useState(false);
+    const autoupdate = useSessionSettings((state) => state.autoupdate)
+    const toffleAutoupdate = useSessionSettings((state) => state.toffleAutoupdate)
 
     const items = [
         { id: "starred-parts", text: "Subscribed Parts", icon: "fa-bell", url: "part", params: { starred: true } },
@@ -31,8 +32,8 @@ export function Dashboard() {
     return (<>
         <Group>
             <StylishText>Dashboard</StylishText>
-            <Chip checked={checked} onChange={() => setChecked((v) => !v)}>Autoupdate</Chip>
+            <Chip checked={autoupdate} onChange={() => toffleAutoupdate()}>Autoupdate</Chip>
         </Group>
-        <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem key={item.id} {...item} autoupdate={checked}/>)}</SimpleGrid>
+        <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem key={item.id} {...item} autoupdate={autoupdate}/>)}</SimpleGrid>
     </>);
 }
