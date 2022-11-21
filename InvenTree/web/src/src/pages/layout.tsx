@@ -7,8 +7,9 @@ import { useStyles } from "../globalStyle";
 import { StylishText } from "../components/StylishText";
 import { ProtectedRoute, useAuth, UserProps } from "../contex/AuthContext";
 import { AuthenticationForm } from "../components/AuthenticationForm";
-import { useState } from "react";
 import { hosts } from "../App";
+import { useSessionSettings } from "../states";
+import { useState } from "react";
 
 
 export default function Layout({ user, tabs, links }: { user: UserProps, tabs: any, links: FooterSimpleProps }) {
@@ -42,20 +43,21 @@ export function Part() {
 }
 
 export function Login() {
-    const { handleLogin, host, setHost } = useAuth();
+    const { handleLogin } = useAuth();
     const navigate = useNavigate();
     const hostOptions = hosts;
-    const [hostname, setHostname] = useState((host === '') ? hostOptions[0] : host.replace('/api/', ''));
+    const [ hostKey, setHostValue ] = useSessionSettings(state => [state.hostKey, state.setHost]);
     function changeHost(newVal: string) {
-        setHost(`${newVal}/api/`);
-        setHostname(newVal);
+        console.log(newVal);
+        setHostValue(hostOptions[newVal].host, newVal);
     }
+    const hostname = (hostOptions[hostKey] === undefined) ? 'No selection' : hostOptions[hostKey].name;
 
     return (<Center mih='100vh'>
         <Stack>
             <Center>
-                <Chip.Group position="center" m="md" multiple={false} value={hostname} onChange={changeHost}>
-                    {hostOptions.map((host) => (<Chip key={host} value={host}>{host}</Chip>))}
+                <Chip.Group position="center" m="md" multiple={false} value={hostKey} onChange={changeHost}>
+                {Object.keys(hostOptions).map((key, index) => (<Chip key={key} value={key}>{hostOptions[key].name}</Chip>))}
                 </Chip.Group>
             </Center>
             <Container w='md'><AuthenticationForm handleLogin={handleLogin} navigate={navigate} hostname={hostname} /></Container>

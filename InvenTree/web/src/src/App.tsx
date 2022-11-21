@@ -46,10 +46,21 @@ const links = {
   ]
 }
 
-export const hosts = [
-  "https://demo.inventree.org",
-  "https://sample.app.invenhost.com",
-];
+export interface HostProps {
+  host: string,
+  name: string,
+}
+
+export interface HostList {
+  [key: string]: HostProps
+}
+
+
+export const hosts: HostList = {
+  "https://demo.inventree.org": {host: "https://demo.inventree.org/api/", name: "InvenTree Demo"},
+  "https://sample.app.invenhost.com": {host: "https://sample.app.invenhost.com/api/", name: "InvenHost: Sample"},
+  "http://localhost:8000": {host: "http://localhost:8000/api/", name: "Localhost"},
+};
 
 const router = createBrowserRouter([
   {

@@ -22,7 +22,8 @@ import { InvenTreeLogo } from '../InvenTreeLogo';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStyles } from '../../globalStyle';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contex/AuthContext';
+import { useSessionSettings } from '../../states';
+import {hosts} from '../../App';
 
 interface HeaderTabsProps {
   user: { name: string; };
@@ -35,7 +36,7 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
   const { tabValue } = useParams();
-  const { host } = useAuth();
+  const [hostKey] = useSessionSettings(state => [state.hostKey]);
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name}>
@@ -47,7 +48,7 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
     <div className={classes.header}>
       <Container className={classes.mainSection}>
         <Group position="apart">
-          <Group><InvenTreeLogo />{host}</Group>
+          <Group><InvenTreeLogo />{hosts[hostKey].name}</Group>
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
           <Group>
             <ColorToggle />
