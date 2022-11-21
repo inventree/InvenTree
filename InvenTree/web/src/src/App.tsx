@@ -19,8 +19,8 @@ import { defaultHostList, tabs, links } from './defaults';
 
 export const api = axios.create({});
 export function setApiDefaults() {
-  const [host] = useSessionSettings(state => [state.host]);
-  const [token] = useSessionState(state => [state.token]);
+  const host = useSessionSettings.getState().host;
+  const token = useSessionState.getState().token;
 
   api.defaults.baseURL = host;
   api.defaults.headers.common['Authorization'] = `Token ${token}`;
