@@ -31,7 +31,7 @@ INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
-# Are enviroment variables manipulated by tests? Needs to be set by testing code
+# Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
 
 # New requirement for django 3.2+
@@ -678,6 +678,9 @@ CURRENCIES = CONFIG.get(
     ],
 )
 
+# Maximum number of decimal places for currency rendering
+CURRENCY_DECIMAL_PLACES = 6
+
 # Check that each provided currency is supported
 for currency in CURRENCIES:
     if currency not in moneyed.CURRENCIES:  # pragma: no cover
@@ -741,6 +744,7 @@ SOCIALACCOUNT_STORE_TOKENS = True
 # settings for allauth
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int)
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int)
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting('INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', 'http')
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
 

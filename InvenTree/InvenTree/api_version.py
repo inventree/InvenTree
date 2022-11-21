@@ -2,10 +2,26 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 80
+INVENTREE_API_VERSION = 83
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v83 -> 2022-11-19 : https://github.com/inventree/InvenTree/pull/3949
+    - Add support for structural Stock locations
+
+v82 -> 2022-11-16 : https://github.com/inventree/InvenTree/pull/3931
+    - Add support for structural Part categories
+
+v81 -> 2022-11-08 : https://github.com/inventree/InvenTree/pull/3710
+    - Adds cached pricing information to Part API
+    - Adds cached pricing information to BomItem API
+    - Allows Part and BomItem list endpoints to be filtered by 'has_pricing'
+    - Remove calculated 'price_string' values from API endpoints
+    - Allows PurchaseOrderLineItem API endpoint to be filtered by 'has_pricing'
+    - Allows SalesOrderLineItem API endpoint to be filtered by 'has_pricing'
+    - Allows SalesOrderLineItem API endpoint to be filtered by 'order_status'
+    - Adds more information to SupplierPriceBreak serializer
 
 v80 -> 2022-11-07 : https://github.com/inventree/InvenTree/pull/3906
     - Adds 'barcode_hash' to Part API serializer

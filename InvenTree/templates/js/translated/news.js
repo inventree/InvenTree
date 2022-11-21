@@ -17,6 +17,7 @@ function loadNewsFeedTable(table, options={}, enableDelete=false) {
         groupBy: false,
         queryParams: {
             ordering: 'published',
+            read: false,
         },
         paginationVAlign: 'bottom',
         formatNoMatches: function() {
@@ -49,10 +50,31 @@ function loadNewsFeedTable(table, options={}, enableDelete=false) {
                 field: 'published',
                 title: '{% trans "Published" %}',
                 sortable: 'true',
-                formatter: function(value) {
-                    return renderDate(value);
+                formatter: function(value, row) {
+                    var html = renderDate(value);
+                    var buttons = getReadEditButton(row.pk, row.read);
+                    html += `<div class='btn-group float-right' role='group'>${buttons}</div>`;
+                    return html;
                 }
             },
         ]
+    });
+
+    $(table).on('click', '.notification-read', function() {
+        var pk = $(this).attr('pk');
+
+        var url = `/api/news/${pk}/`;
+
+        inventreePut(url,
+            {
+                read: true,
+            },
+            {
+                method: 'PATCH',
+                success: function() {
+                    $(table).bootstrapTable('refresh');
+                }
+            }
+        );
     });
 }

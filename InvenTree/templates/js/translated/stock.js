@@ -80,6 +80,9 @@ function serializeStockItem(pk, options={}) {
         },
         destination: {
             icon: 'fa-sitemap',
+            filters: {
+                structural: false,
+            }
         },
         notes: {},
     };
@@ -114,6 +117,7 @@ function stockLocationFields(options={}) {
         name: {},
         description: {},
         owner: {},
+        structural: {},
         icon: {
             help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-box',
@@ -280,6 +284,9 @@ function stockItemFields(options={}) {
         },
         location: {
             icon: 'fa-sitemap',
+            filters: {
+                structural: false,
+            },
         },
         quantity: {
             help_text: '{% trans "Enter initial quantity for this stock item" %}',
@@ -838,6 +845,9 @@ function mergeStockItems(items, options={}) {
             location: {
                 value: location,
                 icon: 'fa-sitemap',
+                filters: {
+                    structural: false,
+                }
             },
             notes: {},
             allow_mismatched_suppliers: {},
@@ -1106,7 +1116,11 @@ function adjustStock(action, items, options={}) {
     var extraFields = {};
 
     if (specifyLocation) {
-        extraFields.location = {};
+        extraFields.location = {
+            filters: {
+                structural: false,
+            },
+        };
     }
 
     if (action != 'delete') {
@@ -1980,17 +1994,16 @@ function loadStockTable(table, options) {
 
     columns.push(col);
 
-    col = {
-        field: 'purchase_price_string',
+    columns.push({
+        field: 'purchase_price',
         title: '{% trans "Purchase Price" %}',
-    };
-
-    if (!options.params.ordering) {
-        col.sortable = true;
-        col.sortName = 'purchase_price';
-    }
-
-    columns.push(col);
+        sortable: false,
+        formatter: function(value, row) {
+            return formatCurrency(value, {
+                currency: row.purchase_price_currency,
+            });
+        }
+    });
 
     columns.push({
         field: 'packaging',
@@ -2268,7 +2281,7 @@ function loadStockLocationTable(table, options) {
         original[k] = params[k];
     }
 
-    setupFilterList(filterKey, table, filterListElement);
+    setupFilterList(filterKey, table, filterListElement, {download: true});
 
     for (var key in params) {
         filters[key] = params[key];
@@ -2811,6 +2824,9 @@ function uninstallStockItem(installed_item_id, options={}) {
             fields: {
                 location: {
                     icon: 'fa-sitemap',
+                    filters: {
+                        structural: false,
+                    }
                 },
                 note: {},
             },

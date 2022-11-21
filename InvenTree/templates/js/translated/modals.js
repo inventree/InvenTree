@@ -621,11 +621,11 @@ function showQuestionDialog(title, content, options={}) {
      *   cancel - Functino to run if the user presses 'Cancel'
      */
 
-    var modal = createNewModal({
-        title: title,
-        submitText: options.accept_text || '{% trans "Accept" %}',
-        closeText: options.cancel_text || '{% trans "Cancel" %}',
-    });
+    options.title = title;
+    options.submitText = options.accept_text || '{% trans "Accept" %}';
+    options.closeText = options.cancel_text || '{% trans "Cancel" %}';
+
+    var modal = createNewModal(options);
 
     modalSetContent(modal, content);
 

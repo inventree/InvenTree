@@ -19,8 +19,8 @@ import common.models
 import common.serializers
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.helpers import inheritors
-from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveAPI,
-                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
+                              RetrieveUpdateDestroyAPI)
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 
@@ -319,36 +319,6 @@ class NotificationDetail(NotificationMessageMixin, RetrieveUpdateDestroyAPI):
     """
 
 
-class NotificationReadEdit(NotificationMessageMixin, CreateAPI):
-    """General API endpoint to manipulate read state of a notification."""
-
-    def get_serializer_context(self):
-        """Add instance to context so it can be accessed in the serializer."""
-        context = super().get_serializer_context()
-        if self.request:
-            context['instance'] = self.get_object()
-        return context
-
-    def perform_create(self, serializer):
-        """Set the `read` status to the target value."""
-        message = self.get_object()
-        try:
-            message.read = self.target
-            message.save()
-        except Exception as exc:
-            raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
-
-
-class NotificationRead(NotificationReadEdit):
-    """API endpoint to mark a notification as read."""
-    target = True
-
-
-class NotificationUnread(NotificationReadEdit):
-    """API endpoint to mark a notification as unread."""
-    target = False
-
-
 class NotificationReadAll(NotificationMessageMixin, RetrieveAPI):
     """API endpoint to mark all notifications as read."""
 
@@ -390,11 +360,6 @@ class NewsFeedEntryDetail(NewsFeedMixin, RetrieveUpdateDestroyAPI):
     """Detail view for an individual news feed object."""
 
 
-class NewsFeedEntryRead(NewsFeedMixin, NotificationReadEdit):
-    """API endpoint to mark a news item as read."""
-    target = True
-
-
 settings_api_urls = [
     # User settings
     re_path(r'^user/', include([
@@ -432,8 +397,6 @@ common_api_urls = [
     re_path(r'^notifications/', include([
         # Individual purchase order detail URLs
         re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'^read/', NotificationRead.as_view(), name='api-notifications-read'),
-            re_path(r'^unread/', NotificationUnread.as_view(), name='api-notifications-unread'),
             re_path(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
         ])),
         # Read all
@@ -446,7 +409,6 @@ common_api_urls = [
     # News
     re_path(r'^news/', include([
         re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'^read/', NewsFeedEntryRead.as_view(), name='api-news-read'),
             re_path(r'.*$', NewsFeedEntryDetail.as_view(), name='api-news-detail'),
         ])),
         re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),

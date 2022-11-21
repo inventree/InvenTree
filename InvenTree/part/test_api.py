@@ -4,6 +4,7 @@ from decimal import Decimal
 from enum import IntEnum
 from random import randint
 
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 import PIL
@@ -402,6 +403,59 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 for child in child_categories:
                     child.refresh_from_db()
                     self.assertEqual(child.parent, parent_category)
+
+    def test_structural(self):
+        """Test the effectiveness of structural categories
+
+        Make sure:
+        - Parts cannot be created in structural categories
+        - Parts cannot be assigned to structural categories
+        """
+
+        # Create our structural part category
+        structural_category = PartCategory.objects.create(
+            name='Structural category',
+            description='This is the structural category',
+            parent=None,
+            structural=True
+        )
+
+        part_count_before = Part.objects.count()
+
+        # Make sure that we get an error if we try to create part in the structural category
+        with self.assertRaises(ValidationError):
+            part = Part.objects.create(
+                name="Part which shall not be created",
+                description="-",
+                category=structural_category
+            )
+
+        # Ensure that the part really did not get created in the structural category
+        self.assertEqual(part_count_before, Part.objects.count())
+
+        # Create a non structural category for test part category change
+        non_structural_category = PartCategory.objects.create(
+            name='Non-structural category',
+            description='This is a non-structural category',
+            parent=None,
+            structural=False
+        )
+
+        # Create the test part assigned to a non-structural category
+        part = Part.objects.create(
+            name="Part which category will be changed to structural",
+            description="-",
+            category=non_structural_category
+        )
+
+        # Assign the test part to a structural category and make sure it gives an error
+        part.category = structural_category
+        with self.assertRaises(ValidationError):
+            part.save()
+
+        # Ensure that the part did not get saved to the DB
+        part.refresh_from_db()
+        self.assertEqual(part.category.pk, non_structural_category.pk)
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
@@ -1182,17 +1236,17 @@ class PartAPITest(InvenTreeAPITestCase):
         url = reverse('api-part-list')
 
         required_cols = [
-            'id',
-            'name',
-            'description',
-            'in_stock',
-            'category_name',
-            'keywords',
-            'is_template',
-            'virtual',
-            'trackable',
-            'active',
-            'notes',
+            'Part ID',
+            'Part Name',
+            'Part Description',
+            'In Stock',
+            'Category Name',
+            'Keywords',
+            'Template',
+            'Virtual',
+            'Trackable',
+            'Active',
+            'Notes',
             'creation_date',
         ]
 
@@ -1217,16 +1271,16 @@ class PartAPITest(InvenTreeAPITestCase):
             )
 
             for row in data:
-                part = Part.objects.get(pk=row['id'])
+                part = Part.objects.get(pk=row['Part ID'])
 
                 if part.IPN:
                     self.assertEqual(part.IPN, row['IPN'])
 
-                self.assertEqual(part.name, row['name'])
-                self.assertEqual(part.description, row['description'])
+                self.assertEqual(part.name, row['Part Name'])
+                self.assertEqual(part.description, row['Part Description'])
 
                 if part.category:
-                    self.assertEqual(part.category.name, row['category_name'])
+                    self.assertEqual(part.category.name, row['Category Name'])
 
 
 class PartDetailTests(InvenTreeAPITestCase):
@@ -1544,8 +1598,24 @@ class PartDetailTests(InvenTreeAPITestCase):
         self.assertFalse('hello' in part.metadata)
         self.assertEqual(part.metadata['x'], 'y')
 
-    def test_part_notes(self):
-        """Unit tests for the part 'notes' field"""
+
+class PartNotesTests(InvenTreeAPITestCase):
+    """Tests for the 'notes' field (markdown field)"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'company',
+    ]
+
+    roles = [
+        'part.change',
+        'part.add',
+    ]
+
+    def test_long_notes(self):
+        """Test that very long notes field is rejected"""
 
         # Ensure that we cannot upload a very long piece of text
         url = reverse('api-part-detail', kwargs={'pk': 1})
@@ -1559,6 +1629,86 @@ class PartDetailTests(InvenTreeAPITestCase):
         )
 
         self.assertIn('Ensure this field has no more than 50000 characters', str(response.data['notes']))
+
+    def test_multiline_formatting(self):
+        """Ensure that markdown formatting is retained"""
+
+        url = reverse('api-part-detail', kwargs={'pk': 1})
+
+        notes = """
+        ### Title
+
+        1. Numbered list
+        2. Another item
+        3. Another item again
+
+        [A link](http://link.com.go)
+
+        """
+
+        response = self.patch(
+            url,
+            {
+                'notes': notes,
+            },
+            expected_code=200
+        )
+
+        # Ensure that newline chars have not been removed
+        self.assertIn('\n', response.data['notes'])
+
+        # Entire notes field should match original value
+        self.assertEqual(response.data['notes'], notes.strip())
+
+
+class PartPricingDetailTests(InvenTreeAPITestCase):
+    """Tests for the part pricing API endpoint"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+    ]
+
+    roles = [
+        'part.change',
+    ]
+
+    def url(self, pk):
+        """Construct a pricing URL"""
+
+        return reverse('api-part-pricing', kwargs={'pk': pk})
+
+    def test_pricing_detail(self):
+        """Test an empty pricing detail"""
+
+        response = self.get(
+            self.url(1),
+            expected_code=200
+        )
+
+        # Check for expected fields
+        expected_fields = [
+            'currency',
+            'updated',
+            'bom_cost_min',
+            'bom_cost_max',
+            'purchase_cost_min',
+            'purchase_cost_max',
+            'internal_cost_min',
+            'internal_cost_max',
+            'supplier_price_min',
+            'supplier_price_max',
+            'overall_min',
+            'overall_max',
+        ]
+
+        for field in expected_fields:
+            self.assertIn(field, response.data)
+
+        # Empty fields (no pricing by default)
+        for field in expected_fields[2:]:
+            self.assertIsNone(response.data[field])
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):

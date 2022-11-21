@@ -68,6 +68,13 @@ class InvenTreeConfig(AppConfig):
                 minutes=task.minutes,
             )
 
+        # Put at least one task onto the backround worker stack,
+        # which will be processed as soon as the worker comes online
+        InvenTree.tasks.offload_task(
+            InvenTree.tasks.heartbeat,
+            force_async=True,
+        )
+
         logger.info("Started background tasks...")
 
     def collect_tasks(self):
