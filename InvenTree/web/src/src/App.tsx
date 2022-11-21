@@ -15,7 +15,7 @@ import {
 import axios from 'axios';
 import { AuthProvider, UserProps } from './contex/AuthContext';
 import { useSessionSettings } from './states';
-import { defaultlist, tabs, links } from './defaults';
+import { defaultHostList, tabs, links } from './defaults';
 
 const user: UserProps = {
   name: "Matthias Mair",
@@ -67,7 +67,7 @@ export default function App() {
   const [hostList] = useSessionSettings(state => [state.hostList]);
   if (Object.keys(hostList).length === 0) {
     console.log('Laoding default host list');
-    useSessionSettings.setState({hostList: defaultlist});
+    useSessionSettings.setState({hostList: defaultHostList});
   }
 
   return (
