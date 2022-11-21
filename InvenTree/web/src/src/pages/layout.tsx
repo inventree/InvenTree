@@ -7,10 +7,7 @@ import { useStyles } from "../globalStyle";
 import { StylishText } from "../components/StylishText";
 import { ProtectedRoute, useAuth, UserProps } from "../contex/AuthContext";
 import { AuthenticationForm } from "../components/AuthenticationForm";
-import { hosts } from "../App";
 import { useSessionSettings } from "../states";
-import { useState } from "react";
-
 
 export default function Layout({ user, tabs, links }: { user: UserProps, tabs: any, links: FooterSimpleProps }) {
     const { classes } = useStyles();
@@ -45,8 +42,7 @@ export function Part() {
 export function Login() {
     const { handleLogin } = useAuth();
     const navigate = useNavigate();
-    const hostOptions = hosts;
-    const [ hostKey, setHostValue ] = useSessionSettings(state => [state.hostKey, state.setHost]);
+    const [ hostKey, setHostValue, hostOptions ] = useSessionSettings(state => [state.hostKey, state.setHost, state.hostList]);
     function changeHost(newVal: string) {
         console.log(newVal);
         setHostValue(hostOptions[newVal].host, newVal);

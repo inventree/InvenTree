@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import ErrorPage from './pages/error';
 import Layout, { Home, Part, Login, Logout } from './pages/layout';
-import { Profile } from "./pages/Profile";
+import { Profile } from './pages/Profile';
 import { Dashboard } from "./pages/Dashboard";
 import {
   QueryClient,
@@ -14,6 +14,8 @@ import {
 } from '@tanstack/react-query'
 import axios from 'axios';
 import { AuthProvider, UserProps } from './contex/AuthContext';
+import { useSessionSettings } from './states';
+import { defaultlist } from './defaults';
 
 const user: UserProps = {
   name: "Matthias Mair",
@@ -45,22 +47,6 @@ const links = {
     }
   ]
 }
-
-export interface HostProps {
-  host: string,
-  name: string,
-}
-
-export interface HostList {
-  [key: string]: HostProps
-}
-
-
-export const hosts: HostList = {
-  "https://demo.inventree.org": {host: "https://demo.inventree.org/api/", name: "InvenTree Demo"},
-  "https://sample.app.invenhost.com": {host: "https://sample.app.invenhost.com/api/", name: "InvenHost: Sample"},
-  "http://localhost:8000": {host: "http://localhost:8000/api/", name: "Localhost"},
-};
 
 const router = createBrowserRouter([
   {
@@ -100,6 +86,12 @@ export default function App() {
   const preferredColorScheme = useColorScheme();
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({ key: 'scheme', defaultValue: preferredColorScheme });
   const toggleColorScheme = (value?: ColorScheme) => setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+
+  const [hostList] = useSessionSettings(state => [state.hostList]);
+  if (Object.keys(hostList).length === 0) {
+    console.log('Laoding default host list');
+    useSessionSettings.setState({hostList: defaultlist});
+  }
 
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
