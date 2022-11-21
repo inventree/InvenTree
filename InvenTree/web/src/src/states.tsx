@@ -3,17 +3,16 @@ import { persist } from 'zustand/middleware'
 
 interface SesstionSettings {
     autoupdate: boolean,
-    setAutoupdate: (autoupdate: boolean) => void,
-    toffleAutoupdate: () => void,
+    toggleAutoupdate: () => void,
 }
 
 
 export const useSessionSettings = create<SesstionSettings>(
-    persist((set) => ({
-        autoupdate: false,
-        setAutoupdate: (value) => set({ autoupdate: value }),
-        toffleAutoupdate: () => set((state) => ({ autoupdate: !state.autoupdate })),
-    }),
+    persist(
+        (set) => ({
+            autoupdate: false,
+            toggleAutoupdate: () => set((state) => ({ autoupdate: !state.autoupdate })),
+        }),
         {
             name: 'session-settings'
         }

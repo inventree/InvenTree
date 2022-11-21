@@ -7,7 +7,7 @@ import { useSessionSettings } from "../states";
 
 export function Dashboard() {
     const autoupdate = useSessionSettings((state) => state.autoupdate)
-    const toffleAutoupdate = useSessionSettings((state) => state.toffleAutoupdate)
+    const toggleAutoupdate = useSessionSettings((state) => state.toggleAutoupdate)
 
     const items = [
         { id: "starred-parts", text: "Subscribed Parts", icon: "fa-bell", url: "part", params: { starred: true } },
@@ -32,7 +32,7 @@ export function Dashboard() {
     return (<>
         <Group>
             <StylishText>Dashboard</StylishText>
-            <Chip checked={autoupdate} onChange={() => toffleAutoupdate()}>Autoupdate</Chip>
+            <Chip checked={autoupdate} onChange={() => toggleAutoupdate()}>Autoupdate</Chip>
         </Group>
         <SimpleGrid cols={4} pt="md" >{items.map((item) => <DashboardItem key={item.id} {...item} autoupdate={autoupdate} />)}</SimpleGrid>
     </>);
