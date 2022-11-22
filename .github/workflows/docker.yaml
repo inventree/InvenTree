@@ -49,12 +49,14 @@ jobs:
         # Build the development docker image (using docker-compose.yml)
         run: |
           docker-compose build
-      - name: Run Unit Tests
+      - name: Update Docker Image
         run: |
           docker-compose run inventree-dev-server invoke update
           docker-compose run inventree-dev-server invoke setup-dev
           docker-compose up -d
           docker-compose run inventree-dev-server invoke wait
+      - name: Run Unit Tests
+        run: |
           docker-compose run inventree-dev-server invoke test
           docker-compose down
       - name: Check Data Directory
