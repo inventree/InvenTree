@@ -23,7 +23,7 @@ on:
 
   pull_request:
     branches:
-      - 'mater'
+      - 'master'
 
 jobs:
 
