@@ -777,8 +777,6 @@ class TestSettings(helpers.InvenTreeTestCase):
         """Test if install of plugins on startup works."""
         from plugin import registry
 
-        InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', False, self.user)
-
         if not settings.DOCKER:
             # Check an install run
             response = registry.install_plugin_file()
