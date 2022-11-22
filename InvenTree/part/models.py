@@ -2620,9 +2620,15 @@ class PartPricing(models.Model):
             self.internal_cost_max,
         ]
 
+        purchase_history_override = InvenTreeSetting.get_setting('PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER', False)
+
         if InvenTreeSetting.get_setting('PRICING_USE_SUPPLIER_PRICING', True):
-            min_costs.append(self.supplier_price_min)
-            max_costs.append(self.supplier_price_max)
+            # Add supplier pricing data, *unless* historical pricing information should override
+            if self.purchase_cost_min is None or not purchase_history_override:
+                min_costs.append(self.supplier_price_min)
+
+            if self.purchase_cost_max is None or not purchase_history_override:
+                max_costs.append(self.supplier_price_max)
 
         if InvenTreeSetting.get_setting('PRICING_USE_VARIANT_PRICING', True):
             min_costs.append(self.variant_cost_min)
