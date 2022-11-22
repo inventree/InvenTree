@@ -21,6 +21,10 @@ on:
     branches:
       - 'master'
 
+  pull_request:
+    branches:
+      - 'mater'
+
 jobs:
 
   # Build the docker image
@@ -49,10 +53,12 @@ jobs:
         # Build the development docker image (using docker-compose.yml)
         run: |
           docker-compose build
-      - name: Run Unit Tests
+      - name: Update Docker Image
         run: |
           docker-compose run inventree-dev-server invoke update
           docker-compose run inventree-dev-server invoke setup-dev
+      - name: Run Unit Tests
+        run: |
           docker-compose up -d
           docker-compose run inventree-dev-server invoke wait
           docker-compose run inventree-dev-server invoke test
