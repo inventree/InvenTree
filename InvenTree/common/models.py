@@ -1105,6 +1105,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER': {
+            'name': _('Purchase History Override'),
+            'description': _('Historical purchase order pricing overrides supplier price breaks'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PRICING_USE_VARIANT_PRICING': {
             'name': _('Use Variant Pricing'),
             'description': _('Include variant pricing in overall pricing calculations'),
