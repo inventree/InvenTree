@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-22 12:29+0000\n"
-"PO-Revision-Date: 2022-11-21 15:37\n"
+"POT-Creation-Date: 2022-11-22 05:30+0000\n"
+"PO-Revision-Date: 2022-11-22 15:52\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1169,8 +1169,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:383
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:452
@@ -1203,7 +1202,7 @@ msgstr "Túlfoglalt készlet"
 
 #: build/serializers.py:514
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr "Hogyyan kezeljük az gyártáshoz rendelt extra készletet"
+msgstr "Hogyan kezeljük az gyártáshoz rendelt extra készletet"
 
 #: build/serializers.py:524
 msgid "Some stock items have been overallocated"
@@ -2025,7 +2024,7 @@ msgstr "Áraknál használt tizedesjegyek száma"
 
 #: common/models.py:1092
 msgid "Number of decimal places to display when rendering pricing data"
-msgstr "Ennyi tizedejeggyel kerülnek az árak megjelenítésre"
+msgstr "Tizedejegyek száma az árak megjelenítésekor"
 
 #: common/models.py:1102
 msgid "Use Supplier Pricing"
@@ -2036,40 +2035,32 @@ msgid "Include supplier price breaks in overall pricing calculations"
 msgstr "Beszállítói ársávok megjelenítése az általános árkalkulációkban"
 
 #: common/models.py:1109
-#, fuzzy
-#| msgid "Purchase Order"
 msgid "Purchase History Override"
-msgstr "Beszerzési rendelés"
+msgstr "Beszerzési előzmények felülbírálása"
 
 #: common/models.py:1110
 msgid "Historical purchase order pricing overrides supplier price breaks"
-msgstr ""
+msgstr "Beszerzési árelőzmények felülírják a beszállítói ársávokat"
 
 #: common/models.py:1116
-#, fuzzy
-#| msgid "Part Pricing"
 msgid "Use Variant Pricing"
-msgstr "Alkatrész árak"
+msgstr "Alkatrészváltozat árak használata"
 
 #: common/models.py:1117
-#, fuzzy
-#| msgid "Include supplier price breaks in overall pricing calculations"
 msgid "Include variant pricing in overall pricing calculations"
-msgstr "Beszállítói ársávok megjelenítése az általános árkalkulációkban"
+msgstr "Alkatrészváltozat árak megjelenítése az általános árkalkulációkban"
 
 #: common/models.py:1123
-#, fuzzy
-#| msgid "Active parts"
 msgid "Active Variants Only"
-msgstr "Aktív alkatrész"
+msgstr "Csak az aktív változatokat"
 
 #: common/models.py:1124
 msgid "Only use active variant parts for calculating variant pricing"
-msgstr ""
+msgstr "Csak az aktív alkatrészváltozatok használata az árazásban"
 
 #: common/models.py:1130
 msgid "Pricing Rebuild Time"
-msgstr "Ár újrakalkuláció futásideje"
+msgstr "Ár újraszámítás ideje"
 
 #: common/models.py:1131
 msgid "Number of days before part pricing is automatically updated"
@@ -2089,7 +2080,7 @@ msgstr "Alkatrészekhez belső ár engedélyezése"
 
 #: common/models.py:1148
 msgid "Internal Price Override"
-msgstr "Belső ár felülbírálás"
+msgstr "Belső ár felülbírálása"
 
 #: common/models.py:1149
 msgid "If available, internal prices override price range calculations"
@@ -2733,7 +2724,7 @@ msgstr "Maximális szöveg hossz ami megjelenhet a táblázatokban"
 
 #: common/models.py:1822
 msgid "Price break quantity"
-msgstr "Árlépcső mennyiség"
+msgstr "Ársáv mennyiség"
 
 #: common/models.py:1829 company/serializers.py:393 order/models.py:975
 #: templates/js/translated/company.js:1164 templates/js/translated/part.js:1141
@@ -3291,7 +3282,7 @@ msgstr "Kép eltávolítása"
 
 #: company/templates/company/company_base.html:205
 msgid "Remove associated image from this company"
-msgstr ""
+msgstr "Céghez rendelt kép eltávolítása"
 
 #: company/templates/company/company_base.html:207
 #: part/templates/part/part_base.html:511
@@ -3618,7 +3609,7 @@ msgstr "Árinformációk"
 #: company/templates/company/supplier_part.html:317
 #: templates/js/translated/pricing.js:413
 msgid "Add Price Break"
-msgstr "Árlépcső hozzáadása"
+msgstr "Ársáv hozzáadása"
 
 #: company/templates/company/supplier_part.html:285
 msgid "Link Barcode to Supplier Part"
@@ -4535,7 +4526,7 @@ msgstr "Kategória neve"
 
 #: part/admin.py:30 part/admin.py:144
 msgid "Default Location ID"
-msgstr "Alapértelmezett lokáció ID"
+msgstr "Alapértelmezett készlethely ID"
 
 #: part/admin.py:31
 msgid "Default Supplier ID"
@@ -4581,7 +4572,7 @@ msgstr "Minimum költség"
 
 #: part/admin.py:53 part/models.py:2818
 msgid "Maximum Cost"
-msgstr "Maximális költség"
+msgstr "Maximum költség"
 
 #: part/admin.py:142 part/admin.py:216 stock/admin.py:26 stock/admin.py:98
 msgid "Parent ID"
@@ -4613,11 +4604,11 @@ msgstr "Alkatrészjegyzék szint"
 
 #: part/admin.py:213
 msgid "BOM Item ID"
-msgstr "Beépülő cikk ID"
+msgstr "Alkatrészjegyzék tétel ID"
 
 #: part/admin.py:217
 msgid "Parent IPN"
-msgstr "Szülő cikkszáma"
+msgstr "Szülő IPN"
 
 #: part/admin.py:220 part/models.py:3236
 msgid "Part IPN"
@@ -4705,7 +4696,7 @@ msgstr "Szerkezeti"
 
 #: part/models.py:124
 msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
-msgstr ""
+msgstr "A szerkezeti alkatrész kategóriákhoz nem lehet direktben alkatrészeket hozzáadni, csak az alkategóriáikhoz."
 
 #: part/models.py:128
 msgid "Default keywords"
@@ -4725,7 +4716,7 @@ msgstr "Ikon (opcionális)"
 
 #: part/models.py:153
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
-msgstr "Nem lehet az alkatrészkategóriát szerkezeti kategóriává változtatni, mert már vannak alkatrészek hozzárendelve!"
+msgstr "Nem lehet az alkatrészkategóriát szerkezeti kategóriává tenni, mert már vannak itt alkatrészek!"
 
 #: part/models.py:159 part/models.py:3177 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
@@ -4893,7 +4884,7 @@ msgstr "Több értékesítése"
 
 #: part/models.py:2729
 msgid "Currency used to cache pricing calculations"
-msgstr ""
+msgstr "Árszámítások gyorstárazásához használt pénznem"
 
 #: part/models.py:2734
 msgid "Updated"
@@ -4905,123 +4896,123 @@ msgstr "Legutóbbi ár frissítés időpontja"
 
 #: part/models.py:2752
 msgid "Minimum BOM Cost"
-msgstr "Minimum beépülő alkatrész költség"
+msgstr "Minimum alkatrészjegyzék költség"
 
 #: part/models.py:2753
 msgid "Minimum cost of component parts"
-msgstr ""
+msgstr "Összetevők minimum költsége"
 
 #: part/models.py:2758
 msgid "Maximum BOM Cost"
-msgstr "Maximum beépülő alkatrész költség"
+msgstr "Maximum alkatrészjegyzék költség"
 
 #: part/models.py:2759
 msgid "Maximum cost of component parts"
-msgstr ""
+msgstr "Összetevők maximum költsége"
 
 #: part/models.py:2764
 msgid "Minimum Purchase Cost"
-msgstr ""
+msgstr "Minimum beszerzési ár"
 
 #: part/models.py:2765
 msgid "Minimum historical purchase cost"
-msgstr ""
+msgstr "Eddigi minimum beszerzési költség"
 
 #: part/models.py:2770
 msgid "Maximum Purchase Cost"
-msgstr ""
+msgstr "Maximum beszerzési ár"
 
 #: part/models.py:2771
 msgid "Maximum historical purchase cost"
-msgstr ""
+msgstr "Eddigi maximum beszerzési költség"
 
 #: part/models.py:2776
 msgid "Minimum Internal Price"
-msgstr ""
+msgstr "Minimum belső ár"
 
 #: part/models.py:2777
 msgid "Minimum cost based on internal price breaks"
-msgstr ""
+msgstr "Minimum költség a belső ársávok alapján"
 
 #: part/models.py:2782
 msgid "Maximum Internal Price"
-msgstr ""
+msgstr "Maximum belső ár"
 
 #: part/models.py:2783
 msgid "Maximum cost based on internal price breaks"
-msgstr ""
+msgstr "Maximum költség a belső ársávok alapján"
 
 #: part/models.py:2788
 msgid "Minimum Supplier Price"
-msgstr ""
+msgstr "Minimum beszállítói ár"
 
 #: part/models.py:2789
 msgid "Minimum price of part from external suppliers"
-msgstr ""
+msgstr "Minimum alkatrész ár a beszállítóktól"
 
 #: part/models.py:2794
 msgid "Maximum Supplier Price"
-msgstr ""
+msgstr "Maximum beszállítói ár"
 
 #: part/models.py:2795
 msgid "Maximum price of part from external suppliers"
-msgstr ""
+msgstr "Maximum alkatrész ár a beszállítóktól"
 
 #: part/models.py:2800
 msgid "Minimum Variant Cost"
-msgstr ""
+msgstr "Minimum alkatrészváltozat ár"
 
 #: part/models.py:2801
 msgid "Calculated minimum cost of variant parts"
-msgstr ""
+msgstr "Alkatrészváltozatok számolt minimum költsége"
 
 #: part/models.py:2806
 msgid "Maximum Variant Cost"
-msgstr ""
+msgstr "Maximum alkatrészváltozat ár"
 
 #: part/models.py:2807
 msgid "Calculated maximum cost of variant parts"
-msgstr ""
+msgstr "Alkatrészváltozatok számolt maximum költsége"
 
 #: part/models.py:2813
 msgid "Calculated overall minimum cost"
-msgstr ""
+msgstr "Számított általános minimum költség"
 
 #: part/models.py:2819
 msgid "Calculated overall maximum cost"
-msgstr ""
+msgstr "Számított általános maximum költség"
 
 #: part/models.py:2824
 msgid "Minimum Sale Price"
-msgstr ""
+msgstr "Minimum eladási ár"
 
 #: part/models.py:2825
 msgid "Minimum sale price based on price breaks"
-msgstr ""
+msgstr "Minimum eladási ár az ársávok alapján"
 
 #: part/models.py:2830
 msgid "Maximum Sale Price"
-msgstr ""
+msgstr "Maximum eladási ár"
 
 #: part/models.py:2831
 msgid "Maximum sale price based on price breaks"
-msgstr ""
+msgstr "Maximum eladási ár az ársávok alapján"
 
 #: part/models.py:2836
 msgid "Minimum Sale Cost"
-msgstr ""
+msgstr "Minimum eladási költség"
 
 #: part/models.py:2837
 msgid "Minimum historical sale price"
-msgstr ""
+msgstr "Eddigi minimum eladási ár"
 
 #: part/models.py:2842
 msgid "Maximum Sale Cost"
-msgstr ""
+msgstr "Maximum eladási költség"
 
 #: part/models.py:2843
 msgid "Maximum historical sale price"
-msgstr ""
+msgstr "Eddigi maximum eladási ár"
 
 #: part/models.py:2979
 msgid "Test templates can only be created for trackable parts"
@@ -5170,7 +5161,7 @@ msgstr "Fogyóeszköz"
 
 #: part/models.py:3336
 msgid "This BOM item is consumable (it is not tracked in build orders)"
-msgstr "Ez a BOM tétel fogyóeszköz (készlete nincs követve a gyártásban)"
+msgstr "Ez az alkatrészjegyzék tétel fogyóeszköz (készlete nincs követve a gyártásban)"
 
 #: part/models.py:3340 part/templates/part/upload_bom.html:55
 msgid "Overage"
@@ -5266,11 +5257,11 @@ msgstr "Beszerzési pénzneme ennek a készlet tételnek"
 
 #: part/serializers.py:543
 msgid "Update"
-msgstr ""
+msgstr "Frissítés"
 
 #: part/serializers.py:544
 msgid "Update pricing for this part"
-msgstr ""
+msgstr "Alkatrész árak frissítése"
 
 #: part/serializers.py:854
 msgid "Select part to copy BOM from"
@@ -5794,7 +5785,7 @@ msgstr "Minimális készlet"
 #: templates/js/translated/pricing.js:124
 #: templates/js/translated/pricing.js:762
 msgid "Price Range"
-msgstr ""
+msgstr "Ártartomány"
 
 #: part/templates/part/part_base.html:345
 msgid "Latest Serial Number"
@@ -5815,7 +5806,7 @@ msgstr "Számítás"
 
 #: part/templates/part/part_base.html:509
 msgid "Remove associated image from this part"
-msgstr ""
+msgstr "Alkatrészhez rendelt kép eltávolítása"
 
 #: part/templates/part/part_base.html:561
 msgid "No matching images found"
@@ -5828,7 +5819,7 @@ msgstr "Részletek elrejtése"
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:78
 #: part/templates/part/prices.html:238 templates/js/translated/pricing.js:218
 msgid "Supplier Pricing"
-msgstr "Beszállító árazás"
+msgstr "Beszállítói ár"
 
 #: part/templates/part/part_pricing.html:26
 #: part/templates/part/part_pricing.html:52
@@ -5904,11 +5895,11 @@ msgstr "Válassz a meglévő képek közül"
 
 #: part/templates/part/prices.html:11
 msgid "Pricing Overview"
-msgstr ""
+msgstr "Ár áttekintés"
 
 #: part/templates/part/prices.html:14
 msgid "Refresh Part Pricing"
-msgstr ""
+msgstr "Árazás frissítése"
 
 #: part/templates/part/prices.html:25 stock/admin.py:106
 #: stock/templates/stock/item_base.html:440
@@ -5919,7 +5910,7 @@ msgstr "Utoljára módosítva"
 
 #: part/templates/part/prices.html:34 part/templates/part/prices.html:126
 msgid "Price Category"
-msgstr ""
+msgstr "Árkategória"
 
 #: part/templates/part/prices.html:35 part/templates/part/prices.html:127
 msgid "Minimum"
@@ -5931,31 +5922,31 @@ msgstr "Maximum"
 
 #: part/templates/part/prices.html:49 part/templates/part/prices.html:185
 msgid "Internal Pricing"
-msgstr ""
+msgstr "Belső árazás"
 
 #: part/templates/part/prices.html:64 part/templates/part/prices.html:217
 msgid "Purchase History"
-msgstr ""
+msgstr "Beszerzési előzmények"
 
 #: part/templates/part/prices.html:103 part/templates/part/prices.html:286
 msgid "Variant Pricing"
-msgstr ""
+msgstr "Alkatrészváltozat árazás"
 
 #: part/templates/part/prices.html:111
 msgid "Overall Pricing"
-msgstr ""
+msgstr "Általános árazás"
 
 #: part/templates/part/prices.html:155 part/templates/part/prices.html:338
 msgid "Sale History"
-msgstr ""
+msgstr "Eladási előzmények"
 
 #: part/templates/part/prices.html:168
 msgid "Sale price data is not available for this part"
-msgstr ""
+msgstr "Nincsenek eladási ár adatok ehhez az alkatrészhez"
 
 #: part/templates/part/prices.html:175
 msgid "Price range data is not available for this part."
-msgstr ""
+msgstr "Nincsenek ársáv adatok ehhez az alkatrészhez."
 
 #: part/templates/part/prices.html:186 part/templates/part/prices.html:218
 #: part/templates/part/prices.html:239 part/templates/part/prices.html:263
@@ -5966,7 +5957,7 @@ msgstr "Ugrás az áttekintéshez"
 
 #: part/templates/part/prices.html:191
 msgid "Add Internal Price Break"
-msgstr "Belső árlépcső hozzáadása"
+msgstr "Belső ársáv hozzáadása"
 
 #: part/templates/part/prices.html:309
 msgid "Sale Pricing"
@@ -5974,7 +5965,7 @@ msgstr "Eladási ár"
 
 #: part/templates/part/prices.html:315
 msgid "Add Sell Price Break"
-msgstr ""
+msgstr "Eladási ársáv hozzáadása"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:639
 #: templates/js/translated/part.js:1362 templates/js/translated/part.js:1364
@@ -6424,7 +6415,7 @@ msgstr "Hely ID"
 
 #: stock/admin.py:24 stock/admin.py:91
 msgid "Location Name"
-msgstr ""
+msgstr "Hely neve"
 
 #: stock/admin.py:28 stock/templates/stock/location.html:123
 #: stock/templates/stock/location.html:129
@@ -6433,7 +6424,7 @@ msgstr "Hely elérési út"
 
 #: stock/admin.py:83
 msgid "Stock Item ID"
-msgstr ""
+msgstr "Készlet tétel ID"
 
 #: stock/admin.py:92 templates/js/translated/model_renderers.js:418
 msgid "Supplier Part ID"
@@ -6441,15 +6432,15 @@ msgstr "Beszállítói cikkszám"
 
 #: stock/admin.py:93
 msgid "Supplier ID"
-msgstr "Beszállító azonosító"
+msgstr "Beszállító ID"
 
 #: stock/admin.py:94
 msgid "Supplier Name"
-msgstr ""
+msgstr "Beszállító neve"
 
 #: stock/admin.py:95
 msgid "Customer ID"
-msgstr ""
+msgstr "Vevő ID"
 
 #: stock/admin.py:96 stock/models.py:674
 #: stock/templates/stock/item_base.html:359
@@ -6462,11 +6453,11 @@ msgstr "Gyártás ID"
 
 #: stock/admin.py:99
 msgid "Sales Order ID"
-msgstr ""
+msgstr "Vevői rendelés ID"
 
 #: stock/admin.py:100
 msgid "Purchase Order ID"
-msgstr "Vevői megrendelés azonosító"
+msgstr "Vevői rendelés azonosító"
 
 #: stock/admin.py:107 templates/js/translated/stock.js:1904
 msgid "Stocktake"
@@ -6501,15 +6492,15 @@ msgstr "Tulajdonos kiválasztása"
 
 #: stock/models.py:114
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
-msgstr ""
+msgstr "A szerkezeti raktári helyekre nem lehet direktben raktározni, csak az al-helyekre."
 
 #: stock/models.py:157
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
-msgstr ""
+msgstr "Nem lehet ezt a raktári helyet szerkezetivé tenni, mert már vannak itt tételek!"
 
 #: stock/models.py:524
 msgid "Stock items cannot be located into structural stock locations!"
-msgstr ""
+msgstr "A szerkezeti raktári helyre nem lehet készletet felvenni!"
 
 #: stock/models.py:549 stock/serializers.py:97
 msgid "Stock item cannot be created for virtual parts"
@@ -8049,16 +8040,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -8515,7 +8504,7 @@ msgstr "Fájlfomátum kiválasztása"
 
 #: templates/js/translated/bom.js:320
 msgid "Multi Level BOM"
-msgstr "Többszintű alkatrészlista"
+msgstr "Többszintű alkatrészjegyzék"
 
 #: templates/js/translated/bom.js:321
 msgid "Include BOM data for subassemblies"
@@ -8563,11 +8552,11 @@ msgstr "Beszállítói adatok megjelenítése az exportált alkatrészjegyzékbe
 
 #: templates/js/translated/bom.js:358
 msgid "Include Pricing Data"
-msgstr ""
+msgstr "Ár adatokkal együtt"
 
 #: templates/js/translated/bom.js:359
 msgid "Include part pricing data in exported BOM"
-msgstr ""
+msgstr "Ár adatok megjelenítése az exportált alkatrészjegyzékben"
 
 #: templates/js/translated/bom.js:550
 msgid "Remove substitute part"
@@ -8603,7 +8592,7 @@ msgstr "Töröljük a kiválasztott alkatrészjegyzék tételeket?"
 
 #: templates/js/translated/bom.js:868
 msgid "Load BOM for subassembly"
-msgstr "BOM betöltése az al-gyártmányhoz"
+msgstr "Alkatrészjegyzék betöltése az al-gyártmányhoz"
 
 #: templates/js/translated/bom.js:878
 msgid "Substitutes Available"
@@ -8623,15 +8612,15 @@ msgstr "Alkatrészjegyzék megtekintése"
 
 #: templates/js/translated/bom.js:1094
 msgid "BOM pricing is complete"
-msgstr ""
+msgstr "Alkatrészjegyzék árazása teljes"
 
 #: templates/js/translated/bom.js:1099
 msgid "BOM pricing is incomplete"
-msgstr ""
+msgstr "Alkatrészjegyzék árazása nem teljes"
 
 #: templates/js/translated/bom.js:1106
 msgid "No pricing available"
-msgstr ""
+msgstr "Nincsenek árak"
 
 #: templates/js/translated/bom.js:1137 templates/js/translated/build.js:1917
 #: templates/js/translated/order.js:3932
@@ -8820,7 +8809,7 @@ msgstr "Lefoglalt készlet"
 
 #: templates/js/translated/build.js:1282
 msgid "No tracked BOM items for this build"
-msgstr "Nincsenek követett BOM tételek ehhez a gyártáshoz"
+msgstr "Nincsenek követett alkatrészjegyzék tételek ehhez a gyártáshoz"
 
 #: templates/js/translated/build.js:1304
 msgid "Completed Tests"
@@ -8924,7 +8913,7 @@ msgstr "A készlet automatikusan lefoglalásra kerül ehhez a gyártási utasít
 
 #: templates/js/translated/build.js:2404
 msgid "If a location is specified, stock will only be allocated from that location"
-msgstr ""
+msgstr "Ha egy készlet hely meg van adva, akkor készlet csak arról a helyről lesz foglalva"
 
 #: templates/js/translated/build.js:2405
 msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
@@ -9079,16 +9068,16 @@ msgstr "Beszállítói alkatrész törlése"
 #: templates/js/translated/company.js:1112
 #: templates/js/translated/pricing.js:423
 msgid "Delete Price Break"
-msgstr "Árlépcső törlése"
+msgstr "Ársáv törlése"
 
 #: templates/js/translated/company.js:1128
 #: templates/js/translated/pricing.js:437
 msgid "Edit Price Break"
-msgstr "Árlépcső szerkesztése"
+msgstr "Ársáv szerkesztése"
 
 #: templates/js/translated/company.js:1145
 msgid "No price break information found"
-msgstr "Nincs árlépcső információ"
+msgstr "Nincs ársáv információ"
 
 #: templates/js/translated/company.js:1174
 msgid "Last updated"
@@ -9096,11 +9085,11 @@ msgstr "Utoljára módosítva"
 
 #: templates/js/translated/company.js:1180
 msgid "Edit price break"
-msgstr "Árlépcső szerkesztése"
+msgstr "Ársáv szerkesztése"
 
 #: templates/js/translated/company.js:1181
 msgid "Delete price break"
-msgstr "Árlépcső törlése"
+msgstr "Ársáv törlése"
 
 #: templates/js/translated/filters.js:178
 #: templates/js/translated/filters.js:441
@@ -10127,15 +10116,15 @@ msgstr "A plugin telepítve lett"
 
 #: templates/js/translated/pricing.js:54
 msgid "No BOM data available"
-msgstr ""
+msgstr "Nincs alkatrészjegyzék infomáció"
 
 #: templates/js/translated/pricing.js:196
 msgid "No supplier pricing data available"
-msgstr ""
+msgstr "Nincs beszállítói árinfomáció"
 
 #: templates/js/translated/pricing.js:305
 msgid "No price break data available"
-msgstr ""
+msgstr "Nincsenek ársáv adatok"
 
 #: templates/js/translated/pricing.js:361
 #, python-brace-format
@@ -10149,27 +10138,27 @@ msgstr "${human_name} törlése"
 
 #: templates/js/translated/pricing.js:480
 msgid "No purchase history data available"
-msgstr ""
+msgstr "Nincsenek beszerzési ár előzmények"
 
 #: templates/js/translated/pricing.js:502
 msgid "Purchase Price History"
-msgstr ""
+msgstr "Beszerzési ár előzmények"
 
 #: templates/js/translated/pricing.js:602
 msgid "No sales history data available"
-msgstr ""
+msgstr "Nincsenek eladási ár előzmények"
 
 #: templates/js/translated/pricing.js:624
 msgid "Sale Price History"
-msgstr ""
+msgstr "Eladási ár előzmények"
 
 #: templates/js/translated/pricing.js:713
 msgid "No variant data available"
-msgstr ""
+msgstr "Nincs alkatrészváltozat infomáció"
 
 #: templates/js/translated/pricing.js:753
 msgid "Variant Part"
-msgstr ""
+msgstr "Alkatrészváltozat"
 
 #: templates/js/translated/report.js:67
 msgid "items selected"
@@ -10271,7 +10260,7 @@ msgstr "Biztosan törölni szeretnéd ezt a készlet helyet?"
 
 #: templates/js/translated/stock.js:184
 msgid "Move to parent stock location"
-msgstr ""
+msgstr "Szülő készlet helyre mozgatás"
 
 #: templates/js/translated/stock.js:193
 msgid "Delete Stock Location"
@@ -10279,11 +10268,11 @@ msgstr "Készlethely törlése"
 
 #: templates/js/translated/stock.js:197
 msgid "Action for stock items in this stock location"
-msgstr ""
+msgstr "Műveletek az ezen a helyen lévő tételekhez"
 
 #: templates/js/translated/stock.js:202
 msgid "Action for sub-locations"
-msgstr ""
+msgstr "Műveletek az al-helyekhez"
 
 #: templates/js/translated/stock.js:250
 msgid "This part cannot be serialized"
@@ -10653,7 +10642,7 @@ msgstr "Készlet változatok engedélyezése"
 #: templates/js/translated/table_filters.js:92
 #: templates/js/translated/table_filters.js:508
 msgid "Has Pricing"
-msgstr ""
+msgstr "Van árazás"
 
 #: templates/js/translated/table_filters.js:130
 #: templates/js/translated/table_filters.js:203
@@ -11192,3 +11181,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
