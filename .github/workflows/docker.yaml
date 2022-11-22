@@ -57,10 +57,10 @@ jobs:
         run: |
           docker-compose run inventree-dev-server invoke update
           docker-compose run inventree-dev-server invoke setup-dev
-      - name: Run Unit Tests
-        run: |
           docker-compose up -d
           docker-compose run inventree-dev-server invoke wait
+      - name: Run Unit Tests
+        run: |
           docker-compose run inventree-dev-server invoke test
           docker-compose down
       - name: Check Data Directory
