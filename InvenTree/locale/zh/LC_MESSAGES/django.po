@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-22 12:29+0000\n"
-"PO-Revision-Date: 2022-11-21 15:36\n"
+"POT-Creation-Date: 2022-11-22 05:30+0000\n"
+"PO-Revision-Date: 2022-11-22 15:52\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -2034,20 +2034,16 @@ msgid "Include supplier price breaks in overall pricing calculations"
 msgstr ""
 
 #: common/models.py:1109
-#, fuzzy
-#| msgid "Purchase Orders"
 msgid "Purchase History Override"
-msgstr "采购订单"
+msgstr ""
 
 #: common/models.py:1110
 msgid "Historical purchase order pricing overrides supplier price breaks"
 msgstr ""
 
 #: common/models.py:1116
-#, fuzzy
-#| msgid "Part Pricing"
 msgid "Use Variant Pricing"
-msgstr "商品价格"
+msgstr ""
 
 #: common/models.py:1117
 msgid "Include variant pricing in overall pricing calculations"
@@ -8043,16 +8039,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -11186,3 +11180,4 @@ msgstr "编辑项目权限"
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr "删除项目权限"
+
