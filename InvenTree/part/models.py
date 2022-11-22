@@ -2571,10 +2571,17 @@ class PartPricing(models.Model):
         variant_min = None
         variant_max = None
 
+        active_only = InvenTreeSetting.get_setting('PRICING_ACTIVE_VARIANTS', False)
+
         if self.part.is_template:
             variants = self.part.get_descendants(include_self=False)
 
             for v in variants:
+
+                if active_only and not v.active:
+                    # Ignore inactive variant parts
+                    continue
+
                 v_min = self.convert(v.pricing.overall_min)
                 v_max = self.convert(v.pricing.overall_max)
 
