@@ -2605,19 +2605,21 @@ class PartPricing(models.Model):
             self.bom_cost_min,
             self.purchase_cost_min,
             self.internal_cost_min,
-            self.variant_cost_min
         ]
 
         max_costs = [
             self.bom_cost_max,
             self.purchase_cost_max,
             self.internal_cost_max,
-            self.variant_cost_max
         ]
 
         if InvenTreeSetting.get_setting('PRICING_USE_SUPPLIER_PRICING', True):
             min_costs.append(self.supplier_price_min)
             max_costs.append(self.supplier_price_max)
+
+        if InvenTreeSetting.get_setting('PRICING_USE_VARIANT_PRICING', True):
+            min_costs.append(self.variant_cost_min)
+            max_costs.append(self.variant_cost_max)
 
         # Calculate overall minimum cost
         for cost in min_costs:
