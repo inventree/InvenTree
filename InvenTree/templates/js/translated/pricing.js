@@ -695,6 +695,11 @@ function loadVariantPricingChart(options={}) {
 
     options.params.ancestor = part;
 
+    if (global_settings.PRICING_ACTIVE_VARIANTS) {
+        // Filter variants by "active" status
+        options.params.active = true;
+    }
+
     table.inventreeTable({
         url: '{% url "api-part-list" %}',
         name: 'variantpricingtable',

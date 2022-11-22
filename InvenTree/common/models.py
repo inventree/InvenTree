@@ -1105,6 +1105,20 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'PRICING_USE_VARIANT_PRICING': {
+            'name': _('Use Variant Pricing'),
+            'description': _('Include variant pricing in overall pricing calculations'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PRICING_ACTIVE_VARIANTS': {
+            'name': _('Active Variants Only'),
+            'description': _('Only use active variant parts for calculating variant pricing'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PRICING_UPDATE_DAYS': {
             'name': _('Pricing Rebuild Time'),
             'description': _('Number of days before part pricing is automatically updated'),
