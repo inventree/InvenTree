@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-22 12:29+0000\n"
-"PO-Revision-Date: 2022-11-21 15:36\n"
+"POT-Creation-Date: 2022-11-22 05:30+0000\n"
+"PO-Revision-Date: 2022-11-22 15:52\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -2034,30 +2034,24 @@ msgid "Include supplier price breaks in overall pricing calculations"
 msgstr ""
 
 #: common/models.py:1109
-#, fuzzy
-#| msgid "Purchase Orders"
 msgid "Purchase History Override"
-msgstr "Satın Alma Emirleri"
+msgstr ""
 
 #: common/models.py:1110
 msgid "Historical purchase order pricing overrides supplier price breaks"
 msgstr ""
 
 #: common/models.py:1116
-#, fuzzy
-#| msgid "Supplier Part Pricing"
 msgid "Use Variant Pricing"
-msgstr "Tedarikçi Parçası Fiyatlandırması"
+msgstr ""
 
 #: common/models.py:1117
 msgid "Include variant pricing in overall pricing calculations"
 msgstr ""
 
 #: common/models.py:1123
-#, fuzzy
-#| msgid "Include Variants"
 msgid "Active Variants Only"
-msgstr "Çeşitleri Dahil Et"
+msgstr ""
 
 #: common/models.py:1124
 msgid "Only use active variant parts for calculating variant pricing"
@@ -8045,16 +8039,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -11188,3 +11180,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
