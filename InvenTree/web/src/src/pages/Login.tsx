@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Center, Chip, Container, Stack } from '@mantine/core';
+import { Center, Container, Select, Stack } from '@mantine/core';
 import { useAuth } from '../contex/AuthContext';
 import { AuthenticationForm } from '../components/AuthenticationForm';
 import { useLocalState } from '../contex/LocalState';
@@ -26,6 +26,9 @@ export function Login() {
       ? 'No selection'
       : hostOptions[hostKey].name;
 
+  const [editing, setEditing] = useToggle([false, true] as const);
+  const hostOptionsSelect = Object.keys(hostOptions).map((key) => ({ value: key, label: hostOptions[key].name }));
+
   function Login(username: string, password: string) {
     handleLogin(username, password).then(() => {
       useLocalState.setState({ lastUsername: username });
@@ -39,29 +42,11 @@ export function Login() {
     console.log(name, username, password);
   }
 
-  const [editing, setEditing] = useToggle([false, true] as const);
-
   return (
     <Center mih="100vh">
-      <Stack>
-        {editing ? (
-          <Center>
-            <Chip.Group
-              position="center"
-              m="md"
-              multiple={false}
-              value={hostKey}
-              onChange={changeHost}
-            >
-              {Object.keys(hostOptions).map((key) => (
-                <Chip key={key} value={key}>
-                  {hostOptions[key].name}
-                </Chip>
-              ))}
-            </Chip.Group>
-          </Center>
-        ) : null}
-        <Container w="md">
+      <Container w="md">
+        <Stack>
+          {editing ? (<Select value={hostKey} onChange={changeHost} data={hostOptionsSelect} />) : null}
           <AuthenticationForm
             Login={Login}
             Register={Register}
@@ -70,8 +55,8 @@ export function Login() {
             editing={editing}
             setEditing={setEditing}
           />
-        </Container>
-      </Stack>
+        </Stack>
+      </Container>
     </Center>
   );
 }
