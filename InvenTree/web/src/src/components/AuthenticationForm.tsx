@@ -12,17 +12,22 @@ import {
   Stack,
   Center
 } from '@mantine/core';
+import { EditButton } from './items/EditButton';
 
 export function AuthenticationForm({
   Login,
   Register,
   hostname,
-  lastUsername
+  lastUsername,
+  editing,
+  setEditing
 }: {
   Login: (username: string, password: string) => void;
   Register: (name: string, username: string, password: string) => void;
   hostname: string;
   lastUsername: string;
+  editing: boolean;
+  setEditing: (value?: React.SetStateAction<boolean> | undefined) => void;
 }) {
   const [action, toggleAction] = useToggle(['login', 'register']);
   const form = useForm({
@@ -43,8 +48,7 @@ export function AuthenticationForm({
 
   return (
     <Paper radius="md" p="xl" withBorder>
-      <Text size="lg" weight={500}>
-        Welcome to {hostname}, {action} with
+      <Text size="lg" weight={500}>Welcome {action} to <Group>{hostname}{EditButton(setEditing, editing)}</Group>
       </Text>
       <Center>
         <Group grow mb="md" mt="md">

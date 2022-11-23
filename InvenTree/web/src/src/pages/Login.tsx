@@ -4,6 +4,7 @@ import { useAuth } from '../contex/AuthContext';
 import { AuthenticationForm } from '../components/AuthenticationForm';
 import { useLocalState } from '../contex/LocalState';
 import { fetchSession } from '../App';
+import { useToggle } from '@mantine/hooks';
 
 export function Login() {
   const { handleLogin } = useAuth();
@@ -18,6 +19,7 @@ export function Login() {
   );
   function changeHost(newVal: string) {
     setHostValue(hostOptions[newVal].host, newVal);
+    setEditing(false);
   }
   const hostname =
     hostOptions[hostKey] === undefined
@@ -37,30 +39,36 @@ export function Login() {
     console.log(name, username, password);
   }
 
+  const [editing, setEditing] = useToggle([false, true] as const);
+
   return (
     <Center mih="100vh">
       <Stack>
-        <Center>
-          <Chip.Group
-            position="center"
-            m="md"
-            multiple={false}
-            value={hostKey}
-            onChange={changeHost}
-          >
-            {Object.keys(hostOptions).map((key) => (
-              <Chip key={key} value={key}>
-                {hostOptions[key].name}
-              </Chip>
-            ))}
-          </Chip.Group>
-        </Center>
+        {editing ? (
+          <Center>
+            <Chip.Group
+              position="center"
+              m="md"
+              multiple={false}
+              value={hostKey}
+              onChange={changeHost}
+            >
+              {Object.keys(hostOptions).map((key) => (
+                <Chip key={key} value={key}>
+                  {hostOptions[key].name}
+                </Chip>
+              ))}
+            </Chip.Group>
+          </Center>
+        ) : null}
         <Container w="md">
           <AuthenticationForm
             Login={Login}
             Register={Register}
             hostname={hostname}
             lastUsername={lastUsername}
+            editing={editing}
+            setEditing={setEditing}
           />
         </Container>
       </Stack>
