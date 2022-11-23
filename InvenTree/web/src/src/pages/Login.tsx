@@ -59,7 +59,7 @@ export function Login() {
       return null;
     return <Group>
       <Select value={hostKey} onChange={changeHost} data={hostOptionsSelect} disabled={optionEditing} />
-      {EditButton(setOptionEditing, optionEditing)}
+      {EditButton(setOptionEditing, optionEditing, optionEditing)}
     </Group>
   }
 
