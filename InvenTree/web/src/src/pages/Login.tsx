@@ -77,7 +77,6 @@ export function Login() {
       <Container w="md">
         <Stack>
           <EditHostList />
-          <SelectHost />
           {!HostListEdit &&
             <AuthenticationForm
               Login={Login}
@@ -86,6 +85,7 @@ export function Login() {
               lastUsername={lastUsername}
               editing={hostEdit}
               setEditing={setHostEdit}
+              selectElement={<SelectHost />}
             />
           }
         </Stack>
