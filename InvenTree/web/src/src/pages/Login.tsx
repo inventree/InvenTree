@@ -12,7 +12,7 @@ import { HostList } from '../contex/states';
 export function Login() {
   const { handleLogin } = useAuth();
   const navigate = useNavigate();
-  const [hostKey, setHostValue, hostOptions, lastUsername] = useLocalState(
+  const [hostKey, setHost, hostList, lastUsername] = useLocalState(
     (state) => [
       state.hostKey,
       state.setHost,
@@ -20,18 +20,18 @@ export function Login() {
       state.lastUsername
     ]
   );
-  function changeHost(newVal: string) {
-    setHostValue(hostOptions[newVal].host, newVal);
-    setEditing(false);
+  function changeHost(newHost: string) {
+    setHost(hostList[newHost].host, newHost);
+    setHostEditing(false);
   }
   const hostname =
-    hostOptions[hostKey] === undefined
+    hostList[hostKey] === undefined
       ? 'No selection'
-      : hostOptions[hostKey].name;
+      : hostList[hostKey].name;
 
-  const [editing, setEditing] = useToggle([false, true] as const);
-  const hostOptionsSelect = Object.keys(hostOptions).map((key) => ({ value: key, label: hostOptions[key].name }));
-  const [optionEditing, setOptionEditing] = useToggle([false, true] as const);
+  const [hostEditing, setHostEditing] = useToggle([false, true] as const);
+  const hostListData = Object.keys(hostList).map((key) => ({ value: key, label: hostList[key].name }));
+  const [HostListEditing, setHostListEditing] = useToggle([false, true] as const);
 
   function Login(username: string, password: string) {
     handleLogin(username, password).then(() => {
@@ -46,29 +46,29 @@ export function Login() {
     console.log(name, username, password);
   }
 
-  function SaveOptions(newData: HostList) {
-    useLocalState.setState({ hostList: newData });
-    if (newData[hostKey] === undefined) { setHostValue('', ''); }
-    setOptionEditing();
+  function SaveOptions(newHostList: HostList) {
+    useLocalState.setState({ hostList: newHostList });
+    if (newHostList[hostKey] === undefined) { setHost('', ''); }
+    setHostListEditing();
   }
 
 
   // Subcomponents
-  function HostSelect() {
-    if (!editing)
+  function SelectHost() {
+    if (!hostEditing)
       return null;
     return <Group>
-      <Select value={hostKey} onChange={changeHost} data={hostOptionsSelect} disabled={optionEditing} />
-      {EditButton(setOptionEditing, optionEditing, optionEditing)}
+      <Select value={hostKey} onChange={changeHost} data={hostListData} disabled={HostListEditing} />
+      {EditButton(setHostListEditing, HostListEditing, HostListEditing)}
     </Group>
   }
 
-  function HostOptionEdit() {
-    if (!optionEditing)
+  function EditHostList() {
+    if (!HostListEditing)
       return null;
     return <>
       <Text>Edit host options</Text>
-      <HostOptionsForm data={hostOptions} saveOptions={SaveOptions} />
+      <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
     </>
   }
 
@@ -76,16 +76,16 @@ export function Login() {
     <Center mih="100vh">
       <Container w="md">
         <Stack>
-          <HostOptionEdit />
-          <HostSelect />
-          {!optionEditing &&
+          <EditHostList />
+          <SelectHost />
+          {!HostListEditing &&
             <AuthenticationForm
               Login={Login}
               Register={Register}
               hostname={hostname}
               lastUsername={lastUsername}
-              editing={editing}
-              setEditing={setEditing}
+              editing={hostEditing}
+              setEditing={setHostEditing}
             />
           }
         </Stack>
