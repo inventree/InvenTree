@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import { Center, Container, Group, Select, Stack } from '@mantine/core';
+import { Center, Container, Group, Select, Text, Stack } from '@mantine/core';
 import { useAuth } from '../contex/AuthContext';
 import { AuthenticationForm } from '../components/AuthenticationForm';
 import { useLocalState } from '../contex/LocalState';
 import { fetchSession } from '../App';
 import { useToggle } from '@mantine/hooks';
 import { EditButton } from '../components/items/EditButton';
+import { HostOptionsForm } from '../components/HostOptionsForm';
+import { HostList } from '../contex/states';
 
 export function Login() {
   const { handleLogin } = useAuth();
@@ -44,30 +46,47 @@ export function Login() {
     console.log(name, username, password);
   }
 
+  function SaveOptions(newData: HostList) {
+    useLocalState.setState({ hostList: newData });
+    setOptionEditing();
+  }
+
 
   // Subcomponents
   function HostSelect() {
     if (!editing)
       return null;
     return <Group>
-      <Select value={hostKey} onChange={changeHost} data={hostOptionsSelect} />
+      <Select value={hostKey} onChange={changeHost} data={hostOptionsSelect} disabled={optionEditing} />
       {EditButton(setOptionEditing, optionEditing)}
     </Group>
+  }
+
+  function HostOptionEdit() {
+    if (!optionEditing)
+      return null;
+    return <>
+      <Text>Edit host options</Text>
+      <HostOptionsForm data={hostOptions} saveOptions={SaveOptions} />
+    </>
   }
 
   return (
     <Center mih="100vh">
       <Container w="md">
         <Stack>
+          <HostOptionEdit />
           <HostSelect />
-          <AuthenticationForm
-            Login={Login}
-            Register={Register}
-            hostname={hostname}
-            lastUsername={lastUsername}
-            editing={editing}
-            setEditing={setEditing}
-          />
+          {!optionEditing &&
+            <AuthenticationForm
+              Login={Login}
+              Register={Register}
+              hostname={hostname}
+              lastUsername={lastUsername}
+              editing={editing}
+              setEditing={setEditing}
+            />
+          }
         </Stack>
       </Container>
     </Center>
