@@ -20,19 +20,26 @@ export function Login() {
       state.lastUsername
     ]
   );
-  function changeHost(newHost: string) {
-    setHost(hostList[newHost].host, newHost);
-    setHostEditing(false);
-  }
   const hostname =
     hostList[hostKey] === undefined
       ? 'No selection'
       : hostList[hostKey].name;
-
-  const [hostEditing, setHostEditing] = useToggle([false, true] as const);
+  const [hostEdit, setHostEdit] = useToggle([false, true] as const);
   const hostListData = Object.keys(hostList).map((key) => ({ value: key, label: hostList[key].name }));
-  const [HostListEditing, setHostListEditing] = useToggle([false, true] as const);
+  const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);
 
+  // Data manipulation functions
+  function ChangeHost(newHost: string) {
+    setHost(hostList[newHost].host, newHost);
+    setHostEdit(false);
+  }
+  function SaveOptions(newHostList: HostList) {
+    useLocalState.setState({ hostList: newHostList });
+    if (newHostList[hostKey] === undefined) { setHost('', ''); }
+    setHostListEdit();
+  }
+
+  // Main functions
   function Login(username: string, password: string) {
     handleLogin(username, password).then(() => {
       useLocalState.setState({ lastUsername: username });
@@ -46,25 +53,18 @@ export function Login() {
     console.log(name, username, password);
   }
 
-  function SaveOptions(newHostList: HostList) {
-    useLocalState.setState({ hostList: newHostList });
-    if (newHostList[hostKey] === undefined) { setHost('', ''); }
-    setHostListEditing();
-  }
-
-
   // Subcomponents
   function SelectHost() {
-    if (!hostEditing)
+    if (!hostEdit)
       return null;
     return <Group>
-      <Select value={hostKey} onChange={changeHost} data={hostListData} disabled={HostListEditing} />
-      {EditButton(setHostListEditing, HostListEditing, HostListEditing)}
+      <Select value={hostKey} onChange={ChangeHost} data={hostListData} disabled={HostListEdit} />
+      {EditButton(setHostListEdit, HostListEdit, HostListEdit)}
     </Group>
   }
 
   function EditHostList() {
-    if (!HostListEditing)
+    if (!HostListEdit)
       return null;
     return <>
       <Text>Edit host options</Text>
@@ -78,14 +78,14 @@ export function Login() {
         <Stack>
           <EditHostList />
           <SelectHost />
-          {!HostListEditing &&
+          {!HostListEdit &&
             <AuthenticationForm
               Login={Login}
               Register={Register}
               hostname={hostname}
               lastUsername={lastUsername}
-              editing={hostEditing}
-              setEditing={setHostEditing}
+              editing={hostEdit}
+              setEditing={setHostEdit}
             />
           }
         </Stack>
