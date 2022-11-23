@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { Center, Container, Select, Stack } from '@mantine/core';
+import { Center, Container, Group, Select, Stack } from '@mantine/core';
 import { useAuth } from '../contex/AuthContext';
 import { AuthenticationForm } from '../components/AuthenticationForm';
 import { useLocalState } from '../contex/LocalState';
 import { fetchSession } from '../App';
 import { useToggle } from '@mantine/hooks';
+import { EditButton } from '../components/items/EditButton';
 
 export function Login() {
   const { handleLogin } = useAuth();
@@ -28,6 +29,7 @@ export function Login() {
 
   const [editing, setEditing] = useToggle([false, true] as const);
   const hostOptionsSelect = Object.keys(hostOptions).map((key) => ({ value: key, label: hostOptions[key].name }));
+  const [optionEditing, setOptionEditing] = useToggle([false, true] as const);
 
   function Login(username: string, password: string) {
     handleLogin(username, password).then(() => {
@@ -42,11 +44,22 @@ export function Login() {
     console.log(name, username, password);
   }
 
+
+  // Subcomponents
+  function HostSelect() {
+    if (!editing)
+      return null;
+    return <Group>
+      <Select value={hostKey} onChange={changeHost} data={hostOptionsSelect} />
+      {EditButton(setOptionEditing, optionEditing)}
+    </Group>
+  }
+
   return (
     <Center mih="100vh">
       <Container w="md">
         <Stack>
-          {editing ? (<Select value={hostKey} onChange={changeHost} data={hostOptionsSelect} />) : null}
+          <HostSelect />
           <AuthenticationForm
             Login={Login}
             Register={Register}
