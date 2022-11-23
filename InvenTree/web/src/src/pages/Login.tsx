@@ -48,6 +48,7 @@ export function Login() {
 
   function SaveOptions(newData: HostList) {
     useLocalState.setState({ hostList: newData });
+    if (newData[hostKey] === undefined) { setHostValue('', ''); }
     setOptionEditing();
   }
 

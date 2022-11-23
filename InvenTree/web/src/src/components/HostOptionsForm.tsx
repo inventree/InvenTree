@@ -7,12 +7,18 @@ import { HostList } from '../contex/states';
 
 export function HostOptionsForm({ data, saveOptions }: { data: HostList, saveOptions: (newData: HostList) => void }) {
     const form = useForm({ initialValues: data });
+    function deleteItem(key: string) {
+        const newData = form.values;
+        delete newData[key];
+        form.setValues(newData);
+    }
+
     const fields = Object.entries(form.values).map(([key]) => (
         <Group key={key} mt="xs">
             {form.values[key] !== undefined && (<>
                 <TextInput placeholder="Host" withAsterisk sx={{ flex: 1 }} {...form.getInputProps(`${key}.host`)} />
                 <TextInput placeholder="Host" withAsterisk sx={{ flex: 1 }} {...form.getInputProps(`${key}.name`)} />
-                <ActionIcon color="red" onClick={() => (form.setValues({ ...form.values, [key]: undefined }))}><IconTrash size={16} /></ActionIcon>
+                <ActionIcon color="red" onClick={() => { deleteItem(key); }}><IconTrash size={16} /></ActionIcon>
             </>)}
         </Group >
     ));
