@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Button,
   Container,
   Grid,
@@ -15,9 +14,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { StylishText } from '../../components/items/StylishText';
 import { useStyles } from '../../globalStyle';
 import { useToggle } from '@mantine/hooks';
-import { IconEdit, IconDeviceFloppy } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';
 import { api, queryClient } from '../../App';
+import { EditButton } from '../../components/items/EditButton';
 
 export function Profile() {
   const navigate = useNavigate();
@@ -106,9 +105,7 @@ function UserInfo({ data }: { data: any }) {
     <form onSubmit={form.onSubmit((values) => SaveData(values))}>
       <Group>
         <Text>Userinfo</Text>
-        <ActionIcon onClick={() => setEditing()}>
-          {editing ? <IconDeviceFloppy /> : <IconEdit />}
-        </ActionIcon>
+        {EditButton(setEditing, editing)}
       </Group>
       <Group>
         {editing ? (
