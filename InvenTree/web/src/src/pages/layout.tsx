@@ -7,7 +7,7 @@ import { InvenTreeStyle } from '../globalStyle';
 import { ProtectedRoute } from '../contex/AuthContext';
 
 export default function Layout() {
-  const { classes } = InvenTreeStyle;
+  const { classes } = InvenTreeStyle();
 
   return (
     <ProtectedRoute>
