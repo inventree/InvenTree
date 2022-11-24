@@ -1135,7 +1135,7 @@ class OrderCalendarExport(ICalFeed):
     """
 
     try:
-        instance_url = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', create=False, cache=False)
+        instance_url = InvenTreeSetting.get_setting('INVENTREE_BASE_URL', create=False, cache=False)
     except ProgrammingError:  # pragma: no cover
         # database is not initialized yet
         instance_url = ''
@@ -1261,6 +1261,8 @@ class OrderCalendarExport(ICalFeed):
 
     def item_link(self, item):
         """Set the item link."""
+
+        # Do not use instance_url as here, as the protocol needs to be included
         site_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL")
         return f'{site_url}{item.get_absolute_url()}'
 
@@ -1354,5 +1356,5 @@ order_api_urls = [
     ])),
 
     # API endpoint for subscribing to ICS calendar of purchase/sales orders
-    re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order)/calendar.ics', OrderCalendarExport(), name='calendar'),
+    re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order)/calendar.ics', OrderCalendarExport(), name='api-po-so-calendar'),
 ]
