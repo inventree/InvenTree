@@ -5,10 +5,8 @@ import {
   Group,
   Text,
   Menu,
-  Tabs,
-  Burger
+  Tabs
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import {
   IconLogout,
   IconHeart,
@@ -28,7 +26,6 @@ import { tabs } from '../../defaults';
 
 export function Header() {
   const { classes, theme, cx } = InvenTreeStyle();
-  const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
   const { tabValue } = useParams();
@@ -55,12 +52,6 @@ export function Header() {
             <InvenTreeLogo />
             {hostList[hostKey].name}|{servername}
           </Group>
-          <Burger
-            opened={opened}
-            onClick={toggle}
-            className={classes.burger}
-            size="sm"
-          />
           <Group>
             <ColorToggle />
             <Menu

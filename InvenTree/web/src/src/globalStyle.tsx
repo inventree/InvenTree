@@ -43,12 +43,6 @@ export const InvenTreeStyle = createStyles((theme) => ({
       theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
   },
 
-  burger: {
-    [theme.fn.largerThan('xs')]: {
-      display: 'none'
-    }
-  },
-
   tabs: {
     [theme.fn.smallerThan('sm')]: {
       display: 'none'
