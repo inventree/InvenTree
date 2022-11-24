@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
+from icalendar import Calendar
 from rest_framework import status
 
 import order.models as models
@@ -373,6 +374,36 @@ class PurchaseOrderTest(OrderTest):
 
         order = models.PurchaseOrder.objects.get(pk=1)
         self.assertEqual(order.get_metadata('yam'), 'yum')
+
+    def test_po_calendar(self):
+        """Test the calendar export endpoint"""
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'})
+
+        # Test without completed orders
+        response = self.get(url, expected_code=200, format=None)
+
+        number_orders = len(models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE))
+
+        calendar = Calendar.from_ical(response.content)
+        n_events = 0
+        for component in calendar.walk():
+            if component.name == 'VEVENT':
+                n_events += 1
+
+        self.assertEqual(number_orders, n_events)
+
+        # Test with completed orders
+        response = self.get(url, data={'include_completed': 'True'}, expected_code=200, format=None)
+
+        number_orders = len(models.PurchaseOrder.objects.filter(target_date__isnull=False))
+
+        calendar = Calendar.from_ical(response.content)
+        n_events = 0
+        for component in calendar.walk():
+            if component.name == 'VEVENT':
+                n_events += 1
+
+        self.assertEqual(number_orders, n_events)
 
 
 class PurchaseOrderDownloadTest(OrderTest):
@@ -1010,6 +1041,36 @@ class SalesOrderTest(OrderTest):
 
         order = models.SalesOrder.objects.get(pk=1)
         self.assertEqual(order.get_metadata('xyz'), 'abc')
+
+    def test_so_calendar(self):
+        """Test the calendar export endpoint"""
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'sales-order'})
+
+        # Test without completed orders
+        response = self.get(url, expected_code=200, format=None)
+
+        number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.PENDING))
+
+        calendar = Calendar.from_ical(response.content)
+        n_events = 0
+        for component in calendar.walk():
+            if component.name == 'VEVENT':
+                n_events += 1
+
+        self.assertEqual(number_orders, n_events)
+
+        # Test with completed orders
+        response = self.get(url, data={'include_completed': 'True'}, expected_code=200, format=None)
+
+        number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False))
+
+        calendar = Calendar.from_ical(response.content)
+        n_events = 0
+        for component in calendar.walk():
+            if component.name == 'VEVENT':
+                n_events += 1
+
+        self.assertEqual(number_orders, n_events)
 
 
 class SalesOrderLineItemTest(OrderTest):
