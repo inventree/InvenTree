@@ -252,7 +252,7 @@ class StockItemLabel(LabelTemplate):
             'barcode_data': stock_item.barcode_data,
             'barcode_hash': stock_item.barcode_hash,
             'qr_data': stock_item.format_barcode(brief=True),
-            'qr_url': stock_item.format_barcode(url=True, request=request),
+            'qr_url': request.build_absolute_uri(stock_item.get_absolute_url()),
             'tests': stock_item.testResultMap(),
             'parameters': stock_item.part.parameters_map(),
 
@@ -318,6 +318,6 @@ class PartLabel(LabelTemplate):
             'IPN': part.IPN,
             'revision': part.revision,
             'qr_data': part.format_barcode(brief=True),
-            'qr_url': part.format_barcode(url=True, request=request),
+            'qr_url': request.build_absolute_uri(part.get_absolute_url()),
             'parameters': part.parameters_map(),
         }

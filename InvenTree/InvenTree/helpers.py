@@ -456,7 +456,7 @@ def WrapWithQuotes(text, quote='"'):
     return text
 
 
-def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
+def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
     """Generate a string for a barcode. Adds some global InvenTree parameters.
 
     Args:
@@ -468,29 +468,16 @@ def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
     Returns:
         json string of the supplied data plus some other data
     """
+
     if object_data is None:
         object_data = {}
 
-    url = kwargs.get('url', False)
     brief = kwargs.get('brief', True)
 
     data = {}
 
-    if url:
-        request = object_data.get('request', None)
-        item_url = object_data.get('item_url', None)
-        absolute_url = None
-
-        if request and item_url:
-            absolute_url = request.build_absolute_uri(item_url)
-            # Return URL (No JSON)
-            return absolute_url
-
-        if item_url:
-            # Return URL (No JSON)
-            return item_url
-    elif brief:
-        data[object_name] = object_pk
+    if brief:
+        data[cls_name] = object_pk
     else:
         data['tool'] = 'InvenTree'
         data['version'] = InvenTree.version.inventreeVersion()
@@ -498,7 +485,7 @@ def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
 
         # Ensure PK is included
         object_data['id'] = object_pk
-        data[object_name] = object_data
+        data[cls_name] = object_data
 
     return json.dumps(data, sort_keys=True)
 
@@ -629,6 +616,13 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
     def add_serial(serial):
         """Helper function to check for duplicated values"""
+
+        serial = serial.strip()
+
+        # Ignore blank / emtpy serials
+        if len(serial) == 0:
+            return
+
         if serial in serials:
             add_error(_("Duplicate serial") + f": {serial}")
         else:
@@ -645,6 +639,10 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             return serials
 
     for group in groups:
+
+        # Calculate the "remaining" quantity of serial numbers
+        remaining = expected_quantity - len(serials)
+
         group = group.strip()
 
         if '-' in group:
@@ -680,20 +678,21 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                         group_items.append(b)
                         break
 
-                    elif count > expected_quantity:
+                    elif count > remaining:
                         # More than the allowed number of items
                         break
 
                     elif a_next is None:
                         break
 
-                if len(group_items) > 0 and group_items[0] == a and group_items[-1] == b:
+                if len(group_items) > remaining:
+                    add_error(_("Group range {g} exceeds allowed quantity ({q})".format(g=group, q=expected_quantity)))
+                elif len(group_items) > 0 and group_items[0] == a and group_items[-1] == b:
                     # In this case, the range extraction looks like it has worked
                     for item in group_items:
                         add_serial(item)
                 else:
-                    add_serial(group)
-                    # add_error(_("Invalid group range: {g}").format(g=group))
+                    add_error(_("Invalid group range: {g}").format(g=group))
 
             else:
                 # In the case of a different number of hyphens, simply add the entire group
@@ -715,7 +714,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 continue
             elif len(items) == 2:
                 try:
-                    if items[1] not in ['', None]:
+                    if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
                     add_error(_("Invalid group sequence: {g}").format(g=group))
@@ -745,7 +744,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     if len(serials) == 0:
         raise ValidationError([_("No serial numbers found")])
 
-    if len(serials) != expected_quantity:
+    if len(errors) == 0 and len(serials) != expected_quantity:
         raise ValidationError([_("Number of unique serial numbers ({s}) must match quantity ({q})").format(s=len(serials), q=expected_quantity)])
 
     return serials
@@ -951,16 +950,27 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
     return cleaned
 
 
-def remove_non_printable_characters(value: str, remove_ascii=True, remove_unicode=True):
+def remove_non_printable_characters(value: str, remove_newline=True, remove_ascii=True, remove_unicode=True):
     """Remove non-printable / control characters from the provided string"""
+
+    cleaned = value
 
     if remove_ascii:
         # Remove ASCII control characters
-        cleaned = regex.sub(u'[\x01-\x1F]+', '', value)
+        # Note that we do not sub out 0x0A (\n) here, it is done separately below
+        cleaned = regex.sub(u'[\x01-\x09]+', '', cleaned)
+        cleaned = regex.sub(u'[\x0b-\x1F]+', '', cleaned)
+
+    if remove_newline:
+        cleaned = regex.sub(u'[\x0a]+', '', cleaned)
 
     if remove_unicode:
         # Remove Unicode control characters
-        cleaned = regex.sub(u'[^\P{C}]+', '', value)
+        if remove_newline:
+            cleaned = regex.sub(u'[^\P{C}]+', '', cleaned)
+        else:
+            # Use 'negative-lookahead' to exclude newline character
+            cleaned = regex.sub(u'(?![\x0A])[^\P{C}]+', '', cleaned)
 
     return cleaned
 

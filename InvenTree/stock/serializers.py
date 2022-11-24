@@ -65,6 +65,10 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'barcode_hash',
         ]
 
+        read_only_fields = [
+            'barcode_hash',
+        ]
+
     def validate_serial(self, value):
         """Make sure serial is not to big."""
         if abs(extract_int(value)) > 0x7fffffff:
@@ -167,7 +171,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
-        max_digits=19, decimal_places=4,
+        max_digits=19, decimal_places=6,
         allow_null=True,
         help_text=_('Purchase price of this stock item'),
     )
@@ -178,16 +182,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         label=_('Currency'),
         help_text=_('Purchase currency of this stock item'),
     )
-
-    purchase_price_string = serializers.SerializerMethodField()
-
-    def get_purchase_price_string(self, obj):
-        """Return purchase price as string."""
-        if obj.purchase_price:
-            obj.purchase_price.decimal_places_display = 4
-            return str(obj.purchase_price)
-
-        return '-'
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
@@ -249,7 +243,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'updated',
             'purchase_price',
             'purchase_price_currency',
-            'purchase_price_string',
         ]
 
         """
@@ -258,6 +251,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """
         read_only_fields = [
             'allocated',
+            'barcode_hash',
             'stocktake_date',
             'stocktake_user',
             'updated',
@@ -602,6 +596,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         model = StockLocation
         fields = [
             'pk',
+            'barcode_hash',
             'url',
             'name',
             'level',
@@ -611,6 +606,11 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'items',
             'owner',
             'icon',
+            'structural',
+        ]
+
+        read_only_fields = [
+            'barcode_hash',
         ]
 
 

@@ -8,6 +8,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q, Sum, UniqueConstraint
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -18,11 +20,14 @@ import common.models
 import common.settings
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.ready
+import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin
 from InvenTree.status_codes import PurchaseOrderStatus
+from plugin.models import MetadataMixin
 
 
 def rename_company_image(instance, filename):
@@ -50,7 +55,7 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-class Company(models.Model):
+class Company(MetadataMixin, models.Model):
     """A Company object represents an external company.
 
     It may be a supplier or a customer or a manufacturer (or a combination)
@@ -100,7 +105,7 @@ class Company(models.Model):
         blank=True,
     )
 
-    website = models.URLField(
+    website = InvenTreeURLField(
         blank=True,
         verbose_name=_('Website'),
         help_text=_('Company website URL')
@@ -690,3 +695,23 @@ class SupplierPriceBreak(common.models.PriceBreak):
     def __str__(self):
         """Format a string representation of a SupplierPriceBreak instance"""
         return f'{self.part.SKU} - {self.price} @ {self.quantity}'
+
+
+@receiver(post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break')
+def after_save_supplier_price(sender, instance, created, **kwargs):
+    """Callback function when a SupplierPriceBreak is created or updated"""
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+
+        if instance.part and instance.part.part:
+            instance.part.part.pricing.schedule_for_update()
+
+
+@receiver(post_delete, sender=SupplierPriceBreak, dispatch_uid='post_delete_supplier_price_break')
+def after_delete_supplier_price(sender, instance, **kwargs):
+    """Callback function when a SupplierPriceBreak is deleted"""
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+
+        if instance.part and instance.part.part:
+            instance.part.part.pricing.schedule_for_update()

@@ -43,8 +43,35 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     """Organization tree for StockItem objects.
 
     A "StockLocation" can be considered a warehouse, or storage location
-    Stock locations can be heirarchical as required
+    Stock locations can be hierarchical as required
     """
+
+    def delete_recursive(self, *args, **kwargs):
+        """This function handles the recursive deletion of sub-locations depending on kwargs contents"""
+        delete_stock_items = kwargs.get('delete_stock_items', False)
+        parent_location = kwargs.get('parent_location', None)
+
+        if parent_location is None:
+            # First iteration, (no parent_location kwargs passed)
+            parent_location = self.parent
+
+        for child_item in self.get_stock_items(False):
+            if delete_stock_items:
+                child_item.delete()
+            else:
+                child_item.location = parent_location
+                child_item.save()
+
+        for child_location in self.children.all():
+            if kwargs.get('delete_sub_locations', False):
+                child_location.delete_recursive(**dict(delete_sub_locations=True,
+                                                       delete_stock_items=delete_stock_items,
+                                                       parent_location=parent_location))
+            else:
+                child_location.parent = parent_location
+                child_location.save()
+
+        super().delete(*args, **dict())
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child locations or items.
@@ -53,24 +80,13 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         """
         with transaction.atomic():
 
-            parent = self.parent
-            tree_id = self.tree_id
+            self.delete_recursive(**dict(delete_stock_items=kwargs.get('delete_stock_items', False),
+                                         delete_sub_locations=kwargs.get('delete_sub_locations', False),
+                                         parent_category=self.parent))
 
-            # Update each stock item in the stock location
-            for item in self.stock_items.all():
-                item.location = self.parent
-                item.save()
-
-            # Update each child category
-            for child in self.children.all():
-                child.parent = self.parent
-                child.save()
-
-            super().delete(*args, **kwargs)
-
-            if parent is not None:
+            if self.parent is not None:
                 # Partially rebuild the tree (cheaper than a complete rebuild)
-                StockLocation.objects.partial_rebuild(tree_id)
+                StockLocation.objects.partial_rebuild(self.tree_id)
             else:
                 StockLocation.objects.rebuild()
 
@@ -90,6 +106,14 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
                               verbose_name=_('Owner'),
                               help_text=_('Select Owner'),
                               related_name='stock_locations')
+
+    structural = models.BooleanField(
+        default=False,
+        verbose_name=_('Structural'),
+        help_text=_(
+            'Stock items may not be directly located into a structural stock locations, '
+            'but may be located to child locations.'),
+    )
 
     def get_location_owner(self):
         """Get the closest "owner" for this location.
@@ -122,6 +146,17 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
             return True
 
         return user in owner.get_related_owners(include_group=True)
+
+    def clean(self):
+        """Custom clean action for the StockLocation model:
+
+        - Ensure stock location can't be made structural if stock items already located to them
+        """
+        if self.pk and self.structural and self.item_count > 0:
+            raise ValidationError(
+                _("You cannot make this stock location structural because some stock items "
+                  "are already located into it!"))
+        super().clean()
 
     def get_absolute_url(self):
         """Return url for instance."""
@@ -480,8 +515,14 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         - The 'part' and 'supplier_part.part' fields cannot point to the same Part object
         - The 'part' is not virtual
         - The 'part' does not belong to itself
+        - The location is not structural
         - Quantity must be 1 if the StockItem has a serial number
         """
+
+        if self.location is not None and self.location.structural:
+            raise ValidationError(
+                {'location': _("Stock items cannot be located into structural stock locations!")})
+
         super().clean()
 
         # Strip serial number field
@@ -656,7 +697,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     link = InvenTreeURLField(
         verbose_name=_('External Link'),
-        blank=True, max_length=200,
+        blank=True,
         help_text=_("Link to external URL")
     )
 
@@ -735,7 +776,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         blank=True,
         null=True,
         verbose_name=_('Purchase Price'),

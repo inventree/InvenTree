@@ -323,6 +323,21 @@
                         {% endif %}
                     </td>
                 </tr>
+                {% with part.pricing as pricing %}
+                {% if pricing.is_valid %}
+                <tr>
+                    <td><span class='fas fa-dollar-sign'></span></td>
+                    <td>{% trans "Price Range" %}</td>
+                    <td>
+                        {% if pricing.overall_min == pricing.overall_max %}
+                        {% render_currency pricing.overall_max %}
+                        {% else %}
+                        {% render_currency pricing.overall_min %} - {% render_currency pricing.overall_max %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endwith %}
                 {% with part.get_latest_serial_number as sn %}
                 {% if part.trackable and sn %}
                 <tr>
@@ -487,8 +502,34 @@
         });
     });
 
-    $("#part-image-upload").click(function() {
+    $('#part-image-delete').click(function(event) {
+        event.stopPropagation();
+        showQuestionDialog(
+            '{% trans "Remove Image" %}',
+            '{% trans "Remove associated image from this part" %}',
+            {
+                accept_text: '{% trans "Remove" %}',
+                submitClass: 'danger',
+                accept: function() {
+                    inventreePut(
+                        '{% url "api-part-detail" part.pk %}',
+                        {
+                            'image': null,
+                        },
+                        {
+                            method: 'PATCH',
+                            success: function(data) {
+                                location.reload();
+                            }
+                        }
+                    );
+                }
+            }
+        );
+    });
 
+    $("#part-image-upload").click(function(event) {
+        event.stopPropagation();
         constructForm(
             '{% url "api-part-detail" part.pk %}',
             {
@@ -561,12 +602,12 @@
         });
     }
 
-    $("#part-image-select").click(function() {
-        launchModalForm("{% url 'part-image-select' part.id %}",
-                        {
-                            reload: true,
-                            after_render: onSelectImage
-                        });
+    $("#part-image-select").click(function(event) {
+        event.stopPropagation();
+        launchModalForm("{% url 'part-image-select' part.id %}", {
+            reload: true,
+            after_render: onSelectImage
+        });
     });
 
     $("#part-edit").click(function() {

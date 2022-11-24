@@ -6,7 +6,7 @@ import re
 import warnings
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Callable
+from typing import Callable, List
 
 from django.conf import settings
 from django.core import mail as django_mail
@@ -153,7 +153,7 @@ class ScheduledTask:
 
 class TaskRegister:
     """Registery for periodicall tasks."""
-    task_list: list[ScheduledTask] = []
+    task_list: List[ScheduledTask] = []
 
     def register(self, task, schedule, minutes: int = None):
         """Register a task with the que."""
@@ -200,7 +200,7 @@ def scheduled_task(interval: str, minutes: int = None, tasklist: TaskRegister = 
     return _task_wrapper
 
 
-@scheduled_task(ScheduledTask.MINUTES, 15)
+@scheduled_task(ScheduledTask.MINUTES, 5)
 def heartbeat():
     """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
 

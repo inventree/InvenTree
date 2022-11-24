@@ -141,7 +141,7 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
         manufacturer_detail = kwargs.pop('manufacturer_detail', True)
         prettify = kwargs.pop('pretty', False)
 
-        super(ManufacturerPartSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if part_detail is not True:
             self.fields.pop('part_detail')
@@ -205,7 +205,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
         """Initialize this serializer with extra detail fields as required"""
         man_detail = kwargs.pop('manufacturer_part_detail', False)
 
-        super(ManufacturerPartParameterSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not man_detail:
             self.fields.pop('manufacturer_part_detail')
@@ -247,13 +247,17 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         # Check if 'available' quantity was supplied
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
-        part_detail = kwargs.pop('part_detail', True)
-        supplier_detail = kwargs.pop('supplier_detail', True)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', True)
+        brief = kwargs.pop('brief', False)
+
+        detail_default = not brief
+
+        part_detail = kwargs.pop('part_detail', detail_default)
+        supplier_detail = kwargs.pop('supplier_detail', detail_default)
+        manufacturer_detail = kwargs.pop('manufacturer_detail', detail_default)
 
         prettify = kwargs.pop('pretty', False)
 
-        super(SupplierPartSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if part_detail is not True:
             self.fields.pop('part_detail')
@@ -263,6 +267,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
         if manufacturer_detail is not True:
             self.fields.pop('manufacturer_detail')
+            self.fields.pop('manufacturer_part_detail')
 
         if prettify is not True:
             self.fields.pop('pretty_name')
@@ -294,6 +299,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'MPN',
             'note',
             'pk',
+            'barcode_hash',
             'packaging',
             'pack_size',
             'part',
@@ -307,6 +313,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
         read_only_fields = [
             'availability_updated',
+            'barcode_hash',
         ]
 
     @staticmethod
@@ -364,6 +371,20 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
     """Serializer for SupplierPriceBreak object."""
 
+    def __init__(self, *args, **kwargs):
+        """Initialize this serializer with extra fields as required"""
+
+        supplier_detail = kwargs.pop('supplier_detail', False)
+        part_detail = kwargs.pop('part_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not supplier_detail:
+            self.fields.pop('supplier_detail')
+
+        if not part_detail:
+            self.fields.pop('part_detail')
+
     quantity = InvenTreeDecimalField()
 
     price = InvenTreeMoneySerializer(
@@ -378,6 +399,13 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
         label=_('Currency'),
     )
 
+    supplier = serializers.PrimaryKeyRelatedField(source='part.supplier', many=False, read_only=True)
+
+    supplier_detail = CompanyBriefSerializer(source='part.supplier', many=False, read_only=True)
+
+    # Detail serializer for SupplierPart
+    part_detail = SupplierPartSerializer(source='part', brief=True, many=False, read_only=True)
+
     class Meta:
         """Metaclass options."""
 
@@ -385,8 +413,11 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'part',
+            'part_detail',
             'quantity',
             'price',
             'price_currency',
+            'supplier',
+            'supplier_detail',
             'updated',
         ]

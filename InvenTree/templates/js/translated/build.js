@@ -60,9 +60,15 @@ function buildFormFields() {
         },
         take_from: {
             icon: 'fa-sitemap',
+            filters: {
+                structural: false,
+            }
         },
         destination: {
             icon: 'fa-sitemap',
+            filters: {
+                structural: false,
+            }
         },
         link: {
             icon: 'fa-link',
@@ -524,7 +530,11 @@ function completeBuildOutputs(build_id, outputs, options={}) {
         preFormContent: html,
         fields: {
             status: {},
-            location: {},
+            location: {
+                filters: {
+                    structural: false,
+                },
+            },
             notes: {},
             accept_incomplete_allocation: {},
         },
@@ -2391,7 +2401,7 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
     <strong>{% trans "Automatic Stock Allocation" %}</strong><br>
     {% trans "Stock items will be automatically allocated to this build order, according to the provided guidelines" %}:
     <ul>
-        <li>{% trans "If a location is specifed, stock will only be allocated from that location" %}</li>
+        <li>{% trans "If a location is specified, stock will only be allocated from that location" %}</li>
         <li>{% trans "If stock is considered interchangeable, it will be allocated from the first location it is found" %}</li>
         <li>{% trans "If substitute stock is allowed, it will be used where stock of the primary part cannot be found" %}</li>
     </ul>
@@ -2401,6 +2411,9 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
     var fields = {
         location: {
             value: options.location,
+            filters: {
+                structural: false,
+            }
         },
         exclude_location: {},
         interchangeable: {
@@ -2679,7 +2692,7 @@ function loadBuildTable(table, options) {
                     treeColumn: 1,
                 });
 
-                table.treegrid('expandAll');
+                $(table).treegrid('expandAll');
             } else if (display_mode == 'calendar') {
 
                 if (!loaded_calendar) {

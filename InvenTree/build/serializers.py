@@ -702,7 +702,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         ]
 
     def validate(self, data):
-        """Perfofrm data validation for this item"""
+        """Perform data validation for this item"""
         super().validate(data)
 
         build = self.context['build']

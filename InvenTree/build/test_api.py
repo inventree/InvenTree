@@ -213,7 +213,7 @@ class BuildTest(BuildAPITest):
                 "location": 1,
                 "status": 50,  # Item requires attention
             },
-            expected_code=201
+            expected_code=201,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)

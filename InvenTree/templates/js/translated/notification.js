@@ -17,7 +17,7 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
     var params = options.params || {};
     var read = typeof(params.read) === 'undefined' ? true : params.read;
 
-    setupFilterList(`notifications-${options.name}`, table);
+    setupFilterList(`notifications-${options.name}`, $(table));
 
     $(table).inventreeTable({
         url: options.url,
@@ -157,38 +157,50 @@ function notificationCheck(force = false) {
  * - panel_caller: this button was clicked in the notification panel
  **/
 function updateNotificationReadState(btn, panel_caller=false) {
-    var url = `/api/notifications/${btn.attr('pk')}/${btn.attr('target')}/`;
 
-    inventreePut(url, {}, {
-        method: 'POST',
-        success: function() {
-            // update the notification tables if they were declared
-            if (window.updateNotifications) {
-                window.updateNotifications();
-            }
+    // Determine 'read' status of the notification
+    var status = btn.attr('target') == 'read';
+    var pk = btn.attr('pk');
 
-            // update current notification count
-            var count = parseInt($('#notification-counter').html());
-            if (btn.attr('target') == 'read') {
-                count = count - 1;
-            } else {
-                count = count + 1;
-            }
+    var url = `/api/notifications/${pk}/`;
 
-            // Prevent negative notification count
-            if (count < 0) {
-                count = 0;
-            }
+    inventreePut(
+        url,
+        {
+            read: status,
+        },
+        {
+            method: 'PATCH',
+            success: function() {
+                // update the notification tables if they were declared
+                if (window.updateNotifications) {
+                    window.updateNotifications();
+                }
 
-            // update notification indicator now
-            updateNotificationIndicator(count);
+                // update current notification count
+                var count = parseInt($('#notification-counter').html());
 
-            // remove notification if called from notification panel
-            if (panel_caller) {
-                btn.parent().parent().remove();
+                if (status) {
+                    count = count - 1;
+                } else {
+                    count = count + 1;
+                }
+
+                // Prevent negative notification count
+                if (count < 0) {
+                    count = 0;
+                }
+
+                // update notification indicator now
+                updateNotificationIndicator(count);
+
+                // remove notification if called from notification panel
+                if (panel_caller) {
+                    btn.parent().parent().remove();
+                }
             }
         }
-    });
+    );
 };
 
 /**

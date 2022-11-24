@@ -25,7 +25,7 @@
 {% endblock %}
 
 {% block actions %}
-{% if user.is_staff and roles.part_category.change %}
+{% if category and user.is_staff and roles.part_category.change %}
 {% url 'admin:part_partcategory_change' category.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
@@ -62,11 +62,6 @@
     </ul>
 </div>
 {% endif %}
-{% endif %}
-{% if roles.part_category.add %}
-<button class='btn btn-success' id='cat-create' title='{% trans "Create new part category" %}'>
-    <span class='fas fa-plus-circle'></span> {% trans "New Category" %}
-</button>
 {% endif %}
 {% endblock %}
 
@@ -225,7 +220,17 @@
 
 <div class='panel panel-hidden' id='panel-subcategories'>
     <div class='panel-heading'>
-        <h4>{% trans "Subcategories" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Subcategories" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.part_category.add %}
+                <button class='btn btn-success' id='cat-create' title='{% trans "Create new part category" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Category" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='subcategory-button-toolbar'>

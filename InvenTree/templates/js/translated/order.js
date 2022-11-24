@@ -798,30 +798,64 @@ function poLineItemFields(options={}) {
                 // If the pack_size != 1, add a note to the field
                 var pack_size = 1;
                 var units = '';
+                var supplier_part_id = value;
+                var quantity = getFormFieldValue('quantity', {}, opts);
 
                 // Remove any existing note fields
                 $(opts.modal).find('#info-pack-size').remove();
 
-                if (value != null) {
-                    inventreeGet(`/api/company/part/${value}/`,
+                if (value == null) {
+                    return;
+                }
+
+                // Request information about the particular supplier part
+                inventreeGet(`/api/company/part/${value}/`,
+                    {
+                        part_detail: true,
+                    },
+                    {
+                        success: function(response) {
+                            // Extract information from the returned query
+                            pack_size = response.pack_size || 1;
+                            units = response.part_detail.units || '';
+                        },
+                    }
+                ).then(function() {
+                    // Update pack size information
+                    if (pack_size != 1) {
+                        var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_size} ${units}`;
+                        $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
+                    }
+                }).then(function() {
+                    // Update pricing data (if available)
+                    inventreeGet(
+                        '{% url "api-part-supplier-price-list" %}',
                         {
-                            part_detail: true,
+                            part: supplier_part_id,
+                            ordering: 'quantity',
                         },
                         {
                             success: function(response) {
-                                // Extract information from the returned query
-                                pack_size = response.pack_size || 1;
-                                units = response.part_detail.units || '';
-                            },
-                        }
-                    ).then(function() {
+                                // Returned prices are in increasing order of quantity
+                                if (response.length > 0) {
+                                    var idx = 0;
 
-                        if (pack_size != 1) {
-                            var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_size} ${units}`;
-                            $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
+                                    for (var idx = 0; idx < response.length; idx++) {
+                                        if (response[idx].quantity > quantity) {
+                                            break;
+                                        }
+
+                                        index = idx;
+                                    }
+
+                                    // Update price and currency data in the form
+                                    updateFieldValue('purchase_price', response[index].price, {}, opts);
+                                    updateFieldValue('purchase_price_currency', response[index].price_currency, {}, opts);
+                                }
+                            }
                         }
-                    });
-                }
+                    );
+                });
             },
             secondary: {
                 method: 'POST',
@@ -854,7 +888,11 @@ function poLineItemFields(options={}) {
         purchase_price: {},
         purchase_price_currency: {},
         target_date: {},
-        destination: {},
+        destination: {
+            filters: {
+                structural: false,
+            }
+        },
         notes: {},
     };
 
@@ -1654,7 +1692,11 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
     constructForm(`/api/order/po/${order_id}/receive/`, {
         method: 'POST',
         fields: {
-            location: {},
+            location: {
+                filters: {
+                    structural: false,
+                }
+            },
         },
         preFormContent: html,
         confirm: true,
@@ -2084,6 +2126,11 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
     options.params['order'] = options.order;
     options.params['part_detail'] = true;
 
+    // Override 'editing' if order is not pending
+    if (!options.pending && !global_settings.PURCHASEORDER_EDIT_COMPLETED_ORDERS) {
+        options.allow_edit = false;
+    }
+
     var filters = loadTableFilters('purchaseorderlineitem');
 
     for (var key in options.params) {
@@ -2300,14 +2347,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'purchase_price',
                 title: '{% trans "Unit Price" %}',
                 formatter: function(value, row) {
-                    var formatter = new Intl.NumberFormat(
-                        'en-US',
-                        {
-                            style: 'currency',
-                            currency: row.purchase_price_currency
-                        }
-                    );
-                    return formatter.format(row.purchase_price);
+                    return formatCurrency(row.purchase_price, {
+                        currency: row.purchase_price_currency,
+                    });
                 }
             },
             {
@@ -2315,14 +2357,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 sortable: true,
                 title: '{% trans "Total Price" %}',
                 formatter: function(value, row) {
-                    var formatter = new Intl.NumberFormat(
-                        'en-US',
-                        {
-                            style: 'currency',
-                            currency: row.purchase_price_currency
-                        }
-                    );
-                    return formatter.format(row.purchase_price * row.quantity);
+                    return formatCurrency(row.purchase_price * row.quantity, {
+                        currency: row.purchase_price_currency
+                    });
                 },
                 footerFormatter: function(data) {
                     var total = data.map(function(row) {
@@ -2333,15 +2370,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
                     var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency) || 'USD';
 
-                    var formatter = new Intl.NumberFormat(
-                        'en-US',
-                        {
-                            style: 'currency',
-                            currency: currency
-                        }
-                    );
-
-                    return formatter.format(total);
+                    return formatCurrency(total, {
+                        currency: currency
+                    });
                 }
             },
             {
@@ -2445,6 +2476,10 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
     options.table = table;
 
+    if (!options.pending && !global_settings.PURCHASEORDER_EDIT_COMPLETED_ORDERS) {
+        options.allow_edit = false;
+    }
+
     options.params = options.params || {};
 
     if (!options.order) {
@@ -2473,9 +2508,6 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
     setupFilterList('purchaseorderextraline', $(table), filter_target);
 
-    // Is the order pending?
-    var pending = options.status == {{ SalesOrderStatus.PENDING }};
-
     // Table columns to display
     var columns = [
         {
@@ -2502,15 +2534,9 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
             field: 'price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.price_currency
-                    }
-                );
-
-                return formatter.format(row.price);
+                return formatCurrency(row.price, {
+                    currency: row.price_currency,
+                });
             }
         },
         {
@@ -2518,15 +2544,9 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
             sortable: true,
             title: '{% trans "Total Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.price_currency
-                    }
-                );
-
-                return formatter.format(row.price * row.quantity);
+                return formatCurrency(row.price * row.quantity, {
+                    currency: row.price_currency,
+                });
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
@@ -2537,15 +2557,9 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
                 var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
 
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: currency
-                    }
-                );
-
-                return formatter.format(total);
+                return formatCurrency(total, {
+                    currency: currency,
+                });
             }
         }
     ];
@@ -2555,26 +2569,26 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
         title: '{% trans "Notes" %}',
     });
 
-    if (pending) {
-        columns.push({
-            field: 'buttons',
-            switchable: false,
-            formatter: function(value, row, index, field) {
+    columns.push({
+        field: 'buttons',
+        switchable: false,
+        formatter: function(value, row, index, field) {
 
-                var html = `<div class='btn-group float-right' role='group'>`;
+            var html = `<div class='btn-group float-right' role='group'>`;
 
-                var pk = row.pk;
+            var pk = row.pk;
 
+            if (options.allow_edit) {
                 html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
                 html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
                 html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
-
-                html += `</div>`;
-
-                return html;
             }
-        });
-    }
+
+            html += `</div>`;
+
+            return html;
+        }
+    });
 
     function reloadTable() {
         $(table).bootstrapTable('refresh');
@@ -3726,7 +3740,7 @@ function reloadTotal() {
         {},
         {
             success: function(data) {
-                $(TotalPriceRef).html(data.total_price_string);
+                $(TotalPriceRef).html(formatCurrency(data.price, {currency: data.price_currency}));
             }
         }
     );
@@ -3744,6 +3758,10 @@ function reloadTotal() {
 function loadSalesOrderLineItemTable(table, options={}) {
 
     options.table = table;
+
+    if (!options.pending && !global_settings.SALESORDER_EDIT_COMPLETED_ORDERS) {
+        options.allow_edit = false;
+    }
 
     options.params = options.params || {};
 
@@ -3774,7 +3792,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
     setupFilterList('salesorderlineitem', $(table), filter_target);
 
     // Is the order pending?
-    var pending = options.status == {{ SalesOrderStatus.PENDING }};
+    var pending = options.pending;
 
     // Has the order shipped?
     var shipped = options.status == {{ SalesOrderStatus.SHIPPED }};
@@ -3841,15 +3859,9 @@ function loadSalesOrderLineItemTable(table, options={}) {
             field: 'sale_price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.sale_price_currency
-                    }
-                );
-
-                return formatter.format(row.sale_price);
+                return formatCurrency(row.sale_price, {
+                    currency: row.sale_price_currency
+                });
             }
         },
         {
@@ -3857,15 +3869,9 @@ function loadSalesOrderLineItemTable(table, options={}) {
             sortable: true,
             title: '{% trans "Total Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.sale_price_currency
-                    }
-                );
-
-                return formatter.format(row.sale_price * row.quantity);
+                return formatCurrency(row.sale_price * row.quantity, {
+                    currency: row.sale_price_currency,
+                });
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
@@ -3876,15 +3882,9 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                 var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
 
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: currency
-                    }
-                );
-
-                return formatter.format(total);
+                return formatCurrency(total, {
+                    currency: currency,
+                });
             }
         },
         {
@@ -4292,6 +4292,10 @@ function loadSalesOrderExtraLineTable(table, options={}) {
 
     options.table = table;
 
+    if (!options.pending && !global_settings.SALESORDER_EDIT_COMPLETED_ORDERS) {
+        options.allow_edit = false;
+    }
+
     options.params = options.params || {};
 
     if (!options.order) {
@@ -4320,9 +4324,6 @@ function loadSalesOrderExtraLineTable(table, options={}) {
 
     setupFilterList('salesorderextraline', $(table), filter_target);
 
-    // Is the order pending?
-    var pending = options.status == {{ SalesOrderStatus.PENDING }};
-
     // Table columns to display
     var columns = [
         {
@@ -4349,15 +4350,9 @@ function loadSalesOrderExtraLineTable(table, options={}) {
             field: 'price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.price_currency
-                    }
-                );
-
-                return formatter.format(row.price);
+                return formatCurrency(row.price, {
+                    currency: row.price_currency,
+                });
             }
         },
         {
@@ -4365,15 +4360,9 @@ function loadSalesOrderExtraLineTable(table, options={}) {
             sortable: true,
             title: '{% trans "Total Price" %}',
             formatter: function(value, row) {
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: row.price_currency
-                    }
-                );
-
-                return formatter.format(row.price * row.quantity);
+                return formatCurrency(row.price * row.quantity, {
+                    currency: row.price_currency,
+                });
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
@@ -4384,15 +4373,9 @@ function loadSalesOrderExtraLineTable(table, options={}) {
 
                 var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
 
-                var formatter = new Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: currency
-                    }
-                );
-
-                return formatter.format(total);
+                return formatCurrency(total, {
+                    currency: currency,
+                });
             }
         }
     ];
@@ -4402,26 +4385,24 @@ function loadSalesOrderExtraLineTable(table, options={}) {
         title: '{% trans "Notes" %}',
     });
 
-    if (pending) {
-        columns.push({
-            field: 'buttons',
-            switchable: false,
-            formatter: function(value, row, index, field) {
+    columns.push({
+        field: 'buttons',
+        switchable: false,
+        formatter: function(value, row, index, field) {
 
-                var html = `<div class='btn-group float-right' role='group'>`;
+            var html = `<div class='btn-group float-right' role='group'>`;
 
+            if (options.allow_edit) {
                 var pk = row.pk;
-
                 html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
                 html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
                 html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
-
-                html += `</div>`;
-
-                return html;
             }
-        });
-    }
+
+            html += `</div>`;
+            return html;
+        }
+    });
 
     function reloadTable() {
         $(table).bootstrapTable('refresh');

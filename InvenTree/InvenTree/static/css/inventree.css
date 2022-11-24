@@ -458,7 +458,7 @@ main {
 }
 
 .part-thumb-container:hover .part-thumb-overlay {
-    opacity: 1;
+    opacity: 0.75;
 }
 
 .part-thumb-overlay {
@@ -467,8 +467,6 @@ main {
     left: 0;
     opacity: 0;
     transition: .25s ease;
-    padding-top: 10px;
-    padding-left: 25px;
     margin: 5px;
 }
 

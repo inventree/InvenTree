@@ -29,6 +29,19 @@ class ReportTagTest(TestCase):
         """Enable or disable debug mode for reports"""
         InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', value, change_user=None)
 
+    def test_getkey(self):
+        """Tests for the 'getkey' template tag"""
+
+        data = {
+            'hello': 'world',
+            'foo': 'bar',
+            'with spaces': 'withoutspaces',
+            1: 2,
+        }
+
+        for k, v in data.items():
+            self.assertEqual(report_tags.getkey(data, k), v)
+
     def test_asset(self):
         """Tests for asset files"""
 
@@ -305,6 +318,7 @@ class TestReportTest(ReportTest):
         InvenTreeSetting.set_setting('REPORT_ATTACH_TEST_REPORT', True, None)
 
         response = self.get(url, {'item': item.pk}, expected_code=200)
+
         headers = response.headers
         self.assertEqual(headers['Content-Type'], 'application/pdf')
 
