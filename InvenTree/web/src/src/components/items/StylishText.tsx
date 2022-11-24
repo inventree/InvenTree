@@ -1,7 +1,7 @@
 import { Text } from '@mantine/core';
 import { useStyles } from '../../globalStyle';
 
-export function StylishText({ children }: { children: JSX.Element }) {
+export function StylishText({ children }: { children: JSX.Element | string }) {
   const { classes } = useStyles();
   return (
     <Text

@@ -6,7 +6,7 @@ import {
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
-import Layout from './pages/Layout';
+import Layout from './pages/layout';
 import { Logout } from './pages/Logout';
 import { Login } from './pages/Login';
 import { Part } from './pages/Index/Part';
