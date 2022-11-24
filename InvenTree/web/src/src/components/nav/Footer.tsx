@@ -18,7 +18,7 @@ export function Footer() {
   ));
 
   return (
-    <div className={classes.footer}>
+    <div className={classes.layoutFooter}>
       <Container className={classes.inner}>
         <InvenTreeLogo />
         <Group className={classes.links}>{items}</Group>

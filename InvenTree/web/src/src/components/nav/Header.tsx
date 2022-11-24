@@ -48,8 +48,8 @@ export function Header() {
   ));
 
   return (
-    <div className={classes.header}>
-      <Container className={classes.mainSection}>
+    <div className={classes.layoutHeader}>
+      <Container className={classes.layoutHeaderSection}>
         <Group position="apart">
           <Group>
             <InvenTreeLogo />
@@ -72,8 +72,8 @@ export function Header() {
             >
               <Menu.Target>
                 <UnstyledButton
-                  className={cx(classes.user, {
-                    [classes.userActive]: userMenuOpened
+                  className={cx(classes.layoutHeaderUser, {
+                    [classes.layoutHeaderUserActive]: userMenuOpened
                   })}
                 >
                   <Group spacing={7}>

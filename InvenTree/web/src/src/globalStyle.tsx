@@ -1,7 +1,7 @@
 import { createStyles } from '@mantine/core';
 
 export const InvenTreeStyle = createStyles((theme) => ({
-  header: {
+  layoutHeader: {
     paddingTop: theme.spacing.sm,
     backgroundColor:
       theme.colorScheme === 'dark'
@@ -12,11 +12,17 @@ export const InvenTreeStyle = createStyles((theme) => ({
     marginBottom: 10
   },
 
-  mainSection: {
+  layoutFooter: {
+    marginTop: 10,
+    borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
+      }`
+  },
+
+  layoutHeaderSection: {
     paddingBottom: theme.spacing.sm
   },
 
-  user: {
+  layoutHeaderUser: {
     color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
     padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
     borderRadius: theme.radius.sm,
@@ -32,15 +38,15 @@ export const InvenTreeStyle = createStyles((theme) => ({
     }
   },
 
+  layoutHeaderUserActive: {
+    backgroundColor:
+      theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
+  },
+
   burger: {
     [theme.fn.largerThan('xs')]: {
       display: 'none'
     }
-  },
-
-  userActive: {
-    backgroundColor:
-      theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
   },
 
   tabs: {
@@ -73,12 +79,6 @@ export const InvenTreeStyle = createStyles((theme) => ({
           ? theme.colors.dark[7]
           : theme.colors.gray[2]
     }
-  },
-
-  footer: {
-    marginTop: 10,
-    borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
-      }`
   },
 
   inner: {
