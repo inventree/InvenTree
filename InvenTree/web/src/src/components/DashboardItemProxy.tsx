@@ -35,7 +35,7 @@ export function DashboardItemProxy({
     }
   }, [data]);
 
-  if (error !== undefined)
+  if (error != null)
     return <ErrorItem id={id} error={error} />;
   return (
     <div key={id}>
