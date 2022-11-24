@@ -12,7 +12,7 @@ import {
 import { useForm } from '@mantine/form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { StylishText } from '../../components/items/StylishText';
-import { useStyles } from '../../globalStyle';
+import { InvenTreeStyle } from '../../globalStyle';
 import { useToggle } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { api, queryClient } from '../../App';
@@ -48,7 +48,7 @@ export function Profile() {
 
 function UserPanel() {
   // view
-  const { theme } = useStyles();
+  const { theme } = InvenTreeStyle();
   const PRIMARY_COL_HEIGHT = 300;
   const SECONDARY_COL_HEIGHT = PRIMARY_COL_HEIGHT / 2 - theme.spacing.md / 2;
 

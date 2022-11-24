@@ -3,11 +3,11 @@ import { Header } from '../components/nav/Header';
 import { Container, Flex, Space } from '@mantine/core';
 
 import { Footer } from '../components/nav/Footer';
-import { useStyles } from '../globalStyle';
+import { InvenTreeStyle } from '../globalStyle';
 import { ProtectedRoute } from '../contex/AuthContext';
 
 export default function Layout() {
-  const { classes } = useStyles();
+  const { classes } = InvenTreeStyle;
 
   return (
     <ProtectedRoute>

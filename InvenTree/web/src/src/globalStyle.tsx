@@ -1,6 +1,6 @@
 import { createStyles } from '@mantine/core';
 
-export const useStyles = createStyles((theme) => ({
+export const InvenTreeStyle = createStyles((theme) => ({
   header: {
     paddingTop: theme.spacing.sm,
     backgroundColor:

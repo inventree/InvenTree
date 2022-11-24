@@ -20,14 +20,14 @@ import {
 import { ColorToggle } from '../items/ColorToggle';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useStyles } from '../../globalStyle';
+import { InvenTreeStyle } from '../../globalStyle';
 import { Link } from 'react-router-dom';
 import { useLocalState } from '../../contex/LocalState';
 import { useApiState } from '../../contex/ApiState';
 import { tabs } from '../../defaults';
 
 export function Header() {
-  const { classes, theme, cx } = useStyles();
+  const { classes, theme, cx } = InvenTreeStyle();
   const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
