@@ -7,9 +7,8 @@ export const useStyles = createStyles((theme) => ({
       theme.colorScheme === 'dark'
         ? theme.colors.dark[6]
         : theme.colors.gray[0],
-    borderBottom: `1px solid ${
-      theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]
-    }`,
+    borderBottom: `1px solid ${theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]
+      }`,
     marginBottom: 10
   },
 
@@ -78,9 +77,8 @@ export const useStyles = createStyles((theme) => ({
 
   footer: {
     marginTop: 10,
-    borderTop: `1px solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
-    }`
+    borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
+      }`
   },
 
   inner: {
@@ -109,5 +107,10 @@ export const useStyles = createStyles((theme) => ({
   signText: {
     fontSize: 'xl',
     fontWeight: 700
+  },
+
+  error: {
+    backgroundColor: theme.colors.gray[0],
+    color: theme.colors.red[6]
   }
 }));
