@@ -38,10 +38,8 @@ class InvenTreeURLField(models.URLField):
     def __init__(self, **kwargs):
         """Initialization method for InvenTreeURLField"""
 
-        # Max length for InvenTreeURLField defaults to 200
-        if 'max_length' not in kwargs:
-            kwargs['max_length'] = 200
-
+        # Max length for InvenTreeURLField is set to 200
+        kwargs['max_length'] = 200
         super().__init__(**kwargs)
 
 
@@ -69,6 +67,13 @@ class InvenTreeModelMoneyField(ModelMoneyField):
             # set defaults
             kwargs.update(money_kwargs())
 
+        # Default values (if not specified)
+        if 'max_digits' not in kwargs:
+            kwargs['max_digits'] = 19
+
+        if 'decimal_places' not in kwargs:
+            kwargs['decimal_places'] = 6
+
         # Set a minimum value validator
         validators = kwargs.get('validators', [])
 
@@ -91,12 +96,28 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         kwargs['form_class'] = InvenTreeMoneyField
         return super().formfield(**kwargs)
 
+    def to_python(self, value):
+        """Convert value to python type."""
+        value = super().to_python(value)
+        return round_decimal(value, self.decimal_places)
+
+    def prepare_value(self, value):
+        """Override the 'prepare_value' method, to remove trailing zeros when displaying.
+
+        Why? It looks nice!
+        """
+        return round_decimal(value, self.decimal_places, normalize=True)
+
 
 class InvenTreeMoneyField(MoneyField):
     """Custom MoneyField for clean migrations while using dynamic currency settings."""
     def __init__(self, *args, **kwargs):
         """Override initial values with the real info from database."""
         kwargs.update(money_kwargs())
+
+        kwargs['max_digits'] = 19
+        kwargs['decimal_places'] = 6
+
         super().__init__(*args, **kwargs)
 
 
@@ -126,11 +147,16 @@ class DatePickerFormField(forms.DateField):
         )
 
 
-def round_decimal(value, places):
+def round_decimal(value, places, normalize=False):
     """Round value to the specified number of places."""
-    if value is not None:
-        # see https://docs.python.org/2/library/decimal.html#decimal.Decimal.quantize for options
-        return value.quantize(Decimal(10) ** -places)
+
+    if type(value) in [Decimal, float]:
+        value = round(value, places)
+
+        if normalize:
+            # Remove any trailing zeroes
+            value = InvenTree.helpers.normalize(value)
+
     return value
 
 
@@ -140,18 +166,14 @@ class RoundingDecimalFormField(forms.DecimalField):
     def to_python(self, value):
         """Convert value to python type."""
         value = super().to_python(value)
-        value = round_decimal(value, self.decimal_places)
-        return value
+        return round_decimal(value, self.decimal_places)
 
     def prepare_value(self, value):
         """Override the 'prepare_value' method, to remove trailing zeros when displaying.
 
         Why? It looks nice!
         """
-        if type(value) == Decimal:
-            return InvenTree.helpers.normalize(value)
-        else:
-            return value
+        return round_decimal(value, self.decimal_places, normalize=True)
 
 
 class RoundingDecimalField(models.DecimalField):

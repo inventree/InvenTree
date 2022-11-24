@@ -1,10 +1,14 @@
 """Tests for labels"""
 
+import io
+
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.urls import reverse
 
+from common.models import InvenTreeSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import validateFilterString
 from part.models import Part
@@ -73,3 +77,55 @@ class LabelTest(InvenTreeAPITestCase):
         for label in labels:
             url = reverse('api-part-label-print', kwargs={'pk': label.pk})
             self.get(f'{url}?parts={part.pk}', expected_code=200)
+
+    def test_print_part_label(self):
+        """Actually 'print' a label, and ensure that the correct information is contained."""
+
+        label_data = """
+        {% load barcode %}
+        {% load report %}
+
+        <html>
+        <!-- Test that the part instance is supplied -->
+        part: {{ part.pk }} - {{ part.name }}
+        <!-- Test qr data -->
+        data: {{ qr_data|safe }}
+        <!-- Test InvenTree URL -->
+        url: {{ qr_url|safe }}
+        <!-- Test image URL generation -->
+        image: {% part_image part %}
+        <!-- Test InvenTree logo -->
+        logo: {% logo_image %}
+        </html>
+        """
+
+        buffer = io.StringIO()
+        buffer.write(label_data)
+
+        template = ContentFile(buffer.getvalue(), "label.html")
+
+        # Construct a label template
+        label = PartLabel.objects.create(
+            name='test',
+            description='Test label',
+            enabled=True,
+            label=template,
+        )
+
+        # Ensure we are in "debug" mode (so the report is generated as HTML)
+        InvenTreeSetting.set_setting('REPORT_ENABLE', True, None)
+        InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', True, None)
+
+        # Print via the API
+        url = reverse('api-part-label-print', kwargs={'pk': label.pk})
+
+        response = self.get(f'{url}?parts=1', expected_code=200)
+
+        content = str(response.content)
+
+        # Test that each element has been rendered correctly
+        self.assertIn("part: 1 - M2x4 LPHS", content)
+        self.assertIn('data: {"part": 1}', content)
+        self.assertIn("http://testserver/part/1/", content)
+        self.assertIn("image: /static/img/blank_image.png", content)
+        self.assertIn("logo: /static/img/inventree.png", content)

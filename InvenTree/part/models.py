@@ -15,7 +15,7 @@ from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
 from django.urls import reverse
@@ -24,6 +24,7 @@ from django.utils.translation import gettext_lazy as _
 from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
 from jinja2 import Template
 from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
@@ -31,6 +32,8 @@ from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
 
 import common.models
+import common.settings
+import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
 import part.filters as part_filters
@@ -63,31 +66,46 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         default_keywords: Default keywords for parts created in this category
     """
 
+    def delete_recursive(self, *args, **kwargs):
+        """This function handles the recursive deletion of subcategories depending on kwargs contents"""
+        delete_parts = kwargs.get('delete_parts', False)
+        parent_category = kwargs.get('parent_category', None)
+
+        if parent_category is None:
+            # First iteration, (no part_category kwargs passed)
+            parent_category = self.parent
+
+        for child_part in self.parts.all():
+            if delete_parts:
+                child_part.delete()
+            else:
+                child_part.category = parent_category
+                child_part.save()
+
+        for child_category in self.children.all():
+            if kwargs.get('delete_child_categories', False):
+                child_category.delete_recursive(**dict(delete_child_categories=True,
+                                                       delete_parts=delete_parts,
+                                                       parent_category=parent_category))
+            else:
+                child_category.parent = parent_category
+                child_category.save()
+
+        super().delete(*args, **dict())
+
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
 
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
         with transaction.atomic():
+            self.delete_recursive(**dict(delete_parts=kwargs.get('delete_parts', False),
+                                         delete_child_categories=kwargs.get('delete_child_categories', False),
+                                         parent_category=self.parent))
 
-            parent = self.parent
-            tree_id = self.tree_id
-
-            # Update each part in this category to point to the parent category
-            for p in self.parts.all():
-                p.category = self.parent
-                p.save()
-
-            # Update each child category
-            for child in self.children.all():
-                child.parent = self.parent
-                child.save()
-
-            super().delete(*args, **kwargs)
-
-            if parent is not None:
+            if self.parent is not None:
                 # Partially rebuild the tree (cheaper than a complete rebuild)
-                PartCategory.objects.partial_rebuild(tree_id)
+                PartCategory.objects.partial_rebuild(self.tree_id)
             else:
                 PartCategory.objects.rebuild()
 
@@ -97,6 +115,14 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         on_delete=models.SET_NULL,
         verbose_name=_('Default Location'),
         help_text=_('Default location for parts in this category')
+    )
+
+    structural = models.BooleanField(
+        default=False,
+        verbose_name=_('Structural'),
+        help_text=_(
+            'Parts may not be directly assigned to a structural category, '
+            'but may be assigned to child categories.'),
     )
 
     default_keywords = models.CharField(null=True, blank=True, max_length=250, verbose_name=_('Default keywords'), help_text=_('Default keywords for parts in this category'))
@@ -116,6 +142,17 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     def get_absolute_url(self):
         """Return the web URL associated with the detail view for this PartCategory instance"""
         return reverse('category-detail', kwargs={'pk': self.id})
+
+    def clean(self):
+        """Custom clean action for the PartCategory model:
+
+        - Ensure that the structural parameter cannot get set if products already assigned to the category
+        """
+        if self.pk and self.structural and self.item_count > 0:
+            raise ValidationError(
+                _("You cannot make this part category structural because some parts "
+                  "are already assigned to it!"))
+        super().clean()
 
     class Meta:
         """Metaclass defines extra model properties"""
@@ -293,6 +330,7 @@ class PartManager(TreeManager):
         """Perform default prefetch operations when accessing Part model from the database"""
         return super().get_queryset().prefetch_related(
             'category',
+            'pricing_data',
             'category__parent',
             'stock_items',
             'builds',
@@ -405,6 +443,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         If not, it is considered "orphaned" and will be deleted.
         """
         # Get category templates settings
+
         add_category_templates = kwargs.pop('add_category_templates', False)
 
         if self.pk:
@@ -671,7 +710,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
             return full_name
 
-        except AttributeError as attr_err:
+        except Exception as attr_err:
 
             logger.warning(f"exception while trying to create full name for part {self.name}", attr_err)
 
@@ -735,11 +774,17 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     def clean(self):
         """Perform cleaning operations for the Part model.
 
-        Update trackable status:
+        - Check if the PartCategory is not structural
+
+        - Update trackable status:
             If this part is trackable, and it is used in the BOM
             for a parent part which is *not* trackable,
             then we will force the parent part to be trackable.
         """
+        if self.category is not None and self.category.structural:
+            raise ValidationError(
+                {'category': _("Parts cannot be assigned to structural part categories!")})
+
         super().clean()
 
         # Strip IPN field
@@ -1634,15 +1679,25 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         """Return the number of supplier parts available for this part."""
         return self.supplier_parts.count()
 
-    @property
-    def has_complete_bom_pricing(self):
-        """Return true if there is pricing information for each item in the BOM."""
-        use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-        for item in self.get_bom_items().select_related('sub_part'):
-            if item.sub_part.get_price_range(internal=use_internal) is None:
-                return False
+    def update_pricing(self):
+        """Recalculate cached pricing for this Part instance"""
 
-        return True
+        self.pricing.update_pricing()
+
+    @property
+    def pricing(self):
+        """Return the PartPricing information for this Part instance.
+
+        If there is no PartPricing database entry defined for this Part,
+        it will first be created, and then returned.
+        """
+
+        try:
+            pricing = PartPricing.objects.get(part=self)
+        except PartPricing.DoesNotExist:
+            pricing = PartPricing(part=self)
+
+        return pricing
 
     def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
         """Return a simplified pricing string for this part.
@@ -1785,7 +1840,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
                 max(buy_price_range[1], bom_price_range[1])
             )
 
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
+    base_cost = models.DecimalField(max_digits=19, decimal_places=6, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
 
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Sell multiple'))
 
@@ -2184,6 +2239,611 @@ def after_save_part(sender, instance: Part, created, **kwargs):
         InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance)
 
 
+class PartPricing(models.Model):
+    """Model for caching min/max pricing information for a particular Part
+
+    It is prohibitively expensive to calculate min/max pricing for a part "on the fly".
+    As min/max pricing does not change very often, we pre-calculate and cache these values.
+
+    Whenever pricing is updated, these values are re-calculated and stored.
+
+    Pricing information is cached for:
+
+    - BOM cost (min / max cost of component items)
+    - Purchase cost (based on purchase history)
+    - Internal cost (based on user-specified InternalPriceBreak data)
+    - Supplier price (based on supplier part data)
+    - Variant price (min / max cost of any variants)
+    - Overall best / worst (based on the values listed above)
+    - Sale price break min / max values
+    - Historical sale pricing min / max values
+
+    Note that this pricing information does not take "quantity" into account:
+    - This provides a simple min / max pricing range, which is quite valuable in a lot of situations
+    - Quantity pricing still needs to be calculated
+    - Quantity pricing can be viewed from the part detail page
+    - Detailed pricing information is very context specific in any case
+    """
+
+    @property
+    def is_valid(self):
+        """Return True if the cached pricing is valid"""
+
+        return self.updated is not None
+
+    def convert(self, money):
+        """Attempt to convert money value to default currency.
+
+        If a MissingRate error is raised, ignore it and return None
+        """
+
+        if money is None:
+            return None
+
+        target_currency = currency_code_default()
+
+        try:
+            result = convert_money(money, target_currency)
+        except MissingRate:
+            logger.warning(f"No currency conversion rate available for {money.currency} -> {target_currency}")
+            result = None
+
+        return result
+
+    def schedule_for_update(self, counter: int = 0):
+        """Schedule this pricing to be updated"""
+
+        if self.pk is None:
+            self.save()
+
+        self.refresh_from_db()
+
+        if self.scheduled_for_update:
+            # Ignore if the pricing is already scheduled to be updated
+            logger.info(f"Pricing for {self.part} already scheduled for update - skipping")
+            return
+
+        if counter > 25:
+            # Prevent infinite recursion / stack depth issues
+            logger.info(counter, f"Skipping pricing update for {self.part} - maximum depth exceeded")
+            return
+
+        self.scheduled_for_update = True
+        self.save()
+
+        import part.tasks as part_tasks
+
+        # Offload task to update the pricing
+        # Force async, to prevent running in the foreground
+        InvenTree.tasks.offload_task(
+            part_tasks.update_part_pricing,
+            self,
+            counter=counter,
+            force_async=True
+        )
+
+    def update_pricing(self, counter: int = 0):
+        """Recalculate all cost data for the referenced Part instance"""
+
+        if self.pk is not None:
+            self.refresh_from_db()
+
+        self.update_bom_cost(save=False)
+        self.update_purchase_cost(save=False)
+        self.update_internal_cost(save=False)
+        self.update_supplier_cost(save=False)
+        self.update_variant_cost(save=False)
+        self.update_sale_cost(save=False)
+
+        # Clear scheduling flag
+        self.scheduled_for_update = False
+
+        # Note: save method calls update_overall_cost
+        try:
+            self.save()
+        except IntegrityError:
+            # Background worker processes may try to concurrently update
+            pass
+
+        # Update parent assemblies and templates
+        self.update_assemblies(counter)
+        self.update_templates(counter)
+
+    def update_assemblies(self, counter: int = 0):
+        """Schedule updates for any assemblies which use this part"""
+
+        # If the linked Part is used in any assemblies, schedule a pricing update for those assemblies
+        used_in_parts = self.part.get_used_in()
+
+        for p in used_in_parts:
+            p.pricing.schedule_for_update(counter + 1)
+
+    def update_templates(self, counter: int = 0):
+        """Schedule updates for any template parts above this part"""
+
+        templates = self.part.get_ancestors(include_self=False)
+
+        for p in templates:
+            p.pricing.schedule_for_update(counter + 1)
+
+    def save(self, *args, **kwargs):
+        """Whenever pricing model is saved, automatically update overall prices"""
+
+        # Update the currency which was used to perform the calculation
+        self.currency = currency_code_default()
+
+        self.update_overall_cost()
+
+        super().save(*args, **kwargs)
+
+    def update_bom_cost(self, save=True):
+        """Recalculate BOM cost for the referenced Part instance.
+
+        Iterate through the Bill of Materials, and calculate cumulative pricing:
+
+        cumulative_min: The sum of minimum costs for each line in the BOM
+        cumulative_max: The sum of maximum costs for each line in the BOM
+
+        Note: The cumulative costs are calculated based on the specified default currency
+        """
+
+        if not self.part.assembly:
+            # Not an assembly - no BOM pricing
+            self.bom_cost_min = None
+            self.bom_cost_max = None
+
+            if save:
+                self.save()
+
+            # Short circuit - no further operations required
+            return
+
+        currency_code = common.settings.currency_code_default()
+
+        cumulative_min = Money(0, currency_code)
+        cumulative_max = Money(0, currency_code)
+
+        any_min_elements = False
+        any_max_elements = False
+
+        for bom_item in self.part.get_bom_items():
+            # Loop through each BOM item which is used to assemble this part
+
+            bom_item_min = None
+            bom_item_max = None
+
+            for sub_part in bom_item.get_valid_parts_for_allocation():
+                # Check each part which *could* be used
+
+                sub_part_pricing = sub_part.pricing
+
+                sub_part_min = self.convert(sub_part_pricing.overall_min)
+                sub_part_max = self.convert(sub_part_pricing.overall_max)
+
+                if sub_part_min is not None:
+                    if bom_item_min is None or sub_part_min < bom_item_min:
+                        bom_item_min = sub_part_min
+
+                if sub_part_max is not None:
+                    if bom_item_max is None or sub_part_max > bom_item_max:
+                        bom_item_max = sub_part_max
+
+            # Update cumulative totals
+            if bom_item_min is not None:
+                bom_item_min *= bom_item.quantity
+                cumulative_min += self.convert(bom_item_min)
+
+                any_min_elements = True
+
+            if bom_item_max is not None:
+                bom_item_max *= bom_item.quantity
+                cumulative_max += self.convert(bom_item_max)
+
+                any_max_elements = True
+
+        if any_min_elements:
+            self.bom_cost_min = cumulative_min
+        else:
+            self.bom_cost_min = None
+
+        if any_max_elements:
+            self.bom_cost_max = cumulative_max
+        else:
+            self.bom_cost_max = None
+
+        if save:
+            self.save()
+
+    def update_purchase_cost(self, save=True):
+        """Recalculate historical purchase cost for the referenced Part instance.
+
+        Purchase history only takes into account "completed" purchase orders.
+        """
+
+        # Find all line items for completed orders which reference this part
+        line_items = OrderModels.PurchaseOrderLineItem.objects.filter(
+            order__status=PurchaseOrderStatus.COMPLETE,
+            received__gt=0,
+            part__part=self.part,
+        )
+
+        # Exclude line items which do not have an associated price
+        line_items = line_items.exclude(purchase_price=None)
+
+        purchase_min = None
+        purchase_max = None
+
+        for line in line_items:
+
+            if line.purchase_price is None:
+                continue
+
+            # Take supplier part pack size into account
+            purchase_cost = self.convert(line.purchase_price / line.part.pack_size)
+
+            if purchase_cost is None:
+                continue
+
+            if purchase_min is None or purchase_cost < purchase_min:
+                purchase_min = purchase_cost
+
+            if purchase_max is None or purchase_cost > purchase_max:
+                purchase_max = purchase_cost
+
+        self.purchase_cost_min = purchase_min
+        self.purchase_cost_max = purchase_max
+
+        if save:
+            self.save()
+
+    def update_internal_cost(self, save=True):
+        """Recalculate internal cost for the referenced Part instance"""
+
+        min_int_cost = None
+        max_int_cost = None
+
+        if InvenTreeSetting.get_setting('PART_INTERNAL_PRICE', False, cache=False):
+            # Only calculate internal pricing if internal pricing is enabled
+            for pb in self.part.internalpricebreaks.all():
+                cost = self.convert(pb.price)
+
+                if cost is None:
+                    # Ignore if cost could not be converted for some reason
+                    continue
+
+                if min_int_cost is None or cost < min_int_cost:
+                    min_int_cost = cost
+
+                if max_int_cost is None or cost > max_int_cost:
+                    max_int_cost = cost
+
+        self.internal_cost_min = min_int_cost
+        self.internal_cost_max = max_int_cost
+
+        if save:
+            self.save()
+
+    def update_supplier_cost(self, save=True):
+        """Recalculate supplier cost for the referenced Part instance.
+
+        - The limits are simply the lower and upper bounds of available SupplierPriceBreaks
+        - We do not take "quantity" into account here
+        """
+
+        min_sup_cost = None
+        max_sup_cost = None
+
+        if self.part.purchaseable:
+
+            # Iterate through each available SupplierPart instance
+            for sp in self.part.supplier_parts.all():
+
+                # Iterate through each available SupplierPriceBreak instance
+                for pb in sp.pricebreaks.all():
+
+                    if pb.price is None:
+                        continue
+
+                    # Ensure we take supplier part pack size into account
+                    cost = self.convert(pb.price / sp.pack_size)
+
+                    if cost is None:
+                        continue
+
+                    if min_sup_cost is None or cost < min_sup_cost:
+                        min_sup_cost = cost
+
+                    if max_sup_cost is None or cost > max_sup_cost:
+                        max_sup_cost = cost
+
+        self.supplier_price_min = min_sup_cost
+        self.supplier_price_max = max_sup_cost
+
+        if save:
+            self.save()
+
+    def update_variant_cost(self, save=True):
+        """Update variant cost values.
+
+        Here we track the min/max costs of any variant parts.
+        """
+
+        variant_min = None
+        variant_max = None
+
+        active_only = InvenTreeSetting.get_setting('PRICING_ACTIVE_VARIANTS', False)
+
+        if self.part.is_template:
+            variants = self.part.get_descendants(include_self=False)
+
+            for v in variants:
+
+                if active_only and not v.active:
+                    # Ignore inactive variant parts
+                    continue
+
+                v_min = self.convert(v.pricing.overall_min)
+                v_max = self.convert(v.pricing.overall_max)
+
+                if v_min is not None:
+                    if variant_min is None or v_min < variant_min:
+                        variant_min = v_min
+
+                if v_max is not None:
+                    if variant_max is None or v_max > variant_max:
+                        variant_max = v_max
+
+        self.variant_cost_min = variant_min
+        self.variant_cost_max = variant_max
+
+        if save:
+            self.save()
+
+    def update_overall_cost(self):
+        """Update overall cost values.
+
+        Here we simply take the minimum / maximum values of the other calculated fields.
+        """
+
+        overall_min = None
+        overall_max = None
+
+        min_costs = [
+            self.bom_cost_min,
+            self.purchase_cost_min,
+            self.internal_cost_min,
+        ]
+
+        max_costs = [
+            self.bom_cost_max,
+            self.purchase_cost_max,
+            self.internal_cost_max,
+        ]
+
+        purchase_history_override = InvenTreeSetting.get_setting('PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER', False, cache=False)
+
+        if InvenTreeSetting.get_setting('PRICING_USE_SUPPLIER_PRICING', True, cache=False):
+            # Add supplier pricing data, *unless* historical pricing information should override
+            if self.purchase_cost_min is None or not purchase_history_override:
+                min_costs.append(self.supplier_price_min)
+
+            if self.purchase_cost_max is None or not purchase_history_override:
+                max_costs.append(self.supplier_price_max)
+
+        if InvenTreeSetting.get_setting('PRICING_USE_VARIANT_PRICING', True, cache=False):
+            min_costs.append(self.variant_cost_min)
+            max_costs.append(self.variant_cost_max)
+
+        # Calculate overall minimum cost
+        for cost in min_costs:
+            if cost is None:
+                continue
+
+            # Ensure we are working in a common currency
+            cost = self.convert(cost)
+
+            if overall_min is None or cost < overall_min:
+                overall_min = cost
+
+        # Calculate overall maximum cost
+        for cost in max_costs:
+            if cost is None:
+                continue
+
+            # Ensure we are working in a common currency
+            cost = self.convert(cost)
+
+            if overall_max is None or cost > overall_max:
+                overall_max = cost
+
+        if InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False, cache=False):
+            # Check if internal pricing should override other pricing
+            if self.internal_cost_min is not None:
+                overall_min = self.internal_cost_min
+
+            if self.internal_cost_max is not None:
+                overall_max = self.internal_cost_max
+
+        self.overall_min = overall_min
+        self.overall_max = overall_max
+
+    def update_sale_cost(self, save=True):
+        """Recalculate sale cost data"""
+
+        # Iterate through the sell price breaks
+        min_sell_price = None
+        max_sell_price = None
+
+        for pb in self.part.salepricebreaks.all():
+
+            cost = self.convert(pb.price)
+
+            if cost is None:
+                continue
+
+            if min_sell_price is None or cost < min_sell_price:
+                min_sell_price = cost
+
+            if max_sell_price is None or cost > max_sell_price:
+                max_sell_price = cost
+
+        # Record min/max values
+        self.sale_price_min = min_sell_price
+        self.sale_price_max = max_sell_price
+
+        min_sell_history = None
+        max_sell_history = None
+
+        # Find all line items for shipped sales orders which reference this part
+        line_items = OrderModels.SalesOrderLineItem.objects.filter(
+            order__status=SalesOrderStatus.SHIPPED,
+            part=self.part
+        )
+
+        # Exclude line items which do not have associated pricing data
+        line_items = line_items.exclude(sale_price=None)
+
+        for line in line_items:
+
+            cost = self.convert(line.sale_price)
+
+            if cost is None:
+                continue
+
+            if min_sell_history is None or cost < min_sell_history:
+                min_sell_history = cost
+
+            if max_sell_history is None or cost > max_sell_history:
+                max_sell_history = cost
+
+        self.sale_history_min = min_sell_history
+        self.sale_history_max = max_sell_history
+
+        if save:
+            self.save()
+
+    currency = models.CharField(
+        default=currency_code_default,
+        max_length=10,
+        verbose_name=_('Currency'),
+        help_text=_('Currency used to cache pricing calculations'),
+        choices=common.settings.currency_code_mappings(),
+    )
+
+    updated = models.DateTimeField(
+        verbose_name=_('Updated'),
+        help_text=_('Timestamp of last pricing update'),
+        auto_now=True
+    )
+
+    scheduled_for_update = models.BooleanField(
+        default=False,
+    )
+
+    part = models.OneToOneField(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='pricing_data',
+        verbose_name=_('Part'),
+    )
+
+    bom_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum BOM Cost'),
+        help_text=_('Minimum cost of component parts')
+    )
+
+    bom_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum BOM Cost'),
+        help_text=_('Maximum cost of component parts'),
+    )
+
+    purchase_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Purchase Cost'),
+        help_text=_('Minimum historical purchase cost'),
+    )
+
+    purchase_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Purchase Cost'),
+        help_text=_('Maximum historical purchase cost'),
+    )
+
+    internal_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Internal Price'),
+        help_text=_('Minimum cost based on internal price breaks'),
+    )
+
+    internal_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Internal Price'),
+        help_text=_('Maximum cost based on internal price breaks'),
+    )
+
+    supplier_price_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Supplier Price'),
+        help_text=_('Minimum price of part from external suppliers'),
+    )
+
+    supplier_price_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Supplier Price'),
+        help_text=_('Maximum price of part from external suppliers'),
+    )
+
+    variant_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Variant Cost'),
+        help_text=_('Calculated minimum cost of variant parts'),
+    )
+
+    variant_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Variant Cost'),
+        help_text=_('Calculated maximum cost of variant parts'),
+    )
+
+    overall_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Cost'),
+        help_text=_('Calculated overall minimum cost'),
+    )
+
+    overall_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Cost'),
+        help_text=_('Calculated overall maximum cost'),
+    )
+
+    sale_price_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Sale Price'),
+        help_text=_('Minimum sale price based on price breaks'),
+    )
+
+    sale_price_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Sale Price'),
+        help_text=_('Maximum sale price based on price breaks'),
+    )
+
+    sale_history_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Sale Cost'),
+        help_text=_('Minimum historical sale price'),
+    )
+
+    sale_history_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Sale Cost'),
+        help_text=_('Maximum historical sale price'),
+    )
+
+
 class PartAttachment(InvenTreeAttachment):
     """Model for storing file attachments against a Part object."""
 
@@ -2383,10 +3043,7 @@ class PartTestTemplate(models.Model):
 
 
 def validate_template_name(name):
-    """Prevent illegal characters in "name" field for PartParameterTemplate."""
-    for c in "\"\'`!?|":  # noqa: P103
-        if c in str(name):
-            raise ValidationError(_(f"Illegal character in template name ({c})"))
+    """Placeholder for legacy function used in migrations."""
 
 
 class PartParameterTemplate(models.Model):
@@ -2431,10 +3088,7 @@ class PartParameterTemplate(models.Model):
         max_length=100,
         verbose_name=_('Name'),
         help_text=_('Parameter Name'),
-        unique=True,
-        validators=[
-            validate_template_name,
-        ]
+        unique=True
     )
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
@@ -2877,7 +3531,7 @@ class BomItem(DataImportMixin, models.Model):
     def price_range(self, internal=False):
         """Return the price-range for this BOM item."""
         # get internal price setting
-        use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+        use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False, cache=False)
         prange = self.sub_part.get_price_range(self.quantity, internal=use_internal and internal)
 
         if prange is None:
@@ -2893,6 +3547,28 @@ class BomItem(DataImportMixin, models.Model):
         pmax = decimal2money(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+
+
+@receiver(post_save, sender=BomItem, dispatch_uid='post_save_bom_item')
+@receiver(post_save, sender=PartSellPriceBreak, dispatch_uid='post_save_sale_price_break')
+@receiver(post_save, sender=PartInternalPriceBreak, dispatch_uid='post_save_internal_price_break')
+def update_pricing_after_edit(sender, instance, created, **kwargs):
+    """Callback function when a part price break is created or updated"""
+
+    # Update part pricing *unless* we are importing data
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+        instance.part.pricing.schedule_for_update()
+
+
+@receiver(post_delete, sender=BomItem, dispatch_uid='post_delete_bom_item')
+@receiver(post_delete, sender=PartSellPriceBreak, dispatch_uid='post_delete_sale_price_break')
+@receiver(post_delete, sender=PartInternalPriceBreak, dispatch_uid='post_delete_internal_price_break')
+def update_pricing_after_delete(sender, instance, **kwargs):
+    """Callback function when a part price break is deleted"""
+
+    # Update part pricing *unless* we are importing data
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+        instance.part.pricing.schedule_for_update()
 
 
 class BomItemSubstitute(models.Model):

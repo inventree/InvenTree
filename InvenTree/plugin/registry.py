@@ -108,9 +108,6 @@ class PluginsRegistry:
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
-        if not settings.PLUGINS_ENABLED:
-            # Plugins not enabled, do nothing
-            return  # pragma: no cover
 
         logger.info('Start loading plugins')
 
@@ -167,9 +164,6 @@ class PluginsRegistry:
 
     def unload_plugins(self):
         """Unload and deactivate all IntegrationPlugins."""
-        if not settings.PLUGINS_ENABLED:
-            # Plugins not enabled, do nothing
-            return  # pragma: no cover
 
         logger.info('Start unloading plugins')
 
@@ -187,6 +181,7 @@ class PluginsRegistry:
         # remove maintenance
         if not _maintenance:
             set_maintenance_mode(False)  # pragma: no cover
+
         logger.info('Finished unloading plugins')
 
     def reload_plugins(self, full_reload: bool = False):
@@ -210,62 +205,63 @@ class PluginsRegistry:
     def plugin_dirs(self):
         """Construct a list of directories from where plugins can be loaded"""
 
+        # Builtin plugins are *always* loaded
         dirs = ['plugin.builtin', ]
 
-        if settings.TESTING or settings.DEBUG:
-            # If in TEST or DEBUG mode, load plugins from the 'samples' directory
-            dirs.append('plugin.samples')
+        if settings.PLUGINS_ENABLED:
+            # Any 'external' plugins are only loaded if PLUGINS_ENABLED is set to True
 
-        if settings.TESTING:
-            custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
-        else:  # pragma: no cover
-            custom_dirs = get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
+            if settings.TESTING or settings.DEBUG:
+                # If in TEST or DEBUG mode, load plugins from the 'samples' directory
+                dirs.append('plugin.samples')
 
-            # Load from user specified directories (unless in testing mode)
-            dirs.append('plugins')
+            if settings.TESTING:
+                custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
+            else:  # pragma: no cover
+                custom_dirs = get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
-        if custom_dirs is not None:
-            # Allow multiple plugin directories to be specified
-            for pd_text in custom_dirs.split(','):
-                pd = Path(pd_text.strip()).absolute()
+                # Load from user specified directories (unless in testing mode)
+                dirs.append('plugins')
 
-                # Attempt to create the directory if it does not already exist
-                if not pd.exists():
-                    try:
-                        pd.mkdir(exist_ok=True)
-                    except Exception:  # pragma: no cover
-                        logger.error(f"Could not create plugin directory '{pd}'")
-                        continue
+            if custom_dirs is not None:
+                # Allow multiple plugin directories to be specified
+                for pd_text in custom_dirs.split(','):
+                    pd = Path(pd_text.strip()).absolute()
 
-                # Ensure the directory has an __init__.py file
-                init_filename = pd.joinpath('__init__.py')
+                    # Attempt to create the directory if it does not already exist
+                    if not pd.exists():
+                        try:
+                            pd.mkdir(exist_ok=True)
+                        except Exception:  # pragma: no cover
+                            logger.error(f"Could not create plugin directory '{pd}'")
+                            continue
 
-                if not init_filename.exists():
-                    try:
-                        init_filename.write_text("# InvenTree plugin directory\n")
-                    except Exception:  # pragma: no cover
-                        logger.error(f"Could not create file '{init_filename}'")
-                        continue
+                    # Ensure the directory has an __init__.py file
+                    init_filename = pd.joinpath('__init__.py')
 
-                # By this point, we have confirmed that the directory at least exists
-                if pd.exists() and pd.is_dir():
-                    # Convert to python dot-path
-                    if pd.is_relative_to(settings.BASE_DIR):
-                        pd_path = '.'.join(pd.relative_to(settings.BASE_DIR).parts)
-                    else:
-                        pd_path = str(pd)
+                    if not init_filename.exists():
+                        try:
+                            init_filename.write_text("# InvenTree plugin directory\n")
+                        except Exception:  # pragma: no cover
+                            logger.error(f"Could not create file '{init_filename}'")
+                            continue
 
-                    # Add path
-                    dirs.append(pd_path)
-                    logger.info(f"Added plugin directory: '{pd}' as '{pd_path}'")
+                    # By this point, we have confirmed that the directory at least exists
+                    if pd.exists() and pd.is_dir():
+                        # Convert to python dot-path
+                        if pd.is_relative_to(settings.BASE_DIR):
+                            pd_path = '.'.join(pd.relative_to(settings.BASE_DIR).parts)
+                        else:
+                            pd_path = str(pd)
+
+                        # Add path
+                        dirs.append(pd_path)
+                        logger.info(f"Added plugin directory: '{pd}' as '{pd_path}'")
 
         return dirs
 
     def collect_plugins(self):
         """Collect plugins from all possible ways of loading. Returned as list."""
-        if not settings.PLUGINS_ENABLED:
-            # Plugins not enabled, do nothing
-            return  # pragma: no cover
 
         collected_plugins = []
 
@@ -293,17 +289,20 @@ class PluginsRegistry:
             if modules:
                 [collected_plugins.append(item) for item in modules]
 
-        # Check if not running in testing mode and apps should be loaded from hooks
-        if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
-            # Collect plugins from setup entry points
-            for entry in get_entrypoints():
-                try:
-                    plugin = entry.load()
-                    plugin.is_package = True
-                    plugin._get_package_metadata()
-                    collected_plugins.append(plugin)
-                except Exception as error:  # pragma: no cover
-                    handle_error(error, do_raise=False, log_name='discovery')
+        # From this point any plugins are considered "external" and only loaded if plugins are explicitly enabled
+        if settings.PLUGINS_ENABLED:
+
+            # Check if not running in testing mode and apps should be loaded from hooks
+            if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
+                # Collect plugins from setup entry points
+                for entry in get_entrypoints():
+                    try:
+                        plugin = entry.load()
+                        plugin.is_package = True
+                        plugin._get_package_metadata()
+                        collected_plugins.append(plugin)
+                    except Exception as error:  # pragma: no cover
+                        handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
         logger.info(f'Collected {len(collected_plugins)} plugins!')
@@ -312,7 +311,7 @@ class PluginsRegistry:
         return collected_plugins
 
     def install_plugin_file(self):
-        """Make sure all plugins are installed in the current enviroment."""
+        """Make sure all plugins are installed in the current environment."""
         if settings.PLUGIN_FILE_CHECKED:
             logger.info('Plugin file was already checked')
             return True
@@ -335,7 +334,7 @@ class PluginsRegistry:
     # endregion
 
     # region registry functions
-    def with_mixin(self, mixin: str, active=None):
+    def with_mixin(self, mixin: str, active=None, builtin=None):
         """Returns reference to all plugins that have a specified mixin enabled."""
         result = []
 
@@ -343,10 +342,13 @@ class PluginsRegistry:
             if plugin.mixin_enabled(mixin):
 
                 if active is not None:
-                    # Filter by 'enabled' status
-                    config = plugin.plugin_config()
+                    # Filter by 'active' status of plugin
+                    if active != plugin.is_active():
+                        continue
 
-                    if config.active != active:
+                if builtin is not None:
+                    # Filter by 'builtin' status of plugin
+                    if builtin != plugin.is_builtin:
                         continue
 
                 result.append(plugin)
@@ -403,8 +405,14 @@ class PluginsRegistry:
             # Append reference to plugin
             plg.db = plg_db
 
-            # Always activate if testing
-            if settings.PLUGIN_TESTING or (plg_db and plg_db.active):
+            # Check if this is a 'builtin' plugin
+            builtin = plg.check_is_builtin()
+
+            # Determine if this plugin should be loaded:
+            # - If PLUGIN_TESTING is enabled
+            # - If this is a 'builtin' plugin
+            # - If this plugin has been explicitly enabled by the user
+            if settings.PLUGIN_TESTING or builtin or (plg_db and plg_db.active):
                 # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
                 if disabled and ((plg.__name__ == disabled) or (plg.__module__ == disabled)):
                     safe_reference(plugin=plg, key=plg_key, active=False)
@@ -498,10 +506,9 @@ class PluginsRegistry:
             for _key, plugin in plugins:
 
                 if plugin.mixin_enabled('schedule'):
-                    config = plugin.plugin_config()
 
-                    # Only active tasks for plugins which are enabled
-                    if config and config.active:
+                    if plugin.is_active():
+                        # Only active tasks for plugins which are enabled
                         plugin.register_tasks()
                         task_keys += plugin.get_task_names()
 

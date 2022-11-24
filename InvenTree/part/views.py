@@ -11,10 +11,6 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-from djmoney.contrib.exchange.exceptions import MissingRate
-from djmoney.contrib.exchange.models import convert_money
-
-import common.settings as inventree_settings
 from common.files import FileManager
 from common.models import InvenTreeSetting
 from common.views import FileManagementAjaxView, FileManagementFormView
@@ -22,7 +18,6 @@ from company.models import SupplierPart
 from InvenTree.helpers import str2bool
 from InvenTree.views import (AjaxUpdateView, AjaxView, InvenTreeRoleMixin,
                              QRCodeView)
-from order.models import PurchaseOrderLineItem
 from plugin.views import InvenTreePluginViewMixin
 from stock.models import StockItem, StockLocation
 
@@ -292,17 +287,6 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
         context.update(**ctx)
 
-        show_price_history = InvenTreeSetting.get_setting('PART_SHOW_PRICE_HISTORY', False)
-
-        context['show_price_history'] = show_price_history
-
-        # Pricing information
-        if show_price_history:
-            ctx = self.get_pricing(self.get_quantity())
-            ctx['form'] = self.form_class(initial=self.get_initials())
-
-            context.update(ctx)
-
         return context
 
     def get_quantity(self):
@@ -312,113 +296,6 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     def get_part(self):
         """Return the Part instance associated with this view"""
         return self.get_object()
-
-    def get_pricing(self, quantity=1, currency=None):
-        """Returns context with pricing information."""
-        ctx = PartPricing.get_pricing(self, quantity, currency)
-        part = self.get_part()
-        default_currency = inventree_settings.currency_code_default()
-
-        # Stock history
-        if part.total_stock > 1:
-            price_history = []
-            stock = part.stock_entries(include_variants=False, in_stock=True).\
-                order_by('purchase_order__issue_date').prefetch_related('purchase_order', 'supplier_part')
-
-            for stock_item in stock:
-                if None in [stock_item.purchase_price, stock_item.quantity]:
-                    continue
-
-                # convert purchase price to current currency - only one currency in the graph
-                try:
-                    price = convert_money(stock_item.purchase_price, default_currency)
-                except MissingRate:
-                    continue
-
-                line = {
-                    'price': price.amount,
-                    'qty': stock_item.quantity
-                }
-                # Supplier Part Name  # TODO use in graph
-                if stock_item.supplier_part:
-                    line['name'] = stock_item.supplier_part.pretty_name
-
-                    if stock_item.supplier_part.unit_pricing and price:
-                        line['price_diff'] = price.amount - stock_item.supplier_part.unit_pricing
-                        line['price_part'] = stock_item.supplier_part.unit_pricing
-
-                # set date for graph labels
-                if stock_item.purchase_order and stock_item.purchase_order.issue_date:
-                    line['date'] = stock_item.purchase_order.issue_date.isoformat()
-                elif stock_item.tracking_info.count() > 0:
-                    line['date'] = stock_item.tracking_info.first().date.date().isoformat()
-                else:
-                    # Not enough information
-                    continue
-
-                price_history.append(line)
-
-            ctx['price_history'] = price_history
-
-        # BOM Information for Pie-Chart
-        if part.has_bom:
-            # get internal price setting
-            use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-            ctx_bom_parts = []
-            # iterate over all bom-items
-            for item in part.bom_items.all():
-                ctx_item = {'name': str(item.sub_part)}
-                price, qty = item.sub_part.get_price_range(quantity, internal=use_internal), item.quantity
-
-                price_min, price_max = 0, 0
-                if price:  # check if price available
-                    price_min = str((price[0] * qty) / quantity)
-                    if len(set(price)) == 2:  # min and max-price present
-                        price_max = str((price[1] * qty) / quantity)
-                        ctx['bom_pie_max'] = True  # enable showing max prices in bom
-
-                ctx_item['max_price'] = price_min
-                ctx_item['min_price'] = price_max if price_max else price_min
-                ctx_bom_parts.append(ctx_item)
-
-            # add to global context
-            ctx['bom_parts'] = ctx_bom_parts
-
-        # Sale price history
-        sale_items = PurchaseOrderLineItem.objects.filter(part__part=part).order_by('order__issue_date').\
-            prefetch_related('order', ).all()
-
-        if sale_items:
-            sale_history = []
-
-            for sale_item in sale_items:
-                # check for not fully defined elements
-                if None in [sale_item.purchase_price, sale_item.quantity]:
-                    continue
-
-                try:
-                    price = convert_money(sale_item.purchase_price, default_currency)
-                except MissingRate:
-                    continue
-
-                line = {
-                    'price': price.amount if price else 0,
-                    'qty': sale_item.quantity,
-                }
-
-                # set date for graph labels
-                if sale_item.order.issue_date:
-                    line['date'] = sale_item.order.issue_date.isoformat()
-                elif sale_item.order.creation_date:
-                    line['date'] = sale_item.order.creation_date.isoformat()
-                else:
-                    line['date'] = _('None')
-
-                sale_history.append(line)
-
-            ctx['sale_history'] = sale_history
-
-        return ctx
 
     def get_initials(self):
         """Returns initials for form."""
@@ -573,6 +450,8 @@ class BomDownload(AjaxView):
 
         manufacturer_data = str2bool(request.GET.get('manufacturer_data', False))
 
+        pricing_data = str2bool(request.GET.get('pricing_data', False))
+
         levels = request.GET.get('levels', None)
 
         if levels is not None:
@@ -596,6 +475,7 @@ class BomDownload(AjaxView):
                          stock_data=stock_data,
                          supplier_data=supplier_data,
                          manufacturer_data=manufacturer_data,
+                         pricing_data=pricing_data,
                          )
 
     def get_data(self):

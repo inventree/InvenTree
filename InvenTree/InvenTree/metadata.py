@@ -93,11 +93,11 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Add a 'DELETE' action if we are allowed to delete
             if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
-                actions['DELETE'] = True
+                actions['DELETE'] = {}
 
             # Add a 'VIEW' action if we are allowed to view
             if 'GET' in view.allowed_methods and check(user, table, 'view'):
-                actions['GET'] = True
+                actions['GET'] = {}
 
             metadata['actions'] = actions
 
