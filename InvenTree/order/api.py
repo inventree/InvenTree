@@ -3,6 +3,7 @@
 from django.contrib.auth import authenticate, login
 from django.db import transaction
 from django.db.models import F, Q
+from django.db.utils import ProgrammingError
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
@@ -1133,7 +1134,12 @@ class OrderCalendarExport(ICalFeed):
         whether or not to show completed orders. Defaults to false
     """
 
-    instance_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL").replace("http://", "").replace("https://", "")
+    try:
+        instance_url = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', create=False, cache=False)
+    except ProgrammingError:  # pragma: no cover
+        # database is not initialized yet
+        instance_url = ''
+    instance_url = instance_url.replace("http://", "").replace("https://", "")
     timezone = settings.TIME_ZONE
     file_name = "calendar.ics"
 
