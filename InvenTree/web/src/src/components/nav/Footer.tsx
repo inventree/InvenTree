@@ -19,9 +19,9 @@ export function Footer() {
 
   return (
     <div className={classes.layoutFooter}>
-      <Container className={classes.inner}>
+      <Container className={classes.layoutFooterInner}>
         <InvenTreeLogo />
-        <Group className={classes.links}>{items}</Group>
+        <Group className={classes.layoutFooterLinks}>{items}</Group>
       </Container>
     </div>
   );

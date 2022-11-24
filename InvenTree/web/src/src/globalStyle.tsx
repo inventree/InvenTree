@@ -43,6 +43,29 @@ export const InvenTreeStyle = createStyles((theme) => ({
       theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
   },
 
+  layoutContent: {
+    flex: 1,
+    width: '100%'
+  },
+
+  layoutFooterLinks: {
+    [theme.fn.smallerThan('xs')]: {
+      marginTop: theme.spacing.md
+    }
+  },
+
+  layoutFooterInner: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: theme.spacing.xl,
+    paddingBottom: theme.spacing.xl,
+
+    [theme.fn.smallerThan('xs')]: {
+      flexDirection: 'column'
+    }
+  },
+
   tabs: {
     [theme.fn.smallerThan('sm')]: {
       display: 'none'
@@ -73,29 +96,6 @@ export const InvenTreeStyle = createStyles((theme) => ({
           ? theme.colors.dark[7]
           : theme.colors.gray[2]
     }
-  },
-
-  inner: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.xl,
-
-    [theme.fn.smallerThan('xs')]: {
-      flexDirection: 'column'
-    }
-  },
-
-  links: {
-    [theme.fn.smallerThan('xs')]: {
-      marginTop: theme.spacing.md
-    }
-  },
-
-  content: {
-    flex: 1,
-    width: '100%'
   },
 
   signText: {
