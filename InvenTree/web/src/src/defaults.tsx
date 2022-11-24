@@ -1,11 +1,11 @@
 import { HostList } from './contex/states';
 
 export const defaultHostList: HostList = {
-  'https://demo.inventree.org': {
+  'https://demo_inventree_org': {
     host: 'https://demo.inventree.org/api/',
     name: 'InvenTree Demo'
   },
-  'https://sample.app.invenhost.com': {
+  'https://sample_app_invenhost_com': {
     host: 'https://sample.app.invenhost.com/api/',
     name: 'InvenHost: Sample'
   },

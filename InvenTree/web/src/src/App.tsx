@@ -6,7 +6,7 @@ import {
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
-import Layout from './pages/Layout';
+import Layout from './pages/layout';
 import { Logout } from './pages/Logout';
 import { Login } from './pages/Login';
 import { Part } from './pages/Index/Part';
@@ -84,11 +84,13 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <Login />
+    element: <Login />,
+    errorElement: <ErrorPage />
   },
   {
     path: '/logout',
-    element: <Logout />
+    element: <Logout />,
+    errorElement: <ErrorPage />
   }
 ]);
 
@@ -111,7 +113,8 @@ export default function App() {
   }
   setApiDefaults();
   const [fetchedSession, setFetchedSession] = useState(false);
-  const [token] = useSessionState.getState().token;
+  const sessionState = useSessionState.getState();
+  const [token] = sessionState.token ? [sessionState.token] : [null];
   if (token && !fetchedSession) {
     setFetchedSession(true);
     fetchSession();

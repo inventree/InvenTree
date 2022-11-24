@@ -1,8 +1,10 @@
+export interface Host {
+  host: string;
+  name: string;
+}
+
 export interface HostList {
-  [key: string]: {
-    host: string;
-    name: string;
-  };
+  [key: string]: Host;
 }
 
 export interface UserProps {
