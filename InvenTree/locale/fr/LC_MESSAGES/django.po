@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-22 05:30+0000\n"
-"PO-Revision-Date: 2022-11-22 15:52\n"
+"PO-Revision-Date: 2022-11-24 16:19\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -132,7 +132,7 @@ msgstr "Chaîne de numéro de série vide"
 
 #: InvenTree/helpers.py:627
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Numéro de série dupliqué"
 
 #: InvenTree/helpers.py:660 InvenTree/helpers.py:695
 #, python-brace-format
