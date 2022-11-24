@@ -106,5 +106,15 @@ export const InvenTreeStyle = createStyles((theme) => ({
   error: {
     backgroundColor: theme.colors.gray[0],
     color: theme.colors.red[6]
+  },
+
+  dashboardItemValue: {
+    fontSize: 24,
+    fontWeight: 700,
+    lineHeight: 1
+  },
+
+  dashboardItemTitle: {
+    fontWeight: 700
   }
 }));
