@@ -1,22 +1,10 @@
 import {
-  createStyles,
   LoadingOverlay,
   Group,
   Paper,
   Text
 } from '@mantine/core';
-
-const useStyles = createStyles((theme) => ({
-  value: {
-    fontSize: 24,
-    fontWeight: 700,
-    lineHeight: 1
-  },
-
-  title: {
-    fontWeight: 700
-  }
-}));
+import { InvenTreeStyle } from '../../globalStyle';
 
 export interface StatisticItemProps {
   title: string;
@@ -32,19 +20,19 @@ export function StatisticItem({
   data: StatisticItemProps;
   isLoading: boolean;
 }) {
-  const { classes } = useStyles();
+  const { classes } = InvenTreeStyle();
 
   return (
     <Paper withBorder p="xs" radius="md" key={id} pos="relative">
       <LoadingOverlay visible={isLoading} overlayBlur={2} />
       <Group position="apart">
-        <Text size="xs" color="dimmed" className={classes.title}>
+        <Text size="xs" color="dimmed" className={classes.dashboardItemTitle}>
           {data.title}
         </Text>
       </Group>
 
       <Group align="flex-end" spacing="xs" mt={25}>
-        <Text className={classes.value}>{data.value}</Text>
+        <Text className={classes.dashboardItemValue}>{data.value}</Text>
       </Group>
     </Paper>
   );

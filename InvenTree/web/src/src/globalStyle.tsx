@@ -1,23 +1,28 @@
 import { createStyles } from '@mantine/core';
 
-export const useStyles = createStyles((theme) => ({
-  header: {
+export const InvenTreeStyle = createStyles((theme) => ({
+  layoutHeader: {
     paddingTop: theme.spacing.sm,
     backgroundColor:
       theme.colorScheme === 'dark'
         ? theme.colors.dark[6]
         : theme.colors.gray[0],
-    borderBottom: `1px solid ${
-      theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]
-    }`,
+    borderBottom: `1px solid ${theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]
+      }`,
     marginBottom: 10
   },
 
-  mainSection: {
+  layoutFooter: {
+    marginTop: 10,
+    borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
+      }`
+  },
+
+  layoutHeaderSection: {
     paddingBottom: theme.spacing.sm
   },
 
-  user: {
+  layoutHeaderUser: {
     color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
     padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
     borderRadius: theme.radius.sm,
@@ -33,15 +38,32 @@ export const useStyles = createStyles((theme) => ({
     }
   },
 
-  burger: {
-    [theme.fn.largerThan('xs')]: {
-      display: 'none'
+  layoutHeaderUserActive: {
+    backgroundColor:
+      theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
+  },
+
+  layoutContent: {
+    flex: 1,
+    width: '100%'
+  },
+
+  layoutFooterLinks: {
+    [theme.fn.smallerThan('xs')]: {
+      marginTop: theme.spacing.md
     }
   },
 
-  userActive: {
-    backgroundColor:
-      theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
+  layoutFooterInner: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: theme.spacing.xl,
+    paddingBottom: theme.spacing.xl,
+
+    [theme.fn.smallerThan('xs')]: {
+      flexDirection: 'column'
+    }
   },
 
   tabs: {
@@ -76,38 +98,23 @@ export const useStyles = createStyles((theme) => ({
     }
   },
 
-  footer: {
-    marginTop: 10,
-    borderTop: `1px solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
-    }`
-  },
-
-  inner: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.xl,
-
-    [theme.fn.smallerThan('xs')]: {
-      flexDirection: 'column'
-    }
-  },
-
-  links: {
-    [theme.fn.smallerThan('xs')]: {
-      marginTop: theme.spacing.md
-    }
-  },
-
-  content: {
-    flex: 1,
-    width: '100%'
-  },
-
   signText: {
     fontSize: 'xl',
+    fontWeight: 700
+  },
+
+  error: {
+    backgroundColor: theme.colors.gray[0],
+    color: theme.colors.red[6]
+  },
+
+  dashboardItemValue: {
+    fontSize: 24,
+    fontWeight: 700,
+    lineHeight: 1
+  },
+
+  dashboardItemTitle: {
     fontWeight: 700
   }
 }));

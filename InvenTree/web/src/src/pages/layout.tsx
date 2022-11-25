@@ -3,17 +3,17 @@ import { Header } from '../components/nav/Header';
 import { Container, Flex, Space } from '@mantine/core';
 
 import { Footer } from '../components/nav/Footer';
-import { useStyles } from '../globalStyle';
+import { InvenTreeStyle } from '../globalStyle';
 import { ProtectedRoute } from '../contex/AuthContext';
 
 export default function Layout() {
-  const { classes } = useStyles();
+  const { classes } = InvenTreeStyle();
 
   return (
     <ProtectedRoute>
       <Flex direction="column" mih="100vh">
         <Header />
-        <Container className={classes.content}>
+        <Container className={classes.layoutContent}>
           <Outlet />
         </Container>
         <Space h="xl" />

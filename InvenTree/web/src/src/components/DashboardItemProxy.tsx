@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../App';
 import { StatisticItem } from './items/DashboardItem';
 import { useEffect, useState } from 'react';
+import { ErrorItem } from './items/ErrorItem';
 
 export function DashboardItemProxy({
   id,
@@ -34,7 +35,8 @@ export function DashboardItemProxy({
     }
   }, [data]);
 
-  if (error) return <>An error has occurred: {error}</>;
+  if (error != null)
+    return <ErrorItem id={id} error={error} />;
   return (
     <div key={id}>
       <StatisticItem

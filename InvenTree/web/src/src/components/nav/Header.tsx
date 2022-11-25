@@ -5,10 +5,8 @@ import {
   Group,
   Text,
   Menu,
-  Tabs,
-  Burger
+  Tabs
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import {
   IconLogout,
   IconHeart,
@@ -20,15 +18,14 @@ import {
 import { ColorToggle } from '../items/ColorToggle';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useStyles } from '../../globalStyle';
+import { InvenTreeStyle } from '../../globalStyle';
 import { Link } from 'react-router-dom';
 import { useLocalState } from '../../contex/LocalState';
 import { useApiState } from '../../contex/ApiState';
 import { tabs } from '../../defaults';
 
 export function Header() {
-  const { classes, theme, cx } = useStyles();
-  const [opened, { toggle }] = useDisclosure(false);
+  const { classes, theme, cx } = InvenTreeStyle();
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
   const { tabValue } = useParams();
@@ -48,19 +45,13 @@ export function Header() {
   ));
 
   return (
-    <div className={classes.header}>
-      <Container className={classes.mainSection}>
+    <div className={classes.layoutHeader}>
+      <Container className={classes.layoutHeaderSection}>
         <Group position="apart">
           <Group>
             <InvenTreeLogo />
             {hostList[hostKey].name}|{servername}
           </Group>
-          <Burger
-            opened={opened}
-            onClick={toggle}
-            className={classes.burger}
-            size="sm"
-          />
           <Group>
             <ColorToggle />
             <Menu
@@ -72,8 +63,8 @@ export function Header() {
             >
               <Menu.Target>
                 <UnstyledButton
-                  className={cx(classes.user, {
-                    [classes.userActive]: userMenuOpened
+                  className={cx(classes.layoutHeaderUser, {
+                    [classes.layoutHeaderUserActive]: userMenuOpened
                   })}
                 >
                   <Group spacing={7}>

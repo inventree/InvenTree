@@ -1,10 +1,10 @@
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { Container, Group, Anchor } from '@mantine/core';
-import { useStyles } from '../../globalStyle';
+import { InvenTreeStyle } from '../../globalStyle';
 import { links } from '../../defaults';
 
 export function Footer() {
-  const { classes } = useStyles();
+  const { classes } = InvenTreeStyle();
   const items = links.map((link) => (
     <Anchor<'a'>
       color="dimmed"
@@ -18,10 +18,10 @@ export function Footer() {
   ));
 
   return (
-    <div className={classes.footer}>
-      <Container className={classes.inner}>
+    <div className={classes.layoutFooter}>
+      <Container className={classes.layoutFooterInner}>
         <InvenTreeLogo />
-        <Group className={classes.links}>{items}</Group>
+        <Group className={classes.layoutFooterLinks}>{items}</Group>
       </Container>
     </div>
   );
