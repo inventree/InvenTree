@@ -7,7 +7,6 @@ export function StylishText({ children }: { children: JSX.Element | string }) {
     <Text
       className={classes.signText}
       variant="gradient"
-      gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}
     >
       {children}
     </Text>

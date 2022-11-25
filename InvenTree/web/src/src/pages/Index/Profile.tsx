@@ -1,12 +1,15 @@
 import {
   Button,
+  ColorPicker,
   Container,
   Grid,
   Group,
+  Header,
   SimpleGrid,
   Skeleton,
   Tabs,
   Text,
+  DEFAULT_THEME,
   TextInput
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -17,6 +20,7 @@ import { useToggle } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { api, queryClient } from '../../App';
 import { EditButton } from '../../components/items/EditButton';
+import { useLocalState } from '../../contex/LocalState';
 
 export function Profile() {
   const navigate = useNavigate();
@@ -73,7 +77,7 @@ function UserPanel() {
         </Container>
         <Grid gutter="md">
           <Grid.Col>
-            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" />
+            <UserTheme height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
           <Grid.Col span={6}>
             <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" />
@@ -143,6 +147,31 @@ function UserInfo({ data }: { data: any }) {
       ) : null}
     </form>
   );
+}
+
+function UserTheme({ height }: { height: number }) {
+  function getLkp(color: string) {
+    return { [DEFAULT_THEME.colors[color][6]]: color }
+  }
+  const lookup = Object.assign(...Object.keys(DEFAULT_THEME.colors).map(clr => getLkp(clr)));
+  function changePrimary(color: string) {
+    useLocalState.setState({ primaryColor: lookup[color] });
+  }
+
+  return (
+    <Container w="100%" h={height}>
+      <Header height={5}>Design</Header>
+      <div style={{ maxWidth: 200, marginLeft: 'auto', marginRight: 'auto' }}>
+        <ColorPicker
+          format="hex"
+          onChange={changePrimary}
+          withPicker={false}
+          fullWidth
+          swatches={Object.keys(lookup)}
+        />
+      </div>
+    </Container>)
+    ;
 }
 
 function SettingsPanel() {

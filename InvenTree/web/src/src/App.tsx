@@ -95,14 +95,11 @@ const router = createBrowserRouter([
   }
 ]);
 
-export const myTheme: MantineThemeOverride = {
-  colorScheme: 'light',
-  primaryColor: 'green',
-  defaultRadius: 0,
-};
 
 // Main App
 export default function App() {
+  const [hostList, primaryColor] = useLocalState((state) => [state.hostList, state.primaryColor]);
+
   // Color Scheme
   const preferredColorScheme = useColorScheme();
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -113,9 +110,13 @@ export default function App() {
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
     myTheme.colorScheme = colorScheme;
   };
+  const myTheme: MantineThemeOverride = {
+    colorScheme: 'light',
+    primaryColor: primaryColor,
+    defaultRadius: 0,
+  };
 
   // Session initialization
-  const [hostList] = useLocalState((state) => [state.hostList]);
   if (Object.keys(hostList).length === 0) {
     console.log('Laoding default host list');
     useLocalState.setState({ hostList: defaultHostList });
