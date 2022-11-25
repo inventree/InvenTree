@@ -1227,7 +1227,15 @@ class OrderCalendarExport(ICalFeed):
 
     def title(self, obj):
         """Return calendar title."""
-        return f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {obj["ordertype"]}'
+
+        if obj["ordertype"] == 'purchase-order':
+            ordertype_title = _('Purchase Order')
+        elif obj["ordertype"] == 'sales-order':
+            ordertype_title = _('Sales Order')
+        else:
+            ordertype_title = _('Unknown')
+
+        return f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {ordertype_title}'
 
     def product_id(self, obj):
         """Return calendar product id."""
@@ -1244,14 +1252,14 @@ class OrderCalendarExport(ICalFeed):
             if obj['include_completed'] is False:
                 # Do not include completed orders from list in this case
                 # Completed status = 30
-                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt='30')
+                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE)
             else:
                 outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
         else:
             if obj['include_completed'] is False:
                 # Do not include completed (=shipped) orders from list in this case
                 # Shipped status = 20
-                outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt='20')
+                outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED)
             else:
                 outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
 

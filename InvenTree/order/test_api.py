@@ -377,6 +377,52 @@ class PurchaseOrderTest(OrderTest):
 
     def test_po_calendar(self):
         """Test the calendar export endpoint"""
+
+        # Create required purchase orders
+        self.assignRole('purchase_order.add')
+
+        for i in range(1, 9):
+            self.post(
+                reverse('api-po-list'),
+                {
+                    'reference': f'PO-1100000{i}',
+                    'supplier': 1,
+                    'description': f'Calendar PO {i}',
+                    'target_date': f'2024-12-{i:02d}',
+                },
+                expected_code=201
+            )
+
+        # Get some of these orders with target date, complete or cancel them
+        for po in models.PurchaseOrder.objects.filter(target_date__isnull=False):
+            if po.reference in ['PO-11000001', 'PO-11000002', 'PO-11000003', 'PO-11000004']:
+                # Set issued status for these POs
+                self.post(
+                    reverse('api-po-issue', kwargs={'pk': po.pk}),
+                    {},
+                    expected_code=None
+                )
+
+                if po.reference in ['PO-11000001', 'PO-11000002']:
+                    # Set complete status for these POs
+                    self.post(
+                        reverse('api-po-complete', kwargs={'pk': po.pk}),
+                        {
+                            'accept_incomplete': True,
+                        },
+                        expected_code=None
+                    )
+
+            elif po.reference in ['PO-11000005', 'PO-11000006']:
+                # Set cancel status for these POs
+                self.post(
+                    reverse('api-po-cancel', kwargs={'pk': po.pk}),
+                    {
+                        'accept_incomplete': True,
+                    },
+                    expected_code=201
+                )
+
         url = reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'})
 
         # Test without completed orders
@@ -384,12 +430,15 @@ class PurchaseOrderTest(OrderTest):
 
         number_orders = len(models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE))
 
+        # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)
         n_events = 0
+        # Count number of events in calendar
         for component in calendar.walk():
             if component.name == 'VEVENT':
                 n_events += 1
 
+        self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders, n_events)
 
         # Test with completed orders
@@ -397,12 +446,15 @@ class PurchaseOrderTest(OrderTest):
 
         number_orders = len(models.PurchaseOrder.objects.filter(target_date__isnull=False))
 
+        # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)
         n_events = 0
+        # Count number of events in calendar
         for component in calendar.walk():
             if component.name == 'VEVENT':
                 n_events += 1
 
+        self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders, n_events)
 
 
@@ -1044,19 +1096,60 @@ class SalesOrderTest(OrderTest):
 
     def test_so_calendar(self):
         """Test the calendar export endpoint"""
+
+        # Create required sales orders
+        self.assignRole('sales_order.add')
+
+        for i in range(1, 9):
+            self.post(
+                reverse('api-so-list'),
+                {
+                    'reference': f'SO-1100000{i}',
+                    'customer': 4,
+                    'description': f'Calendar SO {i}',
+                    'target_date': f'2024-12-{i:02d}',
+                },
+                expected_code=201
+            )
+
+        # Get some of these orders with target date, complete or cancel them
+        for so in models.SalesOrder.objects.filter(target_date__isnull=False):
+            if so.reference in ['SO-11000001', 'SO-11000002', 'SO-11000003', 'SO-11000004']:
+                # Set complete status for these orders
+                self.post(
+                    reverse('api-so-complete', kwargs={'pk': so.pk}),
+                    {
+                        'accept_incomplete': True,
+                    },
+                    expected_code=None
+                )
+
+            elif so.reference in ['SO-11000005', 'SO-11000006']:
+                # Set cancel status for these orders
+                self.post(
+                    reverse('api-po-cancel', kwargs={'pk': so.pk}),
+                    {
+                        'accept_incomplete': True,
+                    },
+                    expected_code=201
+                )
+
         url = reverse('api-po-so-calendar', kwargs={'ordertype': 'sales-order'})
 
         # Test without completed orders
         response = self.get(url, expected_code=200, format=None)
 
-        number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.PENDING))
+        number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.COMPLETE))
 
+        # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)
         n_events = 0
+        # Count number of events in calendar
         for component in calendar.walk():
             if component.name == 'VEVENT':
                 n_events += 1
 
+        self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders, n_events)
 
         # Test with completed orders
@@ -1064,12 +1157,15 @@ class SalesOrderTest(OrderTest):
 
         number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False))
 
+        # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)
         n_events = 0
+        # Count number of events in calendar
         for component in calendar.walk():
             if component.name == 'VEVENT':
                 n_events += 1
 
+        self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders, n_events)
 
 
