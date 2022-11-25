@@ -1,7 +1,8 @@
 import {
   MantineProvider,
   ColorSchemeProvider,
-  ColorScheme
+  ColorScheme,
+  MantineThemeOverride,
 } from '@mantine/core';
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -94,6 +95,12 @@ const router = createBrowserRouter([
   }
 ]);
 
+export const myTheme: MantineThemeOverride = {
+  colorScheme: 'light',
+  primaryColor: 'green',
+  defaultRadius: 0,
+};
+
 // Main App
 export default function App() {
   // Color Scheme
@@ -102,8 +109,10 @@ export default function App() {
     key: 'scheme',
     defaultValue: preferredColorScheme
   });
-  const toggleColorScheme = (value?: ColorScheme) =>
+  const toggleColorScheme = (value?: ColorScheme) => {
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+    myTheme.colorScheme = colorScheme;
+  };
 
   // Session initialization
   const [hostList] = useLocalState((state) => [state.hostList]);
@@ -127,7 +136,7 @@ export default function App() {
       toggleColorScheme={toggleColorScheme}
     >
       <MantineProvider
-        theme={{ colorScheme }}
+        theme={myTheme}
         withGlobalStyles
         withNormalizeCSS
       >
