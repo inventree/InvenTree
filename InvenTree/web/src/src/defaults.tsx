@@ -1,4 +1,5 @@
 import { HostList } from './contex/states';
+import { MantineSize } from '@mantine/core';
 
 export const defaultHostList: HostList = {
   'https://demo_inventree_org': {
@@ -52,7 +53,12 @@ export const emptyServerAPI = {
   active_plugins: []
 };
 
-export const SizeMarks = [
+export interface SiteMarkProps {
+  value: number
+  label: MantineSize
+}
+
+export const SizeMarks: SiteMarkProps[] = [
   { value: 0, label: 'xs' },
   { value: 25, label: 'sm' },
   { value: 50, label: 'md' },
