@@ -4,13 +4,14 @@ import {
   Container,
   Grid,
   Group,
-  Header,
+  Title,
   SimpleGrid,
   Skeleton,
   Tabs,
   Text,
   DEFAULT_THEME,
-  TextInput
+  TextInput,
+  ColorInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -21,6 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api, queryClient } from '../../App';
 import { EditButton } from '../../components/items/EditButton';
 import { useLocalState } from '../../contex/LocalState';
+import { useState } from 'react';
 
 export function Profile() {
   const navigate = useNavigate();
@@ -108,7 +110,7 @@ function UserInfo({ data }: { data: any }) {
   return (
     <form onSubmit={form.onSubmit((values) => SaveData(values))}>
       <Group>
-        <Text>Userinfo</Text>
+        <Title order={3}>Userinfo</Title>
         {EditButton(setEditing, editing)}
       </Group>
       <Group>
@@ -150,26 +152,45 @@ function UserInfo({ data }: { data: any }) {
 }
 
 function UserTheme({ height }: { height: number }) {
+  const { theme } = InvenTreeStyle();
+
   function getLkp(color: string) {
     return { [DEFAULT_THEME.colors[color][6]]: color }
   }
   const lookup = Object.assign(...Object.keys(DEFAULT_THEME.colors).map(clr => getLkp(clr)));
+
+  // primary color
   function changePrimary(color: string) {
     useLocalState.setState({ primaryColor: lookup[color] });
   }
+  // white color
+  const [whiteColor, setWhiteColor] = useState(theme.white);
+  function changeWhite(color: string) {
+    useLocalState.setState({ whiteColor: color });
+    setWhiteColor(color);
+  }
+  // black color
+  const [blackColor, setBlackColor] = useState(theme.black);
+  function changeBlack(color: string) {
+    useLocalState.setState({ blackColor: color });
+    setBlackColor(color);
+  }
 
   return (
-    <Container w="100%" h={height}>
-      <Header height={5}>Design</Header>
-      <div style={{ maxWidth: 200, marginLeft: 'auto', marginRight: 'auto' }}>
-        <ColorPicker
-          format="hex"
-          onChange={changePrimary}
-          withPicker={false}
-          fullWidth
-          swatches={Object.keys(lookup)}
-        />
-      </div>
+    <Container w="100%" mih={height}>
+      <Title order={3}>Design</Title>
+      <Group>
+        <Text>Primary color</Text>
+        <ColorPicker format="hex" onChange={changePrimary} withPicker={false} swatches={Object.keys(lookup)} />
+      </Group>
+      <Group>
+        <Text>White color</Text>
+        <ColorInput value={whiteColor} onChange={changeWhite} />
+      </Group>
+      <Group>
+        <Text>Black color</Text>
+        <ColorInput value={blackColor} onChange={changeBlack} />
+      </Group>
     </Container>)
     ;
 }

@@ -10,7 +10,10 @@ interface LocalStateProps {
   hostKey: string;
   hostList: HostList;
   lastUsername: string;
+  // theme
   primaryColor: string;
+  whiteColor: string;
+  blackColor: string;
 }
 
 export const useLocalState = create<LocalStateProps>()(
@@ -25,7 +28,10 @@ export const useLocalState = create<LocalStateProps>()(
       lastUsername: '',
       hostKey: '',
       hostList: {},
+      //theme
       primaryColor: 'green',
+      whiteColor: '#fff',
+      blackColor: '#000',
     }),
     {
       name: 'session-settings'

@@ -98,7 +98,7 @@ const router = createBrowserRouter([
 
 // Main App
 export default function App() {
-  const [hostList, primaryColor] = useLocalState((state) => [state.hostList, state.primaryColor]);
+  const [hostList, primaryColor, whiteColor, blackColor] = useLocalState((state) => [state.hostList, state.primaryColor, state.whiteColor, state.blackColor]);
 
   // Color Scheme
   const preferredColorScheme = useColorScheme();
@@ -113,7 +113,8 @@ export default function App() {
   const myTheme: MantineThemeOverride = {
     colorScheme: colorScheme,
     primaryColor: primaryColor,
-    defaultRadius: 0,
+    white: whiteColor,
+    black: blackColor,
   };
 
   // Session initialization
