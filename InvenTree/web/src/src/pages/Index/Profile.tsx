@@ -14,6 +14,7 @@ import {
   ColorInput,
   Slider,
   Select,
+  Table,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -213,27 +214,31 @@ function UserTheme({ height }: { height: number }) {
   return (
     <Container w="100%" mih={height}>
       <Title order={3}>Design</Title>
-      <Group>
-        <Text>Primary color</Text>
-        <ColorPicker format="hex" onChange={changePrimary} withPicker={false} swatches={Object.keys(lookup)} />
-      </Group>
-      <Group>
-        <Text>White color</Text>
-        <ColorInput value={whiteColor} onChange={changeWhite} />
-      </Group>
-      <Group>
-        <Text>Black color</Text>
-        <ColorInput value={blackColor} onChange={changeBlack} />
-      </Group>
-      <Group>
-        <Text>Border Radius</Text>
-        <Slider label={(val) => getMark(val).label} defaultValue={50} step={25} marks={MARKS} styles={{ markLabel: { display: 'none' } }}
-          w={"100%"} onChange={changeRadius} value={radius} />
-      </Group>
-      <Group>
-        <Text>Loader</Text>
-        <Select data={loaderDate} value={loader} onChange={changeLoader} />
-      </Group>
+      <Table>
+        <tbody>
+          <tr>
+            <td>Primary color</td>
+            <td><ColorPicker format="hex" onChange={changePrimary} withPicker={false} swatches={Object.keys(lookup)} /></td>
+          </tr>
+          <tr>
+            <td>White color</td>
+            <td><ColorInput value={whiteColor} onChange={changeWhite} /></td>
+          </tr>
+          <tr>
+            <td>Black color</td>
+            <td><ColorInput value={blackColor} onChange={changeBlack} /></td>
+          </tr>
+          <tr>
+            <td>Border Radius</td>
+            <td><Slider label={(val) => getMark(val).label} defaultValue={50} step={25} marks={MARKS}
+              value={radius} onChange={changeRadius} /></td>
+          </tr>
+          <tr>
+            <td>Loader</td>
+            <td><Select data={loaderDate} value={loader} onChange={changeLoader} /></td>
+          </tr>
+        </tbody>
+      </Table>
     </Container>)
     ;
 }
