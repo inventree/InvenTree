@@ -157,7 +157,7 @@ function UserTheme({ height }: { height: number }) {
   function getLkp(color: string) {
     return { [DEFAULT_THEME.colors[color][6]]: color }
   }
-  const lookup = Object.assign(...Object.keys(DEFAULT_THEME.colors).map(clr => getLkp(clr)));
+  const lookup = Object.assign({}, ...Object.keys(DEFAULT_THEME.colors).map(clr => getLkp(clr)));
 
   // primary color
   function changePrimary(color: string) {
