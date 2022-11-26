@@ -34,7 +34,7 @@ export const useLocalState = create<LocalStateProps>()(
       hostKey: '',
       hostList: {},
       //theme
-      primaryColor: 'green',
+      primaryColor: 'indigo',
       whiteColor: '#fff',
       blackColor: '#000',
       radius: 'md',
