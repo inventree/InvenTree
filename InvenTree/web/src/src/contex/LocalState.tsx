@@ -1,6 +1,9 @@
+import { MantineNumberSize } from '@mantine/core';
+import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { HostList } from './states';
+
 
 interface LocalStateProps {
   autoupdate: boolean;
@@ -14,6 +17,8 @@ interface LocalStateProps {
   primaryColor: string;
   whiteColor: string;
   blackColor: string;
+  radius: MantineNumberSize;
+  loader: LoaderType;
 }
 
 export const useLocalState = create<LocalStateProps>()(
@@ -32,6 +37,8 @@ export const useLocalState = create<LocalStateProps>()(
       primaryColor: 'green',
       whiteColor: '#fff',
       blackColor: '#000',
+      radius: 'md',
+      loader: 'oval',
     }),
     {
       name: 'session-settings'
