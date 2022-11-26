@@ -111,7 +111,7 @@ export default function App() {
     myTheme.colorScheme = colorScheme;
   };
   const myTheme: MantineThemeOverride = {
-    colorScheme: 'light',
+    colorScheme: colorScheme,
     primaryColor: primaryColor,
     defaultRadius: 0,
   };
