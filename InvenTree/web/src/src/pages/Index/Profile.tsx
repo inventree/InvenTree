@@ -27,6 +27,7 @@ import { EditButton } from '../../components/items/EditButton';
 import { useLocalState } from '../../contex/LocalState';
 import { useState } from 'react';
 import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
+import { SizeMarks } from '../../defaults';
 
 export function Profile() {
   const navigate = useNavigate();
@@ -155,14 +156,6 @@ function UserInfo({ data }: { data: any }) {
   );
 }
 
-const MARKS = [
-  { value: 0, label: 'xs' },
-  { value: 25, label: 'sm' },
-  { value: 50, label: 'md' },
-  { value: 75, label: 'lg' },
-  { value: 100, label: 'xl' },
-];
-
 function UserTheme({ height }: { height: number }) {
   const { theme } = InvenTreeStyle();
 
@@ -189,12 +182,12 @@ function UserTheme({ height }: { height: number }) {
   }
   // radius
   function getMark(value: number) {
-    const obj = MARKS.find((mark) => mark.value === value);
+    const obj = SizeMarks.find((mark) => mark.value === value);
     if (obj) return obj;
-    return MARKS[0]
+    return SizeMarks[0]
   }
   function getDefaultRadius() {
-    const obj = MARKS.find((mark) => mark.label === useLocalState.getState().radius)
+    const obj = SizeMarks.find((mark) => mark.label === useLocalState.getState().radius)
     if (obj) return obj.value;
     return 50;
   }
@@ -230,7 +223,7 @@ function UserTheme({ height }: { height: number }) {
           </tr>
           <tr>
             <td>Border Radius</td>
-            <td><Slider label={(val) => getMark(val).label} defaultValue={50} step={25} marks={MARKS} value={radius} onChange={changeRadius} /></td>
+            <td><Slider label={(val) => getMark(val).label} defaultValue={50} step={25} marks={SizeMarks} value={radius} onChange={changeRadius} /></td>
           </tr>
           <tr>
             <td>Loader</td>
