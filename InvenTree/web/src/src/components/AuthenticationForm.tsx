@@ -49,7 +49,7 @@ export function AuthenticationForm({
   };
 
   return (
-    <Paper radius="md" p="xl" withBorder>
+    <Paper p="xl" withBorder>
       <Text size="lg" weight={500}>Welcome {action} to <Group>
         {(!editing) ? hostname : selectElement}{EditButton(setEditing, editing)}</Group>
       </Text>

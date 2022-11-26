@@ -75,7 +75,7 @@ function UserPanel() {
       <SimpleGrid cols={2} spacing="md">
         <Container w="100%">
           {isLoading ? (
-            <Skeleton height="100%" radius="md" />
+            <Skeleton height="100%" />
           ) : (
             <UserInfo data={data} />
           )}
@@ -85,10 +85,10 @@ function UserPanel() {
             <UserTheme height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
           <Grid.Col span={6}>
-            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" />
+            <Skeleton height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
           <Grid.Col span={6}>
-            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" />
+            <Skeleton height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
         </Grid>
       </SimpleGrid>
