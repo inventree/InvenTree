@@ -75,7 +75,7 @@ function UserPanel() {
       <SimpleGrid cols={2} spacing="md">
         <Container w="100%">
           {isLoading ? (
-            <Skeleton height="100%" />
+            <Skeleton height={SECONDARY_COL_HEIGHT} />
           ) : (
             <UserInfo data={data} />
           )}
