@@ -230,8 +230,7 @@ function UserTheme({ height }: { height: number }) {
           </tr>
           <tr>
             <td>Border Radius</td>
-            <td><Slider label={(val) => getMark(val).label} defaultValue={50} step={25} marks={MARKS}
-              value={radius} onChange={changeRadius} /></td>
+            <td><Slider label={(val) => getMark(val).label} defaultValue={50} step={25} marks={MARKS} value={radius} onChange={changeRadius} /></td>
           </tr>
           <tr>
             <td>Loader</td>
