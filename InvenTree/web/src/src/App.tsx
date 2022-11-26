@@ -98,7 +98,7 @@ const router = createBrowserRouter([
 
 // Main App
 export default function App() {
-  const [hostList, primaryColor, whiteColor, blackColor, radius, loader, fontFamily] = useLocalState((state) => [state.hostList, state.primaryColor, state.whiteColor, state.blackColor, state.radius, state.loader, state.fontFamily]);
+  const [hostList, primaryColor, whiteColor, blackColor, radius, loader] = useLocalState((state) => [state.hostList, state.primaryColor, state.whiteColor, state.blackColor, state.radius, state.loader]);
 
   // Color Scheme
   const preferredColorScheme = useColorScheme();
