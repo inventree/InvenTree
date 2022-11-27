@@ -13,7 +13,8 @@ import {
   IconSettings,
   IconChevronDown,
   IconDashboard,
-  IconUserCircle
+  IconUserCircle,
+  IconLanguage,
 } from '@tabler/icons';
 import { ColorToggle } from '../items/ColorToggle';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
@@ -23,6 +24,7 @@ import { Link } from 'react-router-dom';
 import { useLocalState } from '../../contex/LocalState';
 import { useApiState } from '../../contex/ApiState';
 import { tabs } from '../../defaults';
+import { activateLocale, Local } from '../../App';
 
 export function Header() {
   const { classes, theme, cx } = InvenTreeStyle();
@@ -37,6 +39,13 @@ export function Header() {
     state.user.name,
     state.server.instance
   ]);
+  const [locale, setLocale] = useState<Local>('en')
+  const nextLanguage = locale === 'en' ? 'de' : 'en'
+  const switchLanguage = () => {
+    console.log('changing language...')
+    setLocale(nextLanguage)
+    activateLocale(nextLanguage)
+  }
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name}>
@@ -96,6 +105,9 @@ export function Header() {
                 </Menu.Item>
 
                 <Menu.Label>Settings</Menu.Label>
+                <Menu.Item icon={<IconLanguage size={14} stroke={1.5} />} onClick={() => switchLanguage()}>
+                  Current language {locale}
+                </Menu.Item>
                 <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>
                   Account settings
                 </Menu.Item>

@@ -23,7 +23,10 @@ import { useApiState } from './contex/ApiState';
 import { defaultHostList } from './defaults';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { i18n } from '@lingui/core'
+import { I18nProvider } from '@lingui/react'
+import { de, en } from "make-plural/plurals";
 
 // Error tracking
 Sentry.init({
@@ -94,8 +97,27 @@ const router = createBrowserRouter([
   }
 ]);
 
+// Translations
+export type Local = 'de' | 'en'
+
+i18n.loadLocaleData({
+  de: { plurals: de },
+  en: { plurals: en }
+}
+);
+
+export async function activateLocale(locale: Local) {
+  const { messages } = await import(`./locales/${locale}/messages.ts`)
+  i18n.load(locale, messages)
+  i18n.activate(locale)
+}
+
 // Main App
 export default function App() {
+  useEffect(() => {
+    activateLocale('en')
+  }, [])
+
   // Color Scheme
   const preferredColorScheme = useColorScheme();
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -131,11 +153,13 @@ export default function App() {
         withGlobalStyles
         withNormalizeCSS
       >
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </AuthProvider>
+        <I18nProvider i18n={i18n}>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <RouterProvider router={router} />
+            </QueryClientProvider>
+          </AuthProvider>
+        </I18nProvider>
       </MantineProvider>
     </ColorSchemeProvider>
   );
