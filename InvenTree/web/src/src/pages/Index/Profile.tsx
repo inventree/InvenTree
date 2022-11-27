@@ -1,13 +1,20 @@
 import {
   Button,
+  ColorPicker,
   Container,
   Grid,
   Group,
+  Title,
   SimpleGrid,
   Skeleton,
   Tabs,
   Text,
-  TextInput
+  DEFAULT_THEME,
+  TextInput,
+  ColorInput,
+  Slider,
+  Select,
+  Table,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -17,6 +24,10 @@ import { useToggle } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { api, queryClient } from '../../App';
 import { EditButton } from '../../components/items/EditButton';
+import { useLocalState } from '../../contex/LocalState';
+import { useState } from 'react';
+import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
+import { SizeMarks } from '../../defaults';
 import { Trans } from '@lingui/macro'
 
 
@@ -68,20 +79,20 @@ function UserPanel() {
       <SimpleGrid cols={2} spacing="md">
         <Container w="100%">
           {isLoading ? (
-            <Skeleton height="100%" radius="md" />
+            <Skeleton height={SECONDARY_COL_HEIGHT} />
           ) : (
             <UserInfo data={data} />
           )}
         </Container>
         <Grid gutter="md">
           <Grid.Col>
-            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" />
+            <UserTheme height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
           <Grid.Col span={6}>
-            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" />
+            <Skeleton height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
           <Grid.Col span={6}>
-            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" />
+            <Skeleton height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
         </Grid>
       </SimpleGrid>
@@ -106,7 +117,7 @@ function UserInfo({ data }: { data: any }) {
   return (
     <form onSubmit={form.onSubmit((values) => SaveData(values))}>
       <Group>
-        <Text><Trans>Userinfo</Trans></Text>
+        <Title order={3}><Trans>Userinfo</Trans></Title>
         {EditButton(setEditing, editing)}
       </Group>
       <Group>
@@ -145,6 +156,85 @@ function UserInfo({ data }: { data: any }) {
       ) : null}
     </form>
   );
+}
+
+function UserTheme({ height }: { height: number }) {
+  const { theme } = InvenTreeStyle();
+
+  function getLkp(color: string) {
+    return { [DEFAULT_THEME.colors[color][6]]: color }
+  }
+  const lookup = Object.assign({}, ...Object.keys(DEFAULT_THEME.colors).map(clr => getLkp(clr)));
+
+  // primary color
+  function changePrimary(color: string) {
+    useLocalState.setState({ primaryColor: lookup[color] });
+  }
+  // white color
+  const [whiteColor, setWhiteColor] = useState(theme.white);
+  function changeWhite(color: string) {
+    useLocalState.setState({ whiteColor: color });
+    setWhiteColor(color);
+  }
+  // black color
+  const [blackColor, setBlackColor] = useState(theme.black);
+  function changeBlack(color: string) {
+    useLocalState.setState({ blackColor: color });
+    setBlackColor(color);
+  }
+  // radius
+  function getMark(value: number) {
+    const obj = SizeMarks.find((mark) => mark.value === value);
+    if (obj) return obj;
+    return SizeMarks[0]
+  }
+  function getDefaultRadius() {
+    const obj = SizeMarks.find((mark) => mark.label === useLocalState.getState().radius)
+    if (obj) return obj.value;
+    return 50;
+  }
+  const [radius, setRadius] = useState(getDefaultRadius());
+  function changeRadius(value: number) {
+    setRadius(value);
+    useLocalState.setState({ radius: getMark(value).label });
+  }
+  // loader
+  const loaderDate = ["bars", "oval", "dots"];
+  const [loader, setLoader] = useState<LoaderType>(theme.loader);
+  function changeLoader(value: LoaderType) {
+    setLoader(value);
+    useLocalState.setState({ loader: value });
+  }
+
+  return (
+    <Container w="100%" mih={height}>
+      <Title order={3}>Design</Title>
+      <Table>
+        <tbody>
+          <tr>
+            <td>Primary color</td>
+            <td><ColorPicker format="hex" onChange={changePrimary} withPicker={false} swatches={Object.keys(lookup)} /></td>
+          </tr>
+          <tr>
+            <td>White color</td>
+            <td><ColorInput value={whiteColor} onChange={changeWhite} /></td>
+          </tr>
+          <tr>
+            <td>Black color</td>
+            <td><ColorInput value={blackColor} onChange={changeBlack} /></td>
+          </tr>
+          <tr>
+            <td>Border Radius</td>
+            <td><Slider label={(val) => getMark(val).label} defaultValue={50} step={25} marks={SizeMarks} value={radius} onChange={changeRadius} /></td>
+          </tr>
+          <tr>
+            <td>Loader</td>
+            <td><Select data={loaderDate} value={loader} onChange={changeLoader} /></td>
+          </tr>
+        </tbody>
+      </Table>
+    </Container>)
+    ;
 }
 
 function SettingsPanel() {

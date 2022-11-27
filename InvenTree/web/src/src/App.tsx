@@ -1,7 +1,8 @@
 import {
   MantineProvider,
   ColorSchemeProvider,
-  ColorScheme
+  ColorScheme,
+  MantineThemeOverride,
 } from '@mantine/core';
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -115,17 +116,28 @@ export async function activateLocale(locale: Locales) {
 
 // Main App
 export default function App() {
+  const [hostList, primaryColor, whiteColor, blackColor, radius, loader, language] = useLocalState((state) => [state.hostList, state.primaryColor, state.whiteColor, state.blackColor, state.radius, state.loader, state.language]);
+
   // Color Scheme
   const preferredColorScheme = useColorScheme();
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: 'scheme',
     defaultValue: preferredColorScheme
   });
-  const toggleColorScheme = (value?: ColorScheme) =>
+  const toggleColorScheme = (value?: ColorScheme) => {
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+    myTheme.colorScheme = colorScheme;
+  };
+  const myTheme: MantineThemeOverride = {
+    colorScheme: colorScheme,
+    primaryColor: primaryColor,
+    white: whiteColor,
+    black: blackColor,
+    loader: loader,
+    defaultRadius: radius,
+  };
 
   // Session initialization
-  const [hostList, language] = useLocalState((state) => [state.hostList, state.language]);
   if (Object.keys(hostList).length === 0) {
     console.log('Laoding default host list');
     useLocalState.setState({ hostList: defaultHostList });
@@ -149,7 +161,7 @@ export default function App() {
       toggleColorScheme={toggleColorScheme}
     >
       <MantineProvider
-        theme={{ colorScheme }}
+        theme={myTheme}
         withGlobalStyles
         withNormalizeCSS
       >

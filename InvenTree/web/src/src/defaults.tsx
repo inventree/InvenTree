@@ -1,4 +1,5 @@
 import { HostList } from './contex/states';
+import { MantineSize } from '@mantine/core';
 import { t } from '@lingui/macro'
 
 
@@ -53,3 +54,16 @@ export const emptyServerAPI = {
   plugins_enabled: null,
   active_plugins: []
 };
+
+export interface SiteMarkProps {
+  value: number
+  label: MantineSize
+}
+
+export const SizeMarks: SiteMarkProps[] = [
+  { value: 0, label: 'xs' },
+  { value: 25, label: 'sm' },
+  { value: 50, label: 'md' },
+  { value: 75, label: 'lg' },
+  { value: 100, label: 'xl' },
+];

@@ -23,7 +23,7 @@ export function StatisticItem({
   const { classes } = InvenTreeStyle();
 
   return (
-    <Paper withBorder p="xs" radius="md" key={id} pos="relative">
+    <Paper withBorder p="xs" key={id} pos="relative">
       <LoadingOverlay visible={isLoading} overlayBlur={2} />
       <Group position="apart">
         <Text size="xs" color="dimmed" className={classes.dashboardItemTitle}>
