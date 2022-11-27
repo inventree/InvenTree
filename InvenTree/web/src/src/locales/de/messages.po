@@ -56,6 +56,8 @@ msgid "Your name"
 msgstr "Ihr Name"
 
 #: src/components/AuthenticationForm.tsx:84
+#: src/pages/Index/Profile.tsx:135
+#: src/pages/Index/Profile.tsx:135
 msgid "Username"
 msgstr "Nutzername"
 
@@ -131,7 +133,7 @@ msgstr "Profil"
 
 #: src/components/nav/Header.tsx:91
 #: src/pages/Index/Profile.tsx:48
-#: src/pages/Index/Profile.tsx:243
+#: src/pages/Index/Profile.tsx:231
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -269,20 +271,54 @@ msgstr "Nutzer"
 msgid "Userinfo"
 msgstr "Benutzerdetails"
 
-#: src/pages/Index/Profile.tsx:131
+#: src/pages/Index/Profile.tsx:125
+#: src/pages/Index/Profile.tsx:125
+msgid "First name"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:127
 msgid "First name: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:140
+#: src/pages/Index/Profile.tsx:130
+#: src/pages/Index/Profile.tsx:130
+msgid "Last name"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:132
 msgid "Last name: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:149
+#: src/pages/Index/Profile.tsx:137
 msgid "Username: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:154
+#: src/pages/Index/Profile.tsx:142
 msgid "Submit"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:199
+msgid "Design"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:203
+msgid "Primary color"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:207
+msgid "White color"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:211
+msgid "Black color"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:215
+msgid "Border Radius"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:219
+msgid "Loader"
 msgstr ""
 
 #: src/pages/Login.tsx:27
