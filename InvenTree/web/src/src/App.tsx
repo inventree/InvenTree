@@ -98,15 +98,15 @@ const router = createBrowserRouter([
 ]);
 
 // Translations
-export type Local = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
-
+export type Locales = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
+export const languages: Locales[] = ['en', 'de', 'hu'];
 i18n.loadLocaleData({
   de: { plurals: de },
   en: { plurals: en }
 }
 );
 
-export async function activateLocale(locale: Local) {
+export async function activateLocale(locale: Locales) {
   const { messages } = await import(`./locales/${locale}/messages.ts`)
   i18n.load(locale, messages)
   i18n.activate(locale)
@@ -114,10 +114,6 @@ export async function activateLocale(locale: Local) {
 
 // Main App
 export default function App() {
-  useEffect(() => {
-    activateLocale('en')
-  }, [])
-
   // Color Scheme
   const preferredColorScheme = useColorScheme();
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -128,7 +124,7 @@ export default function App() {
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
   // Session initialization
-  const [hostList] = useLocalState((state) => [state.hostList]);
+  const [hostList, language] = useLocalState((state) => [state.hostList, state.language]);
   if (Object.keys(hostList).length === 0) {
     console.log('Laoding default host list');
     useLocalState.setState({ hostList: defaultHostList });
@@ -141,6 +137,9 @@ export default function App() {
     setFetchedSession(true);
     fetchSession();
   }
+
+  // Language
+  useEffect(() => { activateLocale(language) }, [language])
 
   // Main App component
   return (

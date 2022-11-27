@@ -1,5 +1,6 @@
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
+import { Locales } from '../App';
 import { HostList } from './states';
 
 interface LocalStateProps {
@@ -10,6 +11,7 @@ interface LocalStateProps {
   hostKey: string;
   hostList: HostList;
   lastUsername: string;
+  language: Locales
 }
 
 export const useLocalState = create<LocalStateProps>()(
@@ -24,6 +26,7 @@ export const useLocalState = create<LocalStateProps>()(
       lastUsername: '',
       hostKey: '',
       hostList: {},
+      language: 'en',
     }),
     {
       name: 'session-settings'

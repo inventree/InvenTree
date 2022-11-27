@@ -24,7 +24,7 @@ import { Link } from 'react-router-dom';
 import { useLocalState } from '../../contex/LocalState';
 import { useApiState } from '../../contex/ApiState';
 import { tabs } from '../../defaults';
-import { activateLocale, Local } from '../../App';
+import { languages } from '../../App';
 import { Trans } from '@lingui/macro'
 
 
@@ -33,26 +33,19 @@ export function Header() {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
   const { tabValue } = useParams();
-  const [hostKey, hostList] = useLocalState((state) => [
+  const [hostKey, hostList, locale] = useLocalState((state) => [
     state.hostKey,
-    state.hostList
+    state.hostList,
+    state.language
   ]);
   const [username, servername] = useApiState((state) => [
     state.user.name,
     state.server.instance
   ]);
-  const [locale, setLocale] = useState<Local>('en')
-  const nextLanguage = locale === 'en' ? 'de' : 'en'
-  const switchLanguage = () => {
-    console.log('changing language...')
-    setLocale(nextLanguage)
-    activateLocale(nextLanguage)
-  }
-  const enablePsuedo = () => {
-    console.log('enabling psuedo language...')
-    setLocale('pseudo-LOCALE')
-    activateLocale('pseudo-LOCALE')
-  }
+
+  // Language
+  function switchLanguage() { useLocalState.setState({ language: languages[(languages.indexOf(locale) + 1) % languages.length] }); }
+  function enablePsuedo() { useLocalState.setState({ language: 'pseudo-LOCALE' }); }
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name}>
