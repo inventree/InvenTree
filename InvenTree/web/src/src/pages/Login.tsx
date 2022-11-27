@@ -8,7 +8,7 @@ import { useToggle } from '@mantine/hooks';
 import { EditButton } from '../components/items/EditButton';
 import { HostOptionsForm } from '../components/HostOptionsForm';
 import { HostList } from '../contex/states';
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
 
 
 export function Login() {
@@ -24,7 +24,7 @@ export function Login() {
   );
   const hostname =
     hostList[hostKey] === undefined
-      ? <Trans>No selection</Trans>
+      ? t`No selection`
       : hostList[hostKey].name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
   const hostListData = Object.keys(hostList).map((key) => ({ value: key, label: hostList[key].name }));
