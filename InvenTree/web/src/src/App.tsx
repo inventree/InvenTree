@@ -98,7 +98,7 @@ const router = createBrowserRouter([
 ]);
 
 // Translations
-export type Local = 'de' | 'en' | 'pseudo-LOCALE';
+export type Local = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
 
 i18n.loadLocaleData({
   de: { plurals: de },

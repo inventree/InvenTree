@@ -96,8 +96,8 @@ export function Header() {
                 <Menu.Item icon={<IconUserCircle size={14} stroke={1.5} />} component={Link} to="/profile/user"><Trans>Profile</Trans></Menu.Item>
 
                 <Menu.Label><Trans>Settings</Trans></Menu.Label>
-                <Menu.Item icon={<IconLanguage size={14} stroke={1.5} />} onClick={() => switchLanguage()}><Trans>Current language {locale}</Trans></Menu.Item>
-                <Menu.Item icon={<IconLanguage size={14} stroke={1.5} />} onClick={() => enablePsuedo()}><Trans>Switch to pseudo language</Trans></Menu.Item>
+                <Menu.Item icon={<IconLanguage size={14} stroke={1.5} />} onClick={switchLanguage}><Trans>Current language {locale}</Trans></Menu.Item>
+                <Menu.Item icon={<IconLanguage size={14} stroke={1.5} />} onClick={enablePsuedo}><Trans>Switch to pseudo language</Trans></Menu.Item>
                 <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}><Trans>Account settings</Trans></Menu.Item>
                 <Menu.Item icon={<IconLogout size={14} stroke={1.5} />} component={Link} to="/logout"><Trans>Logout</Trans></Menu.Item>
               </Menu.Dropdown>
