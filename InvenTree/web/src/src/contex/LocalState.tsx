@@ -2,6 +2,7 @@ import { MantineNumberSize } from '@mantine/core';
 import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
+import { Locales } from '../App';
 import { HostList } from './states';
 
 
@@ -13,6 +14,7 @@ interface LocalStateProps {
   hostKey: string;
   hostList: HostList;
   lastUsername: string;
+  language: Locales
   // theme
   primaryColor: string;
   whiteColor: string;
@@ -33,6 +35,7 @@ export const useLocalState = create<LocalStateProps>()(
       lastUsername: '',
       hostKey: '',
       hostList: {},
+      language: 'en',
       //theme
       primaryColor: 'indigo',
       whiteColor: '#fff',

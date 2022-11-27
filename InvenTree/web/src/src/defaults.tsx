@@ -1,38 +1,40 @@
 import { HostList } from './contex/states';
 import { MantineSize } from '@mantine/core';
+import { t } from '@lingui/macro'
+
 
 export const defaultHostList: HostList = {
   'https://demo_inventree_org': {
     host: 'https://demo.inventree.org/api/',
-    name: 'InvenTree Demo'
+    name: t`InvenTree Demo`
   },
   'https://sample_app_invenhost_com': {
     host: 'https://sample.app.invenhost.com/api/',
-    name: 'InvenHost: Sample'
+    name: t`InvenHost: Sample`
   },
   'http://localhost:8000': {
     host: 'http://localhost:8000/api/',
-    name: 'Localhost'
+    name: t`Localhost`
   }
 };
 
 export const tabs = [
-  { text: 'Home', name: 'home' },
-  { text: 'Part', name: 'part' }
+  { text: t`Home`, name: 'home' },
+  { text: t`Part`, name: 'part' }
 ];
 
 export const links = [
   {
     link: 'https://inventree.org/',
-    label: 'Website'
+    label: t`Website`
   },
   {
     link: 'https://github.com/invenhost/InvenTree',
-    label: 'GitHub'
+    label: t`GitHub`
   },
   {
     link: 'https://demo.inventree.org/',
-    label: 'Demo'
+    label: t`Demo`
   }
 ];
 

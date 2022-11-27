@@ -8,6 +8,8 @@ import { useToggle } from '@mantine/hooks';
 import { EditButton } from '../components/items/EditButton';
 import { HostOptionsForm } from '../components/HostOptionsForm';
 import { HostList } from '../contex/states';
+import { Trans, t } from '@lingui/macro'
+
 
 export function Login() {
   const { handleLogin } = useAuth();
@@ -22,7 +24,7 @@ export function Login() {
   );
   const hostname =
     hostList[hostKey] === undefined
-      ? 'No selection'
+      ? t`No selection`
       : hostList[hostKey].name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
   const hostListData = Object.keys(hostList).map((key) => ({ value: key, label: hostList[key].name }));
@@ -67,7 +69,7 @@ export function Login() {
     if (!HostListEdit)
       return null;
     return <>
-      <Text>Edit host options</Text>
+      <Text><Trans>Edit host options</Trans></Text>
       <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
     </>
   }

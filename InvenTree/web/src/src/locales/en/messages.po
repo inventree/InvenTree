@@ -1,0 +1,296 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2022-11-27 00:07+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/components/AuthenticationForm.tsx:55
+msgid "Welcome {action} to"
+msgstr "Welcome {action} to"
+
+#: src/components/AuthenticationForm.tsx:60
+msgid "Placeholder"
+msgstr "Placeholder"
+
+#: src/components/AuthenticationForm.tsx:63
+msgid "Or continue with email"
+msgstr "Or continue with email"
+
+#: src/components/AuthenticationForm.tsx:72
+#: src/components/HostOptionsForm.tsx:33
+msgid "Name"
+msgstr "Name"
+
+#: src/components/AuthenticationForm.tsx:73
+msgid "Your name"
+msgstr "Your name"
+
+#: src/components/AuthenticationForm.tsx:83
+msgid "Username"
+msgstr "Username"
+
+#: src/components/AuthenticationForm.tsx:89
+msgid "Invalid email"
+msgstr "Invalid email"
+
+#: src/components/AuthenticationForm.tsx:94
+msgid "Password"
+msgstr "Password"
+
+#: src/components/AuthenticationForm.tsx:95
+msgid "Your password"
+msgstr "Your password"
+
+#: src/components/AuthenticationForm.tsx:100
+msgid "Password should include at least 6 characters"
+msgstr "Password should include at least 6 characters"
+
+#: src/components/AuthenticationForm.tsx:113
+msgid "Already have an account? Login"
+msgstr "Already have an account? Login"
+
+#: src/components/AuthenticationForm.tsx:113
+#~ msgid "'Already have an account? Login"
+#~ msgstr "'Already have an account? Login"
+
+#: src/components/AuthenticationForm.tsx:114
+msgid "Don't have an account? Register"
+msgstr "Don't have an account? Register"
+
+#: src/components/DashboardItemProxy.tsx:32
+msgid "Title"
+msgstr "Title"
+
+#: src/components/DashboardItemProxy.tsx:32
+#~ msgid "'Title'"
+#~ msgstr "'Title'"
+
+#: src/components/HostOptionsForm.tsx:32
+msgid "Host"
+msgstr "Host"
+
+#: src/components/HostOptionsForm.tsx:36
+msgid "No one here..."
+msgstr "No one here..."
+
+#: src/components/HostOptionsForm.tsx:40
+msgid "Add Host"
+msgstr "Add Host"
+
+#: src/components/HostOptionsForm.tsx:42
+msgid "Save"
+msgstr "Save"
+
+#: src/components/items/ErrorItem.tsx:7
+msgid "Unknown error"
+msgstr "Unknown error"
+
+#: src/components/items/ErrorItem.tsx:10
+msgid "An error occured:"
+msgstr "An error occured:"
+
+#: src/components/items/InvenTreeLogo.tsx:11
+msgid "InvenTree Logo"
+msgstr "InvenTree Logo"
+
+#: src/components/nav/Header.tsx:95
+msgid "Notifications"
+msgstr "Notifications"
+
+#: src/components/nav/Header.tsx:96
+#: src/pages/Index/Profile.tsx:29
+msgid "Profile"
+msgstr "Profile"
+
+#: src/components/nav/Header.tsx:98
+#: src/pages/Index/Profile.tsx:37
+#: src/pages/Index/Profile.tsx:153
+msgid "Settings"
+msgstr "Settings"
+
+#: src/components/nav/Header.tsx:99
+msgid "Current language {locale}"
+msgstr "Current language {locale}"
+
+#: src/components/nav/Header.tsx:100
+msgid "Switch to pseudo language"
+msgstr "Switch to pseudo language"
+
+#: src/components/nav/Header.tsx:101
+msgid "Account settings"
+msgstr "Account settings"
+
+#: src/components/nav/Header.tsx:102
+msgid "Logout"
+msgstr "Logout"
+
+#: src/defaults.tsx:8
+msgid "InvenTree Demo"
+msgstr "InvenTree Demo"
+
+#: src/defaults.tsx:12
+msgid "InvenHost: Sample"
+msgstr "InvenHost: Sample"
+
+#: src/defaults.tsx:16
+msgid "Localhost"
+msgstr "Localhost"
+
+#: src/defaults.tsx:21
+#: src/pages/Index/Home.tsx:7
+msgid "Home"
+msgstr "Home"
+
+#: src/defaults.tsx:21
+#~ msgid "'Home'"
+#~ msgstr "'Home'"
+
+#: src/defaults.tsx:22
+#: src/pages/Index/Part.tsx:7
+msgid "Part"
+msgstr "Part"
+
+#: src/defaults.tsx:22
+#~ msgid "'Part'"
+#~ msgstr "'Part'"
+
+#: src/defaults.tsx:28
+msgid "Website"
+msgstr "Website"
+
+#: src/defaults.tsx:28
+#~ msgid "'Website'"
+#~ msgstr "'Website'"
+
+#: src/defaults.tsx:32
+msgid "GitHub"
+msgstr "GitHub"
+
+#: src/defaults.tsx:32
+#~ msgid "'GitHub'"
+#~ msgstr "'GitHub'"
+
+#: src/defaults.tsx:36
+msgid "Demo"
+msgstr "Demo"
+
+#: src/defaults.tsx:36
+#~ msgid "'Demo'"
+#~ msgstr "'Demo'"
+
+#: src/pages/Index/Dashboard.tsx:17
+msgid "Subscribed Parts"
+msgstr "Subscribed Parts"
+
+#: src/pages/Index/Dashboard.tsx:24
+msgid "Subscribed Categories"
+msgstr "Subscribed Categories"
+
+#: src/pages/Index/Dashboard.tsx:31
+msgid "Latest Parts"
+msgstr "Latest Parts"
+
+#: src/pages/Index/Dashboard.tsx:38
+msgid "BOM Waiting Validation"
+msgstr "BOM Waiting Validation"
+
+#: src/pages/Index/Dashboard.tsx:45
+msgid "Recently Updated"
+msgstr "Recently Updated"
+
+#: src/pages/Index/Dashboard.tsx:52
+msgid "Low Stock"
+msgstr "Low Stock"
+
+#: src/pages/Index/Dashboard.tsx:59
+msgid "Depleted Stock"
+msgstr "Depleted Stock"
+
+#: src/pages/Index/Dashboard.tsx:66
+msgid "Required for Build Orders"
+msgstr "Required for Build Orders"
+
+#: src/pages/Index/Dashboard.tsx:73
+msgid "Expired Stock"
+msgstr "Expired Stock"
+
+#: src/pages/Index/Dashboard.tsx:80
+msgid "Stale Stock"
+msgstr "Stale Stock"
+
+#: src/pages/Index/Dashboard.tsx:87
+msgid "Build Orders In Progress"
+msgstr "Build Orders In Progress"
+
+#: src/pages/Index/Dashboard.tsx:94
+msgid "Overdue Build Orders"
+msgstr "Overdue Build Orders"
+
+#: src/pages/Index/Dashboard.tsx:101
+msgid "Outstanding Purchase Orders"
+msgstr "Outstanding Purchase Orders"
+
+#: src/pages/Index/Dashboard.tsx:108
+msgid "Overdue Purchase Orders"
+msgstr "Overdue Purchase Orders"
+
+#: src/pages/Index/Dashboard.tsx:115
+msgid "Outstanding Sales Orders"
+msgstr "Outstanding Sales Orders"
+
+#: src/pages/Index/Dashboard.tsx:122
+msgid "Overdue Sales Orders"
+msgstr "Overdue Sales Orders"
+
+#: src/pages/Index/Dashboard.tsx:129
+msgid "Current News"
+msgstr "Current News"
+
+#: src/pages/Index/Dashboard.tsx:139
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: src/pages/Index/Dashboard.tsx:140
+msgid "Autoupdate"
+msgstr "Autoupdate"
+
+#: src/pages/Index/Profile.tsx:36
+msgid "User"
+msgstr "User"
+
+#: src/pages/Index/Profile.tsx:109
+msgid "Userinfo"
+msgstr "Userinfo"
+
+#: src/pages/Index/Profile.tsx:120
+msgid "First name: {0}"
+msgstr "First name: {0}"
+
+#: src/pages/Index/Profile.tsx:129
+msgid "Last name: {0}"
+msgstr "Last name: {0}"
+
+#: src/pages/Index/Profile.tsx:138
+msgid "Username: {0}"
+msgstr "Username: {0}"
+
+#: src/pages/Index/Profile.tsx:143
+msgid "Submit"
+msgstr "Submit"
+
+#: src/pages/Login.tsx:27
+msgid "No selection"
+msgstr "No selection"
+
+#: src/pages/Login.tsx:72
+msgid "Edit host options"
+msgstr "Edit host options"

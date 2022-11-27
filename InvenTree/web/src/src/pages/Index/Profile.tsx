@@ -28,6 +28,8 @@ import { useLocalState } from '../../contex/LocalState';
 import { useState } from 'react';
 import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { SizeMarks } from '../../defaults';
+import { Trans } from '@lingui/macro'
+
 
 export function Profile() {
   const navigate = useNavigate();
@@ -35,15 +37,15 @@ export function Profile() {
 
   return (
     <>
-      <StylishText>Profile</StylishText>
+      <StylishText><Trans>Profile</Trans></StylishText>
       <Tabs
         orientation="vertical"
         value={tabValue}
         onTabChange={(value) => navigate(`/profile/${value}`)}
       >
         <Tabs.List>
-          <Tabs.Tab value="user">User</Tabs.Tab>
-          <Tabs.Tab value="settings">Settings</Tabs.Tab>
+          <Tabs.Tab value="user"><Trans>User</Trans></Tabs.Tab>
+          <Tabs.Tab value="settings"><Trans>Settings</Trans></Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="user">
@@ -115,7 +117,7 @@ function UserInfo({ data }: { data: any }) {
   return (
     <form onSubmit={form.onSubmit((values) => SaveData(values))}>
       <Group>
-        <Title order={3}>Userinfo</Title>
+        <Title order={3}><Trans>Userinfo</Trans></Title>
         {EditButton(setEditing, editing)}
       </Group>
       <Group>
@@ -126,7 +128,7 @@ function UserInfo({ data }: { data: any }) {
             {...form.getInputProps('first_name')}
           />
         ) : (
-          <Text>First name: {form.values.first_name}</Text>
+          <Text><Trans>First name: {form.values.first_name}</Trans></Text>
         )}
         {editing ? (
           <TextInput
@@ -135,7 +137,7 @@ function UserInfo({ data }: { data: any }) {
             {...form.getInputProps('last_name')}
           />
         ) : (
-          <Text>Last name: {form.values.last_name}</Text>
+          <Text><Trans>Last name: {form.values.last_name}</Trans></Text>
         )}
         {editing ? (
           <TextInput
@@ -144,12 +146,12 @@ function UserInfo({ data }: { data: any }) {
             {...form.getInputProps('username')}
           />
         ) : (
-          <Text>Username: {form.values.username}</Text>
+          <Text><Trans>Username: {form.values.username}</Trans></Text>
         )}
       </Group>
       {editing ? (
         <Group position="right" mt="md">
-          <Button type="submit">Submit</Button>
+          <Button type="submit"><Trans>Submit</Trans></Button>
         </Group>
       ) : null}
     </form>
@@ -238,7 +240,7 @@ function UserTheme({ height }: { height: number }) {
 function SettingsPanel() {
   return (
     <Container>
-      <Text>Settings</Text>
+      <Text><Trans>Settings</Trans></Text>
     </Container>
   );
 }

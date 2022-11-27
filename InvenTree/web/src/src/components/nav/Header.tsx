@@ -13,7 +13,8 @@ import {
   IconSettings,
   IconChevronDown,
   IconDashboard,
-  IconUserCircle
+  IconUserCircle,
+  IconLanguage,
 } from '@tabler/icons';
 import { ColorToggle } from '../items/ColorToggle';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
@@ -23,20 +24,28 @@ import { Link } from 'react-router-dom';
 import { useLocalState } from '../../contex/LocalState';
 import { useApiState } from '../../contex/ApiState';
 import { tabs } from '../../defaults';
+import { languages } from '../../App';
+import { Trans } from '@lingui/macro'
+
 
 export function Header() {
   const { classes, theme, cx } = InvenTreeStyle();
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
   const { tabValue } = useParams();
-  const [hostKey, hostList] = useLocalState((state) => [
+  const [hostKey, hostList, locale] = useLocalState((state) => [
     state.hostKey,
-    state.hostList
+    state.hostList,
+    state.language
   ]);
   const [username, servername] = useApiState((state) => [
     state.user.name,
     state.server.instance
   ]);
+
+  // Language
+  function switchLanguage() { useLocalState.setState({ language: languages[(languages.indexOf(locale) + 1) % languages.length] }); }
+  function enablePsuedo() { useLocalState.setState({ language: 'pseudo-LOCALE' }); }
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name}>
@@ -76,36 +85,14 @@ export function Header() {
                 </UnstyledButton>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item
-                  icon={
-                    <IconHeart
-                      size={14}
-                      color={theme.colors.red[6]}
-                      stroke={1.5}
-                    />
-                  }
-                >
-                  Notifications
-                </Menu.Item>
-                <Menu.Item
-                  icon={<IconUserCircle size={14} stroke={1.5} />}
-                  component={Link}
-                  to="/profile/user"
-                >
-                  Profile
-                </Menu.Item>
+                <Menu.Item icon={<IconHeart size={14} color={theme.colors.red[6]} stroke={1.5} />}><Trans>Notifications</Trans></Menu.Item>
+                <Menu.Item icon={<IconUserCircle size={14} stroke={1.5} />} component={Link} to="/profile/user"><Trans>Profile</Trans></Menu.Item>
 
-                <Menu.Label>Settings</Menu.Label>
-                <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>
-                  Account settings
-                </Menu.Item>
-                <Menu.Item
-                  icon={<IconLogout size={14} stroke={1.5} />}
-                  component={Link}
-                  to="/logout"
-                >
-                  Logout
-                </Menu.Item>
+                <Menu.Label><Trans>Settings</Trans></Menu.Label>
+                <Menu.Item icon={<IconLanguage size={14} stroke={1.5} />} onClick={switchLanguage}><Trans>Current language {locale}</Trans></Menu.Item>
+                <Menu.Item icon={<IconLanguage size={14} stroke={1.5} />} onClick={enablePsuedo}><Trans>Switch to pseudo language</Trans></Menu.Item>
+                <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}><Trans>Account settings</Trans></Menu.Item>
+                <Menu.Item icon={<IconLogout size={14} stroke={1.5} />} component={Link} to="/logout"><Trans>Logout</Trans></Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </Group>

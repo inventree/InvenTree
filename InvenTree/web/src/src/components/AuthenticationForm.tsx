@@ -13,6 +13,8 @@ import {
   Center
 } from '@mantine/core';
 import { EditButton } from './items/EditButton';
+import { Trans, t } from '@lingui/macro'
+
 
 export function AuthenticationForm({
   Login,
@@ -49,16 +51,16 @@ export function AuthenticationForm({
   };
 
   return (
-    <Paper p="xl" withBorder>
-      <Text size="lg" weight={500}>Welcome {action} to <Group>
+    <Paper radius="md" p="xl" withBorder>
+      <Text size="lg" weight={500}><Trans>Welcome {action} to </Trans><Group>
         {(!editing) ? hostname : selectElement}{EditButton(setEditing, editing)}</Group>
       </Text>
       <Center>
         <Group grow mb="md" mt="md">
-          <Text>Placeholder</Text>
+          <Text><Trans>Placeholder</Trans></Text>
         </Group>
       </Center>
-      <Divider label="Or continue with email" labelPosition="center" my="lg" />
+      <Divider label={<Trans>Or continue with email</Trans>} labelPosition="center" my="lg" />
       <form
         onSubmit={form.onSubmit(() => {
           submit();
@@ -67,8 +69,8 @@ export function AuthenticationForm({
         <Stack>
           {action === 'register' && (
             <TextInput
-              label="Name"
-              placeholder="Your name"
+              label={<Trans>Name</Trans>}
+              placeholder={t`Your name`}
               value={form.values.name}
               onChange={(event) =>
                 form.setFieldValue('name', event.currentTarget.value)
@@ -78,27 +80,24 @@ export function AuthenticationForm({
 
           <TextInput
             required
-            label="Username"
+            label={<Trans>Username</Trans>}
             placeholder="hello@mantine.dev"
             value={form.values.email}
             onChange={(event) =>
               form.setFieldValue('email', event.currentTarget.value)
             }
-            error={form.errors.email && 'Invalid email'}
+            error={form.errors.email && <Trans>Invalid email</Trans>}
           />
 
           <PasswordInput
             required
-            label="Password"
-            placeholder="Your password"
+            label={<Trans>Password</Trans>}
+            placeholder={t`Your password`}
             value={form.values.password}
             onChange={(event) =>
               form.setFieldValue('password', event.currentTarget.value)
             }
-            error={
-              form.errors.password &&
-              'Password should include at least 6 characters'
-            }
+            error={form.errors.password && <Trans>Password should include at least 6 characters</Trans>}
           />
         </Stack>
 
@@ -111,8 +110,8 @@ export function AuthenticationForm({
             size="xs"
           >
             {action === 'register'
-              ? 'Already have an account? Login'
-              : "Don't have an account? Register"}
+              ? <Trans>Already have an account? Login</Trans>
+              : <Trans>Don't have an account? Register</Trans>}
           </Anchor>
           <Button type="submit">{upperFirst(action)}</Button>
         </Group>
