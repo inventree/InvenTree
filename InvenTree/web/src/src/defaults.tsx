@@ -1,37 +1,39 @@
 import { HostList } from './contex/states';
+import { Trans } from '@lingui/macro'
+
 
 export const defaultHostList: HostList = {
   'https://demo_inventree_org': {
     host: 'https://demo.inventree.org/api/',
-    name: 'InvenTree Demo'
+    name: <Trans>InvenTree Demo</Trans>
   },
   'https://sample_app_invenhost_com': {
     host: 'https://sample.app.invenhost.com/api/',
-    name: 'InvenHost: Sample'
+    name: <Trans>InvenHost: Sample</Trans>
   },
   'http://localhost:8000': {
     host: 'http://localhost:8000/api/',
-    name: 'Localhost'
+    name: <Trans>Localhost</Trans>
   }
 };
 
 export const tabs = [
-  { text: 'Home', name: 'home' },
-  { text: 'Part', name: 'part' }
+  { text: <Trans>Home</Trans>, name: 'home' },
+  { text: <Trans>Part</Trans>, name: 'part' }
 ];
 
 export const links = [
   {
     link: 'https://inventree.org/',
-    label: 'Website'
+    label: <Trans>Website</Trans>
   },
   {
     link: 'https://github.com/invenhost/InvenTree',
-    label: 'GitHub'
+    label: <Trans>GitHub</Trans>
   },
   {
     link: 'https://demo.inventree.org/',
-    label: 'Demo'
+    label: <Trans>Demo</Trans>
   }
 ];
 

@@ -117,7 +117,7 @@ function UserInfo({ data }: { data: any }) {
             {...form.getInputProps('first_name')}
           />
         ) : (
-          <Text>First name: {form.values.first_name}</Text>
+          <Text><Trans>First name: {form.values.first_name}</Trans></Text>
         )}
         {editing ? (
           <TextInput
@@ -126,7 +126,7 @@ function UserInfo({ data }: { data: any }) {
             {...form.getInputProps('last_name')}
           />
         ) : (
-          <Text>Last name: {form.values.last_name}</Text>
+          <Text><Trans>Last name: {form.values.last_name}</Trans></Text>
         )}
         {editing ? (
           <TextInput
@@ -135,12 +135,12 @@ function UserInfo({ data }: { data: any }) {
             {...form.getInputProps('username')}
           />
         ) : (
-          <Text>Username: {form.values.username}</Text>
+          <Text><Trans>Username: {form.values.username}</Trans></Text>
         )}
       </Group>
       {editing ? (
         <Group position="right" mt="md">
-          <Button type="submit">Submit</Button>
+          <Button type="submit"><Trans>Submit</Trans></Button>
         </Group>
       ) : null}
     </form>
