@@ -13,52 +13,73 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/components/AuthenticationForm.tsx:55
-msgid "Welcome {action} to"
-msgstr "Wilkommen {action} bei"
+#: src/components/AuthenticationForm.tsx:37
+msgid "login"
+msgstr ""
 
-#: src/components/AuthenticationForm.tsx:60
+#: src/components/AuthenticationForm.tsx:37
+msgid "register"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:37
+#~ msgid "Login"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:37
+#~ msgid "Register"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:55
+#~ msgid "Welcome {action} to"
+#~ msgstr "Wilkommen {action} bei"
+
+#: src/components/AuthenticationForm.tsx:56
+msgid "Welcome {actionname} to"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:61
 msgid "Placeholder"
 msgstr "Platzhalter"
 
-#: src/components/AuthenticationForm.tsx:63
+#: src/components/AuthenticationForm.tsx:64
 msgid "Or continue with email"
 msgstr "Oder mit E-Mail fortfahren"
 
-#: src/components/AuthenticationForm.tsx:72
+#: src/components/AuthenticationForm.tsx:73
+#: src/components/HostOptionsForm.tsx:22
 #: src/components/HostOptionsForm.tsx:33
 msgid "Name"
 msgstr "Name"
 
-#: src/components/AuthenticationForm.tsx:73
+#: src/components/AuthenticationForm.tsx:74
 msgid "Your name"
 msgstr "Ihr Name"
 
-#: src/components/AuthenticationForm.tsx:83
+#: src/components/AuthenticationForm.tsx:84
 msgid "Username"
 msgstr "Nutzername"
 
-#: src/components/AuthenticationForm.tsx:89
+#: src/components/AuthenticationForm.tsx:90
 msgid "Invalid email"
 msgstr "Ungültige E-Mail"
 
-#: src/components/AuthenticationForm.tsx:94
+#: src/components/AuthenticationForm.tsx:95
 msgid "Password"
 msgstr "Passwort"
 
-#: src/components/AuthenticationForm.tsx:95
+#: src/components/AuthenticationForm.tsx:96
 msgid "Your password"
 msgstr "Dein Passwort"
 
-#: src/components/AuthenticationForm.tsx:100
+#: src/components/AuthenticationForm.tsx:101
 msgid "Password should include at least 6 characters"
 msgstr "Das Passwort sollte mindestens 6 Zeichen enthalten"
 
-#: src/components/AuthenticationForm.tsx:113
+#: src/components/AuthenticationForm.tsx:114
 msgid "Already have an account? Login"
 msgstr "Bereits ein Konto? Einloggen"
 
-#: src/components/AuthenticationForm.tsx:114
+#: src/components/AuthenticationForm.tsx:115
 msgid "Don't have an account? Register"
 msgstr "Noch kein Konto? Registrieren"
 
@@ -66,6 +87,7 @@ msgstr "Noch kein Konto? Registrieren"
 msgid "Title"
 msgstr "Name"
 
+#: src/components/HostOptionsForm.tsx:21
 #: src/components/HostOptionsForm.tsx:32
 msgid "Host"
 msgstr "Adresse"
@@ -94,68 +116,72 @@ msgstr "Ein Fehler ist aufgetreten:"
 msgid "InvenTree Logo"
 msgstr "InvenTree's Logo"
 
-#: src/components/nav/Header.tsx:95
+#: src/components/nav/Footer.tsx:18
+#~ msgid "{0}"
+#~ msgstr ""
+
+#: src/components/nav/Header.tsx:88
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: src/components/nav/Header.tsx:96
-#: src/pages/Index/Profile.tsx:29
+#: src/components/nav/Header.tsx:89
+#: src/pages/Index/Profile.tsx:40
 msgid "Profile"
 msgstr "Profil"
 
-#: src/components/nav/Header.tsx:98
-#: src/pages/Index/Profile.tsx:37
-#: src/pages/Index/Profile.tsx:153
+#: src/components/nav/Header.tsx:91
+#: src/pages/Index/Profile.tsx:48
+#: src/pages/Index/Profile.tsx:243
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/components/nav/Header.tsx:99
+#: src/components/nav/Header.tsx:92
 msgid "Current language {locale}"
 msgstr "Aktuelle Sprache {locale}"
 
-#: src/components/nav/Header.tsx:100
+#: src/components/nav/Header.tsx:93
 msgid "Switch to pseudo language"
 msgstr "Zu Pseudo-Sprache wechseln"
 
-#: src/components/nav/Header.tsx:101
+#: src/components/nav/Header.tsx:94
 msgid "Account settings"
 msgstr "Benutzereinstellungen"
 
-#: src/components/nav/Header.tsx:102
+#: src/components/nav/Header.tsx:95
 msgid "Logout"
 msgstr "Abmelden"
 
-#: src/defaults.tsx:8
-msgid "InvenTree Demo"
-msgstr "InvenTree Demo"
+#: src/defaults.tsx:13
+#~ msgid "InvenHost: Sample"
+#~ msgstr ""
 
-#: src/defaults.tsx:12
-msgid "InvenHost: Sample"
-msgstr ""
+#: src/defaults.tsx:17
+#~ msgid "Localhost"
+#~ msgstr ""
 
-#: src/defaults.tsx:16
-msgid "Localhost"
-msgstr ""
+#: src/defaults.tsx:9
+#~ msgid "InvenTree Demo"
+#~ msgstr "InvenTree Demo"
 
-#: src/defaults.tsx:21
+#: src/defaults.tsx:22
 #: src/pages/Index/Home.tsx:7
 msgid "Home"
 msgstr "Startseite"
 
-#: src/defaults.tsx:22
+#: src/defaults.tsx:23
 #: src/pages/Index/Part.tsx:7
 msgid "Part"
 msgstr "Teil"
 
-#: src/defaults.tsx:28
+#: src/defaults.tsx:29
 msgid "Website"
 msgstr "Webseite"
 
-#: src/defaults.tsx:32
+#: src/defaults.tsx:34
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/defaults.tsx:36
+#: src/defaults.tsx:39
 msgid "Demo"
 msgstr "Demo"
 
@@ -235,27 +261,27 @@ msgstr "Übersicht"
 msgid "Autoupdate"
 msgstr "Automatisch aktualisieren"
 
-#: src/pages/Index/Profile.tsx:36
+#: src/pages/Index/Profile.tsx:47
 msgid "User"
 msgstr "Nutzer"
 
-#: src/pages/Index/Profile.tsx:109
+#: src/pages/Index/Profile.tsx:120
 msgid "Userinfo"
 msgstr "Benutzerdetails"
 
-#: src/pages/Index/Profile.tsx:120
+#: src/pages/Index/Profile.tsx:131
 msgid "First name: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:129
+#: src/pages/Index/Profile.tsx:140
 msgid "Last name: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:138
+#: src/pages/Index/Profile.tsx:149
 msgid "Username: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:143
+#: src/pages/Index/Profile.tsx:154
 msgid "Submit"
 msgstr ""
 

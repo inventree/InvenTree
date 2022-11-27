@@ -139,7 +139,7 @@ export default function App() {
 
   // Session initialization
   if (Object.keys(hostList).length === 0) {
-    console.log('Laoding default host list');
+    console.log('Loading default host list');
     useLocalState.setState({ hostList: defaultHostList });
   }
   setApiDefaults();
