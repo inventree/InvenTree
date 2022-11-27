@@ -4,6 +4,8 @@ import { TextInput, Group, ActionIcon, Box, Text, Button, Space, Divider } from 
 import { randomId } from '@mantine/hooks';
 import { IconTrash, IconSquarePlus } from '@tabler/icons';
 import { HostList } from '../contex/states';
+import { Trans } from '@lingui/macro'
+
 
 export function HostOptionsForm({ data, saveOptions }: { data: HostList, saveOptions: (newData: HostList) => void }) {
     const form = useForm({ initialValues: data });
@@ -27,17 +29,17 @@ export function HostOptionsForm({ data, saveOptions }: { data: HostList, saveOpt
         <Box sx={{ maxWidth: 500 }} mx="auto">
             {fields.length > 0 ? (
                 <Group mb="xs">
-                    <Text weight={500} size="sm" sx={{ flex: 1 }}>Host</Text>
-                    <Text weight={500} size="sm" sx={{ flex: 1 }}>Name</Text>
+                    <Text weight={500} size="sm" sx={{ flex: 1 }}><Trans>Host</Trans></Text>
+                    <Text weight={500} size="sm" sx={{ flex: 1 }}><Trans>Name</Trans></Text>
                 </Group>
             ) : (
-                <Text color="dimmed" align="center">No one here...</Text>
+                <Text color="dimmed" align="center"><Trans>No one here...</Trans></Text>
             )}
             {fields}
             <Group mt="md">
-                <Button onClick={() => form.setFieldValue(`${randomId()}`, { name: '', host: '' })}><IconSquarePlus size={16} /> Add Host</Button>
+                <Button onClick={() => form.setFieldValue(`${randomId()}`, { name: '', host: '' })}><IconSquarePlus size={16} /><Trans>Add Host</Trans></Button>
                 <Space sx={{ flex: 1 }} />
-                <Button type="submit">Save</Button>
+                <Button type="submit"><Trans>Save</Trans></Button>
             </Group>
         </Box>
         <Divider />

@@ -1,0 +1,268 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2022-11-27 02:47+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: hu\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/components/AuthenticationForm.tsx:55
+msgid "Welcome {action} to"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:60
+msgid "Placeholder"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:63
+msgid "Or continue with email"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:72
+#: src/components/HostOptionsForm.tsx:33
+msgid "Name"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:73
+msgid "Your name"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:83
+msgid "Username"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:89
+msgid "Invalid email"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:94
+msgid "Password"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:95
+msgid "Your password"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:100
+msgid "Password should include at least 6 characters"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:113
+msgid "Already have an account? Login"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:114
+msgid "Don't have an account? Register"
+msgstr ""
+
+#: src/components/DashboardItemProxy.tsx:32
+msgid "Title"
+msgstr ""
+
+#: src/components/HostOptionsForm.tsx:32
+msgid "Host"
+msgstr ""
+
+#: src/components/HostOptionsForm.tsx:36
+msgid "No one here..."
+msgstr ""
+
+#: src/components/HostOptionsForm.tsx:40
+msgid "Add Host"
+msgstr ""
+
+#: src/components/HostOptionsForm.tsx:42
+msgid "Save"
+msgstr ""
+
+#: src/components/items/ErrorItem.tsx:7
+msgid "Unknown error"
+msgstr ""
+
+#: src/components/items/ErrorItem.tsx:10
+msgid "An error occured:"
+msgstr ""
+
+#: src/components/items/InvenTreeLogo.tsx:11
+msgid "InvenTree Logo"
+msgstr ""
+
+#: src/components/nav/Header.tsx:95
+msgid "Notifications"
+msgstr ""
+
+#: src/components/nav/Header.tsx:96
+#: src/pages/Index/Profile.tsx:29
+msgid "Profile"
+msgstr ""
+
+#: src/components/nav/Header.tsx:98
+#: src/pages/Index/Profile.tsx:37
+#: src/pages/Index/Profile.tsx:153
+msgid "Settings"
+msgstr ""
+
+#: src/components/nav/Header.tsx:99
+msgid "Current language {locale}"
+msgstr ""
+
+#: src/components/nav/Header.tsx:100
+msgid "Switch to pseudo language"
+msgstr ""
+
+#: src/components/nav/Header.tsx:101
+msgid "Account settings"
+msgstr ""
+
+#: src/components/nav/Header.tsx:102
+msgid "Logout"
+msgstr ""
+
+#: src/defaults.tsx:8
+msgid "InvenTree Demo"
+msgstr ""
+
+#: src/defaults.tsx:12
+msgid "InvenHost: Sample"
+msgstr ""
+
+#: src/defaults.tsx:16
+msgid "Localhost"
+msgstr ""
+
+#: src/defaults.tsx:21
+#: src/pages/Index/Home.tsx:7
+msgid "Home"
+msgstr ""
+
+#: src/defaults.tsx:22
+#: src/pages/Index/Part.tsx:7
+msgid "Part"
+msgstr "Alkatrész"
+
+#: src/defaults.tsx:28
+msgid "Website"
+msgstr ""
+
+#: src/defaults.tsx:32
+msgid "GitHub"
+msgstr ""
+
+#: src/defaults.tsx:36
+msgid "Demo"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:17
+msgid "Subscribed Parts"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:24
+msgid "Subscribed Categories"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:31
+msgid "Latest Parts"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:38
+msgid "BOM Waiting Validation"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:45
+msgid "Recently Updated"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:52
+msgid "Low Stock"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:59
+msgid "Depleted Stock"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:66
+msgid "Required for Build Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:73
+msgid "Expired Stock"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:80
+msgid "Stale Stock"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:87
+msgid "Build Orders In Progress"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:94
+msgid "Overdue Build Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:101
+msgid "Outstanding Purchase Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:108
+msgid "Overdue Purchase Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:115
+msgid "Outstanding Sales Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:122
+msgid "Overdue Sales Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:129
+msgid "Current News"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:139
+msgid "Dashboard"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:140
+msgid "Autoupdate"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:36
+msgid "User"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:109
+msgid "Userinfo"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:120
+msgid "First name: {0}"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:129
+msgid "Last name: {0}"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:138
+msgid "Username: {0}"
+msgstr ""
+
+#: src/pages/Index/Profile.tsx:143
+msgid "Submit"
+msgstr ""
+
+#: src/pages/Login.tsx:27
+msgid "No selection"
+msgstr ""
+
+#: src/pages/Login.tsx:72
+msgid "Edit host options"
+msgstr ""

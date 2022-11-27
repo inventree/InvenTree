@@ -3,6 +3,8 @@ import { api } from '../App';
 import { StatisticItem } from './items/DashboardItem';
 import { useEffect, useState } from 'react';
 import { ErrorItem } from './items/ErrorItem';
+import { t } from '@lingui/macro'
+
 
 export function DashboardItemProxy({
   id,
@@ -27,7 +29,7 @@ export function DashboardItemProxy({
     queryFn: fetchData,
     refetchOnWindowFocus: autoupdate
   });
-  const [dashdata, setDashData] = useState({ title: 'Title', value: '000' });
+  const [dashdata, setDashData] = useState({ title: t`Title`, value: '000' });
 
   useEffect(() => {
     if (data) {

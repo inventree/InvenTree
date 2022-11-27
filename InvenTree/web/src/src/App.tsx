@@ -23,7 +23,10 @@ import { useApiState } from './contex/ApiState';
 import { defaultHostList } from './defaults';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { i18n } from '@lingui/core'
+import { I18nProvider } from '@lingui/react'
+import { de, en, hu } from "make-plural/plurals";
 
 // Error tracking
 Sentry.init({
@@ -94,6 +97,22 @@ const router = createBrowserRouter([
   }
 ]);
 
+// Translations
+export type Locales = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
+export const languages: Locales[] = ['en', 'de', 'hu'];
+i18n.loadLocaleData({
+  de: { plurals: de },
+  en: { plurals: en },
+  hu: { plurals: hu },
+}
+);
+
+export async function activateLocale(locale: Locales) {
+  const { messages } = await import(`./locales/${locale}/messages.ts`)
+  i18n.load(locale, messages)
+  i18n.activate(locale)
+}
+
 // Main App
 export default function App() {
   // Color Scheme
@@ -106,7 +125,7 @@ export default function App() {
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
   // Session initialization
-  const [hostList] = useLocalState((state) => [state.hostList]);
+  const [hostList, language] = useLocalState((state) => [state.hostList, state.language]);
   if (Object.keys(hostList).length === 0) {
     console.log('Laoding default host list');
     useLocalState.setState({ hostList: defaultHostList });
@@ -120,6 +139,9 @@ export default function App() {
     fetchSession();
   }
 
+  // Language
+  useEffect(() => { activateLocale(language) }, [language])
+
   // Main App component
   return (
     <ColorSchemeProvider
@@ -131,11 +153,13 @@ export default function App() {
         withGlobalStyles
         withNormalizeCSS
       >
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </AuthProvider>
+        <I18nProvider i18n={i18n}>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <RouterProvider router={router} />
+            </QueryClientProvider>
+          </AuthProvider>
+        </I18nProvider>
       </MantineProvider>
     </ColorSchemeProvider>
   );
