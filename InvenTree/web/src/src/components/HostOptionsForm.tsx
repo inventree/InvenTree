@@ -1,6 +1,6 @@
 
 import { useForm } from '@mantine/form';
-import { TextInput, Group, ActionIcon, Box, Text, Button, Space, Divider } from '@mantine/core';
+import { TextInput, Group, ActionIcon, Box, Text, Button, Space } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
 import { IconTrash, IconSquarePlus } from '@tabler/icons';
 import { HostList } from '../contex/states';
@@ -42,6 +42,5 @@ export function HostOptionsForm({ data, saveOptions }: { data: HostList, saveOpt
                 <Button type="submit"><Trans>Save</Trans></Button>
             </Group>
         </Box>
-        <Divider />
     </form>);
 }
