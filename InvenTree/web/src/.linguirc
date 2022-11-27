@@ -1,5 +1,5 @@
 {
-    "locales": ["en", "de"],
+    "locales": ["en", "de", "pseudo-LOCALE"],
     "catalogs": [{
         "path": "src/locales/{locale}/messages",
         "include": ["src"],
@@ -8,8 +8,10 @@
     "format": "po",
     "orderBy": "origin",
     "sourceLocale": "en",
+    "pseudoLocale": "pseudo-LOCALE",
     "fallbackLocales": {
-        "default": "en"
+        "default": "en",
+        "pseudo-LOCALE": "en"
     },
     "extractBabelOptions": {
         "presets": ["@babel/preset-typescript"]

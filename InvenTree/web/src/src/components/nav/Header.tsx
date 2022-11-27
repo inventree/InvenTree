@@ -46,6 +46,11 @@ export function Header() {
     setLocale(nextLanguage)
     activateLocale(nextLanguage)
   }
+  const enablePsuedo = () => {
+    console.log('enabling psuedo language...')
+    setLocale('pseudo-LOCALE')
+    activateLocale('pseudo-LOCALE')
+  }
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name}>
@@ -107,6 +112,9 @@ export function Header() {
                 <Menu.Label>Settings</Menu.Label>
                 <Menu.Item icon={<IconLanguage size={14} stroke={1.5} />} onClick={() => switchLanguage()}>
                   Current language {locale}
+                </Menu.Item>
+                <Menu.Item icon={<IconLanguage size={14} stroke={1.5} />} onClick={() => enablePsuedo()}>
+                  Switch to pseudo language
                 </Menu.Item>
                 <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>
                   Account settings
