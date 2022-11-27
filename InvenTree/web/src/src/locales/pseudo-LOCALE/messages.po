@@ -133,13 +133,13 @@ msgid "Notifications"
 msgstr ""
 
 #: src/components/nav/Header.tsx:89
-#: src/pages/Index/Profile.tsx:40
+#: src/pages/Index/Profile/Profile.tsx:17
 msgid "Profile"
 msgstr ""
 
 #: src/components/nav/Header.tsx:91
-#: src/pages/Index/Profile.tsx:48
-#: src/pages/Index/Profile.tsx:243
+#: src/pages/Index/Profile/Profile.tsx:25
+#: src/pages/Index/Profile/SettingsPanel.tsx:7
 msgid "Settings"
 msgstr ""
 
@@ -289,27 +289,27 @@ msgstr ""
 msgid "Autoupdate"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:47
+#: src/pages/Index/Profile/Profile.tsx:24
 msgid "User"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:120
+#: src/pages/Index/Profile/UserPanel.tsx:77
 msgid "Userinfo"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:131
+#: src/pages/Index/Profile/UserPanel.tsx:87
 msgid "First name: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:140
+#: src/pages/Index/Profile/UserPanel.tsx:95
 msgid "Last name: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:149
+#: src/pages/Index/Profile/UserPanel.tsx:103
 msgid "Username: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:154
+#: src/pages/Index/Profile/UserPanel.tsx:108
 msgid "Submit"
 msgstr ""
 

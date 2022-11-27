@@ -12,7 +12,7 @@ import { Logout } from './pages/Logout';
 import { Login } from './pages/Login';
 import { Part } from './pages/Index/Part';
 import { Home } from './pages/Index/Home';
-import { Profile } from './pages/Index/Profile';
+import { Profile } from './pages/Index/Profile/Profile';
 import { Dashboard } from './pages/Index/Dashboard';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import axios from 'axios';
