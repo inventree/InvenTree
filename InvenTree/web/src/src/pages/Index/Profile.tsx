@@ -28,7 +28,7 @@ import { useLocalState } from '../../contex/LocalState';
 import { useState } from 'react';
 import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { SizeMarks } from '../../defaults';
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
 
 
 export function Profile() {
@@ -122,29 +122,17 @@ function UserInfo({ data }: { data: any }) {
       </Group>
       <Group>
         {editing ? (
-          <TextInput
-            label="First name"
-            placeholder="First name"
-            {...form.getInputProps('first_name')}
-          />
+          <TextInput label={t`First name`} placeholder={t`First name`} {...form.getInputProps('first_name')} />
         ) : (
           <Text><Trans>First name: {form.values.first_name}</Trans></Text>
         )}
         {editing ? (
-          <TextInput
-            label="Last name"
-            placeholder="Last name"
-            {...form.getInputProps('last_name')}
-          />
+          <TextInput label={t`Last name`} placeholder={t`Last name`} {...form.getInputProps('last_name')} />
         ) : (
           <Text><Trans>Last name: {form.values.last_name}</Trans></Text>
         )}
         {editing ? (
-          <TextInput
-            label="Username"
-            placeholder="Username"
-            {...form.getInputProps('username')}
-          />
+          <TextInput label={t`Username`} placeholder={t`Username`} {...form.getInputProps('username')} />
         ) : (
           <Text><Trans>Username: {form.values.username}</Trans></Text>
         )}
@@ -208,27 +196,27 @@ function UserTheme({ height }: { height: number }) {
 
   return (
     <Container w="100%" mih={height}>
-      <Title order={3}>Design</Title>
+      <Title order={3}><Trans>Design</Trans></Title>
       <Table>
         <tbody>
           <tr>
-            <td>Primary color</td>
+            <td><Trans>Primary color</Trans></td>
             <td><ColorPicker format="hex" onChange={changePrimary} withPicker={false} swatches={Object.keys(lookup)} /></td>
           </tr>
           <tr>
-            <td>White color</td>
+            <td><Trans>White color</Trans></td>
             <td><ColorInput value={whiteColor} onChange={changeWhite} /></td>
           </tr>
           <tr>
-            <td>Black color</td>
+            <td><Trans>Black color</Trans></td>
             <td><ColorInput value={blackColor} onChange={changeBlack} /></td>
           </tr>
           <tr>
-            <td>Border Radius</td>
+            <td><Trans>Border Radius</Trans></td>
             <td><Slider label={(val) => getMark(val).label} defaultValue={50} step={25} marks={SizeMarks} value={radius} onChange={changeRadius} /></td>
           </tr>
           <tr>
-            <td>Loader</td>
+            <td><Trans>Loader</Trans></td>
             <td><Select data={loaderDate} value={loader} onChange={changeLoader} /></td>
           </tr>
         </tbody>
