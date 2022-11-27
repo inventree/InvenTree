@@ -4,7 +4,7 @@ import { TextInput, Group, ActionIcon, Box, Text, Button, Space, Divider } from 
 import { randomId } from '@mantine/hooks';
 import { IconTrash, IconSquarePlus } from '@tabler/icons';
 import { HostList } from '../contex/states';
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
 
 
 export function HostOptionsForm({ data, saveOptions }: { data: HostList, saveOptions: (newData: HostList) => void }) {
@@ -18,8 +18,8 @@ export function HostOptionsForm({ data, saveOptions }: { data: HostList, saveOpt
     const fields = Object.entries(form.values).map(([key]) => (
         <Group key={key} mt="xs">
             {form.values[key] !== undefined && (<>
-                <TextInput placeholder="Host" withAsterisk sx={{ flex: 1 }} {...form.getInputProps(`${key}.host`)} />
-                <TextInput placeholder="Host" withAsterisk sx={{ flex: 1 }} {...form.getInputProps(`${key}.name`)} />
+                <TextInput placeholder={t`Host`} withAsterisk sx={{ flex: 1 }} {...form.getInputProps(`${key}.host`)} />
+                <TextInput placeholder={t`Name`} withAsterisk sx={{ flex: 1 }} {...form.getInputProps(`${key}.name`)} />
                 <ActionIcon color="red" onClick={() => { deleteItem(key); }}><IconTrash size={16} /></ActionIcon>
             </>)}
         </Group >

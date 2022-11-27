@@ -34,6 +34,7 @@ export function AuthenticationForm({
   selectElement: JSX.Element;
 }) {
   const [action, toggleAction] = useToggle(['login', 'register']);
+  const actionname = action === 'login' ? t`login` : t`register`;
   const form = useForm({
     initialValues: {
       email: lastUsername,
@@ -52,7 +53,7 @@ export function AuthenticationForm({
 
   return (
     <Paper radius="md" p="xl" withBorder>
-      <Text size="lg" weight={500}><Trans>Welcome {action} to </Trans><Group>
+      <Text size="lg" weight={500}><Trans>Welcome {actionname} to </Trans><Group>
         {(!editing) ? hostname : selectElement}{EditButton(setEditing, editing)}</Group>
       </Text>
       <Center>
@@ -113,7 +114,7 @@ export function AuthenticationForm({
               ? <Trans>Already have an account? Login</Trans>
               : <Trans>Don't have an account? Register</Trans>}
           </Anchor>
-          <Button type="submit">{upperFirst(action)}</Button>
+          <Button type="submit">{upperFirst(actionname)}</Button>
         </Group>
       </form>
     </Paper>
