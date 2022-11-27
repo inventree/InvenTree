@@ -159,20 +159,36 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: src/defaults.tsx:9
-msgid "InvenTree Demo"
-msgstr ""
-
 #: src/defaults.tsx:13
-msgid "InvenHost: Sample"
-msgstr ""
+#~ msgid "InvenHost: Sample"
+#~ msgstr ""
 
 #: src/defaults.tsx:17
-msgid "Localhost"
-msgstr ""
+#~ msgid "Localhost"
+#~ msgstr ""
 
 #: src/defaults.tsx:21
 #~ msgid "'Home'"
+#~ msgstr ""
+
+#: src/defaults.tsx:22
+#~ msgid "'Part'"
+#~ msgstr ""
+
+#: src/defaults.tsx:28
+#~ msgid "'Website'"
+#~ msgstr ""
+
+#: src/defaults.tsx:32
+#~ msgid "'GitHub'"
+#~ msgstr ""
+
+#: src/defaults.tsx:36
+#~ msgid "'Demo'"
+#~ msgstr ""
+
+#: src/defaults.tsx:9
+#~ msgid "InvenTree Demo"
 #~ msgstr ""
 
 #: src/defaults.tsx:22
@@ -180,34 +196,18 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/defaults.tsx:22
-#~ msgid "'Part'"
-#~ msgstr ""
-
 #: src/defaults.tsx:23
 #: src/pages/Index/Part.tsx:7
 msgid "Part"
 msgstr ""
 
-#: src/defaults.tsx:28
-#~ msgid "'Website'"
-#~ msgstr ""
-
 #: src/defaults.tsx:29
 msgid "Website"
 msgstr ""
 
-#: src/defaults.tsx:32
-#~ msgid "'GitHub'"
-#~ msgstr ""
-
 #: src/defaults.tsx:34
 msgid "GitHub"
 msgstr ""
-
-#: src/defaults.tsx:36
-#~ msgid "'Demo'"
-#~ msgstr ""
 
 #: src/defaults.tsx:39
 msgid "Demo"

@@ -151,17 +151,17 @@ msgstr "Benutzereinstellungen"
 msgid "Logout"
 msgstr "Abmelden"
 
-#: src/defaults.tsx:9
-msgid "InvenTree Demo"
-msgstr "InvenTree Demo"
-
 #: src/defaults.tsx:13
-msgid "InvenHost: Sample"
-msgstr ""
+#~ msgid "InvenHost: Sample"
+#~ msgstr ""
 
 #: src/defaults.tsx:17
-msgid "Localhost"
-msgstr ""
+#~ msgid "Localhost"
+#~ msgstr ""
+
+#: src/defaults.tsx:9
+#~ msgid "InvenTree Demo"
+#~ msgstr "InvenTree Demo"
 
 #: src/defaults.tsx:22
 #: src/pages/Index/Home.tsx:7

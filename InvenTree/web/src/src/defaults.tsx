@@ -1,20 +1,20 @@
 import { HostList } from './contex/states';
 import { MantineSize } from '@mantine/core';
-import { Trans, t } from '@lingui/macro'
+import { Trans } from '@lingui/macro'
 
 
 export const defaultHostList: HostList = {
   'mantine-u56l5jt85': {
     host: 'https://demo.inventree.org/api/',
-    name: t`InvenTree Demo`
+    name: 'InvenTree Demo'
   },
   'mantine-g8t1zrj50': {
     host: 'https://sample.app.invenhost.com/api/',
-    name: t`InvenHost: Sample`
+    name: 'InvenHost: Sample'
   },
   'mantine-cqj63coxn': {
     host: 'http://localhost:8000/api/',
-    name: t`Localhost`
+    name: 'Localhost'
   }
 };
 
