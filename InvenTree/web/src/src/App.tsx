@@ -26,7 +26,7 @@ import { BrowserTracing } from '@sentry/tracing';
 import { useEffect, useState } from 'react';
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
-import { de, en } from "make-plural/plurals";
+import { de, en, hu } from "make-plural/plurals";
 
 // Error tracking
 Sentry.init({
@@ -102,7 +102,8 @@ export type Locales = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
 export const languages: Locales[] = ['en', 'de', 'hu'];
 i18n.loadLocaleData({
   de: { plurals: de },
-  en: { plurals: en }
+  en: { plurals: en },
+  hu: { plurals: hu },
 }
 );
 
