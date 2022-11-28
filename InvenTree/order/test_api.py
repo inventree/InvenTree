@@ -1100,7 +1100,7 @@ class SalesOrderTest(OrderTest):
         # Create required sales orders
         self.assignRole('sales_order.add')
 
-        for i in range(1, 9):
+        for i in range(1, 4):
             self.post(
                 reverse('api-so-list'),
                 {
@@ -1112,27 +1112,16 @@ class SalesOrderTest(OrderTest):
                 expected_code=201
             )
 
-        # Get some of these orders with target date, complete or cancel them
-        for so in models.SalesOrder.objects.filter(target_date__isnull=False):
-            if so.reference in ['SO-11000001', 'SO-11000002', 'SO-11000003', 'SO-11000004']:
-                # Set complete status for these orders
-                self.post(
-                    reverse('api-so-complete', kwargs={'pk': so.pk}),
-                    {
-                        'accept_incomplete': True,
-                    },
-                    expected_code=201
-                )
-
-            elif so.reference in ['SO-11000005', 'SO-11000006']:
-                # Set cancel status for these orders
-                self.post(
-                    reverse('api-po-cancel', kwargs={'pk': so.pk}),
-                    {
-                        'accept_incomplete': True,
-                    },
-                    expected_code=201
-                )
+        # Get all roders with an empty target date, set it
+        for so in models.SalesOrder.objects.filter(target_date__isnull=True):
+            # Set complete status for these orders
+            self.post(
+                reverse('api-so-detail', kwargs={'pk': so.pk}),
+                {
+                    'target_date': '2024-12-12',
+                },
+                expected_code=201
+            )
 
         url = reverse('api-po-so-calendar', kwargs={'ordertype': 'sales-order'})
 
