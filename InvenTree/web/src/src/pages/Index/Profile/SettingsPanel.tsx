@@ -86,7 +86,7 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
 
             if (item.choices.length > 0) {
                 const choices = item.choices.map((choice) => ({ label: choice.display_name, value: choice.value }))
-                control = <Select data={choices} value={value} onChange={(value) => onChange(value)} />
+                control = <Select searchable data={choices} value={value} onChange={(value) => onChange(value)} />
             }
             else {
                 control = <TextInput value={value} onChange={(event) => onChange(event.currentTarget.value)} />;
