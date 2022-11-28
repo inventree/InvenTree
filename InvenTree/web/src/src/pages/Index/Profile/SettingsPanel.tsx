@@ -49,7 +49,7 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
     const { classes } = InvenTreeStyle();
 
     let control = <Text><Trans>Input {item.type} is not known</Trans></Text>
-    let setfnc = (value: any) => { console.log('this should not appear' + value) };
+    let setfnc = (value: React.SetStateAction<any>) => { throw value };
     switch (item.type) {
         case Type.Boolean: {
             const [value, setValue] = useState<boolean>(item.value === 'False' ? false : true);
