@@ -43,6 +43,8 @@ export interface GlobalSetting {
   model_name: null;
   api_url: null;
   typ: Typ;
+  plugin?: string;
+  method?: string;
 }
 
 export interface Choice {
@@ -52,6 +54,9 @@ export interface Choice {
 
 export enum Typ {
   Inventree = "inventree",
+  Plugin = "plugin",
+  User = "user",
+  Notification = "notification",
 }
 
 export enum Type {
