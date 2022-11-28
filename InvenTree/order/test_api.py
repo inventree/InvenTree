@@ -1115,7 +1115,7 @@ class SalesOrderTest(OrderTest):
         # Get all roders with an empty target date, set it
         for so in models.SalesOrder.objects.filter(target_date__isnull=True):
             # Set complete status for these orders
-            self.post(
+            self.patch(
                 reverse('api-so-detail', kwargs={'pk': so.pk}),
                 {
                     'target_date': '2024-12-12',
