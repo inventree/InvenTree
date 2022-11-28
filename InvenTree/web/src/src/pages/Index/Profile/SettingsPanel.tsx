@@ -16,6 +16,15 @@ export function SettingsPanel() {
     const { isLoading, data } = useQuery({ queryKey: ['settings-global'], queryFn: fetchData, refetchOnWindowFocus: false });
     const [showNames, setShowNames] = useState<boolean>(false);
 
+    function SwitchesCard({ title, description, data, showNames = false }: { title: string; description: string; data: GlobalSetting[]; showNames?: boolean; }) {
+        const { classes } = InvenTreeStyle();
+        return (
+            <Card withBorder className={classes.card}>
+                <Text size="lg" weight={500}>{title}</Text><Text size="xs" color="dimmed" mb="md">{description}</Text>
+                {data.map((item) => (SettingsBlock(item, showNames)))}
+            </Card>
+        );
+    }
 
     return (
         <Container>
@@ -30,19 +39,6 @@ export function SettingsPanel() {
         </Container >
     );
 }
-
-
-export function SwitchesCard({ title, description, data, showNames = false }: { title: string; description: string; data: GlobalSetting[]; showNames?: boolean; }) {
-    const { classes } = InvenTreeStyle();
-    const items = data.map((item) => (SettingsBlock(item, showNames)))
-
-    return (
-        <Card withBorder className={classes.card}>
-            <Text size="lg" weight={500}>{title}</Text><Text size="xs" color="dimmed" mb="md">{description}</Text>{items}
-        </Card>
-    );
-}
-
 
 function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
     const { classes } = InvenTreeStyle();
