@@ -44,8 +44,6 @@ msgid "Your name"
 msgstr "Your name"
 
 #: src/components/AuthenticationForm.tsx:84
-#: src/pages/Index/Profile.tsx:135
-#: src/pages/Index/Profile.tsx:135
 msgid "Username"
 msgstr "Username"
 
@@ -65,22 +63,6 @@ msgstr "Your password"
 msgid "Password should include at least 6 characters"
 msgstr "Password should include at least 6 characters"
 
-#: src/components/AuthenticationForm.tsx:113
-#~ msgid "'Already have an account? Login"
-#~ msgstr "'Already have an account? Login"
-
-#: src/components/AuthenticationForm.tsx:37
-#~ msgid "Login"
-#~ msgstr "Login"
-
-#: src/components/AuthenticationForm.tsx:37
-#~ msgid "Register"
-#~ msgstr "Register"
-
-#: src/components/AuthenticationForm.tsx:55
-#~ msgid "Welcome {action} to"
-#~ msgstr "Welcome {action} to"
-
 #: src/components/AuthenticationForm.tsx:114
 msgid "Already have an account? Login"
 msgstr "Already have an account? Login"
@@ -92,10 +74,6 @@ msgstr "Don't have an account? Register"
 #: src/components/DashboardItemProxy.tsx:32
 msgid "Title"
 msgstr "Title"
-
-#: src/components/DashboardItemProxy.tsx:32
-#~ msgid "'Title'"
-#~ msgstr "'Title'"
 
 #: src/components/HostOptionsForm.tsx:21
 #: src/components/HostOptionsForm.tsx:32
@@ -126,22 +104,18 @@ msgstr "An error occured:"
 msgid "InvenTree Logo"
 msgstr "InvenTree Logo"
 
-#: src/components/nav/Footer.tsx:18
-#~ msgid "{0}"
-#~ msgstr "{0}"
-
 #: src/components/nav/Header.tsx:88
 msgid "Notifications"
 msgstr "Notifications"
 
 #: src/components/nav/Header.tsx:89
-#: src/pages/Index/Profile.tsx:40
+#: src/pages/Index/Profile/Profile.tsx:17
 msgid "Profile"
 msgstr "Profile"
 
 #: src/components/nav/Header.tsx:91
-#: src/pages/Index/Profile.tsx:48
-#: src/pages/Index/Profile.tsx:231
+#: src/pages/Index/Profile/Profile.tsx:25
+#: src/pages/Index/Profile/SettingsPanel.tsx:23
 msgid "Settings"
 msgstr "Settings"
 
@@ -161,55 +135,23 @@ msgstr "Account settings"
 msgid "Logout"
 msgstr "Logout"
 
-#: src/defaults.tsx:13
-#~ msgid "InvenHost: Sample"
-#~ msgstr "InvenHost: Sample"
-
-#: src/defaults.tsx:17
-#~ msgid "Localhost"
-#~ msgstr "Localhost"
-
-#: src/defaults.tsx:21
-#~ msgid "'Home'"
-#~ msgstr "'Home'"
-
 #: src/defaults.tsx:22
 #: src/pages/Index/Home.tsx:7
 msgid "Home"
 msgstr "Home"
-
-#: src/defaults.tsx:22
-#~ msgid "'Part'"
-#~ msgstr "'Part'"
 
 #: src/defaults.tsx:23
 #: src/pages/Index/Part.tsx:7
 msgid "Part"
 msgstr "Part"
 
-#: src/defaults.tsx:28
-#~ msgid "'Website'"
-#~ msgstr "'Website'"
-
 #: src/defaults.tsx:29
 msgid "Website"
 msgstr "Website"
 
-#: src/defaults.tsx:32
-#~ msgid "'GitHub'"
-#~ msgstr "'GitHub'"
-
 #: src/defaults.tsx:34
 msgid "GitHub"
 msgstr "GitHub"
-
-#: src/defaults.tsx:36
-#~ msgid "'Demo'"
-#~ msgstr "'Demo'"
-
-#: src/defaults.tsx:9
-#~ msgid "InvenTree Demo"
-#~ msgstr "InvenTree Demo"
 
 #: src/defaults.tsx:39
 msgid "Demo"
@@ -291,63 +233,65 @@ msgstr "Dashboard"
 msgid "Autoupdate"
 msgstr "Autoupdate"
 
-#: src/pages/Index/Profile.tsx:47
+#: src/pages/Index/Profile/Profile.tsx:24
 msgid "User"
 msgstr "User"
 
-#: src/pages/Index/Profile.tsx:120
+#: src/pages/Index/Profile/SettingsPanel.tsx:24
+msgid "Show internal names"
+msgstr "Show internal names"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:27
+msgid "Data is current beeing loaded"
+msgstr "Data is current beeing loaded"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:29
+msgid "Global Server Settings"
+msgstr "Global Server Settings"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:29
+msgid "Global Settings for this instance"
+msgstr "Global Settings for this instance"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:51
+msgid "Input {0} is not known"
+msgstr "Input {0} is not known"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:57
+msgid "Saved changes {0}"
+msgstr "Saved changes {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:57
+msgid "Changed to {0}"
+msgstr "Changed to {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:66
+msgid "Error while saving {0}"
+msgstr "Error while saving {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:66
+msgid "Error was {err}"
+msgstr "Error was {err}"
+
+#: src/pages/Index/Profile/UserPanel.tsx:77
 msgid "Userinfo"
 msgstr "Userinfo"
 
-#: src/pages/Index/Profile.tsx:125
-#: src/pages/Index/Profile.tsx:125
-msgid "First name"
-msgstr "First name"
-
-#: src/pages/Index/Profile.tsx:127
+#: src/pages/Index/Profile/UserPanel.tsx:87
 msgid "First name: {0}"
 msgstr "First name: {0}"
 
-#: src/pages/Index/Profile.tsx:130
-#: src/pages/Index/Profile.tsx:130
-msgid "Last name"
-msgstr "Last name"
-
-#: src/pages/Index/Profile.tsx:132
+#: src/pages/Index/Profile/UserPanel.tsx:95
 msgid "Last name: {0}"
 msgstr "Last name: {0}"
 
-#: src/pages/Index/Profile.tsx:137
+#: src/pages/Index/Profile/UserPanel.tsx:103
 msgid "Username: {0}"
 msgstr "Username: {0}"
 
-#: src/pages/Index/Profile.tsx:142
+#: src/pages/Index/Profile/UserPanel.tsx:108
 msgid "Submit"
 msgstr "Submit"
-
-#: src/pages/Index/Profile.tsx:199
-msgid "Design"
-msgstr "Design"
-
-#: src/pages/Index/Profile.tsx:203
-msgid "Primary color"
-msgstr "Primary color"
-
-#: src/pages/Index/Profile.tsx:207
-msgid "White color"
-msgstr "White color"
-
-#: src/pages/Index/Profile.tsx:211
-msgid "Black color"
-msgstr "Black color"
-
-#: src/pages/Index/Profile.tsx:215
-msgid "Border Radius"
-msgstr "Border Radius"
-
-#: src/pages/Index/Profile.tsx:219
-msgid "Loader"
-msgstr "Loader"
 
 #: src/pages/Login.tsx:27
 msgid "No selection"

@@ -44,8 +44,6 @@ msgid "Your name"
 msgstr ""
 
 #: src/components/AuthenticationForm.tsx:84
-#: src/pages/Index/Profile.tsx:135
-#: src/pages/Index/Profile.tsx:135
 msgid "Username"
 msgstr ""
 
@@ -65,22 +63,6 @@ msgstr ""
 msgid "Password should include at least 6 characters"
 msgstr ""
 
-#: src/components/AuthenticationForm.tsx:113
-#~ msgid "'Already have an account? Login"
-#~ msgstr ""
-
-#: src/components/AuthenticationForm.tsx:37
-#~ msgid "Login"
-#~ msgstr ""
-
-#: src/components/AuthenticationForm.tsx:37
-#~ msgid "Register"
-#~ msgstr ""
-
-#: src/components/AuthenticationForm.tsx:55
-#~ msgid "Welcome {action} to"
-#~ msgstr ""
-
 #: src/components/AuthenticationForm.tsx:114
 msgid "Already have an account? Login"
 msgstr ""
@@ -92,10 +74,6 @@ msgstr ""
 #: src/components/DashboardItemProxy.tsx:32
 msgid "Title"
 msgstr ""
-
-#: src/components/DashboardItemProxy.tsx:32
-#~ msgid "'Title'"
-#~ msgstr ""
 
 #: src/components/HostOptionsForm.tsx:21
 #: src/components/HostOptionsForm.tsx:32
@@ -126,22 +104,18 @@ msgstr ""
 msgid "InvenTree Logo"
 msgstr ""
 
-#: src/components/nav/Footer.tsx:18
-#~ msgid "{0}"
-#~ msgstr ""
-
 #: src/components/nav/Header.tsx:88
 msgid "Notifications"
 msgstr ""
 
 #: src/components/nav/Header.tsx:89
-#: src/pages/Index/Profile.tsx:40
+#: src/pages/Index/Profile/Profile.tsx:17
 msgid "Profile"
 msgstr ""
 
 #: src/components/nav/Header.tsx:91
-#: src/pages/Index/Profile.tsx:48
-#: src/pages/Index/Profile.tsx:231
+#: src/pages/Index/Profile/Profile.tsx:25
+#: src/pages/Index/Profile/SettingsPanel.tsx:23
 msgid "Settings"
 msgstr ""
 
@@ -161,55 +135,23 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: src/defaults.tsx:13
-#~ msgid "InvenHost: Sample"
-#~ msgstr ""
-
-#: src/defaults.tsx:17
-#~ msgid "Localhost"
-#~ msgstr ""
-
-#: src/defaults.tsx:21
-#~ msgid "'Home'"
-#~ msgstr ""
-
 #: src/defaults.tsx:22
 #: src/pages/Index/Home.tsx:7
 msgid "Home"
 msgstr ""
-
-#: src/defaults.tsx:22
-#~ msgid "'Part'"
-#~ msgstr ""
 
 #: src/defaults.tsx:23
 #: src/pages/Index/Part.tsx:7
 msgid "Part"
 msgstr ""
 
-#: src/defaults.tsx:28
-#~ msgid "'Website'"
-#~ msgstr ""
-
 #: src/defaults.tsx:29
 msgid "Website"
 msgstr ""
 
-#: src/defaults.tsx:32
-#~ msgid "'GitHub'"
-#~ msgstr ""
-
 #: src/defaults.tsx:34
 msgid "GitHub"
 msgstr ""
-
-#: src/defaults.tsx:36
-#~ msgid "'Demo'"
-#~ msgstr ""
-
-#: src/defaults.tsx:9
-#~ msgid "InvenTree Demo"
-#~ msgstr ""
 
 #: src/defaults.tsx:39
 msgid "Demo"
@@ -291,62 +233,64 @@ msgstr ""
 msgid "Autoupdate"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:47
+#: src/pages/Index/Profile/Profile.tsx:24
 msgid "User"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:120
+#: src/pages/Index/Profile/SettingsPanel.tsx:24
+msgid "Show internal names"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:27
+msgid "Data is current beeing loaded"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:29
+msgid "Global Server Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:29
+msgid "Global Settings for this instance"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:51
+msgid "Input {0} is not known"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:57
+msgid "Saved changes {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:57
+msgid "Changed to {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:66
+msgid "Error while saving {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:66
+msgid "Error was {err}"
+msgstr ""
+
+#: src/pages/Index/Profile/UserPanel.tsx:77
 msgid "Userinfo"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:125
-#: src/pages/Index/Profile.tsx:125
-msgid "First name"
-msgstr ""
-
-#: src/pages/Index/Profile.tsx:127
+#: src/pages/Index/Profile/UserPanel.tsx:87
 msgid "First name: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:130
-#: src/pages/Index/Profile.tsx:130
-msgid "Last name"
-msgstr ""
-
-#: src/pages/Index/Profile.tsx:132
+#: src/pages/Index/Profile/UserPanel.tsx:95
 msgid "Last name: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:137
+#: src/pages/Index/Profile/UserPanel.tsx:103
 msgid "Username: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile.tsx:142
+#: src/pages/Index/Profile/UserPanel.tsx:108
 msgid "Submit"
-msgstr ""
-
-#: src/pages/Index/Profile.tsx:199
-msgid "Design"
-msgstr ""
-
-#: src/pages/Index/Profile.tsx:203
-msgid "Primary color"
-msgstr ""
-
-#: src/pages/Index/Profile.tsx:207
-msgid "White color"
-msgstr ""
-
-#: src/pages/Index/Profile.tsx:211
-msgid "Black color"
-msgstr ""
-
-#: src/pages/Index/Profile.tsx:215
-msgid "Border Radius"
-msgstr ""
-
-#: src/pages/Index/Profile.tsx:219
-msgid "Loader"
 msgstr ""
 
 #: src/pages/Login.tsx:27
