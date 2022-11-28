@@ -28,6 +28,7 @@ import { useEffect, useState } from 'react';
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
 import { de, en, hu } from "make-plural/plurals";
+import { NotificationsProvider } from '@mantine/notifications';
 
 // Error tracking
 Sentry.init({
@@ -166,11 +167,13 @@ export default function App() {
         withNormalizeCSS
       >
         <I18nProvider i18n={i18n}>
-          <AuthProvider>
-            <QueryClientProvider client={queryClient}>
-              <RouterProvider router={router} />
-            </QueryClientProvider>
-          </AuthProvider>
+          <NotificationsProvider>
+            <AuthProvider>
+              <QueryClientProvider client={queryClient}>
+                <RouterProvider router={router} />
+              </QueryClientProvider>
+            </AuthProvider>
+          </NotificationsProvider>
         </I18nProvider>
       </MantineProvider>
     </ColorSchemeProvider>
