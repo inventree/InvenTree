@@ -52,9 +52,7 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
     let setfnc = (value: any) => { console.log('this should not appear' + value) };
     switch (item.type) {
         case Type.Boolean: {
-            const vala = item.value === 'True' ? true : item.value === 'False' ? false : item.value;
-
-            const [value, setValue] = useState<boolean>(vala);
+            const [value, setValue] = useState<boolean>(item.value === 'False' ? false : true);
             setfnc = setValue
             control = <Switch checked={value} onChange={(event) => onChange(event.currentTarget.checked)} />
             break;
