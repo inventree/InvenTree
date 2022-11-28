@@ -9,33 +9,33 @@ import { GlobalSetting, Type } from '../../../contex/states';
 import { InvenTreeStyle } from '../../../globalStyle';
 import { IconCheck, IconX } from '@tabler/icons';
 
-export function SettingsPanel() {
+export function SettingsPanel({ reference, title, description, url }: { reference: string, title: string, description: string, url?: string }) {
     function fetchData() {
-        return api.get('settings/global/').then((res) => res.data);
+        return api.get(url ? url : `settings/${reference}/`).then((res) => res.data);
     }
-    const { isLoading, data } = useQuery({ queryKey: ['settings-global'], queryFn: fetchData, refetchOnWindowFocus: false });
+    const { isLoading, data, isError } = useQuery({ queryKey: [`settings-${reference}`], queryFn: fetchData, refetchOnWindowFocus: false });
     const [showNames, setShowNames] = useState<boolean>(false);
 
     function SwitchesCard({ title, description, data, showNames = false }: { title: string; description: string; data: GlobalSetting[]; showNames?: boolean; }) {
         const { classes } = InvenTreeStyle();
+        const items = data.map((item) => SettingsBlock(item, showNames));
+
         return (
             <Card withBorder className={classes.card}>
                 <Text size="lg" weight={500}>{title}</Text><Text size="xs" color="dimmed" mb="md">{description}</Text>
-                {data.map((item) => (SettingsBlock(item, showNames)))}
+                {items}
             </Card>
         );
     }
+
+    const datapane = isLoading ? <Skeleton /> : isError ? <Text>Failed to load</Text> : data ? <SwitchesCard title={title} description={description} data={data} showNames={showNames} /> : <Text>Failed to load</Text>;
 
     return (
         <Container>
             <Title order={3}><Trans>Settings</Trans></Title>
             <Chip checked={showNames} onChange={(value) => setShowNames(value)}><Trans>Show internal names</Trans></Chip>
             <Space h="md" />
-            {isLoading ?
-                <><Text><Trans>Data is current beeing loaded</Trans></Text><Skeleton h={3} /></>
-                :
-                <SwitchesCard title={t`Global Server Settings`} description={t`Global Settings for this instance`} data={data} showNames={showNames} />
-            }
+            {datapane}
         </Container >
     );
 }
