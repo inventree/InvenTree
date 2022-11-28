@@ -1116,7 +1116,7 @@ class SalesOrderTest(OrderTest):
 
         # Cancel a few orders - these will not show in incomplete view below
         for so in models.SalesOrder.objects.filter(target_date__isnull=False):
-            if po.reference in ['SO-11000006', 'SO-11000007', 'SO-11000008', 'SO-11000009']:
+            if so.reference in ['SO-11000006', 'SO-11000007', 'SO-11000008', 'SO-11000009']:
                 self.post(
                     reverse('api-so-cancel', kwargs={'pk': so.pk}),
                     expected_code=201
