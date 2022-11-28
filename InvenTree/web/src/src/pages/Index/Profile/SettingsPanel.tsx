@@ -95,8 +95,8 @@ function SettingsBlock(item: Setting, showNames = false): JSX.Element {
 
     return <Group position="apart" className={classes.itemTopBorder} noWrap my='0' py='0' key={item.pk}>
         <div>
-            {item.typ == SettingTyp.Plugin ? <Badge variant="outline"><Trans>Plugin: {item.plugin}</Trans></Badge> : null}
-            {item.typ == SettingTyp.Notification ? <Badge variant="outline"><Trans>Method: {item.method}</Trans></Badge> : null}
+            {item.typ == SettingTyp.Plugin ? <Badge color={"green"} variant="outline"><Trans>Plugin: {item.plugin}</Trans></Badge> : null}
+            {item.typ == SettingTyp.Notification ? <Badge color={"green"} variant="outline"><Trans>Method: {item.method}</Trans></Badge> : null}
             <Group>
                 <Text>{item.name}</Text>
                 {showNames ? <Badge variant='outline' >{item.pk}|{item.key}</Badge> : null}
