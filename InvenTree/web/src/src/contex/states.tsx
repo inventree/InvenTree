@@ -29,3 +29,33 @@ export interface PluginProps {
   slug: string;
   version: null | string;
 }
+
+
+// settings
+export interface GlobalSetting {
+  pk: number;
+  key: string;
+  value: string;
+  name: string;
+  description: string;
+  type: Type;
+  choices: Choice[];
+  model_name: null;
+  api_url: null;
+  typ: Typ;
+}
+
+export interface Choice {
+  value: string;
+  display_name: string;
+}
+
+export enum Typ {
+  Inventree = "inventree",
+}
+
+export enum Type {
+  Boolean = "boolean",
+  Integer = "integer",
+  String = "string",
+}
