@@ -5,7 +5,7 @@ import { showNotification } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { api } from '../../../App';
-import { GlobalSetting, Typ, Type } from '../../../contex/states';
+import { Setting, SettingTyp, SettingType } from '../../../contex/states';
 import { InvenTreeStyle } from '../../../globalStyle';
 import { IconCheck, IconX } from '@tabler/icons';
 
@@ -16,7 +16,7 @@ export function SettingsPanel({ reference, title, description, url }: { referenc
     const { isLoading, data, isError } = useQuery({ queryKey: [`settings-${reference}`], queryFn: fetchData, refetchOnWindowFocus: false });
     const [showNames, setShowNames] = useState<boolean>(false);
 
-    function SwitchesCard({ title, description, data, showNames = false }: { title: string; description: string; data: GlobalSetting[]; showNames?: boolean; }) {
+    function SwitchesCard({ title, description, data, showNames = false }: { title: string; description: string; data: Setting[]; showNames?: boolean; }) {
         const { classes } = InvenTreeStyle();
         const items = data.map((item) => SettingsBlock(item, showNames));
 
@@ -40,7 +40,7 @@ export function SettingsPanel({ reference, title, description, url }: { referenc
     );
 }
 
-function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
+function SettingsBlock(item: Setting, showNames = false): JSX.Element {
     const { classes } = InvenTreeStyle();
 
     let control = <Text><Trans>Input {item.type} is not known</Trans></Text>
@@ -50,7 +50,7 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
         const val = value?.toString();
         api.put(`settings/global/${item.key}/`, { value: val }).then((res) => {
             showNotification({ title: t`Saved changes ${item.key}`, message: t`Changed to ${res.data.value}`, color: 'teal', icon: < IconCheck size={18} />, })
-            if (item.type == Type.Boolean) {
+            if (item.type == SettingType.Boolean) {
                 setfnc(res.data.value === 'False' ? false : true);
             } else {
                 setfnc(res.data.value);
@@ -64,19 +64,19 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
 
     // Select control
     switch (item.type) {
-        case Type.Boolean: {
+        case SettingType.Boolean: {
             const [value, setValue] = useState<boolean>(item.value === 'False' ? false : true);
             setfnc = setValue
             control = <Switch checked={value} onChange={(event) => onChange(event.currentTarget.checked)} />
             break;
         }
-        case Type.Integer: {
+        case SettingType.Integer: {
             const [value, setValue] = useState<number>(parseInt(item.value));
             setfnc = setValue
             control = <NumberInput value={value} onChange={(value) => onChange(value)} />
             break;
         }
-        case Type.String: {
+        case SettingType.String: {
             const [value, setValue] = useState<string>(item.value);
             setfnc = setValue
 
@@ -95,8 +95,8 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
 
     return <Group position="apart" className={classes.itemTopBorder} noWrap my='0' py='0' key={item.pk}>
         <div>
-            {item.typ == Typ.Plugin ? <Badge variant="outline"><Trans>Plugin: {item.plugin}</Trans></Badge> : null}
-            {item.typ == Typ.Notification ? <Badge variant="outline"><Trans>Method: {item.method}</Trans></Badge> : null}
+            {item.typ == SettingTyp.Plugin ? <Badge variant="outline"><Trans>Plugin: {item.plugin}</Trans></Badge> : null}
+            {item.typ == SettingTyp.Notification ? <Badge variant="outline"><Trans>Method: {item.method}</Trans></Badge> : null}
             <Group>
                 <Text>{item.name}</Text>
                 {showNames ? <Badge variant='outline' >{item.pk}|{item.key}</Badge> : null}

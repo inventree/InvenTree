@@ -32,34 +32,34 @@ export interface PluginProps {
 
 
 // settings
-export interface GlobalSetting {
+export interface Setting {
   pk: number;
   key: string;
   value: string;
   name: string;
   description: string;
-  type: Type;
-  choices: Choice[];
+  type: SettingType;
+  choices: SettingChoice[];
   model_name: null;
   api_url: null;
-  typ: Typ;
+  typ: SettingTyp;
   plugin?: string;
   method?: string;
 }
 
-export interface Choice {
+export interface SettingChoice {
   value: string;
   display_name: string;
 }
 
-export enum Typ {
+export enum SettingTyp {
   Inventree = "inventree",
   Plugin = "plugin",
   User = "user",
   Notification = "notification",
 }
 
-export enum Type {
+export enum SettingType {
   Boolean = "boolean",
   Integer = "integer",
   String = "string",
