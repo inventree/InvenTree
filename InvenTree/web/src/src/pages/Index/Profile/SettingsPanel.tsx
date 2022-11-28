@@ -51,7 +51,7 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
     let setfnc = (value: React.SetStateAction<any>) => { console.log(value) };
 
     function onChange(value: string | number | boolean | null | undefined) {
-        const val = value?.toString;
+        const val = value?.toString();
         api.put(`settings/global/${item.key}/`, { value: val }).then((res) => {
             showNotification({ title: t`Saved changes ${item.key}`, message: t`Changed to ${res.data.value}`, color: 'teal', icon: < IconCheck size={18} />, })
             if (item.type == Type.Boolean) {
