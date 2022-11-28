@@ -2571,10 +2571,17 @@ class PartPricing(models.Model):
         variant_min = None
         variant_max = None
 
+        active_only = InvenTreeSetting.get_setting('PRICING_ACTIVE_VARIANTS', False)
+
         if self.part.is_template:
             variants = self.part.get_descendants(include_self=False)
 
             for v in variants:
+
+                if active_only and not v.active:
+                    # Ignore inactive variant parts
+                    continue
+
                 v_min = self.convert(v.pricing.overall_min)
                 v_max = self.convert(v.pricing.overall_max)
 
@@ -2605,19 +2612,27 @@ class PartPricing(models.Model):
             self.bom_cost_min,
             self.purchase_cost_min,
             self.internal_cost_min,
-            self.variant_cost_min
         ]
 
         max_costs = [
             self.bom_cost_max,
             self.purchase_cost_max,
             self.internal_cost_max,
-            self.variant_cost_max
         ]
 
-        if InvenTreeSetting.get_setting('PRICING_USE_SUPPLIER_PRICING', True):
-            min_costs.append(self.supplier_price_min)
-            max_costs.append(self.supplier_price_max)
+        purchase_history_override = InvenTreeSetting.get_setting('PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER', False, cache=False)
+
+        if InvenTreeSetting.get_setting('PRICING_USE_SUPPLIER_PRICING', True, cache=False):
+            # Add supplier pricing data, *unless* historical pricing information should override
+            if self.purchase_cost_min is None or not purchase_history_override:
+                min_costs.append(self.supplier_price_min)
+
+            if self.purchase_cost_max is None or not purchase_history_override:
+                max_costs.append(self.supplier_price_max)
+
+        if InvenTreeSetting.get_setting('PRICING_USE_VARIANT_PRICING', True, cache=False):
+            min_costs.append(self.variant_cost_min)
+            max_costs.append(self.variant_cost_max)
 
         # Calculate overall minimum cost
         for cost in min_costs:

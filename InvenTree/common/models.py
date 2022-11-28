@@ -258,7 +258,12 @@ class BaseInvenTreeSetting(models.Model):
         """
         setting = cls.get_setting_definition(key, **kwargs)
 
-        return setting.get('default', '')
+        default = setting.get('default', '')
+
+        if callable(default):
+            return default()
+        else:
+            return default
 
     @classmethod
     def get_setting_choices(cls, key, **kwargs):
@@ -1100,6 +1105,27 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER': {
+            'name': _('Purchase History Override'),
+            'description': _('Historical purchase order pricing overrides supplier price breaks'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PRICING_USE_VARIANT_PRICING': {
+            'name': _('Use Variant Pricing'),
+            'description': _('Include variant pricing in overall pricing calculations'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PRICING_ACTIVE_VARIANTS': {
+            'name': _('Active Variants Only'),
+            'description': _('Only use active variant parts for calculating variant pricing'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PRICING_UPDATE_DAYS': {
             'name': _('Pricing Rebuild Time'),
             'description': _('Number of days before part pricing is automatically updated'),
@@ -1345,7 +1371,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'PLUGIN_ON_STARTUP': {
             'name': _('Check plugins on startup'),
             'description': _('Check that all plugins are installed on startup - enable in container environments'),
-            'default': False,
+            'default': settings.DOCKER,
             'validator': bool,
             'requires_restart': True,
         },

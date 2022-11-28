@@ -45,10 +45,21 @@ echo "### Installer for InvenTree - source: $publisher/$source_url"
 # Check if os and version is supported
 get_distribution
 echo "### Detected distribution: $OS $VER"
-SUPPORTED=true
+SUPPORTED=true          # is thos OS supported?
+NEEDS_LIBSSL1_1=false   # does this OS need libssl1.1?
+
+DIST_OS=${OS,,}
+DIST_VER=$VER
+
 case "$OS" in
     Ubuntu)
-        if [[ $VER != "20.04" ]]; then
+        if [[ $VER == "22.04" ]]; then
+            SUPPORTED=true
+            NEEDS_LIBSSL1_1=true
+            DIST_VER="20.04"
+        elif [[ $VER == "20.04" ]]; then
+            SUPPORTED=true
+        else
             SUPPORTED=false
         fi
         ;;
@@ -83,10 +94,19 @@ for pkg in $REQS; do
     fi
 done
 
+if [[ $NEEDS_LIBSSL1_1 == "true" ]]; then
+    echo "### Pathching for libssl1.1"
+
+    echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
+    do_call "sudo apt-get update"
+    do_call "sudo apt-get install libssl1.1"
+    sudo rm /etc/apt/sources.list.d/focal-security.list
+fi
+
 echo "### Getting and adding key"
 wget -qO- https://dl.packager.io/srv/$publisher/InvenTree/key | sudo apt-key add -
 echo "### Adding package source"
-do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/${OS,,}/${VER}.repo"
+do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/$DIST_OS/$DIST_VER.repo"
 
 echo "### Updateing package lists"
 do_call "sudo apt-get update"

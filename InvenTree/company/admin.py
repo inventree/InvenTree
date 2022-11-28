@@ -71,9 +71,9 @@ class SupplierPartAdmin(ImportExportModelAdmin):
     list_display = ('part', 'supplier', 'SKU')
 
     search_fields = [
-        'company__name',
+        'supplier__name',
         'part__name',
-        'MPN',
+        'manufacturer_part__MPN',
         'SKU',
     ]
 
