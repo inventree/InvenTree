@@ -4,21 +4,28 @@
     blankImage,
     deleteButton,
     editButton,
+    formatCurrency,
+    formatDecimal,
+    formatPriceRange,
     imageHoverIcon,
     makeIconBadge,
     makeIconButton,
     makeProgressBar,
     renderLink,
+    sanitizeInputString,
     select2Thumbnail,
+    setupNotesField,
+    shortenString,
     thumbnailImage
     yesNoLabel,
+    withTitle,
 */
 
 function yesNoLabel(value) {
     if (value) {
-        return `<span class='label label-green'>{% trans "YES" %}</span>`;
+        return `<span class='badge rounded-pill bg-success'>{% trans "YES" %}</span>`;
     } else {
-        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
+        return `<span class='badge rounded-pill bg-warning'>{% trans "NO" %}</span>`;
     }
 }
 
@@ -30,6 +37,117 @@ function editButton(url, text='{% trans "Edit" %}') {
 
 function deleteButton(url, text='{% trans "Delete" %}') {
     return `<button class='btn btn-danger delete-button btn-sm' type='button' url='${url}'>${text}</button>`;
+}
+
+
+/*
+ * format currency (money) value based on current settings
+ *
+ * Options:
+ * - currency: Currency code (uses default value if none provided)
+ * - locale: Locale specified (uses default value if none provided)
+ * - digits: Maximum number of significant digits (default = 10)
+ */
+function formatCurrency(value, options={}) {
+
+    if (value == null) {
+        return null;
+    }
+
+    var digits = options.digits || global_settings.PRICING_DECIMAL_PLACES || 6;
+
+    // Strip out any trailing zeros, etc
+    value = formatDecimal(value, digits);
+
+    // Extract default currency information
+    var currency = options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
+
+    // Exctract locale information
+    var locale = options.locale || navigator.language || 'en-US';
+
+
+    var formatter = new Intl.NumberFormat(
+        locale,
+        {
+            style: 'currency',
+            currency: currency,
+            maximumSignificantDigits: digits,
+        }
+    );
+
+    return formatter.format(value);
+}
+
+
+/*
+ * Format a range of prices
+ */
+function formatPriceRange(price_min, price_max, options={}) {
+
+    var p_min = price_min || price_max;
+    var p_max = price_max || price_min;
+
+    var quantity = options.quantity || 1;
+
+    if (p_min == null && p_max == null) {
+        return null;
+    }
+
+    p_min = parseFloat(p_min) * quantity;
+    p_max = parseFloat(p_max) * quantity;
+
+    var output = '';
+
+    output += formatCurrency(p_min, options);
+
+    if (p_min != p_max) {
+        output += ' - ';
+        output += formatCurrency(p_max, options);
+    }
+
+    return output;
+}
+
+
+/*
+ * Ensure a string does not exceed a maximum length.
+ * Useful for displaying long strings in tables,
+ * to ensure a very long string does not "overflow" the table
+ */
+function shortenString(input_string, options={}) {
+
+    // Maximum length can be provided via options argument, or via a user-configurable setting
+    var max_length = options.max_length || user_settings.TABLE_STRING_MAX_LENGTH;
+
+    if (!max_length || !input_string) {
+        return input_string;
+    }
+
+    input_string = input_string.toString();
+
+    // Easy option: input string is already short enough
+    if (input_string.length <= max_length) {
+        return input_string;
+    }
+
+    var N = Math.floor(max_length / 2 - 1);
+
+    var output_string = input_string.slice(0, N) + '...' + input_string.slice(-N);
+
+    return output_string;
+}
+
+
+function withTitle(html, title, options={}) {
+
+    return `<div title='${title}'>${html}</div>`;
+}
+
+
+/* Format a decimal (floating point) number, to strip trailing zeros
+ */
+function formatDecimal(number, places=5) {
+    return +parseFloat(number).toFixed(places);
 }
 
 
@@ -59,18 +177,19 @@ function imageHoverIcon(url) {
 
 /**
  * Renders a simple thumbnail image
- * @param {String} url is the image URL 
+ * @param {String} url is the image URL
  * @returns html <img> tag
  */
-function thumbnailImage(url) {
+function thumbnailImage(url, options={}) {
 
     if (!url) {
         url = blankImage();
     }
 
     // TODO: Support insertion of custom classes
+    var title = options.title || '';
 
-    var html = `<img class='hover-img-thumb' src='${url}'>`;
+    var html = `<img class='hover-img-thumb' src='${url}' title='${title}'>`;
 
     return html;
 
@@ -92,7 +211,7 @@ function select2Thumbnail(image) {
  */
 function makeIconBadge(icon, title) {
 
-    var html = `<span class='fas ${icon} label-right' title='${title}'></span>`;
+    var html = `<span class='icon-badge fas ${icon} float-right' title='${title}'></span>`;
 
     return html;
 }
@@ -103,7 +222,7 @@ function makeIconBadge(icon, title) {
  */
 function makeIconButton(icon, cls, pk, title, options={}) {
 
-    var classes = `btn btn-default btn-glyph ${cls}`;
+    var classes = `btn btn-outline-secondary ${cls}`;
 
     var id = `${cls}-${pk}`;
 
@@ -113,6 +232,10 @@ function makeIconButton(icon, cls, pk, title, options={}) {
 
     if (options.disabled) {
         extraProps += `disabled='true' `;
+    }
+
+    if (options.collapseTarget) {
+        extraProps += `data-bs-toggle='collapse' href='#${options.collapseTarget}'`;
     }
 
     html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
@@ -125,7 +248,7 @@ function makeIconButton(icon, cls, pk, title, options={}) {
 
 /*
  * Render a progessbar!
- * 
+ *
  * @param value is the current value of the progress bar
  * @param maximum is the maximum value of the progress bar
  */
@@ -133,14 +256,14 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var options = opts || {};
 
-    value = parseFloat(value);
+    value = formatDecimal(parseFloat(value));
 
     var percent = 100;
 
     // Prevent div-by-zero or null value
     if (maximum && maximum > 0) {
-        maximum = parseFloat(maximum);
-        percent = parseInt(value / maximum * 100);
+        maximum = formatDecimal(parseFloat(maximum));
+        percent = formatDecimal(parseInt(value / maximum * 100));
     }
 
     if (percent > 100) {
@@ -157,33 +280,41 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var style = options.style || '';
 
-    var text = '';
+    var text = options.text;
 
-    if (style == 'percent') {
-        // Display e.g. "50%"
+    if (!text) {
+        if (style == 'percent') {
+            // Display e.g. "50%"
 
-        text = `${percent}%`;
-    } else if (style == 'max') {
-        // Display just the maximum value
-        text = `${maximum}`;
-    } else if (style == 'value') {
-        // Display just the current value
-        text = `${value}`;
-    } else if (style == 'blank') {
-        // No display!
-        text = '';
-    } else {
-        /* Default style
-        * Display e.g. "5 / 10"
-        */
+            text = `${percent}%`;
+        } else if (style == 'max') {
+            // Display just the maximum value
+            text = `${maximum}`;
+        } else if (style == 'value') {
+            // Display just the current value
+            text = `${value}`;
+        } else if (style == 'blank') {
+            // No display!
+            text = '';
+        } else {
+            /* Default style
+            * Display e.g. "5 / 10"
+            */
 
-        text = `${value} / ${maximum}`;
+            text = `${value} / ${maximum}`;
+        }
     }
 
     var id = options.id || 'progress-bar';
 
+    var style = '';
+
+    if (opts.max_width) {
+        style += `max-width: ${options.max_width}; `;
+    }
+
     return `
-    <div id='${id}' class='progress'>
+    <div id='${id}' class='progress' style='${style}'>
         <div class='progress-bar ${extraclass}' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
         <div class='progress-value'>${text}</div>
     </div>
@@ -191,22 +322,146 @@ function makeProgressBar(value, maximum, opts={}) {
 }
 
 
+/*
+ * Render a URL for display
+ */
 function renderLink(text, url, options={}) {
     if (url === null || url === undefined || url === '') {
         return text;
     }
 
-    var max_length = options.max_length || -1;
+    var max_length = options.max_length || 0;
 
-    // Shorten the displayed length if required
-    if ((max_length > 0) && (text.length > max_length)) {
-        var slice_length = (max_length - 3) / 2;
-
-        var text_start = text.slice(0, slice_length);
-        var text_end = text.slice(-slice_length);
-
-        text = `${text_start}...${text_end}`;
+    if (max_length > 0) {
+        text = shortenString(text, {
+            max_length: max_length,
+        });
     }
 
-    return `<a href="${url}">${text}</a>`;
+    var extras = '';
+
+    if (options.tooltip != false) {
+        extras += ` title="${url}"`;
+    }
+
+    return `<a href="${url}" ${extras}>${text}</a>`;
+}
+
+
+function setupNotesField(element, url, options={}) {
+
+    var editable = options.editable || false;
+
+    // Read initial notes value from the URL
+    var initial = null;
+
+    inventreeGet(url, {}, {
+        async: false,
+        success: function(response) {
+            initial = response[options.notes_field || 'notes'];
+        },
+    });
+
+    var toolbar_icons = [
+        'preview', '|',
+    ];
+
+    if (editable) {
+        // Heading icons
+        toolbar_icons.push('heading-1', 'heading-2', 'heading-3', '|');
+
+        // Font style
+        toolbar_icons.push('bold', 'italic', 'strikethrough', '|');
+
+        // Text formatting
+        toolbar_icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|');
+
+        // Elements
+        toolbar_icons.push('table', 'link', 'image');
+    }
+
+    // Markdown syntax guide
+    toolbar_icons.push('|', 'guide');
+
+    const mde = new EasyMDE({
+        element: document.getElementById(element),
+        initialValue: initial,
+        toolbar: toolbar_icons,
+        shortcuts: [],
+        renderingConfig: {
+            markedOptions: {
+                sanitize: true,
+            }
+        }
+    });
+
+
+    // Hide the toolbar
+    $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').hide();
+
+    if (!editable) {
+        // Set readonly
+        mde.codemirror.setOption('readOnly', true);
+
+        // Hide the "edit" and "save" buttons
+        $('#edit-notes').hide();
+        $('#save-notes').hide();
+
+    } else {
+        mde.togglePreview();
+
+        // Add callback for "edit" button
+        $('#edit-notes').click(function() {
+            $('#edit-notes').hide();
+            $('#save-notes').show();
+
+            // Show the toolbar
+            $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').show();
+
+            mde.togglePreview();
+        });
+
+        // Add callback for "save" button
+        $('#save-notes').click(function() {
+
+            var data = {};
+
+            data[options.notes_field || 'notes'] = mde.value();
+
+            inventreePut(url, data, {
+                method: 'PATCH',
+                success: function(response) {
+                    showMessage('{% trans "Notes updated" %}', {style: 'success'});
+                },
+                error: function(xhr) {
+                    showApiError(xhr, url);
+                }
+            });
+        });
+    }
+}
+
+
+/*
+ * Sanitize a string provided by the user from an input field,
+ * e.g. data form or search box
+ *
+ * - Remove leading / trailing whitespace
+ * - Remove hidden control characters
+ */
+function sanitizeInputString(s, options={}) {
+
+    if (!s) {
+        return s;
+    }
+
+    // Remove ASCII control characters
+    s = s.replace(/[\x01-\x1F]+/g, '');
+
+    // Remove Unicode control characters
+    s = s.replace(/[\p{C}]+/gu, '');
+
+    s = s.trim();
+
+    return s;
 }

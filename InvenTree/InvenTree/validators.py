@@ -1,34 +1,32 @@
-"""
-Custom field validators for InvenTree
-"""
+"""Custom field validators for InvenTree."""
+
+import re
+from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core import validators
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import FieldDoesNotExist
 
+from jinja2 import Template
 from moneyed import CURRENCIES
 
 import common.models
 
-import re
-
 
 def validate_currency_code(code):
-    """
-    Check that a given code is a valid currency code.
-    """
-
+    """Check that a given code is a valid currency code."""
     if code not in CURRENCIES:
         raise ValidationError(_('Not a valid currency code'))
 
 
 def allowable_url_schemes():
-    """ Return the list of allowable URL schemes.
+    """Return the list of allowable URL schemes.
+
     In addition to the default schemes allowed by Django,
     the install configuration file (config.yaml) can specify
-    extra schemas """
-
+    extra schemas
+    """
     # Default schemes
     schemes = ['http', 'https', 'ftp', 'ftps']
 
@@ -41,19 +39,48 @@ def allowable_url_schemes():
     return schemes
 
 
+class AllowedURLValidator(validators.URLValidator):
+    """Custom URL validator to allow for custom schemes."""
+    def __call__(self, value):
+        """Validate the URL."""
+        self.schemes = allowable_url_schemes()
+        super().__call__(value)
+
+
 def validate_part_name(value):
-    """ Prevent some illegal characters in part names.
+    """Validate the name field for a Part instance
+
+    This function is exposed to any Validation plugins, and thus can be customized.
     """
 
-    for c in ['|', '#', '$', '{', '}']:
-        if c in str(value):
-            raise ValidationError(
-                _('Invalid character in part name')
-            )
+    from plugin.registry import registry
+
+    for plugin in registry.with_mixin('validation'):
+        # Run the name through each custom validator
+        # If the plugin returns 'True' we will skip any subsequent validation
+        if plugin.validate_part_name(value):
+            return
 
 
 def validate_part_ipn(value):
-    """ Validate the Part IPN against regex rule """
+    """Validate the IPN field for a Part instance.
+
+    This function is exposed to any Validation plugins, and thus can be customized.
+
+    If no validation errors are raised, the IPN is also validated against a configurable regex pattern.
+    """
+
+    from plugin.registry import registry
+
+    plugins = registry.with_mixin('validation')
+
+    for plugin in plugins:
+        # Run the IPN through each custom validator
+        # If the plugin returns 'True' we will skip any subsequent validation
+        if plugin.validate_part_ipn(value):
+            return
+
+    # If we get to here, none of the plugins have raised an error
 
     pattern = common.models.InvenTreeSetting.get_setting('PART_IPN_REGEX')
 
@@ -64,77 +91,50 @@ def validate_part_ipn(value):
             raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
 
 
-def validate_build_order_reference(value):
-    """
-    Validate the 'reference' field of a BuildOrder
-    """
-
-    pattern = common.models.InvenTreeSetting.get_setting('BUILDORDER_REFERENCE_REGEX')
-
-    if pattern:
-        match = re.search(pattern, value)
-
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
-
-
 def validate_purchase_order_reference(value):
-    """
-    Validate the 'reference' field of a PurchaseOrder
-    """
+    """Validate the 'reference' field of a PurchaseOrder."""
 
-    pattern = common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_REGEX')
+    from order.models import PurchaseOrder
 
-    if pattern:
-        match = re.search(pattern, value)
-
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
+    # If we get to here, run the "default" validation routine
+    PurchaseOrder.validate_reference_field(value)
 
 
 def validate_sales_order_reference(value):
-    """
-    Validate the 'reference' field of a SalesOrder
-    """
+    """Validate the 'reference' field of a SalesOrder."""
 
-    pattern = common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_REGEX')
+    from order.models import SalesOrder
 
-    if pattern:
-        match = re.search(pattern, value)
-
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
+    # If we get to here, run the "default" validation routine
+    SalesOrder.validate_reference_field(value)
 
 
 def validate_tree_name(value):
-    """ Prevent illegal characters in tree item names """
-
-    for c in "!@#$%^&*'\"\\/[]{}<>,|+=~`\"":
-        if c in str(value):
-            raise ValidationError(_('Illegal character in name ({x})'.format(x=c)))
+    """Placeholder for legacy function used in migrations."""
+    ...
 
 
 def validate_overage(value):
-    """ Validate that a BOM overage string is properly formatted.
+    """Validate that a BOM overage string is properly formatted.
 
     An overage string can look like:
 
     - An integer number ('1' / 3 / 4)
+    - A decimal number ('0.123')
     - A percentage ('5%' / '10 %')
     """
-
     value = str(value).lower().strip()
 
-    # First look for a simple integer value
+    # First look for a simple numerical value
     try:
-        i = int(value)
+        i = Decimal(value)
 
         if i < 0:
             raise ValidationError(_("Overage value must not be negative"))
 
-        # Looks like an integer!
+        # Looks like a number
         return True
-    except ValueError:
+    except (ValueError, InvalidOperation):
         pass
 
     # Now look for a percentage value
@@ -155,28 +155,29 @@ def validate_overage(value):
             pass
 
     raise ValidationError(
-        _("Overage must be an integer value or a percentage")
+        _("Invalid value for overage")
     )
 
 
-def validate_part_name_format(self):
-    """
-    Validate part name format.
+def validate_part_name_format(value):
+    """Validate part name format.
+
     Make sure that each template container has a field of Part Model
     """
 
+    # Make sure that the field_name exists in Part model
+    from part.models import Part
+
     jinja_template_regex = re.compile('{{.*?}}')
     field_name_regex = re.compile('(?<=part\\.)[A-z]+')
-    for jinja_template in jinja_template_regex.findall(str(self)):
+
+    for jinja_template in jinja_template_regex.findall(str(value)):
         # make sure at least one and only one field is present inside the parser
         field_names = field_name_regex.findall(jinja_template)
         if len(field_names) < 1:
             raise ValidationError({
                 'value': 'At least one field must be present inside a jinja template container i.e {{}}'
             })
-
-        # Make sure that the field_name exists in Part model
-        from part.models import Part
 
         for field_name in field_names:
             try:
@@ -185,5 +186,15 @@ def validate_part_name_format(self):
                 raise ValidationError({
                     'value': f'{field_name} does not exist in Part Model'
                 })
+
+    # Attempt to render the template with a dummy Part instance
+    p = Part(name='test part', description='some test part')
+
+    try:
+        Template(value).render({'part': p})
+    except Exception as exc:
+        raise ValidationError({
+            'value': str(exc)
+        })
 
     return True

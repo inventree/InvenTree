@@ -1,6 +1,4 @@
-"""
-URL lookup for common views
-"""
+"""URL lookup for common views."""
 
 common_urls = [
 ]

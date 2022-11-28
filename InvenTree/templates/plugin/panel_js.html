@@ -1,0 +1,10 @@
+{% if plugin_panels %}
+// Run custom javascript when plugin panels are loaded
+{% for panel in plugin_panels %}
+{% if panel.javascript %}
+onPanelLoad('{{ panel.key }}', function() {
+{{ panel.javascript | safe }}
+});
+{% endif %}
+{% endfor %}
+{% endif %}

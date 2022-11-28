@@ -7,7 +7,7 @@ def create_thumbnails(apps, schema_editor):
     """
     Create thumbnails for all existing Part images.
 
-    Note: This functionality is now performed in apps.py, 
+    Note: This functionality is now performed in apps.py,
     as running the thumbnail script here caused too many database level errors.
 
     This migration is left here to maintain the database migration history

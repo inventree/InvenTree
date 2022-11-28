@@ -1,0 +1,10 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+{% trans "Stock Items" as text %}
+{% include "sidebar_item.html" with label='stock' text=text icon="fa-boxes" %}
+{% trans "Purchase Orders" as text %}
+{% include "sidebar_item.html" with label='purchase-orders' text=text icon="fa-shopping-cart" %}
+{% trans "Supplier Part Pricing" as text %}
+{% include "sidebar_item.html" with label='pricing' text=text icon="fa-dollar-sign" %}

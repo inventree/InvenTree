@@ -1,0 +1,8 @@
+{% load i18n %}
+<span title='{{ text }}' class="list-group-item sidebar-list-group-item border-end d-inline-block text-truncate bg-light" data-bs-parent="#sidebar">
+    <h6>
+        <span class="bi bi-bootstrap"></span>
+        {% if icon %}<span class='sidebar-item-icon fas {{ icon }}'></span>{% endif %}
+        {% if text %}<span class='sidebar-item-text' style='display: none;'><strong>{{ text }}</strong></span>{% endif %}
+    </h6>
+</span>

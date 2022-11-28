@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block page_title %}
-InvenTree | {% trans "Page Not Found" %}
+{% inventree_title %} | {% trans "Page Not Found" %}
 {% endblock %}
 
 {% block content %}

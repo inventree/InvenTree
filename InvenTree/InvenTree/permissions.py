@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Permission set for InvenTree."""
+
+from functools import wraps
 
 from rest_framework import permissions
 
@@ -7,9 +8,7 @@ import users.models
 
 
 class RolePermission(permissions.BasePermission):
-    """
-    Role mixin for API endpoints, allowing us to specify the user "role"
-    which is required for certain operations.
+    """Role mixin for API endpoints, allowing us to specify the user "role" which is required for certain operations.
 
     Each endpoint can have one or more of the following actions:
     - GET
@@ -28,14 +27,10 @@ class RolePermission(permissions.BasePermission):
     to perform the specified action.
 
     For example, a DELETE action will be rejected unless the user has the "part.remove" permission
-
     """
 
     def has_permission(self, request, view):
-        """
-        Determine if the current user has the specified permissions
-        """
-
+        """Determine if the current user has the specified permissions."""
         user = request.user
 
         # Superuser can do it all
@@ -70,3 +65,11 @@ class RolePermission(permissions.BasePermission):
         result = users.models.RuleSet.check_table_permission(user, table, permission)
 
         return result
+
+
+def auth_exempt(view_func):
+    """Mark a view function as being exempt from auth requirements."""
+    def wrapped_view(*args, **kwargs):
+        return view_func(*args, **kwargs)
+    wrapped_view.auth_exempt = True
+    return wraps(view_func)(wrapped_view)

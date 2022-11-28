@@ -96,6 +96,7 @@
     location: 7
     quantity: 1
     serial: 1000
+    serial_int: 1000
     level: 0
     tree_id: 0
     lft: 0
@@ -119,21 +120,9 @@
   fields:
     part: 10001
     location: 7
-    batch: "AAA"
     quantity: 1
     serial: 1
-    level: 0
-    tree_id: 0
-    lft: 0
-    rght: 0
-
-- model: stock.stockitem
-  pk: 501
-  fields:
-    part: 10001
-    location: 7
-    quantity: 1
-    serial: 1
+    serial_int: 1
     level: 0
     tree_id: 0
     lft: 0
@@ -146,6 +135,7 @@
     location: 7
     quantity: 1
     serial: 2
+    serial_int: 2
     level: 0
     tree_id: 0
     lft: 0
@@ -158,6 +148,7 @@
     location: 7
     quantity: 1
     serial: 3
+    serial_int: 3
     level: 0
     tree_id: 0
     lft: 0
@@ -170,6 +161,7 @@
     location: 7
     quantity: 1
     serial: 4
+    serial_int: 4
     level: 0
     tree_id: 0
     lft: 0
@@ -182,6 +174,7 @@
     location: 7
     quantity: 1
     serial: 5
+    serial_int: 5
     level: 0
     tree_id: 0
     lft: 0
@@ -194,6 +187,7 @@
     location: 7
     quantity: 1
     serial: 10
+    serial_int: 10
     level: 0
     tree_id: 0
     lft: 0
@@ -206,6 +200,7 @@
     location: 7
     quantity: 1
     serial: 11
+    serial_int: 11
     level: 0
     tree_id: 0
     lft: 0
@@ -218,6 +213,7 @@
     location: 7
     quantity: 1
     serial: 12
+    serial_int: 12
     level: 0
     tree_id: 0
     lft: 0
@@ -230,11 +226,13 @@
     location: 7
     quantity: 1
     serial: 20
+    serial_int: 20
     level: 0
     tree_id: 0
     lft: 0
     rght: 0
     expiry_date: "1990-10-10"
+    barcode_hash: 9e5ae7fc20568ed4814c10967bba8b65
 
 - model: stock.stockitem
   pk: 521
@@ -243,11 +241,13 @@
     location: 7
     quantity: 1
     serial: 21
+    serial_int: 21
     level: 0
     tree_id: 0
     lft: 0
     rght: 0
     status: 60
+    barcode_hash: 1be0dfa925825c5c6c79301449e50c2d
 
 - model: stock.stockitem
   pk: 522
@@ -256,9 +256,110 @@
     location: 7
     quantity: 1
     serial: 22
+    serial_int: 22
     level: 0
     tree_id: 0
     lft: 0
     rght: 0
     expiry_date: "1990-10-10"
     status: 70
+
+# Multiple stock items for "Bob" (PK 100)
+- model: stock.stockitem
+  pk: 1000
+  fields:
+    part: 100
+    location: 1
+    quantity: 10
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 1001
+  fields:
+    part: 100
+    location: 1
+    quantity: 11
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 1002
+  fields:
+    part: 100
+    location: 1
+    quantity: 12
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 1003
+  fields:
+    part: 100
+    location: 1
+    quantity: 13
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 1004
+  fields:
+    part: 100
+    location: 1
+    quantity: 14
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 1005
+  fields:
+    part: 100
+    location: 1
+    quantity: 15
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 1006
+  fields:
+    part: 100
+    location: 1
+    quantity: 16
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 1007
+  fields:
+    part: 100
+    location: 7
+    quantity: 17
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 1008
+  fields:
+    part: 100
+    location: 7
+    quantity: 18
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0

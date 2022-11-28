@@ -78,8 +78,7 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
 {% endblock %}
 
 {% block header_content %}
-    <!-- TODO - Make the company logo asset generic -->
-    <img class='logo' src="{% asset 'company_logo.png' %}" alt="logo" width="150">
+    <img class='logo' src="{% logo_image %}" alt="logo" width="150">
 
     <div class='header-right'>
         <h3>
@@ -120,13 +119,13 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
             </tr>
             <tr>
                 <th>{% trans "Issued" %}</th>
-                <td>{{ build.creation_date }}</td>
+                <td>{% render_date build.creation_date %}</td>
             </tr>
             <tr>
                 <th>{% trans "Target Date" %}</th>
                 <td>
                     {% if build.target_date %}
-                    {{ build.target_date }}
+                    {% render_date build.target_date %}
                     {% else %}
                     <em>Not specified</em>
                     {% endif %}

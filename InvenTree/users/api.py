@@ -1,35 +1,64 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
+"""DRF API definition for the 'users' app"""
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.urls import include, path, re_path
 
-from django.conf.urls import url, include
-
-from rest_framework import generics, permissions
-from rest_framework.views import APIView
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.views import APIView
 
-from .serializers import UserSerializer, OwnerSerializer
+from InvenTree.mixins import ListAPI, RetrieveAPI
+from InvenTree.serializers import UserSerializer
+from users.models import Owner, RuleSet, check_user_role
+from users.serializers import OwnerSerializer
 
-from .models import RuleSet, Owner, check_user_role
 
+class OwnerList(ListAPI):
+    """List API endpoint for Owner model.
 
-class OwnerList(generics.ListAPIView):
-    """
-    List API endpoint for Owner model. Cannot create.
+    Cannot create.
     """
 
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
 
+    def filter_queryset(self, queryset):
+        """Implement text search for the "owner" model.
 
-class OwnerDetail(generics.RetrieveAPIView):
-    """
-    Detail API endpoint for Owner model. Cannot edit or delete
+        Note that an "owner" can be either a group, or a user,
+        so we cannot do a direct text search.
+
+        A "hack" here is to post-process the queryset and simply
+        remove any values which do not match.
+
+        It is not necessarily "efficient" to do it this way,
+        but until we determine a better way, this is what we have...
+        """
+        search_term = str(self.request.query_params.get('search', '')).lower()
+
+        queryset = super().filter_queryset(queryset)
+
+        if not search_term:
+            return queryset
+
+        results = []
+
+        # Extract search term f
+
+        for result in queryset.all():
+            if search_term in result.name().lower():
+                results.append(result)
+
+        return results
+
+
+class OwnerDetail(RetrieveAPI):
+    """Detail API endpoint for Owner model.
+
+    Cannot edit or delete
     """
 
     queryset = Owner.objects.all()
@@ -37,9 +66,7 @@ class OwnerDetail(generics.RetrieveAPIView):
 
 
 class RoleDetails(APIView):
-    """
-    API endpoint which lists the available role permissions
-    for the current user
+    """API endpoint which lists the available role permissions for the current user.
 
     (Requires authentication)
     """
@@ -49,7 +76,7 @@ class RoleDetails(APIView):
     ]
 
     def get(self, request, *args, **kwargs):
-
+        """Return the list of roles / permissions available to the current user"""
         user = request.user
 
         roles = {}
@@ -68,7 +95,7 @@ class RoleDetails(APIView):
             if len(permissions) > 0:
                 roles[role] = permissions
             else:
-                roles[role] = None
+                roles[role] = None  # pragma: no cover
 
         data = {
             'user': user.pk,
@@ -81,37 +108,46 @@ class RoleDetails(APIView):
         return Response(data)
 
 
-class UserDetail(generics.RetrieveAPIView):
-    """ Detail endpoint for a single user """
+class UserDetail(RetrieveAPI):
+    """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class UserList(generics.ListAPIView):
-    """ List endpoint for detail on all users """
+class UserList(ListAPI):
+    """List endpoint for detail on all users."""
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+    ]
+
+    search_fields = [
+        'first_name',
+        'last_name',
+        'username',
+    ]
 
 
 class GetAuthToken(APIView):
-    """ Return authentication token for an authenticated user. """
+    """Return authentication token for an authenticated user."""
 
     permission_classes = [
         permissions.IsAuthenticated,
     ]
 
     def get(self, request, *args, **kwargs):
-        return self.login(request)
+        """Return an API token if the user is authenticated
 
-    def delete(self, request):
-        return self.logout(request)
-
-    def login(self, request):
-
+        - If the user already has a token, return it
+        - Otherwise, create a new token
+        """
         if request.user.is_authenticated:
             # Get the user token (or create one if it does not exist)
             token, created = Token.objects.get_or_create(user=request.user)
@@ -119,12 +155,8 @@ class GetAuthToken(APIView):
                 'token': token.key,
             })
 
-        else:
-            return Response({
-                'error': 'User not authenticated',
-            })
-
-    def logout(self, request):
+    def delete(self, request):
+        """User has requested deletion of API token"""
         try:
             request.user.auth_token.delete()
             return Response({"success": "Successfully logged out."},
@@ -136,14 +168,14 @@ class GetAuthToken(APIView):
 
 user_urls = [
 
-    url(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
-    url(r'token/?$', GetAuthToken.as_view(), name='api-token'),
+    re_path(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
+    re_path(r'token/?$', GetAuthToken.as_view(), name='api-token'),
 
-    url(r'^owner/', include([
-        url(r'^(?P<pk>[0-9]+)/$', OwnerDetail.as_view(), name='api-owner-detail'),
-        url(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
+    re_path(r'^owner/', include([
+        path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
+        re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
     ])),
 
-    url(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='user-detail'),
-    url(r'^$', UserList.as_view()),
+    re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='user-detail'),
+    path('', UserList.as_view()),
 ]

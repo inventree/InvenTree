@@ -1,16 +1,12 @@
-"""
-This script calculates translation coverage for various languages
-"""
+"""This script calculates translation coverage for various languages."""
 
-import os
 import json
+import os
+import sys
 
 
 def calculate_coverage(filename):
-    """
-    Calculate translation coverage for a .po file
-    """
-
+    """Calculate translation coverage for a .po file."""
     with open(filename, 'r') as f:
         lines = f.readlines()
 
@@ -42,7 +38,7 @@ if __name__ == '__main__':
     locales = {}
     locales_perc = {}
 
-    print("InvenTree translation coverage:")
+    verbose = '-v' in sys.argv
 
     for locale in os.listdir(LC_DIR):
         path = os.path.join(LC_DIR, locale)
@@ -53,7 +49,10 @@ if __name__ == '__main__':
             if os.path.exists(locale_file) and os.path.isfile(locale_file):
                 locales[locale] = locale_file
 
-    print("-" * 16)
+    if verbose:
+        print("-" * 16)
+
+    percentages = []
 
     for locale in locales.keys():
         locale_file = locales[locale]
@@ -66,11 +65,23 @@ if __name__ == '__main__':
         else:
             percentage = 0
 
-        print(f"| {locale.ljust(4, ' ')} : {str(percentage).rjust(4, ' ')}% |")
+        if verbose:
+            print(f"| {locale.ljust(4, ' ')} : {str(percentage).rjust(4, ' ')}% |")
+
         locales_perc[locale] = percentage
 
-    print("-" * 16)
+        percentages.append(percentage)
+
+    if verbose:
+        print("-" * 16)
 
     # write locale stats
     with open(STAT_FILE, 'w') as target:
         json.dump(locales_perc, target)
+
+    if len(percentages) > 0:
+        avg = int(sum(percentages) / len(percentages))
+    else:
+        avg = 0
+
+    print(f"InvenTree translation coverage: {avg}%")

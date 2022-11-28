@@ -1,10 +1,10 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% decimal total_stock %}
+{% decimal total_stock %} {% include "part/part_units.html" %}
 
 {% if total_stock == 0 %}
-<span class='label label-danger label-right'>{% trans "No Stock" %}</span>
+<span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>
 {% elif total_stock < part.minimum_stock %}
-<span class='label label-warning label-right'>{% trans "Low Stock" %}</span>
+<span class='badge badge-right rounded-pill bg-warning'>{% trans "Low Stock" %}</span>
 {% endif %}

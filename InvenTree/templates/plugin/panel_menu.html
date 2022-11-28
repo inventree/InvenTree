@@ -1,0 +1,6 @@
+{% if plugin_panels %}
+<!-- Custom sidebar menu items, loaded via plugins -->
+{% for panel in plugin_panels %}
+{% include "sidebar_item.html" with label=panel.key text=panel.title icon=panel.icon %}
+{% endfor %}
+{% endif %}

@@ -1,7 +1,8 @@
+"""Gunicorn configuration for InvenTree."""
+
+import logging
 import multiprocessing
 import os
-import logging
-
 
 logger = logging.getLogger('inventree')
 

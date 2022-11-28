@@ -1,0 +1,43 @@
+name: Check Translations
+
+on:
+  push:
+    branches:
+      - l10
+  pull_request:
+    branches:
+      - l10
+
+jobs:
+
+  check:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      INVENTREE_DB_NAME: './test_db.sqlite'
+      INVENTREE_DB_ENGINE: django.db.backends.sqlite3
+      INVENTREE_DEBUG: info
+      INVENTREE_MEDIA_ROOT: ./media
+      INVENTREE_STATIC_ROOT: ./static
+      INVENTREE_BACKUP_DIR: ./backup
+      python_version: 3.9
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Set Up Python ${{ env.python_version }}
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        with:
+          python-version: ${{ env.python_version }}
+          cache: 'pip'
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install gettext
+          pip3 install invoke
+          invoke install
+      - name: Test Translations
+        run: invoke translate
+      - name: Check Migration Files
+        run: python3 ci/check_migration_files.py

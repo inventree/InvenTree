@@ -4,7 +4,6 @@
 {% load report %}
 {% load barcode %}
 {% load inventree_extras %}
-{% load markdownify %}
 
 {% block page_margin %}
 margin: 2cm;
@@ -16,7 +15,7 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
 {% endblock %}
 
 {% block bottom_center %}
-content: "InvenTree v{% inventree_version %}";
+content: "{% inventree_version shortstring=True %}";
 {% endblock %}
 
 {% block style %}
@@ -75,7 +74,7 @@ table td.expand {
 
     <div class='header-right'>
         <h3>{% trans "Purchase Order" %} {{ prefix }}{{ reference }}</h3>
-        {{ supplier.name }}
+        {% if supplier %}{{ supplier.name }}{% else %}{% trans "Supplier was deleted" %}{% endif %}
     </div>
 
 {% endblock %}

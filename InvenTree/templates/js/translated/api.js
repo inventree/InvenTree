@@ -2,8 +2,6 @@
 {% load inventree_extras %}
 
 /* globals
-    renderErrorMessage,
-    showAlertDialog,
 */
 
 /* exported
@@ -16,11 +14,11 @@
 $.urlParam = function(name) {
     // eslint-disable-next-line no-useless-escape
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-    
+
     if (results == null) {
         return null;
     }
-    
+
     return decodeURI(results[1]) || 0;
 };
 
@@ -56,6 +54,7 @@ function inventreeGet(url, filters={}, options={}) {
         data: filters,
         dataType: 'json',
         contentType: 'application/json',
+        async: (options.async == false) ? false : true,
         success: function(response) {
             if (options.success) {
                 options.success(response);
@@ -63,11 +62,17 @@ function inventreeGet(url, filters={}, options={}) {
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on GET at ' + url);
-            console.error(thrownError);
+
+            if (thrownError) {
+                console.error('Error: ' + thrownError);
+            }
+
             if (options.error) {
                 options.error({
                     error: thrownError
                 });
+            } else {
+                showApiError(xhr, url);
             }
         }
     });
@@ -75,9 +80,9 @@ function inventreeGet(url, filters={}, options={}) {
 
 function inventreeFormDataUpload(url, data, options={}) {
     /* Upload via AJAX using the FormData approach.
-     * 
+     *
      * Note that the following AJAX parameters are required for FormData upload
-     * 
+     *
      * processData: false
      * contentType: false
      */
@@ -100,10 +105,12 @@ function inventreeFormDataUpload(url, data, options={}) {
             }
         },
         error: function(xhr, status, error) {
-            console.log('Form data upload failure: ' + status);
+            console.error('Form data upload failure: ' + status);
 
             if (options.error) {
                 options.error(xhr, status, error);
+            } else {
+                showApiError(xhr, url);
             }
         }
     });
@@ -139,6 +146,8 @@ function inventreePut(url, data={}, options={}) {
             } else {
                 console.error(`Error on ${method} to '${url}' - STATUS ${xhr.status}`);
                 console.error(thrownError);
+
+                showApiError(xhr, url);
             }
         },
         complete: function(xhr, status) {
@@ -150,25 +159,37 @@ function inventreePut(url, data={}, options={}) {
 }
 
 
+/*
+ * Performs a DELETE API call to the server
+ */
 function inventreeDelete(url, options={}) {
-    /*
-     * Delete a record
-     */
 
     options = options || {};
 
     options.method = 'DELETE';
 
-    return inventreePut(url, {}, options);
+    return inventreePut(
+        url,
+        options.data || {},
+        options
+    );
 }
 
 
-function showApiError(xhr) {
+/*
+ * Display a notification with error information
+ */
+function showApiError(xhr, url) {
 
     var title = null;
     var message = null;
 
-    switch (xhr.status) {
+    if (xhr.statusText == 'abort') {
+        // Don't show errors for requests which were intentionally aborted
+        return;
+    }
+
+    switch (xhr.status || 0) {
     // No response
     case 0:
         title = '{% trans "No Response" %}';
@@ -196,6 +217,11 @@ function showApiError(xhr) {
         title = '{% trans "Error 404: Resource Not Found" %}';
         message = '{% trans "The requested resource could not be located on the server" %}';
         break;
+    // Method not allowed
+    case 405:
+        title = '{% trans "Error 405: Method Not Allowed" %}';
+        message = '{% trans "HTTP method not allowed at URL" %}';
+        break;
     // Timeout
     case 408:
         title = '{% trans "Error 408: Timeout" %}';
@@ -204,11 +230,31 @@ function showApiError(xhr) {
     default:
         title = '{% trans "Unhandled Error Code" %}';
         message = `{% trans "Error code" %}: ${xhr.status}`;
+
+        var response = xhr.responseJSON;
+
+        // The server may have provided some extra information about this error
+        if (response) {
+            if (response.error) {
+                title = response.error;
+            }
+
+            if (response.detail) {
+                message = response.detail;
+            }
+        }
+
         break;
     }
 
-    message += '<hr>';
-    message += renderErrorMessage(xhr);
+    if (url) {
+        message += '<hr>';
+        message += `URL: ${url}`;
+    }
 
-    showAlertDialog(title, message);
+    showMessage(title, {
+        style: 'danger',
+        icon: 'fas fa-server icon-red',
+        details: message,
+    });
 }

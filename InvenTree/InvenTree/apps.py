@@ -1,95 +1,108 @@
-# -*- coding: utf-8 -*-
+"""AppConfig for inventree app."""
 
 import logging
+from importlib import import_module
+from pathlib import Path
 
-from django.apps import AppConfig
+from django.apps import AppConfig, apps
+from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
+from django.db import transaction
+from django.db.utils import IntegrityError
 
-from InvenTree.ready import isInTestMode, canAppAccessDatabase
 import InvenTree.tasks
+from InvenTree.ready import canAppAccessDatabase, isInTestMode
 
+from .config import get_setting
 
 logger = logging.getLogger("inventree")
 
 
 class InvenTreeConfig(AppConfig):
+    """AppConfig for inventree app."""
     name = 'InvenTree'
 
     def ready(self):
+        """Setup background tasks and update exchange rates."""
+        if canAppAccessDatabase() or settings.TESTING_ENV:
 
-        if canAppAccessDatabase():
+            self.remove_obsolete_tasks()
+
+            self.collect_tasks()
             self.start_background_tasks()
 
-            if not isInTestMode():
+            if not isInTestMode():  # pragma: no cover
                 self.update_exchange_rates()
 
-    def start_background_tasks(self):
+        self.collect_notification_methods()
+
+        if canAppAccessDatabase() or settings.TESTING_ENV:
+            self.add_user_on_startup()
+
+    def remove_obsolete_tasks(self):
+        """Delete any obsolete scheduled tasks in the database."""
+        obsolete = [
+            'InvenTree.tasks.delete_expired_sessions',
+            'stock.tasks.delete_old_stock_items',
+        ]
 
         try:
             from django_q.models import Schedule
-        except (AppRegistryNotReady):
+        except AppRegistryNotReady:  # pragma: no cover
             return
+
+        # Remove any existing obsolete tasks
+        Schedule.objects.filter(func__in=obsolete).delete()
+
+    def start_background_tasks(self):
+        """Start all background tests for InvenTree."""
 
         logger.info("Starting background tasks...")
 
-        # Remove successful task results from the database
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.delete_successful_tasks',
-            schedule_type=Schedule.DAILY,
+        for task in InvenTree.tasks.tasks.task_list:
+            ref_name = f'{task.func.__module__}.{task.func.__name__}'
+            InvenTree.tasks.schedule_task(
+                ref_name,
+                schedule_type=task.interval,
+                minutes=task.minutes,
+            )
+
+        # Put at least one task onto the backround worker stack,
+        # which will be processed as soon as the worker comes online
+        InvenTree.tasks.offload_task(
+            InvenTree.tasks.heartbeat,
+            force_async=True,
         )
 
-        # Check for InvenTree updates
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.check_for_updates',
-            schedule_type=Schedule.DAILY
-        )
+        logger.info("Started background tasks...")
 
-        # Heartbeat to let the server know the background worker is running
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.heartbeat',
-            schedule_type=Schedule.MINUTES,
-            minutes=15
-        )
+    def collect_tasks(self):
+        """Collect all background tasks."""
 
-        # Keep exchange rates up to date
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.update_exchange_rates',
-            schedule_type=Schedule.DAILY,
-        )
+        for app_name, app in apps.app_configs.items():
+            if app_name == 'InvenTree':
+                continue
 
-        # Remove expired sessions
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.delete_expired_sessions',
-            schedule_type=Schedule.DAILY,
-        )
+            if Path(app.path).joinpath('tasks.py').exists():
+                try:
+                    import_module(f'{app.module.__package__}.tasks')
+                except Exception as e:  # pragma: no cover
+                    logger.error(f"Error loading tasks for {app_name}: {e}")
 
-        # Delete old error messages
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.delete_old_error_logs',
-            schedule_type=Schedule.DAILY,
-        )
+    def update_exchange_rates(self):  # pragma: no cover
+        """Update exchange rates each time the server is started.
 
-        # Delete "old" stock items
-        InvenTree.tasks.schedule_task(
-            'stock.tasks.delete_old_stock_items',
-            schedule_type=Schedule.MINUTES,
-            minutes=30,
-        )
-
-    def update_exchange_rates(self):
-        """
-        Update exchange rates each time the server is started, *if*:
-
+        Only runs *if*:
         a) Have not been updated recently (one day or less)
         b) The base exchange rate has been altered
         """
-
         try:
             from djmoney.contrib.exchange.models import ExchangeBackend
-            from datetime import datetime, timedelta
-            from InvenTree.tasks import update_exchange_rates
+
             from common.settings import currency_code_default
-        except AppRegistryNotReady:
+            from InvenTree.tasks import update_exchange_rates
+        except AppRegistryNotReady:  # pragma: no cover
             pass
 
         base_currency = currency_code_default()
@@ -101,28 +114,76 @@ class InvenTreeConfig(AppConfig):
 
             last_update = backend.last_update
 
-            if last_update is not None:
-                delta = datetime.now().date() - last_update.date()
-                if delta > timedelta(days=1):
-                    print(f"Last update was {last_update}")
-                    update = True
-            else:
+            if last_update is None:
                 # Never been updated
-                print("Exchange backend has never been updated")
+                logger.info("Exchange backend has never been updated")
                 update = True
 
             # Backend currency has changed?
-            if not base_currency == backend.base_currency:
-                print(f"Base currency changed from {backend.base_currency} to {base_currency}")
+            if base_currency != backend.base_currency:
+                logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
                 update = True
 
         except (ExchangeBackend.DoesNotExist):
-            print("Exchange backend not found - updating")
+            logger.info("Exchange backend not found - updating")
             update = True
 
-        except:
+        except Exception:
             # Some other error - potentially the tables are not ready yet
             return
 
         if update:
-            update_exchange_rates()
+            try:
+                update_exchange_rates()
+            except Exception as e:
+                logger.error(f"Error updating exchange rates: {e}")
+
+    def add_user_on_startup(self):
+        """Add a user on startup."""
+        # stop if checks were already created
+        if hasattr(settings, 'USER_ADDED') and settings.USER_ADDED:
+            return
+
+        # get values
+        add_user = get_setting('INVENTREE_ADMIN_USER', 'admin_user')
+        add_email = get_setting('INVENTREE_ADMIN_EMAIL', 'admin_email')
+        add_password = get_setting('INVENTREE_ADMIN_PASSWORD', 'admin_password')
+
+        # check if all values are present
+        set_variables = 0
+
+        for tested_var in [add_user, add_email, add_password]:
+            if tested_var:
+                set_variables += 1
+
+        # no variable set -> do not try anything
+        if set_variables == 0:
+            settings.USER_ADDED = True
+            return
+
+        # not all needed variables set
+        if set_variables < 3:
+            logger.warn('Not all required settings for adding a user on startup are present:\nINVENTREE_ADMIN_USER, INVENTREE_ADMIN_EMAIL, INVENTREE_ADMIN_PASSWORD')
+            settings.USER_ADDED = True
+            return
+
+        # good to go -> create user
+        user = get_user_model()
+        try:
+            with transaction.atomic():
+                if user.objects.filter(username=add_user).exists():
+                    logger.info(f"User {add_user} already exists - skipping creation")
+                else:
+                    new_user = user.objects.create_superuser(add_user, add_email, add_password)
+                    logger.info(f'User {str(new_user)} was created!')
+        except IntegrityError as _e:
+            logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
+
+        # do not try again
+        settings.USER_ADDED = True
+
+    def collect_notification_methods(self):
+        """Collect all notification methods."""
+        from common.notifications import storage
+
+        storage.collect()

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # exit when any command fails
 set -e
 
@@ -11,6 +11,11 @@ fi
 if [[ ! -d "$INVENTREE_MEDIA_ROOT" ]]; then
     echo "Creating directory $INVENTREE_MEDIA_ROOT"
     mkdir -p $INVENTREE_MEDIA_ROOT
+fi
+
+if [[ ! -d "$INVENTREE_BACKUP_DIR" ]]; then
+    echo "Creating directory $INVENTREE_BACKUP_DIR"
+    mkdir -p $INVENTREE_BACKUP_DIR
 fi
 
 # Check if "config.yaml" has been copied into the correct location
@@ -27,16 +32,19 @@ fi
 if [[ -n "$INVENTREE_PY_ENV" ]]; then
     echo "Using Python virtual environment: ${INVENTREE_PY_ENV}"
     # Setup a virtual environment (within the "dev" directory)
-    python3 -m venv ${INVENTREE_PY_ENV}
+    python3 -m venv ${INVENTREE_PY_ENV} --system-site-packages
 
     # Activate the virtual environment
     source ${INVENTREE_PY_ENV}/bin/activate
 
     # Note: Python packages will have to be installed on first run
-    # e.g docker-compose -f docker-compose.dev.yml run inventree-dev-server invoke install
+    # e.g docker-compose run inventree-dev-server invoke update
 fi
 
 cd ${INVENTREE_HOME}
+
+# Collect translation file stats
+invoke translate-stats
 
 # Launch the CMD *after* the ENTRYPOINT completes
 exec "$@"

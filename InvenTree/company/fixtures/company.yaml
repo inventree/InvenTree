@@ -17,6 +17,7 @@
   fields:
     name: Zerg Corp
     description: We eat the competition
+    is_customer: False
 
 - model: company.company
   pk: 4

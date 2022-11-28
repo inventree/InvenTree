@@ -1,10 +1,14 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% if user_setting %}
-    {% setting_object key user=request.user as setting %}
+{% if plugin %}
+{% setting_object key plugin=plugin as setting %}
+{% elif user_setting %}
+{% setting_object key user=request.user as setting %}
+{% elif notification_setting %}
+{% setting_object key method=method user=request.user as setting %}
 {% else %}
-    {% setting_object key as setting %}
+{% setting_object key as setting %}
 {% endif %}
 
 <tr>
@@ -13,34 +17,44 @@
         <span class='fas {{ icon }}'></span>
         {% endif %}
     </td>
-    <td><strong>{% trans setting.name %}</strong></td>
+    <td><strong>{{ setting.name }}</strong></td>
     <td>
-        {% if setting.is_bool %}
-        <div>
-            <input fieldname='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' disabled='' {% if setting.as_bool %}checked=''{% endif %}>
-        </div>
-        {% else %}
-        <div id='setting-{{ setting.pk }}'>
-            <strong>
-            <span id='setting-value-{{ setting.key.upper }}' fieldname='{{ setting.key.upper }}'>
-                {% if setting.value %}
-                {{ setting.value }}
-                {% else %}
-                <em>{% trans "No value set" %}</em>
-                {% endif %}
-            </span>
-            </strong>
-            {{ setting.units }}
-        </div>
-        {% endif %}
-    <td>
-        {% trans setting.description %}
+        {{ setting.description }}
     </td>
     <td>
-        <div class='btn-group float-right'>
-            <button class='btn btn-default btn-glyph btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if user_setting %}user='{{request.user.id}}'{% endif %}>
-                <span class='fas fa-edit icon-green'></span>
-            </button>
+        {% if setting.is_bool %}
+        {% include "InvenTree/settings/setting_boolean.html" %}
+        {% else %}
+        <div id='setting-{{ setting.pk }}'>
+            <span id='setting-value-{{ setting.pk }}-{{ setting.typ }}' fieldname='{{ setting.key.upper }}'>
+                {% if setting.value %}
+                {% if setting.is_choice %}
+                <strong>{{ setting.as_choice }}</strong>
+                {% else %}
+                <strong>{{ setting.value }}</strong>
+                {% endif %}
+                {% else %}
+                <em style='color: #855;'>{% trans "No value set" %}</em>
+                {% endif %}
+            </span>
+            {{ setting.units }}
+            <div class='btn-group float-right'>
+                <button
+                    class='btn btn-outline-secondary btn-small btn-edit-setting'
+                    title='{% trans "Edit setting" %}'
+                    pk='{{ setting.pk }}'
+                    setting='{{ setting.key.upper }}'
+                    {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}
+                    {% if user_setting or notification_setting %}user='{{request.user.id}}'{% endif %}
+                    {% if notification_setting %}
+                    notification=true
+                    method='{{ setting.method }}'
+                    {% endif %}
+                >
+                    <span class='fas fa-edit icon-green'></span>
+                </button>
+            </div>
         </div>
+        {% endif %}
     </td>
 </tr>

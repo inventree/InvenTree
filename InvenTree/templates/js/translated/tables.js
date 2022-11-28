@@ -7,46 +7,166 @@
 
 /* exported
     customGroupSorter,
+    downloadTableData,
+    getTableData,
     reloadtable,
     renderLink,
     reloadTableFilters,
+    constructOrderTableButtons,
 */
 
 /**
  * Reload a named table
- * @param table 
+ * @param table
  */
 function reloadtable(table) {
     $(table).bootstrapTable('refresh');
 }
 
 
-/**
- * Render a URL for display
- * @param {String} text 
- * @param {String} url 
- * @param {object} options 
- * @returns link text
+/*
+ * Construct a set of extra buttons to display against a list of orders,
+ * allowing the orders to be displayed in various 'view' modes:
+ *
+ * - Calendar view
+ * - List view
+ * - Tree view
+ *
+ * Options:
+ * - callback: Callback function to be called when one of the buttons is pressed
+ * - prefix: The prefix to use when saving display data to user session
+ * - display: Which button to set as 'active' by default
+ *
  */
-function renderLink(text, url, options={}) {
-    if (url === null || url === undefined || url === '') {
-        return text;
+function constructOrderTableButtons(options={}) {
+
+    var display_mode = options.display;
+
+    var key = `${options.prefix || order}-table-display-mode`;
+
+    // If display mode is not provided, look up from session
+    if (!display_mode) {
+        display_mode = inventreeLoad(key, 'list');
     }
 
-    var max_length = options.max_length || -1;
+    var idx = 0;
+    var buttons = [];
 
-    // Shorten the displayed length if required
-    if ((max_length > 0) && (text.length > max_length)) {
-        var slice_length = (max_length - 3) / 2;
+    function buttonCallback(view_mode) {
+        inventreeSave(key, view_mode);
 
-        var text_start = text.slice(0, slice_length);
-        var text_end = text.slice(-slice_length);
-
-        text = `${text_start}...${text_end}`;
+        if (options.callback) {
+            options.callback(view_mode);
+        }
     }
 
-    return '<a href="' + url + '">' + text + '</a>';
+    var class_calendar = display_mode == 'calendar' ? 'btn-secondary' : 'btn-outline-secondary';
+    var class_list = display_mode == 'list' ? 'btn-secondary' : 'btn-outline-secondary';
+    var class_tree = display_mode == 'tree' ? 'btn-secondary' : 'btn-outline-secondary';
+
+    // Calendar view button
+    if (!options.disableCalendarView) {
+        buttons.push({
+            html: `<button type='button' name='${idx++}' class='btn ${class_calendar}' title='{% trans "Display calendar view" %}'><span class='fas fa-calendar-alt'></span></button>`,
+            event: function() {
+                buttonCallback('calendar');
+            }
+        });
+    }
+
+    // List view button
+    if (!options.disableListView) {
+        buttons.push({
+            html: `<button type='button' name='${idx++}' class='btn ${class_list}' title='{% trans "Display list view" %}'><span class='fas fa-th-list'></span></button>`,
+            event: function() {
+                buttonCallback('list');
+            }
+        });
+    }
+
+    // Tree view button
+    if (!options.disableTreeView) {
+        buttons.push({
+            html: `<button type='button' name='${idx++}' class='btn ${class_tree}' title='{% trans "Display tree view" %}'><span class='fas fa-sitemap'></span></button>`,
+            event: function() {
+                buttonCallback('tree');
+            }
+        });
+    }
+
+    return buttons;
 }
+
+
+/* Return the 'selected' data rows from a bootstrap table.
+ * If allowEmpty = false, and the returned dataset is empty,
+ * then instead try to return *all* the data
+ */
+function getTableData(table, allowEmpty=false) {
+
+    var data = $(table).bootstrapTable('getSelections');
+
+    if (data.length == 0 && !allowEmpty) {
+        data = $(table).bootstrapTable('getData');
+    }
+
+    return data;
+}
+
+
+/**
+ * Download data from a table, via the API.
+ * This requires a number of conditions to be met:
+ *
+ * - The API endpoint supports data download (on the server side)
+ * - The table is "flat" (does not support multi-level loading, etc)
+ * - The table has been loaded using the inventreeTable() function, not bootstrapTable()
+ *   (Refer to the "reloadTableFilters" function to see why!)
+ */
+function downloadTableData(table, opts={}) {
+
+    // Extract table configuration options
+    var table_options = table.bootstrapTable('getOptions');
+
+    var url = table_options.url;
+
+    if (!url) {
+        console.error('downloadTableData could not find "url" parameter.');
+    }
+
+    var query_params = table_options.query_params || {};
+
+    url += '?';
+
+    constructFormBody({}, {
+        title: opts.title || '{% trans "Export Table Data" %}',
+        fields: {
+            format: {
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select File Format" %}',
+                required: true,
+                type: 'choice',
+                value: 'csv',
+                choices: exportFormatOptions(),
+            }
+        },
+        onSubmit: function(fields, form_options) {
+            var format = getFormFieldValue('format', fields['format'], form_options);
+
+            // Hide the modal
+            $(form_options.modal).modal('hide');
+
+            for (const [key, value] of Object.entries(query_params)) {
+                url += `${key}=${value}&`;
+            }
+
+            url += `export=${format}`;
+
+            location.href = url;
+        }
+    });
+}
+
 
 
 function enableButtons(elements, enabled) {
@@ -77,8 +197,8 @@ function linkButtonsToSelection(table, buttons) {
 
 /**
  * Returns true if the input looks like a valid number
- * @param {String} n 
- * @returns 
+ * @param {String} n
+ * @returns
  */
 function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -113,6 +233,10 @@ function reloadTableFilters(table, filters) {
             params[key] = options.original[key];
         }
     }
+
+    // Store the total set of query params
+    // This is necessary for the "downloadTableData" function to work
+    options.query_params = params;
 
     options.queryParams = function(tableParams) {
         return convertQueryParameters(tableParams, params);
@@ -186,11 +310,13 @@ function convertQueryParameters(params, filters) {
     if ('original_search' in params) {
         var search = params['search'] || '';
 
-        params['search'] = search + ' ' + params['original_search'];
+        var clean_search = sanitizeInputString(search + ' ' + params['original_search']);
+
+        params['search'] = clean_search;
 
         delete params['original_search'];
     }
-    
+
     return params;
 }
 
@@ -214,12 +340,21 @@ $.fn.inventreeTable = function(options) {
         options.pageList = [25, 50, 100, 250, 'all'];
         options.totalField = 'count';
         options.dataField = 'results';
+
+    } else {
+        options.pagination = false;
     }
 
     // Extract query params
     var filters = options.queryParams || options.filters || {};
 
+    options.escape = true;
+
+    // Store the total set of query params
+    options.query_params = filters;
+
     options.queryParams = function(params) {
+        // Update the query parameters callback with the *new* filters
         return convertQueryParameters(params, filters);
     };
 
@@ -276,7 +411,7 @@ $.fn.inventreeTable = function(options) {
                 }
             });
         } else {
-            console.log(`Could not get list of visible columns for column '${tableName}'`);
+            console.error(`Could not get list of visible columns for table '${tableName}'`);
         }
     }
 
@@ -369,7 +504,12 @@ function customGroupSorter(sortName, sortOrder, sortData) {
             return `${pageNumber} {% trans "rows per page" %}`;
         },
         formatShowingRows: function(pageFrom, pageTo, totalRows) {
-            return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;
+
+            if (totalRows === undefined || totalRows === NaN) {
+                return '{% trans "Showing all rows" %}';
+            } else {
+                return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;
+            }
         },
         formatSearch: function() {
             return '{% trans "Search" %}';
@@ -396,4 +536,52 @@ function customGroupSorter(sortName, sortOrder, sortData) {
 
     $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['en-US-custom']);
 
+    // Enable HTML escaping by default
+    $.fn.bootstrapTable.escape = true;
+
+    // Override the 'calculateObjectValue' function at bootstrap-table.js:3525
+    // Allows us to escape any nasty HTML tags which are rendered to the DOM
+    $.fn.bootstrapTable.utils._calculateObjectValue = $.fn.bootstrapTable.utils.calculateObjectValue;
+
+    $.fn.bootstrapTable.utils.calculateObjectValue = function escapeCellValue(self, name, args, defaultValue) {
+
+        var args_list = [];
+
+        if (args) {
+
+            args_list.push(args[0]);
+
+            if (name && typeof(name) === 'function' && name.name == 'formatter') {
+                /* This is a custom "formatter" function for a particular cell,
+                * which may side-step regular HTML escaping, and inject malicious code into the DOM.
+                *
+                * Here we have access to the 'args' supplied to the custom 'formatter' function,
+                * which are in the order:
+                * args = [value, row, index, field]
+                *
+                * 'row' is the one we are interested in
+                */
+
+                var row = Object.assign({}, args[1]);
+
+                args_list.push(sanitizeData(row));
+            } else {
+                args_list.push(args[1]);
+            }
+
+            for (var ii = 2; ii < args.length; ii++) {
+                args_list.push(args[ii]);
+            }
+        }
+
+        var value = $.fn.bootstrapTable.utils._calculateObjectValue(self, name, args_list, defaultValue);
+
+        return value;
+    };
+
 })(jQuery);
+
+$.extend($.fn.treegrid.defaults, {
+    expanderExpandedClass: 'treegrid-expander-expanded',
+    expanderCollapsedClass: 'treegrid-expander-collapsed'
+});

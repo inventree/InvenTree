@@ -7,6 +7,7 @@
     part: 100
     sub_part: 1
     quantity: 10
+    allow_variants: True
 
 # 40 x R_2K2_0805
 - model: part.bomitem
@@ -23,6 +24,7 @@
     part: 100
     sub_part: 5
     quantity: 25
+    reference: ABCDE
 
 # 3 x Orphan
 - model: part.bomitem
@@ -31,6 +33,7 @@
     part: 100
     sub_part: 50
     quantity: 3
+    reference: VWXYZ
 
 - model: part.bomitem
   pk: 5
@@ -38,3 +41,12 @@
     part: 1
     sub_part: 5
     quantity: 3
+    reference: LMNOP
+
+# Make "Assembly" from "Bob"
+- model: part.bomitem
+  pk: 6
+  fields:
+    part: 101
+    sub_part: 100
+    quantity: 10

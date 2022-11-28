@@ -1,25 +1,24 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Admin class for the 'company' app"""
 
 from django.contrib import admin
 
-from import_export.admin import ImportExportModelAdmin
-from import_export.resources import ModelResource
-from import_export.fields import Field
 import import_export.widgets as widgets
+from import_export.admin import ImportExportModelAdmin
+from import_export.fields import Field
 
-from .models import Company
-from .models import SupplierPart
-from .models import SupplierPriceBreak
-from .models import ManufacturerPart, ManufacturerPartParameter
-
+from InvenTree.admin import InvenTreeResource
 from part.models import Part
 
+from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
+                     ManufacturerPartParameter, SupplierPart,
+                     SupplierPriceBreak)
 
-class CompanyResource(ModelResource):
-    """ Class for managing Company data import/export """
+
+class CompanyResource(InvenTreeResource):
+    """Class for managing Company data import/export."""
 
     class Meta:
+        """Metaclass defines extra options"""
         model = Company
         skip_unchanged = True
         report_skipped = False
@@ -27,6 +26,7 @@ class CompanyResource(ModelResource):
 
 
 class CompanyAdmin(ImportExportModelAdmin):
+    """Admin class for the Company model"""
 
     resource_class = CompanyResource
 
@@ -38,10 +38,8 @@ class CompanyAdmin(ImportExportModelAdmin):
     ]
 
 
-class SupplierPartResource(ModelResource):
-    """
-    Class for managing SupplierPart data import/export
-    """
+class SupplierPartResource(InvenTreeResource):
+    """Class for managing SupplierPart data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
@@ -52,30 +50,42 @@ class SupplierPartResource(ModelResource):
     supplier_name = Field(attribute='supplier__name', readonly=True)
 
     class Meta:
+        """Metaclass defines extra admin options"""
         model = SupplierPart
         skip_unchanged = True
         report_skipped = True
         clean_model_instances = True
 
 
+class SupplierPriceBreakInline(admin.TabularInline):
+    """Inline for supplier-part pricing"""
+
+    model = SupplierPriceBreak
+
+
 class SupplierPartAdmin(ImportExportModelAdmin):
+    """Admin class for the SupplierPart model"""
 
     resource_class = SupplierPartResource
 
     list_display = ('part', 'supplier', 'SKU')
 
     search_fields = [
-        'company__name',
+        'supplier__name',
         'part__name',
-        'MPN',
+        'manufacturer_part__MPN',
         'SKU',
     ]
 
+    inlines = [
+        SupplierPriceBreakInline,
+    ]
 
-class ManufacturerPartResource(ModelResource):
-    """
-    Class for managing ManufacturerPart data import/export
-    """
+    autocomplete_fields = ('part', 'supplier', 'manufacturer_part',)
+
+
+class ManufacturerPartResource(InvenTreeResource):
+    """Class for managing ManufacturerPart data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
@@ -86,33 +96,15 @@ class ManufacturerPartResource(ModelResource):
     manufacturer_name = Field(attribute='manufacturer__name', readonly=True)
 
     class Meta:
+        """Metaclass defines extra admin options"""
         model = ManufacturerPart
         skip_unchanged = True
         report_skipped = True
         clean_model_instances = True
 
 
-class ManufacturerPartParameterInline(admin.TabularInline):
-    """
-    Inline for editing ManufacturerPartParameter objects,
-    directly from the ManufacturerPart admin view.
-    """
-
-    model = ManufacturerPartParameter
-
-
-class SupplierPartInline(admin.TabularInline):
-    """
-    Inline for the SupplierPart model
-    """
-
-    model = SupplierPart
-
-
 class ManufacturerPartAdmin(ImportExportModelAdmin):
-    """
-    Admin class for ManufacturerPart model
-    """
+    """Admin class for ManufacturerPart model."""
 
     resource_class = ManufacturerPartResource
 
@@ -124,18 +116,22 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
         'MPN',
     ]
 
-    inlines = [
-        SupplierPartInline,
-        ManufacturerPartParameterInline,
-    ]
+    autocomplete_fields = ('part', 'manufacturer',)
 
 
-class ManufacturerPartParameterResource(ModelResource):
-    """
-    Class for managing ManufacturerPartParameter data import/export
-    """
+class ManufacturerPartAttachmentAdmin(ImportExportModelAdmin):
+    """Admin class for ManufacturerPartAttachment model."""
+
+    list_display = ('manufacturer_part', 'attachment', 'comment')
+
+    autocomplete_fields = ('manufacturer_part',)
+
+
+class ManufacturerPartParameterResource(InvenTreeResource):
+    """Class for managing ManufacturerPartParameter data import/export."""
 
     class Meta:
+        """Metaclass defines extra admin options"""
         model = ManufacturerPartParameter
         skip_unchanged = True
         report_skipped = True
@@ -143,9 +139,7 @@ class ManufacturerPartParameterResource(ModelResource):
 
 
 class ManufacturerPartParameterAdmin(ImportExportModelAdmin):
-    """
-    Admin class for ManufacturerPartParameter model
-    """
+    """Admin class for ManufacturerPartParameter model."""
 
     resource_class = ManufacturerPartParameterResource
 
@@ -157,9 +151,11 @@ class ManufacturerPartParameterAdmin(ImportExportModelAdmin):
         'value'
     ]
 
+    autocomplete_fields = ('manufacturer_part',)
 
-class SupplierPriceBreakResource(ModelResource):
-    """ Class for managing SupplierPriceBreak data import/export """
+
+class SupplierPriceBreakResource(InvenTreeResource):
+    """Class for managing SupplierPriceBreak data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(SupplierPart))
 
@@ -174,6 +170,7 @@ class SupplierPriceBreakResource(ModelResource):
     MPN = Field(attribute='part__MPN', readonly=True)
 
     class Meta:
+        """Metaclass defines extra admin options"""
         model = SupplierPriceBreak
         skip_unchanged = True
         report_skipped = False
@@ -181,10 +178,13 @@ class SupplierPriceBreakResource(ModelResource):
 
 
 class SupplierPriceBreakAdmin(ImportExportModelAdmin):
+    """Admin class for the SupplierPriceBreak model"""
 
     resource_class = SupplierPriceBreakResource
 
     list_display = ('part', 'quantity', 'price')
+
+    autocomplete_fields = ('part',)
 
 
 admin.site.register(Company, CompanyAdmin)
@@ -192,4 +192,5 @@ admin.site.register(SupplierPart, SupplierPartAdmin)
 admin.site.register(SupplierPriceBreak, SupplierPriceBreakAdmin)
 
 admin.site.register(ManufacturerPart, ManufacturerPartAdmin)
+admin.site.register(ManufacturerPartAttachment, ManufacturerPartAttachmentAdmin)
 admin.site.register(ManufacturerPartParameter, ManufacturerPartParameterAdmin)

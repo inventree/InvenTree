@@ -16,7 +16,7 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
 {% endblock %}
 
 {% block bottom_center %}
-content: "InvenTree v{% inventree_version %}";
+content: "{% inventree_version shortstring=True %}";
 {% endblock %}
 
 {% block style %}

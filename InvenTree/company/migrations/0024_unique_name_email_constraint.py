@@ -1,7 +1,7 @@
 from django.db import migrations, models
 
 
-def reverse_empty_email(apps, schema_editor):
+def reverse_empty_email(apps, schema_editor):  # pragma: no cover
     Company = apps.get_model('company', 'Company')
     for company in Company.objects.all():
         if company.email == None:

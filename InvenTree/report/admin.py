@@ -1,28 +1,23 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Admin functionality for the 'report' app"""
 
 from django.contrib import admin
 
-from .models import ReportSnippet, ReportAsset
-from .models import TestReport
-from .models import BuildReport
-from .models import BillOfMaterialsReport
-from .models import PurchaseOrderReport
-from .models import SalesOrderReport
+from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
+                     ReportAsset, ReportSnippet, SalesOrderReport, TestReport)
 
 
 class ReportTemplateAdmin(admin.ModelAdmin):
-
+    """Admin class for the various reporting models"""
     list_display = ('name', 'description', 'template', 'filters', 'enabled', 'revision')
 
 
 class ReportSnippetAdmin(admin.ModelAdmin):
-
+    """Admin class for the ReportSnippet model"""
     list_display = ('id', 'snippet', 'description')
 
 
 class ReportAssetAdmin(admin.ModelAdmin):
-
+    """Admin class for the ReportAsset model"""
     list_display = ('id', 'asset', 'description')
 
 

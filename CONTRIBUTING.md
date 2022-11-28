@@ -1,4 +1,39 @@
+Hi there, thank you for your intrest in contributing!
 Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
+
+## Quickstart
+
+The following commands will get you quickly configure and run a development server, complete with a demo dataset to work with:
+
+### Bare Metal
+
+```bash
+git clone https://github.com/inventree/InvenTree.git && cd InvenTree
+python3 -m venv env && source env/bin/activate
+pip install invoke && invoke
+pip install invoke && invoke setup-dev --tests
+```
+
+### Docker
+
+```bash
+git clone https://github.com/inventree/InvenTree.git && cd InvenTree
+docker compose run inventree-dev-server invoke install
+docker compose run inventree-dev-server invoke setup-test
+docker compose up -d
+```
+
+Read the [InvenTree setup documentation](https://inventree.readthedocs.io/en/latest/start/intro/) for a complete installation reference guide.
+
+### Setup Devtools
+
+Run the following command to set up all toolsets for development.
+
+```bash
+invoke setup-dev
+```
+
+*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.*
 
 ## Branches and Versioning
 
@@ -17,7 +52,7 @@ The HEAD of the "main" or "master" branch of InvenTree represents the current "l
 
 **No pushing to master:** New featues must be submitted as a pull request from a separate branch (one branch per feature).
 
-#### Feature Branches
+### Feature Branches
 
 Feature branches should be branched *from* the *master* branch.
 
@@ -44,6 +79,31 @@ The HEAD of the "stable" branch represents the latest stable release code.
 - When approved, the branch is merged back *into* stable, with an incremented PATCH number (e.g. 0.4.1 -> 0.4.2)
 - The bugfix *must* also be cherry picked into the *master* branch.
 
+## Environment
+### Target version
+We are currently targeting:
+| Name | Minimum version |
+|---|---|
+| Python | 3.9 |
+| Django | 3.2 |
+
+### Auto creating updates
+The following tools can be used to auto-upgrade syntax that was depreciated in new versions:
+```bash
+pip install pyupgrade
+pip install django-upgrade
+```
+
+To update the codebase run the following script.
+```bash
+pyupgrade `find . -name "*.py"`
+django-upgrade --target-version 3.2 `find . -name "*.py"`
+```
+
+## Credits
+If you add any new dependencies / libraries, they need to be added to [the docs](https://github.com/inventree/inventree-docs/blob/master/docs/credits.md). Please try to do that as timely as possible.
+
+
 ## Migration Files
 
 Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate` and commit the migration files before submitting the PR.
@@ -66,6 +126,7 @@ The various github actions can be found in the `./github/workflows` directory
 ## Code Style
 
 Sumbitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
+Please write docstrings for each function and class - we follow the [google doc-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for python. Docstrings for general javascript code is encouraged! Docstyles are checked by `invoke style`.
 
 ## Documentation
 
@@ -86,7 +147,7 @@ Any user-facing strings *must* be passed through the translation engine.
 For strings exposed via Python code, use the following format:
 
 ```python
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 user_facing_string = _('This string will be exposed to the translation engine!')
 ```
@@ -100,3 +161,43 @@ HTML and javascript files are passed through the django templating engine. Trans
 
 <span>{% trans "This string will be translated" %} - this string will not!</span>
 ```
+
+## Github use
+### Tags
+The tags describe issues and PRs in multiple areas:
+| Area | Name | Description |
+|---|---|---|
+| Triage Labels |  |  |
+|  | triage:not-checked | Item was not checked by the core team  |
+|  | triage:not-approved | Item is not green-light by maintainer |
+| Type Labels |  |  |
+|  | breaking | Indicates a major update or change which breaks compatibility |
+|  | bug | Identifies a bug which needs to be addressed |
+|  | dependency | Relates to a project dependency |
+|  | duplicate | Duplicate of another issue or PR |
+|  | enhancement | This is an suggested enhancement or new feature |
+|  | help wanted | Assistance required |
+|  | invalid | This issue or PR is considered invalid |
+|  | inactive | Indicates lack of activity |
+|  | question | This is a question |
+|  | roadmap | This is a roadmap feature with no immediate plans for implementation |
+|  | security | Relates to a security issue |
+|  | starter | Good issue for a developer new to the project |
+|  | wontfix | No work will be done against this issue or PR |
+| Feature Labels |  |  |
+|  | API | Relates to the API |
+|  | barcode | Barcode scanning and integration |
+|  | build | Build orders |
+|  | importer | Data importing and processing |
+|  | order | Purchase order and sales orders |
+|  | part | Parts |
+|  | plugin | Plugin ecosystem |
+|  | pricing | Pricing functionality |
+|  | report | Report generation |
+|  | stock | Stock item management |
+|  | user interface | User interface |
+| Ecosystem Labels |  |  |
+|  | demo | Relates to the InvenTree demo server or dataset |
+|  | docker | Docker / docker-compose |
+|  | CI | CI / unit testing ecosystem |
+|  | setup | Relates to the InvenTree setup / installation process |

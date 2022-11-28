@@ -1,34 +1,13 @@
-"""
-Django forms for interacting with common objects
-"""
-
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Django forms for interacting with common objects."""
 
 from django import forms
 from django.utils.translation import gettext as _
 
-from InvenTree.forms import HelperForm
-
 from .files import FileManager
-from .models import InvenTreeSetting
-
-
-class SettingEditForm(HelperForm):
-    """
-    Form for creating / editing a settings object
-    """
-
-    class Meta:
-        model = InvenTreeSetting
-
-        fields = [
-            'value'
-        ]
 
 
 class UploadFileForm(forms.Form):
-    """ Step 1 of FileManagementFormView """
+    """Step 1 of FileManagementFormView."""
 
     file = forms.FileField(
         label=_('File'),
@@ -36,8 +15,7 @@ class UploadFileForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        """ Update label and help_text """
-
+        """Update label and help_text."""
         # Get file name
         name = None
         if 'name' in kwargs:
@@ -51,11 +29,10 @@ class UploadFileForm(forms.Form):
             self.fields['file'].help_text = _(f'Select {name} file to upload')
 
     def clean_file(self):
-        """
-            Run tabular file validation.
-            If anything is wrong with the file, it will raise ValidationError
-        """
+        """Run tabular file validation.
 
+        If anything is wrong with the file, it will raise ValidationError
+        """
         file = self.cleaned_data['file']
 
         # Validate file using FileManager class - will perform initial data validation
@@ -66,10 +43,10 @@ class UploadFileForm(forms.Form):
 
 
 class MatchFieldForm(forms.Form):
-    """ Step 2 of FileManagementFormView """
+    """Step 2 of FileManagementFormView."""
 
     def __init__(self, *args, **kwargs):
-
+        """Setup filemanager and check columsn."""
         # Get FileManager
         file_manager = None
         if 'file_manager' in kwargs:
@@ -99,10 +76,10 @@ class MatchFieldForm(forms.Form):
 
 
 class MatchItemForm(forms.Form):
-    """ Step 3 of FileManagementFormView """
+    """Step 3 of FileManagementFormView."""
 
     def __init__(self, *args, **kwargs):
-
+        """Setup filemanager and create fields."""
         # Get FileManager
         file_manager = None
         if 'file_manager' in kwargs:
@@ -197,6 +174,5 @@ class MatchItemForm(forms.Form):
                         )
 
     def get_special_field(self, col_guess, row, file_manager):
-        """ Function to be overriden in inherited forms to add specific form settings """
-
+        """Function to be overriden in inherited forms to add specific form settings."""
         return None

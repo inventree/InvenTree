@@ -17,17 +17,19 @@ def assign_bom_items(apps, schema_editor):
     BuildItem = apps.get_model('build', 'builditem')
     BomItem = apps.get_model('part', 'bomitem')
     Part = apps.get_model('part', 'part')
-    
-    logger.info("Assigning BomItems to existing BuildItem objects")
 
     count_valid = 0
     count_total = 0
 
-    for build_item in BuildItem.objects.all():
+    for build_item in BuildItem.objects.all():  # pragma: no cover
 
         # Try to find a BomItem which matches the BuildItem
         # Note: Before this migration, variant stock assignment was not allowed,
         #       so BomItem lookup should be pretty easy
+
+        if count_total == 0:
+            # First time around
+            logger.info("Assigning BomItems to existing BuildItem objects")
 
         count_total += 1
 
@@ -45,11 +47,11 @@ def assign_bom_items(apps, schema_editor):
         except BomItem.DoesNotExist:
             pass
 
-    if count_total > 0:
+    if count_total > 0:  # pragma: no cover
         logger.info(f"Assigned BomItem for {count_valid}/{count_total} entries")
 
 
-def unassign_bom_items(apps, schema_editor):
+def unassign_bom_items(apps, schema_editor):  # pragma: no cover
     """
     Reverse migration does not do anything.
     Function here to preserve ability to reverse migration

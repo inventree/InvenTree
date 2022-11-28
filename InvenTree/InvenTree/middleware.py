@@ -1,21 +1,37 @@
-from django.shortcuts import HttpResponseRedirect
-from django.urls import reverse_lazy
-from django.db import connection
-from django.shortcuts import redirect
-import logging
-import time
-import operator
+"""Middleware for InvenTree."""
 
+import logging
+import sys
+
+from django.conf import settings
+from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.urls import Resolver404, include, re_path, resolve, reverse_lazy
+
+from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
+                                    BaseRequire2FAMiddleware)
+from error_report.middleware import ExceptionProcessor
 from rest_framework.authtoken.models import Token
+
+from common.models import InvenTreeSetting
+from InvenTree.urls import frontendpatterns
 
 logger = logging.getLogger("inventree")
 
 
 class AuthRequiredMiddleware(object):
+    """Check for user to be authenticated."""
+
     def __init__(self, get_response):
+        """Save response object."""
         self.get_response = get_response
 
     def __call__(self, request):
+        """Check if user needs to be authenticated and is.
+
+        Redirects to login if not authenticated.
+        """
         # Code to be executed for each request before
         # the view (and later middleware) are called.
 
@@ -25,9 +41,15 @@ class AuthRequiredMiddleware(object):
         if request.path_info.startswith('/api/'):
             return self.get_response(request)
 
+        # Is the function exempt from auth requirements?
+        path_func = resolve(request.path).func
+        if getattr(path_func, 'auth_exempt', False) is True:
+            return self.get_response(request)
+
         if not request.user.is_authenticated:
             """
             Normally, a web-based session would use csrftoken based authentication.
+
             However when running an external application (e.g. the InvenTree app or Python library),
             we must validate the user token manually.
             """
@@ -59,14 +81,9 @@ class AuthRequiredMiddleware(object):
 
                     except Token.DoesNotExist:
                         logger.warning(f"Access denied for unknown token {token_key}")
-                        pass
 
             # No authorization was found for the request
             if not authorized:
-                # A logout request will redirect the user to the login screen
-                if request.path_info == reverse_lazy('account_logout'):
-                    return HttpResponseRedirect(reverse_lazy('account_login'))
-
                 path = request.path_info
 
                 # List of URL endpoints we *do not* want to redirect to
@@ -77,72 +94,75 @@ class AuthRequiredMiddleware(object):
                     reverse_lazy('admin:logout'),
                 ]
 
-                if path not in urls and not path.startswith('/api/'):
+                # Do not redirect requests to any of these paths
+                paths_ignore = [
+                    '/api/',
+                    '/js/',
+                    '/media/',
+                    '/static/',
+                ]
+
+                if path not in urls and not any([path.startswith(p) for p in paths_ignore]):
                     # Save the 'next' parameter to pass through to the login view
 
-                    return redirect('%s?next=%s' % (reverse_lazy('account_login'), request.path))
+                    return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
+
+                else:
+                    # Return a 401 (Unauthorized) response code for this request
+                    return HttpResponse('Unauthorized', status=401)
 
         response = self.get_response(request)
 
         return response
 
 
-class QueryCountMiddleware(object):
-    """
-    This middleware will log the number of queries run
-    and the total time taken for each request (with a
-    status code of 200). It does not currently support
-    multi-db setups.
+url_matcher = re_path('', include(frontendpatterns))
 
-    To enable this middleware, set 'log_queries: True' in the local InvenTree config file.
 
-    Reference: https://www.dabapps.com/blog/logging-sql-queries-django-13/
+class Check2FAMiddleware(BaseRequire2FAMiddleware):
+    """Check if user is required to have MFA enabled."""
+    def require_2fa(self, request):
+        """Use setting to check if MFA should be enforced for frontend page."""
+        try:
+            if url_matcher.resolve(request.path[1:]):
+                return InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA')
+        except Resolver404:
+            pass
+        return False
 
-    Note: 2020-08-15 - This is no longer used, instead we now rely on the django-debug-toolbar addon
-    """
 
-    def __init__(self, get_response):
-        self.get_response = get_response
+class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
+    """This function ensures only frontend code triggers the MFA auth cycle."""
+    def process_request(self, request):
+        """Check if requested url is forntend and enforce MFA check."""
+        try:
+            if not url_matcher.resolve(request.path[1:]):
+                super().process_request(request)
+        except Resolver404:
+            pass
 
-    def __call__(self, request):
 
-        t_start = time.time()
-        response = self.get_response(request)
-        t_stop = time.time()
+class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
+    """Middleware to check if HTTP-header based auth is enabled and to set it up."""
+    header = settings.REMOTE_LOGIN_HEADER
 
-        if response.status_code == 200:
-            total_time = 0
+    def process_request(self, request):
+        """Check if proxy login is enabled."""
+        if not settings.REMOTE_LOGIN:
+            return
 
-            if len(connection.queries) > 0:
+        return super().process_request(request)
 
-                queries = {}
 
-                for query in connection.queries:
-                    query_time = query.get('time')
+class InvenTreeExceptionProcessor(ExceptionProcessor):
+    """Custom exception processor that respects blocked errors."""
 
-                    sql = query.get('sql').split('.')[0]
+    def process_exception(self, request, exception):
+        """Check if kind is ignored before procesing."""
+        kind, info, data = sys.exc_info()
 
-                    if sql in queries:
-                        queries[sql] += 1
-                    else:
-                        queries[sql] = 1
+        # Check if the eror is on the ignore list
+        if kind in settings.IGNORED_ERRORS:
+            return
 
-                    if query_time is None:
-                        # django-debug-toolbar monkeypatches the connection
-                        # cursor wrapper and adds extra information in each
-                        # item in connection.queries. The query time is stored
-                        # under the key "duration" rather than "time" and is
-                        # in milliseconds, not seconds.
-                        query_time = float(query.get('duration', 0))
-
-                    total_time += float(query_time)
-
-                logger.debug('{n} queries run, {a:.3f}s / {b:.3f}s'.format(
-                    n=len(connection.queries),
-                    a=total_time,
-                    b=(t_stop - t_start)))
-
-                for x in sorted(queries.items(), key=operator.itemgetter(1), reverse=True):
-                    print(x[0], ':', x[1])
-
-        return response
+        return super().process_exception(request, exception)

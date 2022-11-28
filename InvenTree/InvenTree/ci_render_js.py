@@ -1,37 +1,23 @@
+"""Pull rendered copies of the templated.
+
+Only used for testing the js files! - This file is omited from coverage.
 """
-Pull rendered copies of the templated 
-"""
 
-from django.http import response
-from django.test import TestCase, testcases
-from django.contrib.auth import get_user_model
+import os  # pragma: no cover
+import pathlib  # pragma: no cover
 
-import os
-import pathlib
+from InvenTree.helpers import InvenTreeTestCase  # pragma: no cover
 
 
-class RenderJavascriptFiles(TestCase):
-    """
-    A unit test to "render" javascript files.
+class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
+    """A unit test to "render" javascript files.
 
     The server renders templated javascript files,
     we need the fully-rendered files for linting and static tests.
     """
 
-    def setUp(self):
-
-        user = get_user_model()
-
-        self.user = user.objects.create_user(
-            username='testuser',
-            password='testpassword',
-            email='user@gmail.com',
-        )
-
-        self.client.login(username='testuser', password='testpassword')
-
     def download_file(self, filename, prefix):
-
+        """Function to `download`(copy) a file to a temporay firectory."""
         url = os.path.join(prefix, filename)
 
         response = self.client.get(url)
@@ -59,6 +45,7 @@ class RenderJavascriptFiles(TestCase):
             output.write(response.content)
 
     def download_files(self, subdir, prefix):
+        """Download files in directory."""
         here = os.path.abspath(os.path.dirname(__file__))
 
         js_template_dir = os.path.join(
@@ -86,10 +73,7 @@ class RenderJavascriptFiles(TestCase):
         return n
 
     def test_render_files(self):
-        """
-        Look for all javascript files
-        """
-
+        """Look for all javascript files."""
         n = 0
 
         print("Rendering javascript files...")

@@ -25,7 +25,7 @@ function selectReport(reports, items, options={}) {
     /**
      * Present the user with the available reports,
      * and allow them to select which report to print.
-     * 
+     *
      * The intent is that the available report templates have been requested
      * (via AJAX) from the server.
      */
@@ -152,7 +152,7 @@ function printTestReports(items) {
                                 href += `item=${item}&`;
                             });
 
-                            window.location.href = href;
+                            window.open(href);
                         }
                     }
                 );
@@ -205,7 +205,7 @@ function printBuildReports(builds) {
                                 href += `build=${build}&`;
                             });
 
-                            window.location.href = href;
+                            window.open(href);
                         }
                     }
                 );
@@ -259,7 +259,7 @@ function printBomReports(parts) {
                                 href += `part=${part}&`;
                             });
 
-                            window.location.href = href;
+                            window.open(href);
                         }
                     }
                 );
@@ -271,7 +271,7 @@ function printBomReports(parts) {
 
 function printPurchaseOrderReports(orders) {
     /**
-     * Print PO reports for the provided purchase order(s)
+     * Print PurchaseOrder reports for the provided purchase order(s)
      */
 
     if (orders.length == 0) {
@@ -313,7 +313,7 @@ function printPurchaseOrderReports(orders) {
                                 href += `order=${order}&`;
                             });
 
-                            window.location.href = href;
+                            window.open(href);
                         }
                     }
                 );
@@ -325,7 +325,7 @@ function printPurchaseOrderReports(orders) {
 
 function printSalesOrderReports(orders) {
     /**
-     * Print SO reports for the provided purchase order(s)
+     * Print SalesOrder reports for the provided purchase order(s)
      */
 
     if (orders.length == 0) {
@@ -367,7 +367,7 @@ function printSalesOrderReports(orders) {
                                 href += `order=${order}&`;
                             });
 
-                            window.location.href = href;
+                            window.open(href);
                         }
                     }
                 );

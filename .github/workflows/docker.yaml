@@ -1,0 +1,114 @@
+# Build, test and push InvenTree docker image
+# This workflow runs under any of the following conditions:
+#
+# - Push to the master branch
+# - Publish release
+#
+# The following actions are performed:
+#
+# - Check that the version number matches the current branch or tag
+# - Build the InvenTree docker image
+# - Run suite of unit tests against the build image
+# - Push the compiled, tested image to dockerhub
+
+name: Docker
+
+on:
+  release:
+    types: [ published ]
+
+  push:
+    branches:
+      - 'master'
+
+jobs:
+
+  # Build the docker image
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      python_version: 3.9
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Set Up Python ${{ env.python_version }}
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        with:
+          python-version: ${{ env.python_version }}
+          cache: 'pip'
+      - name: Version Check
+        run: |
+          pip install requests
+          python3 ci/version_check.py
+          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
+      - name: Build Docker Image
+        # Build the development docker image (using docker-compose.yml)
+        run: |
+          docker-compose build
+      - name: Update Docker Image
+        run: |
+          docker-compose run inventree-dev-server invoke update
+          docker-compose run inventree-dev-server invoke setup-dev
+          docker-compose up -d
+          docker-compose run inventree-dev-server invoke wait
+      - name: Run Unit Tests
+        run: |
+          docker-compose run inventree-dev-server invoke test
+          docker-compose down
+      - name: Check Data Directory
+        # The following file structure should have been created by the docker image
+        run: |
+          test -d data
+          test -d data/env
+          test -d data/pgdb
+          test -d data/media
+          test -d data/static
+          test -d data/plugins
+          test -f data/config.yaml
+          test -f data/plugins.txt
+          test -f data/secret_key.txt
+      - name: Set up QEMU
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18 # pin@v2.1.0
+      - name: Set up Docker Buildx
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-buildx-action@95cb08cb2672c73d4ffd2f422e6d11953d2a9c70 # pin@v2.1.0
+      - name: Set up cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@7cc35d7fdbe70d4278a0c96779081e6fac665f88 # pin@v2.8.0
+      - name: Login to Dockerhub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # pin@v2.1.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Extract Docker metadata
+        if: github.event_name != 'pull_request'
+        id: meta
+        uses: docker/metadata-action@12cce9efe0d49980455aaaca9b071c0befcdd702 # pin@v4.1.0
+        with:
+          images: |
+            inventree/inventree
+      - name: Build and Push
+        id: build-and-push
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # pin@v3.2.0
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          target: production
+          tags: ${{ env.docker_tags }}
+          build-args: |
+            commit_hash=${{ env.git_commit_hash }}
+            commit_date=${{ env.git_commit_date }}
+      - name: Sign the published image
+        if: github.event_name != 'pull_request'
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+        run: cosign sign ${{ steps.meta.outputs.tags }}@${{
+          steps.build-and-push.outputs.digest }}

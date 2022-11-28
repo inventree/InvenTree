@@ -1,0 +1,17 @@
+name: 'Migration test'
+description: 'Run migration test sequenze'
+author: 'inventree'
+
+runs:
+    using: 'composite'
+    steps:
+      - name: Data Import Export
+        shell: bash
+        run: |
+          invoke migrate
+          invoke import-fixtures
+          invoke export-records -f data.json
+          python3 ./InvenTree/manage.py flush --noinput
+          invoke migrate
+          invoke import-records -f data.json
+          invoke import-records -f data.json

@@ -1,4 +1,4 @@
-# Create some fasteners 
+# Create some fasteners
 
 - model: part.part
   pk: 1
@@ -69,6 +69,7 @@
     name: 'Widget'
     description: 'A watchamacallit'
     category: 7
+    salable: true
     assembly: true
     trackable: true
     tree_id: 0
@@ -83,6 +84,7 @@
     name: 'Orphan'
     description: 'A part without a category'
     category: null
+    salable: true
     tree_id: 0
     level: 0
     lft: 0
@@ -95,11 +97,24 @@
     name: 'Bob'
     description: 'Can we build it?'
     assembly: true
+    salable: true
     purchaseable: false
     category: 7
     active: False
     IPN: BOB
     revision: A2
+    tree_id: 0
+    level: 0
+    lft: 0
+    rght: 0
+
+- model: part.part
+  pk: 101
+  fields:
+    name: 'Assembly'
+    description: 'A high level assembly'
+    salable: true
+    active: True
     tree_id: 0
     level: 0
     lft: 0
@@ -113,6 +128,7 @@
     description: 'A chair'
     is_template: True
     trackable: true
+    salable: true
     category: 7
     tree_id: 1
     level: 0
@@ -161,6 +177,7 @@
   fields:
     name: 'Green chair variant'
     variant_of: 10003
+    is_template: true
     category: 7
     trackable: true
     tree_id: 1

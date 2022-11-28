@@ -1,9 +1,11 @@
-from django.utils.translation import ugettext_lazy as _
+"""Status codes for InvenTree."""
+
+from django.utils.translation import gettext_lazy as _
 
 
 class StatusCode:
-    """
-    Base class for representing a set of StatusCodes.
+    """Base class for representing a set of StatusCodes.
+
     This is used to map a set of integer values to text.
     """
 
@@ -11,21 +13,15 @@ class StatusCode:
 
     @classmethod
     def render(cls, key, large=False):
-        """
-        Render the value as a HTML label.
-        """
-
+        """Render the value as a HTML label."""
         # If the key cannot be found, pass it back
         if key not in cls.options.keys():
             return key
 
         value = cls.options.get(key, key)
-        color = cls.colors.get(key, 'grey')
+        color = cls.colors.get(key, 'secondary')
 
-        if large:
-            span_class = 'label label-large label-large-{c}'.format(c=color)
-        else:
-            span_class = 'label label-{c}'.format(c=color)
+        span_class = f'badge rounded-pill bg-{color}'
 
         return "<span class='{cl}'>{value}</span>".format(
             cl=span_class,
@@ -34,10 +30,7 @@ class StatusCode:
 
     @classmethod
     def list(cls):
-        """
-        Return the StatusCode options as a list of mapped key / value items
-        """
-
+        """Return the StatusCode options as a list of mapped key / value items."""
         codes = []
 
         for key in cls.options.keys():
@@ -58,28 +51,32 @@ class StatusCode:
 
     @classmethod
     def text(cls, key):
+        """Text for supplied status code."""
         return cls.options.get(key, None)
 
     @classmethod
     def items(cls):
+        """All status code items."""
         return cls.options.items()
 
     @classmethod
     def keys(cls):
+        """All status code keys."""
         return cls.options.keys()
 
     @classmethod
     def labels(cls):
+        """All status code labels."""
         return cls.options.values()
 
     @classmethod
     def label(cls, value):
-        """ Return the status code label associated with the provided value """
+        """Return the status code label associated with the provided value."""
         return cls.options.get(value, value)
 
     @classmethod
     def value(cls, label):
-        """ Return the value associated with the provided label """
+        """Return the value associated with the provided label."""
         for k in cls.options.keys():
             if cls.options[k].lower() == label.lower():
                 return k
@@ -88,9 +85,7 @@ class StatusCode:
 
 
 class PurchaseOrderStatus(StatusCode):
-    """
-    Defines a set of status codes for a PurchaseOrder
-    """
+    """Defines a set of status codes for a PurchaseOrder."""
 
     # Order status codes
     PENDING = 10  # Order is pending (not yet placed)
@@ -110,12 +105,12 @@ class PurchaseOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'blue',
-        PLACED: 'blue',
-        COMPLETE: 'green',
-        CANCELLED: 'red',
-        LOST: 'yellow',
-        RETURNED: 'yellow',
+        PENDING: 'secondary',
+        PLACED: 'primary',
+        COMPLETE: 'success',
+        CANCELLED: 'danger',
+        LOST: 'warning',
+        RETURNED: 'warning',
     }
 
     # Open orders
@@ -133,7 +128,7 @@ class PurchaseOrderStatus(StatusCode):
 
 
 class SalesOrderStatus(StatusCode):
-    """ Defines a set of status codes for a SalesOrder """
+    """Defines a set of status codes for a SalesOrder."""
 
     PENDING = 10  # Order is pending
     SHIPPED = 20  # Order has been shipped to customer
@@ -150,11 +145,11 @@ class SalesOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'blue',
-        SHIPPED: 'green',
-        CANCELLED: 'red',
-        LOST: 'yellow',
-        RETURNED: 'yellow',
+        PENDING: 'secondary',
+        SHIPPED: 'success',
+        CANCELLED: 'danger',
+        LOST: 'warning',
+        RETURNED: 'warning',
     }
 
     # Open orders
@@ -169,6 +164,7 @@ class SalesOrderStatus(StatusCode):
 
 
 class StockStatus(StatusCode):
+    """Status codes for Stock."""
 
     OK = 10  # Item is OK
     ATTENTION = 50  # Item requires attention
@@ -176,11 +172,8 @@ class StockStatus(StatusCode):
     DESTROYED = 60  # Item is destroyed
     REJECTED = 65  # Item is rejected
     LOST = 70  # Item has been lost
+    QUARANTINED = 75  # Item has been quarantined and is unavailable
     RETURNED = 85  # Item has been returned from a customer
-
-    # Any stock code above 100 means that the stock item is not "in stock"
-    # This can be used as a quick check for filtering
-    NOT_IN_STOCK = 100
 
     options = {
         OK: _("OK"),
@@ -189,16 +182,18 @@ class StockStatus(StatusCode):
         DESTROYED: _("Destroyed"),
         LOST: _("Lost"),
         REJECTED: _("Rejected"),
+        QUARANTINED: _("Quarantined"),
         RETURNED: _("Returned"),
     }
 
     colors = {
-        OK: 'green',
-        ATTENTION: 'yellow',
-        DAMAGED: 'red',
-        DESTROYED: 'red',
-        LOST: 'grey',
-        REJECTED: 'red',
+        OK: 'success',
+        ATTENTION: 'warning',
+        DAMAGED: 'danger',
+        DESTROYED: 'danger',
+        LOST: 'dark',
+        REJECTED: 'danger',
+        QUARANTINED: 'info'
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -209,24 +204,9 @@ class StockStatus(StatusCode):
         RETURNED,
     ]
 
-    # The following codes correspond to parts that are 'unavailable'
-    UNAVAILABLE_CODES = [
-        DESTROYED,
-        LOST,
-        REJECTED,
-    ]
-
-    # The following codes are available for receiving goods
-    RECEIVING_CODES = [
-        OK,
-        ATTENTION,
-        DAMAGED,
-        DESTROYED,
-        REJECTED
-    ]
-
 
 class StockHistoryCode(StatusCode):
+    """Status codes for StockHistory."""
 
     LEGACY = 0
 
@@ -255,9 +235,16 @@ class StockHistoryCode(StatusCode):
     SPLIT_FROM_PARENT = 40
     SPLIT_CHILD_ITEM = 42
 
+    # Stock merging operations
+    MERGED_STOCK_ITEMS = 45
+
+    # Convert stock item to variant
+    CONVERTED_TO_VARIANT = 48
+
     # Build order codes
     BUILD_OUTPUT_CREATED = 50
     BUILD_OUTPUT_COMPLETED = 55
+    BUILD_CONSUMED = 57
 
     # Sales order codes
 
@@ -291,11 +278,16 @@ class StockHistoryCode(StatusCode):
         SPLIT_FROM_PARENT: _('Split from parent item'),
         SPLIT_CHILD_ITEM: _('Split child item'),
 
+        MERGED_STOCK_ITEMS: _('Merged stock items'),
+
+        CONVERTED_TO_VARIANT: _('Converted to variant'),
+
         SENT_TO_CUSTOMER: _('Sent to customer'),
         RETURNED_FROM_CUSTOMER: _('Returned from customer'),
 
         BUILD_OUTPUT_CREATED: _('Build order output created'),
         BUILD_OUTPUT_COMPLETED: _('Build order output completed'),
+        BUILD_CONSUMED: _('Consumed by build order'),
 
         RECEIVED_AGAINST_PURCHASE_ORDER: _('Received against purchase order')
 
@@ -303,8 +295,8 @@ class StockHistoryCode(StatusCode):
 
 
 class BuildStatus(StatusCode):
+    """Build status codes."""
 
-    # Build status codes
     PENDING = 10  # Build is pending / active
     PRODUCTION = 20  # BuildOrder is in production
     CANCELLED = 30  # Build was cancelled
@@ -318,10 +310,10 @@ class BuildStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'blue',
-        PRODUCTION: 'blue',
-        COMPLETE: 'green',
-        CANCELLED: 'red',
+        PENDING: 'secondary',
+        PRODUCTION: 'primary',
+        COMPLETE: 'success',
+        CANCELLED: 'danger',
     }
 
     ACTIVE_CODES = [
