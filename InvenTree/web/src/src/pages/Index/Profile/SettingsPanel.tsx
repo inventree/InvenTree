@@ -50,6 +50,24 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
 
     let control = <Text><Trans>Input {item.type} is not known</Trans></Text>
     let setfnc = (value: React.SetStateAction<any>) => { console.log(value) };
+
+    function onChange(value: string | number | boolean | null | undefined) {
+        const val = value?.toString;
+        api.put(`settings/global/${item.key}/`, { value: val }).then((res) => {
+            showNotification({ title: t`Saved changes ${item.key}`, message: t`Changed to ${res.data.value}`, color: 'teal', icon: < IconCheck size={18} />, })
+            if (item.type == Type.Boolean) {
+                setfnc(res.data.value === 'False' ? false : true);
+            } else {
+                setfnc(res.data.value);
+            }
+        }).catch((err) => {
+            const err_msg = err?.response.data.non_field_errors
+            console.log(err_msg);
+            showNotification({ title: t`Error while saving ${item.key}`, message: (err_msg) ? err_msg : t`Error was ${err}`, color: 'red', icon: <IconX size={18} /> })
+        });
+    }
+
+    // Select control
     switch (item.type) {
         case Type.Boolean: {
             const [value, setValue] = useState<boolean>(item.value === 'False' ? false : true);
@@ -78,22 +96,6 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
         default:
             console.log('Error: Unknown type');
     }
-
-    function onChange(value: any) {
-        api.put(`settings/global/${item.key}/`, { value: value.toString() }).then((res) => {
-            showNotification({ title: t`Saved changes ${item.key}`, message: t`Changed to ${res.data.value}`, color: 'teal', icon: < IconCheck size={18} />, })
-            if (item.type == Type.Boolean) {
-                setfnc(res.data.value === 'False' ? false : true);
-            } else {
-                setfnc(res.data.value);
-            }
-        }).catch((err) => {
-            const err_msg = err?.response.data.non_field_errors
-            console.log(err_msg);
-            showNotification({ title: t`Error while saving ${item.key}`, message: (err_msg) ? err_msg : t`Error was ${err}`, color: 'red', icon: <IconX size={18} /> })
-        });
-    }
-
 
     return <Group position="apart" className={classes.itemTopBorder} noWrap my='0' py='0' key={item.pk}>
         <div>
