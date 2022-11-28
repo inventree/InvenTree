@@ -444,8 +444,10 @@ class PurchaseOrderTest(OrderTest):
         # Test with completed orders
         response = self.get(url, data={'include_completed': 'True'}, expected_code=200, format=None)
 
-        number_orders = len(models.PurchaseOrder.objects.filter(target_date__isnull=False))
+        number_orders_incl_completed = len(models.PurchaseOrder.objects.filter(target_date__isnull=False))
 
+        self.assertGreater(number_orders_incl_completed, number_orders)
+        
         # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)
         n_events = 0
@@ -455,7 +457,7 @@ class PurchaseOrderTest(OrderTest):
                 n_events += 1
 
         self.assertGreaterEqual(n_events, 1)
-        self.assertEqual(number_orders, n_events)
+        self.assertEqual(number_orders_incl_completed, n_events)
 
 
 class PurchaseOrderDownloadTest(OrderTest):
@@ -1141,7 +1143,8 @@ class SalesOrderTest(OrderTest):
         # Test with completed orders
         response = self.get(url, data={'include_completed': 'True'}, expected_code=200, format=None)
 
-        number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False))
+        number_orders_incl_complete = len(models.SalesOrder.objects.filter(target_date__isnull=False))
+        self.assertGreater(number_orders_incl_complete, number_orders)
 
         # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)
@@ -1152,7 +1155,7 @@ class SalesOrderTest(OrderTest):
                 n_events += 1
 
         self.assertGreaterEqual(n_events, 1)
-        self.assertEqual(number_orders, n_events)
+        self.assertEqual(number_orders_incl_complete, n_events)
 
 
 class SalesOrderLineItemTest(OrderTest):
