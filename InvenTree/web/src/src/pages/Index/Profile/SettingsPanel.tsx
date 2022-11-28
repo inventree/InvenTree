@@ -1,10 +1,9 @@
 import { Trans, t } from '@lingui/macro';
 import { Container, Skeleton, Title, Badge, NumberInput, TextInput, Chip, Space, Select } from '@mantine/core';
 import { Card, Group, Switch, Text } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { api } from '../../../App';
 import { GlobalSetting, Type } from '../../../contex/states';
 import { InvenTreeStyle } from '../../../globalStyle';
