@@ -447,7 +447,7 @@ class PurchaseOrderTest(OrderTest):
         number_orders_incl_completed = len(models.PurchaseOrder.objects.filter(target_date__isnull=False))
 
         self.assertGreater(number_orders_incl_completed, number_orders)
-        
+
         # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)
         n_events = 0
