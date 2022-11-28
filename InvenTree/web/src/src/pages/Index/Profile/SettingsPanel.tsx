@@ -5,7 +5,7 @@ import { showNotification } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { api } from '../../../App';
-import { GlobalSetting, Type } from '../../../contex/states';
+import { GlobalSetting, Typ, Type } from '../../../contex/states';
 import { InvenTreeStyle } from '../../../globalStyle';
 import { IconCheck, IconX } from '@tabler/icons';
 
@@ -95,6 +95,8 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
 
     return <Group position="apart" className={classes.itemTopBorder} noWrap my='0' py='0' key={item.pk}>
         <div>
+            {item.typ == Typ.Plugin ? <Badge variant="outline"><Trans>Plugin: {item.plugin}</Trans></Badge> : null}
+            {item.typ == Typ.Notification ? <Badge variant="outline"><Trans>Method: {item.method}</Trans></Badge> : null}
             <Group>
                 <Text>{item.name}</Text>
                 {showNames ? <Badge variant='outline' >{item.pk}|{item.key}</Badge> : null}
