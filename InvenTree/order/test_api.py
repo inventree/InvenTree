@@ -400,7 +400,7 @@ class PurchaseOrderTest(OrderTest):
                 self.post(
                     reverse('api-po-issue', kwargs={'pk': po.pk}),
                     {},
-                    expected_code=None
+                    expected_code=201
                 )
 
                 if po.reference in ['PO-11000001', 'PO-11000002']:
@@ -410,7 +410,7 @@ class PurchaseOrderTest(OrderTest):
                         {
                             'accept_incomplete': True,
                         },
-                        expected_code=None
+                        expected_code=201
                     )
 
             elif po.reference in ['PO-11000005', 'PO-11000006']:
@@ -1121,7 +1121,7 @@ class SalesOrderTest(OrderTest):
                     {
                         'accept_incomplete': True,
                     },
-                    expected_code=None
+                    expected_code=201
                 )
 
             elif so.reference in ['SO-11000005', 'SO-11000006']:
