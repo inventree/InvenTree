@@ -130,6 +130,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Include sublocations" %}',
                 description: '{% trans "Include locations" %}',
             },
+            structural: {
+                type: 'bool',
+                title: '{% trans "Structural" %}',
+            },
         };
     }
 
@@ -140,6 +144,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Include subcategories" %}',
                 description: '{% trans "Include subcategories" %}',
+            },
+            structural: {
+                type: 'bool',
+                title: '{% trans "Structural" %}',
             },
             starred: {
                 type: 'bool',
