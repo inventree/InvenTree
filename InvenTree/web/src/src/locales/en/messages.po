@@ -44,6 +44,8 @@ msgid "Your name"
 msgstr "Your name"
 
 #: src/components/AuthenticationForm.tsx:84
+#: src/pages/Index/Profile.tsx:135
+#: src/pages/Index/Profile.tsx:135
 msgid "Username"
 msgstr "Username"
 
@@ -138,8 +140,8 @@ msgid "Profile"
 msgstr "Profile"
 
 #: src/components/nav/Header.tsx:91
-#: src/pages/Index/Profile/Profile.tsx:25
-#: src/pages/Index/Profile/SettingsPanel.tsx:7
+#: src/pages/Index/Profile.tsx:48
+#: src/pages/Index/Profile.tsx:231
 msgid "Settings"
 msgstr "Settings"
 
@@ -172,16 +174,34 @@ msgstr "Logout"
 #~ msgstr "'Home'"
 
 #: src/defaults.tsx:22
+#: src/pages/Index/Home.tsx:7
+msgid "Home"
+msgstr "Home"
+
+#: src/defaults.tsx:22
 #~ msgid "'Part'"
 #~ msgstr "'Part'"
+
+#: src/defaults.tsx:23
+#: src/pages/Index/Part.tsx:7
+msgid "Part"
+msgstr "Part"
 
 #: src/defaults.tsx:28
 #~ msgid "'Website'"
 #~ msgstr "'Website'"
 
+#: src/defaults.tsx:29
+msgid "Website"
+msgstr "Website"
+
 #: src/defaults.tsx:32
 #~ msgid "'GitHub'"
 #~ msgstr "'GitHub'"
+
+#: src/defaults.tsx:34
+msgid "GitHub"
+msgstr "GitHub"
 
 #: src/defaults.tsx:36
 #~ msgid "'Demo'"
@@ -190,24 +210,6 @@ msgstr "Logout"
 #: src/defaults.tsx:9
 #~ msgid "InvenTree Demo"
 #~ msgstr "InvenTree Demo"
-
-#: src/defaults.tsx:22
-#: src/pages/Index/Home.tsx:7
-msgid "Home"
-msgstr "Home"
-
-#: src/defaults.tsx:23
-#: src/pages/Index/Part.tsx:7
-msgid "Part"
-msgstr "Part"
-
-#: src/defaults.tsx:29
-msgid "Website"
-msgstr "Website"
-
-#: src/defaults.tsx:34
-msgid "GitHub"
-msgstr "GitHub"
 
 #: src/defaults.tsx:39
 msgid "Demo"
@@ -297,21 +299,55 @@ msgstr "User"
 msgid "Userinfo"
 msgstr "Userinfo"
 
-#: src/pages/Index/Profile/UserPanel.tsx:87
+#: src/pages/Index/Profile.tsx:125
+#: src/pages/Index/Profile.tsx:125
+msgid "First name"
+msgstr "First name"
+
+#: src/pages/Index/Profile.tsx:127
 msgid "First name: {0}"
 msgstr "First name: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:95
+#: src/pages/Index/Profile.tsx:130
+#: src/pages/Index/Profile.tsx:130
+msgid "Last name"
+msgstr "Last name"
+
+#: src/pages/Index/Profile.tsx:132
 msgid "Last name: {0}"
 msgstr "Last name: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:103
+#: src/pages/Index/Profile.tsx:137
 msgid "Username: {0}"
 msgstr "Username: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:108
+#: src/pages/Index/Profile.tsx:142
 msgid "Submit"
 msgstr "Submit"
+
+#: src/pages/Index/Profile.tsx:199
+msgid "Design"
+msgstr "Design"
+
+#: src/pages/Index/Profile.tsx:203
+msgid "Primary color"
+msgstr "Primary color"
+
+#: src/pages/Index/Profile.tsx:207
+msgid "White color"
+msgstr "White color"
+
+#: src/pages/Index/Profile.tsx:211
+msgid "Black color"
+msgstr "Black color"
+
+#: src/pages/Index/Profile.tsx:215
+msgid "Border Radius"
+msgstr "Border Radius"
+
+#: src/pages/Index/Profile.tsx:219
+msgid "Loader"
+msgstr "Loader"
 
 #: src/pages/Login.tsx:27
 msgid "No selection"

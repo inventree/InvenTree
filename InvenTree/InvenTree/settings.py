@@ -808,7 +808,10 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration(), ],
         traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
-        send_default_pii=True
+        send_default_pii=True,
+        _experiments={
+            "profiles_sample_rate": 1.0,
+        }
     )
     inventree_tags = {
         'testing': TESTING,
