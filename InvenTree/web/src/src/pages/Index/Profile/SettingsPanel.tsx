@@ -85,7 +85,8 @@ function SettingsBlock(item: GlobalSetting, showNames = false): JSX.Element {
             setfnc = setValue
 
             if (item.choices.length > 0) {
-                control = <Select data={item.choices} value={value} onChange={(value) => onChange(value)} />
+                const choices = item.choices.map((choice) => ({ label: choice.display_name, value: choice.value }))
+                control = <Select data={choices} value={value} onChange={(value) => onChange(value)} />
             }
             else {
                 control = <TextInput value={value} onChange={(event) => onChange(event.currentTarget.value)} />;
