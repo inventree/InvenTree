@@ -1086,7 +1086,8 @@ function loadBomTable(table, options={}) {
             }
 
             if (any_pricing) {
-                var html = formatCurrency(min_price) + ' - ' + formatCurrency(max_price);
+
+                var html = formatPriceRange(min_price, max_price);
 
                 if (complete_pricing) {
                     html += makeIconBadge(
