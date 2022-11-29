@@ -29,6 +29,8 @@ import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
 import { de, en, hu } from "make-plural/plurals";
 import { NotificationsProvider } from '@mantine/notifications';
+import { ModalsProvider } from '@mantine/modals';
+import { t } from '@lingui/macro'
 
 // Error tracking
 Sentry.init({
@@ -171,11 +173,13 @@ export default function App() {
       >
         <I18nProvider i18n={i18n}>
           <NotificationsProvider>
-            <AuthProvider>
-              <QueryClientProvider client={queryClient}>
-                <RouterProvider router={router} />
-              </QueryClientProvider>
-            </AuthProvider>
+            <ModalsProvider labels={{ confirm: t`Submit`, cancel: t`Cancel` }}>
+              <AuthProvider>
+                <QueryClientProvider client={queryClient}>
+                  <RouterProvider router={router} />
+                </QueryClientProvider>
+              </AuthProvider>
+            </ModalsProvider>
           </NotificationsProvider>
         </I18nProvider>
       </MantineProvider>
