@@ -35,7 +35,7 @@ function makeBarcodeInput(placeholderText='', hintText='') {
     hintText = hintText || '{% trans "Enter barcode data" %}';
 
     var html = `
-    <div id='barcode_scan_video_container' class='mx-auto' style='width: 240px; display: none;'>
+    <div id='barcode_scan_video_container' style='display: none;'>
         <div id="barcode_scan_video"></div>
     </div>
     <div class='form-group'>
@@ -84,7 +84,7 @@ function startQrScanner() {
 
     // Set continuous focus after delay to ensure camera is running
     setTimeout(function () {
-        html5QrCode.applyVideoConstraints({
+        qrScanner.applyVideoConstraints({
             focusMode: "continuous",
         });
     }, 2000);
