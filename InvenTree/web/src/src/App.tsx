@@ -113,6 +113,9 @@ export async function activateLocale(locale: Locales) {
   const { messages } = await import(`./locales/${locale}/messages.ts`)
   i18n.load(locale, messages)
   i18n.activate(locale)
+
+  // Set api header
+  api.defaults.headers.common['Accept-Language'] = locale;
 }
 
 // Main App
