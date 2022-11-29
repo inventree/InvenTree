@@ -35,7 +35,7 @@ function makeBarcodeInput(placeholderText='', hintText='') {
     hintText = hintText || '{% trans "Enter barcode data" %}';
 
     var html = `
-    <div id='barcode_scan_video_container' style='display: none;'>
+    <div id='barcode_scan_video_container' class="mx-auto" style='width: 100%; max-width: 240px; display: none;'>
         <div id="barcode_scan_video"></div>
     </div>
     <div class='form-group'>
@@ -65,7 +65,7 @@ function startQrScanner() {
     $('#barcode_scan_video_container').show();
 
     const config = {
-        fps: 30,
+        fps: 10,
         qrbox: function(viewfinder_width, viewfinder_height) {
             // qrbox should be 80% of shortest viewfinder edge
             var edge_percentage = 0.8;
@@ -78,16 +78,12 @@ function startQrScanner() {
             };
         },
         aspectRatio: 1,
+        applyVideoConstraints: {
+            focusMode: 'continuous',
+        },
     };
 
     qrScanner.start({facingMode: 'environment'}, config, qrScannerCallback);
-
-    // Set continuous focus after delay to ensure camera is running
-    setTimeout(function() {
-        qrScanner.applyVideoConstraints({
-            focusMode: 'continuous',
-        });
-    }, 2000);
 }
 
 function stopQrScanner() {
