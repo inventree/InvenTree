@@ -710,6 +710,7 @@ function loadPartVariantTable(table, partId, options={}) {
             field: 'name',
             title: '{% trans "Name" %}',
             switchable: false,
+            sortable: true,
             formatter: function(value, row) {
                 var html = '';
 
@@ -760,10 +761,12 @@ function loadPartVariantTable(table, partId, options={}) {
         {
             field: 'IPN',
             title: '{% trans "IPN" %}',
+            sortable: true,
         },
         {
             field: 'revision',
             title: '{% trans "Revision" %}',
+            sortable: true,
         },
         {
             field: 'description',
@@ -772,6 +775,7 @@ function loadPartVariantTable(table, partId, options={}) {
         {
             field: 'in_stock',
             title: '{% trans "Stock" %}',
+            sortable: true,
             formatter: function(value, row) {
 
                 var base_stock = row.in_stock;
