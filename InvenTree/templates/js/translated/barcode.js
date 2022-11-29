@@ -83,9 +83,9 @@ function startQrScanner() {
     qrScanner.start({facingMode: 'environment'}, config, qrScannerCallback);
 
     // Set continuous focus after delay to ensure camera is running
-    setTimeout(function () {
+    setTimeout(function() {
         qrScanner.applyVideoConstraints({
-            focusMode: "continuous",
+            focusMode: 'continuous',
         });
     }, 2000);
 }
@@ -110,7 +110,7 @@ function onCameraAvailable(hasCamera, options) {
             });
             qrScannerCallback = (decodedText, decodedResult) => {
                 onBarcodeScanCompleted(decodedResult.result, options);
-            }
+            };
             $('#barcode_scan_btn').show();
         }
     }
