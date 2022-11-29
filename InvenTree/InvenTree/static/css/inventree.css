@@ -722,6 +722,20 @@ input[type="submit"] {
     display: inline-block !important;
 }
 
+@-moz-document url-prefix() {
+    #barcode_scan_video video {
+        margin-top: calc(-100% * (var(--scanner-upscale) - 1) / 2 + 50%);
+        margin-bottom: calc(-100% * (var(--scanner-upscale) - 1) / 2 + 50%);
+    }
+
+    @media (pointer:coarse) {
+        #barcode_scan_video video {
+            margin-top: calc(-100% * (var(--scanner-upscale)) / 2 - 20%);
+            margin-bottom: calc(-100% * (var(--scanner-upscale)) / 2 - 20%);
+        }
+    }
+}
+
 #barcode_scan_video #qr-shaded-region {
     border: none !important;
     margin: var(--scanner-margin);
