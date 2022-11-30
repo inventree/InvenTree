@@ -34,12 +34,13 @@ export function QrCodeModal({ context, id }: ContextModalProps<{ modalBody: stri
 
     // Scanner functions
     function onScanSuccess(decodedText: string, decodedResult: Html5QrcodeResult) {
-        console.log(`Code matched = ${decodedText}`, decodedResult);
         handlers.append(decodedText);
     }
 
     function onScanFailure(error: string) {
-        console.warn(`Code scan error = ${error}`);
+        if (error != "QR code parse error, error = NotFoundException: No MultiFormat Readers were able to detect the code.") {
+            console.warn(`Code scan error = ${error}`);
+        }
     }
 
     function selectCamera() {
