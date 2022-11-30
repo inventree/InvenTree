@@ -1,37 +1,34 @@
+import { i18n } from '@lingui/core';
+import { t } from '@lingui/macro';
+import { I18nProvider } from '@lingui/react';
 import {
-  MantineProvider,
-  ColorSchemeProvider,
-  ColorScheme,
-  MantineThemeOverride,
+  ColorScheme, ColorSchemeProvider, MantineProvider, MantineThemeOverride
 } from '@mantine/core';
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import ErrorPage from './pages/ErrorPage';
-import Layout from './pages/layout';
-import { Logout } from './pages/Logout';
-import { Login } from './pages/Login';
-import { Part } from './pages/Index/Part';
-import { Home } from './pages/Index/Home';
-import { Profile } from './pages/Index/Profile/Profile';
-import { Dashboard } from './pages/Index/Dashboard';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import axios from 'axios';
-import { AuthProvider } from './contex/AuthContext';
-import { UserProps } from './contex/states';
-import { useLocalState } from './contex/LocalState';
-import { useSessionState } from './contex/SessionState';
-import { useApiState } from './contex/ApiState';
-import { defaultHostList } from './defaults';
+import { ModalsProvider } from '@mantine/modals';
+import { NotificationsProvider } from '@mantine/notifications';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
-import { useEffect, useState } from 'react';
-import { i18n } from '@lingui/core'
-import { I18nProvider } from '@lingui/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import axios from 'axios';
 import { de, en, hu } from "make-plural/plurals";
-import { NotificationsProvider } from '@mantine/notifications';
-import { ModalsProvider } from '@mantine/modals';
-import { t } from '@lingui/macro'
+import { useEffect, useState } from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QrCodeModal } from './components/modals/QrCodeModal';
+import { useApiState } from './contex/ApiState';
+import { AuthProvider } from './contex/AuthContext';
+import { useLocalState } from './contex/LocalState';
+import { useSessionState } from './contex/SessionState';
+import { UserProps } from './contex/states';
+import { defaultHostList } from './defaults';
+import ErrorPage from './pages/ErrorPage';
+import { Dashboard } from './pages/Index/Dashboard';
+import { Home } from './pages/Index/Home';
+import { Part } from './pages/Index/Part';
+import { Profile } from './pages/Index/Profile/Profile';
+import Layout from './pages/layout';
+import { Login } from './pages/Login';
+import { Logout } from './pages/Logout';
 
 // Error tracking
 Sentry.init({

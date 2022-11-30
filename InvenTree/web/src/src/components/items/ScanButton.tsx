@@ -1,7 +1,7 @@
+import { t } from '@lingui/macro';
 import { ActionIcon } from "@mantine/core";
 import { openContextModal } from "@mantine/modals";
 import { IconQrcode } from '@tabler/icons';
-import { t } from '@lingui/macro'
 
 
 export function ScanButton() {

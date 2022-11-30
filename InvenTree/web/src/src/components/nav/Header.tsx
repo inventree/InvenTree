@@ -1,31 +1,21 @@
-import { useState } from 'react';
+import { Trans } from '@lingui/macro';
 import {
-  Container,
-  UnstyledButton,
-  Group,
-  Text,
-  Menu,
-  Tabs
+  Container, Group, Menu,
+  Tabs, Text, UnstyledButton
 } from '@mantine/core';
 import {
-  IconLogout,
-  IconHeart,
-  IconSettings,
   IconChevronDown,
-  IconDashboard,
-  IconUserCircle,
-  IconLanguage,
+  IconDashboard, IconHeart, IconLanguage, IconLogout, IconSettings, IconUserCircle
 } from '@tabler/icons';
+import { useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { languages } from '../../App';
+import { useApiState } from '../../contex/ApiState';
+import { useLocalState } from '../../contex/LocalState';
+import { tabs } from '../../defaults';
+import { InvenTreeStyle } from '../../globalStyle';
 import { ColorToggle } from '../items/ColorToggle';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
-import { useNavigate, useParams } from 'react-router-dom';
-import { InvenTreeStyle } from '../../globalStyle';
-import { Link } from 'react-router-dom';
-import { useLocalState } from '../../contex/LocalState';
-import { useApiState } from '../../contex/ApiState';
-import { tabs } from '../../defaults';
-import { languages } from '../../App';
-import { Trans } from '@lingui/macro'
 import { ScanButton } from '../items/ScanButton';
 
 
