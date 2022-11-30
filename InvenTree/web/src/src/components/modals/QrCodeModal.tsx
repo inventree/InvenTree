@@ -61,7 +61,7 @@ export function QrCodeModal({ context, id, innerProps }: ContextModalProps<{ mod
     }
 
     function stopScan() {
-        if (qrCodeScanner) { // && qrCodeScanner.isScanning) {
+        if (qrCodeScanner && ScanningEnabled) {
             qrCodeScanner.stop().catch((err: string) => {
                 showNotification({ title: t`Error while stopping`, message: err, color: 'red', icon: <IconX size={18} /> })
             });
