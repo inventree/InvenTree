@@ -9,7 +9,7 @@ import { useDocumentVisibility, useLocalStorage } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons';
 
-export function QrCodeModal({ context, id, innerProps }: ContextModalProps<{ modalBody: string }>) {
+export function QrCodeModal({ context, id }: ContextModalProps<{ modalBody: string }>) {
     const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
     const [camId, setCamId] = useLocalStorage<CameraDevice | null>({ key: 'camId', defaultValue: null });
     const [ScanningEnabled, setIsScanning] = useState<boolean>(false);
@@ -22,10 +22,10 @@ export function QrCodeModal({ context, id, innerProps }: ContextModalProps<{ mod
     // Stop/star when leaving or reentering page
     useEffect(() => {
         if (ScanningEnabled && documentState === "hidden") {
-            stopScan();
+            stopScanning();
             setWasAutoPaused(true);
         } else if (wasAutoPaused && documentState === "visible") {
-            mountScan();
+            startScanning();
             setWasAutoPaused(false);
         }
     }, [documentState]);
@@ -38,7 +38,7 @@ export function QrCodeModal({ context, id, innerProps }: ContextModalProps<{ mod
         console.warn(`Code scan error = ${error}`);
     }
 
-    function getCamera() {
+    function selectCamera() {
         Html5Qrcode.getCameras().then(devices => {
             if (devices && devices.length) { setCamId(devices[0]); }
         }).catch(err => {
@@ -46,7 +46,7 @@ export function QrCodeModal({ context, id, innerProps }: ContextModalProps<{ mod
         });
     }
 
-    function mountScan() {
+    function startScanning() {
         if (camId && qrCodeScanner) {
             qrCodeScanner.start(
                 camId.id,
@@ -60,7 +60,7 @@ export function QrCodeModal({ context, id, innerProps }: ContextModalProps<{ mod
         }
     }
 
-    function stopScan() {
+    function stopScanning() {
         if (qrCodeScanner && ScanningEnabled) {
             qrCodeScanner.stop().catch((err: string) => {
                 showNotification({ title: t`Error while stopping`, message: err, color: 'red', icon: <IconX size={18} /> })
@@ -77,15 +77,15 @@ export function QrCodeModal({ context, id, innerProps }: ContextModalProps<{ mod
                 <Badge>{ScanningEnabled ? t`Scanning` : t`Not scanning`}</Badge>
             </Group>
             <Container px={0} id="reader" w={'100%'} mih='300px' />
-            {(!camId) ? <Button onClick={() => getCamera()} ><Trans>Select Camera</Trans></Button> : null}
+            {(!camId) ? <Button onClick={() => selectCamera()} ><Trans>Select Camera</Trans></Button> : null}
             <Group>
-                <Button sx={{ flex: 1 }} onClick={() => mountScan()} disabled={(camId != undefined && ScanningEnabled == true)}><Trans>Start scanning</Trans></Button>
-                <Button sx={{ flex: 1 }} onClick={() => stopScan()} disabled={!ScanningEnabled}><Trans>Stop scanning</Trans></Button>
+                <Button sx={{ flex: 1 }} onClick={() => startScanning()} disabled={(camId != undefined && ScanningEnabled == true)}><Trans>Start scanning</Trans></Button>
+                <Button sx={{ flex: 1 }} onClick={() => stopScanning()} disabled={!ScanningEnabled}><Trans>Stop scanning</Trans></Button>
             </Group>
             <Code>
                 {JSON.stringify(camId)}
             </Code>
-            <Button fullWidth mt="md" color="red" onClick={() => { stopScan(); context.closeModal(id) }}><Trans>Close modal</Trans></Button>
+            <Button fullWidth mt="md" color="red" onClick={() => { stopScanning(); context.closeModal(id) }}><Trans>Close modal</Trans></Button>
         </Stack >
     );
 }
