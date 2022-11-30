@@ -31,6 +31,7 @@ import { de, en, hu } from "make-plural/plurals";
 import { NotificationsProvider } from '@mantine/notifications';
 import { ModalsProvider } from '@mantine/modals';
 import { t } from '@lingui/macro'
+import { QrCodeModal } from './components/modals/QrCodeModal';
 
 // Error tracking
 Sentry.init({
@@ -173,7 +174,7 @@ export default function App() {
       >
         <I18nProvider i18n={i18n}>
           <NotificationsProvider>
-            <ModalsProvider labels={{ confirm: t`Submit`, cancel: t`Cancel` }}>
+            <ModalsProvider labels={{ confirm: t`Submit`, cancel: t`Cancel` }} modals={{ qr: QrCodeModal }}>
               <AuthProvider>
                 <QueryClientProvider client={queryClient}>
                   <RouterProvider router={router} />

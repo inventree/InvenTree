@@ -26,6 +26,7 @@ import { useApiState } from '../../contex/ApiState';
 import { tabs } from '../../defaults';
 import { languages } from '../../App';
 import { Trans } from '@lingui/macro'
+import { ScanButton } from '../items/ScanButton';
 
 
 export function Header() {
@@ -62,6 +63,7 @@ export function Header() {
             {hostList[hostKey].name}|{servername}
           </Group>
           <Group>
+            <ScanButton />
             <ColorToggle />
             <Menu
               width={260}
