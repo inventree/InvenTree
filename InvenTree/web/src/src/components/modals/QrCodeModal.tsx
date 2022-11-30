@@ -5,7 +5,7 @@ import { Html5Qrcode } from "html5-qrcode";
 import { Html5QrcodeResult } from "html5-qrcode/core";
 import { CameraDevice } from "html5-qrcode/camera/core";
 import { useEffect, useState } from 'react';
-import { useLocalStorage } from '@mantine/hooks';
+import { useDocumentVisibility, useLocalStorage } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons';
 
@@ -13,9 +13,22 @@ export function QrCodeModal({ context, id, innerProps }: ContextModalProps<{ mod
     const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
     const [camId, setCamId] = useLocalStorage<CameraDevice | null>({ key: 'camId', defaultValue: null });
     const [ScanningEnabled, setIsScanning] = useState<boolean>(false);
+    const [wasAutoPaused, setWasAutoPaused] = useState<boolean>(false);
+    const documentState = useDocumentVisibility();
 
     // Mount QR code once we are loaded
     useEffect(() => { setQrCodeScanner(new Html5Qrcode("reader")); }, []);
+
+    // Stop/star when leaving or reentering page
+    useEffect(() => {
+        if (ScanningEnabled && documentState === "hidden") {
+            stopScan();
+            setWasAutoPaused(true);
+        } else if (wasAutoPaused && documentState === "visible") {
+            mountScan();
+            setWasAutoPaused(false);
+        }
+    }, [documentState]);
 
     function onScanSuccess(decodedText: string, decodedResult: Html5QrcodeResult) {
         console.log(`Code matched = ${decodedText}`, decodedResult);
