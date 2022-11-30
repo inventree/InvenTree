@@ -1,13 +1,13 @@
-import { ContextModalProps } from '@mantine/modals';
-import { Text, Button, Group, Container, Stack, Badge, Space, ScrollArea } from '@mantine/core';
-import { Trans, t } from '@lingui/macro';
-import { Html5Qrcode } from "html5-qrcode";
-import { Html5QrcodeResult } from "html5-qrcode/core";
-import { CameraDevice } from "html5-qrcode/camera/core";
-import { useEffect, useState } from 'react';
+import { t, Trans } from '@lingui/macro';
+import { Badge, Button, Container, Group, ScrollArea, Space, Stack, Text } from '@mantine/core';
 import { useDocumentVisibility, useListState, useLocalStorage } from '@mantine/hooks';
+import { ContextModalProps } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons';
+import { Html5Qrcode } from "html5-qrcode";
+import { CameraDevice } from "html5-qrcode/camera/core";
+import { Html5QrcodeResult } from "html5-qrcode/core";
+import { useEffect, useState } from 'react';
 import { api } from '../../App';
 
 export function QrCodeModal({ context, id }: ContextModalProps<{ modalBody: string }>) {
