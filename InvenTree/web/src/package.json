@@ -22,7 +22,6 @@
         "@mantine/hooks": "^5.8.4",
         "@mantine/modals": "^5.8.4",
         "@mantine/notifications": "^5.8.4",
-        "@mantine/rte": "^5.8.4",
         "@sentry/react": "^7.22.0",
         "@sentry/tracing": "^7.22.0",
         "@tanstack/react-query": "^4.16.1",
