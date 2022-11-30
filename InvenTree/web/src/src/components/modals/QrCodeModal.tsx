@@ -77,14 +77,17 @@ export function QrCodeModal({ context, id }: ContextModalProps<{ modalBody: stri
                 <Badge>{ScanningEnabled ? t`Scanning` : t`Not scanning`}</Badge>
             </Group>
             <Container px={0} id="reader" w={'100%'} mih='300px' />
-            {(!camId) ? <Button onClick={() => selectCamera()} ><Trans>Select Camera</Trans></Button> : null}
-            <Group>
-                <Button sx={{ flex: 1 }} onClick={() => startScanning()} disabled={(camId != undefined && ScanningEnabled == true)}><Trans>Start scanning</Trans></Button>
-                <Button sx={{ flex: 1 }} onClick={() => stopScanning()} disabled={!ScanningEnabled}><Trans>Stop scanning</Trans></Button>
-            </Group>
-            <Code>
-                {JSON.stringify(camId)}
-            </Code>
+            {(!camId) ? <Button onClick={() => selectCamera()} ><Trans>Select Camera</Trans></Button> :
+                <>
+                    <Group>
+                        <Button sx={{ flex: 1 }} onClick={() => startScanning()} disabled={(camId != undefined && ScanningEnabled == true)}><Trans>Start scanning</Trans></Button>
+                        <Button sx={{ flex: 1 }} onClick={() => stopScanning()} disabled={!ScanningEnabled}><Trans>Stop scanning</Trans></Button>
+                    </Group>
+                    <Code>
+                        {JSON.stringify(camId)}
+                    </Code>
+                </>
+            }
             <Button fullWidth mt="md" color="red" onClick={() => { stopScanning(); context.closeModal(id) }}><Trans>Close modal</Trans></Button>
         </Stack >
     );
