@@ -89,7 +89,7 @@ export function QrCodeModal({ context, id }: ContextModalProps<{ modalBody: stri
                         <Button sx={{ flex: 1 }} onClick={() => stopScanning()} disabled={!ScanningEnabled}><Trans>Stop scanning</Trans></Button>
                     </Group>
                     {values.length == 0 ? <Text color={"grey"}><Trans>No scans yet!</Trans></Text> :
-                        <ScrollArea sx={{ maxHeight: 200 }} type="auto" offsetScrollbars>
+                        <ScrollArea sx={{ height: 200 }} type="auto" offsetScrollbars>
                             {values.map((value, index) => <div key={index}>{value}</div>)}
                         </ScrollArea>
                     }
