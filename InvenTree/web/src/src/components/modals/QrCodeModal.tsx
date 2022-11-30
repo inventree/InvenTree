@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useDocumentVisibility, useListState, useLocalStorage } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons';
+import { api } from '../../App';
 
 export function QrCodeModal({ context, id }: ContextModalProps<{ modalBody: string }>) {
     const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
@@ -34,7 +35,19 @@ export function QrCodeModal({ context, id }: ContextModalProps<{ modalBody: stri
 
     // Scanner functions
     function onScanSuccess(decodedText: string, decodedResult: Html5QrcodeResult) {
+        qrCodeScanner?.pause();
+
         handlers.append(decodedText);
+        api.post('/barcode/', { barcode: decodedText }).then((response) => {
+            showNotification({
+                title: response.data?.success || t`Unknown response`,
+                message: JSON.stringify(response.data),
+                color: response.data?.success ? "teal" : "red",
+            });
+            if (response.data?.url) { window.location.href = response.data.url; }
+        });
+
+        qrCodeScanner?.resume();
     }
 
     function onScanFailure(error: string) {
