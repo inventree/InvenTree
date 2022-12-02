@@ -37,7 +37,16 @@ export function Profile() {
           <SettingsPanel reference='notification' title={t`Notification Settings`} description={t`Settings for the notifications`} />
         </Tabs.Panel>
         <Tabs.Panel value="global-settings">
-          <SettingsPanel reference='global' title={t`Global Server Settings`} description={t`Global Settings for this instance`} />
+          <SettingsPanel reference='global'
+            title={t`Global Server Settings`}
+            description={t`Global Settings for this instance`}
+            sections={[
+              { key: 'abc', name: 'ABC', description: 'ABC description' },
+              { key: 'a1', name: 'A1', description: 'ABC description' },
+              { key: 'a2', name: 'A2', description: 'ABC description' },
+              { key: 'a2', name: 'A3', description: 'ABC description' },
+            ]}
+          />
         </Tabs.Panel>
         <Tabs.Panel value="plugin-settings">
           <SettingsPanel reference='plugin' title={t`Plugin Settings`} description={t`Plugin Settings for this instance`} url='plugin/settings/' />

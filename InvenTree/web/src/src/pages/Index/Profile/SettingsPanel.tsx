@@ -1,41 +1,72 @@
-import { Trans, t } from '@lingui/macro';
-import { Container, Skeleton, Title, Badge, NumberInput, TextInput, Chip, Space, Select } from '@mantine/core';
-import { Card, Group, Switch, Text } from '@mantine/core';
+import { t, Trans } from '@lingui/macro';
+import { Accordion, Badge, Card, Chip, Container, Group, NumberInput, Select, Skeleton, Space, Switch, Text, TextInput, Title } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { api } from '../../../App';
 import { Setting, SettingTyp, SettingType } from '../../../contex/states';
 import { InvenTreeStyle } from '../../../globalStyle';
-import { IconCheck, IconX } from '@tabler/icons';
 
-export function SettingsPanel({ reference, title, description, url }: { reference: string, title: string, description: string, url?: string }) {
+interface Section {
+    key: string;
+    name: string;
+    description: string;
+}
+
+export function SettingsPanel({ reference, title, description, url, sections }: { reference: string, title: string, description: string, url?: string, sections?: Section[] }) {
     function fetchData() {
         return api.get(url ? url : `settings/${reference}/`).then((res) => res.data);
     }
     const { isLoading, data, isError } = useQuery({ queryKey: [`settings-${reference}`], queryFn: fetchData, refetchOnWindowFocus: false });
     const [showNames, setShowNames] = useState<boolean>(false);
 
-    function SwitchesCard({ title, description, data, showNames = false }: { title: string; description: string; data: Setting[]; showNames?: boolean; }) {
+    function SwitchesCard({ title, description, children }: { title: string; description: string; children: JSX.Element }) {
         const { classes } = InvenTreeStyle();
-        const items = data.map((item) => SettingsBlock(item, showNames));
 
         return (
             <Card withBorder className={classes.card}>
                 <Text size="lg" weight={500}>{title}</Text><Text size="xs" color="dimmed" mb="md">{description}</Text>
-                {items}
+                {children}
             </Card>
         );
     }
 
-    const datapane = isLoading ? <Skeleton /> : isError ? <Text>Failed to load</Text> : data ? <SwitchesCard title={title} description={description} data={data} showNames={showNames} /> : <Text>Failed to load</Text>;
+    function LoadingBlock({ children }: { children: JSX.Element }) {
+        if (isLoading)
+            return <Skeleton />
+        else if (isError)
+            return <Text>Failed to load</Text>
+        else if (data)
+            return children
+        else
+            return <Text>Failed to load</Text>
+    }
+
+    function Settings() {
+        return <>{data.map((item: Setting) => SettingsBlock(item, showNames))}</>;
+    }
+    const content = (sections != undefined) ? <Settings /> : <SwitchesCard title={title} description={description}>{<Settings />}</SwitchesCard>
+
 
     return (
         <Container>
             <Title order={3}><Trans>Settings</Trans></Title>
             <Chip checked={showNames} onChange={(value) => setShowNames(value)}><Trans>Show internal names</Trans></Chip>
             <Space h="md" />
-            {datapane}
+
+            {(sections != undefined) ?
+                <Accordion variant="separated">
+                    {sections.map((section) => (
+                        <Accordion.Item value={section.key}>
+                            <Accordion.Control>{section.name}
+                                <Text size={'xs'}>{section.description}</Text></Accordion.Control>
+                            <Accordion.Panel><LoadingBlock>{content}</LoadingBlock></Accordion.Panel>
+                        </Accordion.Item>
+                    ))}
+                </Accordion>
+                :
+                <LoadingBlock>{content}</LoadingBlock>}
         </Container >
     );
 }
