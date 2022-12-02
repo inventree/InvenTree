@@ -20,6 +20,9 @@ on:
   push:
     branches:
       - 'master'
+  pull_request:
+    branches:
+      - 'master'
 
 jobs:
 
@@ -38,7 +41,6 @@ jobs:
         uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
         with:
           python-version: ${{ env.python_version }}
-          cache: 'pip'
       - name: Version Check
         run: |
           pip install requests
