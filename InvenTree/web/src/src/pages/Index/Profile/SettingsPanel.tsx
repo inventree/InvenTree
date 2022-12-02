@@ -46,8 +46,6 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
     function Settings() {
         return <>{data.map((item: Setting) => SettingsBlock(item, showNames))}</>;
     }
-    const content = (sections != undefined) ? <Settings /> : <SwitchesCard title={title} description={description}>{<Settings />}</SwitchesCard>
-
 
     return (
         <Container>
@@ -61,12 +59,12 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
                         <Accordion.Item value={section.key}>
                             <Accordion.Control>{section.name}
                                 <Text size={'xs'}>{section.description}</Text></Accordion.Control>
-                            <Accordion.Panel><LoadingBlock>{content}</LoadingBlock></Accordion.Panel>
+                            <Accordion.Panel><LoadingBlock><Settings /></LoadingBlock></Accordion.Panel>
                         </Accordion.Item>
                     ))}
                 </Accordion>
                 :
-                <LoadingBlock>{content}</LoadingBlock>}
+                <LoadingBlock><SwitchesCard title={title} description={description}>{<Settings />}</SwitchesCard></LoadingBlock>}
         </Container >
     );
 }
