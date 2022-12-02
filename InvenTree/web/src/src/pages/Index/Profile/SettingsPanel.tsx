@@ -33,8 +33,8 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
             return <Text><Trans>Failed to load</Trans></Text>
     }
 
-    function Settings() {
-        return <>{data.map((item: Setting) => SettingsBlock(item, showNames))}</>;
+    function Settings({ data }: { data: Setting[] }) {
+        return <>{data.map((item) => SettingsBlock(item, showNames))}</>;
     }
 
     return (
@@ -49,7 +49,7 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
                         <Accordion.Item value={section.key}>
                             <Accordion.Control>{section.name}
                                 <Text size={'xs'}>{section.description}</Text></Accordion.Control>
-                            <Accordion.Panel><LoadingBlock><Settings /></LoadingBlock></Accordion.Panel>
+                            <Accordion.Panel><LoadingBlock><Settings data={data} /></LoadingBlock></Accordion.Panel>
                         </Accordion.Item>
                     ))}
                 </Accordion>
@@ -57,7 +57,7 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
                 <LoadingBlock>
                     <Card withBorder className={classes.card}>
                         <Text size="lg" weight={500}>{title}</Text><Text size="xs" color="dimmed" mb="md">{description}</Text>
-                        <Settings />
+                        <Settings data={data} />
                     </Card>
                 </LoadingBlock>}
         </Container >
