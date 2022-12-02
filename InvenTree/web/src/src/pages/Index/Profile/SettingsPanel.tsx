@@ -36,11 +36,11 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
         if (isLoading)
             return <Skeleton />
         else if (isError)
-            return <Text>Failed to load</Text>
+            return <Text><Trans>Failed to load</Trans></Text>
         else if (data)
             return children
         else
-            return <Text>Failed to load</Text>
+            return <Text><Trans>Failed to load</Trans></Text>
     }
 
     function Settings() {
