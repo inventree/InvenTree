@@ -20,17 +20,7 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
     }
     const { isLoading, data, isError } = useQuery({ queryKey: [`settings-${reference}`], queryFn: fetchData, refetchOnWindowFocus: false });
     const [showNames, setShowNames] = useState<boolean>(false);
-
-    function SwitchesCard({ title, description, children }: { title: string; description: string; children: JSX.Element }) {
-        const { classes } = InvenTreeStyle();
-
-        return (
-            <Card withBorder className={classes.card}>
-                <Text size="lg" weight={500}>{title}</Text><Text size="xs" color="dimmed" mb="md">{description}</Text>
-                {children}
-            </Card>
-        );
-    }
+    const { classes } = InvenTreeStyle();
 
     function LoadingBlock({ children }: { children: JSX.Element }) {
         if (isLoading)
@@ -64,7 +54,12 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
                     ))}
                 </Accordion>
                 :
-                <LoadingBlock><SwitchesCard title={title} description={description}>{<Settings />}</SwitchesCard></LoadingBlock>}
+                <LoadingBlock>
+                    <Card withBorder className={classes.card}>
+                        <Text size="lg" weight={500}>{title}</Text><Text size="xs" color="dimmed" mb="md">{description}</Text>
+                        <Settings />
+                    </Card>
+                </LoadingBlock>}
         </Container >
     );
 }
