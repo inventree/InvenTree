@@ -8,10 +8,16 @@ import { api } from '../../../App';
 import { Setting, SettingTyp, SettingType } from '../../../contex/states';
 import { InvenTreeStyle } from '../../../globalStyle';
 
+
+interface SectionKeys {
+    key: string;
+    icon?: string;
+}
 interface Section {
     key: string;
     name: string;
-    description: string;
+    description?: string;
+    keys: SectionKeys[];
 }
 
 export function SettingsPanel({ reference, title, description, url, sections }: { reference: string, title: string, description: string, url?: string, sections?: Section[] }) {
@@ -37,6 +43,12 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
         return <>{data.map((item) => SettingsBlock(item, showNames))}</>;
     }
 
+    function filter_data(data: any, section: Section) {
+        if (data)
+            return data.filter((item: SectionKeys) => section.keys.map((key) => key.key).includes(item.key));
+        return data
+    }
+
     return (
         <Container>
             <Title order={3}><Trans>Settings</Trans></Title>
@@ -49,7 +61,7 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
                         <Accordion.Item value={section.key}>
                             <Accordion.Control>{section.name}
                                 <Text size={'xs'}>{section.description}</Text></Accordion.Control>
-                            <Accordion.Panel><LoadingBlock><Settings data={data} /></LoadingBlock></Accordion.Panel>
+                            <Accordion.Panel><LoadingBlock><Settings data={filter_data(data, section)} /></LoadingBlock></Accordion.Panel>
                         </Accordion.Item>
                     ))}
                 </Accordion>
