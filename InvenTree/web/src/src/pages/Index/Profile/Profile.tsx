@@ -155,6 +155,17 @@ export function Profile() {
                   { key: 'SALESORDER_EDIT_COMPLETED_ORDERS', icon: 'fa-edit' },
                 ]
               },
+              {
+                key: 'plugin', name: 'Plugin Settings', keys: [
+                  { key: 'ENABLE_PLUGINS_SCHEDULE', icon: 'fa-calendar-alt' },
+                  { key: 'ENABLE_PLUGINS_EVENTS', icon: 'fa-reply-all' },
+                  { key: 'ENABLE_PLUGINS_URL', icon: 'fa-link' },
+                  { key: 'ENABLE_PLUGINS_NAVIGATION', icon: 'fa-sitemap' },
+                  { key: 'ENABLE_PLUGINS_APP', icon: 'fa-rocket' },
+                  { key: 'PLUGIN_ON_STARTUP' },
+                  { key: 'PLUGIN_CHECK_SIGNATURES' },
+                ]
+              },
             ]}
           />
         </Tabs.Panel>
