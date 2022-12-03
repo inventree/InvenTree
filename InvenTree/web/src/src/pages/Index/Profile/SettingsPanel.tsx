@@ -1,41 +1,77 @@
-import { Trans, t } from '@lingui/macro';
-import { Container, Skeleton, Title, Badge, NumberInput, TextInput, Chip, Space, Select } from '@mantine/core';
-import { Card, Group, Switch, Text } from '@mantine/core';
+import { t, Trans } from '@lingui/macro';
+import { Accordion, Badge, Card, Chip, Container, Group, NumberInput, Select, Skeleton, Space, Switch, Text, TextInput, Title } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { api } from '../../../App';
 import { Setting, SettingTyp, SettingType } from '../../../contex/states';
 import { InvenTreeStyle } from '../../../globalStyle';
-import { IconCheck, IconX } from '@tabler/icons';
 
-export function SettingsPanel({ reference, title, description, url }: { reference: string, title: string, description: string, url?: string }) {
+
+interface SectionKeys {
+    key: string;
+    icon?: string;
+}
+interface Section {
+    key: string;
+    name: string;
+    description?: string;
+    keys: SectionKeys[];
+}
+
+export function SettingsPanel({ reference, title, description, url, sections }: { reference: string, title: string, description: string, url?: string, sections?: Section[] }) {
     function fetchData() {
         return api.get(url ? url : `settings/${reference}/`).then((res) => res.data);
     }
     const { isLoading, data, isError } = useQuery({ queryKey: [`settings-${reference}`], queryFn: fetchData, refetchOnWindowFocus: false });
     const [showNames, setShowNames] = useState<boolean>(false);
+    const { classes } = InvenTreeStyle();
 
-    function SwitchesCard({ title, description, data, showNames = false }: { title: string; description: string; data: Setting[]; showNames?: boolean; }) {
-        const { classes } = InvenTreeStyle();
-        const items = data.map((item) => SettingsBlock(item, showNames));
-
-        return (
-            <Card withBorder className={classes.card}>
-                <Text size="lg" weight={500}>{title}</Text><Text size="xs" color="dimmed" mb="md">{description}</Text>
-                {items}
-            </Card>
-        );
+    function LoadingBlock({ children }: { children: JSX.Element }) {
+        if (isLoading)
+            return <Skeleton />
+        else if (isError)
+            return <Text><Trans>Failed to load</Trans></Text>
+        else if (data)
+            return children
+        else
+            return <Text><Trans>Failed to load</Trans></Text>
     }
 
-    const datapane = isLoading ? <Skeleton /> : isError ? <Text>Failed to load</Text> : data ? <SwitchesCard title={title} description={description} data={data} showNames={showNames} /> : <Text>Failed to load</Text>;
+    function Settings({ data }: { data: Setting[] }) {
+        return <>{data.map((item) => SettingsBlock(item, showNames))}</>;
+    }
+
+    function filter_data(data: any, section: Section) {
+        if (data)
+            return data.filter((item: SectionKeys) => section.keys.map((key) => key.key).includes(item.key));
+        return data
+    }
 
     return (
         <Container>
             <Title order={3}><Trans>Settings</Trans></Title>
             <Chip checked={showNames} onChange={(value) => setShowNames(value)}><Trans>Show internal names</Trans></Chip>
             <Space h="md" />
-            {datapane}
+
+            {(sections != undefined) ?
+                <Accordion variant="separated">
+                    {sections.map((section) => (
+                        <Accordion.Item value={section.key}>
+                            <Accordion.Control>{section.name}
+                                <Text size={'xs'}>{section.description}</Text></Accordion.Control>
+                            <Accordion.Panel><LoadingBlock><Settings data={filter_data(data, section)} /></LoadingBlock></Accordion.Panel>
+                        </Accordion.Item>
+                    ))}
+                </Accordion>
+                :
+                <LoadingBlock>
+                    <Card withBorder className={classes.card}>
+                        <Text size="lg" weight={500}>{title}</Text><Text size="xs" color="dimmed" mb="md">{description}</Text>
+                        <Settings data={data} />
+                    </Card>
+                </LoadingBlock>}
         </Container >
     );
 }
