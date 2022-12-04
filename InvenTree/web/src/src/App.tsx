@@ -11,7 +11,6 @@ import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import axios from 'axios';
-import { de, en, hu } from "make-plural/plurals";
 import { useEffect, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QrCodeModal } from './components/modals/QrCodeModal';
@@ -21,6 +20,7 @@ import { useLocalState } from './context/LocalState';
 import { useSessionState } from './context/SessionState';
 import { UserProps } from './context/states';
 import { defaultHostList } from './defaults';
+import { activateLocale, loadLocales, Locales } from './translation';
 import ErrorPage from './pages/ErrorPage';
 import { Dashboard } from './pages/Index/Dashboard';
 import { Home } from './pages/Index/Home';
@@ -99,26 +99,6 @@ const router = createBrowserRouter([
   }
 ]);
 
-// Translations
-export type Locales = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
-export const languages: Locales[] = ['en', 'de', 'hu'];
-i18n.loadLocaleData({
-  de: { plurals: de },
-  en: { plurals: en },
-  hu: { plurals: hu },
-}
-);
-
-export async function activateLocale(locale: Locales) {
-  const { messages } = await import(`./locales/${locale}/messages.ts`)
-  i18n.load(locale, messages)
-  i18n.activate(locale)
-
-  // Set api header
-  api.defaults.headers.common['Accept-Language'] = locale;
-}
-
-
 function ThemeContext({ children }: { children: any }) {
   const [primaryColor, whiteColor, blackColor, radius, loader] = useLocalState((state) => [state.primaryColor, state.whiteColor, state.blackColor, state.radius, state.loader]);
 
@@ -184,6 +164,7 @@ export default function App() {
   }
 
   // Language
+  loadLocales();
   useEffect(() => { activateLocale(language) }, [language])
 
   // Main App component
