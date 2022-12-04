@@ -20,7 +20,6 @@ import { useLocalState } from './context/LocalState';
 import { useSessionState } from './context/SessionState';
 import { UserProps } from './context/states';
 import { defaultHostList } from './defaults';
-import { activateLocale, loadLocales, Locales } from './translation';
 import ErrorPage from './pages/ErrorPage';
 import { Dashboard } from './pages/Index/Dashboard';
 import { Home } from './pages/Index/Home';
@@ -29,13 +28,14 @@ import { Profile } from './pages/Index/Profile/Profile';
 import Layout from './pages/layout';
 import { Login } from './pages/Login';
 import { Logout } from './pages/Logout';
+import { activateLocale, loadLocales } from './translation';
 
 // Error tracking
-// Sentry.init({
-//   dsn: 'https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920',
-//   integrations: [new BrowserTracing()],
-//   tracesSampleRate: 1.0
-// });
+Sentry.init({
+  dsn: 'https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920',
+  integrations: [new BrowserTracing()],
+  tracesSampleRate: 1.0
+});
 
 // API
 export const api = axios.create({});
