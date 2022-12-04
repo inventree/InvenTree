@@ -31,11 +31,11 @@ import { Login } from './pages/Login';
 import { Logout } from './pages/Logout';
 
 // Error tracking
-Sentry.init({
-  dsn: 'https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920',
-  integrations: [new BrowserTracing()],
-  tracesSampleRate: 1.0
-});
+// Sentry.init({
+//   dsn: 'https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920',
+//   integrations: [new BrowserTracing()],
+//   tracesSampleRate: 1.0
+// });
 
 // API
 export const api = axios.create({});
@@ -118,9 +118,9 @@ export async function activateLocale(locale: Locales) {
   api.defaults.headers.common['Accept-Language'] = locale;
 }
 
-// Main App
-export default function App() {
-  const [hostList, primaryColor, whiteColor, blackColor, radius, loader, language] = useLocalState((state) => [state.hostList, state.primaryColor, state.whiteColor, state.blackColor, state.radius, state.loader, state.language]);
+
+function ThemeContext({ children }: { children: any }) {
+  const [primaryColor, whiteColor, blackColor, radius, loader] = useLocalState((state) => [state.primaryColor, state.whiteColor, state.blackColor, state.radius, state.loader]);
 
   // Color Scheme
   const preferredColorScheme = useColorScheme();
@@ -140,6 +140,32 @@ export default function App() {
     loader: loader,
     defaultRadius: radius,
   };
+
+  return (
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
+    >
+      <MantineProvider
+        theme={myTheme}
+        withGlobalStyles
+        withNormalizeCSS
+      >
+        <NotificationsProvider>
+          <ModalsProvider labels={{ confirm: t`Submit`, cancel: t`Cancel` }} modals={{ qr: QrCodeModal }}>
+
+            {children}
+
+          </ModalsProvider>
+        </NotificationsProvider>
+      </MantineProvider>
+    </ColorSchemeProvider>
+  )
+}
+
+// Main App
+export default function App() {
+  const [hostList, language] = useLocalState((state) => [state.hostList, state.language]);
 
   // Session initialization
   if (Object.keys(hostList).length === 0) {
@@ -161,27 +187,13 @@ export default function App() {
   // Main App component
   return (
     <I18nProvider i18n={i18n}>
-      <ColorSchemeProvider
-        colorScheme={colorScheme}
-        toggleColorScheme={toggleColorScheme}
-      >
-        <MantineProvider
-          theme={myTheme}
-          withGlobalStyles
-          withNormalizeCSS
-        >
-
-          <NotificationsProvider>
-            <ModalsProvider labels={{ confirm: t`Submit`, cancel: t`Cancel` }} modals={{ qr: QrCodeModal }}>
-              <AuthProvider>
-                <QueryClientProvider client={queryClient}>
-                  <RouterProvider router={router} />
-                </QueryClientProvider>
-              </AuthProvider>
-            </ModalsProvider>
-          </NotificationsProvider>
-        </MantineProvider>
-      </ColorSchemeProvider>
+      <ThemeContext>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </AuthProvider>
+      </ThemeContext>
     </I18nProvider>
   );
 }
