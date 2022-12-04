@@ -43,9 +43,12 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
         return <>{data.map((item) => SettingsBlock(item, showNames))}</>;
     }
 
-    function filter_data(data: any, section: Section) {
-        if (data)
-            return data.filter((item: SectionKeys) => section.keys.map((key) => key.key).includes(item.key));
+    function filter_data(data: Setting[], section: Section) {
+        if (data) {
+            return section.keys.map((key) => {
+                return data.filter((item: Setting) => item.key === key.key)[0];
+            });
+        }
         return data
     }
 
