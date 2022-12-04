@@ -160,16 +160,17 @@ export default function App() {
 
   // Main App component
   return (
-    <ColorSchemeProvider
-      colorScheme={colorScheme}
-      toggleColorScheme={toggleColorScheme}
-    >
-      <MantineProvider
-        theme={myTheme}
-        withGlobalStyles
-        withNormalizeCSS
+    <I18nProvider i18n={i18n}>
+      <ColorSchemeProvider
+        colorScheme={colorScheme}
+        toggleColorScheme={toggleColorScheme}
       >
-        <I18nProvider i18n={i18n}>
+        <MantineProvider
+          theme={myTheme}
+          withGlobalStyles
+          withNormalizeCSS
+        >
+
           <NotificationsProvider>
             <ModalsProvider labels={{ confirm: t`Submit`, cancel: t`Cancel` }} modals={{ qr: QrCodeModal }}>
               <AuthProvider>
@@ -179,8 +180,8 @@ export default function App() {
               </AuthProvider>
             </ModalsProvider>
           </NotificationsProvider>
-        </I18nProvider>
-      </MantineProvider>
-    </ColorSchemeProvider>
+        </MantineProvider>
+      </ColorSchemeProvider>
+    </I18nProvider>
   );
 }
