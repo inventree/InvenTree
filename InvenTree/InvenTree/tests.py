@@ -773,7 +773,7 @@ class TestSettings(helpers.InvenTreeTestCase):
         # make sure to clean up
         settings.TESTING_ENV = False
 
-    def x_test_initial_install(self):
+    def test_initial_install(self):
         """Test if install of plugins on startup works."""
         from plugin import registry
 
