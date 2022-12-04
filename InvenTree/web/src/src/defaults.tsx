@@ -1,4 +1,4 @@
-import { HostList } from './contex/states';
+import { HostList } from './context/states';
 import { MantineSize } from '@mantine/core';
 import { Trans } from '@lingui/macro'
 

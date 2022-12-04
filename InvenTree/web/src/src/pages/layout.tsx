@@ -4,7 +4,7 @@ import { Container, Flex, Space } from '@mantine/core';
 
 import { Footer } from '../components/nav/Footer';
 import { InvenTreeStyle } from '../globalStyle';
-import { ProtectedRoute } from '../contex/AuthContext';
+import { ProtectedRoute } from '../context/AuthContext';
 
 export default function Layout() {
   const { classes } = InvenTreeStyle();

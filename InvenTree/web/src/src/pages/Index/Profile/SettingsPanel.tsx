@@ -6,7 +6,7 @@ import { IconCheck, IconX } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { api } from '../../../App';
-import { Setting, SettingTyp, SettingType } from '../../../contex/states';
+import { Setting, SettingTyp, SettingType } from '../../../context/states';
 import { InvenTreeStyle } from '../../../globalStyle';
 
 

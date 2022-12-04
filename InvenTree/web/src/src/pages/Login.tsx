@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { Center, Container, Group, Select, Text, Stack } from '@mantine/core';
-import { useAuth } from '../contex/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { AuthenticationForm } from '../components/AuthenticationForm';
-import { useLocalState } from '../contex/LocalState';
+import { useLocalState } from '../context/LocalState';
 import { fetchSession } from '../App';
 import { useToggle } from '@mantine/hooks';
 import { EditButton } from '../components/items/EditButton';
 import { HostOptionsForm } from '../components/HostOptionsForm';
-import { HostList } from '../contex/states';
+import { HostList } from '../context/states';
 import { Trans, t } from '@lingui/macro'
 
 
