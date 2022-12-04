@@ -1,9 +1,10 @@
 import { t, Trans } from '@lingui/macro';
 import { Accordion, Badge, Card, Chip, Container, Group, NumberInput, Select, Skeleton, Space, Switch, Text, TextInput, Title } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../../../App';
 import { Setting, SettingTyp, SettingType } from '../../../contex/states';
 import { InvenTreeStyle } from '../../../globalStyle';
@@ -125,7 +126,12 @@ function SettingsBlock(item: Setting, url: string, showNames = false): JSX.Eleme
                 control = <Select searchable data={choices} value={value} onChange={(value) => onChange(value)} />
             }
             else {
-                control = <TextInput value={value} onChange={(event) => onChange(event.currentTarget.value)} />;
+                const [debouncedValue] = useDebouncedValue(value, 500);
+                useEffect(() => {
+                    if (item.value !== debouncedValue) { onChange(debouncedValue); }
+                }, [debouncedValue]);
+
+                control = <TextInput value={value} onChange={(event) => setValue(event.currentTarget.value)} />;
             }
             break;
         }
