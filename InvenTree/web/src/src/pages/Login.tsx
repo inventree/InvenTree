@@ -3,7 +3,7 @@ import { Center, Container, Group, Select, Text, Stack } from '@mantine/core';
 import { useAuth } from '../context/AuthContext';
 import { AuthenticationForm } from '../components/AuthenticationForm';
 import { useLocalState } from '../context/LocalState';
-import { fetchSession } from '../App';
+import { fetchServerSession } from '../App';
 import { useToggle } from '@mantine/hooks';
 import { EditButton } from '../components/items/EditButton';
 import { HostOptionsForm } from '../components/HostOptionsForm';
@@ -47,7 +47,7 @@ export function Login() {
       useLocalState.setState({ lastUsername: username });
       navigate('/');
     });
-    fetchSession();
+    fetchServerSession();
   }
   function Register(name: string, username: string, password: string) {
     // TODO: Register

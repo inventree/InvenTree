@@ -49,7 +49,7 @@ export function setApiDefaults() {
 export const queryClient = new QueryClient();
 
 // States
-export async function fetchSession() {
+export async function fetchServerSession() {
   // Fetch user data
   await api.get('/user/me/').then((response) => {
     const user: UserProps = {
@@ -167,18 +167,20 @@ function ThemeContext({ children }: { children: any }) {
 export default function App() {
   const [hostList, language] = useLocalState((state) => [state.hostList, state.language]);
 
-  // Session initialization
+  // Local state initialization
   if (Object.keys(hostList).length === 0) {
     console.log('Loading default host list');
     useLocalState.setState({ hostList: defaultHostList });
   }
   setApiDefaults();
-  const [fetchedSession, setFetchedSession] = useState(false);
+
+  // Server Session
+  const [fetchedServerSession, setFetchedServerSession] = useState(false);
   const sessionState = useSessionState.getState();
   const [token] = sessionState.token ? [sessionState.token] : [null];
-  if (token && !fetchedSession) {
-    setFetchedSession(true);
-    fetchSession();
+  if (token && !fetchedServerSession) {
+    setFetchedServerSession(true);
+    fetchServerSession();
   }
 
   // Language
