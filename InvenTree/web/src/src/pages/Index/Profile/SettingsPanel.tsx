@@ -21,8 +21,9 @@ interface Section {
 }
 
 export function SettingsPanel({ reference, title, description, url, sections }: { reference: string, title: string, description: string, url?: string, sections?: Section[] }) {
+    const panel_url = url ? url : `settings/${reference}/`
     function fetchData() {
-        return api.get(url ? url : `settings/${reference}/`).then((res) => res.data);
+        return api.get(panel_url).then((res) => res.data);
     }
     const { isLoading, data, isError } = useQuery({ queryKey: [`settings-${reference}`], queryFn: fetchData, refetchOnWindowFocus: false });
     const [showNames, setShowNames] = useState<boolean>(false);
@@ -40,7 +41,7 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
     }
 
     function Settings({ data }: { data: Setting[] }) {
-        return <>{data.map((item) => SettingsBlock(item, showNames))}</>;
+        return <>{data.map((item) => SettingsBlock(item, panel_url, showNames))}</>;
     }
 
     function filter_data(data: Setting[], section: Section) {
@@ -79,7 +80,7 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
     );
 }
 
-function SettingsBlock(item: Setting, showNames = false): JSX.Element {
+function SettingsBlock(item: Setting, url: string, showNames = false): JSX.Element {
     const { classes } = InvenTreeStyle();
 
     let control = <Text><Trans>Input {item.type} is not known</Trans></Text>
@@ -87,7 +88,7 @@ function SettingsBlock(item: Setting, showNames = false): JSX.Element {
 
     function onChange(value: string | number | boolean | null | undefined) {
         const val = value?.toString();
-        api.put(`settings/global/${item.key}/`, { value: val }).then((res) => {
+        api.put(`${url}${item.key}/`, { value: val }).then((res) => {
             showNotification({ title: t`Saved changes ${item.key}`, message: t`Changed to ${res.data.value}`, color: 'teal', icon: < IconCheck size={18} />, })
             if (item.type == SettingType.Boolean) {
                 setfnc(res.data.value === 'False' ? false : true);
