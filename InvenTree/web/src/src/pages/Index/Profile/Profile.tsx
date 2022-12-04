@@ -31,7 +31,71 @@ export function Profile() {
           <UserPanel />
         </Tabs.Panel>
         <Tabs.Panel value="user-settings">
-          <SettingsPanel reference='user' title={t`User Settings`} description={t`Settings for the current user`} />
+          <SettingsPanel reference='user' title={t`User Settings`} description={t`Settings for the current user`} sections={
+            [
+              {
+                key: 'user-home', name: t`Home Page Settings`, keys: [
+                  { key: 'HOMEPAGE_PART_STARRED', icon: 'fa-bell' },
+                  { key: 'HOMEPAGE_CATEGORY_STARRED', icon: 'fa-bell' },
+                  { key: 'HOMEPAGE_PART_LATEST', icon: 'fa-history' },
+                  { key: 'PART_RECENT_COUNT', icon: 'fa-clock' },
+                  { key: 'HOMEPAGE_BOM_REQUIRES_VALIDATION' },
+                  { key: 'HOMEPAGE_STOCK_RECENT', icon: 'fa-history' },
+                  { key: 'STOCK_RECENT_COUNT', icon: 'fa-clock' },
+                  { key: 'HOMEPAGE_STOCK_LOW' },
+                  { key: 'HOMEPAGE_SHOW_STOCK_DEPLETED' },
+                  { key: 'HOMEPAGE_BUILD_STOCK_NEEDED' },
+                  { key: 'HOMEPAGE_STOCK_EXPIRED', icon: 'fa-calendar-alt' },
+                  { key: 'HOMEPAGE_STOCK_STALE', icon: 'fa-calendar-alt' },
+                  { key: 'HOMEPAGE_BUILD_PENDING' },
+                  { key: 'HOMEPAGE_BUILD_OVERDUE' },
+                  { key: 'HOMEPAGE_PO_OUTSTANDING' },
+                  { key: 'HOMEPAGE_PO_OVERDUE' },
+                  { key: 'HOMEPAGE_SO_OUTSTANDING' },
+                  { key: 'HOMEPAGE_SO_OVERDUE' },
+                  { key: 'HOMEPAGE_NEWS' },
+                ]
+              },
+              {
+                key: 'user-search', name: t`Search Settings`, keys: [
+                  { key: 'SEARCH_PREVIEW_SHOW_PARTS', icon: 'fa-shapes' },
+                  { key: 'SEARCH_HIDE_INACTIVE_PARTS', icon: 'fa-eye-slash' },
+                  { key: 'SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS', icon: 'fa-building' },
+                  { key: 'SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS', icon: 'fa-industry' },
+                  { key: 'SEARCH_PREVIEW_SHOW_CATEGORIES', icon: 'fa-sitemap' },
+                  { key: 'SEARCH_PREVIEW_SHOW_STOCK', icon: 'fa-boxes' },
+                  { key: 'SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK', icon: 'fa-eye-slash' },
+                  { key: 'SEARCH_PREVIEW_SHOW_LOCATIONS', icon: 'fa-sitemap' },
+                  { key: 'SEARCH_PREVIEW_SHOW_COMPANIES', icon: 'fa-building' },
+                  { key: 'SEARCH_PREVIEW_SHOW_BUILD_ORDERS', icon: 'fa-tools' },
+                  { key: 'SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS', icon: 'fa-shopping-cart' },
+                  { key: 'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS', icon: 'fa-eye-slash' },
+                  { key: 'SEARCH_PREVIEW_SHOW_SALES_ORDERS', icon: 'fa-truck' },
+                  { key: 'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS', icon: 'fa-eye-slash' },
+                  { key: 'SEARCH_PREVIEW_RESULTS', icon: 'fa-search' },
+                ]
+              },
+              {
+                key: 'user-labels', name: t`Label Settings`, keys: [
+                  { key: 'LABEL_INLINE', icon: 'fa-tag' },
+                ]
+              },
+              {
+                key: 'user-reports', name: t`Report Settings`, keys: [
+                  { key: 'REPORT_INLINE', icon: 'fa-file-pdf' },
+                ]
+              },
+              {
+                key: 'user-display', name: t`Display Settings`, keys: [
+                  { key: 'STICKY_HEADER', icon: 'fa-bars' },
+                  { key: 'DATE_DISPLAY_FORMAT', icon: 'fa-calendar-alt' },
+                  { key: 'FORMS_CLOSE_USING_ESCAPE', icon: 'fa-window-close' },
+                  { key: 'PART_SHOW_QUANTITY_IN_FORMS', icon: 'fa-hashtag' },
+                  { key: 'DISPLAY_SCHEDULE_TAB', icon: 'fa-calendar-alt' },
+                  { key: 'TABLE_STRING_MAX_LENGTH', icon: 'fa-table' },
+                ]
+              }
+            ]} />
         </Tabs.Panel>
         <Tabs.Panel value="notification-settings">
           <SettingsPanel reference='notification' title={t`Notification Settings`} description={t`Settings for the notifications`} />
