@@ -10,10 +10,15 @@ export type Locales = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
 export const languages: Locales[] = ['en', 'de', 'hu'];
 
 // Context
+i18n.loadLocaleData({
+    de: { plurals: de },
+    en: { plurals: en },
+    hu: { plurals: hu },
+});
+
 export function LanguageContext({ children }: { children: JSX.Element }) {
     const [language] = useLocalState((state) => [state.language]);
 
-    loadLocales();
     useEffect(() => { activateLocale(language) }, [language])
 
     return (
@@ -23,14 +28,6 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
     )
 }
 
-// Functions
-export function loadLocales() {
-    i18n.loadLocaleData({
-        de: { plurals: de },
-        en: { plurals: en },
-        hu: { plurals: hu },
-    });
-}
 
 export async function activateLocale(locale: Locales) {
     const { messages } = await import(`../locales/${locale}/messages.ts`)
