@@ -3,8 +3,8 @@ import { ColorScheme, ColorSchemeProvider, MantineProvider, MantineThemeOverride
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
 import { NotificationsProvider } from '@mantine/notifications';
-import { QrCodeModal } from './components/modals/QrCodeModal';
-import { useLocalState } from './context/LocalState';
+import { QrCodeModal } from '../components/modals/QrCodeModal';
+import { useLocalState } from './LocalState';
 
 
 export function ThemeContext({ children }: { children: JSX.Element; }) {
