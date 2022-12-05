@@ -1,10 +1,20 @@
 import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { de, en, hu } from "make-plural/plurals";
 import { api } from './App';
 
 // Definitions
 export type Locales = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
 export const languages: Locales[] = ['en', 'de', 'hu'];
+
+// Context
+export function LanguageContext({ children }: { children: JSX.Element }) {
+    return (
+        <I18nProvider i18n={i18n}>
+            {children}
+        </I18nProvider>
+    )
+}
 
 // Functions
 export function loadLocales() {

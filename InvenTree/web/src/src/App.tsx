@@ -1,6 +1,4 @@
-import { i18n } from '@lingui/core';
 import { t } from '@lingui/macro';
-import { I18nProvider } from '@lingui/react';
 import {
   ColorScheme, ColorSchemeProvider, MantineProvider, MantineThemeOverride
 } from '@mantine/core';
@@ -28,7 +26,7 @@ import { Profile } from './pages/Index/Profile/Profile';
 import Layout from './pages/layout';
 import { Login } from './pages/Login';
 import { Logout } from './pages/Logout';
-import { activateLocale, loadLocales } from './translation';
+import { activateLocale, LanguageContext, loadLocales } from './translation';
 
 // Error tracking
 Sentry.init({
@@ -169,7 +167,7 @@ export default function App() {
 
   // Main App component
   return (
-    <I18nProvider i18n={i18n}>
+    <LanguageContext>
       <ThemeContext>
         <AuthProvider>
           <QueryClientProvider client={queryClient}>
@@ -177,6 +175,6 @@ export default function App() {
           </QueryClientProvider>
         </AuthProvider>
       </ThemeContext>
-    </I18nProvider>
+    </LanguageContext>
   );
 }
