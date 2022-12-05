@@ -6,7 +6,7 @@ import { IconCheck, IconX } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { api } from '../../../App';
-import { Setting, SettingTyp, SettingType } from '../../../contex/states';
+import { Setting, SettingTyp, SettingType } from '../../../context/states';
 import { InvenTreeStyle } from '../../../globalStyle';
 
 
@@ -63,7 +63,7 @@ export function SettingsPanel({ reference, title, description, url, sections }: 
             {(sections != undefined) ?
                 <Accordion variant="separated">
                     {sections.map((section) => (
-                        <Accordion.Item value={section.key}>
+                        <Accordion.Item key={section.key} value={section.key}>
                             <Accordion.Control>{section.name}
                                 <Text size={'xs'}>{section.description}</Text></Accordion.Control>
                             <Accordion.Panel><LoadingBlock><Settings data={filter_data(data, section)} /></LoadingBlock></Accordion.Panel>

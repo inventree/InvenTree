@@ -9,9 +9,9 @@ import {
 } from '@tabler/icons';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { languages } from '../../App';
-import { useApiState } from '../../contex/ApiState';
-import { useLocalState } from '../../contex/LocalState';
+import { languages } from "../../context/LanguageContext";
+import { useApiState } from '../../context/ApiState';
+import { useLocalState } from '../../context/LocalState';
 import { tabs } from '../../defaults';
 import { InvenTreeStyle } from '../../globalStyle';
 import { ColorToggle } from '../items/ColorToggle';

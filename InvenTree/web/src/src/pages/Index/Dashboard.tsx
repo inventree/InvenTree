@@ -2,7 +2,7 @@ import { Group } from '@mantine/core';
 import { SimpleGrid, Chip } from '@mantine/core';
 import { DashboardItemProxy } from '../../components/DashboardItemProxy';
 import { StylishText } from '../../components/items/StylishText';
-import { useLocalState } from '../../contex/LocalState';
+import { useLocalState } from '../../context/LocalState';
 import { Trans, t } from '@lingui/macro'
 
 export function Dashboard() {

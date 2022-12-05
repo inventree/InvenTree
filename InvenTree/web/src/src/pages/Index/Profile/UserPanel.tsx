@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { api, queryClient } from '../../../App';
 import { EditButton } from '../../../components/items/EditButton';
-import { useLocalState } from '../../../contex/LocalState';
+import { useLocalState } from '../../../context/LocalState';
 import { SizeMarks } from '../../../defaults';
 import { InvenTreeStyle } from '../../../globalStyle';
 

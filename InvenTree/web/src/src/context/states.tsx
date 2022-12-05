@@ -64,3 +64,11 @@ export enum SettingType {
   Integer = "integer",
   String = "string",
 }
+
+// Errors
+export type ErrorResponse = {
+  data: any;
+  status: number;
+  statusText: string;
+  message?: string;
+};

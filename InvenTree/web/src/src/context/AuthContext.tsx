@@ -35,7 +35,6 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
   ]);
   const [host] = useLocalState((state) => [state.host]);
 
-  // TODO add types
   const handleLogin = async (username: string, password: string) => {
     // Get token from server
     const token = await axios

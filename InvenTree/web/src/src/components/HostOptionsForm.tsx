@@ -3,7 +3,7 @@ import { useForm } from '@mantine/form';
 import { TextInput, Group, ActionIcon, Box, Text, Button, Space } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
 import { IconTrash, IconSquarePlus } from '@tabler/icons';
-import { HostList } from '../contex/states';
+import { HostList } from '../context/states';
 import { Trans, t } from '@lingui/macro'
 
 
