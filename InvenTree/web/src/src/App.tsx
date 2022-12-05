@@ -9,7 +9,7 @@ import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QrCodeModal } from './components/modals/QrCodeModal';
 import { useApiState } from './context/ApiState';
@@ -26,7 +26,7 @@ import { Profile } from './pages/Index/Profile/Profile';
 import Layout from './pages/layout';
 import { Login } from './pages/Login';
 import { Logout } from './pages/Logout';
-import { activateLocale, LanguageContext, loadLocales } from './translation';
+import { LanguageContext } from './translation';
 
 // Error tracking
 Sentry.init({
@@ -143,7 +143,7 @@ function ThemeContext({ children }: { children: any }) {
 
 // Main App
 export default function App() {
-  const [hostList, language] = useLocalState((state) => [state.hostList, state.language]);
+  const [hostList] = useLocalState((state) => [state.hostList]);
 
   // Local state initialization
   if (Object.keys(hostList).length === 0) {
@@ -160,10 +160,6 @@ export default function App() {
     setFetchedServerSession(true);
     fetchServerSession();
   }
-
-  // Language
-  loadLocales();
-  useEffect(() => { activateLocale(language) }, [language])
 
   // Main App component
   return (

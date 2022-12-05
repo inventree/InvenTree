@@ -1,7 +1,9 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { de, en, hu } from "make-plural/plurals";
+import { useEffect } from 'react';
 import { api } from './App';
+import { useLocalState } from './context/LocalState';
 
 // Definitions
 export type Locales = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
@@ -9,6 +11,11 @@ export const languages: Locales[] = ['en', 'de', 'hu'];
 
 // Context
 export function LanguageContext({ children }: { children: JSX.Element }) {
+    const [language] = useLocalState((state) => [state.language]);
+
+    loadLocales();
+    useEffect(() => { activateLocale(language) }, [language])
+
     return (
         <I18nProvider i18n={i18n}>
             {children}
