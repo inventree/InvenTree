@@ -40,7 +40,6 @@ from rest_framework.exceptions import PermissionDenied
 
 import build.validators
 import InvenTree.fields
-import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.validators
 import order.validators
@@ -1372,7 +1371,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'PLUGIN_ON_STARTUP': {
             'name': _('Check plugins on startup'),
             'description': _('Check that all plugins are installed on startup - enable in container environments'),
-            'default': InvenTree.helpers.str2bool(os.getenv('INVENTREE_DOCKER'), False),
+            'default': os.getenv('INVENTREE_DOCKER', False),
             'validator': bool,
             'requires_restart': True,
         },
