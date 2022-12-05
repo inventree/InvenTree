@@ -469,6 +469,7 @@ class PurchaseOrderTest(OrderTest):
         resp_dict = response.json()
         self.assertEqual(resp_dict['detail'], "Authentication credentials were not provided.")
 
+
 class PurchaseOrderDownloadTest(OrderTest):
     """Unit tests for downloading PurchaseOrder data via the API endpoint."""
 
