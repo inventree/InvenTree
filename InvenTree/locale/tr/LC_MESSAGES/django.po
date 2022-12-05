@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-29 02:00+0000\n"
-"PO-Revision-Date: 2022-11-29 04:09\n"
+"POT-Creation-Date: 2022-12-01 21:04+0000\n"
+"PO-Revision-Date: 2022-12-02 04:21\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -40,7 +40,7 @@ msgstr "Tarih giriniz"
 #: stock/serializers.py:321 stock/serializers.py:454 stock/serializers.py:535
 #: stock/serializers.py:827 stock/serializers.py:926 stock/serializers.py:1058
 #: stock/templates/stock/stock_sidebar.html:25
-#: templates/js/translated/barcode.js:108 templates/js/translated/bom.js:1212
+#: templates/js/translated/barcode.js:131 templates/js/translated/bom.js:1212
 #: templates/js/translated/company.js:1023
 #: templates/js/translated/order.js:2435 templates/js/translated/order.js:2569
 #: templates/js/translated/order.js:3067 templates/js/translated/order.js:4004
@@ -804,7 +804,7 @@ msgstr "Bu yapım işinin tahsis edildiği yapım işi emri"
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:16
 #: templates/email/overdue_build_order.html:16
-#: templates/js/translated/barcode.js:479 templates/js/translated/bom.js:591
+#: templates/js/translated/barcode.js:503 templates/js/translated/bom.js:591
 #: templates/js/translated/bom.js:728 templates/js/translated/bom.js:849
 #: templates/js/translated/build.js:1224 templates/js/translated/build.js:1721
 #: templates/js/translated/build.js:2204 templates/js/translated/build.js:2598
@@ -1033,7 +1033,7 @@ msgstr "Kaynak stok kalemi"
 #: stock/templates/stock/item_base.html:290
 #: stock/templates/stock/item_base.html:298
 #: templates/email/build_order_completed.html:18
-#: templates/js/translated/barcode.js:481 templates/js/translated/bom.js:730
+#: templates/js/translated/barcode.js:505 templates/js/translated/bom.js:730
 #: templates/js/translated/bom.js:913 templates/js/translated/build.js:480
 #: templates/js/translated/build.js:636 templates/js/translated/build.js:827
 #: templates/js/translated/build.js:1246 templates/js/translated/build.js:1747
@@ -1137,8 +1137,8 @@ msgstr ""
 #: stock/serializers.py:314 stock/serializers.py:449 stock/serializers.py:530
 #: stock/serializers.py:919 stock/serializers.py:1152
 #: stock/templates/stock/item_base.html:388
-#: templates/js/translated/barcode.js:480
-#: templates/js/translated/barcode.js:724 templates/js/translated/build.js:812
+#: templates/js/translated/barcode.js:504
+#: templates/js/translated/barcode.js:748 templates/js/translated/build.js:812
 #: templates/js/translated/build.js:1759 templates/js/translated/order.js:1572
 #: templates/js/translated/order.js:3514 templates/js/translated/order.js:3619
 #: templates/js/translated/order.js:3627 templates/js/translated/order.js:3708
@@ -1156,7 +1156,7 @@ msgstr ""
 #: build/templates/build/detail.html:62 order/models.py:670
 #: order/serializers.py:473 stock/admin.py:89
 #: stock/templates/stock/item_base.html:421
-#: templates/js/translated/barcode.js:214 templates/js/translated/build.js:2627
+#: templates/js/translated/barcode.js:237 templates/js/translated/build.js:2627
 #: templates/js/translated/order.js:1681 templates/js/translated/order.js:2034
 #: templates/js/translated/order.js:2850 templates/js/translated/stock.js:1864
 #: templates/js/translated/stock.js:2637 templates/js/translated/stock.js:2769
@@ -3520,8 +3520,8 @@ msgstr ""
 #: company/templates/company/supplier_part.html:42
 #: stock/templates/stock/item_base.html:48
 #: stock/templates/stock/location.html:52
-#: templates/js/translated/barcode.js:430
-#: templates/js/translated/barcode.js:435
+#: templates/js/translated/barcode.js:454
+#: templates/js/translated/barcode.js:459
 msgid "Unlink Barcode"
 msgstr ""
 
@@ -8370,102 +8370,102 @@ msgstr ""
 msgid "Scan barcode using connected webcam"
 msgstr ""
 
-#: templates/js/translated/barcode.js:103
+#: templates/js/translated/barcode.js:126
 msgid "Enter optional notes for stock transfer"
 msgstr ""
 
-#: templates/js/translated/barcode.js:104
+#: templates/js/translated/barcode.js:127
 msgid "Enter notes"
 msgstr ""
 
-#: templates/js/translated/barcode.js:150
+#: templates/js/translated/barcode.js:173
 msgid "Server error"
 msgstr ""
 
-#: templates/js/translated/barcode.js:179
+#: templates/js/translated/barcode.js:202
 msgid "Unknown response from server"
 msgstr ""
 
-#: templates/js/translated/barcode.js:214
+#: templates/js/translated/barcode.js:237
 #: templates/js/translated/modals.js:1063
 msgid "Invalid server response"
 msgstr ""
 
-#: templates/js/translated/barcode.js:331
+#: templates/js/translated/barcode.js:355
 msgid "Scan barcode data"
 msgstr ""
 
-#: templates/js/translated/barcode.js:381 templates/navbar.html:109
+#: templates/js/translated/barcode.js:405 templates/navbar.html:109
 msgid "Scan Barcode"
 msgstr ""
 
-#: templates/js/translated/barcode.js:393
+#: templates/js/translated/barcode.js:417
 msgid "No URL in response"
 msgstr ""
 
-#: templates/js/translated/barcode.js:432
+#: templates/js/translated/barcode.js:456
 msgid "This will remove the link to the associated barcode"
 msgstr ""
 
-#: templates/js/translated/barcode.js:438
+#: templates/js/translated/barcode.js:462
 msgid "Unlink"
 msgstr ""
 
-#: templates/js/translated/barcode.js:500 templates/js/translated/stock.js:1083
+#: templates/js/translated/barcode.js:524 templates/js/translated/stock.js:1083
 msgid "Remove stock item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:543
+#: templates/js/translated/barcode.js:567
 msgid "Scan Stock Items Into Location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:545
+#: templates/js/translated/barcode.js:569
 msgid "Scan stock item barcode to check in to this location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:548
-#: templates/js/translated/barcode.js:740
+#: templates/js/translated/barcode.js:572
+#: templates/js/translated/barcode.js:764
 msgid "Check In"
 msgstr ""
 
-#: templates/js/translated/barcode.js:579
+#: templates/js/translated/barcode.js:603
 msgid "No barcode provided"
 msgstr ""
 
-#: templates/js/translated/barcode.js:619
+#: templates/js/translated/barcode.js:643
 msgid "Stock Item already scanned"
 msgstr ""
 
-#: templates/js/translated/barcode.js:623
+#: templates/js/translated/barcode.js:647
 msgid "Stock Item already in this location"
 msgstr "Stok kalemi zaten bu konumda"
 
-#: templates/js/translated/barcode.js:630
+#: templates/js/translated/barcode.js:654
 msgid "Added stock item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:639
+#: templates/js/translated/barcode.js:663
 msgid "Barcode does not match valid stock item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:656
+#: templates/js/translated/barcode.js:680
 msgid "Scan Stock Container Into Location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:658
+#: templates/js/translated/barcode.js:682
 msgid "Scan stock container barcode to check in to this location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:692
+#: templates/js/translated/barcode.js:716
 msgid "Barcode does not match valid stock location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:735
+#: templates/js/translated/barcode.js:759
 msgid "Check Into Location"
 msgstr "Konuma Kaydet"
 
-#: templates/js/translated/barcode.js:803
-#: templates/js/translated/barcode.js:812
+#: templates/js/translated/barcode.js:827
+#: templates/js/translated/barcode.js:836
 msgid "Barcode does not match a valid location"
 msgstr "Barkod geçerli bir konumla eşleşmiyor"
 
