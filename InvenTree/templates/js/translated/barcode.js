@@ -35,8 +35,8 @@ function makeBarcodeInput(placeholderText='', hintText='') {
     hintText = hintText || '{% trans "Enter barcode data" %}';
 
     var html = `
-    <div id='barcode_scan_video_container' class='text-center' style='height: 240px; display: none;'>
-        <video id='barcode_scan_video' disablepictureinpicture playsinline height='240' style='object-fit: fill;'></video>
+    <div id='barcode_scan_video_container' class="mx-auto" style='width: 100%; max-width: 240px; display: none;'>
+        <div id="barcode_scan_video"></div>
     </div>
     <div class='form-group'>
         <label class='control-label' for='barcode'>{% trans "Barcode" %}</label>
@@ -59,14 +59,37 @@ function makeBarcodeInput(placeholderText='', hintText='') {
 }
 
 qrScanner = null;
+qrScannerCallback = null;
 
 function startQrScanner() {
     $('#barcode_scan_video_container').show();
-    qrScanner.start();
+
+    const config = {
+        fps: 10,
+        qrbox: function(viewfinder_width, viewfinder_height) {
+            // qrbox should be 80% of shortest viewfinder edge
+            var edge_percentage = 0.8;
+            var min_edge_size = Math.min(viewfinder_width, viewfinder_height);
+            var box_size = Math.floor(min_edge_size * edge_percentage);
+
+            return {
+                width: box_size,
+                height: box_size
+            };
+        },
+        aspectRatio: 1,
+        applyVideoConstraints: {
+            focusMode: 'continuous',
+        },
+    };
+
+    qrScanner.start({facingMode: 'environment'}, config, qrScannerCallback);
 }
 
 function stopQrScanner() {
-    if (qrScanner != null) qrScanner.stop();
+    if (qrScanner != null && qrScanner.getState() != Html5QrcodeScannerState.NOT_STARTED) {
+        qrScanner.stop();
+    }
     $('#barcode_scan_video_container').hide();
 }
 
@@ -77,22 +100,22 @@ function onBarcodeScanClicked(e) {
 function onCameraAvailable(hasCamera, options) {
     if (hasCamera && global_settings.BARCODE_WEBCAM_SUPPORT) {
         // Camera is only acccessible if page is served over secure connection
-        if ( window.isSecureContext == true ) {
-            qrScanner = new QrScanner(document.getElementById('barcode_scan_video'), (result) => {
-                onBarcodeScanCompleted(result, options);
-            }, {
-                highlightScanRegion: true,
-                highlightCodeOutline: true,
+        if (window.isSecureContext == true) {
+            qrScanner = new Html5Qrcode('barcode_scan_video', {
+                useBarCodeDetectorIfSupported: true,
             });
+            qrScannerCallback = (decodedText, decodedResult) => {
+                onBarcodeScanCompleted(decodedResult.result, options);
+            };
             $('#barcode_scan_btn').show();
         }
     }
 }
 
 function onBarcodeScanCompleted(result, options) {
-    if (result.data == '') return;
+    if (result.text == '') return;
     stopQrScanner();
-    postBarcodeData(result.data, options);
+    postBarcodeData(result.text, options);
 }
 
 /*
@@ -268,7 +291,8 @@ function barcodeDialog(title, options={}) {
         $(modal + ' .modal-form-content').scrollTop(0);
 
         // Check for qr-scanner camera
-        QrScanner.hasCamera().then( (hasCamera) => {
+        Html5Qrcode.getCameras().then( (devices) => {
+            var hasCamera = devices && devices.length;
             onCameraAvailable(hasCamera, options);
         });
 
@@ -316,8 +340,8 @@ function barcodeDialog(title, options={}) {
 
     $(modal).on('hidden.bs.modal', function() {
         stopQrScanner();
-        if (qrScanner != null) qrScanner.destroy();
         qrScanner = null;
+        qrScannerCallback = null;
     });
 
     modalSetTitle(modal, title);
