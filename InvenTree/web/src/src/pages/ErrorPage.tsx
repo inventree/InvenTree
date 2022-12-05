@@ -5,8 +5,15 @@ import { useEffect, useState } from "react";
 import { useRouteError } from "react-router-dom";
 import { LanguageContext } from "../context/LanguageContext";
 
+type ErrorResponse = {
+  data: any;
+  status: number;
+  statusText: string;
+  message?: string;
+};
+
 export default function ErrorPage() {
-  const error = useRouteError();
+  const error = useRouteError() as ErrorResponse;
   const [title, setTitle] = useState(t`Error`);
   useDocumentTitle(title);
 
