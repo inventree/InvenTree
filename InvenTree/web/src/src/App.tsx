@@ -4,11 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import axios from 'axios';
 import { useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { useApiState } from './context/ApiState';
 import { AuthProvider } from './context/AuthContext';
 import { useLocalState } from './context/LocalState';
 import { useSessionState } from './context/SessionState';
-import { UserProps } from './context/states';
 import { defaultHostList } from './defaults';
 import ErrorPage from './pages/ErrorPage';
 import { Dashboard } from './pages/Index/Dashboard';
@@ -20,6 +18,8 @@ import { Login } from './pages/Login';
 import { Logout } from './pages/Logout';
 import { ThemeContext } from './context/ThemeContext';
 import { LanguageContext } from './context/LanguageContext';
+import { useApiState } from './context/ApiState';
+
 
 // Error tracking
 Sentry.init({
@@ -38,23 +38,6 @@ export function setApiDefaults() {
   api.defaults.headers.common['Authorization'] = `Token ${token}`;
 }
 export const queryClient = new QueryClient();
-
-// States
-export async function fetchServerSession() {
-  // Fetch user data
-  await api.get('/user/me/').then((response) => {
-    const user: UserProps = {
-      name: `${response.data.first_name} ${response.data.last_name}`,
-      email: response.data.email,
-      username: response.data.username
-    };
-    useApiState.getState().setUser(user);
-  });
-  // Fetch server data
-  await api.get('/').then((response) => {
-    useApiState.getState().setServer(response.data);
-  });
-}
 
 // Routes
 const router = createBrowserRouter([
@@ -93,6 +76,7 @@ const router = createBrowserRouter([
 // Main App
 export default function App() {
   const [hostList] = useLocalState((state) => [state.hostList]);
+  const [fetchApiState] = useApiState((state) => [state.fetchApiState]);
 
   // Local state initialization
   if (Object.keys(hostList).length === 0) {
@@ -107,7 +91,7 @@ export default function App() {
   const [token] = sessionState.token ? [sessionState.token] : [null];
   if (token && !fetchedServerSession) {
     setFetchedServerSession(true);
-    fetchServerSession();
+    fetchApiState();
   }
 
   // Main App component
