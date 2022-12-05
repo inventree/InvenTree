@@ -461,11 +461,15 @@ class PurchaseOrderTest(OrderTest):
 
     def test_po_calendar_noauth(self):
         """Test accessing calendar without authorization"""
+        self.client.logout()
+        response = self.client.get(reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}), format='json')
 
-        response = InvenTreeAPITestCase.client.get(reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}))
-        self.assertEqual(response.response_code, 401)
-        self.assertEqual(response.data, {"detail": "Authentication credentials were not provided."})
+        self.assertEqual(response.status_code, 401)
 
+        print(f"{response.content = }")
+        for A,J in response.content.items():
+            print(f"{A} : {J}")
+        # ~ self.assertEqual(response.content['detail'], str("Authentication credentials were not provided."))
 
 class PurchaseOrderDownloadTest(OrderTest):
     """Unit tests for downloading PurchaseOrder data via the API endpoint."""
