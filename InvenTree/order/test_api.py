@@ -466,10 +466,8 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(response.status_code, 401)
 
-        print(f"{response.content = }")
-        for A,J in response.content.items():
-            print(f"{A} : {J}")
-        # ~ self.assertEqual(response.content['detail'], str("Authentication credentials were not provided."))
+        resp_dict = response.json()
+        self.assertEqual(resp_dict['detail'], "Authentication credentials were not provided.")
 
 class PurchaseOrderDownloadTest(OrderTest):
     """Unit tests for downloading PurchaseOrder data via the API endpoint."""
