@@ -20,13 +20,16 @@ import { ThemeContext } from './context/ThemeContext';
 import { LanguageContext } from './context/LanguageContext';
 import { useApiState } from './context/ApiState';
 
+const LOAD_SENTRY = false;
 
 // Error tracking
-Sentry.init({
-  dsn: 'https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920',
-  integrations: [new BrowserTracing()],
-  tracesSampleRate: 1.0
-});
+if (LOAD_SENTRY) {
+  Sentry.init({
+    dsn: 'https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920',
+    integrations: [new BrowserTracing()],
+    tracesSampleRate: 1.0
+  });
+}
 
 // API
 export const api = axios.create({});
