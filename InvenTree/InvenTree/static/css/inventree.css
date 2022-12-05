@@ -12,6 +12,9 @@
     --label-yellow: #fdc82a;
 
     --bs-body-color: #68686a;
+
+    --scanner-upscale: 5;
+    --scanner-margin: 10%;
 }
 
 main {
@@ -709,6 +712,33 @@ input[type="submit"] {
 
 .modal .btn-form-secondary {
     margin-bottom: 10px;
+}
+
+/* Make barcode scanner responsive and performant */
+#barcode_scan_video video {
+    width: calc(100% * var(--scanner-upscale)) !important;
+    transform: scale(calc(1 / var(--scanner-upscale)));
+    margin: calc(-100% * (var(--scanner-upscale) - 1) / 2);
+    display: inline-block !important;
+}
+
+@-moz-document url-prefix() {
+    #barcode_scan_video video {
+        margin-top: calc(-100% * (var(--scanner-upscale) - 1) / 2 + 50%);
+        margin-bottom: calc(-100% * (var(--scanner-upscale) - 1) / 2 + 50%);
+    }
+
+    @media (pointer:coarse) {
+        #barcode_scan_video video {
+            margin-top: calc(-100% * (var(--scanner-upscale)) / 2 - 20%);
+            margin-bottom: calc(-100% * (var(--scanner-upscale)) / 2 - 20%);
+        }
+    }
+}
+
+#barcode_scan_video #qr-shaded-region {
+    border: none !important;
+    margin: var(--scanner-margin);
 }
 
 .sidebar-list-group-item {
