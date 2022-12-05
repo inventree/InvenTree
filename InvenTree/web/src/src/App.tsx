@@ -19,7 +19,7 @@ import Layout from './pages/layout';
 import { Login } from './pages/Login';
 import { Logout } from './pages/Logout';
 import { ThemeContext } from './context/ThemeContext';
-import { LanguageContext } from './translation';
+import { LanguageContext } from './context/LanguageContext';
 
 // Error tracking
 Sentry.init({

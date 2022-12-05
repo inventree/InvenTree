@@ -2,8 +2,8 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { de, en, hu } from "make-plural/plurals";
 import { useEffect } from 'react';
-import { api } from './App';
-import { useLocalState } from './context/LocalState';
+import { api } from '../App';
+import { useLocalState } from './LocalState';
 
 // Definitions
 export type Locales = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
@@ -33,7 +33,7 @@ export function loadLocales() {
 }
 
 export async function activateLocale(locale: Locales) {
-    const { messages } = await import(`./locales/${locale}/messages.ts`)
+    const { messages } = await import(`../locales/${locale}/messages.ts`)
     i18n.load(locale, messages)
     i18n.activate(locale)
 

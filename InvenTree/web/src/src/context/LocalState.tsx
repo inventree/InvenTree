@@ -2,7 +2,7 @@ import { MantineNumberSize } from '@mantine/core';
 import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Locales } from "../translation";
+import { Locales } from "./LanguageContext";
 import { HostList } from './states';
 
 
