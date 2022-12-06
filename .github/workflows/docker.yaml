@@ -21,6 +21,10 @@ on:
     branches:
       - 'master'
 
+  pull_request:
+    branches:
+      - 'master'
+
 jobs:
 
   # Build the docker image
@@ -69,6 +73,9 @@ jobs:
           test -f data/secret_key.txt
       - name: Run Unit Tests
         run: |
+          docker-compose run inventree-dev-server pip list
+          docker-compose run inventree-dev-server pip show pyyaml
+          docker-compose run inventree-dev-server which python
           docker-compose run inventree-dev-server invoke test
           docker-compose down
       - name: Set up QEMU
