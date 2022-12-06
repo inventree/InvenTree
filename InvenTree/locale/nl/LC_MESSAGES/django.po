@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-05 02:11+0000\n"
-"PO-Revision-Date: 2022-12-05 11:58\n"
+"PO-Revision-Date: 2022-12-06 11:57\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -52,11 +52,11 @@ msgstr "Opmerkingen"
 #: InvenTree/format.py:142
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "Waarde '{name}' verschijnt niet in patroonformaat"
 
 #: InvenTree/format.py:152
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "Opgegeven waarde komt niet overeen met vereist patroon: "
 
 #: InvenTree/forms.py:134
 msgid "Enter password"
@@ -132,7 +132,7 @@ msgstr "Leeg serienummer"
 
 #: InvenTree/helpers.py:627
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Duplicaat serienummer"
 
 #: InvenTree/helpers.py:660 InvenTree/helpers.py:695
 #, python-brace-format
