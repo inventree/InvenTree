@@ -76,6 +76,7 @@ jobs:
           docker-compose run inventree-dev-server pip list
           docker-compose run inventree-dev-server pip show pyyaml
           docker-compose run inventree-dev-server which python
+          docker images
           docker-compose run inventree-dev-server invoke test
           docker-compose down
       - name: Set up QEMU
