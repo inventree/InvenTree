@@ -52,7 +52,7 @@ jobs:
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: |
-          docker-compose build
+          docker-compose build --no-cache
       - name: Update Docker Image
         run: |
           docker-compose run inventree-dev-server invoke update

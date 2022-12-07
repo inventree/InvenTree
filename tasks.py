@@ -540,7 +540,7 @@ def test(c, database=None):
     manage(c, 'check')
 
     # Run coverage tests
-    manage(c, 'test', pty=True)
+    manage(c, 'test', pty=False)
 
 
 @task(help={'dev': 'Set up development environment at the end'})
