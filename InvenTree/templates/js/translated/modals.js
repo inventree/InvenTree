@@ -45,6 +45,18 @@ function createNewModal(options={}) {
 
     var submitClass = options.submitClass || 'primary';
 
+    var buttons = '';
+
+    // Add in a "close" button
+    if (!options.hideCloseButton) {
+        buttons += `<button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Cancel" %}</button>`;
+    }
+
+    // Add in a "submit" button
+    if (!options.hideSubmitButton) {
+        buttons += `<button type='button' class='btn btn-${submitClass}' id='modal-form-submit'>{% trans "Submit" %}</button>`;
+    }
+
     var html = `
     <div class='modal fade modal-fixed-footer modal-primary inventree-modal' role='dialog' id='modal-form-${id}' tabindex='-1'>
         <div class='modal-dialog'>
@@ -79,8 +91,7 @@ function createNewModal(options={}) {
                     <div id='modal-footer-secondary-buttons'>
                         <!-- Extra secondary buttons can be inserted here -->
                     </div>
-                    <button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Cancel" %}</button>
-                    <button type='button' class='btn btn-${submitClass}' id='modal-form-submit'>{% trans "Submit" %}</button>
+                    ${buttons}
                 </div>
             </div>
         </div>
@@ -102,11 +113,7 @@ function createNewModal(options={}) {
         // Steal keyboard focus
         $(modal_name).focus();
 
-        if (options.hideCloseButton) {
-            $(modal_name).find('#modal-form-close').hide();
-        }
-
-        if (options.preventSubmit || options.hideSubmitButton) {
+        if (options.preventSubmit) {
             $(modal_name).find('#modal-form-submit').hide();
         }
 
