@@ -48,7 +48,7 @@ jobs:
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: |
-          docker-compose build
+          docker-compose build --no-cache
       - name: Update Docker Image
         run: |
           docker-compose run inventree-dev-server invoke update
@@ -69,7 +69,7 @@ jobs:
           test -f data/secret_key.txt
       - name: Run Unit Tests
         run: |
-          docker-compose run inventree-dev-server invoke test
+          docker-compose run inventree-dev-server invoke test --disable-pty
           docker-compose down
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
