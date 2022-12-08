@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
+from django.db.utils import IntegrityError, OperationalError
 
 import feedparser
 
@@ -57,13 +58,17 @@ def update_news_feed():
             continue
 
         # Create entry
-        NewsFeedEntry.objects.create(
-            feed_id=entry.id,
-            title=entry.title,
-            link=entry.link,
-            published=entry.published,
-            author=entry.author,
-            summary=entry.summary,
-        )
+        try:
+            NewsFeedEntry.objects.create(
+                feed_id=entry.id,
+                title=entry.title,
+                link=entry.link,
+                published=entry.published,
+                author=entry.author,
+                summary=entry.summary,
+            )
+        except (IntegrityError, OperationalError):
+            # Sometimes errors-out on database start-up
+            pass
 
     logger.info('update_news_feed: Sync done')
