@@ -1213,7 +1213,7 @@ function orderParts(parts_list, options={}) {
     constructFormBody({}, {
         preFormContent: html,
         title: '{% trans "Order Parts" %}',
-        preventSubmit: true,
+        hideSubmitButton: true,
         closeText: '{% trans "Close" %}',
         afterRender: function(fields, opts) {
             parts.forEach(function(part) {
