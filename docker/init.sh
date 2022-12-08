@@ -20,7 +20,7 @@ fi
 
 # Check if "config.yaml" has been copied into the correct location
 if test -f "$INVENTREE_CONFIG_FILE"; then
-    echo "$INVENTREE_CONFIG_FILE exists - skipping"
+    echo "Loading config file : $INVENTREE_CONFIG_FILE"
 else
     echo "Copying config file to $INVENTREE_CONFIG_FILE"
     cp $INVENTREE_HOME/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
