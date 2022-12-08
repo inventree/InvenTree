@@ -73,11 +73,7 @@ jobs:
           test -f data/secret_key.txt
       - name: Run Unit Tests
         run: |
-          docker-compose run inventree-dev-server pip list --local
-          docker-compose run inventree-dev-server pip show pyyaml --files
-          docker-compose run inventree-dev-server which python
-          docker images
-          docker-compose run inventree-dev-server invoke test
+          docker-compose run inventree-dev-server invoke test --disable-pty
           docker-compose down
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
