@@ -59,17 +59,7 @@ def get_config_file(create=True) -> Path:
 def load_config_data() -> map:
     """Load configuration data from the config file."""
 
-    import sys
-    print("================ PATH ================")
-    print(sys.path)
-    print(sys.argv)
-
-    try:
-        import yaml
-    except Exception:
-
-        print("Could not import YAML!")
-        sys.exit(1)
+    import yaml
 
     cfg_file = get_config_file()
 
