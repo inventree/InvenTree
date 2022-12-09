@@ -14,4 +14,3 @@ mariadb>=1.0.7,<1.1.0
 
 # gunicorn web server
 gunicorn>=20.1.0
-gevent>=22.10.2

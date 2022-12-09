@@ -12,7 +12,8 @@ loglevel = os.environ.get('INVENTREE_LOG_LEVEL', 'warning').lower()
 capture_output = True
 
 # Worker configuration
-worker_class = 'gevent'  # Allow multi-threading support
+#  TODO: Implement support for gevent
+# worker_class = 'gevent'  # Allow multi-threading support
 worker_tmp_dir = '/dev/shm'  # Write temp file to RAM (faster)
 threads = 4
 
