@@ -10,6 +10,7 @@ from pathlib import Path
 from django.apps import AppConfig
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
+from django.db.utils import OperationalError
 
 from InvenTree.ready import canAppAccessDatabase
 
@@ -35,18 +36,18 @@ class LabelConfig(AppConfig):
     def ready(self):
         """This function is called whenever the label app is loaded."""
         if canAppAccessDatabase():
-            self.create_labels()  # pragma: no cover
+
+            try:
+                self.create_labels()  # pragma: no cover
+            except (AppRegistryNotReady, OperationalError):
+                # Database might not yet be ready
+                warnings.warn('Database was not ready for creating labels')
 
     def create_labels(self):
         """Create all default templates."""
         # Test if models are ready
-        try:
-            from .models import PartLabel, StockItemLabel, StockLocationLabel
-            assert bool(StockLocationLabel is not None)
-        except AppRegistryNotReady:  # pragma: no cover
-            # Database might not yet be ready
-            warnings.warn('Database was not ready for creating labels')
-            return
+        from .models import PartLabel, StockItemLabel, StockLocationLabel
+        assert bool(StockLocationLabel is not None)
 
         # Create the categories
         self.create_labels_category(
@@ -62,6 +63,7 @@ class LabelConfig(AppConfig):
                 },
             ],
         )
+
         self.create_labels_category(
             StockLocationLabel,
             'stocklocation',
@@ -82,6 +84,7 @@ class LabelConfig(AppConfig):
                 }
             ]
         )
+
         self.create_labels_category(
             PartLabel,
             'part',
