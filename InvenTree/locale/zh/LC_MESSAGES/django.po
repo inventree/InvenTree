@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 12:35+0000\n"
-"PO-Revision-Date: 2022-12-08 12:04\n"
+"POT-Creation-Date: 2022-12-11 11:42+0000\n"
+"PO-Revision-Date: 2022-12-11 18:55\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -52,11 +52,11 @@ msgstr "备注"
 #: InvenTree/format.py:142
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "值 '{name}' 没有以模式格式显示"
 
 #: InvenTree/format.py:152
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "提供的值与所需模式不匹配： "
 
 #: InvenTree/forms.py:134
 msgid "Enter password"
@@ -92,31 +92,31 @@ msgstr "您必须输入相同的 Email 。"
 
 #: InvenTree/helpers.py:158
 msgid "Connection error"
-msgstr ""
+msgstr "连接错误"
 
 #: InvenTree/helpers.py:162 InvenTree/helpers.py:167
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "服务器响应状态码无效"
 
 #: InvenTree/helpers.py:164
 msgid "Exception occurred"
-msgstr ""
+msgstr "发生异常"
 
 #: InvenTree/helpers.py:172
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "服务器响应的内容长度值无效"
 
 #: InvenTree/helpers.py:175
 msgid "Image size is too large"
-msgstr ""
+msgstr "图片尺寸过大"
 
 #: InvenTree/helpers.py:187
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "图像下载超过最大尺寸"
 
 #: InvenTree/helpers.py:192
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "远程服务器返回了空响应"
 
 #: InvenTree/helpers.py:200
 msgid "Supplied URL is not a valid image file"
@@ -132,7 +132,7 @@ msgstr "空序列号字符串"
 
 #: InvenTree/helpers.py:627
 msgid "Duplicate serial"
-msgstr ""
+msgstr "重复的序列号"
 
 #: InvenTree/helpers.py:660 InvenTree/helpers.py:695
 #, python-brace-format
@@ -142,7 +142,7 @@ msgstr "无效的组范围: {g}"
 #: InvenTree/helpers.py:689
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
-msgstr ""
+msgstr "组 {g} 超出了允许的数量 ({q})"
 
 #: InvenTree/helpers.py:713 InvenTree/helpers.py:720 InvenTree/helpers.py:735
 #, python-brace-format
@@ -160,31 +160,31 @@ msgstr "唯一序列号 ({s}) 必须匹配数量 ({q})"
 
 #: InvenTree/helpers.py:947
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "从这个值中删除 HTML 标签"
 
 #: InvenTree/models.py:238
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "格式不正确"
 
 #: InvenTree/models.py:245
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "指定了未知格式密钥"
 
 #: InvenTree/models.py:251
 msgid "Missing required format key"
-msgstr ""
+msgstr "缺少必需的格式密钥"
 
 #: InvenTree/models.py:263
 msgid "Reference field cannot be empty"
-msgstr ""
+msgstr "引用字段不能为空"
 
 #: InvenTree/models.py:270
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "引用必须匹配所需的图案"
 
 #: InvenTree/models.py:306
 msgid "Reference number is too large"
-msgstr ""
+msgstr "参考编号过大"
 
 #: InvenTree/models.py:384
 msgid "Missing file"
@@ -324,27 +324,27 @@ msgstr "上级项"
 #: InvenTree/models.py:580 InvenTree/models.py:581
 #: templates/js/translated/part.js:2048 templates/js/translated/stock.js:2469
 msgid "Path"
-msgstr ""
+msgstr "路径"
 
 #: InvenTree/models.py:682
 msgid "Barcode Data"
-msgstr ""
+msgstr "条码数据"
 
 #: InvenTree/models.py:683
 msgid "Third party barcode data"
-msgstr ""
+msgstr "第三方条形码数据"
 
 #: InvenTree/models.py:688 order/serializers.py:477
 msgid "Barcode Hash"
-msgstr ""
+msgstr "条码哈希"
 
 #: InvenTree/models.py:689
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "条码数据的唯一哈希"
 
 #: InvenTree/models.py:734
 msgid "Existing barcode found"
-msgstr ""
+msgstr "发现现有条码"
 
 #: InvenTree/models.py:787
 msgid "Server Error"
@@ -411,15 +411,15 @@ msgstr "复制列: '{col}'"
 #: InvenTree/serializers.py:606
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: InvenTree/serializers.py:607
 msgid "URL of remote image file"
-msgstr ""
+msgstr "远程图像文件的 URL"
 
 #: InvenTree/serializers.py:621
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "未启用从远程 URL下载图像"
 
 #: InvenTree/settings.py:627
 msgid "Czech"
@@ -427,7 +427,7 @@ msgstr "捷克语"
 
 #: InvenTree/settings.py:628
 msgid "Danish"
-msgstr ""
+msgstr "丹麦语"
 
 #: InvenTree/settings.py:629
 msgid "German"
@@ -705,27 +705,27 @@ msgstr "备损不能超过 100%"
 msgid "Invalid value for overage"
 msgstr "无效的备损值"
 
-#: InvenTree/views.py:520 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:447 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr "编辑用户信息"
 
-#: InvenTree/views.py:532 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:459 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "设置密码"
 
-#: InvenTree/views.py:554
+#: InvenTree/views.py:481
 msgid "Password fields must match"
 msgstr "密码字段必须相匹配。"
 
-#: InvenTree/views.py:563
+#: InvenTree/views.py:490
 msgid "Wrong password provided"
 msgstr "密码错误"
 
-#: InvenTree/views.py:773 templates/navbar.html:152
+#: InvenTree/views.py:700 templates/navbar.html:152
 msgid "System Information"
 msgstr "系统信息"
 
-#: InvenTree/views.py:780 templates/navbar.html:163
+#: InvenTree/views.py:707 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "关于 InventTree"
 
@@ -1127,7 +1127,7 @@ msgstr "自动为所需项分配对应的序列号"
 
 #: build/serializers.py:281 stock/api.py:601
 msgid "The following serial numbers already exist or are invalid"
-msgstr ""
+msgstr "以下序列号已存在或无效"
 
 #: build/serializers.py:330 build/serializers.py:399
 msgid "A list of build outputs must be provided"
@@ -1189,19 +1189,19 @@ msgstr "删除所有未完成的生产产出"
 
 #: build/serializers.py:488
 msgid "Accept as consumed by this build order"
-msgstr ""
+msgstr "接受此构建订单所消耗的内容"
 
 #: build/serializers.py:489
 msgid "Deallocate before completing this build order"
-msgstr ""
+msgstr "在完成此构建订单前取消分配"
 
 #: build/serializers.py:512
 msgid "Overallocated Stock"
-msgstr ""
+msgstr "超出分配的库存"
 
 #: build/serializers.py:514
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr ""
+msgstr "你想如何处理分配给构建订单的额外库存物品"
 
 #: build/serializers.py:524
 msgid "Some stock items have been overallocated"
