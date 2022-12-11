@@ -1,6 +1,5 @@
-"""JSON API for the plugin app."""
+"""API for the plugin app."""
 
-from django.conf import settings
 from django.urls import include, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -238,7 +237,6 @@ general_plugin_api_urls = [
     re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
 ]
 
-if settings.PLUGINS_ENABLED:
-    plugin_api_urls.append(
-        re_path(r'^plugin/', include(general_plugin_api_urls))
-    )
+plugin_api_urls.append(
+    re_path(r'^plugin/', include(general_plugin_api_urls))
+)

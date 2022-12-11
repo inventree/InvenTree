@@ -957,10 +957,10 @@ function loadBomTable(table, options={}) {
                 }
             });
 
-            var total = `${top_total}`;
+            var total = `${formatDecimal(top_total)}`;
 
             if (top_total != all_total) {
-                total += ` / ${all_total}`;
+                total += ` / ${formatDecimal(all_total)}`;
             }
 
             return total;
@@ -1086,7 +1086,8 @@ function loadBomTable(table, options={}) {
             }
 
             if (any_pricing) {
-                var html = formatCurrency(min_price) + ' - ' + formatCurrency(max_price);
+
+                var html = formatPriceRange(min_price, max_price);
 
                 if (complete_pricing) {
                     html += makeIconBadge(

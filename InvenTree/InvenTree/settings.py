@@ -584,7 +584,7 @@ if cache_host:  # pragma: no cover
 
 # database user sessions
 SESSION_ENGINE = 'user_sessions.backends.db'
-LOGOUT_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = get_setting('INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index')
 SILENCED_SYSTEM_CHECKS = [
     'admin.E410',
 ]

@@ -7,8 +7,6 @@ import shutil
 import string
 from pathlib import Path
 
-import yaml
-
 logger = logging.getLogger('inventree')
 
 
@@ -60,6 +58,8 @@ def get_config_file(create=True) -> Path:
 
 def load_config_data() -> map:
     """Load configuration data from the config file."""
+
+    import yaml
 
     cfg_file = get_config_file()
 
