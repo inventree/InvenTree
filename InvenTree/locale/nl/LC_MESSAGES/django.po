@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 12:35+0000\n"
-"PO-Revision-Date: 2022-12-08 12:04\n"
+"POT-Creation-Date: 2022-12-11 11:42+0000\n"
+"PO-Revision-Date: 2022-12-11 18:55\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -705,27 +705,27 @@ msgstr "Overschot mag niet groter zijn dan 100%"
 msgid "Invalid value for overage"
 msgstr "Ongeldige waarde voor overschot"
 
-#: InvenTree/views.py:520 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:447 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr "Gebruikersgegevens bewerken"
 
-#: InvenTree/views.py:532 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:459 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "Wachtwoord instellen"
 
-#: InvenTree/views.py:554
+#: InvenTree/views.py:481
 msgid "Password fields must match"
 msgstr "Wachtwoordvelden komen niet overeen"
 
-#: InvenTree/views.py:563
+#: InvenTree/views.py:490
 msgid "Wrong password provided"
 msgstr "Onjuist wachtwoord opgegeven"
 
-#: InvenTree/views.py:773 templates/navbar.html:152
+#: InvenTree/views.py:700 templates/navbar.html:152
 msgid "System Information"
 msgstr "Systeeminformatie"
 
-#: InvenTree/views.py:780 templates/navbar.html:163
+#: InvenTree/views.py:707 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "Over InvenTree"
 
