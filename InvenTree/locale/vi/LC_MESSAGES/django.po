@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 12:35+0000\n"
-"PO-Revision-Date: 2022-12-08 12:04\n"
+"POT-Creation-Date: 2022-12-11 11:42+0000\n"
+"PO-Revision-Date: 2022-12-11 18:55\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -705,27 +705,27 @@ msgstr ""
 msgid "Invalid value for overage"
 msgstr ""
 
-#: InvenTree/views.py:520 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:447 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr ""
 
-#: InvenTree/views.py:532 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:459 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr ""
 
-#: InvenTree/views.py:554
+#: InvenTree/views.py:481
 msgid "Password fields must match"
 msgstr ""
 
-#: InvenTree/views.py:563
+#: InvenTree/views.py:490
 msgid "Wrong password provided"
 msgstr ""
 
-#: InvenTree/views.py:773 templates/navbar.html:152
+#: InvenTree/views.py:700 templates/navbar.html:152
 msgid "System Information"
 msgstr "Thông tin hệ thống"
 
-#: InvenTree/views.py:780 templates/navbar.html:163
+#: InvenTree/views.py:707 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "Giới thiệu"
 
