@@ -358,7 +358,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 # Create parts in the child categories
                 for jj in range(3):
                     child_categories_parts.append(Part.objects.create(
-                        name=f"Part xyz {jj}",
+                        name=f"Part xyz {jj}_{ii}",
                         description="Child part in the child category of the deleted category",
                         category=child
                     ))
