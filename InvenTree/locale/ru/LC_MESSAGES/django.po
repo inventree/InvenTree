@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-11 11:42+0000\n"
-"PO-Revision-Date: 2022-12-11 18:55\n"
+"POT-Creation-Date: 2022-12-12 08:18+0000\n"
+"PO-Revision-Date: 2022-12-12 18:57\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -421,103 +421,103 @@ msgstr ""
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/settings.py:627
+#: InvenTree/settings.py:637
 msgid "Czech"
 msgstr ""
 
-#: InvenTree/settings.py:628
+#: InvenTree/settings.py:638
 msgid "Danish"
 msgstr ""
 
-#: InvenTree/settings.py:629
+#: InvenTree/settings.py:639
 msgid "German"
 msgstr "Немецкий"
 
-#: InvenTree/settings.py:630
+#: InvenTree/settings.py:640
 msgid "Greek"
 msgstr "Греческий"
 
-#: InvenTree/settings.py:631
+#: InvenTree/settings.py:641
 msgid "English"
 msgstr "Английский"
 
-#: InvenTree/settings.py:632
+#: InvenTree/settings.py:642
 msgid "Spanish"
 msgstr "Испанский"
 
-#: InvenTree/settings.py:633
+#: InvenTree/settings.py:643
 msgid "Spanish (Mexican)"
 msgstr "Испанский (Мексика)"
 
-#: InvenTree/settings.py:634
+#: InvenTree/settings.py:644
 msgid "Farsi / Persian"
 msgstr ""
 
-#: InvenTree/settings.py:635
+#: InvenTree/settings.py:645
 msgid "French"
 msgstr "Французский"
 
-#: InvenTree/settings.py:636
+#: InvenTree/settings.py:646
 msgid "Hebrew"
 msgstr "Иврит"
 
-#: InvenTree/settings.py:637
+#: InvenTree/settings.py:647
 msgid "Hungarian"
 msgstr "Венгерский"
 
-#: InvenTree/settings.py:638
+#: InvenTree/settings.py:648
 msgid "Italian"
 msgstr "Итальянский"
 
-#: InvenTree/settings.py:639
+#: InvenTree/settings.py:649
 msgid "Japanese"
 msgstr "Японский"
 
-#: InvenTree/settings.py:640
+#: InvenTree/settings.py:650
 msgid "Korean"
 msgstr "Корейский"
 
-#: InvenTree/settings.py:641
+#: InvenTree/settings.py:651
 msgid "Dutch"
 msgstr "Голландский"
 
-#: InvenTree/settings.py:642
+#: InvenTree/settings.py:652
 msgid "Norwegian"
 msgstr "Норвежский"
 
-#: InvenTree/settings.py:643
+#: InvenTree/settings.py:653
 msgid "Polish"
 msgstr "Польский"
 
-#: InvenTree/settings.py:644
+#: InvenTree/settings.py:654
 msgid "Portuguese"
 msgstr ""
 
-#: InvenTree/settings.py:645
+#: InvenTree/settings.py:655
 msgid "Portuguese (Brazilian)"
 msgstr ""
 
-#: InvenTree/settings.py:646
+#: InvenTree/settings.py:656
 msgid "Russian"
 msgstr "Русский"
 
-#: InvenTree/settings.py:647
+#: InvenTree/settings.py:657
 msgid "Swedish"
 msgstr "Шведский"
 
-#: InvenTree/settings.py:648
+#: InvenTree/settings.py:658
 msgid "Thai"
 msgstr "Тайский"
 
-#: InvenTree/settings.py:649
+#: InvenTree/settings.py:659
 msgid "Turkish"
 msgstr "Турецкий"
 
-#: InvenTree/settings.py:650
+#: InvenTree/settings.py:660
 msgid "Vietnamese"
 msgstr "Вьетнамский"
 
-#: InvenTree/settings.py:651
+#: InvenTree/settings.py:661
 msgid "Chinese"
 msgstr "Китайский"
 
@@ -721,11 +721,11 @@ msgstr "Пароли должны совпадать"
 msgid "Wrong password provided"
 msgstr ""
 
-#: InvenTree/views.py:700 templates/navbar.html:152
+#: InvenTree/views.py:703 templates/navbar.html:152
 msgid "System Information"
 msgstr "Информация о системе"
 
-#: InvenTree/views.py:707 templates/navbar.html:163
+#: InvenTree/views.py:710 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr ""
 
