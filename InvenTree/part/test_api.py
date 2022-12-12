@@ -126,7 +126,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             # Create parts in this category
             for jj in range(10):
                 Part.objects.create(
-                    name=f"Part xyz {jj}",
+                    name=f"Part xyz {jj}_{ii}",
                     description="A test part",
                     category=child
                 )
