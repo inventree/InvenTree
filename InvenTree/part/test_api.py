@@ -2752,3 +2752,18 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
                 round(Decimal(data['price']), 4),
                 round(Decimal(p), 4)
             )
+
+        # Now, ensure that we can delete the Part via the API
+        # In particular this test checks that there are no circular post_delete relationships
+        # Ref: https://github.com/inventree/InvenTree/pull/3986
+
+        # First, ensure the part instance can be deleted
+        p = Part.objects.get(pk=1)
+        p.active = False
+        p.save()
+
+        response = self.delete(reverse("api-part-detail", kwargs={"pk": 1}))
+        self.assertEqual(response.status_code, 204)
+
+        with self.assertRaises(Part.DoesNotExist):
+            p.refresh_from_db()
