@@ -771,6 +771,10 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
                     'IPN': _('Duplicate IPN not allowed in part settings'),
                 })
 
+        # Ensure unique across (Name, revision, IPN) (as specified)
+        if Part.objects.exclude(pk=self.pk).filter(name=self.name, revision=self.revision, IPN=self.IPN).exists():
+            raise ValidationError(_("Part with this Name, IPN and Revision already exists."))
+
     def clean(self):
         """Perform cleaning operations for the Part model.
 
@@ -1699,6 +1703,20 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return pricing
 
+    def schedule_pricing_update(self):
+        """Helper function to schedule a pricing update.
+
+        Importantly, catches any errors which may occur during deletion of related objects,
+        in particular due to post_delete signals.
+
+        Ref: https://github.com/inventree/InvenTree/pull/3986
+        """
+
+        try:
+            self.pricing.schedule_for_update()
+        except (PartPricing.DoesNotExist, IntegrityError):
+            pass
+
     def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
         """Return a simplified pricing string for this part.
 
@@ -2293,23 +2311,35 @@ class PartPricing(models.Model):
     def schedule_for_update(self, counter: int = 0):
         """Schedule this pricing to be updated"""
 
-        if self.pk is None:
-            self.save()
+        try:
+            self.refresh_from_db()
+        except (PartPricing.DoesNotExist, IntegrityError):
+            # Error thrown if this PartPricing instance has already been removed
+            return
 
-        self.refresh_from_db()
+        # Ensure that the referenced part still exists in the database
+        try:
+            p = self.part
+            p.refresh_from_db()
+        except IntegrityError:
+            return
 
         if self.scheduled_for_update:
             # Ignore if the pricing is already scheduled to be updated
-            logger.info(f"Pricing for {self.part} already scheduled for update - skipping")
+            logger.info(f"Pricing for {p} already scheduled for update - skipping")
             return
 
         if counter > 25:
             # Prevent infinite recursion / stack depth issues
-            logger.info(counter, f"Skipping pricing update for {self.part} - maximum depth exceeded")
+            logger.info(counter, f"Skipping pricing update for {p} - maximum depth exceeded")
             return
 
-        self.scheduled_for_update = True
-        self.save()
+        try:
+            self.scheduled_for_update = True
+            self.save()
+        except IntegrityError:
+            # An IntegrityError here likely indicates that the referenced part has already been deleted
+            return
 
         import part.tasks as part_tasks
 
@@ -3561,7 +3591,7 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
 
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        instance.part.pricing.schedule_for_update()
+        instance.part.schedule_pricing_update()
 
 
 @receiver(post_delete, sender=BomItem, dispatch_uid='post_delete_bom_item')
@@ -3572,7 +3602,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
 
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        instance.part.pricing.schedule_for_update()
+        instance.part.schedule_pricing_update()
 
 
 class BomItemSubstitute(models.Model):
