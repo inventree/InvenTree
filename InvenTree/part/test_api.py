@@ -339,7 +339,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             # Create parts in the category to be deleted
             for jj in range(3):
                 parts.append(Part.objects.create(
-                    name=f"Part xyz {jj}",
+                    name=f"Part xyz {i}_{jj}",
                     description="Child part of the deleted category",
                     category=cat_to_delete
                 ))
@@ -349,7 +349,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             # Create child categories under the category to be deleted
             for ii in range(3):
                 child = PartCategory.objects.create(
-                    name=f"Child parent_cat {ii}",
+                    name=f"Child parent_cat {i}_{ii}",
                     description="A child category of the deleted category",
                     parent=cat_to_delete
                 )
@@ -358,7 +358,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 # Create parts in the child categories
                 for jj in range(3):
                     child_categories_parts.append(Part.objects.create(
-                        name=f"Part xyz {jj}_{ii}",
+                        name=f"Part xyz {i}_{jj}_{ii}",
                         description="Child part in the child category of the deleted category",
                         category=child
                     ))
