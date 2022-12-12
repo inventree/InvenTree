@@ -21,6 +21,10 @@ on:
     branches:
       - 'master'
 
+  pull_request:
+    branches:
+      - 'master'
+
 jobs:
 
   # Build the docker image
