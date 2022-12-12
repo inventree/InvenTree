@@ -881,11 +881,15 @@ class PartAPITest(InvenTreeAPITestCase):
         """
         url = reverse('api-part-list')
 
-        response = self.post(url, {
-            'name': 'all defaults',
-            'description': 'my test part',
-            'category': 1,
-        })
+        response = self.post(
+            url,
+            {
+                'name': 'all defaults',
+                'description': 'my test part',
+                'category': 1,
+            },
+            expected_code=201,
+        )
 
         data = response.data
 
@@ -903,23 +907,31 @@ class PartAPITest(InvenTreeAPITestCase):
             self.user
         )
 
-        response = self.post(url, {
-            'name': 'all defaults',
-            'description': 'my test part 2',
-            'category': 1,
-        })
+        response = self.post(
+            url,
+            {
+                'name': 'all defaults 2',
+                'description': 'my test part 2',
+                'category': 1,
+            },
+            expected_code=201,
+        )
 
         # Part should now be purchaseable by default
         self.assertTrue(response.data['purchaseable'])
 
         # "default" values should not be used if the value is specified
-        response = self.post(url, {
-            'name': 'all defaults',
-            'description': 'my test part 2',
-            'category': 1,
-            'active': False,
-            'purchaseable': False,
-        })
+        response = self.post(
+            url,
+            {
+                'name': 'all defaults 3',
+                'description': 'my test part 3',
+                'category': 1,
+                'active': False,
+                'purchaseable': False,
+            },
+            expected_code=201
+        )
 
         self.assertFalse(response.data['active'])
         self.assertFalse(response.data['purchaseable'])
