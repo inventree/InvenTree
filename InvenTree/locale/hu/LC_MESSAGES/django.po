@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-13 11:25+0000\n"
-"PO-Revision-Date: 2022-12-12 18:57\n"
+"POT-Creation-Date: 2022-12-13 00:08+0000\n"
+"PO-Revision-Date: 2022-12-13 19:13\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1169,8 +1169,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:383
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:452
@@ -4750,10 +4749,8 @@ msgid "Duplicate IPN not allowed in part settings"
 msgstr "Azonos IPN nem engedélyezett az alkatrész beállításokban"
 
 #: part/models.py:776
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Part with this Name, IPN and Revision already exists."
-msgstr "Ilyen fájlnévvel már létezik melléklet"
+msgstr ""
 
 #: part/models.py:790
 msgid "Parts cannot be assigned to structural part categories!"
@@ -8049,16 +8046,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -11192,3 +11187,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
