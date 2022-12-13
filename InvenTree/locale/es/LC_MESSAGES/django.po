@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 12:35+0000\n"
-"PO-Revision-Date: 2022-12-08 12:04\n"
+"POT-Creation-Date: 2022-12-12 08:18+0000\n"
+"PO-Revision-Date: 2022-12-12 18:58\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -421,103 +421,103 @@ msgstr "URL de imagen remota"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "La descarga de imágenes desde la URL remota no está habilitada"
 
-#: InvenTree/settings.py:627
+#: InvenTree/settings.py:637
 msgid "Czech"
 msgstr "Checo"
 
-#: InvenTree/settings.py:628
+#: InvenTree/settings.py:638
 msgid "Danish"
 msgstr "Danés"
 
-#: InvenTree/settings.py:629
+#: InvenTree/settings.py:639
 msgid "German"
 msgstr "Alemán"
 
-#: InvenTree/settings.py:630
+#: InvenTree/settings.py:640
 msgid "Greek"
 msgstr "Griego"
 
-#: InvenTree/settings.py:631
+#: InvenTree/settings.py:641
 msgid "English"
 msgstr "Inglés"
 
-#: InvenTree/settings.py:632
+#: InvenTree/settings.py:642
 msgid "Spanish"
 msgstr "Español"
 
-#: InvenTree/settings.py:633
+#: InvenTree/settings.py:643
 msgid "Spanish (Mexican)"
 msgstr "Español (México)"
 
-#: InvenTree/settings.py:634
+#: InvenTree/settings.py:644
 msgid "Farsi / Persian"
 msgstr "Farsi / Persa"
 
-#: InvenTree/settings.py:635
+#: InvenTree/settings.py:645
 msgid "French"
 msgstr "Francés"
 
-#: InvenTree/settings.py:636
+#: InvenTree/settings.py:646
 msgid "Hebrew"
 msgstr "Hebreo"
 
-#: InvenTree/settings.py:637
+#: InvenTree/settings.py:647
 msgid "Hungarian"
 msgstr "Húngaro"
 
-#: InvenTree/settings.py:638
+#: InvenTree/settings.py:648
 msgid "Italian"
 msgstr "Italiano"
 
-#: InvenTree/settings.py:639
+#: InvenTree/settings.py:649
 msgid "Japanese"
 msgstr "Japonés"
 
-#: InvenTree/settings.py:640
+#: InvenTree/settings.py:650
 msgid "Korean"
 msgstr "Coreano"
 
-#: InvenTree/settings.py:641
+#: InvenTree/settings.py:651
 msgid "Dutch"
 msgstr "Holandés"
 
-#: InvenTree/settings.py:642
+#: InvenTree/settings.py:652
 msgid "Norwegian"
 msgstr "Noruego"
 
-#: InvenTree/settings.py:643
+#: InvenTree/settings.py:653
 msgid "Polish"
 msgstr "Polaco"
 
-#: InvenTree/settings.py:644
+#: InvenTree/settings.py:654
 msgid "Portuguese"
 msgstr "Portugués"
 
-#: InvenTree/settings.py:645
+#: InvenTree/settings.py:655
 msgid "Portuguese (Brazilian)"
 msgstr "Portugués (Brasileño)"
 
-#: InvenTree/settings.py:646
+#: InvenTree/settings.py:656
 msgid "Russian"
 msgstr "Ruso"
 
-#: InvenTree/settings.py:647
+#: InvenTree/settings.py:657
 msgid "Swedish"
 msgstr "Sueco"
 
-#: InvenTree/settings.py:648
+#: InvenTree/settings.py:658
 msgid "Thai"
 msgstr "Tailandés"
 
-#: InvenTree/settings.py:649
+#: InvenTree/settings.py:659
 msgid "Turkish"
 msgstr "Turco"
 
-#: InvenTree/settings.py:650
+#: InvenTree/settings.py:660
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: InvenTree/settings.py:651
+#: InvenTree/settings.py:661
 msgid "Chinese"
 msgstr "Chino"
 
@@ -705,27 +705,27 @@ msgstr "El excedente no debe superar el 100%"
 msgid "Invalid value for overage"
 msgstr "Valor no válido para sobrecarga"
 
-#: InvenTree/views.py:520 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:447 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr "Editar datos del usuario"
 
-#: InvenTree/views.py:532 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:459 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "Configurar Contraseña"
 
-#: InvenTree/views.py:554
+#: InvenTree/views.py:481
 msgid "Password fields must match"
 msgstr "Los campos de contraseña deben coincidir"
 
-#: InvenTree/views.py:563
+#: InvenTree/views.py:490
 msgid "Wrong password provided"
 msgstr "Contraseña incorrecta proporcionada"
 
-#: InvenTree/views.py:773 templates/navbar.html:152
+#: InvenTree/views.py:703 templates/navbar.html:152
 msgid "System Information"
 msgstr "Información del sistema"
 
-#: InvenTree/views.py:780 templates/navbar.html:163
+#: InvenTree/views.py:710 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "Acerca de InvenTree"
 
@@ -1641,7 +1641,7 @@ msgstr "Salidas incompletas"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Outputs"
-msgstr ""
+msgstr "Salidas completadas"
 
 #: common/files.py:62
 msgid "Unsupported file format: {ext.upper()}"
@@ -1718,7 +1718,7 @@ msgstr "Se ha cambiado una configuración que requiere un reinicio del servidor"
 
 #: common/models.py:818
 msgid "Server Instance Name"
-msgstr ""
+msgstr "Nombre de la instancia del servidor"
 
 #: common/models.py:820
 msgid "String descriptor for the server instance"
@@ -1790,7 +1790,7 @@ msgstr ""
 
 #: common/models.py:886
 msgid "Tree Depth"
-msgstr ""
+msgstr "Profundidad del árbol"
 
 #: common/models.py:887
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
@@ -1814,7 +1814,7 @@ msgstr "Los resultados de las tareas en segundo plano se eliminarán después de
 
 #: common/models.py:914
 msgid "Delete Error Logs"
-msgstr ""
+msgstr "Borrar registros de errores"
 
 #: common/models.py:915
 msgid "Error logs will be deleted after specified number of days"
@@ -2019,7 +2019,7 @@ msgstr ""
 
 #: common/models.py:1092
 msgid "Pricing Decimal Places"
-msgstr ""
+msgstr "Lugares decimales en el precio"
 
 #: common/models.py:1093
 msgid "Number of decimal places to display when rendering pricing data"
@@ -2555,7 +2555,7 @@ msgstr "Mostrar informes PDF en el navegador, en lugar de descargar como un arch
 
 #: common/models.py:1610
 msgid "Search Parts"
-msgstr ""
+msgstr "Buscar partes"
 
 #: common/models.py:1611
 msgid "Display parts in search preview window"
@@ -2595,7 +2595,7 @@ msgstr ""
 
 #: common/models.py:1645
 msgid "Search Stock"
-msgstr ""
+msgstr "Buscar inventario"
 
 #: common/models.py:1646
 msgid "Display stock items in search preview window"
@@ -2635,7 +2635,7 @@ msgstr ""
 
 #: common/models.py:1680
 msgid "Search Purchase Orders"
-msgstr ""
+msgstr "Buscar órdenes de compra"
 
 #: common/models.py:1681
 msgid "Display purchase orders in search preview window"
@@ -2651,7 +2651,7 @@ msgstr ""
 
 #: common/models.py:1694
 msgid "Search Sales Orders"
-msgstr ""
+msgstr "Buscar órdenes de venta"
 
 #: common/models.py:1695
 msgid "Display sales orders in search preview window"
@@ -2695,15 +2695,15 @@ msgstr "Barra de navegación fija"
 
 #: common/models.py:1730
 msgid "The navbar position is fixed to the top of the screen"
-msgstr ""
+msgstr "La posición de la barra de navegación se fija en la parte superior de la pantalla"
 
 #: common/models.py:1736
 msgid "Date Format"
-msgstr ""
+msgstr "Formato de Fecha"
 
 #: common/models.py:1737
 msgid "Preferred format for displaying dates"
-msgstr ""
+msgstr "Formato preferido para mostrar fechas"
 
 #: common/models.py:1751 part/templates/part/detail.html:41
 msgid "Part Scheduling"
@@ -2825,11 +2825,11 @@ msgstr ""
 
 #: common/models.py:2341 templates/js/translated/news.js:35
 msgid "Title"
-msgstr ""
+msgstr "Titulo"
 
 #: common/models.py:2351 templates/js/translated/news.js:51
 msgid "Published"
-msgstr ""
+msgstr "Publicado"
 
 #: common/models.py:2356 templates/InvenTree/settings/plugin.html:62
 #: templates/InvenTree/settings/plugin_settings.html:33
@@ -2839,7 +2839,7 @@ msgstr "Autor"
 
 #: common/models.py:2361 templates/js/translated/news.js:43
 msgid "Summary"
-msgstr ""
+msgstr "Resumen"
 
 #: common/models.py:2366
 msgid "Read"
@@ -2860,7 +2860,7 @@ msgstr ""
 
 #: common/notifications.py:301
 msgid "Items Received"
-msgstr ""
+msgstr "Artículos Recibidos"
 
 #: common/notifications.py:303
 msgid "Items have been received against a purchase order"
@@ -3197,7 +3197,7 @@ msgstr ""
 
 #: company/models.py:686
 msgid "last updated"
-msgstr ""
+msgstr "última actualización"
 
 #: company/serializers.py:72
 msgid "Default currency used for this supplier"
@@ -3253,7 +3253,7 @@ msgstr "Descargar desde URL"
 #: company/templates/company/company_base.html:62
 #: part/templates/part/part_thumb.html:17
 msgid "Delete image"
-msgstr ""
+msgstr "Borrar imagen"
 
 #: company/templates/company/company_base.html:89 order/models.py:665
 #: order/templates/order/sales_order_base.html:116 stock/models.py:686
@@ -3277,7 +3277,7 @@ msgstr "Teléfono"
 #: company/templates/company/company_base.html:204
 #: part/templates/part/part_base.html:508
 msgid "Remove Image"
-msgstr ""
+msgstr "Quitar imagen"
 
 #: company/templates/company/company_base.html:205
 msgid "Remove associated image from this company"
@@ -3895,7 +3895,7 @@ msgstr ""
 
 #: order/models.py:976
 msgid "Unit price"
-msgstr ""
+msgstr "Precio unitario"
 
 #: order/models.py:1006
 msgid "Supplier part must match supplier"
@@ -3903,7 +3903,7 @@ msgstr "La pieza del proveedor debe coincidir con el proveedor"
 
 #: order/models.py:1014
 msgid "deleted"
-msgstr ""
+msgstr "eliminado"
 
 #: order/models.py:1020 order/models.py:1100 order/models.py:1141
 #: order/models.py:1235 order/models.py:1367
@@ -4298,12 +4298,12 @@ msgstr "Emitido"
 #: order/templates/order/order_base.html:192
 #: order/templates/order/sales_order_base.html:190
 msgid "Total cost"
-msgstr ""
+msgstr "Costo total"
 
 #: order/templates/order/order_base.html:196
 #: order/templates/order/sales_order_base.html:194
 msgid "Total cost could not be calculated"
-msgstr ""
+msgstr "No se ha podido calcular el costo total"
 
 #: order/templates/order/order_wizard/match_parts.html:12
 #: part/templates/part/import_wizard/ajax_match_references.html:12
@@ -4381,13 +4381,13 @@ msgstr "Recibir elementos seleccionados"
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/sales_order_detail.html:45
 msgid "Extra Lines"
-msgstr ""
+msgstr "Líneas Adicionales"
 
 #: order/templates/order/purchase_order_detail.html:56
 #: order/templates/order/sales_order_detail.html:51
 #: order/templates/order/sales_order_detail.html:291
 msgid "Add Extra Line"
-msgstr ""
+msgstr "Añadir línea adicional"
 
 #: order/templates/order/purchase_order_detail.html:76
 msgid "Received Items"
