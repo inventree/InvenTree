@@ -31,6 +31,16 @@ INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
+# Note: The following fix is "required" for docker build workflow
+# Note: 2022-12-12 still unsure why...
+if TESTING:
+    # Ensure that sys.path includes global python libs
+    python_dir = os.path.dirname(sys.executable)
+    python_lib = os.path.join(python_dir, "lib", "site-packages")
+
+    if python_lib not in sys.path:
+        sys.path.append(python_lib)
+
 # Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
 

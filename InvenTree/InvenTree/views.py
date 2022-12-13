@@ -642,6 +642,9 @@ class CustomLoginView(LoginView):
             # Initiate form
             form = self.get_form_class()(request.GET.dict(), request=request)
 
+            # Validate form data
+            form.is_valid()
+
             # Try to login
             form.full_clean()
             return form.login(request)

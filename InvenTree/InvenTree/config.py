@@ -59,6 +59,13 @@ def get_config_file(create=True) -> Path:
 def load_config_data() -> map:
     """Load configuration data from the config file."""
 
+    import sys
+
+    print("load_config_data()")
+    print("- cwd:", os.getcwd())
+    print("- exe:", sys.executable)
+    print("- path:", sys.path)
+
     import yaml
 
     cfg_file = get_config_file()
