@@ -390,7 +390,7 @@ class PurchaseOrder(Order):
             # Schedule pricing update for any referenced parts
             for line in self.lines.all():
                 if line.part and line.part.part:
-                    line.part.part.pricing.schedule_for_update()
+                    line.part.part.schedule_pricing_update()
 
             trigger_event('purchaseorder.completed', id=self.pk)
 
@@ -778,7 +778,7 @@ class SalesOrder(Order):
 
         # Schedule pricing update for any referenced parts
         for line in self.lines.all():
-            line.part.pricing.schedule_for_update()
+            line.part.schedule_pricing_update()
 
         trigger_event('salesorder.completed', id=self.pk)
 

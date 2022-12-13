@@ -4,7 +4,18 @@ import logging
 import multiprocessing
 import os
 
+# Logger configuration
 logger = logging.getLogger('inventree')
+accesslog = '-'
+errorlog = '-'
+loglevel = os.environ.get('INVENTREE_LOG_LEVEL', 'warning').lower()
+capture_output = True
+
+# Worker configuration
+#  TODO: Implement support for gevent
+# worker_class = 'gevent'  # Allow multi-threading support
+worker_tmp_dir = '/dev/shm'  # Write temp file to RAM (faster)
+threads = 4
 
 workers = os.environ.get('INVENTREE_GUNICORN_WORKERS', None)
 
