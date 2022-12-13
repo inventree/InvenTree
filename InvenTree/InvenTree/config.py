@@ -63,6 +63,8 @@ def load_config_data() -> map:
 
     print("load_config_data()")
     print("- cwd:", os.getcwd())
+    print("- argv:", sys.argv)
+    print("- mod:", sys.modules)
     print("- exe:", sys.executable)
     print("- path:", sys.path)
 
