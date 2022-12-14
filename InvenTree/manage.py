@@ -3,6 +3,8 @@
 import os
 import sys
 
+import setuptools  # noqa: F401
+
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "InvenTree.settings")
     try:
