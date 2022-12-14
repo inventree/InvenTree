@@ -7,6 +7,8 @@ import shutil
 import string
 from pathlib import Path
 
+import setuptools  # noqa: F401
+
 logger = logging.getLogger('inventree')
 
 
