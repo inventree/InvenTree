@@ -58,6 +58,7 @@ jobs:
           docker-compose run inventree-dev-server invoke update
           docker-compose run inventree-dev-server invoke setup-dev
           docker-compose up -d
+          docker-compose run inventree-dev-server pip install --upgrade setuptools
           docker-compose run inventree-dev-server invoke wait
       - name: Check Data Directory
         # The following file structure should have been created by the docker image
