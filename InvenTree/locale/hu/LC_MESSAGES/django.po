@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-13 00:08+0000\n"
-"PO-Revision-Date: 2022-12-13 19:13\n"
+"POT-Creation-Date: 2022-12-15 10:00+0000\n"
+"PO-Revision-Date: 2022-12-15 10:07\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -4624,47 +4624,47 @@ msgstr "Minimum ár"
 msgid "Maximum Price"
 msgstr "Maximum ár"
 
-#: part/api.py:533
+#: part/api.py:536
 msgid "Incoming Purchase Order"
 msgstr "Beérkező beszerzési rendelés"
 
-#: part/api.py:553
+#: part/api.py:556
 msgid "Outgoing Sales Order"
 msgstr "Kimenő vevői rendelés"
 
-#: part/api.py:571
+#: part/api.py:574
 msgid "Stock produced by Build Order"
 msgstr "Gyártással előállított készlet"
 
-#: part/api.py:657
+#: part/api.py:660
 msgid "Stock required for Build Order"
 msgstr "A gyártási utasításhoz szükséges készlet"
 
-#: part/api.py:815
+#: part/api.py:818
 msgid "Valid"
 msgstr "Érvényes"
 
-#: part/api.py:816
+#: part/api.py:819
 msgid "Validate entire Bill of Materials"
 msgstr "Teljes alkatrészjegyzék jóváhagyása"
 
-#: part/api.py:822
+#: part/api.py:825
 msgid "This option must be selected"
 msgstr "Ennek az opciónak ki kll lennie választva"
 
-#: part/api.py:1262
+#: part/api.py:1265
 msgid "Must be greater than zero"
 msgstr "Nullánál nagyobb kell legyen"
 
-#: part/api.py:1266
+#: part/api.py:1269
 msgid "Must be a valid quantity"
 msgstr "Érvényes mennyiségnek kell lennie"
 
-#: part/api.py:1281
+#: part/api.py:1284
 msgid "Specify location for initial part stock"
 msgstr "Hely megadása a kezdeti alkarész készlethez"
 
-#: part/api.py:1312 part/api.py:1316 part/api.py:1331 part/api.py:1335
+#: part/api.py:1315 part/api.py:1319 part/api.py:1334 part/api.py:1338
 msgid "This field is required"
 msgstr "Ez a mező kötelező"
 
