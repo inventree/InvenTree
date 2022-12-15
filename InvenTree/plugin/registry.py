@@ -564,7 +564,9 @@ class PluginsRegistry:
                         settings.INSTALLED_APPS += [plugin_path]
                         self.installed_apps += [plugin_path]
                         apps_changed = True
-
+                # for pure UrlMixin
+                elif plugin.mixin_enabled('urls'):
+                    apps_changed = True
             # if apps were changed or force loading base apps -> reload
             if apps_changed or force_reload:
                 # first startup or force loading of base apps -> registry is prob false
