@@ -182,6 +182,8 @@ function getFilterOptionList(tableKey, filterKey) {
                 value: '{% trans "false" %}',
             },
         };
+    } else if (settings.type == 'date') {
+        return 'date';
     } else if ('options' in settings) {
         return settings.options;
     }
