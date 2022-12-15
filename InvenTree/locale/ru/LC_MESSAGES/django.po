@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-13 00:08+0000\n"
-"PO-Revision-Date: 2022-12-13 19:13\n"
+"POT-Creation-Date: 2022-12-15 10:00+0000\n"
+"PO-Revision-Date: 2022-12-15 10:08\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -4623,47 +4623,47 @@ msgstr ""
 msgid "Maximum Price"
 msgstr ""
 
-#: part/api.py:533
+#: part/api.py:536
 msgid "Incoming Purchase Order"
 msgstr ""
 
-#: part/api.py:553
+#: part/api.py:556
 msgid "Outgoing Sales Order"
 msgstr ""
 
-#: part/api.py:571
+#: part/api.py:574
 msgid "Stock produced by Build Order"
 msgstr ""
 
-#: part/api.py:657
+#: part/api.py:660
 msgid "Stock required for Build Order"
 msgstr ""
 
-#: part/api.py:815
+#: part/api.py:818
 msgid "Valid"
 msgstr ""
 
-#: part/api.py:816
+#: part/api.py:819
 msgid "Validate entire Bill of Materials"
 msgstr ""
 
-#: part/api.py:822
+#: part/api.py:825
 msgid "This option must be selected"
 msgstr ""
 
-#: part/api.py:1262
+#: part/api.py:1265
 msgid "Must be greater than zero"
 msgstr ""
 
-#: part/api.py:1266
+#: part/api.py:1269
 msgid "Must be a valid quantity"
 msgstr ""
 
-#: part/api.py:1281
+#: part/api.py:1284
 msgid "Specify location for initial part stock"
 msgstr ""
 
-#: part/api.py:1312 part/api.py:1316 part/api.py:1331 part/api.py:1335
+#: part/api.py:1315 part/api.py:1319 part/api.py:1334 part/api.py:1338
 msgid "This field is required"
 msgstr ""
 
