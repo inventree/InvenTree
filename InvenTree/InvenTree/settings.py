@@ -21,7 +21,6 @@ from django.utils.translation import gettext_lazy as _
 
 import moneyed
 import sentry_sdk
-import setuptools  # noqa: F401
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from . import config
