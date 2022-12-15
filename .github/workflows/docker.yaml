@@ -74,7 +74,6 @@ jobs:
           test -f data/secret_key.txt
       - name: Run Unit Tests
         run: |
-          docker-compose --version
           docker-compose run inventree-dev-server invoke test --disable-pty
           docker-compose down
       - name: Set up QEMU
