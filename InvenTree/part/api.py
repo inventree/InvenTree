@@ -38,7 +38,7 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartRelated, PartSellPriceBreak,
-                     PartTestTemplate)
+                     PartStocktake, PartTestTemplate)
 
 
 class CategoryList(APIDownloadMixin, ListCreateAPI):
@@ -1696,6 +1696,27 @@ class PartParameterDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartParameterSerializer
 
 
+class PartStocktakeFilter(rest_filters.FilterSet):
+    """Custom fitler for the PartStocktakeList endpoint"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = PartStocktake
+        fields = [
+            'part',
+            'user',
+        ]
+
+
+class PartStocktakeList(ListAPI):
+    """API endpoint for listing part stocktake information"""
+
+    queryset = PartStocktake.objects.all()
+    serializer_class = part_serializers.PartStocktakeSerializer
+    filterset_class = PartStocktakeFilter
+
+
 class BomFilter(rest_filters.FilterSet):
     """Custom filters for the BOM list."""
 
@@ -2109,6 +2130,11 @@ part_api_urls = [
 
         re_path(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
         re_path(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
+    ])),
+
+    # Part stocktake data
+    re_path(r'^stocktake/', include([
+        re_path(r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
     ])),
 
     re_path(r'^thumbs/', include([

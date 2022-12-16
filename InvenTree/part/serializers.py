@@ -31,7 +31,8 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartPricing, PartRelated,
-                     PartSellPriceBreak, PartStar, PartTestTemplate)
+                     PartSellPriceBreak, PartStar, PartStocktake,
+                     PartTestTemplate)
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -502,6 +503,22 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             )
 
         return self.instance
+
+
+class PartStocktakeSerializer(InvenTreeModelSerializer):
+    """Serializer for the PartStocktake model"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = PartStocktake
+        fields = [
+            'pk',
+            'date',
+            'part',
+            'quantity',
+            'user',
+        ]
 
 
 class PartPricingSerializer(InvenTreeModelSerializer):
