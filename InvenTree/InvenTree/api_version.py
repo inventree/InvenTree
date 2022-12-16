@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 83
+INVENTREE_API_VERSION = 84
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v84 -> 2022-12-16 : https://github.com/inventree/InvenTree/pull/4069
+    - Adds API endpoints for part stocktake
 
 v83 -> 2022-11-19 : https://github.com/inventree/InvenTree/pull/3949
     - Add support for structural Stock locations
