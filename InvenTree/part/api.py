@@ -1716,6 +1716,20 @@ class PartStocktakeList(ListAPI):
     serializer_class = part_serializers.PartStocktakeSerializer
     filterset_class = PartStocktakeFilter
 
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        'part',
+        'date',
+        'user',
+    ]
+
+    # Reverse date ordering by default
+    ordering = '-date'
+
 
 class BomFilter(rest_filters.FilterSet):
     """Custom filters for the BOM list."""
