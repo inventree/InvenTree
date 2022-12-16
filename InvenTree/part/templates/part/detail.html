@@ -53,6 +53,24 @@
 </div>
 {% endif %}
 
+{% settings_value 'DISPLAY_STOCKTAKE_TAB' user=request.user as show_stocktake %}
+{% if show_stocktake %}
+<div class='panel panel-hidden' id='panel-stocktake'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Stocktake" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                buttons
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "part/part_stocktake.html" %}
+    </div>
+</div>
+{% endif %}
+
 <div class='panel panel-hidden' id='panel-test-templates'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>

@@ -1754,6 +1754,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'DISPLAY_STOCKTAKE_TAB': {
+            'name': _('Part Stocktake'),
+            'description': _('Display part stocktake information'),
+            'default': True,
+            'validator': bool,
+        },
+
         'TABLE_STRING_MAX_LENGTH': {
             'name': _('Table String Length'),
             'description': _('Maximimum length limit for strings displayed in table views'),
