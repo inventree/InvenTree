@@ -2878,6 +2878,45 @@ class PartPricing(models.Model):
     )
 
 
+class PartStocktake(models.Model):
+    """Model representing a 'stocktake' entry for a particular Part.
+
+    A 'stocktake' is a representative count of available stock:
+    - Performed on a given date
+    - Records quantity of part in stock (across multiple stock items)
+    - Records user information
+    """
+
+    part = models.ForeignKey(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='stocktakes',
+        verbose_name=_('Part'),
+        help_text=_('Part for stocktake'),
+    )
+
+    quantity = models.DecimalField(
+        max_digits=19, decimal_places=5,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Quantity'),
+        help_text=_('Total available stock at time of stocktake'),
+    )
+
+    date = models.DateField(
+        verbose_name=_('Date'),
+        help_text=_('Date stocktake was performed'),
+        auto_now_add=True
+    )
+
+    user = models.ForeignKey(
+        User, blank=True, null=True,
+        on_delete=models.SET_NULL,
+        related_name='part_stocktakes',
+        verbose_name=_('User'),
+        help_text=_('User who performed this stocktake'),
+    )
+
+
 class PartAttachment(InvenTreeAttachment):
     """Model for storing file attachments against a Part object."""
 
