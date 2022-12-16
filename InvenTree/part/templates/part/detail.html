@@ -61,7 +61,7 @@
             <h4>{% trans "Part Stocktake" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                buttons
+                <!-- TODO: Buttons -->
             </div>
         </div>
     </div>
@@ -458,6 +458,11 @@
 
             chart = loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
         });
+    });
+
+    // Load the "stocktake" tab
+    onPanelLoad('stocktake', function() {
+        loadPartStocktakeTable({{ part.pk }});
     });
 
     // Load the "suppliers" tab

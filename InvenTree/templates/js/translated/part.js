@@ -33,6 +33,7 @@
     loadPartTable,
     loadPartTestTemplateTable,
     loadPartSchedulingChart,
+    loadPartStocktakeTable,
     loadPartVariantTable,
     loadRelatedPartsTable,
     loadSimplePartTable,
@@ -682,9 +683,55 @@ function makePartIcons(part) {
 }
 
 
+/*
+ * Load table for part stocktake information
+ */
+function loadPartStocktakeTable(partId, options={}) {
+
+    var table = options.table || '#part-stocktake-table';
+
+    var params = options.params || {};
+
+    params.part = partId;
+
+    var filters = loadTableFilters('stocktake');
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('stocktake', $(table), '#filter-list-stocktake');
+
+    $(table).inventreeTable({
+        url: '{% url "api-part-stocktake-list" %}',
+        queryParams: filters,
+        name: 'partstocktake',
+        original: options.params,
+        showColumns: true,
+        formatNoMatches: function() {
+            return '{% trans "No stocktake information available" %}';
+        },
+        columns: [
+            {
+                field: 'date',
+                title: '{% trans "Date" %}',
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+            },
+            {
+                field: 'user',
+                title: '{% trans "User" %}',
+            }
+        ]
+    });
+}
+
+
+/* Load part variant table
+ */
 function loadPartVariantTable(table, partId, options={}) {
-    /* Load part variant table
-     */
 
     var params = options.params || {};
 
