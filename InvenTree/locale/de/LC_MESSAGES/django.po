@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 00:04+0000\n"
-"PO-Revision-Date: 2022-12-15 10:07\n"
+"POT-Creation-Date: 2022-12-15 10:00+0000\n"
+"PO-Revision-Date: 2022-12-16 10:16\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -132,7 +132,7 @@ msgstr "Keine Seriennummer angegeben"
 
 #: InvenTree/helpers.py:627
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Duplizierter Seriennummer"
 
 #: InvenTree/helpers.py:660 InvenTree/helpers.py:695
 #, python-brace-format
@@ -142,7 +142,7 @@ msgstr "Ungültiger Gruppenbereich: {g}"
 #: InvenTree/helpers.py:689
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
-msgstr ""
+msgstr "Gruppenbereich {g} überschreitet die zulässige Menge ({q})"
 
 #: InvenTree/helpers.py:713 InvenTree/helpers.py:720 InvenTree/helpers.py:735
 #, python-brace-format
@@ -2147,7 +2147,7 @@ msgstr ""
 
 #: common/models.py:1213
 msgid "Serial numbers for stock items must be globally unique"
-msgstr ""
+msgstr "Seriennummern für Lagerartikel müssen global eindeutig sein"
 
 #: common/models.py:1219
 msgid "Batch Code Template"
@@ -8045,16 +8045,14 @@ msgstr "Einloggen"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
@@ -8423,7 +8421,7 @@ msgstr "Lagerartikel entfernen"
 
 #: templates/js/translated/barcode.js:567
 msgid "Scan Stock Items Into Location"
-msgstr ""
+msgstr "Lagerartikel in Lagerort buchen"
 
 #: templates/js/translated/barcode.js:569
 msgid "Scan stock item barcode to check in to this location"
@@ -9920,7 +9918,7 @@ msgstr "Das Löschen dieses Teils kann nicht rückgängig gemacht werden"
 
 #: templates/js/translated/part.js:476
 msgid "Any stock items for this part will be deleted"
-msgstr ""
+msgstr "Alle Lagerartikel für dieses Teil werden gelöscht"
 
 #: templates/js/translated/part.js:477
 msgid "This part will be removed from any Bills of Material"
@@ -11188,3 +11186,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
