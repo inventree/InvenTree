@@ -508,6 +508,8 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 class PartStocktakeSerializer(InvenTreeModelSerializer):
     """Serializer for the PartStocktake model"""
 
+    quantity = serializers.FloatField()
+
     class Meta:
         """Metaclass options"""
 
