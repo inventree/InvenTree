@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 00:04+0000\n"
-"PO-Revision-Date: 2022-12-15 10:08\n"
+"POT-Creation-Date: 2022-12-15 10:00+0000\n"
+"PO-Revision-Date: 2022-12-16 10:16\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -52,11 +52,11 @@ msgstr "Uwagi"
 #: InvenTree/format.py:142
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "Wartość '{name}' nie pojawia się w formacie wzoru"
 
 #: InvenTree/format.py:152
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "Podana wartość nie pasuje do wymaganego wzoru: "
 
 #: InvenTree/forms.py:134
 msgid "Enter password"
@@ -92,7 +92,7 @@ msgstr "Należy ponownie wpisać ten sam adres e-mail."
 
 #: InvenTree/helpers.py:158
 msgid "Connection error"
-msgstr ""
+msgstr "Błąd połączenia"
 
 #: InvenTree/helpers.py:162 InvenTree/helpers.py:167
 msgid "Server responded with invalid status code"
@@ -8045,22 +8045,18 @@ msgstr "Zaloguj się"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
-"Zaloguj się za pomocą jednego\n"
+msgstr "Zaloguj się za pomocą jednego\n"
 "istniejących kont stron trzecich lub  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">zarejestruj się</a>\n"
 "w celu założenia konta i zaloguj się poniżej:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
-"Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
+msgstr "Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
 "<a href=\"%(signup_url)s\">zarejstruj się</a>."
 
 #: templates/account/login.html:47
@@ -11193,3 +11189,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
