@@ -33,13 +33,13 @@ TESTING = 'test' in sys.argv
 
 # Note: The following fix is "required" for docker build workflow
 # Note: 2022-12-12 still unsure why...
-if TESTING:
+if TESTING and os.getenv('INVENTREE_DOCKER'):
     # Ensure that sys.path includes global python libs
-    python_dir = os.path.dirname(sys.executable)
-    python_lib = os.path.join(python_dir, "lib", "site-packages")
+    site_packages = '/usr/local/lib/python3.9/site-packages'
 
-    if python_lib not in sys.path:
-        sys.path.append(python_lib)
+    if site_packages not in sys.path:
+        print("Adding missing site-packages path:", site_packages)
+        sys.path.append(site_packages)
 
 # Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
