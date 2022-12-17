@@ -654,6 +654,7 @@ LANGUAGES = [
     ('pt', _('Portuguese')),
     ('pt-BR', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
+    ('sl', _('Slovenian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
