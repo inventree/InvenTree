@@ -593,7 +593,6 @@ class PluginsRegistry:
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL'):
             logger.info('Registering UrlsMixin Plugin')
             urls_changed = False
-
             # check whether an activated plugin extends UrlsMixin
             for _key, plugin in plugins:
                 if plugin.mixin_enabled('urls'):
@@ -602,7 +601,6 @@ class PluginsRegistry:
             if urls_changed or force_reload or full_reload:
                 # update urls - must be last as models must be registered for creating admin routes
                 self._update_urls()
-                
         
     def _reregister_contrib_apps(self):
         """Fix reloading of contrib apps - models and admin.

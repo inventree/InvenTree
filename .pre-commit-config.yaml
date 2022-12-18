@@ -7,7 +7,7 @@ exclude: |
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
+    rev: v4.4.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -15,7 +15,7 @@ repos:
     -   id: check-added-large-files
     -   id: mixed-line-ending
 -   repo: https://github.com/pycqa/flake8
-    rev: '5.0.4'
+    rev: '6.0.0'
     hooks:
     -   id: flake8
         additional_dependencies: [
@@ -25,11 +25,11 @@ repos:
                 'pep8-naming ',
         ]
 -   repo: https://github.com/pycqa/isort
-    rev: '5.10.1'
+    rev: 'v5.11.3'
     hooks:
     -   id: isort
 -   repo: https://github.com/jazzband/pip-tools
-    rev: 6.8.0
+    rev: 6.12.1
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
