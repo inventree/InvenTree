@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 00:04+0000\n"
-"PO-Revision-Date: 2022-12-15 10:07\n"
+"POT-Creation-Date: 2022-12-17 20:15+0000\n"
+"PO-Revision-Date: 2022-12-18 10:47\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -502,22 +502,26 @@ msgid "Russian"
 msgstr "Russo"
 
 #: InvenTree/settings.py:657
+msgid "Slovenian"
+msgstr ""
+
+#: InvenTree/settings.py:658
 msgid "Swedish"
 msgstr "Svedese"
 
-#: InvenTree/settings.py:658
+#: InvenTree/settings.py:659
 msgid "Thai"
 msgstr "Thailandese"
 
-#: InvenTree/settings.py:659
+#: InvenTree/settings.py:660
 msgid "Turkish"
 msgstr "Turco"
 
-#: InvenTree/settings.py:660
+#: InvenTree/settings.py:661
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: InvenTree/settings.py:661
+#: InvenTree/settings.py:662
 msgid "Chinese"
 msgstr "Cinese"
 
@@ -8045,16 +8049,14 @@ msgstr "Accedi"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -11188,3 +11190,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
