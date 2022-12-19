@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-15 10:00+0000\n"
-"PO-Revision-Date: 2022-12-15 10:08\n"
+"POT-Creation-Date: 2022-12-17 20:15+0000\n"
+"PO-Revision-Date: 2022-12-18 10:47\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -502,22 +502,26 @@ msgid "Russian"
 msgstr "俄语"
 
 #: InvenTree/settings.py:657
+msgid "Slovenian"
+msgstr ""
+
+#: InvenTree/settings.py:658
 msgid "Swedish"
 msgstr "瑞典语"
 
-#: InvenTree/settings.py:658
+#: InvenTree/settings.py:659
 msgid "Thai"
 msgstr "泰语"
 
-#: InvenTree/settings.py:659
+#: InvenTree/settings.py:660
 msgid "Turkish"
 msgstr "土耳其语"
 
-#: InvenTree/settings.py:660
+#: InvenTree/settings.py:661
 msgid "Vietnamese"
 msgstr "越南语"
 
-#: InvenTree/settings.py:661
+#: InvenTree/settings.py:662
 msgid "Chinese"
 msgstr "中文（简体）"
 

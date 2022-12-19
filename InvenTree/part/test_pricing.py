@@ -369,3 +369,33 @@ class PartPricingTests(InvenTreeTestCase):
         # Check that part was actually deleted
         with self.assertRaises(part.models.Part.DoesNotExist):
             self.part.refresh_from_db()
+
+    def test_check_missing_pricing(self):
+        """Tests for check_missing_pricing background task
+
+        Calling the check_missing_pricing task should:
+        - Create PartPricing objects where there are none
+        - Schedule pricing calculations for the newly created PartPricing objects
+        """
+
+        from part.tasks import check_missing_pricing
+
+        # Create some parts
+        for ii in range(100):
+            part.models.Part.objects.create(
+                name=f"Part_{ii}",
+                description="A test part",
+            )
+
+        # Ensure there is no pricing data
+        part.models.PartPricing.objects.all().delete()
+
+        check_missing_pricing()
+
+        # Check that PartPricing objects have been created
+        self.assertEqual(part.models.PartPricing.objects.count(), 101)
+
+        # Check that background-tasks have been created
+        from django_q.models import OrmQ
+
+        self.assertEqual(OrmQ.objects.count(), 101)
