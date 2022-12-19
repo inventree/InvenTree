@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-15 10:00+0000\n"
-"PO-Revision-Date: 2022-12-15 10:07\n"
+"POT-Creation-Date: 2022-12-17 20:15+0000\n"
+"PO-Revision-Date: 2022-12-18 10:46\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -502,22 +502,26 @@ msgid "Russian"
 msgstr "Ρωσικά"
 
 #: InvenTree/settings.py:657
+msgid "Slovenian"
+msgstr ""
+
+#: InvenTree/settings.py:658
 msgid "Swedish"
 msgstr "Σουηδικά"
 
-#: InvenTree/settings.py:658
+#: InvenTree/settings.py:659
 msgid "Thai"
 msgstr "Ταϊλανδέζικα"
 
-#: InvenTree/settings.py:659
+#: InvenTree/settings.py:660
 msgid "Turkish"
 msgstr "Τούρκικα"
 
-#: InvenTree/settings.py:660
+#: InvenTree/settings.py:661
 msgid "Vietnamese"
 msgstr "Βιετναμέζικα"
 
-#: InvenTree/settings.py:661
+#: InvenTree/settings.py:662
 msgid "Chinese"
 msgstr "Κινέζικα"
 

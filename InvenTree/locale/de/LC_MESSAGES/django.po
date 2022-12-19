@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-15 10:00+0000\n"
-"PO-Revision-Date: 2022-12-15 10:07\n"
+"POT-Creation-Date: 2022-12-17 20:15+0000\n"
+"PO-Revision-Date: 2022-12-18 10:46\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -132,7 +132,7 @@ msgstr "Keine Seriennummer angegeben"
 
 #: InvenTree/helpers.py:627
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Duplizierter Seriennummer"
 
 #: InvenTree/helpers.py:660 InvenTree/helpers.py:695
 #, python-brace-format
@@ -142,7 +142,7 @@ msgstr "Ungültiger Gruppenbereich: {g}"
 #: InvenTree/helpers.py:689
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
-msgstr ""
+msgstr "Gruppenbereich {g} überschreitet die zulässige Menge ({q})"
 
 #: InvenTree/helpers.py:713 InvenTree/helpers.py:720 InvenTree/helpers.py:735
 #, python-brace-format
@@ -502,22 +502,26 @@ msgid "Russian"
 msgstr "Russisch"
 
 #: InvenTree/settings.py:657
+msgid "Slovenian"
+msgstr ""
+
+#: InvenTree/settings.py:658
 msgid "Swedish"
 msgstr "Schwedisch"
 
-#: InvenTree/settings.py:658
+#: InvenTree/settings.py:659
 msgid "Thai"
 msgstr "Thailändisch"
 
-#: InvenTree/settings.py:659
+#: InvenTree/settings.py:660
 msgid "Turkish"
 msgstr "Türkisch"
 
-#: InvenTree/settings.py:660
+#: InvenTree/settings.py:661
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
-#: InvenTree/settings.py:661
+#: InvenTree/settings.py:662
 msgid "Chinese"
 msgstr "Chinesisch"
 
@@ -2147,7 +2151,7 @@ msgstr ""
 
 #: common/models.py:1213
 msgid "Serial numbers for stock items must be globally unique"
-msgstr ""
+msgstr "Seriennummern für Lagerartikel müssen global eindeutig sein"
 
 #: common/models.py:1219
 msgid "Batch Code Template"
@@ -8421,7 +8425,7 @@ msgstr "Lagerartikel entfernen"
 
 #: templates/js/translated/barcode.js:567
 msgid "Scan Stock Items Into Location"
-msgstr ""
+msgstr "Lagerartikel in Lagerort buchen"
 
 #: templates/js/translated/barcode.js:569
 msgid "Scan stock item barcode to check in to this location"
@@ -9918,7 +9922,7 @@ msgstr "Das Löschen dieses Teils kann nicht rückgängig gemacht werden"
 
 #: templates/js/translated/part.js:476
 msgid "Any stock items for this part will be deleted"
-msgstr ""
+msgstr "Alle Lagerartikel für dieses Teil werden gelöscht"
 
 #: templates/js/translated/part.js:477
 msgid "This part will be removed from any Bills of Material"
