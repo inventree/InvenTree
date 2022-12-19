@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-19 02:46+0000\n"
-"PO-Revision-Date: 2022-12-18 10:47\n"
+"POT-Creation-Date: 2022-12-17 20:15+0000\n"
+"PO-Revision-Date: 2022-12-19 21:55\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -23,11 +23,11 @@ msgstr ""
 
 #: InvenTree/exceptions.py:68
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "Napaka, podrobnosti vidne v pogledu administratorja"
 
 #: InvenTree/fields.py:129
 msgid "Enter date"
-msgstr ""
+msgstr "Vnesi datum"
 
 #: InvenTree/fields.py:204 build/serializers.py:387
 #: build/templates/build/sidebar.html:21 company/models.py:529
@@ -47,80 +47,80 @@ msgstr ""
 #: templates/js/translated/order.js:4385 templates/js/translated/stock.js:1407
 #: templates/js/translated/stock.js:2014
 msgid "Notes"
-msgstr ""
+msgstr "Zapiski"
 
 #: InvenTree/format.py:142
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "Vrednost '{name}' ni v predpisanem formatu"
 
 #: InvenTree/format.py:152
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "Podana vrednost se ujema s predpisanim vzorcem: "
 
 #: InvenTree/forms.py:134
 msgid "Enter password"
-msgstr ""
+msgstr "Vnesite geslo"
 
 #: InvenTree/forms.py:135
 msgid "Enter new password"
-msgstr ""
+msgstr "Vnesite novo geslo"
 
 #: InvenTree/forms.py:144
 msgid "Confirm password"
-msgstr ""
+msgstr "Potrdite geslo"
 
 #: InvenTree/forms.py:145
 msgid "Confirm new password"
-msgstr ""
+msgstr "Potrdite novo geslo"
 
 #: InvenTree/forms.py:149
 msgid "Old password"
-msgstr ""
+msgstr "Staro geslo"
 
 #: InvenTree/forms.py:178
 msgid "Email (again)"
-msgstr ""
+msgstr "Ponovnite e-pošto"
 
 #: InvenTree/forms.py:182
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Potrdite e-pošto"
 
 #: InvenTree/forms.py:203
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "E-pošti se morata ujemati"
 
 #: InvenTree/helpers.py:158
 msgid "Connection error"
-msgstr ""
+msgstr "Napaka povezave"
 
 #: InvenTree/helpers.py:162 InvenTree/helpers.py:167
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "Odziv serverja: napravilni status kode"
 
 #: InvenTree/helpers.py:164
 msgid "Exception occurred"
-msgstr ""
+msgstr "Pojavila se je izjema"
 
 #: InvenTree/helpers.py:172
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "Odziv serverja: napačna dolžina vrednosti"
 
 #: InvenTree/helpers.py:175
 msgid "Image size is too large"
-msgstr ""
+msgstr "Prevelika velikost slike"
 
 #: InvenTree/helpers.py:187
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "Prenos slike presegel največjo velikost"
 
 #: InvenTree/helpers.py:192
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "Oddaljeni server vrnil prazen odziv"
 
 #: InvenTree/helpers.py:200
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "Podani URL ni veljavna slikovna datoteka"
 
 #: InvenTree/helpers.py:589 order/models.py:329 order/models.py:496
 msgid "Invalid quantity provided"
@@ -8049,16 +8049,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -11192,3 +11190,4 @@ msgstr ""
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr ""
+
