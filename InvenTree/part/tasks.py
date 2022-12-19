@@ -123,4 +123,5 @@ def check_missing_pricing(limit=250):
 
         for p in results:
             pricing = p.pricing
+            pricing.save()
             pricing.schedule_for_update()
