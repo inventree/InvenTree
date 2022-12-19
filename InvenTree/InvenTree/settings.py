@@ -789,6 +789,7 @@ MARKDOWNIFY = {
             'src',
             'alt',
         ],
+        'MARKDOWN_EXTENSIONS' : ['markdown.extensions.extra', ],
         'WHITELIST_TAGS': [
             'a',
             'abbr',
@@ -802,7 +803,13 @@ MARKDOWNIFY = {
             'ol',
             'p',
             'strong',
-            'ul'
+            'ul',
+            'table',
+            'thead',
+            'tbody',
+            'th',
+            'tr',
+            'td'
         ],
     }
 }
