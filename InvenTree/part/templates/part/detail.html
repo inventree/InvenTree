@@ -61,6 +61,11 @@
             <h4>{% trans "Part Stocktake" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
+                {% if roles.part.add %}
+                <button class='btn btn-success' type='button' id='btn-stocktake' title='{% trans "Add stocktake information" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Stocktake" %}
+                </button>
+                {% endif %}
                 <!-- TODO: Buttons -->
             </div>
         </div>
