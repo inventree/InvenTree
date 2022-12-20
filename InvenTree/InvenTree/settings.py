@@ -789,7 +789,9 @@ MARKDOWNIFY = {
             'src',
             'alt',
         ],
-        'MARKDOWN_EXTENSIONS' : ['markdown.extensions.extra', ],
+        'MARKDOWN_EXTENSIONS': [
+            'markdown.extensions.extra'
+        ],
         'WHITELIST_TAGS': [
             'a',
             'abbr',
