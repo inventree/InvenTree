@@ -56,6 +56,10 @@ class PurchaseOrderTest(OrderTest):
         # List *ALL* PurchaseOrder items
         self.filter({}, 7)
 
+        # Filter by assigned-to-me
+        self.filter({'assigned_to_me': 1}, 0)
+        self.filter({'assigned_to_me': 0}, 7)
+
         # Filter by supplier
         self.filter({'supplier': 1}, 1)
         self.filter({'supplier': 3}, 5)
