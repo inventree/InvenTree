@@ -328,3 +328,74 @@ class PartPricingTests(InvenTreeTestCase):
 
         self.assertEqual(pricing.purchase_cost_min, Money('1.333333', 'USD'))
         self.assertEqual(pricing.purchase_cost_max, Money('1.764706', 'USD'))
+
+    def test_delete_with_pricing(self):
+        """Test for deleting a part which has pricing information"""
+
+        # Create some pricing data
+        self.create_price_breaks()
+
+        # Check that pricing does exist
+        pricing = self.part.pricing
+
+        pricing.update_pricing()
+        pricing.save()
+
+        self.assertIsNotNone(pricing.overall_min)
+        self.assertIsNotNone(pricing.overall_max)
+
+        self.part.active = False
+        self.part.save()
+
+        # Remove the part from the database
+        self.part.delete()
+
+        # Check that the pricing was removed also
+        with self.assertRaises(part.models.PartPricing.DoesNotExist):
+            pricing.refresh_from_db()
+
+    def test_delete_without_pricing(self):
+        """Test that we can delete a part which does not have pricing information"""
+
+        pricing = self.part.pricing
+
+        self.assertIsNone(pricing.pk)
+
+        self.part.active = False
+        self.part.save()
+
+        self.part.delete()
+
+        # Check that part was actually deleted
+        with self.assertRaises(part.models.Part.DoesNotExist):
+            self.part.refresh_from_db()
+
+    def test_check_missing_pricing(self):
+        """Tests for check_missing_pricing background task
+
+        Calling the check_missing_pricing task should:
+        - Create PartPricing objects where there are none
+        - Schedule pricing calculations for the newly created PartPricing objects
+        """
+
+        from part.tasks import check_missing_pricing
+
+        # Create some parts
+        for ii in range(100):
+            part.models.Part.objects.create(
+                name=f"Part_{ii}",
+                description="A test part",
+            )
+
+        # Ensure there is no pricing data
+        part.models.PartPricing.objects.all().delete()
+
+        check_missing_pricing()
+
+        # Check that PartPricing objects have been created
+        self.assertEqual(part.models.PartPricing.objects.count(), 101)
+
+        # Check that background-tasks have been created
+        from django_q.models import OrmQ
+
+        self.assertEqual(OrmQ.objects.count(), 101)

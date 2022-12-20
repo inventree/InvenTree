@@ -534,13 +534,15 @@ def test_translations(c):
 
 
 @task
-def test(c, database=None):
+def test(c, disable_pty=False):
     """Run unit-tests for InvenTree codebase."""
     # Run sanity check on the django install
     manage(c, 'check')
 
+    pty = not disable_pty
+
     # Run coverage tests
-    manage(c, 'test', pty=True)
+    manage(c, 'test', pty=pty)
 
 
 @task(help={'dev': 'Set up development environment at the end'})
@@ -577,7 +579,7 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
 
     shutil.copytree(src, dst, dirs_exist_ok=True)
 
-    print("Done setting up test enviroment...")
+    print("Done setting up test environment...")
     print("========================================")
 
     # Set up development setup if flag is set
