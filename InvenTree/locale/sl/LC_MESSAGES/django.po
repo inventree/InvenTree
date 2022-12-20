@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-17 20:15+0000\n"
-"PO-Revision-Date: 2022-12-19 21:55\n"
+"PO-Revision-Date: 2022-12-20 21:55\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -124,15 +124,15 @@ msgstr "Podani URL ni veljavna slikovna datoteka"
 
 #: InvenTree/helpers.py:589 order/models.py:329 order/models.py:496
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Podana napačna količina"
 
 #: InvenTree/helpers.py:597
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Prazno polje serijske številke"
 
 #: InvenTree/helpers.py:627
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Dvojna serijska številka"
 
 #: InvenTree/helpers.py:660 InvenTree/helpers.py:695
 #, python-brace-format
@@ -213,21 +213,21 @@ msgstr ""
 #: templates/js/translated/company.js:1012
 #: templates/js/translated/order.js:3056 templates/js/translated/part.js:1608
 msgid "Link"
-msgstr ""
+msgstr "Povezava"
 
 #: InvenTree/models.py:413 build/models.py:290 part/models.py:866
 #: stock/models.py:701
 msgid "Link to external URL"
-msgstr ""
+msgstr "Zunanja povezava"
 
 #: InvenTree/models.py:416 templates/js/translated/attachment.js:104
 #: templates/js/translated/attachment.js:285
 msgid "Comment"
-msgstr ""
+msgstr "Komentar"
 
 #: InvenTree/models.py:416
 msgid "File comment"
-msgstr ""
+msgstr "Komentar datoteke"
 
 #: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1790
 #: common/models.py:1791 common/models.py:2014 common/models.py:2015
@@ -236,24 +236,24 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2683
 msgid "User"
-msgstr ""
+msgstr "Uporabnik"
 
 #: InvenTree/models.py:426
 msgid "upload date"
-msgstr ""
+msgstr "naloži datum"
 
 #: InvenTree/models.py:448
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Ime ne sme biti prazno"
 
 #: InvenTree/models.py:457
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Neveljavna mapa prilog"
 
 #: InvenTree/models.py:467
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Ime datoteke vsebuje neveljavni znak '{c}'"
 
 #: InvenTree/models.py:470
 msgid "Filename missing extension"
@@ -427,107 +427,107 @@ msgstr ""
 
 #: InvenTree/settings.py:638
 msgid "Danish"
-msgstr ""
+msgstr "Danščina"
 
 #: InvenTree/settings.py:639
 msgid "German"
-msgstr ""
+msgstr "Nemščina"
 
 #: InvenTree/settings.py:640
 msgid "Greek"
-msgstr ""
+msgstr "Grščina"
 
 #: InvenTree/settings.py:641
 msgid "English"
-msgstr ""
+msgstr "Angleščina"
 
 #: InvenTree/settings.py:642
 msgid "Spanish"
-msgstr ""
+msgstr "Španščina"
 
 #: InvenTree/settings.py:643
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Španščina (Mehiško)"
 
 #: InvenTree/settings.py:644
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Perzijsko"
 
 #: InvenTree/settings.py:645
 msgid "French"
-msgstr ""
+msgstr "Francoščina"
 
 #: InvenTree/settings.py:646
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebrejščina"
 
 #: InvenTree/settings.py:647
 msgid "Hungarian"
-msgstr ""
+msgstr "Madžarščina"
 
 #: InvenTree/settings.py:648
 msgid "Italian"
-msgstr ""
+msgstr "Italijanščina"
 
 #: InvenTree/settings.py:649
 msgid "Japanese"
-msgstr ""
+msgstr "Japonščina"
 
 #: InvenTree/settings.py:650
 msgid "Korean"
-msgstr ""
+msgstr "Korejščina"
 
 #: InvenTree/settings.py:651
 msgid "Dutch"
-msgstr ""
+msgstr "Nizozemščina"
 
 #: InvenTree/settings.py:652
 msgid "Norwegian"
-msgstr ""
+msgstr "Norveščina"
 
 #: InvenTree/settings.py:653
 msgid "Polish"
-msgstr ""
+msgstr "Poljščina"
 
 #: InvenTree/settings.py:654
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugalščina"
 
 #: InvenTree/settings.py:655
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugalščina (Brazilsko)"
 
 #: InvenTree/settings.py:656
 msgid "Russian"
-msgstr ""
+msgstr "Ruščina"
 
 #: InvenTree/settings.py:657
 msgid "Slovenian"
-msgstr ""
+msgstr "Slovenščina"
 
 #: InvenTree/settings.py:658
 msgid "Swedish"
-msgstr ""
+msgstr "Švedščina"
 
 #: InvenTree/settings.py:659
 msgid "Thai"
-msgstr ""
+msgstr "Tajščina"
 
 #: InvenTree/settings.py:660
 msgid "Turkish"
-msgstr ""
+msgstr "Turščina"
 
 #: InvenTree/settings.py:661
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamščina"
 
 #: InvenTree/settings.py:662
 msgid "Chinese"
-msgstr ""
+msgstr "Kitajščina"
 
 #: InvenTree/status.py:98
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Nadzor dela v ozadju neuspel"
 
 #: InvenTree/status.py:102
 msgid "Email backend not configured"
@@ -535,7 +535,7 @@ msgstr ""
 
 #: InvenTree/status.py:105
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Preverjanje zdravja sistema InvenTree neuspelo"
 
 #: InvenTree/status_codes.py:99 InvenTree/status_codes.py:140
 #: InvenTree/status_codes.py:306 templates/js/translated/table_filters.js:354
@@ -550,51 +550,51 @@ msgstr ""
 #: order/templates/order/order_base.html:143
 #: order/templates/order/sales_order_base.html:133
 msgid "Complete"
-msgstr ""
+msgstr "Končano"
 
 #: InvenTree/status_codes.py:102 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:308
 msgid "Cancelled"
-msgstr ""
+msgstr "Preklicano"
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:143
 #: InvenTree/status_codes.py:183
 msgid "Lost"
-msgstr ""
+msgstr "Izgubljeno"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:186
 msgid "Returned"
-msgstr ""
+msgstr "Vrnjeno"
 
 #: InvenTree/status_codes.py:141 order/models.py:1165
 #: templates/js/translated/order.js:3644 templates/js/translated/order.js:3979
 msgid "Shipped"
-msgstr ""
+msgstr "Poslano"
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
-msgstr ""
+msgstr "Potrebna pozornost"
 
 #: InvenTree/status_codes.py:181
 msgid "Damaged"
-msgstr ""
+msgstr "Poškodovano"
 
 #: InvenTree/status_codes.py:182
 msgid "Destroyed"
-msgstr ""
+msgstr "Uničeno"
 
 #: InvenTree/status_codes.py:184
 msgid "Rejected"
-msgstr ""
+msgstr "Zavrnjeno"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
-msgstr ""
+msgstr "Dano v karanteno"
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
