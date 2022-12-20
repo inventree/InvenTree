@@ -398,7 +398,7 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(order.get_metadata('yam'), 'yum')
 
 
-class PurchaseOrderLineTest(OrderTest):
+class PurchaseOrderLineItemTest(OrderTest):
     """Unit tests for PurchaseOrderLineItems."""
 
     LIST_URL = reverse('api-po-line-list')
