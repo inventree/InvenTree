@@ -1137,11 +1137,11 @@ class SalesOrderLineItemTest(OrderTest):
 
         # Filter by has_pricing status
         self.filter({'has_pricing': 1}, 0)
-        self.filter({'has_pricing': 0}, 25)
+        self.filter({'has_pricing': 0}, n)
 
         # Filter by has_pricing status
         self.filter({'completed': 1}, 0)
-        self.filter({'completed': 0}, 25)
+        self.filter({'completed': 0}, n)
 
 
 class SalesOrderDownloadTest(OrderTest):
