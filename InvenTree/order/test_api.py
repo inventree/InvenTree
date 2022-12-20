@@ -68,6 +68,18 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'status': 10}, 3)
         self.filter({'status': 40}, 1)
 
+        # Filter by "part"
+        self.filter({'part': 1}, 2)
+        self.filter({'part': 2}, 0)  # Part not assigned to any PO
+        self.assertRaises(ValueError):
+            self.filter({'part': 9999}, 0)  # Non-existant part
+
+        # Filter by "supplier_part"
+        self.filter({'supplier_part': 1}, 2)
+        self.filter({'supplier_part': 2}, 0)  # Part not assigned to any PO
+        self.assertRaises(ValueError):
+            self.filter({'part': 9999}, 0)  # Non-existant part
+        
     def test_overdue(self):
         """Test "overdue" status."""
         self.filter({'overdue': True}, 0)
