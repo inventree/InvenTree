@@ -74,7 +74,8 @@ class PurchaseOrderTest(OrderTest):
 
         # Filter by "supplier_part"
         self.filter({'supplier_part': 1}, 1)
-        self.filter({'supplier_part': 2}, 0)  # Part not assigned to any PO
+        self.filter({'supplier_part': 3}, 2)
+        self.filter({'supplier_part': 4}, 0)
 
     def test_overdue(self):
         """Test "overdue" status."""
@@ -405,7 +406,7 @@ class PurchaseOrderLineTest(OrderTest):
     def test_po_line_list(self):
         """Test the PurchaseOrderLine list API endpoint"""
         # List *ALL* PurchaseOrderLine items
-        self.filter({}, 7)
+        self.filter({}, 5)
 
         # Filter by pending status
         self.filter({'pending': 1}, 0)
