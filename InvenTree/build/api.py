@@ -65,6 +65,13 @@ class BuildFilter(rest_filters.FilterSet):
 
         return queryset
 
+    # Exact match for reference
+    reference = rest_filters.CharFilter(
+        label='Filter by exact reference',
+        field_name='reference',
+        lookup_expr="iexact"
+    )
+
 
 class BuildList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
