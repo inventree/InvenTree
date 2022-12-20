@@ -126,7 +126,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             # Create parts in this category
             for jj in range(10):
                 Part.objects.create(
-                    name=f"Part xyz {jj}",
+                    name=f"Part xyz {jj}_{ii}",
                     description="A test part",
                     category=child
                 )
@@ -339,7 +339,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             # Create parts in the category to be deleted
             for jj in range(3):
                 parts.append(Part.objects.create(
-                    name=f"Part xyz {jj}",
+                    name=f"Part xyz {i}_{jj}",
                     description="Child part of the deleted category",
                     category=cat_to_delete
                 ))
@@ -349,7 +349,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             # Create child categories under the category to be deleted
             for ii in range(3):
                 child = PartCategory.objects.create(
-                    name=f"Child parent_cat {ii}",
+                    name=f"Child parent_cat {i}_{ii}",
                     description="A child category of the deleted category",
                     parent=cat_to_delete
                 )
@@ -358,7 +358,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 # Create parts in the child categories
                 for jj in range(3):
                     child_categories_parts.append(Part.objects.create(
-                        name=f"Part xyz {jj}",
+                        name=f"Part xyz {i}_{jj}_{ii}",
                         description="Child part in the child category of the deleted category",
                         category=child
                     ))
@@ -881,11 +881,15 @@ class PartAPITest(InvenTreeAPITestCase):
         """
         url = reverse('api-part-list')
 
-        response = self.post(url, {
-            'name': 'all defaults',
-            'description': 'my test part',
-            'category': 1,
-        })
+        response = self.post(
+            url,
+            {
+                'name': 'all defaults',
+                'description': 'my test part',
+                'category': 1,
+            },
+            expected_code=201,
+        )
 
         data = response.data
 
@@ -903,23 +907,31 @@ class PartAPITest(InvenTreeAPITestCase):
             self.user
         )
 
-        response = self.post(url, {
-            'name': 'all defaults',
-            'description': 'my test part 2',
-            'category': 1,
-        })
+        response = self.post(
+            url,
+            {
+                'name': 'all defaults 2',
+                'description': 'my test part 2',
+                'category': 1,
+            },
+            expected_code=201,
+        )
 
         # Part should now be purchaseable by default
         self.assertTrue(response.data['purchaseable'])
 
         # "default" values should not be used if the value is specified
-        response = self.post(url, {
-            'name': 'all defaults',
-            'description': 'my test part 2',
-            'category': 1,
-            'active': False,
-            'purchaseable': False,
-        })
+        response = self.post(
+            url,
+            {
+                'name': 'all defaults 3',
+                'description': 'my test part 3',
+                'category': 1,
+                'active': False,
+                'purchaseable': False,
+            },
+            expected_code=201
+        )
 
         self.assertFalse(response.data['active'])
         self.assertFalse(response.data['purchaseable'])
@@ -2752,3 +2764,18 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
                 round(Decimal(data['price']), 4),
                 round(Decimal(p), 4)
             )
+
+        # Now, ensure that we can delete the Part via the API
+        # In particular this test checks that there are no circular post_delete relationships
+        # Ref: https://github.com/inventree/InvenTree/pull/3986
+
+        # First, ensure the part instance can be deleted
+        p = Part.objects.get(pk=1)
+        p.active = False
+        p.save()
+
+        response = self.delete(reverse("api-part-detail", kwargs={"pk": 1}))
+        self.assertEqual(response.status_code, 204)
+
+        with self.assertRaises(Part.DoesNotExist):
+            p.refresh_from_db()

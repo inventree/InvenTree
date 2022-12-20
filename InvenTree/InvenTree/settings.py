@@ -31,6 +31,16 @@ INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
+# Note: The following fix is "required" for docker build workflow
+# Note: 2022-12-12 still unsure why...
+if TESTING and os.getenv('INVENTREE_DOCKER'):
+    # Ensure that sys.path includes global python libs
+    site_packages = '/usr/local/lib/python3.9/site-packages'
+
+    if site_packages not in sys.path:
+        print("Adding missing site-packages path:", site_packages)
+        sys.path.append(site_packages)
+
 # Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
 
@@ -644,6 +654,7 @@ LANGUAGES = [
     ('pt', _('Portuguese')),
     ('pt-BR', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
+    ('sl', _('Slovenian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
