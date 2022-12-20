@@ -68,6 +68,14 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'status': 10}, 3)
         self.filter({'status': 40}, 1)
 
+        # Filter by "reference"
+        self.filter({'reference': 'PO-0001'}, 1)
+        self.filter({'reference': 'PO-9999'}, 0)
+
+        # Filter by "assigned_to_me"
+        self.filter({'assigned_to_me': 1}, 0)
+        self.filter({'assigned_to_me': 0}, 7)
+
     def test_overdue(self):
         """Test "overdue" status."""
         self.filter({'overdue': True}, 0)
@@ -827,6 +835,14 @@ class SalesOrderTest(OrderTest):
         self.filter({'status': 10}, 3)  # PENDING
         self.filter({'status': 20}, 1)  # SHIPPED
         self.filter({'status': 99}, 0)  # Invalid
+
+        # Filter by "reference"
+        self.filter({'reference': 'ABC123'}, 1)
+        self.filter({'reference': 'XXX999'}, 0)
+
+        # Filter by "assigned_to_me"
+        self.filter({'assigned_to_me': 1}, 0)
+        self.filter({'assigned_to_me': 0}, 5)
 
     def test_overdue(self):
         """Test "overdue" status."""
