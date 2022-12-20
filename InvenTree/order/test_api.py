@@ -1,5 +1,6 @@
 """Tests for the Order API."""
 
+import base64
 import io
 from datetime import datetime, timedelta
 
@@ -468,6 +469,21 @@ class PurchaseOrderTest(OrderTest):
 
         resp_dict = response.json()
         self.assertEqual(resp_dict['detail'], "Authentication credentials were not provided.")
+
+    def test_po_calendar_auth(self):
+        """Test accessing calendar with header authorization"""
+        self.client.logout()
+        response = self.client.get(reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}), format='json')
+        self.assertEqual(response.status_code, 401)
+
+        token = f'{self.username}:{self.password}'
+        base64_token = base64.b64encode(token.encode('ascii')).decode('ascii')
+        response = self.client.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
+            format='json',
+            HTTP_AUTHORIZATION=f'basic {base64_token}'
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 class PurchaseOrderDownloadTest(OrderTest):
