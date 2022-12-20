@@ -409,16 +409,16 @@ class PurchaseOrderLineTest(OrderTest):
         self.filter({}, 5)
 
         # Filter by pending status
-        self.filter({'pending': 1}, 0)
+        self.filter({'pending': 1}, 5)
         self.filter({'pending': 0}, 0)
 
         # Filter by received status
         self.filter({'received': 1}, 0)
-        self.filter({'received': 0}, 0)
+        self.filter({'received': 0}, 5)
 
         # Filter by has_pricing status
         self.filter({'has_pricing': 1}, 0)
-        self.filter({'has_pricing': 0}, 0)
+        self.filter({'has_pricing': 0}, 5)
 
 
 class PurchaseOrderDownloadTest(OrderTest):
