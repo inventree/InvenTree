@@ -73,7 +73,7 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'part': 2}, 0)  # Part not assigned to any PO
 
         # Filter by "supplier_part"
-        self.filter({'supplier_part': 1}, 2)
+        self.filter({'supplier_part': 1}, 1)
         self.filter({'supplier_part': 2}, 0)  # Part not assigned to any PO
 
     def test_overdue(self):
@@ -399,6 +399,8 @@ class PurchaseOrderTest(OrderTest):
 
 class PurchaseOrderLineTest(OrderTest):
     """Unit tests for PurchaseOrderLineItems."""
+
+    LIST_URL = reverse('api-po-line-list')
 
     def test_po_line_list(self):
         """Test the PurchaseOrderLine list API endpoint"""
