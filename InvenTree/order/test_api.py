@@ -247,6 +247,20 @@ class PurchaseOrderTest(OrderTest):
         del data['pk']
         del data['reference']
 
+        # Duplicate with non-existent PK to provoke error
+        data['duplicate_order'] = 10000001
+        data['duplicate_line_items'] = True
+        data['duplicate_extra_lines'] = False
+
+        data['reference'] = 'PO-9999'
+
+        # Duplicate via the API
+        response = self.post(
+            reverse('api-po-list'),
+            data,
+            expected_code=400
+        )
+
         data['duplicate_order'] = 1
         data['duplicate_line_items'] = True
         data['duplicate_extra_lines'] = False
