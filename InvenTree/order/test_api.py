@@ -473,11 +473,7 @@ class PurchaseOrderTest(OrderTest):
     def test_po_calendar_auth(self):
         """Test accessing calendar with header authorization"""
         self.client.logout()
-        response = self.client.get(reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}), format='json')
-        self.assertEqual(response.status_code, 401)
-
-        token = f'{self.username}:{self.password}'
-        base64_token = base64.b64encode(token.encode('ascii')).decode('ascii')
+        base64_token = base64.b64encode(f'{self.username}:{self.password}'.encode('ascii')).decode('ascii')
         response = self.client.get(
             reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
             format='json',
