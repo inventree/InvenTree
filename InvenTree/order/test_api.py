@@ -401,6 +401,27 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(order.get_metadata('yam'), 'yum')
 
 
+class PurchaseOrderLineTest(OrderTest):
+    """Unit tests for PurchaseOrderLineItems."""
+
+    def test_po_line_list(self):
+        """Test the PurchaseOrderLine list API endpoint"""
+        # List *ALL* PurchaseOrderLine items
+        self.filter({}, 7)
+
+        # Filter by pending status
+        self.filter({'pending': 1}, 0)
+        self.filter({'pending': 0}, 0)
+
+        # Filter by received status
+        self.filter({'received': 1}, 0)
+        self.filter({'received': 0}, 0)
+
+        # Filter by has_pricing status
+        self.filter({'has_pricing': 1}, 0)
+        self.filter({'has_pricing': 0}, 0)
+
+
 class PurchaseOrderDownloadTest(OrderTest):
     """Unit tests for downloading PurchaseOrder data via the API endpoint."""
 
