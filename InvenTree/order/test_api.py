@@ -1061,6 +1061,8 @@ class SalesOrderTest(OrderTest):
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
 
+    LIST_URL = reverse('api-so-line-list')
+
     def setUp(self):
         """Init routine for this unit test class"""
         super().setUp()
@@ -1132,6 +1134,14 @@ class SalesOrderLineItemTest(OrderTest):
             )
 
             self.assertEqual(response.data['count'], n_parts)
+
+        # Filter by has_pricing status
+        self.filter({'has_pricing': 1}, 0)
+        self.filter({'has_pricing': 0}, 25)
+
+        # Filter by has_pricing status
+        self.filter({'completed': 1}, 0)
+        self.filter({'completed': 0}, 25)
 
 
 class SalesOrderDownloadTest(OrderTest):
