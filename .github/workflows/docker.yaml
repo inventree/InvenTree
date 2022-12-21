@@ -48,12 +48,13 @@ jobs:
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: |
-          docker-compose build
+          docker-compose build --no-cache
       - name: Update Docker Image
         run: |
           docker-compose run inventree-dev-server invoke update
           docker-compose run inventree-dev-server invoke setup-dev
           docker-compose up -d
+          docker-compose run inventree-dev-server pip install --upgrade setuptools
           docker-compose run inventree-dev-server invoke wait
       - name: Check Data Directory
         # The following file structure should have been created by the docker image
@@ -69,7 +70,7 @@ jobs:
           test -f data/secret_key.txt
       - name: Run Unit Tests
         run: |
-          docker-compose run inventree-dev-server invoke test
+          docker-compose run inventree-dev-server invoke test --disable-pty
           docker-compose down
       - name: Set up QEMU
         if: github.event_name != 'pull_request'

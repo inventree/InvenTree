@@ -527,6 +527,9 @@ class PartScheduling(RetrieveAPI):
 
             quantity = max(line.quantity - line.received, 0)
 
+            # Multiply by the pack_size of the SupplierPart
+            quantity *= line.part.pack_size
+
             add_schedule_entry(
                 target_date,
                 quantity,
