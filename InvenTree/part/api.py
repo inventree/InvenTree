@@ -1709,12 +1709,19 @@ class PartStocktakeFilter(rest_filters.FilterSet):
         ]
 
 
-class PartStocktakeList(ListAPI):
+class PartStocktakeList(ListCreateAPI):
     """API endpoint for listing part stocktake information"""
 
     queryset = PartStocktake.objects.all()
     serializer_class = part_serializers.PartStocktakeSerializer
     filterset_class = PartStocktakeFilter
+
+    def get_serializer_context(self):
+        """Extend serializer context data"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
 
     filter_backends = [
         DjangoFilterBackend,

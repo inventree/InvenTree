@@ -519,8 +519,25 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
             'date',
             'part',
             'quantity',
+            'note',
             'user',
         ]
+
+        read_only_fields = [
+            'date',
+            'user',
+        ]
+
+    def save(self):
+        """Called when this serializer is saved"""
+
+        data = self.validated_data
+
+        # Add in user information automatically
+        request = self.context['request']
+        data['user'] = request.user
+
+        super().save()
 
 
 class PartPricingSerializer(InvenTreeModelSerializer):
