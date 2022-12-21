@@ -812,6 +812,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             'exclude_location',
             'interchangeable',
             'substitutes',
+            'optional_items',
         ]
 
     location = serializers.PrimaryKeyRelatedField(
@@ -844,6 +845,12 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
         help_text=_('Allow allocation of substitute parts'),
     )
 
+    optional_items = serializers.BooleanField(
+        default=False,
+        label=_('Optional Items'),
+        help_text=_('Allocate optional BOM items to build order'),
+    )
+
     def save(self):
         """Perform the auto-allocation step"""
         data = self.validated_data
@@ -855,6 +862,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             exclude_location=data.get('exclude_location', None),
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
+            optional_items=data['optional_items'],
         )
 
 
