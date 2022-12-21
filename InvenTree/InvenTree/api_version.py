@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 83
+INVENTREE_API_VERSION = 85
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v85 -> 2022-12-21 : https://github.com/inventree/InvenTree/pull/3858
+    - Add endpoints serving ICS calendars for purchase and sales orders through API
 
 v83 -> 2022-11-19 : https://github.com/inventree/InvenTree/pull/3949
     - Add support for structural Stock locations
