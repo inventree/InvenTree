@@ -84,8 +84,15 @@ class GeneralExtraLineList:
     ]
 
 
-class PurchaseOrderFilter(rest_filters.FilterSet):
-    """Custom API filters for the PurchaseOrderList endpoint."""
+class OrderFilter(rest_filters.FilterSet):
+    """Base class for custom API filters for the OrderList endpoint."""
+
+    # Exact match for reference
+    reference = rest_filters.CharFilter(
+        label='Filter by exact reference',
+        field_name='reference',
+        lookup_expr="iexact"
+    )
 
     assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
 
@@ -103,12 +110,26 @@ class PurchaseOrderFilter(rest_filters.FilterSet):
 
         return queryset
 
+
+class PurchaseOrderFilter(OrderFilter):
+    """Custom API filters for the PurchaseOrderList endpoint."""
     class Meta:
         """Metaclass options."""
 
         model = models.PurchaseOrder
         fields = [
             'supplier',
+        ]
+
+
+class SalesOrderFilter(OrderFilter):
+    """Custom API filters for the SalesOrderList endpoint."""
+    class Meta:
+        """Metaclass options."""
+
+        model = models.SalesOrder
+        fields = [
+            'customer',
         ]
 
 
@@ -619,6 +640,7 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
 
     queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderSerializer
+    filterset_class = SalesOrderFilter
 
     def create(self, request, *args, **kwargs):
         """Save user information on create."""
