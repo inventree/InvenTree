@@ -152,7 +152,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
 
         - Ensure stock location can't be made structural if stock items already located to them
         """
-        if self.pk and self.structural and self.item_count > 0:
+        if self.pk and self.structural and self.stock_item_count(False) > 0:
             raise ValidationError(
                 _("You cannot make this stock location structural because some stock items "
                   "are already located into it!"))

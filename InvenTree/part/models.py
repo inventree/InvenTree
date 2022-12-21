@@ -148,7 +148,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
         - Ensure that the structural parameter cannot get set if products already assigned to the category
         """
-        if self.pk and self.structural and self.item_count > 0:
+        if self.pk and self.structural and self.partcount(False, False) > 0:
             raise ValidationError(
                 _("You cannot make this part category structural because some parts "
                   "are already assigned to it!"))
