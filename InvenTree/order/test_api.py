@@ -56,6 +56,10 @@ class PurchaseOrderTest(OrderTest):
         # List *ALL* PurchaseOrder items
         self.filter({}, 7)
 
+        # Filter by assigned-to-me
+        self.filter({'assigned_to_me': 1}, 0)
+        self.filter({'assigned_to_me': 0}, 7)
+
         # Filter by supplier
         self.filter({'supplier': 1}, 1)
         self.filter({'supplier': 3}, 5)
@@ -67,6 +71,15 @@ class PurchaseOrderTest(OrderTest):
         # Filter by "status"
         self.filter({'status': 10}, 3)
         self.filter({'status': 40}, 1)
+
+        # Filter by "part"
+        self.filter({'part': 1}, 2)
+        self.filter({'part': 2}, 0)  # Part not assigned to any PO
+
+        # Filter by "supplier_part"
+        self.filter({'supplier_part': 1}, 1)
+        self.filter({'supplier_part': 3}, 2)
+        self.filter({'supplier_part': 4}, 0)
 
     def test_overdue(self):
         """Test "overdue" status."""
@@ -247,6 +260,20 @@ class PurchaseOrderTest(OrderTest):
         del data['pk']
         del data['reference']
 
+        # Duplicate with non-existent PK to provoke error
+        data['duplicate_order'] = 10000001
+        data['duplicate_line_items'] = True
+        data['duplicate_extra_lines'] = False
+
+        data['reference'] = 'PO-9999'
+
+        # Duplicate via the API
+        response = self.post(
+            reverse('api-po-list'),
+            data,
+            expected_code=400
+        )
+
         data['duplicate_order'] = 1
         data['duplicate_line_items'] = True
         data['duplicate_extra_lines'] = False
@@ -373,6 +400,29 @@ class PurchaseOrderTest(OrderTest):
 
         order = models.PurchaseOrder.objects.get(pk=1)
         self.assertEqual(order.get_metadata('yam'), 'yum')
+
+
+class PurchaseOrderLineItemTest(OrderTest):
+    """Unit tests for PurchaseOrderLineItems."""
+
+    LIST_URL = reverse('api-po-line-list')
+
+    def test_po_line_list(self):
+        """Test the PurchaseOrderLine list API endpoint"""
+        # List *ALL* PurchaseOrderLine items
+        self.filter({}, 5)
+
+        # Filter by pending status
+        self.filter({'pending': 1}, 5)
+        self.filter({'pending': 0}, 0)
+
+        # Filter by received status
+        self.filter({'received': 1}, 0)
+        self.filter({'received': 0}, 5)
+
+        # Filter by has_pricing status
+        self.filter({'has_pricing': 1}, 0)
+        self.filter({'has_pricing': 0}, 5)
 
 
 class PurchaseOrderDownloadTest(OrderTest):
@@ -1015,6 +1065,8 @@ class SalesOrderTest(OrderTest):
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
 
+    LIST_URL = reverse('api-so-line-list')
+
     def setUp(self):
         """Init routine for this unit test class"""
         super().setUp()
@@ -1086,6 +1138,14 @@ class SalesOrderLineItemTest(OrderTest):
             )
 
             self.assertEqual(response.data['count'], n_parts)
+
+        # Filter by has_pricing status
+        self.filter({'has_pricing': 1}, 0)
+        self.filter({'has_pricing': 0}, n)
+
+        # Filter by has_pricing status
+        self.filter({'completed': 1}, 0)
+        self.filter({'completed': 0}, n)
 
 
 class SalesOrderDownloadTest(OrderTest):
