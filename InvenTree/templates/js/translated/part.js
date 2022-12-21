@@ -841,21 +841,31 @@ function loadPartStocktakeTable(partId, options={}) {
         },
         columns: [
             {
-                field: 'date',
-                title: '{% trans "Date" %}',
-            },
-            {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
+                switchable: false,
+                sortable: true,
             },
             {
                 field: 'note',
                 title: '{% trans "Notes" %}',
+                switchable: true,
             },
             {
-                field: 'user',
-                title: '{% trans "User" %}',
-            }
+                field: 'date',
+                title: '{% trans "Date" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    var html = renderDate(value);
+
+                    if (row.user_detail) {
+                        html += `<span class='badge bg-dark rounded-pill float-right'>${row.user_detail.username}</span>`;
+                    }
+
+                    return html;
+                }
+            },
         ]
     });
 }

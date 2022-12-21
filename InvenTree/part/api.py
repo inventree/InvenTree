@@ -1730,12 +1730,13 @@ class PartStocktakeList(ListCreateAPI):
 
     ordering_fields = [
         'part',
+        'quantity',
         'date',
         'user',
     ]
 
     # Reverse date ordering by default
-    ordering = '-date'
+    ordering = '-pk'
 
 
 class BomFilter(rest_filters.FilterSet):

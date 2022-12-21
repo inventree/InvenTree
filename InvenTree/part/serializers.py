@@ -24,7 +24,8 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer, RemoteImageMixin)
+                                   InvenTreeMoneySerializer, RemoteImageMixin,
+                                   UserSerializer)
 from InvenTree.status_codes import BuildStatus
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
@@ -510,6 +511,8 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
+
     class Meta:
         """Metaclass options"""
 
@@ -521,6 +524,7 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
             'quantity',
             'note',
             'user',
+            'user_detail',
         ]
 
         read_only_fields = [
