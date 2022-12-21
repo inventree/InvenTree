@@ -1,5 +1,7 @@
 """Unit tests for base mixins for plugins."""
 
+import os
+
 from django.conf import settings
 from django.test import TestCase
 from django.urls import include, re_path, reverse
@@ -202,6 +204,13 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
                 return self.api_call('orgs/inventree', simple_response=simple)
 
         self.mixin = MixinCls()
+
+        # If running in github workflow, make use of GITHUB_TOKEN
+        if settings.TESTING:
+            token = os.getenv('GITHUB_TOKEN', None)
+
+            if token:
+                self.mixin.set_setting('API_TOKEN', token)
 
         class WrongCLS(APICallMixin, InvenTreePlugin):
             pass
