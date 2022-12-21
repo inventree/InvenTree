@@ -1215,6 +1215,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SERIAL_NUMBER_AUTOFILL': {
+            'name': _('Autofill Serial Numbers'),
+            'description': _('Autofill serial numbers in forms'),
+            'default': False,
+            'validator': bool,
+        },
+
         'STOCK_BATCH_CODE_TEMPLATE': {
             'name': _('Batch Code Template'),
             'description': _('Template for generating default batch codes for stock items'),

@@ -240,6 +240,12 @@ function stockItemFields(options={}) {
                                 }
 
                                 setFormInputPlaceholder('serial_numbers', placeholder, opts);
+
+                                if (global_settings.SERIAL_NUMBER_AUTOFILL) {
+                                    if (data.next) {
+                                        updateFieldValue('serial_numbers', `${data.next}+`, {}, opts);
+                                    }
+                                }
                             }
                         });
 

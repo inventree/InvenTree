@@ -462,6 +462,7 @@ class PluginsRegistry:
         self.activate_plugin_settings(plugins)
         self.activate_plugin_schedule(plugins)
         self.activate_plugin_app(plugins, force_reload=force_reload, full_reload=full_reload)
+        self.activate_plugin_url(plugins, force_reload=force_reload, full_reload=full_reload)
 
     def _deactivate_plugins(self):
         """Run deactivation functions for all plugins."""
@@ -564,7 +565,6 @@ class PluginsRegistry:
                         settings.INSTALLED_APPS += [plugin_path]
                         self.installed_apps += [plugin_path]
                         apps_changed = True
-
             # if apps were changed or force loading base apps -> reload
             if apps_changed or force_reload:
                 # first startup or force loading of base apps -> registry is prob false
@@ -577,6 +577,27 @@ class PluginsRegistry:
                 # rediscover models/ admin sites
                 self._reregister_contrib_apps()
 
+                # update urls - must be last as models must be registered for creating admin routes
+                self._update_urls()
+
+    def activate_plugin_url(self, plugins, force_reload=False, full_reload: bool = False):
+        """Activate UrlsMixin plugins - add custom urls .
+
+        Args:
+            plugins (dict): List of IntegrationPlugins that should be installed
+            force_reload (bool, optional): Only reload base apps. Defaults to False.
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+        """
+        from common.models import InvenTreeSetting
+        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL'):
+            logger.info('Registering UrlsMixin Plugin')
+            urls_changed = False
+            # check whether an activated plugin extends UrlsMixin
+            for _key, plugin in plugins:
+                if plugin.mixin_enabled('urls'):
+                    urls_changed = True
+            # if apps were changed or force loading base apps -> reload
+            if urls_changed or force_reload or full_reload:
                 # update urls - must be last as models must be registered for creating admin routes
                 self._update_urls()
 
