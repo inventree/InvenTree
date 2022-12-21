@@ -37,7 +37,9 @@
     loadPartVariantTable,
     loadRelatedPartsTable,
     loadSimplePartTable,
+    partDetail,
     partStockLabel,
+    performStocktake,
     toggleStar,
     validateBom,
 */
@@ -679,7 +681,133 @@ function makePartIcons(part) {
     }
 
     return html;
+}
 
+
+/*
+ * Render part information for a table view
+ *
+ * part: JSON part object
+ * options:
+ *  icons: Display part icons
+ *  thumb: Display part thumbnail
+ *  link: Display URL
+ */
+function partDetail(part, options={}) {
+
+    var html = '';
+
+    var name = part.full_name;
+
+    if (options.thumb) {
+        html += imageHoverIcon(part.thumbnail || part.image);
+    }
+
+    if (options.link) {
+        var url = `/part/${part.pk}/`;
+        html += renderLink(shortenString(name), url);
+    } else {
+        html += shortenString(name);
+    }
+
+    if (options.icons) {
+        html += makePartIcons(part);
+    }
+
+    return html;
+}
+
+
+/*
+ * Guide user through "stocktake" process
+ */
+function performStocktake(partId, options={}) {
+
+    // Helper function for formatting a StockItem row
+    function buildStockItemRow(item) {
+
+        // Part detail
+        var part = partDetail(item.part_detail, {
+            thumb: true,
+        });
+
+        // Location detail
+        var location = locationDetail(item);
+
+        // Quantity detail
+        var quantity = item.quantity;
+
+        if (item.serial && item.quantity == 1) {
+            quantity = `{% trans "Serial" %}: ${item.serial}`
+        }
+
+        // Last update
+        var updated = item.updated || item.stocktake_date;
+
+        // Actions
+        var actions = '';
+
+        return `
+        <tr>
+            <td>${part}</td>
+            <td>${location}</td>
+            <td>${quantity}</td>
+            <td>${renderDate(updated)}</td>
+            <td>${actions}</td>
+        </tr>`;
+    }
+
+    // First, load stock information for the part
+    inventreeGet(
+        '{% url "api-stock-list" %}',
+        {
+            part: partId,
+            in_stock: true,
+            location_detail: true,
+            part_detail: true,
+            include_variants: true,
+        },
+        {
+            success: function(response) {
+                var html = '';
+
+                html += `
+                <table class='table table-striped table-condensed'>
+                    <thead>
+                        <tr>
+                            <th>{% trans "Stock Item" %}</th>
+                            <th>{% trans "Location" %}</th>
+                            <th>{% trans "Quantity" %}</th>
+                            <th>{% trans "Updated" %}</th>
+                            <th><!-- Actions --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                response.forEach(function(item) {
+                    html += buildStockItemRow(item);
+                });
+
+                html += `</tbody></table>`;
+
+                constructForm(`/api/part/stocktake/`, {
+                    preFormContent: html,
+                    method: 'POST',
+                    title: '{% trans "Part Stocktake" %}',
+                    confirm: true,
+                    fields: {
+                        part: {
+                            value: partId,
+                            hidden: true,
+                        },
+                        quantity: {},
+                        note: {},
+                    }
+                });
+            }
+        }
+    );
 }
 
 

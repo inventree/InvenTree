@@ -63,7 +63,7 @@
             <div class='btn-group' role='group'>
                 {% if roles.part.add %}
                 <button class='btn btn-success' type='button' id='btn-stocktake' title='{% trans "Add stocktake information" %}'>
-                    <span class='fas fa-plus-circle'></span> {% trans "Stocktake" %}
+                    <span class='fas fa-clipboard-check'></span> {% trans "Stocktake" %}
                 </button>
                 {% endif %}
                 <!-- TODO: Buttons -->
@@ -468,6 +468,10 @@
     // Load the "stocktake" tab
     onPanelLoad('stocktake', function() {
         loadPartStocktakeTable({{ part.pk }});
+
+        $('#btn-stocktake').click(function() {
+            performStocktake({{ part.pk }});
+        });
     });
 
     // Load the "suppliers" tab
