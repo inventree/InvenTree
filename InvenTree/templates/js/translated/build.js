@@ -2422,6 +2422,9 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
         substitutes: {
             value: true,
         },
+        optional_items: {
+            value: false,
+        },
     };
 
     constructForm(`/api/build/${build_id}/auto-allocate/`, {

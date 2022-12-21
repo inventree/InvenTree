@@ -63,6 +63,14 @@ class TestBuildAPI(InvenTreeAPITestCase):
         response = self.client.get(url, {'part': 99999}, format='json')
         self.assertEqual(len(response.data), 0)
 
+        # Get a certain reference
+        response = self.client.get(url, {'reference': 'BO-0001'}, format='json')
+        self.assertEqual(len(response.data), 1)
+
+        # Get a certain reference
+        response = self.client.get(url, {'reference': 'BO-9999XX'}, format='json')
+        self.assertEqual(len(response.data), 0)
+
     def test_get_build_item_list(self):
         """Test that we can retrieve list of BuildItem objects."""
         url = reverse('api-build-item-list')
