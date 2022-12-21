@@ -470,7 +470,11 @@
         loadPartStocktakeTable({{ part.pk }});
 
         $('#btn-stocktake').click(function() {
-            performStocktake({{ part.pk }});
+            performStocktake({{ part.pk }}, {
+                onSuccess: function() {
+                    $('#part-stocktake-table').bootstrapTable('refresh');
+                }
+            });
         });
     });
 

@@ -723,6 +723,8 @@ function partDetail(part, options={}) {
  */
 function performStocktake(partId, options={}) {
 
+    var part_quantity = 0;
+
     // Helper function for formatting a StockItem row
     function buildStockItemRow(item) {
 
@@ -737,9 +739,13 @@ function performStocktake(partId, options={}) {
         // Quantity detail
         var quantity = item.quantity;
 
+        part_quantity += item.quantity;
+
         if (item.serial && item.quantity == 1) {
             quantity = `{% trans "Serial" %}: ${item.serial}`
         }
+
+        quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
 
         // Last update
         var updated = item.updated || item.stocktake_date;
@@ -801,8 +807,13 @@ function performStocktake(partId, options={}) {
                             value: partId,
                             hidden: true,
                         },
-                        quantity: {},
+                        quantity: {
+                            value: part_quantity,
+                        },
                         note: {},
+                    },
+                    onSuccess: function(response) {
+                        handleFormSuccess(response, options);
                     }
                 });
             }
@@ -836,6 +847,7 @@ function loadPartStocktakeTable(partId, options={}) {
         name: 'partstocktake',
         original: options.params,
         showColumns: true,
+        sortable: true,
         formatNoMatches: function() {
             return '{% trans "No stocktake information available" %}';
         },
