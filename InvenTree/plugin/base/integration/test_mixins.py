@@ -261,7 +261,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(result.reason, 'OK')
 
         # api_call with full url
-        result = self.mixin.api_call('orgs/inventree')
+        result = self.mixin.api_call('rate_limit')
         self.assertTrue(result)
 
         # api_call with post and data
