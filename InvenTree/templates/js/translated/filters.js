@@ -447,6 +447,10 @@ function getFilterOptionValue(tableKey, filterKey, valueKey) {
 
         return value;
     }
+    if (filter.type == 'date') {
+        d=new Date(value);
+        return d.toISOString();
+    }
 
     // Iterate through a list of options
     if ('options' in filter) {

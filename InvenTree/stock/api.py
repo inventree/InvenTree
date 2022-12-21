@@ -10,7 +10,6 @@ from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-import pytz
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
@@ -834,15 +833,11 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
             # Filter by 'expiry date'
             expired_date_lte = params.get('expiry_date_lte', None)
             if expired_date_lte is not None:
-                date_lte = datetime.datetime.strptime(expired_date_lte, '%Y-%m-%d')
-                date_lte = date_lte.replace(tzinfo=pytz.UTC)
-                queryset = queryset.filter(expiry_date__lte=date_lte)
+                queryset = queryset.filter(expiry_date__lte=expired_date_lte)
 
             expiry_date_gte = params.get('expiry_date_gte', None)
             if expiry_date_gte is not None:
-                date_gte = datetime.datetime.strptime(expiry_date_gte, '%Y-%m-%d')
-                date_gte = date_gte.replace(tzinfo=pytz.UTC)
-                queryset = queryset.filter(expiry_date__gte=date_gte)
+                queryset = queryset.filter(expiry_date__gte=expiry_date_gte)
 
             # Filter by 'stale' status
             stale = params.get('stale', None)
