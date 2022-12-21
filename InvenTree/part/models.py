@@ -2908,6 +2908,13 @@ class PartStocktake(models.Model):
         auto_now_add=True
     )
 
+    note = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Notes'),
+        help_text=_('Additional notes'),
+    )
+
     user = models.ForeignKey(
         User, blank=True, null=True,
         on_delete=models.SET_NULL,

@@ -721,6 +721,10 @@ function loadPartStocktakeTable(partId, options={}) {
                 title: '{% trans "Quantity" %}',
             },
             {
+                field: 'note',
+                title: '{% trans "Notes" %}',
+            },
+            {
                 field: 'user',
                 title: '{% trans "User" %}',
             }
