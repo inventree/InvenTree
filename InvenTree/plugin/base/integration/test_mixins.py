@@ -231,7 +231,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
         # api_headers
         headers = self.mixin.api_headers
-        self.assertEqual(headers, {'Bearer': '', 'Content-Type': 'application/json'})
+        self.assertEqual(headers['Content-Type'], 'application/json')
 
     def test_args(self):
         """Test that building up args work."""
