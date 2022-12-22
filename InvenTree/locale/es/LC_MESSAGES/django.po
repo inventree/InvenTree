@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-21 12:18+0000\n"
+"POT-Creation-Date: 2022-12-22 01:48+0000\n"
 "PO-Revision-Date: 2022-12-21 21:54\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
@@ -2890,13 +2890,14 @@ msgstr ""
 msgid "Error raised by plugin"
 msgstr ""
 
-#: common/views.py:85 order/templates/order/purchase_order_detail.html:25
-#: order/views.py:102 part/views.py:107
-#: templates/patterns/wizard/upload.html:37
+#: common/views.py:85 order/templates/order/order_wizard/po_upload.html:51
+#: order/templates/order/purchase_order_detail.html:25 order/views.py:102
+#: part/views.py:107 templates/patterns/wizard/upload.html:37
 msgid "Upload File"
 msgstr "Subir Archivo"
 
-#: common/views.py:86 order/views.py:103
+#: common/views.py:86 order/templates/order/order_wizard/match_fields.html:52
+#: order/views.py:103
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
 #: part/views.py:108 templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
@@ -2914,7 +2915,9 @@ msgstr "Falló la coincidencia de campos"
 msgid "Parts imported"
 msgstr "Partes importadas"
 
-#: common/views.py:509 order/templates/order/order_wizard/match_parts.html:19
+#: common/views.py:509 order/templates/order/order_wizard/match_fields.html:27
+#: order/templates/order/order_wizard/match_parts.html:19
+#: order/templates/order/order_wizard/po_upload.html:49
 #: part/templates/part/import_wizard/match_references.html:19
 #: templates/patterns/wizard/match_fields.html:26
 #: templates/patterns/wizard/upload.html:35
@@ -4329,28 +4332,44 @@ msgstr "Costo total"
 msgid "Total cost could not be calculated"
 msgstr "No se ha podido calcular el costo total"
 
-#: order/templates/order/order_wizard/match_parts.html:12
-#: part/templates/part/import_wizard/ajax_match_references.html:12
-#: part/templates/part/import_wizard/match_references.html:12
-msgid "Errors exist in the submitted data"
-msgstr "Existen errores en los datos enviados"
+#: order/templates/order/order_wizard/match_fields.html:9
+#: part/templates/part/import_wizard/ajax_match_fields.html:9
+#: templates/patterns/wizard/match_fields.html:8
+msgid "Missing selections for the following required columns"
+msgstr "Faltan selecciones para las siguientes columnas requeridas"
 
+#: order/templates/order/order_wizard/match_fields.html:20
+#: part/templates/part/import_wizard/ajax_match_fields.html:20
+#: templates/patterns/wizard/match_fields.html:19
+msgid "Duplicate selections found, see below. Fix them then retry submitting."
+msgstr "Se han encontrado selecciones duplicadas, vea a continuación. Arreglarlas y vuelva a intentar enviarlas."
+
+#: order/templates/order/order_wizard/match_fields.html:29
 #: order/templates/order/order_wizard/match_parts.html:21
 #: part/templates/part/import_wizard/match_references.html:21
 #: templates/patterns/wizard/match_fields.html:28
 msgid "Submit Selections"
 msgstr "Enviar selecciones"
 
-#: order/templates/order/order_wizard/match_parts.html:28
-#: part/templates/part/import_wizard/ajax_match_references.html:21
-#: part/templates/part/import_wizard/match_references.html:28
-msgid "Row"
-msgstr "Fila"
+#: order/templates/order/order_wizard/match_fields.html:35
+#: part/templates/part/import_wizard/ajax_match_fields.html:28
+#: templates/patterns/wizard/match_fields.html:34
+msgid "File Fields"
+msgstr "Campos de archivo"
 
-#: order/templates/order/order_wizard/match_parts.html:29
-msgid "Select Supplier Part"
-msgstr "Seleccionar Parte de Proveedor"
+#: order/templates/order/order_wizard/match_fields.html:42
+#: part/templates/part/import_wizard/ajax_match_fields.html:35
+#: templates/patterns/wizard/match_fields.html:41
+msgid "Remove column"
+msgstr "Eliminar columna"
 
+#: order/templates/order/order_wizard/match_fields.html:60
+#: part/templates/part/import_wizard/ajax_match_fields.html:53
+#: templates/patterns/wizard/match_fields.html:59
+msgid "Duplicate selection"
+msgstr "Duplicar selección"
+
+#: order/templates/order/order_wizard/match_fields.html:71
 #: order/templates/order/order_wizard/match_parts.html:52
 #: part/templates/part/import_wizard/ajax_match_fields.html:64
 #: part/templates/part/import_wizard/ajax_match_references.html:42
@@ -4364,6 +4383,22 @@ msgstr "Seleccionar Parte de Proveedor"
 msgid "Remove row"
 msgstr "Eliminar fila"
 
+#: order/templates/order/order_wizard/match_parts.html:12
+#: part/templates/part/import_wizard/ajax_match_references.html:12
+#: part/templates/part/import_wizard/match_references.html:12
+msgid "Errors exist in the submitted data"
+msgstr "Existen errores en los datos enviados"
+
+#: order/templates/order/order_wizard/match_parts.html:28
+#: part/templates/part/import_wizard/ajax_match_references.html:21
+#: part/templates/part/import_wizard/match_references.html:28
+msgid "Row"
+msgstr "Fila"
+
+#: order/templates/order/order_wizard/match_parts.html:29
+msgid "Select Supplier Part"
+msgstr "Seleccionar Parte de Proveedor"
+
 #: order/templates/order/order_wizard/po_upload.html:8
 msgid "Return to Orders"
 msgstr "Volver a Pedidos"
@@ -4375,6 +4410,13 @@ msgstr "Subir archivo para orden de compra"
 #: order/templates/order/order_wizard/po_upload.html:14
 msgid "Order is already processed. Files cannot be uploaded."
 msgstr "El pedido ya ha sido procesado. Los archivos no se pueden cargar."
+
+#: order/templates/order/order_wizard/po_upload.html:27
+#: part/templates/part/import_wizard/ajax_part_upload.html:10
+#: templates/patterns/wizard/upload.html:13
+#, python-format
+msgid "Step %(step)s of %(count)s"
+msgstr "Paso %(step)s de %(count)s"
 
 #: order/templates/order/po_sidebar.html:5
 #: order/templates/order/so_sidebar.html:5
@@ -5643,37 +5685,6 @@ msgstr "Añadir artículos relacionados"
 #: part/templates/part/detail.html:756
 msgid "Add Test Result Template"
 msgstr "Añadir plantilla de resultados de prueba"
-
-#: part/templates/part/import_wizard/ajax_match_fields.html:9
-#: templates/patterns/wizard/match_fields.html:8
-msgid "Missing selections for the following required columns"
-msgstr "Faltan selecciones para las siguientes columnas requeridas"
-
-#: part/templates/part/import_wizard/ajax_match_fields.html:20
-#: templates/patterns/wizard/match_fields.html:19
-msgid "Duplicate selections found, see below. Fix them then retry submitting."
-msgstr "Se han encontrado selecciones duplicadas, vea a continuación. Arreglarlas y vuelva a intentar enviarlas."
-
-#: part/templates/part/import_wizard/ajax_match_fields.html:28
-#: templates/patterns/wizard/match_fields.html:34
-msgid "File Fields"
-msgstr "Campos de archivo"
-
-#: part/templates/part/import_wizard/ajax_match_fields.html:35
-#: templates/patterns/wizard/match_fields.html:41
-msgid "Remove column"
-msgstr "Eliminar columna"
-
-#: part/templates/part/import_wizard/ajax_match_fields.html:53
-#: templates/patterns/wizard/match_fields.html:59
-msgid "Duplicate selection"
-msgstr "Duplicar selección"
-
-#: part/templates/part/import_wizard/ajax_part_upload.html:10
-#: templates/patterns/wizard/upload.html:13
-#, python-format
-msgid "Step %(step)s of %(count)s"
-msgstr "Paso %(step)s de %(count)s"
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:14
@@ -8069,18 +8080,22 @@ msgstr "Ingresar"
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr "Por favor, inicia sesión con una\n"
+msgstr ""
+"Por favor, inicia sesión con una\n"
 "de tus cuentas de terceros existentes o  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">regístrate</a>\n"
 " e inicia sesión a continuación:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr "Si aún no has creado una cuenta, por favor\n"
+msgstr ""
+"Si aún no has creado una cuenta, por favor\n"
 "<a href=\"%(signup_url)s\">regístrate</a> primero."
 
 #: templates/account/login.html:47
@@ -11213,4 +11228,3 @@ msgstr "Permisos para editar elementos"
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr "Permiso para eliminar elementos"
-
