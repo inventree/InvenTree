@@ -104,6 +104,11 @@ class PartResource(InvenTreeResource):
         models.Part.objects.rebuild()
 
 
+class StocktakeInline(admin.TabularInline):
+    """Inline for part stocktake data"""
+    model = models.PartStocktake
+
+
 class PartAdmin(ImportExportModelAdmin):
     """Admin class for the Part model"""
 
@@ -120,6 +125,10 @@ class PartAdmin(ImportExportModelAdmin):
         'category',
         'default_location',
         'default_supplier',
+    ]
+
+    inlines = [
+        StocktakeInline,
     ]
 
 
