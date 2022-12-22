@@ -536,7 +536,9 @@ class APICallMixin:
         """
         headers = {'Content-Type': 'application/json'}
         if getattr(self, 'API_TOKEN_SETTING'):
-            headers[self.API_TOKEN] = self.get_setting(self.API_TOKEN_SETTING)
+            token = self.get_setting(self.API_TOKEN_SETTING)
+            headers[self.API_TOKEN] = token
+            headers['Authorization'] = f"{self.API_TOKEN} {token}"
         return headers
 
     def api_build_url_args(self, arguments: dict) -> str:
