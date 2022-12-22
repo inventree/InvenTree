@@ -151,7 +151,6 @@ def download_image_from_url(remote_url, timeout=2.5):
             timeout=timeout,
             allow_redirects=True,
             stream=True,
-            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
         )
         # Throw an error if anything goes wrong
         response.raise_for_status()
