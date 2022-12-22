@@ -244,8 +244,8 @@
     });
 
     if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
-        event.stopPropagation();
         $('#company-image-url').click(function() {
+            event.stopPropagation();
             constructForm(
                 '{% url "api-company-detail" company.pk %}',
                 {
