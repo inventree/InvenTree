@@ -725,7 +725,7 @@ function performStocktake(partId, options={}) {
 
     var part_quantity = 0;
 
-    var date_threshold = moment().subtract(30, "days");
+    var date_threshold = moment().subtract(30, 'days');
 
     // Helper function for formatting a StockItem row
     function buildStockItemRow(item) {
