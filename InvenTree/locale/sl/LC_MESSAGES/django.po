@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-22 01:48+0000\n"
-"PO-Revision-Date: 2022-12-21 21:54\n"
+"POT-Creation-Date: 2022-12-21 22:18+0000\n"
+"PO-Revision-Date: 2022-12-22 22:00\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: InvenTree/api.py:61
 msgid "API endpoint not found"
-msgstr ""
+msgstr "API vmesnik ni najden"
 
 #: InvenTree/exceptions.py:68
 msgid "Error details can be found in the admin panel"
@@ -137,72 +137,72 @@ msgstr "Dvojna serijska številka"
 #: InvenTree/helpers.py:660 InvenTree/helpers.py:695
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "Nepravilni obseg skupine: {g}"
 
 #: InvenTree/helpers.py:689
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
-msgstr ""
+msgstr "Obseg skupine {g} presega dovoljeno vrednost ({q})"
 
 #: InvenTree/helpers.py:713 InvenTree/helpers.py:720 InvenTree/helpers.py:735
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "Nepravilno zaporedje skupine: {g}"
 
 #: InvenTree/helpers.py:745
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Serijske številke niso najdene"
 
 #: InvenTree/helpers.py:748
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Število unikatnih serijskih številk ({s}) se mora ujemati s količino ({q})"
 
 #: InvenTree/helpers.py:947
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Odstranite oznako HTML iz te vrednosti"
 
 #: InvenTree/models.py:238
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Nepravilno nastavljen vzorec"
 
 #: InvenTree/models.py:245
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "Nastavljen neprepoznan ključ formata"
 
 #: InvenTree/models.py:251
 msgid "Missing required format key"
-msgstr ""
+msgstr "Manjka obvezen ključ formata"
 
 #: InvenTree/models.py:263
 msgid "Reference field cannot be empty"
-msgstr ""
+msgstr "Referenčno polje ne sme biti prazno"
 
 #: InvenTree/models.py:270
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "Referenca se mora ujemati s vzorcem"
 
 #: InvenTree/models.py:306
 msgid "Reference number is too large"
-msgstr ""
+msgstr "Referenčna številka prevelika"
 
 #: InvenTree/models.py:384
 msgid "Missing file"
-msgstr ""
+msgstr "Manjka datoteka"
 
 #: InvenTree/models.py:385
 msgid "Missing external link"
-msgstr ""
+msgstr "Manjka zunanja povezava"
 
 #: InvenTree/models.py:405 stock/models.py:2145
 #: templates/js/translated/attachment.js:103
 #: templates/js/translated/attachment.js:241
 msgid "Attachment"
-msgstr ""
+msgstr "Priloga"
 
 #: InvenTree/models.py:406
 msgid "Select file to attach"
-msgstr ""
+msgstr "Izberite prilogo"
 
 #: InvenTree/models.py:412 common/models.py:2353 company/models.py:129
 #: company/models.py:281 company/models.py:516 order/models.py:85
@@ -257,19 +257,19 @@ msgstr "Ime datoteke vsebuje neveljavni znak '{c}'"
 
 #: InvenTree/models.py:470
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Datoteki manjka končnica"
 
 #: InvenTree/models.py:477
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Priloga s tem imenom že obstaja"
 
 #: InvenTree/models.py:484
 msgid "Error renaming file"
-msgstr ""
+msgstr "Napaka pri preimenovanju datoteke"
 
 #: InvenTree/models.py:520
 msgid "Invalid choice"
-msgstr ""
+msgstr "Nedovoljena izbira"
 
 #: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:2007
 #: company/models.py:363 label/models.py:101 part/models.py:809
@@ -285,7 +285,7 @@ msgstr ""
 #: templates/js/translated/part.js:711 templates/js/translated/part.js:880
 #: templates/js/translated/part.js:2003 templates/js/translated/stock.js:2434
 msgid "Name"
-msgstr ""
+msgstr "Ime"
 
 #: InvenTree/models.py:564 build/models.py:163
 #: build/templates/build/detail.html:24 company/models.py:287
@@ -311,119 +311,119 @@ msgstr ""
 #: templates/js/translated/part.js:2114 templates/js/translated/stock.js:1787
 #: templates/js/translated/stock.js:2466 templates/js/translated/stock.js:2526
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 #: InvenTree/models.py:565
 msgid "Description (optional)"
-msgstr ""
+msgstr "Opis (opcijsko)"
 
 #: InvenTree/models.py:573
 msgid "parent"
-msgstr ""
+msgstr "nadrejen"
 
 #: InvenTree/models.py:580 InvenTree/models.py:581
 #: templates/js/translated/part.js:2048 templates/js/translated/stock.js:2475
 msgid "Path"
-msgstr ""
+msgstr "Pot"
 
 #: InvenTree/models.py:682
 msgid "Barcode Data"
-msgstr ""
+msgstr "Podatki čtrne kode"
 
 #: InvenTree/models.py:683
 msgid "Third party barcode data"
-msgstr ""
+msgstr "Podatki črtne kode tretje osebe"
 
 #: InvenTree/models.py:688 order/serializers.py:477
 msgid "Barcode Hash"
-msgstr ""
+msgstr "Oznaka črtne kode"
 
 #: InvenTree/models.py:689
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Enolična oznaka podatkov črtne kode"
 
 #: InvenTree/models.py:734
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Črtna koda že obstaja"
 
 #: InvenTree/models.py:787
 msgid "Server Error"
-msgstr ""
+msgstr "Napaka strežnika"
 
 #: InvenTree/models.py:788
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Zaznana napaka na strežniku."
 
 #: InvenTree/serializers.py:58 part/models.py:3468
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Mora biti veljavna številka"
 
 #: InvenTree/serializers.py:266
 msgid "Filename"
-msgstr ""
+msgstr "Ime datoteke"
 
 #: InvenTree/serializers.py:301
 msgid "Invalid value"
-msgstr ""
+msgstr "Neveljavna vrednost"
 
 #: InvenTree/serializers.py:323
 msgid "Data File"
-msgstr ""
+msgstr "Podatki datoteke"
 
 #: InvenTree/serializers.py:324
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Izberite datoteke za naložiti"
 
 #: InvenTree/serializers.py:345
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Nepodprta vrsta datotek"
 
 #: InvenTree/serializers.py:351
 msgid "File is too large"
-msgstr ""
+msgstr "Datoteka je prevelika"
 
 #: InvenTree/serializers.py:372
 msgid "No columns found in file"
-msgstr ""
+msgstr "V datoteki ni bilo najdenih stolpcev"
 
 #: InvenTree/serializers.py:375
 msgid "No data rows found in file"
-msgstr ""
+msgstr "V datoteki ni bilo njadenih vrstic"
 
 #: InvenTree/serializers.py:498
 msgid "No data rows provided"
-msgstr ""
+msgstr "Niso bile podane vrste s podatki"
 
 #: InvenTree/serializers.py:501
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Niso bili podani stolpci s podatki"
 
 #: InvenTree/serializers.py:578
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Manjka obvezni stolpec: '{name}'"
 
 #: InvenTree/serializers.py:587
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Dvojni stolpec: '{col}'"
 
 #: InvenTree/serializers.py:606
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "Povezava"
 
 #: InvenTree/serializers.py:607
 msgid "URL of remote image file"
-msgstr ""
+msgstr "Povezava do oddaljene slike"
 
 #: InvenTree/serializers.py:621
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "Prenos slik iz oddaljene povezave ni omogočen"
 
 #: InvenTree/settings.py:639
 msgid "Czech"
-msgstr ""
+msgstr "Češko"
 
 #: InvenTree/settings.py:640
 msgid "Danish"
@@ -531,7 +531,7 @@ msgstr "Nadzor dela v ozadju neuspel"
 
 #: InvenTree/status.py:102
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Zaledje e-pošte ni nastavljeno"
 
 #: InvenTree/status.py:105
 msgid "InvenTree system health checks failed"
@@ -540,11 +540,11 @@ msgstr "Preverjanje zdravja sistema InvenTree neuspelo"
 #: InvenTree/status_codes.py:99 InvenTree/status_codes.py:140
 #: InvenTree/status_codes.py:306 templates/js/translated/table_filters.js:354
 msgid "Pending"
-msgstr ""
+msgstr "V teku"
 
 #: InvenTree/status_codes.py:100
 msgid "Placed"
-msgstr ""
+msgstr "Postavljeno"
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:309
 #: order/templates/order/order_base.html:143
@@ -598,148 +598,148 @@ msgstr "Dano v karanteno"
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Vnos zaloge postavke"
 
 #: InvenTree/status_codes.py:261
 msgid "Stock item created"
-msgstr ""
+msgstr "Postavka zaloge ustvarjena"
 
 #: InvenTree/status_codes.py:263
 msgid "Edited stock item"
-msgstr ""
+msgstr "Urejena postavka zaloge"
 
 #: InvenTree/status_codes.py:264
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Dodeljena serijska številka"
 
 #: InvenTree/status_codes.py:266
 msgid "Stock counted"
-msgstr ""
+msgstr "Zaloga prešteta"
 
 #: InvenTree/status_codes.py:267
 msgid "Stock manually added"
-msgstr ""
+msgstr "Zaloga ročno dodana"
 
 #: InvenTree/status_codes.py:268
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Zaloga ročno odstranjena"
 
 #: InvenTree/status_codes.py:270
 msgid "Location changed"
-msgstr ""
+msgstr "Lokacija spremenjena"
 
 #: InvenTree/status_codes.py:272
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Vstavljeno v sestavo"
 
 #: InvenTree/status_codes.py:273
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Odstranjeno iz sestave"
 
 #: InvenTree/status_codes.py:275
 msgid "Installed component item"
-msgstr ""
+msgstr "Vstavljena postavka komponente"
 
 #: InvenTree/status_codes.py:276
 msgid "Removed component item"
-msgstr ""
+msgstr "Odstranjena postavka komponente"
 
 #: InvenTree/status_codes.py:278
 msgid "Split from parent item"
-msgstr ""
+msgstr "Razdeljena od nadrejene postavke"
 
 #: InvenTree/status_codes.py:279
 msgid "Split child item"
-msgstr ""
+msgstr "Razdeljena podrejena postavka"
 
 #: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2124
 msgid "Merged stock items"
-msgstr ""
+msgstr "Združena zaloga postavk"
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
-msgstr ""
+msgstr "Spremenjeno v varianto"
 
 #: InvenTree/status_codes.py:285 templates/js/translated/table_filters.js:241
 msgid "Sent to customer"
-msgstr ""
+msgstr "Posalno stranki"
 
 #: InvenTree/status_codes.py:286
 msgid "Returned from customer"
-msgstr ""
+msgstr "Vrnjeno od stranke"
 
 #: InvenTree/status_codes.py:288
 msgid "Build order output created"
-msgstr ""
+msgstr "Nalog za izgradnjo ustvarjen"
 
 #: InvenTree/status_codes.py:289
 msgid "Build order output completed"
-msgstr ""
+msgstr "Nalog za izgradnjo končan"
 
 #: InvenTree/status_codes.py:290
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Porabljeno v nalogu za izgradnjo"
 
 #: InvenTree/status_codes.py:292
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Prejeto z nalogom za nabavo"
 
 #: InvenTree/status_codes.py:307
 msgid "Production"
-msgstr ""
+msgstr "Proizvodnja"
 
 #: InvenTree/validators.py:20
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Neveljavna oznaka valute"
 
 #: InvenTree/validators.py:91
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "Notranja številka dela se mora ujemati z vzorcem {pat}"
 
 #: InvenTree/validators.py:133 InvenTree/validators.py:149
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Prestara vrednost ne sme biti negativna"
 
 #: InvenTree/validators.py:151
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Prestarost ne sme presegati 100%"
 
 #: InvenTree/validators.py:158
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Neveljavna vrednost za prestarost"
 
 #: InvenTree/views.py:447 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
-msgstr ""
+msgstr "Uredite informacije o uporabniku"
 
 #: InvenTree/views.py:459 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "Nastavite geslo"
 
 #: InvenTree/views.py:481
 msgid "Password fields must match"
-msgstr ""
+msgstr "Polja z geslom se morajo ujemati"
 
 #: InvenTree/views.py:490
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Vnešeno nepravilno geslo"
 
 #: InvenTree/views.py:703 templates/navbar.html:152
 msgid "System Information"
-msgstr ""
+msgstr "Sistemske informacije"
 
 #: InvenTree/views.py:710 templates/navbar.html:163
 msgid "About InvenTree"
-msgstr ""
+msgstr "O InvenTree"
 
 #: build/api.py:226
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "Izgradnja mora biti najprej preklicana, nato je lahko izbrisana"
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Neveljavna izbira za nadrejeno izgradnjo"
 
 #: build/models.py:110 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -748,7 +748,7 @@ msgstr ""
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:790
 msgid "Build Order"
-msgstr ""
+msgstr "Nalog izgradnje"
 
 #: build/models.py:111 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -759,11 +759,11 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:47
 #: templates/js/translated/search.js:254 users/models.py:41
 msgid "Build Orders"
-msgstr ""
+msgstr "Nalogi izgradnje"
 
 #: build/models.py:154
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Referenca naloga izgradnje"
 
 #: build/models.py:155 order/models.py:241 order/models.py:651
 #: order/models.py:941 part/admin.py:224 part/models.py:3378
@@ -775,20 +775,20 @@ msgstr ""
 #: templates/js/translated/order.js:2516 templates/js/translated/order.js:3841
 #: templates/js/translated/order.js:4332 templates/js/translated/pricing.js:119
 msgid "Reference"
-msgstr ""
+msgstr "Referenca"
 
 #: build/models.py:166
 msgid "Brief description of the build"
-msgstr ""
+msgstr "Kratek opis izgradnje"
 
 #: build/models.py:174 build/templates/build/build_base.html:172
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr ""
+msgstr "Nadrejena izgradnja"
 
 #: build/models.py:175
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "Nalog izgradnje na katerega se ta izgradnaj nanaša"
 
 #: build/models.py:180 build/templates/build/build_base.html:80
 #: build/templates/build/detail.html:29 company/models.py:684
@@ -826,99 +826,99 @@ msgstr ""
 #: templates/js/translated/stock.js:2552 templates/js/translated/stock.js:2747
 #: templates/js/translated/stock.js:2884
 msgid "Part"
-msgstr ""
+msgstr "Del"
 
 #: build/models.py:188
 msgid "Select part to build"
-msgstr ""
+msgstr "Izberite del za izgradnjo"
 
 #: build/models.py:193
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Referenca dobavnica"
 
 #: build/models.py:197
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Dobavnica na katero se navezuje ta izgradnja"
 
 #: build/models.py:202 build/serializers.py:823
 #: templates/js/translated/build.js:2192 templates/js/translated/order.js:3187
 msgid "Source Location"
-msgstr ""
+msgstr "Lokacija vira"
 
 #: build/models.py:206
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Izberite lokacijo dela za to izgradnjo (v primeru da ni pomembno pusti prazno)"
 
 #: build/models.py:211
 msgid "Destination Location"
-msgstr ""
+msgstr "Ciljna lokacija"
 
 #: build/models.py:215
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Izberite lokacijo, kjer bodo končne postavke shranjene"
 
 #: build/models.py:219
 msgid "Build Quantity"
-msgstr ""
+msgstr "Količina izgradenj"
 
 #: build/models.py:222
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Število postavk za izgradnjo"
 
 #: build/models.py:226
 msgid "Completed items"
-msgstr ""
+msgstr "Končane postavke"
 
 #: build/models.py:228
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Število postavk zaloge, ki so bile končane"
 
 #: build/models.py:232
 msgid "Build Status"
-msgstr ""
+msgstr "Status izgradnje"
 
 #: build/models.py:236
 msgid "Build status code"
-msgstr ""
+msgstr "Koda statusa izgradnje"
 
 #: build/models.py:245 build/serializers.py:224 order/serializers.py:455
 #: stock/models.py:705 templates/js/translated/order.js:1534
 msgid "Batch Code"
-msgstr ""
+msgstr "Številka serije"
 
 #: build/models.py:249 build/serializers.py:225
 msgid "Batch code for this build output"
-msgstr ""
+msgstr "Številka serije za to izgradnjo"
 
 #: build/models.py:252 order/models.py:87 part/models.py:1001
 #: part/templates/part/part_base.html:318 templates/js/translated/order.js:2858
 msgid "Creation Date"
-msgstr ""
+msgstr "Datum ustvarjenja"
 
 #: build/models.py:256 order/models.py:681
 msgid "Target completion date"
-msgstr ""
+msgstr "Rok dokončanja"
 
 #: build/models.py:257
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Rok končanja izdelave. Izdelava po tem datumu bo v zamudi po tem datumu."
 
 #: build/models.py:260 order/models.py:292
 #: templates/js/translated/build.js:2678
 msgid "Completion Date"
-msgstr ""
+msgstr "Datom končanja"
 
 #: build/models.py:266
 msgid "completed by"
-msgstr ""
+msgstr "dokončal"
 
 #: build/models.py:274 templates/js/translated/build.js:2646
 msgid "Issued by"
-msgstr ""
+msgstr "Izdal"
 
 #: build/models.py:275
 msgid "User who issued this build order"
-msgstr ""
+msgstr "Uporabnik, ki je izdal nalog za izgradnjo"
 
 #: build/models.py:283 build/templates/build/build_base.html:193
 #: build/templates/build/detail.html:115 order/models.py:101
@@ -927,11 +927,11 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:158
 #: templates/js/translated/build.js:2658 templates/js/translated/order.js:2064
 msgid "Responsible"
-msgstr ""
+msgstr "Odgovoren"
 
 #: build/models.py:284
 msgid "User responsible for this build order"
-msgstr ""
+msgstr "Uporabnik odgovoren za to izgradnjo"
 
 #: build/models.py:289 build/templates/build/detail.html:101
 #: company/templates/company/manufacturer_part.html:107
@@ -939,67 +939,67 @@ msgstr ""
 #: part/templates/part/part_base.html:376 stock/models.py:699
 #: stock/templates/stock/item_base.html:203
 msgid "External Link"
-msgstr ""
+msgstr "Zunanja povezava"
 
 #: build/models.py:294
 msgid "Extra build notes"
-msgstr ""
+msgstr "Dodatni zapiski izdelave"
 
 #: build/models.py:532
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "Nalog izgradnje {build} je dokončan"
 
 #: build/models.py:538
 msgid "A build order has been completed"
-msgstr ""
+msgstr "Nalog izgradnej dokončan"
 
 #: build/models.py:717
 msgid "No build output specified"
-msgstr ""
+msgstr "Ni določena izgradnja"
 
 #: build/models.py:720
 msgid "Build output is already completed"
-msgstr ""
+msgstr "Igradnja je že dokončana"
 
 #: build/models.py:723
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "Izgradnja se ne ujema s nalogom izdelave"
 
 #: build/models.py:1177
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "Izdelana postavka mora imeti izgradnjo, če je glavni del označen kot sledljiv"
 
 #: build/models.py:1186
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
-msgstr ""
+msgstr "Prestavljena zaloga ({q}) ne sme presegati zaloge ({a})"
 
 #: build/models.py:1196 order/models.py:1416
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "Preveč zaloge je prestavljene"
 
 #: build/models.py:1202 order/models.py:1419
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Prestavljena količina mora biti večja od 0"
 
 #: build/models.py:1208
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "Količina za zalogo s serijsko številko mora biti 1"
 
 #: build/models.py:1265
 msgid "Selected stock item not found in BOM"
-msgstr ""
+msgstr "Izbrana postavka ni najdena v BOM"
 
 #: build/models.py:1334 stock/templates/stock/item_base.html:175
 #: templates/InvenTree/search.html:139 templates/js/translated/build.js:2580
 #: templates/navbar.html:38
 msgid "Build"
-msgstr ""
+msgstr "Izdelava"
 
 #: build/models.py:1335
 msgid "Build to allocate parts"
-msgstr ""
+msgstr "Izdelaj da prestaviš dele"
 
 #: build/models.py:1351 build/serializers.py:663 order/serializers.py:1032
 #: order/serializers.py:1053 stock/serializers.py:392 stock/serializers.py:758
@@ -1014,11 +1014,11 @@ msgstr ""
 #: templates/js/translated/stock.js:619 templates/js/translated/stock.js:784
 #: templates/js/translated/stock.js:2625
 msgid "Stock Item"
-msgstr ""
+msgstr "Postavka zaloge"
 
 #: build/models.py:1352
 msgid "Source stock item"
-msgstr ""
+msgstr "Izvorna postavka zaloge"
 
 #: build/models.py:1364 build/serializers.py:192
 #: build/templates/build/build_base.html:85
@@ -1057,28 +1057,28 @@ msgstr ""
 #: templates/js/translated/stock.js:644 templates/js/translated/stock.js:814
 #: templates/js/translated/stock.js:2674 templates/js/translated/stock.js:2759
 msgid "Quantity"
-msgstr ""
+msgstr "Količina"
 
 #: build/models.py:1365
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Količina zaloge za prestavljanje za izgradnjo"
 
 #: build/models.py:1373
 msgid "Install into"
-msgstr ""
+msgstr "Inštaliraj v"
 
 #: build/models.py:1374
 msgid "Destination stock item"
-msgstr ""
+msgstr "Destinacija postavke zaloge"
 
 #: build/serializers.py:137 build/serializers.py:692
 #: templates/js/translated/build.js:1234
 msgid "Build Output"
-msgstr ""
+msgstr "Izgradnja"
 
 #: build/serializers.py:149
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Izgradnja se ne ujema z nadrejeno izgradnjo"
 
 #: build/serializers.py:153
 msgid "Output part does not match BuildOrder part"
@@ -8080,16 +8080,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -11223,3 +11221,4 @@ msgstr ""
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr ""
+
