@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 00:04+0000\n"
+"POT-Creation-Date: 2022-12-19 02:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -503,22 +503,26 @@ msgid "Russian"
 msgstr ""
 
 #: InvenTree/settings.py:657
-msgid "Swedish"
+msgid "Slovenian"
 msgstr ""
 
 #: InvenTree/settings.py:658
-msgid "Thai"
+msgid "Swedish"
 msgstr ""
 
 #: InvenTree/settings.py:659
-msgid "Turkish"
+msgid "Thai"
 msgstr ""
 
 #: InvenTree/settings.py:660
-msgid "Vietnamese"
+msgid "Turkish"
 msgstr ""
 
 #: InvenTree/settings.py:661
+msgid "Vietnamese"
+msgstr ""
+
+#: InvenTree/settings.py:662
 msgid "Chinese"
 msgstr ""
 
