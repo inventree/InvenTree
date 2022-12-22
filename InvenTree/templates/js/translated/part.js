@@ -725,6 +725,8 @@ function performStocktake(partId, options={}) {
 
     var part_quantity = 0;
 
+    var date_threshold = moment().subtract(30, "days");
+
     // Helper function for formatting a StockItem row
     function buildStockItemRow(item) {
 
@@ -748,7 +750,15 @@ function performStocktake(partId, options={}) {
         quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
 
         // Last update
-        var updated = item.updated || item.stocktake_date;
+        var updated = item.stocktake_date || item.updated;
+
+        var update_rendered = renderDate(updated);
+
+        if (updated) {
+            if (moment(updated) < date_threshold) {
+                update_rendered += `<div class='float-right' title='{% trans "Stock item has not been checked recently" %}'><span class='fas fa-calendar-alt icon-red'></span></div>`;
+            }
+        }
 
         // Actions
         var actions = '';
@@ -758,7 +768,7 @@ function performStocktake(partId, options={}) {
             <td>${part}</td>
             <td>${location}</td>
             <td>${quantity}</td>
-            <td>${renderDate(updated)}</td>
+            <td>${update_rendered}</td>
             <td>${actions}</td>
         </tr>`;
     }
@@ -772,6 +782,7 @@ function performStocktake(partId, options={}) {
             location_detail: true,
             part_detail: true,
             include_variants: true,
+            ordering: '-stock',
         },
         {
             success: function(response) {
