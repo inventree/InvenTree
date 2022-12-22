@@ -19,7 +19,6 @@
     makeIconBadge,
     makeIconButton,
     makeOptionsList,
-    makePartIcons,
     modalEnable,
     modalSetContent,
     modalSetTitle,

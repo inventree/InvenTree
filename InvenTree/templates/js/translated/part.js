@@ -742,7 +742,7 @@ function performStocktake(partId, options={}) {
         part_quantity += item.quantity;
 
         if (item.serial && item.quantity == 1) {
-            quantity = `{% trans "Serial" %}: ${item.serial}`
+            quantity = `{% trans "Serial" %}: ${item.serial}`;
         }
 
         quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
