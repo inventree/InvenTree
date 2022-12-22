@@ -586,7 +586,7 @@
     {% if roles.part.change %}
 
     if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
-
+        event.stopPropagation();
         $("#part-image-url").click(function() {
             constructForm(
                 '{% url "api-part-detail" part.pk %}',
@@ -596,7 +596,9 @@
                     fields: {
                         remote_image: {},
                     },
-                    onSuccess: onSelectImage,
+                    onSuccess: function(data) {
+                        reloadImage(data);
+                    },
                 }
             );
         });
