@@ -877,7 +877,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT': {
             'name': _('User-agent used to download from URL'),
-            'description': _('Allow to overide the user-agent used to download mages and files from external URL (leave blank for the default)'),
+            'description': _('Allow to override the user-agent used to download mages and files from external URL (leave blank for the default)'),
             'default': '',
         },
 
