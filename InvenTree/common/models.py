@@ -1222,6 +1222,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'STOCK_DELETE_DEPLETED_DEFAULT': {
+            'name': _('Delete Depleted Stock'),
+            'description': _('Determines default behaviour when a stock item is depleted'),
+            'default': True,
+            'validator': bool,
+        },
+
         'STOCK_BATCH_CODE_TEMPLATE': {
             'name': _('Batch Code Template'),
             'description': _('Template for generating default batch codes for stock items'),
