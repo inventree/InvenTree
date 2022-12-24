@@ -875,6 +875,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT': {
+            'name': _('User-agent used to download from URL'),
+            'description': _('Allow to override the user-agent used to download images and files from external URL (leave blank for the default)'),
+            'default': '',
+        },
+
         'INVENTREE_REQUIRE_CONFIRM': {
             'name': _('Require confirm'),
             'description': _('Require explicit user confirmation for certain action.'),
