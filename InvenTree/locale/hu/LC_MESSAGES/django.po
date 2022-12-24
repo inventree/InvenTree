@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-21 22:18+0000\n"
-"PO-Revision-Date: 2022-12-22 21:59\n"
+"POT-Creation-Date: 2022-12-24 12:18+0000\n"
+"PO-Revision-Date: 2022-12-24 12:32\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -90,75 +90,75 @@ msgstr "Email cím megerősítés"
 msgid "You must type the same email each time."
 msgstr "Mindig ugyanazt az email címet kell beírni."
 
-#: InvenTree/helpers.py:158
+#: InvenTree/helpers.py:166
 msgid "Connection error"
 msgstr "Csatlakozási hiba"
 
-#: InvenTree/helpers.py:162 InvenTree/helpers.py:167
+#: InvenTree/helpers.py:170 InvenTree/helpers.py:175
 msgid "Server responded with invalid status code"
 msgstr "A kiszolgáló érvénytelen státuszkóddal válaszolt"
 
-#: InvenTree/helpers.py:164
+#: InvenTree/helpers.py:172
 msgid "Exception occurred"
 msgstr "Kivétel történt"
 
-#: InvenTree/helpers.py:172
+#: InvenTree/helpers.py:180
 msgid "Server responded with invalid Content-Length value"
 msgstr "A kiszolgáló érvénytelen Content-Length értéket adott"
 
-#: InvenTree/helpers.py:175
+#: InvenTree/helpers.py:183
 msgid "Image size is too large"
 msgstr "A kép mérete túl nagy"
 
-#: InvenTree/helpers.py:187
+#: InvenTree/helpers.py:195
 msgid "Image download exceeded maximum size"
 msgstr "A kép letöltés meghaladja a maximális méretet"
 
-#: InvenTree/helpers.py:192
+#: InvenTree/helpers.py:200
 msgid "Remote server returned empty response"
 msgstr "A kiszolgáló üres választ adott"
 
-#: InvenTree/helpers.py:200
+#: InvenTree/helpers.py:208
 msgid "Supplied URL is not a valid image file"
 msgstr "A megadott URL nem egy érvényes kép fájl"
 
-#: InvenTree/helpers.py:589 order/models.py:329 order/models.py:496
+#: InvenTree/helpers.py:597 order/models.py:329 order/models.py:496
 msgid "Invalid quantity provided"
 msgstr "Nem megfelelő mennyiség"
 
-#: InvenTree/helpers.py:597
+#: InvenTree/helpers.py:605
 msgid "Empty serial number string"
 msgstr "Üres sorozatszám"
 
-#: InvenTree/helpers.py:627
+#: InvenTree/helpers.py:635
 msgid "Duplicate serial"
 msgstr "Duplikált sorozatszám"
 
-#: InvenTree/helpers.py:660 InvenTree/helpers.py:695
+#: InvenTree/helpers.py:668 InvenTree/helpers.py:703
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "Érvénytelen csoport tartomány: {g}"
 
-#: InvenTree/helpers.py:689
+#: InvenTree/helpers.py:697
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
 msgstr "Több lett megadva {g} mint amennyi szükséges lenne ({q})"
 
-#: InvenTree/helpers.py:713 InvenTree/helpers.py:720 InvenTree/helpers.py:735
+#: InvenTree/helpers.py:721 InvenTree/helpers.py:728 InvenTree/helpers.py:743
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr "Érvénytelen csoport szekvencia: {g}"
 
-#: InvenTree/helpers.py:745
+#: InvenTree/helpers.py:753
 msgid "No serial numbers found"
 msgstr "Nem található sorozatszám"
 
-#: InvenTree/helpers.py:748
+#: InvenTree/helpers.py:756
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "A megadott számú egyedi sorozatszám ({s}) meg kell egyezzen a darabszámmal ({q})"
 
-#: InvenTree/helpers.py:947
+#: InvenTree/helpers.py:955
 msgid "Remove HTML tags from this value"
 msgstr "HTML tag-ek eltávolítása ebből az értékből"
 
@@ -204,7 +204,7 @@ msgstr "Melléklet"
 msgid "Select file to attach"
 msgstr "Válaszd ki a mellekelni kívánt fájlt"
 
-#: InvenTree/models.py:412 common/models.py:2353 company/models.py:129
+#: InvenTree/models.py:412 common/models.py:2359 company/models.py:129
 #: company/models.py:281 company/models.py:516 order/models.py:85
 #: order/models.py:1282 part/admin.py:25 part/models.py:865
 #: part/templates/part/part_scheduling.html:11
@@ -229,9 +229,9 @@ msgstr "Megjegyzés"
 msgid "File comment"
 msgstr "Leírás, bővebb infó"
 
-#: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1797
-#: common/models.py:1798 common/models.py:2021 common/models.py:2022
-#: common/models.py:2283 common/models.py:2284 part/models.py:2948
+#: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1803
+#: common/models.py:1804 common/models.py:2027 common/models.py:2028
+#: common/models.py:2289 common/models.py:2290 part/models.py:2948
 #: part/models.py:2968 plugin/models.py:264 plugin/models.py:265
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2689
@@ -271,7 +271,7 @@ msgstr "Hiba a fájl átnevezésekor"
 msgid "Invalid choice"
 msgstr "Érvénytelen választás"
 
-#: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:2007
+#: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:2013
 #: company/models.py:363 label/models.py:101 part/models.py:809
 #: part/models.py:3123 plugin/models.py:94 report/models.py:152
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -289,7 +289,7 @@ msgstr "Név"
 
 #: InvenTree/models.py:564 build/models.py:163
 #: build/templates/build/detail.html:24 company/models.py:287
-#: company/models.py:522 company/templates/company/company_base.html:74
+#: company/models.py:522 company/templates/company/company_base.html:72
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:108 label/models.py:108
 #: order/models.py:83 part/admin.py:141 part/admin.py:222 part/models.py:832
@@ -1022,7 +1022,7 @@ msgstr "Forrás készlet tétel"
 
 #: build/models.py:1364 build/serializers.py:192
 #: build/templates/build/build_base.html:85
-#: build/templates/build/detail.html:34 common/models.py:1829
+#: build/templates/build/detail.html:34 common/models.py:1835
 #: order/models.py:934 order/models.py:1460 order/serializers.py:1206
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:223
 #: part/forms.py:40 part/models.py:3359
@@ -1794,981 +1794,989 @@ msgid "Maximum allowable download size for remote image"
 msgstr "Maximum megengedett letöltési mérete a távoli képeknek"
 
 #: common/models.py:879
+msgid "User-agent used to download from URL"
+msgstr ""
+
+#: common/models.py:880
+msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
+msgstr ""
+
+#: common/models.py:885
 msgid "Require confirm"
 msgstr "Megerősítés igénylése"
 
-#: common/models.py:880
+#: common/models.py:886
 msgid "Require explicit user confirmation for certain action."
 msgstr "Kérjen felhasználói megerősítést bizonyos műveletekhez"
 
-#: common/models.py:886
+#: common/models.py:892
 msgid "Tree Depth"
 msgstr "Fa mélység"
 
-#: common/models.py:887
+#: common/models.py:893
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
 msgstr "Alapértelmezett mélység a fa nézetekben. A mélyebb szintek betöltődnek ha szükségesek."
 
-#: common/models.py:896
+#: common/models.py:902
 msgid "Automatic Backup"
 msgstr "Automatikus biztonsági mentés"
 
-#: common/models.py:897
+#: common/models.py:903
 msgid "Enable automatic backup of database and media files"
 msgstr "Adatbázis és média fájlok automatikus biztonsági mentése"
 
-#: common/models.py:903
+#: common/models.py:909
 msgid "Delete Old Tasks"
 msgstr "Régi feladatok törlése"
 
-#: common/models.py:904
+#: common/models.py:910
 msgid "Background task results will be deleted after specified number of days"
 msgstr "Háttérfolyamat eredmények törlése megadott nap eltelte után"
 
-#: common/models.py:914
+#: common/models.py:920
 msgid "Delete Error Logs"
 msgstr "Hibanapló törlése"
 
-#: common/models.py:915
+#: common/models.py:921
 msgid "Error logs will be deleted after specified number of days"
 msgstr "Hibanapló bejegyzések törlése megadott nap eltelte után"
 
-#: common/models.py:925
+#: common/models.py:931
 msgid "Delete Noficiations"
 msgstr "Értesítések törlése"
 
-#: common/models.py:926
+#: common/models.py:932
 msgid "User notifications will be deleted after specified number of days"
 msgstr "Felhasználói értesítések törlése megadott nap eltelte után"
 
-#: common/models.py:936 templates/InvenTree/settings/sidebar.html:33
+#: common/models.py:942 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
 msgstr "Vonalkód támogatás"
 
-#: common/models.py:937
+#: common/models.py:943
 msgid "Enable barcode scanner support"
 msgstr "Vonalkód olvasó engedélyezése"
 
-#: common/models.py:943
+#: common/models.py:949
 msgid "Barcode Input Delay"
 msgstr "Vonalkód beadási késleltetés"
 
-#: common/models.py:944
+#: common/models.py:950
 msgid "Barcode input processing delay time"
 msgstr "Vonalkód beadáskor a feldolgozás késleltetési ideje"
 
-#: common/models.py:954
+#: common/models.py:960
 msgid "Barcode Webcam Support"
 msgstr "Webkamerás vonalkód olvasás"
 
-#: common/models.py:955
+#: common/models.py:961
 msgid "Allow barcode scanning via webcam in browser"
 msgstr "Webkamerás kódolvasás engedélyezése a böngészőből"
 
-#: common/models.py:961
+#: common/models.py:967
 msgid "IPN Regex"
 msgstr "IPN reguláris kifejezés"
 
-#: common/models.py:962
+#: common/models.py:968
 msgid "Regular expression pattern for matching Part IPN"
 msgstr "Reguláris kifejezés ami illeszkedik az alkatrész IPN-re"
 
-#: common/models.py:966
+#: common/models.py:972
 msgid "Allow Duplicate IPN"
 msgstr "Többször is előforduló IPN engedélyezése"
 
-#: common/models.py:967
+#: common/models.py:973
 msgid "Allow multiple parts to share the same IPN"
 msgstr "Azonos IPN használható legyen több alkatrész esetén is"
 
-#: common/models.py:973
+#: common/models.py:979
 msgid "Allow Editing IPN"
 msgstr "IPN szerkesztésének engedélyezése"
 
-#: common/models.py:974
+#: common/models.py:980
 msgid "Allow changing the IPN value while editing a part"
 msgstr "IPN megváltoztatásánsak engedélyezése az alkatrész szerkesztése közben"
 
-#: common/models.py:980
+#: common/models.py:986
 msgid "Copy Part BOM Data"
 msgstr "Alkatrészjegyzék adatok másolása"
 
-#: common/models.py:981
+#: common/models.py:987
 msgid "Copy BOM data by default when duplicating a part"
 msgstr "Alkatrész másoláskor az alkatrészjegyzék adatokat is másoljuk alapból"
 
-#: common/models.py:987
+#: common/models.py:993
 msgid "Copy Part Parameter Data"
 msgstr "Alkatrész paraméterek másolása"
 
-#: common/models.py:988
+#: common/models.py:994
 msgid "Copy parameter data by default when duplicating a part"
 msgstr "Alkatrész másoláskor a paramétereket is másoljuk alapból"
 
-#: common/models.py:994
+#: common/models.py:1000
 msgid "Copy Part Test Data"
 msgstr "Alkatrész teszt adatok másolása"
 
-#: common/models.py:995
+#: common/models.py:1001
 msgid "Copy test data by default when duplicating a part"
 msgstr "Alkatrész másoláskor a tesztek adatait is másoljuk alapból"
 
-#: common/models.py:1001
+#: common/models.py:1007
 msgid "Copy Category Parameter Templates"
 msgstr "Kategória paraméter sablonok másolása"
 
-#: common/models.py:1002
+#: common/models.py:1008
 msgid "Copy category parameter templates when creating a part"
 msgstr "Kategória paraméter sablonok másolása alkatrész létrehozásakor"
 
-#: common/models.py:1008 part/admin.py:41 part/models.py:3168
+#: common/models.py:1014 part/admin.py:41 part/models.py:3168
 #: report/models.py:158 templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:504
 msgid "Template"
 msgstr "Sablon"
 
-#: common/models.py:1009
+#: common/models.py:1015
 msgid "Parts are templates by default"
 msgstr "Alkatrészek alapból sablon alkatrészek legyenek"
 
-#: common/models.py:1015 part/admin.py:37 part/admin.py:229 part/models.py:957
+#: common/models.py:1021 part/admin.py:37 part/admin.py:229 part/models.py:957
 #: templates/js/translated/bom.js:1595
 #: templates/js/translated/table_filters.js:196
 #: templates/js/translated/table_filters.js:467
 msgid "Assembly"
 msgstr "Gyártmány"
 
-#: common/models.py:1016
+#: common/models.py:1022
 msgid "Parts can be assembled from other components by default"
 msgstr "Alkatrészeket alapból lehessen gyártani másik alkatrészekből"
 
-#: common/models.py:1022 part/admin.py:38 part/models.py:963
+#: common/models.py:1028 part/admin.py:38 part/models.py:963
 #: templates/js/translated/table_filters.js:475
 msgid "Component"
 msgstr "Összetevő"
 
-#: common/models.py:1023
+#: common/models.py:1029
 msgid "Parts can be used as sub-components by default"
 msgstr "Alkatrészek alapból használhatók összetevőként más alkatrészekhez"
 
-#: common/models.py:1029 part/admin.py:39 part/models.py:974
+#: common/models.py:1035 part/admin.py:39 part/models.py:974
 msgid "Purchaseable"
 msgstr "Beszerezhető"
 
-#: common/models.py:1030
+#: common/models.py:1036
 msgid "Parts are purchaseable by default"
 msgstr "Alkatrészek alapból beszerezhetők legyenek"
 
-#: common/models.py:1036 part/admin.py:40 part/models.py:979
+#: common/models.py:1042 part/admin.py:40 part/models.py:979
 #: templates/js/translated/table_filters.js:496
 msgid "Salable"
 msgstr "Értékesíthető"
 
-#: common/models.py:1037
+#: common/models.py:1043
 msgid "Parts are salable by default"
 msgstr "Alkatrészek alapból eladhatók legyenek"
 
-#: common/models.py:1043 part/admin.py:42 part/models.py:969
+#: common/models.py:1049 part/admin.py:42 part/models.py:969
 #: templates/js/translated/table_filters.js:46
 #: templates/js/translated/table_filters.js:120
 #: templates/js/translated/table_filters.js:508
 msgid "Trackable"
 msgstr "Követésre kötelezett"
 
-#: common/models.py:1044
+#: common/models.py:1050
 msgid "Parts are trackable by default"
 msgstr "Alkatrészek alapból követésre kötelezettek legyenek"
 
-#: common/models.py:1050 part/admin.py:43 part/models.py:989
+#: common/models.py:1056 part/admin.py:43 part/models.py:989
 #: part/templates/part/part_base.html:156
 #: templates/js/translated/table_filters.js:42
 #: templates/js/translated/table_filters.js:512
 msgid "Virtual"
 msgstr "Virtuális"
 
-#: common/models.py:1051
+#: common/models.py:1057
 msgid "Parts are virtual by default"
 msgstr "Alkatrészek alapból virtuálisak legyenek"
 
-#: common/models.py:1057
+#: common/models.py:1063
 msgid "Show Import in Views"
 msgstr "Importálás megjelenítése a nézetekben"
 
-#: common/models.py:1058
+#: common/models.py:1064
 msgid "Display the import wizard in some part views"
 msgstr "Import segéd megjelenítése néhány alkatrész nézetben"
 
-#: common/models.py:1064
+#: common/models.py:1070
 msgid "Show related parts"
 msgstr "Kapcsolódó alkatrészek megjelenítése"
 
-#: common/models.py:1065
+#: common/models.py:1071
 msgid "Display related parts for a part"
 msgstr "Alkatrész kapcsolódó alkatrészeinek megjelenítése"
 
-#: common/models.py:1071
+#: common/models.py:1077
 msgid "Create initial stock"
 msgstr "Kezdeti készlet létrehozása"
 
-#: common/models.py:1072
+#: common/models.py:1078
 msgid "Create initial stock on part creation"
 msgstr "Kezdeti készlet megadása az alkatrész létrehozásakor"
 
-#: common/models.py:1078
+#: common/models.py:1084
 msgid "Part Name Display Format"
 msgstr "Alkatrész név megjelenítés formátuma"
 
-#: common/models.py:1079
+#: common/models.py:1085
 msgid "Format to display the part name"
 msgstr "Formátum az alkatrész név megjelenítéséhez"
 
-#: common/models.py:1086
+#: common/models.py:1092
 msgid "Part Category Default Icon"
 msgstr "Alkatrész kategória alapértelmezett ikon"
 
-#: common/models.py:1087
+#: common/models.py:1093
 msgid "Part category default icon (empty means no icon)"
 msgstr "Alkatrész kategória alapértelmezett ikon (üres ha nincs)"
 
-#: common/models.py:1092
+#: common/models.py:1098
 msgid "Pricing Decimal Places"
 msgstr "Áraknál használt tizedesjegyek száma"
 
-#: common/models.py:1093
+#: common/models.py:1099
 msgid "Number of decimal places to display when rendering pricing data"
 msgstr "Tizedejegyek száma az árak megjelenítésekor"
 
-#: common/models.py:1103
+#: common/models.py:1109
 msgid "Use Supplier Pricing"
 msgstr "Beszállítói árazás használata"
 
-#: common/models.py:1104
+#: common/models.py:1110
 msgid "Include supplier price breaks in overall pricing calculations"
 msgstr "Beszállítói ársávok megjelenítése az általános árkalkulációkban"
 
-#: common/models.py:1110
+#: common/models.py:1116
 msgid "Purchase History Override"
 msgstr "Beszerzési előzmények felülbírálása"
 
-#: common/models.py:1111
+#: common/models.py:1117
 msgid "Historical purchase order pricing overrides supplier price breaks"
 msgstr "Beszerzési árelőzmények felülírják a beszállítói ársávokat"
 
-#: common/models.py:1117
+#: common/models.py:1123
 msgid "Use Variant Pricing"
 msgstr "Alkatrészváltozat árak használata"
 
-#: common/models.py:1118
+#: common/models.py:1124
 msgid "Include variant pricing in overall pricing calculations"
 msgstr "Alkatrészváltozat árak megjelenítése az általános árkalkulációkban"
 
-#: common/models.py:1124
+#: common/models.py:1130
 msgid "Active Variants Only"
 msgstr "Csak az aktív változatokat"
 
-#: common/models.py:1125
+#: common/models.py:1131
 msgid "Only use active variant parts for calculating variant pricing"
 msgstr "Csak az aktív alkatrészváltozatok használata az árazásban"
 
-#: common/models.py:1131
+#: common/models.py:1137
 msgid "Pricing Rebuild Time"
 msgstr "Ár újraszámítás ideje"
 
-#: common/models.py:1132
+#: common/models.py:1138
 msgid "Number of days before part pricing is automatically updated"
 msgstr "Árak automatikus frissítése ennyi nap után"
 
-#: common/models.py:1133 common/models.py:1249
+#: common/models.py:1139 common/models.py:1255
 msgid "days"
 msgstr "nap"
 
-#: common/models.py:1142
+#: common/models.py:1148
 msgid "Internal Prices"
 msgstr "Belső árak"
 
-#: common/models.py:1143
+#: common/models.py:1149
 msgid "Enable internal prices for parts"
 msgstr "Alkatrészekhez belső ár engedélyezése"
 
-#: common/models.py:1149
+#: common/models.py:1155
 msgid "Internal Price Override"
 msgstr "Belső ár felülbírálása"
 
-#: common/models.py:1150
+#: common/models.py:1156
 msgid "If available, internal prices override price range calculations"
 msgstr "Ha elérhetőek az árkalkulációkban a belső árak lesznek alapul véve"
 
-#: common/models.py:1156
+#: common/models.py:1162
 msgid "Enable label printing"
 msgstr "Címke nyomtatás engedélyezése"
 
-#: common/models.py:1157
+#: common/models.py:1163
 msgid "Enable label printing from the web interface"
 msgstr "Címke nyomtatás engedélyezése a web felületről"
 
-#: common/models.py:1163
+#: common/models.py:1169
 msgid "Label Image DPI"
 msgstr "Címke kép DPI"
 
-#: common/models.py:1164
+#: common/models.py:1170
 msgid "DPI resolution when generating image files to supply to label printing plugins"
 msgstr "Képek felbontása amik átadásra kerülnek címkenyomtató pluginoknak"
 
-#: common/models.py:1173
+#: common/models.py:1179
 msgid "Enable Reports"
 msgstr "Riportok engedélyezése"
 
-#: common/models.py:1174
+#: common/models.py:1180
 msgid "Enable generation of reports"
 msgstr "Riportok előállításának engedélyezése"
 
-#: common/models.py:1180 templates/stats.html:25
+#: common/models.py:1186 templates/stats.html:25
 msgid "Debug Mode"
 msgstr "Debug mód"
 
-#: common/models.py:1181
+#: common/models.py:1187
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "Riportok előállítása HTML formátumban (hibakereséshez)"
 
-#: common/models.py:1187
+#: common/models.py:1193
 msgid "Page Size"
 msgstr "Lapméret"
 
-#: common/models.py:1188
+#: common/models.py:1194
 msgid "Default page size for PDF reports"
 msgstr "Alapértelmezett lapméret a PDF riportokhoz"
 
-#: common/models.py:1198
+#: common/models.py:1204
 msgid "Enable Test Reports"
 msgstr "Teszt riportok engedélyezése"
 
-#: common/models.py:1199
+#: common/models.py:1205
 msgid "Enable generation of test reports"
 msgstr "Teszt riportok előállításának engedélyezése"
 
-#: common/models.py:1205
+#: common/models.py:1211
 msgid "Attach Test Reports"
 msgstr "Teszt riportok hozzáadása"
 
-#: common/models.py:1206
+#: common/models.py:1212
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
 msgstr "Teszt riport nyomtatáskor egy másolat hozzáadása a készlet tételhez"
 
-#: common/models.py:1212
+#: common/models.py:1218
 msgid "Globally Unique Serials"
 msgstr "Globálisan egyedi sorozatszámok"
 
-#: common/models.py:1213
+#: common/models.py:1219
 msgid "Serial numbers for stock items must be globally unique"
 msgstr "A sorozatszámoknak egyedinek kell lennie a teljes készletre vonatkozóan"
 
-#: common/models.py:1219
+#: common/models.py:1225
 msgid "Autofill Serial Numbers"
 msgstr ""
 
-#: common/models.py:1220
+#: common/models.py:1226
 msgid "Autofill serial numbers in forms"
 msgstr ""
 
-#: common/models.py:1226
+#: common/models.py:1232
 msgid "Batch Code Template"
 msgstr "Batch kód sablon"
 
-#: common/models.py:1227
+#: common/models.py:1233
 msgid "Template for generating default batch codes for stock items"
 msgstr "Sablon a készlet tételekhez alapértelmezett batch kódok előállításához"
 
-#: common/models.py:1232
+#: common/models.py:1238
 msgid "Stock Expiry"
 msgstr "Készlet lejárata"
 
-#: common/models.py:1233
+#: common/models.py:1239
 msgid "Enable stock expiry functionality"
 msgstr "Készlet lejárat kezelésének engedélyezése"
 
-#: common/models.py:1239
+#: common/models.py:1245
 msgid "Sell Expired Stock"
 msgstr "Lejárt készlet értékesítése"
 
-#: common/models.py:1240
+#: common/models.py:1246
 msgid "Allow sale of expired stock"
 msgstr "Lejárt készlet értékesítésének engedélyezése"
 
-#: common/models.py:1246
+#: common/models.py:1252
 msgid "Stock Stale Time"
 msgstr "Álló készlet ideje"
 
-#: common/models.py:1247
+#: common/models.py:1253
 msgid "Number of days stock items are considered stale before expiring"
 msgstr "Napok száma amennyivel a lejárat előtt a készlet tételeket állottnak vesszük"
 
-#: common/models.py:1254
+#: common/models.py:1260
 msgid "Build Expired Stock"
 msgstr "Lejárt készlet gyártása"
 
-#: common/models.py:1255
+#: common/models.py:1261
 msgid "Allow building with expired stock"
 msgstr "Gyártás engedélyezése lejárt készletből"
 
-#: common/models.py:1261
+#: common/models.py:1267
 msgid "Stock Ownership Control"
 msgstr "Készlet tulajdonosok kezelése"
 
-#: common/models.py:1262
+#: common/models.py:1268
 msgid "Enable ownership control over stock locations and items"
 msgstr "Tuajdonosok kezelésének engedélyezése a készlet helyekre és tételekre"
 
-#: common/models.py:1268
+#: common/models.py:1274
 msgid "Stock Location Default Icon"
 msgstr "Hely alapértelmezett ikon"
 
-#: common/models.py:1269
+#: common/models.py:1275
 msgid "Stock location default icon (empty means no icon)"
 msgstr "Hely alapértelmezett ikon (üres ha nincs)"
 
-#: common/models.py:1274
+#: common/models.py:1280
 msgid "Build Order Reference Pattern"
 msgstr "Gyártási utasítás azonosító minta"
 
-#: common/models.py:1275
+#: common/models.py:1281
 msgid "Required pattern for generating Build Order reference field"
 msgstr "Szükséges minta a gyártási utasítás azonosító mező előállításához"
 
-#: common/models.py:1281
+#: common/models.py:1287
 msgid "Sales Order Reference Pattern"
 msgstr "Vevői rendelés azonosító minta"
 
-#: common/models.py:1282
+#: common/models.py:1288
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "Szükséges minta a vevői rendelés azonosító mező előállításához"
 
-#: common/models.py:1288
+#: common/models.py:1294
 msgid "Sales Order Default Shipment"
 msgstr "Vevői rendeléshez alapértelmezett szállítmány"
 
-#: common/models.py:1289
+#: common/models.py:1295
 msgid "Enable creation of default shipment with sales orders"
 msgstr "Szállítmány automatikus létrehozása az új vevő rendelésekhez"
 
-#: common/models.py:1295
+#: common/models.py:1301
 msgid "Edit Completed Sales Orders"
 msgstr "Befejezett vevői rendelés szerkesztése"
 
-#: common/models.py:1296
+#: common/models.py:1302
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Vevői rendelések szerkesztésének engedélyezése szállítás vagy befejezés után"
 
-#: common/models.py:1302
+#: common/models.py:1308
 msgid "Purchase Order Reference Pattern"
 msgstr "Beszerzési rendelés azonosító minta"
 
-#: common/models.py:1303
+#: common/models.py:1309
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "Szükséges minta a beszerzési rendelés azonosító mező előállításához"
 
-#: common/models.py:1309
+#: common/models.py:1315
 msgid "Edit Completed Purchase Orders"
 msgstr "Befejezett beszerzési rendelés szerkesztése"
 
-#: common/models.py:1310
+#: common/models.py:1316
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "Beszérzési rendelések szerkesztésének engedélyezése kiküldés vagy befejezés után"
 
-#: common/models.py:1317
+#: common/models.py:1323
 msgid "Enable password forgot"
 msgstr "Elfelejtett jelszó engedélyezése"
 
-#: common/models.py:1318
+#: common/models.py:1324
 msgid "Enable password forgot function on the login pages"
 msgstr "Elfelejtett jelszó funkció engedélyezése a bejentkező oldalon"
 
-#: common/models.py:1324
+#: common/models.py:1330
 msgid "Enable registration"
 msgstr "Regisztráció engedélyezése"
 
-#: common/models.py:1325
+#: common/models.py:1331
 msgid "Enable self-registration for users on the login pages"
 msgstr "Felhaszálók önkéntes regisztrációjának engedélyezése a bejelentkező oldalon"
 
-#: common/models.py:1331
+#: common/models.py:1337
 msgid "Enable SSO"
 msgstr "SSO engedélyezése"
 
-#: common/models.py:1332
+#: common/models.py:1338
 msgid "Enable SSO on the login pages"
 msgstr "SSO engedélyezése a bejelentkező oldalon"
 
-#: common/models.py:1338
+#: common/models.py:1344
 msgid "Email required"
 msgstr "Email szükséges"
 
-#: common/models.py:1339
+#: common/models.py:1345
 msgid "Require user to supply mail on signup"
 msgstr "Kötelező email megadás regisztrációkor"
 
-#: common/models.py:1345
+#: common/models.py:1351
 msgid "Auto-fill SSO users"
 msgstr "SSO felhasználók automatikus kitöltése"
 
-#: common/models.py:1346
+#: common/models.py:1352
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "Felhasználó adatainak automatikus kitöltése az SSO fiókadatokból"
 
-#: common/models.py:1352
+#: common/models.py:1358
 msgid "Mail twice"
 msgstr "Email kétszer"
 
-#: common/models.py:1353
+#: common/models.py:1359
 msgid "On signup ask users twice for their mail"
 msgstr "Regisztráláskor kétszer kérdezze a felhasználó email címét"
 
-#: common/models.py:1359
+#: common/models.py:1365
 msgid "Password twice"
 msgstr "Jelszó kétszer"
 
-#: common/models.py:1360
+#: common/models.py:1366
 msgid "On signup ask users twice for their password"
 msgstr "Regisztráláskor kétszer kérdezze a felhasználó jelszavát"
 
-#: common/models.py:1366
+#: common/models.py:1372
 msgid "Group on signup"
 msgstr "Csoport regisztráláskor"
 
-#: common/models.py:1367
+#: common/models.py:1373
 msgid "Group to which new users are assigned on registration"
 msgstr "Csoport amihez a frissen regisztrált felhasználók hozzá lesznek rendelve"
 
-#: common/models.py:1373
+#: common/models.py:1379
 msgid "Enforce MFA"
 msgstr "Többfaktoros hitelesítés kényszerítése"
 
-#: common/models.py:1374
+#: common/models.py:1380
 msgid "Users must use multifactor security."
 msgstr "A felhasználóknak többfaktoros hitelesítést kell használniuk."
 
-#: common/models.py:1380
+#: common/models.py:1386
 msgid "Check plugins on startup"
 msgstr "Pluginok ellenőrzése indításkor"
 
-#: common/models.py:1381
+#: common/models.py:1387
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "Ellenőrizze induláskor hogy minden plugin telepítve van - engedélyezd konténer környezetben (docker)"
 
-#: common/models.py:1388
+#: common/models.py:1394
 msgid "Check plugin signatures"
 msgstr "Plugin aláírások ellenőrzése"
 
-#: common/models.py:1389
+#: common/models.py:1395
 msgid "Check and show signatures for plugins"
 msgstr "Pluginok aláírásainak ellenőrzése és megjelenítése"
 
-#: common/models.py:1396
+#: common/models.py:1402
 msgid "Enable URL integration"
 msgstr "URL integráció engedélyezése"
 
-#: common/models.py:1397
+#: common/models.py:1403
 msgid "Enable plugins to add URL routes"
 msgstr "URL útvonalalak hozzáadásának engedélyezése a pluginok számára"
 
-#: common/models.py:1404
+#: common/models.py:1410
 msgid "Enable navigation integration"
 msgstr "Navigációs integráció engedélyezése"
 
-#: common/models.py:1405
+#: common/models.py:1411
 msgid "Enable plugins to integrate into navigation"
 msgstr "Navigációs integráció engedélyezése a pluginok számára"
 
-#: common/models.py:1412
+#: common/models.py:1418
 msgid "Enable app integration"
 msgstr "App integráció engedélyezése"
 
-#: common/models.py:1413
+#: common/models.py:1419
 msgid "Enable plugins to add apps"
 msgstr "App hozzáadásának engedélyezése a pluginok számára"
 
-#: common/models.py:1420
+#: common/models.py:1426
 msgid "Enable schedule integration"
 msgstr "Ütemezés integráció engedélyezése"
 
-#: common/models.py:1421
+#: common/models.py:1427
 msgid "Enable plugins to run scheduled tasks"
 msgstr "Háttérben futó feladatok hozzáadásának engedélyezése a pluginok számára"
 
-#: common/models.py:1428
+#: common/models.py:1434
 msgid "Enable event integration"
 msgstr "Esemény integráció engedélyezése"
 
-#: common/models.py:1429
+#: common/models.py:1435
 msgid "Enable plugins to respond to internal events"
 msgstr "Belső eseményekre reagálás engedélyezése a pluginok számára"
 
-#: common/models.py:1448 common/models.py:1790
+#: common/models.py:1454 common/models.py:1796
 msgid "Settings key (must be unique - case insensitive"
 msgstr "Beállítások kulcs (egyedinek kell lennie, nem kis- nagybetű érzékeny"
 
-#: common/models.py:1470
+#: common/models.py:1476
 msgid "Show subscribed parts"
 msgstr "Értesítésre beállított alkatrészek megjelenítése"
 
-#: common/models.py:1471
+#: common/models.py:1477
 msgid "Show subscribed parts on the homepage"
 msgstr "Alkatrész értesítések megjelenítése a főoldalon"
 
-#: common/models.py:1477
+#: common/models.py:1483
 msgid "Show subscribed categories"
 msgstr "Értesítésre beállított kategóriák megjelenítése"
 
-#: common/models.py:1478
+#: common/models.py:1484
 msgid "Show subscribed part categories on the homepage"
 msgstr "Alkatrész kategória értesítések megjelenítése a főoldalon"
 
-#: common/models.py:1484
+#: common/models.py:1490
 msgid "Show latest parts"
 msgstr "Legújabb alkatrészek megjelenítése"
 
-#: common/models.py:1485
+#: common/models.py:1491
 msgid "Show latest parts on the homepage"
 msgstr "Legújabb alkatrészek megjelenítése a főoldalon"
 
-#: common/models.py:1491
+#: common/models.py:1497
 msgid "Recent Part Count"
 msgstr "Legfrissebb alkatrész szám"
 
-#: common/models.py:1492
+#: common/models.py:1498
 msgid "Number of recent parts to display on index page"
 msgstr "Főoldalon megjelenítendő legújabb alkatrészek"
 
-#: common/models.py:1498
+#: common/models.py:1504
 msgid "Show unvalidated BOMs"
 msgstr "Jóváhagyás nélküli alkatrészjegyzékek megjelenítése"
 
-#: common/models.py:1499
+#: common/models.py:1505
 msgid "Show BOMs that await validation on the homepage"
 msgstr "Jóváhagyásra váró alkatrészjegyzékek megjelenítése a főoldalon"
 
-#: common/models.py:1505
+#: common/models.py:1511
 msgid "Show recent stock changes"
 msgstr "Legfrissebb készlet változások megjelenítése"
 
-#: common/models.py:1506
+#: common/models.py:1512
 msgid "Show recently changed stock items on the homepage"
 msgstr "Legutóbb megváltozott alkatrészek megjelenítése a főoldalon"
 
-#: common/models.py:1512
+#: common/models.py:1518
 msgid "Recent Stock Count"
 msgstr "Legfrissebb készlet mennyiség"
 
-#: common/models.py:1513
+#: common/models.py:1519
 msgid "Number of recent stock items to display on index page"
 msgstr "Főoldalon megjelenítendő legújabb készlet tételek száma"
 
-#: common/models.py:1519
+#: common/models.py:1525
 msgid "Show low stock"
 msgstr "Alacsony készlet megjelenítése"
 
-#: common/models.py:1520
+#: common/models.py:1526
 msgid "Show low stock items on the homepage"
 msgstr "Alacsony készletek megjelenítése a főoldalon"
 
-#: common/models.py:1526
+#: common/models.py:1532
 msgid "Show depleted stock"
 msgstr "Kimerült készlet megjelenítése"
 
-#: common/models.py:1527
+#: common/models.py:1533
 msgid "Show depleted stock items on the homepage"
 msgstr "Kimerült készletek megjelenítése a főoldalon"
 
-#: common/models.py:1533
+#: common/models.py:1539
 msgid "Show needed stock"
 msgstr "Gyártáshoz szükséges készlet megjelenítése"
 
-#: common/models.py:1534
+#: common/models.py:1540
 msgid "Show stock items needed for builds on the homepage"
 msgstr "Gyártáshoz szükséges készletek megjelenítése a főoldalon"
 
-#: common/models.py:1540
+#: common/models.py:1546
 msgid "Show expired stock"
 msgstr "Lejárt készlet megjelenítése"
 
-#: common/models.py:1541
+#: common/models.py:1547
 msgid "Show expired stock items on the homepage"
 msgstr "Lejárt készletek megjelenítése a főoldalon"
 
-#: common/models.py:1547
+#: common/models.py:1553
 msgid "Show stale stock"
 msgstr "Állott készlet megjelenítése"
 
-#: common/models.py:1548
+#: common/models.py:1554
 msgid "Show stale stock items on the homepage"
 msgstr "Álló készletek megjelenítése a főoldalon"
 
-#: common/models.py:1554
+#: common/models.py:1560
 msgid "Show pending builds"
 msgstr "Függő gyártások megjelenítése"
 
-#: common/models.py:1555
+#: common/models.py:1561
 msgid "Show pending builds on the homepage"
 msgstr "Folyamatban lévő gyártások megjelenítése a főoldalon"
 
-#: common/models.py:1561
+#: common/models.py:1567
 msgid "Show overdue builds"
 msgstr "Késésben lévő gyártások megjelenítése"
 
-#: common/models.py:1562
+#: common/models.py:1568
 msgid "Show overdue builds on the homepage"
 msgstr "Késésben lévő gyártások megjelenítése a főoldalon"
 
-#: common/models.py:1568
+#: common/models.py:1574
 msgid "Show outstanding POs"
 msgstr "Kintlévő beszerzési rendelések megjelenítése"
 
-#: common/models.py:1569
+#: common/models.py:1575
 msgid "Show outstanding POs on the homepage"
 msgstr "Kintlévő beszerzési rendelések megjelenítése a főoldalon"
 
-#: common/models.py:1575
+#: common/models.py:1581
 msgid "Show overdue POs"
 msgstr "Késésben lévő megrendelések megjelenítése"
 
-#: common/models.py:1576
+#: common/models.py:1582
 msgid "Show overdue POs on the homepage"
 msgstr "Késésben lévő megrendelések megjelenítése a főoldalon"
 
-#: common/models.py:1582
+#: common/models.py:1588
 msgid "Show outstanding SOs"
 msgstr "Függő vevői rendelések megjelenítése"
 
-#: common/models.py:1583
+#: common/models.py:1589
 msgid "Show outstanding SOs on the homepage"
 msgstr "Függő vevői rendelések megjelenítése a főoldalon"
 
-#: common/models.py:1589
+#: common/models.py:1595
 msgid "Show overdue SOs"
 msgstr "Késésben lévő vevői rendelések megjelenítése"
 
-#: common/models.py:1590
+#: common/models.py:1596
 msgid "Show overdue SOs on the homepage"
 msgstr "Késésben lévő vevői rendelések megjelenítése a főoldalon"
 
-#: common/models.py:1596
+#: common/models.py:1602
 msgid "Show News"
 msgstr "Hírek megjelenítése"
 
-#: common/models.py:1597
+#: common/models.py:1603
 msgid "Show news on the homepage"
 msgstr "Hírek megjelenítése a főoldalon"
 
-#: common/models.py:1603
+#: common/models.py:1609
 msgid "Inline label display"
 msgstr "Beágyazott címke megjelenítés"
 
-#: common/models.py:1604
+#: common/models.py:1610
 msgid "Display PDF labels in the browser, instead of downloading as a file"
 msgstr "PDF címkék megjelenítése a böngészőben letöltés helyett"
 
-#: common/models.py:1610
+#: common/models.py:1616
 msgid "Inline report display"
 msgstr "Beágyazott riport megjelenítés"
 
-#: common/models.py:1611
+#: common/models.py:1617
 msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr "PDF riport megjelenítése a böngészőben letöltés helyett"
 
-#: common/models.py:1617
+#: common/models.py:1623
 msgid "Search Parts"
 msgstr "Alkatrészek keresése"
 
-#: common/models.py:1618
+#: common/models.py:1624
 msgid "Display parts in search preview window"
 msgstr "Alkatrészek megjelenítése a keresési előnézetben"
 
-#: common/models.py:1624
+#: common/models.py:1630
 msgid "Seach Supplier Parts"
 msgstr "Beszállítói alkatrészek keresése"
 
-#: common/models.py:1625
+#: common/models.py:1631
 msgid "Display supplier parts in search preview window"
 msgstr "Beszállítói alkatrészek megjelenítése a keresési előnézetben"
 
-#: common/models.py:1631
+#: common/models.py:1637
 msgid "Search Manufacturer Parts"
 msgstr "Gyártói alkatrészek keresése"
 
-#: common/models.py:1632
+#: common/models.py:1638
 msgid "Display manufacturer parts in search preview window"
 msgstr "Gyártói alkatrészek megjelenítése a keresési előnézetben"
 
-#: common/models.py:1638
+#: common/models.py:1644
 msgid "Hide Inactive Parts"
 msgstr "Inaktív alkatrészek elrejtése"
 
-#: common/models.py:1639
+#: common/models.py:1645
 msgid "Excluded inactive parts from search preview window"
 msgstr "Inaktív alkatrészek kihagyása a keresési előnézet találataiból"
 
-#: common/models.py:1645
+#: common/models.py:1651
 msgid "Search Categories"
 msgstr "Kategóriák keresése"
 
-#: common/models.py:1646
+#: common/models.py:1652
 msgid "Display part categories in search preview window"
 msgstr "Alkatrész kategóriák megjelenítése a keresési előnézetben"
 
-#: common/models.py:1652
+#: common/models.py:1658
 msgid "Search Stock"
 msgstr "Készlet keresése"
 
-#: common/models.py:1653
+#: common/models.py:1659
 msgid "Display stock items in search preview window"
 msgstr "Készlet tételek megjelenítése a keresési előnézetben"
 
-#: common/models.py:1659
+#: common/models.py:1665
 msgid "Hide Unavailable Stock Items"
 msgstr "Nem elérhető készlet tételek elrejtése"
 
-#: common/models.py:1660
+#: common/models.py:1666
 msgid "Exclude stock items which are not available from the search preview window"
 msgstr "Nem elérhető készlet kihagyása a keresési előnézet találataiból"
 
-#: common/models.py:1666
+#: common/models.py:1672
 msgid "Search Locations"
 msgstr "Helyek keresése"
 
-#: common/models.py:1667
+#: common/models.py:1673
 msgid "Display stock locations in search preview window"
 msgstr "Készlet helyek megjelenítése a keresési előnézetben"
 
-#: common/models.py:1673
+#: common/models.py:1679
 msgid "Search Companies"
 msgstr "Cégek keresése"
 
-#: common/models.py:1674
+#: common/models.py:1680
 msgid "Display companies in search preview window"
 msgstr "Cégek megjelenítése a keresési előnézetben"
 
-#: common/models.py:1680
+#: common/models.py:1686
 msgid "Search Build Orders"
 msgstr "Gyártási utasítások keresése"
 
-#: common/models.py:1681
+#: common/models.py:1687
 msgid "Display build orders in search preview window"
 msgstr "Gyártási utasítások megjelenítése a keresés előnézet ablakban"
 
-#: common/models.py:1687
+#: common/models.py:1693
 msgid "Search Purchase Orders"
 msgstr "Beszerzési rendelések keresése"
 
-#: common/models.py:1688
+#: common/models.py:1694
 msgid "Display purchase orders in search preview window"
 msgstr "Beszerzési rendelések megjelenítése a keresési előnézetben"
 
-#: common/models.py:1694
+#: common/models.py:1700
 msgid "Exclude Inactive Purchase Orders"
 msgstr "Inaktív beszerzési rendelések kihagyása"
 
-#: common/models.py:1695
+#: common/models.py:1701
 msgid "Exclude inactive purchase orders from search preview window"
 msgstr "Inaktív beszerzési rendelések kihagyása a keresési előnézet találataiból"
 
-#: common/models.py:1701
+#: common/models.py:1707
 msgid "Search Sales Orders"
 msgstr "Vevői rendelések keresése"
 
-#: common/models.py:1702
+#: common/models.py:1708
 msgid "Display sales orders in search preview window"
 msgstr "Vevői rendelések megjelenítése a keresési előnézetben"
 
-#: common/models.py:1708
+#: common/models.py:1714
 msgid "Exclude Inactive Sales Orders"
 msgstr "Inaktív vevői rendelések kihagyása"
 
-#: common/models.py:1709
+#: common/models.py:1715
 msgid "Exclude inactive sales orders from search preview window"
 msgstr "Inaktív vevői rendelések kihagyása a keresési előnézet találataiból"
 
-#: common/models.py:1715
+#: common/models.py:1721
 msgid "Search Preview Results"
 msgstr "Keresési előnézet eredményei"
 
-#: common/models.py:1716
+#: common/models.py:1722
 msgid "Number of results to show in each section of the search preview window"
 msgstr "A keresési előnézetben megjelenítendő eredmények száma szekciónként"
 
-#: common/models.py:1722
+#: common/models.py:1728
 msgid "Show Quantity in Forms"
 msgstr "Mennyiség megjelenítése a formokon"
 
-#: common/models.py:1723
+#: common/models.py:1729
 msgid "Display available part quantity in some forms"
 msgstr "Rendelkezésre álló alkatrész mennyiség megjelenítése néhány formon"
 
-#: common/models.py:1729
+#: common/models.py:1735
 msgid "Escape Key Closes Forms"
 msgstr "ESC billentyű zárja be a formot"
 
-#: common/models.py:1730
+#: common/models.py:1736
 msgid "Use the escape key to close modal forms"
 msgstr "ESC billentyű használata a modális formok bezárásához"
 
-#: common/models.py:1736
+#: common/models.py:1742
 msgid "Fixed Navbar"
 msgstr "Rögzített menüsor"
 
-#: common/models.py:1737
+#: common/models.py:1743
 msgid "The navbar position is fixed to the top of the screen"
 msgstr "A menü pozíciója mindig rögzítve a lap tetején"
 
-#: common/models.py:1743
+#: common/models.py:1749
 msgid "Date Format"
 msgstr "Dátum formátum"
 
-#: common/models.py:1744
+#: common/models.py:1750
 msgid "Preferred format for displaying dates"
 msgstr "Preferált dátum formátum a dátumok kijelzésekor"
 
-#: common/models.py:1758 part/templates/part/detail.html:41
+#: common/models.py:1764 part/templates/part/detail.html:41
 msgid "Part Scheduling"
 msgstr "Alkatrész ütemezés"
 
-#: common/models.py:1759
+#: common/models.py:1765
 msgid "Display part scheduling information"
 msgstr "Alkatrész ütemezési információk megjelenítése"
 
-#: common/models.py:1765
+#: common/models.py:1771
 msgid "Table String Length"
 msgstr "Táblázati szöveg hossz"
 
-#: common/models.py:1766
+#: common/models.py:1772
 msgid "Maximimum length limit for strings displayed in table views"
 msgstr "Maximális szöveg hossz ami megjelenhet a táblázatokban"
 
-#: common/models.py:1830
+#: common/models.py:1836
 msgid "Price break quantity"
 msgstr "Ársáv mennyiség"
 
-#: common/models.py:1837 company/serializers.py:393 order/models.py:975
+#: common/models.py:1843 company/serializers.py:393 order/models.py:975
 #: templates/js/translated/company.js:1164 templates/js/translated/part.js:1145
 #: templates/js/translated/pricing.js:354
 msgid "Price"
 msgstr "Ár"
 
-#: common/models.py:1838
+#: common/models.py:1844
 msgid "Unit price at specified quantity"
 msgstr "Egységár egy meghatározott mennyiség esetén"
 
-#: common/models.py:1998 common/models.py:2176
+#: common/models.py:2004 common/models.py:2182
 msgid "Endpoint"
 msgstr "Végpont"
 
-#: common/models.py:1999
+#: common/models.py:2005
 msgid "Endpoint at which this webhook is received"
 msgstr "Végpont ahol ez a webhook érkezik"
 
-#: common/models.py:2008
+#: common/models.py:2014
 msgid "Name for this webhook"
 msgstr "Webhook neve"
 
-#: common/models.py:2013 part/admin.py:36 part/models.py:984
+#: common/models.py:2019 part/admin.py:36 part/models.py:984
 #: plugin/models.py:100 templates/js/translated/table_filters.js:34
 #: templates/js/translated/table_filters.js:116
 #: templates/js/translated/table_filters.js:336
@@ -2776,97 +2784,97 @@ msgstr "Webhook neve"
 msgid "Active"
 msgstr "Aktív"
 
-#: common/models.py:2014
+#: common/models.py:2020
 msgid "Is this webhook active"
 msgstr "Aktív-e ez a webhook"
 
-#: common/models.py:2028
+#: common/models.py:2034
 msgid "Token"
 msgstr "Token"
 
-#: common/models.py:2029
+#: common/models.py:2035
 msgid "Token for access"
 msgstr "Token a hozzáféréshez"
 
-#: common/models.py:2036
+#: common/models.py:2042
 msgid "Secret"
 msgstr "Titok"
 
-#: common/models.py:2037
+#: common/models.py:2043
 msgid "Shared secret for HMAC"
 msgstr "Megosztott titok a HMAC-hoz"
 
-#: common/models.py:2143
+#: common/models.py:2149
 msgid "Message ID"
 msgstr "Üzenet azonosító"
 
-#: common/models.py:2144
+#: common/models.py:2150
 msgid "Unique identifier for this message"
 msgstr "Egyedi azonosító ehhez az üzenethez"
 
-#: common/models.py:2152
+#: common/models.py:2158
 msgid "Host"
 msgstr "Kiszolgáló"
 
-#: common/models.py:2153
+#: common/models.py:2159
 msgid "Host from which this message was received"
 msgstr "Kiszolgáló ahonnan ez az üzenet érkezett"
 
-#: common/models.py:2160
+#: common/models.py:2166
 msgid "Header"
 msgstr "Fejléc"
 
-#: common/models.py:2161
+#: common/models.py:2167
 msgid "Header of this message"
 msgstr "Üzenet fejléce"
 
-#: common/models.py:2167
+#: common/models.py:2173
 msgid "Body"
 msgstr "Törzs"
 
-#: common/models.py:2168
+#: common/models.py:2174
 msgid "Body of this message"
 msgstr "Üzenet törzse"
 
-#: common/models.py:2177
+#: common/models.py:2183
 msgid "Endpoint on which this message was received"
 msgstr "Végpont amin ez az üzenet érkezett"
 
-#: common/models.py:2182
+#: common/models.py:2188
 msgid "Worked on"
 msgstr "Dolgozott rajta"
 
-#: common/models.py:2183
+#: common/models.py:2189
 msgid "Was the work on this message finished?"
 msgstr "Befejeződött a munka ezzel az üzenettel?"
 
-#: common/models.py:2342
+#: common/models.py:2348
 msgid "Id"
 msgstr "Id"
 
-#: common/models.py:2348 templates/js/translated/news.js:35
+#: common/models.py:2354 templates/js/translated/news.js:35
 msgid "Title"
 msgstr "Cím"
 
-#: common/models.py:2358 templates/js/translated/news.js:51
+#: common/models.py:2364 templates/js/translated/news.js:51
 msgid "Published"
 msgstr "Közzétéve"
 
-#: common/models.py:2363 templates/InvenTree/settings/plugin.html:62
+#: common/models.py:2369 templates/InvenTree/settings/plugin.html:62
 #: templates/InvenTree/settings/plugin_settings.html:33
 #: templates/js/translated/news.js:47
 msgid "Author"
 msgstr "Szerző"
 
-#: common/models.py:2368 templates/js/translated/news.js:43
+#: common/models.py:2374 templates/js/translated/news.js:43
 msgid "Summary"
 msgstr "Összefoglaló"
 
-#: common/models.py:2373
+#: common/models.py:2379
 msgid "Read"
 msgstr "Elolvasva"
 
-#: common/models.py:2374
+#: common/models.py:2380
 msgid "Was this news item read?"
 msgstr "Elolvasva?"
 
@@ -2933,7 +2941,7 @@ msgstr "Cég leírása"
 msgid "Description of the company"
 msgstr "A cég leírása"
 
-#: company/models.py:110 company/templates/company/company_base.html:103
+#: company/models.py:110 company/templates/company/company_base.html:101
 #: templates/InvenTree/settings/plugin_settings.html:55
 #: templates/js/translated/company.js:449
 msgid "Website"
@@ -2943,7 +2951,7 @@ msgstr "Weboldal"
 msgid "Company website URL"
 msgstr "Cég weboldala"
 
-#: company/models.py:115 company/templates/company/company_base.html:121
+#: company/models.py:115 company/templates/company/company_base.html:119
 msgid "Address"
 msgstr "Cím"
 
@@ -2959,7 +2967,7 @@ msgstr "Telefonszám"
 msgid "Contact phone number"
 msgstr "Kapcsolattartó telefonszáma"
 
-#: company/models.py:123 company/templates/company/company_base.html:135
+#: company/models.py:123 company/templates/company/company_base.html:133
 #: templates/InvenTree/settings/user.html:48
 msgid "Email"
 msgstr "Email"
@@ -2968,7 +2976,7 @@ msgstr "Email"
 msgid "Contact email address"
 msgstr "Kapcsolattartó email címe"
 
-#: company/models.py:126 company/templates/company/company_base.html:142
+#: company/models.py:126 company/templates/company/company_base.html:140
 msgid "Contact"
 msgstr "Kapcsolattartó"
 
@@ -3013,7 +3021,7 @@ msgid "Does this company manufacture parts?"
 msgstr "Gyárt ez a cég alkatrészeket?"
 
 #: company/models.py:153 company/serializers.py:399
-#: company/templates/company/company_base.html:109 part/models.py:2762
+#: company/templates/company/company_base.html:107 part/models.py:2762
 #: part/serializers.py:154 part/serializers.py:182 stock/serializers.py:182
 #: templates/InvenTree/settings/pricing.html:64
 msgid "Currency"
@@ -3033,7 +3041,7 @@ msgstr "Kiindulási alkatrész"
 msgid "Select part"
 msgstr "Válassz alkatrészt"
 
-#: company/models.py:268 company/templates/company/company_base.html:79
+#: company/models.py:268 company/templates/company/company_base.html:77
 #: company/templates/company/manufacturer_part.html:90
 #: company/templates/company/supplier_part.html:152
 #: stock/templates/stock/item_base.html:210
@@ -3109,7 +3117,7 @@ msgstr "Paraméter mértékegység"
 msgid "Linked manufacturer part must reference the same base part"
 msgstr "Kapcsolódó gyártói alkatrésznek ugyanarra a kiindulási alkatrészre kell hivatkoznia"
 
-#: company/models.py:497 company/templates/company/company_base.html:84
+#: company/models.py:497 company/templates/company/company_base.html:82
 #: company/templates/company/supplier_part.html:136 order/models.py:264
 #: order/templates/order/order_base.html:121 part/bom.py:252 part/bom.py:280
 #: stock/templates/stock/item_base.html:227
@@ -3260,7 +3268,7 @@ msgid "Delete company"
 msgstr "Cég törlése"
 
 #: company/templates/company/company_base.html:39
-#: company/templates/company/company_base.html:165
+#: company/templates/company/company_base.html:163
 msgid "Delete Company"
 msgstr "Cég törlése"
 
@@ -3274,12 +3282,12 @@ msgstr "Új kép feltöltése"
 msgid "Download image from URL"
 msgstr "Kép letöltése URL-ről"
 
-#: company/templates/company/company_base.html:62
-#: part/templates/part/part_thumb.html:17
+#: company/templates/company/company_base.html:61
+#: part/templates/part/part_thumb.html:16
 msgid "Delete image"
 msgstr "Kép törlése"
 
-#: company/templates/company/company_base.html:89 order/models.py:665
+#: company/templates/company/company_base.html:87 order/models.py:665
 #: order/templates/order/sales_order_base.html:116 stock/models.py:686
 #: stock/models.py:687 stock/serializers.py:813
 #: stock/templates/stock/item_base.html:399
@@ -3290,37 +3298,37 @@ msgstr "Kép törlése"
 msgid "Customer"
 msgstr "Vevő"
 
-#: company/templates/company/company_base.html:114
+#: company/templates/company/company_base.html:112
 msgid "Uses default currency"
 msgstr "Alapértelmezett pénznemet használja"
 
-#: company/templates/company/company_base.html:128
+#: company/templates/company/company_base.html:126
 msgid "Phone"
 msgstr "Telefonszám"
 
-#: company/templates/company/company_base.html:204
-#: part/templates/part/part_base.html:508
+#: company/templates/company/company_base.html:206
+#: part/templates/part/part_base.html:511
 msgid "Remove Image"
 msgstr "Kép eltávolítása"
 
-#: company/templates/company/company_base.html:205
+#: company/templates/company/company_base.html:207
 msgid "Remove associated image from this company"
 msgstr "Céghez rendelt kép eltávolítása"
 
-#: company/templates/company/company_base.html:207
-#: part/templates/part/part_base.html:511
+#: company/templates/company/company_base.html:209
+#: part/templates/part/part_base.html:514
 #: templates/InvenTree/settings/user.html:87
 #: templates/InvenTree/settings/user.html:149
 msgid "Remove"
 msgstr "Törlés"
 
 #: company/templates/company/company_base.html:238
-#: part/templates/part/part_base.html:540
+#: part/templates/part/part_base.html:543
 msgid "Upload Image"
 msgstr "Kép feltöltése"
 
 #: company/templates/company/company_base.html:253
-#: part/templates/part/part_base.html:595
+#: part/templates/part/part_base.html:598
 msgid "Download Image"
 msgstr "Kép letöltése"
 
@@ -5794,7 +5802,7 @@ msgid "Inactive"
 msgstr "Inaktív"
 
 #: part/templates/part/part_base.html:165
-#: part/templates/part/part_base.html:661
+#: part/templates/part/part_base.html:666
 msgid "Show Part Details"
 msgstr "Alkatrész részletei"
 
@@ -5837,23 +5845,23 @@ msgstr "Legutolsó sorozatszám"
 msgid "Search for serial number"
 msgstr "Sorozatszámra keresés"
 
-#: part/templates/part/part_base.html:446
+#: part/templates/part/part_base.html:449
 msgid "Link Barcode to Part"
 msgstr "Vonalkód hozzárendelése az alkatrészhez"
 
-#: part/templates/part/part_base.html:492
+#: part/templates/part/part_base.html:495
 msgid "Calculate"
 msgstr "Számítás"
 
-#: part/templates/part/part_base.html:509
+#: part/templates/part/part_base.html:512
 msgid "Remove associated image from this part"
 msgstr "Alkatrészhez rendelt kép eltávolítása"
 
-#: part/templates/part/part_base.html:561
+#: part/templates/part/part_base.html:564
 msgid "No matching images found"
 msgstr "Nincs egyező kép"
 
-#: part/templates/part/part_base.html:655
+#: part/templates/part/part_base.html:660
 msgid "Hide Part Details"
 msgstr "Részletek elrejtése"
 
