@@ -391,6 +391,8 @@
     $('#part-thumb').click(function() {
         showModalImage('{{ part.image.url }}');
     });
+    {% else %}
+    $('#part-image-delete').hide();
     {% endif %}
 
     function reloadImage(data) {
@@ -403,6 +405,7 @@
                 showModalImage(data.image);
             });
 
+            $("#part-image-delete").show();
         } else {
             // Otherwise, reload the page
             location.reload();
