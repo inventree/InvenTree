@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-25 08:14+0000\n"
-"PO-Revision-Date: 2022-12-24 12:32\n"
+"POT-Creation-Date: 2022-12-24 20:15+0000\n"
+"PO-Revision-Date: 2022-12-25 12:50\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -2178,10 +2178,8 @@ msgid "Autofill serial numbers in forms"
 msgstr ""
 
 #: common/models.py:1232
-#, fuzzy
-#| msgid "Delete selected items"
 msgid "Delete Depleted Stock"
-msgstr "Seçili parçaları sil"
+msgstr ""
 
 #: common/models.py:1233
 msgid "Determines default behaviour when a stock item is depleted"
@@ -8098,16 +8096,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -11241,3 +11237,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:224
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
