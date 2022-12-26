@@ -966,8 +966,8 @@ def remove_non_printable_characters(value: str, remove_newline=True, remove_asci
     if remove_ascii:
         # Remove ASCII control characters
         # Note that we do not sub out 0x0A (\n) here, it is done separately below
-        cleaned = regex.sub(u'[\x01-\x09]+', '', cleaned)
-        cleaned = regex.sub(u'[\x0b-\x1F]+', '', cleaned)
+        cleaned = regex.sub(u'[\x00-\x09]+', '', cleaned)
+        cleaned = regex.sub(u'[\x0b-\x1F\x7F]+', '', cleaned)
 
     if remove_newline:
         cleaned = regex.sub(u'[\x0a]+', '', cleaned)
