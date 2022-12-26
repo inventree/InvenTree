@@ -74,7 +74,8 @@ jobs:
           test -f data/secret_key.txt
       - name: Run Unit Tests
         run: |
-          docker-compose run --env GITHUB_TOKEN=${{ GITHUB_TOKEN }} inventree-dev-server invoke test --disable-pty
+          echo "GITHUB_TOKEN=${{ GITHUB_TOKEN }}" >> docker.dev.env
+          docker-compose run inventree-dev-server invoke test --disable-pty
           docker-compose down
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
