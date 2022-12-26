@@ -144,13 +144,13 @@ class PartImport(FileManagementFormView):
         self.allowed_items = {}
         self.matches = {}
 
-        self.allowed_items['Category'] = PartCategory.objects.all()
+        self.allowed_items['Category'] = PartCategory.objects.all().exclude(structural=True)
         self.matches['Category'] = ['name__contains']
-        self.allowed_items['default_location'] = StockLocation.objects.all()
+        self.allowed_items['default_location'] = StockLocation.objects.all().exclude(structural=True)
         self.matches['default_location'] = ['name__contains']
         self.allowed_items['default_supplier'] = SupplierPart.objects.all()
         self.matches['default_supplier'] = ['SKU__contains']
-        self.allowed_items['variant_of'] = Part.objects.all()
+        self.allowed_items['variant_of'] = Part.objects.all().exclude(is_template=False)
         self.matches['variant_of'] = ['name__contains']
 
         # setup
@@ -249,7 +249,7 @@ class PartImport(FileManagementFormView):
             alert = f"<strong>{_('Part-Import')}</strong><br>{_('Imported {n} parts').format(n=import_done)}"
             messages.success(self.request, alert)
         if import_error:
-            error_text = '\n'.join([f'<li><strong>x{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
+            error_text = '\n'.join([f'<li><strong>{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
             messages.error(self.request, f"<strong>{_('Some errors occured:')}</strong><br><ul>{error_text}</ul>")
 
         return HttpResponseRedirect(reverse('part-index'))

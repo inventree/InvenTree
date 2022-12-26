@@ -13,7 +13,6 @@
     {% trans "Import Parts from File" as header_text %}
     {% trans "Insufficient privileges." as error_text %}
 
-    {% with header_text=header_text upload_go_ahead=roles.part.change error_text=error_text %}
     <div class='panel' id='{{ panel_id }}'>
         <div class='panel-heading'>
             <h4>
@@ -22,7 +21,7 @@
             </h4>
         </div>
         <div class='panel-content'>
-        {% if upload_go_ahead %}
+        {% if roles.part.change %}
 
             <p>{% blocktrans with step=wizard.steps.step1 count=wizard.steps.count %}Step {{step}} of {{count}}{% endblocktrans %}
             {% if description %}- {{ description }}{% endif %}</p>
@@ -59,7 +58,7 @@
         {% endif %}
         </div>
     </div>
-    {% endwith %}
+
 {% endblock %}
 
 {% block js_ready %}
