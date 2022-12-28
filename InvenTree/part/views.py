@@ -230,6 +230,12 @@ class PartImport(FileManagementFormView):
                 trackable=str2bool(part_data.get('trackable', part_settings.part_trackable_default())),
                 virtual=str2bool(part_data.get('virtual', part_settings.part_virtual_default())),
             )
+
+            # check if theres a category assigned, if not skip this part or else bad things happen
+            if not optional_matches['Category']:
+                import_error.append(_("Can't import part {name} because there is no category assigned").format(name=new_part.name))
+                continue
+
             try:
                 new_part.save()
 
