@@ -858,7 +858,7 @@ function loadPartStocktakeTable(partId, options={}) {
         filters[key] = params[key];
     }
 
-    setupFilterList('stocktake', $(table), '#filter-list-stocktake');
+    setupFilterList('stocktake', $(table), '#filter-list-partstocktake');
 
     $(table).inventreeTable({
         url: '{% url "api-part-stocktake-list" %}',
