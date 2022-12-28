@@ -2867,3 +2867,53 @@ class PartStocktakeTest(InvenTreeAPITestCase):
             self.assertEqual(stocktake.quantity, quantity)
             self.assertEqual(stocktake.part, p)
             self.assertEqual(stocktake.note, note)
+
+    def test_edit_stocktake(self):
+        """Test that a Stoctake instance can be edited and deleted via the API.
+
+        Note that only 'staff' users can perform these actions.
+        """
+
+        p = Part.objects.all().first()
+
+        st = PartStocktake.objects.create(part=p, quantity=10)
+
+        url = reverse('api-part-stocktake-detail', kwargs={'pk': st.pk})
+        self.assignRole('part.view')
+
+        # Test we can retrieve via API
+        self.get(url, expected_code=403)
+
+        # Assign staff permission
+        self.user.is_staff = True
+        self.user.save()
+
+        self.get(url, expected_code=200)
+
+        # Try to edit data
+        self.patch(
+            url,
+            {
+                'note': 'Another edit',
+            },
+            expected_code=403
+        )
+
+        # Assign 'edit' role permission
+        self.assignRole('part.change')
+
+        # Try again
+        self.patch(
+            url,
+            {
+                'note': 'Editing note field again',
+            },
+            expected_code=200,
+        )
+
+        # Try to delete
+        self.delete(url, expected_code=403)
+
+        self.assignRole('part.delete')
+
+        self.delete(url, expected_code=204)
