@@ -25,6 +25,7 @@ from . import forms as part_forms
 from . import settings as part_settings
 from .bom import ExportBom, IsValidBOMFormat, MakeBomTemplate
 from .models import Part, PartCategory
+from .part import MakePartTemplate
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
@@ -253,6 +254,19 @@ class PartImport(FileManagementFormView):
             messages.error(self.request, f"<strong>{_('Some errors occured:')}</strong><br><ul>{error_text}</ul>")
 
         return HttpResponseRedirect(reverse('part-index'))
+
+
+class PartImportTemplate(AjaxView):
+    """Provide a part import template file for download.
+
+    - Generates a template file in the provided format e.g. ?format=csv
+    """
+
+    def get(self, request, *args, **kwargs):
+        """Perform a GET request to download the 'Part import' template"""
+        export_format = request.GET.get('format', 'csv')
+
+        return MakePartTemplate(export_format)
 
 
 class PartImportAjax(FileManagementAjaxView, PartImport):
