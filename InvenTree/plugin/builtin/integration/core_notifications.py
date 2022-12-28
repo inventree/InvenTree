@@ -3,12 +3,13 @@
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
+import requests
 from allauth.account.models import EmailAddress
 
 import common.models
 import InvenTree.helpers
 import InvenTree.tasks
-from plugin import InvenTreePlugin
+from plugin import InvenTreePlugin, registry
 from plugin.mixins import BulkNotificationMethod, SettingsMixin
 
 
@@ -38,6 +39,17 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
             'description': _('Allow sending of emails for event notifications'),
             'default': False,
             'validator': bool,
+        },
+        'ENABLE_NOTIFICATION_SLACK': {
+            'name': _('Enable slack notifications'),
+            'description': _('Allow sending of slack channel messages for event notifications'),
+            'default': False,
+            'validator': bool,
+        },
+        'NOTIFICATION_SLACK_URL': {
+            'name': _('Slack incoming webhook url'),
+            'description': _('URL that is used to send messages to a slack channel'),
+            'protected': True,
         },
     }
 
@@ -94,3 +106,53 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
             InvenTree.tasks.send_email(subject, '', targets, html_message=html_message)
 
             return True
+
+    class SlackNotification(PlgMixin, BulkNotificationMethod):
+        """Notificationmethod for delivery via Slack channel messages."""
+
+        METHOD_NAME = 'slack'
+        METHOD_ICON = 'fa-envelope'
+        GLOBAL_SETTING = 'ENABLE_NOTIFICATION_SLACK'
+
+        def get_targets(self):
+            """Not used by this method."""
+            return self.targets
+
+        def send_bulk(self):
+            """Send the notifications out via slack."""
+
+            instance = registry.plugins.get(self.get_plugin().NAME.lower())
+            url = instance.get_setting('NOTIFICATION_SLACK_URL')
+
+            if not url:
+                return False
+
+            ret = requests.post(url, json={
+                'text': str(self.context['message']),
+                'blocks': [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "plain_text",
+                            "text": str(self.context['name'])
+                        }
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": str(self.context['message'])
+                        },
+                        "accessory": {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": str(_("Open link")), "emoji": True
+                            },
+                            "value": f'{self.category}_{self.obj.pk}',
+                            "url": self.context['link'],
+                            "action_id": "button-action"
+                        }
+                    }]
+            })
+            return ret.ok
