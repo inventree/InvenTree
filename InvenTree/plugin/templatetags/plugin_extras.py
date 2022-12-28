@@ -71,3 +71,14 @@ def plugin_errors(*args, **kwargs):
 def notification_settings_list(context, *args, **kwargs):
     """List of all user notification settings."""
     return storage.get_usersettings(user=context.get('user', None))
+
+
+@register.simple_tag(takes_context=True)
+def notification_list(context, *args, **kwargs):
+    """List of all notification methods."""
+    return [{
+        'slug': a.METHOD_NAME,
+        'icon': a.METHOD_ICON,
+        'description': a.__doc__,
+        'name': a.__name__
+    } for a in storage.liste]
