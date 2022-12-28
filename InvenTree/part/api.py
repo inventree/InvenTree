@@ -4,7 +4,7 @@ import functools
 from decimal import Decimal, InvalidOperation
 
 from django.db import transaction
-from django.db.models import Count, F, Q
+from django.db.models import Count, Exists, F, OuterRef, Q
 from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
@@ -1060,6 +1060,22 @@ class PartFilter(rest_filters.FilterSet):
             queryset = queryset.exclude(q_a | q_b)
         else:
             queryset = queryset.filter(q_a | q_b)
+
+        return queryset
+
+    stocktake = rest_filters.BooleanFilter(label="Has stocktake", method='filter_has_stocktake')
+
+    def filter_has_stocktake(self, queryset, name, value):
+        """Filter the queryset based on whether stocktake data is available"""
+
+        value = str2bool(value)
+
+        subquery = Exists(PartStocktake.objects.filter(part=OuterRef('pk')))
+
+        if (value):
+            queryset = queryset.filter(subquery)
+        else:
+            queryset = queryset.exclude(subquery)
 
         return queryset
 
