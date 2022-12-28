@@ -23,13 +23,20 @@
             {% for method in methods %}
             <tr>
                 <td>{% if method.icon %}<span class="fas {{ method.icon }}"></span>{% endif %}</td>
-                <td>{{ method.name }}</td>
+                <td>
+                    {{ method.name }}
+                    {% if method.plugin %}
+                    <a class='sidebar-selector' id='select-plugin-{{method.plugin.slug}}' data-bs-parent="#sidebar">
+                        <span class='badge bg-dark badge-right rounded-pill'>{{ method.plugin.slug }}</span>
+                    </a>
+                    {% endif %}
+                </td>
                 <td>{{ method.slug }}</td>
                 <td>{{ method.description }}</td>
             </tr>
             {% if method.setting %}
             <tr>
-                <td colspan="2"></td>
+                <td colspan="1"></td>
                 <td colspan="3">
                     <table class='table table-condensed'>
                         <tbody>
