@@ -947,7 +947,7 @@ function loadPartStocktakeTable(partId, options={}) {
                         $(table).bootstrapTable('refresh');
                     }
                 });
-            })
+            });
         }
     });
 }
