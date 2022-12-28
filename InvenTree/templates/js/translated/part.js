@@ -763,7 +763,13 @@ function performStocktake(partId, options={}) {
         }
 
         // Actions
-        var actions = '';
+        var actions = `<div class='btn-group float-right' role='group'>`;
+
+        // TODO: Future work
+        // actions += makeIconButton('fa-check-circle icon-green', 'button-line-count', pk, '{% trans "Update item" %}');
+        // actions += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete item" %}');
+
+        actions += `</div>`;
 
         return `
         <tr>
