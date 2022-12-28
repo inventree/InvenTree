@@ -20,7 +20,7 @@ from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     StockStatus)
 from part.models import (BomItem, BomItemSubstitute, Part, PartCategory,
                          PartCategoryParameterTemplate, PartParameterTemplate,
-                         PartRelated)
+                         PartRelated, PartStocktake)
 from stock.models import StockItem, StockLocation
 
 
@@ -2779,3 +2779,91 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
 
         with self.assertRaises(Part.DoesNotExist):
             p.refresh_from_db()
+
+
+class PartStocktakeTest(InvenTreeAPITestCase):
+    """Unit tests for the part stocktake functionality"""
+
+    superuser = False
+    is_staff = False
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+    ]
+
+    def test_list_endpoint(self):
+        """Test the list endpoint for the stocktake data"""
+
+        url = reverse('api-part-stocktake-list')
+
+        self.assignRole('part.view')
+
+        # Initially, no stocktake entries
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 0)
+
+        total = 0
+
+        # Create some entries
+        for p in Part.objects.all():
+
+            for n in range(p.pk):
+                PartStocktake.objects.create(
+                    part=p,
+                    quantity=(n + 1) * 100,
+                )
+
+            total += p.pk
+
+            response = self.get(
+                url,
+                {
+                    'part': p.pk,
+                },
+                expected_code=200,
+            )
+
+            # List by part ID
+            self.assertEqual(len(response.data), p.pk)
+
+        # List all entries
+        response = self.get(url, {}, expected_code=200)
+
+        self.assertEqual(len(response.data), total)
+
+    def test_create_stocktake(self):
+        """Test that stocktake entries can be created via the API"""
+
+        url = reverse('api-part-stocktake-list')
+
+        self.assignRole('part.add')
+        self.assignRole('part.view')
+
+        for p in Part.objects.all():
+
+            # Initially no stocktake information available
+            self.assertIsNone(p.latest_stocktake)
+
+            note = f"Note {p.pk}"
+            quantity = p.pk + 5
+
+            self.post(
+                url,
+                {
+                    'part': p.pk,
+                    'quantity': quantity,
+                    'note': note,
+                },
+                expected_code=201,
+            )
+
+            p.refresh_from_db()
+            stocktake = p.latest_stocktake
+
+            self.assertIsNotNone(stocktake)
+            self.assertEqual(stocktake.quantity, quantity)
+            self.assertEqual(stocktake.part, p)
+            self.assertEqual(stocktake.note, note)
