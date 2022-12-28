@@ -484,6 +484,16 @@ def primitive_to_javascript(primitive):
         return format_html("'{}'", primitive)  # noqa: P103
 
 
+@register.simple_tag()
+def js_bool(val):
+    """Return a javascript boolean value (true or false)"""
+
+    if val:
+        return 'true'
+    else:
+        return 'false'
+
+
 @register.filter
 def keyvalue(dict, key):
     """Access to key of supplied dict.

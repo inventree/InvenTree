@@ -897,7 +897,58 @@ function loadPartStocktakeTable(partId, options={}) {
                     return html;
                 }
             },
-        ]
+            {
+                field: 'actions',
+                title: '',
+                visible: options.admin,
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    if (options.allow_edit) {
+                        html += makeIconButton('fa-edit icon-blue', 'button-edit-stocktake', row.pk, '{% trans "Edit Stocktake Entry" %}');
+                    }
+
+                    if (options.allow_delete) {
+                        html += makeIconButton('fa-trash-alt icon-red', 'button-delete-stocktake', row.pk, '{% trans "Delete Stocktake Entry" %}');
+                    }
+
+                    html += `</div>`;
+
+                    return html;
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Button callbacks
+            $(table).find('.button-edit-stocktake').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/stocktake/${pk}/`, {
+                    fields: {
+                        quantity: {},
+                        note: {},
+                    },
+                    title: '{% trans "Edit Stocktake Entry" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-delete-stocktake').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/stocktake/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Stocktake Entry" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            })
+        }
     });
 }
 

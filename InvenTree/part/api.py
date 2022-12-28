@@ -13,6 +13,7 @@ from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, serializers, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 import order.models
@@ -27,6 +28,7 @@ from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
+from InvenTree.permissions import RolePermission
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from part.admin import PartCategoryResource, PartResource
@@ -1739,6 +1741,20 @@ class PartStocktakeList(ListCreateAPI):
     ordering = '-pk'
 
 
+class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for a single PartStocktake instance.
+
+    Note: Only staff (admin) users can access this endpoint.
+    """
+
+    queryset = PartStocktake.objects.all()
+    serializer_class = part_serializers.PartStocktakeSerializer
+    permission_classes = [
+        IsAdminUser,
+        RolePermission,
+    ]
+
+
 class BomFilter(rest_filters.FilterSet):
     """Custom filters for the BOM list."""
 
@@ -2156,6 +2172,7 @@ part_api_urls = [
 
     # Part stocktake data
     re_path(r'^stocktake/', include([
+        re_path(r'^(?P<pk>\d+)/', PartStocktakeDetail.as_view(), name='api-part-stocktake-detail'),
         re_path(r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
     ])),
 

@@ -446,7 +446,7 @@
             'part-notes',
             '{% url "api-part-detail" part.pk %}',
             {
-                editable: {% if roles.part.change %}true{% else %}false{% endif %},
+                editable: {% js_bool roles.part.change %},
             }
         );
     });
@@ -467,7 +467,11 @@
 
     // Load the "stocktake" tab
     onPanelLoad('stocktake', function() {
-        loadPartStocktakeTable({{ part.pk }});
+        loadPartStocktakeTable({{ part.pk }}, {
+            admin: {% js_bool user.is_staff %},
+            allow_edit: {% js_bool roles.part.change %},
+            allow_delete: {% js_bool roles.part.delete %},
+        });
 
         $('#btn-stocktake').click(function() {
             performStocktake({{ part.pk }}, {
