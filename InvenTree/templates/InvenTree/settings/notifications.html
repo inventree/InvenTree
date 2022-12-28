@@ -27,6 +27,18 @@
                 <td>{{ method.slug }}</td>
                 <td>{{ method.description }}</td>
             </tr>
+            {% if method.setting %}
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="3">
+                    <table class='table table-condensed'>
+                        <tbody>
+                            {% include "InvenTree/settings/setting.html" with key=method.setting plugin=method.plugin %}
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            {% endif %}
             {% endfor %}
         </tbody>
     </table>

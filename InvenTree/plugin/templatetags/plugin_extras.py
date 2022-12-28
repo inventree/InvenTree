@@ -79,6 +79,8 @@ def notification_list(context, *args, **kwargs):
     return [{
         'slug': a.METHOD_NAME,
         'icon': a.METHOD_ICON,
+        'setting': a.GLOBAL_SETTING,
+        'plugin': a.plugin,
         'description': a.__doc__,
         'name': a.__name__
     } for a in storage.liste]
