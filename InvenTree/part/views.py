@@ -145,13 +145,13 @@ class PartImport(FileManagementFormView):
         self.matches = {}
 
         self.allowed_items['Category'] = PartCategory.objects.all().exclude(structural=True)
-        self.matches['Category'] = ['name__contains']
+        self.matches['Category'] = ['id']
         self.allowed_items['default_location'] = StockLocation.objects.all().exclude(structural=True)
-        self.matches['default_location'] = ['name__contains']
+        self.matches['default_location'] = ['id']
         self.allowed_items['default_supplier'] = SupplierPart.objects.all()
-        self.matches['default_supplier'] = ['SKU__contains']
+        self.matches['default_supplier'] = ['id']
         self.allowed_items['variant_of'] = Part.objects.all().exclude(is_template=False)
-        self.matches['variant_of'] = ['name__contains']
+        self.matches['variant_of'] = ['id']
 
         # setup
         self.file_manager.setup()
