@@ -730,6 +730,8 @@ function performStocktake(partId, options={}) {
     // Helper function for formatting a StockItem row
     function buildStockItemRow(item) {
 
+        var pk = item.pk;
+
         // Part detail
         var part = partDetail(item.part_detail, {
             thumb: true,
@@ -765,11 +767,11 @@ function performStocktake(partId, options={}) {
 
         return `
         <tr>
-            <td>${part}</td>
-            <td>${location}</td>
-            <td>${quantity}</td>
-            <td>${update_rendered}</td>
-            <td>${actions}</td>
+            <td id='part-${pk}'>${part}</td>
+            <td id='loc-${pk}'>${location}</td>
+            <td id='quantity-${pk}'>${quantity}</td>
+            <td id='updated-${pk}'>${update_rendered}</td>
+            <td id='actions-${pk}'>${actions}</td>
         </tr>`;
     }
 
