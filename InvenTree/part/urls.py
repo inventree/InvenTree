@@ -36,7 +36,8 @@ category_urls = [
 part_urls = [
 
     # Upload a part
-    re_path(r'^import/', views.PartImport.as_view(), name='part-import'),
+    re_path(r'^import/$', views.PartImport.as_view(), name='part-import'),
+    re_path(r'^import/?', views.PartImportTemplate.as_view(), name='part-template-download'),
     re_path(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
 
     # Download a BOM upload template

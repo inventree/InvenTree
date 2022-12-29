@@ -121,6 +121,9 @@ CORS_ORIGIN_WHITELIST = get_setting(
     default_value=[]
 )
 
+# Needed for the parts importer, directly impacts the maximum parts that can be uploaded
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240  # higher the count of allowable form fields
+
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
 
@@ -376,9 +379,9 @@ for key in db_keys:
         db_config[key] = env_var
 
 # Check that required database configuration options are specified
-reqiured_keys = ['ENGINE', 'NAME']
+required_keys = ['ENGINE', 'NAME']
 
-for key in reqiured_keys:
+for key in required_keys:
     if key not in db_config:  # pragma: no cover
         error_msg = f'Missing required database configuration value {key}'
         logger.error(error_msg)
