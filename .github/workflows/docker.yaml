@@ -21,6 +21,10 @@ on:
     branches:
       - 'master'
 
+  # pull_request:
+  #   branches:
+  #     - 'master'
+
 jobs:
 
   # Build the docker image
@@ -70,6 +74,7 @@ jobs:
           test -f data/secret_key.txt
       - name: Run Unit Tests
         run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
           docker-compose run inventree-dev-server invoke test --disable-pty
           docker-compose down
       - name: Set up QEMU

@@ -875,6 +875,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT': {
+            'name': _('User-agent used to download from URL'),
+            'description': _('Allow to override the user-agent used to download images and files from external URL (leave blank for the default)'),
+            'default': '',
+        },
+
         'INVENTREE_REQUIRE_CONFIRM': {
             'name': _('Require confirm'),
             'description': _('Require explicit user confirmation for certain action.'),
@@ -1219,6 +1225,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Autofill Serial Numbers'),
             'description': _('Autofill serial numbers in forms'),
             'default': False,
+            'validator': bool,
+        },
+
+        'STOCK_DELETE_DEPLETED_DEFAULT': {
+            'name': _('Delete Depleted Stock'),
+            'description': _('Determines default behaviour when a stock item is depleted'),
+            'default': True,
             'validator': bool,
         },
 
