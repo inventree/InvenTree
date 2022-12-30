@@ -29,6 +29,15 @@ def plugin_settings(plugin, *args, **kwargs):
     return registry.mixins_settings.get(plugin)
 
 
+@register.simple_tag(takes_context=True)
+def plugin_settings_content(context, plugin, *args, **kwargs):
+    """Get the settings content for the plugin."""
+    plg = registry.get_plugin(plugin)
+    if hasattr(plg, 'get_settings_content'):
+        return plg.get_settings_content(context.request)
+    return None
+
+
 @register.simple_tag()
 def mixin_enabled(plugin, key, *args, **kwargs):
     """Is the mixin registerd and configured in the plugin?"""

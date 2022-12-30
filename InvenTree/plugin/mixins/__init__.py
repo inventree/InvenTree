@@ -8,8 +8,8 @@ from ..base.barcodes.mixins import BarcodeMixin
 from ..base.event.mixins import EventMixin
 from ..base.integration.mixins import (APICallMixin, AppMixin, NavigationMixin,
                                        PanelMixin, ScheduleMixin,
-                                       SettingsMixin, UrlsMixin,
-                                       ValidationMixin)
+                                       SettingsContentMixin, SettingsMixin,
+                                       UrlsMixin, ValidationMixin)
 from ..base.label.mixins import LabelPrintingMixin
 from ..base.locate.mixins import LocateMixin
 
@@ -20,6 +20,7 @@ __all__ = [
     'LabelPrintingMixin',
     'NavigationMixin',
     'ScheduleMixin',
+    'SettingsContentMixin',
     'SettingsMixin',
     'UrlsMixin',
     'PanelMixin',
