@@ -30,15 +30,18 @@ fi
 # This should be done on the *mounted* filesystem,
 # so that the installed modules persist!
 if [[ -n "$INVENTREE_PY_ENV" ]]; then
-    echo "Using Python virtual environment: ${INVENTREE_PY_ENV}"
-    # Setup a virtual environment (within the "dev" directory)
-    python3 -m venv ${INVENTREE_PY_ENV} --system-site-packages
 
-    # Activate the virtual environment
+    if test -d "$INVENTREE_PY_ENV"; then
+        # venv already exists
+        echo "Using Python virtual environment: ${INVENTREE_PY_ENV}"
+    else
+        # Setup a virtual environment (within the "data/env" directory)
+        echo "Running first time setup for python environment"
+        python3 -m venv ${INVENTREE_PY_ENV} --system-site-packages --upgrade-deps
+    fi
+
+    # Now activate the venv
     source ${INVENTREE_PY_ENV}/bin/activate
-
-    # Note: Python packages will have to be installed on first run
-    # e.g docker-compose run inventree-dev-server invoke update
 fi
 
 cd ${INVENTREE_HOME}

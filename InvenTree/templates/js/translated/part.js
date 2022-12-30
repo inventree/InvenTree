@@ -1333,7 +1333,8 @@ function loadParametricPartTable(table, options={}) {
         uniqueId: 'pk',
         onLoadSuccess: function(response) {
 
-            var data = response.results;
+            // Data may be returned paginated, in which case we preference response.results
+            var data = response.results || response;
 
             for (var idx = 0; idx < data.length; idx++) {
                 var row = data[idx];
@@ -1346,8 +1347,14 @@ function loadParametricPartTable(table, options={}) {
                 data[idx] = row;
             }
 
+            if (response.results) {
+                response.results = data;
+            } else {
+                response = data;
+            }
+
             // Update the table
-            $(table).bootstrapTable('load', data);
+            $(table).bootstrapTable('load', response);
         }
     });
 }
