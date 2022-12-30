@@ -104,6 +104,24 @@ class PartResource(InvenTreeResource):
         models.Part.objects.rebuild()
 
 
+class PartImportResource(InvenTreeResource):
+    """Class for managing Part data import/export."""
+
+    class Meta(PartResource.Meta):
+        """Metaclass definition"""
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+        exclude = [
+            'id', 'category__name', 'creation_date', 'creation_user',
+            'pricing__overall_min', 'pricing__overall_max',
+            'bom_checksum', 'bom_checked_by', 'bom_checked_date',
+            'lft', 'rght', 'tree_id', 'level',
+            'metadata',
+            'barcode_data', 'barcode_hash',
+        ]
+
+
 class PartAdmin(ImportExportModelAdmin):
     """Admin class for the Part model"""
 
