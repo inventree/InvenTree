@@ -2,5 +2,5 @@
 
 {% plugin_settings_content plugin_key as plugin_settings_content %}
 {% if plugin_settings_content %}
-{{ plugin_settings_content }}
+{{ plugin_settings_content|safe }}
 {% endif %}
