@@ -204,6 +204,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+
+    'django_ical',                          # For exporting calendars
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -745,10 +747,14 @@ SITE_ID = 1
 
 # Load the allauth social backends
 SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
+SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', None)
+
+if SOCIALACCOUNT_PROVIDERS is None:
+    SOCIALACCOUNT_PROVIDERS = {}
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
@@ -789,6 +795,9 @@ MARKDOWNIFY = {
             'src',
             'alt',
         ],
+        'MARKDOWN_EXTENSIONS': [
+            'markdown.extensions.extra'
+        ],
         'WHITELIST_TAGS': [
             'a',
             'abbr',
@@ -802,7 +811,13 @@ MARKDOWNIFY = {
             'ol',
             'p',
             'strong',
-            'ul'
+            'ul',
+            'table',
+            'thead',
+            'tbody',
+            'th',
+            'tr',
+            'td'
         ],
     }
 }

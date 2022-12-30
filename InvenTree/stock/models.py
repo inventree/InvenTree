@@ -13,6 +13,7 @@ from django.db import models, transaction
 from django.db.models import Q, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save, pre_delete
+from django.db.utils import IntegrityError, OperationalError
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -152,7 +153,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
 
         - Ensure stock location can't be made structural if stock items already located to them
         """
-        if self.pk and self.structural and self.item_count > 0:
+        if self.pk and self.structural and self.stock_item_count(False) > 0:
             raise ValidationError(
                 _("You cannot make this stock location structural because some stock items "
                   "are already located into it!"))
@@ -249,6 +250,20 @@ def generate_batch_code():
     }
 
     return Template(batch_template).render(context)
+
+
+def default_delete_on_deplete():
+    """Return a default value for the 'delete_on_deplete' field.
+
+    Prior to 2022-12-24, this field was set to True by default.
+    Now, there is a user-configurable setting to govern default behaviour.
+    """
+
+    try:
+        return common.models.InvenTreeSetting.get_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
+    except (IntegrityError, OperationalError):
+        # Revert to original default behaviour
+        return True
 
 
 class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
@@ -760,7 +775,10 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     review_needed = models.BooleanField(default=False)
 
-    delete_on_deplete = models.BooleanField(default=True, verbose_name=_('Delete on deplete'), help_text=_('Delete this Stock Item when stock is depleted'))
+    delete_on_deplete = models.BooleanField(
+        default=default_delete_on_deplete,
+        verbose_name=_('Delete on deplete'), help_text=_('Delete this Stock Item when stock is depleted')
+    )
 
     status = models.PositiveIntegerField(
         default=StockStatus.OK,

@@ -101,6 +101,18 @@ $(document).ready(function () {
 
     showCachedAlerts();
 
+    // Add brand icons for SSO providers, if available
+    $('.socialaccount_provider').each(function(i, obj) {
+        var el = $(this);
+        var tag = el.attr('brand_name');
+
+        var icon = window.FontAwesome.icon({prefix: 'fab', iconName: tag});
+
+        if (icon) {
+            el.append(`&nbsp;<span class='fab fa-${tag}'></span>`);
+        }
+    });
+
 });
 
 </script>

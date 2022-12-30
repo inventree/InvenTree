@@ -1,11 +1,13 @@
 """Tests for the Order API."""
 
+import base64
 import io
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
+from icalendar import Calendar
 from rest_framework import status
 
 import order.models as models
@@ -56,6 +58,10 @@ class PurchaseOrderTest(OrderTest):
         # List *ALL* PurchaseOrder items
         self.filter({}, 7)
 
+        # Filter by assigned-to-me
+        self.filter({'assigned_to_me': 1}, 0)
+        self.filter({'assigned_to_me': 0}, 7)
+
         # Filter by supplier
         self.filter({'supplier': 1}, 1)
         self.filter({'supplier': 3}, 5)
@@ -67,6 +73,23 @@ class PurchaseOrderTest(OrderTest):
         # Filter by "status"
         self.filter({'status': 10}, 3)
         self.filter({'status': 40}, 1)
+
+        # Filter by "reference"
+        self.filter({'reference': 'PO-0001'}, 1)
+        self.filter({'reference': 'PO-9999'}, 0)
+
+        # Filter by "assigned_to_me"
+        self.filter({'assigned_to_me': 1}, 0)
+        self.filter({'assigned_to_me': 0}, 7)
+
+        # Filter by "part"
+        self.filter({'part': 1}, 2)
+        self.filter({'part': 2}, 0)  # Part not assigned to any PO
+
+        # Filter by "supplier_part"
+        self.filter({'supplier_part': 1}, 1)
+        self.filter({'supplier_part': 3}, 2)
+        self.filter({'supplier_part': 4}, 0)
 
     def test_overdue(self):
         """Test "overdue" status."""
@@ -247,6 +270,20 @@ class PurchaseOrderTest(OrderTest):
         del data['pk']
         del data['reference']
 
+        # Duplicate with non-existent PK to provoke error
+        data['duplicate_order'] = 10000001
+        data['duplicate_line_items'] = True
+        data['duplicate_extra_lines'] = False
+
+        data['reference'] = 'PO-9999'
+
+        # Duplicate via the API
+        response = self.post(
+            reverse('api-po-list'),
+            data,
+            expected_code=400
+        )
+
         data['duplicate_order'] = 1
         data['duplicate_line_items'] = True
         data['duplicate_extra_lines'] = False
@@ -373,6 +410,134 @@ class PurchaseOrderTest(OrderTest):
 
         order = models.PurchaseOrder.objects.get(pk=1)
         self.assertEqual(order.get_metadata('yam'), 'yum')
+
+    def test_po_calendar(self):
+        """Test the calendar export endpoint"""
+
+        # Create required purchase orders
+        self.assignRole('purchase_order.add')
+
+        for i in range(1, 9):
+            self.post(
+                reverse('api-po-list'),
+                {
+                    'reference': f'PO-1100000{i}',
+                    'supplier': 1,
+                    'description': f'Calendar PO {i}',
+                    'target_date': f'2024-12-{i:02d}',
+                },
+                expected_code=201
+            )
+
+        # Get some of these orders with target date, complete or cancel them
+        for po in models.PurchaseOrder.objects.filter(target_date__isnull=False):
+            if po.reference in ['PO-11000001', 'PO-11000002', 'PO-11000003', 'PO-11000004']:
+                # Set issued status for these POs
+                self.post(
+                    reverse('api-po-issue', kwargs={'pk': po.pk}),
+                    {},
+                    expected_code=201
+                )
+
+                if po.reference in ['PO-11000001', 'PO-11000002']:
+                    # Set complete status for these POs
+                    self.post(
+                        reverse('api-po-complete', kwargs={'pk': po.pk}),
+                        {
+                            'accept_incomplete': True,
+                        },
+                        expected_code=201
+                    )
+
+            elif po.reference in ['PO-11000005', 'PO-11000006']:
+                # Set cancel status for these POs
+                self.post(
+                    reverse('api-po-cancel', kwargs={'pk': po.pk}),
+                    {
+                        'accept_incomplete': True,
+                    },
+                    expected_code=201
+                )
+
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'})
+
+        # Test without completed orders
+        response = self.get(url, expected_code=200, format=None)
+
+        number_orders = len(models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE))
+
+        # Transform content to a Calendar object
+        calendar = Calendar.from_ical(response.content)
+        n_events = 0
+        # Count number of events in calendar
+        for component in calendar.walk():
+            if component.name == 'VEVENT':
+                n_events += 1
+
+        self.assertGreaterEqual(n_events, 1)
+        self.assertEqual(number_orders, n_events)
+
+        # Test with completed orders
+        response = self.get(url, data={'include_completed': 'True'}, expected_code=200, format=None)
+
+        number_orders_incl_completed = len(models.PurchaseOrder.objects.filter(target_date__isnull=False))
+
+        self.assertGreater(number_orders_incl_completed, number_orders)
+
+        # Transform content to a Calendar object
+        calendar = Calendar.from_ical(response.content)
+        n_events = 0
+        # Count number of events in calendar
+        for component in calendar.walk():
+            if component.name == 'VEVENT':
+                n_events += 1
+
+        self.assertGreaterEqual(n_events, 1)
+        self.assertEqual(number_orders_incl_completed, n_events)
+
+    def test_po_calendar_noauth(self):
+        """Test accessing calendar without authorization"""
+        self.client.logout()
+        response = self.client.get(reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}), format='json')
+
+        self.assertEqual(response.status_code, 401)
+
+        resp_dict = response.json()
+        self.assertEqual(resp_dict['detail'], "Authentication credentials were not provided.")
+
+    def test_po_calendar_auth(self):
+        """Test accessing calendar with header authorization"""
+        self.client.logout()
+        base64_token = base64.b64encode(f'{self.username}:{self.password}'.encode('ascii')).decode('ascii')
+        response = self.client.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
+            format='json',
+            HTTP_AUTHORIZATION=f'basic {base64_token}'
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+class PurchaseOrderLineItemTest(OrderTest):
+    """Unit tests for PurchaseOrderLineItems."""
+
+    LIST_URL = reverse('api-po-line-list')
+
+    def test_po_line_list(self):
+        """Test the PurchaseOrderLine list API endpoint"""
+        # List *ALL* PurchaseOrderLine items
+        self.filter({}, 5)
+
+        # Filter by pending status
+        self.filter({'pending': 1}, 5)
+        self.filter({'pending': 0}, 0)
+
+        # Filter by received status
+        self.filter({'received': 1}, 0)
+        self.filter({'received': 0}, 5)
+
+        # Filter by has_pricing status
+        self.filter({'has_pricing': 1}, 0)
+        self.filter({'has_pricing': 0}, 5)
 
 
 class PurchaseOrderDownloadTest(OrderTest):
@@ -828,6 +993,14 @@ class SalesOrderTest(OrderTest):
         self.filter({'status': 20}, 1)  # SHIPPED
         self.filter({'status': 99}, 0)  # Invalid
 
+        # Filter by "reference"
+        self.filter({'reference': 'ABC123'}, 1)
+        self.filter({'reference': 'XXX999'}, 0)
+
+        # Filter by "assigned_to_me"
+        self.filter({'assigned_to_me': 1}, 0)
+        self.filter({'assigned_to_me': 0}, 5)
+
     def test_overdue(self):
         """Test "overdue" status."""
         self.filter({'overdue': True}, 0)
@@ -1011,9 +1184,72 @@ class SalesOrderTest(OrderTest):
         order = models.SalesOrder.objects.get(pk=1)
         self.assertEqual(order.get_metadata('xyz'), 'abc')
 
+    def test_so_calendar(self):
+        """Test the calendar export endpoint"""
+
+        # Create required sales orders
+        self.assignRole('sales_order.add')
+
+        for i in range(1, 9):
+            self.post(
+                reverse('api-so-list'),
+                {
+                    'reference': f'SO-1100000{i}',
+                    'customer': 4,
+                    'description': f'Calendar SO {i}',
+                    'target_date': f'2024-12-{i:02d}',
+                },
+                expected_code=201
+            )
+
+        # Cancel a few orders - these will not show in incomplete view below
+        for so in models.SalesOrder.objects.filter(target_date__isnull=False):
+            if so.reference in ['SO-11000006', 'SO-11000007', 'SO-11000008', 'SO-11000009']:
+                self.post(
+                    reverse('api-so-cancel', kwargs={'pk': so.pk}),
+                    expected_code=201
+                )
+
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'sales-order'})
+
+        # Test without completed orders
+        response = self.get(url, expected_code=200, format=None)
+
+        number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED))
+
+        # Transform content to a Calendar object
+        calendar = Calendar.from_ical(response.content)
+        n_events = 0
+        # Count number of events in calendar
+        for component in calendar.walk():
+            if component.name == 'VEVENT':
+                n_events += 1
+
+        self.assertGreaterEqual(n_events, 1)
+        self.assertEqual(number_orders, n_events)
+
+        # Test with completed orders
+        response = self.get(url, data={'include_completed': 'True'}, expected_code=200, format=None)
+
+        number_orders_incl_complete = len(models.SalesOrder.objects.filter(target_date__isnull=False))
+        self.assertGreater(number_orders_incl_complete, number_orders)
+
+        # Transform content to a Calendar object
+        calendar = Calendar.from_ical(response.content)
+        n_events = 0
+        # Count number of events in calendar
+        for component in calendar.walk():
+            if component.name == 'VEVENT':
+                n_events += 1
+
+        self.assertGreaterEqual(n_events, 1)
+        self.assertEqual(number_orders_incl_complete, n_events)
+
 
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
+
+    LIST_URL = reverse('api-so-line-list')
 
     def setUp(self):
         """Init routine for this unit test class"""
@@ -1086,6 +1322,14 @@ class SalesOrderLineItemTest(OrderTest):
             )
 
             self.assertEqual(response.data['count'], n_parts)
+
+        # Filter by has_pricing status
+        self.filter({'has_pricing': 1}, 0)
+        self.filter({'has_pricing': 0}, n)
+
+        # Filter by has_pricing status
+        self.filter({'completed': 1}, 0)
+        self.filter({'completed': 0}, n)
 
 
 class SalesOrderDownloadTest(OrderTest):

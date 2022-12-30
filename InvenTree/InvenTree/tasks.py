@@ -2,6 +2,7 @@
 
 import json
 import logging
+import os
 import re
 import warnings
 from dataclasses import dataclass
@@ -338,7 +339,16 @@ def check_for_updates():
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
         return
 
-    response = requests.get('https://api.github.com/repos/inventree/inventree/releases/latest')
+    headers = {}
+
+    # If running within github actions, use authentication token
+    if settings.TESTING:
+        token = os.getenv('GITHUB_TOKEN', None)
+
+        if token:
+            headers['Authorization'] = f"Bearer {token}"
+
+    response = requests.get('https://api.github.com/repos/inventree/inventree/releases/latest', headers=headers)
 
     if response.status_code != 200:
         raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')  # pragma: no cover
