@@ -194,8 +194,10 @@ remote_login_header: HTTP_REMOTE_USER
 #  - 'django.middleware.clickjacking.XFrameOptionsMiddleware'
 #  - 'InvenTree.middleware.AuthRequiredMiddleware'
 
-# Add SSO login-backends
+# Add SSO login-backends (see examples below)
 # social_backends:
+#  - 'allauth.socialaccount.providers.google'
+#  - 'allauth.socialaccount.providers.github'
 #  - 'allauth.socialaccount.providers.keycloak'
 
 # Add specific settings
