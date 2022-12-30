@@ -35,7 +35,7 @@ if [[ -n "$INVENTREE_PY_ENV" ]]; then
         # venv already exists
         echo "Using Python virtual environment: ${INVENTREE_PY_ENV}"
     else
-        # Setup a virtual environment (within the "dev" directory)
+        # Setup a virtual environment (within the "data/env" directory)
         echo "Running first time setup for python environment"
         python3 -m venv ${INVENTREE_PY_ENV} --system-site-packages --upgrade-deps
     fi
