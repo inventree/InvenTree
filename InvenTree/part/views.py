@@ -15,7 +15,7 @@ from common.files import FileManager
 from common.models import InvenTreeSetting
 from common.views import FileManagementAjaxView, FileManagementFormView
 from company.models import SupplierPart
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import str2bool, str2int
 from InvenTree.views import (AjaxUpdateView, AjaxView, InvenTreeRoleMixin,
                              QRCodeView)
 from plugin.views import InvenTreePluginViewMixin
@@ -25,6 +25,7 @@ from . import forms as part_forms
 from . import settings as part_settings
 from .bom import ExportBom, IsValidBOMFormat, MakeBomTemplate
 from .models import Part, PartCategory
+from .part import MakePartTemplate
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
@@ -90,11 +91,12 @@ class PartImport(FileManagementFormView):
             'Assembly',
             'Component',
             'is_template',
-            'Purchaseable',
+            'Purchasable',
             'Salable',
             'Trackable',
             'Virtual',
             'Stock',
+            'Image',
         ]
 
     name = 'part'
@@ -135,6 +137,7 @@ class PartImport(FileManagementFormView):
         'trackable': 'trackable',
         'virtual': 'virtual',
         'stock': 'stock',
+        'image': 'image',
     }
     file_manager_class = PartFileManager
 
@@ -144,14 +147,14 @@ class PartImport(FileManagementFormView):
         self.allowed_items = {}
         self.matches = {}
 
-        self.allowed_items['Category'] = PartCategory.objects.all()
-        self.matches['Category'] = ['name__contains']
-        self.allowed_items['default_location'] = StockLocation.objects.all()
-        self.matches['default_location'] = ['name__contains']
+        self.allowed_items['Category'] = PartCategory.objects.all().exclude(structural=True)
+        self.matches['Category'] = ['name__icontains']
+        self.allowed_items['default_location'] = StockLocation.objects.all().exclude(structural=True)
+        self.matches['default_location'] = ['name__icontains']
         self.allowed_items['default_supplier'] = SupplierPart.objects.all()
-        self.matches['default_supplier'] = ['SKU__contains']
-        self.allowed_items['variant_of'] = Part.objects.all()
-        self.matches['variant_of'] = ['name__contains']
+        self.matches['default_supplier'] = ['SKU__icontains']
+        self.allowed_items['variant_of'] = Part.objects.all().exclude(is_template=False)
+        self.matches['variant_of'] = ['name__icontains']
 
         # setup
         self.file_manager.setup()
@@ -210,8 +213,8 @@ class PartImport(FileManagementFormView):
                 IPN=part_data.get('ipn', None),
                 revision=part_data.get('revision', None),
                 link=part_data.get('link', None),
-                default_expiry=part_data.get('default_expiry', 0),
-                minimum_stock=part_data.get('minimum_stock', 0),
+                default_expiry=str2int(part_data.get('default_expiry'), 0),
+                minimum_stock=str2int(part_data.get('minimum_stock'), 0),
                 units=part_data.get('units', None),
                 notes=part_data.get('notes', None),
                 category=optional_matches['Category'],
@@ -219,8 +222,8 @@ class PartImport(FileManagementFormView):
                 default_supplier=optional_matches['default_supplier'],
                 variant_of=optional_matches['variant_of'],
                 active=str2bool(part_data.get('active', True)),
-                base_cost=part_data.get('base_cost', 0),
-                multiple=part_data.get('multiple', 1),
+                base_cost=str2int(part_data.get('base_cost'), 0),
+                multiple=str2int(part_data.get('multiple'), 1),
                 assembly=str2bool(part_data.get('assembly', part_settings.part_assembly_default())),
                 component=str2bool(part_data.get('component', part_settings.part_component_default())),
                 is_template=str2bool(part_data.get('is_template', part_settings.part_template_default())),
@@ -228,7 +231,14 @@ class PartImport(FileManagementFormView):
                 salable=str2bool(part_data.get('salable', part_settings.part_salable_default())),
                 trackable=str2bool(part_data.get('trackable', part_settings.part_trackable_default())),
                 virtual=str2bool(part_data.get('virtual', part_settings.part_virtual_default())),
+                image=part_data.get('image', None),
             )
+
+            # check if theres a category assigned, if not skip this part or else bad things happen
+            if not optional_matches['Category']:
+                import_error.append(_("Can't import part {name} because there is no category assigned").format(name=new_part.name))
+                continue
+
             try:
                 new_part.save()
 
@@ -240,6 +250,7 @@ class PartImport(FileManagementFormView):
                         quantity=int(part_data.get('stock', 1)),
                     )
                     stock.save()
+
                 import_done += 1
             except ValidationError as _e:
                 import_error.append(', '.join(set(_e.messages)))
@@ -249,10 +260,23 @@ class PartImport(FileManagementFormView):
             alert = f"<strong>{_('Part-Import')}</strong><br>{_('Imported {n} parts').format(n=import_done)}"
             messages.success(self.request, alert)
         if import_error:
-            error_text = '\n'.join([f'<li><strong>x{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
+            error_text = '\n'.join([f'<li><strong>{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
             messages.error(self.request, f"<strong>{_('Some errors occured:')}</strong><br><ul>{error_text}</ul>")
 
         return HttpResponseRedirect(reverse('part-index'))
+
+
+class PartImportTemplate(AjaxView):
+    """Provide a part import template file for download.
+
+    - Generates a template file in the provided format e.g. ?format=csv
+    """
+
+    def get(self, request, *args, **kwargs):
+        """Perform a GET request to download the 'Part import' template"""
+        export_format = request.GET.get('format', 'csv')
+
+        return MakePartTemplate(export_format)
 
 
 class PartImportAjax(FileManagementAjaxView, PartImport):
