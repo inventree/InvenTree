@@ -1347,8 +1347,14 @@ function loadParametricPartTable(table, options={}) {
                 data[idx] = row;
             }
 
+            if (response.results) {
+                response.results = data;
+            } else {
+                response = data;
+            }
+
             // Update the table
-            $(table).bootstrapTable('load', data);
+            $(table).bootstrapTable('load', response);
         }
     });
 }
