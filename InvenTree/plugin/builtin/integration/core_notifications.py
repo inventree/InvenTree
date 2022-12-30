@@ -10,7 +10,8 @@ import common.models
 import InvenTree.helpers
 import InvenTree.tasks
 from plugin import InvenTreePlugin, registry
-from plugin.mixins import BulkNotificationMethod, SettingsMixin
+from plugin.mixins import (BulkNotificationMethod, SettingsContentMixin,
+                           SettingsMixin)
 
 
 class PlgMixin:
@@ -24,7 +25,7 @@ class PlgMixin:
         return CoreNotificationsPlugin
 
 
-class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
+class CoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, InvenTreePlugin):
     """Core notification methods for InvenTree."""
 
     NAME = "CoreNotificationsPlugin"
@@ -52,6 +53,17 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
             'protected': True,
         },
     }
+
+    def get_settings_content(self, request):
+        """Custom settings content for the plugin."""
+        return """
+        <p>Setup for Slack:</p>
+        <ol>
+            <li>Create a new Slack app on <a href="https://api.slack.com/apps/new" target="_blank">this page</a></li>
+            <li>Enable <i>Incoming Webhooks</i> for the channel you want the notifications posted to</li>
+            <li>Set the webhook URL in the settings above</li>
+        <li>Enable the plugin</li>
+        """
 
     class EmailNotification(PlgMixin, BulkNotificationMethod):
         """Notificationmethod for delivery via Email."""
