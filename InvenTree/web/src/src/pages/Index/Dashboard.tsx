@@ -1,5 +1,4 @@
-import { Group } from '@mantine/core';
-import { SimpleGrid, Chip } from '@mantine/core';
+import { Group, SimpleGrid, Chip } from '@mantine/core';
 import { DashboardItemProxy } from '../../components/DashboardItemProxy';
 import { StylishText } from '../../components/items/StylishText';
 import { useLocalState } from '../../context/LocalState';
