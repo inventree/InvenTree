@@ -339,6 +339,19 @@ class PartTest(TestCase):
         self.r2.delete()
         self.assertEqual(PartRelated.objects.count(), 0)
 
+    def test_stocktake(self):
+        """Test for adding stocktake data"""
+
+        # Grab a part
+        p = Part.objects.all().first()
+
+        self.assertIsNone(p.last_stocktake)
+
+        ps = PartStocktake.objects.create(part=p, quantity=100)
+
+        self.assertIsNotNone(p.last_stocktake)
+        self.assertEqual(p.last_stocktake, ps.date)
+
 
 class TestTemplateTest(TestCase):
     """Unit test for the TestTemplate class"""
@@ -396,19 +409,6 @@ class TestTemplateTest(TestCase):
         PartTestTemplate.objects.create(part=variant, test_name='A Sample Test')
 
         self.assertEqual(variant.getTestTemplates().count(), n + 1)
-
-    def test_stocktake(self):
-        """Test for adding stocktake data"""
-
-        # Grab a part
-        p = Part.objects.all().first()
-
-        self.assertIsNone(p.last_stocktake)
-
-        ps = PartStocktake.objects.create(part=p, quantity=100)
-
-        self.assertIsNotNone(p.last_stocktake)
-        self.assertEqual(p.last_stocktake, ps.date)
 
 
 class PartSettingsTest(InvenTreeTestCase):
