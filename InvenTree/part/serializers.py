@@ -24,14 +24,16 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer, RemoteImageMixin)
+                                   InvenTreeMoneySerializer, RemoteImageMixin,
+                                   UserSerializer)
 from InvenTree.status_codes import BuildStatus
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartPricing, PartRelated,
-                     PartSellPriceBreak, PartStar, PartTestTemplate)
+                     PartSellPriceBreak, PartStar, PartStocktake,
+                     PartTestTemplate)
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -451,6 +453,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'IPN',
             'is_template',
             'keywords',
+            'last_stocktake',
             'link',
             'minimum_stock',
             'name',
@@ -502,6 +505,44 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             )
 
         return self.instance
+
+
+class PartStocktakeSerializer(InvenTreeModelSerializer):
+    """Serializer for the PartStocktake model"""
+
+    quantity = serializers.FloatField()
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
+
+    class Meta:
+        """Metaclass options"""
+
+        model = PartStocktake
+        fields = [
+            'pk',
+            'date',
+            'part',
+            'quantity',
+            'note',
+            'user',
+            'user_detail',
+        ]
+
+        read_only_fields = [
+            'date',
+            'user',
+        ]
+
+    def save(self):
+        """Called when this serializer is saved"""
+
+        data = self.validated_data
+
+        # Add in user information automatically
+        request = self.context['request']
+        data['user'] = request.user
+
+        super().save()
 
 
 class PartPricingSerializer(InvenTreeModelSerializer):

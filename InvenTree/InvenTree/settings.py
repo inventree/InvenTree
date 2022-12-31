@@ -750,10 +750,14 @@ SITE_ID = 1
 
 # Load the allauth social backends
 SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
+SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', None)
+
+if SOCIALACCOUNT_PROVIDERS is None:
+    SOCIALACCOUNT_PROVIDERS = {}
 
 SOCIALACCOUNT_STORE_TOKENS = True
 

@@ -122,6 +122,11 @@ class PartImportResource(InvenTreeResource):
         ]
 
 
+class StocktakeInline(admin.TabularInline):
+    """Inline for part stocktake data"""
+    model = models.PartStocktake
+
+
 class PartAdmin(ImportExportModelAdmin):
     """Admin class for the Part model"""
 
@@ -140,6 +145,10 @@ class PartAdmin(ImportExportModelAdmin):
         'default_supplier',
     ]
 
+    inlines = [
+        StocktakeInline,
+    ]
+
 
 class PartPricingAdmin(admin.ModelAdmin):
     """Admin class for PartPricing model"""
@@ -149,6 +158,12 @@ class PartPricingAdmin(admin.ModelAdmin):
     autcomplete_fields = [
         'part',
     ]
+
+
+class PartStocktakeAdmin(admin.ModelAdmin):
+    """Admin class for PartStocktake model"""
+
+    list_display = ['part', 'date', 'quantity', 'user']
 
 
 class PartCategoryResource(InvenTreeResource):
@@ -418,3 +433,4 @@ admin.site.register(models.PartTestTemplate, PartTestTemplateAdmin)
 admin.site.register(models.PartSellPriceBreak, PartSellPriceBreakAdmin)
 admin.site.register(models.PartInternalPriceBreak, PartInternalPriceBreakAdmin)
 admin.site.register(models.PartPricing, PartPricingAdmin)
+admin.site.register(models.PartStocktake, PartStocktakeAdmin)
