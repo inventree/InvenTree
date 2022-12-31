@@ -1,10 +1,10 @@
 import { Trans, t } from "@lingui/macro";
-import { Container } from "@mantine/core";
 import { useDocumentTitle } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { useRouteError } from "react-router-dom";
 import { LanguageContext } from "../context/LanguageContext";
 import { ErrorResponse } from "../context/states";
+import Container from 'react-bootstrap/Container';
 
 
 export default function ErrorPage() {
