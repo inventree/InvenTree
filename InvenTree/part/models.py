@@ -372,6 +372,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         creation_date: Date that this part was added to the database
         creation_user: User who added this part to the database
         responsible: User who is responsible for this part (optional)
+        last_stocktake: Date at which last stocktake was performed for this Part
     """
 
     objects = PartManager()
@@ -1003,6 +1004,11 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Creation User'), related_name='parts_created')
 
     responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
+
+    last_stocktake = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Last Stocktake'),
+    )
 
     @property
     def category_path(self):
@@ -2928,6 +2934,20 @@ class PartStocktake(models.Model):
         verbose_name=_('User'),
         help_text=_('User who performed this stocktake'),
     )
+
+
+@receiver(post_save, sender=PartStocktake, dispatch_uid='post_save_stocktake')
+def update_last_stocktake(sender, instance, created, **kwargs):
+    """Callback function when a PartStocktake instance is created / edited"""
+
+    # When a new PartStocktake instance is create, update the last_stocktake date for the Part
+    if created:
+        try:
+            part = instance.part
+            part.last_stocktake = instance.date
+            part.save()
+        except Exception:
+            pass
 
 
 class PartAttachment(InvenTreeAttachment):

@@ -453,6 +453,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'IPN',
             'is_template',
             'keywords',
+            'last_stocktake',
             'link',
             'minimum_stock',
             'name',
