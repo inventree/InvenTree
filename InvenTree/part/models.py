@@ -372,6 +372,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         creation_date: Date that this part was added to the database
         creation_user: User who added this part to the database
         responsible: User who is responsible for this part (optional)
+        last_stocktake: Date at which last stocktake was performed for this Part
     """
 
     objects = PartManager()
@@ -1003,6 +1004,11 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Creation User'), related_name='parts_created')
 
     responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
+
+    last_stocktake = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Last Stocktake'),
+    )
 
     @property
     def category_path(self):
@@ -2162,6 +2168,12 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         return params
 
     @property
+    def latest_stocktake(self):
+        """Return the latest PartStocktake object associated with this part (if one exists)"""
+
+        return self.stocktakes.order_by('-pk').first()
+
+    @property
     def has_variants(self):
         """Check if this Part object has variants underneath it."""
         return self.get_all_variants().exists()
@@ -2876,6 +2888,66 @@ class PartPricing(models.Model):
         verbose_name=_('Maximum Sale Cost'),
         help_text=_('Maximum historical sale price'),
     )
+
+
+class PartStocktake(models.Model):
+    """Model representing a 'stocktake' entry for a particular Part.
+
+    A 'stocktake' is a representative count of available stock:
+    - Performed on a given date
+    - Records quantity of part in stock (across multiple stock items)
+    - Records user information
+    """
+
+    part = models.ForeignKey(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='stocktakes',
+        verbose_name=_('Part'),
+        help_text=_('Part for stocktake'),
+    )
+
+    quantity = models.DecimalField(
+        max_digits=19, decimal_places=5,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Quantity'),
+        help_text=_('Total available stock at time of stocktake'),
+    )
+
+    date = models.DateField(
+        verbose_name=_('Date'),
+        help_text=_('Date stocktake was performed'),
+        auto_now_add=True
+    )
+
+    note = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Notes'),
+        help_text=_('Additional notes'),
+    )
+
+    user = models.ForeignKey(
+        User, blank=True, null=True,
+        on_delete=models.SET_NULL,
+        related_name='part_stocktakes',
+        verbose_name=_('User'),
+        help_text=_('User who performed this stocktake'),
+    )
+
+
+@receiver(post_save, sender=PartStocktake, dispatch_uid='post_save_stocktake')
+def update_last_stocktake(sender, instance, created, **kwargs):
+    """Callback function when a PartStocktake instance is created / edited"""
+
+    # When a new PartStocktake instance is create, update the last_stocktake date for the Part
+    if created:
+        try:
+            part = instance.part
+            part.last_stocktake = instance.date
+            part.save()
+        except Exception:
+            pass
 
 
 class PartAttachment(InvenTreeAttachment):
