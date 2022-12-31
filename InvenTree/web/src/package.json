@@ -15,7 +15,6 @@
     "dependencies": {
         "@emotion/react": "^11.10.5",
         "@lingui/react": "^3.15.0",
-        "@mantine/core": "^5.8.4",
         "@mantine/dates": "^5.8.4",
         "@mantine/dropzone": "^5.8.4",
         "@mantine/form": "^5.8.4",
