@@ -1896,6 +1896,16 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    columns.push({
+        field: 'last_stocktake',
+        title: '{% trans "Last Stocktake" %}',
+        sortable: true,
+        switchable: true,
+        formatter: function(value) {
+            return renderDate(value);
+        }
+    });
+
     // Push an "actions" column
     if (options.actions) {
         columns.push({

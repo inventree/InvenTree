@@ -1553,6 +1553,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         'in_stock',
         'unallocated_stock',
         'category',
+        'last_stocktake',
     ]
 
     # Default ordering
