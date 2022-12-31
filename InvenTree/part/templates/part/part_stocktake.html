@@ -1,0 +1,10 @@
+{% load i18n %}
+{% load inventree_extras %}
+
+<div id='part-stocktake-toolbar'>
+    <div class='btn-group' role='group'>
+        {% include "filter_list.html" with id="partstocktake" %}
+    </div>
+</div>
+<table class='table table-condensed table-striped' id='part-stocktake-table' data-toolbar='#part-stocktake-toolbar'>
+</table>

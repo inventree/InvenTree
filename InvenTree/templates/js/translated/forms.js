@@ -343,6 +343,9 @@ function constructForm(url, options) {
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
 
+        // Copy across entire actions struct
+        options.actions = OPTIONS.actions.POST || OPTIONS.actions.PUT || OPTIONS.actions.PATCH || OPTIONS.actions.DELETE || {};
+
         // Extract any custom 'context' information from the OPTIONS data
         options.context = OPTIONS.context || {};
 

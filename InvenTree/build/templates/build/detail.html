@@ -466,7 +466,7 @@ $('#btn-create-output').click(function() {
     createBuildOutput(
         {{ build.pk }},
         {
-            trackable_parts: {% if build.part.has_trackable_parts %}true{% else %}false{% endif%},
+            trackable_parts: {% js_bool build.part.has_trackable_parts %},
         }
     );
 });

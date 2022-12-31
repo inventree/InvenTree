@@ -338,6 +338,20 @@
                 </tr>
                 {% endif %}
                 {% endwith %}
+                {% with part.latest_stocktake as stocktake %}
+                {% if stocktake %}
+                <tr>
+                    <td><span class='fas fa-clipboard-check'></span></td>
+                    <td>{% trans "Last Stocktake" %}</td>
+                    <td>
+                        {% decimal stocktake.quantity %} <span class='fas fa-calendar-alt' title='{% render_date stocktake.date %}'></span>
+                        <span class='badge bg-dark rounded-pill float-right'>
+                            {{ stocktake.user.username }}
+                        </span>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endwith %}
                 {% with part.get_latest_serial_number as sn %}
                 {% if part.trackable and sn %}
                 <tr>
