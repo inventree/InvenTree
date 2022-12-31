@@ -2260,13 +2260,19 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 @receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
 def after_save_part(sender, instance: Part, created, **kwargs):
     """Function to be executed after a Part is saved."""
+    from pickle import PicklingError
+
     from part import tasks as part_tasks
 
-    if not created and not InvenTree.ready.isImportingData():
+    if instance and not created and not InvenTree.ready.isImportingData():
         # Check part stock only if we are *updating* the part (not creating it)
 
         # Run this check in the background
-        InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance)
+        try:
+            InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance)
+        except PicklingError:
+            # Can sometimes occur if the referenced Part has issues
+            pass
 
 
 class PartPricing(models.Model):
