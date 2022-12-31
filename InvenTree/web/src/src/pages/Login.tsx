@@ -77,7 +77,7 @@ export function Login() {
 
   return (
     <Center mih="100vh">
-      <Container w="md">
+      <Container w="md" miw={400}>
         <Stack>
           <EditHostList />
           {!HostListEdit &&
