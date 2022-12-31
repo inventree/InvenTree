@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-24 20:15+0000\n"
-"PO-Revision-Date: 2022-12-25 12:50\n"
+"POT-Creation-Date: 2022-12-30 20:46+0000\n"
+"PO-Revision-Date: 2022-12-31 11:30\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -211,7 +211,7 @@ msgstr "选择附件"
 #: report/templates/report/inventree_build_order_base.html:164
 #: stock/admin.py:102 templates/js/translated/company.js:692
 #: templates/js/translated/company.js:1012
-#: templates/js/translated/order.js:3056 templates/js/translated/part.js:1608
+#: templates/js/translated/order.js:3056 templates/js/translated/part.js:1615
 msgid "Link"
 msgstr "链接"
 
@@ -283,7 +283,7 @@ msgstr "选择无效"
 #: templates/js/translated/company.js:794
 #: templates/js/translated/notification.js:71
 #: templates/js/translated/part.js:711 templates/js/translated/part.js:880
-#: templates/js/translated/part.js:2003 templates/js/translated/stock.js:2434
+#: templates/js/translated/part.js:2010 templates/js/translated/stock.js:2434
 msgid "Name"
 msgstr "名称"
 
@@ -307,8 +307,8 @@ msgstr "名称"
 #: templates/js/translated/company.js:987 templates/js/translated/order.js:2030
 #: templates/js/translated/order.js:2267 templates/js/translated/order.js:2845
 #: templates/js/translated/part.js:773 templates/js/translated/part.js:1223
-#: templates/js/translated/part.js:1490 templates/js/translated/part.js:2039
-#: templates/js/translated/part.js:2114 templates/js/translated/stock.js:1787
+#: templates/js/translated/part.js:1497 templates/js/translated/part.js:2046
+#: templates/js/translated/part.js:2121 templates/js/translated/stock.js:1787
 #: templates/js/translated/stock.js:2466 templates/js/translated/stock.js:2526
 msgid "Description"
 msgstr "描述信息"
@@ -322,7 +322,7 @@ msgid "parent"
 msgstr "上级项"
 
 #: InvenTree/models.py:580 InvenTree/models.py:581
-#: templates/js/translated/part.js:2048 templates/js/translated/stock.js:2475
+#: templates/js/translated/part.js:2055 templates/js/translated/stock.js:2475
 msgid "Path"
 msgstr "路径"
 
@@ -820,7 +820,7 @@ msgstr "此次生产匹配的订单"
 #: templates/js/translated/order.js:2252 templates/js/translated/order.js:3199
 #: templates/js/translated/order.js:3595 templates/js/translated/order.js:3825
 #: templates/js/translated/part.js:1208 templates/js/translated/part.js:1280
-#: templates/js/translated/part.js:1467 templates/js/translated/pricing.js:102
+#: templates/js/translated/part.js:1474 templates/js/translated/pricing.js:102
 #: templates/js/translated/stock.js:618 templates/js/translated/stock.js:783
 #: templates/js/translated/stock.js:993 templates/js/translated/stock.js:1739
 #: templates/js/translated/stock.js:2552 templates/js/translated/stock.js:2747
@@ -1049,7 +1049,7 @@ msgstr "源库存项"
 #: templates/js/translated/order.js:3201 templates/js/translated/order.js:3521
 #: templates/js/translated/order.js:3608 templates/js/translated/order.js:3700
 #: templates/js/translated/order.js:3847 templates/js/translated/order.js:4338
-#: templates/js/translated/part.js:1078 templates/js/translated/part.js:2561
+#: templates/js/translated/part.js:1078 templates/js/translated/part.js:2568
 #: templates/js/translated/pricing.js:114
 #: templates/js/translated/pricing.js:207
 #: templates/js/translated/pricing.js:255
@@ -3663,8 +3663,8 @@ msgstr ""
 #: stock/templates/stock/stock_app_base.html:10
 #: templates/InvenTree/search.html:153
 #: templates/InvenTree/settings/sidebar.html:45
-#: templates/js/translated/part.js:777 templates/js/translated/part.js:1371
-#: templates/js/translated/part.js:1527 templates/js/translated/stock.js:994
+#: templates/js/translated/part.js:777 templates/js/translated/part.js:1378
+#: templates/js/translated/part.js:1534 templates/js/translated/stock.js:994
 #: templates/js/translated/stock.js:1799 templates/navbar.html:31
 msgid "Stock"
 msgstr "库存"
@@ -4581,7 +4581,7 @@ msgid "Part Description"
 msgstr ""
 
 #: part/admin.py:22 part/models.py:852 part/templates/part/part_base.html:272
-#: templates/js/translated/part.js:763 templates/js/translated/part.js:1484
+#: templates/js/translated/part.js:763 templates/js/translated/part.js:1491
 #: templates/js/translated/stock.js:1765
 msgid "IPN"
 msgstr ""
@@ -4626,7 +4626,7 @@ msgstr ""
 #: part/admin.py:48 part/bom.py:145 part/templates/part/part_base.html:213
 #: templates/js/translated/bom.js:1156 templates/js/translated/build.js:1935
 #: templates/js/translated/part.js:613 templates/js/translated/part.js:633
-#: templates/js/translated/part.js:1374 templates/js/translated/part.js:1552
+#: templates/js/translated/part.js:1381 templates/js/translated/part.js:1559
 #: templates/js/translated/table_filters.js:68
 msgid "On Order"
 msgstr ""
@@ -4643,7 +4643,7 @@ msgstr ""
 
 #: part/admin.py:51 part/templates/part/part_base.html:244
 #: templates/js/translated/part.js:616 templates/js/translated/part.js:636
-#: templates/js/translated/part.js:1378 templates/js/translated/part.js:1559
+#: templates/js/translated/part.js:1385 templates/js/translated/part.js:1566
 msgid "Building"
 msgstr ""
 
@@ -4674,7 +4674,7 @@ msgstr "类别路径"
 #: part/templates/part/category_sidebar.html:9
 #: templates/InvenTree/index.html:85 templates/InvenTree/search.html:84
 #: templates/InvenTree/settings/sidebar.html:41
-#: templates/js/translated/part.js:2058 templates/js/translated/search.js:146
+#: templates/js/translated/part.js:2065 templates/js/translated/search.js:146
 #: templates/navbar.html:24 users/models.py:38
 msgid "Parts"
 msgstr "商品"
@@ -4869,7 +4869,7 @@ msgstr "提高搜索结果可见性的关键字"
 #: part/templates/part/part_base.html:263
 #: templates/InvenTree/settings/settings.html:229
 #: templates/js/translated/notification.js:50
-#: templates/js/translated/part.js:1506 templates/js/translated/part.js:1763
+#: templates/js/translated/part.js:1513 templates/js/translated/part.js:1770
 msgid "Category"
 msgstr "类别"
 
@@ -5109,7 +5109,7 @@ msgstr ""
 msgid "Test with this name already exists for this part"
 msgstr ""
 
-#: part/models.py:3050 templates/js/translated/part.js:2109
+#: part/models.py:3050 templates/js/translated/part.js:2116
 #: templates/js/translated/stock.js:1379
 msgid "Test Name"
 msgstr ""
@@ -5126,7 +5126,7 @@ msgstr ""
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:3062 templates/js/translated/part.js:2118
+#: part/models.py:3062 templates/js/translated/part.js:2125
 #: templates/js/translated/table_filters.js:322
 msgid "Required"
 msgstr ""
@@ -5135,7 +5135,7 @@ msgstr ""
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:3068 templates/js/translated/part.js:2126
+#: part/models.py:3068 templates/js/translated/part.js:2133
 msgid "Requires Value"
 msgstr ""
 
@@ -5143,7 +5143,7 @@ msgstr ""
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:3074 templates/js/translated/part.js:2133
+#: part/models.py:3074 templates/js/translated/part.js:2140
 msgid "Requires Attachment"
 msgstr ""
 
@@ -5837,7 +5837,7 @@ msgid "Minimum stock level"
 msgstr ""
 
 #: part/templates/part/part_base.html:330 templates/js/translated/bom.js:1032
-#: templates/js/translated/part.js:798 templates/js/translated/part.js:1597
+#: templates/js/translated/part.js:798 templates/js/translated/part.js:1604
 #: templates/js/translated/pricing.js:124
 #: templates/js/translated/pricing.js:762
 msgid "Price Range"
@@ -6024,7 +6024,7 @@ msgid "Add Sell Price Break"
 msgstr ""
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:639
-#: templates/js/translated/part.js:1366 templates/js/translated/part.js:1368
+#: templates/js/translated/part.js:1373 templates/js/translated/part.js:1375
 msgid "No Stock"
 msgstr ""
 
@@ -8112,7 +8112,7 @@ msgid "Forgot Password?"
 msgstr ""
 
 #: templates/account/login.html:53
-msgid "or use SSO"
+msgid "Sign in using third-party SSO"
 msgstr ""
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
@@ -8313,7 +8313,7 @@ msgid "Click on the following link to view this part"
 msgstr ""
 
 #: templates/email/low_stock_notification.html:19
-#: templates/js/translated/part.js:2438
+#: templates/js/translated/part.js:2445
 msgid "Minimum Quantity"
 msgstr ""
 
@@ -8688,7 +8688,7 @@ msgid "Includes variant and substitute stock"
 msgstr ""
 
 #: templates/js/translated/bom.js:1145 templates/js/translated/build.js:1923
-#: templates/js/translated/part.js:790 templates/js/translated/part.js:1565
+#: templates/js/translated/part.js:790 templates/js/translated/part.js:1572
 msgid "Includes variant stock"
 msgstr ""
 
@@ -8987,8 +8987,8 @@ msgstr ""
 msgid "No builds matching query"
 msgstr ""
 
-#: templates/js/translated/build.js:2574 templates/js/translated/part.js:1459
-#: templates/js/translated/part.js:1996 templates/js/translated/stock.js:1725
+#: templates/js/translated/build.js:2574 templates/js/translated/part.js:1466
+#: templates/js/translated/part.js:2003 templates/js/translated/stock.js:1725
 #: templates/js/translated/stock.js:2428
 msgid "Select"
 msgstr ""
@@ -10015,7 +10015,7 @@ msgstr ""
 msgid "Copy Bill of Materials"
 msgstr ""
 
-#: templates/js/translated/part.js:609 templates/js/translated/part.js:1547
+#: templates/js/translated/part.js:609 templates/js/translated/part.js:1554
 #: templates/js/translated/table_filters.js:488
 msgid "Low stock"
 msgstr ""
@@ -10052,117 +10052,117 @@ msgstr ""
 msgid "Delete Part Relationship"
 msgstr ""
 
-#: templates/js/translated/part.js:1327 templates/js/translated/part.js:1648
+#: templates/js/translated/part.js:1327 templates/js/translated/part.js:1655
 msgid "No parts found"
 msgstr ""
 
-#: templates/js/translated/part.js:1514
+#: templates/js/translated/part.js:1521
 msgid "No category"
 msgstr "没有分类"
 
-#: templates/js/translated/part.js:1545
+#: templates/js/translated/part.js:1552
 msgid "No stock"
 msgstr ""
 
-#: templates/js/translated/part.js:1569
+#: templates/js/translated/part.js:1576
 msgid "Allocated to build orders"
 msgstr ""
 
-#: templates/js/translated/part.js:1573
+#: templates/js/translated/part.js:1580
 msgid "Allocated to sales orders"
 msgstr ""
 
-#: templates/js/translated/part.js:1672 templates/js/translated/part.js:1915
+#: templates/js/translated/part.js:1679 templates/js/translated/part.js:1922
 #: templates/js/translated/stock.js:2387
 msgid "Display as list"
 msgstr ""
 
-#: templates/js/translated/part.js:1688
+#: templates/js/translated/part.js:1695
 msgid "Display as grid"
 msgstr ""
 
-#: templates/js/translated/part.js:1754
+#: templates/js/translated/part.js:1761
 msgid "Set the part category for the selected parts"
 msgstr ""
 
-#: templates/js/translated/part.js:1759
+#: templates/js/translated/part.js:1766
 msgid "Set Part Category"
 msgstr "设置商品类别"
 
-#: templates/js/translated/part.js:1764
+#: templates/js/translated/part.js:1771
 msgid "Select Part Category"
 msgstr ""
 
-#: templates/js/translated/part.js:1777
+#: templates/js/translated/part.js:1784
 msgid "Category is required"
 msgstr ""
 
-#: templates/js/translated/part.js:1935 templates/js/translated/stock.js:2407
+#: templates/js/translated/part.js:1942 templates/js/translated/stock.js:2407
 msgid "Display as tree"
 msgstr ""
 
-#: templates/js/translated/part.js:2015
+#: templates/js/translated/part.js:2022
 msgid "Load Subcategories"
 msgstr ""
 
-#: templates/js/translated/part.js:2031
+#: templates/js/translated/part.js:2038
 msgid "Subscribed category"
 msgstr ""
 
-#: templates/js/translated/part.js:2095
+#: templates/js/translated/part.js:2102
 msgid "No test templates matching query"
 msgstr ""
 
-#: templates/js/translated/part.js:2146 templates/js/translated/stock.js:1338
+#: templates/js/translated/part.js:2153 templates/js/translated/stock.js:1338
 msgid "Edit test result"
 msgstr ""
 
-#: templates/js/translated/part.js:2147 templates/js/translated/stock.js:1339
+#: templates/js/translated/part.js:2154 templates/js/translated/stock.js:1339
 #: templates/js/translated/stock.js:1599
 msgid "Delete test result"
 msgstr ""
 
-#: templates/js/translated/part.js:2153
+#: templates/js/translated/part.js:2160
 msgid "This test is defined for a parent part"
 msgstr ""
 
-#: templates/js/translated/part.js:2175
+#: templates/js/translated/part.js:2182
 msgid "Edit Test Result Template"
 msgstr ""
 
-#: templates/js/translated/part.js:2189
+#: templates/js/translated/part.js:2196
 msgid "Delete Test Result Template"
 msgstr ""
 
-#: templates/js/translated/part.js:2270 templates/js/translated/part.js:2271
+#: templates/js/translated/part.js:2277 templates/js/translated/part.js:2278
 msgid "No date specified"
 msgstr ""
 
-#: templates/js/translated/part.js:2273
+#: templates/js/translated/part.js:2280
 msgid "Specified date is in the past"
 msgstr ""
 
-#: templates/js/translated/part.js:2279
+#: templates/js/translated/part.js:2286
 msgid "Speculative"
 msgstr ""
 
-#: templates/js/translated/part.js:2329
+#: templates/js/translated/part.js:2336
 msgid "No scheduling information available for this part"
 msgstr ""
 
-#: templates/js/translated/part.js:2335
+#: templates/js/translated/part.js:2342
 msgid "Error fetching scheduling information for this part"
 msgstr ""
 
-#: templates/js/translated/part.js:2431
+#: templates/js/translated/part.js:2438
 msgid "Scheduled Stock Quantities"
 msgstr ""
 
-#: templates/js/translated/part.js:2447
+#: templates/js/translated/part.js:2454
 msgid "Maximum Quantity"
 msgstr ""
 
-#: templates/js/translated/part.js:2492
+#: templates/js/translated/part.js:2499
 msgid "Minimum Stock Level"
 msgstr ""
 
