@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-01 11:05+0000\n"
-"PO-Revision-Date: 2022-12-31 11:29\n"
+"PO-Revision-Date: 2023-01-01 11:26\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -2764,10 +2764,8 @@ msgid "Part Stocktake"
 msgstr ""
 
 #: common/models.py:1779
-#, fuzzy
-#| msgid "copy version information"
 msgid "Display part stocktake information"
-msgstr "버전 정보 복사"
+msgstr ""
 
 #: common/models.py:1785
 msgid "Table String Length"
@@ -5663,10 +5661,8 @@ msgid "Refresh"
 msgstr ""
 
 #: part/templates/part/detail.html:65
-#, fuzzy
-#| msgid "Edit company information"
 msgid "Add stocktake information"
-msgstr "회사 정보 수정"
+msgstr ""
 
 #: part/templates/part/detail.html:66 part/templates/part/part_sidebar.html:49
 #: stock/admin.py:107 templates/js/translated/stock.js:1905
@@ -5809,10 +5805,8 @@ msgid "Part Import Template"
 msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:89
-#, fuzzy
-#| msgid "Download Image"
 msgid "Download Part Import Template"
-msgstr "이미지 다운로드"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:92
 #: templates/js/translated/bom.js:278 templates/js/translated/bom.js:312
@@ -8229,16 +8223,14 @@ msgstr "로그인"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10170,16 +10162,12 @@ msgid "Stock item has not been checked recently"
 msgstr ""
 
 #: templates/js/translated/part.js:769
-#, fuzzy
-#| msgid "Update Now"
 msgid "Update item"
-msgstr "지금 업데이트"
+msgstr ""
 
 #: templates/js/translated/part.js:770
-#, fuzzy
-#| msgid "Delete"
 msgid "Delete item"
-msgstr "삭제"
+msgstr ""
 
 #: templates/js/translated/part.js:871
 msgid "No stocktake information available"
@@ -10190,10 +10178,8 @@ msgid "Edit Stocktake Entry"
 msgstr ""
 
 #: templates/js/translated/part.js:914 templates/js/translated/part.js:945
-#, fuzzy
-#| msgid "Delete company"
 msgid "Delete Stocktake Entry"
-msgstr "회사 삭제"
+msgstr ""
 
 #: templates/js/translated/part.js:1086
 msgid "No variants found"
@@ -11396,3 +11382,4 @@ msgstr ""
 #: users/models.py:225
 msgid "Permission to delete items"
 msgstr ""
+
