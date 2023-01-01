@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-01 11:05+0000\n"
-"PO-Revision-Date: 2022-12-31 11:30\n"
+"PO-Revision-Date: 2023-01-01 11:26\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -5661,10 +5661,8 @@ msgid "Refresh"
 msgstr ""
 
 #: part/templates/part/detail.html:65
-#, fuzzy
-#| msgid "System Information"
 msgid "Add stocktake information"
-msgstr "Thông tin hệ thống"
+msgstr ""
 
 #: part/templates/part/detail.html:66 part/templates/part/part_sidebar.html:49
 #: stock/admin.py:107 templates/js/translated/stock.js:1905
@@ -7597,10 +7595,8 @@ msgid "Open in new tab"
 msgstr ""
 
 #: templates/InvenTree/settings/notifications.html:9
-#, fuzzy
-#| msgid "Global Settings"
 msgid "Global Notification Settings"
-msgstr "Cài đặt toàn cục"
+msgstr ""
 
 #: templates/InvenTree/settings/notifications.html:18
 msgid "Slug"
@@ -8227,16 +8223,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -11388,3 +11382,4 @@ msgstr ""
 #: users/models.py:225
 msgid "Permission to delete items"
 msgstr ""
+
