@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-01 11:05+0000\n"
-"PO-Revision-Date: 2022-12-31 11:30\n"
+"PO-Revision-Date: 2023-01-01 11:26\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -2760,10 +2760,8 @@ msgstr ""
 
 #: common/models.py:1778 part/templates/part/detail.html:61
 #: templates/js/translated/part.js:822
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Part Stocktake"
-msgstr "商品库存"
+msgstr ""
 
 #: common/models.py:1779
 msgid "Display part stocktake information"
@@ -5141,10 +5139,8 @@ msgid "Maximum historical sale price"
 msgstr ""
 
 #: part/models.py:2913
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Part for stocktake"
-msgstr "商品库存"
+msgstr ""
 
 #: part/models.py:2920
 msgid "Total available stock at time of stocktake"
@@ -5665,10 +5661,8 @@ msgid "Refresh"
 msgstr ""
 
 #: part/templates/part/detail.html:65
-#, fuzzy
-#| msgid "No user information"
 msgid "Add stocktake information"
-msgstr "没有用户信息"
+msgstr ""
 
 #: part/templates/part/detail.html:66 part/templates/part/part_sidebar.html:49
 #: stock/admin.py:107 templates/js/translated/stock.js:1905
@@ -5807,16 +5801,12 @@ msgid "The part import file must contain the required named columns as provided 
 msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:33
-#, fuzzy
-#| msgid "Parameter Template"
 msgid "Part Import Template"
-msgstr "参数模板"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:89
-#, fuzzy
-#| msgid "Download Image"
 msgid "Download Part Import Template"
-msgstr "下载图片"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:92
 #: templates/js/translated/bom.js:278 templates/js/translated/bom.js:312
@@ -6290,10 +6280,8 @@ msgid "Allow sending of emails for event notifications"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:45
-#, fuzzy
-#| msgid "Enable stock expiry functionality"
 msgid "Enable slack notifications"
-msgstr "启用库存到期功能"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:46
 msgid "Allow sending of slack channel messages for event notifications"
@@ -6543,10 +6531,8 @@ msgid "Asset file description"
 msgstr ""
 
 #: report/templates/report/inventree_bill_of_materials_report.html:133
-#, fuzzy
-#| msgid "Attention needed"
 msgid "Materials needed"
-msgstr "需要关注"
+msgstr ""
 
 #: report/templates/report/inventree_build_order_base.html:146
 msgid "Required For"
@@ -8237,16 +8223,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10178,34 +10162,24 @@ msgid "Stock item has not been checked recently"
 msgstr ""
 
 #: templates/js/translated/part.js:769
-#, fuzzy
-#| msgid "Update Now"
 msgid "Update item"
-msgstr "立即更新"
+msgstr ""
 
 #: templates/js/translated/part.js:770
-#, fuzzy
-#| msgid "Delete part"
 msgid "Delete item"
-msgstr "删除商品"
+msgstr ""
 
 #: templates/js/translated/part.js:871
-#, fuzzy
-#| msgid "No translations available"
 msgid "No stocktake information available"
-msgstr "无可用翻译"
+msgstr ""
 
 #: templates/js/translated/part.js:910 templates/js/translated/part.js:933
-#, fuzzy
-#| msgid "Edit Attachment"
 msgid "Edit Stocktake Entry"
-msgstr "编辑附件"
+msgstr ""
 
 #: templates/js/translated/part.js:914 templates/js/translated/part.js:945
-#, fuzzy
-#| msgid "Delete Stock Location"
 msgid "Delete Stocktake Entry"
-msgstr "删除仓储地点"
+msgstr ""
 
 #: templates/js/translated/part.js:1086
 msgid "No variants found"
@@ -11080,10 +11054,8 @@ msgid "Purchasable"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:504
-#, fuzzy
-#| msgid "Legacy stock tracking entry"
 msgid "Has stocktake entries"
-msgstr "旧库存跟踪条目"
+msgstr ""
 
 #: templates/js/translated/tables.js:70
 msgid "Display calendar view"
@@ -11410,3 +11382,4 @@ msgstr "编辑项目权限"
 #: users/models.py:225
 msgid "Permission to delete items"
 msgstr "删除项目权限"
+
