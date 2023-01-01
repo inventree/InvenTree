@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-01 11:05+0000\n"
-"PO-Revision-Date: 2022-12-31 11:30\n"
+"PO-Revision-Date: 2023-01-01 11:26\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -2760,16 +2760,12 @@ msgstr ""
 
 #: common/models.py:1778 part/templates/part/detail.html:61
 #: templates/js/translated/part.js:822
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Part Stocktake"
-msgstr "Parça Stoku"
+msgstr ""
 
 #: common/models.py:1779
-#, fuzzy
-#| msgid "copy version information"
 msgid "Display part stocktake information"
-msgstr "sürüm bilgisini kopyala"
+msgstr ""
 
 #: common/models.py:1785
 msgid "Table String Length"
@@ -5143,10 +5139,8 @@ msgid "Maximum historical sale price"
 msgstr ""
 
 #: part/models.py:2913
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Part for stocktake"
-msgstr "Parça Stoku"
+msgstr ""
 
 #: part/models.py:2920
 msgid "Total available stock at time of stocktake"
@@ -5667,10 +5661,8 @@ msgid "Refresh"
 msgstr "Yenile"
 
 #: part/templates/part/detail.html:65
-#, fuzzy
-#| msgid "Edit User Information"
 msgid "Add stocktake information"
-msgstr "Kullanıcı Bilgisini Düzenle"
+msgstr ""
 
 #: part/templates/part/detail.html:66 part/templates/part/part_sidebar.html:49
 #: stock/admin.py:107 templates/js/translated/stock.js:1905
@@ -5805,22 +5797,16 @@ msgid "Requirements for part import"
 msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:33
-#, fuzzy
-#| msgid "The BOM file must contain the required named columns as provided in the "
 msgid "The part import file must contain the required named columns as provided in the "
-msgstr "Malzeme Listesi dosyası gerekli sütün adlarını sağlandığı şekilde içermelidir "
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:33
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Import Template"
-msgstr "Parça Test Şablonları"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:89
-#, fuzzy
-#| msgid "Delete Part Parameter Template"
 msgid "Download Part Import Template"
-msgstr "Parça Parametre Şablonu Sil"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:92
 #: templates/js/translated/bom.js:278 templates/js/translated/bom.js:312
@@ -6294,10 +6280,8 @@ msgid "Allow sending of emails for event notifications"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:45
-#, fuzzy
-#| msgid "New Notifications"
 msgid "Enable slack notifications"
-msgstr "Yeni Bildirimler"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:46
 msgid "Allow sending of slack channel messages for event notifications"
@@ -6547,10 +6531,8 @@ msgid "Asset file description"
 msgstr ""
 
 #: report/templates/report/inventree_bill_of_materials_report.html:133
-#, fuzzy
-#| msgid "Attention needed"
 msgid "Materials needed"
-msgstr "Dikkat gerekli"
+msgstr ""
 
 #: report/templates/report/inventree_build_order_base.html:146
 msgid "Required For"
@@ -7613,10 +7595,8 @@ msgid "Open in new tab"
 msgstr ""
 
 #: templates/InvenTree/settings/notifications.html:9
-#, fuzzy
-#| msgid "Show Notifications"
 msgid "Global Notification Settings"
-msgstr "Bildirimleri Göster"
+msgstr ""
 
 #: templates/InvenTree/settings/notifications.html:18
 msgid "Slug"
@@ -8243,16 +8223,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10184,34 +10162,24 @@ msgid "Stock item has not been checked recently"
 msgstr ""
 
 #: templates/js/translated/part.js:769
-#, fuzzy
-#| msgid "Update Available"
 msgid "Update item"
-msgstr "Güncelleme Mevcut"
+msgstr ""
 
 #: templates/js/translated/part.js:770
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete item"
-msgstr "Parçaları sil"
+msgstr ""
 
 #: templates/js/translated/part.js:871
-#, fuzzy
-#| msgid "No stock location set"
 msgid "No stocktake information available"
-msgstr "Stok konumu ayarlanmadı"
+msgstr ""
 
 #: templates/js/translated/part.js:910 templates/js/translated/part.js:933
-#, fuzzy
-#| msgid "Edit Attachment"
 msgid "Edit Stocktake Entry"
-msgstr "Ek Düzenle"
+msgstr ""
 
 #: templates/js/translated/part.js:914 templates/js/translated/part.js:945
-#, fuzzy
-#| msgid "Delete Stock Location"
 msgid "Delete Stocktake Entry"
-msgstr "Stok Konumunu Sil"
+msgstr ""
 
 #: templates/js/translated/part.js:1086
 msgid "No variants found"
@@ -11086,10 +11054,8 @@ msgid "Purchasable"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:504
-#, fuzzy
-#| msgid "Legacy stock tracking entry"
 msgid "Has stocktake entries"
-msgstr "Eski stok izleme girişi"
+msgstr ""
 
 #: templates/js/translated/tables.js:70
 msgid "Display calendar view"
@@ -11416,3 +11382,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:225
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
