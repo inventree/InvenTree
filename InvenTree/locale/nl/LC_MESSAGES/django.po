@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-01 11:05+0000\n"
-"PO-Revision-Date: 2022-12-31 11:29\n"
+"PO-Revision-Date: 2023-01-01 11:26\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -2760,16 +2760,12 @@ msgstr ""
 
 #: common/models.py:1778 part/templates/part/detail.html:61
 #: templates/js/translated/part.js:822
-#, fuzzy
-#| msgid "Search Stock"
 msgid "Part Stocktake"
-msgstr "Zoek in Voorraad"
+msgstr ""
 
 #: common/models.py:1779
-#, fuzzy
-#| msgid "Shipment tracking information"
 msgid "Display part stocktake information"
-msgstr "Zending volginformatie"
+msgstr ""
 
 #: common/models.py:1785
 msgid "Table String Length"
@@ -5161,22 +5157,16 @@ msgid "Date"
 msgstr "Datum"
 
 #: part/models.py:2925
-#, fuzzy
-#| msgid "Date order was completed"
 msgid "Date stocktake was performed"
-msgstr "Order voltooid op datum"
+msgstr ""
 
 #: part/models.py:2933
-#, fuzzy
-#| msgid "Additional context for this line"
 msgid "Additional notes"
-msgstr "Additionele context voor deze regel"
+msgstr ""
 
 #: part/models.py:2941
-#, fuzzy
-#| msgid "Purchase order for this stock item"
 msgid "User who performed this stocktake"
-msgstr "Inkooporder voor dit voorraadartikel"
+msgstr ""
 
 #: part/models.py:3091
 msgid "Test templates can only be created for trackable parts"
@@ -5671,10 +5661,8 @@ msgid "Refresh"
 msgstr ""
 
 #: part/templates/part/detail.html:65
-#, fuzzy
-#| msgid "Edit company information"
 msgid "Add stocktake information"
-msgstr "Bedrijfsinformatie bewerken"
+msgstr ""
 
 #: part/templates/part/detail.html:66 part/templates/part/part_sidebar.html:49
 #: stock/admin.py:107 templates/js/translated/stock.js:1905
@@ -5793,10 +5781,8 @@ msgstr ""
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:14
-#, fuzzy
-#| msgid "Insufficient stock available"
 msgid "Insufficient privileges."
-msgstr "Onvoldoende voorraad beschikbaar"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:8
 msgid "Return to Parts"
@@ -5815,16 +5801,12 @@ msgid "The part import file must contain the required named columns as provided 
 msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:33
-#, fuzzy
-#| msgid "Parameter Template"
 msgid "Part Import Template"
-msgstr "Parameter Template"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:89
-#, fuzzy
-#| msgid "Download Image"
 msgid "Download Part Import Template"
-msgstr "Afbeelding Downloaden"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:92
 #: templates/js/translated/bom.js:278 templates/js/translated/bom.js:312
@@ -6298,10 +6280,8 @@ msgid "Allow sending of emails for event notifications"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:45
-#, fuzzy
-#| msgid "Enable URL integration"
 msgid "Enable slack notifications"
-msgstr "Activeer URL-integratie"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:46
 msgid "Allow sending of slack channel messages for event notifications"
@@ -6551,10 +6531,8 @@ msgid "Asset file description"
 msgstr ""
 
 #: report/templates/report/inventree_bill_of_materials_report.html:133
-#, fuzzy
-#| msgid "Attention needed"
 msgid "Materials needed"
-msgstr "Aandacht nodig"
+msgstr ""
 
 #: report/templates/report/inventree_build_order_base.html:146
 msgid "Required For"
@@ -8245,16 +8223,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10182,40 +10158,28 @@ msgid "Salable part"
 msgstr ""
 
 #: templates/js/translated/part.js:761
-#, fuzzy
-#| msgid "Stock item has not been assigned"
 msgid "Stock item has not been checked recently"
-msgstr "Voorraadartikel is niet toegewezen"
+msgstr ""
 
 #: templates/js/translated/part.js:769
-#, fuzzy
-#| msgid "Update Unit Price"
 msgid "Update item"
-msgstr "Werk Stukprijs Bij"
+msgstr ""
 
 #: templates/js/translated/part.js:770
-#, fuzzy
-#| msgid "Delete line"
 msgid "Delete item"
-msgstr "Verwijder regel"
+msgstr ""
 
 #: templates/js/translated/part.js:871
-#, fuzzy
-#| msgid "No supplier information available"
 msgid "No stocktake information available"
-msgstr "Geen leveranciersinformatie beschikbaar"
+msgstr ""
 
 #: templates/js/translated/part.js:910 templates/js/translated/part.js:933
-#, fuzzy
-#| msgid "Edit Stock Location"
 msgid "Edit Stocktake Entry"
-msgstr "Bewerk Voorraadlocatie"
+msgstr ""
 
 #: templates/js/translated/part.js:914 templates/js/translated/part.js:945
-#, fuzzy
-#| msgid "Delete Stock Location"
 msgid "Delete Stocktake Entry"
-msgstr "Verwijder Voorraadlocatie"
+msgstr ""
 
 #: templates/js/translated/part.js:1086
 msgid "No variants found"
@@ -11090,10 +11054,8 @@ msgid "Purchasable"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:504
-#, fuzzy
-#| msgid "Legacy stock tracking entry"
 msgid "Has stocktake entries"
-msgstr "Verouderde volgcode"
+msgstr ""
 
 #: templates/js/translated/tables.js:70
 msgid "Display calendar view"
@@ -11420,3 +11382,4 @@ msgstr ""
 #: users/models.py:225
 msgid "Permission to delete items"
 msgstr ""
+
