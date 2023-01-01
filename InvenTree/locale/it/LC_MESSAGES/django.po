@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-01 11:05+0000\n"
-"PO-Revision-Date: 2022-12-31 11:29\n"
+"PO-Revision-Date: 2023-01-01 11:26\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -2760,10 +2760,8 @@ msgstr ""
 
 #: common/models.py:1778 part/templates/part/detail.html:61
 #: templates/js/translated/part.js:822
-#, fuzzy
-#| msgid "Last Stocktake"
 msgid "Part Stocktake"
-msgstr "Ultimo Inventario"
+msgstr ""
 
 #: common/models.py:1779
 msgid "Display part stocktake information"
@@ -5141,10 +5139,8 @@ msgid "Maximum historical sale price"
 msgstr ""
 
 #: part/models.py:2913
-#, fuzzy
-#| msgid "Last Stocktake"
 msgid "Part for stocktake"
-msgstr "Ultimo Inventario"
+msgstr ""
 
 #: part/models.py:2920
 msgid "Total available stock at time of stocktake"
@@ -5161,10 +5157,8 @@ msgid "Date"
 msgstr "Data"
 
 #: part/models.py:2925
-#, fuzzy
-#| msgid "No stocktake performed"
 msgid "Date stocktake was performed"
-msgstr "Nessun inventario eseguito"
+msgstr ""
 
 #: part/models.py:2933
 msgid "Additional notes"
@@ -5667,10 +5661,8 @@ msgid "Refresh"
 msgstr "Aggiorna"
 
 #: part/templates/part/detail.html:65
-#, fuzzy
-#| msgid "Edit company information"
 msgid "Add stocktake information"
-msgstr "Modifica le informazioni dell'azienda"
+msgstr ""
 
 #: part/templates/part/detail.html:66 part/templates/part/part_sidebar.html:49
 #: stock/admin.py:107 templates/js/translated/stock.js:1905
@@ -5809,16 +5801,12 @@ msgid "The part import file must contain the required named columns as provided 
 msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:33
-#, fuzzy
-#| msgid "Parts imported"
 msgid "Part Import Template"
-msgstr "Articoli importati"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:89
-#, fuzzy
-#| msgid "Download Image"
 msgid "Download Part Import Template"
-msgstr "Download Immagine"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:92
 #: templates/js/translated/bom.js:278 templates/js/translated/bom.js:312
@@ -6292,10 +6280,8 @@ msgid "Allow sending of emails for event notifications"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:45
-#, fuzzy
-#| msgid "Low stock notification"
 msgid "Enable slack notifications"
-msgstr "Notifica di magazzino bassa"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:46
 msgid "Allow sending of slack channel messages for event notifications"
@@ -6545,10 +6531,8 @@ msgid "Asset file description"
 msgstr ""
 
 #: report/templates/report/inventree_bill_of_materials_report.html:133
-#, fuzzy
-#| msgid "Attention needed"
 msgid "Materials needed"
-msgstr "Attenzione necessaria"
+msgstr ""
 
 #: report/templates/report/inventree_build_order_base.html:146
 msgid "Required For"
@@ -8239,16 +8223,14 @@ msgstr "Accedi"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10176,40 +10158,28 @@ msgid "Salable part"
 msgstr "Parte vendibile"
 
 #: templates/js/translated/part.js:761
-#, fuzzy
-#| msgid "Stock item has been rejected"
 msgid "Stock item has not been checked recently"
-msgstr "L'articolo stock è stato rifiutato"
+msgstr ""
 
 #: templates/js/translated/part.js:769
-#, fuzzy
-#| msgid "Update Now"
 msgid "Update item"
-msgstr "Aggiorna Ora"
+msgstr ""
 
 #: templates/js/translated/part.js:770
-#, fuzzy
-#| msgid "Delete Items"
 msgid "Delete item"
-msgstr "Elimina Elementi"
+msgstr ""
 
 #: templates/js/translated/part.js:871
-#, fuzzy
-#| msgid "No stocktake performed"
 msgid "No stocktake information available"
-msgstr "Nessun inventario eseguito"
+msgstr ""
 
 #: templates/js/translated/part.js:910 templates/js/translated/part.js:933
-#, fuzzy
-#| msgid "Last Stocktake"
 msgid "Edit Stocktake Entry"
-msgstr "Ultimo Inventario"
+msgstr ""
 
 #: templates/js/translated/part.js:914 templates/js/translated/part.js:945
-#, fuzzy
-#| msgid "Delete Stock"
 msgid "Delete Stocktake Entry"
-msgstr "Elimina Stock"
+msgstr ""
 
 #: templates/js/translated/part.js:1086
 msgid "No variants found"
@@ -11084,10 +11054,8 @@ msgid "Purchasable"
 msgstr "Acquistabile"
 
 #: templates/js/translated/table_filters.js:504
-#, fuzzy
-#| msgid "No stocktake performed"
 msgid "Has stocktake entries"
-msgstr "Nessun inventario eseguito"
+msgstr ""
 
 #: templates/js/translated/tables.js:70
 msgid "Display calendar view"
@@ -11414,3 +11382,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:225
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
