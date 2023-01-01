@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-01 11:05+0000\n"
-"PO-Revision-Date: 2022-12-31 11:29\n"
+"PO-Revision-Date: 2023-01-01 11:26\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1182,8 +1182,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:383
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:452
@@ -1322,11 +1321,11 @@ msgstr "Helyettesítő alkatrészek foglalásának engedélyezése"
 
 #: build/serializers.py:850
 msgid "Optional Items"
-msgstr ""
+msgstr "Opcionális tételek"
 
 #: build/serializers.py:851
 msgid "Allocate optional BOM items to build order"
-msgstr ""
+msgstr "Opcionális tételek lefoglalása a gyártáshoz"
 
 #: build/tasks.py:100
 msgid "Stock required for build order"
@@ -2182,19 +2181,19 @@ msgstr "A sorozatszámoknak egyedinek kell lennie a teljes készletre vonatkozó
 
 #: common/models.py:1225
 msgid "Autofill Serial Numbers"
-msgstr ""
+msgstr "Sorozatszámok automatikus kitöltése"
 
 #: common/models.py:1226
 msgid "Autofill serial numbers in forms"
-msgstr ""
+msgstr "Sorozatszámok automatikus kitöltése a formokon"
 
 #: common/models.py:1232
 msgid "Delete Depleted Stock"
-msgstr ""
+msgstr "Kimerült készlet törlése"
 
 #: common/models.py:1233
 msgid "Determines default behaviour when a stock item is depleted"
-msgstr ""
+msgstr "Alapértelmezett művelet mikor a készlet tétel elfogy"
 
 #: common/models.py:1239
 msgid "Batch Code Template"
@@ -2762,16 +2761,12 @@ msgstr "Alkatrész ütemezési információk megjelenítése"
 
 #: common/models.py:1778 part/templates/part/detail.html:61
 #: templates/js/translated/part.js:822
-#, fuzzy
-#| msgid "Last Stocktake"
 msgid "Part Stocktake"
-msgstr "Utolsó leltár"
+msgstr "Alkatrész leltár"
 
 #: common/models.py:1779
-#, fuzzy
-#| msgid "Display part scheduling information"
 msgid "Display part stocktake information"
-msgstr "Alkatrész ütemezési információk megjelenítése"
+msgstr "Alkatrész leltározási információk megjelenítése"
 
 #: common/models.py:1785
 msgid "Table String Length"
@@ -3838,7 +3833,7 @@ msgstr "Beszerzési rendelés"
 
 #: order/api.py:1258
 msgid "Unknown"
-msgstr ""
+msgstr "Ismeretlen"
 
 #: order/models.py:83
 msgid "Order description"
@@ -5145,14 +5140,12 @@ msgid "Maximum historical sale price"
 msgstr "Eddigi maximum eladási ár"
 
 #: part/models.py:2913
-#, fuzzy
-#| msgid "Last Stocktake"
 msgid "Part for stocktake"
-msgstr "Utolsó leltár"
+msgstr "Leltározható alkatrész"
 
 #: part/models.py:2920
 msgid "Total available stock at time of stocktake"
-msgstr ""
+msgstr "Teljes készlet a leltárkor"
 
 #: part/models.py:2924 part/templates/part/part_scheduling.html:13
 #: report/templates/report/inventree_test_report_base.html:97
@@ -5165,22 +5158,16 @@ msgid "Date"
 msgstr "Dátum"
 
 #: part/models.py:2925
-#, fuzzy
-#| msgid "No stocktake performed"
 msgid "Date stocktake was performed"
-msgstr "Még nem volt leltározva"
+msgstr "Leltározva ekkor"
 
 #: part/models.py:2933
-#, fuzzy
-#| msgid "Optional note field"
 msgid "Additional notes"
-msgstr "Opcionális megjegyzés mező"
+msgstr "További megjegyzések"
 
 #: part/models.py:2941
-#, fuzzy
-#| msgid "Purchase order for this stock item"
 msgid "User who performed this stocktake"
-msgstr "Beszerzés ehhez a készlet tételhez"
+msgstr "Leltározta"
 
 #: part/models.py:3091
 msgid "Test templates can only be created for trackable parts"
@@ -5675,10 +5662,8 @@ msgid "Refresh"
 msgstr "Frissítés"
 
 #: part/templates/part/detail.html:65
-#, fuzzy
-#| msgid "Package information"
 msgid "Add stocktake information"
-msgstr "Csomag információ"
+msgstr "Leltár információ hozzáadása"
 
 #: part/templates/part/detail.html:66 part/templates/part/part_sidebar.html:49
 #: stock/admin.py:107 templates/js/translated/stock.js:1905
@@ -5797,10 +5782,8 @@ msgstr "Teszt eredmény sablon hozzáadása"
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:14
-#, fuzzy
-#| msgid "Unsuffitient privileges."
 msgid "Insufficient privileges."
-msgstr "Nincs megfelelő jogosultság."
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:8
 msgid "Return to Parts"
@@ -5811,28 +5794,20 @@ msgid "Import Parts from File"
 msgstr "Alkatrészek importálása fájlból"
 
 #: part/templates/part/import_wizard/part_upload.html:31
-#, fuzzy
-#| msgid "Requirements for BOM upload"
 msgid "Requirements for part import"
-msgstr "Követelmények az alkatrészjegyzék feltöltéséhez"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:33
-#, fuzzy
-#| msgid "The BOM file must contain the required named columns as provided in the "
 msgid "The part import file must contain the required named columns as provided in the "
-msgstr "Az alkatrészjegyzék fájlnak tartalmaznia kell a szükséges elnevezéssel ellátott oszlopokat ahogy ebben van "
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:33
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Import Template"
-msgstr "Alkatrész teszt sablonok"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:89
-#, fuzzy
-#| msgid "Download BOM Template"
 msgid "Download Part Import Template"
-msgstr "Alkarészjegyzék sablon letöltése"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:92
 #: templates/js/translated/bom.js:278 templates/js/translated/bom.js:312
@@ -6306,16 +6281,12 @@ msgid "Allow sending of emails for event notifications"
 msgstr "Email küldés engedélyezése esemény értesítésekre"
 
 #: plugin/builtin/integration/core_notifications.py:45
-#, fuzzy
-#| msgid "Enable email notifications"
 msgid "Enable slack notifications"
-msgstr "Email értesítések engedélyezése"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:46
-#, fuzzy
-#| msgid "Allow sending of emails for event notifications"
 msgid "Allow sending of slack channel messages for event notifications"
-msgstr "Email küldés engedélyezése esemény értesítésekre"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:51
 msgid "Slack incoming webhook url"
@@ -6326,10 +6297,8 @@ msgid "URL that is used to send messages to a slack channel"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:162
-#, fuzzy
-#| msgid "Unlink"
 msgid "Open link"
-msgstr "Leválasztás"
+msgstr "Link megnyitása"
 
 #: plugin/models.py:33
 msgid "Plugin Metadata"
@@ -6563,10 +6532,8 @@ msgid "Asset file description"
 msgstr "Asset fájl leírása"
 
 #: report/templates/report/inventree_bill_of_materials_report.html:133
-#, fuzzy
-#| msgid "Attention needed"
 msgid "Materials needed"
-msgstr "Ellenőrizendő"
+msgstr "Szükséges alapanyagok"
 
 #: report/templates/report/inventree_build_order_base.html:146
 msgid "Required For"
@@ -7629,10 +7596,8 @@ msgid "Open in new tab"
 msgstr "Megnyitás új fülön"
 
 #: templates/InvenTree/settings/notifications.html:9
-#, fuzzy
-#| msgid "Notification Settings"
 msgid "Global Notification Settings"
-msgstr "Értesítési beállítások"
+msgstr "Globális értesítési beállítások"
 
 #: templates/InvenTree/settings/notifications.html:18
 msgid "Slug"
@@ -8259,16 +8224,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -8278,7 +8241,7 @@ msgstr "Elfelejtett jelszó?"
 
 #: templates/account/login.html:53
 msgid "Sign in using third-party SSO"
-msgstr ""
+msgstr "Bejelentkezés külső fél által használt SSO-val"
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:20
@@ -10196,40 +10159,28 @@ msgid "Salable part"
 msgstr "Értékesíthető alkatrész"
 
 #: templates/js/translated/part.js:761
-#, fuzzy
-#| msgid "Stock item has not been assigned"
 msgid "Stock item has not been checked recently"
-msgstr "Készlet tétel nincs hozzárendelve"
+msgstr "A készlet tétel mostanában nem volt ellenőrizve"
 
 #: templates/js/translated/part.js:769
-#, fuzzy
-#| msgid "Update Unit Price"
 msgid "Update item"
-msgstr "Egységár módosítása"
+msgstr "Tétel frissítése"
 
 #: templates/js/translated/part.js:770
-#, fuzzy
-#| msgid "Delete Items"
 msgid "Delete item"
-msgstr "Tételek törlése"
+msgstr "Tétel törlése"
 
 #: templates/js/translated/part.js:871
-#, fuzzy
-#| msgid "No supplier information available"
 msgid "No stocktake information available"
-msgstr "Nincs elérhető beszállítói információ"
+msgstr "Nincs elérhető leltár előzmény"
 
 #: templates/js/translated/part.js:910 templates/js/translated/part.js:933
-#, fuzzy
-#| msgid "Edit Stock Status"
 msgid "Edit Stocktake Entry"
-msgstr "Készlet állapot szerkesztése"
+msgstr "Leltár bejegyzés szerkesztése"
 
 #: templates/js/translated/part.js:914 templates/js/translated/part.js:945
-#, fuzzy
-#| msgid "Delete Stock Item"
 msgid "Delete Stocktake Entry"
-msgstr "Készlet tétel törlése"
+msgstr "Leltár bejegyzés törlése"
 
 #: templates/js/translated/part.js:1086
 msgid "No variants found"
@@ -11104,10 +11055,8 @@ msgid "Purchasable"
 msgstr "Beszerezhető"
 
 #: templates/js/translated/table_filters.js:504
-#, fuzzy
-#| msgid "No stocktake performed"
 msgid "Has stocktake entries"
-msgstr "Még nem volt leltározva"
+msgstr "Volt leltár"
 
 #: templates/js/translated/tables.js:70
 msgid "Display calendar view"
@@ -11434,3 +11383,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:225
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
