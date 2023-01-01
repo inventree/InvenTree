@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-01 11:05+0000\n"
-"PO-Revision-Date: 2022-12-31 11:29\n"
+"PO-Revision-Date: 2023-01-01 11:26\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -2760,16 +2760,12 @@ msgstr ""
 
 #: common/models.py:1778 part/templates/part/detail.html:61
 #: templates/js/translated/part.js:822
-#, fuzzy
-#| msgid "Last Stocktake"
 msgid "Part Stocktake"
-msgstr "Ostatnia inwentaryzacja"
+msgstr ""
 
 #: common/models.py:1779
-#, fuzzy
-#| msgid "Package information"
 msgid "Display part stocktake information"
-msgstr "Informacje o pakiecie"
+msgstr ""
 
 #: common/models.py:1785
 msgid "Table String Length"
@@ -5143,10 +5139,8 @@ msgid "Maximum historical sale price"
 msgstr ""
 
 #: part/models.py:2913
-#, fuzzy
-#| msgid "Last Stocktake"
 msgid "Part for stocktake"
-msgstr "Ostatnia inwentaryzacja"
+msgstr ""
 
 #: part/models.py:2920
 msgid "Total available stock at time of stocktake"
@@ -5171,10 +5165,8 @@ msgid "Additional notes"
 msgstr ""
 
 #: part/models.py:2941
-#, fuzzy
-#| msgid "User who checked this shipment"
 msgid "User who performed this stocktake"
-msgstr "Użytkownik, który sprawdził tę wysyłkę"
+msgstr ""
 
 #: part/models.py:3091
 msgid "Test templates can only be created for trackable parts"
@@ -5669,10 +5661,8 @@ msgid "Refresh"
 msgstr "Odśwież"
 
 #: part/templates/part/detail.html:65
-#, fuzzy
-#| msgid "Package information"
 msgid "Add stocktake information"
-msgstr "Informacje o pakiecie"
+msgstr ""
 
 #: part/templates/part/detail.html:66 part/templates/part/part_sidebar.html:49
 #: stock/admin.py:107 templates/js/translated/stock.js:1905
@@ -5791,10 +5781,8 @@ msgstr ""
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:14
-#, fuzzy
-#| msgid "Unsuffitient privileges."
 msgid "Insufficient privileges."
-msgstr "Niewystarczające uprawnienia."
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:8
 msgid "Return to Parts"
@@ -5813,16 +5801,12 @@ msgid "The part import file must contain the required named columns as provided 
 msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:33
-#, fuzzy
-#| msgid "Part Import"
 msgid "Part Import Template"
-msgstr "Import części"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:89
-#, fuzzy
-#| msgid "Download BOM Template"
 msgid "Download Part Import Template"
-msgstr "Pobierz szablon BOM-u"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:92
 #: templates/js/translated/bom.js:278 templates/js/translated/bom.js:312
@@ -6296,10 +6280,8 @@ msgid "Allow sending of emails for event notifications"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:45
-#, fuzzy
-#| msgid "Enable app integration"
 msgid "Enable slack notifications"
-msgstr "Włącz integrację z aplikacją"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:46
 msgid "Allow sending of slack channel messages for event notifications"
@@ -6314,10 +6296,8 @@ msgid "URL that is used to send messages to a slack channel"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:162
-#, fuzzy
-#| msgid "Unlink"
 msgid "Open link"
-msgstr "Rozłącz"
+msgstr ""
 
 #: plugin/models.py:33
 msgid "Plugin Metadata"
@@ -6551,10 +6531,8 @@ msgid "Asset file description"
 msgstr ""
 
 #: report/templates/report/inventree_bill_of_materials_report.html:133
-#, fuzzy
-#| msgid "Attention needed"
 msgid "Materials needed"
-msgstr "Wymaga uwagi"
+msgstr ""
 
 #: report/templates/report/inventree_build_order_base.html:146
 msgid "Required For"
@@ -7617,10 +7595,8 @@ msgid "Open in new tab"
 msgstr "Otwórz w nowej karcie"
 
 #: templates/InvenTree/settings/notifications.html:9
-#, fuzzy
-#| msgid "Global Settings"
 msgid "Global Notification Settings"
-msgstr "Ustawienia globalne"
+msgstr ""
 
 #: templates/InvenTree/settings/notifications.html:18
 msgid "Slug"
@@ -8247,22 +8223,18 @@ msgstr "Zaloguj się"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
-"Zaloguj się za pomocą jednego\n"
+msgstr "Zaloguj się za pomocą jednego\n"
 "istniejących kont stron trzecich lub  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">zarejestruj się</a>\n"
 "w celu założenia konta i zaloguj się poniżej:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
-"Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
+msgstr "Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
 "<a href=\"%(signup_url)s\">zarejstruj się</a>."
 
 #: templates/account/login.html:47
@@ -10193,34 +10165,24 @@ msgid "Stock item has not been checked recently"
 msgstr ""
 
 #: templates/js/translated/part.js:769
-#, fuzzy
-#| msgid "Update Unit Price"
 msgid "Update item"
-msgstr "Zaktualizuj cenę jednostkową"
+msgstr ""
 
 #: templates/js/translated/part.js:770
-#, fuzzy
-#| msgid "Delete Items"
 msgid "Delete item"
-msgstr "Usuń elementy"
+msgstr ""
 
 #: templates/js/translated/part.js:871
-#, fuzzy
-#| msgid "No translations available"
 msgid "No stocktake information available"
-msgstr "Brak dostępnych tłumaczeń"
+msgstr ""
 
 #: templates/js/translated/part.js:910 templates/js/translated/part.js:933
-#, fuzzy
-#| msgid "Last Stocktake"
 msgid "Edit Stocktake Entry"
-msgstr "Ostatnia inwentaryzacja"
+msgstr ""
 
 #: templates/js/translated/part.js:914 templates/js/translated/part.js:945
-#, fuzzy
-#| msgid "Delete Stock"
 msgid "Delete Stocktake Entry"
-msgstr "Usuń stan magazynowy"
+msgstr ""
 
 #: templates/js/translated/part.js:1086
 msgid "No variants found"
@@ -11095,10 +11057,8 @@ msgid "Purchasable"
 msgstr "Możliwość zakupu"
 
 #: templates/js/translated/table_filters.js:504
-#, fuzzy
-#| msgid "Last Stocktake"
 msgid "Has stocktake entries"
-msgstr "Ostatnia inwentaryzacja"
+msgstr ""
 
 #: templates/js/translated/tables.js:70
 msgid "Display calendar view"
@@ -11425,3 +11385,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:225
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
