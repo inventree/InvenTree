@@ -1375,7 +1375,7 @@ function loadStockTestResultsTable(table, options) {
             },
             {
                 field: 'test_name',
-                title: '{% trans "Test Name" %}',
+                title: '{% trans "Test" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var html = value;
@@ -1391,6 +1391,13 @@ function loadStockTestResultsTable(table, options) {
                     }
 
                     return html;
+                }
+            },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                formatter: function(value, row) {
+                    return row.description || row.test_description;
                 }
             },
             {
@@ -1474,6 +1481,7 @@ function loadStockTestResultsTable(table, options) {
                                 if (key == row.key) {
 
                                     item.test_name = row.test_name;
+                                    item.test_description = row.description;
                                     item.required = row.required;
 
                                     if (row.result == null) {
