@@ -192,6 +192,7 @@ class MethodStorageClass:
         for item in current_method:
             plugin = item.get_plugin(item)
             ref = f'{plugin.package_path}_{item.METHOD_NAME}' if plugin else item.METHOD_NAME
+            item.plugin = plugin() if plugin else None
             filtered_list[ref] = item
 
         storage.liste = list(filtered_list.values())
