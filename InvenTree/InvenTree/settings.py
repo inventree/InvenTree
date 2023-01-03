@@ -17,7 +17,6 @@ from pathlib import Path
 
 import django.conf.locale
 import django.core.exceptions
-
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
