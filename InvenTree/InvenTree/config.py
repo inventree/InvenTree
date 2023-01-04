@@ -8,6 +8,13 @@ import string
 from pathlib import Path
 
 logger = logging.getLogger('inventree')
+CONIFG_DATA = None
+
+
+def set_global_config(data):
+    """Set the global configuration data (normally in config.yaml)."""
+    global CONFIG_DATA
+    CONFIG_DATA = data
 
 
 def is_true(x):
@@ -58,6 +65,9 @@ def get_config_file(create=True) -> Path:
 
 def load_config_data() -> map:
     """Load configuration data from the config file."""
+
+    if CONIFG_DATA is not None:
+        return CONIFG_DATA
 
     import yaml
 

@@ -25,7 +25,8 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from . import config
-from .config import get_boolean_setting, get_custom_file, get_setting
+from .config import (get_boolean_setting, get_custom_file, get_setting,
+                     set_global_config)
 
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
@@ -53,6 +54,7 @@ BASE_DIR = config.get_base_dir()
 
 # Load configuration data
 CONFIG = config.load_config_data()
+set_global_config(CONFIG)
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
