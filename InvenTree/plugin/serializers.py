@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
+from InvenTree.tasks import check_for_migrations, offload_task
 from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
 
 
@@ -155,6 +156,9 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         if success:
             with open(settings.PLUGIN_FILE, "a") as plugin_file:
                 plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
+
+        # Check for migrations
+        offload_task(check_for_migrations, worker=True)
 
         return ret
 
