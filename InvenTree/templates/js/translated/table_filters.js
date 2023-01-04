@@ -280,6 +280,14 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Has purchase price" %}',
                 description: '{% trans "Show stock items which have a purchase price set" %}',
             },
+            expiry_date_lte: {
+                type: 'date',
+                title: '{% trans "Expiry Date before" %}',
+            },
+            expiry_date_gte: {
+                type: 'date',
+                title: '{% trans "Expiry Date after" %}',
+            },
         };
 
         // Optional filters if stock expiry functionality is enabled
