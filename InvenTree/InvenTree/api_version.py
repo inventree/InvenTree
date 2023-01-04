@@ -2,10 +2,12 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 86
+INVENTREE_API_VERSION = 87
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+v87 -> 2023-01-04 : https://github.com/inventree/InvenTree/pull/4067
+    - Add API date filter for stock table on Expiry date
 
 v86 -> 2022-12-22 : https://github.com/inventree/InvenTree/pull/4069
     - Adds API endpoints for part stocktake
