@@ -31,7 +31,7 @@ class InvenTreeConfig(AppConfig):
         - Starting regular tasks
         - Updateing exchange rates
         - Collecting notification mehods
-        - Adding users set in the current enviroment
+        - Adding users set in the current environment
         """
         if canAppAccessDatabase() or settings.TESTING_ENV:
             InvenTree.tasks.check_for_migrations(worker=False)
