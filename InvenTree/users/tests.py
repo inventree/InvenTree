@@ -217,6 +217,11 @@ class OwnerModelTest(InvenTreeTestCase):
         # user list with search
         self.do_request(reverse('api-owner-list'), {'search': 'user'})
 
+        # debug stmt
+        print(f'user: {self.user}')
+        print(f'groups: {self.user.groups.all()}')
+        print(f'owners: {Owner.objects.all()}')
+
         # owner detail - user
         response = self.do_request(reverse('api-owner-detail', kwargs={'pk': 1}), {})
         self.assertEqual(response['name'], self.username)
