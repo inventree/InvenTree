@@ -856,10 +856,10 @@ PLUGINS_ENABLED = get_boolean_setting('INVENTREE_PLUGINS_ENABLED', 'plugins_enab
 PLUGIN_FILE = config.get_plugin_file()
 
 # Plugin test settings
-PLUGIN_TESTING = CONFIG.get('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
-PLUGIN_TESTING_SETUP = CONFIG.get('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
+PLUGIN_TESTING = get_setting('PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
+PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
 PLUGIN_TESTING_EVENTS = False                  # Flag if events are tested right now
-PLUGIN_RETRY = CONFIG.get('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?
+PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 'PLUGIN_RETRY', 5)  # how often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
 
 # User interface customization values
