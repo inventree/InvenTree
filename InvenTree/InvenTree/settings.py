@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 import django.conf.locale
+import django.core.exceptions
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
@@ -848,9 +849,10 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
     for key, val in inventree_tags.items():
         sentry_sdk.set_tag(f'inventree_{key}', val)
 
-# In-database error logging
+# Ignore these error typeps for in-database error logging
 IGNORED_ERRORS = [
-    Http404
+    Http404,
+    django.core.exceptions.PermissionDenied,
 ]
 
 # Maintenance mode
