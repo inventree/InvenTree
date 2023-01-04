@@ -113,12 +113,6 @@ function addTableFilter(tableKey, filterKey, filterValue) {
     var filters = loadTableFilters(tableKey);
 
     var settings = getFilterSettings(tableKey, filterKey);
-    // process value regarding filter type
-    if (settings.type == 'date') {
-        d = Date.parse(filterValue);
-        d = new Date(d);
-        filterValue=d.getTime();
-    }
 
     filters[filterKey] = filterValue;
 
@@ -454,11 +448,6 @@ function getFilterOptionValue(tableKey, filterKey, valueKey) {
         if (value == '0') return '{% trans "false" %}';
 
         return value;
-    }
-    // Lookup for Date timestamp
-    if (filter.type == 'date') {
-        d = new Date(parseInt(value));
-        return d.toISOString().split('T')[0];
     }
 
     // Iterate through a list of options

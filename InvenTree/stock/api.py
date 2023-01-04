@@ -833,14 +833,19 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
             # Filter by 'expiry date'
             expired_date_lte = params.get('expiry_date_lte', None)
             if expired_date_lte is not None:
-                date_lte = datetime.fromtimestamp(int(expired_date_lte) / 1e3)
-                queryset = queryset.filter(expiry_date__lte=date_lte)
+                try:
+                    date_lte = datetime.fromisoformat(expired_date_lte)
+                    queryset = queryset.filter(expiry_date__lte=date_lte)
+                except (ValueError, TypeError):
+                    pass
 
             expiry_date_gte = params.get('expiry_date_gte', None)
             if expiry_date_gte is not None:
-                date_gte = datetime.fromtimestamp(int(expiry_date_gte) / 1e3)
-                queryset = queryset.filter(expiry_date__gte=date_gte)
-
+                try:
+                    date_gte = datetime.fromisoformat(expiry_date_gte)
+                    queryset = queryset.filter(expiry_date__gte=date_gte)
+                except (ValueError, TypeError):
+                    pass
             # Filter by 'stale' status
             stale = params.get('stale', None)
 
