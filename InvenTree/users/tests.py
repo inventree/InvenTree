@@ -216,9 +216,19 @@ class OwnerModelTest(InvenTreeTestCase):
         self.do_request(reverse('api-owner-list'), {})
         # user list with search
         self.do_request(reverse('api-owner-list'), {'search': 'user'})
-        # user detail
-        # TODO fix this test
-        # self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {})
+
+        # owner detail - user
+        response = self.do_request(reverse('api-owner-detail', kwargs={'pk': 1}), {})
+        self.assertEqual(response['name'], self.username)
+        self.assertEqual(response['label'], 'user')
+        self.assertEqual(response['owner_id'], self.user.id)
+
+        # owner detail - group
+        group = self.user.groups.first()
+        response = self.do_request(reverse('api-owner-detail', kwargs={'pk': 2}), {})
+        self.assertEqual(response['name'], group.name)
+        self.assertEqual(response['label'], 'group')
+        self.assertEqual(response['owner_id'], group.pk)
 
         # own user detail
         response_detail = self.do_request(reverse('user-detail', kwargs={'pk': self.user.id}), {}, 200)
