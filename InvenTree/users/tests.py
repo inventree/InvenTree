@@ -220,6 +220,13 @@ class OwnerModelTest(InvenTreeTestCase):
         # TODO fix this test
         # self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {})
 
+        # own user detail
+        response_detail = self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {}, 200)
+        self.assertEqual(response_detail['username'], self.username)
+
+        respone_me = self.do_request(reverse('api-user-me', kwargs={'pk': self.user.id}), {}, 200)
+        self.assertEqual(response_detail, respone_me)
+
     def test_token(self):
         """Test token mechanisms."""
         self.client.logout()
@@ -242,3 +249,7 @@ class OwnerModelTest(InvenTreeTestCase):
         # token second delete
         response = self.client.delete(reverse('api-token'), {}, format='json')
         self.assertEqual(response.status_code, 400)
+
+        # test user is associated with token
+        respone_me = self.do_request(reverse('api-user-me', kwargs={'pk': self.user.id}), {}, 200)
+        self.assertEqual(respone_me['username'], self.username)
