@@ -234,7 +234,7 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
-DEBUG_TOOLBAR_ENABLED = DEBUG and CONFIG.get('debug_toolbar', False)
+DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
 
 # If the debug toolbar is enabled, add the modules
 if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
@@ -622,7 +622,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Extra (optional) URL validators
 # See https://docs.djangoproject.com/en/2.2/ref/validators/#django.core.validators.URLValidator
 
-EXTRA_URL_SCHEMES = CONFIG.get('extra_url_schemes', [])
+EXTRA_URL_SCHEMES = get_setting('INVENTREE_EXTRA_URL_SCHEMES', 'extra_url_schemes', [])
 
 if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
     logger.warning("extra_url_schemes not correctly formatted")
@@ -684,12 +684,9 @@ if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no 
     django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
-CURRENCIES = CONFIG.get(
-    'currencies',
-    [
-        'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
-    ],
-)
+CURRENCIES = get_setting('INVENTREE_CURRENCIES', 'currencies', [
+    'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
+])
 
 # Maximum number of decimal places for currency rendering
 CURRENCY_DECIMAL_PLACES = 6
@@ -746,11 +743,11 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 SITE_ID = 1
 
 # Load the allauth social backends
-SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [])
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
+SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', [])
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
