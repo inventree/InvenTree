@@ -112,8 +112,6 @@ function addTableFilter(tableKey, filterKey, filterValue) {
 
     var filters = loadTableFilters(tableKey);
 
-    var settings = getFilterSettings(tableKey, filterKey);
-
     filters[filterKey] = filterValue;
 
     saveTableFilters(tableKey, filters);
