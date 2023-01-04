@@ -456,6 +456,7 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
     )
 
 
+@scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations(worker: bool = True):
     """Checks if migrations are needed.
 
