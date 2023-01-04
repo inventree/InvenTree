@@ -58,7 +58,11 @@ def get_config_file(create=True) -> Path:
 
 
 def load_config_data(set_cache: bool = False) -> map:
-    """Load configuration data from the config file."""
+    """Load configuration data from the config file.
+
+    Arguments:
+        set_cache(bool): If True, the configuration data will be cached for future use after load.
+    """
 
     # use cache if polulated
     # skip cache if cache should be set
