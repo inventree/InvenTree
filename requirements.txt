@@ -96,7 +96,7 @@ django-import-export==2.5.0
     # via -r requirements.in
 django-js-asset==2.0.0
     # via django-mptt
-django-maintenance-mode==0.16.3
+django-maintenance-mode==0.18.0
     # via -r requirements.in
 django-markdownify==0.9.2
     # via -r requirements.in
