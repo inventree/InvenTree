@@ -499,6 +499,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Subscribed" %}',
             },
+            stocktake: {
+                type: 'bool',
+                title: '{% trans "Has stocktake entries" %}',
+            },
             is_template: {
                 type: 'bool',
                 title: '{% trans "Template" %}',

@@ -53,6 +53,29 @@
 </div>
 {% endif %}
 
+{% settings_value 'DISPLAY_STOCKTAKE_TAB' user=request.user as show_stocktake %}
+{% if show_stocktake %}
+<div class='panel panel-hidden' id='panel-stocktake'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Stocktake" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.part.add %}
+                <button class='btn btn-success' type='button' id='btn-stocktake' title='{% trans "Add stocktake information" %}'>
+                    <span class='fas fa-clipboard-check'></span> {% trans "Stocktake" %}
+                </button>
+                {% endif %}
+                <!-- TODO: Buttons -->
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "part/part_stocktake.html" %}
+    </div>
+</div>
+{% endif %}
+
 <div class='panel panel-hidden' id='panel-test-templates'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -423,7 +446,7 @@
             'part-notes',
             '{% url "api-part-detail" part.pk %}',
             {
-                editable: {% if roles.part.change %}true{% else %}false{% endif %},
+                editable: {% js_bool roles.part.change %},
             }
         );
     });
@@ -439,6 +462,23 @@
             }
 
             chart = loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
+        });
+    });
+
+    // Load the "stocktake" tab
+    onPanelLoad('stocktake', function() {
+        loadPartStocktakeTable({{ part.pk }}, {
+            admin: {% js_bool user.is_staff %},
+            allow_edit: {% js_bool roles.part.change %},
+            allow_delete: {% js_bool roles.part.delete %},
+        });
+
+        $('#btn-stocktake').click(function() {
+            performStocktake({{ part.pk }}, {
+                onSuccess: function() {
+                    $('#part-stocktake-table').bootstrapTable('refresh');
+                }
+            });
         });
     });
 

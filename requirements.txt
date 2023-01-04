@@ -70,7 +70,7 @@ django==3.2.16
     #   django-weasyprint
     #   django-xforwardedfor-middleware
     #   djangorestframework
-django-allauth==0.51.0
+django-allauth==0.52.0
     # via
     #   -r requirements.in
     #   django-allauth-2fa
