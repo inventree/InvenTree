@@ -221,10 +221,10 @@ class OwnerModelTest(InvenTreeTestCase):
         # self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {})
 
         # own user detail
-        response_detail = self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {}, 200)
+        response_detail = self.do_request(reverse('user-detail', kwargs={'pk': self.user.id}), {}, 200)
         self.assertEqual(response_detail['username'], self.username)
 
-        respone_me = self.do_request(reverse('api-user-me', kwargs={'pk': self.user.id}), {}, 200)
+        respone_me = self.do_request(reverse('api-user-me'), {}, 200)
         self.assertEqual(response_detail, respone_me)
 
     def test_token(self):
@@ -251,5 +251,5 @@ class OwnerModelTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, 400)
 
         # test user is associated with token
-        respone_me = self.do_request(reverse('api-user-me', kwargs={'pk': self.user.id}), {}, 200)
+        respone_me = self.do_request(reverse('api-user-me'), {}, 200)
         self.assertEqual(respone_me['username'], self.username)
