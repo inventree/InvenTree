@@ -2374,7 +2374,10 @@ class PartPricing(models.Model):
         """Recalculate all cost data for the referenced Part instance"""
 
         if self.pk is not None:
-            self.refresh_from_db()
+            try:
+                self.refresh_from_db()
+            except PartPricing.DoesNotExist:
+                pass
 
         self.update_bom_cost(save=False)
         self.update_purchase_cost(save=False)
