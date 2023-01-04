@@ -33,10 +33,13 @@
     loadPartTable,
     loadPartTestTemplateTable,
     loadPartSchedulingChart,
+    loadPartStocktakeTable,
     loadPartVariantTable,
     loadRelatedPartsTable,
     loadSimplePartTable,
+    partDetail,
     partStockLabel,
+    performStocktake,
     toggleStar,
     validateBom,
 */
@@ -678,13 +681,281 @@ function makePartIcons(part) {
     }
 
     return html;
-
 }
 
 
+/*
+ * Render part information for a table view
+ *
+ * part: JSON part object
+ * options:
+ *  icons: Display part icons
+ *  thumb: Display part thumbnail
+ *  link: Display URL
+ */
+function partDetail(part, options={}) {
+
+    var html = '';
+
+    var name = part.full_name;
+
+    if (options.thumb) {
+        html += imageHoverIcon(part.thumbnail || part.image);
+    }
+
+    if (options.link) {
+        var url = `/part/${part.pk}/`;
+        html += renderLink(shortenString(name), url);
+    } else {
+        html += shortenString(name);
+    }
+
+    if (options.icons) {
+        html += makePartIcons(part);
+    }
+
+    return html;
+}
+
+
+/*
+ * Guide user through "stocktake" process
+ */
+function performStocktake(partId, options={}) {
+
+    var part_quantity = 0;
+
+    var date_threshold = moment().subtract(30, 'days');
+
+    // Helper function for formatting a StockItem row
+    function buildStockItemRow(item) {
+
+        var pk = item.pk;
+
+        // Part detail
+        var part = partDetail(item.part_detail, {
+            thumb: true,
+        });
+
+        // Location detail
+        var location = locationDetail(item);
+
+        // Quantity detail
+        var quantity = item.quantity;
+
+        part_quantity += item.quantity;
+
+        if (item.serial && item.quantity == 1) {
+            quantity = `{% trans "Serial" %}: ${item.serial}`;
+        }
+
+        quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
+
+        // Last update
+        var updated = item.stocktake_date || item.updated;
+
+        var update_rendered = renderDate(updated);
+
+        if (updated) {
+            if (moment(updated) < date_threshold) {
+                update_rendered += `<div class='float-right' title='{% trans "Stock item has not been checked recently" %}'><span class='fas fa-calendar-alt icon-red'></span></div>`;
+            }
+        }
+
+        // Actions
+        var actions = `<div class='btn-group float-right' role='group'>`;
+
+        // TODO: Future work
+        // actions += makeIconButton('fa-check-circle icon-green', 'button-line-count', pk, '{% trans "Update item" %}');
+        // actions += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete item" %}');
+
+        actions += `</div>`;
+
+        return `
+        <tr>
+            <td id='part-${pk}'>${part}</td>
+            <td id='loc-${pk}'>${location}</td>
+            <td id='quantity-${pk}'>${quantity}</td>
+            <td id='updated-${pk}'>${update_rendered}</td>
+            <td id='actions-${pk}'>${actions}</td>
+        </tr>`;
+    }
+
+    // First, load stock information for the part
+    inventreeGet(
+        '{% url "api-stock-list" %}',
+        {
+            part: partId,
+            in_stock: true,
+            location_detail: true,
+            part_detail: true,
+            include_variants: true,
+            ordering: '-stock',
+        },
+        {
+            success: function(response) {
+                var html = '';
+
+                html += `
+                <table class='table table-striped table-condensed'>
+                    <thead>
+                        <tr>
+                            <th>{% trans "Stock Item" %}</th>
+                            <th>{% trans "Location" %}</th>
+                            <th>{% trans "Quantity" %}</th>
+                            <th>{% trans "Updated" %}</th>
+                            <th><!-- Actions --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                response.forEach(function(item) {
+                    html += buildStockItemRow(item);
+                });
+
+                html += `</tbody></table>`;
+
+                constructForm(`/api/part/stocktake/`, {
+                    preFormContent: html,
+                    method: 'POST',
+                    title: '{% trans "Part Stocktake" %}',
+                    confirm: true,
+                    fields: {
+                        part: {
+                            value: partId,
+                            hidden: true,
+                        },
+                        quantity: {
+                            value: part_quantity,
+                        },
+                        note: {},
+                    },
+                    onSuccess: function(response) {
+                        handleFormSuccess(response, options);
+                    }
+                });
+            }
+        }
+    );
+}
+
+
+/*
+ * Load table for part stocktake information
+ */
+function loadPartStocktakeTable(partId, options={}) {
+
+    var table = options.table || '#part-stocktake-table';
+
+    var params = options.params || {};
+
+    params.part = partId;
+
+    var filters = loadTableFilters('stocktake');
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('stocktake', $(table), '#filter-list-partstocktake');
+
+    $(table).inventreeTable({
+        url: '{% url "api-part-stocktake-list" %}',
+        queryParams: filters,
+        name: 'partstocktake',
+        original: options.params,
+        showColumns: true,
+        sortable: true,
+        formatNoMatches: function() {
+            return '{% trans "No stocktake information available" %}';
+        },
+        columns: [
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+                switchable: false,
+                sortable: true,
+            },
+            {
+                field: 'note',
+                title: '{% trans "Notes" %}',
+                switchable: true,
+            },
+            {
+                field: 'date',
+                title: '{% trans "Date" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    var html = renderDate(value);
+
+                    if (row.user_detail) {
+                        html += `<span class='badge bg-dark rounded-pill float-right'>${row.user_detail.username}</span>`;
+                    }
+
+                    return html;
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                visible: options.admin,
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    if (options.allow_edit) {
+                        html += makeIconButton('fa-edit icon-blue', 'button-edit-stocktake', row.pk, '{% trans "Edit Stocktake Entry" %}');
+                    }
+
+                    if (options.allow_delete) {
+                        html += makeIconButton('fa-trash-alt icon-red', 'button-delete-stocktake', row.pk, '{% trans "Delete Stocktake Entry" %}');
+                    }
+
+                    html += `</div>`;
+
+                    return html;
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Button callbacks
+            $(table).find('.button-edit-stocktake').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/stocktake/${pk}/`, {
+                    fields: {
+                        quantity: {},
+                        note: {},
+                    },
+                    title: '{% trans "Edit Stocktake Entry" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-delete-stocktake').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/stocktake/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Stocktake Entry" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        }
+    });
+}
+
+
+/* Load part variant table
+ */
 function loadPartVariantTable(table, partId, options={}) {
-    /* Load part variant table
-     */
 
     var params = options.params || {};
 
@@ -1333,7 +1604,8 @@ function loadParametricPartTable(table, options={}) {
         uniqueId: 'pk',
         onLoadSuccess: function(response) {
 
-            var data = response.results;
+            // Data may be returned paginated, in which case we preference response.results
+            var data = response.results || response;
 
             for (var idx = 0; idx < data.length; idx++) {
                 var row = data[idx];
@@ -1346,8 +1618,14 @@ function loadParametricPartTable(table, options={}) {
                 data[idx] = row;
             }
 
+            if (response.results) {
+                response.results = data;
+            } else {
+                response = data;
+            }
+
             // Update the table
-            $(table).bootstrapTable('load', data);
+            $(table).bootstrapTable('load', response);
         }
     });
 }
@@ -1615,6 +1893,16 @@ function loadPartTable(table, url, options={}) {
                     tooltip: true,
                 }
             );
+        }
+    });
+
+    columns.push({
+        field: 'last_stocktake',
+        title: '{% trans "Last Stocktake" %}',
+        sortable: true,
+        switchable: true,
+        formatter: function(value) {
+            return renderDate(value);
         }
     });
 

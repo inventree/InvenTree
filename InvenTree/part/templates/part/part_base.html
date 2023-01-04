@@ -338,6 +338,20 @@
                 </tr>
                 {% endif %}
                 {% endwith %}
+                {% with part.latest_stocktake as stocktake %}
+                {% if stocktake %}
+                <tr>
+                    <td><span class='fas fa-clipboard-check'></span></td>
+                    <td>{% trans "Last Stocktake" %}</td>
+                    <td>
+                        {% decimal stocktake.quantity %} <span class='fas fa-calendar-alt' title='{% render_date stocktake.date %}'></span>
+                        <span class='badge bg-dark rounded-pill float-right'>
+                            {{ stocktake.user.username }}
+                        </span>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endwith %}
                 {% with part.get_latest_serial_number as sn %}
                 {% if part.trackable and sn %}
                 <tr>
@@ -391,6 +405,8 @@
     $('#part-thumb').click(function() {
         showModalImage('{{ part.image.url }}');
     });
+    {% else %}
+    $('#part-image-delete').hide();
     {% endif %}
 
     function reloadImage(data) {
@@ -403,6 +419,7 @@
                 showModalImage(data.image);
             });
 
+            $("#part-image-delete").show();
         } else {
             // Otherwise, reload the page
             location.reload();
@@ -586,8 +603,8 @@
     {% if roles.part.change %}
 
     if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
-
         $("#part-image-url").click(function() {
+            event.stopPropagation();
             constructForm(
                 '{% url "api-part-detail" part.pk %}',
                 {
@@ -596,7 +613,9 @@
                     fields: {
                         remote_image: {},
                     },
-                    onSuccess: onSelectImage,
+                    onSuccess: function(data) {
+                        reloadImage(data);
+                    },
                 }
             );
         });

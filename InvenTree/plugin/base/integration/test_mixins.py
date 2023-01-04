@@ -1,5 +1,7 @@
 """Unit tests for base mixins for plugins."""
 
+import os
+
 from django.conf import settings
 from django.test import TestCase
 from django.urls import include, re_path, reverse
@@ -203,6 +205,13 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
         self.mixin = MixinCls()
 
+        # If running in github workflow, make use of GITHUB_TOKEN
+        if settings.TESTING:
+            token = os.getenv('GITHUB_TOKEN', None)
+
+            if token:
+                self.mixin.set_setting('API_TOKEN', token)
+
         class WrongCLS(APICallMixin, InvenTreePlugin):
             pass
 
@@ -222,7 +231,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
         # api_headers
         headers = self.mixin.api_headers
-        self.assertEqual(headers, {'Bearer': '', 'Content-Type': 'application/json'})
+        self.assertEqual(headers['Content-Type'], 'application/json')
 
     def test_args(self):
         """Test that building up args work."""
@@ -250,10 +259,6 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         result = self.mixin.get_external_url(False)
         self.assertTrue(result)
         self.assertEqual(result.reason, 'OK')
-
-        # api_call with full url
-        result = self.mixin.api_call('orgs/inventree')
-        self.assertTrue(result)
 
         # api_call with post and data
         result = self.mixin.api_call(

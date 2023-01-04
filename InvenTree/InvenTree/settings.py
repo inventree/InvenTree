@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 import django.conf.locale
+import django.core.exceptions
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
@@ -121,6 +122,9 @@ CORS_ORIGIN_WHITELIST = get_setting(
     default_value=[]
 )
 
+# Needed for the parts importer, directly impacts the maximum parts that can be uploaded
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
 
@@ -204,6 +208,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+
+    'django_ical',                          # For exporting calendars
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -374,9 +380,9 @@ for key in db_keys:
         db_config[key] = env_var
 
 # Check that required database configuration options are specified
-reqiured_keys = ['ENGINE', 'NAME']
+required_keys = ['ENGINE', 'NAME']
 
-for key in reqiured_keys:
+for key in required_keys:
     if key not in db_config:  # pragma: no cover
         error_msg = f'Missing required database configuration value {key}'
         logger.error(error_msg)
@@ -654,6 +660,7 @@ LANGUAGES = [
     ('pt', _('Portuguese')),
     ('pt-BR', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
+    ('sl', _('Slovenian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
@@ -744,10 +751,14 @@ SITE_ID = 1
 
 # Load the allauth social backends
 SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
+SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', None)
+
+if SOCIALACCOUNT_PROVIDERS is None:
+    SOCIALACCOUNT_PROVIDERS = {}
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
@@ -788,6 +799,9 @@ MARKDOWNIFY = {
             'src',
             'alt',
         ],
+        'MARKDOWN_EXTENSIONS': [
+            'markdown.extensions.extra'
+        ],
         'WHITELIST_TAGS': [
             'a',
             'abbr',
@@ -801,7 +815,13 @@ MARKDOWNIFY = {
             'ol',
             'p',
             'strong',
-            'ul'
+            'ul',
+            'table',
+            'thead',
+            'tbody',
+            'th',
+            'tr',
+            'td'
         ],
     }
 }
@@ -829,9 +849,10 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
     for key, val in inventree_tags.items():
         sentry_sdk.set_tag(f'inventree_{key}', val)
 
-# In-database error logging
+# Ignore these error typeps for in-database error logging
 IGNORED_ERRORS = [
-    Http404
+    Http404,
+    django.core.exceptions.PermissionDenied,
 ]
 
 # Maintenance mode

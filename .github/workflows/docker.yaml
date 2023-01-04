@@ -21,6 +21,10 @@ on:
     branches:
       - 'master'
 
+  # pull_request:
+  #   branches:
+  #     - 'master'
+
 jobs:
 
   # Build the docker image
@@ -54,6 +58,7 @@ jobs:
           docker-compose run inventree-dev-server invoke update
           docker-compose run inventree-dev-server invoke setup-dev
           docker-compose up -d
+          docker-compose run inventree-dev-server pip install --upgrade setuptools
           docker-compose run inventree-dev-server invoke wait
       - name: Check Data Directory
         # The following file structure should have been created by the docker image
@@ -69,7 +74,7 @@ jobs:
           test -f data/secret_key.txt
       - name: Run Unit Tests
         run: |
-          docker-compose --version
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
           docker-compose run inventree-dev-server invoke test --disable-pty
           docker-compose down
       - name: Set up QEMU
@@ -108,7 +113,7 @@ jobs:
             commit_hash=${{ env.git_commit_hash }}
             commit_date=${{ env.git_commit_date }}
       - name: Sign the published image
-        if: github.event_name != 'pull_request'
+        if: ${{ false }} # github.event_name != 'pull_request'
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: cosign sign ${{ steps.meta.outputs.tags }}@${{

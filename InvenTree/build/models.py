@@ -832,6 +832,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         exclude_location = kwargs.get('exclude_location', None)
         interchangeable = kwargs.get('interchangeable', False)
         substitutes = kwargs.get('substitutes', True)
+        optional_items = kwargs.get('optional_items', False)
 
         def stock_sort(item, bom_item, variant_parts):
             if item.part == bom_item.sub_part:
@@ -846,6 +847,10 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
             if bom_item.consumable:
                 # Do not auto-allocate stock to consumable BOM items
+                continue
+
+            if bom_item.optional and not optional_items:
+                # User has specified that optional_items are to be ignored
                 continue
 
             variant_parts = bom_item.sub_part.get_descendants(include_self=False)

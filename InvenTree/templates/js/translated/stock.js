@@ -19,7 +19,6 @@
     makeIconBadge,
     makeIconButton,
     makeOptionsList,
-    makePartIcons,
     modalEnable,
     modalSetContent,
     modalSetTitle,
@@ -240,6 +239,12 @@ function stockItemFields(options={}) {
                                 }
 
                                 setFormInputPlaceholder('serial_numbers', placeholder, opts);
+
+                                if (global_settings.SERIAL_NUMBER_AUTOFILL) {
+                                    if (data.next) {
+                                        updateFieldValue('serial_numbers', `${data.next}+`, {}, opts);
+                                    }
+                                }
                             }
                         });
 
@@ -1370,7 +1375,7 @@ function loadStockTestResultsTable(table, options) {
             },
             {
                 field: 'test_name',
-                title: '{% trans "Test Name" %}',
+                title: '{% trans "Test" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var html = value;
@@ -1386,6 +1391,13 @@ function loadStockTestResultsTable(table, options) {
                     }
 
                     return html;
+                }
+            },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                formatter: function(value, row) {
+                    return row.description || row.test_description;
                 }
             },
             {
@@ -1469,6 +1481,7 @@ function loadStockTestResultsTable(table, options) {
                                 if (key == row.key) {
 
                                     item.test_name = row.test_name;
+                                    item.test_description = row.description;
                                     item.required = row.required;
 
                                     if (row.result == null) {
@@ -1736,15 +1749,11 @@ function loadStockTable(table, options) {
         switchable: params['part_detail'],
         formatter: function(value, row) {
 
-            var url = `/part/${row.part}/`;
-            var thumb = row.part_detail.thumbnail;
-            var name = row.part_detail.full_name;
-
-            var html = imageHoverIcon(thumb) + renderLink(shortenString(name), url);
-
-            html += makePartIcons(row.part_detail);
-
-            return html;
+            return partDetail(row.part_detail, {
+                thumb: true,
+                link: true,
+                icons: true,
+            });
         }
     };
 

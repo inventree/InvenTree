@@ -82,7 +82,8 @@ class BuildTestBase(TestCase):
         self.bom_item_2 = BomItem.objects.create(
             part=self.assembly,
             sub_part=self.sub_part_2,
-            quantity=3
+            quantity=3,
+            optional=True
         )
 
         # sub_part_3 is trackable!
@@ -626,6 +627,7 @@ class AutoAllocationTests(BuildTestBase):
         self.build.auto_allocate_stock(
             interchangeable=True,
             substitutes=False,
+            optional_items=True,
         )
 
         self.assertFalse(self.build.are_untracked_parts_allocated())
@@ -646,17 +648,18 @@ class AutoAllocationTests(BuildTestBase):
 
         # self.assertEqual(self.build.allocated_stock.count(), 8)
         self.assertEqual(self.build.unallocated_quantity(self.bom_item_1), 0)
-        self.assertEqual(self.build.unallocated_quantity(self.bom_item_2), 0)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_2), 5.0)
 
         self.assertTrue(self.build.is_bom_item_allocated(self.bom_item_1))
-        self.assertTrue(self.build.is_bom_item_allocated(self.bom_item_2))
+        self.assertFalse(self.build.is_bom_item_allocated(self.bom_item_2))
 
     def test_fully_auto(self):
         """We should be able to auto-allocate against a build in a single go"""
 
         self.build.auto_allocate_stock(
             interchangeable=True,
-            substitutes=True
+            substitutes=True,
+            optional_items=True,
         )
 
         self.assertTrue(self.build.are_untracked_parts_allocated())

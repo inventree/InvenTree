@@ -13,6 +13,7 @@ from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, serializers, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 import order.models
@@ -27,6 +28,7 @@ from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
+from InvenTree.permissions import RolePermission
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from part.admin import PartCategoryResource, PartResource
@@ -38,7 +40,7 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartRelated, PartSellPriceBreak,
-                     PartTestTemplate)
+                     PartStocktake, PartTestTemplate)
 
 
 class CategoryList(APIDownloadMixin, ListCreateAPI):
@@ -1061,6 +1063,20 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset
 
+    stocktake = rest_filters.BooleanFilter(label="Has stocktake", method='filter_has_stocktake')
+
+    def filter_has_stocktake(self, queryset, name, value):
+        """Filter the queryset based on whether stocktake data is available"""
+
+        value = str2bool(value)
+
+        if (value):
+            queryset = queryset.exclude(last_stocktake=None)
+        else:
+            queryset = queryset.filter(last_stocktake=None)
+
+        return queryset
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1537,6 +1553,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         'in_stock',
         'unallocated_stock',
         'category',
+        'last_stocktake',
     ]
 
     # Default ordering
@@ -1694,6 +1711,63 @@ class PartParameterDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
+
+
+class PartStocktakeFilter(rest_filters.FilterSet):
+    """Custom fitler for the PartStocktakeList endpoint"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = PartStocktake
+        fields = [
+            'part',
+            'user',
+        ]
+
+
+class PartStocktakeList(ListCreateAPI):
+    """API endpoint for listing part stocktake information"""
+
+    queryset = PartStocktake.objects.all()
+    serializer_class = part_serializers.PartStocktakeSerializer
+    filterset_class = PartStocktakeFilter
+
+    def get_serializer_context(self):
+        """Extend serializer context data"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        'part',
+        'quantity',
+        'date',
+        'user',
+    ]
+
+    # Reverse date ordering by default
+    ordering = '-pk'
+
+
+class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for a single PartStocktake instance.
+
+    Note: Only staff (admin) users can access this endpoint.
+    """
+
+    queryset = PartStocktake.objects.all()
+    serializer_class = part_serializers.PartStocktakeSerializer
+    permission_classes = [
+        IsAdminUser,
+        RolePermission,
+    ]
 
 
 class BomFilter(rest_filters.FilterSet):
@@ -2109,6 +2183,12 @@ part_api_urls = [
 
         re_path(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
         re_path(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
+    ])),
+
+    # Part stocktake data
+    re_path(r'^stocktake/', include([
+        re_path(r'^(?P<pk>\d+)/', PartStocktakeDetail.as_view(), name='api-part-stocktake-detail'),
+        re_path(r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
     ])),
 
     re_path(r'^thumbs/', include([

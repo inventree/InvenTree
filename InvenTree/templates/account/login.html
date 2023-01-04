@@ -38,7 +38,7 @@ for a account and sign in below:{% endblocktrans %}</p>
   {% if login_message %}
   <div>{{ login_message | safe }}<hr></div>
   {% endif %}
-  <div class="btn-group float-right" role="group">
+  <div class="btn-group" role="group">
     <button class="btn btn-success" type="submit">
       <span class='fas fa-sign-in-alt'></span> {% trans "Sign In" %}
     </button>
@@ -49,8 +49,8 @@ for a account and sign in below:{% endblocktrans %}</p>
 </form>
 
 {% if enable_sso %}
-<br>
-<h4 class="text-center">{% trans 'or use SSO' %}</h4>
+<hr>
+<span class='float-right'>{% trans "Sign in using third-party SSO" %}</span>
 <div>
   {% include "socialaccount/snippets/provider_list.html" with process="login" %}
 </div>

@@ -456,7 +456,7 @@ function sanitizeInputString(s, options={}) {
     }
 
     // Remove ASCII control characters
-    s = s.replace(/[\x01-\x1F]+/g, '');
+    s = s.replace(/[\x00-\x1F\x7F]+/g, '');
 
     // Remove Unicode control characters
     s = s.replace(/[\p{C}]+/gu, '');

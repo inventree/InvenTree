@@ -536,7 +536,12 @@ class APICallMixin:
         """
         headers = {'Content-Type': 'application/json'}
         if getattr(self, 'API_TOKEN_SETTING'):
-            headers[self.API_TOKEN] = self.get_setting(self.API_TOKEN_SETTING)
+            token = self.get_setting(self.API_TOKEN_SETTING)
+
+            if token:
+                headers[self.API_TOKEN] = token
+                headers['Authorization'] = f"{self.API_TOKEN} {token}"
+
         return headers
 
     def api_build_url_args(self, arguments: dict) -> str:
@@ -737,3 +742,24 @@ class PanelMixin:
             panels.append(panel)
 
         return panels
+
+
+class SettingsContentMixin:
+    """Mixin which allows integration of custom HTML content into a plugins settings page.
+
+    The 'get_settings_content' method must return the HTML content to appear in the section
+    """
+
+    class MixinMeta:
+        """Meta for mixin."""
+
+        MIXIN_NAME = 'SettingsContent'
+
+    def __init__(self):
+        """Register mixin."""
+        super().__init__()
+        self.add_mixin('settingscontent', True, __class__)
+
+    def get_settings_content(self, view, request):
+        """This method *must* be implemented by the plugin class."""
+        raise MixinNotImplementedError(f"{__class__} is missing the 'get_settings_content' method")
