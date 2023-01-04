@@ -87,6 +87,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Consumable" %}',
             },
+            has_pricing: {
+                type: 'bool',
+                title: '{% trans "Has Pricing" %}',
+            },
         };
     }
 
@@ -126,6 +130,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Include sublocations" %}',
                 description: '{% trans "Include locations" %}',
             },
+            structural: {
+                type: 'bool',
+                title: '{% trans "Structural" %}',
+            },
         };
     }
 
@@ -136,6 +144,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Include subcategories" %}',
                 description: '{% trans "Include subcategories" %}',
+            },
+            structural: {
+                type: 'bool',
+                title: '{% trans "Structural" %}',
             },
             starred: {
                 type: 'bool',
@@ -487,6 +499,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Subscribed" %}',
             },
+            stocktake: {
+                type: 'bool',
+                title: '{% trans "Has stocktake entries" %}',
+            },
             is_template: {
                 type: 'bool',
                 title: '{% trans "Template" %}',
@@ -498,7 +514,11 @@ function getAvailableTableFilters(tableKey) {
             virtual: {
                 type: 'bool',
                 title: '{% trans "Virtual" %}',
-            }
+            },
+            has_pricing: {
+                type: 'bool',
+                title: '{% trans "Has Pricing" %}',
+            },
         };
     }
 

@@ -26,8 +26,6 @@
     duplicatePart,
     editCategory,
     editPart,
-    initPriceBreakSet,
-    loadBomChart,
     loadParametricPartTable,
     loadPartCategoryTable,
     loadPartParameterTable,
@@ -35,12 +33,13 @@
     loadPartTable,
     loadPartTestTemplateTable,
     loadPartSchedulingChart,
+    loadPartStocktakeTable,
     loadPartVariantTable,
     loadRelatedPartsTable,
-    loadSellPricingChart,
     loadSimplePartTable,
-    loadStockPricingChart,
+    partDetail,
     partStockLabel,
+    performStocktake,
     toggleStar,
     validateBom,
 */
@@ -85,6 +84,9 @@ function partFields(options={}) {
 
                     return fields;
                 }
+            },
+            filters: {
+                structural: false,
             }
         },
         name: {},
@@ -100,6 +102,9 @@ function partFields(options={}) {
             icon: 'fa-link',
         },
         default_location: {
+            filters: {
+                structural: false,
+            }
         },
         default_supplier: {
             filters: {
@@ -298,10 +303,15 @@ function categoryFields() {
         },
         name: {},
         description: {},
-        default_location: {},
+        default_location: {
+            filters: {
+                structural: false,
+            }
+        },
         default_keywords: {
             icon: 'fa-key',
         },
+        structural: {},
         icon: {
             help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-tag',
@@ -333,15 +343,33 @@ function deletePartCategory(pk, options={}) {
     var html = `
     <div class='alert alert-block alert-danger'>
     {% trans "Are you sure you want to delete this part category?" %}
-    <ul>
-        <li>{% trans "Any child categories will be moved to the parent of this category" %}</li>
-        <li>{% trans "Any parts in this category will be moved to the parent of this category" %}</li>
-    </ul>
     </div>`;
+    var subChoices = [
+        {
+            value: 0,
+            display_name: '{% trans "Move to parent category" %}',
+        },
+        {
+            value: 1,
+            display_name: '{% trans "Delete" %}',
+        }
+    ];
 
     constructForm(url, {
         title: '{% trans "Delete Part Category" %}',
         method: 'DELETE',
+        fields: {
+            'delete_parts': {
+                label: '{% trans "Action for parts in this category" %}',
+                choices: subChoices,
+                type: 'choice'
+            },
+            'delete_child_categories': {
+                label: '{% trans "Action for child categories" %}',
+                choices: subChoices,
+                type: 'choice'
+            },
+        },
         preFormContent: html,
         onSuccess: function(response) {
             handleFormSuccess(response, options);
@@ -653,13 +681,281 @@ function makePartIcons(part) {
     }
 
     return html;
-
 }
 
 
+/*
+ * Render part information for a table view
+ *
+ * part: JSON part object
+ * options:
+ *  icons: Display part icons
+ *  thumb: Display part thumbnail
+ *  link: Display URL
+ */
+function partDetail(part, options={}) {
+
+    var html = '';
+
+    var name = part.full_name;
+
+    if (options.thumb) {
+        html += imageHoverIcon(part.thumbnail || part.image);
+    }
+
+    if (options.link) {
+        var url = `/part/${part.pk}/`;
+        html += renderLink(shortenString(name), url);
+    } else {
+        html += shortenString(name);
+    }
+
+    if (options.icons) {
+        html += makePartIcons(part);
+    }
+
+    return html;
+}
+
+
+/*
+ * Guide user through "stocktake" process
+ */
+function performStocktake(partId, options={}) {
+
+    var part_quantity = 0;
+
+    var date_threshold = moment().subtract(30, 'days');
+
+    // Helper function for formatting a StockItem row
+    function buildStockItemRow(item) {
+
+        var pk = item.pk;
+
+        // Part detail
+        var part = partDetail(item.part_detail, {
+            thumb: true,
+        });
+
+        // Location detail
+        var location = locationDetail(item);
+
+        // Quantity detail
+        var quantity = item.quantity;
+
+        part_quantity += item.quantity;
+
+        if (item.serial && item.quantity == 1) {
+            quantity = `{% trans "Serial" %}: ${item.serial}`;
+        }
+
+        quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
+
+        // Last update
+        var updated = item.stocktake_date || item.updated;
+
+        var update_rendered = renderDate(updated);
+
+        if (updated) {
+            if (moment(updated) < date_threshold) {
+                update_rendered += `<div class='float-right' title='{% trans "Stock item has not been checked recently" %}'><span class='fas fa-calendar-alt icon-red'></span></div>`;
+            }
+        }
+
+        // Actions
+        var actions = `<div class='btn-group float-right' role='group'>`;
+
+        // TODO: Future work
+        // actions += makeIconButton('fa-check-circle icon-green', 'button-line-count', pk, '{% trans "Update item" %}');
+        // actions += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete item" %}');
+
+        actions += `</div>`;
+
+        return `
+        <tr>
+            <td id='part-${pk}'>${part}</td>
+            <td id='loc-${pk}'>${location}</td>
+            <td id='quantity-${pk}'>${quantity}</td>
+            <td id='updated-${pk}'>${update_rendered}</td>
+            <td id='actions-${pk}'>${actions}</td>
+        </tr>`;
+    }
+
+    // First, load stock information for the part
+    inventreeGet(
+        '{% url "api-stock-list" %}',
+        {
+            part: partId,
+            in_stock: true,
+            location_detail: true,
+            part_detail: true,
+            include_variants: true,
+            ordering: '-stock',
+        },
+        {
+            success: function(response) {
+                var html = '';
+
+                html += `
+                <table class='table table-striped table-condensed'>
+                    <thead>
+                        <tr>
+                            <th>{% trans "Stock Item" %}</th>
+                            <th>{% trans "Location" %}</th>
+                            <th>{% trans "Quantity" %}</th>
+                            <th>{% trans "Updated" %}</th>
+                            <th><!-- Actions --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                response.forEach(function(item) {
+                    html += buildStockItemRow(item);
+                });
+
+                html += `</tbody></table>`;
+
+                constructForm(`/api/part/stocktake/`, {
+                    preFormContent: html,
+                    method: 'POST',
+                    title: '{% trans "Part Stocktake" %}',
+                    confirm: true,
+                    fields: {
+                        part: {
+                            value: partId,
+                            hidden: true,
+                        },
+                        quantity: {
+                            value: part_quantity,
+                        },
+                        note: {},
+                    },
+                    onSuccess: function(response) {
+                        handleFormSuccess(response, options);
+                    }
+                });
+            }
+        }
+    );
+}
+
+
+/*
+ * Load table for part stocktake information
+ */
+function loadPartStocktakeTable(partId, options={}) {
+
+    var table = options.table || '#part-stocktake-table';
+
+    var params = options.params || {};
+
+    params.part = partId;
+
+    var filters = loadTableFilters('stocktake');
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('stocktake', $(table), '#filter-list-partstocktake');
+
+    $(table).inventreeTable({
+        url: '{% url "api-part-stocktake-list" %}',
+        queryParams: filters,
+        name: 'partstocktake',
+        original: options.params,
+        showColumns: true,
+        sortable: true,
+        formatNoMatches: function() {
+            return '{% trans "No stocktake information available" %}';
+        },
+        columns: [
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+                switchable: false,
+                sortable: true,
+            },
+            {
+                field: 'note',
+                title: '{% trans "Notes" %}',
+                switchable: true,
+            },
+            {
+                field: 'date',
+                title: '{% trans "Date" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    var html = renderDate(value);
+
+                    if (row.user_detail) {
+                        html += `<span class='badge bg-dark rounded-pill float-right'>${row.user_detail.username}</span>`;
+                    }
+
+                    return html;
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                visible: options.admin,
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    if (options.allow_edit) {
+                        html += makeIconButton('fa-edit icon-blue', 'button-edit-stocktake', row.pk, '{% trans "Edit Stocktake Entry" %}');
+                    }
+
+                    if (options.allow_delete) {
+                        html += makeIconButton('fa-trash-alt icon-red', 'button-delete-stocktake', row.pk, '{% trans "Delete Stocktake Entry" %}');
+                    }
+
+                    html += `</div>`;
+
+                    return html;
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Button callbacks
+            $(table).find('.button-edit-stocktake').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/stocktake/${pk}/`, {
+                    fields: {
+                        quantity: {},
+                        note: {},
+                    },
+                    title: '{% trans "Edit Stocktake Entry" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-delete-stocktake').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/stocktake/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Stocktake Entry" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        }
+    });
+}
+
+
+/* Load part variant table
+ */
 function loadPartVariantTable(table, partId, options={}) {
-    /* Load part variant table
-     */
 
     var params = options.params || {};
 
@@ -685,6 +981,7 @@ function loadPartVariantTable(table, partId, options={}) {
             field: 'name',
             title: '{% trans "Name" %}',
             switchable: false,
+            sortable: true,
             formatter: function(value, row) {
                 var html = '';
 
@@ -735,10 +1032,12 @@ function loadPartVariantTable(table, partId, options={}) {
         {
             field: 'IPN',
             title: '{% trans "IPN" %}',
+            sortable: true,
         },
         {
             field: 'revision',
             title: '{% trans "Revision" %}',
+            sortable: true,
         },
         {
             field: 'description',
@@ -747,6 +1046,7 @@ function loadPartVariantTable(table, partId, options={}) {
         {
             field: 'in_stock',
             title: '{% trans "Stock" %}',
+            sortable: true,
             formatter: function(value, row) {
 
                 var base_stock = row.in_stock;
@@ -762,6 +1062,16 @@ function loadPartVariantTable(table, partId, options={}) {
                 }
 
                 return renderLink(text, `/part/${row.pk}/?display=part-stock`);
+            }
+        },
+        {
+            field: 'price_range',
+            title: '{% trans "Price Range" %}',
+            formatter: function(value, row) {
+                return formatPriceRange(
+                    row.pricing_min,
+                    row.pricing_max,
+                );
             }
         }
     ];
@@ -795,6 +1105,9 @@ function loadPartVariantTable(table, partId, options={}) {
 }
 
 
+/*
+ * Load a "simplified" part table without filtering
+ */
 function loadSimplePartTable(table, url, options={}) {
 
     options.disableFilters = true;
@@ -1103,15 +1416,9 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 title: '{% trans "Price" %}',
                 switchable: true,
                 formatter: function(value, row) {
-                    var formatter = new Intl.NumberFormat(
-                        'en-US',
-                        {
-                            style: 'currency',
-                            currency: row.purchase_price_currency,
-                        }
-                    );
-
-                    return formatter.format(row.purchase_price);
+                    return formatCurrency(row.purchase_price, {
+                        currency: row.purchase_price_currency,
+                    });
                 }
             },
             {
@@ -1297,19 +1604,28 @@ function loadParametricPartTable(table, options={}) {
         uniqueId: 'pk',
         onLoadSuccess: function(response) {
 
-            var data = response.results;
+            // Data may be returned paginated, in which case we preference response.results
+            var data = response.results || response;
 
             for (var idx = 0; idx < data.length; idx++) {
                 var row = data[idx];
-                var pk = row.pk;
 
                 // Make each parameter accessible, based on the "template" columns
                 row.parameters.forEach(function(parameter) {
                     row[`parameter_${parameter.template}`] = parameter.data;
                 });
 
-                $(table).bootstrapTable('updateByUniqueId', pk, row);
+                data[idx] = row;
             }
+
+            if (response.results) {
+                response.results = data;
+            } else {
+                response = data;
+            }
+
+            // Update the table
+            $(table).bootstrapTable('load', response);
         }
     });
 }
@@ -1372,19 +1688,19 @@ function partGridTile(part) {
 }
 
 
+/* Load part listing data into specified table.
+ *
+ * Args:
+ *  - table: HTML reference to the table
+ *  - url: Base URL for API query
+ *  - options: object containing following (optional) fields
+ *      checkbox: Show the checkbox column
+ *      query: extra query params for API request
+ *      buttons: If provided, link buttons to selection status of this table
+ *      disableFilters: If true, disable custom filters
+ *      actions: Provide a callback function to construct an "actions" column
+ */
 function loadPartTable(table, url, options={}) {
-    /* Load part listing data into specified table.
-     *
-     * Args:
-     *  - table: HTML reference to the table
-     *  - url: Base URL for API query
-     *  - options: object containing following (optional) fields
-     *      checkbox: Show the checkbox column
-     *      query: extra query params for API request
-     *      buttons: If provided, link buttons to selection status of this table
-     *      disableFilters: If true, disable custom filters
-     *      actions: Provide a callback function to construct an "actions" column
-     */
 
     // Ensure category detail is included
     options.params['category_detail'] = true;
@@ -1424,21 +1740,11 @@ function loadPartTable(table, url, options={}) {
         });
     }
 
-    col = {
-        field: 'IPN',
-        title: '{% trans "IPN" %}',
-    };
-
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
-
-    columns.push(col);
-
-    col = {
+    columns.push({
         field: 'name',
         title: '{% trans "Part" %}',
         switchable: false,
+        sortable: !options.params.ordering,
         formatter: function(value, row) {
 
             var name = shortenString(row.full_name);
@@ -1449,13 +1755,13 @@ function loadPartTable(table, url, options={}) {
 
             return withTitle(display, row.full_name);
         }
-    };
+    });
 
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
-
-    columns.push(col);
+    columns.push({
+        field: 'IPN',
+        title: '{% trans "IPN" %}',
+        sortable: !options.params.ordering
+    });
 
     columns.push({
         field: 'description',
@@ -1562,6 +1868,19 @@ function loadPartTable(table, url, options={}) {
 
     columns.push(col);
 
+    // Pricing information
+    columns.push({
+        field: 'pricing_min',
+        sortable: false,
+        title: '{% trans "Price Range" %}',
+        formatter: function(value, row) {
+            return formatPriceRange(
+                row.pricing_min,
+                row.pricing_max
+            );
+        }
+    });
+
     columns.push({
         field: 'link',
         title: '{% trans "Link" %}',
@@ -1574,6 +1893,16 @@ function loadPartTable(table, url, options={}) {
                     tooltip: true,
                 }
             );
+        }
+    });
+
+    columns.push({
+        field: 'last_stocktake',
+        title: '{% trans "Last Stocktake" %}',
+        sortable: true,
+        switchable: true,
+        formatter: function(value) {
+            return renderDate(value);
         }
     });
 
@@ -1818,7 +2147,7 @@ function loadPartCategoryTable(table, options) {
         filters[key] = params[key];
     }
 
-    setupFilterList(filterKey, table, filterListElement);
+    setupFilterList(filterKey, table, filterListElement, {download: true});
 
     // Function to request sub-category items
     function requestSubItems(parent_pk) {
@@ -1876,15 +2205,16 @@ function loadPartCategoryTable(table, options) {
                 },
                 event: () => {
                     inventreeSave('category-tree-view', 0);
-                    table.bootstrapTable(
-                        'refreshOptions',
-                        {
-                            treeEnable: false,
-                            serverSort: true,
-                            search: true,
-                            pagination: true,
-                        }
-                    );
+
+                    // Adjust table options
+                    options.treeEnable = false;
+                    options.serverSort = false;
+                    options.search = true;
+                    options.pagination = true;
+
+                    // Destroy and re-create the table
+                    table.bootstrapTable('destroy');
+                    loadPartCategoryTable(table, options);
                 }
             },
             {
@@ -1895,15 +2225,16 @@ function loadPartCategoryTable(table, options) {
                 },
                 event: () => {
                     inventreeSave('category-tree-view', 1);
-                    table.bootstrapTable(
-                        'refreshOptions',
-                        {
-                            treeEnable: true,
-                            serverSort: false,
-                            search: false,
-                            pagination: false,
-                        }
-                    );
+
+                    // Adjust table options
+                    options.treeEnable = true;
+                    options.serverSort = false;
+                    options.search = false;
+                    options.pagination = false;
+
+                    // Destroy and re-create the table
+                    table.bootstrapTable('destroy');
+                    loadPartCategoryTable(table, options);
                 }
             }
         ] : [],
@@ -2150,173 +2481,6 @@ function loadPartTestTemplateTable(table, options) {
                 });
             });
         }
-    });
-}
-
-
-function loadPriceBreakTable(table, options) {
-    /*
-     * Load PriceBreak table.
-     */
-
-    var name = options.name || 'pricebreak';
-    var human_name = options.human_name || 'price break';
-    var linkedGraph = options.linkedGraph || null;
-    var chart = null;
-
-    table.inventreeTable({
-        name: name,
-        method: 'get',
-        formatNoMatches: function() {
-            return `{% trans "No ${human_name} information found" %}`;
-        },
-        queryParams: {
-            part: options.part
-        },
-        url: options.url,
-        onLoadSuccess: function(tableData) {
-            if (linkedGraph) {
-                // sort array
-                tableData = tableData.sort((a, b) => (a.quantity - b.quantity));
-
-                // split up for graph definition
-                var graphLabels = Array.from(tableData, (x) => (x.quantity));
-                var graphData = Array.from(tableData, (x) => (x.price));
-
-                // destroy chart if exists
-                if (chart) {
-                    chart.destroy();
-                }
-                chart = loadLineChart(linkedGraph,
-                    {
-                        labels: graphLabels,
-                        datasets: [
-                            {
-                                label: '{% trans "Unit Price" %}',
-                                data: graphData,
-                                backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                                borderColor: 'rgb(255, 206, 86)',
-                                stepped: true,
-                                fill: true,
-                            },
-                        ],
-                    }
-                );
-            }
-        },
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-                switchable: false,
-            },
-            {
-                field: 'quantity',
-                title: '{% trans "Quantity" %}',
-                sortable: true,
-            },
-            {
-                field: 'price',
-                title: '{% trans "Price" %}',
-                sortable: true,
-                formatter: function(value, row) {
-                    var html = value;
-
-                    html += `<div class='btn-group float-right' role='group'>`;
-
-                    html += makeIconButton('fa-edit icon-blue', `button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
-                    html += makeIconButton('fa-trash-alt icon-red', `button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
-
-                    html += `</div>`;
-
-                    return html;
-                }
-            },
-        ]
-    });
-}
-
-function loadLineChart(context, data) {
-    return new Chart(context, {
-        type: 'line',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {position: 'bottom'},
-            }
-        }
-    });
-}
-
-function initPriceBreakSet(table, options) {
-
-    var part_id = options.part_id;
-    var pb_human_name = options.pb_human_name;
-    var pb_url_slug = options.pb_url_slug;
-    var pb_url = options.pb_url;
-    var pb_new_btn = options.pb_new_btn;
-    var pb_new_url = options.pb_new_url;
-
-    var linkedGraph = options.linkedGraph || null;
-
-    loadPriceBreakTable(
-        table,
-        {
-            name: pb_url_slug,
-            human_name: pb_human_name,
-            url: pb_url,
-            linkedGraph: linkedGraph,
-            part: part_id,
-        }
-    );
-
-    function reloadPriceBreakTable() {
-        table.bootstrapTable('refresh');
-    }
-
-    pb_new_btn.click(function() {
-
-        constructForm(pb_new_url, {
-            fields: {
-                part: {
-                    hidden: true,
-                    value: part_id,
-                },
-                quantity: {},
-                price: {},
-                price_currency: {},
-            },
-            method: 'POST',
-            title: '{% trans "Add Price Break" %}',
-            onSuccess: reloadPriceBreakTable,
-        });
-    });
-
-    table.on('click', `.button-${pb_url_slug}-delete`, function() {
-        var pk = $(this).attr('pk');
-
-        constructForm(`${pb_url}${pk}/`, {
-            method: 'DELETE',
-            title: '{% trans "Delete Price Break" %}',
-            onSuccess: reloadPriceBreakTable,
-        });
-    });
-
-    table.on('click', `.button-${pb_url_slug}-edit`, function() {
-        var pk = $(this).attr('pk');
-
-        constructForm(`${pb_url}${pk}/`, {
-            fields: {
-                quantity: {},
-                price: {},
-                price_currency: {},
-            },
-            title: '{% trans "Edit Price Break" %}',
-            onSuccess: reloadPriceBreakTable,
-        });
     });
 }
 
@@ -2691,118 +2855,6 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                         filter: function(item, chart) {
                             return !item.text.includes('zero-stock-level');
                         }
-                    }
-                },
-            },
-        }
-    });
-}
-
-
-function loadStockPricingChart(context, data) {
-    return new Chart(context, {
-        type: 'bar',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {legend: {position: 'bottom'}},
-            scales: {
-                y: {
-                    type: 'linear',
-                    position: 'left',
-                    grid: {display: false},
-                    title: {
-                        display: true,
-                        text: '{% trans "Single Price" %}'
-                    }
-                },
-                y1: {
-                    type: 'linear',
-                    position: 'right',
-                    grid: {display: false},
-                    titel: {
-                        display: true,
-                        text: '{% trans "Quantity" %}',
-                        position: 'right'
-                    }
-                },
-                y2: {
-                    type: 'linear',
-                    position: 'left',
-                    grid: {display: false},
-                    title: {
-                        display: true,
-                        text: '{% trans "Single Price Difference" %}'
-                    }
-                }
-            },
-        }
-    });
-}
-
-
-function loadBomChart(context, data) {
-    return new Chart(context, {
-        type: 'doughnut',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                },
-                scales: {
-                    xAxes: [
-                        {
-                            beginAtZero: true,
-                            ticks: {
-                                autoSkip: false,
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-    });
-}
-
-
-function loadSellPricingChart(context, data) {
-    return new Chart(context, {
-        type: 'line',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            },
-            scales: {
-                y: {
-                    type: 'linear',
-                    position: 'left',
-                    grid: {
-                        display: false
-                    },
-                    title: {
-                        display: true,
-                        text: '{% trans "Unit Price" %}',
-                    }
-                },
-                y1: {
-                    type: 'linear',
-                    position: 'right',
-                    grid: {
-                        display: false
-                    },
-                    titel: {
-                        display: true,
-                        text: '{% trans "Quantity" %}',
-                        position: 'right'
                     }
                 },
             },

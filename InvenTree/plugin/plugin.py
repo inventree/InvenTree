@@ -106,10 +106,15 @@ class MetaBase:
 
     def is_active(self):
         """Return True if this plugin is currently active."""
-        cfg = self.plugin_config()
 
-        if cfg:
-            return cfg.active
+        # Builtin plugins are always considered "active"
+        if self.is_builtin:
+            return True
+
+        config = self.plugin_config()
+
+        if config:
+            return config.active
         else:
             return False  # pragma: no cover
 
@@ -299,6 +304,16 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     def is_sample(self) -> bool:
         """Is this plugin part of the samples?"""
         return self.check_is_sample()
+
+    @classmethod
+    def check_is_builtin(cls) -> bool:
+        """Determine if a particular plugin class is a 'builtin' plugin"""
+        return str(cls.check_package_path()).startswith('plugin/builtin')
+
+    @property
+    def is_builtin(self) -> bool:
+        """Is this plugin is builtin"""
+        return self.check_is_builtin()
 
     @classmethod
     def check_package_path(cls):

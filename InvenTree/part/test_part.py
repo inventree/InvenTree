@@ -17,7 +17,8 @@ from InvenTree import version
 from InvenTree.helpers import InvenTreeTestCase
 
 from .models import (Part, PartCategory, PartCategoryStar, PartRelated,
-                     PartStar, PartTestTemplate, rename_part_image)
+                     PartStar, PartStocktake, PartTestTemplate,
+                     rename_part_image)
 from .templatetags import inventree_extras
 
 
@@ -337,6 +338,19 @@ class PartTest(TestCase):
         # Deleting r2 should remove *all* relationships
         self.r2.delete()
         self.assertEqual(PartRelated.objects.count(), 0)
+
+    def test_stocktake(self):
+        """Test for adding stocktake data"""
+
+        # Grab a part
+        p = Part.objects.all().first()
+
+        self.assertIsNone(p.last_stocktake)
+
+        ps = PartStocktake.objects.create(part=p, quantity=100)
+
+        self.assertIsNotNone(p.last_stocktake)
+        self.assertEqual(p.last_stocktake, ps.date)
 
 
 class TestTemplateTest(TestCase):

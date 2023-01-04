@@ -2,10 +2,46 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 77
+INVENTREE_API_VERSION = 86
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v86 -> 2022-12-22 : https://github.com/inventree/InvenTree/pull/4069
+    - Adds API endpoints for part stocktake
+
+v85 -> 2022-12-21 : https://github.com/inventree/InvenTree/pull/3858
+    - Add endpoints serving ICS calendars for purchase and sales orders through API
+
+v84 -> 2022-12-21: https://github.com/inventree/InvenTree/pull/4083
+    - Add support for listing PO, BO, SO by their reference
+
+v83 -> 2022-11-19 : https://github.com/inventree/InvenTree/pull/3949
+    - Add support for structural Stock locations
+
+v82 -> 2022-11-16 : https://github.com/inventree/InvenTree/pull/3931
+    - Add support for structural Part categories
+
+v81 -> 2022-11-08 : https://github.com/inventree/InvenTree/pull/3710
+    - Adds cached pricing information to Part API
+    - Adds cached pricing information to BomItem API
+    - Allows Part and BomItem list endpoints to be filtered by 'has_pricing'
+    - Remove calculated 'price_string' values from API endpoints
+    - Allows PurchaseOrderLineItem API endpoint to be filtered by 'has_pricing'
+    - Allows SalesOrderLineItem API endpoint to be filtered by 'has_pricing'
+    - Allows SalesOrderLineItem API endpoint to be filtered by 'order_status'
+    - Adds more information to SupplierPriceBreak serializer
+
+v80 -> 2022-11-07 : https://github.com/inventree/InvenTree/pull/3906
+    - Adds 'barcode_hash' to Part API serializer
+    - Adds 'barcode_hash' to StockLocation API serializer
+    - Adds 'barcode_hash' to SupplierPart API serializer
+
+v79 -> 2022-11-03 : https://github.com/inventree/InvenTree/pull/3895
+    - Add metadata to Company
+
+v78 -> 2022-10-25 : https://github.com/inventree/InvenTree/pull/3854
+    - Make PartCategory to be filtered by name and description
 
 v77 -> 2022-10-12 : https://github.com/inventree/InvenTree/pull/3772
     - Adds model permission checks for barcode assignment actions

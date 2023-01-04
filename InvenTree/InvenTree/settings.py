@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 import django.conf.locale
+import django.core.exceptions
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
@@ -26,10 +27,22 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from . import config
 from .config import get_boolean_setting, get_custom_file, get_setting
 
+INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
+
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
-# Are enviroment variables manipulated by tests? Needs to be set by testing code
+# Note: The following fix is "required" for docker build workflow
+# Note: 2022-12-12 still unsure why...
+if TESTING and os.getenv('INVENTREE_DOCKER'):
+    # Ensure that sys.path includes global python libs
+    site_packages = '/usr/local/lib/python3.9/site-packages'
+
+    if site_packages not in sys.path:
+        print("Adding missing site-packages path:", site_packages)
+        sys.path.append(site_packages)
+
+# Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
 
 # New requirement for django 3.2+
@@ -108,6 +121,9 @@ CORS_ORIGIN_WHITELIST = get_setting(
     config_key='cors.whitelist',
     default_value=[]
 )
+
+# Needed for the parts importer, directly impacts the maximum parts that can be uploaded
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
@@ -192,6 +208,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+
+    'django_ical',                          # For exporting calendars
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -362,9 +380,9 @@ for key in db_keys:
         db_config[key] = env_var
 
 # Check that required database configuration options are specified
-reqiured_keys = ['ENGINE', 'NAME']
+required_keys = ['ENGINE', 'NAME']
 
-for key in reqiured_keys:
+for key in required_keys:
     if key not in db_config:  # pragma: no cover
         error_msg = f'Missing required database configuration value {key}'
         logger.error(error_msg)
@@ -562,12 +580,16 @@ else:
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
+    'label': 'Background Tasks',
     'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
     'timeout': int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)),
     'retry': 120,
+    'max_attempts': 5,
     'queue_limit': 50,
+    'catch_up': False,
     'bulk': 10,
     'orm': 'default',
+    'cache': 'default',
     'sync': False,
 }
 
@@ -578,7 +600,7 @@ if cache_host:  # pragma: no cover
 
 # database user sessions
 SESSION_ENGINE = 'user_sessions.backends.db'
-LOGOUT_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = get_setting('INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index')
 SILENCED_SYSTEM_CHECKS = [
     'admin.E410',
 ]
@@ -638,6 +660,7 @@ LANGUAGES = [
     ('pt', _('Portuguese')),
     ('pt-BR', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
+    ('sl', _('Slovenian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
@@ -671,6 +694,9 @@ CURRENCIES = CONFIG.get(
         'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
     ],
 )
+
+# Maximum number of decimal places for currency rendering
+CURRENCY_DECIMAL_PLACES = 6
 
 # Check that each provided currency is supported
 for currency in CURRENCIES:
@@ -725,16 +751,21 @@ SITE_ID = 1
 
 # Load the allauth social backends
 SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
+SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', None)
+
+if SOCIALACCOUNT_PROVIDERS is None:
+    SOCIALACCOUNT_PROVIDERS = {}
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
 # settings for allauth
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int)
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int)
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting('INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', 'http')
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
 
@@ -768,6 +799,9 @@ MARKDOWNIFY = {
             'src',
             'alt',
         ],
+        'MARKDOWN_EXTENSIONS': [
+            'markdown.extensions.extra'
+        ],
         'WHITELIST_TAGS': [
             'a',
             'abbr',
@@ -781,7 +815,13 @@ MARKDOWNIFY = {
             'ol',
             'p',
             'strong',
-            'ul'
+            'ul',
+            'table',
+            'thead',
+            'tbody',
+            'th',
+            'tr',
+            'td'
         ],
     }
 }
@@ -809,9 +849,10 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
     for key, val in inventree_tags.items():
         sentry_sdk.set_tag(f'inventree_{key}', val)
 
-# In-database error logging
+# Ignore these error typeps for in-database error logging
 IGNORED_ERRORS = [
-    Http404
+    Http404,
+    django.core.exceptions.PermissionDenied,
 ]
 
 # Maintenance mode

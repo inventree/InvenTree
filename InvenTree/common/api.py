@@ -11,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
 from rest_framework import filters, permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -18,8 +19,8 @@ import common.models
 import common.serializers
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.helpers import inheritors
-from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveAPI,
-                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
+                              RetrieveUpdateDestroyAPI)
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 
@@ -255,21 +256,20 @@ class NotificationUserSettingsDetail(RetrieveUpdateAPI):
 
     queryset = NotificationUserSetting.objects.all()
     serializer_class = NotificationUserSettingSerializer
-
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
+    permission_classes = [UserSettingsPermissions, ]
 
 
-class NotificationList(BulkDeleteMixin, ListAPI):
-    """List view for all notifications of the current user."""
-
+class NotificationMessageMixin:
+    """Generic mixin for NotificationMessage."""
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
+    permission_classes = [UserSettingsPermissions, ]
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+
+class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
+    """List view for all notifications of the current user."""
+
+    permission_classes = [permissions.IsAuthenticated, ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -312,64 +312,15 @@ class NotificationList(BulkDeleteMixin, ListAPI):
         return queryset
 
 
-class NotificationDetail(RetrieveUpdateDestroyAPI):
+class NotificationDetail(NotificationMessageMixin, RetrieveUpdateDestroyAPI):
     """Detail view for an individual notification object.
 
     - User can only view / delete their own notification objects
     """
 
-    queryset = common.models.NotificationMessage.objects.all()
-    serializer_class = common.serializers.NotificationMessageSerializer
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
 
-
-class NotificationReadEdit(CreateAPI):
-    """General API endpoint to manipulate read state of a notification."""
-
-    queryset = common.models.NotificationMessage.objects.all()
-    serializer_class = common.serializers.NotificationReadSerializer
-
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
-
-    def get_serializer_context(self):
-        """Add instance to context so it can be accessed in the serializer."""
-        context = super().get_serializer_context()
-        if self.request:
-            context['instance'] = self.get_object()
-        return context
-
-    def perform_create(self, serializer):
-        """Set the `read` status to the target value."""
-        message = self.get_object()
-        try:
-            message.read = self.target
-            message.save()
-        except Exception as exc:
-            raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
-
-
-class NotificationRead(NotificationReadEdit):
-    """API endpoint to mark a notification as read."""
-    target = True
-
-
-class NotificationUnread(NotificationReadEdit):
-    """API endpoint to mark a notification as unread."""
-    target = False
-
-
-class NotificationReadAll(RetrieveAPI):
+class NotificationReadAll(NotificationMessageMixin, RetrieveAPI):
     """API endpoint to mark all notifications as read."""
-
-    queryset = common.models.NotificationMessage.objects.all()
-
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
 
     def get(self, request, *args, **kwargs):
         """Set all messages for the current user as read."""
@@ -378,6 +329,35 @@ class NotificationReadAll(RetrieveAPI):
             return Response({'status': 'ok'})
         except Exception as exc:
             raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
+
+
+class NewsFeedMixin:
+    """Generic mixin for NewsFeedEntry."""
+    queryset = common.models.NewsFeedEntry.objects.all()
+    serializer_class = common.serializers.NewsFeedEntrySerializer
+    permission_classes = [IsAdminUser, ]
+
+
+class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
+    """List view for all news items."""
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        'published',
+        'author',
+        'read',
+    ]
+
+    filterset_fields = [
+        'read',
+    ]
+
+
+class NewsFeedEntryDetail(NewsFeedMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for an individual news feed object."""
 
 
 settings_api_urls = [
@@ -417,8 +397,6 @@ common_api_urls = [
     re_path(r'^notifications/', include([
         # Individual purchase order detail URLs
         re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'^read/', NotificationRead.as_view(), name='api-notifications-read'),
-            re_path(r'^unread/', NotificationUnread.as_view(), name='api-notifications-unread'),
             re_path(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
         ])),
         # Read all
@@ -426,6 +404,14 @@ common_api_urls = [
 
         # Notification messages list
         re_path(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
+    ])),
+
+    # News
+    re_path(r'^news/', include([
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'.*$', NewsFeedEntryDetail.as_view(), name='api-news-detail'),
+        ])),
+        re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),
     ])),
 
 ]

@@ -29,7 +29,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
                     'barcode': barcode_data,
                     'stockitem': 521
                 },
-                expected_code=400
+                expected_code=400,
             )
 
             self.assertIn('error', response.data)
@@ -250,7 +250,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         )
 
         self.assertIn('success', response.data)
-        self.assertEqual(response.data['plugin'], 'InvenTreeExternalBarcode')
+        self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
         self.assertEqual(response.data['part']['pk'], 1)
 
         # Attempting to assign the same barcode to a different part should result in an error
@@ -347,7 +347,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         response = self.scan({'barcode': 'blbla=10004'}, expected_code=200)
 
         self.assertEqual(response.data['barcode_data'], 'blbla=10004')
-        self.assertEqual(response.data['plugin'], 'InvenTreeExternalBarcode')
+        self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 
         # Scan for a StockItem instance
         si = stock.models.StockItem.objects.get(pk=1)
@@ -402,7 +402,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.assertEqual(response.data['stocklocation']['pk'], 5)
         self.assertEqual(response.data['stocklocation']['api_url'], '/api/stock/location/5/')
         self.assertEqual(response.data['stocklocation']['web_url'], '/stock/location/5/')
-        self.assertEqual(response.data['plugin'], 'InvenTreeInternalBarcode')
+        self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 
         # Scan a Part object
         response = self.scan(
@@ -423,7 +423,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.data['supplierpart']['pk'], 1)
-        self.assertEqual(response.data['plugin'], 'InvenTreeInternalBarcode')
+        self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 
         self.assertIn('success', response.data)
         self.assertIn('barcode_data', response.data)

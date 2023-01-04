@@ -214,6 +214,139 @@ class ScheduleMixin:
             logger.warning("unregister_tasks failed, database not ready")
 
 
+class ValidationMixin:
+    """Mixin class that allows custom validation for various parts of InvenTree
+
+    Custom generation and validation functionality can be provided for:
+
+    - Part names
+    - Part IPN (internal part number) values
+    - Serial numbers
+    - Batch codes
+
+    Notes:
+    - Multiple ValidationMixin plugins can be used simultaneously
+    - The stub methods provided here generally return None (null value).
+    - The "first" plugin to return a non-null value for a particular method "wins"
+    - In the case of "validation" functions, all loaded plugins are checked until an exception is thrown
+
+    Implementing plugins may override any of the following methods which are of interest.
+
+    For 'validation' methods, there are three 'acceptable' outcomes:
+    - The method determines that the value is 'invalid' and raises a django.core.exceptions.ValidationError
+    - The method passes and returns None (the code then moves on to the next plugin)
+    - The method passes and returns True (and no subsequent plugins are checked)
+
+    """
+
+    class MixinMeta:
+        """Metaclass for this mixin"""
+        MIXIN_NAME = "Validation"
+
+    def __init__(self):
+        """Register the mixin"""
+        super().__init__()
+        self.add_mixin('validation', True, __class__)
+
+    def validate_part_name(self, name: str):
+        """Perform validation on a proposed Part name
+
+        Arguments:
+            name: The proposed part name
+
+        Returns:
+            None or True
+
+        Raises:
+            ValidationError if the proposed name is objectionable
+        """
+        return None
+
+    def validate_part_ipn(self, ipn: str):
+        """Perform validation on a proposed Part IPN (internal part number)
+
+        Arguments:
+            ipn: The proposed part IPN
+
+        Returns:
+            None or True
+
+        Raises:
+            ValidationError if the proposed IPN is objectionable
+        """
+        return None
+
+    def validate_batch_code(self, batch_code: str):
+        """Validate the supplied batch code
+
+        Arguments:
+            batch_code: The proposed batch code (string)
+
+        Returns:
+            None or True
+
+        Raises:
+            ValidationError if the proposed batch code is objectionable
+        """
+        return None
+
+    def generate_batch_code(self):
+        """Generate a new batch code
+
+        Returns:
+            A new batch code (string) or None
+        """
+        return None
+
+    def validate_serial_number(self, serial: str):
+        """Validate the supplied serial number
+
+        Arguments:
+            serial: The proposed serial number (string)
+
+        Returns:
+            None or True
+
+        Raises:
+            ValidationError if the proposed serial is objectionable
+        """
+        return None
+
+    def convert_serial_to_int(self, serial: str):
+        """Convert a serial number (string) into an integer representation.
+
+        This integer value is used for efficient sorting based on serial numbers.
+
+        A plugin which implements this method can either return:
+
+        - An integer based on the serial string, according to some algorithm
+        - A fixed value, such that serial number sorting reverts to the string representation
+        - None (null value) to let any other plugins perform the converrsion
+
+        Note that there is no requirement for the returned integer value to be unique.
+
+        Arguments:
+            serial: Serial value (string)
+
+        Returns:
+            integer representation of the serial number, or None
+        """
+        return None
+
+    def increment_serial_number(self, serial: str):
+        """Return the next sequential serial based on the provided value.
+
+        A plugin which implements this method can either return:
+
+        - A string which represents the "next" serial number in the sequence
+        - None (null value) if the next value could not be determined
+
+        Arguments:
+            serial: Current serial value (string)
+        """
+        return None
+
+
 class UrlsMixin:
     """Mixin that enables custom URLs for the plugin."""
 
@@ -403,7 +536,12 @@ class APICallMixin:
         """
         headers = {'Content-Type': 'application/json'}
         if getattr(self, 'API_TOKEN_SETTING'):
-            headers[self.API_TOKEN] = self.get_setting(self.API_TOKEN_SETTING)
+            token = self.get_setting(self.API_TOKEN_SETTING)
+
+            if token:
+                headers[self.API_TOKEN] = token
+                headers['Authorization'] = f"{self.API_TOKEN} {token}"
+
         return headers
 
     def api_build_url_args(self, arguments: dict) -> str:
@@ -604,3 +742,24 @@ class PanelMixin:
             panels.append(panel)
 
         return panels
+
+
+class SettingsContentMixin:
+    """Mixin which allows integration of custom HTML content into a plugins settings page.
+
+    The 'get_settings_content' method must return the HTML content to appear in the section
+    """
+
+    class MixinMeta:
+        """Meta for mixin."""
+
+        MIXIN_NAME = 'SettingsContent'
+
+    def __init__(self):
+        """Register mixin."""
+        super().__init__()
+        self.add_mixin('settingscontent', True, __class__)
+
+    def get_settings_content(self, view, request):
+        """This method *must* be implemented by the plugin class."""
+        raise MixinNotImplementedError(f"{__class__} is missing the 'get_settings_content' method")

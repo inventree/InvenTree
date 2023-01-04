@@ -292,7 +292,7 @@ function loadAttachmentTable(url, options) {
                     var html = renderDate(value);
 
                     if (row.user_detail) {
-                        html += `<span class='badge bg-dark rounded-pill float-right'>${row.user_detail.username}</div>`;
+                        html += `<span class='badge bg-dark rounded-pill float-right'>${row.user_detail.username}</span>`;
                     }
 
                     return html;

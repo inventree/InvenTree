@@ -1,8 +1,10 @@
 """AppConfig for inventree app."""
 
 import logging
+from importlib import import_module
+from pathlib import Path
 
-from django.apps import AppConfig
+from django.apps import AppConfig, apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
@@ -31,11 +33,12 @@ class InvenTreeConfig(AppConfig):
         - Collecting notification mehods
         - Adding users set in the current enviroment
         """
-        if canAppAccessDatabase():
+        if canAppAccessDatabase() or settings.TESTING_ENV:
             InvenTree.tasks.check_for_migrations(worker=False)
 
             self.remove_obsolete_tasks()
 
+            self.collect_tasks()
             self.start_background_tasks()
 
             if not isInTestMode():  # pragma: no cover
@@ -65,14 +68,36 @@ class InvenTreeConfig(AppConfig):
         """Start all background tests for InvenTree."""
 
         logger.info("Starting background tasks...")
-        # Run through registered tasks
+
         for task in InvenTree.tasks.tasks.task_list:
+            ref_name = f'{task.func.__module__}.{task.func.__name__}'
             InvenTree.tasks.schedule_task(
-                task.func,
+                ref_name,
                 schedule_type=task.interval,
                 minutes=task.minutes,
             )
+
+        # Put at least one task onto the backround worker stack,
+        # which will be processed as soon as the worker comes online
+        InvenTree.tasks.offload_task(
+            InvenTree.tasks.heartbeat,
+            force_async=True,
+        )
+
         logger.info("Started background tasks...")
+
+    def collect_tasks(self):
+        """Collect all background tasks."""
+
+        for app_name, app in apps.app_configs.items():
+            if app_name == 'InvenTree':
+                continue
+
+            if Path(app.path).joinpath('tasks.py').exists():
+                try:
+                    import_module(f'{app.module.__package__}.tasks')
+                except Exception as e:  # pragma: no cover
+                    logger.error(f"Error loading tasks for {app_name}: {e}")
 
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.

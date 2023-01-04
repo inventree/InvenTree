@@ -21,6 +21,10 @@ on:
     branches:
       - 'master'
 
+  # pull_request:
+  #   branches:
+  #     - 'master'
+
 jobs:
 
   # Build the docker image
@@ -30,28 +34,32 @@ jobs:
       id-token: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      python_version: 3.9
     steps:
       - name: Check out repo
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Set Up Python ${{ env.python_version }}
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        with:
+          python-version: ${{ env.python_version }}
       - name: Version Check
         run: |
           pip install requests
+          pip install pyyaml
           python3 ci/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: |
-          docker-compose build
-      - name: Run Unit Tests
+          docker-compose build --no-cache
+      - name: Update Docker Image
         run: |
           docker-compose run inventree-dev-server invoke update
           docker-compose run inventree-dev-server invoke setup-dev
           docker-compose up -d
+          docker-compose run inventree-dev-server pip install --upgrade setuptools
           docker-compose run inventree-dev-server invoke wait
-          docker-compose run inventree-dev-server invoke test
-          docker-compose down
       - name: Check Data Directory
         # The following file structure should have been created by the docker image
         run: |
@@ -64,6 +72,11 @@ jobs:
           test -f data/config.yaml
           test -f data/plugins.txt
           test -f data/secret_key.txt
+      - name: Run Unit Tests
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
+          docker-compose run inventree-dev-server invoke test --disable-pty
+          docker-compose down
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
         uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18 # pin@v2.1.0
@@ -100,7 +113,7 @@ jobs:
             commit_hash=${{ env.git_commit_hash }}
             commit_date=${{ env.git_commit_date }}
       - name: Sign the published image
-        if: github.event_name != 'pull_request'
+        if: ${{ false }} # github.event_name != 'pull_request'
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: cosign sign ${{ steps.meta.outputs.tags }}@${{

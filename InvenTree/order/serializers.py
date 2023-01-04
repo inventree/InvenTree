@@ -39,8 +39,6 @@ class AbstractOrderSerializer(serializers.Serializer):
         read_only=True,
     )
 
-    total_price_string = serializers.CharField(source='get_total_price', read_only=True)
-
 
 class AbstractExtraLineSerializer(serializers.Serializer):
     """Abstract Serializer for a ExtraLine object."""
@@ -59,8 +57,6 @@ class AbstractExtraLineSerializer(serializers.Serializer):
     price = InvenTreeMoneySerializer(
         allow_null=True
     )
-
-    price_string = serializers.CharField(source='price', read_only=True)
 
     price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),
@@ -81,7 +77,6 @@ class AbstractExtraLineMeta:
         'order_detail',
         'price',
         'price_currency',
-        'price_string',
     ]
 
 
@@ -164,7 +159,6 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
             'target_date',
             'notes',
             'total_price',
-            'total_price_string',
         ]
 
         read_only_fields = [
@@ -326,8 +320,6 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         allow_null=True
     )
 
-    purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
-
     destination_detail = stock.serializers.LocationBriefSerializer(source='get_destination', read_only=True)
 
     purchase_price_currency = serializers.ChoiceField(
@@ -387,7 +379,6 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
             'received',
             'purchase_price',
             'purchase_price_currency',
-            'purchase_price_string',
             'destination',
             'destination_detail',
             'target_date',
@@ -531,7 +522,11 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         if serial_numbers:
             try:
                 # Pass the serial numbers through to the parent serializer once validated
-                data['serials'] = extract_serial_numbers(serial_numbers, pack_quantity, base_part.getLatestSerialNumberInt())
+                data['serials'] = extract_serial_numbers(
+                    serial_numbers,
+                    pack_quantity,
+                    base_part.get_latest_serial_number()
+                )
             except DjangoValidationError as e:
                 raise ValidationError({
                     'serial_numbers': e.messages,
@@ -741,7 +736,6 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
             'shipment_date',
             'target_date',
             'total_price',
-            'total_price_string',
         ]
 
         read_only_fields = [
@@ -866,6 +860,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         part_detail = kwargs.pop('part_detail', False)
         order_detail = kwargs.pop('order_detail', False)
         allocations = kwargs.pop('allocations', False)
+        customer_detail = kwargs.pop('customer_detail', False)
 
         super().__init__(*args, **kwargs)
 
@@ -878,6 +873,10 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         if allocations is not True:
             self.fields.pop('allocations')
 
+        if customer_detail is not True:
+            self.fields.pop('customer_detail')
+
+    customer_detail = CompanyBriefSerializer(source='order.customer', many=False, read_only=True)
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
@@ -896,8 +895,6 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         allow_null=True
     )
 
-    sale_price_string = serializers.CharField(source='sale_price', read_only=True)
-
     sale_price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),
         help_text=_('Sale price currency'),
@@ -913,6 +910,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
             'allocated',
             'allocations',
             'available_stock',
+            'customer_detail',
             'quantity',
             'reference',
             'notes',
@@ -923,7 +921,6 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
             'part_detail',
             'sale_price',
             'sale_price_currency',
-            'sale_price_string',
             'shipped',
             'target_date',
         ]
@@ -1256,7 +1253,11 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         part = line_item.part
 
         try:
-            data['serials'] = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+            data['serials'] = extract_serial_numbers(
+                serial_numbers,
+                quantity,
+                part.get_latest_serial_number()
+            )
         except DjangoValidationError as e:
             raise ValidationError({
                 'serial_numbers': e.messages,

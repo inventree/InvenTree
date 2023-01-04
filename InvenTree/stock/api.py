@@ -27,14 +27,15 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool, str2int)
-from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
+from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
+                              ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
 from order.serializers import PurchaseOrderSerializer
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from plugin.serializers import MetadataSerializer
-from stock.admin import StockItemResource
+from stock.admin import LocationResource, StockItemResource
 from stock.models import (StockItem, StockItemAttachment, StockItemTestResult,
                           StockItemTracking, StockLocation)
 
@@ -214,7 +215,7 @@ class StockMerge(CreateAPI):
         return ctx
 
 
-class StockLocationList(ListCreateAPI):
+class StockLocationList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for list view of StockLocation objects.
 
     - GET: Return list of StockLocation objects
@@ -223,6 +224,15 @@ class StockLocationList(ListCreateAPI):
 
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
+
+    def download_queryset(self, queryset, export_format):
+        """Download the filtered queryset as a data file"""
+
+        dataset = LocationResource().export(queryset=queryset)
+        filedata = dataset.export(export_format)
+        filename = f"InvenTree_Locations.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint"""
@@ -299,6 +309,8 @@ class StockLocationList(ListCreateAPI):
     ]
 
     filterset_fields = [
+        'name',
+        'structural'
     ]
 
     search_fields = [
@@ -563,23 +575,35 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
             # If serial numbers are specified, check that they match!
             try:
-                serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+                serials = extract_serial_numbers(
+                    serial_numbers,
+                    quantity,
+                    part.get_latest_serial_number()
+                )
 
-                # Determine if any of the specified serial numbers already exist!
-                existing = []
+                # Determine if any of the specified serial numbers are invalid
+                # Note "invalid" means either they already exist, or do not pass custom rules
+                invalid = []
+                errors = []
 
                 for serial in serials:
-                    if part.checkIfSerialNumberExists(serial):
-                        existing.append(serial)
+                    try:
+                        part.validate_serial_number(serial, raise_error=True)
+                    except DjangoValidationError as exc:
+                        # Catch raised error to extract specific error information
+                        invalid.append(serial)
 
-                if len(existing) > 0:
+                        if exc.message not in errors:
+                            errors.append(exc.message)
 
-                    msg = _("The following serial numbers already exist")
+                if len(errors) > 0:
+
+                    msg = _("The following serial numbers already exist or are invalid")
                     msg += " : "
-                    msg += ",".join([str(e) for e in existing])
+                    msg += ",".join([str(e) for e in invalid])
 
                     raise ValidationError({
-                        'serial_numbers': [msg],
+                        'serial_numbers': errors + [msg]
                     })
 
             except DjangoValidationError as e:
@@ -1345,7 +1369,7 @@ class LocationMetadata(RetrieveUpdateAPI):
     queryset = StockLocation.objects.all()
 
 
-class LocationDetail(RetrieveUpdateDestroyAPI):
+class LocationDetail(CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of StockLocation object.
 
     - GET: Return a single StockLocation object
@@ -1362,6 +1386,16 @@ class LocationDetail(RetrieveUpdateDestroyAPI):
         queryset = super().get_queryset(*args, **kwargs)
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete a Stock location instance via the API"""
+        delete_stock_items = 'delete_stock_items' in request.data and request.data['delete_stock_items'] == '1'
+        delete_sub_locations = 'delete_sub_locations' in request.data and request.data['delete_sub_locations'] == '1'
+        return super().destroy(request,
+                               *args,
+                               **dict(kwargs,
+                                      delete_sub_locations=delete_sub_locations,
+                                      delete_stock_items=delete_stock_items))
 
 
 stock_api_urls = [
