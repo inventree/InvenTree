@@ -11,12 +11,6 @@ logger = logging.getLogger('inventree')
 CONIFG_DATA = None
 
 
-def set_global_config(data):
-    """Set the global configuration data (normally in config.yaml)."""
-    global CONFIG_DATA
-    CONFIG_DATA = data
-
-
 def is_true(x):
     """Shortcut function to determine if a value "looks" like a boolean"""
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
@@ -63,10 +57,12 @@ def get_config_file(create=True) -> Path:
     return cfg_filename
 
 
-def load_config_data() -> map:
+def load_config_data(set_cache: bool = False) -> map:
     """Load configuration data from the config file."""
 
-    if CONIFG_DATA is not None:
+    # use cache if polulated
+    # skip cache if cache should be set
+    if CONIFG_DATA is not None and not set_cache:
         return CONIFG_DATA
 
     import yaml
@@ -75,6 +71,11 @@ def load_config_data() -> map:
 
     with open(cfg_file, 'r') as cfg:
         data = yaml.safe_load(cfg)
+
+    # Set the cache if requested
+    if set_cache:
+        global CONFIG_DATA
+        CONFIG_DATA = data
 
     return data
 
