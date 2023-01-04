@@ -64,7 +64,7 @@ def load_config_data(set_cache: bool = False) -> map:
         set_cache(bool): If True, the configuration data will be cached for future use after load.
     """
 
-    # use cache if polulated
+    # use cache if populated
     # skip cache if cache should be set
     if CONIFG_DATA is not None and not set_cache:
         return CONIFG_DATA
