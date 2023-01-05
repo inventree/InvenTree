@@ -2198,7 +2198,7 @@ part_api_urls = [
     ])),
 
     # BOM template
-    re_path(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='bom-upload-template'),
+    re_path(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='api-bom-upload-template'),
 
     re_path(r'^(?P<pk>\d+)/', include([
 

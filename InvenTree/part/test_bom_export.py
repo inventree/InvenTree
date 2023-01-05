@@ -27,7 +27,7 @@ class BomExportTest(InvenTreeTestCase):
 
     def test_bom_template(self):
         """Test that the BOM template can be downloaded from the server."""
-        url = reverse('bom-upload-template')
+        url = reverse('api-bom-upload-template')
 
         # Download an XLS template
         response = self.client.get(url, data={'format': 'xls'})
