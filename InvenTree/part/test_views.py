@@ -120,12 +120,12 @@ class PartQRTest(PartViewTestCase):
 
     def test_html_redirect(self):
         """A HTML request for a QR code should be redirected (use an AJAX request instead)"""
-        response = self.client.get(reverse('part-qr', args=(1,)))
+        response = self.client.get(reverse('api-part-qr', args=(1,)))
         self.assertEqual(response.status_code, 302)
 
     def test_valid_part(self):
         """Test QR code response for a Part"""
-        response = self.client.get(reverse('part-qr', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(reverse('api-part-qr', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
         data = str(response.content)
@@ -135,6 +135,6 @@ class PartQRTest(PartViewTestCase):
 
     def test_invalid_part(self):
         """Test response for an invalid Part ID value"""
-        response = self.client.get(reverse('part-qr', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(reverse('api-part-qr', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         self.assertEqual(response.status_code, 200)
