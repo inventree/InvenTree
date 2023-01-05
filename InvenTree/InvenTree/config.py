@@ -1,5 +1,6 @@
 """Helper functions for loading InvenTree configuration options."""
 
+import datetime
 import logging
 import os
 import random
@@ -9,6 +10,7 @@ from pathlib import Path
 
 logger = logging.getLogger('inventree')
 CONIFG_DATA = None
+CONFIG_LOOKUPS = {}
 
 
 def is_true(x):
@@ -97,22 +99,30 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
         default_value: Value to return if first two options are not provided
         typecast: Function to use for typecasting the value
     """
-    def try_typecasting(value):
+    def try_typecasting(value, source: str):
         """Attempt to typecast the value"""
         if typecast is not None:
             # Try to typecast the value
             try:
-                return typecast(value)
+                val = typecast(value)
+                set_metadata(source)
+                return val
             except Exception as error:
                 logger.error(f"Failed to typecast '{env_var}' with value '{value}' to type '{typecast}' with error {error}")
+        set_metadata(source)
         return value
+
+    def set_metadata(source: str):
+        """Set lookup metadata for the setting."""
+        key = env_var or config_key
+        CONFIG_LOOKUPS[key] = {'env_var': env_var, 'config_key': config_key, 'source': source, 'accessed': datetime.datetime.now()}
 
     # First, try to load from the environment variables
     if env_var is not None:
         val = os.getenv(env_var, None)
 
         if val is not None:
-            return try_typecasting(val)
+            return try_typecasting(val, 'env')
 
     # Next, try to load from configuration file
     if config_key is not None:
@@ -131,10 +141,10 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
             cfg_data = cfg_data[key]
 
         if result is not None:
-            return try_typecasting(result)
+            return try_typecasting(result, 'yaml')
 
     # Finally, return the default value
-    return try_typecasting(default_value)
+    return try_typecasting(default_value, 'default')
 
 
 def get_boolean_setting(env_var=None, config_key=None, default_value=False):
