@@ -29,6 +29,9 @@ jobs:
 
   # Build the docker image
   build:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event_name }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     permissions:
       id-token: write
