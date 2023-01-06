@@ -2222,9 +2222,14 @@ part_api_urls = [
         # Part pricing
         re_path(r'^pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
 
+        # BOM download
         re_path(r'^bom-download/?', views.BomDownload.as_view(), name='api-bom-download'),
-        re_path(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
+
+        # QR code download
         re_path(r'^qr_code/?', views.PartQRCode.as_view(), name='api-part-qr'),
+
+        # Old pricing endpoint
+        re_path(r'^pricing2/', views.PartPricing.as_view(), name='part-pricing'),
 
         # Part detail endpoint
         re_path(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
