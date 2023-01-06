@@ -9,7 +9,7 @@ import string
 from pathlib import Path
 
 logger = logging.getLogger('inventree')
-CONIFG_DATA = None
+CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
 
 
@@ -65,11 +65,12 @@ def load_config_data(set_cache: bool = False) -> map:
     Arguments:
         set_cache(bool): If True, the configuration data will be cached for future use after load.
     """
+    global CONFIG_DATA
 
     # use cache if populated
     # skip cache if cache should be set
-    if CONIFG_DATA is not None and not set_cache:
-        return CONIFG_DATA
+    if CONFIG_DATA is not None and not set_cache:
+        return CONFIG_DATA
 
     import yaml
 
@@ -80,7 +81,6 @@ def load_config_data(set_cache: bool = False) -> map:
 
     # Set the cache if requested
     if set_cache:
-        global CONFIG_DATA
         CONFIG_DATA = data
 
     return data
