@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 19:50+0000\n"
-"PO-Revision-Date: 2023-01-05 12:12\n"
+"POT-Creation-Date: 2023-01-06 00:15+0000\n"
+"PO-Revision-Date: 2023-01-06 12:24\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -34,7 +34,7 @@ msgstr ""
 #: company/templates/company/sidebar.html:25 order/models.py:943
 #: order/templates/order/po_sidebar.html:11
 #: order/templates/order/so_sidebar.html:17 part/admin.py:27
-#: part/models.py:2932 part/templates/part/part_sidebar.html:62
+#: part/models.py:2935 part/templates/part/part_sidebar.html:62
 #: report/templates/report/inventree_build_order_base.html:172
 #: stock/admin.py:103 stock/models.py:2061 stock/models.py:2169
 #: stock/serializers.py:321 stock/serializers.py:454 stock/serializers.py:535
@@ -231,8 +231,8 @@ msgstr ""
 
 #: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1817
 #: common/models.py:1818 common/models.py:2041 common/models.py:2042
-#: common/models.py:2303 common/models.py:2304 part/models.py:2940
-#: part/models.py:3026 part/models.py:3046 plugin/models.py:264
+#: common/models.py:2303 common/models.py:2304 part/models.py:2943
+#: part/models.py:3029 part/models.py:3049 plugin/models.py:264
 #: plugin/models.py:265
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2692
@@ -274,7 +274,7 @@ msgstr ""
 
 #: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:2027
 #: company/models.py:363 label/models.py:101 part/models.py:810
-#: part/models.py:3201 plugin/models.py:94 report/models.py:152
+#: part/models.py:3204 plugin/models.py:94 report/models.py:152
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
 #: templates/InvenTree/settings/plugin.html:60
@@ -295,7 +295,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:108 label/models.py:108
 #: order/models.py:83 part/admin.py:174 part/admin.py:255 part/models.py:833
-#: part/models.py:3210 part/templates/part/category.html:75
+#: part/models.py:3213 part/templates/part/category.html:75
 #: part/templates/part/part_base.html:172
 #: part/templates/part/part_scheduling.html:12 report/models.py:165
 #: report/models.py:507 report/models.py:551
@@ -358,7 +358,7 @@ msgstr ""
 msgid "An error has been logged by the server."
 msgstr ""
 
-#: InvenTree/serializers.py:58 part/models.py:3546
+#: InvenTree/serializers.py:58 part/models.py:3549
 msgid "Must be a valid number"
 msgstr ""
 
@@ -770,7 +770,7 @@ msgid "Build Order Reference"
 msgstr ""
 
 #: build/models.py:155 order/models.py:241 order/models.py:651
-#: order/models.py:941 part/admin.py:257 part/models.py:3456
+#: order/models.py:941 part/admin.py:257 part/models.py:3459
 #: part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report.html:91
@@ -798,10 +798,10 @@ msgstr ""
 #: build/models.py:180 build/templates/build/build_base.html:80
 #: build/templates/build/detail.html:29 company/models.py:684
 #: order/models.py:1038 order/models.py:1149 order/models.py:1150
-#: part/models.py:382 part/models.py:2799 part/models.py:2912
-#: part/models.py:2972 part/models.py:2987 part/models.py:3006
-#: part/models.py:3024 part/models.py:3123 part/models.py:3244
-#: part/models.py:3336 part/models.py:3421 part/models.py:3737
+#: part/models.py:382 part/models.py:2802 part/models.py:2915
+#: part/models.py:2975 part/models.py:2990 part/models.py:3009
+#: part/models.py:3027 part/models.py:3126 part/models.py:3247
+#: part/models.py:3339 part/models.py:3424 part/models.py:3740
 #: part/serializers.py:894 part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1032,7 +1032,7 @@ msgstr ""
 #: build/templates/build/detail.html:34 common/models.py:1849
 #: order/models.py:934 order/models.py:1460 order/serializers.py:1206
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:256
-#: part/forms.py:40 part/models.py:2919 part/models.py:3437
+#: part/forms.py:40 part/models.py:2922 part/models.py:3440
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1249,8 +1249,8 @@ msgstr ""
 msgid "Build order has incomplete outputs"
 msgstr ""
 
-#: build/serializers.py:595 build/serializers.py:640 part/models.py:3573
-#: part/models.py:3729
+#: build/serializers.py:595 build/serializers.py:640 part/models.py:3576
+#: part/models.py:3732
 msgid "BOM Item"
 msgstr ""
 
@@ -1938,7 +1938,7 @@ msgstr ""
 msgid "Copy category parameter templates when creating a part"
 msgstr ""
 
-#: common/models.py:1014 part/admin.py:41 part/models.py:3246
+#: common/models.py:1014 part/admin.py:41 part/models.py:3249
 #: report/models.py:158 templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:516
 msgid "Template"
@@ -3051,7 +3051,7 @@ msgid "Does this company manufacture parts?"
 msgstr ""
 
 #: company/models.py:153 company/serializers.py:399
-#: company/templates/company/company_base.html:107 part/models.py:2780
+#: company/templates/company/company_base.html:107 part/models.py:2783
 #: part/serializers.py:156 part/serializers.py:184 stock/serializers.py:182
 #: templates/InvenTree/settings/pricing.html:64
 msgid "Currency"
@@ -3133,7 +3133,7 @@ msgid "Parameter value"
 msgstr ""
 
 #: company/models.py:377 part/admin.py:26 part/models.py:952
-#: part/models.py:3206 part/templates/part/part_base.html:286
+#: part/models.py:3209 part/templates/part/part_base.html:286
 #: templates/InvenTree/settings/settings.html:350
 #: templates/js/translated/company.js:806 templates/js/translated/part.js:1166
 msgid "Units"
@@ -3189,7 +3189,7 @@ msgid "Supplier part description"
 msgstr ""
 
 #: company/models.py:528 company/templates/company/supplier_part.html:181
-#: part/admin.py:258 part/models.py:3459 part/templates/part/upload_bom.html:59
+#: part/admin.py:258 part/models.py:3462 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:93 stock/serializers.py:397
@@ -4599,12 +4599,12 @@ msgstr ""
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
-#: part/admin.py:19 part/admin.py:252 part/models.py:3340 stock/admin.py:84
+#: part/admin.py:19 part/admin.py:252 part/models.py:3343 stock/admin.py:84
 #: templates/js/translated/model_renderers.js:212
 msgid "Part ID"
 msgstr ""
 
-#: part/admin.py:20 part/admin.py:254 part/models.py:3344 stock/admin.py:85
+#: part/admin.py:20 part/admin.py:254 part/models.py:3347 stock/admin.py:85
 msgid "Part Name"
 msgstr ""
 
@@ -4679,11 +4679,11 @@ msgstr ""
 msgid "Building"
 msgstr ""
 
-#: part/admin.py:52 part/models.py:2864
+#: part/admin.py:52 part/models.py:2867
 msgid "Minimum Cost"
 msgstr ""
 
-#: part/admin.py:53 part/models.py:2870
+#: part/admin.py:53 part/models.py:2873
 msgid "Maximum Cost"
 msgstr ""
 
@@ -4723,7 +4723,7 @@ msgstr ""
 msgid "Parent IPN"
 msgstr ""
 
-#: part/admin.py:253 part/models.py:3348
+#: part/admin.py:253 part/models.py:3351
 msgid "Part IPN"
 msgstr ""
 
@@ -4833,7 +4833,7 @@ msgstr ""
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
 msgstr ""
 
-#: part/models.py:159 part/models.py:3289 part/templates/part/category.html:16
+#: part/models.py:159 part/models.py:3292 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr ""
@@ -4869,7 +4869,7 @@ msgstr ""
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr ""
 
-#: part/models.py:809 part/models.py:3345
+#: part/models.py:809 part/models.py:3348
 msgid "Part name"
 msgstr ""
 
@@ -4897,7 +4897,7 @@ msgstr ""
 msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
-#: part/models.py:847 part/models.py:3044 part/models.py:3288
+#: part/models.py:847 part/models.py:3047 part/models.py:3291
 #: part/templates/part/part_base.html:263
 #: templates/InvenTree/settings/settings.html:230
 #: templates/js/translated/notification.js:50
@@ -5007,147 +5007,147 @@ msgstr ""
 msgid "Sell multiple"
 msgstr ""
 
-#: part/models.py:2781
+#: part/models.py:2784
 msgid "Currency used to cache pricing calculations"
 msgstr ""
 
-#: part/models.py:2786 templates/js/translated/part.js:806
+#: part/models.py:2789 templates/js/translated/part.js:806
 msgid "Updated"
 msgstr ""
 
-#: part/models.py:2787
+#: part/models.py:2790
 msgid "Timestamp of last pricing update"
 msgstr ""
 
-#: part/models.py:2804
+#: part/models.py:2807
 msgid "Minimum BOM Cost"
 msgstr ""
 
-#: part/models.py:2805
+#: part/models.py:2808
 msgid "Minimum cost of component parts"
 msgstr ""
 
-#: part/models.py:2810
+#: part/models.py:2813
 msgid "Maximum BOM Cost"
 msgstr ""
 
-#: part/models.py:2811
+#: part/models.py:2814
 msgid "Maximum cost of component parts"
 msgstr ""
 
-#: part/models.py:2816
+#: part/models.py:2819
 msgid "Minimum Purchase Cost"
 msgstr ""
 
-#: part/models.py:2817
+#: part/models.py:2820
 msgid "Minimum historical purchase cost"
 msgstr ""
 
-#: part/models.py:2822
+#: part/models.py:2825
 msgid "Maximum Purchase Cost"
 msgstr ""
 
-#: part/models.py:2823
+#: part/models.py:2826
 msgid "Maximum historical purchase cost"
 msgstr ""
 
-#: part/models.py:2828
+#: part/models.py:2831
 msgid "Minimum Internal Price"
 msgstr ""
 
-#: part/models.py:2829
+#: part/models.py:2832
 msgid "Minimum cost based on internal price breaks"
 msgstr ""
 
-#: part/models.py:2834
+#: part/models.py:2837
 msgid "Maximum Internal Price"
 msgstr ""
 
-#: part/models.py:2835
+#: part/models.py:2838
 msgid "Maximum cost based on internal price breaks"
 msgstr ""
 
-#: part/models.py:2840
+#: part/models.py:2843
 msgid "Minimum Supplier Price"
 msgstr ""
 
-#: part/models.py:2841
+#: part/models.py:2844
 msgid "Minimum price of part from external suppliers"
 msgstr ""
 
-#: part/models.py:2846
+#: part/models.py:2849
 msgid "Maximum Supplier Price"
 msgstr ""
 
-#: part/models.py:2847
+#: part/models.py:2850
 msgid "Maximum price of part from external suppliers"
 msgstr ""
 
-#: part/models.py:2852
+#: part/models.py:2855
 msgid "Minimum Variant Cost"
 msgstr ""
 
-#: part/models.py:2853
+#: part/models.py:2856
 msgid "Calculated minimum cost of variant parts"
 msgstr ""
 
-#: part/models.py:2858
+#: part/models.py:2861
 msgid "Maximum Variant Cost"
 msgstr ""
 
-#: part/models.py:2859
+#: part/models.py:2862
 msgid "Calculated maximum cost of variant parts"
 msgstr ""
 
-#: part/models.py:2865
+#: part/models.py:2868
 msgid "Calculated overall minimum cost"
 msgstr ""
 
-#: part/models.py:2871
+#: part/models.py:2874
 msgid "Calculated overall maximum cost"
 msgstr ""
 
-#: part/models.py:2876
+#: part/models.py:2879
 msgid "Minimum Sale Price"
 msgstr ""
 
-#: part/models.py:2877
+#: part/models.py:2880
 msgid "Minimum sale price based on price breaks"
 msgstr ""
 
-#: part/models.py:2882
+#: part/models.py:2885
 msgid "Maximum Sale Price"
 msgstr ""
 
-#: part/models.py:2883
+#: part/models.py:2886
 msgid "Maximum sale price based on price breaks"
 msgstr ""
 
-#: part/models.py:2888
+#: part/models.py:2891
 msgid "Minimum Sale Cost"
 msgstr ""
 
-#: part/models.py:2889
+#: part/models.py:2892
 msgid "Minimum historical sale price"
 msgstr ""
 
-#: part/models.py:2894
+#: part/models.py:2897
 msgid "Maximum Sale Cost"
 msgstr ""
 
-#: part/models.py:2895
+#: part/models.py:2898
 msgid "Maximum historical sale price"
 msgstr ""
 
-#: part/models.py:2913
+#: part/models.py:2916
 msgid "Part for stocktake"
 msgstr ""
 
-#: part/models.py:2920
+#: part/models.py:2923
 msgid "Total available stock at time of stocktake"
 msgstr ""
 
-#: part/models.py:2924 part/templates/part/part_scheduling.html:13
+#: part/models.py:2927 part/templates/part/part_scheduling.html:13
 #: report/templates/report/inventree_test_report_base.html:97
 #: templates/InvenTree/settings/plugin.html:63
 #: templates/InvenTree/settings/plugin_settings.html:38
@@ -5157,145 +5157,145 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: part/models.py:2925
+#: part/models.py:2928
 msgid "Date stocktake was performed"
 msgstr ""
 
-#: part/models.py:2933
+#: part/models.py:2936
 msgid "Additional notes"
 msgstr ""
 
-#: part/models.py:2941
+#: part/models.py:2944
 msgid "User who performed this stocktake"
 msgstr ""
 
-#: part/models.py:3091
+#: part/models.py:3094
 msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
-#: part/models.py:3108
+#: part/models.py:3111
 msgid "Test with this name already exists for this part"
 msgstr ""
 
-#: part/models.py:3128 templates/js/translated/part.js:2397
+#: part/models.py:3131 templates/js/translated/part.js:2397
 msgid "Test Name"
 msgstr ""
 
-#: part/models.py:3129
+#: part/models.py:3132
 msgid "Enter a name for the test"
 msgstr ""
 
-#: part/models.py:3134
+#: part/models.py:3137
 msgid "Test Description"
 msgstr ""
 
-#: part/models.py:3135
+#: part/models.py:3138
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:3140 templates/js/translated/part.js:2406
+#: part/models.py:3143 templates/js/translated/part.js:2406
 #: templates/js/translated/table_filters.js:330
 msgid "Required"
 msgstr ""
 
-#: part/models.py:3141
+#: part/models.py:3144
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:3146 templates/js/translated/part.js:2414
+#: part/models.py:3149 templates/js/translated/part.js:2414
 msgid "Requires Value"
 msgstr ""
 
-#: part/models.py:3147
+#: part/models.py:3150
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:3152 templates/js/translated/part.js:2421
+#: part/models.py:3155 templates/js/translated/part.js:2421
 msgid "Requires Attachment"
 msgstr ""
 
-#: part/models.py:3153
+#: part/models.py:3156
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
-#: part/models.py:3194
+#: part/models.py:3197
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:3202
+#: part/models.py:3205
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:3206
+#: part/models.py:3209
 msgid "Parameter Units"
 msgstr ""
 
-#: part/models.py:3211
+#: part/models.py:3214
 msgid "Parameter description"
 msgstr ""
 
-#: part/models.py:3244
+#: part/models.py:3247
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:3246 part/models.py:3294 part/models.py:3295
+#: part/models.py:3249 part/models.py:3297 part/models.py:3298
 #: templates/InvenTree/settings/settings.html:225
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:3248
+#: part/models.py:3251
 msgid "Data"
 msgstr ""
 
-#: part/models.py:3248
+#: part/models.py:3251
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:3299 templates/InvenTree/settings/settings.html:234
+#: part/models.py:3302 templates/InvenTree/settings/settings.html:234
 msgid "Default Value"
 msgstr ""
 
-#: part/models.py:3300
+#: part/models.py:3303
 msgid "Default Parameter Value"
 msgstr ""
 
-#: part/models.py:3337
+#: part/models.py:3340
 msgid "Part ID or part name"
 msgstr ""
 
-#: part/models.py:3341
+#: part/models.py:3344
 msgid "Unique part ID value"
 msgstr ""
 
-#: part/models.py:3349
+#: part/models.py:3352
 msgid "Part IPN value"
 msgstr ""
 
-#: part/models.py:3352
+#: part/models.py:3355
 msgid "Level"
 msgstr ""
 
-#: part/models.py:3353
+#: part/models.py:3356
 msgid "BOM level"
 msgstr ""
 
-#: part/models.py:3422
+#: part/models.py:3425
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:3430
+#: part/models.py:3433
 msgid "Sub part"
 msgstr ""
 
-#: part/models.py:3431
+#: part/models.py:3434
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:3437
+#: part/models.py:3440
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:3441 part/templates/part/upload_bom.html:58
+#: part/models.py:3444 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:933 templates/js/translated/bom.js:986
 #: templates/js/translated/build.js:1868
 #: templates/js/translated/table_filters.js:84
@@ -5303,105 +5303,105 @@ msgstr ""
 msgid "Optional"
 msgstr ""
 
-#: part/models.py:3442
+#: part/models.py:3445
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:3447 templates/js/translated/bom.js:929
+#: part/models.py:3450 templates/js/translated/bom.js:929
 #: templates/js/translated/bom.js:995 templates/js/translated/build.js:1859
 #: templates/js/translated/table_filters.js:88
 msgid "Consumable"
 msgstr ""
 
-#: part/models.py:3448
+#: part/models.py:3451
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr ""
 
-#: part/models.py:3452 part/templates/part/upload_bom.html:55
+#: part/models.py:3455 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr ""
 
-#: part/models.py:3453
+#: part/models.py:3456
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:3456
+#: part/models.py:3459
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:3459
+#: part/models.py:3462
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:3461
+#: part/models.py:3464
 msgid "Checksum"
 msgstr ""
 
-#: part/models.py:3461
+#: part/models.py:3464
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:3465 part/templates/part/upload_bom.html:57
+#: part/models.py:3468 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1012
 #: templates/js/translated/table_filters.js:76
 #: templates/js/translated/table_filters.js:108
 msgid "Inherited"
 msgstr ""
 
-#: part/models.py:3466
+#: part/models.py:3469
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr ""
 
-#: part/models.py:3471 part/templates/part/upload_bom.html:56
+#: part/models.py:3474 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1004
 msgid "Allow Variants"
 msgstr ""
 
-#: part/models.py:3472
+#: part/models.py:3475
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:3558 stock/models.py:558
+#: part/models.py:3561 stock/models.py:558
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:3567 part/models.py:3569
+#: part/models.py:3570 part/models.py:3572
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:3696
+#: part/models.py:3699
 msgid "BOM Item Substitute"
 msgstr ""
 
-#: part/models.py:3717
+#: part/models.py:3720
 msgid "Substitute part cannot be the same as the master part"
 msgstr ""
 
-#: part/models.py:3730
+#: part/models.py:3733
 msgid "Parent BOM item"
 msgstr ""
 
-#: part/models.py:3738
+#: part/models.py:3741
 msgid "Substitute part"
 msgstr ""
 
-#: part/models.py:3753
+#: part/models.py:3756
 msgid "Part 1"
 msgstr ""
 
-#: part/models.py:3757
+#: part/models.py:3760
 msgid "Part 2"
 msgstr ""
 
-#: part/models.py:3757
+#: part/models.py:3760
 msgid "Select Related Part"
 msgstr ""
 
-#: part/models.py:3775
+#: part/models.py:3778
 msgid "Part relationship cannot be created between a part and itself"
 msgstr ""
 
-#: part/models.py:3779
+#: part/models.py:3782
 msgid "Duplicate relationship already exists"
 msgstr ""
 
