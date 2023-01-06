@@ -1072,12 +1072,15 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def required_parts_to_complete_build(self):
-        """Returns a list of parts required to complete the full build."""
+        """Returns a list of parts required to complete the full build.
+
+        TODO: 2022-01-06 : This method needs to be improved, it is very inefficient in terms of DB hits!
+        """
         parts = []
 
         for bom_item in self.bom_items:
             # Get remaining quantity needed
-            required_quantity_to_complete_build = self.remaining * bom_item.quantity
+            required_quantity_to_complete_build = self.remaining * bom_item.quantity - self.allocated_quantity(bom_item)
             # Compare to net stock
             if bom_item.sub_part.net_stock < required_quantity_to_complete_build:
                 parts.append(bom_item.sub_part)
