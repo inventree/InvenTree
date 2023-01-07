@@ -216,8 +216,6 @@ class RegistratonMixin:
 
     def clean_email(self, email):
         """Check if the mail is valid to the pattern in LOGIN_SIGNUP_MAIL_RESTRICTION (if enabled in settings)."""
-        mail_error = _('The provided primary email address is not valid.')
-
         mail_restriction = InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_RESTRICTION', None)
         if not mail_restriction:
             return super().clean_email(email)
@@ -225,13 +223,13 @@ class RegistratonMixin:
         split_email = email.split('@')
         if len(split_email) != 2:
             logger.error(f'The user {email} has an invalid email address')
-            raise forms.ValidationError(mail_error)
+            raise forms.ValidationError(_('The provided primary email address is not valid.'))
 
         mailoptions = mail_restriction.split(',')
         for option in mailoptions:
             if not option.startswith('@'):
                 logger.error('LOGIN_SIGNUP_MAIL_RESTRICTION is not configured correctly')
-                raise forms.ValidationError(mail_error)
+                raise forms.ValidationError(_('The provided primary email address is not valid.'))
             else:
                 if split_email[1] == option[1:]:
                     return super().clean_email(email)
