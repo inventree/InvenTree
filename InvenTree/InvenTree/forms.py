@@ -1,12 +1,14 @@
 """Helper forms which subclass Django forms to provide additional functionality."""
 
 import logging
+import re
 from urllib.parse import urlencode
 
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.contrib.sites.models import Site
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -216,7 +218,21 @@ class RegistratonMixin:
 
     def save_user(self, request, user, form, commit=True):
         """Check if a default group is set in settings."""
+        # Check if the provided mail is valid to the pattern in LOGIN_SIGNUP_MAIL_RESTRICTION (if enabled in settings)
+        email = form.data.get('email', None)
+        if not email:
+            logger.error(f'The user {user.username} has no email address')
+            raise ValidationError('The user has no email address')
+        mail_restriction = InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_RESTRICTION', None)
+        if mail_restriction:
+            if not re.match(mail_restriction, user.email):
+                logger.error(f'The user {user.username} has an invalid email address')
+                raise ValidationError('The provided primary email address is not approved.')
+
+        # Create the user
         user = super().save_user(request, user, form)
+
+        # Check if a default group is set in settings
         start_group = InvenTreeSetting.get_setting('SIGNUP_GROUP')
         if start_group:
             try:

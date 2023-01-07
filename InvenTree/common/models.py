@@ -1375,6 +1375,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'LOGIN_SIGNUP_MAIL_RESTRICTION': {
+            'name': _('Allowed domains'),
+            'description': _('Restrict signup to certain domains (comma-separated, strarting with @)'),
+            'default': None,
+        },
+
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
             'description': _('Group to which new users are assigned on registration'),
