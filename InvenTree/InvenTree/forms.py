@@ -207,10 +207,11 @@ class CustomSignupForm(SignupForm):
 
 class RegistratonMixin:
     """Mixin to check if registration should be enabled."""
+    REGISTRATION_SETTING = 'LOGIN_ENABLE_REG'
 
     def is_open_for_signup(self, request, *args, **kwargs):
         """Check if signup is enabled in settings."""
-        if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
+        if settings.EMAIL_HOST and InvenTreeSetting.get_setting(self.REGISTRATION_SETTING, True):
             return super().is_open_for_signup(request, *args, **kwargs)
         return False
 
@@ -248,6 +249,7 @@ class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, Default
 
 class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
+    REGISTRATION_SETTING = 'LOGIN_ENABLE_SSO_REG'
 
     def is_auto_signup_allowed(self, request, sociallogin):
         """Check if auto signup is enabled in settings."""
