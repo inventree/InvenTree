@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-06 00:15+0000\n"
-"PO-Revision-Date: 2023-01-06 12:24\n"
+"POT-Creation-Date: 2023-01-06 14:06+0000\n"
+"PO-Revision-Date: 2023-01-07 12:20\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -973,42 +973,42 @@ msgstr "Productie uitvoer is al voltooid"
 msgid "Build output does not match Build Order"
 msgstr "Productuitvoer komt niet overeen met de Productieorder"
 
-#: build/models.py:1177
+#: build/models.py:1180
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Productieartikel moet een productieuitvoer specificeren, omdat het hoofdonderdeel gemarkeerd is als traceerbaar"
 
-#: build/models.py:1186
+#: build/models.py:1189
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Toegewezen hoeveelheid ({q}) mag de beschikbare voorraad ({a}) niet overschrijden"
 
-#: build/models.py:1196 order/models.py:1416
+#: build/models.py:1199 order/models.py:1416
 msgid "Stock item is over-allocated"
 msgstr "Voorraad item is te veel toegewezen"
 
-#: build/models.py:1202 order/models.py:1419
+#: build/models.py:1205 order/models.py:1419
 msgid "Allocation quantity must be greater than zero"
 msgstr "Toewijzing hoeveelheid moet groter zijn dan nul"
 
-#: build/models.py:1208
+#: build/models.py:1211
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Hoeveelheid moet 1 zijn voor geserialiseerde voorraad"
 
-#: build/models.py:1265
+#: build/models.py:1268
 msgid "Selected stock item not found in BOM"
 msgstr "Geselecteerd voorraadartikel niet gevonden in stuklijst"
 
-#: build/models.py:1334 stock/templates/stock/item_base.html:175
+#: build/models.py:1337 stock/templates/stock/item_base.html:175
 #: templates/InvenTree/search.html:139 templates/js/translated/build.js:2580
 #: templates/navbar.html:38
 msgid "Build"
 msgstr "Product"
 
-#: build/models.py:1335
+#: build/models.py:1338
 msgid "Build to allocate parts"
 msgstr "Product om onderdelen toe te wijzen"
 
-#: build/models.py:1351 build/serializers.py:663 order/serializers.py:1032
+#: build/models.py:1354 build/serializers.py:663 order/serializers.py:1032
 #: order/serializers.py:1053 stock/serializers.py:392 stock/serializers.py:758
 #: stock/serializers.py:884 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1023,11 +1023,11 @@ msgstr "Product om onderdelen toe te wijzen"
 msgid "Stock Item"
 msgstr "Voorraadartikel"
 
-#: build/models.py:1352
+#: build/models.py:1355
 msgid "Source stock item"
 msgstr "Bron voorraadartikel"
 
-#: build/models.py:1364 build/serializers.py:192
+#: build/models.py:1367 build/serializers.py:192
 #: build/templates/build/build_base.html:85
 #: build/templates/build/detail.html:34 common/models.py:1849
 #: order/models.py:934 order/models.py:1460 order/serializers.py:1206
@@ -1068,15 +1068,15 @@ msgstr "Bron voorraadartikel"
 msgid "Quantity"
 msgstr "Hoeveelheid"
 
-#: build/models.py:1365
+#: build/models.py:1368
 msgid "Stock quantity to allocate to build"
 msgstr "Voorraad hoeveelheid toe te wijzen aan productie"
 
-#: build/models.py:1373
+#: build/models.py:1376
 msgid "Install into"
 msgstr "Installeren in"
 
-#: build/models.py:1374
+#: build/models.py:1377
 msgid "Destination stock item"
 msgstr "Bestemming voorraadartikel"
 
