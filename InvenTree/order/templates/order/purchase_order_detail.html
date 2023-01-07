@@ -180,7 +180,7 @@ $('#new-po-line').click(function() {
         {% endif %}
         {% endif %}
         {% if order.target_date %}
-        target_date: '{{ order.target_date|date:'Y-m-d' }}',
+        target_date: '{% render_date order.target_date %}',
         {% endif %}
         onSuccess: function() {
             $('#po-line-table').bootstrapTable('refresh');
