@@ -1,7 +1,7 @@
 # Please keep this list sorted - if you pin a version provide a reason
 Django>=3.2.14,<4                       # Django package
 coreapi                                 # API documentation for djangorestframework
-cryptography==3.4.8                     # Core cryptographic functionality
+cryptography                            # Core cryptographic functionality
 django-allauth==0.52.0                  # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
@@ -32,7 +32,7 @@ pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
 python-barcode[images]                  # Barcode generator
 qrcode[pil]                             # QR code generator
-rapidfuzz==0.7.6                        # Fuzzy string matching
+rapidfuzz                               # Fuzzy string matching
 regex                                   # Advanced regular expressions
 sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard depenedency
