@@ -1,7 +1,6 @@
 """Helper forms which subclass Django forms to provide additional functionality."""
 
 import logging
-import re
 from urllib.parse import urlencode
 
 from django import forms
@@ -22,7 +21,6 @@ from crispy_forms.bootstrap import (AppendedText, PrependedAppendedText,
                                     PrependedText)
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
-from rest_framework.exceptions import PermissionDenied
 
 from common.models import InvenTreeSetting
 
@@ -216,19 +214,37 @@ class RegistratonMixin:
             return super().is_open_for_signup(request, *args, **kwargs)
         return False
 
+    def clean_email(self, email):
+        """Check if the mail is valid to the pattern in LOGIN_SIGNUP_MAIL_RESTRICTION (if enabled in settings)."""
+        mail_error = _('The provided primary email address is not valid.')
+
+        if not email:
+            logger.error('The user has no email address')
+            raise forms.ValidationError(_('The user has no email address.'))
+
+        mail_restriction = InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_RESTRICTION', None)
+        if not mail_restriction:
+            return super().clean_email(email)
+
+        split_email = email.split('@')
+        if len(split_email) != 2:
+            logger.error(f'The user {email} has an invalid email address')
+            raise forms.ValidationError(mail_error)
+
+        mailoptions = mail_restriction.split(',')
+        for option in mailoptions:
+            if not option.startswith('@'):
+                logger.error('LOGIN_SIGNUP_MAIL_RESTRICTION is not configured correctly')
+                raise forms.ValidationError(mail_error)
+            else:
+                if split_email[1] == option[1:]:
+                    return super().clean_email(email)
+
+        logger.error(f'The provided email domain for {email} is not approved')
+        raise forms.ValidationError(_('The provided email domain is not approved.'))
+
     def save_user(self, request, user, form, commit=True):
         """Check if a default group is set in settings."""
-        # Check if the provided mail is valid to the pattern in LOGIN_SIGNUP_MAIL_RESTRICTION (if enabled in settings)
-        email = form.data.get('email', None)
-        if not email:
-            logger.error(f'The user {user.username} has no email address')
-            raise PermissionDenied(_('The user has no email address.'))
-        mail_restriction = InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_RESTRICTION', None)
-        if mail_restriction:
-            if not re.match(mail_restriction, user.email):
-                logger.error(f'The user {user.username} has an invalid email address')
-                raise PermissionDenied(_('The provided primary email address is not approved.'))
-
         # Create the user
         user = super().save_user(request, user, form)
 
