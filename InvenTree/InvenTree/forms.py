@@ -218,10 +218,6 @@ class RegistratonMixin:
         """Check if the mail is valid to the pattern in LOGIN_SIGNUP_MAIL_RESTRICTION (if enabled in settings)."""
         mail_error = _('The provided primary email address is not valid.')
 
-        if not email:
-            logger.error('The user has no email address')
-            raise forms.ValidationError(_('The user has no email address.'))
-
         mail_restriction = InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_RESTRICTION', None)
         if not mail_restriction:
             return super().clean_email(email)
