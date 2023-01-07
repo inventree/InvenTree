@@ -13,7 +13,7 @@ from rest_framework.documentation import include_docs_urls
 
 from build.api import build_api_urls
 from build.urls import build_urls
-from common.api import common_api_urls, settings_api_urls
+from common.api import admin_api_urls, common_api_urls, settings_api_urls
 from common.urls import common_urls
 from company.api import company_api_urls
 from company.urls import (company_urls, manufacturer_part_urls,
@@ -53,6 +53,7 @@ apipatterns = [
     re_path(r'^label/', include(label_api_urls)),
     re_path(r'^report/', include(report_api_urls)),
     re_path(r'^user/', include(user_urls)),
+    re_path(r'^admin/', include(admin_api_urls)),
 
     # Plugin endpoints
     path('', include(plugin_api_urls)),

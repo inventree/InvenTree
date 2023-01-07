@@ -52,7 +52,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 BASE_DIR = config.get_base_dir()
 
 # Load configuration data
-CONFIG = config.load_config_data()
+CONFIG = config.load_config_data(set_cache=True)
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!

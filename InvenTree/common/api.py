@@ -18,9 +18,11 @@ from rest_framework.views import APIView
 import common.models
 import common.serializers
 from InvenTree.api import BulkDeleteMixin
+from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.helpers import inheritors
 from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
+from InvenTree.permissions import IsSuperuser
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 
@@ -360,6 +362,29 @@ class NewsFeedEntryDetail(NewsFeedMixin, RetrieveUpdateDestroyAPI):
     """Detail view for an individual news feed object."""
 
 
+class ConfigList(ListAPI):
+    """List view for all accessed configurations."""
+
+    queryset = CONFIG_LOOKUPS
+    serializer_class = common.serializers.ConfigSerializer
+    permission_classes = [IsSuperuser, ]
+
+
+class ConfigDetail(RetrieveAPI):
+    """Detail view for an individual configuration."""
+
+    serializer_class = common.serializers.ConfigSerializer
+    permission_classes = [IsSuperuser, ]
+
+    def get_object(self):
+        """Attempt to find a config object with the provided key."""
+        key = self.kwargs['key']
+        value = CONFIG_LOOKUPS.get(key, None)
+        if not value:
+            raise NotFound()
+        return {key: value}
+
+
 settings_api_urls = [
     # User settings
     re_path(r'^user/', include([
@@ -414,4 +439,10 @@ common_api_urls = [
         re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),
     ])),
 
+]
+
+admin_api_urls = [
+    # Admin
+    path('config/', ConfigList.as_view(), name='api-config-list'),
+    path('config/<str:key>/', ConfigDetail.as_view(), name='api-config-detail'),
 ]
