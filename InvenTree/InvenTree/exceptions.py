@@ -3,11 +3,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import logging
 import sys
 import traceback
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.utils import IntegrityError, OperationalError
 from django.utils.translation import gettext_lazy as _
 
 import rest_framework.views as drfviews
@@ -15,6 +17,8 @@ from error_report.models import Error
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
+
+logger = logging.getLogger('inventree')
 
 
 def log_error(path):
@@ -32,12 +36,19 @@ def log_error(path):
     if kind in settings.IGNORED_ERRORS:
         return
 
-    Error.objects.create(
-        kind=kind.__name__,
-        info=info,
-        data='\n'.join(traceback.format_exception(kind, info, data)),
-        path=path,
-    )
+    # Log error to stderr
+    logger.error(info)
+
+    try:
+        Error.objects.create(
+            kind=kind.__name__,
+            info=info,
+            data='\n'.join(traceback.format_exception(kind, info, data)),
+            path=path,
+        )
+    except (OperationalError, IntegrityError):
+        # Not much we can do if logging the error throws a db exception
+        pass
 
 
 def exception_handler(exc, context):

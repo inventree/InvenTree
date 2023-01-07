@@ -23,6 +23,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
 
 from common.models import InvenTreeSetting
+from InvenTree.exceptions import log_error
 
 logger = logging.getLogger('inventree')
 
@@ -239,10 +240,20 @@ class CustomUrlMixin:
 
 class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
     """Override of adapter to use dynamic settings."""
+
     def send_mail(self, template_prefix, email, context):
         """Only send mail if backend configured."""
         if settings.EMAIL_HOST:
-            return super().send_mail(template_prefix, email, context)
+            try:
+                result = super().send_mail(template_prefix, email, context)
+            except Exception:
+                # An exception ocurred while attempting to send email
+                # Log it (for admin users) and return silently
+                log_error('account email')
+                result = False
+
+            return result
+
         return False
 
 
