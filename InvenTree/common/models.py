@@ -87,13 +87,24 @@ class BaseInvenTreeSetting(models.Model):
 
         super().save()
 
-        # Get after_save action
+        # Execute after_save action
+        self._call_settings_function('after_save', args, kwargs)
+
+    def _call_settings_function(self, reference: str, args, kwargs):
+        """Call a function associated with a particular setting.
+
+        Args:
+            reference (str): The name of the function to call
+            args: Positional arguments to pass to the function
+            kwargs: Keyword arguments to pass to the function
+        """
+        # Get action
         setting = self.get_setting_definition(self.key, *args, **kwargs)
-        after_save = setting.get('after_save', None)
+        settings_fnc = setting.get(reference, None)
 
         # Execute if callable
-        if callable(after_save):
-            after_save(self)
+        if callable(settings_fnc):
+            settings_fnc(self)
 
     @property
     def cache_key(self):
@@ -1378,7 +1389,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'LOGIN_SIGNUP_MAIL_RESTRICTION': {
             'name': _('Allowed domains'),
             'description': _('Restrict signup to certain domains (comma-separated, strarting with @)'),
-            'default': None,
+            'default': '',
         },
 
         'SIGNUP_GROUP': {
