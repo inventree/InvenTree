@@ -23,6 +23,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
 
 from common.models import InvenTreeSetting
+from InvenTree.exceptions import log_error
 
 logger = logging.getLogger('inventree')
 
@@ -228,13 +229,13 @@ class RegistratonMixin:
         mailoptions = mail_restriction.split(',')
         for option in mailoptions:
             if not option.startswith('@'):
-                logger.error('LOGIN_SIGNUP_MAIL_RESTRICTION is not configured correctly')
+                log_error('LOGIN_SIGNUP_MAIL_RESTRICTION is not configured correctly')
                 raise forms.ValidationError(_('The provided primary email address is not valid.'))
             else:
                 if split_email[1] == option[1:]:
                     return super().clean_email(email)
 
-        logger.error(f'The provided email domain for {email} is not approved')
+        logger.info(f'The provided email domain for {email} is not approved')
         raise forms.ValidationError(_('The provided email domain is not approved.'))
 
     def save_user(self, request, user, form, commit=True):
