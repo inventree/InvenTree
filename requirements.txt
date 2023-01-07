@@ -30,7 +30,7 @@ coreapi==2.3.3
     # via -r requirements.in
 coreschema==0.0.4
     # via coreapi
-cryptography==39.0.0
+cryptography==3.4.8
     # via
     #   -r requirements.in
     #   pyjwt
@@ -206,7 +206,7 @@ qrcode[pil]==7.3.1
     # via
     #   -r requirements.in
     #   django-allauth-2fa
-rapidfuzz==2.13.7
+rapidfuzz==0.7.6
     # via -r requirements.in
 redis==3.5.3
     # via
