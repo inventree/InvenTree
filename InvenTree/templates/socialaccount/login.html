@@ -1,0 +1,28 @@
+{% extends "socialaccount/base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+{% if process == "connect" %}
+<h3>{% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}</h3>
+
+<p>{% blocktrans with provider.name as provider %}You are about to connect a new third party account from {{ provider }}.{% endblocktrans %}</p>
+{% else %}
+<h3>{% blocktrans with provider.name as provider %}Sign In Via {{ provider }}{% endblocktrans %}</h3>
+
+<p>{% blocktrans with provider.name as provider %}You are about to sign in using a third party account from {{ provider }}.{% endblocktrans %}</p>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <button class='btn btn-success sso-provider-link' type="submit"><span class='fas fa-sign-in-alt'></span>&nbsp;{% trans "Continue" %}</button>
+</form>
+
+<hr>
+<div>
+    <a href='{% url "account_login" %}'>
+        {% trans "Return to login page" %}
+    </a>
+</div>
+{% endblock %}
