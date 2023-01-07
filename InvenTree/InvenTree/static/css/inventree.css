@@ -1070,3 +1070,24 @@ a {
     margin-left: 0.25rem;
     margin-right: 0.25rem;
 }
+
+.sso-header {
+    text-align: center;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.sso-provider-list {
+    width: 100%;
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+.sso-provider-link {
+    width: 100%;
+}
+
+.sso-provider-link a {
+    width:  100%;
+    text-align: left;
+}

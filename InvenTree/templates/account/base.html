@@ -109,7 +109,7 @@ $(document).ready(function () {
         var icon = window.FontAwesome.icon({prefix: 'fab', iconName: tag});
 
         if (icon) {
-            el.append(`&nbsp;<span class='fab fa-${tag}'></span>`);
+            el.prepend(`<span class='fab fa-${tag}'></span>&nbsp;`);
         }
     });
 
