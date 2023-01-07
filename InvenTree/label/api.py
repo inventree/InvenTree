@@ -98,7 +98,7 @@ class LabelListView(LabelFilterMixin, ListAPI):
                     continue
 
                 for item in items:
-                    item_query = self.queryset.model.objects.filter(pk=item.pk)
+                    item_query = self.ITEM_MODEL.objects.filter(pk=item.pk)
 
                     try:
                         if not item_query.filter(**filters).exists():
@@ -304,35 +304,7 @@ class StockItemLabelPrint(LabelPrintMixin, RetrieveAPI):
     ITEM_KEY = 'item'
 
 
-class StockLocationLabelMixin:
-    """Mixin for extracting stock locations from query params."""
-
-    def get_locations(self):
-        """Return a list of requested stock locations."""
-        locations = []
-
-        params = self.request.query_params
-
-        for key in ['location', 'location[]', 'locations', 'locations[]']:
-
-            if key in params:
-                locations = params.getlist(key, [])
-
-        valid_ids = []
-
-        for loc in locations:
-            try:
-                valid_ids.append(int(loc))
-            except (ValueError):
-                pass
-
-        # List of StockLocation objects which match provided values
-        valid_locations = StockLocation.objects.filter(pk__in=valid_ids)
-
-        return valid_locations
-
-
-class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
+class StockLocationLabelList(LabelListView):
     """API endpoint for viewiing list of StockLocationLabel objects.
 
     Filterable by:
@@ -345,59 +317,8 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
     queryset = StockLocationLabel.objects.all()
     serializer_class = StockLocationLabelSerializer
 
-    def filter_queryset(self, queryset):
-        """Filter the StockLocationLabel queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        # List of StockLocation objects to match against
-        locations = self.get_locations()
-
-        # We wish to filter by stock location(s)
-        if len(locations) > 0:
-            """
-            At this point, we are basically forced to be inefficient,
-            as we need to compare the 'filters' string of each label,
-            and see if it matches against each of the requested items.
-
-            TODO: In the future, if this becomes excessively slow, it
-                  will need to be readdressed.
-            """
-
-            valid_label_ids = set()
-
-            for label in queryset.all():
-
-                matches = True
-
-                # Filter string defined for the StockLocationLabel object
-                try:
-                    filters = InvenTree.helpers.validateFilterString(label.filters)
-                except Exception:  # pragma: no cover
-                    # Skip if there was an error validating the filters...
-                    continue
-
-                for loc in locations:
-
-                    loc_query = StockLocation.objects.filter(pk=loc.pk)
-
-                    try:
-                        if not loc_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                # Matched all items
-                if matches:
-                    valid_label_ids.add(label.pk)
-                else:
-                    continue  # pragma: no cover
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
-
-        return queryset
+    ITEM_MODEL = StockLocation
+    ITEM_KEY = 'location'
 
 
 class StockLocationLabelDetail(RetrieveUpdateDestroyAPI):
@@ -407,17 +328,14 @@ class StockLocationLabelDetail(RetrieveUpdateDestroyAPI):
     serializer_class = StockLocationLabelSerializer
 
 
-class StockLocationLabelPrint(RetrieveAPI, StockLocationLabelMixin, LabelPrintMixin):
+class StockLocationLabelPrint(LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockLocationLabel object."""
 
     queryset = StockLocationLabel.objects.all()
     seiralizer_class = StockLocationLabelSerializer
 
-    def get(self, request, *args, **kwargs):
-        """Print labels based on the request parameters"""
-        locations = self.get_locations()
-
-        return self.print(request, locations)
+    ITEM_MODEL = StockLocation
+    ITEM_KEY = 'location'
 
 
 class PartLabelMixin:
