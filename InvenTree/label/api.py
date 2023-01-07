@@ -338,76 +338,14 @@ class StockLocationLabelPrint(LabelPrintMixin, RetrieveAPI):
     ITEM_KEY = 'location'
 
 
-class PartLabelMixin:
-    """Mixin for extracting Part objects from query parameters."""
-
-    def get_parts(self):
-        """Return a list of requested Part objects."""
-        parts = []
-
-        params = self.request.query_params
-
-        for key in ['part', 'part[]', 'parts', 'parts[]']:
-            if key in params:
-                parts = params.getlist(key, [])
-                break
-
-        valid_ids = []
-
-        for part in parts:
-            try:
-                valid_ids.append(int(part))
-            except (ValueError):
-                pass
-
-        # List of Part objects which match provided values
-        return Part.objects.filter(pk__in=valid_ids)
-
-
-class PartLabelList(LabelListView, PartLabelMixin):
+class PartLabelList(LabelListView):
     """API endpoint for viewing list of PartLabel objects."""
 
     queryset = PartLabel.objects.all()
     serializer_class = PartLabelSerializer
 
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering for the PartLabel list"""
-        queryset = super().filter_queryset(queryset)
-
-        parts = self.get_parts()
-
-        if len(parts) > 0:
-
-            valid_label_ids = set()
-
-            for label in queryset.all():
-
-                matches = True
-
-                try:
-                    filters = InvenTree.helpers.validateFilterString(label.filters)
-                except ValidationError:  # pragma: no cover
-                    continue
-
-                for part in parts:
-
-                    part_query = Part.objects.filter(pk=part.pk)
-
-                    try:
-                        if not part_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                if matches:
-                    valid_label_ids.add(label.pk)
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
-
-        return queryset
+    ITEM_MODEL = Part
+    ITEM_KEY = 'part'
 
 
 class PartLabelDetail(RetrieveUpdateDestroyAPI):
@@ -417,17 +355,14 @@ class PartLabelDetail(RetrieveUpdateDestroyAPI):
     serializer_class = PartLabelSerializer
 
 
-class PartLabelPrint(RetrieveAPI, PartLabelMixin, LabelPrintMixin):
+class PartLabelPrint(LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a PartLabel object."""
 
     queryset = PartLabel.objects.all()
     serializer_class = PartLabelSerializer
 
-    def get(self, request, *args, **kwargs):
-        """Check if valid part(s) have been provided."""
-        parts = self.get_parts()
-
-        return self.print(request, parts)
+    ITEM_MODEL = Part
+    ITEM_KEY = 'part'
 
 
 label_api_urls = [
