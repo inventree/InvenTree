@@ -293,7 +293,7 @@ function downloadBomTemplate(options={}) {
             $(opts.modal).modal('hide');
 
             // Download the file
-            location.href = `{% url "bom-upload-template" %}?format=${format}`;
+            location.href = `{% url "api-bom-upload-template" %}?format=${format}`;
 
         }
     });
@@ -373,7 +373,7 @@ function exportBom(part_id, options={}) {
                 'pricing_data',
             ];
 
-            var url = `/part/${part_id}/bom-download/?`;
+            var url = `/api/part/${part_id}/bom-download/?`;
 
             field_names.forEach(function(fn) {
                 var val = getFormFieldValue(fn, fields[fn], opts);
