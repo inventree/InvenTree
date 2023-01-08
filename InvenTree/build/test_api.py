@@ -63,6 +63,14 @@ class TestBuildAPI(InvenTreeAPITestCase):
         response = self.client.get(url, {'part': 99999}, format='json')
         self.assertEqual(len(response.data), 0)
 
+        # Get a certain reference
+        response = self.client.get(url, {'reference': 'BO-0001'}, format='json')
+        self.assertEqual(len(response.data), 1)
+
+        # Get a certain reference
+        response = self.client.get(url, {'reference': 'BO-9999XX'}, format='json')
+        self.assertEqual(len(response.data), 0)
+
     def test_get_build_item_list(self):
         """Test that we can retrieve list of BuildItem objects."""
         url = reverse('api-build-item-list')
@@ -213,7 +221,7 @@ class BuildTest(BuildAPITest):
                 "location": 1,
                 "status": 50,  # Item requires attention
             },
-            expected_code=201
+            expected_code=201,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
@@ -389,7 +397,7 @@ class BuildTest(BuildAPITest):
             expected_code=400,
         )
 
-        self.assertIn('The following serial numbers already exist : 1,2,3', str(response.data))
+        self.assertIn('The following serial numbers already exist or are invalid : 1,2,3', str(response.data))
 
         # Double check no new outputs have been created
         self.assertEqual(n_outputs + 5, bo.output_count)

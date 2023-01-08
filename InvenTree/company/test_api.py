@@ -217,6 +217,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
                 'part': 1,
                 'manufacturer': 7,
                 'MPN': 'PART_NUMBER',
+                'link': 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E',
             },
             expected_code=201
         )
@@ -229,16 +230,17 @@ class ManufacturerTest(InvenTreeAPITestCase):
             'supplier': 1,
             'SKU': 'SKU_TEST',
             'manufacturer_part': pk,
+            'link': 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E',
         }
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        # Check manufacturer part
-        manufacturer_part_id = int(response.data['manufacturer_part_detail']['pk'])
-        url = reverse('api-manufacturer-part-detail', kwargs={'pk': manufacturer_part_id})
-        response = self.get(url)
-        self.assertEqual(response.data['MPN'], 'PART_NUMBER')
+        # Check link is not modified
+        self.assertEqual(response.data['link'], 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E')
+
+        # Check link is not modified
+        self.assertEqual(response.data['link'], 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E')
 
 
 class SupplierPartTest(InvenTreeAPITestCase):

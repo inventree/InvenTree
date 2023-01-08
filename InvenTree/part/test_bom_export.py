@@ -23,11 +23,11 @@ class BomExportTest(InvenTreeTestCase):
         """Perform test setup functions"""
         super().setUp()
 
-        self.url = reverse('bom-download', kwargs={'pk': 100})
+        self.url = reverse('api-bom-download', kwargs={'pk': 100})
 
     def test_bom_template(self):
         """Test that the BOM template can be downloaded from the server."""
-        url = reverse('bom-upload-template')
+        url = reverse('api-bom-upload-template')
 
         # Download an XLS template
         response = self.client.get(url, data={'format': 'xls'})
@@ -58,21 +58,20 @@ class BomExportTest(InvenTreeTestCase):
                 break
 
             expected = [
-                'part_id',
-                'part_ipn',
-                'part_name',
-                'quantity',
+                'Part ID',
+                'Part IPN',
+                'Quantity',
+                'Reference',
+                'Note',
                 'optional',
                 'overage',
-                'reference',
-                'note',
                 'inherited',
                 'allow_variants',
             ]
 
             # Ensure all the expected headers are in the provided file
             for header in expected:
-                self.assertTrue(header in headers)
+                self.assertIn(header, headers)
 
     def test_export_csv(self):
         """Test BOM download in CSV format."""
@@ -106,22 +105,22 @@ class BomExportTest(InvenTreeTestCase):
                 break
 
             expected = [
-                'level',
-                'bom_id',
-                'parent_part_id',
-                'parent_part_ipn',
-                'parent_part_name',
-                'part_id',
-                'part_ipn',
-                'part_name',
-                'part_description',
-                'sub_assembly',
-                'quantity',
+                'BOM Level',
+                'BOM Item ID',
+                'Parent ID',
+                'Parent IPN',
+                'Parent Name',
+                'Part ID',
+                'Part IPN',
+                'Part Name',
+                'Description',
+                'Assembly',
+                'Quantity',
                 'optional',
                 'consumable',
                 'overage',
-                'reference',
-                'note',
+                'Reference',
+                'Note',
                 'inherited',
                 'allow_variants',
                 'Default Location',
@@ -131,10 +130,10 @@ class BomExportTest(InvenTreeTestCase):
             ]
 
             for header in expected:
-                self.assertTrue(header in headers)
+                self.assertIn(header, headers)
 
             for header in headers:
-                self.assertTrue(header in expected)
+                self.assertIn(header, expected)
 
     def test_export_xls(self):
         """Test BOM download in XLS format."""

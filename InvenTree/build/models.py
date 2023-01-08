@@ -832,6 +832,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         exclude_location = kwargs.get('exclude_location', None)
         interchangeable = kwargs.get('interchangeable', False)
         substitutes = kwargs.get('substitutes', True)
+        optional_items = kwargs.get('optional_items', False)
 
         def stock_sort(item, bom_item, variant_parts):
             if item.part == bom_item.sub_part:
@@ -846,6 +847,10 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
             if bom_item.consumable:
                 # Do not auto-allocate stock to consumable BOM items
+                continue
+
+            if bom_item.optional and not optional_items:
+                # User has specified that optional_items are to be ignored
                 continue
 
             variant_parts = bom_item.sub_part.get_descendants(include_self=False)
@@ -1067,12 +1072,15 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def required_parts_to_complete_build(self):
-        """Returns a list of parts required to complete the full build."""
+        """Returns a list of parts required to complete the full build.
+
+        TODO: 2022-01-06 : This method needs to be improved, it is very inefficient in terms of DB hits!
+        """
         parts = []
 
         for bom_item in self.bom_items:
             # Get remaining quantity needed
-            required_quantity_to_complete_build = self.remaining * bom_item.quantity
+            required_quantity_to_complete_build = self.remaining * bom_item.quantity - self.allocated_quantity(bom_item)
             # Compare to net stock
             if bom_item.sub_part.net_stock < required_quantity_to_complete_build:
                 parts.append(bom_item.sub_part)

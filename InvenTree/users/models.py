@@ -76,6 +76,7 @@ class RuleSet(models.Model):
             'plugin_pluginconfig',
             'plugin_pluginsetting',
             'plugin_notificationusersetting',
+            'common_newsfeedentry',
         ],
         'part_category': [
             'part_partcategory',
@@ -84,6 +85,7 @@ class RuleSet(models.Model):
         ],
         'part': [
             'part_part',
+            'part_partpricing',
             'part_bomitem',
             'part_bomitemsubstitute',
             'part_partattachment',
@@ -95,6 +97,7 @@ class RuleSet(models.Model):
             'part_partrelated',
             'part_partstar',
             'part_partcategorystar',
+            'part_partstocktake',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',

@@ -197,7 +197,27 @@ def translate(c):
     manage(c, "compilemessages")
 
 
-@task(post=[rebuild_models, rebuild_thumbnails])
+@task
+def backup(c):
+    """Backup the database and media files."""
+
+    print("Backing up InvenTree database...")
+    manage(c, "dbbackup --noinput --clean --compress")
+    print("Backing up InvenTree media files...")
+    manage(c, "mediabackup --noinput --clean --compress")
+
+
+@task
+def restore(c):
+    """Restore the database and media files."""
+
+    print("Restoring InvenTree database...")
+    manage(c, "dbrestore --noinput --uncompress")
+    print("Restoring InvenTree media files...")
+    manage(c, "mediarestore --noinput --uncompress")
+
+
+@task(pre=[backup, ], post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
     """Performs database migrations.
 
@@ -515,16 +535,18 @@ def test_translations(c):
 
 
 @task
-def test(c, database=None):
+def test(c, disable_pty=False):
     """Run unit-tests for InvenTree codebase."""
     # Run sanity check on the django install
     manage(c, 'check')
 
+    pty = not disable_pty
+
     # Run coverage tests
-    manage(c, 'test', pty=True)
+    manage(c, 'test', pty=pty)
 
 
-@task(help={'dev': 'Set up development enviroment at the end'})
+@task(help={'dev': 'Set up development environment at the end'})
 def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
     """Setup a testing enviroment."""
 
@@ -558,7 +580,7 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
 
     shutil.copytree(src, dst, dirs_exist_ok=True)
 
-    print("Done setting up test enviroment...")
+    print("Done setting up test environment...")
     print("========================================")
 
     # Set up development setup if flag is set

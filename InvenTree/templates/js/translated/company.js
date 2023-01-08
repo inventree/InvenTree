@@ -22,6 +22,7 @@
     loadManufacturerPartTable,
     loadManufacturerPartParameterTable,
     loadSupplierPartTable,
+    loadSupplierPriceBreakTable,
 */
 
 
@@ -1090,5 +1091,99 @@ function loadSupplierPartTable(table, url, options) {
                 );
             });
         }
+    });
+}
+
+
+/*
+ * Load a table of supplier price break data
+ */
+function loadSupplierPriceBreakTable(options={}) {
+
+    var table = options.table || $('#price-break-table');
+
+    // Setup button callbacks once table is loaded
+    function setupCallbacks() {
+        table.find('.button-price-break-delete').click(function() {
+            var pk = $(this).attr('pk');
+
+            constructForm(`/api/company/price-break/${pk}/`, {
+                method: 'DELETE',
+                title: '{% trans "Delete Price Break" %}',
+                onSuccess: function() {
+                    table.bootstrapTable('refresh');
+                },
+            });
+        });
+
+        table.find('.button-price-break-edit').click(function() {
+            var pk = $(this).attr('pk');
+
+            constructForm(`/api/company/price-break/${pk}/`, {
+                fields: {
+                    quantity: {},
+                    price: {},
+                    price_currency: {},
+                },
+                title: '{% trans "Edit Price Break" %}',
+                onSuccess: function() {
+                    table.bootstrapTable('refresh');
+                }
+            });
+        });
+    }
+
+    setupFilterList('supplierpricebreak', table, '#filter-list-supplierpricebreak');
+
+    table.inventreeTable({
+        name: 'buypricebreaks',
+        url: '{% url "api-part-supplier-price-list" %}',
+        queryParams: {
+            part: options.part,
+        },
+        formatNoMatches: function() {
+            return '{% trans "No price break information found" %}';
+        },
+        onPostBody: function() {
+            setupCallbacks();
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+                sortable: true,
+            },
+            {
+                field: 'price',
+                title: '{% trans "Price" %}',
+                sortable: true,
+                formatter: function(value, row, index) {
+                    return formatCurrency(value, {
+                        currency: row.price_currency
+                    });
+                }
+            },
+            {
+                field: 'updated',
+                title: '{% trans "Last updated" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    var html = renderDate(value);
+
+                    html += `<div class='btn-group float-right' role='group'>`;
+                    html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
+                    html += `</div>`;
+
+                    return html;
+                }
+            },
+        ]
     });
 }

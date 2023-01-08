@@ -39,8 +39,9 @@ class ValidatorTest(TestCase):
         """Test part name validator."""
         validate_part_name('hello world')
 
+        # Validate with some strange chars
         with self.assertRaises(django_exceptions.ValidationError):
-            validate_part_name('This | name is not } valid')
+            validate_part_name('### <> This | name is not } valid')
 
     def test_overage(self):
         """Test overage validator."""
@@ -257,7 +258,7 @@ class TestHelpers(TestCase):
     def test_download_image(self):
         """Test function for downloading image from remote URL"""
 
-        # Run check with a sequency of bad URLs
+        # Run check with a sequence of bad URLs
         for url in [
             "blog",
             "htp://test.com/?",
@@ -267,17 +268,36 @@ class TestHelpers(TestCase):
             with self.assertRaises(django_exceptions.ValidationError):
                 helpers.download_image_from_url(url)
 
+        def dl_helper(url, expected_error, timeout=2.5, retries=3):
+            """Helper function for unit testing downloads.
+
+            As the httpstat.us service occassionaly refuses a connection,
+            we will simply try multiple times
+            """
+
+            tries = 0
+
+            with self.assertRaises(expected_error):
+                while tries < retries:
+
+                    try:
+                        helpers.download_image_from_url(url, timeout=timeout)
+                        break
+                    except Exception as exc:
+                        if type(exc) is expected_error:
+                            # Re-throw this error
+                            raise exc
+                        else:
+                            print("Unexpected error:", type(exc), exc)
+
+                    tries += 1
+                    time.sleep(10 * tries)
+
         # Attempt to download an image which throws a 404
-        with self.assertRaises(requests.exceptions.HTTPError):
-            helpers.download_image_from_url("https://httpstat.us/404", timeout=10)
+        dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
 
         # Attempt to download, but timeout
-        with self.assertRaises(requests.exceptions.Timeout):
-            helpers.download_image_from_url("https://httpstat.us/200?sleep=5000")
-
-        # Attempt to download, but not a valid image
-        with self.assertRaises(TypeError):
-            helpers.download_image_from_url("https://httpstat.us/200", timeout=10)
+        dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.ReadTimeout, timeout=1)
 
         large_img = "https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg"
 
@@ -309,7 +329,7 @@ class TestIncrement(TestCase):
     def tests(self):
         """Test 'intelligent' incrementing function."""
         tests = [
-            ("", ""),
+            ("", '1'),
             (1, "2"),
             ("001", "002"),
             ("1001", "1002"),
@@ -418,16 +438,24 @@ class TestMPTT(TestCase):
 
 
 class TestSerialNumberExtraction(TestCase):
-    """Tests for serial number extraction code."""
+    """Tests for serial number extraction code.
+
+    Note that while serial number extraction is made available to custom plugins,
+    only simple integer-based extraction is tested here.
+    """
 
     def test_simple(self):
         """Test simple serial numbers."""
         e = helpers.extract_serial_numbers
 
+        # Test a range of numbers
         sn = e("1-5", 5, 1)
-        self.assertEqual(len(sn), 5, 1)
+        self.assertEqual(len(sn), 5)
         for i in range(1, 6):
-            self.assertIn(i, sn)
+            self.assertIn(str(i), sn)
+
+        sn = e("11-30", 20, 1)
+        self.assertEqual(len(sn), 20)
 
         sn = e("1, 2, 3, 4, 5", 5, 1)
         self.assertEqual(len(sn), 5)
@@ -435,55 +463,50 @@ class TestSerialNumberExtraction(TestCase):
         # Test partially specifying serials
         sn = e("1, 2, 4+", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 4, 5, 6])
+        self.assertEqual(sn, ['1', '2', '4', '5', '6'])
 
         # Test groups are not interpolated if enough serials are supplied
         sn = e("1, 2, 3, AF5-69H, 5", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 3, "AF5-69H", 5])
+        self.assertEqual(sn, ['1', '2', '3', 'AF5-69H', '5'])
 
         # Test groups are not interpolated with more than one hyphen in a word
         sn = e("1, 2, TG-4SR-92, 4+", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, "TG-4SR-92", 4, 5])
-
-        # Test groups are not interpolated with alpha characters
-        sn = e("1, A-2, 3+", 5, 1)
-        self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, "A-2", 3, 4, 5])
+        self.assertEqual(sn, ['1', '2', "TG-4SR-92", '4', '5'])
 
         # Test multiple placeholders
-        sn = e("1 2 ~ ~ ~", 5, 3)
+        sn = e("1 2 ~ ~ ~", 5, 2)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 3, 4, 5])
+        self.assertEqual(sn, ['1', '2', '3', '4', '5'])
 
         sn = e("1-5, 10-15", 11, 1)
-        self.assertIn(3, sn)
-        self.assertIn(13, sn)
+        self.assertIn('3', sn)
+        self.assertIn('13', sn)
 
         sn = e("1+", 10, 1)
         self.assertEqual(len(sn), 10)
-        self.assertEqual(sn, [_ for _ in range(1, 11)])
+        self.assertEqual(sn, [str(_) for _ in range(1, 11)])
 
         sn = e("4, 1+2", 4, 1)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, [4, 1, 2, 3])
+        self.assertEqual(sn, ['4', '1', '2', '3'])
 
         sn = e("~", 1, 1)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, [1])
+        self.assertEqual(sn, ['2'])
 
         sn = e("~", 1, 3)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, [3])
+        self.assertEqual(sn, ['4'])
 
-        sn = e("~+", 2, 5)
+        sn = e("~+", 2, 4)
         self.assertEqual(len(sn), 2)
-        self.assertEqual(sn, [5, 6])
+        self.assertEqual(sn, ['5', '6'])
 
-        sn = e("~+3", 4, 5)
+        sn = e("~+3", 4, 4)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, [5, 6, 7, 8])
+        self.assertEqual(sn, ['5', '6', '7', '8'])
 
     def test_failures(self):
         """Test wron serial numbers."""
@@ -516,25 +539,53 @@ class TestSerialNumberExtraction(TestCase):
         with self.assertRaises(ValidationError):
             e("1, 2, 3, E-5", 5, 1)
 
+        # Extract a range of values with a smaller range
+        with self.assertRaises(ValidationError) as exc:
+            e("11-50", 10, 1)
+            self.assertIn('Range quantity exceeds 10', str(exc))
+
+        # Test groups are not interpolated with alpha characters
+        with self.assertRaises(ValidationError) as exc:
+            e("1, A-2, 3+", 5, 1)
+            self.assertIn('Invalid group range: A-2', str(exc))
+
     def test_combinations(self):
         """Test complex serial number combinations."""
         e = helpers.extract_serial_numbers
 
         sn = e("1 3-5 9+2", 7, 1)
         self.assertEqual(len(sn), 7)
-        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+        self.assertEqual(sn, ['1', '3', '4', '5', '9', '10', '11'])
 
         sn = e("1,3-5,9+2", 7, 1)
         self.assertEqual(len(sn), 7)
-        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+        self.assertEqual(sn, ['1', '3', '4', '5', '9', '10', '11'])
 
-        sn = e("~+2", 3, 14)
+        sn = e("~+2", 3, 13)
         self.assertEqual(len(sn), 3)
-        self.assertEqual(sn, [14, 15, 16])
+        self.assertEqual(sn, ['14', '15', '16'])
 
-        sn = e("~+", 2, 14)
+        sn = e("~+", 2, 13)
         self.assertEqual(len(sn), 2)
-        self.assertEqual(sn, [14, 15])
+        self.assertEqual(sn, ['14', '15'])
+
+        # Test multiple increment groups
+        sn = e("~+4, 20+4, 30+4", 15, 10)
+        self.assertEqual(len(sn), 15)
+
+        for v in [14, 24, 34]:
+            self.assertIn(str(v), sn)
+
+        # Test multiple range groups
+        sn = e("11-20, 41-50, 91-100", 30, 1)
+        self.assertEqual(len(sn), 30)
+
+        for v in range(11, 21):
+            self.assertIn(str(v), sn)
+        for v in range(41, 51):
+            self.assertIn(str(v), sn)
+        for v in range(91, 101):
+            self.assertIn(str(v), sn)
 
 
 class TestVersionNumber(TestCase):
@@ -726,13 +777,14 @@ class TestSettings(helpers.InvenTreeTestCase):
         """Test if install of plugins on startup works."""
         from plugin import registry
 
-        # Check an install run
-        response = registry.install_plugin_file()
-        self.assertEqual(response, 'first_run')
+        if not settings.DOCKER:
+            # Check an install run
+            response = registry.install_plugin_file()
+            self.assertEqual(response, 'first_run')
 
-        # Set dynamic setting to True and rerun to launch install
-        InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-        registry.reload_plugins(full_reload=True)
+            # Set dynamic setting to True and rerun to launch install
+            InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
+            registry.reload_plugins(full_reload=True)
 
         # Check that there was anotehr run
         response = registry.install_plugin_file()

@@ -1,8 +1,10 @@
 """AppConfig for inventree app."""
 
 import logging
+from importlib import import_module
+from pathlib import Path
 
-from django.apps import AppConfig
+from django.apps import AppConfig, apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
@@ -23,10 +25,11 @@ class InvenTreeConfig(AppConfig):
 
     def ready(self):
         """Setup background tasks and update exchange rates."""
-        if canAppAccessDatabase():
+        if canAppAccessDatabase() or settings.TESTING_ENV:
 
             self.remove_obsolete_tasks()
 
+            self.collect_tasks()
             self.start_background_tasks()
 
             if not isInTestMode():  # pragma: no cover
@@ -54,68 +57,38 @@ class InvenTreeConfig(AppConfig):
 
     def start_background_tasks(self):
         """Start all background tests for InvenTree."""
-        try:
-            from django_q.models import Schedule
-        except AppRegistryNotReady:  # pragma: no cover
-            logger.warning("Cannot start background tasks - app registry not ready")
-            return
 
         logger.info("Starting background tasks...")
 
-        # Remove successful task results from the database
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.delete_successful_tasks',
-            schedule_type=Schedule.DAILY,
+        for task in InvenTree.tasks.tasks.task_list:
+            ref_name = f'{task.func.__module__}.{task.func.__name__}'
+            InvenTree.tasks.schedule_task(
+                ref_name,
+                schedule_type=task.interval,
+                minutes=task.minutes,
+            )
+
+        # Put at least one task onto the backround worker stack,
+        # which will be processed as soon as the worker comes online
+        InvenTree.tasks.offload_task(
+            InvenTree.tasks.heartbeat,
+            force_async=True,
         )
 
-        # Check for InvenTree updates
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.check_for_updates',
-            schedule_type=Schedule.DAILY
-        )
+        logger.info("Started background tasks...")
 
-        # Heartbeat to let the server know the background worker is running
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.heartbeat',
-            schedule_type=Schedule.MINUTES,
-            minutes=15
-        )
+    def collect_tasks(self):
+        """Collect all background tasks."""
 
-        # Keep exchange rates up to date
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.update_exchange_rates',
-            schedule_type=Schedule.DAILY,
-        )
+        for app_name, app in apps.app_configs.items():
+            if app_name == 'InvenTree':
+                continue
 
-        # Delete old error messages
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.delete_old_error_logs',
-            schedule_type=Schedule.DAILY,
-        )
-
-        # Delete old notification records
-        InvenTree.tasks.schedule_task(
-            'common.tasks.delete_old_notifications',
-            schedule_type=Schedule.DAILY,
-        )
-
-        # Check for overdue purchase orders
-        InvenTree.tasks.schedule_task(
-            'order.tasks.check_overdue_purchase_orders',
-            schedule_type=Schedule.DAILY
-        )
-
-        # Check for overdue sales orders
-        InvenTree.tasks.schedule_task(
-            'order.tasks.check_overdue_sales_orders',
-            schedule_type=Schedule.DAILY,
-        )
-
-        # Check for overdue build orders
-        InvenTree.tasks.schedule_task(
-            'build.tasks.check_overdue_build_orders',
-            schedule_type=Schedule.DAILY
-        )
+            if Path(app.path).joinpath('tasks.py').exists():
+                try:
+                    import_module(f'{app.module.__package__}.tasks')
+                except Exception as e:  # pragma: no cover
+                    logger.error(f"Error loading tasks for {app_name}: {e}")
 
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.

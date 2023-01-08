@@ -1,8 +1,11 @@
 """Mixins for (API) views in the whole project."""
 
-from rest_framework import generics, status
+from django.core.exceptions import FieldDoesNotExist
+
+from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
+from InvenTree.fields import InvenTreeNotesField
 from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
 
 
@@ -44,10 +47,35 @@ class CleanMixin():
         Nominally, the only thing that will be "cleaned" will be HTML tags
 
         Ref: https://github.com/mozilla/bleach/issues/192
+
         """
 
         cleaned = strip_html_tags(data, field_name=field)
-        cleaned = remove_non_printable_characters(cleaned)
+
+        # By default, newline characters are removed
+        remove_newline = True
+
+        try:
+            if hasattr(self, 'serializer_class'):
+                model = self.serializer_class.Meta.model
+                field = model._meta.get_field(field)
+
+                # The following field types allow newline characters
+                allow_newline = [
+                    InvenTreeNotesField,
+                ]
+
+                for field_type in allow_newline:
+                    if issubclass(type(field), field_type):
+                        remove_newline = False
+                        break
+
+        except AttributeError:
+            pass
+        except FieldDoesNotExist:
+            pass
+
+        cleaned = remove_non_printable_characters(cleaned, remove_newline=remove_newline)
 
         return cleaned
 
@@ -104,6 +132,45 @@ class RetrieveAPI(generics.RetrieveAPIView):
 class RetrieveUpdateAPI(CleanMixin, generics.RetrieveUpdateAPIView):
     """View for retrieve and update API."""
     pass
+
+
+class CustomDestroyModelMixin:
+    """This mixin was created pass the kwargs from the API to the models."""
+    def destroy(self, request, *args, **kwargs):
+        """Custom destroy method to pass kwargs."""
+        instance = self.get_object()
+        self.perform_destroy(instance, **kwargs)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance, **kwargs):
+        """Custom destroy method to pass kwargs."""
+        instance.delete(**kwargs)
+
+
+class CustomRetrieveUpdateDestroyAPIView(mixins.RetrieveModelMixin,
+                                         mixins.UpdateModelMixin,
+                                         CustomDestroyModelMixin,
+                                         generics.GenericAPIView):
+    """This APIView was created pass the kwargs from the API to the models."""
+    def get(self, request, *args, **kwargs):
+        """Custom get method to pass kwargs."""
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        """Custom put method to pass kwargs."""
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        """Custom patch method to pass kwargs."""
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        """Custom delete method to pass kwargs."""
+        return self.destroy(request, *args, **kwargs)
+
+
+class CustomRetrieveUpdateDestroyAPI(CleanMixin, CustomRetrieveUpdateDestroyAPIView):
+    """This APIView was created pass the kwargs from the API to the models."""
 
 
 class RetrieveUpdateDestroyAPI(CleanMixin, generics.RetrieveUpdateDestroyAPIView):

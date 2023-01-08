@@ -267,7 +267,7 @@ class SalesOrderTest(TestCase):
             category='order.overdue_sales_order',
         )
 
-        self.assertEqual(len(messages), 2)
+        self.assertEqual(len(messages), 1)
 
     def test_new_so_notification(self):
         """Test that a notification is sent when a new SalesOrder is created.

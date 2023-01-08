@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.contrib.sites.models import Site
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -22,6 +23,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
 
 from common.models import InvenTreeSetting
+from InvenTree.exceptions import log_error
 
 logger = logging.getLogger('inventree')
 
@@ -227,16 +229,35 @@ class RegistratonMixin:
         return user
 
 
-class CustomAccountAdapter(RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
+class CustomUrlMixin:
+    """Mixin to set urls."""
+
+    def get_email_confirmation_url(self, request, emailconfirmation):
+        """Custom email confirmation (activation) url."""
+        url = reverse("account_confirm_email", args=[emailconfirmation.key])
+        return Site.objects.get_current().domain + url
+
+
+class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
     """Override of adapter to use dynamic settings."""
+
     def send_mail(self, template_prefix, email, context):
         """Only send mail if backend configured."""
         if settings.EMAIL_HOST:
-            return super().send_mail(template_prefix, email, context)
+            try:
+                result = super().send_mail(template_prefix, email, context)
+            except Exception:
+                # An exception ocurred while attempting to send email
+                # Log it (for admin users) and return silently
+                log_error('account email')
+                result = False
+
+            return result
+
         return False
 
 
-class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
+class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def is_auto_signup_allowed(self, request, sociallogin):

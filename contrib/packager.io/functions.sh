@@ -84,7 +84,7 @@ function detect_envs() {
 
   echo "# Setting base environment variables"
 
-  export INVENTREE_CONFIG_FILE=${CONF_DIR}/config.yaml
+  export INVENTREE_CONFIG_FILE=${INVENTREE_CONFIG_FILE:-${CONF_DIR}/config.yaml}
 
   if test -f "${INVENTREE_CONFIG_FILE}"; then
     echo "# Using existing config file: ${INVENTREE_CONFIG_FILE}"
@@ -93,21 +93,22 @@ function detect_envs() {
     pip install jc -q
 
     # Load config
-    local conf=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)
+    local CONF=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)
 
     # Parse the config file
-    export INVENTREE_MEDIA_ROOT=$conf | jq '.[].media_root'
-    export INVENTREE_STATIC_ROOT=$conf | jq '.[].static_root'
-    export INVENTREE_PLUGINS_ENABLED=$conf | jq '.[].plugins_enabled'
-    export INVENTREE_PLUGIN_FILE=$conf | jq '.[].plugin_file'
-    export INVENTREE_SECRET_KEY_FILE=$conf | jq '.[].secret_key_file'
+    export INVENTREE_MEDIA_ROOT=$(jq -r '.[].media_root' <<< ${CONF})
+    export INVENTREE_STATIC_ROOT=$(jq -r '.[].static_root' <<< ${CONF})
+    export INVENTREE_BACKUP_DIR=$(jq -r '.[].backup_dir' <<< ${CONF})
+    export INVENTREE_PLUGINS_ENABLED=$(jq -r '.[].plugins_enabled' <<< ${CONF})
+    export INVENTREE_PLUGIN_FILE=$(jq -r '.[].plugin_file' <<< ${CONF})
+    export INVENTREE_SECRET_KEY_FILE=$(jq -r '.[].secret_key_file' <<< ${CONF})
 
-    export INVENTREE_DB_ENGINE=$conf | jq '.[].database.ENGINE'
-    export INVENTREE_DB_NAME=$conf | jq '.[].database.NAME'
-    export INVENTREE_DB_USER=$conf | jq '.[].database.USER'
-    export INVENTREE_DB_PASSWORD=$conf | jq '.[].database.PASSWORD'
-    export INVENTREE_DB_HOST=$conf | jq '.[].database.HOST'
-    export INVENTREE_DB_PORT=$conf | jq '.[].database.PORT'
+    export INVENTREE_DB_ENGINE=$(jq -r '.[].database.ENGINE' <<< ${CONF})
+    export INVENTREE_DB_NAME=$(jq -r '.[].database.NAME' <<< ${CONF})
+    export INVENTREE_DB_USER=$(jq -r '.[].database.USER' <<< ${CONF})
+    export INVENTREE_DB_PASSWORD=$(jq -r '.[].database.PASSWORD' <<< ${CONF})
+    export INVENTREE_DB_HOST=$(jq -r '.[].database.HOST' <<< ${CONF})
+    export INVENTREE_DB_PORT=$(jq -r '.[].database.PORT' <<< ${CONF})
   else
     echo "# No config file found: ${INVENTREE_CONFIG_FILE}, using envs or defaults"
 
@@ -119,6 +120,7 @@ function detect_envs() {
 
     export INVENTREE_MEDIA_ROOT=${INVENTREE_MEDIA_ROOT:-${DATA_DIR}/media}
     export INVENTREE_STATIC_ROOT=${DATA_DIR}/static
+    export INVENTREE_BACKUP_DIR=${DATA_DIR}/backup
     export INVENTREE_PLUGINS_ENABLED=true
     export INVENTREE_PLUGIN_FILE=${CONF_DIR}/plugins.txt
     export INVENTREE_SECRET_KEY_FILE=${CONF_DIR}/secret_key.txt
@@ -137,6 +139,7 @@ function detect_envs() {
   echo "# Collected environment variables:"
   echo "#    INVENTREE_MEDIA_ROOT=${INVENTREE_MEDIA_ROOT}"
   echo "#    INVENTREE_STATIC_ROOT=${INVENTREE_STATIC_ROOT}"
+  echo "#    INVENTREE_BACKUP_DIR=${INVENTREE_BACKUP_DIR}"
   echo "#    INVENTREE_PLUGINS_ENABLED=${INVENTREE_PLUGINS_ENABLED}"
   echo "#    INVENTREE_PLUGIN_FILE=${INVENTREE_PLUGIN_FILE}"
   echo "#    INVENTREE_SECRET_KEY_FILE=${INVENTREE_SECRET_KEY_FILE}"
@@ -157,7 +160,8 @@ function create_initscripts() {
     echo "# python enviroment already present - skipping"
   else
     echo "# Setting up python enviroment"
-    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && python3 -m venv env && pip install invoke"
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && ${SETUP_PYTHON} -m venv env"
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install invoke wheel"
 
     if [ -n "${SETUP_EXTRA_PIP}" ]; then
       echo "# Installing extra pip packages"
@@ -250,6 +254,8 @@ function set_env() {
   sed -i s=#media_root:\ \'/home/inventree/data/media\'=media_root:\ \'${INVENTREE_MEDIA_ROOT}\'=g ${INVENTREE_CONFIG_FILE}
   # Static Root
   sed -i s=#static_root:\ \'/home/inventree/data/static\'=static_root:\ \'${INVENTREE_STATIC_ROOT}\'=g ${INVENTREE_CONFIG_FILE}
+  # Backup dir
+  sed -i s=#backup_dir:\ \'/home/inventree/data/backup\'=backup_dir:\ \'${INVENTREE_BACKUP_DIR}\'=g ${INVENTREE_CONFIG_FILE}
   # Plugins enabled
   sed -i s=plugins_enabled:\ False=plugins_enabled:\ ${INVENTREE_PLUGINS_ENABLED}=g ${INVENTREE_CONFIG_FILE}
   # Plugin file

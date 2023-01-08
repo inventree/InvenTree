@@ -32,9 +32,14 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False):
         'prerender',
         'rebuild_models',
         'rebuild_thumbnails',
-        'collectstatic',
         'makemessages',
         'compilemessages',
+        'backup',
+        'dbbackup',
+        'mediabackup',
+        'restore',
+        'dbrestore',
+        'mediarestore',
     ]
 
     if not allow_test:
@@ -45,6 +50,7 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False):
         excluded_commands.extend([
             'makemigrations',
             'migrate',
+            'collectstatic',
         ])
 
     for cmd in excluded_commands:
