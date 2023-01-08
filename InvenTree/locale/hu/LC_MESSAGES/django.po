@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-06 14:06+0000\n"
-"PO-Revision-Date: 2023-01-07 12:20\n"
+"POT-Creation-Date: 2023-01-07 20:52+0000\n"
+"PO-Revision-Date: 2023-01-08 12:22\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "API endpoint not found"
 msgstr "API funkciót nem találom"
 
-#: InvenTree/exceptions.py:68
+#: InvenTree/exceptions.py:79
 msgid "Error details can be found in the admin panel"
 msgstr "A hiba részleteit megtalálod az admin panelen"
 
@@ -58,35 +58,35 @@ msgstr "A(z) '{name}' érték nem a szükséges minta szerinti"
 msgid "Provided value does not match required pattern: "
 msgstr "A megadott érték nem felel meg a szükséges mintának: "
 
-#: InvenTree/forms.py:134
+#: InvenTree/forms.py:135
 msgid "Enter password"
 msgstr "Jelszó megadása"
 
-#: InvenTree/forms.py:135
+#: InvenTree/forms.py:136
 msgid "Enter new password"
 msgstr "Új jelszó megadása"
 
-#: InvenTree/forms.py:144
+#: InvenTree/forms.py:145
 msgid "Confirm password"
 msgstr "Jelszó megerősítése"
 
-#: InvenTree/forms.py:145
+#: InvenTree/forms.py:146
 msgid "Confirm new password"
 msgstr "Új jelszó megerősítése"
 
-#: InvenTree/forms.py:149
+#: InvenTree/forms.py:150
 msgid "Old password"
 msgstr "Régi jelszó"
 
-#: InvenTree/forms.py:178
+#: InvenTree/forms.py:179
 msgid "Email (again)"
 msgstr "Email (újra)"
 
-#: InvenTree/forms.py:182
+#: InvenTree/forms.py:183
 msgid "Email address confirmation"
 msgstr "Email cím megerősítés"
 
-#: InvenTree/forms.py:203
+#: InvenTree/forms.py:204
 msgid "You must type the same email each time."
 msgstr "Mindig ugyanazt az email címet kell beírni."
 
@@ -4738,47 +4738,47 @@ msgstr "Minimum ár"
 msgid "Maximum Price"
 msgstr "Maximum ár"
 
-#: part/api.py:538
+#: part/api.py:539
 msgid "Incoming Purchase Order"
 msgstr "Beérkező beszerzési rendelés"
 
-#: part/api.py:558
+#: part/api.py:559
 msgid "Outgoing Sales Order"
 msgstr "Kimenő vevői rendelés"
 
-#: part/api.py:576
+#: part/api.py:577
 msgid "Stock produced by Build Order"
 msgstr "Gyártással előállított készlet"
 
-#: part/api.py:662
+#: part/api.py:663
 msgid "Stock required for Build Order"
 msgstr "A gyártási utasításhoz szükséges készlet"
 
-#: part/api.py:820
+#: part/api.py:821
 msgid "Valid"
 msgstr "Érvényes"
 
-#: part/api.py:821
+#: part/api.py:822
 msgid "Validate entire Bill of Materials"
 msgstr "Teljes alkatrészjegyzék jóváhagyása"
 
-#: part/api.py:827
+#: part/api.py:828
 msgid "This option must be selected"
 msgstr "Ennek az opciónak ki kll lennie választva"
 
-#: part/api.py:1281
+#: part/api.py:1282
 msgid "Must be greater than zero"
 msgstr "Nullánál nagyobb kell legyen"
 
-#: part/api.py:1285
+#: part/api.py:1286
 msgid "Must be a valid quantity"
 msgstr "Érvényes mennyiségnek kell lennie"
 
-#: part/api.py:1300
+#: part/api.py:1301
 msgid "Specify location for initial part stock"
 msgstr "Hely megadása a kezdeti alkarész készlethez"
 
-#: part/api.py:1331 part/api.py:1335 part/api.py:1350 part/api.py:1354
+#: part/api.py:1332 part/api.py:1336 part/api.py:1351 part/api.py:1355
 msgid "This field is required"
 msgstr "Ez a mező kötelező"
 
@@ -7573,9 +7573,18 @@ msgstr "Címke beállítások"
 msgid "Login Settings"
 msgstr "Belépési beállítások"
 
-#: templates/InvenTree/settings/login.html:21 templates/account/signup.html:5
+#: templates/InvenTree/settings/login.html:16
+msgid "Outgoing email has not been configured. Some login and sign-up features may not work correctly!"
+msgstr ""
+
+#: templates/InvenTree/settings/login.html:26 templates/account/signup.html:5
+#: templates/socialaccount/signup.html:5
 msgid "Signup"
 msgstr "Regisztráció"
+
+#: templates/InvenTree/settings/login.html:34
+msgid "Single Sign On"
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:139
@@ -8217,31 +8226,28 @@ msgstr "Megerősítés"
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr "Ez az email megerősítő link lejárt vagy hibás. <a href=\"%(email_url)s\">Klikk ide az új megerősítési kérelem elküldéséhez</a>."
 
-#: templates/account/login.html:6 templates/account/login.html:16
-#: templates/account/login.html:43
+#: templates/account/login.html:6 templates/account/login.html:17
+#: templates/account/login.html:38 templates/socialaccount/login.html:4
 msgid "Sign In"
 msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
-#, python-format
-msgid "Please sign in with one\n"
-"of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
-"for a account and sign in below:"
-msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
+msgid "Not a member?"
+msgstr ""
 
-#: templates/account/login.html:25
-#, python-format
-msgid "If you have not created an account yet, then please\n"
-"<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
+#: templates/account/login.html:23 templates/account/signup.html:11
+#: templates/account/signup.html:22 templates/socialaccount/signup.html:8
+#: templates/socialaccount/signup.html:20
+msgid "Sign Up"
+msgstr "Regisztráció"
 
-#: templates/account/login.html:47
+#: templates/account/login.html:45
 msgid "Forgot Password?"
 msgstr "Elfelejtett jelszó?"
 
 #: templates/account/login.html:53
-msgid "Sign in using third-party SSO"
-msgstr "Bejelentkezés külső fél által használt SSO-val"
+msgid "or log in with"
+msgstr ""
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:20
@@ -8291,10 +8297,6 @@ msgstr "Jelszó módosítása"
 msgid "Your password is now changed."
 msgstr "A jelszavad sikeresen megváltozott."
 
-#: templates/account/signup.html:11 templates/account/signup.html:22
-msgid "Sign Up"
-msgstr "Regisztráció"
-
 #: templates/account/signup.html:13
 #, python-format
 msgid "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
@@ -8303,6 +8305,21 @@ msgstr "Van már fiókod? akkor kérlek <a href=\"%(login_url)s\">jelentkezz be<
 #: templates/account/signup.html:27
 msgid "Or use a SSO-provider for signup"
 msgstr "Vagy használj SSO kiszolgálót a regisztrációhoz"
+
+#: templates/account/signup_closed.html:5
+#: templates/account/signup_closed.html:8
+msgid "Sign Up Closed"
+msgstr ""
+
+#: templates/account/signup_closed.html:10
+msgid "Sign up is currently closed."
+msgstr ""
+
+#: templates/account/signup_closed.html:15
+#: templates/socialaccount/authentication_error.html:19
+#: templates/socialaccount/login.html:25 templates/socialaccount/signup.html:27
+msgid "Return to login page"
+msgstr ""
 
 #: templates/admin_button.html:8
 msgid "View in administration panel"
@@ -11207,6 +11224,52 @@ msgstr "Keresés menü bezárása"
 #: templates/search.html:35
 msgid "No search results"
 msgstr "Nincs találat"
+
+#: templates/socialaccount/authentication_error.html:5
+msgid "Social Network Login Failure"
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:8
+msgid "Account Login Failure"
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:11
+msgid "An error occurred while attempting to login via your social network account."
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:13
+msgid "Contact your system administrator for further information."
+msgstr ""
+
+#: templates/socialaccount/login.html:8
+#, python-format
+msgid "Connect %(provider)s"
+msgstr ""
+
+#: templates/socialaccount/login.html:10
+#, python-format
+msgid "You are about to connect a new third party account from %(provider)s."
+msgstr ""
+
+#: templates/socialaccount/login.html:12
+#, python-format
+msgid "Sign In Via %(provider)s"
+msgstr ""
+
+#: templates/socialaccount/login.html:14
+#, python-format
+msgid "You are about to sign in using a third party account from %(provider)s."
+msgstr ""
+
+#: templates/socialaccount/login.html:19
+msgid "Continue"
+msgstr ""
+
+#: templates/socialaccount/signup.html:10
+#, python-format
+msgid "You are about to use your %(provider_name)s account to login to\n"
+"%(site_name)s.<br>As a final step, please complete the following form:"
+msgstr ""
 
 #: templates/stats.html:9
 msgid "Server"
