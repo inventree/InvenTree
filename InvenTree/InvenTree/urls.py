@@ -9,6 +9,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
+from drf_spectacular.views import SpectacularAPIView
 from rest_framework.documentation import include_docs_urls
 
 from build.api import build_api_urls
@@ -58,8 +59,11 @@ apipatterns = [
     # Plugin endpoints
     path('', include(plugin_api_urls)),
 
-    # Webhook enpoint
+    # Common endpoints enpoint
     path('', include(common_api_urls)),
+
+    # OpenAPI Schema
+    re_path('schema/', SpectacularAPIView.as_view(), name='schema'),
 
     # InvenTree information endpoint
     path('', InfoView.as_view(), name='api-inventree-info'),

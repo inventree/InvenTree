@@ -26,6 +26,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 
 from . import config
 from .config import get_boolean_setting, get_custom_file, get_setting
+from .version import inventreeApiVersion
 
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
@@ -208,6 +209,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+    'drf_spectacular',                      # API documentation
 
     'django_ical',                          # For exporting calendars
 ]
@@ -331,7 +333,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissions',
         'InvenTree.permissions.RolePermission',
     ),
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -341,6 +343,17 @@ REST_FRAMEWORK = {
 if DEBUG:
     # Enable browsable API if in DEBUG mode
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'InvenTree API',
+    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventroy management system',
+    'LICENSE': {'MIT': 'https://github.com/inventree/InvenTree/blob/master/LICENSE'},
+    'TAGS': ['inventree', 'api', 'inventree-plugins'],
+    'EXTERNAL_DOCS': {'docs': 'https://docs.inventree.org', 'web': 'https://inventree.org'},
+    'VERSION': inventreeApiVersion(),
+
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
