@@ -614,3 +614,13 @@ def coverage(c):
 
     # Generate coverage report
     c.run('coverage html')
+
+
+@task(help={
+    'filename': "Output filename (default = 'schema.yml')",
+    'overwrite': "Overwrite existing files without asking first (default = off/False)",
+})
+def schema(c, filename='schema.yml', overwrite=False):
+    """Export current API schema."""
+    check_file_existance(filename, overwrite)
+    manage(c, f'spectacular --file {filename}')
