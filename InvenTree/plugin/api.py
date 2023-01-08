@@ -16,7 +16,6 @@ from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
 from plugin.models import PluginConfig, PluginSetting
 from plugin.plugin import InvenTreePlugin
-from plugin.registry import registry
 
 
 class PluginList(ListAPI):
@@ -146,11 +145,12 @@ class PluginSettingList(ListAPI):
     ]
 
 
-def check_plugin(plugin_slug: str) -> InvenTreePlugin:
+def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
     """Check that a plugin for the provided slug exsists and get the config.
 
     Args:
         plugin_slug (str): Slug for plugin.
+        plugin_pk (int): Primary key for plugin.
 
     Raises:
         NotFound: If plugin is not installed
@@ -160,22 +160,33 @@ def check_plugin(plugin_slug: str) -> InvenTreePlugin:
     Returns:
         InvenTreePlugin: The config object for the provided plugin.
     """
-    # Check that the 'plugin' specified is valid!
-    if not PluginConfig.objects.filter(key=plugin_slug).exists():
-        raise NotFound(detail=f"Plugin '{plugin_slug}' not installed")
+    # Make sure that a plugin reference is specified
+    if plugin_slug is None and plugin_pk is None:
+        raise NotFound(detail="Plugin not specified")
 
-    # Get the list of settings available for the specified plugin
-    plugin = registry.get_plugin(plugin_slug)
+    # Define filter
+    filter = {}
+    if plugin_slug:
+        filter['key'] = plugin_slug
+    elif plugin_pk:
+        filter['pk'] = plugin_pk
+    ref = plugin_slug or plugin_pk
 
-    if plugin is None:
+    # Check that the 'plugin' specified is valid
+    try:
+        plugin_cgf = PluginConfig.objects.get(**filter)
+    except PluginConfig.DoesNotExist:
+        raise NotFound(detail=f"Plugin '{ref}' not installed")
+
+    if plugin_cgf is None:
         # This only occurs if the plugin mechanism broke
-        raise NotFound(detail=f"Plugin '{plugin_slug}' not found")  # pragma: no cover
+        raise NotFound(detail=f"Plugin '{ref}' not found")  # pragma: no cover
 
     # Check that the plugin is activated
-    if not plugin.is_active():
-        raise NotFound(detail=f"Plugin '{plugin_slug}' is not active")
+    if not plugin_cgf.active:
+        raise NotFound(detail=f"Plugin '{ref}' is not active")
 
-    return plugin
+    return plugin_cgf.plugin
 
 
 class PluginSettingDetail(RetrieveUpdateAPI):
@@ -193,16 +204,15 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         The URL provides the 'slug' of the plugin, and the 'key' of the setting.
         Both the 'slug' and 'key' must be valid, else a 404 error is raised
         """
-        plugin_slug = self.kwargs['plugin']
         key = self.kwargs['key']
 
         # Look up plugin
-        plugin = check_plugin(plugin_slug)
+        plugin = check_plugin(plugin_slug=self.kwargs.get('plugin'), plugin_pk=self.kwargs.get('pk'))
 
         settings = getattr(plugin, 'settings', {})
 
         if key not in settings:
-            raise NotFound(detail=f"Plugin '{plugin_slug}' has no setting matching '{key}'")
+            raise NotFound(detail=f"Plugin '{plugin}' has no setting matching '{key}'")
 
         return PluginSetting.get_setting_object(key, plugin=plugin)
 
@@ -225,6 +235,7 @@ plugin_api_urls = [
 
         # Detail views for a single PluginConfig item
         re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^settings/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail-pk'),
             re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
         ])),
 
