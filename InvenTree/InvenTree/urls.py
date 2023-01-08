@@ -7,8 +7,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
+from django.utils.decorators import method_decorator
 from django.views.generic.base import RedirectView
 
+from axes.decorators import axes_dispatch, axes_form_invalid
 from rest_framework.documentation import include_docs_urls
 
 from build.api import build_api_urls
@@ -131,6 +133,10 @@ backendpatterns = [
     re_path(r'^api/', include(apipatterns)),
     re_path(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 ]
+
+# Override the default login view to enable login throttling
+CustomLoginView.dispatch = method_decorator(axes_dispatch)(CustomLoginView.dispatch)
+CustomLoginView.form_invalid = method_decorator(axes_form_invalid)(CustomLoginView.form_invalid)
 
 frontendpatterns = [
 

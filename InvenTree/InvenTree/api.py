@@ -2,12 +2,15 @@
 
 from django.conf import settings
 from django.db import transaction
+from django.dispatch import receiver
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
+from axes.signals import user_locked_out
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.models import OrmQ
 from rest_framework import filters, permissions
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -208,3 +211,9 @@ class AttachmentMixin:
         attachment = serializer.save()
         attachment.user = self.request.user
         attachment.save()
+
+
+@receiver(user_locked_out)
+def raise_permission_denied(*args, **kwargs):
+    """Raise a PermissionDenied exception when a user is locked out - django-axes."""
+    raise PermissionDenied("Too many failed login attempts")

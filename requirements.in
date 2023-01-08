@@ -4,6 +4,7 @@ coreapi                                 # API documentation for djangorestframew
 cryptography==3.4.8                     # Core cryptographic functionality
 django-allauth==0.52.0                  # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
+django-axes                             # Login throttling
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
 django-crispy-forms                     # Form helpers

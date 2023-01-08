@@ -208,6 +208,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+    'axes',                                 # Brute force protection
 
     'django_ical',                          # For exporting calendars
 ]
@@ -230,15 +231,21 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'InvenTree.middleware.Check2FAMiddleware',                  # Check if the user should be forced to use MFA
     'maintenance_mode.middleware.MaintenanceModeMiddleware',
     'InvenTree.middleware.InvenTreeExceptionProcessor',         # Error reporting
+    'axes.middleware.AxesMiddleware',                           # Brute force protection - needs to be last
 ])
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
+    'axes.backends.AxesStandaloneBackend',                      # Brute force protection - needs to be first
     'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
 DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
+
+# Login throttling: django-axes
+AXES_USERNAME_FORM_FIELD = 'login'
+AXES_COOLOFF_TIME = 0.835
 
 # If the debug toolbar is enabled, add the modules
 if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
@@ -768,7 +775,7 @@ ACCOUNT_PREVENT_ENUMERATION = True
 
 # override forms / adapters
 ACCOUNT_FORMS = {
-    'login': 'allauth.account.forms.LoginForm',
+    'login': 'InvenTree.forms.CustomLoginForm',
     'signup': 'InvenTree.forms.CustomSignupForm',
     'add_email': 'allauth.account.forms.AddEmailForm',
     'change_password': 'allauth.account.forms.ChangePasswordForm',

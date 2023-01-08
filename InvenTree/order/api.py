@@ -1218,7 +1218,7 @@ class OrderCalendarExport(ICalFeed):
                 #
                 if auth[0].lower() == "basic":
                     uname, passwd = base64.b64decode(auth[1]).decode("ascii").split(':')
-                    user = authenticate(username=uname, password=passwd)
+                    user = authenticate(request=request, username=uname, password=passwd)
                     if user is not None:
                         if user.is_active:
                             login(request, user)

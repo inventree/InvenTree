@@ -47,6 +47,7 @@ django==3.2.16
     #   -r requirements.in
     #   django-allauth
     #   django-allauth-2fa
+    #   django-axes
     #   django-cors-headers
     #   django-dbbackup
     #   django-error-report
@@ -76,6 +77,8 @@ django-allauth==0.52.0
     #   django-allauth-2fa
 django-allauth-2fa==0.10.0
     # via -r requirements.in
+django-axes==5.40.1
+    # via -r requirements.in
 django-cleanup==6.0.0
     # via -r requirements.in
 django-cors-headers==3.13.0
@@ -94,6 +97,8 @@ django-ical==1.8.3
     # via -r requirements.in
 django-import-export==2.5.0
     # via -r requirements.in
+django-ipware==4.0.2
+    # via django-axes
 django-js-asset==2.0.0
     # via django-mptt
 django-maintenance-mode==0.18.0

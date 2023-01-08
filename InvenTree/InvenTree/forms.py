@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.account.forms import SignupForm, set_form_field_order
+from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
@@ -163,6 +163,16 @@ class SetPasswordForm(HelperForm):
 
 
 # override allauth
+class CustomLoginForm(LoginForm):
+    """Extended login form class that supplied the user credentials for Axes compatibility."""
+
+    def user_credentials(self):
+        """Override to return the user credentials."""
+        credentials = super().user_credentials()
+        credentials['login'] = credentials.get('email') or credentials.get('username')
+        return credentials
+
+
 class CustomSignupForm(SignupForm):
     """Override to use dynamic settings."""
 
