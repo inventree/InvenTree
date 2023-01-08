@@ -216,27 +216,21 @@ plugin_api_urls = [
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
     re_path(r'^barcode/', include(barcode_api_urls)),
     re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
+    re_path(r'^plugin/', include(
+        # Plugin settings URLs
+        re_path(r'^settings/', include([
+            re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
+            re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
+        ])),
+
+        # Detail views for a single PluginConfig item
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
+        ])),
+
+        re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
+
+        # Anything else
+        re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
+    ))
 ]
-
-general_plugin_api_urls = [
-
-    # Plugin settings URLs
-    re_path(r'^settings/', include([
-        re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
-        re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
-    ])),
-
-    # Detail views for a single PluginConfig item
-    re_path(r'^(?P<pk>\d+)/', include([
-        re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
-    ])),
-
-    re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
-
-    # Anything else
-    re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
-]
-
-plugin_api_urls.append(
-    re_path(r'^plugin/', include(general_plugin_api_urls))
-)
