@@ -229,7 +229,7 @@ plugin_api_urls = [
     re_path(r'^plugins/', include(
         # Plugin settings URLs
         re_path(r'^settings/', include([
-            re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
+            re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),    # Used for admin interface
             re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
         ])),
 
