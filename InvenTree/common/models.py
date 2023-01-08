@@ -11,6 +11,7 @@ import json
 import logging
 import math
 import os
+import re
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
@@ -81,19 +82,33 @@ class BaseInvenTreeSetting(models.Model):
         self.clean(**kwargs)
         self.validate_unique(**kwargs)
 
+        # Execute before_save action
+        self._call_settings_function('before_save', args, kwargs)
+
         # Update this setting in the cache
         if do_cache:
             self.save_to_cache()
 
         super().save()
 
-        # Get after_save action
+        # Execute after_save action
+        self._call_settings_function('after_save', args, kwargs)
+
+    def _call_settings_function(self, reference: str, args, kwargs):
+        """Call a function associated with a particular setting.
+
+        Args:
+            reference (str): The name of the function to call
+            args: Positional arguments to pass to the function
+            kwargs: Keyword arguments to pass to the function
+        """
+        # Get action
         setting = self.get_setting_definition(self.key, *args, **kwargs)
-        after_save = setting.get('after_save', None)
+        settings_fnc = setting.get(reference, None)
 
         # Execute if callable
-        if callable(after_save):
-            after_save(self)
+        if callable(settings_fnc):
+            settings_fnc(self)
 
     @property
     def cache_key(self):
@@ -771,6 +786,19 @@ def update_instance_name(setting):
     site_obj.save()
 
 
+def validate_email_domains(setting):
+    """Validate the email domains setting."""
+    if not setting.value:
+        return
+
+    domains = setting.value.split(',')
+    for domain in domains:
+        if not domain:
+            raise ValidationError(_('An empty domain is not allowed.'))
+        if not re.match(r'^@[a-zA-Z0-9\.\-_]+$', domain):
+            raise ValidationError(_(f'Invalid domain name: {domain}'))
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -1373,6 +1401,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('On signup ask users twice for their password'),
             'default': True,
             'validator': bool,
+        },
+
+        'LOGIN_SIGNUP_MAIL_RESTRICTION': {
+            'name': _('Allowed domains'),
+            'description': _('Restrict signup to certain domains (comma-separated, strarting with @)'),
+            'default': '',
+            'before_save': validate_email_domains,
         },
 
         'SIGNUP_GROUP': {
