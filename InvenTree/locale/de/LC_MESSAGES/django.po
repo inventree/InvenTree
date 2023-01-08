@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-06 14:06+0000\n"
-"PO-Revision-Date: 2023-01-07 12:20\n"
+"POT-Creation-Date: 2023-01-07 20:52+0000\n"
+"PO-Revision-Date: 2023-01-08 12:22\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "API endpoint not found"
 msgstr "API-Endpunkt nicht gefunden"
 
-#: InvenTree/exceptions.py:68
+#: InvenTree/exceptions.py:79
 msgid "Error details can be found in the admin panel"
 msgstr "Fehlerdetails finden Sie im Admin-Panel"
 
@@ -58,35 +58,35 @@ msgstr ""
 msgid "Provided value does not match required pattern: "
 msgstr ""
 
-#: InvenTree/forms.py:134
+#: InvenTree/forms.py:135
 msgid "Enter password"
 msgstr "Passwort eingeben"
 
-#: InvenTree/forms.py:135
+#: InvenTree/forms.py:136
 msgid "Enter new password"
 msgstr "Neues Passwort eingeben"
 
-#: InvenTree/forms.py:144
+#: InvenTree/forms.py:145
 msgid "Confirm password"
 msgstr "Passwort wiederholen"
 
-#: InvenTree/forms.py:145
+#: InvenTree/forms.py:146
 msgid "Confirm new password"
 msgstr "Neues Passwort bestätigen"
 
-#: InvenTree/forms.py:149
+#: InvenTree/forms.py:150
 msgid "Old password"
 msgstr "Altes Passwort"
 
-#: InvenTree/forms.py:178
+#: InvenTree/forms.py:179
 msgid "Email (again)"
 msgstr "E-Mail (nochmal)"
 
-#: InvenTree/forms.py:182
+#: InvenTree/forms.py:183
 msgid "Email address confirmation"
 msgstr "Bestätigung der E-Mail Adresse"
 
-#: InvenTree/forms.py:203
+#: InvenTree/forms.py:204
 msgid "You must type the same email each time."
 msgstr "E-Mail Adressen müssen übereinstimmen."
 
@@ -4737,47 +4737,47 @@ msgstr ""
 msgid "Maximum Price"
 msgstr ""
 
-#: part/api.py:538
+#: part/api.py:539
 msgid "Incoming Purchase Order"
 msgstr "Eingehende Bestellung"
 
-#: part/api.py:558
+#: part/api.py:559
 msgid "Outgoing Sales Order"
 msgstr "Ausgehender Auftrag"
 
-#: part/api.py:576
+#: part/api.py:577
 msgid "Stock produced by Build Order"
 msgstr "Lagerartikel produziert von Bauauftrag"
 
-#: part/api.py:662
+#: part/api.py:663
 msgid "Stock required for Build Order"
 msgstr "Lagerartikel für Bauauftrag benötigt"
 
-#: part/api.py:820
+#: part/api.py:821
 msgid "Valid"
 msgstr "Gültig"
 
-#: part/api.py:821
+#: part/api.py:822
 msgid "Validate entire Bill of Materials"
 msgstr "Gesamte Stückliste validieren"
 
-#: part/api.py:827
+#: part/api.py:828
 msgid "This option must be selected"
 msgstr "Diese Option muss ausgewählt werden"
 
-#: part/api.py:1281
+#: part/api.py:1282
 msgid "Must be greater than zero"
 msgstr "Muss größer als 0 sein"
 
-#: part/api.py:1285
+#: part/api.py:1286
 msgid "Must be a valid quantity"
 msgstr "Muss eine gültige Nummer sein"
 
-#: part/api.py:1300
+#: part/api.py:1301
 msgid "Specify location for initial part stock"
 msgstr "Standort für anfänglichen Bestand angeben"
 
-#: part/api.py:1331 part/api.py:1335 part/api.py:1350 part/api.py:1354
+#: part/api.py:1332 part/api.py:1336 part/api.py:1351 part/api.py:1355
 msgid "This field is required"
 msgstr "Dieses Feld ist erforderlich"
 
@@ -7572,9 +7572,18 @@ msgstr "Labeleinstellungen"
 msgid "Login Settings"
 msgstr "Anmeldeeinstellungen"
 
-#: templates/InvenTree/settings/login.html:21 templates/account/signup.html:5
+#: templates/InvenTree/settings/login.html:16
+msgid "Outgoing email has not been configured. Some login and sign-up features may not work correctly!"
+msgstr ""
+
+#: templates/InvenTree/settings/login.html:26 templates/account/signup.html:5
+#: templates/socialaccount/signup.html:5
 msgid "Signup"
 msgstr "Anmelden"
+
+#: templates/InvenTree/settings/login.html:34
+msgid "Single Sign On"
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:139
@@ -8216,30 +8225,27 @@ msgstr "Bestätigen"
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr "Dieser E-Mail Bestätigungslink ist abgelaufen oder ungültig. Bitte <a href=\"%(email_url)s\">fordern Sie eine neue E-Mail Bestätigung an</a>."
 
-#: templates/account/login.html:6 templates/account/login.html:16
-#: templates/account/login.html:43
+#: templates/account/login.html:6 templates/account/login.html:17
+#: templates/account/login.html:38 templates/socialaccount/login.html:4
 msgid "Sign In"
 msgstr "Einloggen"
 
 #: templates/account/login.html:21
-#, python-format
-msgid "Please sign in with one\n"
-"of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
-"for a account and sign in below:"
-msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
+msgid "Not a member?"
+msgstr ""
 
-#: templates/account/login.html:25
-#, python-format
-msgid "If you have not created an account yet, then please\n"
-"<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
+#: templates/account/login.html:23 templates/account/signup.html:11
+#: templates/account/signup.html:22 templates/socialaccount/signup.html:8
+#: templates/socialaccount/signup.html:20
+msgid "Sign Up"
+msgstr "Anmelden"
 
-#: templates/account/login.html:47
+#: templates/account/login.html:45
 msgid "Forgot Password?"
 msgstr "Passwort vergessen?"
 
 #: templates/account/login.html:53
-msgid "Sign in using third-party SSO"
+msgid "or log in with"
 msgstr ""
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
@@ -8290,10 +8296,6 @@ msgstr "Passwort ändern"
 msgid "Your password is now changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: templates/account/signup.html:11 templates/account/signup.html:22
-msgid "Sign Up"
-msgstr "Anmelden"
-
 #: templates/account/signup.html:13
 #, python-format
 msgid "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
@@ -8302,6 +8304,21 @@ msgstr "Haben Sie bereits ein Konto? Dann melden Sie sich bitte <a href=\"%(logi
 #: templates/account/signup.html:27
 msgid "Or use a SSO-provider for signup"
 msgstr "Oder verwenden Sie einen SSO-Anbieter für die Anmeldung"
+
+#: templates/account/signup_closed.html:5
+#: templates/account/signup_closed.html:8
+msgid "Sign Up Closed"
+msgstr ""
+
+#: templates/account/signup_closed.html:10
+msgid "Sign up is currently closed."
+msgstr ""
+
+#: templates/account/signup_closed.html:15
+#: templates/socialaccount/authentication_error.html:19
+#: templates/socialaccount/login.html:25 templates/socialaccount/signup.html:27
+msgid "Return to login page"
+msgstr ""
 
 #: templates/admin_button.html:8
 msgid "View in administration panel"
@@ -11206,6 +11223,52 @@ msgstr "Suche abbrechen"
 #: templates/search.html:35
 msgid "No search results"
 msgstr "Keine Treffer gefunden"
+
+#: templates/socialaccount/authentication_error.html:5
+msgid "Social Network Login Failure"
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:8
+msgid "Account Login Failure"
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:11
+msgid "An error occurred while attempting to login via your social network account."
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:13
+msgid "Contact your system administrator for further information."
+msgstr ""
+
+#: templates/socialaccount/login.html:8
+#, python-format
+msgid "Connect %(provider)s"
+msgstr ""
+
+#: templates/socialaccount/login.html:10
+#, python-format
+msgid "You are about to connect a new third party account from %(provider)s."
+msgstr ""
+
+#: templates/socialaccount/login.html:12
+#, python-format
+msgid "Sign In Via %(provider)s"
+msgstr ""
+
+#: templates/socialaccount/login.html:14
+#, python-format
+msgid "You are about to sign in using a third party account from %(provider)s."
+msgstr ""
+
+#: templates/socialaccount/login.html:19
+msgid "Continue"
+msgstr ""
+
+#: templates/socialaccount/signup.html:10
+#, python-format
+msgid "You are about to use your %(provider_name)s account to login to\n"
+"%(site_name)s.<br>As a final step, please complete the following form:"
+msgstr ""
 
 #: templates/stats.html:9
 msgid "Server"
