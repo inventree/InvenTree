@@ -20,7 +20,7 @@ def apps():
         'label',
         'order',
         'part',
-        'plugin'
+        'plugin',
         'report',
         'stock',
         'users',
