@@ -1375,6 +1375,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'LOGIN_ENABLE_SSO_REG': {
+            'name': _('Enable SSO registration'),
+            'description': _('Enable self-registration via SSO for users on the login pages'),
+            'default': False,
+            'validator': bool,
+        },
+
         'LOGIN_MAIL_REQUIRED': {
             'name': _('Email required'),
             'description': _('Require user to supply mail on signup'),
