@@ -19,6 +19,9 @@ threads = 4
 
 workers = os.environ.get('INVENTREE_GUNICORN_WORKERS', None)
 
+# Worker timeout (default = 30 seconds)
+timeout = os.environ.get('INVENTREE_GUNICORN_TIMEOUT', 30)
+
 if workers is not None:
     try:
         workers = int(workers)
