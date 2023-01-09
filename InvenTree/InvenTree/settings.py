@@ -147,10 +147,17 @@ STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
-# Backup directories
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
-DBBACKUP_SEND_EMAIL = False
+# Database backup options
+# Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
+DBBACKUP_SEND_EMAIL = get_boolean_setting('INVENTREE_BACKUP_EMAIL', 'backup_email', False)
+DBBACKUP_STORAGE = get_setting('INVENTREE_BACKUP_STORAGE', 'backup_storage', 'django.core.files.storage.FileSystemStorage')
+DBBACKUP_STORAGE_OPTIONS = get_setting('INVENTREE_BACKUP_OPTIONS', 'backup_options', None)
+
+# Default backup configuration
+if DBBACKUP_STORAGE_OPTIONS is None:
+    DBBACKUP_STORAGE_OPTIONS = {
+        'location': config.get_backup_dir(),
+    }
 
 # Application definition
 

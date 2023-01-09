@@ -142,8 +142,11 @@ cors:
 # STATIC_ROOT is the local filesystem location for storing static files
 #static_root: '/home/inventree/data/static'
 
-# BACKUP_DIR is the local filesystem location for storing backups
+### Backup configuration options ###
+# INVENTREE_BACKUP_DIR is the local filesystem location for storing backups
+backup_storage: django.core.files.storage.FileSystemStorage
 #backup_dir: '/home/inventree/data/backup'
+#backup_options:
 
 # Background worker options
 background:
