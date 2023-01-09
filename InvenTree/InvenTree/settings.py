@@ -346,8 +346,9 @@ if DEBUG:
     # Enable browsable API if in DEBUG mode
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
-# Enable JWT - dj-rest-auth
+# dj-rest-auth
 REST_USE_JWT = True
+OLD_PASSWORD_FIELD_ENABLED = True
 # JWT settings - rest_framework_simplejwt
 JWT_AUTH_COOKIE = 'inventree-auth'
 JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
