@@ -164,7 +164,7 @@ jobs:
         with:
           install: true
       - name: Export schema
-        run: inv schema --filename docs/api/new.yml
+        run: invoke schema --filename docs/api/new.yml
       - name: Check for changes in the API schema
         uses: technote-space/get-diff-action@v6
         with:
