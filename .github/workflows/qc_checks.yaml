@@ -166,6 +166,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           install: true
+          update: true
       - name: Export schema
         run: invoke schema --filename docs/api/new.yml
       - name: Check for changes in the API schema
