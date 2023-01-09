@@ -42,9 +42,12 @@ defusedxml==0.7.1
     #   python3-openid
 diff-match-patch==20200713
     # via django-import-export
+dj-rest-auth==2.2.6
+    # via -r requirements.in
 django==3.2.16
     # via
     #   -r requirements.in
+    #   dj-rest-auth
     #   django-allauth
     #   django-allauth-2fa
     #   django-cors-headers
@@ -127,7 +130,9 @@ django-weasyprint==2.2.0
 django-xforwardedfor-middleware==2.0
     # via -r requirements.in
 djangorestframework==3.14.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   dj-rest-auth
 et-xmlfile==1.1.0
     # via openpyxl
 feedparser==6.0.10

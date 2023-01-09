@@ -9,6 +9,8 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
+from dj_rest_auth.registration.views import (SocialAccountDisconnectView,
+                                             SocialAccountListView)
 from rest_framework.documentation import include_docs_urls
 
 from build.api import build_api_urls
@@ -63,6 +65,13 @@ apipatterns = [
 
     # InvenTree information endpoint
     path('', InfoView.as_view(), name='api-inventree-info'),
+
+    # Third party API endpoints
+    path('auth/', include('dj_rest_auth.urls')),
+    path('auth/registration/', include('dj_rest_auth.registration.urls')),
+    # TODO - Add social auth endpoints
+    path('auth/social/', SocialAccountListView.as_view(), name='social_account_list'),
+    path('auth/social/<int:pk>/disconnect/', SocialAccountDisconnectView.as_view(), name='social_account_disconnect'),
 
     # Unknown endpoint
     re_path(r'^.*$', NotFoundView.as_view(), name='api-404'),
