@@ -227,7 +227,7 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         settings = getattr(plugin, 'settings', {})
 
         if key not in settings:
-            raise NotFound(detail=f"Plugin '{plugin}' has no setting matching '{key}'")
+            raise NotFound(detail=f"Plugin '{plugin.slug}' has no setting matching '{key}'")
 
         return PluginSetting.get_setting_object(key, plugin=plugin)
 
