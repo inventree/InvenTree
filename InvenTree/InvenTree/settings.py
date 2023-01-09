@@ -149,7 +149,7 @@ MEDIA_URL = '/media/'
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
-DBBACKUP_SEND_EMAIL = get_boolean_setting('INVENTREE_BACKUP_EMAIL', 'backup_email', False)
+DBBACKUP_SEND_EMAIL = False
 DBBACKUP_STORAGE = get_setting('INVENTREE_BACKUP_STORAGE', 'backup_storage', 'django.core.files.storage.FileSystemStorage')
 DBBACKUP_STORAGE_OPTIONS = get_setting('INVENTREE_BACKUP_OPTIONS', 'backup_options', None)
 
