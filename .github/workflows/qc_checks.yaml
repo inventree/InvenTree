@@ -152,6 +152,40 @@ jobs:
       - name: Run flake8
         run: flake8 InvenTree --statistics
 
+  api_schema:
+    name: Style [API schema]
+    runs-on: ubuntu-20.04
+    needs: [ 'javascript', 'html', 'pre-commit']
+
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Enviroment Setup
+        uses: ./.github/actions/setup
+        with:
+          install: true
+      - name: Export schema
+        run: inv schema --filename docs/api/new.yml
+      - name: Check for changes in the API schema
+        uses: technote-space/get-diff-action@v6
+        with:
+          FILES: |
+            docs/api/latest.yaml
+            docs/api/new.yaml
+      - name: 'Comment on PR'
+        uses: actions/github-script@v5
+        if: github.event_name == 'pull_request' && env.GIT_DIFF
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            let fs = require('fs');
+            let issue_number = Number(fs.readFileSync('./pr_number'));
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: ':mag: There are differences in the API schema within this PR! :warning:'
+            });
+
   coverage:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
