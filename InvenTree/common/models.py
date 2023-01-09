@@ -930,7 +930,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Automatic Backup'),
             'description': _('Enable automatic backup of database and media files'),
             'validator': bool,
-            'default': True,
+            'default': False,
         },
 
         'INVENTREE_DELETE_TASKS_DAYS': {
