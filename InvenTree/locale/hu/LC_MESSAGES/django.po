@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 10:12+0000\n"
-"PO-Revision-Date: 2023-01-08 12:22\n"
+"POT-Creation-Date: 2023-01-08 21:24+0000\n"
+"PO-Revision-Date: 2023-01-09 12:23\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1191,8 +1191,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:383
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:452
@@ -1741,16 +1740,13 @@ msgid "No group"
 msgstr "Nincs csoport"
 
 #: common/models.py:797
-#, fuzzy
-#| msgid "Create operation not allowed"
 msgid "An empty domain is not allowed."
-msgstr "Létrehozás nem engedélyezett"
+msgstr ""
 
 #: common/models.py:799
-#, fuzzy, python-brace-format
-#| msgid "Invalid group range: {g}"
+#, python-brace-format
 msgid "Invalid domain name: {domain}"
-msgstr "Érvénytelen csoport tartomány: {g}"
+msgstr ""
 
 #: common/models.py:838
 msgid "Restart required"
@@ -2378,10 +2374,8 @@ msgid "On signup ask users twice for their password"
 msgstr "Regisztráláskor kétszer kérdezze a felhasználó jelszavát"
 
 #: common/models.py:1407
-#, fuzzy
-#| msgid "Allow Variants"
 msgid "Allowed domains"
-msgstr "Változatok"
+msgstr ""
 
 #: common/models.py:1408
 msgid "Restrict signup to certain domains (comma-separated, strarting with @)"
@@ -11298,8 +11292,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -11486,3 +11479,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:225
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
