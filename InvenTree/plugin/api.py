@@ -10,7 +10,8 @@ from rest_framework.response import Response
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
 from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
-                              RetrieveUpdateDestroyAPI)
+                              RetrieveUpdateDestroyAPI, UpdateAPI)
+from InvenTree.permissions import IsSuperuser
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
@@ -122,6 +123,20 @@ class PluginInstall(CreateAPI):
         return serializer.save()
 
 
+class PluginActivate(UpdateAPI):
+    """Endpoint for activating a plugin."""
+
+    queryset = PluginConfig.objects.all()
+    serializer_class = PluginSerializers.PluginConfigEmptySerializer
+    permission_classes = [IsSuperuser, ]
+
+    def perform_update(self, serializer):
+        """Activate the plugin."""
+        instance = serializer.instance
+        instance.active = True
+        instance.save()
+
+
 class PluginSettingList(ListAPI):
     """List endpoint for all plugin related settings.
 
@@ -216,7 +231,7 @@ plugin_api_urls = [
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
     re_path(r'^barcode/', include(barcode_api_urls)),
     re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
-    re_path(r'^plugins/', include(
+    re_path(r'^plugins/', include([
         # Plugin settings URLs
         re_path(r'^settings/', include([
             re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
@@ -225,12 +240,15 @@ plugin_api_urls = [
 
         # Detail views for a single PluginConfig item
         re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-detail-activate'),
             re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
         ])),
 
+        # Plugin managment
         re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
+        re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'),
 
         # Anything else
         re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
-    ))
+    ]))
 ]
