@@ -33,6 +33,7 @@ coreschema==0.0.4
 cryptography==3.4.8
     # via
     #   -r requirements.in
+    #   djangorestframework-simplejwt
     #   pyjwt
 cssselect2==0.7.0
     # via weasyprint
@@ -73,6 +74,7 @@ django==3.2.16
     #   django-weasyprint
     #   django-xforwardedfor-middleware
     #   djangorestframework
+    #   djangorestframework-simplejwt
 django-allauth==0.52.0
     # via
     #   -r requirements.in
@@ -133,6 +135,9 @@ djangorestframework==3.14.0
     # via
     #   -r requirements.in
     #   dj-rest-auth
+    #   djangorestframework-simplejwt
+djangorestframework-simplejwt[crypto]==5.2.2
+    # via -r requirements.in
 et-xmlfile==1.1.0
     # via openpyxl
 feedparser==6.0.10
@@ -184,7 +189,9 @@ pycparser==2.21
 pydyf==0.5.0
     # via weasyprint
 pyjwt[crypto]==2.6.0
-    # via django-allauth
+    # via
+    #   django-allauth
+    #   djangorestframework-simplejwt
 pyphen==0.13.2
     # via weasyprint
 python-barcode[images]==0.14.0

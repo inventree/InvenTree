@@ -208,6 +208,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+    'rest_framework_simplejwt',             # JWT authentication for API
     'dj_rest_auth',                         # Authentication APIs - dj-rest-auth
     'dj_rest_auth.registration',            # Registration APIs - dj-rest-auth'
 
@@ -326,6 +327,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -344,6 +346,13 @@ if DEBUG:
     # Enable browsable API if in DEBUG mode
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
+# Enable JWT - dj-rest-auth
+REST_USE_JWT = True
+# JWT settings - rest_framework_simplejwt
+JWT_AUTH_COOKIE = 'inventree-auth'
+JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
+
+# WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
 """
