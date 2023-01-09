@@ -156,6 +156,9 @@ jobs:
     name: Style [API schema]
     runs-on: ubuntu-20.04
     needs: [ 'javascript', 'html', 'pre-commit', 'docstyle']
+    env:
+      INVENTREE_DB_NAME: ./inventree.sqlite
+      INVENTREE_DB_ENGINE: sqlite3
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
