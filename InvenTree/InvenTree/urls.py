@@ -9,8 +9,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
-from drf_spectacular.views import SpectacularAPIView
-from rest_framework.documentation import include_docs_urls
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 
 from build.api import build_api_urls
 from build.urls import build_urls
@@ -133,7 +132,7 @@ backendpatterns = [
     re_path(r'^auth/?', auth_request),
 
     re_path(r'^api/', include(apipatterns)),
-    re_path(r'^api-doc/', include_docs_urls(title='InvenTree API')),
+    re_path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
 
 frontendpatterns = [
