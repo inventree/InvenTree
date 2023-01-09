@@ -226,7 +226,7 @@ plugin_api_urls = [
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
     re_path(r'^barcode/', include(barcode_api_urls)),
     re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
-    re_path(r'^plugins/', include(
+    re_path(r'^plugins/', include([
         # Plugin settings URLs
         re_path(r'^settings/', include([
             re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),    # Used for admin interface
@@ -243,5 +243,5 @@ plugin_api_urls = [
 
         # Anything else
         re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
-    ))
+    ]))
 ]
