@@ -22,6 +22,7 @@ from crispy_forms.bootstrap import (AppendedText, PrependedAppendedText,
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from rest_framework import serializers
 
 from common.models import InvenTreeSetting
 from InvenTree.exceptions import log_error
@@ -327,6 +328,7 @@ class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocial
 # override dj-rest-auth
 class CustomRegisterSerializer(RegisterSerializer):
     """Override of serializer to use dynamic settings."""
+    email = serializers.EmailField(required=InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED'))
 
     def save(self, request):
         """Override to check if registration is open."""
