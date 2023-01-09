@@ -245,10 +245,10 @@ def migrate(c):
 @task(
     post=[static, clean_settings, translate_stats],
     help={
-        'backup_data': 'Perform database backup prior to update operations'
+        'skip_backup': 'Skip database backup step (advanced users)'
     }
 )
-def update(c, backup_data=False):
+def update(c, skip_backup=False):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -267,7 +267,7 @@ def update(c, backup_data=False):
     # Ensure required components are installed
     install(c)
 
-    if backup_data:
+    if not skip_backup:
         backup(c)
 
     # Perform database migrations
