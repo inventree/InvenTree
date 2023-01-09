@@ -155,7 +155,7 @@ jobs:
   api_schema:
     name: Style [API schema]
     runs-on: ubuntu-20.04
-    needs: [ 'javascript', 'html', 'pre-commit']
+    needs: [ 'javascript', 'html', 'pre-commit', 'docstyle']
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
