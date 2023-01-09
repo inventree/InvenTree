@@ -349,6 +349,8 @@ if DEBUG:
 # dj-rest-auth
 REST_USE_JWT = True
 OLD_PASSWORD_FIELD_ENABLED = True
+REST_AUTH_REGISTER_SERIALIZERS = {'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'}
+
 # JWT settings - rest_framework_simplejwt
 JWT_AUTH_COOKIE = 'inventree-auth'
 JWT_AUTH_REFRESH_COOKIE = 'inventree-token'

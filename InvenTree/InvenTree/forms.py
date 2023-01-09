@@ -21,6 +21,7 @@ from crispy_forms.bootstrap import (AppendedText, PrependedAppendedText,
                                     PrependedText)
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
+from dj_rest_auth.registration.serializers import RegisterSerializer
 
 from common.models import InvenTreeSetting
 from InvenTree.exceptions import log_error
@@ -206,12 +207,17 @@ class CustomSignupForm(SignupForm):
         return cleaned_data
 
 
+def registration_enabled():
+    """Determine whether user registration is enabled."""
+    return settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True)
+
+
 class RegistratonMixin:
     """Mixin to check if registration should be enabled."""
 
     def is_open_for_signup(self, request, *args, **kwargs):
         """Check if signup is enabled in settings."""
-        if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
+        if registration_enabled():
             return super().is_open_for_signup(request, *args, **kwargs)
         return False
 
@@ -316,3 +322,14 @@ class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocial
 
         # Otherwise defer to the original allauth adapter.
         return super().login(request, user)
+
+
+# override dj-rest-auth
+class CustomRegisterSerializer(RegisterSerializer):
+    """Override of serializer to use dynamic settings."""
+
+    def save(self, request):
+        """Override to check if registration is open."""
+        if registration_enabled():
+            return super().save(request)
+        raise forms.ValidationError(_('Registration is disabled.'))
