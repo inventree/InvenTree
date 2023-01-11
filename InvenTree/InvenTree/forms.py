@@ -210,14 +210,17 @@ class CustomSignupForm(SignupForm):
 
 def registration_enabled():
     """Determine whether user registration is enabled."""
-    return settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True)
+    return settings.EMAIL_HOST and (InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG'))
 
 
 class RegistratonMixin:
     """Mixin to check if registration should be enabled."""
 
     def is_open_for_signup(self, request, *args, **kwargs):
-        """Check if signup is enabled in settings."""
+        """Check if signup is enabled in settings.
+
+        Configure the class variable `REGISTRATION_SETTING` to set which setting should be used, defualt: `LOGIN_ENABLE_REG`.
+        """
         if registration_enabled():
             return super().is_open_for_signup(request, *args, **kwargs)
         return False

@@ -720,6 +720,7 @@ function createPurchaseOrderLineItem(order, options={}) {
         order: order,
         supplier: options.supplier,
         currency: options.currency,
+        target_date: options.target_date,
     });
 
     constructForm('{% url "api-po-line-list" %}', {
@@ -751,6 +752,10 @@ function soLineItemFields(options={}) {
 
     if (options.order) {
         fields.order.value = options.order;
+    }
+
+    if (options.target_date) {
+        fields.target_date.value = options.target_date;
     }
 
     return fields;
@@ -903,6 +908,10 @@ function poLineItemFields(options={}) {
 
     if (options.currency) {
         fields.purchase_price_currency.value = options.currency;
+    }
+
+    if (options.target_date) {
+        fields.target_date.value = options.target_date;
     }
 
     return fields;
