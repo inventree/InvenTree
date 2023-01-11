@@ -117,22 +117,33 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
     if substitute_part_data:
         """If requested, add extra columns for all substitute part numbers associated with each line item."""
 
+        col_index = 0
         substitute_cols = {}
 
-        for b_idx, bom_item in enumerate(bom_items):
+        for bom_item in bom_items:
             substitutes = BomItemSubstitute.objects.filter(bom_item=bom_item)
-            for substitute in substitutes:
-                name = f"Substitute Part {b_idx + 1}"
-                value = substitute.part.name
+            for s_idx, substitute in enumerate(substitutes):
 
+                """Create substitute part name column"""
+                name = f'{_("Substitute Part")}{s_idx + 1}'
+                value = substitute.part.name
                 try:
-                    substitute_cols[name].update({b_idx: value})
+                    substitute_cols[name].update({col_index: value})
                 except KeyError:
-                    substitute_cols[name] = {b_idx: value}
+                    substitute_cols[name] = {col_index: value}
+
+                """Create substitute part description column"""
+                name = f'{_("Substitute Description")}{s_idx + 1}'
+                value = substitute.part.description
+                try:
+                    substitute_cols[name].update({col_index: value})
+                except KeyError:
+                    substitute_cols[name] = {col_index: value}
+
+            col_index = col_index + 1
 
         # Add substitute columns to dataset
-        substitute_cols_ordered = OrderedDict(sorted(substitute_cols.items(), key=lambda x: x[0]))
-        add_columns_to_dataset(substitute_cols_ordered, len(bom_items))
+        add_columns_to_dataset(substitute_cols, len(bom_items))
 
     if parameter_data:
         """If requested, add extra columns for each PartParameter associated with each line item."""
