@@ -222,3 +222,16 @@ class NewsFeedEntrySerializer(InvenTreeModelSerializer):
             'summary',
             'read',
         ]
+
+
+class ConfigSerializer(serializers.Serializer):
+    """Serializer for the InvenTree configuration.
+
+    This is a read-only serializer.
+    """
+
+    def to_representation(self, instance):
+        """Return the configuration data as a dictionary."""
+        if not isinstance(instance, str):
+            instance = list(instance.keys())[0]
+        return {'key': instance, **self.instance[instance]}

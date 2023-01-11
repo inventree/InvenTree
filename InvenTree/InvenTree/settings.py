@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 import django.conf.locale
+import django.core.exceptions
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
@@ -51,7 +52,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 BASE_DIR = config.get_base_dir()
 
 # Load configuration data
-CONFIG = config.load_config_data()
+CONFIG = config.load_config_data(set_cache=True)
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -146,10 +147,21 @@ STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
-# Backup directories
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
+# Database backup options
+# Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
 DBBACKUP_SEND_EMAIL = False
+DBBACKUP_STORAGE = get_setting(
+    'INVENTREE_BACKUP_STORAGE',
+    'backup_storage',
+    'django.core.files.storage.FileSystemStorage'
+)
+
+# Default backup configuration
+DBBACKUP_STORAGE_OPTIONS = get_setting('INVENTREE_BACKUP_OPTIONS', 'backup_options', None)
+if DBBACKUP_STORAGE_OPTIONS is None:
+    DBBACKUP_STORAGE_OPTIONS = {
+        'location': config.get_backup_dir(),
+    }
 
 # Application definition
 
@@ -237,7 +249,7 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
-DEBUG_TOOLBAR_ENABLED = DEBUG and CONFIG.get('debug_toolbar', False)
+DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
 
 # If the debug toolbar is enabled, add the modules
 if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
@@ -625,7 +637,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Extra (optional) URL validators
 # See https://docs.djangoproject.com/en/2.2/ref/validators/#django.core.validators.URLValidator
 
-EXTRA_URL_SCHEMES = CONFIG.get('extra_url_schemes', [])
+EXTRA_URL_SCHEMES = get_setting('INVENTREE_EXTRA_URL_SCHEMES', 'extra_url_schemes', [])
 
 if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
     logger.warning("extra_url_schemes not correctly formatted")
@@ -687,12 +699,9 @@ if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no 
     django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
-CURRENCIES = CONFIG.get(
-    'currencies',
-    [
-        'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
-    ],
-)
+CURRENCIES = get_setting('INVENTREE_CURRENCIES', 'currencies', [
+    'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
+])
 
 # Maximum number of decimal places for currency rendering
 CURRENCY_DECIMAL_PLACES = 6
@@ -749,12 +758,12 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 SITE_ID = 1
 
 # Load the allauth social backends
-SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [])
 
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', None)
+SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None)
 
 if SOCIALACCOUNT_PROVIDERS is None:
     SOCIALACCOUNT_PROVIDERS = {}
@@ -848,14 +857,15 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
     for key, val in inventree_tags.items():
         sentry_sdk.set_tag(f'inventree_{key}', val)
 
-# In-database error logging
+# Ignore these error typeps for in-database error logging
 IGNORED_ERRORS = [
-    Http404
+    Http404,
+    django.core.exceptions.PermissionDenied,
 ]
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60
-MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.DefaultStorageBackend'
+MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.StaticStorageBackend'
 
 # Are plugins enabled?
 PLUGINS_ENABLED = get_boolean_setting('INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False)
@@ -863,11 +873,11 @@ PLUGINS_ENABLED = get_boolean_setting('INVENTREE_PLUGINS_ENABLED', 'plugins_enab
 PLUGIN_FILE = config.get_plugin_file()
 
 # Plugin test settings
-PLUGIN_TESTING = CONFIG.get('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
-PLUGIN_TESTING_SETUP = CONFIG.get('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
-PLUGIN_TESTING_EVENTS = False                  # Flag if events are tested right now
-PLUGIN_RETRY = CONFIG.get('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?
-PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
+PLUGIN_TESTING = get_setting('INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING)                     # Are plugins beeing tested?
+PLUGIN_TESTING_SETUP = get_setting('INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False)     # Load plugins from setup hooks in testing?
+PLUGIN_TESTING_EVENTS = False                                                                           # Flag if events are tested right now
+PLUGIN_RETRY = get_setting('INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5)                                 # How often should plugin loading be tried?
+PLUGIN_FILE_CHECKED = False                                                                             # Was the plugin file checked?
 
 # User interface customization values
 CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True)

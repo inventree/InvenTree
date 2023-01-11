@@ -182,6 +182,8 @@ function getFilterOptionList(tableKey, filterKey) {
                 value: '{% trans "false" %}',
             },
         };
+    } else if (settings.type == 'date') {
+        return 'date';
     } else if ('options' in settings) {
         return settings.options;
     }
@@ -233,6 +235,8 @@ function generateFilterInput(tableKey, filterKey) {
     // A 'null' options list means that a simple text-input dialog should be used
     if (options == null) {
         html = `<input class='form-control filter-input' id='${id}' name='value'></input>`;
+    } else if (options == 'date') {
+        html = `<input type='date' class='dateinput form-control filter-input' id='${id}' name='value'></input>`;
     } else {
         // Return a 'select' input with the available values
         html = `<select class='form-control filter-input' id='${id}' name='value'>`;

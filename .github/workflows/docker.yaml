@@ -29,6 +29,9 @@ jobs:
 
   # Build the docker image
   build:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event_name }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -113,7 +116,7 @@ jobs:
             commit_hash=${{ env.git_commit_hash }}
             commit_date=${{ env.git_commit_date }}
       - name: Sign the published image
-        if: github.event_name != 'pull_request'
+        if: ${{ false }} # github.event_name != 'pull_request'
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: cosign sign ${{ steps.meta.outputs.tags }}@${{

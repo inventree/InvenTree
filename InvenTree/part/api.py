@@ -36,6 +36,7 @@ from plugin.serializers import MetadataSerializer
 from stock.models import StockItem, StockLocation
 
 from . import serializers as part_serializers
+from . import views
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
@@ -2196,6 +2197,9 @@ part_api_urls = [
         re_path(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
 
+    # BOM template
+    re_path(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='api-bom-upload-template'),
+
     re_path(r'^(?P<pk>\d+)/', include([
 
         # Endpoint for extra serial number information
@@ -2217,6 +2221,15 @@ part_api_urls = [
 
         # Part pricing
         re_path(r'^pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
+
+        # BOM download
+        re_path(r'^bom-download/?', views.BomDownload.as_view(), name='api-bom-download'),
+
+        # QR code download
+        re_path(r'^qr_code/?', views.PartQRCode.as_view(), name='api-part-qr'),
+
+        # Old pricing endpoint
+        re_path(r'^pricing2/', views.PartPricing.as_view(), name='part-pricing'),
 
         # Part detail endpoint
         re_path(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
