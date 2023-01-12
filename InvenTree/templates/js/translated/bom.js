@@ -331,8 +331,8 @@ function exportBom(part_id, options={}) {
                 min_value: 0,
             },
             substitute_part_data: {
-                label: '{% trans "Include Substitute Part Numbers" %}',
-                help_text: '{% trans "Include alternative part data in exported BOM" %}',
+                label: '{% trans "Include Alternative Parts" %}',
+                help_text: '{% trans "Include alternative parts in exported BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-substitute_part_data', false),
             },
