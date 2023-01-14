@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-09 22:09+0000\n"
-"PO-Revision-Date: 2023-01-10 12:45\n"
+"PO-Revision-Date: 2023-01-14 05:32\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -112,7 +112,7 @@ msgstr "Ausnahme aufgetreten"
 
 #: InvenTree/helpers.py:180
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "Server antwortete mit ungültigem Wert für die Inhaltslänge"
 
 #: InvenTree/helpers.py:183
 msgid "Image size is too large"
@@ -352,7 +352,7 @@ msgstr "Barcode-Hash"
 
 #: InvenTree/models.py:689
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Eindeutiger Hash der Barcode-Daten"
 
 #: InvenTree/models.py:734
 msgid "Existing barcode found"
@@ -747,7 +747,7 @@ msgstr "Über InvenTree"
 
 #: build/api.py:226
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "Build muss abgebrochen werden, bevor es gelöscht werden kann"
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
@@ -1148,7 +1148,7 @@ msgstr "Benötigte Lagerartikel automatisch mit passenden Seriennummern zuweisen
 
 #: build/serializers.py:281 stock/api.py:601
 msgid "The following serial numbers already exist or are invalid"
-msgstr ""
+msgstr "Die folgenden Seriennummern existieren bereits oder sind ungültig"
 
 #: build/serializers.py:330 build/serializers.py:399
 msgid "A list of build outputs must be provided"
@@ -1223,7 +1223,7 @@ msgstr ""
 
 #: build/serializers.py:514
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr ""
+msgstr "Wie möchtest du zusätzliche Lagerbestandteile, die der Bauauftrag zugewiesen wurden behandeln"
 
 #: build/serializers.py:524
 msgid "Some stock items have been overallocated"
