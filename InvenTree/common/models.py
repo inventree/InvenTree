@@ -956,7 +956,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
-            'name': _('Delete Noficiations'),
+            'name': _('Delete Notifications'),
             'description': _('User notifications will be deleted after specified number of days'),
             'default': 30,
             'units': 'days',
