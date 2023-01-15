@@ -266,7 +266,7 @@ def default_delete_on_deplete():
         return True
 
 
-class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
+class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, MPTTModel):
     """A StockItem object represents a quantity of physical instances of a part.
 
     Attributes:
@@ -728,8 +728,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         max_digits=15, decimal_places=5, validators=[MinValueValidator(0)],
         default=1
     )
-
-    updated = models.DateField(auto_now=True, null=True)
 
     build = models.ForeignKey(
         'build.Build', on_delete=models.SET_NULL,

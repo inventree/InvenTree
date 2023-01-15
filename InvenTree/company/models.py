@@ -683,8 +683,6 @@ class SupplierPriceBreak(common.models.PriceBreak):
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
 
-    updated = models.DateTimeField(auto_now=True, null=True, verbose_name=_('last updated'))
-
     class Meta:
         """Metaclass defines extra model options"""
         unique_together = ("part", "quantity")

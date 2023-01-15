@@ -49,6 +49,25 @@ import order.validators
 logger = logging.getLogger('inventree')
 
 
+class MetaMixin(models.Model):
+    """A base class for InvenTree models to include shared meta fields.
+
+    Attributes:
+    - updated: The last time this object was updated
+    """
+
+    class Meta:
+        """Meta options for MetaMixin."""
+        abstract = True
+
+    updated = models.DateTimeField(
+        verbose_name=_('Updated'),
+        help_text=_('Timestamp of last update'),
+        auto_now=True,
+        null=True,
+    )
+
+
 class EmptyURLValidator(URLValidator):
     """Validator for filed with url - that can be empty."""
 
@@ -1868,7 +1887,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         }
 
 
-class PriceBreak(models.Model):
+class PriceBreak(MetaMixin):
     """Represents a PriceBreak model."""
 
     class Meta:
@@ -2239,7 +2258,7 @@ class WebhookMessage(models.Model):
     )
 
 
-class NotificationEntry(models.Model):
+class NotificationEntry(MetaMixin):
     """A NotificationEntry records the last time a particular notifaction was sent out.
 
     It is recorded to ensure that notifications are not sent out "too often" to users.
@@ -2263,11 +2282,6 @@ class NotificationEntry(models.Model):
     )
 
     uid = models.IntegerField(
-    )
-
-    updated = models.DateTimeField(
-        auto_now=True,
-        null=False,
     )
 
     @classmethod
