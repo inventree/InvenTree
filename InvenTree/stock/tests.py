@@ -498,7 +498,7 @@ class StockTest(StockTestBase):
 
         it = StockItem.objects.get(pk=2)
 
-        # First establish total stock for thid part
+        # First establish total stock for this part
         allstock_before = StockItem.objects.filter(part=it.part).aggregate(Sum("quantity"))["quantity__sum"]
 
         n = it.quantity
@@ -532,7 +532,7 @@ class StockTest(StockTestBase):
         self.assertEqual(track.tracking_type, StockHistoryCode.RETURNED_FROM_CUSTOMER)
         self.assertIn('Stock removed from customer', track.notes)
 
-        # Establish total stock for part after remove from customer to check that we stille have the correct quantity in stock
+        # Establish total stock for the part after remove from customer to check that we still have the correct quantity in stock
         allstock_after = StockItem.objects.filter(part=it.part).aggregate(Sum("quantity"))["quantity__sum"]
         self.assertEqual(allstock_before, allstock_after)
 
