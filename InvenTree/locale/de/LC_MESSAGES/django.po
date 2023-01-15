@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-09 22:09+0000\n"
-"PO-Revision-Date: 2023-01-14 05:32\n"
+"PO-Revision-Date: 2023-01-15 05:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1341,7 +1341,7 @@ msgstr "Bestand für Bauauftrag erforderlich"
 
 #: build/tasks.py:118
 msgid "Overdue Build Order"
-msgstr ""
+msgstr "Überfälliger Bauauftrag"
 
 #: build/tasks.py:123
 #, python-brace-format
@@ -2058,11 +2058,11 @@ msgstr "Format für den Namen eines Teiles"
 
 #: common/models.py:1120
 msgid "Part Category Default Icon"
-msgstr ""
+msgstr "Standardsymbol der Artikelkategorie"
 
 #: common/models.py:1121
 msgid "Part category default icon (empty means no icon)"
-msgstr ""
+msgstr "Standardsymbol der Artikelkategorie (leer bedeutet kein Symbol)"
 
 #: common/models.py:1126
 msgid "Pricing Decimal Places"
@@ -2082,7 +2082,7 @@ msgstr ""
 
 #: common/models.py:1144
 msgid "Purchase History Override"
-msgstr ""
+msgstr "Kaufverlauf überschreiben"
 
 #: common/models.py:1145
 msgid "Historical purchase order pricing overrides supplier price breaks"
@@ -2130,7 +2130,7 @@ msgstr ""
 
 #: common/models.py:1184
 msgid "If available, internal prices override price range calculations"
-msgstr ""
+msgstr "Falls verfügbar, überschreiben interne Preise Preispannenberechnungen"
 
 #: common/models.py:1190
 msgid "Enable label printing"
@@ -2146,7 +2146,7 @@ msgstr "Label Bild DPI"
 
 #: common/models.py:1198
 msgid "DPI resolution when generating image files to supply to label printing plugins"
-msgstr ""
+msgstr "DPI-Auflösung bei der Erstellung von Bilddateien für Etikettendruck-Plugins"
 
 #: common/models.py:1207
 msgid "Enable Reports"
@@ -2198,11 +2198,11 @@ msgstr "Seriennummern für Lagerartikel müssen global eindeutig sein"
 
 #: common/models.py:1253
 msgid "Autofill Serial Numbers"
-msgstr ""
+msgstr "Seriennummern automatisch ausfüllen"
 
 #: common/models.py:1254
 msgid "Autofill serial numbers in forms"
-msgstr ""
+msgstr "Seriennummern automatisch ausfüllen in Formularen"
 
 #: common/models.py:1260
 msgid "Delete Depleted Stock"
@@ -2210,7 +2210,7 @@ msgstr ""
 
 #: common/models.py:1261
 msgid "Determines default behaviour when a stock item is depleted"
-msgstr ""
+msgstr "Legt das Standardverhalten fest, wenn ein Lagerartikel erschöpft ist"
 
 #: common/models.py:1267
 msgid "Batch Code Template"
@@ -2262,11 +2262,11 @@ msgstr "Eigentümerkontrolle für Lagerorte und Teile aktivieren"
 
 #: common/models.py:1309
 msgid "Stock Location Default Icon"
-msgstr ""
+msgstr "Standardsymbol für Lagerort"
 
 #: common/models.py:1310
 msgid "Stock location default icon (empty means no icon)"
-msgstr ""
+msgstr "Standardsymbol für Lagerstandort (leer bedeutet kein Symbol)"
 
 #: common/models.py:1315
 msgid "Build Order Reference Pattern"
@@ -2294,11 +2294,11 @@ msgstr "Erstelle eine Standardsendung für Aufträge"
 
 #: common/models.py:1336
 msgid "Edit Completed Sales Orders"
-msgstr ""
+msgstr "Abgeschlossene Verkaufsaufträge bearbeiten"
 
 #: common/models.py:1337
 msgid "Allow editing of sales orders after they have been shipped or completed"
-msgstr ""
+msgstr "Bearbeitung von Verkaufsaufträgen nach Versand oder Abschluss erlauben"
 
 #: common/models.py:1343
 msgid "Purchase Order Reference Pattern"
@@ -2310,11 +2310,11 @@ msgstr ""
 
 #: common/models.py:1350
 msgid "Edit Completed Purchase Orders"
-msgstr ""
+msgstr "Abgeschlossene Einkaufsaufträge bearbeiten"
 
 #: common/models.py:1351
 msgid "Allow editing of purchase orders after they have been shipped or completed"
-msgstr ""
+msgstr "Bearbeitung von Einkaufsaufträgen nach Versand oder Abschluss erlauben"
 
 #: common/models.py:1358
 msgid "Enable password forgot"
@@ -4668,15 +4668,15 @@ msgstr "Kategorie-ID"
 
 #: part/admin.py:29 part/admin.py:173
 msgid "Category Name"
-msgstr ""
+msgstr "Kategoriename"
 
 #: part/admin.py:30 part/admin.py:177
 msgid "Default Location ID"
-msgstr ""
+msgstr "Standard-Standortnummer"
 
 #: part/admin.py:31
 msgid "Default Supplier ID"
-msgstr ""
+msgstr "Standard-Lieferantennummer"
 
 #: part/admin.py:33 part/models.py:945 part/templates/part/part_base.html:206
 msgid "Minimum Stock"
@@ -4714,11 +4714,11 @@ msgstr "Im Bau"
 
 #: part/admin.py:52 part/models.py:2867
 msgid "Minimum Cost"
-msgstr ""
+msgstr "Minimale Kosten"
 
 #: part/admin.py:53 part/models.py:2873
 msgid "Maximum Cost"
-msgstr ""
+msgstr "Maximale Kosten"
 
 #: part/admin.py:175 part/admin.py:249 stock/admin.py:26 stock/admin.py:98
 msgid "Parent ID"
@@ -4746,7 +4746,7 @@ msgstr "Teile"
 
 #: part/admin.py:244
 msgid "BOM Level"
-msgstr ""
+msgstr "Stücklistenebene"
 
 #: part/admin.py:246
 msgid "BOM Item ID"
@@ -4896,7 +4896,7 @@ msgstr "Doppelte IPN in den Teil-Einstellungen nicht erlaubt"
 
 #: part/models.py:777
 msgid "Part with this Name, IPN and Revision already exists."
-msgstr ""
+msgstr "Teil mit diesem Namen, IPN und Revision existiert bereits."
 
 #: part/models.py:791
 msgid "Parts cannot be assigned to structural part categories!"
@@ -5050,23 +5050,23 @@ msgstr "Aktualisiert"
 
 #: part/models.py:2790
 msgid "Timestamp of last pricing update"
-msgstr ""
+msgstr "Zeitstempel der letzten Preisaktualisierung"
 
 #: part/models.py:2807
 msgid "Minimum BOM Cost"
-msgstr ""
+msgstr "Minimale BOM Kosten"
 
 #: part/models.py:2808
 msgid "Minimum cost of component parts"
-msgstr ""
+msgstr "Minimale Kosten für Bauteile"
 
 #: part/models.py:2813
 msgid "Maximum BOM Cost"
-msgstr ""
+msgstr "Maximale BOM Kosten"
 
 #: part/models.py:2814
 msgid "Maximum cost of component parts"
-msgstr ""
+msgstr "Maximale Kosten für Bauteile"
 
 #: part/models.py:2819
 msgid "Minimum Purchase Cost"
@@ -5074,7 +5074,7 @@ msgstr ""
 
 #: part/models.py:2820
 msgid "Minimum historical purchase cost"
-msgstr ""
+msgstr "Minimale historische Kaufkosten"
 
 #: part/models.py:2825
 msgid "Maximum Purchase Cost"
@@ -5130,7 +5130,7 @@ msgstr ""
 
 #: part/models.py:2862
 msgid "Calculated maximum cost of variant parts"
-msgstr ""
+msgstr "Berechnete maximale Kosten für Variantenteile"
 
 #: part/models.py:2868
 msgid "Calculated overall minimum cost"
@@ -5142,7 +5142,7 @@ msgstr ""
 
 #: part/models.py:2879
 msgid "Minimum Sale Price"
-msgstr ""
+msgstr "Mindestverkaufspreis"
 
 #: part/models.py:2880
 msgid "Minimum sale price based on price breaks"
@@ -5150,7 +5150,7 @@ msgstr ""
 
 #: part/models.py:2885
 msgid "Maximum Sale Price"
-msgstr ""
+msgstr "Maximaler Verkaufspreis"
 
 #: part/models.py:2886
 msgid "Maximum sale price based on price breaks"
@@ -5158,7 +5158,7 @@ msgstr ""
 
 #: part/models.py:2891
 msgid "Minimum Sale Cost"
-msgstr ""
+msgstr "Mindestverkaufskosten"
 
 #: part/models.py:2892
 msgid "Minimum historical sale price"
@@ -5166,7 +5166,7 @@ msgstr ""
 
 #: part/models.py:2897
 msgid "Maximum Sale Cost"
-msgstr ""
+msgstr "Maximale Verkaufskosten"
 
 #: part/models.py:2898
 msgid "Maximum historical sale price"
@@ -6223,7 +6223,7 @@ msgstr "Referenzen zuteilen"
 #: part/views.py:239
 #, python-brace-format
 msgid "Can't import part {name} because there is no category assigned"
-msgstr ""
+msgstr "Teil {name} kann nicht importiert werden, da keine Kategorie zugewiesen ist"
 
 #: part/views.py:378
 msgid "Part QR Code"
@@ -6247,7 +6247,7 @@ msgstr "Teilbepreisung"
 
 #: plugin/apps.py:55
 msgid "Your environment has an outdated git version. This prevents InvenTree from loading plugin details."
-msgstr ""
+msgstr "Ihre Umgebung verwendet eine veraltete Git-Version. Dies hindert InvenTree daran, Plugin-Details zu laden."
 
 #: plugin/base/action/api.py:27
 msgid "No action specified"
@@ -6287,7 +6287,7 @@ msgstr "InvenTree Barcodes"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:27
 msgid "Provides native support for barcodes"
-msgstr ""
+msgstr "Bietet native Unterstützung für Barcodes"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:29
 #: plugin/builtin/integration/core_notifications.py:33
@@ -6639,7 +6639,7 @@ msgstr "Lagerortpfad"
 
 #: stock/admin.py:83
 msgid "Stock Item ID"
-msgstr ""
+msgstr "Lagerartikel ID"
 
 #: stock/admin.py:92 templates/js/translated/model_renderers.js:418
 msgid "Supplier Part ID"
@@ -6647,7 +6647,7 @@ msgstr "Zuliefererteil-ID"
 
 #: stock/admin.py:93
 msgid "Supplier ID"
-msgstr ""
+msgstr "Zulieferer ID"
 
 #: stock/admin.py:94
 msgid "Supplier Name"
@@ -6655,7 +6655,7 @@ msgstr "Lieferant"
 
 #: stock/admin.py:95
 msgid "Customer ID"
-msgstr ""
+msgstr "Kundennummer"
 
 #: stock/admin.py:96 stock/models.py:689
 #: stock/templates/stock/item_base.html:359
@@ -6996,7 +6996,7 @@ msgstr ""
 
 #: stock/serializers.py:531
 msgid "Destination location for returned item"
-msgstr ""
+msgstr "Ziel Lagerort für zurückgegebene Artikel"
 
 #: stock/serializers.py:775
 msgid "Part must be salable"
@@ -7097,7 +7097,7 @@ msgstr "Lagerartikel installieren"
 
 #: stock/templates/stock/item.html:290
 msgid "Delete all test results for this stock item"
-msgstr ""
+msgstr "Alle Testergebnisse für diesen Artikel löschen"
 
 #: stock/templates/stock/item.html:327 templates/js/translated/stock.js:1568
 msgid "Add Test Result"
@@ -7286,7 +7286,7 @@ msgstr "Barcode mit Lagerartikel verknüpfen"
 
 #: stock/templates/stock/item_base.html:603
 msgid "Select one of the part variants listed below."
-msgstr ""
+msgstr "Wählen Sie eine der unten aufgeführten Bauteilvarianten aus."
 
 #: stock/templates/stock/item_base.html:606
 msgid "Warning"
@@ -7318,7 +7318,7 @@ msgstr "Lagerort lokalisieren"
 
 #: stock/templates/stock/location.html:56
 msgid "Scan stock items into this location"
-msgstr ""
+msgstr "Artikel per Barcode-Scan zu diesem Lagerort hinzufügen"
 
 #: stock/templates/stock/location.html:56
 msgid "Scan In Stock Items"
@@ -7381,7 +7381,7 @@ msgstr ""
 
 #: stock/templates/stock/location.html:394
 msgid "Link Barcode to Stock Location"
-msgstr ""
+msgstr "Barcode mit Lagerort verknüpfen"
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
@@ -7823,7 +7823,7 @@ msgstr "Wechselkurse"
 
 #: templates/InvenTree/settings/pricing.html:65
 msgid "Rate"
-msgstr ""
+msgstr "Rate"
 
 #: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reports.html:9
@@ -7896,7 +7896,7 @@ msgstr "Teilparametervorlage bearbeiten"
 
 #: templates/InvenTree/settings/settings.html:414
 msgid "Any parameters which reference this template will also be deleted"
-msgstr ""
+msgstr "Alle Parameter, die diese Vorlage referenzieren, werden ebenfalls gelöscht"
 
 #: templates/InvenTree/settings/settings.html:422
 msgid "Delete Part Parameter Template"
@@ -8600,7 +8600,7 @@ msgstr "Barcode"
 
 #: templates/js/translated/barcode.js:49
 msgid "Scan barcode using connected webcam"
-msgstr ""
+msgstr "Barcode mittels angeschlossener Webcam scannen"
 
 #: templates/js/translated/barcode.js:126
 msgid "Enter optional notes for stock transfer"
@@ -8625,7 +8625,7 @@ msgstr "Ungültige Antwort von Server"
 
 #: templates/js/translated/barcode.js:355
 msgid "Scan barcode data"
-msgstr ""
+msgstr "Barcode Daten scannen"
 
 #: templates/js/translated/barcode.js:405 templates/navbar.html:109
 msgid "Scan Barcode"
@@ -8637,7 +8637,7 @@ msgstr "keine URL in der Antwort"
 
 #: templates/js/translated/barcode.js:456
 msgid "This will remove the link to the associated barcode"
-msgstr ""
+msgstr "Dadurch wird der Link zu dem zugehörigen Barcode entfernt"
 
 #: templates/js/translated/barcode.js:462
 msgid "Unlink"
@@ -8678,7 +8678,7 @@ msgstr "Lagerartikel hinzugefügt"
 
 #: templates/js/translated/barcode.js:663
 msgid "Barcode does not match valid stock item"
-msgstr ""
+msgstr "Barcode entspricht keinem Lagerartikel"
 
 #: templates/js/translated/barcode.js:680
 msgid "Scan Stock Container Into Location"
@@ -8690,7 +8690,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:716
 msgid "Barcode does not match valid stock location"
-msgstr ""
+msgstr "Barcode entspricht keinem Lagerort"
 
 #: templates/js/translated/barcode.js:759
 msgid "Check Into Location"
@@ -8775,7 +8775,7 @@ msgstr "Zulieferer-Daten in Stückliste-Export einschließen"
 
 #: templates/js/translated/bom.js:358
 msgid "Include Pricing Data"
-msgstr ""
+msgstr "Preisdaten einschließen"
 
 #: templates/js/translated/bom.js:359
 msgid "Include part pricing data in exported BOM"
@@ -8843,7 +8843,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:1107
 msgid "No pricing available"
-msgstr ""
+msgstr "Keine Preisinformation verfügbar"
 
 #: templates/js/translated/bom.js:1138 templates/js/translated/build.js:1917
 #: templates/js/translated/order.js:3941
@@ -9278,7 +9278,7 @@ msgstr "Keine Zuliefererteile gefunden"
 
 #: templates/js/translated/company.js:1033
 msgid "Availability"
-msgstr ""
+msgstr "Verfügbarkeit"
 
 #: templates/js/translated/company.js:1056
 msgid "Edit supplier part"
@@ -10355,7 +10355,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:2780
 msgid "Minimum Stock Level"
-msgstr ""
+msgstr "Mindestbestand"
 
 #: templates/js/translated/plugin.js:23
 msgid "The Plugin was installed"
@@ -10367,7 +10367,7 @@ msgstr "Keine Stücklisten-Daten verfügbar"
 
 #: templates/js/translated/pricing.js:196
 msgid "No supplier pricing data available"
-msgstr ""
+msgstr "Keine Zulieferer-Preise verfügbar"
 
 #: templates/js/translated/pricing.js:305
 msgid "No price break data available"
@@ -10389,23 +10389,23 @@ msgstr ""
 
 #: templates/js/translated/pricing.js:502
 msgid "Purchase Price History"
-msgstr ""
+msgstr "Kaufpreisverlauf"
 
 #: templates/js/translated/pricing.js:602
 msgid "No sales history data available"
-msgstr ""
+msgstr "Keine Verkaufshistorie verfügbar"
 
 #: templates/js/translated/pricing.js:624
 msgid "Sale Price History"
-msgstr ""
+msgstr "Verkaufspreisverlauf"
 
 #: templates/js/translated/pricing.js:713
 msgid "No variant data available"
-msgstr ""
+msgstr "Keine Variantendaten verfügbar"
 
 #: templates/js/translated/pricing.js:753
 msgid "Variant Part"
-msgstr ""
+msgstr "Variantenteil"
 
 #: templates/js/translated/report.js:67
 msgid "items selected"
@@ -10507,7 +10507,7 @@ msgstr "Sind Sie sicher, dass Sie diesen Lagerort löschen wollen?"
 
 #: templates/js/translated/stock.js:183
 msgid "Move to parent stock location"
-msgstr ""
+msgstr "Zum übergeordneten Lagerbestand bewegen"
 
 #: templates/js/translated/stock.js:192
 msgid "Delete Stock Location"
@@ -10515,7 +10515,7 @@ msgstr "Bestand-Lagerort löschen"
 
 #: templates/js/translated/stock.js:196
 msgid "Action for stock items in this stock location"
-msgstr ""
+msgstr "Aktion für Lagerartikel in diesem Lagerort"
 
 #: templates/js/translated/stock.js:201
 msgid "Action for sub-locations"
@@ -11113,7 +11113,7 @@ msgstr "Käuflich"
 
 #: templates/js/translated/table_filters.js:512
 msgid "Has stocktake entries"
-msgstr ""
+msgstr "Hat Inventureinträge"
 
 #: templates/js/translated/tables.js:70
 msgid "Display calendar view"
