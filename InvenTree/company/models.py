@@ -396,7 +396,7 @@ class SupplierPartManager(models.Manager):
         )
 
 
-class SupplierPart(InvenTreeBarcodeMixin, models.Model):
+class SupplierPart(InvenTreeBarcodeMixin, common.models.MetaMixin):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 
     Attributes:
@@ -412,6 +412,7 @@ class SupplierPart(InvenTreeBarcodeMixin, models.Model):
         lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
         pack_size: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
+        updated: Date that the SupplierPart was last updated
     """
 
     objects = SupplierPartManager()
