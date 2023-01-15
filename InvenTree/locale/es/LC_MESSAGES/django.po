@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-09 22:09+0000\n"
-"PO-Revision-Date: 2023-01-10 12:46\n"
+"PO-Revision-Date: 2023-01-15 05:44\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -92,11 +92,11 @@ msgstr "Debe escribir el mismo correo electrónico cada vez."
 
 #: InvenTree/forms.py:230 InvenTree/forms.py:236
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "La dirección de correo electrónico principal proporcionada no es válida."
 
 #: InvenTree/forms.py:242
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "El dominio de correo electrónico proporcionado no está aprobado."
 
 #: InvenTree/helpers.py:166
 msgid "Connection error"
@@ -515,7 +515,7 @@ msgstr "Ruso"
 
 #: InvenTree/settings.py:674
 msgid "Slovenian"
-msgstr ""
+msgstr "Esloveno"
 
 #: InvenTree/settings.py:675
 msgid "Swedish"
@@ -963,7 +963,7 @@ msgstr "Notas adicionales de construcción"
 #: build/models.py:532
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "El pedido {build} ha sido procesado"
 
 #: build/models.py:538
 msgid "A build order has been completed"
