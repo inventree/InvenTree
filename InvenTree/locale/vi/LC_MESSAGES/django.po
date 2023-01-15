@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-09 22:09+0000\n"
-"PO-Revision-Date: 2023-01-10 12:46\n"
+"PO-Revision-Date: 2023-01-15 05:44\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -3557,7 +3557,7 @@ msgstr ""
 #: part/templates/part/category_sidebar.html:19
 #: part/templates/part/detail.html:207 part/templates/part/part_sidebar.html:8
 msgid "Parameters"
-msgstr ""
+msgstr "Thông số"
 
 #: company/templates/company/manufacturer_part.html:170
 #: part/templates/part/detail.html:212
@@ -3568,7 +3568,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part.html:183
 msgid "Delete parameters"
-msgstr ""
+msgstr "Xóa các thông số"
 
 #: company/templates/company/manufacturer_part.html:245
 #: part/templates/part/detail.html:865
@@ -5626,7 +5626,7 @@ msgstr ""
 
 #: part/templates/part/category.html:207
 msgid "Part Parameters"
-msgstr ""
+msgstr "Thông số phụ tùng"
 
 #: part/templates/part/category.html:228
 msgid "Create new part category"
@@ -7896,7 +7896,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings.html:414
 msgid "Any parameters which reference this template will also be deleted"
-msgstr ""
+msgstr "Những thông số thuộc mẫu này cũng sẽ bị xóa"
 
 #: templates/InvenTree/settings/settings.html:422
 msgid "Delete Part Parameter Template"
@@ -9230,11 +9230,11 @@ msgstr ""
 
 #: templates/js/translated/company.js:577
 msgid "All selected parameters will be deleted"
-msgstr ""
+msgstr "Tất cả những thống số được chọn sẽ bị xoá"
 
 #: templates/js/translated/company.js:591
 msgid "Delete Parameters"
-msgstr ""
+msgstr "Xóa các thông số"
 
 #: templates/js/translated/company.js:632
 msgid "No manufacturer parts found"
@@ -9254,7 +9254,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:784 templates/js/translated/part.js:1141
 msgid "No parameters found"
-msgstr ""
+msgstr "Không có thông số được tìm thấy"
 
 #: templates/js/translated/company.js:821 templates/js/translated/part.js:1183
 msgid "Edit parameter"
@@ -10044,7 +10044,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:205
 msgid "Copy Category Parameters"
-msgstr ""
+msgstr "Sao chép thông số nhóm hàng"
 
 #: templates/js/translated/part.js:206
 msgid "Copy parameter templates from selected part category"
@@ -10072,7 +10072,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:287
 msgid "Copy Parameters"
-msgstr ""
+msgstr "Sao chép thông số"
 
 #: templates/js/translated/part.js:288
 msgid "Copy parameter data from original part"
