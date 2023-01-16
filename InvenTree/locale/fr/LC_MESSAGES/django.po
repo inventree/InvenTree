@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-09 22:09+0000\n"
-"PO-Revision-Date: 2023-01-10 12:45\n"
+"PO-Revision-Date: 2023-01-16 05:56\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -92,11 +92,11 @@ msgstr "Vous devez taper le même e-mail à chaque fois."
 
 #: InvenTree/forms.py:230 InvenTree/forms.py:236
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "L'adresse e-mail principale fournie n'est pas valide."
 
 #: InvenTree/forms.py:242
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "Le domaine e-mail fourni n'est pas approuvé."
 
 #: InvenTree/helpers.py:166
 msgid "Connection error"
@@ -515,7 +515,7 @@ msgstr "Russe"
 
 #: InvenTree/settings.py:674
 msgid "Slovenian"
-msgstr ""
+msgstr "Slovénien"
 
 #: InvenTree/settings.py:675
 msgid "Swedish"
@@ -1223,7 +1223,7 @@ msgstr "Stock suralloué"
 
 #: build/serializers.py:514
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr ""
+msgstr "Comment voulez-vous gérer les articles en stock supplémentaires assignés à l'ordre de construction"
 
 #: build/serializers.py:524
 msgid "Some stock items have been overallocated"
@@ -1329,7 +1329,7 @@ msgstr "Autoriser l'allocation de pièces de remplacement"
 
 #: build/serializers.py:850
 msgid "Optional Items"
-msgstr ""
+msgstr "Objets Optionnels"
 
 #: build/serializers.py:851
 msgid "Allocate optional BOM items to build order"
@@ -1372,7 +1372,7 @@ msgstr "Annuler l'assemblage"
 
 #: build/templates/build/build_base.html:59
 msgid "Duplicate Build"
-msgstr ""
+msgstr "Dupliquer la construction"
 
 #: build/templates/build/build_base.html:62
 msgid "Delete Build"
@@ -1740,12 +1740,12 @@ msgstr "Pas de groupe"
 
 #: common/models.py:797
 msgid "An empty domain is not allowed."
-msgstr ""
+msgstr "Un domaine vide n'est pas autorisé."
 
 #: common/models.py:799
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
-msgstr ""
+msgstr "Nom de domaine invalide : {domain}"
 
 #: common/models.py:838
 msgid "Restart required"
@@ -1821,11 +1821,11 @@ msgstr "Taille maximale autorisée pour le téléchargement de l'image distante"
 
 #: common/models.py:907
 msgid "User-agent used to download from URL"
-msgstr ""
+msgstr "Agent utilisateur utilisé pour télécharger depuis l'URL"
 
 #: common/models.py:908
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
-msgstr ""
+msgstr "Permettre de remplacer l'agent utilisateur utilisé pour télécharger des images et des fichiers à partir d'URL externe (laisser vide pour la valeur par défaut)"
 
 #: common/models.py:913
 msgid "Require confirm"
@@ -1857,7 +1857,7 @@ msgstr "Supprimer les anciennes tâches"
 
 #: common/models.py:938
 msgid "Background task results will be deleted after specified number of days"
-msgstr ""
+msgstr "Les résultats de la tâche en arrière-plan seront supprimés après le nombre de jours spécifié"
 
 #: common/models.py:948
 msgid "Delete Error Logs"
@@ -2062,7 +2062,7 @@ msgstr "Icône de catégorie par défaut"
 
 #: common/models.py:1121
 msgid "Part category default icon (empty means no icon)"
-msgstr ""
+msgstr "Icône par défaut de la catégorie de la pièce (vide signifie aucune icône)"
 
 #: common/models.py:1126
 msgid "Pricing Decimal Places"
@@ -2070,35 +2070,35 @@ msgstr ""
 
 #: common/models.py:1127
 msgid "Number of decimal places to display when rendering pricing data"
-msgstr ""
+msgstr "Nombre de décimales à afficher lors du rendu des données de prix"
 
 #: common/models.py:1137
 msgid "Use Supplier Pricing"
-msgstr ""
+msgstr "Utiliser le prix fournisseur"
 
 #: common/models.py:1138
 msgid "Include supplier price breaks in overall pricing calculations"
-msgstr ""
+msgstr "Inclure les réductions de prix dans le calcul du prix global"
 
 #: common/models.py:1144
 msgid "Purchase History Override"
-msgstr ""
+msgstr "Remplacer l'historique des achats"
 
 #: common/models.py:1145
 msgid "Historical purchase order pricing overrides supplier price breaks"
-msgstr ""
+msgstr "La tarification historique des bons de commande remplace les réductions de prix des fournisseurs"
 
 #: common/models.py:1151
 msgid "Use Variant Pricing"
-msgstr ""
+msgstr "Utiliser les prix variants"
 
 #: common/models.py:1152
 msgid "Include variant pricing in overall pricing calculations"
-msgstr ""
+msgstr "Inclure la tarification variante dans le calcul global des prix"
 
 #: common/models.py:1158
 msgid "Active Variants Only"
-msgstr ""
+msgstr "Variantes actives uniquement"
 
 #: common/models.py:1159
 msgid "Only use active variant parts for calculating variant pricing"
@@ -2342,11 +2342,11 @@ msgstr "Activer le SSO sur les pages de connexion"
 
 #: common/models.py:1379
 msgid "Enable SSO registration"
-msgstr ""
+msgstr "Activer l'inscription SSO"
 
 #: common/models.py:1380
 msgid "Enable self-registration via SSO for users on the login pages"
-msgstr ""
+msgstr "Activer l'auto-inscription via SSO pour les utilisateurs sur les pages de connexion"
 
 #: common/models.py:1386
 msgid "Email required"
@@ -2362,7 +2362,7 @@ msgstr "Saisie automatique des utilisateurs SSO"
 
 #: common/models.py:1394
 msgid "Automatically fill out user-details from SSO account-data"
-msgstr ""
+msgstr "Remplir automatiquement les détails de l'utilisateur à partir des données de compte SSO"
 
 #: common/models.py:1400
 msgid "Mail twice"
@@ -2382,11 +2382,11 @@ msgstr "Lors de l'inscription, demandez deux fois aux utilisateurs leur mot de p
 
 #: common/models.py:1414
 msgid "Allowed domains"
-msgstr ""
+msgstr "Domaines autorisés"
 
 #: common/models.py:1415
 msgid "Restrict signup to certain domains (comma-separated, strarting with @)"
-msgstr ""
+msgstr "Restreindre l'inscription à certains domaines (séparés par des virgules, commence par @)"
 
 #: common/models.py:1421
 msgid "Group on signup"
@@ -2410,7 +2410,7 @@ msgstr "Vérifier les plugins au démarrage"
 
 #: common/models.py:1436
 msgid "Check that all plugins are installed on startup - enable in container environments"
-msgstr ""
+msgstr "Vérifier que tous les plugins sont installés au démarrage - activer dans les environnements conteneurs"
 
 #: common/models.py:1443
 msgid "Check plugin signatures"
@@ -2418,23 +2418,23 @@ msgstr "Vérifier les signatures du plugin"
 
 #: common/models.py:1444
 msgid "Check and show signatures for plugins"
-msgstr ""
+msgstr "Vérifier et afficher les signatures des plugins"
 
 #: common/models.py:1451
 msgid "Enable URL integration"
-msgstr ""
+msgstr "Activer l'intégration d'URL"
 
 #: common/models.py:1452
 msgid "Enable plugins to add URL routes"
-msgstr ""
+msgstr "Autoriser les plugins à ajouter des chemins URL"
 
 #: common/models.py:1459
 msgid "Enable navigation integration"
-msgstr ""
+msgstr "Activer l'intégration de navigation"
 
 #: common/models.py:1460
 msgid "Enable plugins to integrate into navigation"
-msgstr ""
+msgstr "Activer les plugins à s'intégrer dans la navigation"
 
 #: common/models.py:1467
 msgid "Enable app integration"
@@ -2446,19 +2446,19 @@ msgstr "Activer l'intégration de plugin pour ajouter des apps"
 
 #: common/models.py:1475
 msgid "Enable schedule integration"
-msgstr ""
+msgstr "Activer l'intégration du planning"
 
 #: common/models.py:1476
 msgid "Enable plugins to run scheduled tasks"
-msgstr ""
+msgstr "Autoriser les plugins à éxécuter des tâches planifiées"
 
 #: common/models.py:1483
 msgid "Enable event integration"
-msgstr ""
+msgstr "Activer l'intégration des évènements"
 
 #: common/models.py:1484
 msgid "Enable plugins to respond to internal events"
-msgstr ""
+msgstr "Autoriser les plugins à répondre aux évènements internes"
 
 #: common/models.py:1503 common/models.py:1852
 msgid "Settings key (must be unique - case insensitive"
@@ -2474,11 +2474,11 @@ msgstr "Afficher les composants suivis sur l'écran d'accueil"
 
 #: common/models.py:1532
 msgid "Show subscribed categories"
-msgstr ""
+msgstr "Afficher les catégories suivies"
 
 #: common/models.py:1533
 msgid "Show subscribed part categories on the homepage"
-msgstr ""
+msgstr "Afficher les catégories de pièces suivies sur la page d'accueil"
 
 #: common/models.py:1539
 msgid "Show latest parts"
@@ -2494,15 +2494,15 @@ msgstr "Nombre de composants récents"
 
 #: common/models.py:1547
 msgid "Number of recent parts to display on index page"
-msgstr ""
+msgstr "Nombre de pièces récentes à afficher sur la page d'index"
 
 #: common/models.py:1553
 msgid "Show unvalidated BOMs"
-msgstr ""
+msgstr "Afficher les listes de matériaux non validées"
 
 #: common/models.py:1554
 msgid "Show BOMs that await validation on the homepage"
-msgstr ""
+msgstr "Afficher les listes de matériaux en attente de validation sur la page d'accueil"
 
 #: common/models.py:1560
 msgid "Show recent stock changes"
@@ -2510,23 +2510,23 @@ msgstr "Afficher les dernières modifications du stock"
 
 #: common/models.py:1561
 msgid "Show recently changed stock items on the homepage"
-msgstr ""
+msgstr "Afficher les articles de stock récemment modifiés sur la page d'accueil"
 
 #: common/models.py:1567
 msgid "Recent Stock Count"
-msgstr ""
+msgstr "Compte de stock récent"
 
 #: common/models.py:1568
 msgid "Number of recent stock items to display on index page"
-msgstr ""
+msgstr "Nombre d'éléments de stock récents à afficher sur la page d'index"
 
 #: common/models.py:1574
 msgid "Show low stock"
-msgstr ""
+msgstr "Afficher le stock faible"
 
 #: common/models.py:1575
 msgid "Show low stock items on the homepage"
-msgstr ""
+msgstr "Afficher les articles en stock bas sur la page d'accueil"
 
 #: common/models.py:1581
 msgid "Show depleted stock"
@@ -2542,19 +2542,19 @@ msgstr "Afficher le stock nécessaire"
 
 #: common/models.py:1589
 msgid "Show stock items needed for builds on the homepage"
-msgstr ""
+msgstr "Afficher les pièces en stock nécessaires pour les assemblages sur la page d'accueil"
 
 #: common/models.py:1595
 msgid "Show expired stock"
-msgstr ""
+msgstr "Afficher le stock expiré"
 
 #: common/models.py:1596
 msgid "Show expired stock items on the homepage"
-msgstr ""
+msgstr "Afficher les pièces en stock expirées sur la page d'accueil"
 
 #: common/models.py:1602
 msgid "Show stale stock"
-msgstr ""
+msgstr "Afficher le stock périmé"
 
 #: common/models.py:1603
 msgid "Show stale stock items on the homepage"
@@ -2674,15 +2674,15 @@ msgstr ""
 
 #: common/models.py:1707
 msgid "Search Stock"
-msgstr ""
+msgstr "Rechercher dans le stock"
 
 #: common/models.py:1708
 msgid "Display stock items in search preview window"
-msgstr ""
+msgstr "Afficher les pièces en stock dans la fenêtre d'aperçu de la recherche"
 
 #: common/models.py:1714
 msgid "Hide Unavailable Stock Items"
-msgstr ""
+msgstr "Cacher les pièces indisponibles"
 
 #: common/models.py:1715
 msgid "Exclude stock items which are not available from the search preview window"
@@ -2770,11 +2770,11 @@ msgstr ""
 
 #: common/models.py:1791
 msgid "Fixed Navbar"
-msgstr ""
+msgstr "Barre de navigation fixe"
 
 #: common/models.py:1792
 msgid "The navbar position is fixed to the top of the screen"
-msgstr ""
+msgstr "La position de la barre de navigation est fixée en haut de l'écran"
 
 #: common/models.py:1798
 msgid "Date Format"
