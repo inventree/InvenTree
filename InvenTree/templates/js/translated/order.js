@@ -1032,7 +1032,7 @@ function exportOrder(redirect_url, options={}) {
 /*
  * Create a new form to order parts based on the list of provided parts.
  */
-function orderParts(parts_list, options={}) {
+function orderParts(parts_list, options) {
 
     var parts = [];
 
@@ -1162,6 +1162,9 @@ function orderParts(parts_list, options={}) {
         // If the modal is now "empty", dismiss it
         if (!($(opts.modal).find('.part-order-row').exists())) {
             closeModal(opts.modal);
+            // If there is a onSuccess callback defined, call it
+            if (options && options.onSuccess)
+                options.onSuccess();
         }
     }
 
