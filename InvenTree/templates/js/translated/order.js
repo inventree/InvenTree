@@ -1163,8 +1163,9 @@ function orderParts(parts_list, options) {
         if (!($(opts.modal).find('.part-order-row').exists())) {
             closeModal(opts.modal);
             // If there is a onSuccess callback defined, call it
-            if (options && options.onSuccess)
+            if (options && options.onSuccess) {
                 options.onSuccess();
+            }
         }
     }
 
