@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-09 22:09+0000\n"
-"PO-Revision-Date: 2023-01-10 12:45\n"
+"PO-Revision-Date: 2023-01-17 14:36\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -92,11 +92,11 @@ msgstr "Mindig ugyanazt az email címet kell beírni."
 
 #: InvenTree/forms.py:230 InvenTree/forms.py:236
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "A megadott elsődleges email cím nem valós."
 
 #: InvenTree/forms.py:242
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "A megadott email domain nincs jóváhagyva."
 
 #: InvenTree/helpers.py:166
 msgid "Connection error"
@@ -1741,12 +1741,12 @@ msgstr "Nincs csoport"
 
 #: common/models.py:797
 msgid "An empty domain is not allowed."
-msgstr ""
+msgstr "Üres domain nem engedélyezett."
 
 #: common/models.py:799
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
-msgstr ""
+msgstr "Érvénytelen domain név: {domain}"
 
 #: common/models.py:838
 msgid "Restart required"
@@ -1822,11 +1822,11 @@ msgstr "Maximum megengedett letöltési mérete a távoli képeknek"
 
 #: common/models.py:907
 msgid "User-agent used to download from URL"
-msgstr ""
+msgstr "Felhasznált User-agent az URL-ről letöltéshez"
 
 #: common/models.py:908
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
-msgstr ""
+msgstr "A külső URL-ről letöltéshez használt user-agent felülbírálásának engedélyezése (hagyd üresen az alapértelmezéshez)"
 
 #: common/models.py:913
 msgid "Require confirm"
@@ -2343,11 +2343,11 @@ msgstr "SSO engedélyezése a bejelentkező oldalon"
 
 #: common/models.py:1379
 msgid "Enable SSO registration"
-msgstr ""
+msgstr "SSO regisztráció engedélyezése"
 
 #: common/models.py:1380
 msgid "Enable self-registration via SSO for users on the login pages"
-msgstr ""
+msgstr "Felhaszálók önkéntes regisztrációjának engedélyezése SSO-n keresztül a bejelentkező oldalon"
 
 #: common/models.py:1386
 msgid "Email required"
@@ -2383,11 +2383,11 @@ msgstr "Regisztráláskor kétszer kérdezze a felhasználó jelszavát"
 
 #: common/models.py:1414
 msgid "Allowed domains"
-msgstr ""
+msgstr "Engedélyezett domainek"
 
 #: common/models.py:1415
 msgid "Restrict signup to certain domains (comma-separated, strarting with @)"
-msgstr ""
+msgstr "Ezekről a domain-ekről a regisztráció tiltása (vesszővel elválasztva, @-el kezdve)"
 
 #: common/models.py:1421
 msgid "Group on signup"
@@ -5816,7 +5816,7 @@ msgstr "Teszt eredmény sablon hozzáadása"
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:14
 msgid "Insufficient privileges."
-msgstr ""
+msgstr "Nincs megfelelő jogosultság."
 
 #: part/templates/part/import_wizard/part_upload.html:8
 msgid "Return to Parts"
@@ -5828,19 +5828,19 @@ msgstr "Alkatrészek importálása fájlból"
 
 #: part/templates/part/import_wizard/part_upload.html:31
 msgid "Requirements for part import"
-msgstr ""
+msgstr "Követelmények az alkatrész importáláshoz"
 
 #: part/templates/part/import_wizard/part_upload.html:33
 msgid "The part import file must contain the required named columns as provided in the "
-msgstr ""
+msgstr "Az alkatrész import fájlnak tartalmaznia kell a szükséges elnevezéssel ellátott oszlopokat ahogy ebben van "
 
 #: part/templates/part/import_wizard/part_upload.html:33
 msgid "Part Import Template"
-msgstr ""
+msgstr "Alkatrész import sablon"
 
 #: part/templates/part/import_wizard/part_upload.html:89
 msgid "Download Part Import Template"
-msgstr ""
+msgstr "Alkatrész import sablon letöltése"
 
 #: part/templates/part/import_wizard/part_upload.html:92
 #: templates/js/translated/bom.js:278 templates/js/translated/bom.js:312
@@ -6224,7 +6224,7 @@ msgstr "Azonosítók egyeztetése"
 #: part/views.py:239
 #, python-brace-format
 msgid "Can't import part {name} because there is no category assigned"
-msgstr ""
+msgstr "A(z) {name} alkatrész nem importálható, nincs kategória hozzárendelve"
 
 #: part/views.py:378
 msgid "Part QR Code"
@@ -7608,7 +7608,7 @@ msgstr "Belépési beállítások"
 
 #: templates/InvenTree/settings/login.html:16
 msgid "Outgoing email has not been configured. Some login and sign-up features may not work correctly!"
-msgstr ""
+msgstr "Kimenő email nincs beállítva. Néhány bejelentkezési és regisztrációs funkció nem fog megfelelően működni!"
 
 #: templates/InvenTree/settings/login.html:26 templates/account/signup.html:5
 #: templates/socialaccount/signup.html:5
@@ -7617,7 +7617,7 @@ msgstr "Regisztráció"
 
 #: templates/InvenTree/settings/login.html:36
 msgid "Single Sign On"
-msgstr ""
+msgstr "Single Sign On (SSO)"
 
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:139
@@ -8266,7 +8266,7 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 msgid "Not a member?"
-msgstr ""
+msgstr "Még nem vagy regisztrálva?"
 
 #: templates/account/login.html:23 templates/account/signup.html:11
 #: templates/account/signup.html:22 templates/socialaccount/signup.html:8
@@ -8280,7 +8280,7 @@ msgstr "Elfelejtett jelszó?"
 
 #: templates/account/login.html:53
 msgid "or log in with"
-msgstr ""
+msgstr "vagy jelentkezz be a"
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:20
@@ -8337,22 +8337,22 @@ msgstr "Van már fiókod? akkor kérlek <a href=\"%(login_url)s\">jelentkezz be<
 
 #: templates/account/signup.html:28
 msgid "Use a SSO-provider for signup"
-msgstr ""
+msgstr "Használj SSO kiszolgálót a regisztrációhoz"
 
 #: templates/account/signup_closed.html:5
 #: templates/account/signup_closed.html:8
 msgid "Sign Up Closed"
-msgstr ""
+msgstr "Regisztráció lezárva"
 
 #: templates/account/signup_closed.html:10
 msgid "Sign up is currently closed."
-msgstr ""
+msgstr "A regisztráció jelenleg zárva."
 
 #: templates/account/signup_closed.html:15
 #: templates/socialaccount/authentication_error.html:19
 #: templates/socialaccount/login.html:25 templates/socialaccount/signup.html:27
 msgid "Return to login page"
-msgstr ""
+msgstr "Vissza a bejelentkezéshez"
 
 #: templates/admin_button.html:8
 msgid "View in administration panel"
@@ -11041,11 +11041,11 @@ msgstr "Beszerzési árral rendelkező készlet tételek megjelenítése"
 
 #: templates/js/translated/table_filters.js:285
 msgid "Expiry Date before"
-msgstr ""
+msgstr "Lejárat előtt"
 
 #: templates/js/translated/table_filters.js:289
 msgid "Expiry Date after"
-msgstr ""
+msgstr "Lejárat után"
 
 #: templates/js/translated/table_filters.js:298
 msgid "Show stock items which have expired"
@@ -11260,49 +11260,49 @@ msgstr "Nincs találat"
 
 #: templates/socialaccount/authentication_error.html:5
 msgid "Social Network Login Failure"
-msgstr ""
+msgstr "Közösségi háló bejelentkezési hiba"
 
 #: templates/socialaccount/authentication_error.html:8
 msgid "Account Login Failure"
-msgstr ""
+msgstr "Felhasználó bejelentkezési hiba"
 
 #: templates/socialaccount/authentication_error.html:11
 msgid "An error occurred while attempting to login via your social network account."
-msgstr ""
+msgstr "Hiba lépett fel a közösségi hálós bejelentkezés során."
 
 #: templates/socialaccount/authentication_error.html:13
 msgid "Contact your system administrator for further information."
-msgstr ""
+msgstr "Vedd fel a kapcsolatot a rendszergazdával további információkért."
 
 #: templates/socialaccount/login.html:8
 #, python-format
 msgid "Connect %(provider)s"
-msgstr ""
+msgstr "Kapcsolódás %(provider)s-hoz"
 
 #: templates/socialaccount/login.html:10
 #, python-format
 msgid "You are about to connect a new third party account from %(provider)s."
-msgstr ""
+msgstr "A %(provider)s felhasználói fiókkal fogsz kapcsolódni."
 
 #: templates/socialaccount/login.html:12
 #, python-format
 msgid "Sign In Via %(provider)s"
-msgstr ""
+msgstr "Bejelentkezés a következővel: %(provider)s"
 
 #: templates/socialaccount/login.html:14
 #, python-format
 msgid "You are about to sign in using a third party account from %(provider)s."
-msgstr ""
+msgstr "A %(provider)s felhasználói fiókkal fogsz regisztrálni."
 
 #: templates/socialaccount/login.html:19
 msgid "Continue"
-msgstr ""
+msgstr "Tovább"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
 msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
+msgstr "A %(provider_name)s felhasználói fiókodat fogod használni a %(site_name)s belépéshez.<br>Kérlek töltsd ki az alábbi adatokat:"
 
 #: templates/stats.html:9
 msgid "Server"
