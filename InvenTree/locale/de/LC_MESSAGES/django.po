@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-09 22:09+0000\n"
-"PO-Revision-Date: 2023-01-15 05:44\n"
+"PO-Revision-Date: 2023-01-19 15:10\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4643,7 +4643,7 @@ msgstr "Name des Teils"
 
 #: part/admin.py:21
 msgid "Part Description"
-msgstr ""
+msgstr "Beschreibung des Teils"
 
 #: part/admin.py:22 part/models.py:853 part/templates/part/part_base.html:272
 #: templates/js/translated/part.js:1034 templates/js/translated/part.js:1762
@@ -4726,7 +4726,7 @@ msgstr ""
 
 #: part/admin.py:176 part/admin.py:251 stock/admin.py:27
 msgid "Parent Name"
-msgstr ""
+msgstr "Name des übergeordneten Teils"
 
 #: part/admin.py:179 part/templates/part/category.html:81
 #: part/templates/part/category.html:94
@@ -4754,7 +4754,7 @@ msgstr ""
 
 #: part/admin.py:250
 msgid "Parent IPN"
-msgstr ""
+msgstr "Übergeordnete IPN"
 
 #: part/admin.py:253 part/models.py:3351
 msgid "Part IPN"
@@ -5102,7 +5102,7 @@ msgstr ""
 
 #: part/models.py:2843
 msgid "Minimum Supplier Price"
-msgstr ""
+msgstr "Minimaler Lieferantenpreis"
 
 #: part/models.py:2844
 msgid "Minimum price of part from external suppliers"
@@ -5110,7 +5110,7 @@ msgstr ""
 
 #: part/models.py:2849
 msgid "Maximum Supplier Price"
-msgstr ""
+msgstr "Maximaler Lieferantenpreis"
 
 #: part/models.py:2850
 msgid "Maximum price of part from external suppliers"
@@ -5196,7 +5196,7 @@ msgstr ""
 
 #: part/models.py:2936
 msgid "Additional notes"
-msgstr ""
+msgstr "Zusätzliche Notizen"
 
 #: part/models.py:2944
 msgid "User who performed this stocktake"
@@ -5344,7 +5344,7 @@ msgstr "Diese Stücklisten-Position ist optional"
 #: templates/js/translated/bom.js:995 templates/js/translated/build.js:1859
 #: templates/js/translated/table_filters.js:88
 msgid "Consumable"
-msgstr ""
+msgstr "Verbrauchsmaterial"
 
 #: part/models.py:3451
 msgid "This BOM item is consumable (it is not tracked in build orders)"
@@ -8866,7 +8866,7 @@ msgstr "Enthält Ersatzbestand"
 #: templates/js/translated/bom.js:1172 templates/js/translated/build.js:1908
 #: templates/js/translated/build.js:1995
 msgid "Consumable item"
-msgstr ""
+msgstr "Verbrauchsartikel"
 
 #: templates/js/translated/bom.js:1232
 msgid "Validate BOM Item"
