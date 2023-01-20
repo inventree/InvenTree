@@ -29,13 +29,13 @@ body:
       required: true
     attributes:
       label: "Steps to Reproduce"
-      description: "Steps to reproduce the behavior, please make it detailed"
+      description: "Steps to reproduce the behaviour, please make it detailed"
       placeholder: |
         0. Link to all docs you used
         1. Go to '...'
         2. Click on '....'
         3. Scroll down to '....'
-        4. See error
+        4. See the error
   - type: textarea
     id: logs
     attributes:
