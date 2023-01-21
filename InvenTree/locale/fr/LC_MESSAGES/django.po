@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-09 22:09+0000\n"
-"PO-Revision-Date: 2023-01-16 05:56\n"
+"PO-Revision-Date: 2023-01-21 22:15\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -2190,7 +2190,7 @@ msgstr "Lors de l'impression d'un rapport de test, joignez une copie du rapport 
 
 #: common/models.py:1246
 msgid "Globally Unique Serials"
-msgstr ""
+msgstr "Numéro de Série Universellement Unique"
 
 #: common/models.py:1247
 msgid "Serial numbers for stock items must be globally unique"
