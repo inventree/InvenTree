@@ -165,7 +165,7 @@ class ScheduleMixin:
                 if '.' in func_name:
                     """Dotted notation indicates that we wish to run a globally defined function, from a specified Python module."""
 
-                    Schedule.objects.create(
+                    Schedule.objects.update_or_create(
                         name=task_name,
                         func=func_name,
                         schedule_type=task['schedule'],
@@ -182,7 +182,7 @@ class ScheduleMixin:
 
                     slug = self.plugin_slug()
 
-                    Schedule.objects.create(
+                    Schedule.objects.update_or_create(
                         name=task_name,
                         func=registry.call_plugin_function,
                         args=f"'{slug}', '{func_name}'",
