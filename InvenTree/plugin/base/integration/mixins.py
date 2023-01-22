@@ -171,8 +171,12 @@ class ScheduleMixin:
                     obj['args'] = f"'{slug}', '{func_name}'"
 
                 if Schedule.objects.filter(name=task_name).exists():
-                    # Scheduled task already exists - continue!
-                    continue  # pragma: no cover
+                    # Scheduled task already exists - update it!
+                    logger.info(f"Updating scheduled task '{task_name}'")
+                    instance = Schedule.objects.get(name=task_name)
+                    for item in obj:
+                        setattr(instance, item, obj[item])
+                    instance.save()
                 else:
                     logger.info(f"Adding scheduled task '{task_name}'")
                     # Create a new scheduled task
