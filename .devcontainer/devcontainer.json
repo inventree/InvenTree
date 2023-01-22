@@ -64,7 +64,7 @@
   },
 
   "remoteEnv": {
-    // Inventree config
+    // InvenTree config
     "INVENTREE_DEBUG": "True",
     "INVENTREE_DEBUG_LEVEL": "INFO",
     "INVENTREE_DB_ENGINE": "sqlite3",
