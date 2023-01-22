@@ -614,7 +614,7 @@ def coverage(c):
     manage(c, 'check')
 
     # Run coverage tests
-    c.run('coverage run {manage} test stock.test_views'.format(
+    c.run('coverage run {manage} test stock'.format(
         manage=managePyPath()
     ))
 
