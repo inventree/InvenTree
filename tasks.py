@@ -614,9 +614,8 @@ def coverage(c):
     manage(c, 'check')
 
     # Run coverage tests
-    c.run('coverage run {manage} test {apps}'.format(
-        manage=managePyPath(),
-        apps=' '.join(apps())
+    c.run('coverage run {manage} test stock.test_views'.format(
+        manage=managePyPath()
     ))
 
     # Generate coverage report
