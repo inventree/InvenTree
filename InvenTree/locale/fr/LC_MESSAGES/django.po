@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-09 22:09+0000\n"
-"PO-Revision-Date: 2023-01-21 22:15\n"
+"PO-Revision-Date: 2023-01-22 22:19\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -2198,15 +2198,15 @@ msgstr "Les numéros de série pour les articles en stock doivent être uniques 
 
 #: common/models.py:1253
 msgid "Autofill Serial Numbers"
-msgstr ""
+msgstr "Remplir automatiquement les Numéros de Série"
 
 #: common/models.py:1254
 msgid "Autofill serial numbers in forms"
-msgstr ""
+msgstr "Remplir automatiquement les numéros de série dans les formulaires"
 
 #: common/models.py:1260
 msgid "Delete Depleted Stock"
-msgstr ""
+msgstr "Supprimer le stock épuisé"
 
 #: common/models.py:1261
 msgid "Determines default behaviour when a stock item is depleted"
@@ -2398,11 +2398,11 @@ msgstr "Groupe auquel les nouveaux utilisateurs sont assignés lors de l'inscrip
 
 #: common/models.py:1428
 msgid "Enforce MFA"
-msgstr "Forcer le Multi-Factor-Authentication"
+msgstr "Forcer l'authentification multifacteurs"
 
 #: common/models.py:1429
 msgid "Users must use multifactor security."
-msgstr "Les utilisateurs doivent utiliser une sécurité multi-facteurs."
+msgstr "Les utilisateurs doivent utiliser l'authentification multifacteurs."
 
 #: common/models.py:1435
 msgid "Check plugins on startup"
@@ -2923,7 +2923,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin_settings.html:33
 #: templates/js/translated/news.js:47
 msgid "Author"
-msgstr ""
+msgstr "Auteur"
 
 #: common/models.py:2430 templates/js/translated/news.js:43
 msgid "Summary"
@@ -3170,7 +3170,7 @@ msgstr ""
 #: templates/InvenTree/settings/settings.html:350
 #: templates/js/translated/company.js:806 templates/js/translated/part.js:1166
 msgid "Units"
-msgstr ""
+msgstr "Unités"
 
 #: company/models.py:378
 msgid "Parameter units"
@@ -5188,7 +5188,7 @@ msgstr ""
 #: templates/js/translated/pricing.js:537
 #: templates/js/translated/pricing.js:658 templates/js/translated/stock.js:2519
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: part/models.py:2928
 msgid "Date stocktake was performed"
@@ -5286,7 +5286,7 @@ msgstr ""
 
 #: part/models.py:3302 templates/InvenTree/settings/settings.html:234
 msgid "Default Value"
-msgstr ""
+msgstr "Valeur par Défaut"
 
 #: part/models.py:3303
 msgid "Default Parameter Value"
@@ -6209,12 +6209,12 @@ msgstr ""
 
 #: part/templatetags/inventree_extras.py:210
 msgid "Unknown database"
-msgstr ""
+msgstr "Base de données inconnue"
 
 #: part/templatetags/inventree_extras.py:262
 #, python-brace-format
 msgid "{title} v{version}"
-msgstr ""
+msgstr "{title} v{version}"
 
 #: part/views.py:111
 msgid "Match References"
@@ -6247,7 +6247,7 @@ msgstr ""
 
 #: plugin/apps.py:55
 msgid "Your environment has an outdated git version. This prevents InvenTree from loading plugin details."
-msgstr ""
+msgstr "Votre environnement utilise une version obsolète de git. Cela empêche InvenTree de charger les détails de l'extension."
 
 #: plugin/base/action/api.py:27
 msgid "No action specified"
@@ -6283,7 +6283,7 @@ msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:26
 msgid "Inventree Barcodes"
-msgstr ""
+msgstr "Code-barres InvenTree"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:27
 msgid "Provides native support for barcodes"
@@ -6292,11 +6292,11 @@ msgstr ""
 #: plugin/builtin/barcodes/inventree_barcode.py:29
 #: plugin/builtin/integration/core_notifications.py:33
 msgid "InvenTree contributors"
-msgstr ""
+msgstr "Contributeurs d'InvenTree"
 
 #: plugin/builtin/integration/core_notifications.py:32
 msgid "InvenTree Notifications"
-msgstr ""
+msgstr "Notifications InvenTree"
 
 #: plugin/builtin/integration/core_notifications.py:34
 msgid "Integrated outgoing notificaton methods"
@@ -6334,7 +6334,7 @@ msgstr ""
 
 #: plugin/models.py:33
 msgid "Plugin Metadata"
-msgstr ""
+msgstr "Métadonnées de l'Extension"
 
 #: plugin/models.py:34
 msgid "JSON metadata field, for use by external plugins"
@@ -6370,11 +6370,11 @@ msgstr ""
 
 #: plugin/models.py:167
 msgid "Builtin Plugin"
-msgstr ""
+msgstr "Extension Intégrée"
 
 #: plugin/models.py:192 templates/InvenTree/settings/plugin_settings.html:10
 msgid "Plugin"
-msgstr ""
+msgstr "Extension"
 
 #: plugin/models.py:257
 msgid "Method"
@@ -6390,7 +6390,7 @@ msgstr ""
 
 #: plugin/registry.py:439
 msgid "Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!"
-msgstr ""
+msgstr "L'extension `{plg_name}` n'est pas compatible avec la version actuelle d'InvenTree {version.inventreeVersion()} !"
 
 #: plugin/registry.py:441
 #, python-brace-format
@@ -6621,7 +6621,7 @@ msgstr ""
 #: templates/js/translated/stock.js:641 templates/js/translated/stock.js:811
 #: templates/js/translated/stock.js:2768
 msgid "Serial"
-msgstr ""
+msgstr "Numéro de série"
 
 #: stock/admin.py:23 stock/admin.py:90
 #: templates/js/translated/model_renderers.js:159
@@ -7417,7 +7417,7 @@ msgstr ""
 
 #: templates/403_csrf.html:14
 msgid "You have been logged out from InvenTree."
-msgstr ""
+msgstr "Vous avez été déconnecté•e d'InvenTree."
 
 #: templates/403_csrf.html:19 templates/navbar.html:142
 msgid "Login"
@@ -7518,7 +7518,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:312
 msgid "InvenTree News"
-msgstr ""
+msgstr "Nouvelles d'InvenTree"
 
 #: templates/InvenTree/index.html:314
 msgid "Current News"
@@ -7581,7 +7581,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/barcode.html:8
 msgid "Barcode Settings"
-msgstr ""
+msgstr "Paramètres des Code-barres"
 
 #: templates/InvenTree/settings/build.html:8
 msgid "Build Order Settings"
@@ -7589,21 +7589,21 @@ msgstr ""
 
 #: templates/InvenTree/settings/category.html:7
 msgid "Category Settings"
-msgstr ""
+msgstr "Paramètres de Catégorie"
 
 #: templates/InvenTree/settings/global.html:9
 msgid "Server Settings"
-msgstr ""
+msgstr "Paramètres du Serveur"
 
 #: templates/InvenTree/settings/label.html:8
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
-msgstr ""
+msgstr "Paramètres des Étiquettes"
 
 #: templates/InvenTree/settings/login.html:9
 #: templates/InvenTree/settings/sidebar.html:31
 msgid "Login Settings"
-msgstr ""
+msgstr "Paramètres de Connexion"
 
 #: templates/InvenTree/settings/login.html:16
 msgid "Outgoing email has not been configured. Some login and sign-up features may not work correctly!"
@@ -7621,7 +7621,7 @@ msgstr ""
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:139
 msgid "Settings"
-msgstr ""
+msgstr "Paramètres"
 
 #: templates/InvenTree/settings/mixins/urls.html:5
 msgid "URLs"
@@ -7638,7 +7638,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/notifications.html:9
 msgid "Global Notification Settings"
-msgstr ""
+msgstr "Paramètres de Notification"
 
 #: templates/InvenTree/settings/notifications.html:18
 msgid "Slug"
@@ -7663,7 +7663,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin.html:10
 #: templates/InvenTree/settings/sidebar.html:57
 msgid "Plugin Settings"
-msgstr ""
+msgstr "Paramètres des Extensions"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
@@ -7672,7 +7672,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin.html:38
 #: templates/InvenTree/settings/sidebar.html:59
 msgid "Plugins"
-msgstr ""
+msgstr "Extensions"
 
 #: templates/InvenTree/settings/plugin.html:44
 #: templates/js/translated/plugin.js:16
@@ -7681,7 +7681,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:52
 msgid "External plugins are not enabled for this InvenTree installation"
-msgstr ""
+msgstr "Les extensions tierces ne sont pas activées pour cette installation d'InvenTree"
 
 #: templates/InvenTree/settings/plugin.html:64
 #: templates/InvenTree/settings/plugin_settings.html:43
@@ -7798,7 +7798,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/pricing.html:29
 msgid "Currency Settings"
-msgstr ""
+msgstr "Paramètre de la Devise"
 
 #: templates/InvenTree/settings/pricing.html:35
 msgid "Update Now"
@@ -7828,7 +7828,7 @@ msgstr ""
 #: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reports.html:9
 msgid "Report Settings"
-msgstr ""
+msgstr "Paramètres des Rapports"
 
 #: templates/InvenTree/settings/setting.html:37
 msgid "No value set"
@@ -7905,17 +7905,17 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "Paramètres Utilisateur"
 
 #: templates/InvenTree/settings/sidebar.html:9
 #: templates/InvenTree/settings/user.html:12
 msgid "Account Settings"
-msgstr ""
+msgstr "Paramètres du Compte"
 
 #: templates/InvenTree/settings/sidebar.html:11
 #: templates/InvenTree/settings/user_display.html:9
 msgid "Display Settings"
-msgstr ""
+msgstr "Paramètres d'Affichage"
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
@@ -7924,7 +7924,7 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
-msgstr ""
+msgstr "Paramètres de Recherche"
 
 #: templates/InvenTree/settings/sidebar.html:19
 #: templates/InvenTree/settings/sidebar.html:39
@@ -7938,7 +7938,7 @@ msgstr "Rapports"
 
 #: templates/InvenTree/settings/sidebar.html:26
 msgid "Global Settings"
-msgstr ""
+msgstr "Paramètres Globaux"
 
 #: templates/InvenTree/settings/sidebar.html:29
 msgid "Server Configuration"
@@ -7946,7 +7946,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:45
 msgid "Categories"
-msgstr ""
+msgstr "Catégories"
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
@@ -7960,37 +7960,37 @@ msgstr ""
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
-msgstr ""
+msgstr "Changer le mot de passe"
 
 #: templates/InvenTree/settings/user.html:23
 #: templates/js/translated/helpers.js:33 templates/notes_buttons.html:3
 #: templates/notes_buttons.html:4
 msgid "Edit"
-msgstr ""
+msgstr "Modifier"
 
 #: templates/InvenTree/settings/user.html:32
 msgid "Username"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 #: templates/InvenTree/settings/user.html:36
 msgid "First Name"
-msgstr ""
+msgstr "Prénom"
 
 #: templates/InvenTree/settings/user.html:40
 msgid "Last Name"
-msgstr ""
+msgstr "Nom"
 
 #: templates/InvenTree/settings/user.html:54
 msgid "The following email addresses are associated with your account:"
-msgstr ""
+msgstr "Les adresses de messagerie suivantes sont associées à votre compte :"
 
 #: templates/InvenTree/settings/user.html:75
 msgid "Verified"
-msgstr ""
+msgstr "Vérifiée"
 
 #: templates/InvenTree/settings/user.html:77
 msgid "Unverified"
-msgstr ""
+msgstr "Non vérifiée"
 
 #: templates/InvenTree/settings/user.html:79
 msgid "Primary"
@@ -8022,7 +8022,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:117
 msgid "Social Accounts"
-msgstr ""
+msgstr "Réseaux Sociaux"
 
 #: templates/InvenTree/settings/user.html:122
 msgid "You can sign in to your account using any of the following third party accounts:"
@@ -8030,7 +8030,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:158
 msgid "There are no social network accounts connected to this account."
-msgstr ""
+msgstr "Aucun compte de réseau social n'est connecté à ce compte."
 
 #: templates/InvenTree/settings/user.html:164
 msgid "Add a 3rd Party Account"
@@ -8038,11 +8038,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:174
 msgid "Multifactor"
-msgstr ""
+msgstr "Authentification Multifacteurs"
 
 #: templates/InvenTree/settings/user.html:179
 msgid "You have these factors available:"
-msgstr ""
+msgstr "Facteurs d'authentification disponibles :"
 
 #: templates/InvenTree/settings/user.html:189
 msgid "TOTP"
@@ -8054,31 +8054,31 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:204
 msgid "Multifactor authentication is not configured for your account"
-msgstr ""
+msgstr "L'authentification multifacteurs n'est pas configurée pour votre compte"
 
 #: templates/InvenTree/settings/user.html:211
 msgid "Change factors"
-msgstr ""
+msgstr "Modifier les facteurs d'authentification"
 
 #: templates/InvenTree/settings/user.html:212
 msgid "Setup multifactor"
-msgstr ""
+msgstr "Configurer l'authentification multifacteurs"
 
 #: templates/InvenTree/settings/user.html:214
 msgid "Remove multifactor"
-msgstr ""
+msgstr "Supprimer un facteur d'authentification"
 
 #: templates/InvenTree/settings/user.html:222
 msgid "Active Sessions"
-msgstr ""
+msgstr "Sessions actives"
 
 #: templates/InvenTree/settings/user.html:228
 msgid "Log out active sessions (except this one)"
-msgstr ""
+msgstr "Se déconnecter des sessions actives (sauf celle-ci)"
 
 #: templates/InvenTree/settings/user.html:229
 msgid "Log Out Active Sessions"
-msgstr ""
+msgstr "Se déconnecter des sessions actives"
 
 #: templates/InvenTree/settings/user.html:238
 msgid "<em>unknown on unknown</em>"
@@ -8090,20 +8090,20 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:243
 msgid "IP Address"
-msgstr ""
+msgstr "Adresse IP"
 
 #: templates/InvenTree/settings/user.html:244
 msgid "Device"
-msgstr ""
+msgstr "Appareil"
 
 #: templates/InvenTree/settings/user.html:245
 msgid "Last Activity"
-msgstr ""
+msgstr "Dernière activité"
 
 #: templates/InvenTree/settings/user.html:258
 #, python-format
 msgid "%(time)s ago (this session)"
-msgstr ""
+msgstr "Il y a %(time)s (session actuelle)"
 
 #: templates/InvenTree/settings/user.html:260
 #, python-format
@@ -8116,7 +8116,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:29
 msgid "Theme Settings"
-msgstr ""
+msgstr "Paramètres de Thème"
 
 #: templates/InvenTree/settings/user_display.html:39
 msgid "Select theme"
@@ -8128,7 +8128,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:58
 msgid "Language Settings"
-msgstr ""
+msgstr "Paramètres de Langue"
 
 #: templates/InvenTree/settings/user_display.html:67
 msgid "Select language"
@@ -8173,11 +8173,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:108
 msgid "InvenTree Translation Project"
-msgstr ""
+msgstr "Projet collaboratif de Traduction d'InvenTree"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
-msgstr ""
+msgstr "Paramètres de la Page d'Accueil"
 
 #: templates/InvenTree/settings/user_notifications.html:9
 msgid "Notification Settings"
@@ -8185,7 +8185,7 @@ msgstr "Paramètres de notification"
 
 #: templates/about.html:9
 msgid "InvenTree Version"
-msgstr ""
+msgstr "Version d'InvenTree"
 
 #: templates/about.html:14
 msgid "Development Version"
@@ -8201,7 +8201,7 @@ msgstr ""
 
 #: templates/about.html:42
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "Documentation d'InvenTree"
 
 #: templates/about.html:47
 msgid "API Version"
@@ -8359,7 +8359,7 @@ msgstr ""
 
 #: templates/allauth_2fa/authenticate.html:5
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "Authentification à deux facteurs"
 
 #: templates/allauth_2fa/authenticate.html:13
 msgid "Authenticate"
@@ -8367,7 +8367,7 @@ msgstr ""
 
 #: templates/allauth_2fa/backup_tokens.html:6
 msgid "Two-Factor Authentication Backup Tokens"
-msgstr ""
+msgstr "Jetons de secours pour l'authentification à deux facteurs"
 
 #: templates/allauth_2fa/backup_tokens.html:17
 msgid "Backup tokens have been generated, but are not revealed here for security reasons. Press the button below to generate new ones."
@@ -8383,7 +8383,7 @@ msgstr ""
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
-msgstr ""
+msgstr "Désactiver l'authentification à deux facteurs"
 
 #: templates/allauth_2fa/remove.html:9
 msgid "Are you sure?"
@@ -8395,7 +8395,7 @@ msgstr ""
 
 #: templates/allauth_2fa/setup.html:6
 msgid "Setup Two-Factor Authentication"
-msgstr ""
+msgstr "Configurer l'authentification à deux facteurs"
 
 #: templates/allauth_2fa/setup.html:10
 msgid "Step 1"
@@ -11259,7 +11259,7 @@ msgstr ""
 
 #: templates/socialaccount/authentication_error.html:5
 msgid "Social Network Login Failure"
-msgstr ""
+msgstr "Échec de connexion au réseau social"
 
 #: templates/socialaccount/authentication_error.html:8
 msgid "Account Login Failure"
@@ -11267,7 +11267,7 @@ msgstr ""
 
 #: templates/socialaccount/authentication_error.html:11
 msgid "An error occurred while attempting to login via your social network account."
-msgstr ""
+msgstr "Une erreur s’est produite en essayant de vous connecter via votre compte de réseau social."
 
 #: templates/socialaccount/authentication_error.html:13
 msgid "Contact your system administrator for further information."
@@ -11361,7 +11361,7 @@ msgstr ""
 
 #: templates/stats.html:75
 msgid "Email Settings"
-msgstr ""
+msgstr "Paramètres de Messagerie"
 
 #: templates/stats.html:78
 msgid "Email settings not configured"
