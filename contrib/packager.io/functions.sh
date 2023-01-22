@@ -191,7 +191,7 @@ function create_initscripts() {
   ${INIT_CMD} start nginx
 
   echo "# (Re)creating init scripts"
-  # This reset scale parameters to a known state
+  # This resets scale parameters to a known state
   inventree scale web="1" worker="1"
 
   echo "# Enabling InvenTree on boot"
