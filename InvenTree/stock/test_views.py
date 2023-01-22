@@ -7,7 +7,8 @@ from django.urls import reverse
 from common.models import InvenTreeSetting
 from InvenTree.helpers import InvenTreeTestCase
 from InvenTree.status_codes import StockStatus
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation
+from users.models import Owner
 
 
 class StockViewTestCase(InvenTreeTestCase):
@@ -85,8 +86,47 @@ class StockDetailTest(StockViewTestCase):
             self.assertIn(act, html)
 
 
+class StockOwnershipTestNew(StockViewTestCase):
+    """Tests for stock ownership views."""
+    test_item_id = 11
+    test_location_id = 1
+
+    def enable_ownership(self):
+        """Helper function to turn on ownership control."""
+        # Enable stock location ownership
+
+        InvenTreeSetting.set_setting('STOCK_OWNERSHIP_CONTROL', True, self.user)
+        self.assertEqual(True, InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL'))
+
+    def assert_ownership(self, assertio: bool = True, user=None):
+        """Helper function to check ownership control."""
+        if user is None:
+            user = self.user
+
+        item = StockItem.objects.get(pk=self.test_item_id)
+        self.assertEqual(assertio, item.check_ownership(user))
+
+        location = StockLocation.objects.get(pk=self.test_location_id)
+        self.assertEqual(assertio, location.check_ownership(user))
+
+    def test_owner_no_ownership(self):
+        """Check without ownership control enabled. Should always return True."""
+        self.assert_ownership(True)
+
+    def test_ownership_as_superuser(self):
+        """Test that superuser are always allowed to access items."""
+        self.enable_ownership()
+
+        # Check with superuser
+        self.user.is_superuser = True
+        self.user.save()
+        self.assert_ownership(True)
+
+
 class StockOwnershipTest(StockViewTestCase):
     """Tests for stock ownership views."""
+    test_item_id = 11
+    test_location_id = 1
 
     def setUp(self):
         """Add another user for ownership tests."""
@@ -129,11 +169,7 @@ class StockOwnershipTest(StockViewTestCase):
 
     def test_owner_control(self):
         """Test that ownership control is working correctly."""
-        # Test stock location and item ownership
-        from users.models import Owner
-
-        from .models import StockLocation
-
+        item = StockItem.objects.get(pk=self.test_item_id)
         new_user_group = self.new_user.groups.all()[0]
         new_user_group_owner = Owner.get_owner(new_user_group)
 
@@ -143,10 +179,9 @@ class StockOwnershipTest(StockViewTestCase):
         # Enable ownership control
         self.enable_ownership()
 
-        test_item_id = 11
         # Set ownership on existing item
         response = self.client.patch(
-            reverse('api-stock-detail', args=(test_item_id,)),
+            reverse('api-stock-detail', args=(self.test_item_id,)),
             {'status': StockStatus.OK, 'owner': user_as_owner.pk},
             content_type='application/json',
         )
@@ -162,13 +197,13 @@ class StockOwnershipTest(StockViewTestCase):
 
         # Test item edit
         response = self.client.patch(
-            reverse('api-stock-detail', args=(test_item_id,)),
+            reverse('api-stock-detail', args=(self.test_item_id,)),
             {'status': StockStatus.OK, 'owner': new_user_as_owner.pk},
             content_type='application/json',
         )
 
         # Make sure the item's owner is changed
-        item = StockItem.objects.get(pk=test_item_id)
+        item = StockItem.objects.get(pk=self.test_item_id)
         self.assertEqual(item.owner, new_user_as_owner)
 
         # Create new parent location
