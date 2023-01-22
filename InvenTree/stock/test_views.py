@@ -109,6 +109,14 @@ class StockOwnershipTestNew(StockViewTestCase):
         location = StockLocation.objects.get(pk=self.test_location_id)
         self.assertEqual(assertio, location.check_ownership(user))
 
+    def assert_api_change(self):
+        """Helper function to get response to API change."""
+        return self.client.patch(
+            reverse('api-stock-detail', args=(self.test_item_id,)),
+            {'status': StockStatus.DAMAGED},
+            content_type='application/json',
+        )
+
     def test_owner_no_ownership(self):
         """Check without ownership control enabled. Should always return True."""
         self.assert_ownership(True)
@@ -121,6 +129,42 @@ class StockOwnershipTestNew(StockViewTestCase):
         self.user.is_superuser = True
         self.user.save()
         self.assert_ownership(True)
+
+    def test_ownership_functions(self):
+        """Test that ownership is working correctly for StockItem/StockLocation."""
+        self.enable_ownership()
+        item = StockItem.objects.get(pk=self.test_item_id)
+        location = StockLocation.objects.get(pk=self.test_location_id)
+
+        # Check that user is not allowed to change item
+        self.assertTrue(item.check_ownership(self.user))        # No owner -> True
+        self.assertTrue(location.check_ownership(self.user))    # No owner -> True
+        self.assertContains(self.assert_api_change(), 'You do not have permission to perform this action.', status_code=403)
+
+        # Adjust group rules
+        group = Group.objects.get(name='my_test_group')
+        rule = group.rule_sets.get(name='stock')
+        rule.can_change = True
+        rule.save()
+
+        # Set owner to group of user
+        group_owner = Owner.get_owner(group)
+        item.owner = group_owner
+        item.save()
+
+        # Check that user is allowed to change item
+        self.assertTrue(item.check_ownership(self.user))        # Owner is group -> True
+        self.assertTrue(location.check_ownership(self.user))    # Owner is group -> True
+        self.assertContains(self.assert_api_change(), f'"status":{StockStatus.DAMAGED}', status_code=200)
+
+        # Change group
+        new_group = Group.objects.create(name='new_group')
+        item.owner = Owner.get_owner(new_group)
+        item.save()
+
+        # Check that user is not allowed to change item
+        self.assertFalse(item.check_ownership(self.user))       # Owner is not in group -> False
+        self.assertFalse(location.check_ownership(self.user))    # Owner is not in group -> False
 
 
 class StockOwnershipTest(StockViewTestCase):
