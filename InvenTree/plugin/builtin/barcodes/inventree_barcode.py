@@ -55,7 +55,7 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             url = instance.get_absolute_url()
             data['web_url'] = url
         else:
-            url = None
+            url = None  # pragma: no cover
 
         response = {
             label: data
