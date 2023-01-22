@@ -678,6 +678,12 @@ class Owner(models.Model):
 
         return related_owners
 
+    def is_user_allowed(self, user, include_group: bool = False):
+        """Check if user is allowed to access something owned by this owner."""
+
+        user_owner = Owner.get_owner(user)
+        return user_owner in self.get_related_owners(include_group=include_group)
+
 
 @receiver(post_save, sender=Group, dispatch_uid='create_owner')
 @receiver(post_save, sender=get_user_model(), dispatch_uid='create_owner')
