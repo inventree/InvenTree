@@ -639,9 +639,9 @@ class Owner(models.Model):
                                 ContentType.objects.get_for_model(user_model).id]
 
         # If instance type is obvious: set content type
-        if type(user_or_group) is Group:
+        if isinstance(user_or_group, Group):
             content_type_id = content_type_id_list[0]
-        elif type(user_or_group) is get_user_model():
+        elif isinstance(user_or_group, get_user_model()):
             content_type_id = content_type_id_list[1]
 
         if content_type_id:
