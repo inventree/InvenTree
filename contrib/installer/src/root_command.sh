@@ -67,7 +67,7 @@ case "$OS" in
         if [[ $VER != "11" ]]; then
             SUPPORTED=false
         fi
-        DIST_OS=Debian
+        DIST_OS=debian
         ;;
     *)
         echo "### Distribution not supported"
