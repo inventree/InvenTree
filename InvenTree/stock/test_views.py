@@ -144,12 +144,15 @@ class StockOwnershipTest(StockViewTestCase):
         self.enable_ownership()
 
         test_item_id = 11
-        # Set ownership on existing item (and change location)
-        response = self.client.post(reverse('stock-item-edit', args=(test_item_id,)),
-                                    {'part': 1, 'status': StockStatus.OK, 'owner': user_as_owner.pk},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        # Set ownership on existing item
+        response = self.client.patch(
+            reverse('api-stock-detail', args=(test_item_id,)),
+            {'status': StockStatus.OK, 'owner': user_as_owner.pk},
+            content_type='application/json',
+        )
 
-        self.assertContains(response, '"form_valid": true', status_code=200)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['owner'], user_as_owner.pk)
 
         # Logout
         self.client.logout()
@@ -157,21 +160,22 @@ class StockOwnershipTest(StockViewTestCase):
         # Login with new user
         self.client.login(username='john', password='custom123')
 
-        # TODO: Refactor this following test to use the new API form
         # Test item edit
-        response = self.client.post(reverse('stock-item-edit', args=(test_item_id,)),
-                                    {'part': 1, 'status': StockStatus.OK, 'owner': new_user_as_owner.pk},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.patch(
+            reverse('api-stock-detail', args=(test_item_id,)),
+            {'status': StockStatus.OK, 'owner': new_user_as_owner.pk},
+            content_type='application/json',
+        )
 
-        # Make sure the item's owner is unchanged
+        # Make sure the item's owner is changed
         item = StockItem.objects.get(pk=test_item_id)
-        self.assertEqual(item.owner, user_as_owner)
+        self.assertEqual(item.owner, new_user_as_owner)
 
         # Create new parent location
         parent_location = {
             'name': 'John Desk',
             'description': 'John\'s desk',
-            'owner': new_user_group_owner.pk,
+            'owner': new_user_group_owner,
         }
 
         # Retrieve created location
@@ -186,21 +190,27 @@ class StockOwnershipTest(StockViewTestCase):
         }
 
         # Try to create new item with no owner
-        response = self.client.post(reverse('stock-item-create'),
-                                    new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": false', status_code=200)
+        response = self.client.post(
+            reverse('api-stock-list'),
+            new_item,
+        )
+        self.assertEqual(response.status_code, 201)
 
         # Try to create new item with invalid owner
         new_item['owner'] = user_as_owner.pk
-        response = self.client.post(reverse('stock-item-create'),
-                                    new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": false', status_code=200)
+        response = self.client.post(
+            reverse('api-stock-list'),
+            new_item,
+        )
+        self.assertEqual(response.status_code, 201)
 
         # Try to create new item with valid owner
         new_item['owner'] = new_user_as_owner.pk
-        response = self.client.post(reverse('stock-item-create'),
-                                    new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": true', status_code=200)
+        response = self.client.post(
+            reverse('api-stock-list'),
+            new_item,
+        )
+        self.assertEqual(response.status_code, 201)
 
         # Logout
         self.client.logout()
