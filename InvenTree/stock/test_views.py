@@ -150,6 +150,8 @@ class StockOwnershipTest(StockViewTestCase):
         group_owner = Owner.get_owner(group)
         item.owner = group_owner
         item.save()
+        location.owner = group_owner
+        location.save()
 
         # Check that user is allowed to change item
         self.assertTrue(item.check_ownership(self.user))        # Owner is group -> True
@@ -158,8 +160,11 @@ class StockOwnershipTest(StockViewTestCase):
 
         # Change group
         new_group = Group.objects.create(name='new_group')
-        item.owner = Owner.get_owner(new_group)
+        new_group_owner = Owner.get_owner(new_group)
+        item.owner = new_group_owner
         item.save()
+        location.owner = new_group_owner
+        location.save()
 
         # Check that user is not allowed to change item
         self.assertFalse(item.check_ownership(self.user))       # Owner is not in group -> False
