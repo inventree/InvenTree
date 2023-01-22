@@ -184,6 +184,7 @@ $('#new-po-line').click(function() {
         {% endif %}
         onSuccess: function() {
             $('#po-line-table').bootstrapTable('refresh');
+            reloadTotal();
         }
     });
 });
@@ -199,6 +200,7 @@ $('#new-po-line').click(function() {
             {
                 success: function() {
                     $("#po-line-table").bootstrapTable('refresh');
+                    reloadTotal();
                 }
             }
         );
@@ -242,6 +244,7 @@ $("#new-po-extra-line").click(function() {
         title: '{% trans "Add Order Line" %}',
         onSuccess: function() {
             $("#po-extra-lines-table").bootstrapTable("refresh");
+            reloadTotal();
         },
     });
 });

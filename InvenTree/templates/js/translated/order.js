@@ -2171,6 +2171,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                             title: '{% trans "Duplicate Line Item" %}',
                             onSuccess: function(response) {
                                 $(table).bootstrapTable('refresh');
+                                reloadTotal();
                             }
                         });
                     }
@@ -2188,6 +2189,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     title: '{% trans "Edit Line Item" %}',
                     onSuccess: function() {
                         $(table).bootstrapTable('refresh');
+                        reloadTotal();
                     }
                 });
             });
@@ -2201,6 +2203,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     title: '{% trans "Delete Line Item" %}',
                     onSuccess: function() {
                         $(table).bootstrapTable('refresh');
+                        reloadTotal();
                     }
                 });
             });
@@ -2229,6 +2232,8 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
                             // Reload the "received stock" table
                             $('#stock-table').bootstrapTable('refresh');
+
+                            reloadTotal();
                         }
                     }
                 );
@@ -2237,8 +2242,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
     }
 
     function reloadSubTotal() {
-        inventreeGet(
-            `/api/order/po/${options.order}/`,
+        inventreeGet(`/api/order/po/${options.order}/`,
             {},
             {
                 success: function(data) {
@@ -2598,8 +2602,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
     }
 
     function reloadSubTotal() {
-        inventreeGet(
-            `/api/order/po/${options.order}/`,
+        inventreeGet(`/api/order/po/${options.order}/`,
             {},
             {
                 success: function(data) {
@@ -2628,6 +2631,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
                         title: '{% trans "Duplicate Line" %}',
                         onSuccess: function(response) {
                             $(table).bootstrapTable('refresh');
+                            reloadTotal();
                         }
                     });
                 }
@@ -2990,6 +2994,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 method: 'DELETE',
                 onSuccess: function() {
                     $(table).bootstrapTable('refresh');
+                    reloadTotal();
                 }
             });
         });
@@ -4070,8 +4075,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
     }
 
     function reloadSubTotal() {
-        inventreeGet(
-            `/api/order/so/${options.order}/`,
+        inventreeGet(`/api/order/so/${options.order}/`,
             {},
             {
                 success: function(data) {
@@ -4100,6 +4104,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         title: '{% trans "Duplicate Line Item" %}',
                         onSuccess: function(response) {
                             $(table).bootstrapTable('refresh');
+                            reloadTotal();
                         }
                     });
                 }
@@ -4190,6 +4195,8 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                         // Reload the pending shipment table
                         $('#pending-shipments-table').bootstrapTable('refresh');
+
+                        reloadTotal();
                     }
                 }
             );
@@ -4418,8 +4425,7 @@ function loadSalesOrderExtraLineTable(table, options={}) {
     }
 
     function reloadSubTotal() {
-        inventreeGet(
-            `/api/order/so/${options.order}/`,
+        inventreeGet(`/api/order/so/${options.order}/`,
             {},
             {
                 success: function(data) {
@@ -4448,6 +4454,7 @@ function loadSalesOrderExtraLineTable(table, options={}) {
                         title: '{% trans "Duplicate Line" %}',
                         onSuccess: function(response) {
                             $(table).bootstrapTable('refresh');
+                            reloadTotal();
                         }
                     });
                 }
