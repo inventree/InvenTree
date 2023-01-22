@@ -116,6 +116,25 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         if target_currency is None:
             target_currency = currency_code_default()
 
+        total = self.get_sub_total_item_price(target_currency) + self.get_sub_total_extra_line_price(target_currency)
+
+        # set decimal-places
+        total.decimal_places = 4
+
+        return total
+
+    def get_sub_total_item_price(self, target_currency=None):
+        """Calculates the total price of only the order lines, and converts to the specified target currency.
+
+        If not specified, the default system currency is used.
+
+        If currency conversion fails (e.g. there are no valid conversion rates),
+        then we simply return zero, rather than attempting some other calculation.
+        """
+        # Set default - see B008
+        if target_currency is None:
+            target_currency = currency_code_default()
+
         total = Money(0, target_currency)
 
         # gather name reference
@@ -135,11 +154,30 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                 # Record the error, try to press on
                 kind, info, data = sys.exc_info()
 
-                log_error('order.get_total_price')
+                log_error('order.get_sub_total_item_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid
                 return None
+
+        # set decimal-places
+        total.decimal_places = 4
+
+        return total
+
+    def get_sub_total_extra_line_price(self, target_currency=None):
+        """Calculates the total price of only the extra lines, and converts to the specified target currency.
+
+        If not specified, the default system currency is used.
+
+        If currency conversion fails (e.g. there are no valid conversion rates),
+        then we simply return zero, rather than attempting some other calculation.
+        """
+        # Set default - see B008
+        if target_currency is None:
+            target_currency = currency_code_default()
+
+        total = Money(0, target_currency)
 
         # extra items
         for line in self.extra_lines.all():
@@ -152,7 +190,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
             except MissingRate:
                 # Record the error, try to press on
 
-                log_error('order.get_total_price')
+                log_error('order.get_sub_total_extra_line_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid

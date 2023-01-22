@@ -39,6 +39,18 @@ class AbstractOrderSerializer(serializers.Serializer):
         read_only=True,
     )
 
+    sub_total_items_price = InvenTreeMoneySerializer(
+        source='get_sub_total_item_price',
+        allow_null=True,
+        read_only=True,
+    )
+
+    sub_total_extra_line_price = InvenTreeMoneySerializer(
+        source='get_sub_total_extra_line_price',
+        allow_null=True,
+        read_only=True,
+    )
+
 
 class AbstractExtraLineSerializer(serializers.Serializer):
     """Abstract Serializer for a ExtraLine object."""
@@ -159,6 +171,8 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
             'target_date',
             'notes',
             'total_price',
+            'sub_total_items_price',
+            'sub_total_extra_line_price',
         ]
 
         read_only_fields = [
@@ -736,6 +750,8 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
             'shipment_date',
             'target_date',
             'total_price',
+            'sub_total_items_price',
+            'sub_total_extra_line_price',
         ]
 
         read_only_fields = [

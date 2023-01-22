@@ -2236,8 +2236,21 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
         }
     }
 
+    function reloadSubTotal() {
+        inventreeGet(
+            `/api/order/po/${options.order}/`,
+            {},
+            {
+                success: function(data) {
+                    $("#sub_total_items_price").html(formatCurrency(data.sub_total_items_price));
+                }
+            }
+        );
+    }
+
     $(table).inventreeTable({
         onPostBody: setupCallbacks,
+        onPostFooter: reloadSubTotal,
         name: 'purchaseorderlines',
         sidePagination: 'server',
         formatNoMatches: function() {
@@ -2371,17 +2384,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     });
                 },
                 footerFormatter: function(data) {
-                    var total = data.map(function(row) {
-                        return +row['purchase_price']*row['quantity'];
-                    }).reduce(function(sum, i) {
-                        return sum + i;
-                    }, 0);
-
-                    var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency) || 'USD';
-
-                    return formatCurrency(total, {
-                        currency: currency
-                    });
+                    return '<div id="sub_total_items_price">';
                 }
             },
             {
@@ -2558,17 +2561,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return '<div id="sub_total_extra_line_price">';
             }
         }
     ];
@@ -2602,6 +2595,18 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
     function reloadTable() {
         $(table).bootstrapTable('refresh');
         reloadTotal();
+    }
+
+    function reloadSubTotal() {
+        inventreeGet(
+            `/api/order/po/${options.order}/`,
+            {},
+            {
+                success: function(data) {
+                    $("#sub_total_extra_line_price").html(formatCurrency(data.sub_total_extra_line_price));
+                }
+            }
+        );
     }
 
     // Configure callback functions once the table is loaded
@@ -2660,6 +2665,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
     $(table).inventreeTable({
         onPostBody: setupCallbacks,
+        onPostFooter: reloadSubTotal,
         name: 'purchaseorderextraline',
         sidePagination: 'client',
         formatNoMatches: function() {
@@ -3883,17 +3889,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['sale_price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return '<div id="sub_total_items_price">';
             }
         },
         {
@@ -4071,6 +4067,18 @@ function loadSalesOrderLineItemTable(table, options={}) {
     function reloadTable() {
         $(table).bootstrapTable('refresh');
         reloadTotal();
+    }
+
+    function reloadSubTotal() {
+        inventreeGet(
+            `/api/order/so/${options.order}/`,
+            {},
+            {
+                success: function(data) {
+                    $("#sub_total_items_price").html(formatCurrency(data.sub_total_items_price));
+                }
+            }
+        );
     }
 
     // Configure callback functions once the table is loaded
@@ -4257,6 +4265,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     $(table).inventreeTable({
         onPostBody: setupCallbacks,
+        onPostFooter: reloadSubTotal,
         name: 'salesorderlineitems',
         sidePagination: 'client',
         formatNoMatches: function() {
@@ -4374,17 +4383,7 @@ function loadSalesOrderExtraLineTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return '<div id="sub_total_extra_line_price">';
             }
         }
     ];
@@ -4416,6 +4415,18 @@ function loadSalesOrderExtraLineTable(table, options={}) {
     function reloadTable() {
         $(table).bootstrapTable('refresh');
         reloadTotal();
+    }
+
+    function reloadSubTotal() {
+        inventreeGet(
+            `/api/order/so/${options.order}/`,
+            {},
+            {
+                success: function(data) {
+                    $("#sub_total_extra_line_price").html(formatCurrency(data.sub_total_extra_line_price));
+                }
+            }
+        );
     }
 
     // Configure callback functions once the table is loaded
@@ -4474,6 +4485,7 @@ function loadSalesOrderExtraLineTable(table, options={}) {
 
     $(table).inventreeTable({
         onPostBody: setupCallbacks,
+        onPostFooter: reloadSubTotal,
         name: 'salesorderextraline',
         sidePagination: 'client',
         formatNoMatches: function() {
