@@ -135,7 +135,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                 # Record the error, try to press on
                 kind, info, data = sys.exc_info()
 
-                log_error('order.get_sub_total_item_price')
+                log_error('order.get_total_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid
@@ -152,7 +152,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
             except MissingRate:
                 # Record the error, try to press on
 
-                log_error('order.get_sub_total_extra_line_price')
+                log_error('order.get_total_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid
