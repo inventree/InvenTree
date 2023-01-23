@@ -116,25 +116,6 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         if target_currency is None:
             target_currency = currency_code_default()
 
-        total = self.get_sub_total_item_price(target_currency) + self.get_sub_total_extra_line_price(target_currency)
-
-        # set decimal-places
-        total.decimal_places = 4
-
-        return total
-
-    def get_sub_total_item_price(self, target_currency=None):
-        """Calculates the total price of only the order lines, and converts to the specified target currency.
-
-        If not specified, the default system currency is used.
-
-        If currency conversion fails (e.g. there are no valid conversion rates),
-        then we simply return zero, rather than attempting some other calculation.
-        """
-        # Set default - see B008
-        if target_currency is None:
-            target_currency = currency_code_default()
-
         total = Money(0, target_currency)
 
         # gather name reference
@@ -159,25 +140,6 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
                 # Return None to indicate the calculated price is invalid
                 return None
-
-        # set decimal-places
-        total.decimal_places = 4
-
-        return total
-
-    def get_sub_total_extra_line_price(self, target_currency=None):
-        """Calculates the total price of only the extra lines, and converts to the specified target currency.
-
-        If not specified, the default system currency is used.
-
-        If currency conversion fails (e.g. there are no valid conversion rates),
-        then we simply return zero, rather than attempting some other calculation.
-        """
-        # Set default - see B008
-        if target_currency is None:
-            target_currency = currency_code_default()
-
-        total = Money(0, target_currency)
 
         # extra items
         for line in self.extra_lines.all():
@@ -1014,6 +976,19 @@ class OrderExtraLine(OrderLineItem):
         help_text=_('Unit price'),
     )
 
+    def get_converted_total_price(self):
+        """The total price of this item in the currency of the user"""
+
+        if self.price and self.quantity:
+            return convert_money(self.price * self.quantity, self.get_converted_total_price_currency())
+        else:
+            return convert_money(0, self.get_converted_total_price_currency())
+
+    def get_converted_total_price_currency(self):
+        """The currency of the total price, for now the InvenTree user default"""
+
+        return currency_code_default()
+
 
 class PurchaseOrderLineItem(OrderLineItem):
     """Model for a purchase order line item.
@@ -1100,6 +1075,18 @@ class PurchaseOrderLineItem(OrderLineItem):
         blank=True, null=True,
         help_text=_('Where does the Purchaser want this item to be stored?')
     )
+
+    def get_converted_total_price(self):
+        """The total price of this item in the currency of the user"""
+        if self.purchase_price and self.quantity:
+            return convert_money(self.purchase_price * self.quantity, self.get_converted_total_price_currency())
+        else:
+            return convert_money(0, self.get_converted_total_price_currency())
+
+    def get_converted_total_price_currency(self):
+        """The currency of the total price, for now the InvenTree user default"""
+
+        return currency_code_default()
 
     def get_destination(self):
         """Show where the line item is or should be placed.
@@ -1236,6 +1223,19 @@ class SalesOrderLineItem(OrderLineItem):
     def is_completed(self):
         """Return True if this line item is completed (has been fully shipped)."""
         return self.shipped >= self.quantity
+
+    def get_converted_total_price(self):
+        """The total price of this item in the currency of the user"""
+
+        if self.sale_price and self.quantity:
+            return convert_money(self.sale_price * self.quantity, self.get_converted_total_price_currency())
+        else:
+            return convert_money(0, self.get_converted_total_price_currency())
+
+    def get_converted_total_price_currency(self):
+        """The currency of the total price, for now the InvenTree user default"""
+
+        return currency_code_default()
 
 
 class SalesOrderShipment(models.Model):

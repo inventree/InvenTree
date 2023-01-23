@@ -39,18 +39,6 @@ class AbstractOrderSerializer(serializers.Serializer):
         read_only=True,
     )
 
-    sub_total_items_price = InvenTreeMoneySerializer(
-        source='get_sub_total_item_price',
-        allow_null=True,
-        read_only=True,
-    )
-
-    sub_total_extra_line_price = InvenTreeMoneySerializer(
-        source='get_sub_total_extra_line_price',
-        allow_null=True,
-        read_only=True,
-    )
-
 
 class AbstractExtraLineSerializer(serializers.Serializer):
     """Abstract Serializer for a ExtraLine object."""
@@ -75,6 +63,19 @@ class AbstractExtraLineSerializer(serializers.Serializer):
         help_text=_('Price currency'),
     )
 
+    converted_total_price = InvenTreeMoneySerializer(
+        source='get_converted_total_price',
+        allow_null=True,
+        read_only=True,
+    )
+
+    converted_total_price_currency = serializers.ChoiceField(
+        source='get_converted_total_price_currency',
+        allow_null=True,
+        read_only=True,
+        choices=currency_code_mappings(),
+    )
+
 
 class AbstractExtraLineMeta:
     """Abstract Meta for ExtraLine."""
@@ -89,6 +90,8 @@ class AbstractExtraLineMeta:
         'order_detail',
         'price',
         'price_currency',
+        'converted_total_price',
+        'converted_total_price_currency',
     ]
 
 
@@ -171,8 +174,6 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
             'target_date',
             'notes',
             'total_price',
-            'sub_total_items_price',
-            'sub_total_extra_line_price',
         ]
 
         read_only_fields = [
@@ -343,6 +344,19 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
 
+    converted_total_price = InvenTreeMoneySerializer(
+        source='get_converted_total_price',
+        allow_null=True,
+        read_only=True,
+    )
+
+    converted_total_price_currency = serializers.ChoiceField(
+        source='get_converted_total_price_currency',
+        allow_null=True,
+        read_only=True,
+        choices=currency_code_mappings(),
+    )
+
     def validate(self, data):
         """Custom validation for the serializer:
 
@@ -397,6 +411,8 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
             'destination_detail',
             'target_date',
             'total_price',
+            'converted_total_price',
+            'converted_total_price_currency',
         ]
 
 
@@ -750,8 +766,6 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
             'shipment_date',
             'target_date',
             'total_price',
-            'sub_total_items_price',
-            'sub_total_extra_line_price',
         ]
 
         read_only_fields = [
@@ -916,6 +930,19 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         help_text=_('Sale price currency'),
     )
 
+    converted_total_price = InvenTreeMoneySerializer(
+        source='get_converted_total_price',
+        allow_null=True,
+        read_only=True,
+    )
+
+    converted_total_price_currency = serializers.ChoiceField(
+        source='get_converted_total_price_currency',
+        allow_null=True,
+        read_only=True,
+        choices=currency_code_mappings(),
+    )
+
     class Meta:
         """Metaclass options."""
 
@@ -939,6 +966,8 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
             'sale_price_currency',
             'shipped',
             'target_date',
+            'converted_total_price',
+            'converted_total_price_currency',
         ]
 
 
