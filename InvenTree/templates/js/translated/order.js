@@ -3890,7 +3890,17 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                return '<div id="sub_total_items_price">';
+                var total = data.map(function(row) {
+                    return +row['converted_total_price'];
+                }).reduce(function(sum, i) {
+                    return sum + i;
+                }, 0);
+
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].converted_total_price_currency) || 'USD';
+
+                return formatCurrency(total, {
+                    currency: currency,
+                });
             }
         },
         {
