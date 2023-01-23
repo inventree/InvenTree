@@ -1230,7 +1230,7 @@ class SalesOrderLineItem(OrderLineItem):
         if self.sale_price and self.quantity:
             return convert_money(self.sale_price * self.quantity, self.get_converted_total_price_currency())
         else:
-            return convert_money(0, self.get_converted_total_price_currency())
+            return Money(0, self.get_converted_total_price_currency())
 
     def get_converted_total_price_currency(self):
         """The currency of the total price, for now the InvenTree user default"""
