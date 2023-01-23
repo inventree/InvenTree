@@ -982,7 +982,7 @@ class OrderExtraLine(OrderLineItem):
         if self.price and self.quantity:
             return convert_money(self.price * self.quantity, self.get_converted_total_price_currency())
         else:
-            return convert_money(0, self.get_converted_total_price_currency())
+            return Money(0, self.get_converted_total_price_currency())
 
     def get_converted_total_price_currency(self):
         """The currency of the total price, for now the InvenTree user default"""
@@ -1081,7 +1081,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         if self.purchase_price and self.quantity:
             return convert_money(self.purchase_price * self.quantity, self.get_converted_total_price_currency())
         else:
-            return convert_money(0, self.get_converted_total_price_currency())
+            return Money(0, self.get_converted_total_price_currency())
 
     def get_converted_total_price_currency(self):
         """The currency of the total price, for now the InvenTree user default"""
