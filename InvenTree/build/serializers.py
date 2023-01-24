@@ -112,6 +112,7 @@ class BuildSerializer(InvenTreeModelSerializer):
             'issued_by_detail',
             'responsible',
             'responsible_detail',
+            'priority',
         ]
 
         read_only_fields = [
