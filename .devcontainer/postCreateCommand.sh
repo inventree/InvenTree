@@ -8,7 +8,7 @@ cd /workspaces/InvenTree
 python3 -m venv dev/venv
 . dev/venv/bin/activate
 
-# setup inventree server
+# setup InvenTree server
 pip install invoke
 inv update
 inv setup-dev
