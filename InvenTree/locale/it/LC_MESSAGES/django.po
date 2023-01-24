@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-09 22:09+0000\n"
-"PO-Revision-Date: 2023-01-10 12:45\n"
+"PO-Revision-Date: 2023-01-24 08:58\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -52,11 +52,11 @@ msgstr "Note"
 #: InvenTree/format.py:142
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "Il valore '{name}' non è nel formato del pattern"
 
 #: InvenTree/format.py:152
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "Il valore fornito non corrisponde al modello richiesto: "
 
 #: InvenTree/forms.py:135
 msgid "Enter password"
@@ -92,11 +92,11 @@ msgstr "È necessario digitare la stessa e-mail ogni volta."
 
 #: InvenTree/forms.py:230 InvenTree/forms.py:236
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "L'indirizzo email principale fornito non è valido."
 
 #: InvenTree/forms.py:242
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "Il dominio di posta elettronica fornito non è approvato."
 
 #: InvenTree/helpers.py:166
 msgid "Connection error"
@@ -112,19 +112,19 @@ msgstr "Si è verificata un'eccezione"
 
 #: InvenTree/helpers.py:180
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "Il server ha risposto con valore Content-Length non valido"
 
 #: InvenTree/helpers.py:183
 msgid "Image size is too large"
-msgstr ""
+msgstr "Immagine troppo grande"
 
 #: InvenTree/helpers.py:195
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "Il download dell'immagine ha superato la dimensione massima"
 
 #: InvenTree/helpers.py:200
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "Il server remoto ha restituito una risposta vuota"
 
 #: InvenTree/helpers.py:208
 msgid "Supplied URL is not a valid image file"
@@ -140,7 +140,7 @@ msgstr "Numero seriale vuoto"
 
 #: InvenTree/helpers.py:635
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Seriale Duplicato"
 
 #: InvenTree/helpers.py:668 InvenTree/helpers.py:703
 #, python-brace-format
@@ -150,7 +150,7 @@ msgstr "Range gruppo: {g}"
 #: InvenTree/helpers.py:697
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
-msgstr ""
+msgstr "L'intervallo {g} supera la quantità consentita ({q})"
 
 #: InvenTree/helpers.py:721 InvenTree/helpers.py:728 InvenTree/helpers.py:743
 #, python-brace-format
@@ -168,19 +168,19 @@ msgstr "Il numero dei numeri seriali univoci ({s}) deve essere uguale alla quant
 
 #: InvenTree/helpers.py:955
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Rimuovi i tag HTML da questo valore"
 
 #: InvenTree/models.py:238
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Schema formattato impropriamente"
 
 #: InvenTree/models.py:245
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "Chiave di formato specificata sconosciuta"
 
 #: InvenTree/models.py:251
 msgid "Missing required format key"
-msgstr ""
+msgstr "Chiave di formato richiesta mancante"
 
 #: InvenTree/models.py:263
 msgid "Reference field cannot be empty"
