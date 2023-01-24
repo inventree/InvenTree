@@ -974,7 +974,11 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def return_from_customer(self, location, user=None, **kwargs):
-        """Return stock item from customer, back into the specified location."""
+        """Return stock item from customer, back into the specified location.
+
+        If the selected location is the same as the parent, merge stock back into the parent.
+        Otherwise create the stock in the new location
+        """
         notes = kwargs.get('notes', '')
 
         tracking_info = {}
@@ -991,7 +995,10 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             location=location
         )
 
+        self.clearAllocations()
         self.customer = None
+        self.belongs_to = None
+        self.sales_order = None
         self.location = location
 
         trigger_event(
@@ -999,7 +1006,16 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             id=self.id,
         )
 
-        self.save()
+        """If new location is the same as the parent location, merge this stock back in the parent"""
+        if self.parent and self.location == self.parent.location:
+            self.parent.merge_stock_items(
+                {self},
+                user=user,
+                location=location,
+                notes=notes
+            )
+        else:
+            self.save()
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""
