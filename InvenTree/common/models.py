@@ -949,7 +949,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Automatic Backup'),
             'description': _('Enable automatic backup of database and media files'),
             'validator': bool,
-            'default': True,
+            'default': False,
         },
 
         'INVENTREE_DELETE_TASKS_DAYS': {
@@ -975,7 +975,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
-            'name': _('Delete Noficiations'),
+            'name': _('Delete Notifications'),
             'description': _('User notifications will be deleted after specified number of days'),
             'default': 30,
             'units': 'days',
@@ -1390,6 +1390,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'LOGIN_ENABLE_SSO': {
             'name': _('Enable SSO'),
             'description': _('Enable SSO on the login pages'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'LOGIN_ENABLE_SSO_REG': {
+            'name': _('Enable SSO registration'),
+            'description': _('Enable self-registration via SSO for users on the login pages'),
             'default': False,
             'validator': bool,
         },

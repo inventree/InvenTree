@@ -146,7 +146,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
             # So, no ownership checks to perform!
             return True
 
-        return user in owner.get_related_owners(include_group=True)
+        return owner.is_user_allowed(user, include_group=True)
 
     def clean(self):
         """Custom clean action for the StockLocation model:
@@ -862,7 +862,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
         if owner is None:
             return True
 
-        return user in owner.get_related_owners(include_group=True)
+        return owner.is_user_allowed(user, include_group=True)
 
     def is_stale(self):
         """Returns True if this Stock item is "stale".
@@ -972,7 +972,11 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
 
     @transaction.atomic
     def return_from_customer(self, location, user=None, **kwargs):
-        """Return stock item from customer, back into the specified location."""
+        """Return stock item from customer, back into the specified location.
+
+        If the selected location is the same as the parent, merge stock back into the parent.
+        Otherwise create the stock in the new location
+        """
         notes = kwargs.get('notes', '')
 
         tracking_info = {}
@@ -989,7 +993,10 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
             location=location
         )
 
+        self.clearAllocations()
         self.customer = None
+        self.belongs_to = None
+        self.sales_order = None
         self.location = location
 
         trigger_event(
@@ -997,7 +1004,16 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
             id=self.id,
         )
 
-        self.save()
+        """If new location is the same as the parent location, merge this stock back in the parent"""
+        if self.parent and self.location == self.parent.location:
+            self.parent.merge_stock_items(
+                {self},
+                user=user,
+                location=location,
+                notes=notes
+            )
+        else:
+            self.save()
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""

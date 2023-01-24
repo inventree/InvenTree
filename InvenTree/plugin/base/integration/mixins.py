@@ -153,43 +153,34 @@ class ScheduleMixin:
             for key, task in self.scheduled_tasks.items():
 
                 task_name = self.get_task_name(key)
-
-                if Schedule.objects.filter(name=task_name).exists():
-                    # Scheduled task already exists - continue!
-                    continue  # pragma: no cover
-
-                logger.info(f"Adding scheduled task '{task_name}'")
-
+                obj = {
+                    'name': task_name,
+                    'schedule_type': task['schedule'],
+                    'minutes': task.get('minutes', None),
+                    'repeats': task.get('repeats', -1),
+                }
                 func_name = task['func'].strip()
 
                 if '.' in func_name:
                     """Dotted notation indicates that we wish to run a globally defined function, from a specified Python module."""
-
-                    Schedule.objects.create(
-                        name=task_name,
-                        func=func_name,
-                        schedule_type=task['schedule'],
-                        minutes=task.get('minutes', None),
-                        repeats=task.get('repeats', -1),
-                    )
-
+                    obj['func'] = func_name
                 else:
-                    """
-                    Non-dotted notation indicates that we wish to call a 'member function' of the calling plugin.
-
-                    This is managed by the plugin registry itself.
-                    """
-
+                    """Non-dotted notation indicates that we wish to call a 'member function' of the calling plugin. This is managed by the plugin registry itself."""
                     slug = self.plugin_slug()
+                    obj['func'] = registry.call_plugin_function
+                    obj['args'] = f"'{slug}', '{func_name}'"
 
-                    Schedule.objects.create(
-                        name=task_name,
-                        func=registry.call_plugin_function,
-                        args=f"'{slug}', '{func_name}'",
-                        schedule_type=task['schedule'],
-                        minutes=task.get('minutes', None),
-                        repeats=task.get('repeats', -1),
-                    )
+                if Schedule.objects.filter(name=task_name).exists():
+                    # Scheduled task already exists - update it!
+                    logger.info(f"Updating scheduled task '{task_name}'")
+                    instance = Schedule.objects.get(name=task_name)
+                    for item in obj:
+                        setattr(instance, item, obj[item])
+                    instance.save()
+                else:
+                    logger.info(f"Adding scheduled task '{task_name}'")
+                    # Create a new scheduled task
+                    Schedule.objects.create(**obj)
 
         except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready

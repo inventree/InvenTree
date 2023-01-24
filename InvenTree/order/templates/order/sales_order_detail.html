@@ -252,6 +252,9 @@
 
         var fields = soLineItemFields({
             order: {{ order.pk }},
+            {% if order.target_date %}
+            target_date: '{{ order.target_date|date:'Y-m-d' }}',
+            {% endif %}
         });
 
         constructForm('{% url "api-so-line-list" %}', {

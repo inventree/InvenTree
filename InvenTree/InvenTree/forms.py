@@ -210,8 +210,11 @@ class RegistratonMixin:
     """Mixin to check if registration should be enabled."""
 
     def is_open_for_signup(self, request, *args, **kwargs):
-        """Check if signup is enabled in settings."""
-        if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
+        """Check if signup is enabled in settings.
+
+        Configure the class variable `REGISTRATION_SETTING` to set which setting should be used, defualt: `LOGIN_ENABLE_REG`.
+        """
+        if settings.EMAIL_HOST and (InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG')):
             return super().is_open_for_signup(request, *args, **kwargs)
         return False
 

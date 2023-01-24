@@ -692,7 +692,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     @property
     def full_name(self):
-        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in Inventree settings.
+        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings.
 
         As a failsafe option, the following is done:
 
