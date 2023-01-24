@@ -146,7 +146,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
             # So, no ownership checks to perform!
             return True
 
-        return user in owner.get_related_owners(include_group=True)
+        return owner.is_user_allowed(user, include_group=True)
 
     def clean(self):
         """Custom clean action for the StockLocation model:
@@ -864,7 +864,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         if owner is None:
             return True
 
-        return user in owner.get_related_owners(include_group=True)
+        return owner.is_user_allowed(user, include_group=True)
 
     def is_stale(self):
         """Returns True if this Stock item is "stale".
