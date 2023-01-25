@@ -321,6 +321,7 @@ function selectLabel(labels, items, options={}) {
     });
 
     modalEnable(modal, true);
+    modalShowSubmitButton(modal, true);
     modalSetTitle(modal, '{% trans "Select Label Template" %}');
     modalSetContent(modal, html);
 

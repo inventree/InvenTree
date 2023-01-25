@@ -134,6 +134,7 @@ class SettingsTest(InvenTreeTestCase):
             'units',
             'requires_restart',
             'after_save',
+            'before_save',
         ]
 
         for k in setting.keys():
