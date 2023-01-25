@@ -1044,6 +1044,11 @@ function loadSupplierPartTable(table, url, options) {
                 }
             },
             {
+                field: 'updated',
+                title: '{% trans "Last Updated" %}',
+                sortable: true,
+            },
+            {
                 field: 'actions',
                 title: '',
                 sortable: false,

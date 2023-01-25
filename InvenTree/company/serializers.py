@@ -282,6 +282,9 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
+    # Date fields
+    updated = serializers.DateTimeField(allow_null=True, read_only=True)
+
     class Meta:
         """Metaclass options."""
 
@@ -309,6 +312,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'supplier',
             'supplier_detail',
             'url',
+            'updated',
         ]
 
         read_only_fields = [

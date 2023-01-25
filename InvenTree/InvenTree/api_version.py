@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 88
+INVENTREE_API_VERSION = 89
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+v89 -> 2023-01-25 : https://github.com/inventree/InvenTree/pull/4214
+    - Adds updated field to SupplierPart API
+    - Adds API date orddering for supplier part list
 v88 -> 2023-01-17: https://github.com/inventree/InvenTree/pull/4225
     - Adds 'priority' field to Build model and api endpoints
 v87 -> 2023-01-04 : https://github.com/inventree/InvenTree/pull/4067

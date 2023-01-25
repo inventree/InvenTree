@@ -2275,7 +2275,7 @@ def after_save_part(sender, instance: Part, created, **kwargs):
             pass
 
 
-class PartPricing(models.Model):
+class PartPricing(common.models.MetaMixin):
     """Model for caching min/max pricing information for a particular Part
 
     It is prohibitively expensive to calculate min/max pricing for a part "on the fly".
@@ -2783,12 +2783,6 @@ class PartPricing(models.Model):
         verbose_name=_('Currency'),
         help_text=_('Currency used to cache pricing calculations'),
         choices=common.settings.currency_code_mappings(),
-    )
-
-    updated = models.DateTimeField(
-        verbose_name=_('Updated'),
-        help_text=_('Timestamp of last pricing update'),
-        auto_now=True
     )
 
     scheduled_for_update = models.BooleanField(
