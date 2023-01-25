@@ -145,10 +145,10 @@ table td.expand {
         <tr>
             <td>
                 <div class='thumb-container'>
-                    <img src='{% part_image line.part %}' class='part-thumb'>
+                    <img src='{% part_image line.sub_part %}' class='part-thumb'>
                 </div>
                 <div class='part-text'>
-                    {{ line.part.full_name }}
+                    {{ line.sub_part.full_name }}
                 </div>
             </td>
             <td>{% decimal line.quantity %}</td>
