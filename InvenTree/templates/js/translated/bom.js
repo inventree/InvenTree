@@ -293,7 +293,7 @@ function downloadBomTemplate(options={}) {
             $(opts.modal).modal('hide');
 
             // Download the file
-            location.href = `{% url "bom-upload-template" %}?format=${format}`;
+            location.href = `{% url "api-bom-upload-template" %}?format=${format}`;
 
         }
     });
@@ -330,9 +330,15 @@ function exportBom(part_id, options={}) {
                 required: true,
                 min_value: 0,
             },
+            substitute_part_data: {
+                label: '{% trans "Include Alternative Parts" %}',
+                help_text: '{% trans "Include alternative parts in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-substitute_part_data', false),
+            },
             parameter_data: {
                 label: '{% trans "Include Parameter Data" %}',
-                help_text: '{% trans "Include part  parameter data in exported BOM" %}',
+                help_text: '{% trans "Include part parameter data in exported BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-parameter_data', false),
             },
@@ -366,6 +372,7 @@ function exportBom(part_id, options={}) {
             // Extract values from the form
             var field_names = [
                 'format', 'cascade', 'levels',
+                'substitute_part_data',
                 'parameter_data',
                 'stock_data',
                 'manufacturer_data',
@@ -373,7 +380,7 @@ function exportBom(part_id, options={}) {
                 'pricing_data',
             ];
 
-            var url = `/part/${part_id}/bom-download/?`;
+            var url = `/api/part/${part_id}/bom-download/?`;
 
             field_names.forEach(function(fn) {
                 var val = getFormFieldValue(fn, fields[fn], opts);

@@ -194,6 +194,13 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ build.responsible }}</td>
     </tr>
     {% endif %}
+    {% if build.priority != 0 %}
+    <tr>
+        <td><span class="fa-solid fa-arrow-up-9-1"></span></td>
+        <td>{% trans "Priority" %}</td>
+        <td>{{ build.priority }}</td>
+    </tr>
+    {% endif %}
 </table>
 {% endblock %}
 

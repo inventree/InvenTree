@@ -61,6 +61,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         completed_by: User that completed the build
         issued_by: User that issued the build
         responsible: User (or group) responsible for completing the build
+        priority: Priority of the build
     """
 
     OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
@@ -292,6 +293,13 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     notes = InvenTree.fields.InvenTreeNotesField(
         help_text=_('Extra build notes')
+    )
+
+    priority = models.PositiveIntegerField(
+        verbose_name=_('Build Priority'),
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text=_('Priority of this build order')
     )
 
     def sub_builds(self, cascade=True):
@@ -1072,12 +1080,15 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def required_parts_to_complete_build(self):
-        """Returns a list of parts required to complete the full build."""
+        """Returns a list of parts required to complete the full build.
+
+        TODO: 2022-01-06 : This method needs to be improved, it is very inefficient in terms of DB hits!
+        """
         parts = []
 
         for bom_item in self.bom_items:
             # Get remaining quantity needed
-            required_quantity_to_complete_build = self.remaining * bom_item.quantity
+            required_quantity_to_complete_build = self.remaining * bom_item.quantity - self.allocated_quantity(bom_item)
             # Compare to net stock
             if bom_item.sub_part.net_stock < required_quantity_to_complete_build:
                 parts.append(bom_item.sub_part)

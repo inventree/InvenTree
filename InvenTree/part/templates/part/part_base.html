@@ -441,7 +441,7 @@
     {% if barcodes %}
     $("#show-qr-code").click(function() {
         launchModalForm(
-            "{% url 'part-qr' part.id %}",
+            "{% url 'api-part-qr' part.id %}",
             {
                 no_post: true,
             }

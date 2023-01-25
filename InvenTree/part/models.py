@@ -692,7 +692,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     @property
     def full_name(self):
-        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in Inventree settings.
+        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings.
 
         As a failsafe option, the following is done:
 
@@ -2275,7 +2275,7 @@ def after_save_part(sender, instance: Part, created, **kwargs):
             pass
 
 
-class PartPricing(models.Model):
+class PartPricing(common.models.MetaMixin):
     """Model for caching min/max pricing information for a particular Part
 
     It is prohibitively expensive to calculate min/max pricing for a part "on the fly".
@@ -2374,7 +2374,10 @@ class PartPricing(models.Model):
         """Recalculate all cost data for the referenced Part instance"""
 
         if self.pk is not None:
-            self.refresh_from_db()
+            try:
+                self.refresh_from_db()
+            except PartPricing.DoesNotExist:
+                pass
 
         self.update_bom_cost(save=False)
         self.update_purchase_cost(save=False)
@@ -2780,12 +2783,6 @@ class PartPricing(models.Model):
         verbose_name=_('Currency'),
         help_text=_('Currency used to cache pricing calculations'),
         choices=common.settings.currency_code_mappings(),
-    )
-
-    updated = models.DateTimeField(
-        verbose_name=_('Updated'),
-        help_text=_('Timestamp of last pricing update'),
-        auto_now=True
     )
 
     scheduled_for_update = models.BooleanField(

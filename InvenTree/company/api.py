@@ -364,6 +364,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'packaging',
         'pack_size',
         'in_stock',
+        'updated',
     ]
 
     ordering_field_aliases = {

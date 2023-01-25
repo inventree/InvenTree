@@ -52,7 +52,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 BASE_DIR = config.get_base_dir()
 
 # Load configuration data
-CONFIG = config.load_config_data()
+CONFIG = config.load_config_data(set_cache=True)
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -147,10 +147,21 @@ STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
-# Backup directories
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
+# Database backup options
+# Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
 DBBACKUP_SEND_EMAIL = False
+DBBACKUP_STORAGE = get_setting(
+    'INVENTREE_BACKUP_STORAGE',
+    'backup_storage',
+    'django.core.files.storage.FileSystemStorage'
+)
+
+# Default backup configuration
+DBBACKUP_STORAGE_OPTIONS = get_setting('INVENTREE_BACKUP_OPTIONS', 'backup_options', None)
+if DBBACKUP_STORAGE_OPTIONS is None:
+    DBBACKUP_STORAGE_OPTIONS = {
+        'location': config.get_backup_dir(),
+    }
 
 # Application definition
 

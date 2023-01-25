@@ -67,6 +67,14 @@ class RolePermission(permissions.BasePermission):
         return result
 
 
+class IsSuperuser(permissions.IsAdminUser):
+    """Allows access only to superuser users."""
+
+    def has_permission(self, request, view):
+        """Check if the user is a superuser."""
+        return bool(request.user and request.user.is_superuser)
+
+
 def auth_exempt(view_func):
     """Mark a view function as being exempt from auth requirements."""
     def wrapped_view(*args, **kwargs):
