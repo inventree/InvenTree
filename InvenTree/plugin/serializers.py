@@ -159,6 +159,10 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         return ret
 
 
+class PluginConfigEmptySerializer(serializers.Serializer):
+    """Serializer for a PluginConfig."""
+
+
 class PluginSettingSerializer(GenericReferencedSettingSerializer):
     """Serializer for the PluginSetting model."""
 
