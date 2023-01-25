@@ -468,6 +468,8 @@ class BomDownload(AjaxView):
 
         parameter_data = str2bool(request.GET.get('parameter_data', False))
 
+        substitute_part_data = str2bool(request.GET.get('substitute_part_data', False))
+
         stock_data = str2bool(request.GET.get('stock_data', False))
 
         supplier_data = str2bool(request.GET.get('supplier_data', False))
@@ -500,10 +502,11 @@ class BomDownload(AjaxView):
                          supplier_data=supplier_data,
                          manufacturer_data=manufacturer_data,
                          pricing_data=pricing_data,
+                         substitute_part_data=substitute_part_data,
                          )
 
     def get_data(self):
-        """Return a cutsom message"""
+        """Return a custom message"""
         return {
             'info': 'Exported BOM'
         }

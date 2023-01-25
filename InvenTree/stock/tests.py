@@ -8,8 +8,10 @@ from django.test import override_settings
 
 from build.models import Build
 from common.models import InvenTreeSetting
+from company.models import Company
 from InvenTree.helpers import InvenTreeTestCase
 from InvenTree.status_codes import StockHistoryCode
+from order.models import SalesOrder
 from part.models import Part
 
 from .models import (StockItem, StockItemTestResult, StockItemTracking,
@@ -464,6 +466,75 @@ class StockTest(StockTestBase):
         self.assertIn('Added some items', track.notes)
 
         self.assertFalse(it.add_stock(-10, None))
+
+    def test_allocate_to_customer(self):
+        """Test allocating stock to a customer"""
+        it = StockItem.objects.get(pk=2)
+        n = it.quantity
+        an = n - 10
+        customer = Company.objects.create(name="MyTestCompany")
+        order = SalesOrder.objects.create(description="Test order")
+        ait = it.allocateToCustomer(customer, quantity=an, order=order, user=None, notes='Allocated some stock')
+
+        # Check if new stockitem is created
+        self.assertTrue(ait)
+        # Check correct quantity of new allocated stock
+        self.assertEqual(ait.quantity, an)
+        # Check if new stock is assigned to correct customer
+        self.assertEqual(ait.customer, customer)
+        # Check if new stock is assigned to correct sales order
+        self.assertEqual(ait.sales_order, order)
+        # Check location is None because this stock is now allocated to a user
+        self.assertFalse(ait.location)
+
+        # Check that a tracking item was added
+        track = StockItemTracking.objects.filter(item=ait).latest('id')
+
+        self.assertEqual(track.tracking_type, StockHistoryCode.SENT_TO_CUSTOMER)
+        self.assertIn('Allocated some stock', track.notes)
+
+    def test_return_from_customer(self):
+        """Test removing previous allocated stock from customer"""
+
+        it = StockItem.objects.get(pk=2)
+
+        # First establish total stock for this part
+        allstock_before = StockItem.objects.filter(part=it.part).aggregate(Sum("quantity"))["quantity__sum"]
+
+        n = it.quantity
+        an = n - 10
+        customer = Company.objects.create(name="MyTestCompany")
+        order = SalesOrder.objects.create(description="Test order")
+
+        ait = it.allocateToCustomer(customer, quantity=an, order=order, user=None, notes='Allocated some stock')
+        ait.return_from_customer(it.location, None, notes="Stock removed from customer")
+
+        # When returned stock is returned to its original (parent) location, check that the parent has correct quantity
+        self.assertEqual(it.quantity, n)
+
+        ait = it.allocateToCustomer(customer, quantity=an, order=order, user=None, notes='Allocated some stock')
+        ait.return_from_customer(self.drawer3, None, notes="Stock removed from customer")
+
+        # Check correct assignment of the new location
+        self.assertEqual(ait.location, self.drawer3)
+        # We should be un allocated
+        self.assertFalse(ait.is_allocated())
+        # No customer should be assigned
+        self.assertFalse(ait.customer)
+        # We dont belong to anyone
+        self.assertFalse(ait.belongs_to)
+        # Assigned sales order should be None
+        self.assertFalse(ait.sales_order)
+
+        # Check that a tracking item was added
+        track = StockItemTracking.objects.filter(item=ait).latest('id')
+
+        self.assertEqual(track.tracking_type, StockHistoryCode.RETURNED_FROM_CUSTOMER)
+        self.assertIn('Stock removed from customer', track.notes)
+
+        # Establish total stock for the part after remove from customer to check that we still have the correct quantity in stock
+        allstock_after = StockItem.objects.filter(part=it.part).aggregate(Sum("quantity"))["quantity__sum"]
+        self.assertEqual(allstock_before, allstock_after)
 
     def test_take_stock(self):
         """Test stock removal."""

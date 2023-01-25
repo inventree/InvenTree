@@ -88,6 +88,13 @@
                     <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a>{% include "clip.html"%}</td>
                 </tr>
                 {% endif %}
+                {% if build.priority != 0 %}
+                <tr>
+                    <td><span class="fa-solid fa-arrow-up-9-1"></span></td>
+                    <td>{% trans "Priority" %}</td>
+                    <td>{{ build.priority }}</td>
+                </tr>
+                {% endif %}
                 {% if build.sales_order %}
                 <tr>
                     <td><span class='fas fa-dolly'></span></td>
