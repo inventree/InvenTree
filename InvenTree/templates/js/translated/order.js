@@ -720,6 +720,7 @@ function createPurchaseOrderLineItem(order, options={}) {
         order: order,
         supplier: options.supplier,
         currency: options.currency,
+        target_date: options.target_date,
     });
 
     constructForm('{% url "api-po-line-list" %}', {
@@ -751,6 +752,10 @@ function soLineItemFields(options={}) {
 
     if (options.order) {
         fields.order.value = options.order;
+    }
+
+    if (options.target_date) {
+        fields.target_date.value = options.target_date;
     }
 
     return fields;
@@ -905,6 +910,10 @@ function poLineItemFields(options={}) {
         fields.purchase_price_currency.value = options.currency;
     }
 
+    if (options.target_date) {
+        fields.target_date.value = options.target_date;
+    }
+
     return fields;
 }
 
@@ -1023,7 +1032,7 @@ function exportOrder(redirect_url, options={}) {
 /*
  * Create a new form to order parts based on the list of provided parts.
  */
-function orderParts(parts_list, options={}) {
+function orderParts(parts_list, options) {
 
     var parts = [];
 
@@ -1153,6 +1162,10 @@ function orderParts(parts_list, options={}) {
         // If the modal is now "empty", dismiss it
         if (!($(opts.modal).find('.part-order-row').exists())) {
             closeModal(opts.modal);
+            // If there is a onSuccess callback defined, call it
+            if (options && options.onSuccess) {
+                options.onSuccess();
+            }
         }
     }
 

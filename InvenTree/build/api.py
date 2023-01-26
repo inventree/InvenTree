@@ -101,6 +101,7 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
         'completed',
         'issued_by',
         'responsible',
+        'priority',
     ]
 
     ordering_field_aliases = {
@@ -115,6 +116,7 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
         'part__name',
         'part__IPN',
         'part__description',
+        'priority',
     ]
 
     def get_queryset(self):

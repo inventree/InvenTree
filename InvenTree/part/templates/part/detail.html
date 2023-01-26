@@ -757,7 +757,11 @@
                 success: function(part) {
                     orderParts(
                         [part],
-                        {}
+                        {
+                            onSuccess: function() {
+                                $("#purchase-order-table").bootstrapTable('refresh');
+                            }
+                        }
                     );
                 }
             }

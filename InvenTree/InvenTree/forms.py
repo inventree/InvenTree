@@ -210,14 +210,43 @@ class RegistratonMixin:
     """Mixin to check if registration should be enabled."""
 
     def is_open_for_signup(self, request, *args, **kwargs):
-        """Check if signup is enabled in settings."""
-        if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
+        """Check if signup is enabled in settings.
+
+        Configure the class variable `REGISTRATION_SETTING` to set which setting should be used, defualt: `LOGIN_ENABLE_REG`.
+        """
+        if settings.EMAIL_HOST and (InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG')):
             return super().is_open_for_signup(request, *args, **kwargs)
         return False
 
+    def clean_email(self, email):
+        """Check if the mail is valid to the pattern in LOGIN_SIGNUP_MAIL_RESTRICTION (if enabled in settings)."""
+        mail_restriction = InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_RESTRICTION', None)
+        if not mail_restriction:
+            return super().clean_email(email)
+
+        split_email = email.split('@')
+        if len(split_email) != 2:
+            logger.error(f'The user {email} has an invalid email address')
+            raise forms.ValidationError(_('The provided primary email address is not valid.'))
+
+        mailoptions = mail_restriction.split(',')
+        for option in mailoptions:
+            if not option.startswith('@'):
+                log_error('LOGIN_SIGNUP_MAIL_RESTRICTION is not configured correctly')
+                raise forms.ValidationError(_('The provided primary email address is not valid.'))
+            else:
+                if split_email[1] == option[1:]:
+                    return super().clean_email(email)
+
+        logger.info(f'The provided email domain for {email} is not approved')
+        raise forms.ValidationError(_('The provided email domain is not approved.'))
+
     def save_user(self, request, user, form, commit=True):
         """Check if a default group is set in settings."""
+        # Create the user
         user = super().save_user(request, user, form)
+
+        # Check if a default group is set in settings
         start_group = InvenTreeSetting.get_setting('SIGNUP_GROUP')
         if start_group:
             try:
