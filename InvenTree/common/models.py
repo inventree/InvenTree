@@ -54,6 +54,25 @@ from users.models import Owner
 logger = logging.getLogger('inventree')
 
 
+class MetaMixin(models.Model):
+    """A base class for InvenTree models to include shared meta fields.
+
+    Attributes:
+    - updated: The last time this object was updated
+    """
+
+    class Meta:
+        """Meta options for MetaMixin."""
+        abstract = True
+
+    updated = models.DateTimeField(
+        verbose_name=_('Updated'),
+        help_text=_('Timestamp of last update'),
+        auto_now=True,
+        null=True,
+    )
+
+
 class EmptyURLValidator(URLValidator):
     """Validator for filed with url - that can be empty."""
 
@@ -981,7 +1000,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
-            'name': _('Delete Noficiations'),
+            'name': _('Delete Notifications'),
             'description': _('User notifications will be deleted after specified number of days'),
             'default': 30,
             'units': 'days',
@@ -1900,7 +1919,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         }
 
 
-class PriceBreak(models.Model):
+class PriceBreak(MetaMixin):
     """Represents a PriceBreak model."""
 
     class Meta:
@@ -2288,7 +2307,7 @@ class WebhookMessage(GenericWebTransaction):
     )
 
 
-class NotificationEntry(models.Model):
+class NotificationEntry(MetaMixin):
     """A NotificationEntry records the last time a particular notifaction was sent out.
 
     It is recorded to ensure that notifications are not sent out "too often" to users.
@@ -2312,11 +2331,6 @@ class NotificationEntry(models.Model):
     )
 
     uid = models.IntegerField(
-    )
-
-    updated = models.DateTimeField(
-        auto_now=True,
-        null=False,
     )
 
     @classmethod

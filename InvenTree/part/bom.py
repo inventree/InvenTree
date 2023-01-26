@@ -12,7 +12,7 @@ from InvenTree.helpers import (DownloadFile, GetExportFormats, normalize,
                                str2bool)
 
 from .admin import BomItemResource
-from .models import BomItem, Part
+from .models import BomItem, BomItemSubstitute, Part
 
 
 def IsValidBOMFormat(fmt):
@@ -58,6 +58,7 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
         supplier_data (bool, optional): Additonal data that should be added. Defaults to False.
         manufacturer_data (bool, optional): Additonal data that should be added. Defaults to False.
         pricing_data (bool, optional): Include pricing data in exported BOM. Defaults to False
+        substitute_part_data (bool, optional): Include substitute part numbers in exported BOM. Defaults to False
 
     Returns:
         StreamingHttpResponse: Response that can be passed to the endpoint
@@ -68,6 +69,7 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
     supplier_data = str2bool(kwargs.get('supplier_data', False))
     manufacturer_data = str2bool(kwargs.get('manufacturer_data', False))
     pricing_data = str2bool(kwargs.get('pricing_data', False))
+    substitute_part_data = str2bool(kwargs.get('substitute_part_data', False))
 
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'
@@ -111,6 +113,37 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
                 dataset.append_col(col, header=header)
         except AttributeError:
             pass
+
+    if substitute_part_data:
+        """If requested, add extra columns for all substitute part numbers associated with each line item."""
+
+        col_index = 0
+        substitute_cols = {}
+
+        for bom_item in bom_items:
+            substitutes = BomItemSubstitute.objects.filter(bom_item=bom_item)
+            for s_idx, substitute in enumerate(substitutes):
+
+                """Create substitute part name column"""
+                name = f'{_("Substitute Part")}{s_idx + 1}'
+                value = substitute.part.name
+                try:
+                    substitute_cols[name].update({col_index: value})
+                except KeyError:
+                    substitute_cols[name] = {col_index: value}
+
+                """Create substitute part description column"""
+                name = f'{_("Substitute Description")}{s_idx + 1}'
+                value = substitute.part.description
+                try:
+                    substitute_cols[name].update({col_index: value})
+                except KeyError:
+                    substitute_cols[name] = {col_index: value}
+
+            col_index = col_index + 1
+
+        # Add substitute columns to dataset
+        add_columns_to_dataset(substitute_cols, len(bom_items))
 
     if parameter_data:
         """If requested, add extra columns for each PartParameter associated with each line item."""

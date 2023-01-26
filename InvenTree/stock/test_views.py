@@ -1,10 +1,13 @@
 """Unit tests for Stock views (see views.py)."""
 
+from django.contrib.auth.models import Group
 from django.urls import reverse
 
+from common.models import InvenTreeSetting
 from InvenTree.helpers import InvenTreeTestCase
-
-# from common.models import InvenTreeSetting
+from InvenTree.status_codes import StockStatus
+from stock.models import StockItem, StockLocation
+from users.models import Owner
 
 
 class StockViewTestCase(InvenTreeTestCase):
@@ -84,124 +87,85 @@ class StockDetailTest(StockViewTestCase):
 
 class StockOwnershipTest(StockViewTestCase):
     """Tests for stock ownership views."""
-
-    def setUp(self):
-        """Add another user for ownership tests."""
-
-    """
-    TODO: Refactor this following test to use the new API form
-
-        super().setUp()
-
-        # Promote existing user with staff, admin and superuser statuses
-        self.user.is_staff = True
-        self.user.is_admin = True
-        self.user.is_superuser = True
-        self.user.save()
-
-        # Create a new user
-        user = get_user_model()
-
-        self.new_user = user.objects.create_user(
-            username='john',
-            email='john@email.com',
-            password='custom123',
-        )
-
-        # Put the user into a new group with the correct permissions
-        group = Group.objects.create(name='new_group')
-        self.new_user.groups.add(group)
-
-        # Give the group *all* the permissions!
-        for rule in group.rule_sets.all():
-            rule.can_view = True
-            rule.can_change = True
-            rule.can_add = True
-            rule.can_delete = True
-
-            rule.save()
+    test_item_id = 11
+    test_location_id = 1
 
     def enable_ownership(self):
+        """Helper function to turn on ownership control."""
         # Enable stock location ownership
 
         InvenTreeSetting.set_setting('STOCK_OWNERSHIP_CONTROL', True, self.user)
         self.assertEqual(True, InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL'))
 
-    def test_owner_control(self):
-        # Test stock location and item ownership
-        from .models import StockLocation
-        from users.models import Owner
+    def assert_ownership(self, assertio: bool = True, user=None):
+        """Helper function to check ownership control."""
+        if user is None:
+            user = self.user
 
-        new_user_group = self.new_user.groups.all()[0]
-        new_user_group_owner = Owner.get_owner(new_user_group)
+        item = StockItem.objects.get(pk=self.test_item_id)
+        self.assertEqual(assertio, item.check_ownership(user))
 
-        user_as_owner = Owner.get_owner(self.user)
-        new_user_as_owner = Owner.get_owner(self.new_user)
+        location = StockLocation.objects.get(pk=self.test_location_id)
+        self.assertEqual(assertio, location.check_ownership(user))
 
-        # Enable ownership control
+    def assert_api_change(self):
+        """Helper function to get response to API change."""
+        return self.client.patch(
+            reverse('api-stock-detail', args=(self.test_item_id,)),
+            {'status': StockStatus.DAMAGED},
+            content_type='application/json',
+        )
+
+    def test_owner_no_ownership(self):
+        """Check without ownership control enabled. Should always return True."""
+        self.assert_ownership(True)
+
+    def test_ownership_as_superuser(self):
+        """Test that superuser are always allowed to access items."""
         self.enable_ownership()
 
-        test_location_id = 4
-        test_item_id = 11
-        # Set ownership on existing item (and change location)
-        response = self.client.post(reverse('stock-item-edit', args=(test_item_id,)),
-                                    {'part': 1, 'status': StockStatus.OK, 'owner': user_as_owner.pk},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        # Check with superuser
+        self.user.is_superuser = True
+        self.user.save()
+        self.assert_ownership(True)
 
-        self.assertContains(response, '"form_valid": true', status_code=200)
+    def test_ownership_functions(self):
+        """Test that ownership is working correctly for StockItem/StockLocation."""
+        self.enable_ownership()
+        item = StockItem.objects.get(pk=self.test_item_id)
+        location = StockLocation.objects.get(pk=self.test_location_id)
 
+        # Check that user is not allowed to change item
+        self.assertTrue(item.check_ownership(self.user))        # No owner -> True
+        self.assertTrue(location.check_ownership(self.user))    # No owner -> True
+        self.assertContains(self.assert_api_change(), 'You do not have permission to perform this action.', status_code=403)
 
-        # Logout
-        self.client.logout()
+        # Adjust group rules
+        group = Group.objects.get(name='my_test_group')
+        rule = group.rule_sets.get(name='stock')
+        rule.can_change = True
+        rule.save()
 
-        # Login with new user
-        self.client.login(username='john', password='custom123')
+        # Set owner to group of user
+        group_owner = Owner.get_owner(group)
+        item.owner = group_owner
+        item.save()
+        location.owner = group_owner
+        location.save()
 
-        # TODO: Refactor this following test to use the new API form
-        # Test item edit
-        response = self.client.post(reverse('stock-item-edit', args=(test_item_id,)),
-                                    {'part': 1, 'status': StockStatus.OK, 'owner': new_user_as_owner.pk},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        # Check that user is allowed to change item
+        self.assertTrue(item.check_ownership(self.user))        # Owner is group -> True
+        self.assertTrue(location.check_ownership(self.user))    # Owner is group -> True
+        self.assertContains(self.assert_api_change(), f'"status":{StockStatus.DAMAGED}', status_code=200)
 
-        # Make sure the item's owner is unchanged
-        item = StockItem.objects.get(pk=test_item_id)
-        self.assertEqual(item.owner, user_as_owner)
+        # Change group
+        new_group = Group.objects.create(name='new_group')
+        new_group_owner = Owner.get_owner(new_group)
+        item.owner = new_group_owner
+        item.save()
+        location.owner = new_group_owner
+        location.save()
 
-        # Create new parent location
-        parent_location = {
-            'name': 'John Desk',
-            'description': 'John\'s desk',
-            'owner': new_user_group_owner.pk,
-        }
-
-        # Retrieve created location
-        location_created = StockLocation.objects.get(name=new_location['name'])
-
-        # Create new item
-        new_item = {
-            'part': 25,
-            'location': location_created.pk,
-            'quantity': 123,
-            'status': StockStatus.OK,
-        }
-
-        # Try to create new item with no owner
-        response = self.client.post(reverse('stock-item-create'),
-                                    new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": false', status_code=200)
-
-        # Try to create new item with invalid owner
-        new_item['owner'] = user_as_owner.pk
-        response = self.client.post(reverse('stock-item-create'),
-                                    new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": false', status_code=200)
-
-        # Try to create new item with valid owner
-        new_item['owner'] = new_user_as_owner.pk
-        response = self.client.post(reverse('stock-item-create'),
-                                    new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": true', status_code=200)
-
-        # Logout
-        self.client.logout()
-    """
+        # Check that user is not allowed to change item
+        self.assertFalse(item.check_ownership(self.user))       # Owner is not in group -> False
+        self.assertFalse(location.check_ownership(self.user))    # Owner is not in group -> False
