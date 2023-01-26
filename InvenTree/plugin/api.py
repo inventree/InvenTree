@@ -20,6 +20,7 @@ from plugin.base.locate.api import LocatePluginView
 from plugin.base.supplier.api import PluginSearch
 from plugin.base.supplier.models import ConnectionSetting
 from plugin.models import PluginConfig, PluginSetting
+from plugin.urls import PLUGIN_BASE
 
 
 class PluginList(ListAPI):
@@ -274,7 +275,7 @@ plugin_api_urls = [
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
     re_path(r'^barcode/', include(barcode_api_urls)),
     re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
-    re_path(r'^plugins/', include([
+    re_path(f'^{PLUGIN_BASE}/', include([
         # Plugin settings URLs
         re_path(r'^settings/', include([
             re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
