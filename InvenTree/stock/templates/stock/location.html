@@ -53,12 +53,21 @@
         {% else %}
         <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
         {% endif %}
-        {% if labels_enabled %}
-        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
-        {% endif %}
-        <li><a class='dropdown-item' href='#' id='barcode-check-in'><span class='fas fa-arrow-right'></span> {% trans "Check-in Items" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='barcode-scan-in-items' title='{% trans "Scan stock items into this location" %}'><span class='fas fa-boxes'></span> {% trans "Scan In Stock Items" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='barcode-scan-in-containers' title='{% trans "Scan stock container into this location" %}'><span class='fas fa-sitemap'></span> {% trans "Scan In Container" %}</a></li>
     </ul>
 </div>
+<!-- Printing action -->
+{% if labels_enabled %}
+<div class='btn-group' role='group'>
+    <button id='printing-options' title='{% trans "Printing actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-print'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu'>
+        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-print'></span> {% trans "Print Label" %}</a>
+    </ul>
+</div>
+{% endif %}
 <!-- Check permissions and owner -->
 {% if user_owns_location %}
 {% if roles.stock.change %}
@@ -95,11 +104,6 @@
 {% endif %}
 {% endif %}
 {% endif %}
-{% endif %}
-{% if user_owns_location and roles.stock_location.add %}
-<button class='btn btn-success' id='location-create' type='button' title='{% trans "Create new stock location" %}'>
-    <span class='fas fa-plus-circle'></span> {% trans "New Location" %}
-</button>
 {% endif %}
 {% endblock %}
 
@@ -203,7 +207,17 @@
 
 <div class='panel panel-hidden' id='panel-sublocations'>
     <div class='panel-heading'>
-        <h4>{% trans "Sublocations" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Sublocations" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if user_owns_location and roles.stock_location.add %}
+                <button class='btn btn-success' id='location-create' type='button' title='{% trans "Create new stock location" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Location" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='sublocation-button-toolbar'>
@@ -284,13 +298,29 @@
     {% endif %}
 
     {% if location %}
-    $("#barcode-check-in").click(function() {
-        barcodeCheckIn({{ location.id }});
+    $("#barcode-scan-in-items").click(function() {
+        barcodeCheckInStockItems({{ location.id }});
+    });
+
+    $('#barcode-scan-in-containers').click(function() {
+        barcodeCheckInStockLocations({{ location.id }},
+            {
+                onSuccess: function() {
+                    showMessage(
+                        '{% trans "Scanned stock container into this location" %}',
+                        {
+                            style: 'success',
+                        }
+                    );
+
+                    $('#sublocation-table').bootstrapTable('refresh');
+                }
+            }
+        );
     });
     {% endif %}
 
     $('#location-create').click(function () {
-
         createStockLocation({
             {% if location %}
             parent: {{ location.pk }},

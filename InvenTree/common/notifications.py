@@ -173,7 +173,7 @@ class MethodStorageClass:
     user_settings = {}
 
     def collect(self, selected_classes=None):
-        """Collect all classes in the enviroment that are notification methods.
+        """Collect all classes in the environment that are notification methods.
 
         Can be filtered to only include provided classes for testing.
 
@@ -192,6 +192,7 @@ class MethodStorageClass:
         for item in current_method:
             plugin = item.get_plugin(item)
             ref = f'{plugin.package_path}_{item.METHOD_NAME}' if plugin else item.METHOD_NAME
+            item.plugin = plugin() if plugin else None
             filtered_list[ref] = item
 
         storage.liste = list(filtered_list.values())
@@ -243,8 +244,9 @@ class UIMessageNotification(SingleNotificationMethod):
     METHOD_NAME = 'ui_message'
 
     def get_targets(self):
-        """Just return the targets - no tricks here."""
-        return self.targets
+        """Only send notifications for active users"""
+
+        return [target for target in self.targets if target.is_active]
 
     def send(self, target):
         """Send a UI notification to a user."""

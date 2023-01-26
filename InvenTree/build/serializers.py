@@ -14,7 +14,6 @@ from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentS
 from InvenTree.serializers import UserSerializer
 
 import InvenTree.helpers
-from InvenTree.helpers import extract_serial_numbers
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.status_codes import StockStatus
 
@@ -260,7 +259,11 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         if serial_numbers:
 
             try:
-                self.serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+                self.serials = InvenTree.helpers.extract_serial_numbers(
+                    serial_numbers,
+                    quantity,
+                    part.get_latest_serial_number()
+                )
             except DjangoValidationError as e:
                 raise ValidationError({
                     'serial_numbers': e.messages,
@@ -270,12 +273,12 @@ class BuildOutputCreateSerializer(serializers.Serializer):
             existing = []
 
             for serial in self.serials:
-                if part.checkIfSerialNumberExists(serial):
+                if not part.validate_serial_number(serial):
                     existing.append(serial)
 
             if len(existing) > 0:
 
-                msg = _("The following serial numbers already exist")
+                msg = _("The following serial numbers already exist or are invalid")
                 msg += " : "
                 msg += ",".join([str(e) for e in existing])
 
@@ -699,7 +702,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         ]
 
     def validate(self, data):
-        """Perfofrm data validation for this item"""
+        """Perform data validation for this item"""
         super().validate(data)
 
         build = self.context['build']
@@ -809,6 +812,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             'exclude_location',
             'interchangeable',
             'substitutes',
+            'optional_items',
         ]
 
     location = serializers.PrimaryKeyRelatedField(
@@ -841,6 +845,12 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
         help_text=_('Allow allocation of substitute parts'),
     )
 
+    optional_items = serializers.BooleanField(
+        default=False,
+        label=_('Optional Items'),
+        help_text=_('Allocate optional BOM items to build order'),
+    )
+
     def save(self):
         """Perform the auto-allocation step"""
         data = self.validated_data
@@ -852,6 +862,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             exclude_location=data.get('exclude_location', None),
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
+            optional_items=data['optional_items'],
         )
 
 

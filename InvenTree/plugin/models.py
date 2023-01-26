@@ -163,16 +163,20 @@ class PluginConfig(models.Model):
     @admin.display(boolean=True, description=_('Sample plugin'))
     def is_sample(self) -> bool:
         """Is this plugin a sample app?"""
-        # Loaded and active plugin
-        if isinstance(self.plugin, InvenTreePlugin):
-            return self.plugin.check_is_sample()
 
-        # If no plugin_class is available it can not be a sample
         if not self.plugin:
             return False
 
-        # Not loaded plugin
-        return self.plugin.check_is_sample()  # pragma: no cover
+        return self.plugin.check_is_sample()
+
+    @admin.display(boolean=True, description=_('Builtin Plugin'))
+    def is_builtin(self) -> bool:
+        """Return True if this is a 'builtin' plugin"""
+
+        if not self.plugin:
+            return False
+
+        return self.plugin.check_is_builtin()
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):

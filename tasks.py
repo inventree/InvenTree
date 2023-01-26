@@ -180,6 +180,14 @@ def translate_stats(c):
 
     The file generated from this is needed for the UI.
     """
+
+    # Recompile the translation files (.mo)
+    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
+    try:
+        manage(c, 'compilemessages', pty=True)
+    except Exception:
+        print("WARNING: Translation files could not be compiled:")
+
     path = Path('InvenTree', 'script', 'translation_stats.py')
     c.run(f'python3 {path}')
 
@@ -216,7 +224,7 @@ def restore(c):
     manage(c, "mediarestore --noinput --uncompress")
 
 
-@task(pre=[backup, ], post=[rebuild_models, rebuild_thumbnails])
+@task(post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
     """Performs database migrations.
 
@@ -234,8 +242,13 @@ def migrate(c):
     print("InvenTree database migrations completed!")
 
 
-@task(pre=[install, migrate, static, clean_settings, translate_stats])
-def update(c):
+@task(
+    post=[static, clean_settings, translate_stats],
+    help={
+        'skip_backup': 'Skip database backup step (advanced users)'
+    }
+)
+def update(c, skip_backup=False):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -244,17 +257,21 @@ def update(c):
     The following tasks are performed, in order:
 
     - install
+    - backup (optional)
     - migrate
     - static
     - clean_settings
     - translate_stats
     """
-    # Recompile the translation files (.mo)
-    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
-    try:
-        manage(c, 'compilemessages', pty=True)
-    except Exception:
-        print("WARNING: Translation files could not be compiled:")
+
+    # Ensure required components are installed
+    install(c)
+
+    if not skip_backup:
+        backup(c)
+
+    # Perform database migrations
+    migrate(c)
 
 
 # Data tasks
@@ -534,16 +551,18 @@ def test_translations(c):
 
 
 @task
-def test(c, database=None):
+def test(c, disable_pty=False):
     """Run unit-tests for InvenTree codebase."""
     # Run sanity check on the django install
     manage(c, 'check')
 
+    pty = not disable_pty
+
     # Run coverage tests
-    manage(c, 'test', pty=True)
+    manage(c, 'test', pty=pty)
 
 
-@task(help={'dev': 'Set up development enviroment at the end'})
+@task(help={'dev': 'Set up development environment at the end'})
 def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
     """Setup a testing enviroment."""
 
@@ -577,7 +596,7 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
 
     shutil.copytree(src, dst, dirs_exist_ok=True)
 
-    print("Done setting up test enviroment...")
+    print("Done setting up test environment...")
     print("========================================")
 
     # Set up development setup if flag is set

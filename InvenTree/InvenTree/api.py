@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 from django_filters.rest_framework import DjangoFilterBackend
+from django_q.models import OrmQ
 from rest_framework import filters, permissions
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
@@ -28,6 +29,11 @@ class InfoView(AjaxView):
 
     permission_classes = [permissions.AllowAny]
 
+    def worker_pending_tasks(self):
+        """Return the current number of outstanding background tasks"""
+
+        return OrmQ.objects.count()
+
     def get(self, request, *args, **kwargs):
         """Serve current server information."""
         data = {
@@ -36,6 +42,7 @@ class InfoView(AjaxView):
             'instance': inventreeInstanceName(),
             'apiVersion': inventreeApiVersion(),
             'worker_running': is_worker_running(),
+            'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'active_plugins': plugins_info(),
         }

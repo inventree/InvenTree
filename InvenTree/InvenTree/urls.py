@@ -13,7 +13,7 @@ from rest_framework.documentation import include_docs_urls
 
 from build.api import build_api_urls
 from build.urls import build_urls
-from common.api import common_api_urls, settings_api_urls
+from common.api import admin_api_urls, common_api_urls, settings_api_urls
 from common.urls import common_urls
 from company.api import company_api_urls
 from company.urls import (company_urls, manufacturer_part_urls,
@@ -53,6 +53,7 @@ apipatterns = [
     re_path(r'^label/', include(label_api_urls)),
     re_path(r'^report/', include(report_api_urls)),
     re_path(r'^user/', include(user_urls)),
+    re_path(r'^admin/', include(admin_api_urls)),
 
     # Plugin endpoints
     path('', include(plugin_api_urls)),
@@ -98,6 +99,7 @@ translated_javascript_urls = [
     re_path(r'^barcode.js', DynamicJsView.as_view(template_name='js/translated/barcode.js'), name='barcode.js'),
     re_path(r'^bom.js', DynamicJsView.as_view(template_name='js/translated/bom.js'), name='bom.js'),
     re_path(r'^build.js', DynamicJsView.as_view(template_name='js/translated/build.js'), name='build.js'),
+    re_path(r'^charts.js', DynamicJsView.as_view(template_name='js/translated/charts.js'), name='charts.js'),
     re_path(r'^company.js', DynamicJsView.as_view(template_name='js/translated/company.js'), name='company.js'),
     re_path(r'^filters.js', DynamicJsView.as_view(template_name='js/translated/filters.js'), name='filters.js'),
     re_path(r'^forms.js', DynamicJsView.as_view(template_name='js/translated/forms.js'), name='forms.js'),
@@ -111,6 +113,8 @@ translated_javascript_urls = [
     re_path(r'^search.js', DynamicJsView.as_view(template_name='js/translated/search.js'), name='search.js'),
     re_path(r'^stock.js', DynamicJsView.as_view(template_name='js/translated/stock.js'), name='stock.js'),
     re_path(r'^plugin.js', DynamicJsView.as_view(template_name='js/translated/plugin.js'), name='plugin.js'),
+    re_path(r'^pricing.js', DynamicJsView.as_view(template_name='js/translated/pricing.js'), name='pricing.js'),
+    re_path(r'^news.js', DynamicJsView.as_view(template_name='js/translated/news.js'), name='news.js'),
     re_path(r'^tables.js', DynamicJsView.as_view(template_name='js/translated/tables.js'), name='tables.js'),
     re_path(r'^table_filters.js', DynamicJsView.as_view(template_name='js/translated/table_filters.js'), name='table_filters.js'),
     re_path(r'^notification.js', DynamicJsView.as_view(template_name='js/translated/notification.js'), name='notification.js'),

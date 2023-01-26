@@ -4,47 +4,47 @@ import functools
 from decimal import Decimal, InvalidOperation
 
 from django.db import transaction
-from django.db.models import Avg, Count, F, Max, Min, Q
+from django.db.models import Count, F, Q
 from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from djmoney.contrib.exchange.exceptions import MissingRate
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
 from rest_framework import filters, serializers, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 import order.models
 from build.models import Build, BuildItem
-from common.models import InvenTreeSetting
 from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
-from InvenTree.helpers import (DownloadFile, increment, isNull, str2bool,
-                               str2int)
-from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
+from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
+                               str2bool, str2int)
+from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
+                              ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
+from InvenTree.permissions import RolePermission
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
-from part.admin import PartResource
+from part.admin import PartCategoryResource, PartResource
 from plugin.serializers import MetadataSerializer
 from stock.models import StockItem, StockLocation
 
 from . import serializers as part_serializers
+from . import views
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartRelated, PartSellPriceBreak,
-                     PartTestTemplate)
+                     PartStocktake, PartTestTemplate)
 
 
-class CategoryList(ListCreateAPI):
+class CategoryList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -53,6 +53,15 @@ class CategoryList(ListCreateAPI):
 
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
+
+    def download_queryset(self, queryset, export_format):
+        """Download the filtered queryset as a data file"""
+
+        dataset = PartCategoryResource().export(queryset=queryset)
+        filedata = dataset.export(export_format)
+        filename = f"InvenTree_Categories.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryList endpoint"""
@@ -153,6 +162,9 @@ class CategoryList(ListCreateAPI):
     ]
 
     filterset_fields = [
+        'name',
+        'description',
+        'structural'
     ]
 
     ordering_fields = [
@@ -177,7 +189,7 @@ class CategoryList(ListCreateAPI):
     ]
 
 
-class CategoryDetail(RetrieveUpdateDestroyAPI):
+class CategoryDetail(CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartCategory object."""
 
     serializer_class = part_serializers.CategorySerializer
@@ -215,6 +227,16 @@ class CategoryDetail(RetrieveUpdateDestroyAPI):
         response = super().update(request, *args, **kwargs)
 
         return response
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete a Part category instance via the API"""
+        delete_parts = 'delete_parts' in request.data and request.data['delete_parts'] == '1'
+        delete_child_categories = 'delete_child_categories' in request.data and request.data['delete_child_categories'] == '1'
+        return super().destroy(request,
+                               *args,
+                               **dict(kwargs,
+                                      delete_parts=delete_parts,
+                                      delete_child_categories=delete_child_categories))
 
 
 class CategoryMetadata(RetrieveUpdateAPI):
@@ -508,6 +530,9 @@ class PartScheduling(RetrieveAPI):
 
             quantity = max(line.quantity - line.received, 0)
 
+            # Multiply by the pack_size of the SupplierPart
+            quantity *= line.part.pack_size
+
             add_schedule_entry(
                 target_date,
                 quantity,
@@ -707,6 +732,27 @@ class PartMetadata(RetrieveUpdateAPI):
     queryset = Part.objects.all()
 
 
+class PartPricingDetail(RetrieveUpdateAPI):
+    """API endpoint for viewing part pricing data"""
+
+    serializer_class = part_serializers.PartPricingSerializer
+    queryset = Part.objects.all()
+
+    def get_object(self):
+        """Return the PartPricing object associated with the linked Part"""
+
+        part = super().get_object()
+        return part.pricing
+
+    def _get_serializer(self, *args, **kwargs):
+        """Return a part pricing serializer object"""
+
+        part = self.get_object()
+        kwargs['instance'] = part.pricing
+
+        return self.serializer_class(**kwargs)
+
+
 class PartSerialNumberDetail(RetrieveAPI):
     """API endpoint for returning extra serial number information about a particular part."""
 
@@ -717,16 +763,16 @@ class PartSerialNumberDetail(RetrieveAPI):
         part = self.get_object()
 
         # Calculate the "latest" serial number
-        latest = part.getLatestSerialNumber()
+        latest = part.get_latest_serial_number()
 
         data = {
             'latest': latest,
         }
 
         if latest is not None:
-            next_serial = increment(latest)
+            next_serial = increment_serial_number(latest)
 
-            if next_serial != increment:
+            if next_serial != latest:
                 data['next'] = next_serial
 
         return Response(data)
@@ -1001,6 +1047,37 @@ class PartFilter(rest_filters.FilterSet):
         queryset = queryset.filter(id__in=[p.pk for p in bom_parts])
         return queryset
 
+    has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method="filter_has_pricing")
+
+    def filter_has_pricing(self, queryset, name, value):
+        """Filter the queryset based on whether pricing information is available for the sub_part"""
+
+        value = str2bool(value)
+
+        q_a = Q(pricing_data=None)
+        q_b = Q(pricing_data__overall_min=None, pricing_data__overall_max=None)
+
+        if value:
+            queryset = queryset.exclude(q_a | q_b)
+        else:
+            queryset = queryset.filter(q_a | q_b)
+
+        return queryset
+
+    stocktake = rest_filters.BooleanFilter(label="Has stocktake", method='filter_has_stocktake')
+
+    def filter_has_stocktake(self, queryset, name, value):
+        """Filter the queryset based on whether stocktake data is available"""
+
+        value = str2bool(value)
+
+        if (value):
+            queryset = queryset.exclude(last_stocktake=None)
+        else:
+            queryset = queryset.filter(last_stocktake=None)
+
+        return queryset
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1050,7 +1127,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
 
-        # Pass a list of "starred" parts fo the current user to the serializer
+        # Pass a list of "starred" parts to the current user to the serializer
         # We do this to reduce the number of database queries required!
         if self.starred_parts is None and self.request is not None:
             self.starred_parts = [star.part for star in self.request.user.starred_parts.all()]
@@ -1467,7 +1544,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
     ordering_fields = [
@@ -1477,6 +1554,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         'in_stock',
         'unallocated_stock',
         'category',
+        'last_stocktake',
     ]
 
     # Default ordering
@@ -1636,6 +1714,63 @@ class PartParameterDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartParameterSerializer
 
 
+class PartStocktakeFilter(rest_filters.FilterSet):
+    """Custom fitler for the PartStocktakeList endpoint"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = PartStocktake
+        fields = [
+            'part',
+            'user',
+        ]
+
+
+class PartStocktakeList(ListCreateAPI):
+    """API endpoint for listing part stocktake information"""
+
+    queryset = PartStocktake.objects.all()
+    serializer_class = part_serializers.PartStocktakeSerializer
+    filterset_class = PartStocktakeFilter
+
+    def get_serializer_context(self):
+        """Extend serializer context data"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        'part',
+        'quantity',
+        'date',
+        'user',
+    ]
+
+    # Reverse date ordering by default
+    ordering = '-pk'
+
+
+class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for a single PartStocktake instance.
+
+    Note: Only staff (admin) users can access this endpoint.
+    """
+
+    queryset = PartStocktake.objects.all()
+    serializer_class = part_serializers.PartStocktakeSerializer
+    permission_classes = [
+        IsAdminUser,
+        RolePermission,
+    ]
+
+
 class BomFilter(rest_filters.FilterSet):
     """Custom filters for the BOM list."""
 
@@ -1704,6 +1839,23 @@ class BomFilter(rest_filters.FilterSet):
 
         return queryset
 
+    has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method="filter_has_pricing")
+
+    def filter_has_pricing(self, queryset, name, value):
+        """Filter the queryset based on whether pricing information is available for the sub_part"""
+
+        value = str2bool(value)
+
+        q_a = Q(sub_part__pricing_data=None)
+        q_b = Q(sub_part__pricing_data__overall_min=None, sub_part__pricing_data__overall_max=None)
+
+        if value:
+            queryset = queryset.exclude(q_a | q_b)
+        else:
+            queryset = queryset.filter(q_a | q_b)
+
+        return queryset
+
 
 class BomList(ListCreateDestroyAPIView):
     """API endpoint for accessing a list of BomItem objects.
@@ -1748,7 +1900,6 @@ class BomList(ListCreateDestroyAPIView):
         If requested, extra detail fields are annotated to the queryset:
         - part_detail
         - sub_part_detail
-        - include_pricing
         """
 
         # Do we wish to include extra detail?
@@ -1759,12 +1910,6 @@ class BomList(ListCreateDestroyAPIView):
 
         try:
             kwargs['sub_part_detail'] = str2bool(self.request.GET.get('sub_part_detail', None))
-        except AttributeError:
-            pass
-
-        try:
-            # Include or exclude pricing information in the serialized data
-            kwargs['include_pricing'] = self.include_pricing()
         except AttributeError:
             pass
 
@@ -1836,73 +1981,6 @@ class BomList(ListCreateDestroyAPIView):
 
             except (ValueError, Part.DoesNotExist):
                 pass
-
-        if self.include_pricing():
-            queryset = self.annotate_pricing(queryset)
-
-        return queryset
-
-    def include_pricing(self):
-        """Determine if pricing information should be included in the response."""
-        pricing_default = InvenTreeSetting.get_setting('PART_SHOW_PRICE_IN_BOM')
-
-        return str2bool(self.request.query_params.get('include_pricing', pricing_default))
-
-    def annotate_pricing(self, queryset):
-        """Add part pricing information to the queryset."""
-        # Annotate with purchase prices
-        queryset = queryset.annotate(
-            purchase_price_min=Min('sub_part__stock_items__purchase_price'),
-            purchase_price_max=Max('sub_part__stock_items__purchase_price'),
-            purchase_price_avg=Avg('sub_part__stock_items__purchase_price'),
-        )
-
-        # Get values for currencies
-        currencies = queryset.annotate(
-            purchase_price=F('sub_part__stock_items__purchase_price'),
-            purchase_price_currency=F('sub_part__stock_items__purchase_price_currency'),
-        ).values('pk', 'sub_part', 'purchase_price', 'purchase_price_currency')
-
-        def convert_price(price, currency, decimal_places=4):
-            """Convert price field, returns Money field."""
-            price_adjusted = None
-
-            # Get default currency from settings
-            default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-
-            if price:
-                if currency and default_currency:
-                    try:
-                        # Get adjusted price
-                        price_adjusted = convert_money(Money(price, currency), default_currency)
-                    except MissingRate:
-                        # No conversion rate set
-                        price_adjusted = Money(price, currency)
-                else:
-                    # Currency exists
-                    if currency:
-                        price_adjusted = Money(price, currency)
-                    # Default currency exists
-                    if default_currency:
-                        price_adjusted = Money(price, default_currency)
-
-            if price_adjusted and decimal_places:
-                price_adjusted.decimal_places = decimal_places
-
-            return price_adjusted
-
-        # Convert prices to default currency (using backend conversion rates)
-        for bom_item in queryset:
-            # Find associated currency (select first found)
-            purchase_price_currency = None
-            for currency_item in currencies:
-                if currency_item['pk'] == bom_item.pk and currency_item['sub_part'] == bom_item.sub_part.pk and currency_item['purchase_price']:
-                    purchase_price_currency = currency_item['purchase_price_currency']
-                    break
-            # Convert prices
-            bom_item.purchase_price_min = convert_price(bom_item.purchase_price_min, purchase_price_currency)
-            bom_item.purchase_price_max = convert_price(bom_item.purchase_price_max, purchase_price_currency)
-            bom_item.purchase_price_avg = convert_price(bom_item.purchase_price_avg, purchase_price_currency)
 
         return queryset
 
@@ -2108,10 +2186,19 @@ part_api_urls = [
         re_path(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
     ])),
 
+    # Part stocktake data
+    re_path(r'^stocktake/', include([
+        re_path(r'^(?P<pk>\d+)/', PartStocktakeDetail.as_view(), name='api-part-stocktake-detail'),
+        re_path(r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
+    ])),
+
     re_path(r'^thumbs/', include([
         path('', PartThumbs.as_view(), name='api-part-thumbs'),
         re_path(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
+
+    # BOM template
+    re_path(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='api-bom-upload-template'),
 
     re_path(r'^(?P<pk>\d+)/', include([
 
@@ -2131,6 +2218,18 @@ part_api_urls = [
 
         # Part metadata
         re_path(r'^metadata/', PartMetadata.as_view(), name='api-part-metadata'),
+
+        # Part pricing
+        re_path(r'^pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
+
+        # BOM download
+        re_path(r'^bom-download/?', views.BomDownload.as_view(), name='api-bom-download'),
+
+        # QR code download
+        re_path(r'^qr_code/?', views.PartQRCode.as_view(), name='api-part-qr'),
+
+        # Old pricing endpoint
+        re_path(r'^pricing2/', views.PartPricing.as_view(), name='part-pricing'),
 
         # Part detail endpoint
         re_path(r'^.*$', PartDetail.as_view(), name='api-part-detail'),

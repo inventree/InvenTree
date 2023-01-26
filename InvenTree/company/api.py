@@ -7,10 +7,13 @@ from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
+import part.models
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
-from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (ListCreateAPI, RetrieveUpdateAPI,
+                              RetrieveUpdateDestroyAPI)
+from plugin.serializers import MetadataSerializer
 
 from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
                      ManufacturerPartParameter, SupplierPart,
@@ -81,6 +84,16 @@ class CompanyDetail(RetrieveUpdateDestroyAPI):
         queryset = CompanySerializer.annotate_queryset(queryset)
 
         return queryset
+
+
+class CompanyMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating Company metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a Company"""
+        return MetadataSerializer(Company, *args, **kwargs)
+
+    queryset = Company.objects.all()
 
 
 class ManufacturerPartFilter(rest_filters.FilterSet):
@@ -342,9 +355,6 @@ class SupplierPartList(ListCreateDestroyAPIView):
         InvenTreeOrderingFilter,
     ]
 
-    filterset_fields = [
-    ]
-
     ordering_fields = [
         'SKU',
         'part',
@@ -391,6 +401,31 @@ class SupplierPartDetail(RetrieveUpdateDestroyAPI):
     ]
 
 
+class SupplierPriceBreakFilter(rest_filters.FilterSet):
+    """Custom API filters for the SupplierPriceBreak list endpoint"""
+
+    base_part = rest_filters.ModelChoiceFilter(
+        label='Base Part',
+        queryset=part.models.Part.objects.all(),
+        field_name='part__part',
+    )
+
+    supplier = rest_filters.ModelChoiceFilter(
+        label='Supplier',
+        queryset=Company.objects.all(),
+        field_name='part__supplier',
+    )
+
+    class Meta:
+        """Metaclass options"""
+
+        model = SupplierPriceBreak
+        fields = [
+            'part',
+            'quantity',
+        ]
+
+
 class SupplierPriceBreakList(ListCreateAPI):
     """API endpoint for list view of SupplierPriceBreak object.
 
@@ -400,14 +435,34 @@ class SupplierPriceBreakList(ListCreateAPI):
 
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
+    filterset_class = SupplierPriceBreakFilter
+
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer instance for this endpoint"""
+
+        try:
+            params = self.request.query_params
+
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', False))
+
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
 
     filter_backends = [
         DjangoFilterBackend,
+        filters.OrderingFilter,
     ]
 
-    filterset_fields = [
-        'part',
+    ordering_fields = [
+        'quantity',
     ]
+
+    ordering = 'quantity'
 
 
 class SupplierPriceBreakDetail(RetrieveUpdateDestroyAPI):
@@ -460,7 +515,11 @@ company_api_urls = [
         re_path(r'^.*$', SupplierPriceBreakList.as_view(), name='api-part-supplier-price-list'),
     ])),
 
-    re_path(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
+    re_path(r'^(?P<pk>\d+)/?', include([
+        re_path(r'^metadata/', CompanyMetadata.as_view(), name='api-company-metadata'),
+        re_path(r'^.*$', CompanyDetail.as_view(), name='api-company-detail'),
+    ])),
 
     re_path(r'^.*$', CompanyList.as_view(), name='api-company-list'),
+
 ]

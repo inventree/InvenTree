@@ -114,7 +114,7 @@
     <tr>
         <td colspan='3' style='padding: 3px;'>
                 <div id='part-properties-wrapper' class='d-flex flex-wrap'>
-                    <div id='part-properties' class='btn-group' role='group';'>
+                    <div id='part-properties' class='btn-group' role='group'>
                         <h5>
                         {% if part.is_template %}
                         &ensp;
@@ -323,12 +323,42 @@
                         {% endif %}
                     </td>
                 </tr>
-                {% if part.trackable and part.getLatestSerialNumber %}
+                {% with part.pricing as pricing %}
+                {% if pricing.is_valid %}
+                <tr>
+                    <td><span class='fas fa-dollar-sign'></span></td>
+                    <td>{% trans "Price Range" %}</td>
+                    <td>
+                        {% if pricing.overall_min == pricing.overall_max %}
+                        {% render_currency pricing.overall_max %}
+                        {% else %}
+                        {% render_currency pricing.overall_min %} - {% render_currency pricing.overall_max %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endwith %}
+                {% with part.latest_stocktake as stocktake %}
+                {% if stocktake %}
+                <tr>
+                    <td><span class='fas fa-clipboard-check'></span></td>
+                    <td>{% trans "Last Stocktake" %}</td>
+                    <td>
+                        {% decimal stocktake.quantity %} <span class='fas fa-calendar-alt' title='{% render_date stocktake.date %}'></span>
+                        <span class='badge bg-dark rounded-pill float-right'>
+                            {{ stocktake.user.username }}
+                        </span>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endwith %}
+                {% with part.get_latest_serial_number as sn %}
+                {% if part.trackable and sn %}
                 <tr>
                     <td><span class='fas fa-hashtag'></span></td>
                     <td>{% trans "Latest Serial Number" %}</td>
                     <td>
-                        {{ part.getLatestSerialNumber }}
+                        {{ sn }}
                         <div class='btn-group float-right' role='group'>
                             <a class='btn btn-small btn-outline-secondary text-sm' href='#' id='serial-number-search' title='{% trans "Search for serial number" %}'>
                                 <span class='fas fa-search'></span>
@@ -337,6 +367,7 @@
                     </td>
                 </tr>
                 {% endif %}
+                {% endwith %}
                 {% if part.default_location %}
                 <tr>
                     <td><span class='fas fa-search-location'></span></td>
@@ -374,6 +405,8 @@
     $('#part-thumb').click(function() {
         showModalImage('{{ part.image.url }}');
     });
+    {% else %}
+    $('#part-image-delete').hide();
     {% endif %}
 
     function reloadImage(data) {
@@ -386,6 +419,7 @@
                 showModalImage(data.image);
             });
 
+            $("#part-image-delete").show();
         } else {
             // Otherwise, reload the page
             location.reload();
@@ -407,7 +441,7 @@
     {% if barcodes %}
     $("#show-qr-code").click(function() {
         launchModalForm(
-            "{% url 'part-qr' part.id %}",
+            "{% url 'api-part-qr' part.id %}",
             {
                 no_post: true,
             }
@@ -485,8 +519,34 @@
         });
     });
 
-    $("#part-image-upload").click(function() {
+    $('#part-image-delete').click(function(event) {
+        event.stopPropagation();
+        showQuestionDialog(
+            '{% trans "Remove Image" %}',
+            '{% trans "Remove associated image from this part" %}',
+            {
+                accept_text: '{% trans "Remove" %}',
+                submitClass: 'danger',
+                accept: function() {
+                    inventreePut(
+                        '{% url "api-part-detail" part.pk %}',
+                        {
+                            'image': null,
+                        },
+                        {
+                            method: 'PATCH',
+                            success: function(data) {
+                                location.reload();
+                            }
+                        }
+                    );
+                }
+            }
+        );
+    });
 
+    $("#part-image-upload").click(function(event) {
+        event.stopPropagation();
         constructForm(
             '{% url "api-part-detail" part.pk %}',
             {
@@ -543,8 +603,8 @@
     {% if roles.part.change %}
 
     if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
-
         $("#part-image-url").click(function() {
+            event.stopPropagation();
             constructForm(
                 '{% url "api-part-detail" part.pk %}',
                 {
@@ -553,18 +613,20 @@
                     fields: {
                         remote_image: {},
                     },
-                    onSuccess: onSelectImage,
+                    onSuccess: function(data) {
+                        reloadImage(data);
+                    },
                 }
             );
         });
     }
 
-    $("#part-image-select").click(function() {
-        launchModalForm("{% url 'part-image-select' part.id %}",
-                        {
-                            reload: true,
-                            after_render: onSelectImage
-                        });
+    $("#part-image-select").click(function(event) {
+        event.stopPropagation();
+        launchModalForm("{% url 'part-image-select' part.id %}", {
+            reload: true,
+            after_render: onSelectImage
+        });
     });
 
     $("#part-edit").click(function() {

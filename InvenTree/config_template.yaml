@@ -142,8 +142,11 @@ cors:
 # STATIC_ROOT is the local filesystem location for storing static files
 #static_root: '/home/inventree/data/static'
 
-# BACKUP_DIR is the local filesystem location for storing backups
+### Backup configuration options ###
+# INVENTREE_BACKUP_DIR is the local filesystem location for storing backups
+backup_storage: django.core.files.storage.FileSystemStorage
 #backup_dir: '/home/inventree/data/backup'
+#backup_options:
 
 # Background worker options
 background:
@@ -161,12 +164,21 @@ background:
 # Login configuration
 login_confirm_days: 3
 login_attempts: 5
+login_default_protocol: http
 
 # Remote / proxy login
 # These settings can introduce security problems if configured incorrectly. Please read
 # https://docs.djangoproject.com/en/4.0/howto/auth-remote-user/ for more details
+# The header name should be prefixed by `HTTP`. Please read the docs for more details
+# https://docs.djangoproject.com/en/stable/ref/request-response/#django.http.HttpRequest.META
 remote_login_enabled: False
-remote_login_header: REMOTE_USER
+remote_login_header: HTTP_REMOTE_USER
+
+# Logout redirect configuration
+# This setting may be required if using remote / proxy login to redirect requests
+# during the logout process (default is 'index'). Please read the docs for more details
+# https://docs.djangoproject.com/en/stable/ref/settings/#logout-redirect-url
+#logout_redirect_url: 'index'
 
 # Permit custom authentication backends
 #authentication_backends:
@@ -185,11 +197,13 @@ remote_login_header: REMOTE_USER
 #  - 'django.middleware.clickjacking.XFrameOptionsMiddleware'
 #  - 'InvenTree.middleware.AuthRequiredMiddleware'
 
-# Add SSO login-backends
+# Add SSO login-backends (see examples below)
 # social_backends:
+#  - 'allauth.socialaccount.providers.google'
+#  - 'allauth.socialaccount.providers.github'
 #  - 'allauth.socialaccount.providers.keycloak'
 
-# Add specific settings
+# Add specific settings for social account providers (if required)
 # social_providers:
 #   keycloak:
 #     KEYCLOAK_URL: 'https://keycloak.custom/auth'

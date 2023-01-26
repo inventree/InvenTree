@@ -134,6 +134,7 @@ class SettingsTest(InvenTreeTestCase):
             'units',
             'requires_restart',
             'after_save',
+            'before_save',
         ]
 
         for k in setting.keys():
@@ -778,7 +779,8 @@ class NotificationTest(InvenTreeAPITestCase):
         messages = NotificationMessage.objects.all()
 
         # As there are three staff users (including the 'test' user) we expect 30 notifications
-        self.assertEqual(messages.count(), 30)
+        # However, one user is marked as i nactive
+        self.assertEqual(messages.count(), 20)
 
         # Only 10 messages related to *this* user
         my_notifications = messages.filter(user=self.user)
@@ -822,11 +824,11 @@ class NotificationTest(InvenTreeAPITestCase):
 
         # Only 7 notifications should have been deleted,
         # as the notifications associated with other users must remain untouched
-        self.assertEqual(NotificationMessage.objects.count(), 23)
+        self.assertEqual(NotificationMessage.objects.count(), 13)
         self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 3)
 
 
-class LoadingTest(TestCase):
+class CommonTest(InvenTreeAPITestCase):
     """Tests for the common config."""
 
     def test_restart_flag(self):
@@ -842,6 +844,30 @@ class LoadingTest(TestCase):
 
         # now it should be false again
         self.assertFalse(common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+
+    def test_config_api(self):
+        """Test config URLs."""
+        # Not superuser
+        self.get(reverse('api-config-list'), expected_code=403)
+
+        # Turn into superuser
+        self.user.is_superuser = True
+        self.user.save()
+
+        # Successfull checks
+        data = [
+            self.get(reverse('api-config-list'), expected_code=200).data[0],                                    # list endpoint
+            self.get(reverse('api-config-detail', kwargs={'key': 'INVENTREE_DEBUG'}), expected_code=200).data,  # detail endpoint
+        ]
+
+        for item in data:
+            self.assertEqual(item['key'], 'INVENTREE_DEBUG')
+            self.assertEqual(item['env_var'], 'INVENTREE_DEBUG')
+            self.assertEqual(item['config_key'], 'debug')
+
+        # Turn into normal user again
+        self.user.is_superuser = False
+        self.user.save()
 
 
 class ColorThemeTest(TestCase):

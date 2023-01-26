@@ -326,7 +326,12 @@ class OrderTest(TestCase):
                 user__id=user_id,
             )
 
-            self.assertTrue(messages.exists())
+            # User ID 3 is inactive, and thus should not receive notifications
+            if user_id == 3:
+                self.assertFalse(messages.exists())
+                continue
+            else:
+                self.assertTrue(messages.exists())
 
             msg = messages.first()
 

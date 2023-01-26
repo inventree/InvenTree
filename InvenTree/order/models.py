@@ -24,13 +24,14 @@ from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
 import InvenTree.ready
+import InvenTree.tasks
 import order.validators
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
-                              RoundingDecimalField)
+                              InvenTreeURLField, RoundingDecimalField)
 from InvenTree.helpers import decimal2string, getSetting, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
@@ -81,7 +82,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
-    link = models.URLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
+    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 
     creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation Date'))
 
@@ -311,6 +312,9 @@ class PurchaseOrder(Order):
             reference (str, optional): Reference to item. Defaults to ''.
             purchase_price (optional): Price of item. Defaults to None.
 
+        Returns:
+            The newly created PurchaseOrderLineItem instance
+
         Raises:
             ValidationError: quantity is smaller than 0
             ValidationError: quantity is not type int
@@ -338,11 +342,13 @@ class PurchaseOrder(Order):
                 quantity_new = line.quantity + quantity
                 line.quantity = quantity_new
                 supplier_price = supplier_part.get_price(quantity_new)
+
                 if line.purchase_price and supplier_price:
                     line.purchase_price = supplier_price / quantity_new
+
                 line.save()
 
-                return
+                return line
 
         line = PurchaseOrderLineItem(
             order=self,
@@ -353,6 +359,8 @@ class PurchaseOrder(Order):
         )
 
         line.save()
+
+        return line
 
     @transaction.atomic
     def place_order(self):
@@ -376,9 +384,20 @@ class PurchaseOrder(Order):
         if self.status == PurchaseOrderStatus.PLACED:
             self.status = PurchaseOrderStatus.COMPLETE
             self.complete_date = datetime.now().date()
+
             self.save()
 
+            # Schedule pricing update for any referenced parts
+            for line in self.lines.all():
+                if line.part and line.part.part:
+                    line.part.part.schedule_pricing_update()
+
             trigger_event('purchaseorder.completed', id=self.pk)
+
+    @property
+    def is_pending(self):
+        """Return True if the PurchaseOrder is 'pending'"""
+        return self.status == PurchaseOrderStatus.PENDING
 
     @property
     def is_overdue(self):
@@ -757,6 +776,10 @@ class SalesOrder(Order):
 
         self.save()
 
+        # Schedule pricing update for any referenced parts
+        for line in self.lines.all():
+            line.part.schedule_pricing_update()
+
         trigger_event('salesorder.completed', id=self.pk)
 
         return True
@@ -946,7 +969,7 @@ class OrderExtraLine(OrderLineItem):
 
     price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True, blank=True,
         allow_negative=True,
         verbose_name=_('Price'),
@@ -1026,7 +1049,7 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True, blank=True,
         verbose_name=_('Purchase Price'),
         help_text=_('Unit purchase price'),
@@ -1132,7 +1155,7 @@ class SalesOrderLineItem(OrderLineItem):
 
     sale_price = InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True, blank=True,
         verbose_name=_('Sale Price'),
         help_text=_('Unit sale price'),
@@ -1254,7 +1277,7 @@ class SalesOrderShipment(models.Model):
         help_text=_('Reference number for associated invoice'),
     )
 
-    link = models.URLField(
+    link = InvenTreeURLField(
         blank=True,
         verbose_name=_('Link'),
         help_text=_('Link to external page')
