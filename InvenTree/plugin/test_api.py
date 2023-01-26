@@ -2,7 +2,10 @@
 
 from django.urls import reverse
 
+from rest_framework.exceptions import NotFound
+
 from InvenTree.api_tester import InvenTreeAPITestCase, PluginMixin
+from plugin.api import check_plugin
 from plugin.models import PluginConfig
 
 
@@ -172,3 +175,26 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             plg_inactive.active = True
             plg_inactive.save()
         self.assertEqual(cm.warning.args[0], 'A reload was triggered')
+
+    def test_check_plugin(self):
+        """Test check_plugin function."""
+
+        # No argument
+        with self.assertRaises(NotFound) as exc:
+            check_plugin(plugin_slug=None, plugin_pk=None)
+        self.assertEqual(str(exc.exception.detail), 'Plugin not specified')
+
+        # Wrong with slug
+        with self.assertRaises(NotFound) as exc:
+            check_plugin(plugin_slug='123abc', plugin_pk=None)
+        self.assertEqual(str(exc.exception.detail), "Plugin '123abc' not installed")
+
+        # Wrong with pk
+        with self.assertRaises(NotFound) as exc:
+            check_plugin(plugin_slug=None, plugin_pk='123')
+        self.assertEqual(str(exc.exception.detail), "Plugin '123' not installed")
+
+        # Not active
+        with self.assertRaises(NotFound) as exc:
+            check_plugin(plugin_slug='inventreebarcode', plugin_pk=None)
+        self.assertEqual(str(exc.exception.detail), "Plugin 'inventreebarcode' is not active")
