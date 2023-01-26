@@ -129,6 +129,12 @@ class PluginActivate(UpdateAPI):
     serializer_class = PluginSerializers.PluginConfigEmptySerializer
     permission_classes = [IsSuperuser, ]
 
+    def get_object(self):
+        """Returns the object for the view."""
+        if self.request.data.get('pk', None):
+            return self.queryset.get(pk=self.request.data.get('pk'))
+        return super().get_object()
+
     def perform_update(self, serializer):
         """Activate the plugin."""
         instance = serializer.instance
