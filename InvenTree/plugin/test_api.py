@@ -3,6 +3,7 @@
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase, PluginMixin
+from plugin.models import PluginConfig
 
 
 class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
@@ -85,6 +86,42 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         }, expected_code=400).data
 
         self.assertEqual(data['confirm'][0].title().upper(), 'Installation not confirmed'.upper())
+
+    def test_plugin_activate(self):
+        """Test the plugin activate."""
+
+        test_plg = self.plugin_confs.first()
+
+        def assert_plugin_active(self, active):
+            self.assertEqual(PluginConfig.objects.all().first().active, active)
+
+        # Should not work - not a superuser
+        response = self.client.post(reverse('api-plugin-activate'), {}, follow=True)
+        self.assertEqual(response.status_code, 403)
+
+        # Make user superuser
+        self.user.is_superuser = True
+        self.user.save()
+
+        # Deactivate plugin
+        test_plg.active = False
+        test_plg.save()
+
+        # Activate plugin with detail url
+        assert_plugin_active(self, False)
+        response = self.client.patch(reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.id}), {}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        assert_plugin_active(self, True)
+
+        # Deactivate plugin
+        test_plg.active = False
+        test_plg.save()
+
+        # Activate plugin
+        assert_plugin_active(self, False)
+        response = self.client.patch(reverse('api-plugin-activate'), {'pk': test_plg.pk}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        assert_plugin_active(self, True)
 
     def test_admin_action(self):
         """Test the PluginConfig action commands."""
