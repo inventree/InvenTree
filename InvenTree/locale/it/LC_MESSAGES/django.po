@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-25 01:20+0000\n"
-"PO-Revision-Date: 2023-01-25 08:53\n"
+"PO-Revision-Date: 2023-01-26 09:26\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1203,7 +1203,7 @@ msgstr "Completa l'output se le scorte non sono state interamente assegnate"
 
 #: build/serializers.py:453
 msgid "Remove Allocated Stock"
-msgstr "Rimuovi Scorte Allocate"
+msgstr "Rimuovi Giacenze Allocate"
 
 #: build/serializers.py:454
 msgid "Subtract any stock which has already been allocated to this build"
@@ -1547,7 +1547,7 @@ msgstr "Assegna Scorte alla Produzione"
 
 #: build/templates/build/detail.html:183 templates/js/translated/build.js:2016
 msgid "Unallocate stock"
-msgstr "Scorte non assegnate"
+msgstr "Scorte Non Assegnate"
 
 #: build/templates/build/detail.html:184
 msgid "Unallocate Stock"
@@ -1567,7 +1567,7 @@ msgstr "Assegna manualmente le scorte per la produzione"
 
 #: build/templates/build/detail.html:190 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
-msgstr "Assegna scorte"
+msgstr "Assegna Scorte"
 
 #: build/templates/build/detail.html:193
 msgid "Order required parts"
@@ -1590,7 +1590,7 @@ msgstr "Le scorte non rintracciabili non sono state completamente assegnate per 
 
 #: build/templates/build/detail.html:217
 msgid "Allocate selected items"
-msgstr "Assegnare i prodotti selezionati"
+msgstr "Assegna i prodotti selezionati"
 
 #: build/templates/build/detail.html:227
 msgid "This Build Order does not have any associated untracked BOM items"
@@ -1598,7 +1598,7 @@ msgstr "Questo ordine di produzione non ha alcun articolo rintracciabile nella d
 
 #: build/templates/build/detail.html:236
 msgid "Incomplete Build Outputs"
-msgstr "Produzione incompleta"
+msgstr "Produzione Incompleta"
 
 #: build/templates/build/detail.html:240
 msgid "Create new build output"
@@ -1606,7 +1606,7 @@ msgstr "Crea nuova produzione"
 
 #: build/templates/build/detail.html:241
 msgid "New Build Output"
-msgstr "Nuova produzione"
+msgstr "Nuova Produzione"
 
 #: build/templates/build/detail.html:255
 msgid "Output Actions"
@@ -1618,7 +1618,7 @@ msgstr "Completa la produzione selezionata"
 
 #: build/templates/build/detail.html:261
 msgid "Complete outputs"
-msgstr "Completa l'outputs"
+msgstr "Completa gli outputs"
 
 #: build/templates/build/detail.html:265
 msgid "Delete selected build outputs"
@@ -1640,7 +1640,7 @@ msgstr "Stampa etichette"
 
 #: build/templates/build/detail.html:301
 msgid "Completed Build Outputs"
-msgstr "Produzione completata"
+msgstr "Produzioni Completate"
 
 #: build/templates/build/detail.html:313 build/templates/build/sidebar.html:19
 #: company/templates/company/manufacturer_part.html:151
@@ -1668,15 +1668,15 @@ msgstr "Tutte le giacenze non tracciate sono state assegnate"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:339
 msgid "New Build Order"
-msgstr "Nuovo ordine di produzione"
+msgstr "Nuovo Ordine di Produzione"
 
 #: build/templates/build/index.html:37 build/templates/build/index.html:38
 msgid "Print Build Orders"
-msgstr "Stampa gli ordini di produzione"
+msgstr "Stampa gli Ordini di Produzione"
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
-msgstr "Dettagli ordine di produzione"
+msgstr "Dettagli Ordine di Produzione"
 
 #: build/templates/build/sidebar.html:12
 msgid "Incomplete Outputs"
@@ -1684,7 +1684,7 @@ msgstr "Output Incompleti"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Outputs"
-msgstr "Output completato"
+msgstr "Outputs Completati"
 
 #: common/files.py:62
 msgid "Unsupported file format: {ext.upper()}"
@@ -1794,11 +1794,11 @@ msgstr "Usa il nome dell'istanza nella barra del titolo"
 
 #: common/models.py:879
 msgid "Restrict showing `about`"
-msgstr "Limita visualizzazione `about`"
+msgstr "Limita visualizzazione `Informazioni`"
 
 #: common/models.py:880
 msgid "Show the `about` modal only to superusers"
-msgstr "Mostra la modalità `about` solo ai superusers"
+msgstr "Mostra la modalità `Informazioni` solo ai superusers"
 
 #: common/models.py:886 company/models.py:98 company/models.py:99
 msgid "Company name"
@@ -2325,7 +2325,7 @@ msgstr "Consenti la modifica degli ordini di vendita dopo che sono stati spediti
 
 #: common/models.py:1362
 msgid "Purchase Order Reference Pattern"
-msgstr "Modello Di Riferimento Ordine D'Acquisto"
+msgstr "Modello di Riferimento Ordine D'Acquisto"
 
 #: common/models.py:1363
 msgid "Required pattern for generating Purchase Order reference field"
@@ -2513,7 +2513,7 @@ msgstr "Mostra gli ultimi articoli sulla homepage"
 
 #: common/models.py:1565
 msgid "Recent Part Count"
-msgstr "Conteggio ultimi articoli"
+msgstr "Conteggio Ultimi Articoli"
 
 #: common/models.py:1566
 msgid "Number of recent parts to display on index page"
@@ -2529,23 +2529,23 @@ msgstr "Mostra le distinte base che attendono la convalida sulla homepage"
 
 #: common/models.py:1579
 msgid "Show recent stock changes"
-msgstr "Mostra le modifiche recenti allo stock"
+msgstr "Mostra le modifiche recenti alle giacenze"
 
 #: common/models.py:1580
 msgid "Show recently changed stock items on the homepage"
-msgstr "Mostra le scorte modificate di recente nella homepage"
+msgstr "Mostra le giacenze modificate di recente nella homepage"
 
 #: common/models.py:1586
 msgid "Recent Stock Count"
-msgstr "Recente Conteggio Scorte"
+msgstr "Recente Conteggio Giacenze"
 
 #: common/models.py:1587
 msgid "Number of recent stock items to display on index page"
-msgstr "Numero di scorte recenti da visualizzare sulla pagina indice"
+msgstr "Numero di giacenze recenti da visualizzare sulla pagina indice"
 
 #: common/models.py:1593
 msgid "Show low stock"
-msgstr "Mostra disponibilità scarsa delle scorte"
+msgstr "Mostra disponibilità scarsa delle giacenze"
 
 #: common/models.py:1594
 msgid "Show low stock items on the homepage"
@@ -2601,43 +2601,43 @@ msgstr "Mostra produzioni in ritardo sulla home page"
 
 #: common/models.py:1642
 msgid "Show outstanding POs"
-msgstr ""
+msgstr "Mostra ordini di produzione inevasi"
 
 #: common/models.py:1643
 msgid "Show outstanding POs on the homepage"
-msgstr ""
+msgstr "Mostra ordini di produzione inevasi sulla home page"
 
 #: common/models.py:1649
 msgid "Show overdue POs"
-msgstr ""
+msgstr "Mostra Ordini di Produzione in ritardo"
 
 #: common/models.py:1650
 msgid "Show overdue POs on the homepage"
-msgstr ""
+msgstr "Mostra Ordini di Produzione in ritardo sulla home page"
 
 #: common/models.py:1656
 msgid "Show outstanding SOs"
-msgstr ""
+msgstr "Mostra Ordini di Vendita inevasi"
 
 #: common/models.py:1657
 msgid "Show outstanding SOs on the homepage"
-msgstr ""
+msgstr "Mostra Ordini di Vendita inevasi sulla home page"
 
 #: common/models.py:1663
 msgid "Show overdue SOs"
-msgstr ""
+msgstr "Mostra Ordini di Vendita in ritardo"
 
 #: common/models.py:1664
 msgid "Show overdue SOs on the homepage"
-msgstr ""
+msgstr "Mostra Ordini di Vendita in ritardo sulla home page"
 
 #: common/models.py:1670
 msgid "Show News"
-msgstr ""
+msgstr "Mostra Notizie"
 
 #: common/models.py:1671
 msgid "Show news on the homepage"
-msgstr ""
+msgstr "Mostra notizie sulla home page"
 
 #: common/models.py:1677
 msgid "Inline label display"
@@ -2657,103 +2657,103 @@ msgstr "Visualizza le etichette PDF nel browser, invece di scaricare come file"
 
 #: common/models.py:1691
 msgid "Search Parts"
-msgstr ""
+msgstr "Cerca Articoli"
 
 #: common/models.py:1692
 msgid "Display parts in search preview window"
-msgstr ""
+msgstr "Mostra articoli della ricerca nella finestra di anteprima"
 
 #: common/models.py:1698
 msgid "Seach Supplier Parts"
-msgstr ""
+msgstr "Trova Articoli del Fornitore"
 
 #: common/models.py:1699
 msgid "Display supplier parts in search preview window"
-msgstr ""
+msgstr "Mostra articoli del fornitore nella finestra di anteprima"
 
 #: common/models.py:1705
 msgid "Search Manufacturer Parts"
-msgstr ""
+msgstr "Cerca Articoli Produttore"
 
 #: common/models.py:1706
 msgid "Display manufacturer parts in search preview window"
-msgstr ""
+msgstr "Mostra articoli del produttore nella finestra di anteprima"
 
 #: common/models.py:1712
 msgid "Hide Inactive Parts"
-msgstr ""
+msgstr "Nascondi Articoli Inattivi"
 
 #: common/models.py:1713
 msgid "Excluded inactive parts from search preview window"
-msgstr ""
+msgstr "Escludi articoli inattivi dalla finestra di anteprima della ricerca"
 
 #: common/models.py:1719
 msgid "Search Categories"
-msgstr ""
+msgstr "Cerca Categorie"
 
 #: common/models.py:1720
 msgid "Display part categories in search preview window"
-msgstr ""
+msgstr "Mostra categorie articolo nella finestra di anteprima di ricerca"
 
 #: common/models.py:1726
 msgid "Search Stock"
-msgstr ""
+msgstr "Cerca Giacenze"
 
 #: common/models.py:1727
 msgid "Display stock items in search preview window"
-msgstr ""
+msgstr "Mostra articoli in giacenza nella finestra di anteprima della ricerca"
 
 #: common/models.py:1733
 msgid "Hide Unavailable Stock Items"
-msgstr ""
+msgstr "Nascondi elementi non disponibili"
 
 #: common/models.py:1734
 msgid "Exclude stock items which are not available from the search preview window"
-msgstr ""
+msgstr "Escludi gli elementi stock che non sono disponibili dalla finestra di anteprima di ricerca"
 
 #: common/models.py:1740
 msgid "Search Locations"
-msgstr ""
+msgstr "Cerca Ubicazioni"
 
 #: common/models.py:1741
 msgid "Display stock locations in search preview window"
-msgstr ""
+msgstr "Mostra ubicazioni delle giacenze nella finestra di anteprima di ricerca"
 
 #: common/models.py:1747
 msgid "Search Companies"
-msgstr ""
+msgstr "Cerca Aziende"
 
 #: common/models.py:1748
 msgid "Display companies in search preview window"
-msgstr ""
+msgstr "Mostra le aziende nella finestra di anteprima di ricerca"
 
 #: common/models.py:1754
 msgid "Search Build Orders"
-msgstr ""
+msgstr "Cerca Ordini Di Produzione"
 
 #: common/models.py:1755
 msgid "Display build orders in search preview window"
-msgstr ""
+msgstr "Mostra gli ordini di produzione nella finestra di anteprima di ricerca"
 
 #: common/models.py:1761
 msgid "Search Purchase Orders"
-msgstr ""
+msgstr "Cerca Ordini di Acquisto"
 
 #: common/models.py:1762
 msgid "Display purchase orders in search preview window"
-msgstr ""
+msgstr "Mostra gli ordini di acquisto nella finestra di anteprima di ricerca"
 
 #: common/models.py:1768
 msgid "Exclude Inactive Purchase Orders"
-msgstr ""
+msgstr "Escludi Ordini D'Acquisto Inattivi"
 
 #: common/models.py:1769
 msgid "Exclude inactive purchase orders from search preview window"
-msgstr ""
+msgstr "Escludi ordini di acquisto inattivi dalla finestra di anteprima di ricerca"
 
 #: common/models.py:1775
 msgid "Search Sales Orders"
-msgstr ""
+msgstr "Cerca Ordini Di Vendita"
 
 #: common/models.py:1776
 msgid "Display sales orders in search preview window"
@@ -2761,11 +2761,11 @@ msgstr ""
 
 #: common/models.py:1782
 msgid "Exclude Inactive Sales Orders"
-msgstr ""
+msgstr "Escludi Ordini Di Vendita Inattivi"
 
 #: common/models.py:1783
 msgid "Exclude inactive sales orders from search preview window"
-msgstr ""
+msgstr "Escludi ordini di vendita inattivi dalla finestra di anteprima di ricerca"
 
 #: common/models.py:1789
 msgid "Search Preview Results"
@@ -3104,7 +3104,7 @@ msgstr "è un produttore"
 
 #: company/models.py:149
 msgid "Does this company manufacture parts?"
-msgstr ""
+msgstr "Questa azienda produce articoli?"
 
 #: company/models.py:153 company/serializers.py:403
 #: company/templates/company/company_base.html:107 part/models.py:2783
@@ -3115,7 +3115,7 @@ msgstr "Valuta"
 
 #: company/models.py:156
 msgid "Default currency used for this company"
-msgstr ""
+msgstr "Valuta predefinita utilizzata per questa azienda"
 
 #: company/models.py:253 company/models.py:488 stock/models.py:656
 #: stock/serializers.py:89 stock/templates/stock/item_base.html:143
@@ -3226,11 +3226,11 @@ msgstr "Seleziona fornitore"
 #: templates/js/translated/order.js:2286 templates/js/translated/part.js:233
 #: templates/js/translated/part.js:1324 templates/js/translated/pricing.js:243
 msgid "SKU"
-msgstr ""
+msgstr "SKU"
 
 #: company/models.py:505 templates/js/translated/part.js:234
 msgid "Supplier stock keeping unit"
-msgstr ""
+msgstr "Unità di giacenza magazzino fornitore"
 
 #: company/models.py:512
 msgid "Select manufacturer part"
@@ -3278,11 +3278,11 @@ msgstr "Imballaggio del pezzo"
 #: templates/js/translated/order.js:2330 templates/js/translated/order.js:2347
 #: templates/js/translated/part.js:1356 templates/js/translated/part.js:1408
 msgid "Pack Quantity"
-msgstr ""
+msgstr "Quantità Confezione"
 
 #: company/models.py:539
 msgid "Unit quantity supplied in a single pack"
-msgstr ""
+msgstr "Quantità unitaria contenuta in una singola confezione"
 
 #: company/models.py:545 part/models.py:1869
 msgid "multiple"
@@ -3304,15 +3304,15 @@ msgstr "Disponibile"
 
 #: company/models.py:554
 msgid "Quantity available from supplier"
-msgstr ""
+msgstr "Quantità disponibile dal fornitore"
 
 #: company/models.py:558
 msgid "Availability Updated"
-msgstr ""
+msgstr "Disponibilità Aggiornata"
 
 #: company/models.py:559
 msgid "Date of last update of availability data"
-msgstr ""
+msgstr "Data dell’ultimo aggiornamento dei dati sulla disponibilità"
 
 #: company/serializers.py:72
 msgid "Default currency used for this supplier"
@@ -3335,7 +3335,7 @@ msgstr "Crea ordine d'acquisto"
 
 #: company/templates/company/company_base.html:28
 msgid "Company actions"
-msgstr ""
+msgstr "Azioni Azienda"
 
 #: company/templates/company/company_base.html:33
 msgid "Edit company information"
@@ -3348,7 +3348,7 @@ msgstr "Modifica azienda"
 
 #: company/templates/company/company_base.html:38
 msgid "Delete company"
-msgstr ""
+msgstr "Elimina azienda"
 
 #: company/templates/company/company_base.html:39
 #: company/templates/company/company_base.html:163
@@ -3368,7 +3368,7 @@ msgstr "Scarica immagine dall'URL"
 #: company/templates/company/company_base.html:61
 #: part/templates/part/part_thumb.html:16
 msgid "Delete image"
-msgstr ""
+msgstr "Elimina immagine"
 
 #: company/templates/company/company_base.html:87 order/models.py:665
 #: order/templates/order/sales_order_base.html:116 stock/models.py:701
@@ -3392,11 +3392,11 @@ msgstr "Telefono"
 #: company/templates/company/company_base.html:206
 #: part/templates/part/part_base.html:525
 msgid "Remove Image"
-msgstr ""
+msgstr "Rimuovi immagine"
 
 #: company/templates/company/company_base.html:207
 msgid "Remove associated image from this company"
-msgstr ""
+msgstr "Rimuovi l'immagine associata a questa azienda"
 
 #: company/templates/company/company_base.html:209
 #: part/templates/part/part_base.html:528
@@ -3450,15 +3450,15 @@ msgstr "Cancella articoli"
 #: company/templates/company/detail.html:61 templates/InvenTree/search.html:105
 #: templates/js/translated/search.js:185
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Articoli Produttore"
 
 #: company/templates/company/detail.html:65
 msgid "Create new manufacturer part"
-msgstr ""
+msgstr "Crea nuovo articolo produttore"
 
 #: company/templates/company/detail.html:66 part/templates/part/detail.html:410
 msgid "New Manufacturer Part"
-msgstr ""
+msgstr "Nuovo Produttore Articoli"
 
 #: company/templates/company/detail.html:107
 msgid "Supplier Stock"
@@ -3481,12 +3481,12 @@ msgstr "Ordine di acquisto"
 #: company/templates/company/detail.html:121
 #: order/templates/order/purchase_orders.html:17
 msgid "Create new purchase order"
-msgstr ""
+msgstr "Crea nuovo ordine di acquisto"
 
 #: company/templates/company/detail.html:122
 #: order/templates/order/purchase_orders.html:18
 msgid "New Purchase Order"
-msgstr ""
+msgstr "Nuovo Ordine di Acquisto"
 
 #: company/templates/company/detail.html:143
 #: company/templates/company/sidebar.html:20
@@ -3499,22 +3499,22 @@ msgstr ""
 #: templates/js/translated/search.js:317 templates/navbar.html:61
 #: users/models.py:43
 msgid "Sales Orders"
-msgstr ""
+msgstr "Ordini di Vendita"
 
 #: company/templates/company/detail.html:147
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
-msgstr ""
+msgstr "Crea nuovo ordine di vendita"
 
 #: company/templates/company/detail.html:148
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
-msgstr ""
+msgstr "Nuovo Ordine di Vendita"
 
 #: company/templates/company/detail.html:168
 #: templates/js/translated/build.js:1733
 msgid "Assigned Stock"
-msgstr ""
+msgstr "Assegna Giacenza"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -3534,12 +3534,12 @@ msgstr "Articoli ordinati"
 #: company/templates/company/manufacturer_part.html:39
 #: templates/js/translated/company.js:717
 msgid "Edit manufacturer part"
-msgstr ""
+msgstr "Modifica articolo produttore"
 
 #: company/templates/company/manufacturer_part.html:43
 #: templates/js/translated/company.js:718
 msgid "Delete manufacturer part"
-msgstr ""
+msgstr "Cancella articolo produttore"
 
 #: company/templates/company/manufacturer_part.html:65
 #: company/templates/company/supplier_part.html:98
@@ -3548,7 +3548,7 @@ msgstr "Articolo interno"
 
 #: company/templates/company/manufacturer_part.html:95
 msgid "No manufacturer information available"
-msgstr ""
+msgstr "Nessuna informazione sul produttore disponibile"
 
 #: company/templates/company/manufacturer_part.html:119
 #: company/templates/company/supplier_part.html:15 company/views.py:32
@@ -3596,19 +3596,19 @@ msgstr "Aggiungi parametro"
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Articoli Prodotti"
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
-msgstr ""
+msgstr "Articoli Forniti"
 
 #: company/templates/company/sidebar.html:16
 msgid "Supplied Stock Items"
-msgstr ""
+msgstr "Elementi in Giacenza Forniti"
 
 #: company/templates/company/sidebar.html:22
 msgid "Assigned Stock Items"
-msgstr ""
+msgstr "Elementi in Giacenza Impegnati"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:665
@@ -3638,18 +3638,18 @@ msgstr "Mostra QR Code"
 #: templates/js/translated/barcode.js:454
 #: templates/js/translated/barcode.js:459
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Scollega Codice a Barre"
 
 #: company/templates/company/supplier_part.html:44
 #: part/templates/part/part_base.html:51
 #: stock/templates/stock/item_base.html:50
 #: stock/templates/stock/location.html:54
 msgid "Link Barcode"
-msgstr ""
+msgstr "Collega Codice a Barre"
 
 #: company/templates/company/supplier_part.html:51
 msgid "Supplier part actions"
-msgstr ""
+msgstr "Azioni Articolo Fornitore"
 
 #: company/templates/company/supplier_part.html:56
 #: company/templates/company/supplier_part.html:57
@@ -3661,7 +3661,7 @@ msgstr "Ordine Articolo"
 #: company/templates/company/supplier_part.html:61
 #: company/templates/company/supplier_part.html:62
 msgid "Update Availability"
-msgstr ""
+msgstr "Aggiorna Disponibilità"
 
 #: company/templates/company/supplier_part.html:64
 #: company/templates/company/supplier_part.html:65
@@ -3673,26 +3673,26 @@ msgstr "Modifica fornitore articolo"
 #: company/templates/company/supplier_part.html:70
 #: templates/js/translated/company.js:223
 msgid "Duplicate Supplier Part"
-msgstr ""
+msgstr "Duplica Articoli Fornitore"
 
 #: company/templates/company/supplier_part.html:74
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "Cancella Articolo Fornitore"
 
 #: company/templates/company/supplier_part.html:75
 msgid "Delete Supplier  Part"
-msgstr ""
+msgstr "Elimina Articolo Fornitore"
 
 #: company/templates/company/supplier_part.html:122
 #: part/templates/part/part_base.html:307
 #: stock/templates/stock/item_base.html:161
 #: stock/templates/stock/location.html:150
 msgid "Barcode Identifier"
-msgstr ""
+msgstr "Codice a Barre Identificativo"
 
 #: company/templates/company/supplier_part.html:140
 msgid "No supplier information available"
-msgstr ""
+msgstr "Nessuna informazione sul fornitore disponibile"
 
 #: company/templates/company/supplier_part.html:200
 #: company/templates/company/supplier_part_navbar.html:12
@@ -3727,11 +3727,11 @@ msgstr "Aggiungi riduzione prezzo"
 
 #: company/templates/company/supplier_part.html:285
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Collega Codice a Barre con l'Articolo Fornitore"
 
 #: company/templates/company/supplier_part.html:375
 msgid "Update Part Availability"
-msgstr ""
+msgstr "Aggiorna Disponibilità Articolo"
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:14
@@ -3799,7 +3799,7 @@ msgstr "Nuova Azienda"
 
 #: company/views.py:120 stock/views.py:125
 msgid "Stock Item QR Code"
-msgstr ""
+msgstr "Stock Item QR Code"
 
 #: label/models.py:102
 msgid "Label name"
@@ -3843,15 +3843,15 @@ msgstr "Larghezza dell'etichetta, specificata in mm"
 
 #: label/models.py:143 report/models.py:247
 msgid "Filename Pattern"
-msgstr ""
+msgstr "Formato del nome file"
 
 #: label/models.py:144
 msgid "Pattern for generating label filenames"
-msgstr ""
+msgstr "Formato del nome file per la generazione etichetta"
 
 #: label/models.py:233
 msgid "Query filters (comma-separated list of key=value pairs),"
-msgstr ""
+msgstr "Filtri di ricerca (elenco separato da virgole key=coppia di valori),"
 
 #: label/models.py:234 label/models.py:275 label/models.py:303
 #: report/models.py:280 report/models.py:411 report/models.py:449
@@ -3860,15 +3860,15 @@ msgstr "Filtri"
 
 #: label/models.py:274
 msgid "Query filters (comma-separated list of key=value pairs"
-msgstr ""
+msgstr "Filtri di ricerca (elenco separato da virgole key=coppia di valori"
 
 #: label/models.py:302
 msgid "Part query filters (comma-separated value of key=value pairs)"
-msgstr ""
+msgstr "Articolo Filtri di ricerca (elenco separato da virgole key=coppia di valori)"
 
 #: order/api.py:161
 msgid "No matching purchase order found"
-msgstr ""
+msgstr "Nessun ordine di acquisto corrispondente trovato"
 
 #: order/api.py:1257 order/models.py:1021 order/models.py:1100
 #: order/templates/order/order_base.html:9
@@ -3881,11 +3881,11 @@ msgstr ""
 #: templates/js/translated/pricing.js:515 templates/js/translated/stock.js:1957
 #: templates/js/translated/stock.js:2591
 msgid "Purchase Order"
-msgstr ""
+msgstr "Ordine D'Acquisto"
 
 #: order/api.py:1261
 msgid "Unknown"
-msgstr ""
+msgstr "Sconosciuto"
 
 #: order/models.py:83
 msgid "Order description"
@@ -4168,23 +4168,23 @@ msgstr ""
 
 #: order/models.py:1426
 msgid "Shipment does not match sales order"
-msgstr ""
+msgstr "La spedizione non corrisponde all'ordine di vendita"
 
 #: order/models.py:1434
 msgid "Line"
-msgstr ""
+msgstr "Linea"
 
 #: order/models.py:1443
 msgid "Sales order shipment reference"
-msgstr ""
+msgstr "Riferimento della spedizione ordine di vendita"
 
 #: order/models.py:1456 templates/js/translated/notification.js:55
 msgid "Item"
-msgstr ""
+msgstr "Elemento"
 
 #: order/models.py:1457
 msgid "Select stock item to allocate"
-msgstr ""
+msgstr "Seleziona elemento stock da allocare"
 
 #: order/models.py:1460
 msgid "Enter stock allocation quantity"
@@ -4192,51 +4192,51 @@ msgstr "Inserisci la quantità assegnata alla giacenza"
 
 #: order/serializers.py:63
 msgid "Price currency"
-msgstr ""
+msgstr "Valuta prezzo"
 
 #: order/serializers.py:193
 msgid "Order cannot be cancelled"
-msgstr ""
+msgstr "L'ordine non può essere cancellato"
 
 #: order/serializers.py:203 order/serializers.py:1101
 msgid "Allow order to be closed with incomplete line items"
-msgstr ""
+msgstr "Consenti di chiudere l'ordine con elementi di riga incompleti"
 
 #: order/serializers.py:214 order/serializers.py:1112
 msgid "Order has incomplete line items"
-msgstr ""
+msgstr "L'ordine ha elementi di riga incompleti"
 
 #: order/serializers.py:305
 msgid "Order is not open"
-msgstr ""
+msgstr "L'ordine non è aperto"
 
 #: order/serializers.py:327
 msgid "Purchase price currency"
-msgstr ""
+msgstr "Valuta prezzo d'acquisto"
 
 #: order/serializers.py:346
 msgid "Supplier part must be specified"
-msgstr ""
+msgstr "L'articolo del fornitore deve essere specificato"
 
 #: order/serializers.py:351
 msgid "Purchase order must be specified"
-msgstr ""
+msgstr "L'ordine di acquisto deve essere specificato"
 
 #: order/serializers.py:357
 msgid "Supplier must match purchase order"
-msgstr ""
+msgstr "Il fornitore deve essere abbinato all'ordine d'acquisto"
 
 #: order/serializers.py:358
 msgid "Purchase order must match supplier"
-msgstr ""
+msgstr "L'ordine di acquisto deve essere abbinato al fornitore"
 
 #: order/serializers.py:421 order/serializers.py:1189
 msgid "Line Item"
-msgstr ""
+msgstr "Elemento Riga"
 
 #: order/serializers.py:427
 msgid "Line item does not match purchase order"
-msgstr ""
+msgstr "L'elemento di riga non corrisponde all'ordine di acquisto"
 
 #: order/serializers.py:437 order/serializers.py:548
 msgid "Select destination location for received items"
@@ -4244,27 +4244,27 @@ msgstr "Seleziona la posizione di destinazione per gli elementi ricevuti"
 
 #: order/serializers.py:456 templates/js/translated/order.js:1548
 msgid "Enter batch code for incoming stock items"
-msgstr ""
+msgstr "Inserisci il codice univoco per gli articoli in arrivo"
 
 #: order/serializers.py:464 templates/js/translated/order.js:1559
 msgid "Enter serial numbers for incoming stock items"
-msgstr ""
+msgstr "Inserisci i numeri di serie per gli articoli stock in arrivo"
 
 #: order/serializers.py:478
 msgid "Unique identifier field"
-msgstr ""
+msgstr "Campo identificativo univoco"
 
 #: order/serializers.py:492
 msgid "Barcode is already in use"
-msgstr ""
+msgstr "Il codice a barre è già in uso"
 
 #: order/serializers.py:518
 msgid "An integer quantity must be provided for trackable parts"
-msgstr ""
+msgstr "Deve essere fornita una quantità intera per gli articoli rintracciabili"
 
 #: order/serializers.py:564
 msgid "Line items must be provided"
-msgstr ""
+msgstr "Gli elementi di linea devono essere forniti"
 
 #: order/serializers.py:581
 msgid "Destination location must be specified"
@@ -4272,80 +4272,80 @@ msgstr "La destinazione deve essere specificata"
 
 #: order/serializers.py:592
 msgid "Supplied barcode values must be unique"
-msgstr ""
+msgstr "I valori dei codici a barre forniti devono essere univoci"
 
 #: order/serializers.py:900
 msgid "Sale price currency"
-msgstr ""
+msgstr "Valuta prezzo di vendita"
 
 #: order/serializers.py:981
 msgid "No shipment details provided"
-msgstr ""
+msgstr "Nessun dettaglio di spedizione fornito"
 
 #: order/serializers.py:1044 order/serializers.py:1198
 msgid "Line item is not associated with this order"
-msgstr ""
+msgstr "L'elemento di riga non è associato a questo ordine"
 
 #: order/serializers.py:1066
 msgid "Quantity must be positive"
-msgstr ""
+msgstr "La quantità deve essere positiva"
 
 #: order/serializers.py:1211
 msgid "Enter serial numbers to allocate"
-msgstr ""
+msgstr "Inserisci i numeri di serie da assegnare"
 
 #: order/serializers.py:1233 order/serializers.py:1357
 msgid "Shipment has already been shipped"
-msgstr ""
+msgstr "La spedizione è già stata spedita"
 
 #: order/serializers.py:1236 order/serializers.py:1360
 msgid "Shipment is not associated with this order"
-msgstr ""
+msgstr "La spedizione non è associata con questo ordine"
 
 #: order/serializers.py:1290
 msgid "No match found for the following serial numbers"
-msgstr ""
+msgstr "Nessuna corrispondenza trovata per i seguenti numeri di serie"
 
 #: order/serializers.py:1300
 msgid "The following serial numbers are already allocated"
-msgstr ""
+msgstr "I seguenti numeri di serie sono già assegnati"
 
 #: order/tasks.py:26
 msgid "Overdue Purchase Order"
-msgstr ""
+msgstr "Ordine D'Acquisto in ritardo"
 
 #: order/tasks.py:31
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
-msgstr ""
+msgstr "L'ordine d'acquisto {po} è in ritardo"
 
 #: order/tasks.py:89
 msgid "Overdue Sales Order"
-msgstr ""
+msgstr "Ordini Di Vendita in ritardo"
 
 #: order/tasks.py:94
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
-msgstr ""
+msgstr "L'ordine di vendita {so} è ora in ritardo"
 
 #: order/templates/order/order_base.html:33
 msgid "Print purchase order report"
-msgstr ""
+msgstr "Stampa report ordine acquisto"
 
 #: order/templates/order/order_base.html:35
 #: order/templates/order/sales_order_base.html:45
 msgid "Export order to file"
-msgstr ""
+msgstr "Esportare File Ordine"
 
 #: order/templates/order/order_base.html:41
 #: order/templates/order/sales_order_base.html:54
 msgid "Order actions"
-msgstr ""
+msgstr "Azioni Ordine"
 
 #: order/templates/order/order_base.html:46
 #: order/templates/order/sales_order_base.html:58
 msgid "Edit order"
-msgstr ""
+msgstr "Modifica ordine"
 
 #: order/templates/order/order_base.html:50
 #: order/templates/order/sales_order_base.html:61
@@ -4354,12 +4354,12 @@ msgstr "Annulla l'ordine"
 
 #: order/templates/order/order_base.html:55
 msgid "Duplicate order"
-msgstr ""
+msgstr "Duplica Ordine"
 
 #: order/templates/order/order_base.html:61
 #: order/templates/order/order_base.html:62
 msgid "Submit Order"
-msgstr ""
+msgstr "Invia ordine"
 
 #: order/templates/order/order_base.html:65
 msgid "Receive items"
@@ -4368,7 +4368,7 @@ msgstr "Ricevere articoli"
 #: order/templates/order/order_base.html:67
 #: order/templates/order/purchase_order_detail.html:32
 msgid "Receive Items"
-msgstr ""
+msgstr "Ricevi elementi"
 
 #: order/templates/order/order_base.html:69
 msgid "Mark order as complete"
@@ -4377,7 +4377,7 @@ msgstr "Contrassegna ordine come completato"
 #: order/templates/order/order_base.html:71
 #: order/templates/order/sales_order_base.html:68
 msgid "Complete Order"
-msgstr ""
+msgstr "Completa l'ordine"
 
 #: order/templates/order/order_base.html:93
 #: order/templates/order/sales_order_base.html:80
@@ -4387,7 +4387,7 @@ msgstr "Riferimento ordine"
 #: order/templates/order/order_base.html:98
 #: order/templates/order/sales_order_base.html:85
 msgid "Order Description"
-msgstr ""
+msgstr "Descrizione Dell'Ordine"
 
 #: order/templates/order/order_base.html:103
 #: order/templates/order/sales_order_base.html:90
@@ -4396,18 +4396,18 @@ msgstr "Stato dell'ordine"
 
 #: order/templates/order/order_base.html:126
 msgid "No suppplier information available"
-msgstr ""
+msgstr "Nessuna informazione sul fornitore disponibile"
 
 #: order/templates/order/order_base.html:139
 #: order/templates/order/sales_order_base.html:129
 msgid "Completed Line Items"
-msgstr ""
+msgstr "Elementi della linea completati"
 
 #: order/templates/order/order_base.html:145
 #: order/templates/order/sales_order_base.html:135
 #: order/templates/order/sales_order_base.html:145
 msgid "Incomplete"
-msgstr ""
+msgstr "Incompleto"
 
 #: order/templates/order/order_base.html:164
 #: report/templates/report/inventree_build_order_base.html:121
@@ -4417,7 +4417,7 @@ msgstr "Emesso"
 #: order/templates/order/order_base.html:192
 #: order/templates/order/sales_order_base.html:190
 msgid "Total cost"
-msgstr ""
+msgstr "Costo totale"
 
 #: order/templates/order/order_base.html:196
 #: order/templates/order/sales_order_base.html:194
@@ -4823,7 +4823,7 @@ msgstr ""
 
 #: part/api.py:1286
 msgid "Must be a valid quantity"
-msgstr ""
+msgstr "Deve essere una quantità valida"
 
 #: part/api.py:1301
 msgid "Specify location for initial part stock"
@@ -4831,7 +4831,7 @@ msgstr "Specifica la posizione per lo stock iniziale"
 
 #: part/api.py:1332 part/api.py:1336 part/api.py:1351 part/api.py:1355
 msgid "This field is required"
-msgstr ""
+msgstr "Questo campo è obbligatorio"
 
 #: part/bom.py:175 part/models.py:116 part/models.py:888
 #: part/templates/part/category.html:109 part/templates/part/part_base.html:374
@@ -4859,11 +4859,11 @@ msgstr "Posizione predefinita per gli articoli di questa categoria"
 #: templates/js/translated/table_filters.js:135
 #: templates/js/translated/table_filters.js:150
 msgid "Structural"
-msgstr ""
+msgstr "Strutturale"
 
 #: part/models.py:124
 msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
-msgstr ""
+msgstr "Le parti non possono essere assegnate direttamente a una categoria strutturale, ma possono essere assegnate a categorie subordinate."
 
 #: part/models.py:128
 msgid "Default keywords"
@@ -4875,15 +4875,15 @@ msgstr "Parole chiave predefinite per gli articoli in questa categoria"
 
 #: part/models.py:133 stock/models.py:102
 msgid "Icon"
-msgstr ""
+msgstr "Icona"
 
 #: part/models.py:134 stock/models.py:103
 msgid "Icon (optional)"
-msgstr ""
+msgstr "Icona (facoltativa)"
 
 #: part/models.py:153
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
-msgstr ""
+msgstr "Non puoi rendere principale questa categoria di articoli perché alcuni articoli sono già assegnati!"
 
 #: part/models.py:159 part/models.py:3286 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
@@ -4903,11 +4903,11 @@ msgstr "Scelta non valida per l'articolo principale"
 #: part/models.py:539 part/models.py:551
 #, python-brace-format
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
-msgstr ""
+msgstr "L'articolo '{p1}' è usato nella Distinta Base per '{p2}' (ricorsivo)"
 
 #: part/models.py:641
 msgid "Stock item with this serial number already exists"
-msgstr ""
+msgstr "Esiste già un elemento stock con questo numero seriale"
 
 #: part/models.py:772
 msgid "Duplicate IPN not allowed in part settings"
@@ -4915,11 +4915,11 @@ msgstr "Non è consentito duplicare IPN nelle impostazioni dell'articolo"
 
 #: part/models.py:777
 msgid "Part with this Name, IPN and Revision already exists."
-msgstr ""
+msgstr "Un articolo con questo Nome, IPN e Revisione esiste già."
 
 #: part/models.py:791
 msgid "Parts cannot be assigned to structural part categories!"
-msgstr ""
+msgstr "Gli articoli non possono essere assegnati a categorie articolo principali!"
 
 #: part/models.py:809 part/models.py:3342
 msgid "Part name"
@@ -4999,15 +4999,15 @@ msgstr "Unità di conservazione delle scorte per quest'articolo"
 
 #: part/models.py:959
 msgid "Can this part be built from other parts?"
-msgstr ""
+msgstr "Questo articolo può essere costruito da altri articoli?"
 
 #: part/models.py:965
 msgid "Can this part be used to build other parts?"
-msgstr ""
+msgstr "Questo articolo può essere utilizzato per costruire altri articoli?"
 
 #: part/models.py:971
 msgid "Does this part have tracking for unique items?"
-msgstr ""
+msgstr "Questo articolo ha il tracciamento per gli elementi unici?"
 
 #: part/models.py:976
 msgid "Can this part be purchased from external suppliers?"
@@ -5027,27 +5027,27 @@ msgstr "È una parte virtuale, come un prodotto software o una licenza?"
 
 #: part/models.py:993
 msgid "Part notes"
-msgstr ""
+msgstr "Note Articolo"
 
 #: part/models.py:995
 msgid "BOM checksum"
-msgstr ""
+msgstr "Somma di controllo Distinta Base"
 
 #: part/models.py:995
 msgid "Stored BOM checksum"
-msgstr ""
+msgstr "Somma di controllo immagazzinata Distinta Base"
 
 #: part/models.py:998
 msgid "BOM checked by"
-msgstr ""
+msgstr "Distinta Base controllata da"
 
 #: part/models.py:1000
 msgid "BOM checked date"
-msgstr ""
+msgstr "Data di verifica Distinta Base"
 
 #: part/models.py:1004
 msgid "Creation User"
-msgstr ""
+msgstr "Creazione Utente"
 
 #: part/models.py:1010 part/templates/part/part_base.html:345
 #: stock/templates/stock/item_base.html:445
@@ -5057,123 +5057,123 @@ msgstr "Ultimo Inventario"
 
 #: part/models.py:1869
 msgid "Sell multiple"
-msgstr ""
+msgstr "Vendita multipla"
 
 #: part/models.py:2784
 msgid "Currency used to cache pricing calculations"
-msgstr ""
+msgstr "Valuta utilizzata per calcolare i prezzi"
 
 #: part/models.py:2801
 msgid "Minimum BOM Cost"
-msgstr ""
+msgstr "Costo Minimo Distinta Base"
 
 #: part/models.py:2802
 msgid "Minimum cost of component parts"
-msgstr ""
+msgstr "Costo minimo dei componenti dell'articolo"
 
 #: part/models.py:2807
 msgid "Maximum BOM Cost"
-msgstr ""
+msgstr "Costo Massimo Distinta Base"
 
 #: part/models.py:2808
 msgid "Maximum cost of component parts"
-msgstr ""
+msgstr "Costo massimo dei componenti dell'articolo"
 
 #: part/models.py:2813
 msgid "Minimum Purchase Cost"
-msgstr ""
+msgstr "Importo Acquisto Minimo"
 
 #: part/models.py:2814
 msgid "Minimum historical purchase cost"
-msgstr ""
+msgstr "Costo minimo di acquisto storico"
 
 #: part/models.py:2819
 msgid "Maximum Purchase Cost"
-msgstr ""
+msgstr "Importo massimo acquisto"
 
 #: part/models.py:2820
 msgid "Maximum historical purchase cost"
-msgstr ""
+msgstr "Costo massimo di acquisto storico"
 
 #: part/models.py:2825
 msgid "Minimum Internal Price"
-msgstr ""
+msgstr "Prezzo Interno Minimo"
 
 #: part/models.py:2826
 msgid "Minimum cost based on internal price breaks"
-msgstr ""
+msgstr "Costo minimo basato su interruzioni di prezzo interne"
 
 #: part/models.py:2831
 msgid "Maximum Internal Price"
-msgstr ""
+msgstr "Prezzo Interno Massimo"
 
 #: part/models.py:2832
 msgid "Maximum cost based on internal price breaks"
-msgstr ""
+msgstr "Costo massimo basato su interruzioni di prezzo interne"
 
 #: part/models.py:2837
 msgid "Minimum Supplier Price"
-msgstr ""
+msgstr "Prezzo Minimo Fornitore"
 
 #: part/models.py:2838
 msgid "Minimum price of part from external suppliers"
-msgstr ""
+msgstr "Prezzo minimo articolo da fornitori esterni"
 
 #: part/models.py:2843
 msgid "Maximum Supplier Price"
-msgstr ""
+msgstr "Prezzo Massimo Fornitore"
 
 #: part/models.py:2844
 msgid "Maximum price of part from external suppliers"
-msgstr ""
+msgstr "Prezzo massimo dell'articolo proveniente da fornitori esterni"
 
 #: part/models.py:2849
 msgid "Minimum Variant Cost"
-msgstr ""
+msgstr "Variazione di costo minimo"
 
 #: part/models.py:2850
 msgid "Calculated minimum cost of variant parts"
-msgstr ""
+msgstr "Costo minimo calcolato di variazione dell'articolo"
 
 #: part/models.py:2855
 msgid "Maximum Variant Cost"
-msgstr ""
+msgstr "Massima variazione di costo"
 
 #: part/models.py:2856
 msgid "Calculated maximum cost of variant parts"
-msgstr ""
+msgstr "Costo massimo calcolato di variazione dell'articolo"
 
 #: part/models.py:2862
 msgid "Calculated overall minimum cost"
-msgstr ""
+msgstr "Costo minimo totale calcolato"
 
 #: part/models.py:2868
 msgid "Calculated overall maximum cost"
-msgstr ""
+msgstr "Costo massimo totale calcolato"
 
 #: part/models.py:2873
 msgid "Minimum Sale Price"
-msgstr ""
+msgstr "Prezzo Di Vendita Minimo"
 
 #: part/models.py:2874
 msgid "Minimum sale price based on price breaks"
-msgstr ""
+msgstr "Prezzo minimo di vendita basato sulle interruzioni di prezzo"
 
 #: part/models.py:2879
 msgid "Maximum Sale Price"
-msgstr ""
+msgstr "Prezzo Di Vendita Massimo"
 
 #: part/models.py:2880
 msgid "Maximum sale price based on price breaks"
-msgstr ""
+msgstr "Prezzo massimo di vendita basato sulle interruzioni di prezzo"
 
 #: part/models.py:2885
 msgid "Minimum Sale Cost"
-msgstr ""
+msgstr "Costo Di Vendita Minimo"
 
 #: part/models.py:2886
 msgid "Minimum historical sale price"
-msgstr ""
+msgstr "Prezzo storico minimo di vendita"
 
 #: part/models.py:2891
 msgid "Maximum Sale Cost"
@@ -5407,79 +5407,79 @@ msgstr ""
 
 #: part/models.py:3555 stock/models.py:558
 msgid "Quantity must be integer value for trackable parts"
-msgstr ""
+msgstr "La quantità deve essere un valore intero per gli articoli rintracciabili"
 
 #: part/models.py:3564 part/models.py:3566
 msgid "Sub part must be specified"
-msgstr ""
+msgstr "L'articolo subordinato deve essere specificato"
 
 #: part/models.py:3693
 msgid "BOM Item Substitute"
-msgstr ""
+msgstr "Elemento Distinta Base Sostituito"
 
 #: part/models.py:3714
 msgid "Substitute part cannot be the same as the master part"
-msgstr ""
+msgstr "La parte sostituita non può essere la stessa dell'articolo principale"
 
 #: part/models.py:3727
 msgid "Parent BOM item"
-msgstr ""
+msgstr "Elemento principale Distinta Base"
 
 #: part/models.py:3735
 msgid "Substitute part"
-msgstr ""
+msgstr "Sostituisci l'Articolo"
 
 #: part/models.py:3750
 msgid "Part 1"
-msgstr ""
+msgstr "Articolo 1"
 
 #: part/models.py:3754
 msgid "Part 2"
-msgstr ""
+msgstr "Articolo 2"
 
 #: part/models.py:3754
 msgid "Select Related Part"
-msgstr ""
+msgstr "Seleziona Prodotto Relativo"
 
 #: part/models.py:3772
 msgid "Part relationship cannot be created between a part and itself"
-msgstr ""
+msgstr "Non si può creare una relazione tra l'articolo e sé stesso"
 
 #: part/models.py:3776
 msgid "Duplicate relationship already exists"
-msgstr ""
+msgstr "La relazione duplicata esiste già"
 
 #: part/serializers.py:157 part/serializers.py:185 stock/serializers.py:183
 msgid "Purchase currency of this stock item"
-msgstr ""
+msgstr "Valuta di acquisto di questo articolo in stock"
 
 #: part/serializers.py:584
 msgid "Update"
-msgstr ""
+msgstr "Aggiorna"
 
 #: part/serializers.py:585
 msgid "Update pricing for this part"
-msgstr ""
+msgstr "Aggiorna i prezzi per questo articolo"
 
 #: part/serializers.py:895
 msgid "Select part to copy BOM from"
-msgstr ""
+msgstr "Seleziona l'articolo da cui copiare la distinta base"
 
 #: part/serializers.py:903
 msgid "Remove Existing Data"
-msgstr ""
+msgstr "Rimuovi Dati Esistenti"
 
 #: part/serializers.py:904
 msgid "Remove existing BOM items before copying"
-msgstr ""
+msgstr "Rimuovi elementi distinta base esistenti prima di copiare"
 
 #: part/serializers.py:909
 msgid "Include Inherited"
-msgstr ""
+msgstr "Includi Ereditato"
 
 #: part/serializers.py:910
 msgid "Include BOM items which are inherited from templated parts"
-msgstr ""
+msgstr "Includi gli elementi Distinta Base ereditati da prodotti template"
 
 #: part/serializers.py:915
 msgid "Skip Invalid Rows"
@@ -5491,47 +5491,47 @@ msgstr "Abilita questa opzione per saltare le righe non valide"
 
 #: part/serializers.py:921
 msgid "Copy Substitute Parts"
-msgstr ""
+msgstr "Copia Articoli sostitutivi"
 
 #: part/serializers.py:922
 msgid "Copy substitute parts when duplicate BOM items"
-msgstr ""
+msgstr "Copia articoli sostitutivi quando duplichi gli elementi distinta base"
 
 #: part/serializers.py:962
 msgid "Clear Existing BOM"
-msgstr ""
+msgstr "Cancella Distinta Base esistente"
 
 #: part/serializers.py:963
 msgid "Delete existing BOM items before uploading"
-msgstr ""
+msgstr "Rimuovi elementi distinta base esistenti prima del caricamento"
 
 #: part/serializers.py:993
 msgid "No part column specified"
-msgstr ""
+msgstr "Nessuna colonna articolo specificata"
 
 #: part/serializers.py:1036
 msgid "Multiple matching parts found"
-msgstr ""
+msgstr "Trovati più articoli corrispondenti"
 
 #: part/serializers.py:1039
 msgid "No matching part found"
-msgstr ""
+msgstr "Nessun articolo corrispondente trovato"
 
 #: part/serializers.py:1042
 msgid "Part is not designated as a component"
-msgstr ""
+msgstr "L'articolo non è indicato come componente"
 
 #: part/serializers.py:1051
 msgid "Quantity not provided"
-msgstr ""
+msgstr "Quantità non fornita"
 
 #: part/serializers.py:1059
 msgid "Invalid quantity"
-msgstr ""
+msgstr "Quantità non valida"
 
 #: part/serializers.py:1080
 msgid "At least one BOM item is required"
-msgstr ""
+msgstr "Almeno un elemento della distinta base è richiesto"
 
 #: part/tasks.py:25
 msgid "Low stock notification"
@@ -5540,30 +5540,30 @@ msgstr "Notifica di magazzino bassa"
 #: part/tasks.py:26
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
-msgstr ""
+msgstr "Lo stock disponibile per {part.name} è sceso sotto il livello minimo configurato"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
-msgstr ""
+msgstr "Non hai il permesso di modificare la distinta base."
 
 #: part/templates/part/bom.html:15
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
-msgstr ""
+msgstr "La distinta base per <em>%(part)s</em> è cambiata e deve essere convalidata.<br>"
 
 #: part/templates/part/bom.html:17
 #, python-format
 msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr ""
+msgstr "La distinta base per <em>%(part)s</em> è stato controllato da %(checker)s il %(check_date)s"
 
 #: part/templates/part/bom.html:21
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr ""
+msgstr "La distinta base per <em>%(part)s</em> non è stata convalidata."
 
 #: part/templates/part/bom.html:30 part/templates/part/detail.html:290
 msgid "BOM actions"
-msgstr ""
+msgstr "Azioni Distinta Base"
 
 #: part/templates/part/bom.html:34
 msgid "Delete Items"
@@ -5657,11 +5657,11 @@ msgstr "Crea Articolo"
 
 #: part/templates/part/category.html:355
 msgid "Create another part after this one"
-msgstr ""
+msgstr "Crea un altro articolo dopo questo"
 
 #: part/templates/part/category.html:356
 msgid "Part created successfully"
-msgstr ""
+msgstr "Articolo creato con successo"
 
 #: part/templates/part/category_sidebar.html:13
 msgid "Import Parts"
@@ -5669,35 +5669,35 @@ msgstr "Importa Articoli"
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:407
 msgid "Duplicate Part"
-msgstr ""
+msgstr "Duplica articolo"
 
 #: part/templates/part/copy_part.html:10
 #, python-format
 msgid "Make a copy of part '%(full_name)s'."
-msgstr ""
+msgstr "Crea una copia dell'articolo '%(full_name)s'."
 
 #: part/templates/part/copy_part.html:14
 #: part/templates/part/create_part.html:11
 msgid "Possible Matching Parts"
-msgstr ""
+msgstr "Possibili articoli corrispondenti"
 
 #: part/templates/part/copy_part.html:15
 #: part/templates/part/create_part.html:12
 msgid "The new part may be a duplicate of these existing parts"
-msgstr ""
+msgstr "Il nuovo articolo potrebbe essere un duplicato di questi articoli esistenti"
 
 #: part/templates/part/create_part.html:17
 #, python-format
 msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
-msgstr ""
+msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
 
 #: part/templates/part/detail.html:20
 msgid "Part Stock"
-msgstr ""
+msgstr "Articolo Stock"
 
 #: part/templates/part/detail.html:44
 msgid "Refresh scheduling data"
-msgstr ""
+msgstr "Aggiorna i dati di pianificazione"
 
 #: part/templates/part/detail.html:45 part/templates/part/prices.html:15
 #: templates/js/translated/tables.js:524
@@ -5706,7 +5706,7 @@ msgstr "Aggiorna"
 
 #: part/templates/part/detail.html:65
 msgid "Add stocktake information"
-msgstr ""
+msgstr "Aggiungi informazioni inventario"
 
 #: part/templates/part/detail.html:66 part/templates/part/part_sidebar.html:49
 #: stock/admin.py:107 templates/js/translated/stock.js:1913
@@ -5715,11 +5715,11 @@ msgstr "Inventario"
 
 #: part/templates/part/detail.html:82
 msgid "Part Test Templates"
-msgstr ""
+msgstr "Modelli Articoli Test"
 
 #: part/templates/part/detail.html:87
 msgid "Add Test Template"
-msgstr ""
+msgstr "Aggiungi Modelli Test"
 
 #: part/templates/part/detail.html:144 stock/templates/stock/item.html:53
 msgid "Sales Order Allocations"
@@ -5727,11 +5727,11 @@ msgstr "Assegnazione Ordine Di Vendita"
 
 #: part/templates/part/detail.html:164
 msgid "Part Notes"
-msgstr ""
+msgstr "Note Articolo"
 
 #: part/templates/part/detail.html:179
 msgid "Part Variants"
-msgstr ""
+msgstr "Varianti articolo"
 
 #: part/templates/part/detail.html:183
 msgid "Create new variant"
@@ -6047,55 +6047,55 @@ msgstr ""
 #: part/templates/part/part_pricing.html:48 part/templates/part/prices.html:94
 #: part/templates/part/prices.html:262
 msgid "BOM Pricing"
-msgstr ""
+msgstr "Prezzi Distinta Base"
 
 #: part/templates/part/part_pricing.html:66
 msgid "Unit Purchase Price"
-msgstr ""
+msgstr "Prezzo di Acquisto Unitario"
 
 #: part/templates/part/part_pricing.html:72
 msgid "Total Purchase Price"
-msgstr ""
+msgstr "Prezzo Totale D'Acquisto"
 
 #: part/templates/part/part_pricing.html:83
 msgid "No BOM pricing available"
-msgstr ""
+msgstr "Nessun prezzo distinta base disponibile"
 
 #: part/templates/part/part_pricing.html:92
 msgid "Internal Price"
-msgstr ""
+msgstr "Prezzo interno"
 
 #: part/templates/part/part_pricing.html:123
 msgid "No pricing information is available for this part."
-msgstr ""
+msgstr "Nessuna informazione sul prezzo è disponibile per questo articolo."
 
 #: part/templates/part/part_scheduling.html:14
 msgid "Scheduled Quantity"
-msgstr ""
+msgstr "Quantità Programmata"
 
 #: part/templates/part/part_sidebar.html:11
 msgid "Variants"
-msgstr ""
+msgstr "Varianti"
 
 #: part/templates/part/part_sidebar.html:44
 msgid "Scheduling"
-msgstr ""
+msgstr "Programmazione"
 
 #: part/templates/part/part_sidebar.html:53
 msgid "Test Templates"
-msgstr ""
+msgstr "Modelli test"
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
-msgstr ""
+msgstr "Seleziona da immagini esistenti"
 
 #: part/templates/part/prices.html:11
 msgid "Pricing Overview"
-msgstr ""
+msgstr "Panoramica prezzi"
 
 #: part/templates/part/prices.html:14
 msgid "Refresh Part Pricing"
-msgstr ""
+msgstr "Aggiorna prezzo articolo"
 
 #: part/templates/part/prices.html:25 stock/admin.py:106
 #: stock/templates/stock/item_base.html:440
@@ -6107,58 +6107,58 @@ msgstr "Ultimo aggiornamento"
 
 #: part/templates/part/prices.html:34 part/templates/part/prices.html:126
 msgid "Price Category"
-msgstr ""
+msgstr "Categoria prezzo"
 
 #: part/templates/part/prices.html:35 part/templates/part/prices.html:127
 msgid "Minimum"
-msgstr ""
+msgstr "Minimo"
 
 #: part/templates/part/prices.html:36 part/templates/part/prices.html:128
 msgid "Maximum"
-msgstr ""
+msgstr "Massimo"
 
 #: part/templates/part/prices.html:49 part/templates/part/prices.html:185
 msgid "Internal Pricing"
-msgstr ""
+msgstr "Prezzo interno"
 
 #: part/templates/part/prices.html:64 part/templates/part/prices.html:217
 msgid "Purchase History"
-msgstr ""
+msgstr "Cronologia acquisti"
 
 #: part/templates/part/prices.html:103 part/templates/part/prices.html:286
 msgid "Variant Pricing"
-msgstr ""
+msgstr "Variazione prezzo"
 
 #: part/templates/part/prices.html:111
 msgid "Overall Pricing"
-msgstr ""
+msgstr "Prezzi Totali"
 
 #: part/templates/part/prices.html:155 part/templates/part/prices.html:338
 msgid "Sale History"
-msgstr ""
+msgstr "Storico vendite"
 
 #: part/templates/part/prices.html:168
 msgid "Sale price data is not available for this part"
-msgstr ""
+msgstr "I dati del prezzo di vendita non sono disponibili per questo prodotto"
 
 #: part/templates/part/prices.html:175
 msgid "Price range data is not available for this part."
-msgstr ""
+msgstr "I dati della fascia di prezzo non sono disponibili per questo prodotto."
 
 #: part/templates/part/prices.html:186 part/templates/part/prices.html:218
 #: part/templates/part/prices.html:239 part/templates/part/prices.html:263
 #: part/templates/part/prices.html:287 part/templates/part/prices.html:310
 #: part/templates/part/prices.html:339
 msgid "Jump to overview"
-msgstr ""
+msgstr "Torna al riepilogo"
 
 #: part/templates/part/prices.html:191
 msgid "Add Internal Price Break"
-msgstr ""
+msgstr "Aggiungi prezzo interno d'nterruzione"
 
 #: part/templates/part/prices.html:309
 msgid "Sale Pricing"
-msgstr ""
+msgstr "Prezzo di Vendita"
 
 #: part/templates/part/prices.html:315
 msgid "Add Sell Price Break"
