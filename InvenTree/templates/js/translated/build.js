@@ -46,6 +46,7 @@ function buildFormFields() {
         },
         title: {},
         quantity: {},
+        priority: {},
         parent: {
             filters: {
                 part_detail: true,
@@ -2595,6 +2596,12 @@ function loadBuildTable(table, options) {
                 field: 'title',
                 title: '{% trans "Description" %}',
                 switchable: true,
+            },
+            {
+                field: 'priority',
+                title: '{% trans "Priority" %}',
+                switchable: true,
+                sortable: true,
             },
             {
                 field: 'part',

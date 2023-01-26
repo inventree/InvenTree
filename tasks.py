@@ -196,6 +196,14 @@ def translate_stats(c):
 
     The file generated from this is needed for the UI.
     """
+
+    # Recompile the translation files (.mo)
+    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
+    try:
+        manage(c, 'compilemessages', pty=True)
+    except Exception:
+        print("WARNING: Translation files could not be compiled:")
+
     path = Path('InvenTree', 'script', 'translation_stats.py')
     c.run(f'python3 {path}')
 
@@ -232,7 +240,7 @@ def restore(c):
     manage(c, "mediarestore --noinput --uncompress")
 
 
-@task(pre=[backup, ], post=[rebuild_models, rebuild_thumbnails])
+@task(post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
     """Performs database migrations.
 
@@ -250,8 +258,13 @@ def migrate(c):
     print("InvenTree database migrations completed!")
 
 
-@task(pre=[install, migrate, static, clean_settings, translate_stats])
-def update(c):
+@task(
+    post=[static, clean_settings, translate_stats],
+    help={
+        'skip_backup': 'Skip database backup step (advanced users)'
+    }
+)
+def update(c, skip_backup=False):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -260,17 +273,21 @@ def update(c):
     The following tasks are performed, in order:
 
     - install
+    - backup (optional)
     - migrate
     - static
     - clean_settings
     - translate_stats
     """
-    # Recompile the translation files (.mo)
-    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
-    try:
-        manage(c, 'compilemessages', pty=True)
-    except Exception:
-        print("WARNING: Translation files could not be compiled:")
+
+    # Ensure required components are installed
+    install(c)
+
+    if not skip_backup:
+        backup(c)
+
+    # Perform database migrations
+    migrate(c)
 
 
 # Data tasks

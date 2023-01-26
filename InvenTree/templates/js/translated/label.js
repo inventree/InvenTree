@@ -235,7 +235,7 @@ function selectLabel(labels, items, options={}) {
     // Request a list of available label printing plugins from the server
     if (plugins_enabled) {
         inventreeGet(
-            `/api/plugin/`,
+            `/api/plugins/`,
             {
                 mixin: 'labels',
             },
@@ -321,6 +321,7 @@ function selectLabel(labels, items, options={}) {
     });
 
     modalEnable(modal, true);
+    modalShowSubmitButton(modal, true);
     modalSetTitle(modal, '{% trans "Select Label Template" %}');
     modalSetContent(modal, html);
 

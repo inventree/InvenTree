@@ -23,7 +23,7 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     """Builtin BarcodePlugin for matching and generating internal barcodes."""
 
     NAME = "InvenTreeBarcode"
-    TITLE = _("Inventree Barcodes")
+    TITLE = _("InvenTree Barcodes")
     DESCRIPTION = _("Provides native support for barcodes")
     VERSION = "2.0.0"
     AUTHOR = _("InvenTree contributors")
@@ -55,7 +55,7 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             url = instance.get_absolute_url()
             data['web_url'] = url
         else:
-            url = None
+            url = None  # pragma: no cover
 
         response = {
             label: data
