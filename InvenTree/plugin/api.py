@@ -278,6 +278,10 @@ plugin_api_urls = [
     re_path(f'^{PLUGIN_BASE}/', include([
         # Plugin settings URLs
         re_path(r'^settings/', include([
+            # WebConnection  - SupplierMixin
+            re_path(r'^(?P<plugin>\w+)/connection/(?P<connection_key>\w+)/(?P<connection>\w+)/(?P<key>\w+)/', WebConnectionSettingDetail.as_view(), name='api-plugin-webconnection-setting-detail'),
+
+            # PluginSetting
             re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
             re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
         ])),
@@ -292,44 +296,16 @@ plugin_api_urls = [
         re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
         re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'),
 
+        # Connections
+        re_path(r'^connection/', include([
+            re_path(r'^(?P<pk>\d+)/', WebConnectionDetail.as_view(), name='api-plugin-connection-detail'),
+            re_path(r'^.*$', WebConnectionList.as_view(), name='api-plugin-connection-list'),
+        ])),
+
+        # Search backend
+        re_path(r'^(?P<plugin>\w+)/search/', PluginSearch.as_view(), name='api-plugin-search'),
+
         # Anything else
         re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
     ]))
 ]
-
-general_plugin_api_urls = [
-
-    # Plugin settings URLs
-    re_path(r'^settings/', include([
-        # WebConnection  - SupplierMixin
-        re_path(r'^(?P<plugin>\w+)/connection/(?P<connection_key>\w+)/(?P<connection>\w+)/(?P<key>\w+)/', WebConnectionSettingDetail.as_view(), name='api-plugin-webconnection-setting-detail'),
-
-        # PluginSetting
-        re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
-        re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
-    ])),
-
-    # Detail views for a single PluginConfig item
-    re_path(r'^(?P<pk>\d+)/', include([
-        re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
-    ])),
-
-    # Install endpoint
-    re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
-
-    # Connections
-    re_path(r'^connection/', include([
-        re_path(r'^(?P<pk>\d+)/', WebConnectionDetail.as_view(), name='api-plugin-connection-detail'),
-        re_path(r'^.*$', WebConnectionList.as_view(), name='api-plugin-connection-list'),
-    ])),
-
-    # Search backend
-    re_path(r'^(?P<plugin>\w+)/search/', PluginSearch.as_view(), name='api-plugin-search'),
-
-    # Anything else
-    re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
-]
-
-plugin_api_urls.append(
-    re_path(r'^plugin/', include(general_plugin_api_urls))
-)
