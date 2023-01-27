@@ -391,6 +391,17 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
         parent_attr = 'variant_of'
 
+    def __init__(self, *args, **kwargs):
+        """Custom initialization routine for the Part model.
+
+        Ensures that custom serializer fields (without matching model fields) are removed
+        """
+
+        # Remote image specified during creation via API
+        kwargs.pop('remote_image', None)
+
+        super().__init__(*args, **kwargs)
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the Part model"""
@@ -950,7 +961,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         max_length=20, default="",
         blank=True, null=True,
         verbose_name=_('Units'),
-        help_text=_('Stock keeping units for this part')
+        help_text=_('Units of measure for this part')
     )
 
     assembly = models.BooleanField(

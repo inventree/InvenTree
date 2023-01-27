@@ -235,7 +235,7 @@ function selectLabel(labels, items, options={}) {
     // Request a list of available label printing plugins from the server
     if (plugins_enabled) {
         inventreeGet(
-            `/api/plugin/`,
+            `/api/plugins/`,
             {
                 mixin: 'labels',
             },
