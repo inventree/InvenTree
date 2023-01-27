@@ -20,6 +20,7 @@
 */
 
 /* exported
+    createPart,
     deletePart,
     deletePartCategory,
     duplicateBom,
@@ -87,7 +88,8 @@ function partFields(options={}) {
             },
             filters: {
                 structural: false,
-            }
+            },
+            value: options.category || null,
         },
         name: {},
         IPN: {},
@@ -378,6 +380,32 @@ function deletePartCategory(pk, options={}) {
 }
 
 
+/*
+ * Launches a form to create a new Part instance
+ */
+function createPart(options={}) {
+
+    options.create = true;
+
+    constructForm('{% url "api-part-list" %}', {
+        method: 'POST',
+        fields: partFields(options),
+        groups: partGroups(),
+        title: '{% trans "Create Part" %}',
+        reloadFormAfterSuccess: true,
+        persistMessage: '{% trans "Create another part after this one" %}',
+        successMessage: '{% trans "Part created successfully" %}',
+        onSuccess: function(data) {
+            // Follow the new part
+            location.href = `/part/${data.pk}/`;
+        },
+    });
+}
+
+
+/*
+ * Launches a form to edit an existing Part instance
+ */
 function editPart(pk) {
 
     var url = `/api/part/${pk}/`;
