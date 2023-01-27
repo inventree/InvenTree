@@ -123,13 +123,15 @@ class PluginConfig(models.Model):
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
 
-        # append settings from registry
+        # Append settings from registry
         plugin = registry.plugins_full.get(self.key, None)
 
         def get_plugin_meta(name):
-            if plugin:
-                return str(getattr(plugin, name, None))
-            return None
+            if not plugin:
+                return None
+            if not self.active:
+                return _('Unvailable')
+            return str(getattr(plugin, name, None))
 
         self.meta = {
             key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author',
