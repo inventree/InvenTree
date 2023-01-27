@@ -94,6 +94,17 @@ class Company(MetadataMixin, models.Model):
         ]
         verbose_name_plural = "Companies"
 
+    def __init__(self, *args, **kwargs):
+        """Custom initialization routine for the Company model.
+
+        Ensures that custom serializer fields (without matching model fields) are removed
+        """
+
+        # Remote image specified during creation via API
+        kwargs.pop('remote_image', None)
+
+        super().__init__(*args, **kwargs)
+
     name = models.CharField(max_length=100, blank=False,
                             help_text=_('Company name'),
                             verbose_name=_('Company name'))
