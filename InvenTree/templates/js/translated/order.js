@@ -2626,10 +2626,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
                         fields: fields,
                         data: data,
                         title: '{% trans "Duplicate Line" %}',
-                        onSuccess: function(response) {
-                            $(table).bootstrapTable('refresh');
-                            reloadTotal();
-                        }
+                        onSuccess: reloadTable
                     });
                 }
             });
@@ -2990,7 +2987,6 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 method: 'DELETE',
                 onSuccess: function() {
                     $(table).bootstrapTable('refresh');
-                    reloadTotal();
                 }
             });
         });
@@ -4098,8 +4094,9 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         data: data,
                         title: '{% trans "Duplicate Line Item" %}',
                         onSuccess: function(response) {
-                            $(table).bootstrapTable('refresh');
-                            reloadTotal();
+                            //$(table).bootstrapTable('refresh');
+                            //reloadTotal();
+                            reloadTable();
                         }
                     });
                 }
@@ -4190,8 +4187,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                         // Reload the pending shipment table
                         $('#pending-shipments-table').bootstrapTable('refresh');
-
-                        reloadTotal();
                     }
                 }
             );
