@@ -4093,11 +4093,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         fields: fields,
                         data: data,
                         title: '{% trans "Duplicate Line Item" %}',
-                        onSuccess: function(response) {
-                            //$(table).bootstrapTable('refresh');
-                            //reloadTotal();
-                            reloadTable();
-                        }
+                        onSuccess: reloadTable
                     });
                 }
             });
