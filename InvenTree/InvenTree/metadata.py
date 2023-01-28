@@ -256,7 +256,7 @@ class InvenTreeMetadata(SimpleMetadata):
             if isinstance(field, serializers.PrimaryKeyRelatedField):
                 model = field.queryset.model
             else:
-                logger.debug("Could not extract model for:", field_info['label'], '->', field)
+                logger.debug("Could not extract model for:", field_info.get('label'), '->', field)
                 model = None
 
             if model:
