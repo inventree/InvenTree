@@ -576,7 +576,7 @@ function createSalesOrderLineItem(options={}) {
         method: 'POST',
         title: '{% trans "Add Line Item" %}',
         onSuccess: function(response) {
-            handleFormSuccess(response, options)
+            handleFormSuccess(response, options);
         },
     });
 }
