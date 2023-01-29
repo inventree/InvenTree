@@ -30,6 +30,7 @@
     createPurchaseOrder,
     createPurchaseOrderLineItem,
     createSalesOrder,
+    createSalesOrderLineItem,
     createSalesOrderShipment,
     duplicatePurchaseOrder,
     editPurchaseOrder,
@@ -519,7 +520,9 @@ function createSalesOrderShipment(options={}) {
 }
 
 
-// Create a new SalesOrder
+/*
+ * Create a new SalesOrder
+ */
 function createSalesOrder(options={}) {
 
     constructForm('{% url "api-so-list" %}', {
@@ -557,6 +560,24 @@ function createSalesOrder(options={}) {
             location.href = `/order/sales-order/${data.pk}/`;
         },
         title: '{% trans "Create Sales Order" %}',
+    });
+}
+
+
+/*
+ * Launch a modal form to create a new SalesOrderLineItem
+ */
+function createSalesOrderLineItem(options={}) {
+
+    var fields = soLineItemFields(options);
+
+    constructForm('{% url "api-so-line-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Line Item" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options)
+        },
     });
 }
 
