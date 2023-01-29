@@ -2,7 +2,11 @@
 
 from django.urls import reverse
 
+from rest_framework.exceptions import NotFound
+
 from InvenTree.api_tester import InvenTreeAPITestCase, PluginMixin
+from plugin.api import check_plugin
+from plugin.models import PluginConfig
 
 
 class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
@@ -86,6 +90,42 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         self.assertEqual(data['confirm'][0].title().upper(), 'Installation not confirmed'.upper())
 
+    def test_plugin_activate(self):
+        """Test the plugin activate."""
+
+        test_plg = self.plugin_confs.first()
+
+        def assert_plugin_active(self, active):
+            self.assertEqual(PluginConfig.objects.all().first().active, active)
+
+        # Should not work - not a superuser
+        response = self.client.post(reverse('api-plugin-activate'), {}, follow=True)
+        self.assertEqual(response.status_code, 403)
+
+        # Make user superuser
+        self.user.is_superuser = True
+        self.user.save()
+
+        # Deactivate plugin
+        test_plg.active = False
+        test_plg.save()
+
+        # Activate plugin with detail url
+        assert_plugin_active(self, False)
+        response = self.client.patch(reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.id}), {}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        assert_plugin_active(self, True)
+
+        # Deactivate plugin
+        test_plg.active = False
+        test_plg.save()
+
+        # Activate plugin
+        assert_plugin_active(self, False)
+        response = self.client.patch(reverse('api-plugin-activate'), {'pk': test_plg.pk}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        assert_plugin_active(self, True)
+
     def test_admin_action(self):
         """Test the PluginConfig action commands."""
         url = reverse('admin:plugin_pluginconfig_changelist')
@@ -135,3 +175,21 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             plg_inactive.active = True
             plg_inactive.save()
         self.assertEqual(cm.warning.args[0], 'A reload was triggered')
+
+    def test_check_plugin(self):
+        """Test check_plugin function."""
+
+        # No argument
+        with self.assertRaises(NotFound) as exc:
+            check_plugin(plugin_slug=None, plugin_pk=None)
+        self.assertEqual(str(exc.exception.detail), 'Plugin not specified')
+
+        # Wrong with slug
+        with self.assertRaises(NotFound) as exc:
+            check_plugin(plugin_slug='123abc', plugin_pk=None)
+        self.assertEqual(str(exc.exception.detail), "Plugin '123abc' not installed")
+
+        # Wrong with pk
+        with self.assertRaises(NotFound) as exc:
+            check_plugin(plugin_slug=None, plugin_pk='123')
+        self.assertEqual(str(exc.exception.detail), "Plugin '123' not installed")
