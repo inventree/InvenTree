@@ -304,6 +304,34 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
+class DuplicatePartSerializer(serializers.Serializer):
+    """Serializer for specifying options when duplicating a Part.
+
+    The fields in this serializer control how the Part is duplicated.
+    """
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        label=_('Original Part'), help_text=_('Select original part to duplicate'),
+        required=True,
+    )
+
+    copy_image = serializers.BooleanField(
+        label=_('Copy Image'), help_text=_('Copy image from original part'),
+        default=False,
+    )
+
+    copy_bom = serializers.BooleanField(
+        label=_('Copy BOM'), help_text=_('Copy bill of materials from original part'),
+        default=False,
+    )
+
+    copy_parameters = serializers.BooleanField(
+        label=_('Copy Parameters'), help_text=_('Copy parameter data from original part'),
+        default=False,
+    )
+
+
 class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for complete detail information of a part.
 
@@ -313,6 +341,17 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     def get_api_url(self):
         """Return the API url associated with this serializer"""
         return reverse_lazy('api-part-list')
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new Part instance"""
+
+        fields = super().skip_create_fields()
+
+        fields += [
+            'duplicate',
+        ]
+
+        return fields
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for PartSerializer:
@@ -325,6 +364,8 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
         parameters = kwargs.pop('parameters', False)
 
+        create = kwargs.pop('create', False)
+
         super().__init__(*args, **kwargs)
 
         if category_detail is not True:
@@ -332,6 +373,11 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
         if parameters is not True:
             self.fields.pop('parameters')
+
+        if create is not True:
+            # These fields are only used for the LIST API endpoint
+            for f in self.skip_create_fields():
+                self.fields.pop(f)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -427,6 +473,12 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         read_only=True,
     )
 
+    # Extra fields used only for creation of a new Part instance
+    duplicate = DuplicatePartSerializer(
+        label=_('Duplicate Part'), help_text=_('Copy initial data from another Part'),
+        write_only=True, required=False
+    )
+
     class Meta:
         """Metaclass defining serializer fields"""
         model = Part
@@ -475,6 +527,9 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'virtual',
             'pricing_min',
             'pricing_max',
+
+            # Fields only used for Part creation
+            'duplicate',
         ]
 
         read_only_fields = [

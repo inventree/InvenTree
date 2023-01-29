@@ -1096,25 +1096,7 @@ class PartFilter(rest_filters.FilterSet):
 
 
 class PartList(APIDownloadMixin, ListCreateAPI):
-    """API endpoint for accessing a list of Part objects.
-
-    - GET: Return list of objects
-    - POST: Create a new Part object
-
-    The Part object list can be filtered by:
-        - category: Filter by PartCategory reference
-        - cascade: If true, include parts from sub-categories
-        - starred: Is the part "starred" by the current user?
-        - is_template: Is the part a template part?
-        - variant_of: Filter by variant_of Part reference
-        - assembly: Filter by assembly field
-        - component: Filter by component field
-        - trackable: Filter by trackable field
-        - purchaseable: Filter by purcahseable field
-        - salable: Filter by salable field
-        - active: Filter by active field
-        - ancestor: Filter parts by 'ancestor' (template / variant tree)
-    """
+    """API endpoint for accessing a list of Part objects, or creating a new Part instance"""
 
     serializer_class = part_serializers.PartSerializer
     queryset = Part.objects.all()
@@ -1126,6 +1108,9 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         """Return a serializer instance for this endpoint"""
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
+
+        # Indicate that we can create a new Part via this endpoint
+        kwargs['create'] = True
 
         # Pass a list of "starred" parts to the current user to the serializer
         # We do this to reduce the number of database queries required!
