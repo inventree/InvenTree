@@ -536,6 +536,30 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'barcode_hash',
         ]
 
+    @transaction.atomic
+    def create(self, validated_data):
+        """Custom method for creating a new Part instance using this serializer"""
+
+        duplicate = validated_data.pop('duplicate', None)
+
+        instance = super().create(validated_data)
+
+        if duplicate:
+            # Copy data from original Part
+            original = duplicate['part']
+
+            if duplicate['copy_bom']:
+                instance.copy_bom_from(original)
+
+            if duplicate['copy_image']:
+                instance.image = original.image
+                instance.save()
+
+            if duplicate['copy_parameters']:
+                instance.copy_parameters_from(original)
+
+        return instance
+
     def save(self):
         """Save the Part instance"""
 

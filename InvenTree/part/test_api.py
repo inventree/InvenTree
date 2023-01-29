@@ -1302,6 +1302,10 @@ class PartCreationTests(PartAPITestBase):
         self.assertEqual(response.data['name'], name)
         self.assertEqual(response.data['description'], description)
 
+    def test_duplication(self):
+        """Test part duplication options"""
+        ...
+
 
 class PartDetailTests(PartAPITestBase):
     """Test that we can create / edit / delete Part objects via the API."""
