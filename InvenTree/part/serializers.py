@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 
+import company.models
 import InvenTree.helpers
 import part.filters
 import stock.models
@@ -350,6 +351,44 @@ class InitialStockSerializer(serializers.Serializer):
     )
 
 
+class InitialSupplierSerializer(serializers.Serializer):
+    """Serializer for adding initial supplier / manufacturer information"""
+
+    supplier = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.Company.objects.all(),
+        label=_('Supplier'), help_text=_('Select supplier'),
+        allow_null=True, required=False,
+    )
+
+    sku = serializers.CharField(
+        max_length=100, required=False,
+        label=_('SKU'), help_text=_('Supplier stock keeping unit'),
+    )
+
+    manufacturer = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.Company.objects.all(),
+        label=_('Manufacturer'), help_text=_('Select manufacturer'),
+        allow_null=True, required=False,
+    )
+
+    mpn = serializers.CharField(
+        max_length=100, required=False,
+        label=_('MPN'), help_text=_('Manufacturer part number'),
+    )
+
+    def validate_supplier(self, company):
+        """Validation for the provided Supplier"""
+
+        if not company.is_supplier:
+            raise serializers.ValidationError(_('Selected company is not a valid supplier'))
+
+    def validate_manufacturer(self, company):
+        """Validation for the provided Manufacturer"""
+
+        if not company.is_manufacturer:
+            raise serializers.ValidationError(_('Selected company is not a valid manufacturer'))
+
+
 class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for complete detail information of a part.
 
@@ -368,6 +407,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         fields += [
             'duplicate',
             'initial_stock',
+            'initial_supplier',
         ]
 
         return fields
@@ -503,6 +543,11 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         write_only=True, required=False,
     )
 
+    initial_supplier = InitialSupplierSerializer(
+        label=_('Supplier Information'), help_text=_('Add initial supplier information for this part'),
+        write_only=True, required=False,
+    )
+
     class Meta:
         """Metaclass defining serializer fields"""
         model = Part
@@ -555,6 +600,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             # Fields only used for Part creation
             'duplicate',
             'initial_stock',
+            'initial_supplier',
         ]
 
         read_only_fields = [
