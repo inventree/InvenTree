@@ -205,7 +205,8 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
                 # Remove any fields we do not wish to provide to the model
                 initial_data.pop(field, None)
 
-            instance = self.Meta.model._default_manager.create(**initial_data)
+            # Create a (RAM only) instance for extra testing
+            instance = self.Meta.model(**initial_data)
         else:
             # Instance already exists (we are updating!)
             instance = self.instance
