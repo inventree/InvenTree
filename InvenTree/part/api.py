@@ -1,7 +1,6 @@
 """Provides a JSON API for the Part app."""
 
 import functools
-from decimal import Decimal, InvalidOperation
 
 from django.db import transaction
 from django.db.models import Count, F, Q
@@ -33,7 +32,6 @@ from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from part.admin import PartCategoryResource, PartResource
 from plugin.serializers import MetadataSerializer
-from stock.models import StockItem, StockLocation
 
 from . import serializers as part_serializers
 from . import views
@@ -1129,6 +1127,13 @@ class PartList(APIDownloadMixin, ListCreateAPI):
 
         return self.serializer_class(*args, **kwargs)
 
+    def get_serializer_context(self):
+        """Extend serializer context data"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
+
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a data file"""
         dataset = PartResource().export(queryset=queryset)
@@ -1225,46 +1230,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         }
 
         part.save(**{'add_category_templates': copy_templates})
-
-        # Optionally create initial stock item
-        initial_stock = str2bool(data.get('initial_stock', False))
-
-        if initial_stock:
-            try:
-
-                initial_stock_quantity = Decimal(data.get('initial_stock_quantity', ''))
-
-                if initial_stock_quantity <= 0:
-                    raise ValidationError({
-                        'initial_stock_quantity': [_('Must be greater than zero')],
-                    })
-            except (ValueError, InvalidOperation):  # Invalid quantity provided
-                raise ValidationError({
-                    'initial_stock_quantity': [_('Must be a valid quantity')],
-                })
-
-            initial_stock_location = data.get('initial_stock_location', None)
-
-            try:
-                initial_stock_location = StockLocation.objects.get(pk=initial_stock_location)
-            except (ValueError, StockLocation.DoesNotExist):
-                initial_stock_location = None
-
-            if initial_stock_location is None:
-                if part.default_location is not None:
-                    initial_stock_location = part.default_location
-                else:
-                    raise ValidationError({
-                        'initial_stock_location': [_('Specify location for initial part stock')],
-                    })
-
-            stock_item = StockItem(
-                part=part,
-                quantity=initial_stock_quantity,
-                location=initial_stock_location,
-            )
-
-            stock_item.save(user=request.user)
 
         # Optionally add manufacturer / supplier data to the part
         if part.purchaseable and str2bool(data.get('add_supplier_info', False)):

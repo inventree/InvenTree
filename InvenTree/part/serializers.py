@@ -5,6 +5,7 @@ import io
 from decimal import Decimal
 
 from django.core.files.base import ContentFile
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, FloatField, Q
 from django.db.models.functions import Coalesce
@@ -16,6 +17,7 @@ from sql_util.utils import SubqueryCount, SubquerySum
 
 import InvenTree.helpers
 import part.filters
+import stock.models
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.serializers import (DataFileExtractSerializer,
                                    DataFileUploadSerializer,
@@ -332,6 +334,22 @@ class DuplicatePartSerializer(serializers.Serializer):
     )
 
 
+class InitialStockSerializer(serializers.Serializer):
+    """Serializer for creating initial stock quantity."""
+
+    quantity = serializers.DecimalField(
+        max_digits=15, decimal_places=5, validators=[MinValueValidator(0)],
+        label=_('Initial Stock Quantity'), help_text=_('Specify initial stock quantity for this Part'),
+        required=True,
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        label=_('Initial Stock Location'), help_text=_('Specify initial stock location for this Part'),
+        allow_null=True, required=False,
+    )
+
+
 class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for complete detail information of a part.
 
@@ -349,6 +367,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
         fields += [
             'duplicate',
+            'initial_stock',
         ]
 
         return fields
@@ -479,6 +498,11 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         write_only=True, required=False
     )
 
+    initial_stock = InitialStockSerializer(
+        label=_('Initial Stock'), help_text=_('Create Part with initial stock quantity'),
+        write_only=True, required=False,
+    )
+
     class Meta:
         """Metaclass defining serializer fields"""
         model = Part
@@ -530,6 +554,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
             # Fields only used for Part creation
             'duplicate',
+            'initial_stock',
         ]
 
         read_only_fields = [
@@ -541,11 +566,12 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         """Custom method for creating a new Part instance using this serializer"""
 
         duplicate = validated_data.pop('duplicate', None)
+        initial_stock = validated_data.pop('initial_stock', None)
 
         instance = super().create(validated_data)
 
+        # Copy data from original Part
         if duplicate:
-            # Copy data from original Part
             original = duplicate['part']
 
             if duplicate['copy_bom']:
@@ -557,6 +583,20 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
             if duplicate['copy_parameters']:
                 instance.copy_parameters_from(original)
+
+        # Create initial stock entry
+        if initial_stock:
+            quantity = initial_stock['quantity']
+            location = initial_stock['location'] or instance.default_location
+
+            if quantity > 0:
+                stockitem = stock.models.StockItem(
+                    part=instance,
+                    quantity=quantity,
+                    location=location,
+                )
+
+                stockitem.save(user=self.context['request'].user)
 
         return instance
 
