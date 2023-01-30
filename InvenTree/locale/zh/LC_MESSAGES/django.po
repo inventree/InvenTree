@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-29 04:45+0000\n"
-"PO-Revision-Date: 2023-01-29 09:42\n"
+"PO-Revision-Date: 2023-01-30 10:43\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -92,11 +92,11 @@ msgstr "您必须输入相同的 Email 。"
 
 #: InvenTree/forms.py:230 InvenTree/forms.py:236
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "所提供的主要电子邮件地址无效。"
 
 #: InvenTree/forms.py:242
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "提供的电子邮件域未被核准。"
 
 #: InvenTree/helpers.py:166
 msgid "Connection error"
@@ -515,7 +515,7 @@ msgstr "俄语"
 
 #: InvenTree/settings.py:674
 msgid "Slovenian"
-msgstr ""
+msgstr "斯洛文尼亚"
 
 #: InvenTree/settings.py:675
 msgid "Swedish"
@@ -962,11 +962,11 @@ msgstr "额外的生产备注"
 
 #: build/models.py:299
 msgid "Build Priority"
-msgstr ""
+msgstr "创建优先级"
 
 #: build/models.py:302
 msgid "Priority of this build order"
-msgstr ""
+msgstr "此构建订单的优先级"
 
 #: build/models.py:540
 #, python-brace-format
@@ -1337,11 +1337,11 @@ msgstr "允许分配可替换的部件"
 
 #: build/serializers.py:851
 msgid "Optional Items"
-msgstr ""
+msgstr "可选项目"
 
 #: build/serializers.py:852
 msgid "Allocate optional BOM items to build order"
-msgstr ""
+msgstr "分配可选的BOM项目来建立订单"
 
 #: build/tasks.py:100
 msgid "Stock required for build order"
@@ -1349,12 +1349,12 @@ msgstr "生产订单所需的库存"
 
 #: build/tasks.py:118
 msgid "Overdue Build Order"
-msgstr ""
+msgstr "超时构建顺序"
 
 #: build/tasks.py:123
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr ""
+msgstr "生成订单 {bo} 现在已过期"
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
@@ -1364,7 +1364,7 @@ msgstr "打印操作"
 
 #: build/templates/build/build_base.html:43
 msgid "Print build order report"
-msgstr ""
+msgstr "打印构建订单报告"
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
@@ -1380,7 +1380,7 @@ msgstr "取消生产"
 
 #: build/templates/build/build_base.html:59
 msgid "Duplicate Build"
-msgstr ""
+msgstr "重复构件"
 
 #: build/templates/build/build_base.html:62
 msgid "Delete Build"
@@ -1393,7 +1393,7 @@ msgstr "生产完成"
 
 #: build/templates/build/build_base.html:90
 msgid "Build Description"
-msgstr ""
+msgstr "构建描述"
 
 #: build/templates/build/build_base.html:98
 msgid "No build outputs have been created for this build order"
@@ -1402,20 +1402,20 @@ msgstr "针对此生产订单，尚未创建生产产出"
 #: build/templates/build/build_base.html:104
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
-msgstr ""
+msgstr "此构建订单已分配给销售订单 %(link)s"
 
 #: build/templates/build/build_base.html:111
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
-msgstr ""
+msgstr "此构建订单是 %(link)s 订单的一个子订单"
 
 #: build/templates/build/build_base.html:118
 msgid "Build Order is ready to mark as completed"
-msgstr ""
+msgstr "构建订单已准备好标记为已完成"
 
 #: build/templates/build/build_base.html:123
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr ""
+msgstr "创建订单无法完成，因为未完成的输出"
 
 #: build/templates/build/build_base.html:128
 msgid "Required build quantity has not yet been completed"
@@ -1423,7 +1423,7 @@ msgstr "所需生产数量尚未完成"
 
 #: build/templates/build/build_base.html:133
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr ""
+msgstr "库存尚未被完全分配到此构建订单"
 
 #: build/templates/build/build_base.html:154
 #: build/templates/build/detail.html:138 order/models.py:947
@@ -1480,7 +1480,7 @@ msgstr "发布者"
 #: build/templates/build/build_base.html:200
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2602
 msgid "Priority"
-msgstr ""
+msgstr "优先级"
 
 #: build/templates/build/build_base.html:259
 msgid "Delete Build Order"
@@ -1492,24 +1492,24 @@ msgstr "生产详情"
 
 #: build/templates/build/detail.html:38
 msgid "Stock Source"
-msgstr ""
+msgstr "库存来源"
 
 #: build/templates/build/detail.html:43
 msgid "Stock can be taken from any available location."
-msgstr ""
+msgstr "库存可以从任何可用的地点获得。"
 
 #: build/templates/build/detail.html:49 order/models.py:1060
 #: templates/js/translated/order.js:1716 templates/js/translated/order.js:2458
 msgid "Destination"
-msgstr ""
+msgstr "目的地"
 
 #: build/templates/build/detail.html:56
 msgid "Destination location not specified"
-msgstr ""
+msgstr "目标位置未指定"
 
 #: build/templates/build/detail.html:73
 msgid "Allocated Parts"
-msgstr ""
+msgstr "已分配的部件"
 
 #: build/templates/build/detail.html:80 stock/admin.py:88
 #: stock/templates/stock/item_base.html:168
@@ -1520,7 +1520,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:179
 #: templates/js/translated/table_filters.js:270
 msgid "Batch"
-msgstr ""
+msgstr "批量"
 
 #: build/templates/build/detail.html:133
 #: order/templates/order/order_base.html:158
@@ -1555,15 +1555,15 @@ msgstr "未分配库存"
 
 #: build/templates/build/detail.html:186
 msgid "Automatically allocate stock to build"
-msgstr ""
+msgstr "自动分配存货进行生成"
 
 #: build/templates/build/detail.html:187
 msgid "Auto Allocate"
-msgstr ""
+msgstr "自动分配"
 
 #: build/templates/build/detail.html:189
 msgid "Manually allocate stock to build"
-msgstr ""
+msgstr "手动分配存货进行生成"
 
 #: build/templates/build/detail.html:190 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
@@ -1590,11 +1590,11 @@ msgstr "未跟踪的库存尚未完全分配给此生产订单"
 
 #: build/templates/build/detail.html:217
 msgid "Allocate selected items"
-msgstr ""
+msgstr "分配选定项目"
 
 #: build/templates/build/detail.html:227
 msgid "This Build Order does not have any associated untracked BOM items"
-msgstr ""
+msgstr "此构建订单没有任何关联的 BOM 项目"
 
 #: build/templates/build/detail.html:236
 msgid "Incomplete Build Outputs"
@@ -1602,31 +1602,31 @@ msgstr "未完成的生产产出"
 
 #: build/templates/build/detail.html:240
 msgid "Create new build output"
-msgstr ""
+msgstr "创建新构建输出"
 
 #: build/templates/build/detail.html:241
 msgid "New Build Output"
-msgstr ""
+msgstr "新建构建输出"
 
 #: build/templates/build/detail.html:255
 msgid "Output Actions"
-msgstr ""
+msgstr "输出操作"
 
 #: build/templates/build/detail.html:260
 msgid "Complete selected build outputs"
-msgstr ""
+msgstr "完成选定的构建输出"
 
 #: build/templates/build/detail.html:261
 msgid "Complete outputs"
-msgstr ""
+msgstr "已完成输出"
 
 #: build/templates/build/detail.html:265
 msgid "Delete selected build outputs"
-msgstr ""
+msgstr "删除选中的构建输出"
 
 #: build/templates/build/detail.html:266
 msgid "Delete outputs"
-msgstr ""
+msgstr "删除输出"
 
 #: build/templates/build/detail.html:274
 #: stock/templates/stock/location.html:228 templates/stock_table.html:27
