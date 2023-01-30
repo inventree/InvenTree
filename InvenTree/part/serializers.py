@@ -388,6 +388,25 @@ class InitialSupplierSerializer(serializers.Serializer):
         if not company.is_manufacturer:
             raise serializers.ValidationError(_('Selected company is not a valid manufacturer'))
 
+    def validate(self, data):
+        """Extra validation for this serializer"""
+
+        if company.models.ManufacturerPart.objects.filter(
+            manufacturer=data.get('manufacturer', None),
+            MPN=data.get('mpn', '')
+        ).exists():
+            raise serializers.ValidationError({
+                'mpn': _('Manufacturer part matching this MPN already exists')
+            })
+
+        if company.models.SupplierPart.objects.filter(
+            supplier=data.get('supplier', None),
+            SKU=data.get('sku', '')
+        ).exists():
+            raise serializers.ValidationError({
+                'sku': _('Supplier part matching this SKU already exists')
+            })
+
 
 class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for complete detail information of a part.
@@ -435,7 +454,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
         if create is not True:
             # These fields are only used for the LIST API endpoint
-            for f in self.skip_create_fields():
+            for f in self.skip_create_fields()[1:]:
                 self.fields.pop(f)
 
     @staticmethod
@@ -613,6 +632,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
         duplicate = validated_data.pop('duplicate', None)
         initial_stock = validated_data.pop('initial_stock', None)
+        initial_supplier = validated_data.pop('initial_supplier', None)
 
         instance = super().create(validated_data)
 
@@ -643,6 +663,32 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
                 )
 
                 stockitem.save(user=self.context['request'].user)
+
+        # Create initial supplier information
+        if initial_supplier:
+
+            manufacturer = initial_stock.get('manufacturer', None)
+            mpn = initial_stock.get('mpn', '')
+
+            if manufacturer and mpn:
+                manu_part = company.models.ManufacturerPart.objects.create(
+                    part=instance,
+                    manufacturer=manufacturer,
+                    MPN=mpn
+                )
+            else:
+                manu_part = None
+
+            supplier = initial_stock.get('supplier', None)
+            sku = initial_stock.get('sku', '')
+
+            if supplier and sku:
+                company.models.SupplierPart.objects.create(
+                    part=instance,
+                    supplier=supplier,
+                    SKU=sku,
+                    manufacturer_part=manu_part,
+                )
 
         return instance
 
