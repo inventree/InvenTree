@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-29 04:45+0000\n"
-"PO-Revision-Date: 2023-01-29 09:41\n"
+"PO-Revision-Date: 2023-01-30 10:43\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -966,7 +966,7 @@ msgstr ""
 
 #: build/models.py:302
 msgid "Priority of this build order"
-msgstr ""
+msgstr "Priorität dieses Bauauftrags"
 
 #: build/models.py:540
 #, python-brace-format
@@ -1227,7 +1227,7 @@ msgstr ""
 
 #: build/serializers.py:513
 msgid "Overallocated Stock"
-msgstr ""
+msgstr "Überbelegter Lagerbestand"
 
 #: build/serializers.py:515
 msgid "How do you want to handle extra stock items assigned to the build order"
@@ -1480,7 +1480,7 @@ msgstr "Aufgegeben von"
 #: build/templates/build/build_base.html:200
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2602
 msgid "Priority"
-msgstr ""
+msgstr "Priorität"
 
 #: build/templates/build/build_base.html:259
 msgid "Delete Build Order"
@@ -2089,11 +2089,11 @@ msgstr "Standardsymbol der Artikelkategorie (leer bedeutet kein Symbol)"
 
 #: common/models.py:1145
 msgid "Pricing Decimal Places"
-msgstr ""
+msgstr "Dezimalstellen für Preise"
 
 #: common/models.py:1146
 msgid "Number of decimal places to display when rendering pricing data"
-msgstr ""
+msgstr "Anzahl der Dezimalstellen, die bei der Darstellung der Preisdaten angezeigt werden sollen"
 
 #: common/models.py:1156
 msgid "Use Supplier Pricing"
@@ -2101,7 +2101,7 @@ msgstr "Zulieferer-Preise verwenden"
 
 #: common/models.py:1157
 msgid "Include supplier price breaks in overall pricing calculations"
-msgstr ""
+msgstr "Lieferanten-Staffelpreise in die Gesamt-Preisberechnungen einbeziehen"
 
 #: common/models.py:1163
 msgid "Purchase History Override"
@@ -2109,7 +2109,7 @@ msgstr "Kaufverlauf überschreiben"
 
 #: common/models.py:1164
 msgid "Historical purchase order pricing overrides supplier price breaks"
-msgstr ""
+msgstr "Historische Bestellungspreise überschreiben die Lieferanten-Staffelpreise"
 
 #: common/models.py:1170
 msgid "Use Variant Pricing"
@@ -2117,11 +2117,11 @@ msgstr ""
 
 #: common/models.py:1171
 msgid "Include variant pricing in overall pricing calculations"
-msgstr ""
+msgstr "Variantenpreise in die Gesamt-Preisberechnungen einbeziehen"
 
 #: common/models.py:1177
 msgid "Active Variants Only"
-msgstr ""
+msgstr "Nur aktive Varianten"
 
 #: common/models.py:1178
 msgid "Only use active variant parts for calculating variant pricing"
@@ -2133,7 +2133,7 @@ msgstr ""
 
 #: common/models.py:1185
 msgid "Number of days before part pricing is automatically updated"
-msgstr ""
+msgstr "Anzahl der Tage bis die Teile-Preisberechnungen automatisch aktualisiert werden"
 
 #: common/models.py:1186 common/models.py:1309
 msgid "days"
@@ -2229,7 +2229,7 @@ msgstr "Seriennummern automatisch ausfüllen in Formularen"
 
 #: common/models.py:1279
 msgid "Delete Depleted Stock"
-msgstr ""
+msgstr "Erschöpften Lagerartikel löschen"
 
 #: common/models.py:1280
 msgid "Determines default behaviour when a stock item is depleted"
@@ -2818,7 +2818,7 @@ msgstr "Zeige Zeitplanung für Teile"
 #: common/models.py:1839 part/templates/part/detail.html:61
 #: templates/js/translated/part.js:822
 msgid "Part Stocktake"
-msgstr ""
+msgstr "Inventur"
 
 #: common/models.py:1840
 msgid "Display part stocktake information"
@@ -3885,7 +3885,7 @@ msgstr "Bestellung"
 
 #: order/api.py:1261
 msgid "Unknown"
-msgstr ""
+msgstr "Unbekannt"
 
 #: order/models.py:83
 msgid "Order description"
@@ -4321,7 +4321,7 @@ msgstr "Bestellung {po} ist jetzt überfällig"
 
 #: order/tasks.py:89
 msgid "Overdue Sales Order"
-msgstr ""
+msgstr "Überfälliger Auftrag"
 
 #: order/tasks.py:94
 #, python-brace-format
@@ -4354,7 +4354,7 @@ msgstr "Bestellung stornieren"
 
 #: order/templates/order/order_base.html:55
 msgid "Duplicate order"
-msgstr ""
+msgstr "Bestellung duplizieren"
 
 #: order/templates/order/order_base.html:61
 #: order/templates/order/order_base.html:62
@@ -4740,7 +4740,7 @@ msgstr "Maximale Kosten"
 
 #: part/admin.py:175 part/admin.py:249 stock/admin.py:26 stock/admin.py:98
 msgid "Parent ID"
-msgstr ""
+msgstr "Eltern ID"
 
 #: part/admin.py:176 part/admin.py:251 stock/admin.py:27
 msgid "Parent Name"
@@ -4906,7 +4906,7 @@ msgstr "Teil '{p1}' wird in Stückliste für Teil '{p2}' benutzt (rekursiv)"
 
 #: part/models.py:652
 msgid "Stock item with this serial number already exists"
-msgstr ""
+msgstr "Ein Lagerartikel mit dieser Seriennummer existiert bereits"
 
 #: part/models.py:783
 msgid "Duplicate IPN not allowed in part settings"
@@ -5092,7 +5092,7 @@ msgstr ""
 
 #: part/models.py:2831
 msgid "Maximum historical purchase cost"
-msgstr ""
+msgstr "Maximale historische Einkaufskosten"
 
 #: part/models.py:2836
 msgid "Minimum Internal Price"
@@ -5100,7 +5100,7 @@ msgstr ""
 
 #: part/models.py:2837
 msgid "Minimum cost based on internal price breaks"
-msgstr ""
+msgstr "Minimale Kosten basierend auf den internen Staffelpreisen"
 
 #: part/models.py:2842
 msgid "Maximum Internal Price"
@@ -5275,7 +5275,7 @@ msgstr "Einheit des Parameters"
 
 #: part/models.py:3219
 msgid "Parameter description"
-msgstr ""
+msgstr "Parameter-Beschreibung"
 
 #: part/models.py:3252
 msgid "Parent Part"
@@ -6294,7 +6294,7 @@ msgstr "Labeldruck fehlgeschlagen"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:26
 msgid "InvenTree Barcodes"
-msgstr ""
+msgstr "InvenTree Barcodes"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:27
 msgid "Provides native support for barcodes"
@@ -6683,11 +6683,11 @@ msgstr "Bauauftrag-ID"
 
 #: stock/admin.py:99
 msgid "Sales Order ID"
-msgstr ""
+msgstr "Auftrags-ID"
 
 #: stock/admin.py:100
 msgid "Purchase Order ID"
-msgstr ""
+msgstr "Bestellungs-ID"
 
 #: stock/admin.py:108 stock/models.py:762
 #: stock/templates/stock/item_base.html:427
@@ -8687,7 +8687,7 @@ msgstr "Barcode entspricht keinem Lagerartikel"
 
 #: templates/js/translated/barcode.js:680
 msgid "Scan Stock Container Into Location"
-msgstr ""
+msgstr "Diesen Lagerort per Scan an einen anderen Lagerort verschieben"
 
 #: templates/js/translated/barcode.js:682
 msgid "Scan stock container barcode to check in to this location"
@@ -9149,7 +9149,7 @@ msgstr "Lagerartikel werden automatisch diesem Bauauftrag zugewiesen, entspreche
 
 #: templates/js/translated/build.js:2405
 msgid "If a location is specified, stock will only be allocated from that location"
-msgstr ""
+msgstr "Wenn ein Lagerort angegeben ist, wird der Lagerbestand nur von diesem Ort zugewiesen"
 
 #: templates/js/translated/build.js:2406
 msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
