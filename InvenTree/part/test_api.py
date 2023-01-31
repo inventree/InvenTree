@@ -556,6 +556,7 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'company',
         'test_templates',
         'manufacturer_part',
+        'params',
         'supplier_part',
         'order',
         'stock',
@@ -1331,7 +1332,32 @@ class PartCreationTests(PartAPITestBase):
 
     def test_duplication(self):
         """Test part duplication options"""
-        ...
+
+        # Run a matrix of tests
+        for bom in [True, False]:
+            for img in [True, False]:
+                for params in [True, False]:
+                    response = self.post(
+                        reverse('api-part-list'),
+                        {
+                            'name': f'thing_{bom}{img}{params}',
+                            'description': 'Some description',
+                            'category': 1,
+                            'duplicate': {
+                                'part': 100,
+                                'copy_bom': bom,
+                                'copy_image': img,
+                                'copy_parameters': params,
+                            }
+                        },
+                        expected_code=201,
+                    )
+
+                    part = Part.objects.get(pk=response.data['pk'])
+
+                    # Check new part
+                    self.assertEqual(part.bom_items.count(), 4 if bom else 0)
+                    self.assertEqual(part.parameters.count(), 2 if params else 0)
 
 
 class PartDetailTests(PartAPITestBase):
