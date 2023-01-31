@@ -382,11 +382,15 @@ class InitialSupplierSerializer(serializers.Serializer):
         if not company.is_supplier:
             raise serializers.ValidationError(_('Selected company is not a valid supplier'))
 
+        return company
+
     def validate_manufacturer(self, company):
         """Validation for the provided Manufacturer"""
 
         if not company.is_manufacturer:
             raise serializers.ValidationError(_('Selected company is not a valid manufacturer'))
+
+        return company
 
     def validate(self, data):
         """Extra validation for this serializer"""
@@ -406,6 +410,8 @@ class InitialSupplierSerializer(serializers.Serializer):
             raise serializers.ValidationError({
                 'sku': _('Supplier part matching this SKU already exists')
             })
+
+        return data
 
 
 class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
@@ -667,8 +673,8 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         # Create initial supplier information
         if initial_supplier:
 
-            manufacturer = initial_stock.get('manufacturer', None)
-            mpn = initial_stock.get('mpn', '')
+            manufacturer = initial_supplier.get('manufacturer', None)
+            mpn = initial_supplier.get('mpn', '')
 
             if manufacturer and mpn:
                 manu_part = company.models.ManufacturerPart.objects.create(
@@ -679,8 +685,8 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             else:
                 manu_part = None
 
-            supplier = initial_stock.get('supplier', None)
-            sku = initial_stock.get('sku', '')
+            supplier = initial_supplier.get('supplier', None)
+            sku = initial_supplier.get('sku', '')
 
             if supplier and sku:
                 company.models.SupplierPart.objects.create(

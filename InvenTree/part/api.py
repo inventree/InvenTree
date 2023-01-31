@@ -17,7 +17,6 @@ from rest_framework.response import Response
 
 import order.models
 from build.models import Build, BuildItem
-from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
@@ -1230,59 +1229,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         }
 
         part.save(**{'add_category_templates': copy_templates})
-
-        # Optionally add manufacturer / supplier data to the part
-        if part.purchaseable and str2bool(data.get('add_supplier_info', False)):
-
-            try:
-                manufacturer = Company.objects.get(pk=data.get('manufacturer', None))
-            except Exception:
-                manufacturer = None
-
-            try:
-                supplier = Company.objects.get(pk=data.get('supplier', None))
-            except Exception:
-                supplier = None
-
-            mpn = str(data.get('MPN', '')).strip()
-            sku = str(data.get('SKU', '')).strip()
-
-            # Construct a manufacturer part
-            if manufacturer or mpn:
-                if not manufacturer:
-                    raise ValidationError({
-                        'manufacturer': [_("This field is required")]
-                    })
-                if not mpn:
-                    raise ValidationError({
-                        'MPN': [_("This field is required")]
-                    })
-
-                manufacturer_part = ManufacturerPart.objects.create(
-                    part=part,
-                    manufacturer=manufacturer,
-                    MPN=mpn
-                )
-            else:
-                # No manufacturer part data specified
-                manufacturer_part = None
-
-            if supplier or sku:
-                if not supplier:
-                    raise ValidationError({
-                        'supplier': [_("This field is required")]
-                    })
-                if not sku:
-                    raise ValidationError({
-                        'SKU': [_("This field is required")]
-                    })
-
-                SupplierPart.objects.create(
-                    part=part,
-                    supplier=supplier,
-                    SKU=sku,
-                    manufacturer_part=manufacturer_part,
-                )
 
         headers = self.get_success_headers(serializer.data)
 

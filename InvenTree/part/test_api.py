@@ -12,6 +12,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 import build.models
+import company.models
 import order.models
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
@@ -1224,65 +1225,91 @@ class PartCreationTests(PartAPITestBase):
 
     def test_initial_supplier_data(self):
         """Tests for initial creation of supplier / manufacturer data."""
-        url = reverse('api-part-list')
 
-        n = Part.objects.count()
+        def submit(supplier_data, expected_code=400):
+            """Helper function for submitting with supplier data"""
 
-        # Set up initial part data
-        data = {
-            'category': 1,
-            'name': 'Buy Buy Buy',
-            'description': 'A purchaseable part',
-            'purchaseable': True,
-        }
+            data = {
+                'name': 'My test part',
+                'description': 'A test part thingy',
+                'category': 1,
+            }
 
-        # Signal that we wish to create initial supplier data
-        data['add_supplier_info'] = True
+            data['initial_supplier'] = supplier_data
 
-        # Specify MPN but not manufacturer
-        data['MPN'] = 'MPN-123'
+            response = self.post(
+                reverse('api-part-list'),
+                data,
+                expected_code=expected_code
+            )
 
-        response = self.post(url, data, expected_code=400)
-        self.assertIn('manufacturer', response.data)
+            return response.data
 
-        # Specify manufacturer but not MPN
-        del data['MPN']
-        data['manufacturer'] = 1
-        response = self.post(url, data, expected_code=400)
-        self.assertIn('MPN', response.data)
+        n_part = Part.objects.count()
+        n_mp = company.models.ManufacturerPart.objects.count()
+        n_sp = company.models.SupplierPart.objects.count()
 
-        # Specify SKU but not supplier
-        del data['manufacturer']
-        data['SKU'] = 'SKU-123'
-        response = self.post(url, data, expected_code=400)
-        self.assertIn('supplier', response.data)
+        # Submit with an invalid manufacturer
+        response = submit({
+            'manufacturer': 99999,
+        })
 
-        # Specify supplier but not SKU
-        del data['SKU']
-        data['supplier'] = 1
-        response = self.post(url, data, expected_code=400)
-        self.assertIn('SKU', response.data)
+        self.assertIn('object does not exist', str(response['initial_supplier']['manufacturer']))
 
-        # Check that no new parts have been created
-        self.assertEqual(Part.objects.count(), n)
+        response = submit({
+            'manufacturer': 8
+        })
 
-        # Now, fully specify the details
-        data['SKU'] = 'SKU-123'
-        data['supplier'] = 3
-        data['MPN'] = 'MPN-123'
-        data['manufacturer'] = 6
+        self.assertIn('Selected company is not a valid manufacturer', str(response['initial_supplier']['manufacturer']))
 
-        response = self.post(url, data, expected_code=201)
+        # Submit with an invalid supplier
+        response = submit({
+            'supplier': 8,
+        })
 
-        self.assertEqual(Part.objects.count(), n + 1)
+        self.assertIn('Selected company is not a valid supplier', str(response['initial_supplier']['supplier']))
 
-        pk = response.data['pk']
+        # Test for duplicate MPN
+        response = submit({
+            'manufacturer': 6,
+            'mpn': 'MPN123',
+        })
 
-        new_part = Part.objects.get(pk=pk)
+        self.assertIn('Manufacturer part matching this MPN already exists', str(response))
 
-        # Check that there is a new manufacturer part *and* a new supplier part
-        self.assertEqual(new_part.supplier_parts.count(), 1)
-        self.assertEqual(new_part.manufacturer_parts.count(), 1)
+        # Test for duplicate SKU
+        response = submit({
+            'supplier': 2,
+            'sku': 'MPN456-APPEL',
+        })
+
+        self.assertIn('Supplier part matching this SKU already exists', str(response))
+
+        # Test fields which are too long
+        response = submit({
+            'sku': 'abc' * 100,
+            'mpn': 'xyz' * 100,
+        })
+
+        too_long = 'Ensure this field has no more than 100 characters'
+
+        self.assertIn(too_long, str(response['initial_supplier']['sku']))
+        self.assertIn(too_long, str(response['initial_supplier']['mpn']))
+
+        # Finally, submit a valid set of information
+        response = submit(
+            {
+                'supplier': 2,
+                'sku': 'ABCDEFG',
+                'manufacturer': 6,
+                'mpn': 'QWERTY'
+            },
+            expected_code=201
+        )
+
+        self.assertEqual(n_part + 1, Part.objects.count())
+        self.assertEqual(n_sp + 1, company.models.SupplierPart.objects.count())
+        self.assertEqual(n_mp + 1, company.models.ManufacturerPart.objects.count())
 
     def test_strange_chars(self):
         """Test that non-standard ASCII chars are accepted."""
