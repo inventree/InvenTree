@@ -261,35 +261,23 @@ function partFields(options={}) {
     // Additional fields when "duplicating" a part
     if (options.duplicate) {
 
-        fields.copy_from = {
-            type: 'integer',
-            hidden: true,
+        // The following fields exist under the child serializer named 'duplicate'
+
+        fields.duplicate__part = {
             value: options.duplicate,
-            group: 'duplicate',
-        },
-
-        fields.copy_image = {
-            type: 'boolean',
-            label: '{% trans "Copy Image" %}',
-            help_text: '{% trans "Copy image from original part" %}',
-            value: true,
-            group: 'duplicate',
-        },
-
-        fields.copy_bom = {
-            type: 'boolean',
-            label: '{% trans "Copy BOM" %}',
-            help_text: '{% trans "Copy bill of materials from original part" %}',
-            value: global_settings.PART_COPY_BOM,
-            group: 'duplicate',
+            hidden: true,
         };
 
-        fields.copy_parameters = {
-            type: 'boolean',
-            label: '{% trans "Copy Parameters" %}',
-            help_text: '{% trans "Copy parameter data from original part" %}',
+        fields.duplicate__copy_image = {
+            value: true,
+        };
+
+        fields.duplicate__copy_bom = {
+            value: global_settings.PART_COPY_BOM,
+        }
+
+        fields.duplicate__copy_parameters = {
             value: global_settings.PART_COPY_PARAMETERS,
-            group: 'duplicate',
         };
     }
 

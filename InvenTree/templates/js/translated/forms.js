@@ -430,6 +430,52 @@ function constructForm(url, options) {
 
 
 /*
+ * Extracted information about a 'nested field' from the API metadata:
+ *
+ * - Nested fields are designated using a '__' (double underscore) separator
+ * - Currently only single-depth nesting is supported
+ */
+function extractNestedField(field_name, fields) {
+
+    var field_path = field_name.split('__');
+    var parent_name = field_path[0];
+    var child_name = field_path[1];
+
+    var parent_field = fields[parent_name];
+    var child_field = null;
+
+    // Check that the parent field exists
+    if (!parent_field) {
+        console.warn(`Expected parent field '${parent_name}' missing from API metadata`);
+        return;
+    }
+
+    // Check that the parent field is a 'nested object'
+    if (parent_field.type != 'nested object') {
+        console.warn(`Parent field '${parent_name}' is not designated as a nested object`);
+        return;
+    }
+
+    // Check that the field has a 'children' attribute
+    if ('children' in parent_field) {
+        child_field = parent_field['children'][child_name];
+    } else {
+        console.warn(`Parent field '${parent_name}' missing 'children' field`);
+        return;
+    }
+
+    if (child_field) {
+        // Mark this as a nested child field
+        child_field['nested_child'] = true;
+        child_field['parent_name'] = parent_name;
+        child_field['child_name'] = child_name;
+    }
+
+    return child_field;
+}
+
+
+/*
  * Construct a modal form based on the provided options
  *
  * arguments:
@@ -476,9 +522,21 @@ function constructFormBody(fields, options) {
         }
     }
 
+
     // Provide each field object with its own name
     for (field in fields) {
         fields[field].name = field;
+
+        /* Handle metadata for 'nested' fields.
+         * - Nested fields are designated using a '__' (double underscore) separator
+         * - Currently only single depth nesting is supported
+         */
+        if (field.includes('__')) {
+            var nested_field_info = extractNestedField(field, fields);
+
+            // Update the field data
+            fields[field] = Object.assign(fields[field], nested_field_info);
+        }
 
         // If any "instance_filters" are defined for the endpoint, copy them across (overwrite)
         if (fields[field].instance_filters) {
@@ -2058,8 +2116,10 @@ function constructField(name, parameters, options={}) {
         return constructHiddenInput(field_name, parameters, options);
     }
 
+    var group_name = parameters.group || parameters.parent_name;
+
     // Are we ending a group?
-    if (options.current_group && parameters.group != options.current_group) {
+    if (options.current_group && group_name != options.current_group) {
         html += `</div></div>`;
 
         // Null out the current "group" so we can start a new one
@@ -2067,9 +2127,9 @@ function constructField(name, parameters, options={}) {
     }
 
     // Are we starting a new group?
-    if (parameters.group) {
+    if (group_name) {
 
-        var group = parameters.group;
+        var group = group_name;
 
         var group_id = getFieldName(group, options);
 
@@ -2077,7 +2137,7 @@ function constructField(name, parameters, options={}) {
 
         // Are we starting a new group?
         // Add HTML for the start of a separate panel
-        if (parameters.group != options.current_group) {
+        if (group_name != options.current_group) {
 
             html += `
             <div class='panel form-panel' id='form-panel-${group_id}' group='${group}'>
