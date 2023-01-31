@@ -379,7 +379,7 @@ class InitialSupplierSerializer(serializers.Serializer):
     def validate_supplier(self, company):
         """Validation for the provided Supplier"""
 
-        if not company.is_supplier:
+        if company and not company.is_supplier:
             raise serializers.ValidationError(_('Selected company is not a valid supplier'))
 
         return company
@@ -387,7 +387,7 @@ class InitialSupplierSerializer(serializers.Serializer):
     def validate_manufacturer(self, company):
         """Validation for the provided Manufacturer"""
 
-        if not company.is_manufacturer:
+        if company and not company.is_manufacturer:
             raise serializers.ValidationError(_('Selected company is not a valid manufacturer'))
 
         return company

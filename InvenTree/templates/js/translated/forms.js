@@ -860,7 +860,16 @@ function submitFormData(fields, options) {
                 // Normal field (not a file or image)
                 form_data.append(name, value);
 
-                data[name] = value;
+                if (field.parent_name && field.child_name) {
+                    // "Nested" fields are handled a little differently
+                    if (!(field.parent_name in data)) {
+                        data[field.parent_name] = {};
+                    }
+
+                    data[field.parent_name][field.child_name] = value;
+                } else {
+                    data[name] = value;
+                }
             }
         } else {
             console.warn(`Could not find field matching '${name}'`);
