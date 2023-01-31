@@ -1238,7 +1238,7 @@ function clearFormErrors(options={}) {
  *
  */
 
-function handleNestedErrors(errors, field_name, options={}) {
+function handleNestedArrayErrors(errors, field_name, options={}) {
 
     var error_list = errors[field_name];
 
@@ -1251,7 +1251,7 @@ function handleNestedErrors(errors, field_name, options={}) {
 
     // Nest list must be provided!
     if (!nest_list) {
-        console.warn(`handleNestedErrors missing nesting options for field '${fieldName}'`);
+        console.warn(`handleNestedArrayErrors missing nesting options for field '${fieldName}'`);
         return;
     }
 
@@ -1260,7 +1260,7 @@ function handleNestedErrors(errors, field_name, options={}) {
         var error_item = error_list[idx];
 
         if (idx >= nest_list.length) {
-            console.warn(`handleNestedErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
+            console.warn(`handleNestedArrayErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
             break;
         }
 
@@ -1361,16 +1361,29 @@ function handleFormErrors(errors, fields={}, options={}) {
     for (var field_name in errors) {
 
         var field = fields[field_name] || {};
+        var field_errors = errors[field_name];
 
-        if ((field.type == 'field') && ('child' in field)) {
-            // This is a "nested" field
-            handleNestedErrors(errors, field_name, options);
+        if ((field.type == 'nested object') && ('children' in field)) {
+            // Handle multi-level nested errors
+
+            for (var sub_field in field_errors) {
+                var sub_field_name = `${field_name}__${sub_field}`;
+                var sub_field_errors = field_errors[sub_field];
+
+                if (!first_error_field && sub_field_errors && isFieldVisible(sub_field_name, options)) {
+                    first_error_field = sub_field_name;
+                }
+
+                addFieldErrorMessage(sub_field_name, sub_field_errors, options);
+            }
+
+        }
+        else if ((field.type == 'field') && ('child' in field)) {
+            // This is a "nested" array field
+            handleNestedArrayErrors(errors, field_name, options);
         } else {
             // This is a "simple" field
-
-            var field_errors = errors[field_name];
-
-            if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
+            if (!first_error_field && field_errors && isFieldVisible(field_name, options)) {
                 first_error_field = field_name;
             }
 
@@ -1380,14 +1393,14 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     if (first_error_field) {
         // Ensure that the field in question is visible
-        var error_element = document.querySelector(`#div_id_${field_name}`);
+        var error_element = document.querySelector(`#div_id_${first_error_field}`);
 
         if (error_element) {
             error_element.scrollIntoView({
                 behavior: 'smooth',
             });
         } else {
-            console.warn(`Could not scroll to field '${field_name}' - element not found`);
+            console.warn(`Could not scroll to field '${first_error_field}' - element not found`);
         }
     } else {
         // Scroll to the top of the form
