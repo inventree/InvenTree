@@ -94,7 +94,6 @@ function partFields(options={}) {
             filters: {
                 structural: false,
             },
-            value: options.category || null,
         },
         name: {},
         IPN: {},
@@ -157,6 +156,10 @@ function partFields(options={}) {
             group: 'attributes',
         },
     };
+
+    if (options.category) {
+        fields.category.value = options.category;
+    }
 
     // If editing a part, we can set the "active" status
     if (options.edit) {
