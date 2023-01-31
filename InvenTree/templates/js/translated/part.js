@@ -230,7 +230,7 @@ function partFields(options={}) {
 
         fields.duplicate__copy_bom = {
             value: global_settings.PART_COPY_BOM,
-        }
+        };
 
         fields.duplicate__copy_parameters = {
             value: global_settings.PART_COPY_PARAMETERS,

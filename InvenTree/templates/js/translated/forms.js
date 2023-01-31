@@ -1376,9 +1376,7 @@ function handleFormErrors(errors, fields={}, options={}) {
 
                 addFieldErrorMessage(sub_field_name, sub_field_errors, options);
             }
-
-        }
-        else if ((field.type == 'field') && ('child' in field)) {
+        } else if ((field.type == 'field') && ('child' in field)) {
             // This is a "nested" array field
             handleNestedArrayErrors(errors, field_name, options);
         } else {
