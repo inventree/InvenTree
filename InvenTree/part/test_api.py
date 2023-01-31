@@ -574,6 +574,19 @@ class PartAPITestBase(InvenTreeAPITestCase):
 class PartAPITest(PartAPITestBase):
     """Series of tests for the Part DRF API."""
 
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'bom',
+        'company',
+        'test_templates',
+        'manufacturer_part',
+        'params',
+        'supplier_part',
+        'order',
+    ]
+
     def test_get_categories(self):
         """Test that we can retrieve list of part categories, with various filtering options."""
         url = reverse('api-part-category-list')
