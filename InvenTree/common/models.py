@@ -1121,9 +1121,16 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'PART_CREATE_INITIAL': {
-            'name': _('Create initial stock'),
-            'description': _('Create initial stock on part creation'),
+            'name': _('Initial Stock Data'),
+            'description': _('Allow creation of initial stock when adding a new part'),
             'default': False,
+            'validator': bool,
+        },
+
+        'PART_CREATE_SUPPLIER': {
+            'name': _('Initial Supplier Data'),
+            'description': _('Allow creation of initial supplier data when adding a new part'),
+            'default': True,
             'validator': bool,
         },
 

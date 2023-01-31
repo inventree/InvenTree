@@ -340,7 +340,7 @@ class InitialStockSerializer(serializers.Serializer):
 
     quantity = serializers.DecimalField(
         max_digits=15, decimal_places=5, validators=[MinValueValidator(0)],
-        label=_('Initial Stock Quantity'), help_text=_('Specify initial stock quantity for this Part'),
+        label=_('Initial Stock Quantity'), help_text=_('Specify initial stock quantity for this Part. If quantity is zero, no stock is added.'),
         required=True,
     )
 
@@ -356,7 +356,7 @@ class InitialSupplierSerializer(serializers.Serializer):
 
     supplier = serializers.PrimaryKeyRelatedField(
         queryset=company.models.Company.objects.all(),
-        label=_('Supplier'), help_text=_('Select supplier'),
+        label=_('Supplier'), help_text=_('Select supplier (or leave blank to skip)'),
         allow_null=True, required=False,
     )
 
@@ -367,7 +367,7 @@ class InitialSupplierSerializer(serializers.Serializer):
 
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=company.models.Company.objects.all(),
-        label=_('Manufacturer'), help_text=_('Select manufacturer'),
+        label=_('Manufacturer'), help_text=_('Select manufacturer (or leave blank to skip)'),
         allow_null=True, required=False,
     )
 

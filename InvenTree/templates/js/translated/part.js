@@ -64,11 +64,16 @@ function partGroups() {
             title: '{% trans "Part Duplication Options" %}',
             collapsible: true,
         },
-        supplier: {
-            title: '{% trans "Supplier Options" %}',
+        initial_stock: {
+            title: '{% trans "Initial Stock" %}',
             collapsible: true,
-            hidden: !global_settings.PART_PURCHASEABLE,
-        }
+            hidden: !global_settings.PART_CREATE_INITIAL,
+        },
+        initial_supplier: {
+            title: '{% trans "Initial Supplier Data" %}',
+            collapsible: true,
+            hidden: !global_settings.PART_CREATE_SUPPLIER,
+        },
     };
 }
 
@@ -166,38 +171,33 @@ function partFields(options={}) {
     }
 
     if (options.create || options.duplicate) {
+
+        // Add fields for creating initial supplier data
+
+        // Add fields for creating initial stock
         if (global_settings.PART_CREATE_INITIAL) {
 
-            fields.initial_stock = {
-                type: 'boolean',
-                label: '{% trans "Create Initial Stock" %}',
-                help_text: '{% trans "Create an initial stock item for this part" %}',
-                group: 'create',
+            fields.initial_stock__quantity = {
+                value: 0,
             };
-
-            fields.initial_stock_quantity = {
-                type: 'decimal',
-                value: 1,
-                label: '{% trans "Initial Stock Quantity" %}',
-                help_text: '{% trans "Specify initial stock quantity for this part" %}',
-                group: 'create',
-            };
-
-            // TODO - Allow initial location of stock to be specified
-            fields.initial_stock_location = {
-                label: '{% trans "Location" %}',
-                help_text: '{% trans "Select destination stock location" %}',
-                type: 'related field',
-                required: true,
-                api_url: `/api/stock/location/`,
-                model: 'stocklocation',
-                group: 'create',
-            };
+            fields.initial_stock__location = {};
         }
-    }
 
-    // Additional fields when "creating" a new part
-    if (options.create) {
+        // Add fields for creating initial supplier data
+        if (global_settings.PART_CREATE_SUPPLIER) {
+            fields.initial_supplier__supplier = {
+                filters: {
+                    is_supplier: true,
+                }
+            };
+            fields.initial_supplier__sku = {};
+            fields.initial_supplier__manufacturer = {
+                filters: {
+                    is_manufacturer: true,
+                }
+            };
+            fields.initial_supplier__mpn = {};
+        }
 
         // No supplier parts available yet
         delete fields['default_supplier'];
@@ -209,53 +209,6 @@ function partFields(options={}) {
             value: global_settings.PART_CATEGORY_PARAMETERS,
             group: 'create',
         };
-
-        // Supplier options
-        fields.add_supplier_info = {
-            type: 'boolean',
-            label: '{% trans "Add Supplier Data" %}',
-            help_text: '{% trans "Create initial supplier data for this part" %}',
-            group: 'supplier',
-        };
-
-        fields.supplier = {
-            type: 'related field',
-            model: 'company',
-            label: '{% trans "Supplier" %}',
-            help_text: '{% trans "Select supplier" %}',
-            filters: {
-                'is_supplier': true,
-            },
-            api_url: '{% url "api-company-list" %}',
-            group: 'supplier',
-        };
-
-        fields.SKU = {
-            type: 'string',
-            label: '{% trans "SKU" %}',
-            help_text: '{% trans "Supplier stock keeping unit" %}',
-            group: 'supplier',
-        };
-
-        fields.manufacturer = {
-            type: 'related field',
-            model: 'company',
-            label: '{% trans "Manufacturer" %}',
-            help_text: '{% trans "Select manufacturer" %}',
-            filters: {
-                'is_manufacturer': true,
-            },
-            api_url: '{% url "api-company-list" %}',
-            group: 'supplier',
-        };
-
-        fields.MPN = {
-            type: 'string',
-            label: '{% trans "MPN" %}',
-            help_text: '{% trans "Manufacturer Part Number" %}',
-            group: 'supplier',
-        };
-
     }
 
     // Additional fields when "duplicating" a part
@@ -285,6 +238,9 @@ function partFields(options={}) {
 }
 
 
+/*
+ * Construct a set of fields for a PartCategory intance
+ */
 function categoryFields() {
     return {
         parent: {

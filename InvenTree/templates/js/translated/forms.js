@@ -2151,7 +2151,7 @@ function constructField(name, parameters, options={}) {
                 html += `<div>`;
             }
 
-            html += `<h4 style='display: inline;'>${group_options.title || group}</h4>`;
+            html += `<h5 style='display: inline;'>${group_options.title || group}</h5>`;
 
             if (group_options.collapsible) {
                 html += `</a>`;
