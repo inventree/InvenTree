@@ -321,17 +321,17 @@ class DuplicatePartSerializer(serializers.Serializer):
 
     copy_image = serializers.BooleanField(
         label=_('Copy Image'), help_text=_('Copy image from original part'),
-        default=False,
+        required=False, default=False,
     )
 
     copy_bom = serializers.BooleanField(
         label=_('Copy BOM'), help_text=_('Copy bill of materials from original part'),
-        default=False,
+        required=False, default=False,
     )
 
     copy_parameters = serializers.BooleanField(
         label=_('Copy Parameters'), help_text=_('Copy parameter data from original part'),
-        default=False,
+        required=False, default=False,
     )
 
 

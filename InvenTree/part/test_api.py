@@ -1172,57 +1172,48 @@ class PartCreationTests(PartAPITestBase):
 
     def test_initial_stock(self):
         """Tests for initial stock quantity creation."""
-        url = reverse('api-part-list')
+
+        def submit(stock_data, expected_code=None):
+            """Helper function for submitting with initial stock data"""
+
+            data = {
+                'category': 1,
+                'name': "My lil' test part",
+                'description': 'A part with which to test',
+            }
+
+            data['initial_stock'] = stock_data
+
+            response = self.post(
+                reverse('api-part-list'),
+                data,
+                expected_code=expected_code
+            )
+
+            return response.data
 
         # Track how many parts exist at the start of this test
         n = Part.objects.count()
 
-        # Set up required part data
-        data = {
-            'category': 1,
-            'name': "My lil' test part",
-            'description': 'A part with which to test',
-        }
+        # Submit with empty data
+        response = submit({}, expected_code=400)
+        self.assertIn('This field is required', str(response['initial_stock']['quantity']))
 
-        # Signal that we want to add initial stock
-        data['initial_stock'] = True
+        # Submit with invalid quantity
+        response = submit({
+            'quantity': 'ax',
+        }, expected_code=400)
+        self.assertIn('A valid number is required', str(response['initial_stock']['quantity']))
 
-        # Post without a quantity
-        response = self.post(url, data, expected_code=400)
-        self.assertIn('initial_stock_quantity', response.data)
+        # Submit with valid data
+        response = submit({
+            'quantity': 50,
+            'location': 1,
+        }, expected_code=201)
 
-        # Post with an invalid quantity
-        data['initial_stock_quantity'] = "ax"
-        response = self.post(url, data, expected_code=400)
-        self.assertIn('initial_stock_quantity', response.data)
-
-        # Post with a negative quantity
-        data['initial_stock_quantity'] = -1
-        response = self.post(url, data, expected_code=400)
-        self.assertIn('Must be greater than zero', response.data['initial_stock_quantity'])
-
-        # Post with a valid quantity
-        data['initial_stock_quantity'] = 12345
-
-        response = self.post(url, data, expected_code=400)
-        self.assertIn('initial_stock_location', response.data)
-
-        # Check that the number of parts has not increased (due to form failures)
-        self.assertEqual(Part.objects.count(), n)
-
-        # Now, set a location
-        data['initial_stock_location'] = 1
-
-        response = self.post(url, data, expected_code=201)
-
-        # Check that the part has been created
-        self.assertEqual(Part.objects.count(), n + 1)
-
-        pk = response.data['pk']
-
-        new_part = Part.objects.get(pk=pk)
-
-        self.assertEqual(new_part.total_stock, 12345)
+        part = Part.objects.get(pk=response['pk'])
+        self.assertEqual(part.total_stock, 50)
+        self.assertEqual(n + 1, Part.objects.count())
 
     def test_initial_supplier_data(self):
         """Tests for initial creation of supplier / manufacturer data."""
