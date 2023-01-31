@@ -1380,9 +1380,15 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     if (first_error_field) {
         // Ensure that the field in question is visible
-        document.querySelector(`#div_id_${field_name}`).scrollIntoView({
-            behavior: 'smooth',
-        });
+        var error_element = document.querySelector(`#div_id_${field_name}`);
+
+        if (error_element) {
+            error_element.scrollIntoView({
+                behavior: 'smooth',
+            });
+        } else {
+            console.warn(`Could not scroll to field '${field_name}' - element not found`);
+        }
     } else {
         // Scroll to the top of the form
         $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);

@@ -361,7 +361,7 @@ class InitialSupplierSerializer(serializers.Serializer):
     )
 
     sku = serializers.CharField(
-        max_length=100, required=False,
+        max_length=100, required=False, allow_blank=True,
         label=_('SKU'), help_text=_('Supplier stock keeping unit'),
     )
 
@@ -372,7 +372,7 @@ class InitialSupplierSerializer(serializers.Serializer):
     )
 
     mpn = serializers.CharField(
-        max_length=100, required=False,
+        max_length=100, required=False, allow_blank=True,
         label=_('MPN'), help_text=_('Manufacturer part number'),
     )
 
