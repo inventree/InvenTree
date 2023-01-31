@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-29 04:45+0000\n"
-"PO-Revision-Date: 2023-01-29 09:41\n"
+"PO-Revision-Date: 2023-01-31 14:45\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -962,11 +962,11 @@ msgstr "Extra gyártási megjegyzések"
 
 #: build/models.py:299
 msgid "Build Priority"
-msgstr ""
+msgstr "Priorítás"
 
 #: build/models.py:302
 msgid "Priority of this build order"
-msgstr ""
+msgstr "Gyártási utasítás priorítása"
 
 #: build/models.py:540
 #, python-brace-format
@@ -1481,7 +1481,7 @@ msgstr "Kiállította"
 #: build/templates/build/build_base.html:200
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2602
 msgid "Priority"
-msgstr ""
+msgstr "Prioritás"
 
 #: build/templates/build/build_base.html:259
 msgid "Delete Build Order"
@@ -1730,7 +1730,7 @@ msgstr "Frissítve"
 
 #: common/models.py:65
 msgid "Timestamp of last update"
-msgstr ""
+msgstr "Legutóbbi frissítés időpontja"
 
 #: common/models.py:491
 msgid "Settings key (must be unique - case insensitive)"
@@ -4016,7 +4016,7 @@ msgstr "Sortétel megjegyzései"
 
 #: order/models.py:948
 msgid "Target date for this line item (leave blank to use the target date from the order)"
-msgstr ""
+msgstr "Cél dátuma ennek a sortételnek (hagyd üresen a rendelés céldátum használatához)"
 
 #: order/models.py:966
 msgid "Context"
@@ -4995,7 +4995,7 @@ msgstr "Minimálisan megengedett készlet mennyiség"
 
 #: part/models.py:964
 msgid "Units of measure for this part"
-msgstr ""
+msgstr "Alkatrész mértékegysége"
 
 #: part/models.py:970
 msgid "Can this part be built from other parts?"
@@ -6295,7 +6295,7 @@ msgstr "Címkenyomtatás sikertelen"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:26
 msgid "InvenTree Barcodes"
-msgstr ""
+msgstr "InventTree vonalkódok"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:27
 msgid "Provides native support for barcodes"
@@ -6326,19 +6326,19 @@ msgstr "Email küldés engedélyezése esemény értesítésekre"
 
 #: plugin/builtin/integration/core_notifications.py:45
 msgid "Enable slack notifications"
-msgstr ""
+msgstr "Slack értesítések engedélyezése"
 
 #: plugin/builtin/integration/core_notifications.py:46
 msgid "Allow sending of slack channel messages for event notifications"
-msgstr ""
+msgstr "Slack channel üzenetek küldésének engedélyezése az esemény értesítésekre"
 
 #: plugin/builtin/integration/core_notifications.py:51
 msgid "Slack incoming webhook url"
-msgstr ""
+msgstr "Slack bejövő webhook URL"
 
 #: plugin/builtin/integration/core_notifications.py:52
 msgid "URL that is used to send messages to a slack channel"
-msgstr ""
+msgstr "URL az üzenetek küldéséhez egy a slack channel-re"
 
 #: plugin/builtin/integration/core_notifications.py:162
 msgid "Open link"
@@ -7652,7 +7652,7 @@ msgstr "Globális értesítési beállítások"
 
 #: templates/InvenTree/settings/notifications.html:18
 msgid "Slug"
-msgstr ""
+msgstr "URL kompatibilis név (Slug)"
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
@@ -8749,11 +8749,11 @@ msgstr "Válaszd ki a maximum alkatrészjegyzék szintet amit exportáljunk (0=�
 
 #: templates/js/translated/bom.js:334
 msgid "Include Alternative Parts"
-msgstr ""
+msgstr "Alternatív alkatrészekkel együtt"
 
 #: templates/js/translated/bom.js:335
 msgid "Include alternative parts in exported BOM"
-msgstr ""
+msgstr "Alternatív alkatrészek megjelenítése az exportált alkatrészjegyzékben"
 
 #: templates/js/translated/bom.js:340
 msgid "Include Parameter Data"
@@ -8761,7 +8761,7 @@ msgstr "Paraméter adattal együtt"
 
 #: templates/js/translated/bom.js:341
 msgid "Include part parameter data in exported BOM"
-msgstr ""
+msgstr "Alkatrész paraméter adatok megjelenítése az exportált alkatrészjegyzékben"
 
 #: templates/js/translated/bom.js:346
 msgid "Include Stock Data"
