@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-29 04:45+0000\n"
-"PO-Revision-Date: 2023-01-31 14:45\n"
+"PO-Revision-Date: 2023-02-01 14:49\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -188,7 +188,7 @@ msgstr "Referenz-Feld darf nicht leer sein"
 
 #: InvenTree/models.py:270
 msgid "Reference must match required pattern"
-msgstr "Referenz muss dem erforderlichen Muster entsprechen"
+msgstr "Referenz erforderlichem Muster entsprechen"
 
 #: InvenTree/models.py:306
 msgid "Reference number is too large"
@@ -962,7 +962,7 @@ msgstr "Extranotizen für den Bauauftrag"
 
 #: build/models.py:299
 msgid "Build Priority"
-msgstr "Bau-Priorität"
+msgstr "Bauauftrags-Priorität"
 
 #: build/models.py:302
 msgid "Priority of this build order"
@@ -1235,7 +1235,7 @@ msgstr "Wie sollen zusätzliche Lagerbestandteile, die dem Bauauftrag zugewiesen
 
 #: build/serializers.py:525
 msgid "Some stock items have been overallocated"
-msgstr "Der Bestand einiger Lagerartikel ist überlastet"
+msgstr "Der Bestand einiger Lagerartikel ist überbelegt"
 
 #: build/serializers.py:530
 msgid "Accept Unallocated"
@@ -5164,7 +5164,7 @@ msgstr "Maximaler Verkaufspreis"
 
 #: part/models.py:2891
 msgid "Maximum sale price based on price breaks"
-msgstr "Maximaler Verkaufspreis basierend auf Staffelpreisen"
+msgstr "Maximalverkaufspreis basierend auf Staffelpreisen"
 
 #: part/models.py:2896
 msgid "Minimum Sale Cost"
@@ -7337,15 +7337,15 @@ msgstr "Lagerartikel per Barcode-Scan zu diesem Lagerort hinzufügen"
 
 #: stock/templates/stock/location.html:56
 msgid "Scan In Stock Items"
-msgstr ""
+msgstr "Lagerartikel einscannen"
 
 #: stock/templates/stock/location.html:57
 msgid "Scan stock container into this location"
-msgstr ""
+msgstr "Lagerort hierher einscannen"
 
 #: stock/templates/stock/location.html:57
 msgid "Scan In Container"
-msgstr ""
+msgstr "Lagerort scannen"
 
 #: stock/templates/stock/location.html:96
 msgid "Location actions"
@@ -7392,7 +7392,7 @@ msgstr "Neuer Lagerort"
 
 #: stock/templates/stock/location.html:310
 msgid "Scanned stock container into this location"
-msgstr ""
+msgstr "Lagerort an diesen Ort eingescannt"
 
 #: stock/templates/stock/location.html:394
 msgid "Link Barcode to Stock Location"
@@ -8593,7 +8593,7 @@ msgstr "Anhang löschen"
 
 #: templates/js/translated/barcode.js:33
 msgid "Scan barcode data here using barcode scanner"
-msgstr ""
+msgstr "Barcode Daten hier mit Barcode Scanner scannen"
 
 #: templates/js/translated/barcode.js:35
 msgid "Enter barcode data"
@@ -8658,7 +8658,7 @@ msgstr "Lagerartikel in Lagerort buchen"
 
 #: templates/js/translated/barcode.js:569
 msgid "Scan stock item barcode to check in to this location"
-msgstr ""
+msgstr "Barcode des Lagerartikels scannen um ihn an diesen Ort einzuchecken"
 
 #: templates/js/translated/barcode.js:572
 #: templates/js/translated/barcode.js:764
@@ -8691,7 +8691,7 @@ msgstr "Diesen Lagerort per Scan an einen anderen Lagerort verschieben"
 
 #: templates/js/translated/barcode.js:682
 msgid "Scan stock container barcode to check in to this location"
-msgstr ""
+msgstr "Barcode des Lagerorts scannen um ihn an diesen Ort einzuchecken"
 
 #: templates/js/translated/barcode.js:716
 msgid "Barcode does not match valid stock location"
