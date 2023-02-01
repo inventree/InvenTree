@@ -2604,7 +2604,7 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         response = self.get(url)
 
-        self.assertEqual(len(response.data), 5)
+        self.assertEqual(len(response.data), 7)
 
         # Filter by part
         response = self.get(
@@ -2624,7 +2624,7 @@ class PartParameterTest(InvenTreeAPITestCase):
             }
         )
 
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(len(response.data), 4)
 
     def test_create_param(self):
         """Test that we can create a param via the API."""
@@ -2643,7 +2643,7 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         response = self.get(url)
 
-        self.assertEqual(len(response.data), 6)
+        self.assertEqual(len(response.data), 8)
 
     def test_param_detail(self):
         """Tests for the PartParameter detail endpoint."""
