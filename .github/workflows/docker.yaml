@@ -58,6 +58,7 @@ jobs:
           docker-compose build --no-cache
       - name: Update Docker Image
         run: |
+          sudo apt-get install git
           docker-compose run inventree-dev-server invoke update
           docker-compose run inventree-dev-server invoke setup-dev
           docker-compose up -d
