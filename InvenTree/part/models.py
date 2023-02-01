@@ -391,17 +391,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
         parent_attr = 'variant_of'
 
-    def __init__(self, *args, **kwargs):
-        """Custom initialization routine for the Part model.
-
-        Ensures that custom serializer fields (without matching model fields) are removed
-        """
-
-        # Remote image specified during creation via API
-        kwargs.pop('remote_image', None)
-
-        super().__init__(*args, **kwargs)
-
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the Part model"""
@@ -2033,41 +2022,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             parameter.pk = None
 
             parameter.save()
-
-    @transaction.atomic
-    def deep_copy(self, other, **kwargs):
-        """Duplicates non-field data from another part.
-
-        Does not alter the normal fields of this part, but can be used to copy other data linked by ForeignKey refernce.
-
-        Keyword Args:
-            image: If True, copies Part image (default = True)
-            bom: If True, copies BOM data (default = False)
-            parameters: If True, copies Parameters data (default = True)
-        """
-        # Copy the part image
-        if kwargs.get('image', True):
-            if other.image:
-                # Reference the other image from this Part
-                self.image = other.image
-
-        # Copy the BOM data
-        if kwargs.get('bom', False):
-            self.copy_bom_from(other)
-
-        # Copy the parameters data
-        if kwargs.get('parameters', True):
-            self.copy_parameters_from(other)
-
-        # Copy the fields that aren't available in the duplicate form
-        self.salable = other.salable
-        self.assembly = other.assembly
-        self.component = other.component
-        self.purchaseable = other.purchaseable
-        self.trackable = other.trackable
-        self.virtual = other.virtual
-
-        self.save()
 
     def getTestTemplates(self, required=None, include_parent=True):
         """Return a list of all test templates associated with this Part.
