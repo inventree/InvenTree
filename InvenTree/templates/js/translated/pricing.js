@@ -7,6 +7,7 @@
 */
 
 /* exported
+    convertCurrency,
     loadBomPricingChart,
     loadPartSupplierPricingTable,
     initPriceBreakSet,
@@ -15,6 +16,65 @@
     loadSalesPriceHistoryTable,
     loadVariantPricingChart,
 */
+
+// TODO: Implement a better version of caching here
+var cached_exchange_rates = null;
+
+/*
+ * Retrieve currency conversion rate information from the server
+ */
+function getCurrencyConversionRates() {
+
+    if (cached_exchange_rates != null) {
+        return cached_exchange_rates;
+    }
+
+    inventreeGet('{% url "api-currency-exchange" %}', {}, {
+        async: false,
+        success: function(response) {
+            cached_exchange_rates = response;
+        }
+    });
+
+    return cached_exchange_rates;
+}
+
+
+/*
+ * Convert from one specified currency into another
+ *
+ * @param {number} value - numerical value
+ * @param {string} source_currency - The source currency code e.g. 'AUD'
+ * @param {string} target_currency - The target currency code e.g. 'USD'
+ * @param {object} rate_data - Currency exchange rate data received from the server
+ */
+function convertCurrency(value, source_currency, target_currency, rate_data) {
+
+    if (!('base_currency' in rate_data)) {
+        logger.error('Currency data missing base_currency parameter');
+        return null;
+    }
+
+    if (!('exchange_rates' in rate_data)) {
+        logger.error('Currency data missing exchange_rates parameter');
+        return null;
+    }
+
+    var rates = rate_data['exchange_rates'];
+
+    if (!(source_currency in rates)) {
+        logger.error(`Source currency '${source_currency}' not found in exchange rate data`);
+        return null;
+    }
+
+    if (!(target_currency in rates)) {
+        logger.error(`Target currency '${target_currency}' not found in exchange rate date`);
+        return null;
+    }
+
+    // We assume that the 'base exchange rate' is 1:1
+    return value / rates[source_currency] * rates[target_currency];
+}
 
 
 /*
