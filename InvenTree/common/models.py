@@ -43,6 +43,7 @@ import build.validators
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.ready
+import InvenTree.tasks
 import InvenTree.validators
 import order.validators
 
@@ -818,6 +819,11 @@ def validate_email_domains(setting):
             raise ValidationError(_(f'Invalid domain name: {domain}'))
 
 
+def update_exchange_rates(setting):
+    """Update exchange rates when base currency is changed"""
+    InvenTree.tasks.update_exchange_rates()
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -898,9 +904,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'INVENTREE_DEFAULT_CURRENCY': {
             'name': _('Default Currency'),
-            'description': _('Default currency'),
+            'description': _('Select base currency for pricing caluclations'),
             'default': 'USD',
             'choices': CURRENCY_CHOICES,
+            'after_save': update_exchange_rates,
         },
 
         'INVENTREE_DOWNLOAD_FROM_URL': {
