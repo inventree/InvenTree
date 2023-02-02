@@ -179,9 +179,6 @@ $('#new-po-line').click(function() {
         currency: '{{ order.supplier.currency }}',
         {% endif %}
         {% endif %}
-        {% if order.target_date %}
-        target_date: '{{ order.target_date|date:'Y-m-d' }}',
-        {% endif %}
         onSuccess: function() {
             $('#po-line-table').bootstrapTable('refresh');
         }

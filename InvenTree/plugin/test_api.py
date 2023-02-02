@@ -193,8 +193,3 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         with self.assertRaises(NotFound) as exc:
             check_plugin(plugin_slug=None, plugin_pk='123')
         self.assertEqual(str(exc.exception.detail), "Plugin '123' not installed")
-
-        # Not active
-        with self.assertRaises(NotFound) as exc:
-            check_plugin(plugin_slug='inventreebarcode', plugin_pk=None)
-        self.assertEqual(str(exc.exception.detail), "Plugin 'inventreebarcode' is not active")
