@@ -399,8 +399,6 @@ class BaseInvenTreeSetting(models.Model):
                     **kwargs
                 )
 
-                print("Creating new setting:", cls, key, default_value)
-
                 try:
                     # Wrap this statement in "atomic", so it can be rolled back if it fails
                     with transaction.atomic():

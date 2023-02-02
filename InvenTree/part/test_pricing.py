@@ -10,6 +10,7 @@ import common.settings
 import company.models
 import order.models
 import part.models
+import stock.models
 from InvenTree.helpers import InvenTreeTestCase
 from InvenTree.status_codes import PurchaseOrderStatus
 
@@ -233,6 +234,53 @@ class PartPricingTests(InvenTreeTestCase):
             # Maximum cost should stay the same
             self.assertEqual(pricing.internal_cost_max, Money(10, currency))
             self.assertEqual(pricing.overall_max, Money(10, currency))
+
+    def test_stock_item_pricing(self):
+        """Test for stock item pricing data"""
+
+        # Create a part
+        p = part.models.Part.objects.create(
+            name='Test part for pricing',
+            description='hello world',
+        )
+
+        # Create some stock items
+        prices = [
+            (10, 'AUD'),
+            (5, 'USD'),
+            (2, 'CAD'),
+        ]
+
+        for price, currency in prices:
+
+            stock.models.StockItem.objects.create(
+                part=p,
+                quantity=10,
+                purchase_price=price,
+                purchase_price_currency=currency
+            )
+
+        # Ensure that initially, stock item pricing is disabled
+        common.models.InvenTreeSetting.set_setting('PRICING_USE_STOCK_PRICING', False, None)
+
+        pricing = p.pricing
+        pricing.update_pricing()
+
+        # Stock Item pricing must have been updated
+        self.assertIsNotNone(pricing.stock_item_cost_min)
+        self.assertIsNotNone(pricing.stock_item_cost_max)
+
+        # But overall pricing is None (due to configured setting)
+        self.assertIsNone(pricing.overall_min)
+        self.assertIsNone(pricing.overall_max)
+
+        # Turn on stock pricing
+        common.models.InvenTreeSetting.set_setting('PRICING_USE_STOCK_PRICING', True, None)
+
+        pricing.update_pricing()
+
+        self.assertEqual(pricing.overall_min, Money(1.176471, 'USD'))
+        self.assertEqual(pricing.overall_max, Money(6.666667, 'USD'))
 
     def test_bom_pricing(self):
         """Unit test for BOM pricing calculations"""
