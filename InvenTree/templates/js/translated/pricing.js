@@ -10,6 +10,8 @@
     baseCurrency,
     calculateTotalPrice,
     convertCurrency,
+    formatCurrency,
+    formatPriceRange,
     loadBomPricingChart,
     loadPartSupplierPricingTable,
     initPriceBreakSet,
@@ -25,6 +27,76 @@
  */
 function baseCurrency() {
     return global_settings.INVENTREE_BASE_CURRENCY || 'USD';
+}
+
+
+
+/*
+ * format currency (money) value based on current settings
+ *
+ * Options:
+ * - currency: Currency code (uses default value if none provided)
+ * - locale: Locale specified (uses default value if none provided)
+ * - digits: Maximum number of significant digits (default = 10)
+ */
+function formatCurrency(value, options={}) {
+
+    if (value == null) {
+        return null;
+    }
+
+    var digits = options.digits || global_settings.PRICING_DECIMAL_PLACES || 6;
+
+    // Strip out any trailing zeros, etc
+    value = formatDecimal(value, digits);
+
+    // Extract default currency information
+    var currency = options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
+
+    // Exctract locale information
+    var locale = options.locale || navigator.language || 'en-US';
+
+
+    var formatter = new Intl.NumberFormat(
+        locale,
+        {
+            style: 'currency',
+            currency: currency,
+            maximumSignificantDigits: digits,
+        }
+    );
+
+    return formatter.format(value);
+}
+
+
+/*
+ * Format a range of prices
+ */
+function formatPriceRange(price_min, price_max, options={}) {
+
+    var p_min = price_min || price_max;
+    var p_max = price_max || price_min;
+
+    var quantity = options.quantity || 1;
+
+    if (p_min == null && p_max == null) {
+        return null;
+    }
+
+    p_min = parseFloat(p_min) * quantity;
+    p_max = parseFloat(p_max) * quantity;
+
+    var output = '';
+
+    output += formatCurrency(p_min, options);
+
+    if (p_min != p_max) {
+        output += ' - ';
+        output += formatCurrency(p_max, options);
+    }
+
+    return output;
 }
 
 
