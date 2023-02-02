@@ -390,11 +390,16 @@ class BaseInvenTreeSetting(models.Model):
 
             if create:
                 # Attempt to create a new settings object
+
+                default_value = cls.get_setting_default(key, **kwargs)
+
                 setting = cls(
                     key=key,
-                    value=cls.get_setting_default(key, **kwargs),
+                    value=default_value,
                     **kwargs
                 )
+
+                print("Creating new setting:", cls, key, default_value)
 
                 try:
                     # Wrap this statement in "atomic", so it can be rolled back if it fails
@@ -1171,6 +1176,24 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Historical purchase order pricing overrides supplier price breaks'),
             'default': False,
             'validator': bool,
+        },
+
+        'PRICING_USE_STOCK_PRICING': {
+            'name': _('Use Stock Item Pricing'),
+            'description': _('Use pricing from manually entered stock data for pricing calculations'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PRICING_STOCK_ITEM_AGE_DAYS': {
+            'name': _('Stock Item Pricing Age'),
+            'description': _('Exclude stock items older than this number of days from pricing calculations'),
+            'default': 0,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ]
         },
 
         'PRICING_USE_VARIANT_PRICING': {
