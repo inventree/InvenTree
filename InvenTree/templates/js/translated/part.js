@@ -1550,7 +1550,7 @@ function loadParametricPartTable(table, options={}) {
                         field: `parameter_${template.pk}`,
                         title: template.name,
                         switchable: true,
-                        sortable: true,
+                        sortable: false,
                         filterControl: 'input',
                     });
                 }
