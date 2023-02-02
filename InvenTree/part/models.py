@@ -2797,6 +2797,18 @@ class PartPricing(common.models.MetaMixin):
         help_text=_('Maximum cost based on internal price breaks'),
     )
 
+    stock_item_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Stock Price'),
+        help_text=_('Minimum cost of individual stock items for this part'),
+    )
+
+    stock_item_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Stock Price'),
+        help_text=_('Minimum cost of individual stock items for this part'),
+    )
+
     supplier_price_min = InvenTree.fields.InvenTreeModelMoneyField(
         null=True, blank=True,
         verbose_name=_('Minimum Supplier Price'),
