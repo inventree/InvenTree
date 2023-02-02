@@ -104,7 +104,10 @@ class WebhookView(CsrfExemptMixin, APIView):
 
 
 class CurrencyExchangeView(APIView):
-    """API endpoint for displaying currency information"""
+    """API endpoint for displaying currency information
+
+    TODO: Add a POST hook to refresh / update the currency exchange data
+    """
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -114,7 +117,10 @@ class CurrencyExchangeView(APIView):
         """Return information on available currency conversions"""
 
         # Extract a list of all available rates
-        rates = Rate.objects.all()
+        try:
+            rates = Rate.objects.all()
+        except Exception:
+            rates = []
 
         response = {
             'base_currency': common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', 'USD'),
