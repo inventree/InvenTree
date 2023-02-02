@@ -2005,20 +2005,8 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
         # Run this check in the background
         InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 
-        # Determine if pricing should be updated for the parent Part instance
-        pricing = instance.part.pricing
-
-        # Check if the stock_item pricing will change
-        stock_min = pricing.stock_item_cost_min
-        stock_max = pricing.stock_item_cost_max
-
-        # Recalculate stock item pricing (but do not save)
-        pricing.update_stock_item_cost(save=False)
-
-        if stock_min != pricing.stock_item_cost_min or stock_max != pricing.stock_item_cost_max:
-            # Pricing was different, schedule part price for update
-            if InvenTree.ready.canAppAccessDatabase():
-                instance.part.schedule_pricing_update()
+        if InvenTree.ready.canAppAccessDatabase():
+            instance.part.schedule_pricing_update()
 
 
 class StockItemAttachment(InvenTreeAttachment):

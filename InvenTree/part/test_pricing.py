@@ -266,11 +266,9 @@ class PartPricingTests(InvenTreeTestCase):
         pricing = p.pricing
         pricing.update_pricing()
 
-        # Stock Item pricing must have been updated
-        self.assertIsNotNone(pricing.stock_item_cost_min)
-        self.assertIsNotNone(pricing.stock_item_cost_max)
-
-        # But overall pricing is None (due to configured setting)
+        # Check that stock item pricing data is not used
+        self.assertIsNone(pricing.purchase_cost_min)
+        self.assertIsNone(pricing.purchase_cost_max)
         self.assertIsNone(pricing.overall_min)
         self.assertIsNone(pricing.overall_max)
 
@@ -278,6 +276,9 @@ class PartPricingTests(InvenTreeTestCase):
         common.models.InvenTreeSetting.set_setting('PRICING_USE_STOCK_PRICING', True, None)
 
         pricing.update_pricing()
+
+        self.assertIsNotNone(pricing.purchase_cost_min)
+        self.assertIsNotNone(pricing.purchase_cost_max)
 
         self.assertEqual(pricing.overall_min, Money(1.176471, 'USD'))
         self.assertEqual(pricing.overall_max, Money(6.666667, 'USD'))

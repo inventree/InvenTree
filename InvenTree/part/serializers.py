@@ -778,9 +778,6 @@ class PartPricingSerializer(InvenTreeModelSerializer):
     purchase_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
     purchase_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
 
-    stock_item_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
-    stock_item_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
-
     internal_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
     internal_cost_max = InvenTreeMoneySerializer(allow_null=True, read_only=True)
 
@@ -818,8 +815,6 @@ class PartPricingSerializer(InvenTreeModelSerializer):
             'bom_cost_max',
             'purchase_cost_min',
             'purchase_cost_max',
-            'stock_item_cost_min',
-            'stock_item_cost_max',
             'internal_cost_min',
             'internal_cost_max',
             'supplier_price_min',

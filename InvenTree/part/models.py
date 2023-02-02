@@ -2346,7 +2346,6 @@ class PartPricing(common.models.MetaMixin):
 
         self.update_bom_cost(save=False)
         self.update_purchase_cost(save=False)
-        self.update_stock_item_cost(save=False)
         self.update_internal_cost(save=False)
         self.update_supplier_cost(save=False)
         self.update_variant_cost(save=False)
@@ -2511,47 +2510,33 @@ class PartPricing(common.models.MetaMixin):
             if purchase_max is None or purchase_cost > purchase_max:
                 purchase_max = purchase_cost
 
+        # Also check if manual stock item pricing is included
+        if InvenTreeSetting.get_setting('PRICING_USE_STOCK_PRICING', True, cache=False):
+
+            items = self.part.stock_items.all()
+
+            # Limit to stock items updated within a certain window
+            days = int(InvenTreeSetting.get_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0, cache=False))
+
+            if days > 0:
+                date_threshold = datetime.now().date() - timedelta(days=days)
+                items = items.filter(updated__gte=date_threshold)
+
+            for item in items:
+                cost = self.convert(item.purchase_price)
+
+                # Skip if the cost could not be converted (for some reason)
+                if cost is None:
+                    continue
+
+                if purchase_min is None or cost < purchase_min:
+                    purchase_min = cost
+
+                if purchase_max is None or cost > purchase_max:
+                    purchase_max = cost
+
         self.purchase_cost_min = purchase_min
         self.purchase_cost_max = purchase_max
-
-        if save:
-            self.save()
-
-    def update_stock_item_cost(self, save=True):
-        """Recalculate price range for stock items.
-
-        Here we look at the 'purchase_price' field of all stock items.
-        This is primarily useful in cases where stock items were entered manually
-        (i.e. without a referenced PurcahseOrder)
-        """
-
-        items = self.part.stock_items.all()
-
-        # Limit to stock items updated within a certain window
-        days = int(InvenTreeSetting.get_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0, cache=False))
-
-        if days > 0:
-            date_threshold = datetime.now().date() - timedelta(days=days)
-            items = items.filter(updated__gte=date_threshold)
-
-        min_item_cost = None
-        max_item_cost = None
-
-        for item in items:
-            cost = self.convert(item.purchase_price)
-
-            # Skip if the cost could not be converted (for some reason)
-            if cost is None:
-                continue
-
-            if min_item_cost is None or cost < min_item_cost:
-                min_item_cost = cost
-
-            if max_item_cost is None or cost > max_item_cost:
-                max_item_cost = cost
-
-        self.stock_item_cost_min = min_item_cost
-        self.stock_item_cost_max = max_item_cost
 
         if save:
             self.save()
@@ -2695,11 +2680,6 @@ class PartPricing(common.models.MetaMixin):
             min_costs.append(self.variant_cost_min)
             max_costs.append(self.variant_cost_max)
 
-        if InvenTreeSetting.get_setting('PRICING_USE_STOCK_PRICING', True, cache=False):
-            # Include stock pricing in overall calculations
-            min_costs.append(self.stock_item_cost_min)
-            max_costs.append(self.stock_item_cost_max)
-
         # Calculate overall minimum cost
         for cost in min_costs:
             if cost is None:
@@ -2841,18 +2821,6 @@ class PartPricing(common.models.MetaMixin):
         null=True, blank=True,
         verbose_name=_('Maximum Internal Price'),
         help_text=_('Maximum cost based on internal price breaks'),
-    )
-
-    stock_item_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True, blank=True,
-        verbose_name=_('Minimum Stock Price'),
-        help_text=_('Minimum cost of individual stock items for this part'),
-    )
-
-    stock_item_cost_max = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True, blank=True,
-        verbose_name=_('Minimum Stock Price'),
-        help_text=_('Minimum cost of individual stock items for this part'),
     )
 
     supplier_price_min = InvenTree.fields.InvenTreeModelMoneyField(
