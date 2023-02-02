@@ -45,9 +45,7 @@
                             </a>
                             {% endif %}
                         </td>
-                        <th>
-                            {% trans "Internal Pricing" %}
-                        </th>
+                        <th>{% trans "Internal Pricing" %}</th>
                         <td>{% include "price_data.html" with price=pricing.internal_cost_min %}</td>
                         <td>{% include "price_data.html" with price=pricing.internal_cost_max %}</td>
                     </tr>
@@ -60,12 +58,21 @@
                             </a>
                             {% endif %}
                         </td>
-                        <th>
-                            {% trans "Purchase History" %}
-                        </th>
+                        <th>{% trans "Purchase History" %}</th>
                         <td>{% include "price_data.html" with price=pricing.purchase_cost_min %}</td>
                         <td>{% include "price_data.html" with price=pricing.purchase_cost_max %}</td>
                     </tr>
+                    {% settings_value PRICING_USE_SUPPLIER_PRICING as use_stock_pricing %}
+                    {% if use_stock_pricing %}
+                    <tr>
+                        <td>
+                            <span class='fas fa-boxes'></span>
+                        </td>
+                        <td>{% trans "Stock Item Pricing" %}</td>
+                        <td>{% include "price_data.html" with price=pricing.stock_item_cost_min %}</td>
+                        <td>{% include "price_data.html" with price=pricing.stock_item_cost_max %}</td>
+                    </tr>
+                    {% endif %}
                     <tr>
                         <td>
                             {% if roles.purchase_order.view %}
@@ -74,9 +81,7 @@
                             </a>
                             {% endif %}
                         </td>
-                        <th>
-                            {% trans "Supplier Pricing" %}
-                        </th>
+                        <th>{% trans "Supplier Pricing" %}</th>
                         <td>{% include "price_data.html" with price=pricing.supplier_price_min %}</td>
                         <td>{% include "price_data.html" with price=pricing.supplier_price_max %}</td>
                     </tr>
@@ -90,9 +95,7 @@
                             </a>
                             {% endif %}
                         </td>
-                        <th>
-                            {% trans "BOM Pricing" %}
-                        </th>
+                        <th>{% trans "BOM Pricing" %}</th>
                         <td>{% include "price_data.html" with price=pricing.bom_cost_min %}</td>
                         <td>{% include "price_data.html" with price=pricing.bom_cost_max %}</td>
                     </tr>
@@ -107,9 +110,7 @@
                     {% endif %}
                     <tr>
                         <td></td>
-                        <th>
-                            {% trans "Overall Pricing" %}
-                        </th>
+                        <th>{% trans "Overall Pricing" %}</th>
                         <th>{% include "price_data.html" with price=pricing.overall_min %}</th>
                         <th>{% include "price_data.html" with price=pricing.overall_max %}</th>
                     </tr>
@@ -135,15 +136,9 @@
                                 <span class='fas fa-dollar-sign'></span>
                             </a>
                         </td>
-                        <th>
-                            {% trans "Sale Price" %}
-                        </th>
-                        <td>
-                            {% include "price_data.html" with price=pricing.sale_price_min %}
-                        </td>
-                        <td>
-                            {% include "price_data.html" with price=pricing.sale_price_max %}
-                        </td>
+                        <th>{% trans "Sale Price" %}</th>
+                        <td>{% include "price_data.html" with price=pricing.sale_price_min %}</td>
+                        <td>{% include "price_data.html" with price=pricing.sale_price_max %}</td>
                     </tr>
                     <tr>
                         <td>
@@ -151,15 +146,9 @@
                                 <span class='fas fa-chart-line'></span>
                             </a>
                         </td>
-                        <th>
-                            {% trans "Sale History" %}
-                        </th>
-                        <td>
-                            {% include "price_data.html" with price=pricing.sale_history_min %}
-                        </td>
-                        <td>
-                            {% include "price_data.html" with price=pricing.sale_history_max %}
-                        </td>
+                        <th>{% trans "Sale History" %}</th>
+                        <td>{% include "price_data.html" with price=pricing.sale_history_min %}</td>
+                        <td>{% include "price_data.html" with price=pricing.sale_history_max %}</td>
                     </tr>
                 </tbody>
             </table>
