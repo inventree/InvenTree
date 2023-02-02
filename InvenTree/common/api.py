@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
+from djmoney.contrib.exchange.models import Rate
 from rest_framework import filters, permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.permissions import IsAdminUser
@@ -100,6 +101,30 @@ class WebhookView(CsrfExemptMixin, APIView):
             return self.webhook.process_webhook()
         except self.model_class.DoesNotExist:
             raise NotFound()
+
+
+class CurrencyExchangeView(APIView):
+    """API endpoint for displaying currency information"""
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request, format=None):
+        """Return information on available currency conversions"""
+
+        # Extract a list of all available rates
+        rates = Rate.objects.all()
+
+        response = {
+            'base_currency': common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', 'USD'),
+            'exchange_rates': {}
+        }
+
+        for rate in rates:
+            response['exchange_rates'][rate.currency] = rate.value
+
+        return Response(response)
 
 
 class SettingsList(ListAPI):
@@ -417,6 +442,11 @@ settings_api_urls = [
 common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
+
+    # Currencies
+    re_path(r'^currency/', include([
+        re_path(r'^exchange/', CurrencyExchangeView.as_view(), name='api-currency-exchange'),
+    ])),
 
     # Notifications
     re_path(r'^notifications/', include([
