@@ -7,6 +7,8 @@
 */
 
 /* exported
+    baseCurrency,
+    calculateTotalPrice,
     convertCurrency,
     loadBomPricingChart,
     loadPartSupplierPricingTable,
@@ -16,6 +18,15 @@
     loadSalesPriceHistoryTable,
     loadVariantPricingChart,
 */
+
+
+/*
+ * Returns the base currency used for conversion operations
+ */
+function baseCurrency() {
+    return global_settings.INVENTREE_BASE_CURRENCY || 'USD';
+}
+
 
 // TODO: Implement a better version of caching here
 var cached_exchange_rates = null;
@@ -41,6 +52,94 @@ function getCurrencyConversionRates() {
 
 
 /*
+ * Calculate the total price for a given dataset.
+ * Within each 'row' in the dataset, the 'price' attribute is denoted by 'key' variable
+ *
+ * The target currency is determined as follows:
+ * 1. Provided as options.currency
+ * 2. All rows use the same currency (defaults to this)
+ * 3. Use the result of baseCurrency function
+ */
+function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
+
+    var currency = options.currency;
+
+    var rates = getCurrencyConversionRates();
+
+    if (!rates) {
+        console.error("Could not retrieve currency conversion information from the server");
+        return `<span class='icon-red fas fa-exclamation-circle' title='{% trans "Error fetching currency data" %}'></span>`;
+    }
+
+    if (!currency) {
+        // Try to determine currency from the dataset
+        var common_currency = true;
+
+        for (var idx = 0; idx < dataset.length; idx++) {
+            var row = dataset[idx];
+
+            var row_currency = currency_func(row);
+
+            if (row_currency == null) {
+                continue;
+            }
+
+            if (currency == null) {
+                currency = row_currency;
+            }
+
+            if (currency != row_currency) {
+                common_currency = false;
+                break;
+            }
+        }
+
+        // Inconsistent currencies between rows - revert to base currency
+        if (!common_currency) {
+            currency = baseCurrency();
+        }
+    }
+
+    var total = null;
+
+    for (var ii = 0; ii < dataset.length; ii++) {
+        var row = dataset[ii];
+
+        // Pass the row back to the decoder
+        var value = value_func(row);
+
+        // Ignore null values
+        if (value == null) {
+            continue;
+        }
+
+        // Convert to the desired currency
+        value = convertCurrency(
+            value,
+            currency_func(row) || baseCurrency(),
+            currency,
+            rates
+        );
+
+        if (value == null) {
+            continue;
+        }
+
+        // Total is null until we get a good value
+        if (total == null) {
+            total = 0;
+        }
+
+        total += value;
+    }
+
+    return formatCurrency(total, {
+        currency: currency,
+    });
+}
+
+
+/*
  * Convert from one specified currency into another
  *
  * @param {number} value - numerical value
@@ -50,25 +149,30 @@ function getCurrencyConversionRates() {
  */
 function convertCurrency(value, source_currency, target_currency, rate_data) {
 
+    if (value == null) {
+        console.warn('Null value passed to convertCurrency function');
+        return null;
+    }
+
     if (!('base_currency' in rate_data)) {
-        logger.error('Currency data missing base_currency parameter');
+        console.error('Currency data missing base_currency parameter');
         return null;
     }
 
     if (!('exchange_rates' in rate_data)) {
-        logger.error('Currency data missing exchange_rates parameter');
+        console.error('Currency data missing exchange_rates parameter');
         return null;
     }
 
     var rates = rate_data['exchange_rates'];
 
     if (!(source_currency in rates)) {
-        logger.error(`Source currency '${source_currency}' not found in exchange rate data`);
+        console.error(`Source currency '${source_currency}' not found in exchange rate data`);
         return null;
     }
 
     if (!(target_currency in rates)) {
-        logger.error(`Target currency '${target_currency}' not found in exchange rate date`);
+        console.error(`Target currency '${target_currency}' not found in exchange rate date`);
         return null;
     }
 
