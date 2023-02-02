@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 91
+INVENTREE_API_VERSION = 92
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v92 -> 2023-02-02 : https://github.com/inventree/InvenTree/pull/4292
+    - Adds more pricing data to the /api/part/pricing endpoint
 
 v91 -> 2023-01-31 : https://github.com/inventree/InvenTree/pull/4281
     - Improves the API endpoint for creating new Part instances
