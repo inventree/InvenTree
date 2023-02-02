@@ -123,13 +123,15 @@ class PluginConfig(models.Model):
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
 
-        # append settings from registry
+        # Append settings from registry
         plugin = registry.plugins_full.get(self.key, None)
 
         def get_plugin_meta(name):
-            if plugin:
-                return str(getattr(plugin, name, None))
-            return None
+            if not plugin:
+                return None
+            if not self.active:
+                return _('Unvailable')
+            return str(getattr(plugin, name, None))
 
         self.meta = {
             key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author',
@@ -145,6 +147,10 @@ class PluginConfig(models.Model):
         reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
         ret = super().save(force_insert, force_update, *args, **kwargs)
+
+        if self.is_builtin():
+            # Force active if builtin
+            self.active = True
 
         if not reload:
             if (self.active is False and self.__org_active is True) or \

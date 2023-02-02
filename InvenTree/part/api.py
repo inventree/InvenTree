@@ -1,7 +1,6 @@
 """Provides a JSON API for the Part app."""
 
 import functools
-from decimal import Decimal, InvalidOperation
 
 from django.db import transaction
 from django.db.models import Count, F, Q
@@ -18,7 +17,6 @@ from rest_framework.response import Response
 
 import order.models
 from build.models import Build, BuildItem
-from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
@@ -33,7 +31,6 @@ from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from part.admin import PartCategoryResource, PartResource
 from plugin.serializers import MetadataSerializer
-from stock.models import StockItem, StockLocation
 
 from . import serializers as part_serializers
 from . import views
@@ -1096,25 +1093,7 @@ class PartFilter(rest_filters.FilterSet):
 
 
 class PartList(APIDownloadMixin, ListCreateAPI):
-    """API endpoint for accessing a list of Part objects.
-
-    - GET: Return list of objects
-    - POST: Create a new Part object
-
-    The Part object list can be filtered by:
-        - category: Filter by PartCategory reference
-        - cascade: If true, include parts from sub-categories
-        - starred: Is the part "starred" by the current user?
-        - is_template: Is the part a template part?
-        - variant_of: Filter by variant_of Part reference
-        - assembly: Filter by assembly field
-        - component: Filter by component field
-        - trackable: Filter by trackable field
-        - purchaseable: Filter by purcahseable field
-        - salable: Filter by salable field
-        - active: Filter by active field
-        - ancestor: Filter parts by 'ancestor' (template / variant tree)
-    """
+    """API endpoint for accessing a list of Part objects, or creating a new Part instance"""
 
     serializer_class = part_serializers.PartSerializer
     queryset = Part.objects.all()
@@ -1126,6 +1105,9 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         """Return a serializer instance for this endpoint"""
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
+
+        # Indicate that we can create a new Part via this endpoint
+        kwargs['create'] = True
 
         # Pass a list of "starred" parts to the current user to the serializer
         # We do this to reduce the number of database queries required!
@@ -1143,6 +1125,13 @@ class PartList(APIDownloadMixin, ListCreateAPI):
             pass
 
         return self.serializer_class(*args, **kwargs)
+
+    def get_serializer_context(self):
+        """Extend serializer context data"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
 
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a data file"""
@@ -1240,127 +1229,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         }
 
         part.save(**{'add_category_templates': copy_templates})
-
-        # Optionally copy data from another part (e.g. when duplicating)
-        copy_from = data.get('copy_from', None)
-
-        if copy_from is not None:
-
-            try:
-                original = Part.objects.get(pk=copy_from)
-
-                copy_bom = str2bool(data.get('copy_bom', False))
-                copy_parameters = str2bool(data.get('copy_parameters', False))
-                copy_image = str2bool(data.get('copy_image', True))
-
-                # Copy image?
-                if copy_image:
-                    part.image = original.image
-                    part.save()
-
-                # Copy BOM?
-                if copy_bom:
-                    part.copy_bom_from(original)
-
-                # Copy parameter data?
-                if copy_parameters:
-                    part.copy_parameters_from(original)
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        # Optionally create initial stock item
-        initial_stock = str2bool(data.get('initial_stock', False))
-
-        if initial_stock:
-            try:
-
-                initial_stock_quantity = Decimal(data.get('initial_stock_quantity', ''))
-
-                if initial_stock_quantity <= 0:
-                    raise ValidationError({
-                        'initial_stock_quantity': [_('Must be greater than zero')],
-                    })
-            except (ValueError, InvalidOperation):  # Invalid quantity provided
-                raise ValidationError({
-                    'initial_stock_quantity': [_('Must be a valid quantity')],
-                })
-
-            initial_stock_location = data.get('initial_stock_location', None)
-
-            try:
-                initial_stock_location = StockLocation.objects.get(pk=initial_stock_location)
-            except (ValueError, StockLocation.DoesNotExist):
-                initial_stock_location = None
-
-            if initial_stock_location is None:
-                if part.default_location is not None:
-                    initial_stock_location = part.default_location
-                else:
-                    raise ValidationError({
-                        'initial_stock_location': [_('Specify location for initial part stock')],
-                    })
-
-            stock_item = StockItem(
-                part=part,
-                quantity=initial_stock_quantity,
-                location=initial_stock_location,
-            )
-
-            stock_item.save(user=request.user)
-
-        # Optionally add manufacturer / supplier data to the part
-        if part.purchaseable and str2bool(data.get('add_supplier_info', False)):
-
-            try:
-                manufacturer = Company.objects.get(pk=data.get('manufacturer', None))
-            except Exception:
-                manufacturer = None
-
-            try:
-                supplier = Company.objects.get(pk=data.get('supplier', None))
-            except Exception:
-                supplier = None
-
-            mpn = str(data.get('MPN', '')).strip()
-            sku = str(data.get('SKU', '')).strip()
-
-            # Construct a manufacturer part
-            if manufacturer or mpn:
-                if not manufacturer:
-                    raise ValidationError({
-                        'manufacturer': [_("This field is required")]
-                    })
-                if not mpn:
-                    raise ValidationError({
-                        'MPN': [_("This field is required")]
-                    })
-
-                manufacturer_part = ManufacturerPart.objects.create(
-                    part=part,
-                    manufacturer=manufacturer,
-                    MPN=mpn
-                )
-            else:
-                # No manufacturer part data specified
-                manufacturer_part = None
-
-            if supplier or sku:
-                if not supplier:
-                    raise ValidationError({
-                        'supplier': [_("This field is required")]
-                    })
-                if not sku:
-                    raise ValidationError({
-                        'SKU': [_("This field is required")]
-                    })
-
-                SupplierPart.objects.create(
-                    part=part,
-                    supplier=supplier,
-                    SKU=sku,
-                    manufacturer_part=manufacturer_part,
-                )
 
         headers = self.get_success_headers(serializer.data)
 

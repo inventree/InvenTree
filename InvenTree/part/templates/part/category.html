@@ -336,30 +336,9 @@
 
     {% if roles.part.add %}
     $("#part-create").click(function() {
-
-        var fields = partFields({
-            create: true,
+        createPart({
+            {% if category %}category: {{ category.pk }},{% endif %}
         });
-
-        {% if category %}
-        fields.category.value = {{ category.pk }};
-        {% endif %}
-
-        constructForm('{% url "api-part-list" %}', {
-            method: 'POST',
-            fields: fields,
-            groups: partGroups(),
-            title: '{% trans "Create Part" %}',
-            reloadFormAfterSuccess: true,
-            persist: true,
-            persistMessage: '{% trans "Create another part after this one" %}',
-            successMessage: '{% trans "Part created successfully" %}',
-            onSuccess: function(data) {
-                // Follow the new part
-                location.href = `/part/${data.pk}/`;
-            },
-        });
-
     });
     {% endif %}
 

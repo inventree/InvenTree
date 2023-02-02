@@ -390,9 +390,12 @@ class BaseInvenTreeSetting(models.Model):
 
             if create:
                 # Attempt to create a new settings object
+
+                default_value = cls.get_setting_default(key, **kwargs)
+
                 setting = cls(
                     key=key,
-                    value=cls.get_setting_default(key, **kwargs),
+                    value=default_value,
                     **kwargs
                 )
 
@@ -1121,9 +1124,16 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'PART_CREATE_INITIAL': {
-            'name': _('Create initial stock'),
-            'description': _('Create initial stock on part creation'),
+            'name': _('Initial Stock Data'),
+            'description': _('Allow creation of initial stock when adding a new part'),
             'default': False,
+            'validator': bool,
+        },
+
+        'PART_CREATE_SUPPLIER': {
+            'name': _('Initial Supplier Data'),
+            'description': _('Allow creation of initial supplier data when adding a new part'),
+            'default': True,
             'validator': bool,
         },
 
@@ -1164,6 +1174,24 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Historical purchase order pricing overrides supplier price breaks'),
             'default': False,
             'validator': bool,
+        },
+
+        'PRICING_USE_STOCK_PRICING': {
+            'name': _('Use Stock Item Pricing'),
+            'description': _('Use pricing from manually entered stock data for pricing calculations'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PRICING_STOCK_ITEM_AGE_DAYS': {
+            'name': _('Stock Item Pricing Age'),
+            'description': _('Exclude stock items older than this number of days from pricing calculations'),
+            'default': 0,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ]
         },
 
         'PRICING_USE_VARIANT_PRICING': {
