@@ -12,7 +12,6 @@ import InvenTree.helpers
 from plugin.helpers import (MixinImplementationError, MixinNotImplementedError,
                             render_template, render_text)
 from plugin.models import PluginConfig, PluginSetting
-from plugin.registry import registry
 from plugin.urls import PLUGIN_BASE
 
 logger = logging.getLogger('inventree')
@@ -153,12 +152,14 @@ class ScheduleMixin:
             for key, task in self.scheduled_tasks.items():
 
                 task_name = self.get_task_name(key)
+
                 obj = {
                     'name': task_name,
                     'schedule_type': task['schedule'],
                     'minutes': task.get('minutes', None),
                     'repeats': task.get('repeats', -1),
                 }
+
                 func_name = task['func'].strip()
 
                 if '.' in func_name:
@@ -167,7 +168,7 @@ class ScheduleMixin:
                 else:
                     """Non-dotted notation indicates that we wish to call a 'member function' of the calling plugin. This is managed by the plugin registry itself."""
                     slug = self.plugin_slug()
-                    obj['func'] = registry.call_plugin_function
+                    obj['func'] = 'plugin.registry.call_plugin_function'
                     obj['args'] = f"'{slug}', '{func_name}'"
 
                 if Schedule.objects.filter(name=task_name).exists():

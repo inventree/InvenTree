@@ -27,6 +27,7 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
     NAME = "ScheduledTasksPlugin"
     SLUG = "schedule"
     TITLE = "Scheduled Tasks"
+    VERSION = "0.2.0"
 
     SCHEDULED_TASKS = {
         'member': {
