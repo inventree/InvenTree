@@ -821,6 +821,13 @@ def validate_email_domains(setting):
 
 def update_exchange_rates(setting):
     """Update exchange rates when base currency is changed"""
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    if not InvenTree.ready.canAppAccessDatabase():
+        return
+
     InvenTree.tasks.update_exchange_rates()
 
 
