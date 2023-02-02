@@ -3904,17 +3904,15 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['sale_price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return calculateTotalPrice(
+                    data,
+                    function(row) {
+                        return row.sale_price ? row.sale_price * row.quantity : null;
+                    },
+                    function(row) {
+                        return row.sale_price_currency;
+                    }
+                );
             }
         },
         {
@@ -4395,17 +4393,15 @@ function loadSalesOrderExtraLineTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return calculateTotalPrice(
+                    data,
+                    function(row) {
+                        return row.price ? row.price * row.quantity : null;
+                    },
+                    function(row) {
+                        return row.price_currency;
+                    }
+                );
             }
         }
     ];

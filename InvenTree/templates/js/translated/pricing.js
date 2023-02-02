@@ -226,6 +226,11 @@ function convertCurrency(value, source_currency, target_currency, rate_data) {
         return null;
     }
 
+    // Short circuit the case where the currencies are the same
+    if (source_currency == target_currency) {
+        return value;
+    }
+
     if (!('base_currency' in rate_data)) {
         console.error('Currency data missing base_currency parameter');
         return null;
