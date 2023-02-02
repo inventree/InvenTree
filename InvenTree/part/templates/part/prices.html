@@ -62,7 +62,7 @@
                         <td>{% include "price_data.html" with price=pricing.purchase_cost_min %}</td>
                         <td>{% include "price_data.html" with price=pricing.purchase_cost_max %}</td>
                     </tr>
-                    {% settings_value PRICING_USE_SUPPLIER_PRICING as use_stock_pricing %}
+                    {% settings_value "PRICING_USE_STOCK_PRICING" as use_stock_pricing %}
                     {% if use_stock_pricing %}
                     <tr>
                         <td>
