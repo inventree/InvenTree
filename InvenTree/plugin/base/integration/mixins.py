@@ -168,7 +168,7 @@ class ScheduleMixin:
                 else:
                     """Non-dotted notation indicates that we wish to call a 'member function' of the calling plugin. This is managed by the plugin registry itself."""
                     slug = self.plugin_slug()
-                    obj['func'] = 'registry.call_plugin_function'
+                    obj['func'] = 'plugin.registry.call_plugin_function'
                     obj['args'] = f"'{slug}', '{func_name}'"
 
                 if Schedule.objects.filter(name=task_name).exists():
