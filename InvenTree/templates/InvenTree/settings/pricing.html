@@ -32,12 +32,7 @@
         <h4>{% trans "Currency Settings" %}</h4>
         {% include "spacer.html" %}
         <div class='btn-group' role='group'>
-            <form action='{% url "settings-currencies-refresh" %}' method='post'>
-                <div id='refresh-rates-form'>
-                    {% csrf_token %}
-                    <button type='submit' id='update-rates' class='btn btn-primary float-right'>{% trans "Update Now" %}</button>
-                </div>
-            </form>
+            <button type='button' id='btn-update-rates' class='btn btn-primary float-right'>{% trans "Update Now" %}</button>
         </div>
     </div>
 </div>

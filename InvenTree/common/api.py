@@ -104,10 +104,7 @@ class WebhookView(CsrfExemptMixin, APIView):
 
 
 class CurrencyExchangeView(APIView):
-    """API endpoint for displaying currency information
-
-    TODO: Add a POST hook to refresh / update the currency exchange data
-    """
+    """API endpoint for displaying currency information"""
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -131,6 +128,29 @@ class CurrencyExchangeView(APIView):
             response['exchange_rates'][rate.currency] = rate.value
 
         return Response(response)
+
+
+class CurrencyRefreshView(APIView):
+    """API endpoint for manually refreshing currency exchange rates.
+
+    User must be a 'staff' user to access this endpoint
+    """
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+        permissions.IsAdminUser,
+    ]
+
+    def post(self, request, *args, **kwargs):
+        """Performing a POST request will update currency exchange rates"""
+
+        from InvenTree.tasks import update_exchange_rates
+
+        update_exchange_rates
+
+        return Response({
+            'success': 'Exchange rates updated',
+        })
 
 
 class SettingsList(ListAPI):
@@ -452,6 +472,7 @@ common_api_urls = [
     # Currencies
     re_path(r'^currency/', include([
         re_path(r'^exchange/', CurrencyExchangeView.as_view(), name='api-currency-exchange'),
+        re_path(r'^refresh/', CurrencyRefreshView.as_view(), name='api-currency-refresh'),
     ])),
 
     # Notifications

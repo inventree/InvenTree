@@ -652,20 +652,6 @@ class CustomLoginView(LoginView):
         return super().get(request, *args, **kwargs)
 
 
-class CurrencyRefreshView(RedirectView):
-    """POST endpoint to refresh / update exchange rates."""
-
-    url = reverse_lazy("settings-currencies")
-
-    def post(self, request, *args, **kwargs):
-        """On a POST request we will attempt to refresh the exchange rates."""
-        from InvenTree.tasks import offload_task, update_exchange_rates
-
-        offload_task(update_exchange_rates, force_sync=True)
-
-        return redirect(reverse_lazy('settings'))
-
-
 class AppearanceSelectView(RedirectView):
     """View for selecting a color theme."""
 
