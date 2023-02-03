@@ -167,6 +167,7 @@ $('#btn-update-rates').click(function() {
 $('#exchange-rate-table').inventreeTable({
     url: '{% url "api-currency-exchange" %}',
     search: false,
+    showColumns: false,
     sortable: true,
     sidePagination: 'client',
     onLoadSuccess: function(response) {
