@@ -154,7 +154,7 @@ class CurrencyRefreshView(APIView):
 
         from InvenTree.tasks import update_exchange_rates
 
-        update_exchange_rates
+        update_exchange_rates()
 
         return Response({
             'success': 'Exchange rates updated',
