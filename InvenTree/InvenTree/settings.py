@@ -624,7 +624,7 @@ Q_CLUSTER = {
     'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
     'timeout': _q_worker_timeout,
     'retry': min(120, _q_worker_timeout + 30),
-    'max_attempts': 5,
+    'max_attempts': int(get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)),
     'queue_limit': 50,
     'catch_up': False,
     'bulk': 10,
