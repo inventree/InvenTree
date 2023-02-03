@@ -127,6 +127,7 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 STATICFILES_DIRS = []
 
