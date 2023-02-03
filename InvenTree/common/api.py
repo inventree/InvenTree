@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
-from djmoney.contrib.exchange.models import Rate
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework import filters, permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.permissions import IsAdminUser
@@ -119,9 +119,17 @@ class CurrencyExchangeView(APIView):
         except Exception:
             rates = []
 
+        # Information on last update
+        try:
+            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            updated = backend.last_update
+        except Exception:
+            updated = None
+
         response = {
             'base_currency': common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', 'USD'),
-            'exchange_rates': {}
+            'exchange_rates': {},
+            'updated': updated,
         }
 
         for rate in rates:
