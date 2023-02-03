@@ -912,3 +912,8 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
         self.assertIn('base_currency', response.data)
         self.assertIn('exchange_rates', response.data)
+
+    def test_refresh_endpoint(self):
+        """Call the 'refresh currencies' endpoint"""
+
+        self.post(reverse('api-currency-refresh'))
