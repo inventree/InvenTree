@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-02 11:48+0000\n"
-"PO-Revision-Date: 2023-02-02 14:57\n"
+"POT-Creation-Date: 2023-02-03 01:45+0000\n"
+"PO-Revision-Date: 2023-02-03 15:05\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -288,7 +288,7 @@ msgstr "Geçersiz seçim"
 #: templates/InvenTree/settings/plugin.html:60
 #: templates/InvenTree/settings/plugin.html:104
 #: templates/InvenTree/settings/plugin_settings.html:23
-#: templates/InvenTree/settings/settings.html:345
+#: templates/InvenTree/settings/settings.html:391
 #: templates/js/translated/company.js:581
 #: templates/js/translated/company.js:794
 #: templates/js/translated/notification.js:71
@@ -311,7 +311,7 @@ msgstr "Adı"
 #: stock/admin.py:25 stock/templates/stock/location.html:117
 #: templates/InvenTree/settings/notifications.html:19
 #: templates/InvenTree/settings/plugin_settings.html:28
-#: templates/InvenTree/settings/settings.html:356
+#: templates/InvenTree/settings/settings.html:402
 #: templates/js/translated/bom.js:599 templates/js/translated/bom.js:902
 #: templates/js/translated/build.js:2597 templates/js/translated/company.js:445
 #: templates/js/translated/company.js:703
@@ -433,107 +433,107 @@ msgstr ""
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/settings.py:654
+#: InvenTree/settings.py:689
 msgid "Czech"
 msgstr ""
 
-#: InvenTree/settings.py:655
+#: InvenTree/settings.py:690
 msgid "Danish"
 msgstr ""
 
-#: InvenTree/settings.py:656
+#: InvenTree/settings.py:691
 msgid "German"
 msgstr "Almanca"
 
-#: InvenTree/settings.py:657
+#: InvenTree/settings.py:692
 msgid "Greek"
 msgstr "Yunanca"
 
-#: InvenTree/settings.py:658
+#: InvenTree/settings.py:693
 msgid "English"
 msgstr "İngilizce"
 
-#: InvenTree/settings.py:659
+#: InvenTree/settings.py:694
 msgid "Spanish"
 msgstr "İspanyolca"
 
-#: InvenTree/settings.py:660
+#: InvenTree/settings.py:695
 msgid "Spanish (Mexican)"
 msgstr "İspanyolca(Meksika)"
 
-#: InvenTree/settings.py:661
+#: InvenTree/settings.py:696
 msgid "Farsi / Persian"
 msgstr ""
 
-#: InvenTree/settings.py:662
+#: InvenTree/settings.py:697
 msgid "French"
 msgstr "Fransızca"
 
-#: InvenTree/settings.py:663
+#: InvenTree/settings.py:698
 msgid "Hebrew"
 msgstr "İbranice"
 
-#: InvenTree/settings.py:664
+#: InvenTree/settings.py:699
 msgid "Hungarian"
 msgstr "Macarca"
 
-#: InvenTree/settings.py:665
+#: InvenTree/settings.py:700
 msgid "Italian"
 msgstr "İtalyanca"
 
-#: InvenTree/settings.py:666
+#: InvenTree/settings.py:701
 msgid "Japanese"
 msgstr "Japonca"
 
-#: InvenTree/settings.py:667
+#: InvenTree/settings.py:702
 msgid "Korean"
 msgstr "Korece"
 
-#: InvenTree/settings.py:668
+#: InvenTree/settings.py:703
 msgid "Dutch"
 msgstr "Flemenkçe"
 
-#: InvenTree/settings.py:669
+#: InvenTree/settings.py:704
 msgid "Norwegian"
 msgstr "Norveççe"
 
-#: InvenTree/settings.py:670
+#: InvenTree/settings.py:705
 msgid "Polish"
 msgstr "Polonyaca"
 
-#: InvenTree/settings.py:671
+#: InvenTree/settings.py:706
 msgid "Portuguese"
 msgstr ""
 
-#: InvenTree/settings.py:672
+#: InvenTree/settings.py:707
 msgid "Portuguese (Brazilian)"
 msgstr ""
 
-#: InvenTree/settings.py:673
+#: InvenTree/settings.py:708
 msgid "Russian"
 msgstr "Rusça"
 
-#: InvenTree/settings.py:674
+#: InvenTree/settings.py:709
 msgid "Slovenian"
 msgstr ""
 
-#: InvenTree/settings.py:675
+#: InvenTree/settings.py:710
 msgid "Swedish"
 msgstr "İsveççe"
 
-#: InvenTree/settings.py:676
+#: InvenTree/settings.py:711
 msgid "Thai"
 msgstr "Tay dili"
 
-#: InvenTree/settings.py:677
+#: InvenTree/settings.py:712
 msgid "Turkish"
 msgstr "Türkçe"
 
-#: InvenTree/settings.py:678
+#: InvenTree/settings.py:713
 msgid "Vietnamese"
 msgstr "Vietnamca"
 
-#: InvenTree/settings.py:679
+#: InvenTree/settings.py:714
 msgid "Chinese"
 msgstr "Çince"
 
@@ -737,11 +737,11 @@ msgstr "Parola alanları eşleşmelidir"
 msgid "Wrong password provided"
 msgstr ""
 
-#: InvenTree/views.py:703 templates/navbar.html:152
+#: InvenTree/views.py:689 templates/navbar.html:152
 msgid "System Information"
 msgstr "Sistem Bilgisi"
 
-#: InvenTree/views.py:710 templates/navbar.html:163
+#: InvenTree/views.py:696 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "InvenTree Hakkında"
 
@@ -3132,7 +3132,7 @@ msgstr "Bu şirket üretim yapıyor mu?"
 #: company/models.py:153 company/serializers.py:403
 #: company/templates/company/company_base.html:107 part/models.py:2774
 #: part/serializers.py:159 part/serializers.py:187 stock/serializers.py:182
-#: templates/InvenTree/settings/pricing.html:68
+#: templates/InvenTree/settings/settings.html:191
 msgid "Currency"
 msgstr "Para birimi"
 
@@ -3213,7 +3213,7 @@ msgstr "Parametre değeri"
 
 #: company/models.py:377 part/admin.py:26 part/models.py:952
 #: part/models.py:3194 part/templates/part/part_base.html:286
-#: templates/InvenTree/settings/settings.html:350
+#: templates/InvenTree/settings/settings.html:396
 #: templates/js/translated/company.js:806 templates/js/translated/part.js:1141
 msgid "Units"
 msgstr ""
@@ -4956,7 +4956,7 @@ msgstr ""
 
 #: part/models.py:847 part/models.py:3032 part/models.py:3276
 #: part/templates/part/part_base.html:263
-#: templates/InvenTree/settings/settings.html:230
+#: templates/InvenTree/settings/settings.html:276
 #: templates/js/translated/notification.js:50
 #: templates/js/translated/part.js:1759 templates/js/translated/part.js:2026
 msgid "Category"
@@ -5288,7 +5288,7 @@ msgid "Parent Part"
 msgstr ""
 
 #: part/models.py:3234 part/models.py:3282 part/models.py:3283
-#: templates/InvenTree/settings/settings.html:225
+#: templates/InvenTree/settings/settings.html:271
 msgid "Parameter Template"
 msgstr "Parametre Şablonu"
 
@@ -5300,7 +5300,7 @@ msgstr ""
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:3287 templates/InvenTree/settings/settings.html:234
+#: part/models.py:3287 templates/InvenTree/settings/settings.html:280
 msgid "Default Value"
 msgstr ""
 
@@ -7888,33 +7888,21 @@ msgstr ""
 msgid "Pricing Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/pricing.html:32
-msgid "Currency Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/pricing.html:38
-msgid "Update Now"
-msgstr ""
-
-#: templates/InvenTree/settings/pricing.html:47
-#: templates/InvenTree/settings/pricing.html:51
-msgid "Last Update"
-msgstr ""
-
-#: templates/InvenTree/settings/pricing.html:51
-msgid "Never"
-msgstr ""
-
-#: templates/InvenTree/settings/pricing.html:61
-msgid "Base Currency"
-msgstr ""
-
-#: templates/InvenTree/settings/pricing.html:67
+#: templates/InvenTree/settings/pricing.html:33
 msgid "Exchange Rates"
 msgstr ""
 
-#: templates/InvenTree/settings/pricing.html:69
-msgid "Rate"
+#: templates/InvenTree/settings/pricing.html:37
+msgid "Update Now"
+msgstr ""
+
+#: templates/InvenTree/settings/pricing.html:45
+#: templates/InvenTree/settings/pricing.html:49
+msgid "Last Update"
+msgstr ""
+
+#: templates/InvenTree/settings/pricing.html:49
+msgid "Never"
 msgstr ""
 
 #: templates/InvenTree/settings/report.html:8
@@ -7946,51 +7934,55 @@ msgstr ""
 msgid "Edit User Setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:215
+#: templates/InvenTree/settings/settings.html:196
+msgid "Rate"
+msgstr ""
+
+#: templates/InvenTree/settings/settings.html:261
 msgid "No category parameter templates found"
 msgstr "Kategori parametre şablonu bulunamadı"
 
-#: templates/InvenTree/settings/settings.html:237
-#: templates/InvenTree/settings/settings.html:362
+#: templates/InvenTree/settings/settings.html:283
+#: templates/InvenTree/settings/settings.html:408
 msgid "Edit Template"
 msgstr "Şablonu Düzenle"
 
-#: templates/InvenTree/settings/settings.html:238
-#: templates/InvenTree/settings/settings.html:363
+#: templates/InvenTree/settings/settings.html:284
+#: templates/InvenTree/settings/settings.html:409
 msgid "Delete Template"
 msgstr "Şablonu Sil"
 
-#: templates/InvenTree/settings/settings.html:278
+#: templates/InvenTree/settings/settings.html:324
 msgid "Create Category Parameter Template"
 msgstr "Kategori Parametre Şablonu Oluştur"
 
-#: templates/InvenTree/settings/settings.html:323
+#: templates/InvenTree/settings/settings.html:369
 msgid "Delete Category Parameter Template"
 msgstr "Kategori Parametre Şablonu Sil"
 
-#: templates/InvenTree/settings/settings.html:335
+#: templates/InvenTree/settings/settings.html:381
 msgid "No part parameter templates found"
 msgstr "Parça parametre şablonu bulunamadı"
 
-#: templates/InvenTree/settings/settings.html:339
+#: templates/InvenTree/settings/settings.html:385
 #: templates/js/translated/news.js:29
 #: templates/js/translated/notification.js:36
 msgid "ID"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:381
+#: templates/InvenTree/settings/settings.html:427
 msgid "Create Part Parameter Template"
 msgstr "Parça Parametre Şablonu Oluştur"
 
-#: templates/InvenTree/settings/settings.html:400
+#: templates/InvenTree/settings/settings.html:446
 msgid "Edit Part Parameter Template"
 msgstr "Parça Parametre Şablonu Düzenle"
 
-#: templates/InvenTree/settings/settings.html:414
+#: templates/InvenTree/settings/settings.html:460
 msgid "Any parameters which reference this template will also be deleted"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:422
+#: templates/InvenTree/settings/settings.html:468
 msgid "Delete Part Parameter Template"
 msgstr "Parça Parametre Şablonu Sil"
 
