@@ -151,6 +151,19 @@ $("#edit-password").on('click', function() {
     );
 });
 
+$('#btn-update-rates').click(function() {
+    inventreePut(
+        '{% url "api-currency-refresh" %}',
+        {},
+        {
+            method: 'POST',
+            success: function(data) {
+                location.reload();
+            }
+        }
+    );
+});
+
 
 $('#category-select').select2({
     placeholder: '',
