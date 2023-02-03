@@ -2,10 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 92
+INVENTREE_API_VERSION = 93
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v93 -> 2023-02-03 : https://github.com/inventree/InvenTree/pull/4300
+    - Adds extra information to the currency exchange endpoint
+    - Adds API endpoint for manually updating exchange rates
 
 v92 -> 2023-02-02 : https://github.com/inventree/InvenTree/pull/4293
     - Adds API endpoint for currency exchange information
