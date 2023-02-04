@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-03 01:45+0000\n"
-"PO-Revision-Date: 2023-02-03 15:05\n"
+"PO-Revision-Date: 2023-02-04 15:06\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1821,7 +1821,7 @@ msgstr "Valuta predefinita"
 
 #: common/models.py:917
 msgid "Select base currency for pricing caluclations"
-msgstr ""
+msgstr "Selezionare la valuta di base per i calcoli dei prezzi"
 
 #: common/models.py:924
 msgid "Download from URL"
@@ -2064,19 +2064,19 @@ msgstr "Visualizza parti correlate per ogni articolo"
 
 #: common/models.py:1141
 msgid "Initial Stock Data"
-msgstr ""
+msgstr "Dati iniziali dello stock"
 
 #: common/models.py:1142
 msgid "Allow creation of initial stock when adding a new part"
-msgstr ""
+msgstr "Consentire la creazione di uno stock iniziale quando si aggiunge una nuova parte"
 
 #: common/models.py:1148 templates/js/translated/part.js:73
 msgid "Initial Supplier Data"
-msgstr ""
+msgstr "Dati iniziali del fornitore"
 
 #: common/models.py:1149
 msgid "Allow creation of initial supplier data when adding a new part"
-msgstr ""
+msgstr "Consentire la creazione dei dati iniziali del fornitore quando si aggiunge una nuova parte"
 
 #: common/models.py:1155
 msgid "Part Name Display Format"
@@ -2120,19 +2120,19 @@ msgstr "Cronologia dei prezzi dell'ordine di acquisto del fornitore superati con
 
 #: common/models.py:1194
 msgid "Use Stock Item Pricing"
-msgstr ""
+msgstr "Utilizzare i prezzi degli articoli in stock"
 
 #: common/models.py:1195
 msgid "Use pricing from manually entered stock data for pricing calculations"
-msgstr ""
+msgstr "Utilizzare i prezzi dei dati di magazzino inseriti manualmente per il calcolo dei prezzi"
 
 #: common/models.py:1201
 msgid "Stock Item Pricing Age"
-msgstr ""
+msgstr "Età dei prezzi degli articoli in stock"
 
 #: common/models.py:1202
 msgid "Exclude stock items older than this number of days from pricing calculations"
-msgstr ""
+msgstr "Escludere dal calcolo dei prezzi gli articoli in giacenza più vecchi di questo numero di giorni"
 
 #: common/models.py:1212
 msgid "Use Variant Pricing"
@@ -2172,7 +2172,7 @@ msgstr "Abilita prezzi interni per gli articoli"
 
 #: common/models.py:1244
 msgid "Internal Price Override"
-msgstr ""
+msgstr "Sovrascrivi Prezzo Interno"
 
 #: common/models.py:1245
 msgid "If available, internal prices override price range calculations"
@@ -2780,7 +2780,7 @@ msgstr "Cerca Ordini Di Vendita"
 
 #: common/models.py:1818
 msgid "Display sales orders in search preview window"
-msgstr ""
+msgstr "Visualizzazione degli ordini di vendita nella finestra di anteprima della ricerca"
 
 #: common/models.py:1824
 msgid "Exclude Inactive Sales Orders"
@@ -2796,31 +2796,31 @@ msgstr "Risultati Dell'Anteprima Di Ricerca"
 
 #: common/models.py:1832
 msgid "Number of results to show in each section of the search preview window"
-msgstr ""
+msgstr "Numero di risultati da visualizzare in ciascuna sezione della finestra di anteprima della ricerca"
 
 #: common/models.py:1838
 msgid "Show Quantity in Forms"
-msgstr ""
+msgstr "Mostra quantità nei moduli"
 
 #: common/models.py:1839
 msgid "Display available part quantity in some forms"
-msgstr ""
+msgstr "Visualizzare la quantità di pezzi disponibili in alcuni moduli"
 
 #: common/models.py:1845
 msgid "Escape Key Closes Forms"
-msgstr ""
+msgstr "Il tasto Escape chiude i moduli"
 
 #: common/models.py:1846
 msgid "Use the escape key to close modal forms"
-msgstr ""
+msgstr "Utilizzare il tasto di escape per chiudere i moduli modali"
 
 #: common/models.py:1852
 msgid "Fixed Navbar"
-msgstr ""
+msgstr "Barra di navigazione fissa"
 
 #: common/models.py:1853
 msgid "The navbar position is fixed to the top of the screen"
-msgstr ""
+msgstr "La posizione della barra di navigazione è fissata nella parte superiore dello schermo"
 
 #: common/models.py:1859
 msgid "Date Format"
