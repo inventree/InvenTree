@@ -3,10 +3,12 @@
 import json
 import logging
 import os
+import random
 import re
+import time
 import warnings
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Callable, List
 
 from django.conf import settings
@@ -428,9 +430,65 @@ def run_backup():
     """Run the backup command."""
     from common.models import InvenTreeSetting
 
-    if InvenTreeSetting.get_setting('INVENTREE_BACKUP_ENABLE'):
-        call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
-        call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
+    if not InvenTreeSetting.get_setting('INVENTREE_BACKUP_ENABLE', False, cache=False):
+        # Backups are not enabled - exit early
+        return
+
+    logger.info("Performing automated database backup task")
+
+    # Sleep a random number of seconds to prevent worker conflict
+    time.sleep(random.randint(1, 5))
+
+    # Check for records of previous backup attempts
+    last_attempt = InvenTreeSetting.get_setting('INVENTREE_BACKUP_ATTEMPT', '', cache=False)
+    last_success = InvenTreeSetting.get_setting('INVENTREE_BACKUP_SUCCESS', '', cache=False)
+
+    try:
+        backup_n_days = int(InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1, cache=False))
+    except Exception:
+        backup_n_days = 1
+
+    if last_attempt:
+        try:
+            last_attempt = datetime.fromisoformat(last_attempt)
+        except ValueError:
+            last_attempt = None
+
+    if last_attempt:
+        # Do not attempt if the 'last attempt' at backup was within 12 hours
+        threshold = timezone.now() - timezone.timedelta(hours=12)
+
+        if last_attempt > threshold:
+            logger.info('Last backup attempt was too recent - skipping backup operation')
+            return
+
+    # Record the timestamp of most recent backup attempt
+    InvenTreeSetting.set_setting('INVENTREE_BACKUP_ATTEMPT', timezone.now().isoformat(), None)
+
+    if not last_attempt:
+        # If there is no record of a previous attempt, exit quickly
+        # This prevents the backup operation from happening when the server first launches, for example
+        logger.info("No previous backup attempts recorded - waiting until tomorrow")
+        return
+
+    if last_success:
+        try:
+            last_success = datetime.fromisoformat(last_success)
+        except ValueError:
+            last_success = None
+
+    # Exit early if the backup was successful within the number of required days
+    if last_success:
+        threshold = timezone.now() - timezone.timedelta(days=backup_n_days)
+
+        if last_success > threshold:
+            logger.info('Last successful backup was too recent - skipping backup operation')
+
+    call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
+    call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
+
+    # Record the timestamp of most recent backup success
+    InvenTreeSetting.set_setting('INVENTREE_BACKUP_SUCCESS', datetime.now().isoformat(), None)
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
