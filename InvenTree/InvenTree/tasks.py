@@ -483,6 +483,7 @@ def run_backup():
 
         if last_success > threshold:
             logger.info('Last successful backup was too recent - skipping backup operation')
+            return
 
     call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
     call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
