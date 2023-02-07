@@ -409,6 +409,11 @@ class PluginsRegistry:
             # Check if this is a 'builtin' plugin
             builtin = plg.check_is_builtin()
 
+            # Auto-enable builtin plugins
+            if builtin and plg_db and not plg_db.active:
+                plg_db.active = True
+                plg_db.save()
+
             # Determine if this plugin should be loaded:
             # - If PLUGIN_TESTING is enabled
             # - If this is a 'builtin' plugin

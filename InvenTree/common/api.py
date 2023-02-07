@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework import filters, permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, ValidationError
 from rest_framework.permissions import IsAdminUser
@@ -101,6 +102,64 @@ class WebhookView(CsrfExemptMixin, APIView):
             return self.webhook.process_webhook()
         except self.model_class.DoesNotExist:
             raise NotFound()
+
+
+class CurrencyExchangeView(APIView):
+    """API endpoint for displaying currency information"""
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request, format=None):
+        """Return information on available currency conversions"""
+
+        # Extract a list of all available rates
+        try:
+            rates = Rate.objects.all()
+        except Exception:
+            rates = []
+
+        # Information on last update
+        try:
+            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            updated = backend.last_update
+        except Exception:
+            updated = None
+
+        response = {
+            'base_currency': common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', 'USD'),
+            'exchange_rates': {},
+            'updated': updated,
+        }
+
+        for rate in rates:
+            response['exchange_rates'][rate.currency] = rate.value
+
+        return Response(response)
+
+
+class CurrencyRefreshView(APIView):
+    """API endpoint for manually refreshing currency exchange rates.
+
+    User must be a 'staff' user to access this endpoint
+    """
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+        permissions.IsAdminUser,
+    ]
+
+    def post(self, request, *args, **kwargs):
+        """Performing a POST request will update currency exchange rates"""
+
+        from InvenTree.tasks import update_exchange_rates
+
+        update_exchange_rates()
+
+        return Response({
+            'success': 'Exchange rates updated',
+        })
 
 
 class SettingsList(ListAPI):
@@ -470,6 +529,12 @@ settings_api_urls = [
 common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
+
+    # Currencies
+    re_path(r'^currency/', include([
+        re_path(r'^exchange/', CurrencyExchangeView.as_view(), name='api-currency-exchange'),
+        re_path(r'^refresh/', CurrencyRefreshView.as_view(), name='api-currency-refresh'),
+    ])),
 
     # Notifications
     re_path(r'^notifications/', include([

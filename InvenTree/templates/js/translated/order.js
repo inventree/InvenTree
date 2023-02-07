@@ -30,6 +30,7 @@
     createPurchaseOrder,
     createPurchaseOrderLineItem,
     createSalesOrder,
+    createSalesOrderLineItem,
     createSalesOrderShipment,
     duplicatePurchaseOrder,
     editPurchaseOrder,
@@ -519,7 +520,9 @@ function createSalesOrderShipment(options={}) {
 }
 
 
-// Create a new SalesOrder
+/*
+ * Create a new SalesOrder
+ */
 function createSalesOrder(options={}) {
 
     constructForm('{% url "api-so-list" %}', {
@@ -557,6 +560,24 @@ function createSalesOrder(options={}) {
             location.href = `/order/sales-order/${data.pk}/`;
         },
         title: '{% trans "Create Sales Order" %}',
+    });
+}
+
+
+/*
+ * Launch a modal form to create a new SalesOrderLineItem
+ */
+function createSalesOrderLineItem(options={}) {
+
+    var fields = soLineItemFields(options);
+
+    constructForm('{% url "api-so-line-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Line Item" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        },
     });
 }
 
@@ -2375,17 +2396,15 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     });
                 },
                 footerFormatter: function(data) {
-                    var total = data.map(function(row) {
-                        return +row['purchase_price']*row['quantity'];
-                    }).reduce(function(sum, i) {
-                        return sum + i;
-                    }, 0);
-
-                    var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency) || 'USD';
-
-                    return formatCurrency(total, {
-                        currency: currency
-                    });
+                    return calculateTotalPrice(
+                        data,
+                        function(row) {
+                            return row.purchase_price ? row.purchase_price * row.quantity : null;
+                        },
+                        function(row) {
+                            return row.purchase_price_currency;
+                        }
+                    );
                 }
             },
             {
@@ -2562,17 +2581,15 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return calculateTotalPrice(
+                    data,
+                    function(row) {
+                        return row.price ? row.price * row.quantity : null;
+                    },
+                    function(row) {
+                        return row.price_currency;
+                    }
+                );
             }
         }
     ];
@@ -3887,17 +3904,15 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['sale_price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return calculateTotalPrice(
+                    data,
+                    function(row) {
+                        return row.sale_price ? row.sale_price * row.quantity : null;
+                    },
+                    function(row) {
+                        return row.sale_price_currency;
+                    }
+                );
             }
         },
         {
@@ -4378,17 +4393,15 @@ function loadSalesOrderExtraLineTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return calculateTotalPrice(
+                    data,
+                    function(row) {
+                        return row.price ? row.price * row.quantity : null;
+                    },
+                    function(row) {
+                        return row.price_currency;
+                    }
+                );
             }
         }
     ];

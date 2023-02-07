@@ -6,7 +6,7 @@ import decimal
 import hashlib
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
@@ -390,17 +390,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         """MPTT metaclass definitions"""
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
         parent_attr = 'variant_of'
-
-    def __init__(self, *args, **kwargs):
-        """Custom initialization routine for the Part model.
-
-        Ensures that custom serializer fields (without matching model fields) are removed
-        """
-
-        # Remote image specified during creation via API
-        kwargs.pop('remote_image', None)
-
-        super().__init__(*args, **kwargs)
 
     @staticmethod
     def get_api_url():
@@ -2034,41 +2023,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
             parameter.save()
 
-    @transaction.atomic
-    def deep_copy(self, other, **kwargs):
-        """Duplicates non-field data from another part.
-
-        Does not alter the normal fields of this part, but can be used to copy other data linked by ForeignKey refernce.
-
-        Keyword Args:
-            image: If True, copies Part image (default = True)
-            bom: If True, copies BOM data (default = False)
-            parameters: If True, copies Parameters data (default = True)
-        """
-        # Copy the part image
-        if kwargs.get('image', True):
-            if other.image:
-                # Reference the other image from this Part
-                self.image = other.image
-
-        # Copy the BOM data
-        if kwargs.get('bom', False):
-            self.copy_bom_from(other)
-
-        # Copy the parameters data
-        if kwargs.get('parameters', True):
-            self.copy_parameters_from(other)
-
-        # Copy the fields that aren't available in the duplicate form
-        self.salable = other.salable
-        self.assembly = other.assembly
-        self.component = other.component
-        self.purchaseable = other.purchaseable
-        self.trackable = other.trackable
-        self.virtual = other.virtual
-
-        self.save()
-
     def getTestTemplates(self, required=None, include_parent=True):
         """Return a list of all test templates associated with this Part.
 
@@ -2556,6 +2510,31 @@ class PartPricing(common.models.MetaMixin):
             if purchase_max is None or purchase_cost > purchase_max:
                 purchase_max = purchase_cost
 
+        # Also check if manual stock item pricing is included
+        if InvenTreeSetting.get_setting('PRICING_USE_STOCK_PRICING', True, cache=False):
+
+            items = self.part.stock_items.all()
+
+            # Limit to stock items updated within a certain window
+            days = int(InvenTreeSetting.get_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0, cache=False))
+
+            if days > 0:
+                date_threshold = datetime.now().date() - timedelta(days=days)
+                items = items.filter(updated__gte=date_threshold)
+
+            for item in items:
+                cost = self.convert(item.purchase_price)
+
+                # Skip if the cost could not be converted (for some reason)
+                if cost is None:
+                    continue
+
+                if purchase_min is None or cost < purchase_min:
+                    purchase_min = cost
+
+                if purchase_max is None or cost > purchase_max:
+                    purchase_max = cost
+
         self.purchase_cost_min = purchase_min
         self.purchase_cost_max = purchase_max
 
@@ -2697,6 +2676,7 @@ class PartPricing(common.models.MetaMixin):
                 max_costs.append(self.supplier_price_max)
 
         if InvenTreeSetting.get_setting('PRICING_USE_VARIANT_PRICING', True, cache=False):
+            # Include variant pricing in overall calculations
             min_costs.append(self.variant_cost_min)
             max_costs.append(self.variant_cost_max)
 

@@ -255,10 +255,6 @@ class PartTest(TestCase):
         self.assertIn('InvenTree', barcode)
         self.assertIn('"part": {"id": 3}', barcode)
 
-    def test_copy(self):
-        """Test that we can 'deep copy' a Part instance"""
-        self.r2.deep_copy(self.r1, image=True, bom=True)
-
     def test_sell_pricing(self):
         """Check that the sell pricebreaks were loaded"""
         self.assertTrue(self.r1.has_price_breaks)
