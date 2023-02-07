@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-06 09:00+0000\n"
-"PO-Revision-Date: 2023-02-06 09:24\n"
+"PO-Revision-Date: 2023-02-07 09:21\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1822,7 +1822,7 @@ msgstr "Alapértelmezett pénznem"
 
 #: common/models.py:917
 msgid "Select base currency for pricing caluclations"
-msgstr ""
+msgstr "Válassz alap pénznemet az ár számításokhoz"
 
 #: common/models.py:924
 msgid "Download from URL"
@@ -1874,11 +1874,11 @@ msgstr "Adatbázis és média fájlok automatikus biztonsági mentése"
 
 #: common/models.py:973
 msgid "Days Between Backup"
-msgstr ""
+msgstr "Biztonsági mentések közti napok"
 
 #: common/models.py:974
 msgid "Specify number of days between automated backup events"
-msgstr ""
+msgstr "Hány naponta készüljön automatikus biztonsági mentés"
 
 #: common/models.py:983
 msgid "Delete Old Tasks"
@@ -2073,19 +2073,19 @@ msgstr "Alkatrész kapcsolódó alkatrészeinek megjelenítése"
 
 #: common/models.py:1151
 msgid "Initial Stock Data"
-msgstr ""
+msgstr "Kezdeti készlet adatok"
 
 #: common/models.py:1152
 msgid "Allow creation of initial stock when adding a new part"
-msgstr ""
+msgstr "Kezdeti készlet létrehozása új alkatrész felvételekor"
 
 #: common/models.py:1158 templates/js/translated/part.js:73
 msgid "Initial Supplier Data"
-msgstr ""
+msgstr "Kezdeti beszállítói adatok"
 
 #: common/models.py:1159
 msgid "Allow creation of initial supplier data when adding a new part"
-msgstr ""
+msgstr "Kezdeti beszállítói adatok létrehozása új alkatrész felvételekor"
 
 #: common/models.py:1165
 msgid "Part Name Display Format"
@@ -2129,19 +2129,19 @@ msgstr "Beszerzési árelőzmények felülírják a beszállítói ársávokat"
 
 #: common/models.py:1204
 msgid "Use Stock Item Pricing"
-msgstr ""
+msgstr "Készlet tétel ár használata"
 
 #: common/models.py:1205
 msgid "Use pricing from manually entered stock data for pricing calculations"
-msgstr ""
+msgstr "A kézzel bevitt készlet tétel árak használata az árszámításokhoz"
 
 #: common/models.py:1211
 msgid "Stock Item Pricing Age"
-msgstr ""
+msgstr "Készlet tétel ár kora"
 
 #: common/models.py:1212
 msgid "Exclude stock items older than this number of days from pricing calculations"
-msgstr ""
+msgstr "Az ennyi napnál régebbi készlet tételek kizárása az árszámításból"
 
 #: common/models.py:1222
 msgid "Use Variant Pricing"
@@ -5469,11 +5469,11 @@ msgstr "Beszerzési pénzneme ennek a készlet tételnek"
 
 #: part/serializers.py:318
 msgid "Original Part"
-msgstr ""
+msgstr "Eredeti alkatrész"
 
 #: part/serializers.py:318
 msgid "Select original part to duplicate"
-msgstr ""
+msgstr "Válassz eredeti alkatrészt a másoláshoz"
 
 #: part/serializers.py:323
 msgid "Copy Image"
@@ -5505,43 +5505,43 @@ msgstr "Kezdeti készlet mennyiség"
 
 #: part/serializers.py:343
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
-msgstr ""
+msgstr "Add meg a kezdeti készlet mennyiséget. Ha nulla akkor nem lesz készlet létrehozva."
 
 #: part/serializers.py:349
 msgid "Initial Stock Location"
-msgstr ""
+msgstr "Kezdeti készlet hely"
 
 #: part/serializers.py:349
 msgid "Specify initial stock location for this Part"
-msgstr ""
+msgstr "Add meg a kezdeti készlet helyét"
 
 #: part/serializers.py:359
 msgid "Select supplier (or leave blank to skip)"
-msgstr ""
+msgstr "Válassz beszállítót (hagyd üresen ha nem kell létrehozni)"
 
 #: part/serializers.py:370
 msgid "Select manufacturer (or leave blank to skip)"
-msgstr ""
+msgstr "Válassz gyártót (hagyd üresen ha nem kell létrehozni)"
 
 #: part/serializers.py:376
 msgid "Manufacturer part number"
-msgstr ""
+msgstr "Gyártói cikkszám"
 
 #: part/serializers.py:383
 msgid "Selected company is not a valid supplier"
-msgstr ""
+msgstr "A kiválasztott cég nem érvényes beszállító"
 
 #: part/serializers.py:391
 msgid "Selected company is not a valid manufacturer"
-msgstr ""
+msgstr "A kiválasztott cég nem érvényes gyártó"
 
 #: part/serializers.py:403
 msgid "Manufacturer part matching this MPN already exists"
-msgstr ""
+msgstr "Van már ilyen gyártói alkatrész"
 
 #: part/serializers.py:411
 msgid "Supplier part matching this SKU already exists"
-msgstr ""
+msgstr "Van már ilyen beszállítói alkatrész"
 
 #: part/serializers.py:562 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:382
@@ -5550,23 +5550,23 @@ msgstr "Alkatrész másolása"
 
 #: part/serializers.py:562
 msgid "Copy initial data from another Part"
-msgstr ""
+msgstr "Kezdeti adatok másolása egy másik alkatrészről"
 
 #: part/serializers.py:567 templates/js/translated/part.js:68
 msgid "Initial Stock"
-msgstr ""
+msgstr "Kezdeti készlet"
 
 #: part/serializers.py:567
 msgid "Create Part with initial stock quantity"
-msgstr ""
+msgstr "Kezdeti készlet mennyiség létrehozása"
 
 #: part/serializers.py:572
 msgid "Supplier Information"
-msgstr ""
+msgstr "Beszállító információ"
 
 #: part/serializers.py:572
 msgid "Add initial supplier information for this part"
-msgstr ""
+msgstr "Kezdeti beszállító adatok hozzáadása"
 
 #: part/serializers.py:801
 msgid "Update"
@@ -10424,7 +10424,7 @@ msgstr "A plugin telepítve lett"
 
 #: templates/js/translated/pricing.js:143
 msgid "Error fetching currency data"
-msgstr ""
+msgstr "Pénznem adatok lekérdezése sikertelen"
 
 #: templates/js/translated/pricing.js:295
 msgid "No BOM data available"
