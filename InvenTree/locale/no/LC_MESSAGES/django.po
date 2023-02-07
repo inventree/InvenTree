@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-06 09:00+0000\n"
-"PO-Revision-Date: 2023-02-06 09:24\n"
+"PO-Revision-Date: 2023-02-07 09:21\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -1340,30 +1340,30 @@ msgstr "Valgfrie elementer"
 
 #: build/serializers.py:852
 msgid "Allocate optional BOM items to build order"
-msgstr ""
+msgstr "Tildel valgfrie BOM varer til bygge ordre"
 
 #: build/tasks.py:100
 msgid "Stock required for build order"
-msgstr ""
+msgstr "Lager kreves for byggeordre"
 
 #: build/tasks.py:118
 msgid "Overdue Build Order"
-msgstr ""
+msgstr "Forfalt byggeordre"
 
 #: build/tasks.py:123
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr ""
+msgstr "Bygge ordre {bo} er nå forfalt"
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
 #: order/templates/order/sales_order_base.html:38
 msgid "Print actions"
-msgstr ""
+msgstr "Skriv ut handlinger"
 
 #: build/templates/build/build_base.html:43
 msgid "Print build order report"
-msgstr ""
+msgstr "Skriv ut byggeordre rapport"
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
@@ -1371,19 +1371,19 @@ msgstr "Bygg handlinger"
 
 #: build/templates/build/build_base.html:54
 msgid "Edit Build"
-msgstr ""
+msgstr "Rediger bygg"
 
 #: build/templates/build/build_base.html:56
 msgid "Cancel Build"
-msgstr ""
+msgstr "Avbryt bygging"
 
 #: build/templates/build/build_base.html:59
 msgid "Duplicate Build"
-msgstr ""
+msgstr "Dupliser bygg"
 
 #: build/templates/build/build_base.html:62
 msgid "Delete Build"
-msgstr ""
+msgstr "Slett bygg"
 
 #: build/templates/build/build_base.html:67
 #: build/templates/build/build_base.html:68
@@ -1401,28 +1401,28 @@ msgstr ""
 #: build/templates/build/build_base.html:104
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
-msgstr ""
+msgstr "Denne byggeordren er allokert til salgsordre %(link)s"
 
 #: build/templates/build/build_base.html:111
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
-msgstr ""
+msgstr "Denne byggeordre er underordnet for byggeordre %(link)s"
 
 #: build/templates/build/build_base.html:118
 msgid "Build Order is ready to mark as completed"
-msgstr ""
+msgstr "Byggeordre er klar til å markere som fullført"
 
 #: build/templates/build/build_base.html:123
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr ""
+msgstr "Byggeordre kan ikke fullføres fordi utganger forblir"
 
 #: build/templates/build/build_base.html:128
 msgid "Required build quantity has not yet been completed"
-msgstr ""
+msgstr "Nødvendig mengde bygg er ikke fullført ennå"
 
 #: build/templates/build/build_base.html:133
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr ""
+msgstr "Lager er ikke fullt tildelt til denne byggordren"
 
 #: build/templates/build/build_base.html:154
 #: build/templates/build/detail.html:138 order/models.py:947
@@ -1438,7 +1438,7 @@ msgstr "Måldato"
 #: build/templates/build/build_base.html:159
 #, python-format
 msgid "This build was due on %(target)s"
-msgstr ""
+msgstr "Forfall for denne builden var %(target)s"
 
 #: build/templates/build/build_base.html:159
 #: build/templates/build/build_base.html:211
@@ -1448,7 +1448,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:389
 #: templates/js/translated/table_filters.js:419
 msgid "Overdue"
-msgstr ""
+msgstr "Forfallt"
 
 #: build/templates/build/build_base.html:166
 #: build/templates/build/detail.html:67 build/templates/build/detail.html:149
@@ -1479,15 +1479,15 @@ msgstr "Utstedt av"
 #: build/templates/build/build_base.html:200
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2602
 msgid "Priority"
-msgstr ""
+msgstr "Prioritet"
 
 #: build/templates/build/build_base.html:259
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Slett denne byggeordren"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
-msgstr ""
+msgstr "Build detaljer"
 
 #: build/templates/build/detail.html:38
 msgid "Stock Source"
@@ -1519,7 +1519,7 @@ msgstr "Tildelte deler"
 #: templates/js/translated/table_filters.js:179
 #: templates/js/translated/table_filters.js:270
 msgid "Batch"
-msgstr ""
+msgstr "Parti"
 
 #: build/templates/build/detail.html:133
 #: order/templates/order/order_base.html:158
@@ -1534,7 +1534,7 @@ msgstr "Ingen måldato satt"
 
 #: build/templates/build/detail.html:153
 msgid "Build not complete"
-msgstr ""
+msgstr "Byggning ikke ferdig"
 
 #: build/templates/build/detail.html:164 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
@@ -1542,7 +1542,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:179
 msgid "Allocate Stock to Build"
-msgstr ""
+msgstr "Tildel lagervarer til bygg"
 
 #: build/templates/build/detail.html:183 templates/js/translated/build.js:2016
 msgid "Unallocate stock"
@@ -1554,7 +1554,7 @@ msgstr "Fjern lager allokering"
 
 #: build/templates/build/detail.html:186
 msgid "Automatically allocate stock to build"
-msgstr ""
+msgstr "Tildel automatisk varer til bygg"
 
 #: build/templates/build/detail.html:187
 msgid "Auto Allocate"
@@ -1562,7 +1562,7 @@ msgstr "Automatisk tildeling"
 
 #: build/templates/build/detail.html:189
 msgid "Manually allocate stock to build"
-msgstr ""
+msgstr "Tildel lager manuelt til bygg"
 
 #: build/templates/build/detail.html:190 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
