@@ -36,7 +36,9 @@ function editSetting(key, options={}) {
 
     // Is this a global setting or a user setting?
     var global = options.global || false;
+
     var plugin = options.plugin;
+
     var notification = options.notification;
     var connection_key = options.connection_key;
     var connection = options.connection;

@@ -596,6 +596,7 @@ class APICallMixin:
 
         if json:
             kwargs['data'] = json_pkg.dumps(json)
+
         if data:
             kwargs['data'] = data
 
