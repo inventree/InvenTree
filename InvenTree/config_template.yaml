@@ -152,6 +152,7 @@ backup_storage: django.core.files.storage.FileSystemStorage
 background:
   workers: 4
   timeout: 90
+  max_attempts: 5
 
 # Optional URL schemes to allow in URL fields
 # By default, only the following schemes are allowed: ['http', 'https', 'ftp', 'ftps']

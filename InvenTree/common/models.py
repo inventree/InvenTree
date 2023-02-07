@@ -969,6 +969,16 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
         },
 
+        'INVENTREE_BACKUP_DAYS': {
+            'name': _('Days Between Backup'),
+            'description': _('Specify number of days between automated backup events'),
+            'validator': [
+                int,
+                MinValueValidator(1),
+            ],
+            'default': 1,
+        },
+
         'INVENTREE_DELETE_TASKS_DAYS': {
             'name': _('Delete Old Tasks'),
             'description': _('Background task results will be deleted after specified number of days'),

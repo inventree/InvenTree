@@ -615,14 +615,16 @@ else:
         },
     }
 
+_q_worker_timeout = int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90))
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'label': 'Background Tasks',
     'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
-    'timeout': int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)),
-    'retry': 120,
-    'max_attempts': 5,
+    'timeout': _q_worker_timeout,
+    'retry': min(120, _q_worker_timeout + 30),
+    'max_attempts': int(get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)),
     'queue_limit': 50,
     'catch_up': False,
     'bulk': 10,

@@ -912,3 +912,16 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
         self.assertIn('base_currency', response.data)
         self.assertIn('exchange_rates', response.data)
+
+    def test_refresh_endpoint(self):
+        """Call the 'refresh currencies' endpoint"""
+
+        from djmoney.contrib.exchange.models import Rate
+
+        # Delete any existing exchange rate data
+        Rate.objects.all().delete()
+
+        self.post(reverse('api-currency-refresh'))
+
+        # There should be some new exchange rate objects now
+        self.assertTrue(Rate.objects.all().exists())
