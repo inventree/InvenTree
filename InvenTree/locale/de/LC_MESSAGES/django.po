@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-06 09:00+0000\n"
-"PO-Revision-Date: 2023-02-06 09:24\n"
+"PO-Revision-Date: 2023-02-07 09:21\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1821,7 +1821,7 @@ msgstr "Standardwährung"
 
 #: common/models.py:917
 msgid "Select base currency for pricing caluclations"
-msgstr ""
+msgstr "Wählen Sie die Basiswährung für die Preiskalkulation"
 
 #: common/models.py:924
 msgid "Download from URL"
@@ -1873,11 +1873,11 @@ msgstr "Automatische Sicherung der Datenbank- und Mediendateien aktivieren"
 
 #: common/models.py:973
 msgid "Days Between Backup"
-msgstr ""
+msgstr "Tage zwischen Sicherung"
 
 #: common/models.py:974
 msgid "Specify number of days between automated backup events"
-msgstr ""
+msgstr "Anzahl der Tage zwischen automatischen Sicherungen"
 
 #: common/models.py:983
 msgid "Delete Old Tasks"
@@ -2072,19 +2072,19 @@ msgstr "Verwandte Teile eines Teils anzeigen"
 
 #: common/models.py:1151
 msgid "Initial Stock Data"
-msgstr ""
+msgstr "Initialer Lagerbestand"
 
 #: common/models.py:1152
 msgid "Allow creation of initial stock when adding a new part"
-msgstr ""
+msgstr "Erstellen von Lagerbestand beim Hinzufügen eines neuen Teils erlauben"
 
 #: common/models.py:1158 templates/js/translated/part.js:73
 msgid "Initial Supplier Data"
-msgstr ""
+msgstr "Initiale Lieferantendaten"
 
 #: common/models.py:1159
 msgid "Allow creation of initial supplier data when adding a new part"
-msgstr ""
+msgstr "Erstellen von Lieferantendaten beim Hinzufügen eines neuen Teils erlauben"
 
 #: common/models.py:1165
 msgid "Part Name Display Format"
@@ -2128,19 +2128,19 @@ msgstr "Historische Bestellungspreise überschreiben die Lieferanten-Staffelprei
 
 #: common/models.py:1204
 msgid "Use Stock Item Pricing"
-msgstr ""
+msgstr "Lagerartikel-Preis verwenden"
 
 #: common/models.py:1205
 msgid "Use pricing from manually entered stock data for pricing calculations"
-msgstr ""
+msgstr "Preise aus manuell eingegebenen Lagerdaten für Preisberechnungen verwenden"
 
 #: common/models.py:1211
 msgid "Stock Item Pricing Age"
-msgstr ""
+msgstr "Lagerartikelpreis Alter"
 
 #: common/models.py:1212
 msgid "Exclude stock items older than this number of days from pricing calculations"
-msgstr ""
+msgstr "Lagerartikel, die älter als diese Anzahl an Tagen sind, von der Preisberechnung ausschließen"
 
 #: common/models.py:1222
 msgid "Use Variant Pricing"
@@ -5468,11 +5468,11 @@ msgstr "Kaufwährung dieses Lagerartikels"
 
 #: part/serializers.py:318
 msgid "Original Part"
-msgstr ""
+msgstr "Originalteil"
 
 #: part/serializers.py:318
 msgid "Select original part to duplicate"
-msgstr ""
+msgstr "Originalteil zum Duplizieren auswählen"
 
 #: part/serializers.py:323
 msgid "Copy Image"
@@ -5504,43 +5504,43 @@ msgstr "Start-Bestandsmenge"
 
 #: part/serializers.py:343
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
-msgstr ""
+msgstr "Initiale Lagermenge für dieses Teil. Wenn die Menge null ist, wird kein Lagerbestand hinzugefügt."
 
 #: part/serializers.py:349
 msgid "Initial Stock Location"
-msgstr ""
+msgstr "Initialer Lagerort"
 
 #: part/serializers.py:349
 msgid "Specify initial stock location for this Part"
-msgstr ""
+msgstr "Lagerstandort für dieses Teil angeben"
 
 #: part/serializers.py:359
 msgid "Select supplier (or leave blank to skip)"
-msgstr ""
+msgstr "Lieferant auswählen (oder leer lassen, um zu überspringen)"
 
 #: part/serializers.py:370
 msgid "Select manufacturer (or leave blank to skip)"
-msgstr ""
+msgstr "Hersteller auswählen (oder leer lassen, um zu überspringen)"
 
 #: part/serializers.py:376
 msgid "Manufacturer part number"
-msgstr ""
+msgstr "Hersteller-Teilenummer"
 
 #: part/serializers.py:383
 msgid "Selected company is not a valid supplier"
-msgstr ""
+msgstr "Ausgewählte Firma ist kein gültiger Lieferant"
 
 #: part/serializers.py:391
 msgid "Selected company is not a valid manufacturer"
-msgstr ""
+msgstr "Ausgewählte Firma ist kein gültiger Hersteller"
 
 #: part/serializers.py:403
 msgid "Manufacturer part matching this MPN already exists"
-msgstr ""
+msgstr "Herstellerteil mit dieser MPN existiert bereits"
 
 #: part/serializers.py:411
 msgid "Supplier part matching this SKU already exists"
-msgstr ""
+msgstr "Lieferantenteil mit dieser SKU existiert bereits"
 
 #: part/serializers.py:562 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:382
@@ -5549,23 +5549,23 @@ msgstr "Teil duplizieren"
 
 #: part/serializers.py:562
 msgid "Copy initial data from another Part"
-msgstr ""
+msgstr "Initiale Daten von anderem Teil kopieren"
 
 #: part/serializers.py:567 templates/js/translated/part.js:68
 msgid "Initial Stock"
-msgstr ""
+msgstr "Initialer Lagerbestand"
 
 #: part/serializers.py:567
 msgid "Create Part with initial stock quantity"
-msgstr ""
+msgstr "Erstelle Teil mit Ausgangsbestand"
 
 #: part/serializers.py:572
 msgid "Supplier Information"
-msgstr ""
+msgstr "Lieferanteninformationen"
 
 #: part/serializers.py:572
 msgid "Add initial supplier information for this part"
-msgstr ""
+msgstr "Lieferanteninformationen zu diesem Teil hinzufügen"
 
 #: part/serializers.py:801
 msgid "Update"
@@ -10423,7 +10423,7 @@ msgstr "Das Plugin wurde installiert"
 
 #: templates/js/translated/pricing.js:143
 msgid "Error fetching currency data"
-msgstr ""
+msgstr "Fehler beim Abrufen der Währungsdaten"
 
 #: templates/js/translated/pricing.js:295
 msgid "No BOM data available"
