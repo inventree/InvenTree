@@ -35,9 +35,14 @@ class SettingsMixin:
         """Does this plugin use custom global settings."""
         return bool(self.settings)
 
-    def get_setting(self, key):
-        """Return the 'value' of the setting associated with this plugin."""
-        return PluginSetting.get_setting(key, plugin=self)
+    def get_setting(self, key, cache=False):
+        """Return the 'value' of the setting associated with this plugin.
+
+        Arguments:
+            key: The 'name' of the setting value to be retrieved
+            cache: Whether to use RAM cached value (default = False)
+        """
+        return PluginSetting.get_setting(key, plugin=self, cache=cache)
 
     def set_setting(self, key, value, user=None):
         """Set plugin setting value by key."""
