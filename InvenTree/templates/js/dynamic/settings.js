@@ -46,9 +46,9 @@ function editSetting(key, options={}) {
     var url = '';
 
     if (connection_key) {
-        url = `/api/plugin/settings/${plugin}/connection/${connection_key}/${connection}/${key}/`;
+        url = `/api/plugins/settings/${plugin}/connection/${connection_key}/${connection}/${key}/`;
     } else if (plugin) {
-        url = `/api/plugin/settings/${plugin}/${key}/`;
+        url = `/api/plugins/settings/${plugin}/${key}/`;
     } else if (notification) {
         url = `/api/settings/notification/${pk}/`;
     } else if (global) {

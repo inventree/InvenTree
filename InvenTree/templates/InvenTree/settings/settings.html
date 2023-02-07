@@ -509,7 +509,7 @@ $("#new-connection").click(function() {
 
 $('.supplier-connections').on('click', '.connection-edit', function() {
     var pk = $(this).attr('pk');
-    constructForm(`/api/plugin/connection/${pk}/`, {
+    constructForm(`/api/plugins/connection/${pk}/`, {
         fields: {
             name: {},
             comment: {},
@@ -521,7 +521,7 @@ $('.supplier-connections').on('click', '.connection-edit', function() {
 
 $('.supplier-connections').on('click', '.connection-delete', function() {
     var pk = $(this).attr('pk');
-    constructForm(`/api/plugin/connection/${pk}/`, {
+    constructForm(`/api/plugins/connection/${pk}/`, {
         method: 'DELETE',
         title: '{% trans "Delete Connection" %}',
         onSuccess: function() {location.reload();},
