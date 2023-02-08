@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-06 09:00+0000\n"
-"PO-Revision-Date: 2023-02-06 09:24\n"
+"PO-Revision-Date: 2023-02-08 11:44\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1873,11 +1873,11 @@ msgstr "Activer le backup automatique de la base de données et des fichiers mé
 
 #: common/models.py:973
 msgid "Days Between Backup"
-msgstr ""
+msgstr "Jours entre chaque sauvegarde"
 
 #: common/models.py:974
 msgid "Specify number of days between automated backup events"
-msgstr ""
+msgstr "Spécifiez le nombre de jours entre les sauvegardes automatique"
 
 #: common/models.py:983
 msgid "Delete Old Tasks"
@@ -2184,7 +2184,7 @@ msgstr "Substitution du prix interne"
 
 #: common/models.py:1255
 msgid "If available, internal prices override price range calculations"
-msgstr ""
+msgstr "Si disponible, les prix internes remplacent les calculs de la fourchette de prix"
 
 #: common/models.py:1261
 msgid "Enable label printing"
@@ -2264,7 +2264,7 @@ msgstr "Supprimer le stock épuisé"
 
 #: common/models.py:1332
 msgid "Determines default behaviour when a stock item is depleted"
-msgstr ""
+msgstr "Détermine le comportement par défaut lorsqu'un article de stock est épuisé"
 
 #: common/models.py:1338
 msgid "Batch Code Template"
@@ -2292,15 +2292,15 @@ msgstr "Autoriser la vente de stock expiré"
 
 #: common/models.py:1358
 msgid "Stock Stale Time"
-msgstr ""
+msgstr "Délai de péremption du stock"
 
 #: common/models.py:1359
 msgid "Number of days stock items are considered stale before expiring"
-msgstr ""
+msgstr "Nombre de jours pendant lesquels les articles en stock sont considérés comme périmés avant d'expirer"
 
 #: common/models.py:1366
 msgid "Build Expired Stock"
-msgstr ""
+msgstr "Construction de stock expirée"
 
 #: common/models.py:1367
 msgid "Allow building with expired stock"
@@ -2348,11 +2348,11 @@ msgstr "Activer la création d'expédition par défaut avec les bons de commande
 
 #: common/models.py:1407
 msgid "Edit Completed Sales Orders"
-msgstr ""
+msgstr "Modifier les commandes de vente terminées"
 
 #: common/models.py:1408
 msgid "Allow editing of sales orders after they have been shipped or completed"
-msgstr ""
+msgstr "Autoriser la modification des commandes de vente après avoir été expédiées ou complétées"
 
 #: common/models.py:1414
 msgid "Purchase Order Reference Pattern"
@@ -2360,15 +2360,15 @@ msgstr "Modèle de référence de commande d'achat"
 
 #: common/models.py:1415
 msgid "Required pattern for generating Purchase Order reference field"
-msgstr ""
+msgstr "Modèle requis pour générer le champ de référence de bon de commande"
 
 #: common/models.py:1421
 msgid "Edit Completed Purchase Orders"
-msgstr ""
+msgstr "Modifier les bons de commande terminés"
 
 #: common/models.py:1422
 msgid "Allow editing of purchase orders after they have been shipped or completed"
-msgstr ""
+msgstr "Autoriser la modification des bons de commande après avoir été expédiés ou complétés"
 
 #: common/models.py:1429
 msgid "Enable password forgot"
@@ -2612,119 +2612,119 @@ msgstr "Afficher le stock périmé"
 
 #: common/models.py:1674
 msgid "Show stale stock items on the homepage"
-msgstr ""
+msgstr "Afficher les articles de stock périmés sur la page d'accueil"
 
 #: common/models.py:1680
 msgid "Show pending builds"
-msgstr ""
+msgstr "Afficher les constructions en attente"
 
 #: common/models.py:1681
 msgid "Show pending builds on the homepage"
-msgstr ""
+msgstr "Afficher les constructions en attente sur la page d'accueil"
 
 #: common/models.py:1687
 msgid "Show overdue builds"
-msgstr ""
+msgstr "Afficher les constructions en retard"
 
 #: common/models.py:1688
 msgid "Show overdue builds on the homepage"
-msgstr ""
+msgstr "Afficher les constructions en retard sur la page d'accueil"
 
 #: common/models.py:1694
 msgid "Show outstanding POs"
-msgstr ""
+msgstr "Afficher les commandes en suspens"
 
 #: common/models.py:1695
 msgid "Show outstanding POs on the homepage"
-msgstr ""
+msgstr "Afficher les commandes en suspens sur la page d'accueil"
 
 #: common/models.py:1701
 msgid "Show overdue POs"
-msgstr ""
+msgstr "Afficher les commandes en retard"
 
 #: common/models.py:1702
 msgid "Show overdue POs on the homepage"
-msgstr ""
+msgstr "Afficher les commandes en retard sur la page d'accueil"
 
 #: common/models.py:1708
 msgid "Show outstanding SOs"
-msgstr ""
+msgstr "Afficher les envois en suspens"
 
 #: common/models.py:1709
 msgid "Show outstanding SOs on the homepage"
-msgstr ""
+msgstr "Afficher les envois en suspens sur la page d'accueil"
 
 #: common/models.py:1715
 msgid "Show overdue SOs"
-msgstr ""
+msgstr "Afficher les envois en retard"
 
 #: common/models.py:1716
 msgid "Show overdue SOs on the homepage"
-msgstr ""
+msgstr "Afficher les envois en retard sur la page d'accueil"
 
 #: common/models.py:1722
 msgid "Show News"
-msgstr ""
+msgstr "Afficher les nouvelles"
 
 #: common/models.py:1723
 msgid "Show news on the homepage"
-msgstr ""
+msgstr "Afficher les nouvelles sur la page d'accueil"
 
 #: common/models.py:1729
 msgid "Inline label display"
-msgstr ""
+msgstr "Affichage du libellé en ligne"
 
 #: common/models.py:1730
 msgid "Display PDF labels in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "Afficher les étiquettes PDF dans le navigateur, au lieu de les télécharger en tant que fichier"
 
 #: common/models.py:1736
 msgid "Inline report display"
-msgstr ""
+msgstr "Affichage du rapport en ligne"
 
 #: common/models.py:1737
 msgid "Display PDF reports in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "Afficher les rapports PDF dans le navigateur, au lieu de les télécharger en tant que fichier"
 
 #: common/models.py:1743
 msgid "Search Parts"
-msgstr ""
+msgstr "Rechercher de pièces"
 
 #: common/models.py:1744
 msgid "Display parts in search preview window"
-msgstr ""
+msgstr "Afficher les pièces dans la fenêtre d'aperçu de la recherche"
 
 #: common/models.py:1750
 msgid "Seach Supplier Parts"
-msgstr ""
+msgstr "Chercher des pièces fournisseur"
 
 #: common/models.py:1751
 msgid "Display supplier parts in search preview window"
-msgstr ""
+msgstr "Afficher les pièces du fournisseur dans la fenêtre de prévisualisation de la recherche"
 
 #: common/models.py:1757
 msgid "Search Manufacturer Parts"
-msgstr ""
+msgstr "Rechercher les pièces du fabricant"
 
 #: common/models.py:1758
 msgid "Display manufacturer parts in search preview window"
-msgstr ""
+msgstr "Afficher les pièces du fabricant dans la fenêtre de prévisualisation de recherche"
 
 #: common/models.py:1764
 msgid "Hide Inactive Parts"
-msgstr ""
+msgstr "Masquer les pièces inactives"
 
 #: common/models.py:1765
 msgid "Excluded inactive parts from search preview window"
-msgstr ""
+msgstr "Exclure les pièces inactives de la fenêtre de prévisualisation de recherche"
 
 #: common/models.py:1771
 msgid "Search Categories"
-msgstr ""
+msgstr "Rechercher des catégories"
 
 #: common/models.py:1772
 msgid "Display part categories in search preview window"
-msgstr ""
+msgstr "Afficher les catégories de pièces dans la fenêtre de prévisualisation de recherche"
 
 #: common/models.py:1778
 msgid "Search Stock"
@@ -2740,47 +2740,47 @@ msgstr "Cacher les pièces indisponibles"
 
 #: common/models.py:1786
 msgid "Exclude stock items which are not available from the search preview window"
-msgstr ""
+msgstr "Exclure les articles en stock qui ne sont pas disponibles de la fenêtre de prévisualisation de recherche"
 
 #: common/models.py:1792
 msgid "Search Locations"
-msgstr ""
+msgstr "Chercher des Emplacements"
 
 #: common/models.py:1793
 msgid "Display stock locations in search preview window"
-msgstr ""
+msgstr "Afficher les emplacements dans la fenêtre d'aperçu de la recherche"
 
 #: common/models.py:1799
 msgid "Search Companies"
-msgstr ""
+msgstr "Rechercher les entreprises"
 
 #: common/models.py:1800
 msgid "Display companies in search preview window"
-msgstr ""
+msgstr "Afficher les entreprises dans la fenêtre de prévisualisation de recherche"
 
 #: common/models.py:1806
 msgid "Search Build Orders"
-msgstr ""
+msgstr "Rechercher les commandes de construction"
 
 #: common/models.py:1807
 msgid "Display build orders in search preview window"
-msgstr ""
+msgstr "Afficher les commandes de construction dans la fenêtre de prévisualisation de recherche"
 
 #: common/models.py:1813
 msgid "Search Purchase Orders"
-msgstr ""
+msgstr "Rechercher des bons de commande"
 
 #: common/models.py:1814
 msgid "Display purchase orders in search preview window"
-msgstr ""
+msgstr "Afficher les bons de commande dans la fenêtre de prévisualisation de recherche"
 
 #: common/models.py:1820
 msgid "Exclude Inactive Purchase Orders"
-msgstr ""
+msgstr "Exclure les bons de commande inactifs"
 
 #: common/models.py:1821
 msgid "Exclude inactive purchase orders from search preview window"
-msgstr ""
+msgstr "Exclure les commandes d’achat inactives de la fenêtre de prévisualisation de recherche"
 
 #: common/models.py:1827
 msgid "Search Sales Orders"
@@ -3201,11 +3201,11 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:220
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Pièces du fabricant"
 
 #: company/models.py:364
 msgid "Parameter name"
-msgstr ""
+msgstr "Nom du paramètre"
 
 #: company/models.py:370
 #: report/templates/report/inventree_test_report_base.html:95
@@ -3217,7 +3217,7 @@ msgstr "Valeur"
 
 #: company/models.py:371
 msgid "Parameter value"
-msgstr ""
+msgstr "Valeur du paramètre"
 
 #: company/models.py:377 part/admin.py:26 part/models.py:952
 #: part/models.py:3194 part/templates/part/part_base.html:286
@@ -3228,11 +3228,11 @@ msgstr "Unités"
 
 #: company/models.py:378
 msgid "Parameter units"
-msgstr ""
+msgstr "Unités du paramètre"
 
 #: company/models.py:456
 msgid "Linked manufacturer part must reference the same base part"
-msgstr ""
+msgstr "La pièce du fabricant liée doit faire référence à la même pièce de base"
 
 #: company/models.py:498 company/templates/company/company_base.html:82
 #: company/templates/company/supplier_part.html:136 order/models.py:264
@@ -3249,22 +3249,22 @@ msgstr "Fournisseur"
 
 #: company/models.py:499
 msgid "Select supplier"
-msgstr ""
+msgstr "Sélectionner un fournisseur"
 
 #: company/models.py:504 company/templates/company/supplier_part.html:146
 #: part/bom.py:286 part/bom.py:314 part/serializers.py:365
 #: templates/js/translated/company.js:303 templates/js/translated/order.js:2307
 #: templates/js/translated/part.js:1299 templates/js/translated/pricing.js:484
 msgid "SKU"
-msgstr ""
+msgstr "SKU"
 
 #: company/models.py:505 part/serializers.py:365
 msgid "Supplier stock keeping unit"
-msgstr ""
+msgstr "Unité de gestion des stocks des fournisseurs"
 
 #: company/models.py:512
 msgid "Select manufacturer part"
-msgstr ""
+msgstr "Sélectionner un fabricant"
 
 #: company/models.py:518
 msgid "URL for external supplier part link"
@@ -3338,15 +3338,15 @@ msgstr "Quantité disponible auprès du fournisseur"
 
 #: company/models.py:558
 msgid "Availability Updated"
-msgstr ""
+msgstr "Disponibilité mise à jour"
 
 #: company/models.py:559
 msgid "Date of last update of availability data"
-msgstr ""
+msgstr "Date de dernière mise à jour des données de disponibilité"
 
 #: company/serializers.py:72
 msgid "Default currency used for this supplier"
-msgstr ""
+msgstr "Devise par défaut utilisée pour ce fournisseur"
 
 #: company/serializers.py:73
 msgid "Currency Code"
@@ -3365,7 +3365,7 @@ msgstr "Créer une commande d'achat"
 
 #: company/templates/company/company_base.html:28
 msgid "Company actions"
-msgstr ""
+msgstr "Actions de l'entreprise"
 
 #: company/templates/company/company_base.html:33
 msgid "Edit company information"
@@ -3398,7 +3398,7 @@ msgstr "Télécharger l'image depuis l'URL"
 #: company/templates/company/company_base.html:61
 #: part/templates/part/part_thumb.html:16
 msgid "Delete image"
-msgstr ""
+msgstr "Supprimer image"
 
 #: company/templates/company/company_base.html:87 order/models.py:665
 #: order/templates/order/sales_order_base.html:116 stock/models.py:701
@@ -3422,18 +3422,18 @@ msgstr "Téléphone"
 #: company/templates/company/company_base.html:206
 #: part/templates/part/part_base.html:525
 msgid "Remove Image"
-msgstr ""
+msgstr "Supprimer l'image"
 
 #: company/templates/company/company_base.html:207
 msgid "Remove associated image from this company"
-msgstr ""
+msgstr "Supprimer l'image associée de cette entreprise"
 
 #: company/templates/company/company_base.html:209
 #: part/templates/part/part_base.html:528
 #: templates/InvenTree/settings/user.html:87
 #: templates/InvenTree/settings/user.html:149
 msgid "Remove"
-msgstr ""
+msgstr "Supprimer"
 
 #: company/templates/company/company_base.html:238
 #: part/templates/part/part_base.html:557
@@ -3675,11 +3675,11 @@ msgstr "Délier le code-barre"
 #: stock/templates/stock/item_base.html:50
 #: stock/templates/stock/location.html:54
 msgid "Link Barcode"
-msgstr ""
+msgstr "Lier le code-barre"
 
 #: company/templates/company/supplier_part.html:51
 msgid "Supplier part actions"
-msgstr ""
+msgstr "Actions de la pièce du fournisseur"
 
 #: company/templates/company/supplier_part.html:56
 #: company/templates/company/supplier_part.html:57
@@ -3691,59 +3691,59 @@ msgstr "Commander un composant"
 #: company/templates/company/supplier_part.html:61
 #: company/templates/company/supplier_part.html:62
 msgid "Update Availability"
-msgstr ""
+msgstr "Disponibilité de la mise à jour"
 
 #: company/templates/company/supplier_part.html:64
 #: company/templates/company/supplier_part.html:65
 #: templates/js/translated/company.js:248
 msgid "Edit Supplier Part"
-msgstr ""
+msgstr "Modifier la pièce du fournisseur"
 
 #: company/templates/company/supplier_part.html:69
 #: company/templates/company/supplier_part.html:70
 #: templates/js/translated/company.js:223
 msgid "Duplicate Supplier Part"
-msgstr ""
+msgstr "Dupliquer la pièce du fournisseur"
 
 #: company/templates/company/supplier_part.html:74
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "Supprimer la pièce du fournisseur"
 
 #: company/templates/company/supplier_part.html:75
 msgid "Delete Supplier  Part"
-msgstr ""
+msgstr "Supprimer la pièce du fournisseur"
 
 #: company/templates/company/supplier_part.html:122
 #: part/templates/part/part_base.html:307
 #: stock/templates/stock/item_base.html:161
 #: stock/templates/stock/location.html:150
 msgid "Barcode Identifier"
-msgstr ""
+msgstr "Identifiant du code-barres"
 
 #: company/templates/company/supplier_part.html:140
 msgid "No supplier information available"
-msgstr ""
+msgstr "Aucune information de fournisseur disponible"
 
 #: company/templates/company/supplier_part.html:200
 #: company/templates/company/supplier_part_navbar.html:12
 msgid "Supplier Part Stock"
-msgstr ""
+msgstr "Stock de pièces du fournisseur"
 
 #: company/templates/company/supplier_part.html:203
 #: part/templates/part/detail.html:24 stock/templates/stock/location.html:197
 msgid "Create new stock item"
-msgstr ""
+msgstr "Créer un nouvel article de stock"
 
 #: company/templates/company/supplier_part.html:204
 #: part/templates/part/detail.html:25 stock/templates/stock/location.html:198
 #: templates/js/translated/stock.js:466
 msgid "New Stock Item"
-msgstr ""
+msgstr "Nouvel article de stock"
 
 #: company/templates/company/supplier_part.html:217
 #: company/templates/company/supplier_part_navbar.html:19
 msgid "Supplier Part Orders"
-msgstr ""
+msgstr "Commandes de pièces du fournisseur"
 
 #: company/templates/company/supplier_part.html:242
 msgid "Pricing Information"
@@ -3753,15 +3753,15 @@ msgstr "Information sur les prix"
 #: company/templates/company/supplier_part.html:317
 #: templates/js/translated/pricing.js:654
 msgid "Add Price Break"
-msgstr ""
+msgstr "Ajouter un prix de rupture"
 
 #: company/templates/company/supplier_part.html:285
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Lier le code-barres à la pièce du fournisseur"
 
 #: company/templates/company/supplier_part.html:375
 msgid "Update Part Availability"
-msgstr ""
+msgstr "Mettre à jour la disponibilité des pièces"
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:14
@@ -3773,7 +3773,7 @@ msgstr ""
 #: templates/js/translated/part.js:1780 templates/js/translated/stock.js:993
 #: templates/js/translated/stock.js:1802 templates/navbar.html:31
 msgid "Stock"
-msgstr ""
+msgstr "Stock"
 
 #: company/templates/company/supplier_part_navbar.html:22
 msgid "Orders"
@@ -3782,7 +3782,7 @@ msgstr "Commandes"
 #: company/templates/company/supplier_part_navbar.html:26
 #: company/templates/company/supplier_part_sidebar.html:9
 msgid "Supplier Part Pricing"
-msgstr ""
+msgstr "Prix de la pièce du fournisseur"
 
 #: company/templates/company/supplier_part_navbar.html:29
 #: part/templates/part/part_sidebar.html:30
@@ -3829,23 +3829,23 @@ msgstr "Nouvelle Entreprise"
 
 #: company/views.py:120 stock/views.py:125
 msgid "Stock Item QR Code"
-msgstr ""
+msgstr "Code QR de l'article en stock"
 
 #: label/models.py:102
 msgid "Label name"
-msgstr ""
+msgstr "Nom de l'étiquette"
 
 #: label/models.py:109
 msgid "Label description"
-msgstr ""
+msgstr "Description de l’étiquette"
 
 #: label/models.py:116
 msgid "Label"
-msgstr ""
+msgstr "Étiquette"
 
 #: label/models.py:117
 msgid "Label template file"
-msgstr ""
+msgstr "Fichier de modèle d'étiquette"
 
 #: label/models.py:123 report/models.py:254
 msgid "Enabled"
@@ -3853,15 +3853,15 @@ msgstr "Activé"
 
 #: label/models.py:124
 msgid "Label template is enabled"
-msgstr ""
+msgstr "Le modèle d'étiquette est activé"
 
 #: label/models.py:129
 msgid "Width [mm]"
-msgstr ""
+msgstr "Largeur [mm]"
 
 #: label/models.py:130
 msgid "Label width, specified in mm"
-msgstr ""
+msgstr "Largeur de l'étiquette, spécifiée en mm"
 
 #: label/models.py:136
 msgid "Height [mm]"
@@ -3869,19 +3869,19 @@ msgstr "Hauteur [mm]"
 
 #: label/models.py:137
 msgid "Label height, specified in mm"
-msgstr ""
+msgstr "Hauteur de l'étiquette, spécifiée en mm"
 
 #: label/models.py:143 report/models.py:247
 msgid "Filename Pattern"
-msgstr ""
+msgstr "Modèle de nom de fichier"
 
 #: label/models.py:144
 msgid "Pattern for generating label filenames"
-msgstr ""
+msgstr "Modèle pour la génération des noms de fichiers d'étiquette"
 
 #: label/models.py:233
 msgid "Query filters (comma-separated list of key=value pairs),"
-msgstr ""
+msgstr "Filtres de requête (liste de paires clé=valeur séparées par des virgules),"
 
 #: label/models.py:234 label/models.py:275 label/models.py:303
 #: report/models.py:280 report/models.py:411 report/models.py:449
@@ -3890,15 +3890,15 @@ msgstr "Filtres"
 
 #: label/models.py:274
 msgid "Query filters (comma-separated list of key=value pairs"
-msgstr ""
+msgstr "Filtres de requête (liste de paires clé=valeur séparées par des virgules"
 
 #: label/models.py:302
 msgid "Part query filters (comma-separated value of key=value pairs)"
-msgstr ""
+msgstr "Filtres de requêtes de pièces (valeurs de paires clé=valeur séparées par des virgules)"
 
 #: order/api.py:161
 msgid "No matching purchase order found"
-msgstr ""
+msgstr "Aucun bon de commande correspondant n'a été trouvé"
 
 #: order/api.py:1257 order/models.py:1021 order/models.py:1100
 #: order/templates/order/order_base.html:9
