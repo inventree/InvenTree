@@ -2,6 +2,9 @@
 # exit when any command fails
 set -e
 
+# Required to suppress some git errors further down the line
+git config --global --add safe.directory /home/***
+
 # Create required directory structure (if it does not already exist)
 if [[ ! -d "$INVENTREE_STATIC_ROOT" ]]; then
     echo "Creating directory $INVENTREE_STATIC_ROOT"

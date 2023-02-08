@@ -233,9 +233,9 @@ class ReferenceIndexingMixin(models.Model):
 
         try:
             info = InvenTree.format.parse_format_string(pattern)
-        except Exception:
+        except Exception as exc:
             raise ValidationError({
-                "value": _("Improperly formatted pattern"),
+                "value": _("Improperly formatted pattern") + ": " + str(exc)
             })
 
         # Check that only 'allowed' keys are provided

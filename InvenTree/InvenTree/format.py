@@ -16,10 +16,20 @@ def parse_format_string(fmt_string: str) -> dict:
 
     info = {}
 
+    seen_groups = set()
+
     for group in groups:
         # Skip any group which does not have a named value
         if not group[1]:
             continue
+
+        name = group[1]
+
+        # Check for duplicate named groups
+        if name in seen_groups:
+            raise ValueError(f"Duplicate group '{name}'")
+        else:
+            seen_groups.add(name)
 
         info[group[1]] = {
             'format': group[1],

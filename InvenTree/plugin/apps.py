@@ -53,6 +53,3 @@ class PluginAppConfig(AppConfig):
 
         if not registry.git_is_modern:  # pragma: no cover  # simulating old git seems not worth it for coverage
             log_error(_('Your environment has an outdated git version. This prevents InvenTree from loading plugin details.'), 'load')
-
-        else:
-            logger.info("Plugins not enabled - skipping loading sequence")  # pragma: no cover

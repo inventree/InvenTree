@@ -151,6 +151,52 @@ $("#edit-password").on('click', function() {
     );
 });
 
+$('#btn-update-rates').click(function() {
+    inventreePut(
+        '{% url "api-currency-refresh" %}',
+        {},
+        {
+            method: 'POST',
+            success: function(data) {
+                location.reload();
+            }
+        }
+    );
+});
+
+$('#exchange-rate-table').inventreeTable({
+    url: '{% url "api-currency-exchange" %}',
+    search: false,
+    showColumns: false,
+    sortable: true,
+    sidePagination: 'client',
+    onLoadSuccess: function(response) {
+        var data = response.exchange_rates || {};
+
+        var rows = [];
+
+        for (var currency in data) {
+            rows.push({
+                'currency': currency,
+                'rate': data[currency],
+            });
+        }
+
+        $('#exchange-rate-table').bootstrapTable('load', rows);
+    },
+    columns: [
+        {
+            field: 'currency',
+            sortable: true,
+            title: '{% trans "Currency" %}',
+        },
+        {
+            field: 'rate',
+            sortable: true,
+            title: '{% trans "Rate" %}',
+        }
+    ]
+});
 
 $('#category-select').select2({
     placeholder: '',

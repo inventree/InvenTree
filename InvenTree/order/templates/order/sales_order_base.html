@@ -193,7 +193,7 @@ src="{% static 'img/blank_image.png' %}"
             {% if tp == None %}
             <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
             {% else %}
-            {{ tp }}
+            {% include "price_data.html" with price=tp %}
             {% endif %}
             {% endwith %}
         </td>
