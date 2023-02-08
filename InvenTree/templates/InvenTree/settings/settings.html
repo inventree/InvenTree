@@ -70,18 +70,26 @@ $('table').find('.boolean-setting').change(function() {
     var plugin = $(this).attr('plugin');
     var user = $(this).attr('user');
     var notification = $(this).attr('notification');
+    var is_global = true;
+    var connection_key = $(this).attr('connection_key');
+    var connection = $(this).attr('connection');
 
     var checked = this.checked;
 
-    // Global setting by default
-    var url = `/api/settings/global/${setting}/`;
+    if ($(this).attr('user')){
+        is_global = false;
+    }
 
-    if (notification) {
-        url = `/api/settings/notification/${pk}/`;
+    if (connection_key) {
+        url = `/api/plugins/settings/${plugin}/connection/${connection_key}/${connection}/${key}/`;
     } else if (plugin) {
-        url = `/api/plugins/settings/${plugin}/${setting}/`;
-    } else if (user) {
-        url = `/api/settings/user/${setting}/`;
+        url = `/api/plugins/settings/${plugin}/${key}/`;
+    } else if (notification) {
+        url = `/api/settings/notification/${pk}/`;
+    } else if (global) {
+        url = `/api/settings/global/${key}/`;
+    } else {
+        url = `/api/settings/user/${key}/`;
     }
 
     inventreePut(
