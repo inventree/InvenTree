@@ -26,7 +26,7 @@
     </td>
     <td>
         {% if setting.is_bool %}
-        {% include "InvenTree/settings/setting_boolean.html" %}
+        {% include "InvenTree/settings/setting_boolean.html" with connection_key=connection_key connection_ref=connection_ref plugin=plugin user_setting=user_setting notification_setting=notification_setting %}
         {% else %}
         <div id='setting-{{ setting.pk }}'>
             <span id='setting-value-{{ setting.pk }}-{{ setting.typ }}' fieldname='{{ setting.key.upper }}'>
