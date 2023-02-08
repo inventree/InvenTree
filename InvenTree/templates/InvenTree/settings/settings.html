@@ -81,15 +81,15 @@ $('table').find('.boolean-setting').change(function() {
     }
 
     if (connection_key) {
-        url = `/api/plugins/settings/${plugin}/connection/${connection_key}/${connection}/${key}/`;
+        url = `/api/plugins/settings/${plugin}/connection/${connection_key}/${connection}/${setting}/`;
     } else if (plugin) {
-        url = `/api/plugins/settings/${plugin}/${key}/`;
+        url = `/api/plugins/settings/${plugin}/${setting}/`;
     } else if (notification) {
         url = `/api/settings/notification/${pk}/`;
-    } else if (global) {
-        url = `/api/settings/global/${key}/`;
+    } else if (is_global) {
+        url = `/api/settings/global/${setting}/`;
     } else {
-        url = `/api/settings/user/${key}/`;
+        url = `/api/settings/user/${setting}/`;
     }
 
     inventreePut(
