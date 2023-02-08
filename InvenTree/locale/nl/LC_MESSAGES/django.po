@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-06 09:00+0000\n"
-"PO-Revision-Date: 2023-02-06 09:24\n"
+"PO-Revision-Date: 2023-02-08 11:44\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -92,7 +92,7 @@ msgstr "Er moet hetzelfde e-mailadres ingevoerd worden."
 
 #: InvenTree/forms.py:230 InvenTree/forms.py:236
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "Het opgegeven primaire e-mailadres is ongeldig."
 
 #: InvenTree/forms.py:242
 msgid "The provided email domain is not approved."
@@ -340,11 +340,11 @@ msgstr "Pad"
 
 #: InvenTree/models.py:682
 msgid "Barcode Data"
-msgstr ""
+msgstr "Streepjescode gegevens"
 
 #: InvenTree/models.py:683
 msgid "Third party barcode data"
-msgstr ""
+msgstr "Streepjescode van derden"
 
 #: InvenTree/models.py:688 order/serializers.py:477
 msgid "Barcode Hash"
@@ -352,11 +352,11 @@ msgstr "Hash van Streepjescode"
 
 #: InvenTree/models.py:689
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Unieke hash van barcode gegevens"
 
 #: InvenTree/models.py:734
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Bestaande barcode gevonden"
 
 #: InvenTree/models.py:787
 msgid "Server Error"
@@ -439,7 +439,7 @@ msgstr "Tsjechisch"
 
 #: InvenTree/settings.py:692
 msgid "Danish"
-msgstr ""
+msgstr "Deens"
 
 #: InvenTree/settings.py:693
 msgid "German"
@@ -962,11 +962,11 @@ msgstr "Opmerkingen over de productie"
 
 #: build/models.py:299
 msgid "Build Priority"
-msgstr ""
+msgstr "Bouw prioriteit"
 
 #: build/models.py:302
 msgid "Priority of this build order"
-msgstr ""
+msgstr "Prioriteit van deze bouwopdracht"
 
 #: build/models.py:540
 #, python-brace-format
@@ -1156,7 +1156,7 @@ msgstr "Vereiste artikelen automatisch toewijzen met overeenkomende serienummers
 
 #: build/serializers.py:282 stock/api.py:601
 msgid "The following serial numbers already exist or are invalid"
-msgstr ""
+msgstr "De volgende serienummers bestaan al of zijn ongeldig"
 
 #: build/serializers.py:331 build/serializers.py:400
 msgid "A list of build outputs must be provided"
@@ -1336,7 +1336,7 @@ msgstr "Toewijzing van vervangende onderdelen toestaan"
 
 #: build/serializers.py:851
 msgid "Optional Items"
-msgstr ""
+msgstr "Optionele Items"
 
 #: build/serializers.py:852
 msgid "Allocate optional BOM items to build order"
@@ -1479,7 +1479,7 @@ msgstr "Uitgegeven door"
 #: build/templates/build/build_base.html:200
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2602
 msgid "Priority"
-msgstr ""
+msgstr "Prioriteit"
 
 #: build/templates/build/build_base.html:259
 msgid "Delete Build Order"
@@ -1724,7 +1724,7 @@ msgstr "Kies {name} bestand om te uploaden"
 
 #: common/models.py:65 templates/js/translated/part.js:781
 msgid "Updated"
-msgstr ""
+msgstr "Bijgewerkt"
 
 #: common/models.py:66
 msgid "Timestamp of last update"
@@ -1833,11 +1833,11 @@ msgstr "Download van afbeeldingen en bestanden vanaf een externe URL toestaan"
 
 #: common/models.py:931
 msgid "Download Size Limit"
-msgstr ""
+msgstr "Download limiet"
 
 #: common/models.py:932
 msgid "Maximum allowable download size for remote image"
-msgstr ""
+msgstr "Maximale downloadgrootte voor externe afbeelding"
 
 #: common/models.py:943
 msgid "User-agent used to download from URL"
@@ -1857,7 +1857,7 @@ msgstr ""
 
 #: common/models.py:956
 msgid "Tree Depth"
-msgstr ""
+msgstr "Boomstructuur Diepte"
 
 #: common/models.py:957
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
@@ -1873,7 +1873,7 @@ msgstr ""
 
 #: common/models.py:973
 msgid "Days Between Backup"
-msgstr ""
+msgstr "Dagen tussen backup"
 
 #: common/models.py:974
 msgid "Specify number of days between automated backup events"
@@ -1881,19 +1881,19 @@ msgstr ""
 
 #: common/models.py:983
 msgid "Delete Old Tasks"
-msgstr ""
+msgstr "Verwijder oude taken"
 
 #: common/models.py:984
 msgid "Background task results will be deleted after specified number of days"
-msgstr ""
+msgstr "Resultaten van achtergrondtaken worden verwijderd na het opgegeven aantal dagen"
 
 #: common/models.py:994
 msgid "Delete Error Logs"
-msgstr ""
+msgstr "Verwijder foutenlogboek"
 
 #: common/models.py:995
 msgid "Error logs will be deleted after specified number of days"
-msgstr ""
+msgstr "Resultaten van achtergrondtaken worden verwijderd na het opgegeven aantal dagen"
 
 #: common/models.py:1005 templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
