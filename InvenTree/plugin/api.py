@@ -268,7 +268,7 @@ class WebConnectionSettingDetail(RetrieveUpdateAPI):
         connection_slug = self.kwargs['connection']
 
         # Look up plugin
-        plugin = check_plugin(plugin_slug)
+        plugin = check_plugin(plugin_pk=None, plugin_slug=plugin_slug)
 
         # Check the connection exsists
         connection_key = getattr(plugin, 'connections', {})
