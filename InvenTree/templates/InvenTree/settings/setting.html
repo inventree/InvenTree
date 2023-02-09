@@ -27,14 +27,14 @@
         {% else %}
         <div id='setting-{{ setting.pk }}'>
             <span id='setting-value-{{ setting.pk }}-{{ setting.typ }}' fieldname='{{ setting.key.upper }}'>
-                {% if setting.value %}
+                {% if setting.value == '' %}
+                <em style='color: #855;'>{% trans "No value set" %}</em>
+                {% else %}
                 {% if setting.is_choice %}
                 <strong>{{ setting.as_choice }}</strong>
                 {% else %}
                 <strong>{{ setting.value }}</strong>
                 {% endif %}
-                {% else %}
-                <em style='color: #855;'>{% trans "No value set" %}</em>
                 {% endif %}
             </span>
             {{ setting.units }}

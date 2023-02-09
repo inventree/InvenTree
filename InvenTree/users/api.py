@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from InvenTree.mixins import ListAPI, RetrieveAPI
+from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI
 from InvenTree.serializers import UserSerializer
 from users.models import Owner, RuleSet, check_user_role
 from users.serializers import OwnerSerializer
@@ -116,6 +116,14 @@ class UserDetail(RetrieveAPI):
     permission_classes = (permissions.IsAuthenticated,)
 
 
+class MeUserDetail(RetrieveUpdateAPI, UserDetail):
+    """Detail endpoint for current user."""
+
+    def get_object(self):
+        """Always return the current user object"""
+        return self.request.user
+
+
 class UserList(ListAPI):
     """List endpoint for detail on all users."""
 
@@ -170,6 +178,7 @@ user_urls = [
 
     re_path(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
     re_path(r'token/?$', GetAuthToken.as_view(), name='api-token'),
+    re_path(r'^me/', MeUserDetail.as_view(), name='api-user-me'),
 
     re_path(r'^owner/', include([
         path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),

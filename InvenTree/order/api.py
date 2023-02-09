@@ -414,11 +414,14 @@ class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
 
     - The purchase order is specified in the URL.
     - Items to receive are specified as a list called "items" with the following options:
+        - line_item: pk of the PO Line item
         - supplier_part: pk value of the supplier part
         - quantity: quantity to receive
         - status: stock item status
         - location: destination for stock item (optional)
-    - A global location can also be specified
+        - batch_code: the batch code for this stock item
+        - serial_numbers: serial numbers for this stock item
+    - A global location must also be specified. This is used when no locations are specified for items, and no location is given in the PO line item
     """
 
     queryset = models.PurchaseOrderLineItem.objects.none()

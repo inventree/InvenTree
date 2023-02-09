@@ -154,10 +154,21 @@ STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
-# Backup directories
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
+# Database backup options
+# Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
 DBBACKUP_SEND_EMAIL = False
+DBBACKUP_STORAGE = get_setting(
+    'INVENTREE_BACKUP_STORAGE',
+    'backup_storage',
+    'django.core.files.storage.FileSystemStorage'
+)
+
+# Default backup configuration
+DBBACKUP_STORAGE_OPTIONS = get_setting('INVENTREE_BACKUP_OPTIONS', 'backup_options', None)
+if DBBACKUP_STORAGE_OPTIONS is None:
+    DBBACKUP_STORAGE_OPTIONS = {
+        'location': config.get_backup_dir(),
+    }
 
 # Application definition
 
@@ -538,6 +549,33 @@ DATABASES = {
     'default': db_config
 }
 
+# login settings
+REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
+REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
+
+# sentry.io integration for error reporting
+SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
+# Default Sentry DSN (can be overriden if user wants custom sentry integration)
+INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
+SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', INVENTREE_DSN)
+SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
+
+if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), ],
+        traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
+        send_default_pii=True
+    )
+    inventree_tags = {
+        'testing': TESTING,
+        'docker': DOCKER,
+        'debug': DEBUG,
+        'remote': REMOTE_LOGIN,
+    }
+    for key, val in inventree_tags.items():
+        sentry_sdk.set_tag(f'inventree_{key}', val)
+
 # Cache configuration
 cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)
 cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379', typecast=int)
@@ -584,14 +622,16 @@ else:
         },
     }
 
+_q_worker_timeout = int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90))
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'label': 'Background Tasks',
     'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
-    'timeout': int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)),
-    'retry': 120,
-    'max_attempts': 5,
+    'timeout': _q_worker_timeout,
+    'retry': min(120, _q_worker_timeout + 30),
+    'max_attempts': int(get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)),
     'queue_limit': 50,
     'catch_up': False,
     'bulk': 10,
@@ -599,6 +639,14 @@ Q_CLUSTER = {
     'cache': 'default',
     'sync': False,
 }
+
+# Configure django-q sentry integration
+if SENTRY_ENABLED and SENTRY_DSN:
+    Q_CLUSTER['error_reporter'] = {
+        'sentry': {
+            'dsn': SENTRY_DSN
+        }
+    }
 
 if cache_host:  # pragma: no cover
     # If using external redis cache, make the cache the broker for Django Q
@@ -788,10 +836,6 @@ ACCOUNT_FORMS = {
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 
-# login settings
-REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
-REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
-
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
 
@@ -829,29 +873,6 @@ MARKDOWNIFY = {
         ],
     }
 }
-
-# sentry.io integration for error reporting
-SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
-# Default Sentry DSN (can be overriden if user wants custom sentry integration)
-INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
-SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', INVENTREE_DSN)
-SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
-
-if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        integrations=[DjangoIntegration(), ],
-        traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
-        send_default_pii=True
-    )
-    inventree_tags = {
-        'testing': TESTING,
-        'docker': DOCKER,
-        'debug': DEBUG,
-        'remote': REMOTE_LOGIN,
-    }
-    for key, val in inventree_tags.items():
-        sentry_sdk.set_tag(f'inventree_{key}', val)
 
 # Ignore these error typeps for in-database error logging
 IGNORED_ERRORS = [

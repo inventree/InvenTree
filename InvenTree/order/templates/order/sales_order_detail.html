@@ -249,18 +249,16 @@
     });
 
     $("#new-so-line").click(function() {
-
-        var fields = soLineItemFields({
+        createSalesOrderLineItem({
             order: {{ order.pk }},
-        });
-
-        constructForm('{% url "api-so-line-list" %}', {
-            fields: fields,
-            method: 'POST',
-            title: '{% trans "Add Line Item" %}',
             onSuccess: function() {
                 $("#so-lines-table").bootstrapTable("refresh");
-            },
+            }
+        });
+
+        // Create a new SalesOrderLine item
+        var fields = soLineItemFields({
+            order: {{ order.pk }},
         });
     });
 

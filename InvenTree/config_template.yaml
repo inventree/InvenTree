@@ -32,7 +32,7 @@ database:
   #USER: sampleuser
   #PASSWORD: samplepassword
   #HOST: samplehost
-  #PORT: sampleport
+  #PORT: 123456
 
   # --- Example Configuration - MySQL ---
   #ENGINE: mysql
@@ -142,13 +142,17 @@ cors:
 # STATIC_ROOT is the local filesystem location for storing static files
 #static_root: '/home/inventree/data/static'
 
-# BACKUP_DIR is the local filesystem location for storing backups
+### Backup configuration options ###
+# INVENTREE_BACKUP_DIR is the local filesystem location for storing backups
+backup_storage: django.core.files.storage.FileSystemStorage
 #backup_dir: '/home/inventree/data/backup'
+#backup_options:
 
 # Background worker options
 background:
   workers: 4
   timeout: 90
+  max_attempts: 5
 
 # Optional URL schemes to allow in URL fields
 # By default, only the following schemes are allowed: ['http', 'https', 'ftp', 'ftps']

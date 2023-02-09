@@ -11,6 +11,7 @@ import json
 import logging
 import math
 import os
+import re
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
@@ -42,10 +43,30 @@ import build.validators
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.ready
+import InvenTree.tasks
 import InvenTree.validators
 import order.validators
 
 logger = logging.getLogger('inventree')
+
+
+class MetaMixin(models.Model):
+    """A base class for InvenTree models to include shared meta fields.
+
+    Attributes:
+    - updated: The last time this object was updated
+    """
+
+    class Meta:
+        """Meta options for MetaMixin."""
+        abstract = True
+
+    updated = models.DateTimeField(
+        verbose_name=_('Updated'),
+        help_text=_('Timestamp of last update'),
+        auto_now=True,
+        null=True,
+    )
 
 
 class EmptyURLValidator(URLValidator):
@@ -81,19 +102,33 @@ class BaseInvenTreeSetting(models.Model):
         self.clean(**kwargs)
         self.validate_unique(**kwargs)
 
+        # Execute before_save action
+        self._call_settings_function('before_save', args, kwargs)
+
         # Update this setting in the cache
         if do_cache:
             self.save_to_cache()
 
         super().save()
 
-        # Get after_save action
+        # Execute after_save action
+        self._call_settings_function('after_save', args, kwargs)
+
+    def _call_settings_function(self, reference: str, args, kwargs):
+        """Call a function associated with a particular setting.
+
+        Args:
+            reference (str): The name of the function to call
+            args: Positional arguments to pass to the function
+            kwargs: Keyword arguments to pass to the function
+        """
+        # Get action
         setting = self.get_setting_definition(self.key, *args, **kwargs)
-        after_save = setting.get('after_save', None)
+        settings_fnc = setting.get(reference, None)
 
         # Execute if callable
-        if callable(after_save):
-            after_save(self)
+        if callable(settings_fnc):
+            settings_fnc(self)
 
     @property
     def cache_key(self):
@@ -356,9 +391,12 @@ class BaseInvenTreeSetting(models.Model):
 
             if create:
                 # Attempt to create a new settings object
+
+                default_value = cls.get_setting_default(key, **kwargs)
+
                 setting = cls(
                     key=key,
-                    value=cls.get_setting_default(key, **kwargs),
+                    value=default_value,
                     **kwargs
                 )
 
@@ -771,6 +809,31 @@ def update_instance_name(setting):
     site_obj.save()
 
 
+def validate_email_domains(setting):
+    """Validate the email domains setting."""
+    if not setting.value:
+        return
+
+    domains = setting.value.split(',')
+    for domain in domains:
+        if not domain:
+            raise ValidationError(_('An empty domain is not allowed.'))
+        if not re.match(r'^@[a-zA-Z0-9\.\-_]+$', domain):
+            raise ValidationError(_(f'Invalid domain name: {domain}'))
+
+
+def update_exchange_rates(setting):
+    """Update exchange rates when base currency is changed"""
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    if not InvenTree.ready.canAppAccessDatabase():
+        return
+
+    InvenTree.tasks.update_exchange_rates()
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -851,9 +914,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'INVENTREE_DEFAULT_CURRENCY': {
             'name': _('Default Currency'),
-            'description': _('Default currency'),
+            'description': _('Select base currency for pricing caluclations'),
             'default': 'USD',
             'choices': CURRENCY_CHOICES,
+            'after_save': update_exchange_rates,
         },
 
         'INVENTREE_DOWNLOAD_FROM_URL': {
@@ -902,7 +966,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Automatic Backup'),
             'description': _('Enable automatic backup of database and media files'),
             'validator': bool,
-            'default': True,
+            'default': False,
+        },
+
+        'INVENTREE_BACKUP_DAYS': {
+            'name': _('Days Between Backup'),
+            'description': _('Specify number of days between automated backup events'),
+            'validator': [
+                int,
+                MinValueValidator(1),
+            ],
+            'default': 1,
         },
 
         'INVENTREE_DELETE_TASKS_DAYS': {
@@ -928,7 +1002,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
-            'name': _('Delete Noficiations'),
+            'name': _('Delete Notifications'),
             'description': _('User notifications will be deleted after specified number of days'),
             'default': 30,
             'units': 'days',
@@ -1074,9 +1148,16 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'PART_CREATE_INITIAL': {
-            'name': _('Create initial stock'),
-            'description': _('Create initial stock on part creation'),
+            'name': _('Initial Stock Data'),
+            'description': _('Allow creation of initial stock when adding a new part'),
             'default': False,
+            'validator': bool,
+        },
+
+        'PART_CREATE_SUPPLIER': {
+            'name': _('Initial Supplier Data'),
+            'description': _('Allow creation of initial supplier data when adding a new part'),
+            'default': True,
             'validator': bool,
         },
 
@@ -1117,6 +1198,24 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Historical purchase order pricing overrides supplier price breaks'),
             'default': False,
             'validator': bool,
+        },
+
+        'PRICING_USE_STOCK_PRICING': {
+            'name': _('Use Stock Item Pricing'),
+            'description': _('Use pricing from manually entered stock data for pricing calculations'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PRICING_STOCK_ITEM_AGE_DAYS': {
+            'name': _('Stock Item Pricing Age'),
+            'description': _('Exclude stock items older than this number of days from pricing calculations'),
+            'default': 0,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ]
         },
 
         'PRICING_USE_VARIANT_PRICING': {
@@ -1347,6 +1446,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'LOGIN_ENABLE_SSO_REG': {
+            'name': _('Enable SSO registration'),
+            'description': _('Enable self-registration via SSO for users on the login pages'),
+            'default': False,
+            'validator': bool,
+        },
+
         'LOGIN_MAIL_REQUIRED': {
             'name': _('Email required'),
             'description': _('Require user to supply mail on signup'),
@@ -1373,6 +1479,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('On signup ask users twice for their password'),
             'default': True,
             'validator': bool,
+        },
+
+        'LOGIN_SIGNUP_MAIL_RESTRICTION': {
+            'name': _('Allowed domains'),
+            'description': _('Restrict signup to certain domains (comma-separated, strarting with @)'),
+            'default': '',
+            'before_save': validate_email_domains,
         },
 
         'SIGNUP_GROUP': {
@@ -1833,7 +1946,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         }
 
 
-class PriceBreak(models.Model):
+class PriceBreak(MetaMixin):
     """Represents a PriceBreak model."""
 
     class Meta:
@@ -2204,7 +2317,7 @@ class WebhookMessage(models.Model):
     )
 
 
-class NotificationEntry(models.Model):
+class NotificationEntry(MetaMixin):
     """A NotificationEntry records the last time a particular notifaction was sent out.
 
     It is recorded to ensure that notifications are not sent out "too often" to users.
@@ -2228,11 +2341,6 @@ class NotificationEntry(models.Model):
     )
 
     uid = models.IntegerField(
-    )
-
-    updated = models.DateTimeField(
-        auto_now=True,
-        null=False,
     )
 
     @classmethod
