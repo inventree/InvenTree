@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-06 09:00+0000\n"
-"PO-Revision-Date: 2023-02-07 09:21\n"
+"PO-Revision-Date: 2023-02-09 15:15\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -2160,7 +2160,7 @@ msgstr ""
 
 #: common/models.py:1236
 msgid "Pricing Rebuild Time"
-msgstr ""
+msgstr "Tiempo de reconstrucción de precios"
 
 #: common/models.py:1237
 msgid "Number of days before part pricing is automatically updated"
