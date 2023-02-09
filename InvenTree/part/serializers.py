@@ -475,6 +475,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'virtual',
             'pricing_min',
             'pricing_max',
+            'responsible',
         ]
 
         read_only_fields = [
