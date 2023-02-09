@@ -322,13 +322,13 @@ def inventree_docs_url(*args, **kwargs):
     """Return URL for InvenTree documenation site."""
     tag = version.inventreeDocsVersion()
 
-    return f"https://inventree.readthedocs.io/en/{tag}"
+    return f"https://docs.inventree.org/en/{tag}"
 
 
 @register.simple_tag()
 def inventree_credits_url(*args, **kwargs):
     """Return URL for InvenTree credits site."""
-    return "https://inventree.readthedocs.io/en/latest/credits/"
+    return "https://docs.inventree.org/en/latest/credits/"
 
 
 @register.simple_tag()

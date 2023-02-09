@@ -86,7 +86,7 @@ class TemplateTagTest(InvenTreeTestCase):
 
     def test_docs(self):
         """Test that the documentation URL template tag returns correctly"""
-        self.assertIn('inventree.readthedocs.io', inventree_extras.inventree_docs_url())
+        self.assertIn('docs.inventree.org', inventree_extras.inventree_docs_url())
 
     def test_keyvalue(self):
         """Test keyvalue template tag"""
