@@ -150,7 +150,7 @@ class UserList(ListAPI):
 class GroupDetail(RetrieveAPI):
     """Detail endpoint for a particular auth group"""
 
-    queryst = Group.objects.all()
+    queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [
         permissions.IsAuthenticated,
@@ -223,7 +223,7 @@ user_urls = [
         re_path(r'^.*$', GroupList.as_view(), name='api-group-list'),
     ])),
 
-    re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='user-detail'),
+    re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='api-user-detail'),
 
-    path('', UserList.as_view()),
+    path('', UserList.as_view(), name='api-user-list'),
 ]
