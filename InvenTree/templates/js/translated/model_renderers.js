@@ -16,6 +16,7 @@
     renderStockItem,
     renderStockLocation,
     renderSupplierPart,
+    renderUser,
 */
 
 
@@ -228,7 +229,8 @@ function renderGroup(name, data, parameters={}, options={}) {
 
 }
 
-
+// Renderer for "User" model
+// eslint-disable-next-line no-unused-vars
 function renderUser(name, data, parameters={}, options={}) {
 
     var html = `<span>${data.username}</span>`;
