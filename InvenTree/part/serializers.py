@@ -5,6 +5,7 @@ import io
 from decimal import Decimal
 
 from django.core.files.base import ContentFile
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, FloatField, Q
 from django.db.models.functions import Coalesce
@@ -14,8 +15,10 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 
+import company.models
 import InvenTree.helpers
 import part.filters
+import stock.models
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.serializers import (DataFileExtractSerializer,
                                    DataFileUploadSerializer,
@@ -304,6 +307,113 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
+class DuplicatePartSerializer(serializers.Serializer):
+    """Serializer for specifying options when duplicating a Part.
+
+    The fields in this serializer control how the Part is duplicated.
+    """
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        label=_('Original Part'), help_text=_('Select original part to duplicate'),
+        required=True,
+    )
+
+    copy_image = serializers.BooleanField(
+        label=_('Copy Image'), help_text=_('Copy image from original part'),
+        required=False, default=False,
+    )
+
+    copy_bom = serializers.BooleanField(
+        label=_('Copy BOM'), help_text=_('Copy bill of materials from original part'),
+        required=False, default=False,
+    )
+
+    copy_parameters = serializers.BooleanField(
+        label=_('Copy Parameters'), help_text=_('Copy parameter data from original part'),
+        required=False, default=False,
+    )
+
+
+class InitialStockSerializer(serializers.Serializer):
+    """Serializer for creating initial stock quantity."""
+
+    quantity = serializers.DecimalField(
+        max_digits=15, decimal_places=5, validators=[MinValueValidator(0)],
+        label=_('Initial Stock Quantity'), help_text=_('Specify initial stock quantity for this Part. If quantity is zero, no stock is added.'),
+        required=True,
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        label=_('Initial Stock Location'), help_text=_('Specify initial stock location for this Part'),
+        allow_null=True, required=False,
+    )
+
+
+class InitialSupplierSerializer(serializers.Serializer):
+    """Serializer for adding initial supplier / manufacturer information"""
+
+    supplier = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.Company.objects.all(),
+        label=_('Supplier'), help_text=_('Select supplier (or leave blank to skip)'),
+        allow_null=True, required=False,
+    )
+
+    sku = serializers.CharField(
+        max_length=100, required=False, allow_blank=True,
+        label=_('SKU'), help_text=_('Supplier stock keeping unit'),
+    )
+
+    manufacturer = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.Company.objects.all(),
+        label=_('Manufacturer'), help_text=_('Select manufacturer (or leave blank to skip)'),
+        allow_null=True, required=False,
+    )
+
+    mpn = serializers.CharField(
+        max_length=100, required=False, allow_blank=True,
+        label=_('MPN'), help_text=_('Manufacturer part number'),
+    )
+
+    def validate_supplier(self, company):
+        """Validation for the provided Supplier"""
+
+        if company and not company.is_supplier:
+            raise serializers.ValidationError(_('Selected company is not a valid supplier'))
+
+        return company
+
+    def validate_manufacturer(self, company):
+        """Validation for the provided Manufacturer"""
+
+        if company and not company.is_manufacturer:
+            raise serializers.ValidationError(_('Selected company is not a valid manufacturer'))
+
+        return company
+
+    def validate(self, data):
+        """Extra validation for this serializer"""
+
+        if company.models.ManufacturerPart.objects.filter(
+            manufacturer=data.get('manufacturer', None),
+            MPN=data.get('mpn', '')
+        ).exists():
+            raise serializers.ValidationError({
+                'mpn': _('Manufacturer part matching this MPN already exists')
+            })
+
+        if company.models.SupplierPart.objects.filter(
+            supplier=data.get('supplier', None),
+            SKU=data.get('sku', '')
+        ).exists():
+            raise serializers.ValidationError({
+                'sku': _('Supplier part matching this SKU already exists')
+            })
+
+        return data
+
+
 class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for complete detail information of a part.
 
@@ -313,6 +423,19 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     def get_api_url(self):
         """Return the API url associated with this serializer"""
         return reverse_lazy('api-part-list')
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new Part instance"""
+
+        fields = super().skip_create_fields()
+
+        fields += [
+            'duplicate',
+            'initial_stock',
+            'initial_supplier',
+        ]
+
+        return fields
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for PartSerializer:
@@ -325,6 +448,8 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
         parameters = kwargs.pop('parameters', False)
 
+        create = kwargs.pop('create', False)
+
         super().__init__(*args, **kwargs)
 
         if category_detail is not True:
@@ -332,6 +457,11 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
         if parameters is not True:
             self.fields.pop('parameters')
+
+        if create is not True:
+            # These fields are only used for the LIST API endpoint
+            for f in self.skip_create_fields()[1:]:
+                self.fields.pop(f)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -427,6 +557,22 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         read_only=True,
     )
 
+    # Extra fields used only for creation of a new Part instance
+    duplicate = DuplicatePartSerializer(
+        label=_('Duplicate Part'), help_text=_('Copy initial data from another Part'),
+        write_only=True, required=False
+    )
+
+    initial_stock = InitialStockSerializer(
+        label=_('Initial Stock'), help_text=_('Create Part with initial stock quantity'),
+        write_only=True, required=False,
+    )
+
+    initial_supplier = InitialSupplierSerializer(
+        label=_('Supplier Information'), help_text=_('Add initial supplier information for this part'),
+        write_only=True, required=False,
+    )
+
     class Meta:
         """Metaclass defining serializer fields"""
         model = Part
@@ -476,11 +622,82 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'pricing_min',
             'pricing_max',
             'responsible',
+
+            # Fields only used for Part creation
+            'duplicate',
+            'initial_stock',
+            'initial_supplier',
         ]
 
         read_only_fields = [
             'barcode_hash',
         ]
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Custom method for creating a new Part instance using this serializer"""
+
+        duplicate = validated_data.pop('duplicate', None)
+        initial_stock = validated_data.pop('initial_stock', None)
+        initial_supplier = validated_data.pop('initial_supplier', None)
+
+        instance = super().create(validated_data)
+
+        # Copy data from original Part
+        if duplicate:
+            original = duplicate['part']
+
+            if duplicate['copy_bom']:
+                instance.copy_bom_from(original)
+
+            if duplicate['copy_image']:
+                instance.image = original.image
+                instance.save()
+
+            if duplicate['copy_parameters']:
+                instance.copy_parameters_from(original)
+
+        # Create initial stock entry
+        if initial_stock:
+            quantity = initial_stock['quantity']
+            location = initial_stock['location'] or instance.default_location
+
+            if quantity > 0:
+                stockitem = stock.models.StockItem(
+                    part=instance,
+                    quantity=quantity,
+                    location=location,
+                )
+
+                stockitem.save(user=self.context['request'].user)
+
+        # Create initial supplier information
+        if initial_supplier:
+
+            manufacturer = initial_supplier.get('manufacturer', None)
+            mpn = initial_supplier.get('mpn', '')
+
+            if manufacturer and mpn:
+                manu_part = company.models.ManufacturerPart.objects.create(
+                    part=instance,
+                    manufacturer=manufacturer,
+                    MPN=mpn
+                )
+            else:
+                manu_part = None
+
+            supplier = initial_supplier.get('supplier', None)
+            sku = initial_supplier.get('sku', '')
+
+            if supplier and sku:
+                company.models.SupplierPart.objects.create(
+                    part=instance,
+                    supplier=supplier,
+                    SKU=sku,
+                    manufacturer_part=manu_part,
+                )
+
+        return instance
 
     def save(self):
         """Save the Part instance"""
