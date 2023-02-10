@@ -8,6 +8,7 @@
 /* exported
     renderBuild,
     renderCompany,
+    renderGroup,
     renderManufacturerPart,
     renderOwner,
     renderPart,
@@ -216,8 +217,18 @@ function renderPart(name, data, parameters={}, options={}) {
     return html;
 }
 
-// Renderer for "User" model
+
+// Renderer for "Group" model
 // eslint-disable-next-line no-unused-vars
+function renderGroup(name, data, parameters={}, options={}) {
+
+    var html = `<span>${data.name}</span>`;
+
+    return html;
+
+}
+
+
 function renderUser(name, data, parameters={}, options={}) {
 
     var html = `<span>${data.username}</span>`;
