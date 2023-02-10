@@ -11,6 +11,7 @@
     modalShowSubmitButton,
     renderBuild,
     renderCompany,
+    renderGroup,
     renderManufacturerPart,
     renderOwner,
     renderPart,
@@ -2072,6 +2073,9 @@ function renderModelData(name, model, data, parameters, options) {
         break;
     case 'user':
         renderer = renderUser;
+        break;
+    case 'group':
+        renderer = renderGroup;
         break;
     default:
         break;
