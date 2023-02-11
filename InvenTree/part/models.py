@@ -2890,6 +2890,7 @@ class PartStocktake(models.Model):
     A 'stocktake' is a representative count of available stock:
     - Performed on a given date
     - Records quantity of part in stock (across multiple stock items)
+    - Records estimated value of "stock on hand"
     - Records user information
     """
 
@@ -2927,6 +2928,18 @@ class PartStocktake(models.Model):
         related_name='part_stocktakes',
         verbose_name=_('User'),
         help_text=_('User who performed this stocktake'),
+    )
+
+    cost_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Stock Cost'),
+        help_text=_('Estimated minimum cost of stock on hand'),
+    )
+
+    cost_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Stock Cost'),
+        help_text=_('Estimated maximum cost of stock on hand'),
     )
 
 
