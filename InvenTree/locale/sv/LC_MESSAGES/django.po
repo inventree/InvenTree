@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 09:00+0000\n"
-"PO-Revision-Date: 2023-02-06 09:24\n"
+"POT-Creation-Date: 2023-02-11 13:13+0000\n"
+"PO-Revision-Date: 2023-02-11 16:12\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -212,7 +212,7 @@ msgstr "Bilaga"
 msgid "Select file to attach"
 msgstr "Välj fil att bifoga"
 
-#: InvenTree/models.py:412 common/models.py:2481 company/models.py:129
+#: InvenTree/models.py:412 common/models.py:2492 company/models.py:129
 #: company/models.py:281 company/models.py:517 order/models.py:85
 #: order/models.py:1282 part/admin.py:25 part/models.py:866
 #: part/templates/part/part_scheduling.html:11
@@ -237,9 +237,9 @@ msgstr "Kommentar"
 msgid "File comment"
 msgstr "Fil kommentar"
 
-#: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1930
-#: common/models.py:1931 common/models.py:2154 common/models.py:2155
-#: common/models.py:2411 common/models.py:2412 part/models.py:2928
+#: InvenTree/models.py:422 InvenTree/models.py:423 common/models.py:1941
+#: common/models.py:1942 common/models.py:2165 common/models.py:2166
+#: common/models.py:2422 common/models.py:2423 part/models.py:2928
 #: part/models.py:3014 part/models.py:3034 plugin/models.py:270
 #: plugin/models.py:271
 #: report/templates/report/inventree_test_report_base.html:96
@@ -280,7 +280,7 @@ msgstr "Fel vid namnbyte av fil"
 msgid "Invalid choice"
 msgstr "Ogiltigt val"
 
-#: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:2140
+#: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:2151
 #: company/models.py:363 label/models.py:101 part/models.py:810
 #: part/models.py:3189 plugin/models.py:94 report/models.py:152
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -1045,7 +1045,7 @@ msgstr "Källa lagervara"
 
 #: build/models.py:1375 build/serializers.py:193
 #: build/templates/build/build_base.html:85
-#: build/templates/build/detail.html:34 common/models.py:1962
+#: build/templates/build/detail.html:34 common/models.py:1973
 #: order/models.py:934 order/models.py:1460 order/serializers.py:1206
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:256
 #: part/forms.py:40 part/models.py:2907 part/models.py:3425
@@ -1067,7 +1067,7 @@ msgstr "Källa lagervara"
 #: templates/js/translated/build.js:1247 templates/js/translated/build.js:1748
 #: templates/js/translated/build.js:2208
 #: templates/js/translated/company.js:1164
-#: templates/js/translated/model_renderers.js:120
+#: templates/js/translated/model_renderers.js:122
 #: templates/js/translated/order.js:124 templates/js/translated/order.js:1209
 #: templates/js/translated/order.js:2338 templates/js/translated/order.js:2554
 #: templates/js/translated/order.js:3231 templates/js/translated/order.js:3551
@@ -1513,7 +1513,7 @@ msgstr ""
 #: build/templates/build/detail.html:80 stock/admin.py:88
 #: stock/templates/stock/item_base.html:168
 #: templates/js/translated/build.js:1251
-#: templates/js/translated/model_renderers.js:124
+#: templates/js/translated/model_renderers.js:126
 #: templates/js/translated/stock.js:1060 templates/js/translated/stock.js:1887
 #: templates/js/translated/stock.js:2785
 #: templates/js/translated/table_filters.js:179
@@ -1754,1142 +1754,1142 @@ msgstr ""
 msgid "Key string must be unique"
 msgstr ""
 
-#: common/models.py:795
+#: common/models.py:806
 msgid "No group"
 msgstr "Ingen grupp"
 
-#: common/models.py:820
+#: common/models.py:831
 msgid "An empty domain is not allowed."
 msgstr ""
 
-#: common/models.py:822
+#: common/models.py:833
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
 msgstr ""
 
-#: common/models.py:873
+#: common/models.py:884
 msgid "Restart required"
 msgstr "Omstart krävs"
 
-#: common/models.py:874
+#: common/models.py:885
 msgid "A setting has been changed which requires a server restart"
 msgstr ""
 
-#: common/models.py:881
+#: common/models.py:892
 msgid "Server Instance Name"
 msgstr "Serverinstans (Namn)"
 
-#: common/models.py:883
+#: common/models.py:894
 msgid "String descriptor for the server instance"
 msgstr ""
 
-#: common/models.py:888
+#: common/models.py:899
 msgid "Use instance name"
 msgstr ""
 
-#: common/models.py:889
+#: common/models.py:900
 msgid "Use the instance name in the title-bar"
 msgstr ""
 
-#: common/models.py:895
+#: common/models.py:906
 msgid "Restrict showing `about`"
 msgstr ""
 
-#: common/models.py:896
+#: common/models.py:907
 msgid "Show the `about` modal only to superusers"
 msgstr ""
 
-#: common/models.py:902 company/models.py:98 company/models.py:99
+#: common/models.py:913 company/models.py:98 company/models.py:99
 msgid "Company name"
 msgstr "Företagsnamn"
 
-#: common/models.py:903
+#: common/models.py:914
 msgid "Internal company name"
 msgstr "Internt företagsnamn"
 
-#: common/models.py:908
+#: common/models.py:919
 msgid "Base URL"
 msgstr "Bas-URL"
 
-#: common/models.py:909
+#: common/models.py:920
 msgid "Base URL for server instance"
 msgstr "Bas-URL för serverinstans"
 
-#: common/models.py:916
+#: common/models.py:927
 msgid "Default Currency"
 msgstr "Standardvaluta"
 
-#: common/models.py:917
+#: common/models.py:928
 msgid "Select base currency for pricing caluclations"
 msgstr ""
 
-#: common/models.py:924
+#: common/models.py:935
 msgid "Download from URL"
 msgstr "Ladda ned från URL"
 
-#: common/models.py:925
+#: common/models.py:936
 msgid "Allow download of remote images and files from external URL"
 msgstr "Tillåt nedladdning av bilder och filer från extern URL"
 
-#: common/models.py:931
+#: common/models.py:942
 msgid "Download Size Limit"
 msgstr ""
 
-#: common/models.py:932
+#: common/models.py:943
 msgid "Maximum allowable download size for remote image"
 msgstr ""
 
-#: common/models.py:943
+#: common/models.py:954
 msgid "User-agent used to download from URL"
 msgstr ""
 
-#: common/models.py:944
+#: common/models.py:955
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
 msgstr ""
 
-#: common/models.py:949
+#: common/models.py:960
 msgid "Require confirm"
 msgstr "Kräv bekräftelse"
 
-#: common/models.py:950
+#: common/models.py:961
 msgid "Require explicit user confirmation for certain action."
 msgstr "Kräv uttrycklig användarbekräftelse för vissa åtgärder."
 
-#: common/models.py:956
+#: common/models.py:967
 msgid "Tree Depth"
 msgstr ""
 
-#: common/models.py:957
+#: common/models.py:968
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
 msgstr ""
 
-#: common/models.py:966
+#: common/models.py:977
 msgid "Automatic Backup"
 msgstr ""
 
-#: common/models.py:967
+#: common/models.py:978
 msgid "Enable automatic backup of database and media files"
 msgstr ""
 
-#: common/models.py:973
+#: common/models.py:984
 msgid "Days Between Backup"
 msgstr ""
 
-#: common/models.py:974
+#: common/models.py:985
 msgid "Specify number of days between automated backup events"
 msgstr ""
 
-#: common/models.py:983
+#: common/models.py:994
 msgid "Delete Old Tasks"
 msgstr ""
 
-#: common/models.py:984
+#: common/models.py:995
 msgid "Background task results will be deleted after specified number of days"
 msgstr ""
 
-#: common/models.py:994
+#: common/models.py:1005
 msgid "Delete Error Logs"
 msgstr ""
 
-#: common/models.py:995
+#: common/models.py:1006
 msgid "Error logs will be deleted after specified number of days"
 msgstr ""
 
-#: common/models.py:1005 templates/InvenTree/notifications/history.html:13
+#: common/models.py:1016 templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
 #: templates/InvenTree/notifications/notifications.html:77
 msgid "Delete Notifications"
 msgstr ""
 
-#: common/models.py:1006
+#: common/models.py:1017
 msgid "User notifications will be deleted after specified number of days"
 msgstr ""
 
-#: common/models.py:1016 templates/InvenTree/settings/sidebar.html:33
+#: common/models.py:1027 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
 msgstr "Stöd för streckkoder"
 
-#: common/models.py:1017
+#: common/models.py:1028
 msgid "Enable barcode scanner support"
 msgstr "Aktivera stöd för streckkodsläsare"
 
-#: common/models.py:1023
+#: common/models.py:1034
 msgid "Barcode Input Delay"
 msgstr ""
 
-#: common/models.py:1024
+#: common/models.py:1035
 msgid "Barcode input processing delay time"
 msgstr ""
 
-#: common/models.py:1034
+#: common/models.py:1045
 msgid "Barcode Webcam Support"
 msgstr ""
 
-#: common/models.py:1035
+#: common/models.py:1046
 msgid "Allow barcode scanning via webcam in browser"
 msgstr ""
 
-#: common/models.py:1041
+#: common/models.py:1052
 msgid "IPN Regex"
 msgstr ""
 
-#: common/models.py:1042
+#: common/models.py:1053
 msgid "Regular expression pattern for matching Part IPN"
 msgstr ""
 
-#: common/models.py:1046
+#: common/models.py:1057
 msgid "Allow Duplicate IPN"
 msgstr ""
 
-#: common/models.py:1047
+#: common/models.py:1058
 msgid "Allow multiple parts to share the same IPN"
 msgstr ""
 
-#: common/models.py:1053
+#: common/models.py:1064
 msgid "Allow Editing IPN"
 msgstr ""
 
-#: common/models.py:1054
+#: common/models.py:1065
 msgid "Allow changing the IPN value while editing a part"
 msgstr ""
 
-#: common/models.py:1060
+#: common/models.py:1071
 msgid "Copy Part BOM Data"
 msgstr ""
 
-#: common/models.py:1061
+#: common/models.py:1072
 msgid "Copy BOM data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:1067
+#: common/models.py:1078
 msgid "Copy Part Parameter Data"
 msgstr ""
 
-#: common/models.py:1068
+#: common/models.py:1079
 msgid "Copy parameter data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:1074
+#: common/models.py:1085
 msgid "Copy Part Test Data"
 msgstr ""
 
-#: common/models.py:1075
+#: common/models.py:1086
 msgid "Copy test data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:1081
+#: common/models.py:1092
 msgid "Copy Category Parameter Templates"
 msgstr ""
 
-#: common/models.py:1082
+#: common/models.py:1093
 msgid "Copy category parameter templates when creating a part"
 msgstr ""
 
-#: common/models.py:1088 part/admin.py:41 part/models.py:3234
+#: common/models.py:1099 part/admin.py:41 part/models.py:3234
 #: report/models.py:158 templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:516
 msgid "Template"
 msgstr ""
 
-#: common/models.py:1089
+#: common/models.py:1100
 msgid "Parts are templates by default"
 msgstr ""
 
-#: common/models.py:1095 part/admin.py:37 part/admin.py:262 part/models.py:958
+#: common/models.py:1106 part/admin.py:37 part/admin.py:262 part/models.py:958
 #: templates/js/translated/bom.js:1602
 #: templates/js/translated/table_filters.js:196
 #: templates/js/translated/table_filters.js:475
 msgid "Assembly"
 msgstr ""
 
-#: common/models.py:1096
+#: common/models.py:1107
 msgid "Parts can be assembled from other components by default"
 msgstr ""
 
-#: common/models.py:1102 part/admin.py:38 part/models.py:964
+#: common/models.py:1113 part/admin.py:38 part/models.py:964
 #: templates/js/translated/table_filters.js:483
 msgid "Component"
 msgstr ""
 
-#: common/models.py:1103
+#: common/models.py:1114
 msgid "Parts can be used as sub-components by default"
 msgstr ""
 
-#: common/models.py:1109 part/admin.py:39 part/models.py:975
+#: common/models.py:1120 part/admin.py:39 part/models.py:975
 msgid "Purchaseable"
 msgstr ""
 
-#: common/models.py:1110
+#: common/models.py:1121
 msgid "Parts are purchaseable by default"
 msgstr ""
 
-#: common/models.py:1116 part/admin.py:40 part/models.py:980
+#: common/models.py:1127 part/admin.py:40 part/models.py:980
 #: templates/js/translated/table_filters.js:504
 msgid "Salable"
 msgstr ""
 
-#: common/models.py:1117
+#: common/models.py:1128
 msgid "Parts are salable by default"
 msgstr ""
 
-#: common/models.py:1123 part/admin.py:42 part/models.py:970
+#: common/models.py:1134 part/admin.py:42 part/models.py:970
 #: templates/js/translated/table_filters.js:46
 #: templates/js/translated/table_filters.js:120
 #: templates/js/translated/table_filters.js:520
 msgid "Trackable"
 msgstr ""
 
-#: common/models.py:1124
+#: common/models.py:1135
 msgid "Parts are trackable by default"
 msgstr ""
 
-#: common/models.py:1130 part/admin.py:43 part/models.py:990
+#: common/models.py:1141 part/admin.py:43 part/models.py:990
 #: part/templates/part/part_base.html:156
 #: templates/js/translated/table_filters.js:42
 #: templates/js/translated/table_filters.js:524
 msgid "Virtual"
 msgstr "Virtuell"
 
-#: common/models.py:1131
+#: common/models.py:1142
 msgid "Parts are virtual by default"
 msgstr "Delar är virtuella som standard"
 
-#: common/models.py:1137
+#: common/models.py:1148
 msgid "Show Import in Views"
 msgstr "Visa import i vyer"
 
-#: common/models.py:1138
+#: common/models.py:1149
 msgid "Display the import wizard in some part views"
 msgstr "Visa importguiden i vissa delvyer"
 
-#: common/models.py:1144
+#: common/models.py:1155
 msgid "Show related parts"
 msgstr "Visa relaterade delar"
 
-#: common/models.py:1145
+#: common/models.py:1156
 msgid "Display related parts for a part"
 msgstr "Visa relaterade delar för en del"
 
-#: common/models.py:1151
+#: common/models.py:1162
 msgid "Initial Stock Data"
 msgstr ""
 
-#: common/models.py:1152
+#: common/models.py:1163
 msgid "Allow creation of initial stock when adding a new part"
 msgstr ""
 
-#: common/models.py:1158 templates/js/translated/part.js:73
+#: common/models.py:1169 templates/js/translated/part.js:73
 msgid "Initial Supplier Data"
 msgstr ""
 
-#: common/models.py:1159
+#: common/models.py:1170
 msgid "Allow creation of initial supplier data when adding a new part"
 msgstr ""
 
-#: common/models.py:1165
+#: common/models.py:1176
 msgid "Part Name Display Format"
 msgstr "Visningsformat för delnamn"
 
-#: common/models.py:1166
+#: common/models.py:1177
 msgid "Format to display the part name"
 msgstr "Formatera för att visa artikelnamnet"
 
-#: common/models.py:1173
+#: common/models.py:1184
 msgid "Part Category Default Icon"
 msgstr ""
 
-#: common/models.py:1174
+#: common/models.py:1185
 msgid "Part category default icon (empty means no icon)"
 msgstr ""
 
-#: common/models.py:1179
+#: common/models.py:1190
 msgid "Pricing Decimal Places"
 msgstr ""
 
-#: common/models.py:1180
+#: common/models.py:1191
 msgid "Number of decimal places to display when rendering pricing data"
 msgstr ""
 
-#: common/models.py:1190
+#: common/models.py:1201
 msgid "Use Supplier Pricing"
 msgstr ""
 
-#: common/models.py:1191
+#: common/models.py:1202
 msgid "Include supplier price breaks in overall pricing calculations"
 msgstr ""
 
-#: common/models.py:1197
+#: common/models.py:1208
 msgid "Purchase History Override"
 msgstr ""
 
-#: common/models.py:1198
+#: common/models.py:1209
 msgid "Historical purchase order pricing overrides supplier price breaks"
 msgstr ""
 
-#: common/models.py:1204
+#: common/models.py:1215
 msgid "Use Stock Item Pricing"
 msgstr ""
 
-#: common/models.py:1205
+#: common/models.py:1216
 msgid "Use pricing from manually entered stock data for pricing calculations"
 msgstr ""
 
-#: common/models.py:1211
+#: common/models.py:1222
 msgid "Stock Item Pricing Age"
 msgstr ""
 
-#: common/models.py:1212
+#: common/models.py:1223
 msgid "Exclude stock items older than this number of days from pricing calculations"
 msgstr ""
 
-#: common/models.py:1222
+#: common/models.py:1233
 msgid "Use Variant Pricing"
 msgstr ""
 
-#: common/models.py:1223
+#: common/models.py:1234
 msgid "Include variant pricing in overall pricing calculations"
 msgstr ""
 
-#: common/models.py:1229
+#: common/models.py:1240
 msgid "Active Variants Only"
 msgstr ""
 
-#: common/models.py:1230
+#: common/models.py:1241
 msgid "Only use active variant parts for calculating variant pricing"
 msgstr ""
 
-#: common/models.py:1236
+#: common/models.py:1247
 msgid "Pricing Rebuild Time"
 msgstr ""
 
-#: common/models.py:1237
+#: common/models.py:1248
 msgid "Number of days before part pricing is automatically updated"
 msgstr ""
 
-#: common/models.py:1238 common/models.py:1361
+#: common/models.py:1249 common/models.py:1372
 msgid "days"
 msgstr ""
 
-#: common/models.py:1247
+#: common/models.py:1258
 msgid "Internal Prices"
 msgstr "Interna priser"
 
-#: common/models.py:1248
+#: common/models.py:1259
 msgid "Enable internal prices for parts"
 msgstr ""
 
-#: common/models.py:1254
+#: common/models.py:1265
 msgid "Internal Price Override"
 msgstr ""
 
-#: common/models.py:1255
+#: common/models.py:1266
 msgid "If available, internal prices override price range calculations"
 msgstr ""
 
-#: common/models.py:1261
+#: common/models.py:1272
 msgid "Enable label printing"
 msgstr "Aktivera etikettutskrift"
 
-#: common/models.py:1262
+#: common/models.py:1273
 msgid "Enable label printing from the web interface"
 msgstr "Aktivera etikettutskrift från webbgränssnittet"
 
-#: common/models.py:1268
+#: common/models.py:1279
 msgid "Label Image DPI"
 msgstr "Etikettbild DPI"
 
-#: common/models.py:1269
+#: common/models.py:1280
 msgid "DPI resolution when generating image files to supply to label printing plugins"
 msgstr ""
 
-#: common/models.py:1278
+#: common/models.py:1289
 msgid "Enable Reports"
 msgstr "Aktivera rapporter"
 
-#: common/models.py:1279
+#: common/models.py:1290
 msgid "Enable generation of reports"
 msgstr "Aktivera generering av rapporter"
 
-#: common/models.py:1285 templates/stats.html:25
+#: common/models.py:1296 templates/stats.html:25
 msgid "Debug Mode"
 msgstr "Debugläge"
 
-#: common/models.py:1286
+#: common/models.py:1297
 msgid "Generate reports in debug mode (HTML output)"
 msgstr ""
 
-#: common/models.py:1292
+#: common/models.py:1303
 msgid "Page Size"
 msgstr "Sidstorlek"
 
-#: common/models.py:1293
+#: common/models.py:1304
 msgid "Default page size for PDF reports"
 msgstr "Standard sidstorlek för PDF-rapporter"
 
-#: common/models.py:1303
+#: common/models.py:1314
 msgid "Enable Test Reports"
 msgstr "Aktivera testrapporter"
 
-#: common/models.py:1304
+#: common/models.py:1315
 msgid "Enable generation of test reports"
 msgstr ""
 
-#: common/models.py:1310
+#: common/models.py:1321
 msgid "Attach Test Reports"
 msgstr ""
 
-#: common/models.py:1311
+#: common/models.py:1322
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
 msgstr ""
 
-#: common/models.py:1317
+#: common/models.py:1328
 msgid "Globally Unique Serials"
 msgstr ""
 
-#: common/models.py:1318
+#: common/models.py:1329
 msgid "Serial numbers for stock items must be globally unique"
 msgstr ""
 
-#: common/models.py:1324
+#: common/models.py:1335
 msgid "Autofill Serial Numbers"
 msgstr ""
 
-#: common/models.py:1325
+#: common/models.py:1336
 msgid "Autofill serial numbers in forms"
 msgstr ""
 
-#: common/models.py:1331
+#: common/models.py:1342
 msgid "Delete Depleted Stock"
 msgstr ""
 
-#: common/models.py:1332
+#: common/models.py:1343
 msgid "Determines default behaviour when a stock item is depleted"
 msgstr ""
 
-#: common/models.py:1338
+#: common/models.py:1349
 msgid "Batch Code Template"
 msgstr ""
 
-#: common/models.py:1339
+#: common/models.py:1350
 msgid "Template for generating default batch codes for stock items"
 msgstr ""
 
-#: common/models.py:1344
+#: common/models.py:1355
 msgid "Stock Expiry"
 msgstr ""
 
-#: common/models.py:1345
+#: common/models.py:1356
 msgid "Enable stock expiry functionality"
 msgstr ""
 
-#: common/models.py:1351
+#: common/models.py:1362
 msgid "Sell Expired Stock"
 msgstr ""
 
-#: common/models.py:1352
+#: common/models.py:1363
 msgid "Allow sale of expired stock"
 msgstr ""
 
-#: common/models.py:1358
+#: common/models.py:1369
 msgid "Stock Stale Time"
 msgstr ""
 
-#: common/models.py:1359
+#: common/models.py:1370
 msgid "Number of days stock items are considered stale before expiring"
 msgstr ""
 
-#: common/models.py:1366
+#: common/models.py:1377
 msgid "Build Expired Stock"
 msgstr ""
 
-#: common/models.py:1367
+#: common/models.py:1378
 msgid "Allow building with expired stock"
 msgstr ""
 
-#: common/models.py:1373
+#: common/models.py:1384
 msgid "Stock Ownership Control"
 msgstr ""
 
-#: common/models.py:1374
+#: common/models.py:1385
 msgid "Enable ownership control over stock locations and items"
 msgstr ""
 
-#: common/models.py:1380
+#: common/models.py:1391
 msgid "Stock Location Default Icon"
 msgstr ""
 
-#: common/models.py:1381
+#: common/models.py:1392
 msgid "Stock location default icon (empty means no icon)"
 msgstr ""
 
-#: common/models.py:1386
+#: common/models.py:1397
 msgid "Build Order Reference Pattern"
 msgstr ""
 
-#: common/models.py:1387
+#: common/models.py:1398
 msgid "Required pattern for generating Build Order reference field"
 msgstr ""
 
-#: common/models.py:1393
+#: common/models.py:1404
 msgid "Sales Order Reference Pattern"
 msgstr ""
 
-#: common/models.py:1394
+#: common/models.py:1405
 msgid "Required pattern for generating Sales Order reference field"
 msgstr ""
 
-#: common/models.py:1400
+#: common/models.py:1411
 msgid "Sales Order Default Shipment"
 msgstr ""
 
-#: common/models.py:1401
+#: common/models.py:1412
 msgid "Enable creation of default shipment with sales orders"
 msgstr ""
 
-#: common/models.py:1407
+#: common/models.py:1418
 msgid "Edit Completed Sales Orders"
 msgstr ""
 
-#: common/models.py:1408
+#: common/models.py:1419
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr ""
 
-#: common/models.py:1414
+#: common/models.py:1425
 msgid "Purchase Order Reference Pattern"
 msgstr ""
 
-#: common/models.py:1415
+#: common/models.py:1426
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr ""
 
-#: common/models.py:1421
+#: common/models.py:1432
 msgid "Edit Completed Purchase Orders"
 msgstr ""
 
-#: common/models.py:1422
+#: common/models.py:1433
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr ""
 
-#: common/models.py:1429
+#: common/models.py:1440
 msgid "Enable password forgot"
 msgstr ""
 
-#: common/models.py:1430
+#: common/models.py:1441
 msgid "Enable password forgot function on the login pages"
 msgstr ""
 
-#: common/models.py:1436
+#: common/models.py:1447
 msgid "Enable registration"
 msgstr ""
 
-#: common/models.py:1437
+#: common/models.py:1448
 msgid "Enable self-registration for users on the login pages"
 msgstr ""
 
-#: common/models.py:1443
+#: common/models.py:1454
 msgid "Enable SSO"
 msgstr ""
 
-#: common/models.py:1444
+#: common/models.py:1455
 msgid "Enable SSO on the login pages"
 msgstr ""
 
-#: common/models.py:1450
+#: common/models.py:1461
 msgid "Enable SSO registration"
 msgstr ""
 
-#: common/models.py:1451
+#: common/models.py:1462
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr ""
 
-#: common/models.py:1457
+#: common/models.py:1468
 msgid "Email required"
 msgstr ""
 
-#: common/models.py:1458
+#: common/models.py:1469
 msgid "Require user to supply mail on signup"
 msgstr ""
 
-#: common/models.py:1464
+#: common/models.py:1475
 msgid "Auto-fill SSO users"
 msgstr ""
 
-#: common/models.py:1465
+#: common/models.py:1476
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr ""
 
-#: common/models.py:1471
+#: common/models.py:1482
 msgid "Mail twice"
 msgstr ""
 
-#: common/models.py:1472
+#: common/models.py:1483
 msgid "On signup ask users twice for their mail"
 msgstr ""
 
-#: common/models.py:1478
+#: common/models.py:1489
 msgid "Password twice"
 msgstr ""
 
-#: common/models.py:1479
+#: common/models.py:1490
 msgid "On signup ask users twice for their password"
 msgstr ""
 
-#: common/models.py:1485
+#: common/models.py:1496
 msgid "Allowed domains"
 msgstr ""
 
-#: common/models.py:1486
+#: common/models.py:1497
 msgid "Restrict signup to certain domains (comma-separated, strarting with @)"
 msgstr ""
 
-#: common/models.py:1492
+#: common/models.py:1503
 msgid "Group on signup"
 msgstr ""
 
-#: common/models.py:1493
+#: common/models.py:1504
 msgid "Group to which new users are assigned on registration"
 msgstr ""
 
-#: common/models.py:1499
+#: common/models.py:1510
 msgid "Enforce MFA"
 msgstr ""
 
-#: common/models.py:1500
+#: common/models.py:1511
 msgid "Users must use multifactor security."
 msgstr ""
 
-#: common/models.py:1506
+#: common/models.py:1517
 msgid "Check plugins on startup"
 msgstr ""
 
-#: common/models.py:1507
+#: common/models.py:1518
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr ""
 
-#: common/models.py:1514
+#: common/models.py:1525
 msgid "Check plugin signatures"
 msgstr ""
 
-#: common/models.py:1515
+#: common/models.py:1526
 msgid "Check and show signatures for plugins"
 msgstr ""
 
-#: common/models.py:1522
+#: common/models.py:1533
 msgid "Enable URL integration"
 msgstr ""
 
-#: common/models.py:1523
+#: common/models.py:1534
 msgid "Enable plugins to add URL routes"
 msgstr ""
 
-#: common/models.py:1530
+#: common/models.py:1541
 msgid "Enable navigation integration"
 msgstr ""
 
-#: common/models.py:1531
+#: common/models.py:1542
 msgid "Enable plugins to integrate into navigation"
 msgstr ""
 
-#: common/models.py:1538
+#: common/models.py:1549
 msgid "Enable app integration"
 msgstr ""
 
-#: common/models.py:1539
+#: common/models.py:1550
 msgid "Enable plugins to add apps"
 msgstr ""
 
-#: common/models.py:1546
+#: common/models.py:1557
 msgid "Enable schedule integration"
 msgstr ""
 
-#: common/models.py:1547
+#: common/models.py:1558
 msgid "Enable plugins to run scheduled tasks"
 msgstr ""
 
-#: common/models.py:1554
+#: common/models.py:1565
 msgid "Enable event integration"
 msgstr ""
 
-#: common/models.py:1555
+#: common/models.py:1566
 msgid "Enable plugins to respond to internal events"
 msgstr ""
 
-#: common/models.py:1574 common/models.py:1923
+#: common/models.py:1585 common/models.py:1934
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
-#: common/models.py:1596
+#: common/models.py:1607
 msgid "Show subscribed parts"
 msgstr ""
 
-#: common/models.py:1597
+#: common/models.py:1608
 msgid "Show subscribed parts on the homepage"
 msgstr ""
 
-#: common/models.py:1603
+#: common/models.py:1614
 msgid "Show subscribed categories"
 msgstr ""
 
-#: common/models.py:1604
+#: common/models.py:1615
 msgid "Show subscribed part categories on the homepage"
 msgstr ""
 
-#: common/models.py:1610
+#: common/models.py:1621
 msgid "Show latest parts"
 msgstr ""
 
-#: common/models.py:1611
+#: common/models.py:1622
 msgid "Show latest parts on the homepage"
 msgstr ""
 
-#: common/models.py:1617
+#: common/models.py:1628
 msgid "Recent Part Count"
 msgstr ""
 
-#: common/models.py:1618
+#: common/models.py:1629
 msgid "Number of recent parts to display on index page"
 msgstr ""
 
-#: common/models.py:1624
+#: common/models.py:1635
 msgid "Show unvalidated BOMs"
 msgstr ""
 
-#: common/models.py:1625
+#: common/models.py:1636
 msgid "Show BOMs that await validation on the homepage"
 msgstr ""
 
-#: common/models.py:1631
+#: common/models.py:1642
 msgid "Show recent stock changes"
 msgstr ""
 
-#: common/models.py:1632
+#: common/models.py:1643
 msgid "Show recently changed stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1638
+#: common/models.py:1649
 msgid "Recent Stock Count"
 msgstr ""
 
-#: common/models.py:1639
+#: common/models.py:1650
 msgid "Number of recent stock items to display on index page"
 msgstr ""
 
-#: common/models.py:1645
+#: common/models.py:1656
 msgid "Show low stock"
 msgstr ""
 
-#: common/models.py:1646
+#: common/models.py:1657
 msgid "Show low stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1652
+#: common/models.py:1663
 msgid "Show depleted stock"
 msgstr ""
 
-#: common/models.py:1653
+#: common/models.py:1664
 msgid "Show depleted stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1659
+#: common/models.py:1670
 msgid "Show needed stock"
 msgstr ""
 
-#: common/models.py:1660
+#: common/models.py:1671
 msgid "Show stock items needed for builds on the homepage"
 msgstr ""
 
-#: common/models.py:1666
+#: common/models.py:1677
 msgid "Show expired stock"
 msgstr ""
 
-#: common/models.py:1667
+#: common/models.py:1678
 msgid "Show expired stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1673
+#: common/models.py:1684
 msgid "Show stale stock"
 msgstr ""
 
-#: common/models.py:1674
+#: common/models.py:1685
 msgid "Show stale stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1680
+#: common/models.py:1691
 msgid "Show pending builds"
 msgstr ""
 
-#: common/models.py:1681
+#: common/models.py:1692
 msgid "Show pending builds on the homepage"
 msgstr ""
 
-#: common/models.py:1687
+#: common/models.py:1698
 msgid "Show overdue builds"
 msgstr ""
 
-#: common/models.py:1688
+#: common/models.py:1699
 msgid "Show overdue builds on the homepage"
 msgstr ""
 
-#: common/models.py:1694
+#: common/models.py:1705
 msgid "Show outstanding POs"
 msgstr ""
 
-#: common/models.py:1695
+#: common/models.py:1706
 msgid "Show outstanding POs on the homepage"
 msgstr ""
 
-#: common/models.py:1701
+#: common/models.py:1712
 msgid "Show overdue POs"
 msgstr ""
 
-#: common/models.py:1702
+#: common/models.py:1713
 msgid "Show overdue POs on the homepage"
 msgstr ""
 
-#: common/models.py:1708
+#: common/models.py:1719
 msgid "Show outstanding SOs"
 msgstr ""
 
-#: common/models.py:1709
+#: common/models.py:1720
 msgid "Show outstanding SOs on the homepage"
 msgstr ""
 
-#: common/models.py:1715
+#: common/models.py:1726
 msgid "Show overdue SOs"
 msgstr ""
 
-#: common/models.py:1716
+#: common/models.py:1727
 msgid "Show overdue SOs on the homepage"
 msgstr ""
 
-#: common/models.py:1722
+#: common/models.py:1733
 msgid "Show News"
 msgstr ""
 
-#: common/models.py:1723
+#: common/models.py:1734
 msgid "Show news on the homepage"
 msgstr ""
 
-#: common/models.py:1729
+#: common/models.py:1740
 msgid "Inline label display"
 msgstr ""
 
-#: common/models.py:1730
+#: common/models.py:1741
 msgid "Display PDF labels in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:1736
+#: common/models.py:1747
 msgid "Inline report display"
 msgstr ""
 
-#: common/models.py:1737
+#: common/models.py:1748
 msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:1743
+#: common/models.py:1754
 msgid "Search Parts"
 msgstr ""
 
-#: common/models.py:1744
+#: common/models.py:1755
 msgid "Display parts in search preview window"
 msgstr ""
 
-#: common/models.py:1750
+#: common/models.py:1761
 msgid "Seach Supplier Parts"
 msgstr ""
 
-#: common/models.py:1751
+#: common/models.py:1762
 msgid "Display supplier parts in search preview window"
 msgstr ""
 
-#: common/models.py:1757
+#: common/models.py:1768
 msgid "Search Manufacturer Parts"
 msgstr ""
 
-#: common/models.py:1758
+#: common/models.py:1769
 msgid "Display manufacturer parts in search preview window"
 msgstr ""
 
-#: common/models.py:1764
+#: common/models.py:1775
 msgid "Hide Inactive Parts"
 msgstr ""
 
-#: common/models.py:1765
+#: common/models.py:1776
 msgid "Excluded inactive parts from search preview window"
 msgstr ""
 
-#: common/models.py:1771
+#: common/models.py:1782
 msgid "Search Categories"
 msgstr ""
 
-#: common/models.py:1772
+#: common/models.py:1783
 msgid "Display part categories in search preview window"
 msgstr ""
 
-#: common/models.py:1778
+#: common/models.py:1789
 msgid "Search Stock"
 msgstr ""
 
-#: common/models.py:1779
+#: common/models.py:1790
 msgid "Display stock items in search preview window"
 msgstr ""
 
-#: common/models.py:1785
+#: common/models.py:1796
 msgid "Hide Unavailable Stock Items"
 msgstr ""
 
-#: common/models.py:1786
+#: common/models.py:1797
 msgid "Exclude stock items which are not available from the search preview window"
 msgstr ""
 
-#: common/models.py:1792
+#: common/models.py:1803
 msgid "Search Locations"
 msgstr ""
 
-#: common/models.py:1793
+#: common/models.py:1804
 msgid "Display stock locations in search preview window"
 msgstr ""
 
-#: common/models.py:1799
+#: common/models.py:1810
 msgid "Search Companies"
 msgstr ""
 
-#: common/models.py:1800
+#: common/models.py:1811
 msgid "Display companies in search preview window"
 msgstr ""
 
-#: common/models.py:1806
+#: common/models.py:1817
 msgid "Search Build Orders"
 msgstr ""
 
-#: common/models.py:1807
+#: common/models.py:1818
 msgid "Display build orders in search preview window"
 msgstr ""
 
-#: common/models.py:1813
+#: common/models.py:1824
 msgid "Search Purchase Orders"
 msgstr ""
 
-#: common/models.py:1814
+#: common/models.py:1825
 msgid "Display purchase orders in search preview window"
 msgstr ""
 
-#: common/models.py:1820
+#: common/models.py:1831
 msgid "Exclude Inactive Purchase Orders"
 msgstr ""
 
-#: common/models.py:1821
+#: common/models.py:1832
 msgid "Exclude inactive purchase orders from search preview window"
 msgstr ""
 
-#: common/models.py:1827
+#: common/models.py:1838
 msgid "Search Sales Orders"
 msgstr ""
 
-#: common/models.py:1828
+#: common/models.py:1839
 msgid "Display sales orders in search preview window"
 msgstr ""
 
-#: common/models.py:1834
+#: common/models.py:1845
 msgid "Exclude Inactive Sales Orders"
 msgstr ""
 
-#: common/models.py:1835
+#: common/models.py:1846
 msgid "Exclude inactive sales orders from search preview window"
 msgstr ""
 
-#: common/models.py:1841
+#: common/models.py:1852
 msgid "Search Preview Results"
 msgstr ""
 
-#: common/models.py:1842
+#: common/models.py:1853
 msgid "Number of results to show in each section of the search preview window"
 msgstr ""
 
-#: common/models.py:1848
+#: common/models.py:1859
 msgid "Show Quantity in Forms"
 msgstr ""
 
-#: common/models.py:1849
+#: common/models.py:1860
 msgid "Display available part quantity in some forms"
 msgstr ""
 
-#: common/models.py:1855
+#: common/models.py:1866
 msgid "Escape Key Closes Forms"
 msgstr ""
 
-#: common/models.py:1856
+#: common/models.py:1867
 msgid "Use the escape key to close modal forms"
 msgstr ""
 
-#: common/models.py:1862
+#: common/models.py:1873
 msgid "Fixed Navbar"
 msgstr ""
 
-#: common/models.py:1863
+#: common/models.py:1874
 msgid "The navbar position is fixed to the top of the screen"
 msgstr ""
 
-#: common/models.py:1869
+#: common/models.py:1880
 msgid "Date Format"
 msgstr ""
 
-#: common/models.py:1870
+#: common/models.py:1881
 msgid "Preferred format for displaying dates"
 msgstr ""
 
-#: common/models.py:1884 part/templates/part/detail.html:41
+#: common/models.py:1895 part/templates/part/detail.html:41
 msgid "Part Scheduling"
 msgstr ""
 
-#: common/models.py:1885
+#: common/models.py:1896
 msgid "Display part scheduling information"
 msgstr ""
 
-#: common/models.py:1891 part/templates/part/detail.html:61
+#: common/models.py:1902 part/templates/part/detail.html:61
 #: templates/js/translated/part.js:797
 msgid "Part Stocktake"
 msgstr ""
 
-#: common/models.py:1892
+#: common/models.py:1903
 msgid "Display part stocktake information"
 msgstr ""
 
-#: common/models.py:1898
+#: common/models.py:1909
 msgid "Table String Length"
 msgstr ""
 
-#: common/models.py:1899
+#: common/models.py:1910
 msgid "Maximimum length limit for strings displayed in table views"
 msgstr ""
 
-#: common/models.py:1963
+#: common/models.py:1974
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:1970 company/serializers.py:397 order/models.py:975
+#: common/models.py:1981 company/serializers.py:397 order/models.py:975
 #: templates/js/translated/company.js:1169 templates/js/translated/part.js:1391
 #: templates/js/translated/pricing.js:595
 msgid "Price"
 msgstr ""
 
-#: common/models.py:1971
+#: common/models.py:1982
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:2131 common/models.py:2309
+#: common/models.py:2142 common/models.py:2320
 msgid "Endpoint"
 msgstr ""
 
-#: common/models.py:2132
+#: common/models.py:2143
 msgid "Endpoint at which this webhook is received"
 msgstr ""
 
-#: common/models.py:2141
+#: common/models.py:2152
 msgid "Name for this webhook"
 msgstr ""
 
-#: common/models.py:2146 part/admin.py:36 part/models.py:985
+#: common/models.py:2157 part/admin.py:36 part/models.py:985
 #: plugin/models.py:100 templates/js/translated/table_filters.js:34
 #: templates/js/translated/table_filters.js:116
 #: templates/js/translated/table_filters.js:344
@@ -2897,97 +2897,97 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: common/models.py:2147
+#: common/models.py:2158
 msgid "Is this webhook active"
 msgstr ""
 
-#: common/models.py:2161
+#: common/models.py:2172
 msgid "Token"
 msgstr ""
 
-#: common/models.py:2162
+#: common/models.py:2173
 msgid "Token for access"
 msgstr ""
 
-#: common/models.py:2169
+#: common/models.py:2180
 msgid "Secret"
 msgstr ""
 
-#: common/models.py:2170
+#: common/models.py:2181
 msgid "Shared secret for HMAC"
 msgstr ""
 
-#: common/models.py:2276
+#: common/models.py:2287
 msgid "Message ID"
 msgstr ""
 
-#: common/models.py:2277
+#: common/models.py:2288
 msgid "Unique identifier for this message"
 msgstr ""
 
-#: common/models.py:2285
+#: common/models.py:2296
 msgid "Host"
 msgstr ""
 
-#: common/models.py:2286
+#: common/models.py:2297
 msgid "Host from which this message was received"
 msgstr ""
 
-#: common/models.py:2293
+#: common/models.py:2304
 msgid "Header"
 msgstr ""
 
-#: common/models.py:2294
+#: common/models.py:2305
 msgid "Header of this message"
 msgstr ""
 
-#: common/models.py:2300
+#: common/models.py:2311
 msgid "Body"
 msgstr ""
 
-#: common/models.py:2301
+#: common/models.py:2312
 msgid "Body of this message"
 msgstr ""
 
-#: common/models.py:2310
+#: common/models.py:2321
 msgid "Endpoint on which this message was received"
 msgstr ""
 
-#: common/models.py:2315
+#: common/models.py:2326
 msgid "Worked on"
 msgstr ""
 
-#: common/models.py:2316
+#: common/models.py:2327
 msgid "Was the work on this message finished?"
 msgstr ""
 
-#: common/models.py:2470
+#: common/models.py:2481
 msgid "Id"
 msgstr ""
 
-#: common/models.py:2476 templates/js/translated/news.js:35
+#: common/models.py:2487 templates/js/translated/news.js:35
 msgid "Title"
 msgstr ""
 
-#: common/models.py:2486 templates/js/translated/news.js:51
+#: common/models.py:2497 templates/js/translated/news.js:51
 msgid "Published"
 msgstr ""
 
-#: common/models.py:2491 templates/InvenTree/settings/plugin.html:62
+#: common/models.py:2502 templates/InvenTree/settings/plugin.html:62
 #: templates/InvenTree/settings/plugin_settings.html:33
 #: templates/js/translated/news.js:47
 msgid "Author"
 msgstr ""
 
-#: common/models.py:2496 templates/js/translated/news.js:43
+#: common/models.py:2507 templates/js/translated/news.js:43
 msgid "Summary"
 msgstr ""
 
-#: common/models.py:2501
+#: common/models.py:2512
 msgid "Read"
 msgstr ""
 
-#: common/models.py:2502
+#: common/models.py:2513
 msgid "Was this news item read?"
 msgstr ""
 
@@ -3595,7 +3595,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:136
 #: company/templates/company/manufacturer_part.html:183
 #: part/templates/part/detail.html:392 part/templates/part/detail.html:422
-#: templates/js/translated/forms.js:504 templates/js/translated/helpers.js:36
+#: templates/js/translated/forms.js:505 templates/js/translated/helpers.js:36
 #: templates/js/translated/part.js:303 templates/js/translated/stock.js:187
 #: users/models.py:225
 msgid "Delete"
@@ -3620,7 +3620,7 @@ msgid "Delete parameters"
 msgstr ""
 
 #: company/templates/company/manufacturer_part.html:245
-#: part/templates/part/detail.html:869
+#: part/templates/part/detail.html:873
 msgid "Add Parameter"
 msgstr ""
 
@@ -4136,7 +4136,7 @@ msgid "User who checked this shipment"
 msgstr ""
 
 #: order/models.py:1257 order/models.py:1442 order/serializers.py:1221
-#: order/serializers.py:1349 templates/js/translated/model_renderers.js:314
+#: order/serializers.py:1349 templates/js/translated/model_renderers.js:327
 msgid "Shipment"
 msgstr ""
 
@@ -4681,7 +4681,7 @@ msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
 #: part/admin.py:19 part/admin.py:252 part/models.py:3328 stock/admin.py:84
-#: templates/js/translated/model_renderers.js:212
+#: templates/js/translated/model_renderers.js:214
 msgid "Part ID"
 msgstr ""
 
@@ -4710,7 +4710,7 @@ msgid "Keywords"
 msgstr ""
 
 #: part/admin.py:28 part/admin.py:172
-#: templates/js/translated/model_renderers.js:338
+#: templates/js/translated/model_renderers.js:351
 msgid "Category ID"
 msgstr ""
 
@@ -6046,7 +6046,7 @@ msgstr ""
 #: part/templates/part/part_base.html:148
 #: templates/js/translated/company.js:660
 #: templates/js/translated/company.js:921
-#: templates/js/translated/model_renderers.js:204
+#: templates/js/translated/model_renderers.js:206
 #: templates/js/translated/part.js:655 templates/js/translated/part.js:1001
 msgid "Inactive"
 msgstr ""
@@ -6693,7 +6693,7 @@ msgstr ""
 #: stock/models.py:706 stock/templates/stock/item_base.html:320
 #: templates/js/translated/build.js:479 templates/js/translated/build.js:635
 #: templates/js/translated/build.js:1245 templates/js/translated/build.js:1746
-#: templates/js/translated/model_renderers.js:118
+#: templates/js/translated/model_renderers.js:120
 #: templates/js/translated/order.js:122 templates/js/translated/order.js:3641
 #: templates/js/translated/order.js:3728 templates/js/translated/stock.js:521
 msgid "Serial Number"
@@ -6734,7 +6734,7 @@ msgid "Serial"
 msgstr ""
 
 #: stock/admin.py:23 stock/admin.py:90
-#: templates/js/translated/model_renderers.js:159
+#: templates/js/translated/model_renderers.js:161
 msgid "Location ID"
 msgstr ""
 
@@ -6751,7 +6751,7 @@ msgstr ""
 msgid "Stock Item ID"
 msgstr ""
 
-#: stock/admin.py:92 templates/js/translated/model_renderers.js:418
+#: stock/admin.py:92 templates/js/translated/model_renderers.js:431
 msgid "Supplier Part ID"
 msgstr ""
 
@@ -6772,7 +6772,7 @@ msgstr ""
 msgid "Installed In"
 msgstr ""
 
-#: stock/admin.py:97 templates/js/translated/model_renderers.js:177
+#: stock/admin.py:97 templates/js/translated/model_renderers.js:179
 msgid "Build ID"
 msgstr ""
 
@@ -8341,7 +8341,7 @@ msgstr ""
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr ""
 
-#: templates/account/email_confirm.html:22 templates/js/translated/forms.js:707
+#: templates/account/email_confirm.html:22 templates/js/translated/forms.js:708
 msgid "Confirm"
 msgstr "Bekräfta"
 
@@ -9448,61 +9448,61 @@ msgstr ""
 msgid "Create filter"
 msgstr ""
 
-#: templates/js/translated/forms.js:372 templates/js/translated/forms.js:387
-#: templates/js/translated/forms.js:401 templates/js/translated/forms.js:415
+#: templates/js/translated/forms.js:373 templates/js/translated/forms.js:388
+#: templates/js/translated/forms.js:402 templates/js/translated/forms.js:416
 msgid "Action Prohibited"
 msgstr ""
 
-#: templates/js/translated/forms.js:374
+#: templates/js/translated/forms.js:375
 msgid "Create operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:389
+#: templates/js/translated/forms.js:390
 msgid "Update operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:403
+#: templates/js/translated/forms.js:404
 msgid "Delete operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:417
+#: templates/js/translated/forms.js:418
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:733
+#: templates/js/translated/forms.js:734
 msgid "Keep this form open"
 msgstr ""
 
-#: templates/js/translated/forms.js:834
+#: templates/js/translated/forms.js:835
 msgid "Enter a valid number"
 msgstr ""
 
-#: templates/js/translated/forms.js:1336 templates/modals.html:19
+#: templates/js/translated/forms.js:1337 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1790
+#: templates/js/translated/forms.js:1791
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:2006 templates/search.html:29
+#: templates/js/translated/forms.js:2007 templates/search.html:29
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:2261
+#: templates/js/translated/forms.js:2265
 msgid "Clear input"
 msgstr ""
 
-#: templates/js/translated/forms.js:2717
+#: templates/js/translated/forms.js:2721
 msgid "File Column"
 msgstr ""
 
-#: templates/js/translated/forms.js:2717
+#: templates/js/translated/forms.js:2721
 msgid "Field Name"
 msgstr ""
 
-#: templates/js/translated/forms.js:2729
+#: templates/js/translated/forms.js:2733
 msgid "Select Columns"
 msgstr ""
 
@@ -9635,25 +9635,25 @@ msgstr ""
 msgid "Error requesting form data"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:72
+#: templates/js/translated/model_renderers.js:74
 msgid "Company ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:133
+#: templates/js/translated/model_renderers.js:135
 msgid "Stock ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:278
-#: templates/js/translated/model_renderers.js:303
+#: templates/js/translated/model_renderers.js:291
+#: templates/js/translated/model_renderers.js:316
 msgid "Order ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:316
-#: templates/js/translated/model_renderers.js:320
+#: templates/js/translated/model_renderers.js:329
+#: templates/js/translated/model_renderers.js:333
 msgid "Shipment ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:381
+#: templates/js/translated/model_renderers.js:394
 msgid "Manufacturer Part ID"
 msgstr ""
 
