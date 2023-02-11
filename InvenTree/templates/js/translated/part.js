@@ -804,6 +804,10 @@ function performStocktake(partId, options={}) {
                         quantity: {
                             value: part_quantity,
                         },
+                        cost_min: {},
+                        cost_min_currency: {},
+                        cost_max: {},
+                        cost_max_currency: {},
                         note: {},
                     },
                     onSuccess: function(response) {
@@ -851,6 +855,13 @@ function loadPartStocktakeTable(partId, options={}) {
                 title: '{% trans "Quantity" %}',
                 switchable: false,
                 sortable: true,
+            },
+            {
+                field: 'cost',
+                title: '{% trans "Total Cost" %}',
+                formatter: function(value, row) {
+                    return formatPriceRange(row.cost_min, row.cost_max);
+                }
             },
             {
                 field: 'note',
@@ -903,6 +914,10 @@ function loadPartStocktakeTable(partId, options={}) {
                 constructForm(`/api/part/stocktake/${pk}/`, {
                     fields: {
                         quantity: {},
+                        cost_min: {},
+                        cost_min_currency: {},
+                        cost_max: {},
+                        cost_max_currency: {},
                         note: {},
                     },
                     title: '{% trans "Edit Stocktake Entry" %}',
