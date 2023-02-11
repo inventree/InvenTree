@@ -1951,6 +1951,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
                 MinValueValidator(0),
             ],
             'default': 100,
+        },
+
+        'BARCODE_DETECTION_ENABLE': {
+            'name': _('Barcode detection'),
+            'description': _('Detect barcode input and automatically open corresponding page'),
+            'default': False,
+            'validator': bool,
         }
     }
 

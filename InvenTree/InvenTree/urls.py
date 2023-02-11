@@ -117,6 +117,7 @@ translated_javascript_urls = [
     re_path(r'^tables.js', DynamicJsView.as_view(template_name='js/translated/tables.js'), name='tables.js'),
     re_path(r'^table_filters.js', DynamicJsView.as_view(template_name='js/translated/table_filters.js'), name='table_filters.js'),
     re_path(r'^notification.js', DynamicJsView.as_view(template_name='js/translated/notification.js'), name='notification.js'),
+    re_path(r'^barcode_detection.js', DynamicJsView.as_view(template_name='js/translated/barcode_detection.js'), name='barcode_detection.js'),
 ]
 
 backendpatterns = [
