@@ -53,8 +53,9 @@
 </div>
 {% endif %}
 
+{% settings_value 'STOCKTAKE_ENABLE' as stocktake_enable %}
 {% settings_value 'DISPLAY_STOCKTAKE_TAB' user=request.user as show_stocktake %}
-{% if show_stocktake %}
+{% if stocktake_enable and show_stocktake %}
 <div class='panel panel-hidden' id='panel-stocktake'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>

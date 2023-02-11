@@ -1568,6 +1568,37 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
+        'STOCKTAKE_ENABLE': {
+            'name': _('Stocktake Functionality'),
+            'description': _('Enable stocktake functionality for recording stock levels and calculating stock value'),
+            'validator': bool,
+            'default': False,
+        },
+
+        'STOCKTAKE_OWNER': {
+            'name': _('Restrict Stocktake Owner'),
+            'description': _('If specified, stocktake information will be available only to the specified owner (user or group)'),
+            'model': 'users.owner',
+        },
+
+        'STOCKTAKE_AUTO_DAYS': {
+            'name': _('Automatic Stocktake Period'),
+            'description': _('Number of days between automatic stocktake recording (set to zero to disable)'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 0,
+        },
+
+        'STOCKTAKE_AUTO_EMAIL': {
+            'name': _('Email Stocktake Reports'),
+            'description': _('Email stocktake report data to stocktake owners'),
+            'validator': bool,
+            'default': False,
+        },
+
     }
 
     typ = 'inventree'
@@ -1900,7 +1931,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
         'DISPLAY_STOCKTAKE_TAB': {
             'name': _('Part Stocktake'),
-            'description': _('Display part stocktake information'),
+            'description': _('Display part stocktake information (if stocktake functionality is enabled)'),
             'default': True,
             'validator': bool,
         },
