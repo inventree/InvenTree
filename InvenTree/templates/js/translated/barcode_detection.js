@@ -5,12 +5,11 @@
 */
 
 function enableBarcodeDetection() {
-    console.log("Barcode detection enabled2")
     onScan.attachTo(document, {
         reactToPaste: true,
         onScan: function(barcode, iQty) {
             console.log('Scanned: ' + iQty + 'x ' + barcode);
-            processDetectedBarcode(barcode)
+            processDetectedBarcode(barcode);
         },
         ignoreIfFocusOn: 'input',
         keyCodeMapper: barcodeKeyCodeMapper
@@ -18,10 +17,11 @@ function enableBarcodeDetection() {
 }
 
 function barcodeKeyCodeMapper(event) {
-    let key = event.key
-    if (key !== undefined && key.length == 1)
-        return key
-    return ''
+    let key = event.key;
+    if (key !== undefined && key.length == 1) {
+        return key;
+    }
+    return '';
 }
 
 function processDetectedBarcode(barcode) {
