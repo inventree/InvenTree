@@ -699,6 +699,26 @@ function partDetail(part, options={}) {
 function performStocktake(partId, options={}) {
 
     var part_quantity = 0;
+    var part_cost_data = [];
+
+    var part_data = null;
+
+    // First grab part information
+    inventreeGet(
+        `/api/part/${partId}/`,
+        {},
+        {
+            async: false,
+            success: function(response) {
+                part_data = response;
+            }
+        }
+    );
+
+    if (!part_data) {
+        console.error("Could not retrieve part information from the server");
+        return;
+    }
 
     var date_threshold = moment().subtract(30, 'days');
 
@@ -726,6 +746,40 @@ function performStocktake(partId, options={}) {
 
         quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
 
+        // Update total cost information
+        var cost_min = null;
+        var cost_max = null;
+        var cost_currency = baseCurrency();
+
+        if (item.purchase_price) {
+            // If purchase price information is available for this item, use that!
+            cost_min = item.purchase_price;
+            cost_max = item.purchase_price;
+            cost_currency = item.purchase_price_currency || baseCurrency();
+        } else {
+            // Otherwise, we'll have to accept the pricing data for the part itself
+            cost_min = part_data.pricing_min;
+            cost_max = part_data.pricing_max;
+        }
+
+        var cost = '';
+
+        if (cost_min != null || cost_max != null) {
+            cost = formatPriceRange(cost_min, cost_max, {
+                currency: cost_currency,
+                quantity: item.quantity,
+            });
+
+            part_cost_data.push({
+                cost_min: cost_min * item.quantity,
+                cost_max: cost_max * item.quantity,
+                cost_currency: cost_currency,
+            });
+
+        } else {
+            cost = `<span class='badge bg-warning rounded-pill'>{% trans "No data" %}</span>`;
+        }
+
         // Last update
         var updated = item.stocktake_date || item.updated;
 
@@ -751,6 +805,7 @@ function performStocktake(partId, options={}) {
             <td id='part-${pk}'>${part}</td>
             <td id='loc-${pk}'>${location}</td>
             <td id='quantity-${pk}'>${quantity}</td>
+            <td id='cost-${pk}'>${cost}</td>
             <td id='updated-${pk}'>${update_rendered}</td>
             <td id='actions-${pk}'>${actions}</td>
         </tr>`;
@@ -778,6 +833,7 @@ function performStocktake(partId, options={}) {
                             <th>{% trans "Stock Item" %}</th>
                             <th>{% trans "Location" %}</th>
                             <th>{% trans "Quantity" %}</th>
+                            <th>{% trans "Total Cost" %}</th>
                             <th>{% trans "Updated" %}</th>
                             <th><!-- Actions --></th>
                         </tr>
@@ -788,6 +844,54 @@ function performStocktake(partId, options={}) {
                 response.forEach(function(item) {
                     html += buildStockItemRow(item);
                 });
+
+                // Calculate total price
+                var total_cost_min = calculateTotalPrice(
+                    part_cost_data,
+                    function(item) {
+                        return item.cost_min;
+                    },
+                    function(item) {
+                        return item.cost_currency;
+                    },
+                    {
+                        currency: baseCurrency(),
+                        raw: true,
+                    }
+                );
+
+                var total_cost_max = calculateTotalPrice(
+                    part_cost_data,
+                    function(item) {
+                        return item.cost_max;
+                    },
+                    function(item) {
+                        return item.cost_currency;
+                    },
+                    {
+                        currency: baseCurrency(),
+                        raw: true,
+                    }
+                );
+
+                var total_cost_range = formatPriceRange(
+                    total_cost_min,
+                    total_cost_max,
+                    {
+                        currency: baseCurrency()
+                    }
+                );
+
+                // Add totals row
+                html += `
+                <tr>
+                    <td></td>
+                    <td><em><strong>{% trans "Total" %}</strong></em></td>
+                    <td><em>${formatDecimal(part_quantity)}</em></td>
+                    <td><em>${total_cost_range}</em></td>
+                    <td></td>
+                    <td></td>
+                </tr>`;
 
                 html += `</tbody></table>`;
 
@@ -804,9 +908,13 @@ function performStocktake(partId, options={}) {
                         quantity: {
                             value: part_quantity,
                         },
-                        cost_min: {},
+                        cost_min: {
+                            value: total_cost_min,
+                        },
                         cost_min_currency: {},
-                        cost_max: {},
+                        cost_max: {
+                            value: total_cost_max,
+                        },
                         cost_max_currency: {},
                         note: {},
                     },
