@@ -21,6 +21,7 @@ from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 
 from common.models import InvenTreeSetting
+from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers import download_image_from_url
 
@@ -64,6 +65,24 @@ class InvenTreeMoneySerializer(MoneyField):
             return Money(amount, currency)
 
         return amount
+
+
+class InvenTreeCurrencySerializer(serializers.ChoiceField):
+    """Custom serializers for selecting currency option"""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the currency serializer"""
+
+        kwargs['choices'] = currency_code_mappings()
+        kwargs['default'] = currency_code_default
+
+        if 'label' not in kwargs:
+            kwargs['label'] = _('Currency')
+
+        if 'help_text' not in kwargs:
+            kwargs['help_text'] = _('Select currency from available options')
+
+        super().__init__(*args, **kwargs)
 
 
 class InvenTreeModelSerializer(serializers.ModelSerializer):

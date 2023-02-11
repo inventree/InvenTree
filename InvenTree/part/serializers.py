@@ -24,6 +24,7 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    DataFileUploadSerializer,
                                    InvenTreeAttachmentSerializer,
                                    InvenTreeAttachmentSerializerField,
+                                   InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
@@ -731,6 +732,12 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
+    cost_min = InvenTreeMoneySerializer(allow_null=True)
+    cost_min_currency = InvenTreeCurrencySerializer()
+
+    cost_max = InvenTreeMoneySerializer(allow_null=True)
+    cost_max_currency = InvenTreeCurrencySerializer()
+
     class Meta:
         """Metaclass options"""
 
@@ -740,6 +747,10 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
             'date',
             'part',
             'quantity',
+            'cost_min',
+            'cost_min_currency',
+            'cost_max',
+            'cost_max_currency',
             'note',
             'user',
             'user_detail',
