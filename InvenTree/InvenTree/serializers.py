@@ -74,7 +74,9 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
         """Initialize the currency serializer"""
 
         kwargs['choices'] = currency_code_mappings()
-        kwargs['default'] = currency_code_default
+
+        if 'default' not in kwargs and 'required' not in kwargs:
+            kwargs['default'] = currency_code_default
 
         if 'label' not in kwargs:
             kwargs['label'] = _('Currency')

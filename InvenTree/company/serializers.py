@@ -9,8 +9,8 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
 import part.filters
-from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
+                                   InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
@@ -66,13 +66,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
 
-    currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        initial=currency_code_default,
-        help_text=_('Default currency used for this supplier'),
-        label=_('Currency Code'),
-        required=True,
-    )
+    currency = InvenTreeCurrencySerializer(help_text=_('Default currency used for this supplier'), required=True)
 
     class Meta:
         """Metaclass options."""
@@ -397,11 +391,7 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
         label=_('Price'),
     )
 
-    price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        default=currency_code_default,
-        label=_('Currency'),
-    )
+    price_currency = InvenTreeCurrencySerializer()
 
     supplier = serializers.PrimaryKeyRelatedField(source='part.supplier', many=False, read_only=True)
 

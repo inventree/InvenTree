@@ -19,7 +19,6 @@ import company.models
 import InvenTree.helpers
 import part.filters
 import stock.models
-from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.serializers import (DataFileExtractSerializer,
                                    DataFileUploadSerializer,
                                    InvenTreeAttachmentSerializer,
@@ -150,16 +149,9 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
 
     quantity = InvenTreeDecimalField()
 
-    price = InvenTreeMoneySerializer(
-        allow_null=True
-    )
+    price = InvenTreeMoneySerializer(allow_null=True)
 
-    price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        default=currency_code_default,
-        label=_('Currency'),
-        help_text=_('Purchase currency of this stock item'),
-    )
+    price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
 
     class Meta:
         """Metaclass defining serializer fields"""
@@ -182,12 +174,7 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
         allow_null=True
     )
 
-    price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        default=currency_code_default,
-        label=_('Currency'),
-        help_text=_('Purchase currency of this stock item'),
-    )
+    price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
 
     class Meta:
         """Metaclass defining serializer fields"""
