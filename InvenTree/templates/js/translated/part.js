@@ -941,6 +941,9 @@ function loadStocktakeChart(data, options={}) {
     var cost_min_data = [];
     var cost_max_data = [];
 
+    var base_currency = baseCurrency();
+    var rate_data = getCurrencyConversionRates();
+
     data.forEach(function(row) {
         var date = moment(row.date);
         quantity_data.push({
@@ -951,14 +954,24 @@ function loadStocktakeChart(data, options={}) {
         if (row.cost_min) {
             cost_min_data.push({
                 x: date,
-                y: row.cost_min,
+                y: convertCurrency(
+                    row.cost_min,
+                    row.cost_min_currency || base_currency,
+                    base_currency,
+                    rate_data
+                ),
             });
         }
 
         if (row.cost_max) {
             cost_max_data.push({
                 x: date,
-                y: row.cost_max
+                y: convertCurrency(
+                    row.cost_max,
+                    row.cost_max_currency || base_currency,
+                    base_currency,
+                    rate_data
+                ),
             });
         }
     });
