@@ -9,7 +9,7 @@ import djmoney.models.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('part', '0094_alter_part_units'),
+        ('part', '0095_alter_part_responsible'),
     ]
 
     operations = [
