@@ -125,3 +125,15 @@ def check_missing_pricing(limit=250):
             pricing = p.pricing
             pricing.save()
             pricing.schedule_for_update()
+
+
+def generate_stocktake_report(**kwargs):
+    """Generate a new PartStocktakeReport with the supplied kwargs"""
+
+    part.models.PartStocktakeReport.create_stocktake_report(**kwargs)
+
+
+@scheduled_task(ScheduledTask.DAILY)
+def scheduled_stocktake_reports():
+    """Scheduled tasks for creating automated stocktake reports"""
+    ...

@@ -18,6 +18,7 @@ from sql_util.utils import SubqueryCount, SubquerySum
 import company.models
 import InvenTree.helpers
 import part.filters
+import part.tasks
 import stock.models
 from InvenTree.serializers import (DataFileExtractSerializer,
                                    DataFileUploadSerializer,
@@ -30,6 +31,7 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    InvenTreeMoneySerializer, RemoteImageMixin,
                                    UserSerializer)
 from InvenTree.status_codes import BuildStatus
+from InvenTree.tasks import offload_task
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
@@ -808,7 +810,19 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
 
     def save(self):
         """Saving this serializer instance requests generation of a new stocktake report"""
-        ...
+
+        data = self.validated_data
+        user = self.context['request'].user
+
+        # Generate a new report
+        offload_task(
+            part.tasks.generate_stocktake_report(
+                user=user,
+                part=data.get('part', None),
+                category=data.get('category', None),
+                update_parts=data['update_parts']
+            )
+        )
 
 
 class PartPricingSerializer(InvenTreeModelSerializer):

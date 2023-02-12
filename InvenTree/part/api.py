@@ -1664,6 +1664,13 @@ class PartStocktakeReportGenerate(CreateAPI):
         permissions.IsAuthenticated,
     ]
 
+    def get_serializer_context(self):
+        """Extend serializer context data"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
+
 
 class BomFilter(rest_filters.FilterSet):
     """Custom filters for the BOM list."""

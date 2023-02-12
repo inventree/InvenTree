@@ -27,6 +27,7 @@
     duplicatePart,
     editCategory,
     editPart,
+    generateStocktakeReport,
     loadParametricPartTable,
     loadPartCategoryTable,
     loadPartParameterTable,
@@ -693,6 +694,38 @@ function partDetail(part, options={}) {
     }
 
     return html;
+}
+
+
+/*
+ * Initiate generation of a stocktake report
+ */
+function generateStocktakeReport(options={}) {
+
+    let fields = {};
+
+    if (options.part) {
+        fields.part = {
+            value: options.part
+        };
+    }
+
+    if (options.category) {
+        fields.category = {
+            value: options.category
+        };
+    }
+
+    fields.update_parts = {};
+
+    constructForm(
+        '{% url "api-part-stocktake-report-generate" %}',
+        {
+            method: 'POST',
+            title: '{% trans "Generate Stocktake Report" %}',
+            fields: fields,
+        }
+    );
 }
 
 

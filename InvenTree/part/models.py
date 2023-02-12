@@ -2994,8 +2994,7 @@ class PartStocktakeReport(models.Model):
             user: The user who requested this stocktake (set to None for automated stocktake)
             part: Optional Part instance to filter by (including variant parts)
             category: Optional PartCategory to filter by
-            save_part_data: If True, save stocktake information against each filtered Part (default = True)
-            ignore_zero_stock: If True, ignore parts which do not have any stock (default = False)
+            update_parts: If True, save stocktake information against each filtered Part (default = True)
         """
 
         parts = Part.objects.all()
@@ -3012,10 +3011,13 @@ class PartStocktakeReport(models.Model):
             categories = category.get_descendants(include_self=True)
             parts = parts.filter(category__in=categories)
 
+        # Exit if filters removed all parts
+        if n_parts := parts.count() == 0:
+            return
+
+        logger.info(f"Generating new stocktake report for {n_parts} parts")
+
         # Iterate through each Part which matches the filters above
-        for part in parts.all():
-            print(part)
-            # TODO
 
     date = models.DateField(
         verbose_name=_('Date'),
