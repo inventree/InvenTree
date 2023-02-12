@@ -166,6 +166,12 @@ class PartStocktakeAdmin(admin.ModelAdmin):
     list_display = ['part', 'date', 'quantity', 'user']
 
 
+class PartStocktakeReportAdmin(admin.ModelAdmin):
+    """Admin class for PartStocktakeReport model"""
+
+    list_display = ['date', 'user']
+
+
 class PartCategoryResource(InvenTreeResource):
     """Class for managing PartCategory data import/export."""
 
@@ -434,3 +440,4 @@ admin.site.register(models.PartSellPriceBreak, PartSellPriceBreakAdmin)
 admin.site.register(models.PartInternalPriceBreak, PartInternalPriceBreakAdmin)
 admin.site.register(models.PartPricing, PartPricingAdmin)
 admin.site.register(models.PartStocktake, PartStocktakeAdmin)
+admin.site.register(models.PartStocktakeReport, PartStocktakeReportAdmin)
