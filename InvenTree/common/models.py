@@ -1599,6 +1599,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
         },
 
+        'STOCKTAKE_DELETE_REPORT_DAYS': {
+            'name': _('Delete Old Reports'),
+            'description': _('Stocktake reports will be deleted after specified number of days'),
+            'default': 90,
+            'units': 'days',
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
     }
 
     typ = 'inventree'
