@@ -2913,7 +2913,7 @@ class PartStocktake(models.Model):
         # Cache min/max pricing information for this Part
         pricing = part.pricing
 
-        if not pricing.valid:
+        if not pricing.is_valid:
             # If pricing is not valid, let's update
             logger.info(f"Pricing not valid for {part} - updating")
             pricing.update_pricing(cascade=False)
@@ -2934,7 +2934,7 @@ class PartStocktake(models.Model):
             if entry.purchase_price:
                 # If purchase price is available, use that
                 try:
-                    pp = convert_money(entry.purchase_price, base_currency)
+                    pp = convert_money(entry.purchase_price, base_currency) * entry.quantity
                     total_cost_min += pp
                     total_cost_max += pp
                 except MissingRate:
@@ -2947,8 +2947,8 @@ class PartStocktake(models.Model):
 
                 if p_min or p_max:
                     try:
-                        total_cost_min += convert_money(p_min, base_currency)
-                        total_cost_max += convert_money(p_max, base_currency)
+                        total_cost_min += convert_money(p_min, base_currency) * entry.quantity
+                        total_cost_max += convert_money(p_max, base_currency) * entry.quantity
                     except MissingRate:
                         logger.warning(f"MissingRate exception occurred converting {p_min}:{p_max} to {base_currency}")
 
