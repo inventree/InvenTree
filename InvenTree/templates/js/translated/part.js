@@ -927,12 +927,116 @@ function performStocktake(partId, options={}) {
     );
 }
 
+var stocktakeChart = null;
+
+/*
+ * Load chart to display part stocktake information
+ */
+function loadStocktakeChart(data, options={}) {
+
+    var chart = 'part-stocktake-chart';
+    var context = document.getElementById(chart);
+
+    var quantity_data = [];
+    var cost_min_data = [];
+    var cost_max_data = [];
+
+    data.forEach(function(row) {
+        var date = moment(row.date);
+        quantity_data.push({
+            x: date,
+            y: row.quantity
+        });
+
+        if (row.cost_min) {
+            cost_min_data.push({
+                x: date,
+                y: row.cost_min,
+            });
+        }
+
+        if (row.cost_max) {
+            cost_max_data.push({
+                x: date,
+                y: row.cost_max
+            });
+        }
+    });
+
+    var chart_data = {
+        datasets: [
+            {
+                label: '{% trans "Quantity" %}',
+                data: quantity_data,
+                backgroundColor: 'rgba(160, 80, 220, 0.75)',
+                borderWidth: 3,
+                borderColor: 'rgb(160, 80, 220)',
+                yAxisID: 'y',
+            },
+            {
+                label: '{% trans "Minimum Cost" %}',
+                data: cost_min_data,
+                backgroundColor: 'rgba(220, 160, 80, 0.25)',
+                borderWidth: 2,
+                borderColor: 'rgba(220, 160, 80, 0.35)',
+                borderDash: [10, 5],
+                yAxisID: 'y1',
+                fill: '+1',
+            },
+            {
+                label: '{% trans "Maximum Cost" %}',
+                data: cost_max_data,
+                backgroundColor: 'rgba(220, 160, 80, 0.25)',
+                borderWidth: 2,
+                borderColor: 'rgba(220, 160, 80, 0.35)',
+                borderDash: [10, 5],
+                yAxisID: 'y1',
+                fill: '-1',
+            }
+        ]
+    };
+
+    if (stocktakeChart != null) {
+        stocktakeChart.destroy();
+    }
+
+    stocktakeChart = new Chart(context, {
+        type: 'scatter',
+        data: chart_data,
+        options: {
+            showLine: true,
+            scales: {
+                x: {
+                    type: 'time',
+                    // suggestedMax: today.format(),
+                    position: 'bottom',
+                    time: {
+                        minUnit: 'day',
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                }
+            },
+        }
+    });
+}
+
+
 
 /*
  * Load table for part stocktake information
  */
 function loadPartStocktakeTable(partId, options={}) {
 
+    // HTML elements
     var table = options.table || '#part-stocktake-table';
 
     var params = options.params || {};
@@ -956,6 +1060,11 @@ function loadPartStocktakeTable(partId, options={}) {
         sortable: true,
         formatNoMatches: function() {
             return '{% trans "No stocktake information available" %}';
+        },
+        onLoadSuccess: function(response) {
+            var data = response.results || response;
+
+            loadStocktakeChart(data);
         },
         columns: [
             {
