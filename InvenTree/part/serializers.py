@@ -816,12 +816,12 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
 
         # Generate a new report
         offload_task(
-            part.tasks.generate_stocktake_report(
-                user=user,
-                part=data.get('part', None),
-                category=data.get('category', None),
-                update_parts=data['update_parts']
-            )
+            part.tasks.generate_stocktake_report,
+            force_async=True,
+            user=user,
+            part=data.get('part', None),
+            category=data.get('category', None),
+            update_parts=data['update_parts']
         )
 
 

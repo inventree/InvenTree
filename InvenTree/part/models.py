@@ -2335,7 +2335,7 @@ class PartPricing(common.models.MetaMixin):
             force_async=True
         )
 
-    def update_pricing(self, counter: int = 0):
+    def update_pricing(self, counter: int = 0, cascade: bool = True):
         """Recalculate all cost data for the referenced Part instance"""
 
         if self.pk is not None:
@@ -2362,8 +2362,9 @@ class PartPricing(common.models.MetaMixin):
             pass
 
         # Update parent assemblies and templates
-        self.update_assemblies(counter)
-        self.update_templates(counter)
+        if cascade:
+            self.update_assemblies(counter)
+            self.update_templates(counter)
 
     def update_assemblies(self, counter: int = 0):
         """Schedule updates for any assemblies which use this part"""
@@ -2894,6 +2895,78 @@ class PartStocktake(models.Model):
     - Records user information
     """
 
+    @classmethod
+    def perform_stocktake(cls, part: Part, user: User, note: str = '', commit=True):
+        """Perform stocktake action on a single part.
+
+        arguments:
+            part: A Part model instance
+            commit: If True (default) save the result to the database
+
+        Returns:
+            PartStocktake: A new PartStocktake model instance (for the specified Part)
+        """
+
+        # Grab all "available" stock items for the Part
+        stock_entries = part.stock_entries(in_stock=True, include_variants=True)
+
+        # Cache min/max pricing information for this Part
+        pricing = part.pricing
+
+        if not pricing.valid:
+            # If pricing is not valid, let's update
+            logger.info(f"Pricing not valid for {part} - updating")
+            pricing.update_pricing(cascade=False)
+            pricing.refresh_from_db()
+
+        base_currency = common.settings.currency_code_default()
+
+        total_quantity = 0
+        total_cost_min = Money(0, base_currency)
+        total_cost_max = Money(0, base_currency)
+
+        for entry in stock_entries:
+
+            # Update total quantity value
+            total_quantity += entry.quantity
+
+            # Update price range values
+            if entry.purchase_price:
+                # If purchase price is available, use that
+                try:
+                    pp = convert_money(entry.purchase_price, base_currency)
+                    total_cost_min += pp
+                    total_cost_max += pp
+                except MissingRate:
+                    logger.warning(f"MissingRate exception occured converting {pp} to {base_currency}")
+
+            else:
+                # Fall back to the part pricing data
+                p_min = pricing.overall_min or pricing.overall_max
+                p_max = pricing.overall_max or pricing.overall_min
+
+                if p_min or p_max:
+                    try:
+                        total_cost_min += convert_money(p_min, base_currency)
+                        total_cost_max += convert_money(p_max, base_currency)
+                    except MissingRate:
+                        logger.warning(f"MissingRate exception occurred converting {p_min}:{p_max} to {base_currency}")
+
+        # Construct PartStocktake instance
+        instance = cls(
+            part=part,
+            quantity=total_quantity,
+            cost_min=total_cost_min,
+            cost_max=total_cost_max,
+            note=note,
+            user=user,
+        )
+
+        if commit:
+            instance.save()
+
+        return instance
+
     part = models.ForeignKey(
         Part,
         on_delete=models.CASCADE,
@@ -2998,6 +3071,7 @@ class PartStocktakeReport(models.Model):
         """
 
         parts = Part.objects.all()
+        user = kwargs.get('user', None)
 
         # Filter by 'Part' instance
         if part := kwargs.get('part', None):
@@ -3018,6 +3092,11 @@ class PartStocktakeReport(models.Model):
         logger.info(f"Generating new stocktake report for {n_parts} parts")
 
         # Iterate through each Part which matches the filters above
+        for part in parts:
+            report = PartStocktake.perform_stocktake(part, user, commit=False)
+
+            print(part, report.quantity, report.cost_min, report.cost_max)
+            break
 
     date = models.DateField(
         verbose_name=_('Date'),
