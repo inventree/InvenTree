@@ -36,7 +36,7 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartPricing, PartRelated,
                      PartSellPriceBreak, PartStar, PartStocktake,
-                     PartTestTemplate)
+                     PartStocktakeReport, PartTestTemplate)
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -758,6 +758,26 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
         data['user'] = request.user
 
         super().save()
+
+
+class PartStocktakeReportSerializer(InvenTreeModelSerializer):
+    """Serializer for stocktake report class"""
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
+
+    report = InvenTreeAttachmentSerializerField(read_only=True)
+
+    class Meta:
+        """Metaclass defines serializer fields"""
+
+        model = PartStocktakeReport
+        fields = [
+            'pk',
+            'date',
+            'report',
+            'user',
+            'user_detail',
+        ]
 
 
 class PartPricingSerializer(InvenTreeModelSerializer):

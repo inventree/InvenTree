@@ -38,7 +38,7 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartRelated, PartSellPriceBreak,
-                     PartStocktake, PartTestTemplate)
+                     PartStocktake, PartStocktakeReport, PartTestTemplate)
 
 
 class CategoryList(APIDownloadMixin, ListCreateAPI):
@@ -1639,6 +1639,22 @@ class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
     ]
 
 
+class PartStocktakeReportList(ListAPI):
+    """API endpoint for listing part stocktake report information"""
+
+    queryset = PartStocktakeReport.objects.all()
+    serializer_class = part_serializers.PartStocktakeReportSerializer
+
+    filter_backensd = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        'date',
+    ]
+
+
 class BomFilter(rest_filters.FilterSet):
     """Custom filters for the BOM list."""
 
@@ -2056,6 +2072,11 @@ part_api_urls = [
 
     # Part stocktake data
     re_path(r'^stocktake/', include([
+
+        path(r'report/', include([
+            re_path(r'^.*$', PartStocktakeReportList.as_view(), name='api-part-stocktake-report-list'),
+        ])),
+
         re_path(r'^(?P<pk>\d+)/', PartStocktakeDetail.as_view(), name='api-part-stocktake-detail'),
         re_path(r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
     ])),

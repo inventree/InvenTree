@@ -2991,6 +2991,7 @@ class PartStocktakeReport(models.Model):
         Optional filters can by supplied via the kwargs
 
         kwargs:
+            user: The user who requested this stocktake (set to None for automated stocktake)
             part: Optional Part instance to filter by (including variant parts)
             category: Optional PartCategory to filter by
             save_part_data: If True, save stocktake information against each filtered Part (default = True)
