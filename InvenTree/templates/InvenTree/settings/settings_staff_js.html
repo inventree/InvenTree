@@ -340,6 +340,7 @@ onPanelLoad('parts', function() {
 
 // Javascript for the Stocktake settings panel
 onPanelLoad('stocktake', function() {
+
     $('#stocktake-report-table').inventreeTable({
         url: '{% url "api-part-stocktake-report-list" %}',
         search: false,
@@ -370,5 +371,9 @@ onPanelLoad('stocktake', function() {
                 }
             },
         ]
+    });
+
+    $('#btn-generate-stocktake').click(function() {
+        // TODO
     });
 });

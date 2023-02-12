@@ -781,6 +781,36 @@ class PartStocktakeReportSerializer(InvenTreeModelSerializer):
         ]
 
 
+class PartStocktakeReportGenerateSerializer(serializers.Serializer):
+    """Serializer class for generating a new PartStocktakeReport"""
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        required=False, allow_null=True,
+        label=_('Part'), help_text=_('Specify part for this stocktake report')
+    )
+
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.all(),
+        required=False, allow_null=True,
+        label=_('Category'), help_text=_('Specify part category for this stocktake report'),
+    )
+
+    update_parts = serializers.BooleanField(
+        default=True,
+        label=_('Update Parts'),
+        help_text=_('Update specified parts with calculated stocktake data')
+    )
+
+    def validate(self, data):
+        """Custom validation for this serializer"""
+        return data
+
+    def save(self):
+        """Saving this serializer instance requests generation of a new stocktake report"""
+        ...
+
+
 class PartPricingSerializer(InvenTreeModelSerializer):
     """Serializer for Part pricing information"""
 

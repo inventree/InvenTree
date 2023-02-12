@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, serializers, status
+from rest_framework import filters, permissions, serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -1655,6 +1655,16 @@ class PartStocktakeReportList(ListAPI):
     ]
 
 
+class PartStocktakeReportGenerate(CreateAPI):
+    """API endpoint for generating a new PartStocktakeReport"""
+
+    serializer_class = part_serializers.PartStocktakeReportGenerateSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
 class BomFilter(rest_filters.FilterSet):
     """Custom filters for the BOM list."""
 
@@ -2074,6 +2084,7 @@ part_api_urls = [
     re_path(r'^stocktake/', include([
 
         path(r'report/', include([
+            path('generate/', PartStocktakeReportGenerate.as_view(), name='api-part-stocktake-report-generate'),
             re_path(r'^.*$', PartStocktakeReportList.as_view(), name='api-part-stocktake-report-list'),
         ])),
 
