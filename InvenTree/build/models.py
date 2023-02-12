@@ -282,7 +282,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('Responsible'),
-        help_text=_('User responsible for this build order'),
+        help_text=_('User or group responsible for this build order'),
         related_name='builds_responsible',
     )
 
