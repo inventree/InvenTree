@@ -124,6 +124,9 @@ function partFields(options={}) {
         minimum_stock: {
             icon: 'fa-boxes',
         },
+        responsible: {
+            icon: 'fa-user',
+        },
         component: {
             default: global_settings.PART_COMPONENT,
             group: 'attributes',

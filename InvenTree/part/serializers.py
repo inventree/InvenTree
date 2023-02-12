@@ -609,6 +609,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'virtual',
             'pricing_min',
             'pricing_max',
+            'responsible',
 
             # Fields only used for Part creation
             'duplicate',

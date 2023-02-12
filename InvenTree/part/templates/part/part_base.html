@@ -391,6 +391,13 @@
                     <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
                 </tr>
                 {% endif %}
+                {% if part.responsible %}
+                <tr>
+                    <td><span class='fas fa-user'></span></td>
+                    <td>{% trans "Responsible" %}</td>
+                    <td> <span class='badge badge-right rounded-pill bg-dark'>{{ part.responsible }}</span></td>
+                </tr>
+                {% endif %}
             </table>
         </div>
     </div>

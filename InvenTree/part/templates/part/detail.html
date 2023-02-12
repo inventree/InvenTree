@@ -864,7 +864,11 @@
                         value: {{ part.pk }},
                         hidden: true,
                     },
-                    template: {},
+                    template: {
+                        filters: {
+                            ordering: 'name',
+                        },
+                    },
                     data: {},
                 },
                 title: '{% trans "Add Parameter" %}',
