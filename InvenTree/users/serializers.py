@@ -1,5 +1,6 @@
 """DRF API serializers for the 'users' app"""
 
+from django.contrib.auth.models import Group
 
 from rest_framework import serializers
 
@@ -23,4 +24,17 @@ class OwnerSerializer(InvenTreeModelSerializer):
             'owner_id',
             'name',
             'label',
+        ]
+
+
+class GroupSerializer(InvenTreeModelSerializer):
+    """Serializer for a 'Group'"""
+
+    class Meta:
+        """Metaclass defines serializer fields"""
+
+        model = Group
+        fields = [
+            'pk',
+            'name',
         ]
