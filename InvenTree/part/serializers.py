@@ -799,7 +799,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
     )
 
     update_parts = serializers.BooleanField(
-        default=True,
+        default=False,
         label=_('Update Parts'),
         help_text=_('Update specified parts with calculated stocktake data')
     )

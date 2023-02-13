@@ -6,6 +6,7 @@ import decimal
 import hashlib
 import logging
 import os
+import time
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
@@ -21,6 +22,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import tablib
 from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
@@ -3072,6 +3074,7 @@ class PartStocktakeReport(models.Model):
 
         parts = Part.objects.all()
         user = kwargs.get('user', None)
+        update_parts = kwargs.get('update_parts', False)
 
         # Filter by 'Part' instance
         if part := kwargs.get('part', None):
@@ -3086,17 +3089,52 @@ class PartStocktakeReport(models.Model):
             parts = parts.filter(category__in=categories)
 
         # Exit if filters removed all parts
-        if n_parts := parts.count() == 0:
+        n_parts = parts.count()
+
+        if n_parts == 0:
+            logger.info("No parts selected for stocktake report - exiting")
             return
 
         logger.info(f"Generating new stocktake report for {n_parts} parts")
 
+        # Construct an initial dataset for the stocktake report
+        dataset = tablib.Dataset(
+            headers=[
+                _('Part ID'),
+                _('Part Name'),
+                _('Part Description'),
+                _('Stock On Hand'),
+                _('Total Cost Min'),
+                _('Total Cost Max'),
+            ]
+        )
+
+        # Simple profiling for this task
+        t_start = time.time()
+
         # Iterate through each Part which matches the filters above
         for part in parts:
-            report = PartStocktake.perform_stocktake(part, user, commit=False)
 
-            print(part, report.quantity, report.cost_min, report.cost_max)
-            break
+            # Create a new stocktake for this part
+            stocktake = PartStocktake.perform_stocktake(part, user, commit=update_parts)
+
+            # Add a row to the dataset
+            dataset.append([
+                part.pk,
+                part.full_name,
+                part.description,
+                stocktake.quantity,
+                stocktake.cost_min.amount,
+                stocktake.cost_max.amount
+            ])
+
+        t_stocktake = time.time() - t_start
+
+        logger.info(f"Generated stocktake report for {n_parts} parts in {round(t_stocktake, 2)}s")
+
+        # Save a new PartStocktakeReport instance
+
+        # TODO: Use bulk_create for efficient insertion of stocktake
 
     date = models.DateField(
         verbose_name=_('Date'),
