@@ -8,10 +8,8 @@ from django.urls import include, re_path
 
 import requests
 
-import InvenTree.helpers
 from plugin.helpers import (MixinImplementationError, MixinNotImplementedError,
                             render_template, render_text)
-from plugin.models import PluginConfig, PluginSetting
 from plugin.urls import PLUGIN_BASE
 
 logger = logging.getLogger('inventree')
@@ -42,10 +40,14 @@ class SettingsMixin:
             key: The 'name' of the setting value to be retrieved
             cache: Whether to use RAM cached value (default = False)
         """
+        from plugin.models import PluginSetting
+
         return PluginSetting.get_setting(key, plugin=self, cache=cache)
 
     def set_setting(self, key, value, user=None):
         """Set plugin setting value by key."""
+        from plugin.models import PluginConfig, PluginSetting
+
         try:
             plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
         except (OperationalError, ProgrammingError):  # pragma: no cover
@@ -698,6 +700,8 @@ class PanelMixin:
         Returns:
             Array of panels
         """
+        import InvenTree.helpers
+
         panels = []
 
         # Construct an updated context object for template rendering

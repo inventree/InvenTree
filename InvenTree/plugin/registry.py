@@ -36,8 +36,9 @@ logger = logging.getLogger('inventree')
 class PluginsRegistry:
     """The PluginsRegistry class."""
 
-    from . import mixins
-    DEFAULT_MIXIN_ORDER = [mixins.SettingsMixin, mixins.ScheduleMixin, mixins.AppMixin, mixins.UrlsMixin]
+    from .base.integration.mixins import (AppMixin, ScheduleMixin,
+                                          SettingsMixin, UrlsMixin)
+    DEFAULT_MIXIN_ORDER = [SettingsMixin, ScheduleMixin, AppMixin, UrlsMixin]
 
     def __init__(self, mixin_order: list = None) -> None:
         """Initialize registry.
