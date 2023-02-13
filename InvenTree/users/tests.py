@@ -231,7 +231,7 @@ class OwnerModelTest(InvenTreeTestCase):
         # self.assertEqual(response['owner_id'], group.pk)
 
         # own user detail
-        response_detail = self.do_request(reverse('user-detail', kwargs={'pk': self.user.id}), {}, 200)
+        response_detail = self.do_request(reverse('api-user-detail', kwargs={'pk': self.user.id}), {}, 200)
         self.assertEqual(response_detail['username'], self.username)
 
         response_me = self.do_request(reverse('api-user-me'), {}, 200)

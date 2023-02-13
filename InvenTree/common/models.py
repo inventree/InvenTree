@@ -729,6 +729,17 @@ class BaseInvenTreeSetting(models.Model):
             except Exception:
                 pass
 
+            # Some other model types are hard-coded
+            hardcoded_models = {
+                'auth.user': 'api-user-list',
+                'auth.group': 'api-group-list',
+            }
+
+            model_table = f'{model_class._meta.app_label}.{model_class._meta.model_name}'
+
+            if url := hardcoded_models[model_table]:
+                return reverse(url)
+
         return None
 
     def is_bool(self):

@@ -4,7 +4,7 @@
 #secret_key_file: '/etc/inventree/secret_key.txt'
 
 # Database backend selection - Configure backend database settings
-# Documentation: https://inventree.readthedocs.io/en/latest/start/config/
+# Documentation: https://docs.inventree.org/en/latest/start/config/
 
 # Note: Database configuration options can also be specified from environmental variables,
 #       with the prefix INVENTREE_DB_
@@ -214,8 +214,8 @@ remote_login_header: HTTP_REMOTE_USER
 # Add custom messages to the login page or main interface navbar or exchange the logo
 # Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO
 # customize:
-#   login_message: InvenTree demo instance - <a href='https://inventree.readthedocs.io/en/latest/demo/'> Click here for login details</a>
-#   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.readthedocs.io/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
+#   login_message: InvenTree demo instance - <a href='https://docs.inventree.org/en/latest/demo/'> Click here for login details</a>
+#   navbar_message: <h6>InvenTree demo mode <a href='https://docs.inventree.org/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
 #   logo: logo.png
 #   splash: splash_screen.jpg
 #   hide_admin_link: true
