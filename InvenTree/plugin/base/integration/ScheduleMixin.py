@@ -54,7 +54,8 @@ class ScheduleMixin:
 
         self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
 
-    def _activate_mixin(self, plugins, *args, **kwargs):
+    @classmethod
+    def _activate_mixin(cls, registry, plugins, *args, **kwargs):
         """Activate scheudles from plugins with the ScheduleMixin."""
         logger.info('Activating plugin tasks')
 
@@ -96,13 +97,6 @@ class ScheduleMixin:
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
             logger.warning("activate_integration_schedule failed, database not ready")
-
-    def _deactivate_mixin(self):
-        """Deactivate ScheduleMixin.
-
-        Currently nothing is done here.
-        """
-        pass
 
     def get_scheduled_tasks(self):
         """Returns `SCHEDULED_TASKS` context.

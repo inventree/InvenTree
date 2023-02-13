@@ -23,10 +23,12 @@ class UrlsMixin:
         self.add_mixin('urls', 'has_urls', __class__)
         self.urls = self.setup_urls()
 
-    def _activate_mixin(self, plugins, force_reload=False, full_reload: bool = False):
+    @classmethod
+    def _activate_mixin(cls, registry, plugins, force_reload=False, full_reload: bool = False):
         """Activate UrlsMixin plugins - add custom urls .
 
         Args:
+            registry (PluginRegistry): The registry that should be used
             plugins (dict): List of IntegrationPlugins that should be installed
             force_reload (bool, optional): Only reload base apps. Defaults to False.
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
@@ -42,7 +44,7 @@ class UrlsMixin:
             # if apps were changed or force loading base apps -> reload
             if urls_changed or force_reload or full_reload:
                 # update urls - must be last as models must be registered for creating admin routes
-                self._update_urls()
+                registry._update_urls()
 
     def setup_urls(self):
         """Setup url endpoints for this plugin."""

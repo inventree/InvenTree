@@ -470,7 +470,7 @@ class PluginsRegistry:
         logger.info(f'Found {len(plugins)} active plugins')
 
         for mixin in self.mixin_order:
-            mixin._activate_mixin(mixin, plugins, force_reload=force_reload, full_reload=full_reload)
+            mixin._activate_mixin(self, plugins, force_reload=force_reload, full_reload=full_reload)
 
     def _deactivate_plugins(self):
         """Run deactivation functions for all plugins."""

@@ -25,10 +25,12 @@ class AppMixin:
         super().__init__()
         self.add_mixin('app', 'has_app', __class__)
 
-    def _activate_mixin(self, plugins, force_reload=False, full_reload: bool = False):
+    @classmethod
+    def _activate_mixin(cls, registry, plugins, force_reload=False, full_reload: bool = False):
         """Activate AppMixin plugins - add custom apps and reload.
 
         Args:
+            registry (PluginRegistry): The registry that should be used
             plugins (dict): List of IntegrationPlugins that should be installed
             force_reload (bool, optional): Only reload base apps. Defaults to False.
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
@@ -42,30 +44,31 @@ class AppMixin:
             # add them to the INSTALLED_APPS
             for _key, plugin in plugins:
                 if plugin.mixin_enabled('app'):
-                    plugin_path = self._get_plugin_path(plugin)
+                    plugin_path = cls._get_plugin_path(plugin)
                     if plugin_path not in settings.INSTALLED_APPS:
                         settings.INSTALLED_APPS += [plugin_path]
-                        self.installed_apps += [plugin_path]
+                        registry.installed_apps += [plugin_path]
                         apps_changed = True
             # if apps were changed or force loading base apps -> reload
             if apps_changed or force_reload:
                 # first startup or force loading of base apps -> registry is prob false
-                if self.apps_loading or force_reload:
-                    self.apps_loading = False
-                    self._reload_apps(force_reload=True, full_reload=full_reload)
+                if registry.apps_loading or force_reload:
+                    registry.apps_loading = False
+                    cls._reload_apps(force_reload=True, full_reload=full_reload)
                 else:
-                    self._reload_apps(full_reload=full_reload)
+                    cls._reload_apps(full_reload=full_reload)
 
                 # rediscover models/ admin sites
-                self._reregister_contrib_apps()
+                cls._reregister_contrib_apps()
 
                 # update urls - must be last as models must be registered for creating admin routes
-                self._update_urls()
+                registry._update_urls()
 
-    def _deactivate_mixin(self):
+    @classmethod
+    def _deactivate_mixin(cls, registry):
         """Deactivate AppMixin plugins - some magic required."""
         # unregister models from admin
-        for plugin_path in self.installed_apps:
+        for plugin_path in registry.installed_apps:
             models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed
             app_name = plugin_path.split('.')[-1]
             try:
@@ -96,23 +99,24 @@ class AppMixin:
                 apps.all_models.pop(app_name)
 
         # remove plugin from installed_apps
-        self._clean_installed_apps()
+        registry._clean_installed_apps()
 
         # reset load flag and reload apps
         settings.INTEGRATION_APPS_LOADED = False
-        self._reload_apps()
+        cls._reload_apps()
 
         # update urls to remove the apps from the site admin
-        self._update_urls()
+        registry._update_urls()
 
     # region helpers
-    def _reregister_contrib_apps(self):
+    @classmethod
+    def _reregister_contrib_apps(cls):
         """Fix reloading of contrib apps - models and admin.
 
         This is needed if plugins were loaded earlier and then reloaded as models and admins rely on imports.
         Those register models and admin in their respective objects (e.g. admin.site for admin).
         """
-        for plugin_path in self.installed_apps:
+        for plugin_path in cls.installed_apps:
             try:
                 app_name = plugin_path.split('.')[-1]
                 app_config = apps.get_app_config(app_name)
@@ -139,7 +143,8 @@ class AppMixin:
             if model_not_reg and hasattr(app_config.module, 'admin'):
                 reload(app_config.module.admin)
 
-    def _get_plugin_path(self, plugin):
+    @classmethod
+    def _get_plugin_path(cls, plugin):
         """Parse plugin path.
 
         The input can be eiter:
@@ -154,7 +159,8 @@ class AppMixin:
             plugin_path = plugin.__module__.split('.')[0]
         return plugin_path
 
-    def _try_reload(self, cmd, *args, **kwargs):
+    @classmethod
+    def _try_reload(cls, cmd, *args, **kwargs):
         """Wrapper to try reloading the apps.
 
         Throws an custom error that gets handled by the loading function.
@@ -165,7 +171,8 @@ class AppMixin:
         except Exception as error:  # pragma: no cover
             handle_error(error)
 
-    def _reload_apps(self, force_reload: bool = False, full_reload: bool = False):
+    @classmethod
+    def _reload_apps(cls, force_reload: bool = False, full_reload: bool = False):
         """Internal: reload apps using django internal functions.
 
         Args:
@@ -174,16 +181,16 @@ class AppMixin:
         """
         # If full_reloading is set to true we do not want to set the flag
         if not full_reload:
-            self.is_loading = True  # set flag to disable loop reloading
+            cls.is_loading = True  # set flag to disable loop reloading
         if force_reload:
             # we can not use the built in functions as we need to brute force the registry
             apps.app_configs = OrderedDict()
             apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
             apps.clear_cache()
-            self._try_reload(apps.populate, settings.INSTALLED_APPS)
+            cls._try_reload(apps.populate, settings.INSTALLED_APPS)
         else:
-            self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
-        self.is_loading = False
+            cls._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
+        cls.is_loading = False
     # endregion
 
     @property

@@ -19,7 +19,8 @@ class SettingsMixin:
         self.add_mixin('settings', 'has_settings', __class__)
         self.settings = getattr(self, 'SETTINGS', {})
 
-    def _activate_mixin(self, plugins, *args, **kwargs):
+    @classmethod
+    def _activate_mixin(cls, registry, plugins, *args, **kwargs):
         """Activate plugin settings.
 
         Add all defined settings form the plugins to a unified dict in the registry.
@@ -27,18 +28,19 @@ class SettingsMixin:
         """
         logger.info('Activating plugin settings')
 
-        self.mixins_settings = {}
+        registry.mixins_settings = {}
 
         for slug, plugin in plugins:
             if plugin.mixin_enabled('settings'):
                 plugin_setting = plugin.settings
-                self.mixins_settings[slug] = plugin_setting
+                registry.mixins_settings[slug] = plugin_setting
 
-    def _deactivate_mixin(self):
+    @classmethod
+    def _deactivate_mixin(cls, registry):
         """Deactivate all plugin settings."""
         logger.info('Deactivating plugin settings')
         # clear settings cache
-        self.mixins_settings = {}
+        registry.mixins_settings = {}
 
     @property
     def has_settings(self):
