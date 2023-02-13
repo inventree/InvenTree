@@ -26,6 +26,7 @@ from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
 
 from InvenTree.config import get_setting
 
+from . import mixins
 from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
                       handle_error, log_error)
 from .plugin import InvenTreePlugin
@@ -36,7 +37,9 @@ logger = logging.getLogger('inventree')
 class PluginsRegistry:
     """The PluginsRegistry class."""
 
-    def __init__(self) -> None:
+    DEFAULT_MIXIN_ORDER = [mixins.SettingsMixin, mixins.ScheduleMixin, mixins.AppMixin, mixins.UrlsMixin]
+
+    def __init__(self, mixin_order: list = None) -> None:
         """Initialize registry.
 
         Set up all needed references for internal and external states.
@@ -59,6 +62,7 @@ class PluginsRegistry:
 
         # mixins
         self.mixins_settings = {}
+        self.mixin_order = mixin_order or self.DEFAULT_MIXIN_ORDER
 
     def get_plugin(self, slug):
         """Lookup plugin by slug (unique key)."""
