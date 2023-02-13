@@ -617,7 +617,12 @@ function partStockLabel(part, options={}) {
             return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building} ${units}</span>`;
         } else {
             // There is no stock
-            return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
+            var unit_badge = '';
+            if (units) {
+                // show units next to [No Stock] badge
+                unit_badge = `<span class='badge rounded-pill text-muted bg-muted ${options.classes}'>{% trans "Unit" %}: ${units}</span> `;
+            }
+            return `${unit_badge}<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
         }
     }
 
