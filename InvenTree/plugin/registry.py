@@ -26,7 +26,6 @@ from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
 
 from InvenTree.config import get_setting
 
-from . import mixins
 from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
                       handle_error, log_error)
 from .plugin import InvenTreePlugin
@@ -37,6 +36,7 @@ logger = logging.getLogger('inventree')
 class PluginsRegistry:
     """The PluginsRegistry class."""
 
+    from . import mixins
     DEFAULT_MIXIN_ORDER = [mixins.SettingsMixin, mixins.ScheduleMixin, mixins.AppMixin, mixins.UrlsMixin]
 
     def __init__(self, mixin_order: list = None) -> None:
