@@ -3099,32 +3099,45 @@ class PartStocktakeReport(models.Model):
 
         logger.info(f"Generating new stocktake report for {n_parts} parts")
 
+        base_currency = common.settings.currency_code_default()
+
         # Construct an initial dataset for the stocktake report
         dataset = tablib.Dataset(
             headers=[
                 _('Part ID'),
                 _('Part Name'),
                 _('Part Description'),
+                _('Category ID'),
+                _('Category Name'),
                 _('Stock On Hand'),
-                _('Total Cost Min'),
-                _('Total Cost Max'),
+                _('Total Cost Min') + f' ({base_currency})',
+                _('Total Cost Max') + f' ({base_currency})',
             ]
         )
 
+        parts = parts.prefetch_related('category', 'stock_items')
+
         # Simple profiling for this task
         t_start = time.time()
+
+        # Keep track of each individual "stocktake" we perform.
+        # They may be bulk-commited to the database afterwards
+        stocktake_instances = []
 
         # Iterate through each Part which matches the filters above
         for part in parts:
 
             # Create a new stocktake for this part
             stocktake = PartStocktake.perform_stocktake(part, user, commit=update_parts)
+            stocktake_instances.append(stocktake)
 
             # Add a row to the dataset
             dataset.append([
                 part.pk,
                 part.full_name,
                 part.description,
+                part.category.pk if part.category else '',
+                part.category.name if part.category else '',
                 stocktake.quantity,
                 stocktake.cost_min.amount,
                 stocktake.cost_max.amount
