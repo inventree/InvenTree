@@ -10,8 +10,9 @@ import logging
 import os
 import subprocess
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, OrderedDict
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
@@ -473,15 +474,50 @@ class PluginsRegistry:
             if hasattr(mixin, '_activate_mixin'):
                 mixin._activate_mixin(self, plugins, force_reload=force_reload, full_reload=full_reload)
 
+        logger.info('Done activating')
+
     def _deactivate_plugins(self):
         """Run deactivation functions for all plugins."""
 
         for mixin in self.mixin_order:
             if hasattr(mixin, '_deactivate_mixin'):
                 mixin._deactivate_mixin(self)
+
+        logger.info('Done deactivating')
     # endregion
 
     # region mixin specific loading ...
+    def _try_reload(self, cmd, *args, **kwargs):
+        """Wrapper to try reloading the apps.
+
+        Throws an custom error that gets handled by the loading function.
+        """
+        try:
+            cmd(*args, **kwargs)
+            return True, []
+        except Exception as error:  # pragma: no cover
+            handle_error(error)
+
+    def _reload_apps(self, force_reload: bool = False, full_reload: bool = False):
+        """Internal: reload apps using django internal functions.
+
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+        """
+        # If full_reloading is set to true we do not want to set the flag
+        if not full_reload:
+            self.is_loading = True  # set flag to disable loop reloading
+        if force_reload:
+            # we can not use the built in functions as we need to brute force the registry
+            apps.app_configs = OrderedDict()
+            apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
+            apps.clear_cache()
+            self._try_reload(apps.populate, settings.INSTALLED_APPS)
+        else:
+            self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
+        self.is_loading = False
+
     def _clean_installed_apps(self):
         for plugin in self.installed_apps:
             if plugin in settings.INSTALLED_APPS:

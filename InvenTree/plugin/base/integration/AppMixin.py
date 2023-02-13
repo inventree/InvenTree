@@ -1,13 +1,10 @@
 """Plugin mixin class for AppMixin."""
 import logging
 from importlib import reload
-from typing import OrderedDict
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
-
-from plugin.helpers import handle_error
 
 logger = logging.getLogger('inventree')
 
@@ -54,12 +51,12 @@ class AppMixin:
                 # first startup or force loading of base apps -> registry is prob false
                 if registry.apps_loading or force_reload:
                     registry.apps_loading = False
-                    cls._reload_apps(force_reload=True, full_reload=full_reload)
+                    registry._reload_apps(force_reload=True, full_reload=full_reload)
                 else:
-                    cls._reload_apps(full_reload=full_reload)
+                    registry._reload_apps(full_reload=full_reload)
 
                 # rediscover models/ admin sites
-                cls._reregister_contrib_apps()
+                cls._reregister_contrib_apps(cls, registry)
 
                 # update urls - must be last as models must be registered for creating admin routes
                 registry._update_urls()
@@ -109,14 +106,13 @@ class AppMixin:
         registry._update_urls()
 
     # region helpers
-    @classmethod
-    def _reregister_contrib_apps(cls):
+    def _reregister_contrib_apps(self, registry):
         """Fix reloading of contrib apps - models and admin.
 
         This is needed if plugins were loaded earlier and then reloaded as models and admins rely on imports.
         Those register models and admin in their respective objects (e.g. admin.site for admin).
         """
-        for plugin_path in cls.installed_apps:
+        for plugin_path in registry.installed_apps:
             try:
                 app_name = plugin_path.split('.')[-1]
                 app_config = apps.get_app_config(app_name)
@@ -159,39 +155,7 @@ class AppMixin:
             plugin_path = plugin.__module__.split('.')[0]
         return plugin_path
 
-    @classmethod
-    def _try_reload(cls, cmd, *args, **kwargs):
-        """Wrapper to try reloading the apps.
-
-        Throws an custom error that gets handled by the loading function.
-        """
-        try:
-            cmd(*args, **kwargs)
-            return True, []
-        except Exception as error:  # pragma: no cover
-            handle_error(error)
-
-    @classmethod
-    def _reload_apps(cls, force_reload: bool = False, full_reload: bool = False):
-        """Internal: reload apps using django internal functions.
-
-        Args:
-            force_reload (bool, optional): Also reload base apps. Defaults to False.
-            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
-        """
-        # If full_reloading is set to true we do not want to set the flag
-        if not full_reload:
-            cls.is_loading = True  # set flag to disable loop reloading
-        if force_reload:
-            # we can not use the built in functions as we need to brute force the registry
-            apps.app_configs = OrderedDict()
-            apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
-            apps.clear_cache()
-            cls._try_reload(apps.populate, settings.INSTALLED_APPS)
-        else:
-            cls._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
-        cls.is_loading = False
-    # endregion
+# endregion
 
     @property
     def has_app(self):
