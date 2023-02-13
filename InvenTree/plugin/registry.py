@@ -478,7 +478,7 @@ class PluginsRegistry:
 
         for mixin in self.mixin_order:
             if hasattr(mixin, '_deactivate_mixin'):
-                mixin._deactivate_mixin(mixin)
+                mixin._deactivate_mixin(self)
     # endregion
 
     # region mixin specific loading ...
