@@ -470,13 +470,15 @@ class PluginsRegistry:
         logger.info(f'Found {len(plugins)} active plugins')
 
         for mixin in self.mixin_order:
-            mixin._activate_mixin(self, plugins, force_reload=force_reload, full_reload=full_reload)
+            if hasattr(mixin, '_activate_mixin'):
+                mixin._activate_mixin(self, plugins, force_reload=force_reload, full_reload=full_reload)
 
     def _deactivate_plugins(self):
         """Run deactivation functions for all plugins."""
 
         for mixin in self.mixin_order:
-            mixin._deactivate_mixin(mixin)
+            if hasattr(mixin, '_deactivate_mixin'):
+                mixin._deactivate_mixin(mixin)
     # endregion
 
     # region mixin specific loading ...
