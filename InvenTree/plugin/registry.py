@@ -476,7 +476,7 @@ class PluginsRegistry:
         """Run deactivation functions for all plugins."""
 
         for mixin in self.mixin_order:
-            mixin._deactivate_mixin()
+            mixin._deactivate_mixin(mixin)
     # endregion
 
     # region mixin specific loading ...
