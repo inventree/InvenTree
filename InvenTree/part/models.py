@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import decimal
 import hashlib
+import io
 import logging
 import os
 import time
@@ -12,6 +13,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
@@ -3133,6 +3135,17 @@ class PartStocktakeReport(models.Model):
         logger.info(f"Generated stocktake report for {n_parts} parts in {round(t_stocktake, 2)}s")
 
         # Save a new PartStocktakeReport instance
+        buffer = io.StringIO()
+        buffer.write(dataset.export('csv'))
+
+        today = datetime.now().date().isoformat()
+        filename = f"InvenTree_Stocktake_{today}.csv"
+        report_file = ContentFile(buffer.getvalue(), name=filename)
+
+        cls.objects.create(
+            report=report_file,
+            user=user
+        )
 
         # TODO: Use bulk_create for efficient insertion of stocktake
 

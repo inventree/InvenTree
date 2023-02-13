@@ -821,7 +821,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
             user=user,
             part=data.get('part', None),
             category=data.get('category', None),
-            update_parts=data['update_parts']
+            update_parts=data.get('update_parts', False),
         )
 
 
