@@ -3127,8 +3127,9 @@ class PartStocktakeReport(models.Model):
         # Iterate through each Part which matches the filters above
         for part in parts:
 
-            # Create a new stocktake for this part
-            stocktake = PartStocktake.perform_stocktake(part, user, commit=update_parts)
+            # Create a new stocktake for this part (do not commit, this will take place later on)
+            stocktake = PartStocktake.perform_stocktake(part, user, commit=False)
+
             stocktake_instances.append(stocktake)
 
             # Add a row to the dataset
@@ -3143,10 +3144,6 @@ class PartStocktakeReport(models.Model):
                 stocktake.cost_max.amount
             ])
 
-        t_stocktake = time.time() - t_start
-
-        logger.info(f"Generated stocktake report for {n_parts} parts in {round(t_stocktake, 2)}s")
-
         # Save a new PartStocktakeReport instance
         buffer = io.StringIO()
         buffer.write(dataset.export('csv'))
@@ -3160,7 +3157,19 @@ class PartStocktakeReport(models.Model):
             user=user
         )
 
-        # TODO: Use bulk_create for efficient insertion of stocktake
+        # Use bulk_create for efficient insertion of stocktake
+        if update_parts:
+            with transaction.atomic():
+                for instance in stocktake_instances:
+                    instance.save()
+
+            # Part.objects.bulk_create(
+            #     stocktake_instances,
+            #     batch_size=500,
+            # )
+
+        t_stocktake = time.time() - t_start
+        logger.info(f"Generated stocktake report for {n_parts} parts in {round(t_stocktake, 2)}s")
 
     date = models.DateField(
         verbose_name=_('Date'),

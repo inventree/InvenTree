@@ -724,6 +724,11 @@ function generateStocktakeReport(options={}) {
             method: 'POST',
             title: '{% trans "Generate Stocktake Report" %}',
             fields: fields,
+            onSuccess: function(response) {
+                showMessage('{% trans "Stocktake report scheduled" %}', {
+                    style: 'success',
+                });
+            }
         }
     );
 }

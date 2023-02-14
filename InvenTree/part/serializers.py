@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 
+import common.models
 import company.models
 import InvenTree.helpers
 import part.filters
@@ -806,6 +807,15 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
 
     def validate(self, data):
         """Custom validation for this serializer"""
+
+        # Stocktake functionality must be enabled
+        if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False):
+            raise serializers.ValidationError(_("Stocktake functionality is not enabled"))
+
+        # TODO: User must be part of the stocktake owner group
+
+        # TODO: Check that background worker is running
+
         return data
 
     def save(self):
