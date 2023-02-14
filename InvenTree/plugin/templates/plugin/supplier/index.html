@@ -5,17 +5,17 @@
 {% load i18n %}
 
 {% block page_title %}
-{% inventree_title %} | {% trans "Vendors" %}
+{% inventree_title %} | {% trans "Supplier API" %}
 {% endblock %}
 
 {% block heading %}
-{% trans "Vendors" %}
+{% trans "Supplier API" %}
 {% endblock %}
 
 {% block actions %}
 {% if roles.part.add %}
-<button type='button' class="btn btn-success" id='import-vendor-part'>
-    <span class='fas fa-tools'></span> {% trans "Import Vendor Part" %}
+<button type='button' class="btn btn-success" id='import-supplier-part'>
+    <span class='fas fa-tools'></span> {% trans "Import Supplier Part" %}
 </button>
 {% endif %}
 {% endblock %}
@@ -23,7 +23,7 @@
 {% block page_info %}
 
 <div class='panel-content'>
-    <p>Multiple vendors are available</p>
+    <p>Multiple supplier APIs are available</p>
 </div>
 
 {% endblock %}
@@ -31,15 +31,15 @@
 {% block js_ready %}
 {{ block.super }}
 
-$("#import-vendor-part").click(function() {
-    importVendorPart();
+$("#import-supplier-part").click(function() {
+    importSupplierPart();
 });
 
 /*
- * Import a part from a vendor via an API form
+ * Import a part from a plugin supplier via an API form
  */
-function importVendorPart(options={}) {
-    /* Launch modal form to import part from vendor.
+function importSupplierPart(options={}) {
+    /* Launch modal form to import part from plugin supplier.
      */
 
     var fields = {
@@ -53,7 +53,7 @@ function importVendorPart(options={}) {
         data: options.data,
         follow: true,
         method: 'POST',
-        title: '{% trans "Import Vendor Part" %}',
+        title: '{% trans "Import Supplier Part" %}',
         onSuccess: options.onSuccess,
     });
 }
