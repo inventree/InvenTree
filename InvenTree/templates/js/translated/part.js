@@ -41,7 +41,6 @@
     loadSimplePartTable,
     partDetail,
     partStockLabel,
-    performStocktake,
     toggleStar,
     validateBom,
 */
@@ -716,252 +715,27 @@ function generateStocktakeReport(options={}) {
         };
     }
 
-    fields.update_parts = {};
+    fields.update_parts = {
+        value: options.update_parts || false,
+    };
+
+    let content = `
+    <div class='alert alert-block alert-info'>
+    {% trans "Schedule generation of a new stocktake report." %}<br>
+    {% trans "Once complete, the stocktake report will be available for download." %}
+    </div>
+    `;
 
     constructForm(
         '{% url "api-part-stocktake-report-generate" %}',
         {
             method: 'POST',
             title: '{% trans "Generate Stocktake Report" %}',
+            preFormContent: content,
             fields: fields,
             onSuccess: function(response) {
                 showMessage('{% trans "Stocktake report scheduled" %}', {
                     style: 'success',
-                });
-            }
-        }
-    );
-}
-
-
-/*
- * Guide user through "stocktake" process
- */
-function performStocktake(partId, options={}) {
-
-    var part_quantity = 0;
-    var part_cost_data = [];
-
-    var part_data = null;
-
-    // First grab part information
-    inventreeGet(
-        `/api/part/${partId}/`,
-        {},
-        {
-            async: false,
-            success: function(response) {
-                part_data = response;
-            }
-        }
-    );
-
-    if (!part_data) {
-        console.error("Could not retrieve part information from the server");
-        return;
-    }
-
-    var date_threshold = moment().subtract(30, 'days');
-
-    // Helper function for formatting a StockItem row
-    function buildStockItemRow(item) {
-
-        var pk = item.pk;
-
-        // Part detail
-        var part = partDetail(item.part_detail, {
-            thumb: true,
-        });
-
-        // Location detail
-        var location = locationDetail(item);
-
-        // Quantity detail
-        var quantity = item.quantity;
-
-        part_quantity += item.quantity;
-
-        if (item.serial && item.quantity == 1) {
-            quantity = `{% trans "Serial" %}: ${item.serial}`;
-        }
-
-        quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
-
-        // Update total cost information
-        var cost_min = null;
-        var cost_max = null;
-        var cost_currency = baseCurrency();
-
-        if (item.purchase_price) {
-            // If purchase price information is available for this item, use that!
-            cost_min = item.purchase_price;
-            cost_max = item.purchase_price;
-            cost_currency = item.purchase_price_currency || baseCurrency();
-        } else {
-            // Otherwise, we'll have to accept the pricing data for the part itself
-            cost_min = part_data.pricing_min;
-            cost_max = part_data.pricing_max;
-        }
-
-        var cost = '';
-
-        if (cost_min != null || cost_max != null) {
-            cost = formatPriceRange(cost_min, cost_max, {
-                currency: cost_currency,
-                quantity: item.quantity,
-            });
-
-            part_cost_data.push({
-                cost_min: cost_min * item.quantity,
-                cost_max: cost_max * item.quantity,
-                cost_currency: cost_currency,
-            });
-
-        } else {
-            cost = `<span class='badge bg-warning rounded-pill'>{% trans "No data" %}</span>`;
-        }
-
-        // Last update
-        var updated = item.stocktake_date || item.updated;
-
-        var update_rendered = renderDate(updated);
-
-        if (updated) {
-            if (moment(updated) < date_threshold) {
-                update_rendered += `<div class='float-right' title='{% trans "Stock item has not been checked recently" %}'><span class='fas fa-calendar-alt icon-red'></span></div>`;
-            }
-        }
-
-        // Actions
-        var actions = `<div class='btn-group float-right' role='group'>`;
-
-        // TODO: Future work
-        // actions += makeIconButton('fa-check-circle icon-green', 'button-line-count', pk, '{% trans "Update item" %}');
-        // actions += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete item" %}');
-
-        actions += `</div>`;
-
-        return `
-        <tr>
-            <td id='part-${pk}'>${part}</td>
-            <td id='loc-${pk}'>${location}</td>
-            <td id='quantity-${pk}'>${quantity}</td>
-            <td id='cost-${pk}'>${cost}</td>
-            <td id='updated-${pk}'>${update_rendered}</td>
-            <td id='actions-${pk}'>${actions}</td>
-        </tr>`;
-    }
-
-    // First, load stock information for the part
-    inventreeGet(
-        '{% url "api-stock-list" %}',
-        {
-            part: partId,
-            in_stock: true,
-            location_detail: true,
-            part_detail: true,
-            include_variants: true,
-            ordering: '-stock',
-        },
-        {
-            success: function(response) {
-                var html = '';
-
-                html += `
-                <table class='table table-striped table-condensed'>
-                    <thead>
-                        <tr>
-                            <th>{% trans "Stock Item" %}</th>
-                            <th>{% trans "Location" %}</th>
-                            <th>{% trans "Quantity" %}</th>
-                            <th>{% trans "Total Cost" %}</th>
-                            <th>{% trans "Updated" %}</th>
-                            <th><!-- Actions --></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                `;
-
-                response.forEach(function(item) {
-                    html += buildStockItemRow(item);
-                });
-
-                // Calculate total price
-                var total_cost_min = calculateTotalPrice(
-                    part_cost_data,
-                    function(item) {
-                        return item.cost_min;
-                    },
-                    function(item) {
-                        return item.cost_currency;
-                    },
-                    {
-                        currency: baseCurrency(),
-                        raw: true,
-                    }
-                );
-
-                var total_cost_max = calculateTotalPrice(
-                    part_cost_data,
-                    function(item) {
-                        return item.cost_max;
-                    },
-                    function(item) {
-                        return item.cost_currency;
-                    },
-                    {
-                        currency: baseCurrency(),
-                        raw: true,
-                    }
-                );
-
-                var total_cost_range = formatPriceRange(
-                    total_cost_min,
-                    total_cost_max,
-                    {
-                        currency: baseCurrency()
-                    }
-                );
-
-                // Add totals row
-                html += `
-                <tr>
-                    <td></td>
-                    <td><em><strong>{% trans "Total" %}</strong></em></td>
-                    <td><em>${formatDecimal(part_quantity)}</em></td>
-                    <td><em>${total_cost_range}</em></td>
-                    <td></td>
-                    <td></td>
-                </tr>`;
-
-                html += `</tbody></table>`;
-
-                constructForm(`/api/part/stocktake/`, {
-                    preFormContent: html,
-                    method: 'POST',
-                    title: '{% trans "Part Stocktake" %}',
-                    confirm: true,
-                    fields: {
-                        part: {
-                            value: partId,
-                            hidden: true,
-                        },
-                        quantity: {
-                            value: part_quantity,
-                        },
-                        cost_min: {
-                            value: total_cost_min,
-                        },
-                        cost_min_currency: {},
-                        cost_max: {
-                            value: total_cost_max,
-                        },
-                        cost_max_currency: {},
-                        note: {},
-                    },
-                    onSuccess: function(response) {
-                        handleFormSuccess(response, options);
-                    }
                 });
             }
         }
@@ -1122,14 +896,21 @@ function loadPartStocktakeTable(partId, options={}) {
         },
         columns: [
             {
+                field: 'item_count',
+                title: '{% trans "Stock Items" %}',
+                switchable: true,
+                sortable: true,
+            },
+            {
                 field: 'quantity',
-                title: '{% trans "Quantity" %}',
+                title: '{% trans "Total Quantity" %}',
                 switchable: false,
                 sortable: true,
             },
             {
                 field: 'cost',
                 title: '{% trans "Total Cost" %}',
+                switchable: false,
                 formatter: function(value, row) {
                     return formatPriceRange(row.cost_min, row.cost_max);
                 }
@@ -1184,6 +965,7 @@ function loadPartStocktakeTable(partId, options={}) {
 
                 constructForm(`/api/part/stocktake/${pk}/`, {
                     fields: {
+                        item_count: {},
                         quantity: {},
                         cost_min: {},
                         cost_min_currency: {},

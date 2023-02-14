@@ -1616,9 +1616,11 @@ class PartStocktakeList(ListCreateAPI):
 
     ordering_fields = [
         'part',
+        'item_count',
         'quantity',
         'date',
         'user',
+        'pk',
     ]
 
     # Reverse date ordering by default
@@ -1645,20 +1647,22 @@ class PartStocktakeReportList(ListAPI):
     queryset = PartStocktakeReport.objects.all()
     serializer_class = part_serializers.PartStocktakeReportSerializer
 
-    filter_backensd = [
+    filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter,
     ]
 
     ordering_fields = [
         'date',
+        'pk',
     ]
 
-    ordering = ['-date', '-pk']
+    # Newest first, by default
+    ordering = '-pk'
 
 
 class PartStocktakeReportGenerate(CreateAPI):
-    """API endpoint for generating a new PartStocktakeReport"""
+    """API endpoint for manually generating a new PartStocktakeReport"""
 
     serializer_class = part_serializers.PartStocktakeReportGenerateSerializer
 

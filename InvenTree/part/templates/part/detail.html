@@ -475,10 +475,9 @@
         });
 
         $('#btn-stocktake').click(function() {
-            performStocktake({{ part.pk }}, {
-                onSuccess: function() {
-                    $('#part-stocktake-table').bootstrapTable('refresh');
-                }
+            generateStocktakeReport({
+                part: {{ part.pk }},
+                update_parts: true,
             });
         });
     });

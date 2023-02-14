@@ -738,6 +738,7 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
             'pk',
             'date',
             'part',
+            'item_count',
             'quantity',
             'cost_min',
             'cost_min_currency',
