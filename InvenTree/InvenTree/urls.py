@@ -24,6 +24,7 @@ from order.urls import order_urls
 from part.api import bom_api_urls, part_api_urls
 from part.urls import part_urls
 from plugin.api import plugin_api_urls
+from plugin.base.supplier.url import plugin_supplier_urls
 from plugin.urls import get_plugin_urls
 from report.api import report_api_urls
 from stock.api import stock_api_urls
@@ -142,6 +143,8 @@ frontendpatterns = [
     re_path(r'^part/', include(part_urls)),
     re_path(r'^stock/', include(stock_urls)),
     re_path(r'^supplier-part/', include(supplier_part_urls)),
+
+    re_path(r'^plugin/suppliers/', include(plugin_supplier_urls)),
 
     re_path(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     re_path(r'^set-password/', SetPasswordView.as_view(), name='set-password'),

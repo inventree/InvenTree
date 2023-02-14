@@ -1,0 +1,61 @@
+{% extends "page_base.html" %}
+
+{% load inventree_extras %}
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}
+{% inventree_title %} | {% trans "Vendors" %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Vendors" %}
+{% endblock %}
+
+{% block actions %}
+{% if roles.part.add %}
+<button type='button' class="btn btn-success" id='import-vendor-part'>
+    <span class='fas fa-tools'></span> {% trans "Import Vendor Part" %}
+</button>
+{% endif %}
+{% endblock %}
+
+{% block page_info %}
+
+<div class='panel-content'>
+    <p>Multiple vendors are available</p>
+</div>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$("#import-vendor-part").click(function() {
+    importVendorPart();
+});
+
+/*
+ * Import a part from a vendor via an API form
+ */
+function importVendorPart(options={}) {
+    /* Launch modal form to import part from vendor.
+     */
+
+    var fields = {
+        connection: {},
+        reference: {},
+        category: {},
+    }
+
+    constructForm(`{% url "api-plugin-import" %}`, {
+        fields: fields,
+        data: options.data,
+        follow: true,
+        method: 'POST',
+        title: '{% trans "Import Vendor Part" %}',
+        onSuccess: options.onSuccess,
+    });
+}
+
+{% endblock %}
