@@ -62,7 +62,7 @@
             <h4>{% trans "Part Stocktake" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.part.add %}
+                {% if roles.stocktake.add %}
                 <button class='btn btn-success' type='button' id='btn-stocktake' title='{% trans "Add stocktake information" %}'>
                     <span class='fas fa-clipboard-check'></span> {% trans "Stocktake" %}
                 </button>
@@ -469,17 +469,21 @@
     // Load the "stocktake" tab
     onPanelLoad('stocktake', function() {
         loadPartStocktakeTable({{ part.pk }}, {
-            admin: {% js_bool user.is_staff %},
-            allow_edit: {% js_bool roles.part.change %},
-            allow_delete: {% js_bool roles.part.delete %},
+            allow_edit: {% js_bool roles.stocktake.change %},
+            allow_delete: {% js_bool roles.stocktake.delete %},
         });
 
+        {% if roles.stocktake.add %}
         $('#btn-stocktake').click(function() {
             generateStocktakeReport({
-                part: {{ part.pk }},
+                part: {
+                    value: {{ part.pk }}
+                },
+                location: {},
                 update_parts: true,
             });
         });
+        {% endif %}
     });
 
     // Load the "suppliers" tab

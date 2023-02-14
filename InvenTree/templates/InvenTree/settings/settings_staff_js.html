@@ -341,6 +341,7 @@ onPanelLoad('parts', function() {
 // Javascript for the Stocktake settings panel
 onPanelLoad('stocktake', function() {
 
+    {% if roles.stocktake.view %}
     var table = '#stocktake-report-table';
 
     var filters = loadTableFilters('stocktakereport');
@@ -384,8 +385,15 @@ onPanelLoad('stocktake', function() {
             },
         ]
     });
+    {% endif %}
 
+    {% if roles.stocktake.add %}
     $('#btn-generate-stocktake').click(function() {
-        generateStocktakeReport();
+        generateStocktakeReport({
+            part: {},
+            category: {},
+            location: {},
+        });
     });
+    {% endif %}
 });

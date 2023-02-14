@@ -793,13 +793,19 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.all(),
         required=False, allow_null=True,
-        label=_('Part'), help_text=_('Specify part for this stocktake report')
+        label=_('Part'), help_text=_('Limit stocktake report to a particular part (and any variant parts)')
     )
 
     category = serializers.PrimaryKeyRelatedField(
         queryset=PartCategory.objects.all(),
         required=False, allow_null=True,
-        label=_('Category'), help_text=_('Specify part category for this stocktake report'),
+        label=_('Category'), help_text=_('Limit stocktake report to a particular part category, and any child categories'),
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        required=False, allow_null=True,
+        label=_('Location'), help_text=_('Limit stocktake report to a particular stock location, and any child locations')
     )
 
     update_parts = serializers.BooleanField(
@@ -836,6 +842,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
             user=user,
             part=data.get('part', None),
             category=data.get('category', None),
+            location=data.get('location', None),
             update_parts=data.get('update_parts', False),
         )
 

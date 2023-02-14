@@ -706,18 +706,19 @@ function partDetail(part, options={}) {
  */
 function generateStocktakeReport(options={}) {
 
-    let fields = {};
+    let fields = {
+    };
 
-    if (options.part) {
-        fields.part = {
-            value: options.part
-        };
+    if (options.part != null) {
+        fields.part = options.part;
     }
 
-    if (options.category) {
-        fields.category = {
-            value: options.category
-        };
+    if (options.category != null) {
+        fields.category = options.category;
+    }
+
+    if (options.location != null) {
+        fields.location = options.location;
     }
 
     fields.update_parts = {
@@ -943,7 +944,7 @@ function loadPartStocktakeTable(partId, options={}) {
             {
                 field: 'actions',
                 title: '',
-                visible: options.admin,
+                visible: options.allow_edit || options.allow_delete,
                 switchable: false,
                 sortable: false,
                 formatter: function(value, row) {
