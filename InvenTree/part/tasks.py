@@ -309,6 +309,7 @@ def generate_stocktake_report(**kwargs):
 
     part.models.PartStocktakeReport.objects.create(
         report=report_file,
+        part_count=n_parts,
         user=user
     )
 

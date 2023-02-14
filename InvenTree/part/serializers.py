@@ -780,13 +780,14 @@ class PartStocktakeReportSerializer(InvenTreeModelSerializer):
             'pk',
             'date',
             'report',
+            'part_count',
             'user',
             'user_detail',
         ]
 
 
 class PartStocktakeReportGenerateSerializer(serializers.Serializer):
-    """Serializer class for generating a new PartStocktakeReport"""
+    """Serializer class for manually generating a new PartStocktakeReport via the API"""
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.all(),

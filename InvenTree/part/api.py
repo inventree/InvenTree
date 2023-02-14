@@ -1654,6 +1654,8 @@ class PartStocktakeReportList(ListAPI):
         'date',
     ]
 
+    ordering = ['-date', '-pk']
+
 
 class PartStocktakeReportGenerate(CreateAPI):
     """API endpoint for generating a new PartStocktakeReport"""

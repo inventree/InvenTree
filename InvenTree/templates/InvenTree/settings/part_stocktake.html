@@ -34,7 +34,12 @@
 </div>
 
 <div class='panel-content'>
-    <table class='table table-striped table-condensed' id='stocktake-report-table'></table>
+    <div id='part-stocktake-report-toolbar'>
+        <div class='btn-group' role='group'>
+            {% include "filter_list.html" with id="stocktakereport" %}
+        </div>
+    </div>
+    <table class='table table-striped table-condensed' id='stocktake-report-table' data-toolbar='#part-stocktake-report-toolbar'></table>
 </div>
 
 {% endblock panel_content %}

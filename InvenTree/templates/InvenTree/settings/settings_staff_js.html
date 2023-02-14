@@ -341,10 +341,18 @@ onPanelLoad('parts', function() {
 // Javascript for the Stocktake settings panel
 onPanelLoad('stocktake', function() {
 
-    $('#stocktake-report-table').inventreeTable({
+    var table = '#stocktake-report-table';
+
+    var filters = loadTableFilters('stocktakereport');
+    setupFilterList('stocktakereport', $(table), '#filter-list-stocktakereport');
+
+    $(table).inventreeTable({
         url: '{% url "api-part-stocktake-report-list" %}',
         search: false,
+        queryParams: filters,
+        name: 'stocktakereport',
         showColumns: false,
+        sidePagination: 'server',
         sortable: true,
         sortName: 'date',
         sortOrder: 'desc',
@@ -355,6 +363,10 @@ onPanelLoad('stocktake', function() {
                 formatter: function(value, row) {
                     return attachmentLink(value);
                 }
+            },
+            {
+                field: 'part_count',
+                title: '{% trans "Part Count" %}',
             },
             {
                 field: 'date',
