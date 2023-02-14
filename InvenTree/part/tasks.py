@@ -2,6 +2,7 @@
 
 import io
 import logging
+import random
 import time
 from datetime import datetime, timedelta
 
@@ -277,7 +278,7 @@ def generate_stocktake_report(**kwargs):
             _('Category ID'),
             _('Category Name'),
             _('Stock Items'),
-            _('Stock On Hand'),
+            _('Total Quantity'),
             _('Total Cost Min') + f' ({base_currency})',
             _('Total Cost Max') + f' ({base_currency})',
         ]
@@ -349,5 +350,55 @@ def generate_stocktake_report(**kwargs):
 
 @scheduled_task(ScheduledTask.DAILY)
 def scheduled_stocktake_reports():
-    """Scheduled tasks for creating automated stocktake reports"""
-    ...
+    """Scheduled tasks for creating automated stocktake reports.
+
+    This task runs daily, and performs the following functions:
+
+    - Delete 'old' stocktake report files after the specified period
+    - Generate new reports at the specified period
+    """
+
+    # Sleep a random number of seconds to prevent worker conflict
+    time.sleep(random.randint(1, 5))
+
+    # First let's delete any old stocktake reports
+    delete_n_days = int(common.models.InvenTreeSetting.get_setting('STOCKTAKE_DELETE_REPORT_DAYS', 90, cache=False))
+    threshold = datetime.now() - timedelta(days=delete_n_days)
+    old_reports = part.models.PartStocktakeReport.objects.filter(date__lt=threshold)
+
+    if old_reports.count() > 0:
+        logger.info(f"Deleting {old_reports.count()} stale stocktake reports")
+        old_reports.delete()
+
+    # Next, check if stocktake functionality is enabled
+    if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False, cache=False):
+        logger.info("Stocktake functionality is not enabled - exiting")
+        return
+
+    report_n_days = int(common.models.InvenTreeSetting.get_setting('STOCKTAKE_AUTO_DAYS', 0, cache=False))
+
+    if report_n_days < 1:
+        logger.info("Stocktake auto reports are disabled, exiting")
+        return
+
+    # How long ago was last full stocktake report generated?
+    last_report = common.models.InvenTreeSetting.get_setting('STOCKTAKE_RECENT_REPORT', '', cache=False)
+
+    try:
+        last_report = datetime.fromisoformat(last_report)
+    except ValueError:
+        last_report = None
+
+    if last_report:
+        # Do not attempt if the last report was within the minimum reporting period
+        threshold = datetime.now() - timedelta(days=report_n_days)
+
+        if last_report > threshold:
+            logger.info("Automatic stocktake report was recently generated - exiting")
+            return
+
+    # Let's start a new stocktake report for all parts
+    generate_stocktake_report(update_parts=True)
+
+    # Record the date of this report
+    common.models.InvenTreeSetting.set_setting('STOCKTAKE_RECENT_REPORT', datetime.now().isoformat(), None)
