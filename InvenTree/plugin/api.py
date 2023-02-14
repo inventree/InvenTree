@@ -17,7 +17,7 @@ from plugin import InvenTreePlugin
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
-from plugin.base.supplier.api import PluginSearch
+from plugin.base.supplier.api import ImportPluginSupplierPartView, PluginSearch
 from plugin.base.supplier.models import ConnectionSetting
 from plugin.models import PluginConfig, PluginSetting
 from plugin.urls import PLUGIN_BASE
@@ -322,6 +322,7 @@ plugin_api_urls = [
 
         # Search backend
         re_path(r'^(?P<plugin>\w+)/search/', PluginSearch.as_view(), name='api-plugin-search'),
+        re_path(r'^import/', ImportPluginSupplierPartView.as_view(), name='api-plugin-import'),
 
         # Anything else
         re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),

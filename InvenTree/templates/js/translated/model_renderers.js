@@ -17,6 +17,7 @@
     renderStockLocation,
     renderSupplierPart,
     renderUser,
+    renderWebconnection,
 */
 
 
@@ -430,5 +431,12 @@ function renderSupplierPart(name, data, parameters={}, options={}) {
 
     html += renderId('{% trans "Supplier Part ID" %}', data.pk, parameters);
 
+    return html;
+}
+
+// Renderer for "WebConnection" model
+// eslint-disable-next-line no-unused-vars
+function renderWebconnection(name, data, parameters={}, options={}) {
+    var html = `<span>${data.connection_key} \\ ${data.name}</span>`;
     return html;
 }

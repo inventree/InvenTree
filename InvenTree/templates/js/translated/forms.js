@@ -12,6 +12,7 @@
     renderBuild,
     renderCompany,
     renderGroup,
+    renderWebconnection,
     renderManufacturerPart,
     renderOwner,
     renderPart,
@@ -2076,6 +2077,10 @@ function renderModelData(name, model, data, parameters, options) {
         break;
     case 'group':
         renderer = renderGroup;
+        break;
+    case 'webconnection':
+        console.log('rendering a webconnection');
+        renderer = renderWebconnection;
         break;
     default:
         break;
