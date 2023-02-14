@@ -21,7 +21,7 @@ logger = logging.getLogger("inventree")
 
 
 class RuleSet(models.Model):
-    """A RuleSet is somewhat like a superset of the django permission  class, in that in encapsulates a bunch of permissions.
+    """A RuleSet is somewhat like a superset of the django permission class, in that in encapsulates a bunch of permissions.
 
     There are *many* apps models used within InvenTree,
     so it makes sense to group them into "roles".
@@ -36,6 +36,7 @@ class RuleSet(models.Model):
         ('admin', _('Admin')),
         ('part_category', _('Part Categories')),
         ('part', _('Parts')),
+        ('stocktake', _('Stocktake')),
         ('stock_location', _('Stock Locations')),
         ('stock', _('Stock Items')),
         ('build', _('Build Orders')),
@@ -97,12 +98,15 @@ class RuleSet(models.Model):
             'part_partrelated',
             'part_partstar',
             'part_partcategorystar',
-            'part_partstocktake',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_manufacturerpartattachment',
             'label_partlabel',
+        ],
+        'stocktake': [
+            'part_partstocktake',
+            'part_partstocktakereport',
         ],
         'stock_location': [
             'stock_stocklocation',

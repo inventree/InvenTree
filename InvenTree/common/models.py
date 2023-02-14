@@ -1576,12 +1576,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
         },
 
-        'STOCKTAKE_OWNER': {
-            'name': _('Restrict Stocktake Owner'),
-            'description': _('If specified, stocktake information will be available only to the specified owner (user or group)'),
-            'model': 'users.owner',
-        },
-
         'STOCKTAKE_AUTO_DAYS': {
             'name': _('Automatic Stocktake Period'),
             'description': _('Number of days between automatic stocktake recording (set to zero to disable)'),
