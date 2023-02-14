@@ -4,12 +4,14 @@ from dataclasses import dataclass
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import permissions, serializers
+from rest_framework.exceptions import NotFound, ValidationError
 
 from common.models import WebConnection
 from InvenTree.mixins import CreateAPI, ListAPI
 from part.models import PartCategory
 from plugin import registry
 from plugin.base.supplier.mixins import SearchRunResult
+from plugin.models import PluginConfig
 
 
 @dataclass()
@@ -49,7 +51,7 @@ class ImportPluginSupplierPartSerializer(serializers.Serializer):
         queryset=WebConnection.objects.all(),
         many=False,
         required=True,
-        label=_('Vendor Connection'),
+        label=_('Suppier Connection'),
     )
     reference = serializers.CharField(
         required=True,
@@ -59,13 +61,24 @@ class ImportPluginSupplierPartSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serializer data. This tries to import the part."""
-        build = self.context['build']
-
         data = self.validated_data
+        plugin_cgf: PluginConfig = data['connection'].plugin
 
-        build.unallocateStock(
-            bom_item=data['bom_item'],
-            output=data['output']
+        # Checks
+        # Plugin must be active
+        if not plugin_cgf.active:
+            raise NotFound(detail=f"Plugin '{plugin_cgf}' is not active")
+
+        # Mixin and function must be present
+        if not plugin_cgf.plugin.mixin_enabled('supplier'):
+            raise ValidationError({'connection': _('This plugin does not provide the required mixin.')})
+        if not hasattr(plugin_cgf.plugin, 'import_part'):
+            raise ValidationError({'connection': _('This plugin does not provide the required function.')})
+
+        # Try to import part
+        plugin_cgf.plugin.import_part(
+            term=data['reference'],
+            category=data['category']
         )
 
 
@@ -74,12 +87,4 @@ class ImportPluginSupplierPartView(CreateAPI):
     permission_classes = [
         permissions.IsAuthenticated
     ]
-
     serializer_class = ImportPluginSupplierPartSerializer
-
-    def get_serializer_context(self):
-        """Add extra context information to the endpoint serializer."""
-        ctx = super().get_serializer_context()
-        # ctx['request'] = self.request
-
-        return ctx

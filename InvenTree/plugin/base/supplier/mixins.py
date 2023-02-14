@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Dict, OrderedDict
 
 from common.models import WebConnectionData
+from part.models import PartCategory
 from plugin import MixinNotImplementedError
 
 logger = logging.getLogger('inventree')
@@ -79,3 +80,7 @@ class SupplierMixin:
     def search_action(self, term: str, exact: bool = False, safe_results: bool = True) -> SearchRunResult:
         """Run search against supplier and return results."""
         raise MixinNotImplementedError('The `search_action` function must be enabled for search integration.')
+
+    def import_part(self, term: str, category: PartCategory) -> bool:
+        """Tries to import a part by term. Returns bool if import was successfull."""
+        raise MixinNotImplementedError('The `import_part` function must be enabled for search integration.')
