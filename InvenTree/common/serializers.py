@@ -225,6 +225,7 @@ class WebConnectionSerializer(InvenTreeModelSerializer):
 
         model = WebConnection
         fields = [
+            'pk',
             'plugin',
             'connection_key',
             'name',
