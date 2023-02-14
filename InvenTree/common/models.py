@@ -2579,7 +2579,7 @@ class WebConnection(models.Model):
         """Pretty name for connection."""
         return f'{self.plugin.key} \ {self.connection_key} : {self.name}'
 
-    def get_api_url(self):
+    def get_api_url():
         """Return API endpoint."""
         return reverse('api-plugin-connection-list')
 
