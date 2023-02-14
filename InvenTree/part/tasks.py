@@ -145,13 +145,19 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
         user: User who requested this stocktake
 
     kwargs:
+        locations: A list of locations to restrict results to
 
     Returns:
         PartStocktake: A new PartStocktake model instance (for the specified Part)
     """
 
+    locations = kwargs.get('locations', None)
+
     # Grab all "available" stock items for the Part
     stock_entries = target.stock_entries(in_stock=True, include_variants=True)
+
+    if locations:
+        stock_entries = stock_entries.filter(location__in=locations)
 
     # Cache min/max pricing information for this Part
     pricing = target.pricing
@@ -223,13 +229,21 @@ def generate_stocktake_report(**kwargs):
     kwargs:
         user: The user who requested this stocktake (set to None for automated stocktake)
         part: Optional Part instance to filter by (including variant parts)
-        category: Optional PartCategory to filter by
+        category: Optional PartCategory to filter results
+        location: Optional StockLocation to filter results
         update_parts: If True, save stocktake information against each filtered Part (default = True)
     """
 
     parts = part.models.Part.objects.all()
     user = kwargs.get('user', None)
     update_parts = kwargs.get('update_parts', False)
+    location = kwargs.get('location', None)
+
+    if location:
+        # Extract flat list of all sublocations
+        locations = [loc for loc in location.get_descendants(include_self=True)]
+    else:
+        locations = None
 
     # Filter by 'Part' instance
     if p := kwargs.get('part', None):
@@ -282,7 +296,11 @@ def generate_stocktake_report(**kwargs):
     for p in parts:
 
         # Create a new stocktake for this part (do not commit, this will take place later on)
-        stocktake = perform_stocktake(p, user, commit=False)
+        stocktake = perform_stocktake(p, user, locations=locations, commit=False)
+
+        if stocktake.quantity == 0:
+            # Skip rows with zero total quantity
+            continue
 
         stocktake_instances.append(stocktake)
 
