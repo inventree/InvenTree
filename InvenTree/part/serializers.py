@@ -18,6 +18,7 @@ from sql_util.utils import SubqueryCount, SubquerySum
 import common.models
 import company.models
 import InvenTree.helpers
+import InvenTree.status
 import part.filters
 import part.tasks
 import stock.models
@@ -808,13 +809,15 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
     def validate(self, data):
         """Custom validation for this serializer"""
 
+        # Check that background worker is running
+        if not InvenTree.status.is_worker_running():
+            raise serializers.ValidationError(_("Background worker check failed"))
+
         # Stocktake functionality must be enabled
         if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False):
             raise serializers.ValidationError(_("Stocktake functionality is not enabled"))
 
         # TODO: User must be part of the stocktake owner group
-
-        # TODO: Check that background worker is running
 
         return data
 
