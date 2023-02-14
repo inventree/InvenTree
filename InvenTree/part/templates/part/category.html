@@ -29,6 +29,11 @@
 {% url 'admin:part_partcategory_change' category.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
+{% if roles.stocktake.add %}
+<button type='button' class='btn btn-outline-secondary' id='category-stocktake' title='{% trans "Perform stocktake for this part category" %}'>
+    <span class='fas fa-clipboard-check'></span>
+</button>
+{% endif %}
 {% if category %}
 {% if starred_directly %}
 <button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "You are subscribed to notifications for this category" %}'>
@@ -252,6 +257,17 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    {% if roles.stocktake.add %}
+    $('#category-stocktake').click(function() {
+        generateStocktakeReport({
+            category: {
+                {% if category %}value: {{ category.pk }},{% endif %}
+            },
+            location: {},
+        });
+    });
+    {% endif %}
 
     {% if category %}
 
