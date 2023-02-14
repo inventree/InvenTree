@@ -33,6 +33,12 @@
 {% include "admin_button.html" with url=url %}
 {% endif %}
 
+{% if roles.stocktake.add %}
+<button type='button' class='btn btn-outline-secondary' id='location-stocktake' title='{% trans "Perform stocktake for this stock location" %}'>
+    <span class='fas fa-clipboard-check'></span>
+</button>
+{% endif %}
+
 {% mixin_available "locate" as locate_available %}
 {% if location and plugins_enabled and locate_available %}
 <button id='locate-location-button' title='{% trans "Locate stock location" %}' class='btn btn-outline-secondary' typy='button'>
@@ -245,6 +251,17 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    {% if roles.stocktake.add %}
+    $('#location-stocktake').click(function() {
+        generateStocktakeReport({
+            category: {},
+            location: {
+                {% if location %}value: {{ location.pk }},{% endif %}
+            },
+        });
+    });
+    {% endif %}
 
     {% if plugins_enabled and location %}
     $('#locate-location-button').click(function() {

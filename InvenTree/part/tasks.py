@@ -292,6 +292,8 @@ def generate_stocktake_report(**kwargs):
     # They may be bulk-commited to the database afterwards
     stocktake_instances = []
 
+    total_parts = 0
+
     # Iterate through each Part which matches the filters above
     for p in parts:
 
@@ -301,6 +303,8 @@ def generate_stocktake_report(**kwargs):
         if stocktake.quantity == 0:
             # Skip rows with zero total quantity
             continue
+
+        total_parts += 1
 
         stocktake_instances.append(stocktake)
 
@@ -327,19 +331,20 @@ def generate_stocktake_report(**kwargs):
 
     part.models.PartStocktakeReport.objects.create(
         report=report_file,
-        part_count=n_parts,
+        part_count=total_parts,
         user=user
     )
 
-    # Use bulk_create for efficient insertion of stocktake
+    # If 'update_parts' is set, we save stocktake entries for each individual part
     if update_parts:
+        # Use bulk_create for efficient insertion of stocktake
         part.models.PartStocktake.objects.bulk_create(
             stocktake_instances,
             batch_size=500,
         )
 
     t_stocktake = time.time() - t_start
-    logger.info(f"Generated stocktake report for {n_parts} parts in {round(t_stocktake, 2)}s")
+    logger.info(f"Generated stocktake report for {total_parts} parts in {round(t_stocktake, 2)}s")
 
 
 @scheduled_task(ScheduledTask.DAILY)

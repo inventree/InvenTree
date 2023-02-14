@@ -721,10 +721,6 @@ function generateStocktakeReport(options={}) {
         fields.location = options.location;
     }
 
-    fields.update_parts = {
-        value: options.update_parts || false,
-    };
-
     let content = `
     <div class='alert alert-block alert-info'>
     {% trans "Schedule generation of a new stocktake report." %}<br>
