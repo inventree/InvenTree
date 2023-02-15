@@ -21,6 +21,7 @@ import common.settings
 import InvenTree.helpers
 import InvenTree.tasks
 import part.models
+import stock.models
 from InvenTree.tasks import ScheduledTask, scheduled_task
 
 logger = logging.getLogger("inventree")
@@ -145,20 +146,12 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
         commit: If True (default) save the result to the database
         user: User who requested this stocktake
 
-    kwargs:
-        locations: A list of locations to restrict results to
-
     Returns:
         PartStocktake: A new PartStocktake model instance (for the specified Part)
     """
 
-    locations = kwargs.get('locations', None)
-
     # Grab all "available" stock items for the Part
     stock_entries = target.stock_entries(in_stock=True, include_variants=True)
-
-    if locations:
-        stock_entries = stock_entries.filter(location__in=locations)
 
     # Cache min/max pricing information for this Part
     pricing = target.pricing
@@ -243,12 +236,6 @@ def generate_stocktake_report(**kwargs):
     generate_report = kwargs.get('generate_report', True)
     update_parts = kwargs.get('update_parts', False)
 
-    if location:
-        # Extract flat list of all sublocations
-        locations = [loc for loc in location.get_descendants(include_self=True)]
-    else:
-        locations = None
-
     # Filter by 'Part' instance
     if p := kwargs.get('part', None):
         variants = p.get_descendants(include_self=True)
@@ -260,6 +247,22 @@ def generate_stocktake_report(**kwargs):
     if category := kwargs.get('category', None):
         categories = category.get_descendants(include_self=True)
         parts = parts.filter(category__in=categories)
+
+    # Filter by 'Location' instance (cascading)
+    # Stocktake report will be limited to parts which have stock items within this location
+    if location:
+        # Extract flat list of all sublocations
+        locations = [loc for loc in location.get_descendants(include_self=True)]
+
+        # Items which exist within these locations
+        items = stock.models.StockItem.objects.filter(location__in=locations)
+
+        # List of parts which exist within these locations
+        unique_parts = items.order_by().values('part').distinct()
+
+        parts = parts.filter(
+            pk__in=[result['part'] for result in unique_parts]
+        )
 
     # Exit if filters removed all parts
     n_parts = parts.count()
@@ -302,7 +305,7 @@ def generate_stocktake_report(**kwargs):
     for p in parts:
 
         # Create a new stocktake for this part (do not commit, this will take place later on)
-        stocktake = perform_stocktake(p, user, locations=locations, commit=False)
+        stocktake = perform_stocktake(p, user, commit=False)
 
         if stocktake.quantity == 0:
             # Skip rows with zero total quantity
