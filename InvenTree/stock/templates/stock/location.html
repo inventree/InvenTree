@@ -32,8 +32,8 @@
 {% url 'admin:stock_stocklocation_change' location.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
-
-{% if roles.stocktake.add %}
+{% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
+{% if stocktake_enable and roles.stocktake.add %}
 <button type='button' class='btn btn-outline-secondary' id='location-stocktake' title='{% trans "Perform stocktake for this stock location" %}'>
     <span class='fas fa-clipboard-check'></span>
 </button>
@@ -252,7 +252,8 @@
 {% block js_ready %}
 {{ block.super }}
 
-    {% if roles.stocktake.add %}
+    {% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
+    {% if stocktake_enable and roles.stocktake.add %}
     $('#location-stocktake').click(function() {
         generateStocktakeReport({
             category: {},

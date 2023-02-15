@@ -377,7 +377,7 @@ def scheduled_stocktake_reports():
     time.sleep(random.randint(1, 5))
 
     # First let's delete any old stocktake reports
-    delete_n_days = int(common.models.InvenTreeSetting.get_setting('STOCKTAKE_DELETE_REPORT_DAYS', 90, cache=False))
+    delete_n_days = int(common.models.InvenTreeSetting.get_setting('STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False))
     threshold = datetime.now() - timedelta(days=delete_n_days)
     old_reports = part.models.PartStocktakeReport.objects.filter(date__lt=threshold)
 
