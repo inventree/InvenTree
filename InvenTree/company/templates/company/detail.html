@@ -194,10 +194,53 @@
     </div>
 </div>
 
+<div class='panel panel-hidden' id='panel-attachments'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "attachment_table.html" %}
+    </div>
+</div>
+
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
+
+    onPanelLoad("attachments", function() {
+        loadAttachmentTable('{% url "api-company-attachment-list" %}', {
+            filters: {
+                company: {{ company.pk }},
+            },
+            fields: {
+                company: {
+                    value: {{ company.pk }},
+                    hidden: true
+                }
+            }
+        });
+
+        enableDragAndDrop(
+            '#attachment-dropzone',
+            '{% url "api-company-attachment-list" %}',
+            {
+                data: {
+                    company: {{ company.id }},
+                },
+                label: 'attachment',
+                success: function(data, status, xhr) {
+                    reloadAttachmentTable();
+                }
+            }
+        );
+    });
 
     onPanelLoad('company-notes', function() {
 
