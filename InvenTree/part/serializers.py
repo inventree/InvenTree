@@ -808,6 +808,12 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
         label=_('Location'), help_text=_('Limit stocktake report to a particular stock location, and any child locations')
     )
 
+    generate_report = serializers.BooleanField(
+        default=True,
+        label=_('Generate Report'),
+        help_text=_('Generate report file containing calculated stocktake data'),
+    )
+
     update_parts = serializers.BooleanField(
         default=False,
         label=_('Update Parts'),
@@ -817,15 +823,13 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
     def validate(self, data):
         """Custom validation for this serializer"""
 
-        # Check that background worker is running
-        if not InvenTree.status.is_worker_running():
-            raise serializers.ValidationError(_("Background worker check failed"))
-
         # Stocktake functionality must be enabled
         if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False):
             raise serializers.ValidationError(_("Stocktake functionality is not enabled"))
 
-        # TODO: User must be part of the stocktake owner group
+        # Check that background worker is running
+        if not InvenTree.status.is_worker_running():
+            raise serializers.ValidationError(_("Background worker check failed"))
 
         return data
 
@@ -843,6 +847,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
             part=data.get('part', None),
             category=data.get('category', None),
             location=data.get('location', None),
+            generate_report=data.get('generate_report', True),
             update_parts=data.get('update_parts', False),
         )
 

@@ -232,13 +232,16 @@ def generate_stocktake_report(**kwargs):
         part: Optional Part instance to filter by (including variant parts)
         category: Optional PartCategory to filter results
         location: Optional StockLocation to filter results
+        generate_report: If True, generate a stocktake report from the calculated data (default=True)
         update_parts: If True, save stocktake information against each filtered Part (default = True)
     """
 
     parts = part.models.Part.objects.all()
     user = kwargs.get('user', None)
-    update_parts = kwargs.get('update_parts', False)
     location = kwargs.get('location', None)
+
+    generate_report = kwargs.get('generate_report', True)
+    update_parts = kwargs.get('update_parts', False)
 
     if location:
         # Extract flat list of all sublocations
@@ -330,26 +333,27 @@ def generate_stocktake_report(**kwargs):
     filename = f"InvenTree_Stocktake_{today}.csv"
     report_file = ContentFile(buffer.getvalue(), name=filename)
 
-    report_instance = part.models.PartStocktakeReport.objects.create(
-        report=report_file,
-        part_count=total_parts,
-        user=user
-    )
-
-    # Notify the requesting user
-    if user:
-
-        common.notifications.trigger_notification(
-            report_instance,
-            category='generate_stocktake_report',
-            context={
-                'name': _('Stocktake Report Available'),
-                'message': _('A new stocktake report is available for download'),
-            },
-            targets=[
-                user,
-            ]
+    if generate_report:
+        report_instance = part.models.PartStocktakeReport.objects.create(
+            report=report_file,
+            part_count=total_parts,
+            user=user
         )
+
+        # Notify the requesting user
+        if user:
+
+            common.notifications.trigger_notification(
+                report_instance,
+                category='generate_stocktake_report',
+                context={
+                    'name': _('Stocktake Report Available'),
+                    'message': _('A new stocktake report is available for download'),
+                },
+                targets=[
+                    user,
+                ]
+            )
 
     # If 'update_parts' is set, we save stocktake entries for each individual part
     if update_parts:
