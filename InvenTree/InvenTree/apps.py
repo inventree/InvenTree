@@ -60,7 +60,10 @@ class InvenTreeConfig(AppConfig):
 
         logger.info("Starting background tasks...")
 
-        for task in InvenTree.tasks.tasks.task_list:
+        # List of collected tasks found with the @scheduled_task decorator
+        tasks = InvenTree.tasks.tasks.task_list
+
+        for task in tasks:
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
             InvenTree.tasks.schedule_task(
                 ref_name,
@@ -75,7 +78,7 @@ class InvenTreeConfig(AppConfig):
             force_async=True,
         )
 
-        logger.info("Started background tasks...")
+        logger.info(f"Started {len(tasks)} scheduled background tasks...")
 
     def collect_tasks(self):
         """Collect all background tasks."""

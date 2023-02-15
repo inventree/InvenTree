@@ -306,7 +306,7 @@ class PluginsRegistry:
 
         # Log collected plugins
         logger.info(f'Collected {len(collected_plugins)} plugins!')
-        logger.info(", ".join([a.__module__ for a in collected_plugins]))
+        logger.debug(", ".join([a.__module__ for a in collected_plugins]))
 
         return collected_plugins
 
@@ -427,7 +427,7 @@ class PluginsRegistry:
                 logger.info(f'Loading plugin `{plg_name}`')
                 try:
                     plg_i: InvenTreePlugin = plg()
-                    logger.info(f'Loaded plugin `{plg_name}`')
+                    logger.debug(f'Loaded plugin `{plg_name}`')
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
 
