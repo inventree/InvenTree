@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-14 11:07+0000\n"
-"PO-Revision-Date: 2023-02-14 21:04\n"
+"PO-Revision-Date: 2023-02-15 21:25\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -5477,7 +5477,7 @@ msgstr "Articolo Originale"
 
 #: part/serializers.py:318
 msgid "Select original part to duplicate"
-msgstr ""
+msgstr "Seleziona l'articolo originale da duplicare"
 
 #: part/serializers.py:323
 msgid "Copy Image"
@@ -5489,11 +5489,11 @@ msgstr "Copia immagine dall'articolo originale"
 
 #: part/serializers.py:328 part/templates/part/detail.html:295
 msgid "Copy BOM"
-msgstr ""
+msgstr "Copia Distinta Base"
 
 #: part/serializers.py:328
 msgid "Copy bill of materials from original part"
-msgstr ""
+msgstr "Copia fattura dei materiali dall'articolo originale"
 
 #: part/serializers.py:333
 msgid "Copy Parameters"
@@ -5501,7 +5501,7 @@ msgstr "Copia parametri"
 
 #: part/serializers.py:333
 msgid "Copy parameter data from original part"
-msgstr ""
+msgstr "Copia i dati dei parametri dall'articolo originale"
 
 #: part/serializers.py:343
 msgid "Initial Stock Quantity"
@@ -5509,43 +5509,43 @@ msgstr "Quantità iniziale"
 
 #: part/serializers.py:343
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
-msgstr ""
+msgstr "Specificare la quantità iniziale disponibile per questo Articolo. Se la quantità è zero, non viene aggiunta alcuna quantità."
 
 #: part/serializers.py:349
 msgid "Initial Stock Location"
-msgstr ""
+msgstr "Ubicazione Iniziale Magazzino"
 
 #: part/serializers.py:349
 msgid "Specify initial stock location for this Part"
-msgstr ""
+msgstr "Specificare l'ubicazione iniziale del magazzino per questo Articolo"
 
 #: part/serializers.py:359
 msgid "Select supplier (or leave blank to skip)"
-msgstr ""
+msgstr "Seleziona il fornitore (o lascia vuoto per saltare)"
 
 #: part/serializers.py:370
 msgid "Select manufacturer (or leave blank to skip)"
-msgstr ""
+msgstr "Seleziona il produttore (o lascia vuoto per saltare)"
 
 #: part/serializers.py:376
 msgid "Manufacturer part number"
-msgstr ""
+msgstr "Codice articolo Produttore"
 
 #: part/serializers.py:383
 msgid "Selected company is not a valid supplier"
-msgstr ""
+msgstr "L'azienda selezionata non è un fornitore valido"
 
 #: part/serializers.py:391
 msgid "Selected company is not a valid manufacturer"
-msgstr ""
+msgstr "L'azienda selezionata non è un produttore valido"
 
 #: part/serializers.py:403
 msgid "Manufacturer part matching this MPN already exists"
-msgstr ""
+msgstr "L'articolo del produttore che corrisponde a questo MPN esiste già"
 
 #: part/serializers.py:411
 msgid "Supplier part matching this SKU already exists"
-msgstr ""
+msgstr "L'articolo del fornitore che corrisponde a questo SKU esiste già"
 
 #: part/serializers.py:562 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:385
@@ -5554,23 +5554,23 @@ msgstr "Duplica articolo"
 
 #: part/serializers.py:562
 msgid "Copy initial data from another Part"
-msgstr ""
+msgstr "Copia i dati iniziali da un altro Articolo"
 
 #: part/serializers.py:567 templates/js/translated/part.js:68
 msgid "Initial Stock"
-msgstr ""
+msgstr "Stock iniziale"
 
 #: part/serializers.py:567
 msgid "Create Part with initial stock quantity"
-msgstr ""
+msgstr "Crea Articolo con quantità di scorta iniziale"
 
 #: part/serializers.py:572
 msgid "Supplier Information"
-msgstr ""
+msgstr "Informazioni Fornitore"
 
 #: part/serializers.py:572
 msgid "Add initial supplier information for this part"
-msgstr ""
+msgstr "Aggiungi le informazioni iniziali del fornitore per questo articolo"
 
 #: part/serializers.py:802
 msgid "Update"
@@ -5838,15 +5838,15 @@ msgstr "Varianti articolo"
 
 #: part/templates/part/detail.html:183
 msgid "Create new variant"
-msgstr ""
+msgstr "Crea nuova variante"
 
 #: part/templates/part/detail.html:184
 msgid "New Variant"
-msgstr ""
+msgstr "Nuova variante"
 
 #: part/templates/part/detail.html:211
 msgid "Add new parameter"
-msgstr ""
+msgstr "Aggiungi un nuovo parametro"
 
 #: part/templates/part/detail.html:248 part/templates/part/part_sidebar.html:57
 msgid "Related Parts"
@@ -5854,7 +5854,7 @@ msgstr "Articoli correlati"
 
 #: part/templates/part/detail.html:252 part/templates/part/detail.html:253
 msgid "Add Related"
-msgstr ""
+msgstr "Aggiungi Correlato"
 
 #: part/templates/part/detail.html:273 part/templates/part/part_sidebar.html:17
 #: report/templates/report/inventree_bill_of_materials_report.html:100
@@ -5863,40 +5863,40 @@ msgstr "Distinta base"
 
 #: part/templates/part/detail.html:278
 msgid "Export actions"
-msgstr ""
+msgstr "Esporta azioni"
 
 #: part/templates/part/detail.html:282 templates/js/translated/bom.js:309
 msgid "Export BOM"
-msgstr ""
+msgstr "Esporta Distinta Base"
 
 #: part/templates/part/detail.html:284
 msgid "Print BOM Report"
-msgstr ""
+msgstr "Stampa il report Distinta Base"
 
 #: part/templates/part/detail.html:294
 msgid "Upload BOM"
-msgstr ""
+msgstr "Carica Distinta Base"
 
 #: part/templates/part/detail.html:296
 msgid "Validate BOM"
-msgstr ""
+msgstr "Valida Distinta Base"
 
 #: part/templates/part/detail.html:301 part/templates/part/detail.html:302
 #: templates/js/translated/bom.js:1275 templates/js/translated/bom.js:1276
 msgid "Add BOM Item"
-msgstr ""
+msgstr "Aggiungi elemento Distinta Base"
 
 #: part/templates/part/detail.html:315
 msgid "Assemblies"
-msgstr ""
+msgstr "Assembla"
 
 #: part/templates/part/detail.html:333
 msgid "Part Builds"
-msgstr ""
+msgstr "Articoli prodotti"
 
 #: part/templates/part/detail.html:360 stock/templates/stock/item.html:38
 msgid "Build Order Allocations"
-msgstr ""
+msgstr "Costruisci le ubicazioni degli ordini"
 
 #: part/templates/part/detail.html:376
 msgid "Part Suppliers"
@@ -5908,7 +5908,7 @@ msgstr "Componenti Produttori"
 
 #: part/templates/part/detail.html:422
 msgid "Delete manufacturer parts"
-msgstr ""
+msgstr "Elimina articoli produttore"
 
 #: part/templates/part/detail.html:696
 msgid "Related Part"
@@ -5916,11 +5916,11 @@ msgstr "Articoli correlati"
 
 #: part/templates/part/detail.html:704
 msgid "Add Related Part"
-msgstr ""
+msgstr "Aggiungi articolo correlato"
 
 #: part/templates/part/detail.html:800
 msgid "Add Test Result Template"
-msgstr ""
+msgstr "Aggiungi risultato modello test"
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:14
@@ -5937,19 +5937,19 @@ msgstr "Importa Articoli da File"
 
 #: part/templates/part/import_wizard/part_upload.html:31
 msgid "Requirements for part import"
-msgstr ""
+msgstr "Requisiti per l'importazione di prodotto"
 
 #: part/templates/part/import_wizard/part_upload.html:33
 msgid "The part import file must contain the required named columns as provided in the "
-msgstr ""
+msgstr "Il file articolo importato deve contenere le colonne con nome richiesto come indicato nella "
 
 #: part/templates/part/import_wizard/part_upload.html:33
 msgid "Part Import Template"
-msgstr ""
+msgstr "Modello Articolo Importato"
 
 #: part/templates/part/import_wizard/part_upload.html:89
 msgid "Download Part Import Template"
-msgstr ""
+msgstr "Scarica il Modello Articolo Importato"
 
 #: part/templates/part/import_wizard/part_upload.html:92
 #: templates/js/translated/bom.js:278 templates/js/translated/bom.js:312
@@ -5965,7 +5965,7 @@ msgstr "Seleziona il formato del file"
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
-msgstr ""
+msgstr "Elenco Articolo"
 
 #: part/templates/part/part_base.html:27 part/templates/part/part_base.html:31
 msgid "You are subscribed to notifications for this part"
@@ -5973,11 +5973,11 @@ msgstr "Sei iscritto alle notifiche per questo articolo"
 
 #: part/templates/part/part_base.html:35
 msgid "Subscribe to notifications for this part"
-msgstr ""
+msgstr "Sottoscrivi le notifiche per questo articolo"
 
 #: part/templates/part/part_base.html:49
 msgid "Unink Barcode"
-msgstr ""
+msgstr "Scollega Codice a Barre"
 
 #: part/templates/part/part_base.html:54
 #: stock/templates/stock/item_base.html:63
@@ -5987,7 +5987,7 @@ msgstr "Stampa Etichetta"
 
 #: part/templates/part/part_base.html:60
 msgid "Show pricing information"
-msgstr ""
+msgstr "Mostra informazioni sui prezzi"
 
 #: part/templates/part/part_base.html:65
 #: stock/templates/stock/item_base.html:111
@@ -5997,15 +5997,15 @@ msgstr "Azioni magazzino"
 
 #: part/templates/part/part_base.html:72
 msgid "Count part stock"
-msgstr ""
+msgstr "Conta articoli magazzino"
 
 #: part/templates/part/part_base.html:78
 msgid "Transfer part stock"
-msgstr ""
+msgstr "Trasferisci giacenza"
 
 #: part/templates/part/part_base.html:93
 msgid "Part actions"
-msgstr ""
+msgstr "Azioni articolo"
 
 #: part/templates/part/part_base.html:96
 msgid "Duplicate part"
@@ -6021,19 +6021,19 @@ msgstr "Cancella articolo"
 
 #: part/templates/part/part_base.html:121
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "L'articolo è una articolo modello (le varianti possono essere fatte da questo articolo)"
 
 #: part/templates/part/part_base.html:125
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "L'articolo può essere assemblato da altri articoli"
 
 #: part/templates/part/part_base.html:129
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "L'articolo può essere utilizzato negli assemblaggi"
 
 #: part/templates/part/part_base.html:133
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "Lo stock dell'articolo è tracciato dal numero di serie"
 
 #: part/templates/part/part_base.html:137
 msgid "Part can be purchased from external suppliers"
@@ -6908,19 +6908,19 @@ msgstr "Costruisci per questo elemento di magazzino"
 
 #: stock/models.py:747
 msgid "Source Purchase Order"
-msgstr ""
+msgstr "Origina Ordine di Acquisto"
 
 #: stock/models.py:750
 msgid "Purchase order for this stock item"
-msgstr ""
+msgstr "Ordine d'acquisto per questo articolo in magazzino"
 
 #: stock/models.py:756
 msgid "Destination Sales Order"
-msgstr ""
+msgstr "Destinazione Ordine di Vendita"
 
 #: stock/models.py:763
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
-msgstr ""
+msgstr "Data di scadenza per l'elemento di magazzino. Le scorte saranno considerate scadute dopo questa data"
 
 #: stock/models.py:778
 msgid "Delete on deplete"
@@ -6928,142 +6928,142 @@ msgstr "Elimina al esaurimento"
 
 #: stock/models.py:778
 msgid "Delete this Stock Item when stock is depleted"
-msgstr ""
+msgstr "Cancella questo Elemento di Magazzino quando la giacenza è esaurita"
 
 #: stock/models.py:791 stock/templates/stock/item.html:132
 msgid "Stock Item Notes"
-msgstr ""
+msgstr "Note Elemento di magazzino"
 
 #: stock/models.py:799
 msgid "Single unit purchase price at time of purchase"
-msgstr ""
+msgstr "Prezzo di acquisto unitario al momento dell’acquisto"
 
 #: stock/models.py:827
 msgid "Converted to part"
-msgstr ""
+msgstr "Convertito in articolo"
 
 #: stock/models.py:1317
 msgid "Part is not set as trackable"
-msgstr ""
+msgstr "L'articolo non è impostato come tracciabile"
 
 #: stock/models.py:1323
 msgid "Quantity must be integer"
-msgstr ""
+msgstr "La quantità deve essere un numero intero"
 
 #: stock/models.py:1329
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({n})"
-msgstr ""
+msgstr "La quantità non deve superare la quantità disponibile ({n})"
 
 #: stock/models.py:1332
 msgid "Serial numbers must be a list of integers"
-msgstr ""
+msgstr "I numeri di serie devono essere numeri interi"
 
 #: stock/models.py:1335
 msgid "Quantity does not match serial numbers"
-msgstr ""
+msgstr "La quantità non corrisponde ai numeri di serie"
 
 #: stock/models.py:1342
 #, python-brace-format
 msgid "Serial numbers already exist: {exists}"
-msgstr ""
+msgstr "Numeri di serie già esistenti: {exists}"
 
 #: stock/models.py:1412
 msgid "Stock item has been assigned to a sales order"
-msgstr ""
+msgstr "L'elemento di magazzino è stato assegnato a un ordine di vendita"
 
 #: stock/models.py:1415
 msgid "Stock item is installed in another item"
-msgstr ""
+msgstr "L'elemento di magazzino è installato in un altro elemento"
 
 #: stock/models.py:1418
 msgid "Stock item contains other items"
-msgstr ""
+msgstr "L'elemento di magazzino contiene altri elementi"
 
 #: stock/models.py:1421
 msgid "Stock item has been assigned to a customer"
-msgstr ""
+msgstr "L'elemento di magazzino è stato assegnato a un cliente"
 
 #: stock/models.py:1424
 msgid "Stock item is currently in production"
-msgstr ""
+msgstr "L'elemento di magazzino è attualmente in produzione"
 
 #: stock/models.py:1427
 msgid "Serialized stock cannot be merged"
-msgstr ""
+msgstr "Il magazzino serializzato non può essere unito"
 
 #: stock/models.py:1434 stock/serializers.py:963
 msgid "Duplicate stock items"
-msgstr ""
+msgstr "Duplica elementi di magazzino"
 
 #: stock/models.py:1438
 msgid "Stock items must refer to the same part"
-msgstr ""
+msgstr "Gli elementi di magazzino devono riferirsi allo stesso articolo"
 
 #: stock/models.py:1442
 msgid "Stock items must refer to the same supplier part"
-msgstr ""
+msgstr "Gli elementi di magazzino devono riferirsi allo stesso articolo fornitore"
 
 #: stock/models.py:1446
 msgid "Stock status codes must match"
-msgstr ""
+msgstr "I codici di stato dello stock devono corrispondere"
 
 #: stock/models.py:1615
 msgid "StockItem cannot be moved as it is not in stock"
-msgstr ""
+msgstr "Le giacenze non possono essere spostate perché non disponibili"
 
 #: stock/models.py:2083
 msgid "Entry notes"
-msgstr ""
+msgstr "Note d'ingresso"
 
 #: stock/models.py:2141
 msgid "Value must be provided for this test"
-msgstr ""
+msgstr "Il valore deve essere fornito per questo test"
 
 #: stock/models.py:2147
 msgid "Attachment must be uploaded for this test"
-msgstr ""
+msgstr "L'allegato deve essere caricato per questo test"
 
 #: stock/models.py:2166
 msgid "Test name"
-msgstr ""
+msgstr "Nome Test"
 
 #: stock/models.py:2172
 msgid "Test result"
-msgstr ""
+msgstr "Risultato Test"
 
 #: stock/models.py:2178
 msgid "Test output value"
-msgstr ""
+msgstr "Test valore output"
 
 #: stock/models.py:2185
 msgid "Test result attachment"
-msgstr ""
+msgstr "Risultato della prova allegato"
 
 #: stock/models.py:2191
 msgid "Test notes"
-msgstr ""
+msgstr "Note del test"
 
 #: stock/serializers.py:75
 msgid "Serial number is too large"
-msgstr ""
+msgstr "Il numero di serie è troppo grande"
 
 #: stock/serializers.py:176
 msgid "Purchase price of this stock item"
-msgstr ""
+msgstr "Prezzo di acquisto di questo elemento di magazzino"
 
 #: stock/serializers.py:286
 msgid "Enter number of stock items to serialize"
-msgstr ""
+msgstr "Inserisci il numero di elementi di magazzino da serializzare"
 
 #: stock/serializers.py:298
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
-msgstr ""
+msgstr "La quantità non deve superare la quantità disponibile ({q})"
 
 #: stock/serializers.py:304
 msgid "Enter serial numbers for new items"
-msgstr ""
+msgstr "Inserisci i numeri di serie per i nuovi elementi"
 
 #: stock/serializers.py:315 stock/serializers.py:920 stock/serializers.py:1153
 msgid "Destination stock location"
@@ -7071,11 +7071,11 @@ msgstr "Posizione magazzino di destinazione"
 
 #: stock/serializers.py:322
 msgid "Optional note field"
-msgstr ""
+msgstr "Note opzionali elemento"
 
 #: stock/serializers.py:332
 msgid "Serial numbers cannot be assigned to this part"
-msgstr ""
+msgstr "Numeri di serie non possono essere assegnati a questo articolo"
 
 #: stock/serializers.py:353
 msgid "Serial numbers already exist"
@@ -7083,43 +7083,43 @@ msgstr "Numeri di serie già esistenti"
 
 #: stock/serializers.py:393
 msgid "Select stock item to install"
-msgstr ""
+msgstr "Seleziona elementi di magazzino da installare"
 
 #: stock/serializers.py:406
 msgid "Stock item is unavailable"
-msgstr ""
+msgstr "Elemento di magazzino non disponibile"
 
 #: stock/serializers.py:413
 msgid "Selected part is not in the Bill of Materials"
-msgstr ""
+msgstr "L'articolo selezionato non è nella Fattura dei Materiali"
 
 #: stock/serializers.py:450
 msgid "Destination location for uninstalled item"
-msgstr ""
+msgstr "Posizione di destinazione per gli elementi disinstallati"
 
 #: stock/serializers.py:455 stock/serializers.py:536
 msgid "Add transaction note (optional)"
-msgstr ""
+msgstr "Aggiungi nota di transazione (opzionale)"
 
 #: stock/serializers.py:489
 msgid "Select part to convert stock item into"
-msgstr ""
+msgstr "Seleziona l'articolo in cui convertire l'elemento di magazzino"
 
 #: stock/serializers.py:500
 msgid "Selected part is not a valid option for conversion"
-msgstr ""
+msgstr "L'articolo selezionato non è una valida opzione per la conversione"
 
 #: stock/serializers.py:531
 msgid "Destination location for returned item"
-msgstr ""
+msgstr "Posizione di destinazione per l'elemento restituito"
 
 #: stock/serializers.py:775
 msgid "Part must be salable"
-msgstr ""
+msgstr "L'articolo deve essere vendibile"
 
 #: stock/serializers.py:779
 msgid "Item is allocated to a sales order"
-msgstr ""
+msgstr "L'elemento è assegnato a un ordine di vendita"
 
 #: stock/serializers.py:783
 msgid "Item is allocated to a build order"
@@ -7807,7 +7807,7 @@ msgstr "Plugin inattivi"
 
 #: templates/InvenTree/settings/plugin.html:94
 msgid "Plugin Error Stack"
-msgstr ""
+msgstr "Plugin Errore Stack"
 
 #: templates/InvenTree/settings/plugin.html:103
 msgid "Stage"
@@ -7857,15 +7857,15 @@ msgstr "Questo plugin è stato installato come pacchetto"
 
 #: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local server path"
-msgstr ""
+msgstr "Questo plugin è stato trovato in un percorso server locale"
 
 #: templates/InvenTree/settings/plugin_settings.html:94
 msgid "Installation path"
-msgstr ""
+msgstr "Percorso d'installazione"
 
 #: templates/InvenTree/settings/plugin_settings.html:102
 msgid "This is a builtin plugin which cannot be disabled"
-msgstr ""
+msgstr "Questo è un plugin integrato che non può essere disabilitato"
 
 #: templates/InvenTree/settings/plugin_settings.html:107
 msgid "Commit Author"
@@ -7874,7 +7874,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin_settings.html:111
 #: templates/about.html:36
 msgid "Commit Date"
-msgstr ""
+msgstr "Data d'impegno"
 
 #: templates/InvenTree/settings/plugin_settings.html:115
 #: templates/about.html:29
@@ -7887,23 +7887,23 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:127
 msgid "Sign Status"
-msgstr ""
+msgstr "Stato Firma"
 
 #: templates/InvenTree/settings/plugin_settings.html:132
 msgid "Sign Key"
-msgstr ""
+msgstr "Chiave Di Firma"
 
 #: templates/InvenTree/settings/po.html:7
 msgid "Purchase Order Settings"
-msgstr ""
+msgstr "Impostazioni Ordine di Acquisto"
 
 #: templates/InvenTree/settings/pricing.html:7
 msgid "Pricing Settings"
-msgstr ""
+msgstr "Impostazioni Prezzi"
 
 #: templates/InvenTree/settings/pricing.html:33
 msgid "Exchange Rates"
-msgstr ""
+msgstr "Tassi di cambio"
 
 #: templates/InvenTree/settings/pricing.html:37
 msgid "Update Now"
@@ -7912,7 +7912,7 @@ msgstr "Aggiorna Ora"
 #: templates/InvenTree/settings/pricing.html:45
 #: templates/InvenTree/settings/pricing.html:49
 msgid "Last Update"
-msgstr ""
+msgstr "Ultimo Aggiornamento"
 
 #: templates/InvenTree/settings/pricing.html:49
 msgid "Never"
@@ -7921,35 +7921,35 @@ msgstr "Mai"
 #: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reports.html:9
 msgid "Report Settings"
-msgstr ""
+msgstr "Impostazioni Report"
 
 #: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
-msgstr ""
+msgstr "Nessun valore impostato"
 
 #: templates/InvenTree/settings/setting.html:44
 msgid "Edit setting"
-msgstr ""
+msgstr "Modifica impostazioni"
 
 #: templates/InvenTree/settings/settings.html:118
 msgid "Edit Plugin Setting"
-msgstr ""
+msgstr "Modifica Impostazioni Plugin"
 
 #: templates/InvenTree/settings/settings.html:120
 msgid "Edit Notification Setting"
-msgstr ""
+msgstr "Modifica Impostazioni Notifica"
 
 #: templates/InvenTree/settings/settings.html:123
 msgid "Edit Global Setting"
-msgstr ""
+msgstr "Modifica Impostazioni Globali"
 
 #: templates/InvenTree/settings/settings.html:125
 msgid "Edit User Setting"
-msgstr ""
+msgstr "Modifica Impostazioni Utente"
 
 #: templates/InvenTree/settings/settings.html:196
 msgid "Rate"
-msgstr ""
+msgstr "Voto"
 
 #: templates/InvenTree/settings/settings.html:261
 msgid "No category parameter templates found"
@@ -7958,12 +7958,12 @@ msgstr "Nessun parametro di categoria trovato"
 #: templates/InvenTree/settings/settings.html:283
 #: templates/InvenTree/settings/settings.html:408
 msgid "Edit Template"
-msgstr ""
+msgstr "Modifica Template"
 
 #: templates/InvenTree/settings/settings.html:284
 #: templates/InvenTree/settings/settings.html:409
 msgid "Delete Template"
-msgstr ""
+msgstr "Elimina Template"
 
 #: templates/InvenTree/settings/settings.html:324
 msgid "Create Category Parameter Template"
@@ -7975,29 +7975,29 @@ msgstr "Elimina Modello Parametro Categoria"
 
 #: templates/InvenTree/settings/settings.html:381
 msgid "No part parameter templates found"
-msgstr ""
+msgstr "Nessun parametro dell'articolo templates trovato"
 
 #: templates/InvenTree/settings/settings.html:385
 #: templates/js/translated/news.js:29
 #: templates/js/translated/notification.js:36
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: templates/InvenTree/settings/settings.html:427
 msgid "Create Part Parameter Template"
-msgstr ""
+msgstr "Crea Parametro Articolo Template"
 
 #: templates/InvenTree/settings/settings.html:446
 msgid "Edit Part Parameter Template"
-msgstr ""
+msgstr "Modifica Parametro Articolo Template"
 
 #: templates/InvenTree/settings/settings.html:460
 msgid "Any parameters which reference this template will also be deleted"
-msgstr ""
+msgstr "Ogni parametro che fa riferimento a questo modello verrà eliminato"
 
 #: templates/InvenTree/settings/settings.html:468
 msgid "Delete Part Parameter Template"
-msgstr ""
+msgstr "Elimina Parametro Articolo Template"
 
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
@@ -8007,16 +8007,16 @@ msgstr "Impostazioni Utente"
 #: templates/InvenTree/settings/sidebar.html:9
 #: templates/InvenTree/settings/user.html:12
 msgid "Account Settings"
-msgstr ""
+msgstr "Impostazioni Account"
 
 #: templates/InvenTree/settings/sidebar.html:11
 #: templates/InvenTree/settings/user_display.html:9
 msgid "Display Settings"
-msgstr ""
+msgstr "Impostazioni Schermo"
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
-msgstr ""
+msgstr "Home Page"
 
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/InvenTree/settings/user_search.html:9
@@ -8026,32 +8026,32 @@ msgstr "Impostazioni di ricerca"
 #: templates/InvenTree/settings/sidebar.html:19
 #: templates/InvenTree/settings/sidebar.html:39
 msgid "Label Printing"
-msgstr ""
+msgstr "Stampa Etichette"
 
 #: templates/InvenTree/settings/sidebar.html:21
 #: templates/InvenTree/settings/sidebar.html:41
 msgid "Reporting"
-msgstr ""
+msgstr "Rapporti"
 
 #: templates/InvenTree/settings/sidebar.html:26
 msgid "Global Settings"
-msgstr ""
+msgstr "Impostazioni Globali"
 
 #: templates/InvenTree/settings/sidebar.html:29
 msgid "Server Configuration"
-msgstr ""
+msgstr "Configurazione Server"
 
 #: templates/InvenTree/settings/sidebar.html:45
 msgid "Categories"
-msgstr ""
+msgstr "Categorie"
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
-msgstr ""
+msgstr "Impostazioni Ordine di Vendita"
 
 #: templates/InvenTree/settings/stock.html:7
 msgid "Stock Settings"
-msgstr ""
+msgstr "Impostazioni Magazzino"
 
 #: templates/InvenTree/settings/user.html:18
 #: templates/account/password_reset_from_key.html:4
@@ -8079,7 +8079,7 @@ msgstr "Cognome"
 
 #: templates/InvenTree/settings/user.html:54
 msgid "The following email addresses are associated with your account:"
-msgstr ""
+msgstr "I seguenti indirizzi email sono associati con il tuo account:"
 
 #: templates/InvenTree/settings/user.html:75
 msgid "Verified"
@@ -8107,7 +8107,7 @@ msgstr "Attenzione:"
 
 #: templates/InvenTree/settings/user.html:96
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
-msgstr ""
+msgstr "Al momento non hai nessun indirizzo email impostato. Dovresti aggiungere un indirizzo email in modo da poter ricevere notifiche, reimpostare la password, ecc."
 
 #: templates/InvenTree/settings/user.html:104
 msgid "Add Email Address"
@@ -8119,35 +8119,35 @@ msgstr "Aggiungi Email"
 
 #: templates/InvenTree/settings/user.html:117
 msgid "Social Accounts"
-msgstr ""
+msgstr "Account Social"
 
 #: templates/InvenTree/settings/user.html:122
 msgid "You can sign in to your account using any of the following third party accounts:"
-msgstr ""
+msgstr "Puoi accedere al tuo account utilizzando uno dei seguenti account di terze parti:"
 
 #: templates/InvenTree/settings/user.html:158
 msgid "There are no social network accounts connected to this account."
-msgstr ""
+msgstr "Non ci sono account di social network connessi a questo account."
 
 #: templates/InvenTree/settings/user.html:164
 msgid "Add a 3rd Party Account"
-msgstr ""
+msgstr "Aggiungi un Account di Terze Parti"
 
 #: templates/InvenTree/settings/user.html:174
 msgid "Multifactor"
-msgstr ""
+msgstr "Multifattore"
 
 #: templates/InvenTree/settings/user.html:179
 msgid "You have these factors available:"
-msgstr ""
+msgstr "Sono disponibili questi fattori:"
 
 #: templates/InvenTree/settings/user.html:189
 msgid "TOTP"
-msgstr ""
+msgstr "TOTP"
 
 #: templates/InvenTree/settings/user.html:195
 msgid "Static"
-msgstr ""
+msgstr "Statico"
 
 #: templates/InvenTree/settings/user.html:204
 msgid "Multifactor authentication is not configured for your account"
@@ -8390,7 +8390,7 @@ msgstr "Sei sicuro di voler uscire?"
 #: templates/account/logout.html:27 templates/allauth_2fa/backup_tokens.html:35
 #: templates/allauth_2fa/remove.html:24 templates/allauth_2fa/setup.html:44
 msgid "Return to Site"
-msgstr ""
+msgstr "Ritorna al Sito"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
@@ -8411,12 +8411,12 @@ msgstr "Questa funzione è attualmente disabilitata. Contatta un amministratore.
 
 #: templates/account/password_reset_from_key.html:7
 msgid "Bad Token"
-msgstr ""
+msgstr "Token Errato"
 
 #: templates/account/password_reset_from_key.html:11
 #, python-format
 msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
-msgstr ""
+msgstr "Il link di reset della password non era valido, forse perché è già stato utilizzato. Si prega di richiedere un <a href=\"%(passwd_reset_url)s\">nuovo reset della password</a>."
 
 #: templates/account/password_reset_from_key.html:18
 msgid "Change password"
@@ -8429,26 +8429,26 @@ msgstr "La tua password è stata modificata."
 #: templates/account/signup.html:13
 #, python-format
 msgid "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr ""
+msgstr "Hai già un account? Allora <a href=\"%(login_url)s\">accedi</a>."
 
 #: templates/account/signup.html:28
 msgid "Use a SSO-provider for signup"
-msgstr ""
+msgstr "Usa un SSO-provider per la registrazione"
 
 #: templates/account/signup_closed.html:5
 #: templates/account/signup_closed.html:8
 msgid "Sign Up Closed"
-msgstr ""
+msgstr "Registrazione Chiusa"
 
 #: templates/account/signup_closed.html:10
 msgid "Sign up is currently closed."
-msgstr ""
+msgstr "L'iscrizione è attualmente chiusa."
 
 #: templates/account/signup_closed.html:15
 #: templates/socialaccount/authentication_error.html:19
 #: templates/socialaccount/login.html:25 templates/socialaccount/signup.html:27
 msgid "Return to login page"
-msgstr ""
+msgstr "Torna alla pagina di login"
 
 #: templates/admin_button.html:8
 msgid "View in administration panel"
@@ -8456,67 +8456,67 @@ msgstr "Visualizza nel pannello di amministrazione"
 
 #: templates/allauth_2fa/authenticate.html:5
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "Autenticazione a Due Fattori"
 
 #: templates/allauth_2fa/authenticate.html:13
 msgid "Authenticate"
-msgstr ""
+msgstr "Autenticazione"
 
 #: templates/allauth_2fa/backup_tokens.html:6
 msgid "Two-Factor Authentication Backup Tokens"
-msgstr ""
+msgstr "Token Di Backup Dell'Autenticazione A Due Fattori"
 
 #: templates/allauth_2fa/backup_tokens.html:17
 msgid "Backup tokens have been generated, but are not revealed here for security reasons. Press the button below to generate new ones."
-msgstr ""
+msgstr "I token di backup sono stati generati, ma non vengono rivelati qui per motivi di sicurezza. Premi il pulsante qui sotto per generarne di nuovi."
 
 #: templates/allauth_2fa/backup_tokens.html:20
 msgid "No backup tokens are available. Press the button below to generate some."
-msgstr ""
+msgstr "Nessun token di backup disponibile. Premi il pulsante qui sotto per generarne alcuni."
 
 #: templates/allauth_2fa/backup_tokens.html:28
 msgid "Generate Tokens"
-msgstr ""
+msgstr "Genera token"
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
-msgstr ""
+msgstr "Disabilita Autenticazione a Due Fattori"
 
 #: templates/allauth_2fa/remove.html:9
 msgid "Are you sure?"
-msgstr ""
+msgstr "Sei sicuro?"
 
 #: templates/allauth_2fa/remove.html:17
 msgid "Disable 2FA"
-msgstr ""
+msgstr "Disabilita l'autenticazione a due fattori"
 
 #: templates/allauth_2fa/setup.html:6
 msgid "Setup Two-Factor Authentication"
-msgstr ""
+msgstr "Imposta l'Autenticazione a Due Fattori"
 
 #: templates/allauth_2fa/setup.html:10
 msgid "Step 1"
-msgstr ""
+msgstr "Passaggio 1"
 
 #: templates/allauth_2fa/setup.html:14
 msgid "Scan the QR code below with a token generator of your choice (for instance Google Authenticator)."
-msgstr ""
+msgstr "Scansiona il codice QR qui sotto con un generatore di token di tua scelta (per esempio Google Authenticator)."
 
 #: templates/allauth_2fa/setup.html:23
 msgid "Step 2"
-msgstr ""
+msgstr "Passaggio 2"
 
 #: templates/allauth_2fa/setup.html:27
 msgid "Input a token generated by the app:"
-msgstr ""
+msgstr "Inserisci un token generato dall'app:"
 
 #: templates/allauth_2fa/setup.html:37
 msgid "Verify"
-msgstr ""
+msgstr "Verifica"
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
 msgid "Add Link"
-msgstr ""
+msgstr "Aggiungi Collegamento"
 
 #: templates/attachment_button.html:7 templates/js/translated/attachment.js:36
 msgid "Add Attachment"
@@ -8524,11 +8524,11 @@ msgstr "Aggiungi allegato"
 
 #: templates/attachment_table.html:11
 msgid "Delete selected attachments"
-msgstr ""
+msgstr "Elimina allegati selezionati"
 
 #: templates/attachment_table.html:12 templates/js/translated/attachment.js:113
 msgid "Delete Attachments"
-msgstr ""
+msgstr "Elimina Allegati"
 
 #: templates/base.html:101
 msgid "Server Restart Required"
@@ -8553,24 +8553,24 @@ msgstr "Comprimi tutte le righe"
 #: templates/email/overdue_sales_order.html:9
 #: templates/email/purchase_order_received.html:9
 msgid "Click on the following link to view this order"
-msgstr ""
+msgstr "Clicca il seguente link per visualizzare quest'ordine"
 
 #: templates/email/build_order_required_stock.html:7
 msgid "Stock is required for the following build order"
-msgstr ""
+msgstr "La giacenza è richiesta per il seguente ordine di produzione"
 
 #: templates/email/build_order_required_stock.html:8
 #, python-format
 msgid "Build order %(build)s - building %(quantity)s x %(part)s"
-msgstr ""
+msgstr "Ordine di produzione %(build)s - produzione %(quantity)s x %(part)s"
 
 #: templates/email/build_order_required_stock.html:10
 msgid "Click on the following link to view this build order"
-msgstr ""
+msgstr "Clicca il seguente link per visualizzare quest'ordine di produzione"
 
 #: templates/email/build_order_required_stock.html:14
 msgid "The following parts are low on required stock"
-msgstr ""
+msgstr "I seguenti articoli sono pochi nel magazzino richiesto"
 
 #: templates/email/build_order_required_stock.html:18
 #: templates/js/translated/bom.js:1637
@@ -8584,7 +8584,7 @@ msgstr "Stai ricevendo questa email perché sei iscritto alle notifiche per ques
 
 #: templates/email/low_stock_notification.html:9
 msgid "Click on the following link to view this part"
-msgstr ""
+msgstr "Clicca il seguente link per visualizzare questo articolo"
 
 #: templates/email/low_stock_notification.html:19
 #: templates/js/translated/part.js:2709
@@ -8597,75 +8597,75 @@ msgstr "Espandi tutte le righe"
 
 #: templates/js/translated/api.js:195 templates/js/translated/modals.js:1080
 msgid "No Response"
-msgstr ""
+msgstr "Nessuna Risposta"
 
 #: templates/js/translated/api.js:196 templates/js/translated/modals.js:1081
 msgid "No response from the InvenTree server"
-msgstr ""
+msgstr "Nessuna risposta dal server InvenTree"
 
 #: templates/js/translated/api.js:202
 msgid "Error 400: Bad request"
-msgstr ""
+msgstr "Errore 400: Richiesta Errata"
 
 #: templates/js/translated/api.js:203
 msgid "API request returned error code 400"
-msgstr ""
+msgstr "Richiesta API restituito codice di errore 400"
 
 #: templates/js/translated/api.js:207 templates/js/translated/modals.js:1090
 msgid "Error 401: Not Authenticated"
-msgstr ""
+msgstr "Errore 401: Non Autenticato"
 
 #: templates/js/translated/api.js:208 templates/js/translated/modals.js:1091
 msgid "Authentication credentials not supplied"
-msgstr ""
+msgstr "Credenziali di autenticazione non fornite"
 
 #: templates/js/translated/api.js:212 templates/js/translated/modals.js:1095
 msgid "Error 403: Permission Denied"
-msgstr ""
+msgstr "Errore 403 - Permesso negato"
 
 #: templates/js/translated/api.js:213 templates/js/translated/modals.js:1096
 msgid "You do not have the required permissions to access this function"
-msgstr ""
+msgstr "Non hai i permessi necessari per accedere a questa funzione"
 
 #: templates/js/translated/api.js:217 templates/js/translated/modals.js:1100
 msgid "Error 404: Resource Not Found"
-msgstr ""
+msgstr "Errore 404: Risorsa Non Trovata"
 
 #: templates/js/translated/api.js:218 templates/js/translated/modals.js:1101
 msgid "The requested resource could not be located on the server"
-msgstr ""
+msgstr "La risorsa richiesta non può essere localizzata sul server"
 
 #: templates/js/translated/api.js:222
 msgid "Error 405: Method Not Allowed"
-msgstr ""
+msgstr "Errore 405: Metodo Non Consentito"
 
 #: templates/js/translated/api.js:223
 msgid "HTTP method not allowed at URL"
-msgstr ""
+msgstr "Metodo HTTP non consentito all'URL"
 
 #: templates/js/translated/api.js:227 templates/js/translated/modals.js:1105
 msgid "Error 408: Timeout"
-msgstr ""
+msgstr "Errore 408: Timeout"
 
 #: templates/js/translated/api.js:228 templates/js/translated/modals.js:1106
 msgid "Connection timeout while requesting data from server"
-msgstr ""
+msgstr "Timeout connessione durante la richiesta di dati dal server"
 
 #: templates/js/translated/api.js:231
 msgid "Unhandled Error Code"
-msgstr ""
+msgstr "Codice Di Errore Non Gestito"
 
 #: templates/js/translated/api.js:232
 msgid "Error code"
-msgstr ""
+msgstr "Codice errore"
 
 #: templates/js/translated/attachment.js:98
 msgid "All selected attachments will be deleted"
-msgstr ""
+msgstr "Tutti gli allegati selezionati saranno eliminati"
 
 #: templates/js/translated/attachment.js:194
 msgid "No attachments found"
-msgstr ""
+msgstr "Allegati non trovati"
 
 #: templates/js/translated/attachment.js:220
 msgid "Edit Attachment"
@@ -8896,164 +8896,164 @@ msgstr ""
 
 #: templates/js/translated/bom.js:622
 msgid "Are you sure you wish to remove this substitute part link?"
-msgstr ""
+msgstr "Sei sicuro di voler rimuovere questo collegamento all' articolo sostitutivo?"
 
 #: templates/js/translated/bom.js:628
 msgid "Remove Substitute Part"
-msgstr ""
+msgstr "Rimuovi Articolo Sostitutivo"
 
 #: templates/js/translated/bom.js:667
 msgid "Add Substitute"
-msgstr ""
+msgstr "Aggiungi Sostitutivo"
 
 #: templates/js/translated/bom.js:668
 msgid "Edit BOM Item Substitutes"
-msgstr ""
+msgstr "Modifica Elementi Sostitutivi Distinta Base"
 
 #: templates/js/translated/bom.js:730
 msgid "All selected BOM items will be deleted"
-msgstr ""
+msgstr "Tutti gli elementi selezionati della Distinta Base saranno eliminati"
 
 #: templates/js/translated/bom.js:746
 msgid "Delete selected BOM items?"
-msgstr ""
+msgstr "Elimina gli Elementi selezionati della Distinta Base?"
 
 #: templates/js/translated/bom.js:875
 msgid "Load BOM for subassembly"
-msgstr ""
+msgstr "Carica la Distinta Base per il sotto assemblaggio"
 
 #: templates/js/translated/bom.js:885
 msgid "Substitutes Available"
-msgstr ""
+msgstr "Sostituti Disponibili"
 
 #: templates/js/translated/bom.js:889 templates/js/translated/build.js:1846
 msgid "Variant stock allowed"
-msgstr ""
+msgstr "Variante stock consentita"
 
 #: templates/js/translated/bom.js:979
 msgid "Substitutes"
-msgstr ""
+msgstr "Sostituti"
 
 #: templates/js/translated/bom.js:1030 templates/js/translated/bom.js:1268
 msgid "View BOM"
-msgstr ""
+msgstr "Visualizza Distinta Base"
 
 #: templates/js/translated/bom.js:1102
 msgid "BOM pricing is complete"
-msgstr ""
+msgstr "I prezzi Distinta Base sono completi"
 
 #: templates/js/translated/bom.js:1107
 msgid "BOM pricing is incomplete"
-msgstr ""
+msgstr "I prezzi Distinta Base sono incompleti"
 
 #: templates/js/translated/bom.js:1114
 msgid "No pricing available"
-msgstr ""
+msgstr "Nessun prezzo disponibile"
 
 #: templates/js/translated/bom.js:1145 templates/js/translated/build.js:1918
 #: templates/js/translated/order.js:3960
 msgid "No Stock Available"
-msgstr ""
+msgstr "Nessuna Scorta Disponibile"
 
 #: templates/js/translated/bom.js:1150 templates/js/translated/build.js:1922
 msgid "Includes variant and substitute stock"
-msgstr ""
+msgstr "Include variante e scorte sostitutive"
 
 #: templates/js/translated/bom.js:1152 templates/js/translated/build.js:1924
 #: templates/js/translated/part.js:1044 templates/js/translated/part.js:1826
 msgid "Includes variant stock"
-msgstr ""
+msgstr "Comprende varianti magazzino"
 
 #: templates/js/translated/bom.js:1154 templates/js/translated/build.js:1926
 msgid "Includes substitute stock"
-msgstr ""
+msgstr "Comprende le scorte sostitutive"
 
 #: templates/js/translated/bom.js:1179 templates/js/translated/build.js:1909
 #: templates/js/translated/build.js:1996
 msgid "Consumable item"
-msgstr ""
+msgstr "Elementi consumabili"
 
 #: templates/js/translated/bom.js:1239
 msgid "Validate BOM Item"
-msgstr ""
+msgstr "Convalida elemento Distinta Base"
 
 #: templates/js/translated/bom.js:1241
 msgid "This line has been validated"
-msgstr ""
+msgstr "Questa linea è stata convalidata"
 
 #: templates/js/translated/bom.js:1243
 msgid "Edit substitute parts"
-msgstr ""
+msgstr "Modifica articoli sostitutivi"
 
 #: templates/js/translated/bom.js:1245 templates/js/translated/bom.js:1441
 msgid "Edit BOM Item"
-msgstr ""
+msgstr "Modifica elemento Distinta Base"
 
 #: templates/js/translated/bom.js:1247
 msgid "Delete BOM Item"
-msgstr ""
+msgstr "Cancella elemento Distinta Base"
 
 #: templates/js/translated/bom.js:1352 templates/js/translated/build.js:1690
 msgid "No BOM items found"
-msgstr ""
+msgstr "Nessun elemento trovato in Distinta Base"
 
 #: templates/js/translated/bom.js:1620 templates/js/translated/build.js:1829
 msgid "Required Part"
-msgstr ""
+msgstr "Articolo richiesto"
 
 #: templates/js/translated/bom.js:1646
 msgid "Inherited from parent BOM"
-msgstr ""
+msgstr "Ereditato dalla Distinta Base principale"
 
 #: templates/js/translated/build.js:96
 msgid "Edit Build Order"
-msgstr ""
+msgstr "Modifica Ordine di produzione"
 
 #: templates/js/translated/build.js:139
 msgid "Create Build Order"
-msgstr ""
+msgstr "Crea Ordine di Produzione"
 
 #: templates/js/translated/build.js:172
 msgid "Cancel Build Order"
-msgstr ""
+msgstr "Annulla Ordine Di Produzione"
 
 #: templates/js/translated/build.js:181
 msgid "Are you sure you wish to cancel this build?"
-msgstr ""
+msgstr "Sei sicuro di voler annullare questa produzione?"
 
 #: templates/js/translated/build.js:187
 msgid "Stock items have been allocated to this build order"
-msgstr ""
+msgstr "Gli elementi di magazzino è stata assegnata a questo ordine di produzione"
 
 #: templates/js/translated/build.js:194
 msgid "There are incomplete outputs remaining for this build order"
-msgstr ""
+msgstr "Ci sono output incompleti rimanenti per questo ordine di produzione"
 
 #: templates/js/translated/build.js:246
 msgid "Build order is ready to be completed"
-msgstr ""
+msgstr "L'ordine di produzione è pronto per essere completato"
 
 #: templates/js/translated/build.js:254
 msgid "This build order cannot be completed as there are incomplete outputs"
-msgstr ""
+msgstr "Questo ordine di produzione non può essere completato in quanto ci sono output incompleti"
 
 #: templates/js/translated/build.js:259
 msgid "Build Order is incomplete"
-msgstr ""
+msgstr "L'Ordine di Produzione è incompleto"
 
 #: templates/js/translated/build.js:277
 msgid "Complete Build Order"
-msgstr ""
+msgstr "Completa l'Ordine di Produzione"
 
 #: templates/js/translated/build.js:318 templates/js/translated/stock.js:94
 #: templates/js/translated/stock.js:236
 msgid "Next available serial number"
-msgstr ""
+msgstr "Il prossimo numero di serie disponibile è"
 
 #: templates/js/translated/build.js:320 templates/js/translated/stock.js:96
 #: templates/js/translated/stock.js:238
 msgid "Latest serial number"
-msgstr ""
+msgstr "Ultimo Numero Di Serie"
 
 #: templates/js/translated/build.js:329
 msgid "The Bill of Materials contains trackable parts"
@@ -9061,47 +9061,47 @@ msgstr "La distinta base contiene articoli tracciabili"
 
 #: templates/js/translated/build.js:330
 msgid "Build outputs must be generated individually"
-msgstr ""
+msgstr "Gli outputs della produzione devono essere generati singolarmente"
 
 #: templates/js/translated/build.js:338
 msgid "Trackable parts can have serial numbers specified"
-msgstr ""
+msgstr "Gli articoli tracciabili possono avere numeri di serie specificati"
 
 #: templates/js/translated/build.js:339
 msgid "Enter serial numbers to generate multiple single build outputs"
-msgstr ""
+msgstr "Inserisci i numeri seriali per generare più output di produzione"
 
 #: templates/js/translated/build.js:346
 msgid "Create Build Output"
-msgstr ""
+msgstr "Crea Output di Produzione"
 
 #: templates/js/translated/build.js:377
 msgid "Allocate stock items to this build output"
-msgstr ""
+msgstr "Assegna gli elementi di magazzino a questo output di produzione"
 
 #: templates/js/translated/build.js:388
 msgid "Unallocate stock from build output"
-msgstr ""
+msgstr "Non assegnare stock all'output di produzione"
 
 #: templates/js/translated/build.js:397
 msgid "Complete build output"
-msgstr ""
+msgstr "Completa output di produzione"
 
 #: templates/js/translated/build.js:405
 msgid "Delete build output"
-msgstr ""
+msgstr "Cancella output di produzione"
 
 #: templates/js/translated/build.js:428
 msgid "Are you sure you wish to unallocate stock items from this build?"
-msgstr ""
+msgstr "Sei sicuro di voler annullare l'allocazione degli elementi stock da questa produzione?"
 
 #: templates/js/translated/build.js:446
 msgid "Unallocate Stock Items"
-msgstr ""
+msgstr "Non assegnare Elementi Stock"
 
 #: templates/js/translated/build.js:466 templates/js/translated/build.js:622
 msgid "Select Build Outputs"
-msgstr ""
+msgstr "Seleziona Output di produzione"
 
 #: templates/js/translated/build.js:467 templates/js/translated/build.js:623
 msgid "At least one build output must be selected"
