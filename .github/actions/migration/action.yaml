@@ -1,6 +1,6 @@
 name: 'Migration test'
 description: 'Run migration test sequenze'
-author: 'inventree'
+author: 'InvenTree'
 
 runs:
     using: 'composite'

@@ -6,7 +6,7 @@ import decimal
 import hashlib
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
@@ -692,7 +692,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     @property
     def full_name(self):
-        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in Inventree settings.
+        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings.
 
         As a failsafe option, the following is done:
 
@@ -950,7 +950,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         max_length=20, default="",
         blank=True, null=True,
         verbose_name=_('Units'),
-        help_text=_('Stock keeping units for this part')
+        help_text=_('Units of measure for this part')
     )
 
     assembly = models.BooleanField(
@@ -1003,7 +1003,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
     creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Creation User'), related_name='parts_created')
 
-    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
+    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), help_text=_('User responsible for this part'), related_name='parts_responible')
 
     last_stocktake = models.DateField(
         blank=True, null=True,
@@ -2023,41 +2023,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
             parameter.save()
 
-    @transaction.atomic
-    def deep_copy(self, other, **kwargs):
-        """Duplicates non-field data from another part.
-
-        Does not alter the normal fields of this part, but can be used to copy other data linked by ForeignKey refernce.
-
-        Keyword Args:
-            image: If True, copies Part image (default = True)
-            bom: If True, copies BOM data (default = False)
-            parameters: If True, copies Parameters data (default = True)
-        """
-        # Copy the part image
-        if kwargs.get('image', True):
-            if other.image:
-                # Reference the other image from this Part
-                self.image = other.image
-
-        # Copy the BOM data
-        if kwargs.get('bom', False):
-            self.copy_bom_from(other)
-
-        # Copy the parameters data
-        if kwargs.get('parameters', True):
-            self.copy_parameters_from(other)
-
-        # Copy the fields that aren't available in the duplicate form
-        self.salable = other.salable
-        self.assembly = other.assembly
-        self.component = other.component
-        self.purchaseable = other.purchaseable
-        self.trackable = other.trackable
-        self.virtual = other.virtual
-
-        self.save()
-
     def getTestTemplates(self, required=None, include_parent=True):
         """Return a list of all test templates associated with this Part.
 
@@ -2275,7 +2240,7 @@ def after_save_part(sender, instance: Part, created, **kwargs):
             pass
 
 
-class PartPricing(models.Model):
+class PartPricing(common.models.MetaMixin):
     """Model for caching min/max pricing information for a particular Part
 
     It is prohibitively expensive to calculate min/max pricing for a part "on the fly".
@@ -2545,6 +2510,31 @@ class PartPricing(models.Model):
             if purchase_max is None or purchase_cost > purchase_max:
                 purchase_max = purchase_cost
 
+        # Also check if manual stock item pricing is included
+        if InvenTreeSetting.get_setting('PRICING_USE_STOCK_PRICING', True, cache=False):
+
+            items = self.part.stock_items.all()
+
+            # Limit to stock items updated within a certain window
+            days = int(InvenTreeSetting.get_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0, cache=False))
+
+            if days > 0:
+                date_threshold = datetime.now().date() - timedelta(days=days)
+                items = items.filter(updated__gte=date_threshold)
+
+            for item in items:
+                cost = self.convert(item.purchase_price)
+
+                # Skip if the cost could not be converted (for some reason)
+                if cost is None:
+                    continue
+
+                if purchase_min is None or cost < purchase_min:
+                    purchase_min = cost
+
+                if purchase_max is None or cost > purchase_max:
+                    purchase_max = cost
+
         self.purchase_cost_min = purchase_min
         self.purchase_cost_max = purchase_max
 
@@ -2686,6 +2676,7 @@ class PartPricing(models.Model):
                 max_costs.append(self.supplier_price_max)
 
         if InvenTreeSetting.get_setting('PRICING_USE_VARIANT_PRICING', True, cache=False):
+            # Include variant pricing in overall calculations
             min_costs.append(self.variant_cost_min)
             max_costs.append(self.variant_cost_max)
 
@@ -2783,12 +2774,6 @@ class PartPricing(models.Model):
         verbose_name=_('Currency'),
         help_text=_('Currency used to cache pricing calculations'),
         choices=common.settings.currency_code_mappings(),
-    )
-
-    updated = models.DateTimeField(
-        verbose_name=_('Updated'),
-        help_text=_('Timestamp of last pricing update'),
-        auto_now=True
     )
 
     scheduled_for_update = models.BooleanField(

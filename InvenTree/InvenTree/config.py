@@ -13,6 +13,25 @@ CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
 
 
+def to_list(value, delimiter=','):
+    """Take a configuration setting and make sure it is a list.
+
+    For example, we might have a configuration setting taken from the .config file,
+    which is already a list.
+
+    However, the same setting may be specified via an environment variable,
+    using a comma delimited string!
+    """
+
+    if type(value) in [list, tuple]:
+        return value
+
+    # Otherwise, force string value
+    value = str(value)
+
+    return [x.strip() for x in value.split(delimiter)]
+
+
 def is_true(x):
     """Shortcut function to determine if a value "looks" like a boolean"""
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
@@ -101,7 +120,12 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
     """
     def try_typecasting(value, source: str):
         """Attempt to typecast the value"""
-        if typecast is not None:
+
+        # Force 'list' of strings
+        if typecast is list:
+            value = to_list(value)
+
+        elif typecast is not None:
             # Try to typecast the value
             try:
                 val = typecast(value)
@@ -109,6 +133,7 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
                 return val
             except Exception as error:
                 logger.error(f"Failed to typecast '{env_var}' with value '{value}' to type '{typecast}' with error {error}")
+
         set_metadata(source)
         return value
 

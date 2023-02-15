@@ -86,7 +86,7 @@ class TemplateTagTest(InvenTreeTestCase):
 
     def test_docs(self):
         """Test that the documentation URL template tag returns correctly"""
-        self.assertIn('inventree.readthedocs.io', inventree_extras.inventree_docs_url())
+        self.assertIn('docs.inventree.org', inventree_extras.inventree_docs_url())
 
     def test_keyvalue(self):
         """Test keyvalue template tag"""
@@ -254,10 +254,6 @@ class PartTest(TestCase):
         barcode = self.r1.format_barcode(brief=False)
         self.assertIn('InvenTree', barcode)
         self.assertIn('"part": {"id": 3}', barcode)
-
-    def test_copy(self):
-        """Test that we can 'deep copy' a Part instance"""
-        self.r2.deep_copy(self.r1, image=True, bom=True)
 
     def test_sell_pricing(self):
         """Check that the sell pricebreaks were loaded"""

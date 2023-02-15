@@ -945,7 +945,7 @@ class OrderLineItem(models.Model):
     target_date = models.DateField(
         blank=True, null=True,
         verbose_name=_('Target Date'),
-        help_text=_('Target shipping date for this line item'),
+        help_text=_('Target date for this line item (leave blank to use the target date from the order)'),
     )
 
 

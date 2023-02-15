@@ -30,6 +30,7 @@
     createPurchaseOrder,
     createPurchaseOrderLineItem,
     createSalesOrder,
+    createSalesOrderLineItem,
     createSalesOrderShipment,
     duplicatePurchaseOrder,
     editPurchaseOrder,
@@ -519,7 +520,9 @@ function createSalesOrderShipment(options={}) {
 }
 
 
-// Create a new SalesOrder
+/*
+ * Create a new SalesOrder
+ */
 function createSalesOrder(options={}) {
 
     constructForm('{% url "api-so-list" %}', {
@@ -557,6 +560,24 @@ function createSalesOrder(options={}) {
             location.href = `/order/sales-order/${data.pk}/`;
         },
         title: '{% trans "Create Sales Order" %}',
+    });
+}
+
+
+/*
+ * Launch a modal form to create a new SalesOrderLineItem
+ */
+function createSalesOrderLineItem(options={}) {
+
+    var fields = soLineItemFields(options);
+
+    constructForm('{% url "api-so-line-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Line Item" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        },
     });
 }
 
@@ -720,6 +741,7 @@ function createPurchaseOrderLineItem(order, options={}) {
         order: order,
         supplier: options.supplier,
         currency: options.currency,
+        target_date: options.target_date,
     });
 
     constructForm('{% url "api-po-line-list" %}', {
@@ -751,6 +773,10 @@ function soLineItemFields(options={}) {
 
     if (options.order) {
         fields.order.value = options.order;
+    }
+
+    if (options.target_date) {
+        fields.target_date.value = options.target_date;
     }
 
     return fields;
@@ -905,6 +931,10 @@ function poLineItemFields(options={}) {
         fields.purchase_price_currency.value = options.currency;
     }
 
+    if (options.target_date) {
+        fields.target_date.value = options.target_date;
+    }
+
     return fields;
 }
 
@@ -1023,7 +1053,7 @@ function exportOrder(redirect_url, options={}) {
 /*
  * Create a new form to order parts based on the list of provided parts.
  */
-function orderParts(parts_list, options={}) {
+function orderParts(parts_list, options) {
 
     var parts = [];
 
@@ -1153,6 +1183,10 @@ function orderParts(parts_list, options={}) {
         // If the modal is now "empty", dismiss it
         if (!($(opts.modal).find('.part-order-row').exists())) {
             closeModal(opts.modal);
+            // If there is a onSuccess callback defined, call it
+            if (options && options.onSuccess) {
+                options.onSuccess();
+            }
         }
     }
 
@@ -2362,17 +2396,15 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     });
                 },
                 footerFormatter: function(data) {
-                    var total = data.map(function(row) {
-                        return +row['purchase_price']*row['quantity'];
-                    }).reduce(function(sum, i) {
-                        return sum + i;
-                    }, 0);
-
-                    var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency) || 'USD';
-
-                    return formatCurrency(total, {
-                        currency: currency
-                    });
+                    return calculateTotalPrice(
+                        data,
+                        function(row) {
+                            return row.purchase_price ? row.purchase_price * row.quantity : null;
+                        },
+                        function(row) {
+                            return row.purchase_price_currency;
+                        }
+                    );
                 }
             },
             {
@@ -2549,17 +2581,15 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return calculateTotalPrice(
+                    data,
+                    function(row) {
+                        return row.price ? row.price * row.quantity : null;
+                    },
+                    function(row) {
+                        return row.price_currency;
+                    }
+                );
             }
         }
     ];
@@ -3874,17 +3904,15 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['sale_price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return calculateTotalPrice(
+                    data,
+                    function(row) {
+                        return row.sale_price ? row.sale_price * row.quantity : null;
+                    },
+                    function(row) {
+                        return row.sale_price_currency;
+                    }
+                );
             }
         },
         {
@@ -4365,17 +4393,15 @@ function loadSalesOrderExtraLineTable(table, options={}) {
                 });
             },
             footerFormatter: function(data) {
-                var total = data.map(function(row) {
-                    return +row['price'] * row['quantity'];
-                }).reduce(function(sum, i) {
-                    return sum + i;
-                }, 0);
-
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
-
-                return formatCurrency(total, {
-                    currency: currency,
-                });
+                return calculateTotalPrice(
+                    data,
+                    function(row) {
+                        return row.price ? row.price * row.quantity : null;
+                    },
+                    function(row) {
+                        return row.price_currency;
+                    }
+                );
             }
         }
     ];

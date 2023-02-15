@@ -166,8 +166,11 @@ def inventree_in_debug_mode(*args, **kwargs):
 @register.simple_tag()
 def inventree_show_about(user, *args, **kwargs):
     """Return True if the about modal should be shown."""
-    if InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT') and not user.is_superuser:
-        return False
+    if InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT'):
+        # Return False if the user is not a superuser, or no user information is provided
+        if not user or not user.is_superuser:
+            return False
+
     return True
 
 
@@ -319,13 +322,13 @@ def inventree_docs_url(*args, **kwargs):
     """Return URL for InvenTree documenation site."""
     tag = version.inventreeDocsVersion()
 
-    return f"https://inventree.readthedocs.io/en/{tag}"
+    return f"https://docs.inventree.org/en/{tag}"
 
 
 @register.simple_tag()
 def inventree_credits_url(*args, **kwargs):
     """Return URL for InvenTree credits site."""
-    return "https://inventree.readthedocs.io/en/latest/credits/"
+    return "https://docs.inventree.org/en/latest/credits/"
 
 
 @register.simple_tag()

@@ -12,7 +12,6 @@ import InvenTree.helpers
 from plugin.helpers import (MixinImplementationError, MixinNotImplementedError,
                             render_template, render_text)
 from plugin.models import PluginConfig, PluginSetting
-from plugin.registry import registry
 from plugin.urls import PLUGIN_BASE
 
 logger = logging.getLogger('inventree')
@@ -36,9 +35,14 @@ class SettingsMixin:
         """Does this plugin use custom global settings."""
         return bool(self.settings)
 
-    def get_setting(self, key):
-        """Return the 'value' of the setting associated with this plugin."""
-        return PluginSetting.get_setting(key, plugin=self)
+    def get_setting(self, key, cache=False):
+        """Return the 'value' of the setting associated with this plugin.
+
+        Arguments:
+            key: The 'name' of the setting value to be retrieved
+            cache: Whether to use RAM cached value (default = False)
+        """
+        return PluginSetting.get_setting(key, plugin=self, cache=cache)
 
     def set_setting(self, key, value, user=None):
         """Set plugin setting value by key."""
@@ -154,42 +158,35 @@ class ScheduleMixin:
 
                 task_name = self.get_task_name(key)
 
-                if Schedule.objects.filter(name=task_name).exists():
-                    # Scheduled task already exists - continue!
-                    continue  # pragma: no cover
-
-                logger.info(f"Adding scheduled task '{task_name}'")
+                obj = {
+                    'name': task_name,
+                    'schedule_type': task['schedule'],
+                    'minutes': task.get('minutes', None),
+                    'repeats': task.get('repeats', -1),
+                }
 
                 func_name = task['func'].strip()
 
                 if '.' in func_name:
                     """Dotted notation indicates that we wish to run a globally defined function, from a specified Python module."""
-
-                    Schedule.objects.create(
-                        name=task_name,
-                        func=func_name,
-                        schedule_type=task['schedule'],
-                        minutes=task.get('minutes', None),
-                        repeats=task.get('repeats', -1),
-                    )
-
+                    obj['func'] = func_name
                 else:
-                    """
-                    Non-dotted notation indicates that we wish to call a 'member function' of the calling plugin.
-
-                    This is managed by the plugin registry itself.
-                    """
-
+                    """Non-dotted notation indicates that we wish to call a 'member function' of the calling plugin. This is managed by the plugin registry itself."""
                     slug = self.plugin_slug()
+                    obj['func'] = 'plugin.registry.call_plugin_function'
+                    obj['args'] = f"'{slug}', '{func_name}'"
 
-                    Schedule.objects.create(
-                        name=task_name,
-                        func=registry.call_plugin_function,
-                        args=f"'{slug}', '{func_name}'",
-                        schedule_type=task['schedule'],
-                        minutes=task.get('minutes', None),
-                        repeats=task.get('repeats', -1),
-                    )
+                if Schedule.objects.filter(name=task_name).exists():
+                    # Scheduled task already exists - update it!
+                    logger.info(f"Updating scheduled task '{task_name}'")
+                    instance = Schedule.objects.get(name=task_name)
+                    for item in obj:
+                        setattr(instance, item, obj[item])
+                    instance.save()
+                else:
+                    logger.info(f"Adding scheduled task '{task_name}'")
+                    # Create a new scheduled task
+                    Schedule.objects.create(**obj)
 
         except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready

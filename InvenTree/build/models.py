@@ -61,6 +61,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         completed_by: User that completed the build
         issued_by: User that issued the build
         responsible: User (or group) responsible for completing the build
+        priority: Priority of the build
     """
 
     OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
@@ -281,7 +282,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('Responsible'),
-        help_text=_('User responsible for this build order'),
+        help_text=_('User or group responsible for this build order'),
         related_name='builds_responsible',
     )
 
@@ -292,6 +293,13 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     notes = InvenTree.fields.InvenTreeNotesField(
         help_text=_('Extra build notes')
+    )
+
+    priority = models.PositiveIntegerField(
+        verbose_name=_('Build Priority'),
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text=_('Priority of this build order')
     )
 
     def sub_builds(self, cascade=True):

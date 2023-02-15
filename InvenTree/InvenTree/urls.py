@@ -31,8 +31,8 @@ from stock.urls import stock_urls
 from users.api import user_urls
 
 from .api import InfoView, NotFoundView
-from .views import (AboutView, AppearanceSelectView, CurrencyRefreshView,
-                    CustomConnectionsView, CustomEmailView, CustomLoginView,
+from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
+                    CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
                     CustomSessionDeleteOtherView, CustomSessionDeleteView,
                     CustomTwoFactorRemove, DatabaseStatsView, DynamicJsView,
@@ -73,7 +73,6 @@ settings_urls = [
     re_path(r'^i18n/?', include('django.conf.urls.i18n')),
 
     re_path(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
-    re_path(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
     # Catch any other urls
     re_path(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),
