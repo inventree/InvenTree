@@ -815,7 +815,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
     )
 
     update_parts = serializers.BooleanField(
-        default=False,
+        default=True,
         label=_('Update Parts'),
         help_text=_('Update specified parts with calculated stocktake data')
     )
@@ -848,7 +848,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
             category=data.get('category', None),
             location=data.get('location', None),
             generate_report=data.get('generate_report', True),
-            update_parts=data.get('update_parts', False),
+            update_parts=data.get('update_parts', True),
         )
 
 

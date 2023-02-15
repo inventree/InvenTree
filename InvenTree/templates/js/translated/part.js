@@ -721,6 +721,14 @@ function generateStocktakeReport(options={}) {
         fields.location = options.location;
     }
 
+    if (options.generate_report) {
+        fields.generate_report = options.generate_report;
+    }
+
+    if (options.update_parts) {
+        fields.update_parts = options.update_parts;
+    }
+
     let content = `
     <div class='alert alert-block alert-info'>
     {% trans "Schedule generation of a new stocktake report." %}<br>
