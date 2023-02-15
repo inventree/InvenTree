@@ -1,6 +1,6 @@
 """DRF API definition for the 'users' app"""
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import include, path, re_path
 
@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI
 from InvenTree.serializers import UserSerializer
 from users.models import Owner, RuleSet, check_user_role
-from users.serializers import OwnerSerializer
+from users.serializers import GroupSerializer, OwnerSerializer
 
 
 class OwnerList(ListAPI):
@@ -113,7 +113,9 @@ class UserDetail(RetrieveAPI):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
@@ -129,7 +131,9 @@ class UserList(ListAPI):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -140,6 +144,35 @@ class UserList(ListAPI):
         'first_name',
         'last_name',
         'username',
+    ]
+
+
+class GroupDetail(RetrieveAPI):
+    """Detail endpoint for a particular auth group"""
+
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
+class GroupList(ListAPI):
+    """List endpoint for all auth groups"""
+
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+    ]
+
+    search_fields = [
+        'name',
     ]
 
 
@@ -185,6 +218,12 @@ user_urls = [
         re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
     ])),
 
-    re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='user-detail'),
-    path('', UserList.as_view()),
+    re_path(r'^group/', include([
+        re_path(r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'),
+        re_path(r'^.*$', GroupList.as_view(), name='api-group-list'),
+    ])),
+
+    re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='api-user-detail'),
+
+    path('', UserList.as_view(), name='api-user-list'),
 ]
