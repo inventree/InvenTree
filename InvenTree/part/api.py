@@ -1668,7 +1668,10 @@ class PartStocktakeReportGenerate(CreateAPI):
 
     permission_classes = [
         permissions.IsAuthenticated,
+        RolePermission,
     ]
+
+    role_required = 'stocktake'
 
     def get_serializer_context(self):
         """Extend serializer context data"""

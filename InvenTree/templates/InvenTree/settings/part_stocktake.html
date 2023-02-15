@@ -24,9 +24,11 @@
         <h4>{% trans "Stocktake Reports" %}</h4>
         {% include "spacer.html" %}
         <div class='btn-group' role='group'>
+            {% if roles.stocktake.add %}
             <button type='button' id='btn-generate-stocktake' class='btn btn-primary float-right'>
                 <span class='fas fa-clipboard-check'></span> {% trans "Stocktake" %}
             </button>
+            {% endif %}
         </div>
     </div>
 </div>
