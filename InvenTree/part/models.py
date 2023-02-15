@@ -2988,6 +2988,17 @@ class PartStocktakeReport(models.Model):
     - Estimated total cost of stock on hand (min:max range)
     """
 
+    def __str__(self):
+        """Construct a simple string representation for the report"""
+        return os.path.basename(self.report.name)
+
+    def get_absolute_url(self):
+        """Return the URL for the associaed report file for download"""
+        if self.report:
+            return self.report.url
+        else:
+            return None
+
     date = models.DateField(
         verbose_name=_('Date'),
         auto_now_add=True

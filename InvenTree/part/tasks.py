@@ -318,8 +318,8 @@ def generate_stocktake_report(**kwargs):
             p.category.name if p.category else '',
             stocktake.item_count,
             stocktake.quantity,
-            stocktake.cost_min.amount,
-            stocktake.cost_max.amount
+            InvenTree.helpers.normalize(stocktake.cost_min.amount),
+            InvenTree.helpers.normalize(stocktake.cost_max.amount),
         ])
 
     # Save a new PartStocktakeReport instance
@@ -330,11 +330,26 @@ def generate_stocktake_report(**kwargs):
     filename = f"InvenTree_Stocktake_{today}.csv"
     report_file = ContentFile(buffer.getvalue(), name=filename)
 
-    part.models.PartStocktakeReport.objects.create(
+    report_instance = part.models.PartStocktakeReport.objects.create(
         report=report_file,
         part_count=total_parts,
         user=user
     )
+
+    # Notify the requesting user
+    if user:
+
+        common.notifications.trigger_notification(
+            report_instance,
+            category='generate_stocktake_report',
+            context={
+                'name': _('Stocktake Report Available'),
+                'message': _('A new stocktake report is available for download'),
+            },
+            targets=[
+                user,
+            ]
+        )
 
     # If 'update_parts' is set, we save stocktake entries for each individual part
     if update_parts:

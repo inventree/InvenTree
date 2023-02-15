@@ -1586,13 +1586,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 0,
         },
 
-        'STOCKTAKE_AUTO_EMAIL': {
-            'name': _('Email Stocktake Reports'),
-            'description': _('Email stocktake report data to stocktake owners'),
-            'validator': bool,
-            'default': False,
-        },
-
         'STOCKTAKE_DELETE_REPORT_DAYS': {
             'name': _('Delete Old Reports'),
             'description': _('Stocktake reports will be deleted after specified number of days'),
