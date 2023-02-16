@@ -362,6 +362,7 @@ class StockFilter(rest_filters.FilterSet):
             'supplier_part',
             'belongs_to',
             'build',
+            'customer',
             'sales_order',
             'purchase_order',
         ]
@@ -401,22 +402,32 @@ class StockFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             # Filter StockItem with either build allocations or sales order allocations
-            queryset = queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
+            return queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
         else:
             # Filter StockItem without build allocations or sales order allocations
-            queryset = queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
-        return queryset
+            return queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
+
+    expired = rest_filters.BooleanFilter(label='Expired', method='filter_expired')
+
+    def filter_expired(self, queryset, name, value):
+        """Filter by whether or not the stock item has expired"""
+
+        if not common.settings.stock_expiry_enabled():
+            return queryset
+
+        if str2bool(value):
+            return queryset.filter(StockItem.EXPIRED_FILTER)
+        else:
+            return queryset.exclude(StockItem.EXPIRED_FILTER)
 
     in_stock = rest_filters.BooleanFilter(label='In Stock', method='filter_in_stock')
 
     def filter_in_stock(self, queryset, name, value):
         """Filter by if item is in stock."""
         if str2bool(value):
-            queryset = queryset.filter(StockItem.IN_STOCK_FILTER)
+            return queryset.filter(StockItem.IN_STOCK_FILTER)
         else:
-            queryset = queryset.exclude(StockItem.IN_STOCK_FILTER)
-
-        return queryset
+            return queryset.exclude(StockItem.IN_STOCK_FILTER)
 
     available = rest_filters.BooleanFilter(label='Available', method='filter_available')
 
@@ -427,12 +438,10 @@ class StockFilter(rest_filters.FilterSet):
         """
         if str2bool(value):
             # The 'quantity' field is greater than the calculated 'allocated' field
-            queryset = queryset.filter(Q(quantity__gt=F('allocated')))
+            return queryset.filter(Q(quantity__gt=F('allocated')))
         else:
             # The 'quantity' field is less than (or equal to) the calculated 'allocated' field
-            queryset = queryset.filter(Q(quantity__lte=F('allocated')))
-
-        return queryset
+            return queryset.filter(Q(quantity__lte=F('allocated')))
 
     batch = rest_filters.CharFilter(label="Batch code filter (case insensitive)", lookup_expr='iexact')
 
@@ -452,11 +461,9 @@ class StockFilter(rest_filters.FilterSet):
         q = Q(serial=None) | Q(serial='')
 
         if str2bool(value):
-            queryset = queryset.exclude(q)
+            return queryset.exclude(q)
         else:
-            queryset = queryset.filter(q)
-
-        return queryset
+            return queryset.filter(q)
 
     has_batch = rest_filters.BooleanFilter(label='Has batch code', method='filter_has_batch')
 
@@ -465,11 +472,9 @@ class StockFilter(rest_filters.FilterSet):
         q = Q(batch=None) | Q(batch='')
 
         if str2bool(value):
-            queryset = queryset.exclude(q)
+            return queryset.exclude(q)
         else:
-            queryset = queryset.filter(q)
-
-        return queryset
+            return queryset.filter(q)
 
     tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
 
@@ -484,55 +489,45 @@ class StockFilter(rest_filters.FilterSet):
         q_serial = Q(serial=None) | Q(serial='')
 
         if str2bool(value):
-            queryset = queryset.exclude(q_batch & q_serial)
+            return queryset.exclude(q_batch & q_serial)
         else:
-            queryset = queryset.filter(q_batch & q_serial)
-
-        return queryset
+            return queryset.filter(q_batch & q_serial)
 
     installed = rest_filters.BooleanFilter(label='Installed in other stock item', method='filter_installed')
 
     def filter_installed(self, queryset, name, value):
         """Filter stock items by "belongs_to" field being empty."""
         if str2bool(value):
-            queryset = queryset.exclude(belongs_to=None)
+            return queryset.exclude(belongs_to=None)
         else:
-            queryset = queryset.filter(belongs_to=None)
-
-        return queryset
+            return queryset.filter(belongs_to=None)
 
     sent_to_customer = rest_filters.BooleanFilter(label='Sent to customer', method='filter_sent_to_customer')
 
     def filter_sent_to_customer(self, queryset, name, value):
         """Filter by sent to customer."""
         if str2bool(value):
-            queryset = queryset.exclude(customer=None)
+            return queryset.exclude(customer=None)
         else:
-            queryset = queryset.filter(customer=None)
-
-        return queryset
+            return queryset.filter(customer=None)
 
     depleted = rest_filters.BooleanFilter(label='Depleted', method='filter_depleted')
 
     def filter_depleted(self, queryset, name, value):
         """Filter by depleted items."""
         if str2bool(value):
-            queryset = queryset.filter(quantity__lte=0)
+            return queryset.filter(quantity__lte=0)
         else:
-            queryset = queryset.exclude(quantity__lte=0)
-
-        return queryset
+            return queryset.exclude(quantity__lte=0)
 
     has_purchase_price = rest_filters.BooleanFilter(label='Has purchase price', method='filter_has_purchase_price')
 
     def filter_has_purchase_price(self, queryset, name, value):
         """Filter by having a purchase price."""
         if str2bool(value):
-            queryset = queryset.exclude(purchase_price=None)
+            return queryset.exclude(purchase_price=None)
         else:
-            queryset = queryset.filter(purchase_price=None)
-
-        return queryset
+            return queryset.filter(purchase_price=None)
 
     # Update date filters
     updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
@@ -826,16 +821,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         if common.settings.stock_expiry_enabled():
 
-            # Filter by 'expired' status
-            expired = params.get('expired', None)
-
-            if expired is not None:
-                expired = str2bool(expired)
-
-                if expired:
-                    queryset = queryset.filter(StockItem.EXPIRED_FILTER)
-                else:
-                    queryset = queryset.exclude(StockItem.EXPIRED_FILTER)
             # Filter by 'expiry date'
             expired_date_lte = params.get('expiry_date_lte', None)
             if expired_date_lte is not None:
@@ -852,6 +837,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     queryset = queryset.filter(expiry_date__gte=date_gte)
                 except (ValueError, TypeError):
                     pass
+
             # Filter by 'stale' status
             stale = params.get('stale', None)
 
@@ -870,12 +856,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                         queryset = queryset.filter(stale_filter)
                     else:
                         queryset = queryset.exclude(stale_filter)
-
-        # Filter by customer
-        customer = params.get('customer', None)
-
-        if customer:
-            queryset = queryset.filter(customer=customer)
 
         # Exclude stock item tree
         exclude_tree = params.get('exclude_tree', None)
