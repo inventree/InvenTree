@@ -800,13 +800,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         queryset = super().filter_queryset(queryset)
 
-        # Filter stock items which are installed in another (specific) stock item
-        installed_in = params.get('installed_in', None)
-
-        if installed_in:
-            # Note: The "installed_in" field is called "belongs_to"
-            queryset = queryset.filter(belongs_to=installed_in)
-
         if common.settings.stock_expiry_enabled():
 
             # Filter by 'expired' status
