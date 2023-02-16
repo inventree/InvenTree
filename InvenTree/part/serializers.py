@@ -781,7 +781,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.all(),
         required=False, allow_null=True,
-        label=_('Part'), help_text=_('Limit stocktake report to a particular part (and any variant parts)')
+        label=_('Part'), help_text=_('Limit stocktake report to a particular part, and any variant parts')
     )
 
     category = serializers.PrimaryKeyRelatedField(

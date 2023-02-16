@@ -731,8 +731,7 @@ function generateStocktakeReport(options={}) {
 
     let content = `
     <div class='alert alert-block alert-info'>
-    {% trans "Schedule generation of a new stocktake report." %}<br>
-    {% trans "Once complete, the stocktake report will be available for download." %}
+    {% trans "Schedule generation of a new stocktake report." %} {% trans "Once complete, the stocktake report will be available for download." %}
     </div>
     `;
 
