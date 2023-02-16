@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-14 11:07+0000\n"
-"PO-Revision-Date: 2023-02-14 21:03\n"
+"POT-Creation-Date: 2023-02-16 20:26+0000\n"
+"PO-Revision-Date: 2023-02-16 21:55\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -30,7 +30,7 @@ msgid "Enter date"
 msgstr "Datum eingeben"
 
 #: InvenTree/fields.py:204 build/serializers.py:388
-#: build/templates/build/sidebar.html:21 company/models.py:530
+#: build/templates/build/sidebar.html:21 company/models.py:549
 #: company/templates/company/sidebar.html:25 order/models.py:943
 #: order/templates/order/po_sidebar.html:11
 #: order/templates/order/so_sidebar.html:17 part/admin.py:27
@@ -38,14 +38,14 @@ msgstr "Datum eingeben"
 #: report/templates/report/inventree_build_order_base.html:172
 #: stock/admin.py:103 stock/models.py:2082 stock/models.py:2190
 #: stock/serializers.py:321 stock/serializers.py:454 stock/serializers.py:535
-#: stock/serializers.py:827 stock/serializers.py:926 stock/serializers.py:1058
+#: stock/serializers.py:813 stock/serializers.py:912 stock/serializers.py:1044
 #: stock/templates/stock/stock_sidebar.html:25
 #: templates/js/translated/barcode.js:131 templates/js/translated/bom.js:1219
 #: templates/js/translated/company.js:1023
 #: templates/js/translated/order.js:2467 templates/js/translated/order.js:2599
 #: templates/js/translated/order.js:3097 templates/js/translated/order.js:4032
 #: templates/js/translated/order.js:4411 templates/js/translated/part.js:865
-#: templates/js/translated/stock.js:1419 templates/js/translated/stock.js:2023
+#: templates/js/translated/stock.js:1423 templates/js/translated/stock.js:2027
 msgid "Notes"
 msgstr "Notizen"
 
@@ -213,7 +213,7 @@ msgid "Select file to attach"
 msgstr "Datei zum Anhängen auswählen"
 
 #: InvenTree/models.py:412 common/models.py:2492 company/models.py:129
-#: company/models.py:281 company/models.py:517 order/models.py:85
+#: company/models.py:300 company/models.py:536 order/models.py:85
 #: order/models.py:1282 part/admin.py:25 part/models.py:866
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
@@ -243,7 +243,7 @@ msgstr "Datei-Kommentar"
 #: part/models.py:3014 part/models.py:3034 plugin/models.py:270
 #: plugin/models.py:271
 #: report/templates/report/inventree_test_report_base.html:96
-#: templates/js/translated/stock.js:2692
+#: templates/js/translated/stock.js:2696
 msgid "User"
 msgstr "Benutzer"
 
@@ -281,7 +281,7 @@ msgid "Invalid choice"
 msgstr "Ungültige Auswahl"
 
 #: InvenTree/models.py:557 InvenTree/models.py:558 common/models.py:2151
-#: company/models.py:363 label/models.py:101 part/models.py:810
+#: company/models.py:382 label/models.py:101 part/models.py:810
 #: part/models.py:3189 plugin/models.py:94 report/models.py:152
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
@@ -293,13 +293,13 @@ msgstr "Ungültige Auswahl"
 #: templates/js/translated/company.js:794
 #: templates/js/translated/notification.js:71
 #: templates/js/translated/part.js:965 templates/js/translated/part.js:1134
-#: templates/js/translated/part.js:2274 templates/js/translated/stock.js:2437
+#: templates/js/translated/part.js:2274 templates/js/translated/stock.js:2441
 msgid "Name"
 msgstr "Name"
 
 #: InvenTree/models.py:564 build/models.py:164
-#: build/templates/build/detail.html:24 company/models.py:287
-#: company/models.py:523 company/templates/company/company_base.html:72
+#: build/templates/build/detail.html:24 company/models.py:306
+#: company/models.py:542 company/templates/company/company_base.html:72
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:108 label/models.py:108
 #: order/models.py:83 part/admin.py:174 part/admin.py:255 part/models.py:833
@@ -319,9 +319,9 @@ msgstr "Name"
 #: templates/js/translated/order.js:2301 templates/js/translated/order.js:2875
 #: templates/js/translated/part.js:1027 templates/js/translated/part.js:1477
 #: templates/js/translated/part.js:1751 templates/js/translated/part.js:2310
-#: templates/js/translated/part.js:2385 templates/js/translated/stock.js:1398
-#: templates/js/translated/stock.js:1790 templates/js/translated/stock.js:2469
-#: templates/js/translated/stock.js:2529
+#: templates/js/translated/part.js:2385 templates/js/translated/stock.js:1402
+#: templates/js/translated/stock.js:1794 templates/js/translated/stock.js:2473
+#: templates/js/translated/stock.js:2533
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -334,7 +334,7 @@ msgid "parent"
 msgstr "Eltern"
 
 #: InvenTree/models.py:580 InvenTree/models.py:581
-#: templates/js/translated/part.js:2319 templates/js/translated/stock.js:2478
+#: templates/js/translated/part.js:2319 templates/js/translated/stock.js:2482
 msgid "Path"
 msgstr "Pfad"
 
@@ -370,66 +370,66 @@ msgstr "Ein Fehler wurde vom Server protokolliert."
 msgid "Must be a valid number"
 msgstr "Muss eine gültige Nummer sein"
 
-#: InvenTree/serializers.py:294
+#: InvenTree/serializers.py:313
 msgid "Filename"
 msgstr "Dateiname"
 
-#: InvenTree/serializers.py:329
+#: InvenTree/serializers.py:350
 msgid "Invalid value"
 msgstr "Ungültiger Wert"
 
-#: InvenTree/serializers.py:351
+#: InvenTree/serializers.py:372
 msgid "Data File"
 msgstr "Datendatei"
 
-#: InvenTree/serializers.py:352
+#: InvenTree/serializers.py:373
 msgid "Select data file for upload"
 msgstr "Neue Datei zum Hochladen auswählen"
 
-#: InvenTree/serializers.py:373
+#: InvenTree/serializers.py:394
 msgid "Unsupported file type"
 msgstr "Nicht unterstütztes Dateiformat"
 
-#: InvenTree/serializers.py:379
+#: InvenTree/serializers.py:400
 msgid "File is too large"
 msgstr "Datei ist zu groß"
 
-#: InvenTree/serializers.py:400
+#: InvenTree/serializers.py:421
 msgid "No columns found in file"
 msgstr "Keine Spalten in der Datei gefunden"
 
-#: InvenTree/serializers.py:403
+#: InvenTree/serializers.py:424
 msgid "No data rows found in file"
 msgstr "Keine Datensätze in der Datei gefunden"
 
-#: InvenTree/serializers.py:526
+#: InvenTree/serializers.py:547
 msgid "No data rows provided"
 msgstr "Keine Zeilen ausgewählt"
 
-#: InvenTree/serializers.py:529
+#: InvenTree/serializers.py:550
 msgid "No data columns supplied"
 msgstr "Keine Spalten angegeben"
 
-#: InvenTree/serializers.py:606
+#: InvenTree/serializers.py:627
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "Erforderliche Spalte '{name}' fehlt"
 
-#: InvenTree/serializers.py:615
+#: InvenTree/serializers.py:636
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Doppelte Spalte: '{col}'"
 
-#: InvenTree/serializers.py:641
+#: InvenTree/serializers.py:662
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
 msgstr "URL"
 
-#: InvenTree/serializers.py:642
+#: InvenTree/serializers.py:663
 msgid "URL of remote image file"
 msgstr "URL der Remote-Bilddatei"
 
-#: InvenTree/serializers.py:656
+#: InvenTree/serializers.py:677
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Das Herunterladen von Bildern von Remote-URLs ist nicht aktiviert"
 
@@ -664,7 +664,7 @@ msgstr "Vom übergeordneten Element geteilt"
 msgid "Split child item"
 msgstr "Unterobjekt geteilt"
 
-#: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2127
+#: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2131
 msgid "Merged stock items"
 msgstr "Lagerartikel zusammengeführt"
 
@@ -804,13 +804,13 @@ msgid "BuildOrder to which this build is allocated"
 msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 
 #: build/models.py:181 build/templates/build/build_base.html:80
-#: build/templates/build/detail.html:29 company/models.py:685
+#: build/templates/build/detail.html:29 company/models.py:704
 #: order/models.py:1038 order/models.py:1149 order/models.py:1150
 #: part/models.py:382 part/models.py:2787 part/models.py:2900
 #: part/models.py:2960 part/models.py:2975 part/models.py:2994
 #: part/models.py:3012 part/models.py:3111 part/models.py:3232
 #: part/models.py:3324 part/models.py:3409 part/models.py:3725
-#: part/serializers.py:1112 part/templates/part/part_app_base.html:8
+#: part/serializers.py:1100 part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
 #: report/templates/report/inventree_bill_of_materials_report.html:110
@@ -837,9 +837,9 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: templates/js/translated/part.js:1462 templates/js/translated/part.js:1534
 #: templates/js/translated/part.js:1728 templates/js/translated/pricing.js:343
 #: templates/js/translated/stock.js:617 templates/js/translated/stock.js:782
-#: templates/js/translated/stock.js:992 templates/js/translated/stock.js:1746
-#: templates/js/translated/stock.js:2555 templates/js/translated/stock.js:2750
-#: templates/js/translated/stock.js:2887
+#: templates/js/translated/stock.js:992 templates/js/translated/stock.js:1750
+#: templates/js/translated/stock.js:2559 templates/js/translated/stock.js:2754
+#: templates/js/translated/stock.js:2891
 msgid "Part"
 msgstr "Teil"
 
@@ -947,7 +947,7 @@ msgstr "Verantwortlicher Benutzer"
 
 #: build/models.py:285
 msgid "User or group responsible for this build order"
-msgstr ""
+msgstr "Benutzer oder Gruppe verantwortlich für diesen Bauauftrag"
 
 #: build/models.py:290 build/templates/build/detail.html:108
 #: company/templates/company/manufacturer_part.html:107
@@ -1025,9 +1025,9 @@ msgstr "Bauauftrag"
 msgid "Build to allocate parts"
 msgstr "Bauauftrag starten um Teile zuzuweisen"
 
-#: build/models.py:1362 build/serializers.py:664 order/serializers.py:1032
-#: order/serializers.py:1053 stock/serializers.py:392 stock/serializers.py:758
-#: stock/serializers.py:884 stock/templates/stock/item_base.html:10
+#: build/models.py:1362 build/serializers.py:664 order/serializers.py:1020
+#: order/serializers.py:1041 stock/serializers.py:392 stock/serializers.py:744
+#: stock/serializers.py:870 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
 #: stock/templates/stock/item_base.html:197
 #: templates/js/translated/build.js:801 templates/js/translated/build.js:806
@@ -1036,7 +1036,7 @@ msgstr "Bauauftrag starten um Teile zuzuweisen"
 #: templates/js/translated/order.js:3532 templates/js/translated/order.js:3537
 #: templates/js/translated/order.js:3632 templates/js/translated/order.js:3724
 #: templates/js/translated/part.js:786 templates/js/translated/stock.js:618
-#: templates/js/translated/stock.js:783 templates/js/translated/stock.js:2628
+#: templates/js/translated/stock.js:783 templates/js/translated/stock.js:2632
 msgid "Stock Item"
 msgstr "Lagerartikel"
 
@@ -1047,7 +1047,7 @@ msgstr "Quell-Lagerartikel"
 #: build/models.py:1375 build/serializers.py:193
 #: build/templates/build/build_base.html:85
 #: build/templates/build/detail.html:34 common/models.py:1973
-#: order/models.py:934 order/models.py:1460 order/serializers.py:1206
+#: order/models.py:934 order/models.py:1460 order/serializers.py:1194
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:256
 #: part/forms.py:40 part/models.py:2907 part/models.py:3425
 #: part/templates/part/part_pricing.html:16
@@ -1081,7 +1081,7 @@ msgstr "Quell-Lagerartikel"
 #: templates/js/translated/pricing.js:496
 #: templates/js/translated/pricing.js:590 templates/js/translated/stock.js:489
 #: templates/js/translated/stock.js:643 templates/js/translated/stock.js:813
-#: templates/js/translated/stock.js:2677 templates/js/translated/stock.js:2762
+#: templates/js/translated/stock.js:2681 templates/js/translated/stock.js:2766
 msgid "Quantity"
 msgstr "Anzahl"
 
@@ -1123,8 +1123,8 @@ msgid "Enter quantity for build output"
 msgstr "Menge der Endprodukte angeben"
 
 #: build/serializers.py:208 build/serializers.py:684 order/models.py:327
-#: order/serializers.py:298 order/serializers.py:450 part/serializers.py:904
-#: part/serializers.py:1275 stock/models.py:574 stock/models.py:1326
+#: order/serializers.py:298 order/serializers.py:450 part/serializers.py:892
+#: part/serializers.py:1263 stock/models.py:574 stock/models.py:1326
 #: stock/serializers.py:294
 msgid "Quantity must be greater than zero"
 msgstr "Anzahl muss größer Null sein"
@@ -1137,7 +1137,7 @@ msgstr "Ganzzahl für verfolgbare Teile erforderlich"
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Ganzzahl erforderlich da die Stückliste nachverfolgbare Teile enthält"
 
-#: build/serializers.py:232 order/serializers.py:463 order/serializers.py:1210
+#: build/serializers.py:232 order/serializers.py:463 order/serializers.py:1198
 #: stock/serializers.py:303 templates/js/translated/order.js:1579
 #: templates/js/translated/stock.js:302 templates/js/translated/stock.js:490
 msgid "Serial Numbers"
@@ -1165,7 +1165,7 @@ msgstr "Eine Liste von Endprodukten muss angegeben werden"
 
 #: build/serializers.py:370 order/serializers.py:436 order/serializers.py:547
 #: stock/serializers.py:314 stock/serializers.py:449 stock/serializers.py:530
-#: stock/serializers.py:919 stock/serializers.py:1152
+#: stock/serializers.py:905 stock/serializers.py:1138
 #: stock/templates/stock/item_base.html:388
 #: templates/js/translated/barcode.js:504
 #: templates/js/translated/barcode.js:748 templates/js/translated/build.js:813
@@ -1174,7 +1174,7 @@ msgstr "Eine Liste von Endprodukten muss angegeben werden"
 #: templates/js/translated/order.js:3657 templates/js/translated/order.js:3738
 #: templates/js/translated/part.js:787 templates/js/translated/stock.js:619
 #: templates/js/translated/stock.js:784 templates/js/translated/stock.js:994
-#: templates/js/translated/stock.js:1898 templates/js/translated/stock.js:2569
+#: templates/js/translated/stock.js:1902 templates/js/translated/stock.js:2573
 msgid "Location"
 msgstr "Lagerort"
 
@@ -1188,8 +1188,8 @@ msgstr "Lagerort für fertige Endprodukte"
 #: stock/templates/stock/item_base.html:421
 #: templates/js/translated/barcode.js:237 templates/js/translated/build.js:2637
 #: templates/js/translated/order.js:1715 templates/js/translated/order.js:2068
-#: templates/js/translated/order.js:2880 templates/js/translated/stock.js:1873
-#: templates/js/translated/stock.js:2646 templates/js/translated/stock.js:2778
+#: templates/js/translated/order.js:2880 templates/js/translated/stock.js:1877
+#: templates/js/translated/stock.js:2650 templates/js/translated/stock.js:2782
 msgid "Status"
 msgstr "Status"
 
@@ -1249,7 +1249,7 @@ msgstr "Akzeptieren, dass Lagerartikel diesem Bauauftrag nicht vollständig zuge
 msgid "Required stock has not been fully allocated"
 msgstr "Benötigter Bestand wurde nicht vollständig zugewiesen"
 
-#: build/serializers.py:546 order/serializers.py:202 order/serializers.py:1100
+#: build/serializers.py:546 order/serializers.py:202 order/serializers.py:1088
 msgid "Accept Incomplete"
 msgstr "Unvollständig Zuweisung akzeptieren"
 
@@ -1282,11 +1282,11 @@ msgstr "Endprodukt muss auf den gleichen Bauauftrag verweisen"
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part muss auf dasselbe Teil verweisen wie der Bauauftrag"
 
-#: build/serializers.py:670 stock/serializers.py:771
+#: build/serializers.py:670 stock/serializers.py:757
 msgid "Item must be in stock"
 msgstr "Teil muss auf Lager sein"
 
-#: build/serializers.py:728 order/serializers.py:1090
+#: build/serializers.py:728 order/serializers.py:1078
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Verfügbare Menge ({q}) überschritten"
@@ -1303,7 +1303,7 @@ msgstr "Endprodukt kann bei Zuweisung nicht-verfolgter Teile nicht angegeben wer
 msgid "This stock item has already been allocated to this build output"
 msgstr "Dieser Lagerbestand wurde bereits diesem Endprodukt zugewiesen"
 
-#: build/serializers.py:769 order/serializers.py:1374
+#: build/serializers.py:769 order/serializers.py:1362
 msgid "Allocation items must be provided"
 msgstr "Zuweisungen müssen angegeben werden"
 
@@ -1515,8 +1515,8 @@ msgstr "Zugewiesene Teile"
 #: stock/templates/stock/item_base.html:168
 #: templates/js/translated/build.js:1251
 #: templates/js/translated/model_renderers.js:126
-#: templates/js/translated/stock.js:1060 templates/js/translated/stock.js:1887
-#: templates/js/translated/stock.js:2785
+#: templates/js/translated/stock.js:1064 templates/js/translated/stock.js:1891
+#: templates/js/translated/stock.js:2789
 #: templates/js/translated/table_filters.js:179
 #: templates/js/translated/table_filters.js:270
 msgid "Batch"
@@ -1643,8 +1643,10 @@ msgid "Completed Build Outputs"
 msgstr "Fertiggestellte Endprodukte"
 
 #: build/templates/build/detail.html:313 build/templates/build/sidebar.html:19
+#: company/templates/company/detail.html:200
 #: company/templates/company/manufacturer_part.html:151
 #: company/templates/company/manufacturer_part_sidebar.html:9
+#: company/templates/company/sidebar.html:27
 #: order/templates/order/po_sidebar.html:9
 #: order/templates/order/purchase_order_detail.html:86
 #: order/templates/order/sales_order_detail.html:140
@@ -3140,7 +3142,7 @@ msgstr "Produziert diese Firma Teile?"
 
 #: company/models.py:153 company/serializers.py:403
 #: company/templates/company/company_base.html:107 part/models.py:2774
-#: part/serializers.py:159 part/serializers.py:187 stock/serializers.py:182
+#: part/serializers.py:147 part/serializers.py:175 stock/serializers.py:182
 #: templates/InvenTree/settings/settings.html:191
 msgid "Currency"
 msgstr "Währung"
@@ -3149,19 +3151,25 @@ msgstr "Währung"
 msgid "Default currency used for this company"
 msgstr "Standard-Währung für diese Firma"
 
-#: company/models.py:253 company/models.py:488 stock/models.py:656
+#: company/models.py:222 company/templates/company/company_base.html:8
+#: company/templates/company/company_base.html:12
+#: templates/InvenTree/search.html:179 templates/js/translated/company.js:422
+msgid "Company"
+msgstr "Firma"
+
+#: company/models.py:272 company/models.py:507 stock/models.py:656
 #: stock/serializers.py:89 stock/templates/stock/item_base.html:143
 #: templates/js/translated/bom.js:588
 msgid "Base Part"
 msgstr "Basisteil"
 
-#: company/models.py:257 company/models.py:492
+#: company/models.py:276 company/models.py:511
 msgid "Select part"
 msgstr "Teil auswählen"
 
-#: company/models.py:268 company/templates/company/company_base.html:77
+#: company/models.py:287 company/templates/company/company_base.html:77
 #: company/templates/company/manufacturer_part.html:90
-#: company/templates/company/supplier_part.html:152 part/serializers.py:370
+#: company/templates/company/supplier_part.html:152 part/serializers.py:358
 #: stock/templates/stock/item_base.html:210
 #: templates/js/translated/company.js:433
 #: templates/js/translated/company.js:534
@@ -3171,12 +3179,12 @@ msgstr "Teil auswählen"
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: company/models.py:269
+#: company/models.py:288
 msgid "Select manufacturer"
 msgstr "Hersteller auswählen"
 
-#: company/models.py:275 company/templates/company/manufacturer_part.html:101
-#: company/templates/company/supplier_part.html:160 part/serializers.py:376
+#: company/models.py:294 company/templates/company/manufacturer_part.html:101
+#: company/templates/company/supplier_part.html:160 part/serializers.py:364
 #: templates/js/translated/company.js:305
 #: templates/js/translated/company.js:533
 #: templates/js/translated/company.js:685
@@ -3185,60 +3193,60 @@ msgstr "Hersteller auswählen"
 msgid "MPN"
 msgstr "MPN"
 
-#: company/models.py:276
+#: company/models.py:295
 msgid "Manufacturer Part Number"
 msgstr "Hersteller-Teilenummer"
 
-#: company/models.py:282
+#: company/models.py:301
 msgid "URL for external manufacturer part link"
 msgstr "Externe URL für das Herstellerteil"
 
-#: company/models.py:288
+#: company/models.py:307
 msgid "Manufacturer part description"
 msgstr "Teilbeschreibung des Herstellers"
 
-#: company/models.py:333 company/models.py:357 company/models.py:511
+#: company/models.py:352 company/models.py:376 company/models.py:530
 #: company/templates/company/manufacturer_part.html:7
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:220
 msgid "Manufacturer Part"
 msgstr "Herstellerteil"
 
-#: company/models.py:364
+#: company/models.py:383
 msgid "Parameter name"
 msgstr "Parametername"
 
-#: company/models.py:370
+#: company/models.py:389
 #: report/templates/report/inventree_test_report_base.html:95
 #: stock/models.py:2177 templates/js/translated/company.js:582
 #: templates/js/translated/company.js:800 templates/js/translated/part.js:1143
-#: templates/js/translated/stock.js:1405
+#: templates/js/translated/stock.js:1409
 msgid "Value"
 msgstr "Wert"
 
-#: company/models.py:371
+#: company/models.py:390
 msgid "Parameter value"
 msgstr "Parameterwert"
 
-#: company/models.py:377 part/admin.py:26 part/models.py:952
+#: company/models.py:396 part/admin.py:26 part/models.py:952
 #: part/models.py:3194 part/templates/part/part_base.html:286
 #: templates/InvenTree/settings/settings.html:396
 #: templates/js/translated/company.js:806 templates/js/translated/part.js:1149
 msgid "Units"
 msgstr "Einheiten"
 
-#: company/models.py:378
+#: company/models.py:397
 msgid "Parameter units"
 msgstr "Parametereinheit"
 
-#: company/models.py:456
+#: company/models.py:475
 msgid "Linked manufacturer part must reference the same base part"
 msgstr "Verlinktes Herstellerteil muss dasselbe Basisteil referenzieren"
 
-#: company/models.py:498 company/templates/company/company_base.html:82
+#: company/models.py:517 company/templates/company/company_base.html:82
 #: company/templates/company/supplier_part.html:136 order/models.py:264
 #: order/templates/order/order_base.html:121 part/bom.py:285 part/bom.py:313
-#: part/serializers.py:359 stock/templates/stock/item_base.html:227
+#: part/serializers.py:347 stock/templates/stock/item_base.html:227
 #: templates/email/overdue_purchase_order.html:16
 #: templates/js/translated/company.js:304
 #: templates/js/translated/company.js:437
@@ -3248,34 +3256,34 @@ msgstr "Verlinktes Herstellerteil muss dasselbe Basisteil referenzieren"
 msgid "Supplier"
 msgstr "Zulieferer"
 
-#: company/models.py:499
+#: company/models.py:518
 msgid "Select supplier"
 msgstr "Zulieferer auswählen"
 
-#: company/models.py:504 company/templates/company/supplier_part.html:146
-#: part/bom.py:286 part/bom.py:314 part/serializers.py:365
+#: company/models.py:523 company/templates/company/supplier_part.html:146
+#: part/bom.py:286 part/bom.py:314 part/serializers.py:353
 #: templates/js/translated/company.js:303 templates/js/translated/order.js:2307
 #: templates/js/translated/part.js:1307 templates/js/translated/pricing.js:484
 msgid "SKU"
 msgstr "SKU (Lagerbestandseinheit)"
 
-#: company/models.py:505 part/serializers.py:365
+#: company/models.py:524 part/serializers.py:353
 msgid "Supplier stock keeping unit"
 msgstr "Lagerbestandseinheit (SKU) des Zulieferers"
 
-#: company/models.py:512
+#: company/models.py:531
 msgid "Select manufacturer part"
 msgstr "Herstellerteil auswählen"
 
-#: company/models.py:518
+#: company/models.py:537
 msgid "URL for external supplier part link"
 msgstr "Teil-URL des Zulieferers"
 
-#: company/models.py:524
+#: company/models.py:543
 msgid "Supplier part description"
 msgstr "Zuliefererbeschreibung des Teils"
 
-#: company/models.py:529 company/templates/company/supplier_part.html:181
+#: company/models.py:548 company/templates/company/supplier_part.html:181
 #: part/admin.py:258 part/models.py:3447 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report.html:92
@@ -3283,26 +3291,26 @@ msgstr "Zuliefererbeschreibung des Teils"
 msgid "Note"
 msgstr "Notiz"
 
-#: company/models.py:533 part/models.py:1867
+#: company/models.py:552 part/models.py:1867
 msgid "base cost"
 msgstr "Basiskosten"
 
-#: company/models.py:533 part/models.py:1867
+#: company/models.py:552 part/models.py:1867
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Mindestpreis"
 
-#: company/models.py:535 company/templates/company/supplier_part.html:167
+#: company/models.py:554 company/templates/company/supplier_part.html:167
 #: stock/admin.py:101 stock/models.py:682
 #: stock/templates/stock/item_base.html:243
-#: templates/js/translated/company.js:992 templates/js/translated/stock.js:2019
+#: templates/js/translated/company.js:992 templates/js/translated/stock.js:2023
 msgid "Packaging"
 msgstr "Verpackungen"
 
-#: company/models.py:535
+#: company/models.py:554
 msgid "Part packaging"
 msgstr "Teile-Verpackungen"
 
-#: company/models.py:538 company/serializers.py:242
+#: company/models.py:557 company/serializers.py:242
 #: company/templates/company/supplier_part.html:174
 #: templates/js/translated/company.js:997 templates/js/translated/order.js:852
 #: templates/js/translated/order.js:1287 templates/js/translated/order.js:1542
@@ -3311,19 +3319,19 @@ msgstr "Teile-Verpackungen"
 msgid "Pack Quantity"
 msgstr "Packmenge"
 
-#: company/models.py:539
+#: company/models.py:558
 msgid "Unit quantity supplied in a single pack"
 msgstr "Stückmenge in einer einzelnen Verpackungseinheit"
 
-#: company/models.py:545 part/models.py:1869
+#: company/models.py:564 part/models.py:1869
 msgid "multiple"
 msgstr "Vielfache"
 
-#: company/models.py:545
+#: company/models.py:564
 msgid "Order multiple"
 msgstr "Mehrere bestellen"
 
-#: company/models.py:553 company/templates/company/supplier_part.html:115
+#: company/models.py:572 company/templates/company/supplier_part.html:115
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:18
 #: templates/js/translated/bom.js:1125 templates/js/translated/build.js:1884
@@ -3333,15 +3341,15 @@ msgstr "Mehrere bestellen"
 msgid "Available"
 msgstr "Verfügbar"
 
-#: company/models.py:554
+#: company/models.py:573
 msgid "Quantity available from supplier"
 msgstr "Verfügbare Menge von Lieferanten"
 
-#: company/models.py:558
+#: company/models.py:577
 msgid "Availability Updated"
 msgstr "Verfügbarkeit aktualisiert"
 
-#: company/models.py:559
+#: company/models.py:578
 msgid "Date of last update of availability data"
 msgstr "Datum des letzten Updates der Verfügbarkeitsdaten"
 
@@ -3352,12 +3360,6 @@ msgstr "Standard-Währung für diesen Zulieferer"
 #: company/serializers.py:73
 msgid "Currency Code"
 msgstr "Währungscode"
-
-#: company/templates/company/company_base.html:8
-#: company/templates/company/company_base.html:12
-#: templates/InvenTree/search.html:179 templates/js/translated/company.js:422
-msgid "Company"
-msgstr "Firma"
 
 #: company/templates/company/company_base.html:22
 #: templates/js/translated/order.js:710
@@ -3403,11 +3405,11 @@ msgstr "Bild löschen"
 
 #: company/templates/company/company_base.html:87 order/models.py:665
 #: order/templates/order/sales_order_base.html:116 stock/models.py:701
-#: stock/models.py:702 stock/serializers.py:813
+#: stock/models.py:702 stock/serializers.py:799
 #: stock/templates/stock/item_base.html:399
 #: templates/email/overdue_sales_order.html:16
 #: templates/js/translated/company.js:429 templates/js/translated/order.js:2857
-#: templates/js/translated/stock.js:2610
+#: templates/js/translated/stock.js:2614
 #: templates/js/translated/table_filters.js:455
 msgid "Customer"
 msgstr "Kunde"
@@ -3598,7 +3600,7 @@ msgstr "Zuliefererteil entfernen"
 #: part/templates/part/detail.html:392 part/templates/part/detail.html:422
 #: templates/js/translated/forms.js:505 templates/js/translated/helpers.js:36
 #: templates/js/translated/part.js:306 templates/js/translated/stock.js:187
-#: users/models.py:225
+#: users/models.py:227
 msgid "Delete"
 msgstr "Löschen"
 
@@ -3645,7 +3647,7 @@ msgstr "Zugewiesene Lagerartikel"
 #: company/templates/company/supplier_part.html:24 stock/models.py:665
 #: stock/templates/stock/item_base.html:236
 #: templates/js/translated/company.js:946 templates/js/translated/order.js:1207
-#: templates/js/translated/stock.js:1977
+#: templates/js/translated/stock.js:1981
 msgid "Supplier Part"
 msgstr "Zuliefererteil"
 
@@ -3726,7 +3728,6 @@ msgid "No supplier information available"
 msgstr "Keine Lieferanteninformationen verfügbar"
 
 #: company/templates/company/supplier_part.html:200
-#: company/templates/company/supplier_part_navbar.html:12
 msgid "Supplier Part Stock"
 msgstr "Zulieferer-Bestand"
 
@@ -3742,7 +3743,6 @@ msgid "New Stock Item"
 msgstr "Neuer Lagerartikel"
 
 #: company/templates/company/supplier_part.html:217
-#: company/templates/company/supplier_part_navbar.html:19
 msgid "Supplier Part Orders"
 msgstr "Zulieferer-Bestellungen"
 
@@ -3764,33 +3764,6 @@ msgstr "Barcode mit Zuliefererteil verknüpfen"
 msgid "Update Part Availability"
 msgstr "Teilverfügbarkeit aktualisieren"
 
-#: company/templates/company/supplier_part_navbar.html:15
-#: part/templates/part/part_sidebar.html:14
-#: stock/templates/stock/loc_link.html:3 stock/templates/stock/location.html:24
-#: stock/templates/stock/stock_app_base.html:10
-#: templates/InvenTree/search.html:153
-#: templates/InvenTree/settings/sidebar.html:47
-#: templates/js/translated/part.js:1031 templates/js/translated/part.js:1632
-#: templates/js/translated/part.js:1788 templates/js/translated/stock.js:993
-#: templates/js/translated/stock.js:1802 templates/navbar.html:31
-msgid "Stock"
-msgstr "Bestand"
-
-#: company/templates/company/supplier_part_navbar.html:22
-msgid "Orders"
-msgstr "Bestellungen"
-
-#: company/templates/company/supplier_part_navbar.html:26
-#: company/templates/company/supplier_part_sidebar.html:9
-msgid "Supplier Part Pricing"
-msgstr "Zuliefererteil Bepreisung"
-
-#: company/templates/company/supplier_part_navbar.html:29
-#: part/templates/part/part_sidebar.html:30
-#: templates/InvenTree/settings/sidebar.html:37
-msgid "Pricing"
-msgstr "Bepreisung"
-
 #: company/templates/company/supplier_part_sidebar.html:5
 #: part/templates/part/category.html:198
 #: part/templates/part/category_sidebar.html:17 stock/admin.py:31
@@ -3799,9 +3772,13 @@ msgstr "Bepreisung"
 #: stock/templates/stock/location.html:194
 #: stock/templates/stock/location_sidebar.html:7
 #: templates/InvenTree/search.html:155 templates/js/translated/search.js:225
-#: templates/js/translated/stock.js:2487 users/models.py:40
+#: templates/js/translated/stock.js:2491 users/models.py:40
 msgid "Stock Items"
 msgstr "Lagerartikel"
+
+#: company/templates/company/supplier_part_sidebar.html:9
+msgid "Supplier Part Pricing"
+msgstr "Zuliefererteil Bepreisung"
 
 #: company/views.py:33
 msgid "New Supplier"
@@ -3909,8 +3886,8 @@ msgstr "Keine passende Bestellung gefunden"
 #: templates/email/overdue_purchase_order.html:15
 #: templates/js/translated/order.js:640 templates/js/translated/order.js:1208
 #: templates/js/translated/order.js:2035 templates/js/translated/part.js:1266
-#: templates/js/translated/pricing.js:756 templates/js/translated/stock.js:1957
-#: templates/js/translated/stock.js:2591
+#: templates/js/translated/pricing.js:756 templates/js/translated/stock.js:1961
+#: templates/js/translated/stock.js:2595
 msgid "Purchase Order"
 msgstr "Bestellung"
 
@@ -4091,7 +4068,7 @@ msgstr "Empfangene Objekt-Anzahl"
 
 #: order/models.py:1054 stock/models.py:798 stock/serializers.py:173
 #: stock/templates/stock/item_base.html:189
-#: templates/js/translated/stock.js:2008
+#: templates/js/translated/stock.js:2012
 msgid "Purchase Price"
 msgstr "Preis"
 
@@ -4136,8 +4113,8 @@ msgstr "Kontrolliert von"
 msgid "User who checked this shipment"
 msgstr "Benutzer, der diese Sendung kontrolliert hat"
 
-#: order/models.py:1257 order/models.py:1442 order/serializers.py:1221
-#: order/serializers.py:1349 templates/js/translated/model_renderers.js:327
+#: order/models.py:1257 order/models.py:1442 order/serializers.py:1209
+#: order/serializers.py:1337 templates/js/translated/model_renderers.js:327
 msgid "Shipment"
 msgstr "Sendung"
 
@@ -4189,7 +4166,7 @@ msgstr "Kann Lagerartikel keiner Zeile ohne Teil hinzufügen"
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "Die zugeordnete Anzahl darf nicht die verfügbare Anzahl überschreiten"
 
-#: order/models.py:1422 order/serializers.py:1083
+#: order/models.py:1422 order/serializers.py:1071
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Anzahl für serialisierte Lagerartikel muss 1 sein"
 
@@ -4229,11 +4206,11 @@ msgstr "Währung"
 msgid "Order cannot be cancelled"
 msgstr "Bestellung kann nicht verworfen werden"
 
-#: order/serializers.py:203 order/serializers.py:1101
+#: order/serializers.py:203 order/serializers.py:1089
 msgid "Allow order to be closed with incomplete line items"
 msgstr "Erlaube das Schließen des Auftrags mit unvollständigen Positionen"
 
-#: order/serializers.py:214 order/serializers.py:1112
+#: order/serializers.py:214 order/serializers.py:1100
 msgid "Order has incomplete line items"
 msgstr "Auftrag hat unvollständige Positionen"
 
@@ -4261,7 +4238,7 @@ msgstr "Lieferant muss mit der Bestellung übereinstimmen"
 msgid "Purchase order must match supplier"
 msgstr "Die Bestellung muss mit dem Lieferant übereinstimmen"
 
-#: order/serializers.py:421 order/serializers.py:1189
+#: order/serializers.py:421 order/serializers.py:1177
 msgid "Line Item"
 msgstr "Position"
 
@@ -4305,39 +4282,39 @@ msgstr "Ziel-Lagerort muss angegeben werden"
 msgid "Supplied barcode values must be unique"
 msgstr "Barcode muss eindeutig sein"
 
-#: order/serializers.py:900
+#: order/serializers.py:888
 msgid "Sale price currency"
 msgstr "Verkaufspreis-Währung"
 
-#: order/serializers.py:981
+#: order/serializers.py:969
 msgid "No shipment details provided"
 msgstr "Keine Sendungsdetails angegeben"
 
-#: order/serializers.py:1044 order/serializers.py:1198
+#: order/serializers.py:1032 order/serializers.py:1186
 msgid "Line item is not associated with this order"
 msgstr "Position ist nicht diesem Auftrag zugeordnet"
 
-#: order/serializers.py:1066
+#: order/serializers.py:1054
 msgid "Quantity must be positive"
 msgstr "Anzahl muss positiv sein"
 
-#: order/serializers.py:1211
+#: order/serializers.py:1199
 msgid "Enter serial numbers to allocate"
 msgstr "Seriennummern zum Zuweisen eingeben"
 
-#: order/serializers.py:1233 order/serializers.py:1357
+#: order/serializers.py:1221 order/serializers.py:1345
 msgid "Shipment has already been shipped"
 msgstr "Sendung wurde bereits versandt"
 
-#: order/serializers.py:1236 order/serializers.py:1360
+#: order/serializers.py:1224 order/serializers.py:1348
 msgid "Shipment is not associated with this order"
 msgstr "Sendung ist nicht diesem Auftrag zugeordnet"
 
-#: order/serializers.py:1290
+#: order/serializers.py:1278
 msgid "No match found for the following serial numbers"
 msgstr "Folgende Serienummern konnten nicht gefunden werden"
 
-#: order/serializers.py:1300
+#: order/serializers.py:1288
 msgid "The following serial numbers are already allocated"
 msgstr "Folgende Seriennummern sind bereits zugewiesen"
 
@@ -4696,7 +4673,7 @@ msgstr "Beschreibung des Teils"
 
 #: part/admin.py:22 part/models.py:853 part/templates/part/part_base.html:272
 #: templates/js/translated/part.js:1017 templates/js/translated/part.js:1745
-#: templates/js/translated/stock.js:1768
+#: templates/js/translated/stock.js:1772
 msgid "IPN"
 msgstr "IPN (Interne Produktnummer)"
 
@@ -5065,7 +5042,7 @@ msgstr "Erstellungs-Nutzer"
 
 #: part/models.py:1006
 msgid "User responsible for this part"
-msgstr ""
+msgstr "Benutzer, der für diesen Teil verantwortlich ist"
 
 #: part/models.py:1010 part/templates/part/part_base.html:345
 #: stock/templates/stock/item_base.html:445
@@ -5215,7 +5192,7 @@ msgstr "Insgesamt verfügbarer Lagerbestand zum Zeitpunkt der Inventur"
 #: templates/InvenTree/settings/plugin_settings.html:38
 #: templates/js/translated/order.js:2077 templates/js/translated/part.js:870
 #: templates/js/translated/pricing.js:778
-#: templates/js/translated/pricing.js:899 templates/js/translated/stock.js:2519
+#: templates/js/translated/pricing.js:899 templates/js/translated/stock.js:2523
 msgid "Date"
 msgstr "Datum"
 
@@ -5467,188 +5444,188 @@ msgstr "Teil-Beziehung kann nicht zwischen einem Teil und sich selbst erstellt w
 msgid "Duplicate relationship already exists"
 msgstr "Doppelte Beziehung existiert bereits"
 
-#: part/serializers.py:160 part/serializers.py:188 stock/serializers.py:183
+#: part/serializers.py:148 part/serializers.py:176 stock/serializers.py:183
 msgid "Purchase currency of this stock item"
 msgstr "Kaufwährung dieses Lagerartikels"
 
-#: part/serializers.py:318
+#: part/serializers.py:306
 msgid "Original Part"
 msgstr "Originalteil"
 
-#: part/serializers.py:318
+#: part/serializers.py:306
 msgid "Select original part to duplicate"
 msgstr "Originalteil zum Duplizieren auswählen"
 
-#: part/serializers.py:323
+#: part/serializers.py:311
 msgid "Copy Image"
 msgstr "Bild kopieren"
 
-#: part/serializers.py:323
+#: part/serializers.py:311
 msgid "Copy image from original part"
 msgstr "Bild vom Originalteil kopieren"
 
-#: part/serializers.py:328 part/templates/part/detail.html:295
+#: part/serializers.py:316 part/templates/part/detail.html:295
 msgid "Copy BOM"
 msgstr "Stückliste kopieren"
 
-#: part/serializers.py:328
+#: part/serializers.py:316
 msgid "Copy bill of materials from original part"
 msgstr "Stückliste vom Originalteil kopieren"
 
-#: part/serializers.py:333
+#: part/serializers.py:321
 msgid "Copy Parameters"
 msgstr "Parameter kopieren"
 
-#: part/serializers.py:333
+#: part/serializers.py:321
 msgid "Copy parameter data from original part"
 msgstr "Parameterdaten vom Originalteil kopieren"
 
-#: part/serializers.py:343
+#: part/serializers.py:331
 msgid "Initial Stock Quantity"
 msgstr "Start-Bestandsmenge"
 
-#: part/serializers.py:343
+#: part/serializers.py:331
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
 msgstr "Initiale Lagermenge für dieses Teil. Wenn die Menge null ist, wird kein Lagerbestand hinzugefügt."
 
-#: part/serializers.py:349
+#: part/serializers.py:337
 msgid "Initial Stock Location"
 msgstr "Initialer Lagerort"
 
-#: part/serializers.py:349
+#: part/serializers.py:337
 msgid "Specify initial stock location for this Part"
 msgstr "Lagerstandort für dieses Teil angeben"
 
-#: part/serializers.py:359
+#: part/serializers.py:347
 msgid "Select supplier (or leave blank to skip)"
 msgstr "Lieferant auswählen (oder leer lassen, um zu überspringen)"
 
-#: part/serializers.py:370
+#: part/serializers.py:358
 msgid "Select manufacturer (or leave blank to skip)"
 msgstr "Hersteller auswählen (oder leer lassen, um zu überspringen)"
 
-#: part/serializers.py:376
+#: part/serializers.py:364
 msgid "Manufacturer part number"
 msgstr "Hersteller-Teilenummer"
 
-#: part/serializers.py:383
+#: part/serializers.py:371
 msgid "Selected company is not a valid supplier"
 msgstr "Ausgewählte Firma ist kein gültiger Lieferant"
 
-#: part/serializers.py:391
+#: part/serializers.py:379
 msgid "Selected company is not a valid manufacturer"
 msgstr "Ausgewählte Firma ist kein gültiger Hersteller"
 
-#: part/serializers.py:403
+#: part/serializers.py:391
 msgid "Manufacturer part matching this MPN already exists"
 msgstr "Herstellerteil mit dieser MPN existiert bereits"
 
-#: part/serializers.py:411
+#: part/serializers.py:399
 msgid "Supplier part matching this SKU already exists"
 msgstr "Lieferantenteil mit dieser SKU existiert bereits"
 
-#: part/serializers.py:562 part/templates/part/copy_part.html:9
+#: part/serializers.py:550 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:385
 msgid "Duplicate Part"
 msgstr "Teil duplizieren"
 
-#: part/serializers.py:562
+#: part/serializers.py:550
 msgid "Copy initial data from another Part"
 msgstr "Initiale Daten von anderem Teil kopieren"
 
-#: part/serializers.py:567 templates/js/translated/part.js:68
+#: part/serializers.py:555 templates/js/translated/part.js:68
 msgid "Initial Stock"
 msgstr "Initialer Lagerbestand"
 
-#: part/serializers.py:567
+#: part/serializers.py:555
 msgid "Create Part with initial stock quantity"
 msgstr "Erstelle Teil mit Ausgangsbestand"
 
-#: part/serializers.py:572
+#: part/serializers.py:560
 msgid "Supplier Information"
 msgstr "Lieferanteninformationen"
 
-#: part/serializers.py:572
+#: part/serializers.py:560
 msgid "Add initial supplier information for this part"
 msgstr "Lieferanteninformationen zu diesem Teil hinzufügen"
 
-#: part/serializers.py:802
+#: part/serializers.py:790
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: part/serializers.py:803
+#: part/serializers.py:791
 msgid "Update pricing for this part"
 msgstr "Preis für dieses Teil aktualisieren"
 
-#: part/serializers.py:1113
+#: part/serializers.py:1101
 msgid "Select part to copy BOM from"
 msgstr "Teil auswählen, von dem Stückliste kopiert wird"
 
-#: part/serializers.py:1121
+#: part/serializers.py:1109
 msgid "Remove Existing Data"
 msgstr "Bestehende Daten entfernen"
 
-#: part/serializers.py:1122
+#: part/serializers.py:1110
 msgid "Remove existing BOM items before copying"
 msgstr "Bestehende Stücklisten-Positionen vor dem Kopieren entfernen"
 
-#: part/serializers.py:1127
+#: part/serializers.py:1115
 msgid "Include Inherited"
 msgstr "Vererbtes einschließen"
 
-#: part/serializers.py:1128
+#: part/serializers.py:1116
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "Stücklisten-Positionen einbeziehen, die von Vorlage-Teilen geerbt werden"
 
-#: part/serializers.py:1133
+#: part/serializers.py:1121
 msgid "Skip Invalid Rows"
 msgstr "Ungültige Zeilen überspringen"
 
-#: part/serializers.py:1134
+#: part/serializers.py:1122
 msgid "Enable this option to skip invalid rows"
 msgstr "Aktiviere diese Option, um ungültige Zeilen zu überspringen"
 
-#: part/serializers.py:1139
+#: part/serializers.py:1127
 msgid "Copy Substitute Parts"
 msgstr "Ersatzteile kopieren"
 
-#: part/serializers.py:1140
+#: part/serializers.py:1128
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Ersatzteile beim Duplizieren von Stücklisten-Positionen kopieren"
 
-#: part/serializers.py:1180
+#: part/serializers.py:1168
 msgid "Clear Existing BOM"
 msgstr "Bestehende Stückliste löschen"
 
-#: part/serializers.py:1181
+#: part/serializers.py:1169
 msgid "Delete existing BOM items before uploading"
 msgstr "Bestehende Stücklisten-Positionen vor dem Importieren entfernen"
 
-#: part/serializers.py:1211
+#: part/serializers.py:1199
 msgid "No part column specified"
 msgstr "Keine Teilspalte angegeben"
 
-#: part/serializers.py:1254
+#: part/serializers.py:1242
 msgid "Multiple matching parts found"
 msgstr "Mehrere übereinstimmende Teile gefunden"
 
-#: part/serializers.py:1257
+#: part/serializers.py:1245
 msgid "No matching part found"
 msgstr "Keine passenden Teile gefunden"
 
-#: part/serializers.py:1260
+#: part/serializers.py:1248
 msgid "Part is not designated as a component"
 msgstr "Teil ist nicht als Komponente angelegt"
 
-#: part/serializers.py:1269
+#: part/serializers.py:1257
 msgid "Quantity not provided"
 msgstr "Menge nicht angegeben"
 
-#: part/serializers.py:1277
+#: part/serializers.py:1265
 msgid "Invalid quantity"
 msgstr "Ungültige Menge"
 
-#: part/serializers.py:1298
+#: part/serializers.py:1286
 msgid "At least one BOM item is required"
 msgstr "Mindestens eine Stückliste-Position ist erforderlich"
 
@@ -5812,7 +5789,7 @@ msgid "Add stocktake information"
 msgstr "Inventurinformationen hinzufügen"
 
 #: part/templates/part/detail.html:66 part/templates/part/part_sidebar.html:49
-#: stock/admin.py:107 templates/js/translated/stock.js:1913
+#: stock/admin.py:107 templates/js/translated/stock.js:1917
 msgid "Stocktake"
 msgstr "Inventur"
 
@@ -6176,6 +6153,22 @@ msgstr "Geplante Menge"
 msgid "Variants"
 msgstr "Varianten"
 
+#: part/templates/part/part_sidebar.html:14
+#: stock/templates/stock/loc_link.html:3 stock/templates/stock/location.html:24
+#: stock/templates/stock/stock_app_base.html:10
+#: templates/InvenTree/search.html:153
+#: templates/InvenTree/settings/sidebar.html:47
+#: templates/js/translated/part.js:1031 templates/js/translated/part.js:1632
+#: templates/js/translated/part.js:1788 templates/js/translated/stock.js:993
+#: templates/js/translated/stock.js:1806 templates/navbar.html:31
+msgid "Stock"
+msgstr "Bestand"
+
+#: part/templates/part/part_sidebar.html:30
+#: templates/InvenTree/settings/sidebar.html:37
+msgid "Pricing"
+msgstr "Bepreisung"
+
 #: part/templates/part/part_sidebar.html:44
 msgid "Scheduling"
 msgstr "Zeitplan"
@@ -6200,7 +6193,7 @@ msgstr "Preis aktualisieren"
 #: stock/templates/stock/item_base.html:440
 #: templates/js/translated/company.js:1039
 #: templates/js/translated/company.js:1048
-#: templates/js/translated/stock.js:1943
+#: templates/js/translated/stock.js:1947
 msgid "Last Updated"
 msgstr "Zuletzt aktualisiert"
 
@@ -6709,7 +6702,7 @@ msgid "Test Results"
 msgstr "Testergebnisse"
 
 #: report/templates/report/inventree_test_report_base.html:93
-#: stock/models.py:2165 templates/js/translated/stock.js:1378
+#: stock/models.py:2165 templates/js/translated/stock.js:1382
 msgid "Test"
 msgstr "Test"
 
@@ -6734,7 +6727,7 @@ msgstr "Verbaute Objekte"
 #: report/templates/report/inventree_test_report_base.html:137
 #: stock/admin.py:87 templates/js/translated/part.js:732
 #: templates/js/translated/stock.js:641 templates/js/translated/stock.js:811
-#: templates/js/translated/stock.js:2768
+#: templates/js/translated/stock.js:2772
 msgid "Serial"
 msgstr "Seriennummer"
 
@@ -6791,7 +6784,7 @@ msgstr "Bestellungs-ID"
 
 #: stock/admin.py:108 stock/models.py:762
 #: stock/templates/stock/item_base.html:427
-#: templates/js/translated/stock.js:1927
+#: templates/js/translated/stock.js:1931
 msgid "Expiry Date"
 msgstr "Ablaufdatum"
 
@@ -6992,7 +6985,7 @@ msgstr "Lagerartikel wird aktuell produziert"
 msgid "Serialized stock cannot be merged"
 msgstr "Nachverfolgbare Lagerartikel können nicht zusammengeführt werden"
 
-#: stock/models.py:1434 stock/serializers.py:963
+#: stock/models.py:1434 stock/serializers.py:949
 msgid "Duplicate stock items"
 msgstr "Artikel duplizeren"
 
@@ -7065,7 +7058,7 @@ msgstr "Anzahl darf nicht die verfügbare Menge überschreiten ({q})"
 msgid "Enter serial numbers for new items"
 msgstr "Seriennummern für neue Teile eingeben"
 
-#: stock/serializers.py:315 stock/serializers.py:920 stock/serializers.py:1153
+#: stock/serializers.py:315 stock/serializers.py:906 stock/serializers.py:1139
 msgid "Destination stock location"
 msgstr "Ziel-Bestand"
 
@@ -7113,63 +7106,63 @@ msgstr "Das ausgewählte Teil ist keine gültige Option für die Umwandlung"
 msgid "Destination location for returned item"
 msgstr "Ziel Lagerort für zurückgegebene Artikel"
 
-#: stock/serializers.py:775
+#: stock/serializers.py:761
 msgid "Part must be salable"
 msgstr "Teil muss verkaufbar sein"
 
-#: stock/serializers.py:779
+#: stock/serializers.py:765
 msgid "Item is allocated to a sales order"
 msgstr "Artikel ist einem Kundenauftrag zugeordnet"
 
-#: stock/serializers.py:783
+#: stock/serializers.py:769
 msgid "Item is allocated to a build order"
 msgstr "Artikel ist einem Fertigungsauftrag zugeordnet"
 
-#: stock/serializers.py:814
+#: stock/serializers.py:800
 msgid "Customer to assign stock items"
 msgstr "Kunde zum Zuweisen von Lagerartikel"
 
-#: stock/serializers.py:820
+#: stock/serializers.py:806
 msgid "Selected company is not a customer"
 msgstr "Ausgewählte Firma ist kein Kunde"
 
-#: stock/serializers.py:828
+#: stock/serializers.py:814
 msgid "Stock assignment notes"
 msgstr "Notizen zur Lagerzuordnung"
 
-#: stock/serializers.py:838 stock/serializers.py:1069
+#: stock/serializers.py:824 stock/serializers.py:1055
 msgid "A list of stock items must be provided"
 msgstr "Eine Liste der Lagerbestände muss angegeben werden"
 
-#: stock/serializers.py:927
+#: stock/serializers.py:913
 msgid "Stock merging notes"
 msgstr "Notizen zur Lagerartikelzusammenführung"
 
-#: stock/serializers.py:932
+#: stock/serializers.py:918
 msgid "Allow mismatched suppliers"
 msgstr "Unterschiedliche Lieferanten erlauben"
 
-#: stock/serializers.py:933
+#: stock/serializers.py:919
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr "Zusammenführen von Lagerartikeln mit unterschiedlichen Lieferanten erlauben"
 
-#: stock/serializers.py:938
+#: stock/serializers.py:924
 msgid "Allow mismatched status"
 msgstr "Unterschiedliche Status erlauben"
 
-#: stock/serializers.py:939
+#: stock/serializers.py:925
 msgid "Allow stock items with different status codes to be merged"
 msgstr "Zusammenführen von Lagerartikeln mit unterschiedlichen Status-Codes erlauben"
 
-#: stock/serializers.py:949
+#: stock/serializers.py:935
 msgid "At least two stock items must be provided"
 msgstr "Mindestens zwei Lagerartikel müssen angegeben werden"
 
-#: stock/serializers.py:1031
+#: stock/serializers.py:1017
 msgid "StockItem primary key value"
 msgstr "Primärschlüssel Lagerelement"
 
-#: stock/serializers.py:1059
+#: stock/serializers.py:1045
 msgid "Stock transaction notes"
 msgstr "Bestandsbewegungsnotizen"
 
@@ -7206,7 +7199,7 @@ msgstr "Testdaten hinzufügen"
 msgid "Installed Stock Items"
 msgstr "Installierte Lagerartikel"
 
-#: stock/templates/stock/item.html:152 templates/js/translated/stock.js:2915
+#: stock/templates/stock/item.html:152 templates/js/translated/stock.js:2919
 msgid "Install Stock Item"
 msgstr "Lagerartikel installieren"
 
@@ -7214,7 +7207,7 @@ msgstr "Lagerartikel installieren"
 msgid "Delete all test results for this stock item"
 msgstr "Alle Testergebnisse für diesen Lagerartikel löschen"
 
-#: stock/templates/stock/item.html:327 templates/js/translated/stock.js:1568
+#: stock/templates/stock/item.html:327 templates/js/translated/stock.js:1572
 msgid "Add Test Result"
 msgstr "Testergebnis hinzufügen"
 
@@ -8740,7 +8733,7 @@ msgstr "Dadurch wird der Link zu dem zugehörigen Barcode entfernt"
 msgid "Unlink"
 msgstr "Entfernen"
 
-#: templates/js/translated/barcode.js:524 templates/js/translated/stock.js:1088
+#: templates/js/translated/barcode.js:524 templates/js/translated/stock.js:1092
 msgid "Remove stock item"
 msgstr "Lagerartikel entfernen"
 
@@ -9260,8 +9253,8 @@ msgid "No builds matching query"
 msgstr "Keine Bauaufträge passen zur Anfrage"
 
 #: templates/js/translated/build.js:2575 templates/js/translated/part.js:1720
-#: templates/js/translated/part.js:2267 templates/js/translated/stock.js:1732
-#: templates/js/translated/stock.js:2431
+#: templates/js/translated/part.js:2267 templates/js/translated/stock.js:1736
+#: templates/js/translated/stock.js:2435
 msgid "Select"
 msgstr "Auswählen"
 
@@ -9273,7 +9266,7 @@ msgstr "Bauauftrag ist überfällig"
 msgid "Progress"
 msgstr "Fortschritt"
 
-#: templates/js/translated/build.js:2659 templates/js/translated/stock.js:2698
+#: templates/js/translated/build.js:2659 templates/js/translated/stock.js:2702
 msgid "No user information"
 msgstr "Keine Benutzerinformation"
 
@@ -9528,7 +9521,7 @@ msgid "Labels sent to printer"
 msgstr "Label an den Drucker gesendet"
 
 #: templates/js/translated/label.js:60 templates/js/translated/report.js:118
-#: templates/js/translated/stock.js:1112
+#: templates/js/translated/stock.js:1116
 msgid "Select Stock Items"
 msgstr "Lagerartikel auswählen"
 
@@ -9862,7 +9855,7 @@ msgstr "Gelieferte Menge"
 msgid "Quantity to receive"
 msgstr "Zu erhaltende Menge"
 
-#: templates/js/translated/order.js:1618 templates/js/translated/stock.js:2187
+#: templates/js/translated/order.js:1618 templates/js/translated/stock.js:2191
 msgid "Stock Status"
 msgstr "Status"
 
@@ -10063,7 +10056,7 @@ msgid "Delete Stock Allocation"
 msgstr "Bestands-Zuordnung löschen"
 
 #: templates/js/translated/order.js:3653 templates/js/translated/order.js:3742
-#: templates/js/translated/stock.js:1648
+#: templates/js/translated/stock.js:1652
 msgid "Shipped to customer"
 msgstr "an Kunde versand"
 
@@ -10258,7 +10251,7 @@ msgstr "Kein Lagerbestand verfügbar"
 
 #: templates/js/translated/part.js:623
 msgid "Unit"
-msgstr ""
+msgstr "Einheit"
 
 #: templates/js/translated/part.js:639 templates/js/translated/part.js:993
 msgid "Trackable part"
@@ -10333,7 +10326,7 @@ msgid "Allocated to sales orders"
 msgstr "Zu Bestellungen zugeordnet"
 
 #: templates/js/translated/part.js:1943 templates/js/translated/part.js:2186
-#: templates/js/translated/stock.js:2390
+#: templates/js/translated/stock.js:2394
 msgid "Display as list"
 msgstr "Listenansicht"
 
@@ -10357,7 +10350,7 @@ msgstr "Teil-Kategorie wählen"
 msgid "Category is required"
 msgstr "Kategorie erforderlich"
 
-#: templates/js/translated/part.js:2206 templates/js/translated/stock.js:2410
+#: templates/js/translated/part.js:2206 templates/js/translated/stock.js:2414
 msgid "Display as tree"
 msgstr "Baumansicht"
 
@@ -10373,12 +10366,12 @@ msgstr "Abonnierte Kategorie"
 msgid "No test templates matching query"
 msgstr "Keine zur Anfrage passenden Testvorlagen"
 
-#: templates/js/translated/part.js:2417 templates/js/translated/stock.js:1337
+#: templates/js/translated/part.js:2417 templates/js/translated/stock.js:1341
 msgid "Edit test result"
 msgstr "Testergebnis bearbeiten"
 
-#: templates/js/translated/part.js:2418 templates/js/translated/stock.js:1338
-#: templates/js/translated/stock.js:1606
+#: templates/js/translated/part.js:2418 templates/js/translated/stock.js:1342
+#: templates/js/translated/stock.js:1610
 msgid "Delete test result"
 msgstr "Testergebnis löschen"
 
@@ -10714,7 +10707,7 @@ msgstr "Entfernen"
 msgid "Add Stock"
 msgstr "Bestand hinzufügen"
 
-#: templates/js/translated/stock.js:976 users/models.py:221
+#: templates/js/translated/stock.js:976 users/models.py:223
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -10722,220 +10715,220 @@ msgstr "Hinzufügen"
 msgid "Delete Stock"
 msgstr "Bestand löschen"
 
-#: templates/js/translated/stock.js:1073
+#: templates/js/translated/stock.js:1077
 msgid "Quantity cannot be adjusted for serialized stock"
 msgstr "Menge von serialisiertem Bestand kann nicht bearbeitet werden"
 
-#: templates/js/translated/stock.js:1073
+#: templates/js/translated/stock.js:1077
 msgid "Specify stock quantity"
 msgstr "Bestandsanzahl angeben"
 
-#: templates/js/translated/stock.js:1113
+#: templates/js/translated/stock.js:1117
 msgid "You must select at least one available stock item"
 msgstr "Sie müssen mindestens einen Lagerartikel auswählen"
 
-#: templates/js/translated/stock.js:1140
+#: templates/js/translated/stock.js:1144
 msgid "Confirm stock adjustment"
 msgstr "Bestands-Anpassung bestätigen"
 
-#: templates/js/translated/stock.js:1276
+#: templates/js/translated/stock.js:1280
 msgid "PASS"
 msgstr "ERFOLGREICH"
 
-#: templates/js/translated/stock.js:1278
+#: templates/js/translated/stock.js:1282
 msgid "FAIL"
 msgstr "FEHLGESCHLAGEN"
 
-#: templates/js/translated/stock.js:1283
+#: templates/js/translated/stock.js:1287
 msgid "NO RESULT"
 msgstr "KEIN ERGEBNIS"
 
-#: templates/js/translated/stock.js:1330
+#: templates/js/translated/stock.js:1334
 msgid "Pass test"
 msgstr "Test bestanden"
 
-#: templates/js/translated/stock.js:1333
+#: templates/js/translated/stock.js:1337
 msgid "Add test result"
 msgstr "Testergebnis hinzufügen"
 
-#: templates/js/translated/stock.js:1359
+#: templates/js/translated/stock.js:1363
 msgid "No test results found"
 msgstr "Keine Testergebnisse gefunden"
 
-#: templates/js/translated/stock.js:1423
+#: templates/js/translated/stock.js:1427
 msgid "Test Date"
 msgstr "Testdatum"
 
-#: templates/js/translated/stock.js:1589
+#: templates/js/translated/stock.js:1593
 msgid "Edit Test Result"
 msgstr "Testergebnis bearbeiten"
 
-#: templates/js/translated/stock.js:1611
+#: templates/js/translated/stock.js:1615
 msgid "Delete Test Result"
 msgstr "Testergebnis löschen"
 
-#: templates/js/translated/stock.js:1640
+#: templates/js/translated/stock.js:1644
 msgid "In production"
 msgstr "In Arbeit"
 
-#: templates/js/translated/stock.js:1644
+#: templates/js/translated/stock.js:1648
 msgid "Installed in Stock Item"
 msgstr "In Lagerartikel installiert"
 
-#: templates/js/translated/stock.js:1652
+#: templates/js/translated/stock.js:1656
 msgid "Assigned to Sales Order"
 msgstr "Auftrag zugewiesen"
 
-#: templates/js/translated/stock.js:1658
+#: templates/js/translated/stock.js:1662
 msgid "No stock location set"
 msgstr "Kein Lagerort gesetzt"
 
-#: templates/js/translated/stock.js:1823
+#: templates/js/translated/stock.js:1827
 msgid "Stock item is in production"
 msgstr "Lagerartikel wird produziert"
 
-#: templates/js/translated/stock.js:1828
+#: templates/js/translated/stock.js:1832
 msgid "Stock item assigned to sales order"
 msgstr "Lagerartikel wurde Auftrag zugewiesen"
 
-#: templates/js/translated/stock.js:1831
+#: templates/js/translated/stock.js:1835
 msgid "Stock item assigned to customer"
 msgstr "Lagerartikel wurde Kunden zugewiesen"
 
-#: templates/js/translated/stock.js:1834
+#: templates/js/translated/stock.js:1838
 msgid "Serialized stock item has been allocated"
 msgstr "Serialisierter Lagerartikel wurde zugewiesen"
 
-#: templates/js/translated/stock.js:1836
+#: templates/js/translated/stock.js:1840
 msgid "Stock item has been fully allocated"
 msgstr "Lagerartikel wurde vollständig zugewiesen"
 
-#: templates/js/translated/stock.js:1838
+#: templates/js/translated/stock.js:1842
 msgid "Stock item has been partially allocated"
 msgstr "Lagerartikel wurde teilweise zugewiesen"
 
-#: templates/js/translated/stock.js:1841
+#: templates/js/translated/stock.js:1845
 msgid "Stock item has been installed in another item"
 msgstr "Lagerartikel in anderem Element verbaut"
 
-#: templates/js/translated/stock.js:1845
+#: templates/js/translated/stock.js:1849
 msgid "Stock item has expired"
 msgstr "Lagerartikel ist abgelaufen"
 
-#: templates/js/translated/stock.js:1847
+#: templates/js/translated/stock.js:1851
 msgid "Stock item will expire soon"
 msgstr "Lagerartikel läuft demnächst ab"
 
-#: templates/js/translated/stock.js:1854
+#: templates/js/translated/stock.js:1858
 msgid "Stock item has been rejected"
 msgstr "Lagerartikel abgewiesen"
 
-#: templates/js/translated/stock.js:1856
+#: templates/js/translated/stock.js:1860
 msgid "Stock item is lost"
 msgstr "Lagerartikel verloren"
 
-#: templates/js/translated/stock.js:1858
+#: templates/js/translated/stock.js:1862
 msgid "Stock item is destroyed"
 msgstr "Lagerartikel zerstört"
 
-#: templates/js/translated/stock.js:1862
+#: templates/js/translated/stock.js:1866
 #: templates/js/translated/table_filters.js:216
 msgid "Depleted"
 msgstr "gelöscht"
 
-#: templates/js/translated/stock.js:1992
+#: templates/js/translated/stock.js:1996
 msgid "Supplier part not specified"
 msgstr "Zuliefererteil nicht angegeben"
 
-#: templates/js/translated/stock.js:2029
+#: templates/js/translated/stock.js:2033
 msgid "No stock items matching query"
 msgstr "Keine zur Anfrage passenden Lagerartikel"
 
-#: templates/js/translated/stock.js:2202
+#: templates/js/translated/stock.js:2206
 msgid "Set Stock Status"
 msgstr "Status setzen"
 
-#: templates/js/translated/stock.js:2216
+#: templates/js/translated/stock.js:2220
 msgid "Select Status Code"
 msgstr "Status Code setzen"
 
-#: templates/js/translated/stock.js:2217
+#: templates/js/translated/stock.js:2221
 msgid "Status code must be selected"
 msgstr "Status Code muss ausgewählt werden"
 
-#: templates/js/translated/stock.js:2449
+#: templates/js/translated/stock.js:2453
 msgid "Load Subloactions"
 msgstr "Untergeordnete Lagerorte laden"
 
-#: templates/js/translated/stock.js:2544
+#: templates/js/translated/stock.js:2548
 msgid "Details"
 msgstr "Details"
 
-#: templates/js/translated/stock.js:2560
+#: templates/js/translated/stock.js:2564
 msgid "Part information unavailable"
 msgstr "Artikelinformationen nicht verfügbar"
 
-#: templates/js/translated/stock.js:2582
+#: templates/js/translated/stock.js:2586
 msgid "Location no longer exists"
 msgstr "Standort nicht mehr vorhanden"
 
-#: templates/js/translated/stock.js:2601
+#: templates/js/translated/stock.js:2605
 msgid "Purchase order no longer exists"
 msgstr "Bestellung existiert nicht mehr"
 
-#: templates/js/translated/stock.js:2620
+#: templates/js/translated/stock.js:2624
 msgid "Customer no longer exists"
 msgstr "Kunde existiert nicht mehr"
 
-#: templates/js/translated/stock.js:2638
+#: templates/js/translated/stock.js:2642
 msgid "Stock item no longer exists"
 msgstr "Lagerartikel existiert nicht mehr"
 
-#: templates/js/translated/stock.js:2661
+#: templates/js/translated/stock.js:2665
 msgid "Added"
 msgstr "Hinzugefügt"
 
-#: templates/js/translated/stock.js:2669
+#: templates/js/translated/stock.js:2673
 msgid "Removed"
 msgstr "Entfernt"
 
-#: templates/js/translated/stock.js:2745
+#: templates/js/translated/stock.js:2749
 msgid "No installed items"
 msgstr "Keine installierten Elemente"
 
-#: templates/js/translated/stock.js:2796 templates/js/translated/stock.js:2832
+#: templates/js/translated/stock.js:2800 templates/js/translated/stock.js:2836
 msgid "Uninstall Stock Item"
 msgstr "Lagerartikel entfernen"
 
-#: templates/js/translated/stock.js:2848
+#: templates/js/translated/stock.js:2852
 msgid "Select stock item to uninstall"
 msgstr "Zu deinstallierende Lagerartikel auswählen"
 
-#: templates/js/translated/stock.js:2869
+#: templates/js/translated/stock.js:2873
 msgid "Install another stock item into this item"
 msgstr "Einen weiteren Lagerartikel in dieses Teil installiert"
 
-#: templates/js/translated/stock.js:2870
+#: templates/js/translated/stock.js:2874
 msgid "Stock items can only be installed if they meet the following criteria"
 msgstr "Lagerartikel können nur installiert werden wenn folgende Kriterien erfüllt werden"
 
-#: templates/js/translated/stock.js:2872
+#: templates/js/translated/stock.js:2876
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
 msgstr "Der Lagerartikel ist auf ein Teil verknüpft das in der Stückliste für diesen Lagerartikel ist"
 
-#: templates/js/translated/stock.js:2873
+#: templates/js/translated/stock.js:2877
 msgid "The Stock Item is currently available in stock"
 msgstr "Dieser Lagerartikel ist aktuell vorhanden"
 
-#: templates/js/translated/stock.js:2874
+#: templates/js/translated/stock.js:2878
 msgid "The Stock Item is not already installed in another item"
 msgstr "Der Lagerbestand ist nicht bereits in einem anderen Bestand installiert"
 
-#: templates/js/translated/stock.js:2875
+#: templates/js/translated/stock.js:2879
 msgid "The Stock Item is tracked by either a batch code or serial number"
 msgstr "Der Lagerbestand wird entweder mit einem Batch-Code oder mit Seriennummer verfolgt"
 
-#: templates/js/translated/stock.js:2888
+#: templates/js/translated/stock.js:2892
 msgid "Select part to install"
 msgstr "Teil zur Installation auswählen"
 
@@ -11529,35 +11522,35 @@ msgstr "Berechtigungen"
 msgid "Important dates"
 msgstr "wichtige Daten"
 
-#: users/models.py:208
+#: users/models.py:210
 msgid "Permission set"
 msgstr "Berechtigung geändert"
 
-#: users/models.py:216
+#: users/models.py:218
 msgid "Group"
 msgstr "Gruppe"
 
-#: users/models.py:219
+#: users/models.py:221
 msgid "View"
 msgstr "Ansicht"
 
-#: users/models.py:219
+#: users/models.py:221
 msgid "Permission to view items"
 msgstr "Berechtigung Einträge anzuzeigen"
 
-#: users/models.py:221
+#: users/models.py:223
 msgid "Permission to add items"
 msgstr "Berechtigung Einträge zu erstellen"
 
-#: users/models.py:223
+#: users/models.py:225
 msgid "Change"
 msgstr "Ändern"
 
-#: users/models.py:223
+#: users/models.py:225
 msgid "Permissions to edit items"
 msgstr "Berechtigungen Einträge zu ändern"
 
-#: users/models.py:225
+#: users/models.py:227
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
