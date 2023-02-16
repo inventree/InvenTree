@@ -110,21 +110,9 @@ class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
         """Metaclass defining serializer fields"""
         model = PartAttachment
 
-        fields = [
-            'pk',
+        fields = InvenTreeAttachmentSerializer.attachment_fields([
             'part',
-            'attachment',
-            'filename',
-            'link',
-            'comment',
-            'upload_date',
-            'user',
-            'user_detail',
-        ]
-
-        read_only_fields = [
-            'upload_date',
-        ]
+        ])
 
 
 class PartTestTemplateSerializer(InvenTreeModelSerializer):

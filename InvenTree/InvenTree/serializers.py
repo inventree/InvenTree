@@ -303,6 +303,25 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
     The only real addition here is that we support "renaming" of the attachment file.
     """
 
+    @staticmethod
+    def attachment_fields(extra_fields=None):
+        """Default set of fields for an attachment serializer"""
+        fields = [
+            'pk',
+            'attachment',
+            'filename',
+            'link',
+            'comment',
+            'upload_date',
+            'user',
+            'user_detail',
+        ]
+
+        if extra_fields:
+            fields += extra_fields
+
+        return fields
+
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     attachment = InvenTreeAttachmentSerializerField(
@@ -317,6 +336,8 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
         source='basename',
         allow_blank=False,
     )
+
+    upload_date = serializers.DateField(read_only=True)
 
 
 class InvenTreeImageSerializerField(serializers.ImageField):

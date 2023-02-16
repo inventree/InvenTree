@@ -929,18 +929,6 @@ class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
         """Serializer metaclass"""
         model = BuildOrderAttachment
 
-        fields = [
-            'pk',
+        fields = InvenTreeAttachmentSerializer.attachment_fields([
             'build',
-            'attachment',
-            'link',
-            'filename',
-            'comment',
-            'upload_date',
-            'user',
-            'user_detail',
-        ]
-
-        read_only_fields = [
-            'upload_date',
-        ]
+        ])

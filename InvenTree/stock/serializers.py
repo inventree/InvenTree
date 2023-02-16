@@ -616,23 +616,9 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
 
         model = StockItemAttachment
 
-        fields = [
-            'pk',
+        fields = InvenTree.serializers.InvenTreeAttachmentSerializer.attachment_fields([
             'stock_item',
-            'attachment',
-            'filename',
-            'link',
-            'comment',
-            'upload_date',
-            'user',
-            'user_detail',
-        ]
-
-        read_only_fields = [
-            'upload_date',
-            'user',
-            'user_detail'
-        ]
+        ])
 
 
 class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):

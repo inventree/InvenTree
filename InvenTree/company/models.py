@@ -205,6 +205,25 @@ class Company(MetadataMixin, models.Model):
         return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).all()
 
 
+class CompanyAttachment(InvenTreeAttachment):
+    """Model for storing file or URL attachments against a Company object"""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with this model"""
+        return reverse('api-company-attachment-list')
+
+    def getSubdir(self):
+        """Return the subdirectory where these attachments are uploaded"""
+        return os.path.join('company_files', str(self.company.pk))
+
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE,
+        verbose_name=_('Company'),
+        related_name='attachments',
+    )
+
+
 class Contact(models.Model):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 

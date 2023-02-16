@@ -134,6 +134,7 @@ class RuleSet(models.Model):
         ],
         'purchase_order': [
             'company_company',
+            'company_companyattachment',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_supplierpart',
@@ -146,6 +147,7 @@ class RuleSet(models.Model):
         ],
         'sales_order': [
             'company_company',
+            'company_companyattachment',
             'order_salesorder',
             'order_salesorderallocation',
             'order_salesorderattachment',

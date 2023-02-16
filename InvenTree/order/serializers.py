@@ -636,21 +636,9 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
 
         model = order.models.PurchaseOrderAttachment
 
-        fields = [
-            'pk',
+        fields = InvenTreeAttachmentSerializer.attachment_fields([
             'order',
-            'attachment',
-            'link',
-            'filename',
-            'comment',
-            'upload_date',
-            'user',
-            'user_detail',
-        ]
-
-        read_only_fields = [
-            'upload_date',
-        ]
+        ])
 
 
 class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
@@ -1403,18 +1391,6 @@ class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
 
         model = order.models.SalesOrderAttachment
 
-        fields = [
-            'pk',
+        fields = InvenTreeAttachmentSerializer.attachment_fields([
             'order',
-            'attachment',
-            'filename',
-            'link',
-            'comment',
-            'upload_date',
-            'user',
-            'user_detail',
-        ]
-
-        read_only_fields = [
-            'upload_date',
-        ]
+        ])
