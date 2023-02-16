@@ -364,8 +364,12 @@ class StockFilter(rest_filters.FilterSet):
             'build',
             'sales_order',
             'purchase_order',
-            'status',
+            # 'status',
         ]
+
+    # Relationship filters
+    manufactuer = rest_filters.ModelChoiceFilter(label='Manufacturer', queryset=Company.objects.filter(is_manufacturer=True), field_name='manufacturer_part__manufacturer')
+    supplier = rest_filters.ModelChoiceFilter(label='Supplier', queryset=Company.objects.all(is_supplier=True), field_name='supplier_part__supplier')
 
     # Part name filters
     name = rest_filters.CharFilter(label='Part name (case insensitive)', field_name='part__name', lookup_expr='iexact')
@@ -1004,18 +1008,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         if company is not None:
             queryset = queryset.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company))
-
-        # Filter by supplier
-        supplier = params.get('supplier', None)
-
-        if supplier is not None:
-            queryset = queryset.filter(supplier_part__supplier=supplier)
-
-        # Filter by manufacturer
-        manufacturer = params.get('manufacturer', None)
-
-        if manufacturer is not None:
-            queryset = queryset.filter(supplier_part__manufacturer_part__manufacturer=manufacturer)
 
         # Also ensure that we pre-fecth all the related items
         queryset = queryset.prefetch_related(
