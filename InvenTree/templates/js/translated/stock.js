@@ -1046,6 +1046,10 @@ function adjustStock(action, items, options={}) {
 
         var quantity = item.quantity;
 
+        if (item.part_detail.units != null) {
+            quantity += ` ${item.part_detail.units}`;
+        }
+
         var location = locationDetail(item, false);
 
         if (item.location_detail) {
