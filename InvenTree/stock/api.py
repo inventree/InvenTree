@@ -811,6 +811,13 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
 
+        # Also ensure that we pre-fecth all the related items
+        queryset = queryset.prefetch_related(
+            'part',
+            'part__category',
+            'location'
+        )
+
         return queryset
 
     def filter_queryset(self, queryset):
@@ -994,13 +1001,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         if company is not None:
             queryset = queryset.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company))
-
-        # Also ensure that we pre-fecth all the related items
-        queryset = queryset.prefetch_related(
-            'part',
-            'part__category',
-            'location'
-        )
 
         return queryset
 
