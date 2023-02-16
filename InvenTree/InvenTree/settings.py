@@ -102,6 +102,7 @@ MEDIA_ROOT = config.get_media_dir()
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = get_setting(
+    "INVENTREE_ALLOWED_HOSTS",
     config_key='allowed_hosts',
     default_value=['*'],
     typecast=list,
@@ -114,11 +115,13 @@ CORS_URLS_REGEX = r'^/api/.*$'
 
 # Extract CORS options from configuration file
 CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
+    "INVENTREE_CORS_ORIGIN_ALLOW_ALL",
     config_key='cors.allow_all',
     default_value=False,
 )
 
 CORS_ORIGIN_WHITELIST = get_setting(
+    "INVENTREE_CORS_ORIGIN_WHITELIST",
     config_key='cors.whitelist',
     default_value=[],
     typecast=list,
