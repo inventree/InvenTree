@@ -17,9 +17,9 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeMoneySerializer, RemoteImageMixin)
 from part.serializers import PartBriefSerializer
 
-from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
-                     ManufacturerPartParameter, SupplierPart,
-                     SupplierPriceBreak)
+from .models import (Company, CompanyAttachment, ManufacturerPart,
+                     ManufacturerPartAttachment, ManufacturerPartParameter,
+                     SupplierPart, SupplierPriceBreak)
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
@@ -126,6 +126,18 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
         return self.instance
 
 
+class CompanyAttachmentSerializer(InvenTreeAttachmentSerializer):
+    """Serializer for the CompanyAttachment class"""
+
+    class Meta:
+        """Metaclass defines serializer options"""
+        model = CompanyAttachment
+
+        fields = InvenTreeAttachmentSerializer.attachment_fields([
+            'company',
+        ])
+
+
 class ManufacturerPartSerializer(InvenTreeModelSerializer):
     """Serializer for ManufacturerPart object."""
 
@@ -179,21 +191,9 @@ class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
 
         model = ManufacturerPartAttachment
 
-        fields = [
-            'pk',
+        fields = InvenTreeAttachmentSerializer.attachment_fields([
             'manufacturer_part',
-            'attachment',
-            'filename',
-            'link',
-            'comment',
-            'upload_date',
-            'user',
-            'user_detail',
-        ]
-
-        read_only_fields = [
-            'upload_date',
-        ]
+        ])
 
 
 class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
