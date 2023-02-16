@@ -1342,15 +1342,11 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         # Does the user wish to filter by category?
         cat_id = params.get('category', None)
 
-        if cat_id is None:
-            # No category filtering if category is not specified
-            pass
-
-        else:
+        if cat_id is not None:
             # Category has been specified!
             if isNull(cat_id):
                 # A 'null' category is the top-level category
-                if cascade is False:
+                if not cascade:
                     # Do not cascade, only list parts in the top-level category
                     queryset = queryset.filter(category=None)
 

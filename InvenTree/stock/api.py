@@ -364,6 +364,7 @@ class StockFilter(rest_filters.FilterSet):
             'build',
             'sales_order',
             'purchase_order',
+            'status',
         ]
 
     # Part name filters
@@ -960,8 +961,9 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         if loc_id is not None:
 
             # Filter by 'null' location (i.e. top-level items)
-            if isNull(loc_id) and not cascade:
-                queryset = queryset.filter(location=None)
+            if isNull(loc_id):
+                if not cascade:
+                    queryset = queryset.filter(location=None)
             else:
                 try:
                     # If '?cascade=true' then include items which exist in sub-locations
@@ -996,18 +998,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
             except (ValueError, BomItem.DoesNotExist):
                 pass
-
-        # Filter by StockItem status
-        status = params.get('status', None)
-
-        if status:
-            queryset = queryset.filter(status=status)
-
-        # Filter by supplier_part ID
-        supplier_part_id = params.get('supplier_part', None)
-
-        if supplier_part_id:
-            queryset = queryset.filter(supplier_part=supplier_part_id)
 
         # Filter by company (either manufacturer or supplier)
         company = params.get('company', None)
