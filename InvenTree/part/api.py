@@ -1342,15 +1342,11 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         # Does the user wish to filter by category?
         cat_id = params.get('category', None)
 
-        if cat_id is None:
-            # No category filtering if category is not specified
-            pass
-
-        else:
+        if cat_id is not None:
             # Category has been specified!
             if isNull(cat_id):
                 # A 'null' category is the top-level category
-                if cascade is False:
+                if not cascade:
                     # Do not cascade, only list parts in the top-level category
                     queryset = queryset.filter(category=None)
 
@@ -1392,20 +1388,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
                 parts_needed_to_complete_builds += [part.pk for part in build.required_parts_to_complete_build]
 
             queryset = queryset.filter(pk__in=parts_needed_to_complete_builds)
-
-        # Optionally limit the maximum number of returned results
-        # e.g. for displaying "recent part" list
-        max_results = params.get('max_results', None)
-
-        if max_results is not None:
-            try:
-                max_results = int(max_results)
-
-                if max_results > 0:
-                    queryset = queryset[:max_results]
-
-            except (ValueError):
-                pass
 
         return queryset
 
