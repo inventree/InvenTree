@@ -173,6 +173,8 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
         # Update total quantity value
         total_quantity += entry.quantity
 
+        has_pricing = False
+
         # Update price range values
         if entry.purchase_price:
             # If purchase price is available, use that
@@ -180,10 +182,11 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
                 pp = convert_money(entry.purchase_price, base_currency) * entry.quantity
                 total_cost_min += pp
                 total_cost_max += pp
+                has_pricing = True
             except MissingRate:
-                logger.warning(f"MissingRate exception occured converting {pp} to {base_currency}")
+                logger.warning(f"MissingRate exception occured converting {entry.purchase_price} to {base_currency}")
 
-        else:
+        if not has_pricing:
             # Fall back to the part pricing data
             p_min = pricing.overall_min or pricing.overall_max
             p_max = pricing.overall_max or pricing.overall_min
@@ -231,10 +234,9 @@ def generate_stocktake_report(**kwargs):
 
     parts = part.models.Part.objects.all()
     user = kwargs.get('user', None)
-    location = kwargs.get('location', None)
 
     generate_report = kwargs.get('generate_report', True)
-    update_parts = kwargs.get('update_parts', False)
+    update_parts = kwargs.get('update_parts', True)
 
     # Filter by 'Part' instance
     if p := kwargs.get('part', None):
@@ -250,9 +252,9 @@ def generate_stocktake_report(**kwargs):
 
     # Filter by 'Location' instance (cascading)
     # Stocktake report will be limited to parts which have stock items within this location
-    if location:
+    if location := kwargs.get('location', None):
         # Extract flat list of all sublocations
-        locations = [loc for loc in location.get_descendants(include_self=True)]
+        locations = list(location.get_descendants(include_self=True))
 
         # Items which exist within these locations
         items = stock.models.StockItem.objects.filter(location__in=locations)
