@@ -352,6 +352,20 @@ class StockLocationTree(ListAPI):
 class StockFilter(rest_filters.FilterSet):
     """FilterSet for StockItem LIST API."""
 
+    class Meta:
+        """Metaclass options for this filterset"""
+
+        model = StockItem
+
+        # Simple filter filters
+        fields = [
+            'supplier_part',
+            'belongs_to',
+            'build',
+            'sales_order',
+            'purchase_order',
+        ]
+
     # Part name filters
     name = rest_filters.CharFilter(label='Part name (case insensitive)', field_name='part__name', lookup_expr='iexact')
     name_contains = rest_filters.CharFilter(label='Part name contains (case insensitive)', field_name='part__name', lookup_expr='icontains')
@@ -785,31 +799,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
-
-        supplier_part = params.get('supplier_part', None)
-
-        if supplier_part:
-            queryset = queryset.filter(supplier_part=supplier_part)
-
-        belongs_to = params.get('belongs_to', None)
-
-        if belongs_to:
-            queryset = queryset.filter(belongs_to=belongs_to)
-
-        build = params.get('build', None)
-
-        if build:
-            queryset = queryset.filter(build=build)
-
-        sales_order = params.get('sales_order', None)
-
-        if sales_order:
-            queryset = queryset.filter(sales_order=sales_order)
-
-        purchase_order = params.get('purchase_order', None)
-
-        if purchase_order is not None:
-            queryset = queryset.filter(purchase_order=purchase_order)
 
         # Filter stock items which are installed in another (specific) stock item
         installed_in = params.get('installed_in', None)
