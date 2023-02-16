@@ -2930,12 +2930,6 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         self.assignRole('part.view')
 
         # Test we can retrieve via API
-        self.get(url, expected_code=403)
-
-        # Assign staff permission
-        self.user.is_staff = True
-        self.user.save()
-
         self.get(url, expected_code=200)
 
         # Try to edit data
@@ -2948,7 +2942,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         )
 
         # Assign 'edit' role permission
-        self.assignRole('part.change')
+        self.assignRole('stocktake.change')
 
         # Try again
         self.patch(
@@ -2962,6 +2956,6 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         # Try to delete
         self.delete(url, expected_code=403)
 
-        self.assignRole('part.delete')
+        self.assignRole('stocktake.delete')
 
         self.delete(url, expected_code=204)

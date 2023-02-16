@@ -12,7 +12,6 @@ from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, serializers, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 import order.models
@@ -1635,10 +1634,6 @@ class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PartStocktake.objects.all()
     serializer_class = part_serializers.PartStocktakeSerializer
-    permission_classes = [
-        IsAdminUser,
-        RolePermission,
-    ]
 
 
 class PartStocktakeReportList(ListAPI):
