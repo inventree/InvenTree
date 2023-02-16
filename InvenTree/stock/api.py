@@ -364,12 +364,11 @@ class StockFilter(rest_filters.FilterSet):
             'build',
             'sales_order',
             'purchase_order',
-            # 'status',
         ]
 
     # Relationship filters
     manufactuer = rest_filters.ModelChoiceFilter(label='Manufacturer', queryset=Company.objects.filter(is_manufacturer=True), field_name='manufacturer_part__manufacturer')
-    supplier = rest_filters.ModelChoiceFilter(label='Supplier', queryset=Company.objects.all(is_supplier=True), field_name='supplier_part__supplier')
+    supplier = rest_filters.ModelChoiceFilter(label='Supplier', queryset=Company.objects.filter(is_supplier=True), field_name='supplier_part__supplier')
 
     # Part name filters
     name = rest_filters.CharFilter(label='Part name (case insensitive)', field_name='part__name', lookup_expr='iexact')
@@ -387,6 +386,26 @@ class StockFilter(rest_filters.FilterSet):
 
     min_stock = rest_filters.NumberFilter(label='Minimum stock', field_name='quantity', lookup_expr='gte')
     max_stock = rest_filters.NumberFilter(label='Maximum stock', field_name='quantity', lookup_expr='lte')
+
+    status = rest_filters.NumberFilter(label='Status Code', method='filter_status')
+
+    def filter_status(self, queryset, name, value):
+        """Filter by integer status code"""
+
+        return queryset.filter(status=value)
+
+    allocated = rest_filters.BooleanFilter(label='Is Allocated', method='filter_allocated')
+
+    def filter_allocated(self, queryset, name, value):
+        """Filter by whether or not the stock item is 'allocated'"""
+
+        if str2bool(value):
+            # Filter StockItem with either build allocations or sales order allocations
+            queryset = queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
+        else:
+            # Filter StockItem without build allocations or sales order allocations
+            queryset = queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
+        return queryset
 
     in_stock = rest_filters.BooleanFilter(label='In Stock', method='filter_in_stock')
 
@@ -883,19 +902,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     queryset = queryset.filter(part__tree_id=part.tree_id)
             except Exception:
                 pass
-
-        # Filter by 'allocated' parts?
-        allocated = params.get('allocated', None)
-
-        if allocated is not None:
-            allocated = str2bool(allocated)
-
-            if allocated:
-                # Filter StockItem with either build allocations or sales order allocations
-                queryset = queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
-            else:
-                # Filter StockItem without build allocations or sales order allocations
-                queryset = queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
 
         # Exclude StockItems which are already allocated to a particular SalesOrder
         exclude_so_allocation = params.get('exclude_so_allocation', None)
