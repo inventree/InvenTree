@@ -14,8 +14,4 @@ class Migration(migrations.Migration):
             name='stocklocation',
             options={'verbose_name': 'Stock Location', 'verbose_name_plural': 'Stock Locations'},
         ),
-        migrations.AlterUniqueTogether(
-            name='stocklocation',
-            unique_together={('name', 'parent')},
-        ),
     ]

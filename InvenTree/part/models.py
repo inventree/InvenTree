@@ -71,8 +71,6 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         verbose_name = _("Part Category")
         verbose_name_plural = _("Part Categories")
 
-        unique_together = ('name', 'parent')
-
     def delete_recursive(self, *args, **kwargs):
         """This function handles the recursive deletion of subcategories depending on kwargs contents"""
         delete_parts = kwargs.get('delete_parts', False)
@@ -749,7 +747,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             return helpers.getBlankThumbnail()
 
     def validate_unique(self, exclude=None):
-        """Validate that a part is 'unique'.
+        """Validate that this Part instance is 'unique'.
 
         Uniqueness is checked across the following (case insensitive) fields:
         - Name

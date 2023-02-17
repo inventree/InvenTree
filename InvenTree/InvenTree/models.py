@@ -501,6 +501,34 @@ class InvenTreeTree(MPTTModel):
         parent: The item immediately above this one. An item with a null parent is a top-level item
     """
 
+    class Meta:
+        """Metaclass defines extra model properties."""
+
+        abstract = True
+
+    class MPTTMeta:
+        """Set insert order."""
+        order_insertion_by = ['name']
+
+    def validate_unique(self, exclude=None):
+        """Validate that this tree instance satisfies our uniqueness requirements.
+
+        Note that a 'unique_together' requirement for ('name', 'parent') is insufficient,
+        as it ignores cases where parent=None (i.e. top-level items)
+        """
+
+        super().validate_unique(exclude)
+
+        results = self.__class__.objects.filter(
+            name=self.name,
+            parent=self.parent
+        ).exclude(pk=self.pk)
+
+        if results.exists():
+            raise ValidationError({
+                'name': _('Duplicate names cannot exist under the same parent')
+            })
+
     def api_instance_filters(self):
         """Instance filters for InvenTreeTree models."""
         return {
@@ -538,18 +566,6 @@ class InvenTreeTree(MPTTModel):
             # Ensure that the pathstring changes are propagated down the tree also
             for child in self.get_children():
                 child.save(*args, **kwargs)
-
-    class Meta:
-        """Metaclass defines extra model properties."""
-
-        abstract = True
-
-        # Names must be unique at any given level in the tree
-        unique_together = ('name', 'parent')
-
-    class MPTTMeta:
-        """Set insert order."""
-        order_insertion_by = ['name']
 
     name = models.CharField(
         blank=False,
