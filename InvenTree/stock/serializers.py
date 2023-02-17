@@ -19,10 +19,10 @@ import InvenTree.helpers
 import InvenTree.serializers
 import part.models as part_models
 import stock.filters
-from common.settings import currency_code_default, currency_code_mappings
 from company.serializers import SupplierPartSerializer
 from InvenTree.models import extract_int
-from InvenTree.serializers import InvenTreeDecimalField
+from InvenTree.serializers import (InvenTreeCurrencySerializer,
+                                   InvenTreeDecimalField)
 from part.serializers import PartBriefSerializer
 
 from .models import (StockItem, StockItemAttachment, StockItemTestResult,
@@ -171,17 +171,11 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
-        max_digits=19, decimal_places=6,
         allow_null=True,
         help_text=_('Purchase price of this stock item'),
     )
 
-    purchase_price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        default=currency_code_default,
-        label=_('Currency'),
-        help_text=_('Purchase currency of this stock item'),
-    )
+    purchase_price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)

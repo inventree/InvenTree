@@ -2839,6 +2839,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         'category',
         'part',
         'location',
+        'stock',
     ]
 
     def test_list_endpoint(self):
@@ -2887,8 +2888,8 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
         url = reverse('api-part-stocktake-list')
 
-        self.assignRole('part.add')
-        self.assignRole('part.view')
+        self.assignRole('stocktake.add')
+        self.assignRole('stocktake.view')
 
         for p in Part.objects.all():
 
@@ -2930,12 +2931,6 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         self.assignRole('part.view')
 
         # Test we can retrieve via API
-        self.get(url, expected_code=403)
-
-        # Assign staff permission
-        self.user.is_staff = True
-        self.user.save()
-
         self.get(url, expected_code=200)
 
         # Try to edit data
@@ -2948,7 +2943,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         )
 
         # Assign 'edit' role permission
-        self.assignRole('part.change')
+        self.assignRole('stocktake.change')
 
         # Try again
         self.patch(
@@ -2962,6 +2957,59 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         # Try to delete
         self.delete(url, expected_code=403)
 
-        self.assignRole('part.delete')
+        self.assignRole('stocktake.delete')
 
         self.delete(url, expected_code=204)
+
+    def test_report_list(self):
+        """Test for PartStocktakeReport list endpoint"""
+
+        from part.tasks import generate_stocktake_report
+
+        n_parts = Part.objects.count()
+
+        # Initially, no stocktake records are available
+        self.assertEqual(PartStocktake.objects.count(), 0)
+
+        # Generate stocktake data for all parts (default configuration)
+        generate_stocktake_report()
+
+        # There should now be 1 stocktake entry for each part
+        self.assertEqual(PartStocktake.objects.count(), n_parts)
+
+        self.assignRole('stocktake.view')
+
+        response = self.get(reverse('api-part-stocktake-list'), expected_code=200)
+
+        self.assertEqual(len(response.data), n_parts)
+
+        # Stocktake report should be available via the API, also
+        response = self.get(reverse('api-part-stocktake-report-list'), expected_code=200)
+
+        self.assertEqual(len(response.data), 1)
+
+        data = response.data[0]
+
+        self.assertEqual(data['part_count'], 14)
+        self.assertEqual(data['user'], None)
+        self.assertTrue(data['report'].endswith('.csv'))
+
+    def test_report_generate(self):
+        """Test API functionality for generating a new stocktake report"""
+
+        url = reverse('api-part-stocktake-report-generate')
+
+        # Permission denied, initially
+        self.assignRole('stocktake.view')
+        response = self.post(url, data={}, expected_code=403)
+
+        # Stocktake functionality disabled
+        InvenTreeSetting.set_setting('STOCKTAKE_ENABLE', False, None)
+        self.assignRole('stocktake.add')
+        response = self.post(url, data={}, expected_code=400)
+
+        self.assertIn('Stocktake functionality is not enabled', str(response.data))
+
+        InvenTreeSetting.set_setting('STOCKTAKE_ENABLE', True, None)
+        response = self.post(url, data={}, expected_code=400)
+        self.assertIn('Background worker check failed', str(response.data))

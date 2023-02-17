@@ -17,10 +17,10 @@ import order.models
 import part.filters
 import stock.models
 import stock.serializers
-from common.settings import currency_code_mappings
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from InvenTree.helpers import extract_serial_numbers, normalize, str2bool
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
+                                   InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeModelSerializer,
                                    InvenTreeMoneySerializer)
@@ -58,10 +58,7 @@ class AbstractExtraLineSerializer(serializers.Serializer):
         allow_null=True
     )
 
-    price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        help_text=_('Price currency'),
-    )
+    price_currency = InvenTreeCurrencySerializer()
 
 
 class AbstractExtraLineMeta:
@@ -316,16 +313,11 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
 
-    purchase_price = InvenTreeMoneySerializer(
-        allow_null=True
-    )
+    purchase_price = InvenTreeMoneySerializer(allow_null=True)
 
     destination_detail = stock.serializers.LocationBriefSerializer(source='get_destination', read_only=True)
 
-    purchase_price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        help_text=_('Purchase price currency'),
-    )
+    purchase_price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase price currency'))
 
     order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
 
@@ -879,14 +871,9 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
 
     shipped = InvenTreeDecimalField(read_only=True)
 
-    sale_price = InvenTreeMoneySerializer(
-        allow_null=True
-    )
+    sale_price = InvenTreeMoneySerializer(allow_null=True)
 
-    sale_price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        help_text=_('Sale price currency'),
-    )
+    sale_price_currency = InvenTreeCurrencySerializer(help_text=_('Sale price currency'))
 
     class Meta:
         """Metaclass options."""

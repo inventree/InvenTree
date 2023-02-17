@@ -974,6 +974,10 @@ function updateFieldValue(name, value, field, options) {
     }
 
     switch (field.type) {
+    case 'decimal':
+        // Strip trailing zeros
+        el.val(formatDecimal(value));
+        break;
     case 'boolean':
         if (value == true || value.toString().toLowerCase() == 'true') {
             el.prop('checked');
