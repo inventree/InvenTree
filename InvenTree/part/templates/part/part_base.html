@@ -447,11 +447,9 @@
 
     {% if barcodes %}
     $("#show-qr-code").click(function() {
-        launchModalForm(
-            "{% url 'api-part-qr' part.id %}",
-            {
-                no_post: true,
-            }
+        showQRDialog(
+            '{% trans "Part QR Code" %}',
+            '{"part": {{ part.pk }}}',
         );
     });
 

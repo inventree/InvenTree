@@ -16,8 +16,7 @@ from common.models import InvenTreeSetting
 from common.views import FileManagementAjaxView, FileManagementFormView
 from company.models import SupplierPart
 from InvenTree.helpers import str2bool, str2int
-from InvenTree.views import (AjaxUpdateView, AjaxView, InvenTreeRoleMixin,
-                             QRCodeView)
+from InvenTree.views import AjaxUpdateView, AjaxView, InvenTreeRoleMixin
 from plugin.views import InvenTreePluginViewMixin
 from stock.models import StockItem, StockLocation
 
@@ -370,22 +369,6 @@ class PartDetailFromIPN(PartDetail):
             return HttpResponseRedirect(reverse('part-index'))
 
         return super(PartDetailFromIPN, self).get(request, *args, **kwargs)
-
-
-class PartQRCode(QRCodeView):
-    """View for displaying a QR code for a Part object."""
-
-    ajax_form_title = _("Part QR Code")
-
-    role_required = 'part.view'
-
-    def get_qr_data(self):
-        """Generate QR code data for the Part."""
-        try:
-            part = Part.objects.get(id=self.pk)
-            return part.format_barcode()
-        except Part.DoesNotExist:
-            return None
 
 
 class PartImageSelect(AjaxUpdateView):
