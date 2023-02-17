@@ -66,6 +66,13 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         default_keywords: Default keywords for parts created in this category
     """
 
+    class Meta:
+        """Metaclass defines extra model properties"""
+        verbose_name = _("Part Category")
+        verbose_name_plural = _("Part Categories")
+
+        unique_together = ('name', 'parent')
+
     def delete_recursive(self, *args, **kwargs):
         """This function handles the recursive deletion of subcategories depending on kwargs contents"""
         delete_parts = kwargs.get('delete_parts', False)
@@ -153,11 +160,6 @@ class PartCategory(MetadataMixin, InvenTreeTree):
                 _("You cannot make this part category structural because some parts "
                   "are already assigned to it!"))
         super().clean()
-
-    class Meta:
-        """Metaclass defines extra model properties"""
-        verbose_name = _("Part Category")
-        verbose_name_plural = _("Part Categories")
 
     def get_parts(self, cascade=True) -> set[Part]:
         """Return a queryset for all parts under this category.

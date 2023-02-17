@@ -47,6 +47,14 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     Stock locations can be hierarchical as required
     """
 
+    class Meta:
+        """Metaclass defines extra model properties"""
+
+        verbose_name = _('Stock Location')
+        verbose_name_plural = _('Stock Locations')
+
+        unique_together = ('name', 'parent')
+
     def delete_recursive(self, *args, **kwargs):
         """This function handles the recursive deletion of sub-locations depending on kwargs contents"""
         delete_stock_items = kwargs.get('delete_stock_items', False)
