@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 95
+INVENTREE_API_VERSION = 96
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v96 -> 2023-02-16 : https://github.com/inventree/InvenTree/pull/4345
+    - Adds stocktake report generation functionality
 
 v95 -> 2023-02-16 : https://github.com/inventree/InvenTree/pull/4346
     - Adds "CompanyAttachment" model (and associated API endpoints)

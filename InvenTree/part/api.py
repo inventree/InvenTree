@@ -10,9 +10,8 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, serializers, status
+from rest_framework import filters, permissions, serializers, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 import order.models
@@ -38,7 +37,7 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartRelated, PartSellPriceBreak,
-                     PartStocktake, PartTestTemplate)
+                     PartStocktake, PartStocktakeReport, PartTestTemplate)
 
 
 class CategoryList(APIDownloadMixin, ListCreateAPI):
@@ -1598,9 +1597,11 @@ class PartStocktakeList(ListCreateAPI):
 
     ordering_fields = [
         'part',
+        'item_count',
         'quantity',
         'date',
         'user',
+        'pk',
     ]
 
     # Reverse date ordering by default
@@ -1615,10 +1616,46 @@ class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PartStocktake.objects.all()
     serializer_class = part_serializers.PartStocktakeSerializer
+
+
+class PartStocktakeReportList(ListAPI):
+    """API endpoint for listing part stocktake report information"""
+
+    queryset = PartStocktakeReport.objects.all()
+    serializer_class = part_serializers.PartStocktakeReportSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        'date',
+        'pk',
+    ]
+
+    # Newest first, by default
+    ordering = '-pk'
+
+
+class PartStocktakeReportGenerate(CreateAPI):
+    """API endpoint for manually generating a new PartStocktakeReport"""
+
+    serializer_class = part_serializers.PartStocktakeReportGenerateSerializer
+
     permission_classes = [
-        IsAdminUser,
+        permissions.IsAuthenticated,
         RolePermission,
     ]
+
+    role_required = 'stocktake'
+
+    def get_serializer_context(self):
+        """Extend serializer context data"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
 
 
 class BomFilter(rest_filters.FilterSet):
@@ -2038,6 +2075,12 @@ part_api_urls = [
 
     # Part stocktake data
     re_path(r'^stocktake/', include([
+
+        path(r'report/', include([
+            path('generate/', PartStocktakeReportGenerate.as_view(), name='api-part-stocktake-report-generate'),
+            re_path(r'^.*$', PartStocktakeReportList.as_view(), name='api-part-stocktake-report-list'),
+        ])),
+
         re_path(r'^(?P<pk>\d+)/', PartStocktakeDetail.as_view(), name='api-part-stocktake-detail'),
         re_path(r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
     ])),

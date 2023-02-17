@@ -67,8 +67,16 @@ class UserMixin:
             self.client.login(username=self.username, password=self.password)
 
     def assignRole(self, role=None, assign_all: bool = False):
-        """Set the user roles for the registered user."""
-        # role is of the format 'rule.permission' e.g. 'part.add'
+        """Set the user roles for the registered user.
+
+        Arguments:
+            role: Role of the format 'rule.permission' e.g. 'part.add'
+            assign_all: Set to True to assign *all* roles
+        """
+
+        if type(assign_all) is not bool:
+            # Raise exception if common mistake is made!
+            raise TypeError('assign_all must be a boolean value')
 
         if not assign_all and role:
             rule, perm = role.split('.')

@@ -15,28 +15,32 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 
+import common.models
 import company.models
 import InvenTree.helpers
+import InvenTree.status
 import part.filters
+import part.tasks
 import stock.models
-from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.serializers import (DataFileExtractSerializer,
                                    DataFileUploadSerializer,
                                    InvenTreeAttachmentSerializer,
                                    InvenTreeAttachmentSerializerField,
+                                   InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
                                    InvenTreeMoneySerializer, RemoteImageMixin,
                                    UserSerializer)
 from InvenTree.status_codes import BuildStatus
+from InvenTree.tasks import offload_task
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartPricing, PartRelated,
                      PartSellPriceBreak, PartStar, PartStocktake,
-                     PartTestTemplate)
+                     PartStocktakeReport, PartTestTemplate)
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -137,16 +141,9 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
 
     quantity = InvenTreeDecimalField()
 
-    price = InvenTreeMoneySerializer(
-        allow_null=True
-    )
+    price = InvenTreeMoneySerializer(allow_null=True)
 
-    price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        default=currency_code_default,
-        label=_('Currency'),
-        help_text=_('Purchase currency of this stock item'),
-    )
+    price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
 
     class Meta:
         """Metaclass defining serializer fields"""
@@ -169,12 +166,7 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
         allow_null=True
     )
 
-    price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        default=currency_code_default,
-        label=_('Currency'),
-        help_text=_('Purchase currency of this stock item'),
-    )
+    price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
 
     class Meta:
         """Metaclass defining serializer fields"""
@@ -720,6 +712,12 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
+    cost_min = InvenTreeMoneySerializer(allow_null=True)
+    cost_min_currency = InvenTreeCurrencySerializer()
+
+    cost_max = InvenTreeMoneySerializer(allow_null=True)
+    cost_max_currency = InvenTreeCurrencySerializer()
+
     class Meta:
         """Metaclass options"""
 
@@ -728,7 +726,12 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
             'pk',
             'date',
             'part',
+            'item_count',
             'quantity',
+            'cost_min',
+            'cost_min_currency',
+            'cost_max',
+            'cost_max_currency',
             'note',
             'user',
             'user_detail',
@@ -749,6 +752,92 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
         data['user'] = request.user
 
         super().save()
+
+
+class PartStocktakeReportSerializer(InvenTreeModelSerializer):
+    """Serializer for stocktake report class"""
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
+
+    report = InvenTreeAttachmentSerializerField(read_only=True)
+
+    class Meta:
+        """Metaclass defines serializer fields"""
+
+        model = PartStocktakeReport
+        fields = [
+            'pk',
+            'date',
+            'report',
+            'part_count',
+            'user',
+            'user_detail',
+        ]
+
+
+class PartStocktakeReportGenerateSerializer(serializers.Serializer):
+    """Serializer class for manually generating a new PartStocktakeReport via the API"""
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        required=False, allow_null=True,
+        label=_('Part'), help_text=_('Limit stocktake report to a particular part, and any variant parts')
+    )
+
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.all(),
+        required=False, allow_null=True,
+        label=_('Category'), help_text=_('Limit stocktake report to a particular part category, and any child categories'),
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        required=False, allow_null=True,
+        label=_('Location'), help_text=_('Limit stocktake report to a particular stock location, and any child locations')
+    )
+
+    generate_report = serializers.BooleanField(
+        default=True,
+        label=_('Generate Report'),
+        help_text=_('Generate report file containing calculated stocktake data'),
+    )
+
+    update_parts = serializers.BooleanField(
+        default=True,
+        label=_('Update Parts'),
+        help_text=_('Update specified parts with calculated stocktake data')
+    )
+
+    def validate(self, data):
+        """Custom validation for this serializer"""
+
+        # Stocktake functionality must be enabled
+        if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False):
+            raise serializers.ValidationError(_("Stocktake functionality is not enabled"))
+
+        # Check that background worker is running
+        if not InvenTree.status.is_worker_running():
+            raise serializers.ValidationError(_("Background worker check failed"))
+
+        return data
+
+    def save(self):
+        """Saving this serializer instance requests generation of a new stocktake report"""
+
+        data = self.validated_data
+        user = self.context['request'].user
+
+        # Generate a new report
+        offload_task(
+            part.tasks.generate_stocktake_report,
+            force_async=True,
+            user=user,
+            part=data.get('part', None),
+            category=data.get('category', None),
+            location=data.get('location', None),
+            generate_report=data.get('generate_report', True),
+            update_parts=data.get('update_parts', True),
+        )
 
 
 class PartPricingSerializer(InvenTreeModelSerializer):
