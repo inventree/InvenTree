@@ -2118,9 +2118,6 @@ part_api_urls = [
         # BOM download
         re_path(r'^bom-download/?', views.BomDownload.as_view(), name='api-bom-download'),
 
-        # QR code download
-        re_path(r'^qr_code/?', views.PartQRCode.as_view(), name='api-part-qr'),
-
         # Old pricing endpoint
         re_path(r'^pricing2/', views.PartPricing.as_view(), name='part-pricing'),
 
