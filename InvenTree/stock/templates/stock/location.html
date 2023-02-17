@@ -379,10 +379,10 @@
 
     {% if barcodes %}
     $('#show-qr-code').click(function() {
-        launchModalForm("{% url 'stock-location-qr' location.id %}",
-        {
-            no_post: true,
-        });
+        showQRDialog(
+            '{% trans "Stock Location QR Code" %}',
+            '{"stocklocation": {{ location.pk }}}'
+        );
     });
 
     $("#barcode-link").click(function() {
