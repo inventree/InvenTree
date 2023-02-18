@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
+from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 import part.filters
 from common.settings import currency_code_default, currency_code_mappings
@@ -126,7 +127,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
         return self.instance
 
 
-class ManufacturerPartSerializer(InvenTreeModelSerializer):
+class ManufacturerPartSerializer(TaggitSerializer, InvenTreeModelSerializer):
     """Serializer for ManufacturerPart object."""
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
@@ -134,6 +135,8 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
     manufacturer_detail = CompanyBriefSerializer(source='manufacturer', many=False, read_only=True)
 
     pretty_name = serializers.CharField(read_only=True)
+
+    tags = TagListSerializerField()
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
@@ -168,6 +171,8 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
             'description',
             'MPN',
             'link',
+
+            'tags',
         ]
 
 
@@ -225,7 +230,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
         ]
 
 
-class SupplierPartSerializer(InvenTreeModelSerializer):
+class SupplierPartSerializer(TaggitSerializer, InvenTreeModelSerializer):
     """Serializer for SupplierPart object."""
 
     # Annotated field showing total in-stock quantity
@@ -285,6 +290,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
     # Date fields
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
 
+    tags = TagListSerializerField()
+
     class Meta:
         """Metaclass options."""
 
@@ -313,6 +320,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'supplier_detail',
             'url',
             'updated',
+
+            'tags',
         ]
 
         read_only_fields = [

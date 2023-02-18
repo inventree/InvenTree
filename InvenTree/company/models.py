@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 
 from moneyed import CURRENCIES
 from stdimage.models import StdImageField
+from taggit.managers import TaggableManager
 
 import common.models
 import common.settings
@@ -288,6 +289,8 @@ class ManufacturerPart(models.Model):
         help_text=_('Manufacturer part description')
     )
 
+    tags = TaggableManager()
+
     @classmethod
     def create(cls, part, manufacturer, mpn, description, link=None):
         """Check if ManufacturerPart instance does not already exist then create it."""
@@ -416,6 +419,7 @@ class SupplierPart(InvenTreeBarcodeMixin, common.models.MetaMixin):
     """
 
     objects = SupplierPartManager()
+    tags = TaggableManager()
 
     @staticmethod
     def get_api_url():
