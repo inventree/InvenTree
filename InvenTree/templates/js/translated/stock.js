@@ -1046,6 +1046,10 @@ function adjustStock(action, items, options={}) {
 
         var quantity = item.quantity;
 
+        if (item.part_detail.units != null) {
+            quantity += ` ${item.part_detail.units}`;
+        }
+
         var location = locationDetail(item, false);
 
         if (item.location_detail) {
@@ -2738,7 +2742,7 @@ function loadInstalledInTable(table, options) {
     table.inventreeTable({
         url: '{% url "api-stock-list" %}',
         queryParams: {
-            installed_in: options.stock_item,
+            belongs_to: options.stock_item,
             part_detail: true,
         },
         formatNoMatches: function() {

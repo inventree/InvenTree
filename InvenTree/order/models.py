@@ -63,6 +63,10 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         responsible: User (or group) responsible for managing the order
     """
 
+    class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+        abstract = True
+
     def save(self, *args, **kwargs):
         """Custom save method for the order models:
 
@@ -74,11 +78,6 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
             self.creation_date = datetime.now().date()
 
         super().save(*args, **kwargs)
-
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-
-        abstract = True
 
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
@@ -927,7 +926,6 @@ class OrderLineItem(models.Model):
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
-
         abstract = True
 
     quantity = RoundingDecimalField(
@@ -958,7 +956,6 @@ class OrderExtraLine(OrderLineItem):
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
-
         abstract = True
 
     context = models.JSONField(

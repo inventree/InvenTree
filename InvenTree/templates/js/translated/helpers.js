@@ -274,6 +274,10 @@ function renderLink(text, url, options={}) {
         extras += ` title="${url}"`;
     }
 
+    if (options.download) {
+        extras += ` download`;
+    }
+
     return `<a href="${url}" ${extras}>${text}</a>`;
 }
 

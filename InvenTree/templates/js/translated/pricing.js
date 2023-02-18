@@ -205,6 +205,11 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
         total += value;
     }
 
+    // Return raw total instead of formatted value
+    if (options.raw) {
+        return total;
+    }
+
     return formatCurrency(total, {
         currency: currency,
     });

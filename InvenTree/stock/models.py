@@ -48,6 +48,12 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     Stock locations can be hierarchical as required
     """
 
+    class Meta:
+        """Metaclass defines extra model properties"""
+
+        verbose_name = _('Stock Location')
+        verbose_name_plural = _('Stock Locations')
+
     tags = TaggableManager()
 
     def delete_recursive(self, *args, **kwargs):

@@ -6,6 +6,7 @@
 */
 
 /* exported
+    attachmentLink,
     addAttachmentButtonCallbacks,
     loadAttachmentTable,
     reloadAttachmentTable,
@@ -130,6 +131,50 @@ function reloadAttachmentTable() {
 }
 
 
+/*
+ * Render a link (with icon) to an internal attachment (file)
+ */
+function attachmentLink(filename) {
+
+    if (!filename) {
+        return null;
+    }
+
+    // Default file icon (if no better choice is found)
+    let icon = 'fa-file-alt';
+    let fn = filename.toLowerCase();
+
+    // Look for some "known" file types
+    if (fn.endsWith('.csv')) {
+        icon = 'fa-file-csv';
+    } else if (fn.endsWith('.pdf')) {
+        icon = 'fa-file-pdf';
+    } else if (fn.endsWith('.xls') || fn.endsWith('.xlsx')) {
+        icon = 'fa-file-excel';
+    } else if (fn.endsWith('.doc') || fn.endsWith('.docx')) {
+        icon = 'fa-file-word';
+    } else if (fn.endsWith('.zip') || fn.endsWith('.7z')) {
+        icon = 'fa-file-archive';
+    } else {
+        let images = ['.png', '.jpg', '.bmp', '.gif', '.svg', '.tif'];
+
+        images.forEach(function(suffix) {
+            if (fn.endsWith(suffix)) {
+                icon = 'fa-file-image';
+            }
+        });
+    }
+
+    let split = filename.split('/');
+    fn = split[split.length - 1];
+
+    let html = `<span class='fas ${icon}'></span> ${fn}`;
+
+    return renderLink(html, filename, {download: true});
+
+}
+
+
 /* Load a table of attachments against a specific model.
  * Note that this is a 'generic' table which is used for multiple attachment model classes
  */
@@ -242,36 +287,7 @@ function loadAttachmentTable(url, options) {
                 formatter: function(value, row) {
 
                     if (row.attachment) {
-                        var icon = 'fa-file-alt';
-
-                        var fn = value.toLowerCase();
-
-                        if (fn.endsWith('.csv')) {
-                            icon = 'fa-file-csv';
-                        } else if (fn.endsWith('.pdf')) {
-                            icon = 'fa-file-pdf';
-                        } else if (fn.endsWith('.xls') || fn.endsWith('.xlsx')) {
-                            icon = 'fa-file-excel';
-                        } else if (fn.endsWith('.doc') || fn.endsWith('.docx')) {
-                            icon = 'fa-file-word';
-                        } else if (fn.endsWith('.zip') || fn.endsWith('.7z')) {
-                            icon = 'fa-file-archive';
-                        } else {
-                            var images = ['.png', '.jpg', '.bmp', '.gif', '.svg', '.tif'];
-
-                            images.forEach(function(suffix) {
-                                if (fn.endsWith(suffix)) {
-                                    icon = 'fa-file-image';
-                                }
-                            });
-                        }
-
-                        var split = value.split('/');
-                        var filename = split[split.length - 1];
-
-                        var html = `<span class='fas ${icon}'></span> ${filename}`;
-
-                        return renderLink(html, value, {download: true});
+                        return attachmentLink(row.attachment);
                     } else if (row.link) {
                         var html = `<span class='fas fa-link'></span> ${row.link}`;
                         return renderLink(html, row.link);

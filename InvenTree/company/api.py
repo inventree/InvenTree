@@ -15,10 +15,10 @@ from InvenTree.mixins import (ListCreateAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
 from plugin.serializers import MetadataSerializer
 
-from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
-                     ManufacturerPartParameter, SupplierPart,
-                     SupplierPriceBreak)
-from .serializers import (CompanySerializer,
+from .models import (Company, CompanyAttachment, ManufacturerPart,
+                     ManufacturerPartAttachment, ManufacturerPartParameter,
+                     SupplierPart, SupplierPriceBreak)
+from .serializers import (CompanyAttachmentSerializer, CompanySerializer,
                           ManufacturerPartAttachmentSerializer,
                           ManufacturerPartParameterSerializer,
                           ManufacturerPartSerializer, SupplierPartSerializer,
@@ -94,6 +94,28 @@ class CompanyMetadata(RetrieveUpdateAPI):
         return MetadataSerializer(Company, *args, **kwargs)
 
     queryset = Company.objects.all()
+
+
+class CompanyAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
+    """API endpoint for the CompanyAttachment model"""
+
+    queryset = CompanyAttachment.objects.all()
+    serializer_class = CompanyAttachmentSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    filterset_fields = [
+        'company',
+    ]
+
+
+class CompanyAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
+    """Detail endpoint for CompanyAttachment model."""
+
+    queryset = CompanyAttachment.objects.all()
+    serializer_class = CompanyAttachmentSerializer
 
 
 class ManufacturerPartFilter(rest_filters.FilterSet):
@@ -405,6 +427,15 @@ class SupplierPartDetail(RetrieveUpdateDestroyAPI):
 class SupplierPriceBreakFilter(rest_filters.FilterSet):
     """Custom API filters for the SupplierPriceBreak list endpoint"""
 
+    class Meta:
+        """Metaclass options"""
+
+        model = SupplierPriceBreak
+        fields = [
+            'part',
+            'quantity',
+        ]
+
     base_part = rest_filters.ModelChoiceFilter(
         label='Base Part',
         queryset=part.models.Part.objects.all(),
@@ -416,15 +447,6 @@ class SupplierPriceBreakFilter(rest_filters.FilterSet):
         queryset=Company.objects.all(),
         field_name='part__supplier',
     )
-
-    class Meta:
-        """Metaclass options"""
-
-        model = SupplierPriceBreak
-        fields = [
-            'part',
-            'quantity',
-        ]
 
 
 class SupplierPriceBreakList(ListCreateAPI):
@@ -519,6 +541,11 @@ company_api_urls = [
     re_path(r'^(?P<pk>\d+)/?', include([
         re_path(r'^metadata/', CompanyMetadata.as_view(), name='api-company-metadata'),
         re_path(r'^.*$', CompanyDetail.as_view(), name='api-company-detail'),
+    ])),
+
+    re_path(r'^attachment/', include([
+        re_path(r'^(?P<pk>\d+)/', CompanyAttachmentDetail.as_view(), name='api-company-attachment-detail'),
+        re_path(r'^$', CompanyAttachmentList.as_view(), name='api-company-attachment-list'),
     ])),
 
     re_path(r'^.*$', CompanyList.as_view(), name='api-company-list'),

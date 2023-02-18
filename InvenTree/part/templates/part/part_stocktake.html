@@ -1,6 +1,10 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+<div id='part-stocktake' style='max-height: 300px;'>
+    <canvas id='part-stocktake-chart' width='100%' style='max-height: 300px;'></canvas>
+</div>
+
 <div id='part-stocktake-toolbar'>
     <div class='btn-group' role='group'>
         {% include "filter_list.html" with id="partstocktake" %}

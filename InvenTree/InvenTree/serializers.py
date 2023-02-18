@@ -21,6 +21,7 @@ from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 
 from common.models import InvenTreeSetting
+from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers import download_image_from_url
 
@@ -64,6 +65,26 @@ class InvenTreeMoneySerializer(MoneyField):
             return Money(amount, currency)
 
         return amount
+
+
+class InvenTreeCurrencySerializer(serializers.ChoiceField):
+    """Custom serializers for selecting currency option"""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the currency serializer"""
+
+        kwargs['choices'] = currency_code_mappings()
+
+        if 'default' not in kwargs and 'required' not in kwargs:
+            kwargs['default'] = currency_code_default
+
+        if 'label' not in kwargs:
+            kwargs['label'] = _('Currency')
+
+        if 'help_text' not in kwargs:
+            kwargs['help_text'] = _('Select currency from available options')
+
+        super().__init__(*args, **kwargs)
 
 
 class InvenTreeModelSerializer(serializers.ModelSerializer):
@@ -282,6 +303,25 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
     The only real addition here is that we support "renaming" of the attachment file.
     """
 
+    @staticmethod
+    def attachment_fields(extra_fields=None):
+        """Default set of fields for an attachment serializer"""
+        fields = [
+            'pk',
+            'attachment',
+            'filename',
+            'link',
+            'comment',
+            'upload_date',
+            'user',
+            'user_detail',
+        ]
+
+        if extra_fields:
+            fields += extra_fields
+
+        return fields
+
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     attachment = InvenTreeAttachmentSerializerField(
@@ -296,6 +336,8 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
         source='basename',
         allow_blank=False,
     )
+
+    upload_date = serializers.DateField(read_only=True)
 
 
 class InvenTreeImageSerializerField(serializers.ImageField):

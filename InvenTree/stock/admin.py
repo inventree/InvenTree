@@ -20,16 +20,6 @@ from .models import (StockItem, StockItemAttachment, StockItemTestResult,
 class LocationResource(InvenTreeResource):
     """Class for managing StockLocation data import/export."""
 
-    id = Field(attribute='pk', column_name=_('Location ID'))
-    name = Field(attribute='name', column_name=_('Location Name'))
-    description = Field(attribute='description', column_name=_('Description'))
-    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(StockLocation))
-    parent_name = Field(attribute='parent__name', column_name=_('Parent Name'), readonly=True)
-    pathstring = Field(attribute='pathstring', column_name=_('Location Path'))
-
-    # Calculated fields
-    items = Field(attribute='item_count', column_name=_('Stock Items'), widget=widgets.IntegerWidget())
-
     class Meta:
         """Metaclass options."""
 
@@ -45,6 +35,16 @@ class LocationResource(InvenTreeResource):
             'barcode_data', 'barcode_hash',
             'owner', 'icon',
         ]
+
+    id = Field(attribute='pk', column_name=_('Location ID'))
+    name = Field(attribute='name', column_name=_('Location Name'))
+    description = Field(attribute='description', column_name=_('Description'))
+    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    parent_name = Field(attribute='parent__name', column_name=_('Parent Name'), readonly=True)
+    pathstring = Field(attribute='pathstring', column_name=_('Location Path'))
+
+    # Calculated fields
+    items = Field(attribute='item_count', column_name=_('Stock Items'), widget=widgets.IntegerWidget())
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
         """Rebuild after import to keep tree intact."""
@@ -80,6 +80,23 @@ class LocationAdmin(ImportExportModelAdmin):
 class StockItemResource(InvenTreeResource):
     """Class for managing StockItem data import/export."""
 
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItem
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instance = True
+
+        exclude = [
+            # Exclude MPTT internal model fields
+            'lft', 'rght', 'tree_id', 'level',
+            # Exclude internal fields
+            'serial_int', 'metadata',
+            'barcode_hash', 'barcode_data',
+            'owner',
+        ]
+
     id = Field(attribute='pk', column_name=_('Stock Item ID'))
     part = Field(attribute='part', column_name=_('Part ID'), widget=widgets.ForeignKeyWidget(Part))
     part_name = Field(attribute='part__full_name', column_name=_('Part Name'), readonly=True)
@@ -113,23 +130,6 @@ class StockItemResource(InvenTreeResource):
 
         # Rebuild the StockItem tree(s)
         StockItem.objects.rebuild()
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItem
-        skip_unchanged = True
-        report_skipped = False
-        clean_model_instance = True
-
-        exclude = [
-            # Exclude MPTT internal model fields
-            'lft', 'rght', 'tree_id', 'level',
-            # Exclude internal fields
-            'serial_int', 'metadata',
-            'barcode_hash', 'barcode_data',
-            'owner',
-        ]
 
 
 class StockItemAdmin(ImportExportModelAdmin):
