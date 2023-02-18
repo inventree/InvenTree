@@ -21,6 +21,7 @@ from django.utils.translation import gettext_lazy as _
 from jinja2 import Template
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
+from taggit.managers import TaggableManager
 
 import common.models
 import InvenTree.helpers
@@ -46,6 +47,8 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     A "StockLocation" can be considered a warehouse, or storage location
     Stock locations can be hierarchical as required
     """
+
+    tags = TaggableManager()
 
     def delete_recursive(self, *args, **kwargs):
         """This function handles the recursive deletion of sub-locations depending on kwargs contents"""
@@ -306,6 +309,8 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
                 'exclude_tree': self.pk,
             }
         }
+
+    tags = TaggableManager()
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(

@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
+from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 import common.models
 import company.models
@@ -76,7 +77,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
         return value
 
 
-class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class StockItemSerializer(TaggitSerializer, InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a StockItem.
 
     - Includes serialization for the linked part
@@ -186,6 +187,8 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
 
+    tags = TagListSerializerField()
+
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
         part_detail = kwargs.pop('part_detail', False)
@@ -243,6 +246,8 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'updated',
             'purchase_price',
             'purchase_price_currency',
+
+            'tags',
         ]
 
         """
@@ -570,7 +575,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         ]
 
 
-class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class LocationSerializer(TaggitSerializer, InvenTree.serializers.InvenTreeModelSerializer):
     """Detailed information about a stock location."""
 
     @staticmethod
@@ -590,6 +595,8 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     level = serializers.IntegerField(read_only=True)
 
+    tags = TagListSerializerField()
+
     class Meta:
         """Metaclass options."""
 
@@ -607,6 +614,8 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'owner',
             'icon',
             'structural',
+
+            'tags',
         ]
 
         read_only_fields = [
