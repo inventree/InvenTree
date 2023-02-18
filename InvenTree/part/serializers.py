@@ -275,7 +275,7 @@ class PartParameterSerializer(InvenTreeModelSerializer):
         ]
 
 
-class PartBriefSerializer(TaggitSerializer, InvenTreeModelSerializer):
+class PartBriefSerializer(InvenTreeModelSerializer):
     """Serializer for Part (brief detail)"""
 
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
@@ -415,7 +415,7 @@ class InitialSupplierSerializer(serializers.Serializer):
         return data
 
 
-class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
+class PartSerializer(TaggitSerializer, RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for complete detail information of a part.
 
     Used when displaying all details of a single component.
