@@ -414,6 +414,11 @@ function duplicatePart(pk, options={}) {
                 data.is_template = false;
             }
 
+            // Clear IPN field if PART_ALLOW_DUPLICATE_IPN is set to False
+            if (!global_settings['PART_ALLOW_DUPLICATE_IPN']) {
+                data.IPN = '';
+            }
+
             constructForm('{% url "api-part-list" %}', {
                 method: 'POST',
                 fields: fields,
