@@ -427,6 +427,15 @@ class SupplierPartDetail(RetrieveUpdateDestroyAPI):
 class SupplierPriceBreakFilter(rest_filters.FilterSet):
     """Custom API filters for the SupplierPriceBreak list endpoint"""
 
+    class Meta:
+        """Metaclass options"""
+
+        model = SupplierPriceBreak
+        fields = [
+            'part',
+            'quantity',
+        ]
+
     base_part = rest_filters.ModelChoiceFilter(
         label='Base Part',
         queryset=part.models.Part.objects.all(),
@@ -438,15 +447,6 @@ class SupplierPriceBreakFilter(rest_filters.FilterSet):
         queryset=Company.objects.all(),
         field_name='part__supplier',
     )
-
-    class Meta:
-        """Metaclass options"""
-
-        model = SupplierPriceBreak
-        fields = [
-            'part',
-            'quantity',
-        ]
 
 
 class SupplierPriceBreakList(ListCreateAPI):
