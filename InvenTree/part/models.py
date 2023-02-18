@@ -3045,6 +3045,10 @@ class PartAttachment(InvenTreeAttachment):
 class PartSellPriceBreak(common.models.PriceBreak):
     """Represents a price break for selling this part."""
 
+    class Meta:
+        """Metaclass providing extra model definition"""
+        unique_together = ('part', 'quantity')
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the PartSellPriceBreak model"""
@@ -3057,13 +3061,13 @@ class PartSellPriceBreak(common.models.PriceBreak):
         verbose_name=_('Part')
     )
 
-    class Meta:
-        """Metaclass providing extra model definition"""
-        unique_together = ('part', 'quantity')
-
 
 class PartInternalPriceBreak(common.models.PriceBreak):
     """Represents a price break for internally selling this part."""
+
+    class Meta:
+        """Metaclass providing extra model definition"""
+        unique_together = ('part', 'quantity')
 
     @staticmethod
     def get_api_url():
@@ -3076,10 +3080,6 @@ class PartInternalPriceBreak(common.models.PriceBreak):
         verbose_name=_('Part')
     )
 
-    class Meta:
-        """Metaclass providing extra model definition"""
-        unique_together = ('part', 'quantity')
-
 
 class PartStar(models.Model):
     """A PartStar object creates a subscription relationship between a User and a Part.
@@ -3091,16 +3091,16 @@ class PartStar(models.Model):
         user: Link to a User object
     """
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, verbose_name=_('Part'), related_name='starred_users')
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_parts')
-
     class Meta:
         """Metaclass providing extra model definition"""
         unique_together = [
             'part',
             'user'
         ]
+
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, verbose_name=_('Part'), related_name='starred_users')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_parts')
 
 
 class PartCategoryStar(models.Model):
@@ -3111,16 +3111,16 @@ class PartCategoryStar(models.Model):
         user: Link to a User object
     """
 
-    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE, verbose_name=_('Category'), related_name='starred_users')
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
-
     class Meta:
         """Metaclass providing extra model definition"""
         unique_together = [
             'category',
             'user',
         ]
+
+    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE, verbose_name=_('Category'), related_name='starred_users')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
 
 
 class PartTestTemplate(models.Model):
@@ -3292,6 +3292,11 @@ class PartParameter(models.Model):
         data: The data (value) of the Parameter [string]
     """
 
+    class Meta:
+        """Metaclass providing extra model definition"""
+        # Prevent multiple instances of a parameter for a single part
+        unique_together = ('part', 'template')
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the PartParameter model"""
@@ -3305,11 +3310,6 @@ class PartParameter(models.Model):
             data=str(self.data),
             units=str(self.template.units)
         )
-
-    class Meta:
-        """Metaclass providing extra model definition"""
-        # Prevent multiple instances of a parameter for a single part
-        unique_together = ('part', 'template')
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'), help_text=_('Parent Part'))
 
@@ -3423,6 +3423,17 @@ class BomItem(DataImportMixin, models.Model):
             'help_text': _('BOM level'),
         }
     }
+
+    class Meta:
+        """Metaclass providing extra model definition"""
+        verbose_name = _("BOM Item")
+
+    def __str__(self):
+        """Return a string representation of this BomItem instance"""
+        return "{n} x {child} to make {parent}".format(
+            parent=self.part.full_name,
+            child=self.sub_part.full_name,
+            n=decimal2string(self.quantity))
 
     @staticmethod
     def get_api_url():
@@ -3637,17 +3648,6 @@ class BomItem(DataImportMixin, models.Model):
                 raise ValidationError({'sub_part': _('Sub part must be specified')})
         except Part.DoesNotExist:
             raise ValidationError({'sub_part': _('Sub part must be specified')})
-
-    class Meta:
-        """Metaclass providing extra model definition"""
-        verbose_name = _("BOM Item")
-
-    def __str__(self):
-        """Return a string representation of this BomItem instance"""
-        return "{n} x {child} to make {parent}".format(
-            parent=self.part.full_name,
-            child=self.sub_part.full_name,
-            n=decimal2string(self.quantity))
 
     def get_overage_quantity(self, quantity):
         """Calculate overage quantity."""

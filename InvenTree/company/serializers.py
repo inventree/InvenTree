@@ -25,10 +25,6 @@ from .models import (Company, CompanyAttachment, ManufacturerPart,
 class CompanyBriefSerializer(InvenTreeModelSerializer):
     """Serializer for Company object (limited detail)"""
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
-    image = serializers.CharField(source='get_thumbnail_url', read_only=True)
-
     class Meta:
         """Metaclass options."""
 
@@ -41,32 +37,13 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             'image',
         ]
 
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    image = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
 
 class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for Company object (full detail)"""
-
-    @staticmethod
-    def annotate_queryset(queryset):
-        """Annoate the supplied queryset with aggregated information"""
-        # Add count of parts manufactured
-        queryset = queryset.annotate(
-            parts_manufactured=SubqueryCount('manufactured_parts')
-        )
-
-        queryset = queryset.annotate(
-            parts_supplied=SubqueryCount('supplied_parts')
-        )
-
-        return queryset
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
-    image = InvenTreeImageSerializerField(required=False, allow_null=True)
-
-    parts_supplied = serializers.IntegerField(read_only=True)
-    parts_manufactured = serializers.IntegerField(read_only=True)
-
-    currency = InvenTreeCurrencySerializer(help_text=_('Default currency used for this supplier'), required=True)
 
     class Meta:
         """Metaclass options."""
@@ -94,6 +71,29 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'parts_manufactured',
             'remote_image',
         ]
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annoate the supplied queryset with aggregated information"""
+        # Add count of parts manufactured
+        queryset = queryset.annotate(
+            parts_manufactured=SubqueryCount('manufactured_parts')
+        )
+
+        queryset = queryset.annotate(
+            parts_supplied=SubqueryCount('supplied_parts')
+        )
+
+        return queryset
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    image = InvenTreeImageSerializerField(required=False, allow_null=True)
+
+    parts_supplied = serializers.IntegerField(read_only=True)
+    parts_manufactured = serializers.IntegerField(read_only=True)
+
+    currency = InvenTreeCurrencySerializer(help_text=_('Default currency used for this supplier'), required=True)
 
     def save(self):
         """Save the Company instance"""
@@ -135,11 +135,21 @@ class CompanyAttachmentSerializer(InvenTreeAttachmentSerializer):
 class ManufacturerPartSerializer(InvenTreeModelSerializer):
     """Serializer for ManufacturerPart object."""
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    class Meta:
+        """Metaclass options."""
 
-    manufacturer_detail = CompanyBriefSerializer(source='manufacturer', many=False, read_only=True)
-
-    pretty_name = serializers.CharField(read_only=True)
+        model = ManufacturerPart
+        fields = [
+            'pk',
+            'part',
+            'part_detail',
+            'pretty_name',
+            'manufacturer',
+            'manufacturer_detail',
+            'description',
+            'MPN',
+            'link',
+        ]
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
@@ -158,23 +168,13 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
         if prettify is not True:
             self.fields.pop('pretty_name')
 
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
+    manufacturer_detail = CompanyBriefSerializer(source='manufacturer', many=False, read_only=True)
+
+    pretty_name = serializers.CharField(read_only=True)
+
     manufacturer = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_manufacturer=True))
-
-    class Meta:
-        """Metaclass options."""
-
-        model = ManufacturerPart
-        fields = [
-            'pk',
-            'part',
-            'part_detail',
-            'pretty_name',
-            'manufacturer',
-            'manufacturer_detail',
-            'description',
-            'MPN',
-            'link',
-        ]
 
 
 class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
@@ -193,17 +193,6 @@ class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
 class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
     """Serializer for the ManufacturerPartParameter model."""
 
-    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
-
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra detail fields as required"""
-        man_detail = kwargs.pop('manufacturer_part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if not man_detail:
-            self.fields.pop('manufacturer_part_detail')
-
     class Meta:
         """Metaclass options."""
 
@@ -218,66 +207,20 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
             'units',
         ]
 
-
-class SupplierPartSerializer(InvenTreeModelSerializer):
-    """Serializer for SupplierPart object."""
-
-    # Annotated field showing total in-stock quantity
-    in_stock = serializers.FloatField(read_only=True)
-
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-
-    supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
-
-    manufacturer_detail = CompanyBriefSerializer(source='manufacturer_part.manufacturer', many=False, read_only=True)
-
-    pretty_name = serializers.CharField(read_only=True)
-
-    pack_size = serializers.FloatField(label=_('Pack Quantity'))
-
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
-
-        # Check if 'available' quantity was supplied
-        self.has_available_quantity = 'available' in kwargs.get('data', {})
-
-        brief = kwargs.pop('brief', False)
-
-        detail_default = not brief
-
-        part_detail = kwargs.pop('part_detail', detail_default)
-        supplier_detail = kwargs.pop('supplier_detail', detail_default)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', detail_default)
-
-        prettify = kwargs.pop('pretty', False)
+        man_detail = kwargs.pop('manufacturer_part_detail', False)
 
         super().__init__(*args, **kwargs)
 
-        if part_detail is not True:
-            self.fields.pop('part_detail')
-
-        if supplier_detail is not True:
-            self.fields.pop('supplier_detail')
-
-        if manufacturer_detail is not True:
-            self.fields.pop('manufacturer_detail')
+        if not man_detail:
             self.fields.pop('manufacturer_part_detail')
 
-        if prettify is not True:
-            self.fields.pop('pretty_name')
+    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
 
-    supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
 
-    manufacturer = serializers.CharField(read_only=True)
-
-    MPN = serializers.CharField(read_only=True)
-
-    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
-    # Date fields
-    updated = serializers.DateTimeField(allow_null=True, read_only=True)
+class SupplierPartSerializer(InvenTreeModelSerializer):
+    """Serializer for SupplierPart object."""
 
     class Meta:
         """Metaclass options."""
@@ -313,6 +256,63 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'availability_updated',
             'barcode_hash',
         ]
+
+    def __init__(self, *args, **kwargs):
+        """Initialize this serializer with extra detail fields as required"""
+
+        # Check if 'available' quantity was supplied
+        self.has_available_quantity = 'available' in kwargs.get('data', {})
+
+        brief = kwargs.pop('brief', False)
+
+        detail_default = not brief
+
+        part_detail = kwargs.pop('part_detail', detail_default)
+        supplier_detail = kwargs.pop('supplier_detail', detail_default)
+        manufacturer_detail = kwargs.pop('manufacturer_detail', detail_default)
+
+        prettify = kwargs.pop('pretty', False)
+
+        super().__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail')
+
+        if supplier_detail is not True:
+            self.fields.pop('supplier_detail')
+
+        if manufacturer_detail is not True:
+            self.fields.pop('manufacturer_detail')
+            self.fields.pop('manufacturer_part_detail')
+
+        if prettify is not True:
+            self.fields.pop('pretty_name')
+
+    # Annotated field showing total in-stock quantity
+    in_stock = serializers.FloatField(read_only=True)
+
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
+    supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
+
+    manufacturer_detail = CompanyBriefSerializer(source='manufacturer_part.manufacturer', many=False, read_only=True)
+
+    pretty_name = serializers.CharField(read_only=True)
+
+    pack_size = serializers.FloatField(label=_('Pack Quantity'))
+
+    supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
+
+    manufacturer = serializers.CharField(read_only=True)
+
+    MPN = serializers.CharField(read_only=True)
+
+    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    # Date fields
+    updated = serializers.DateTimeField(allow_null=True, read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -369,6 +369,22 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
     """Serializer for SupplierPriceBreak object."""
 
+    class Meta:
+        """Metaclass options."""
+
+        model = SupplierPriceBreak
+        fields = [
+            'pk',
+            'part',
+            'part_detail',
+            'quantity',
+            'price',
+            'price_currency',
+            'supplier',
+            'supplier_detail',
+            'updated',
+        ]
+
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra fields as required"""
 
@@ -399,19 +415,3 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
 
     # Detail serializer for SupplierPart
     part_detail = SupplierPartSerializer(source='part', brief=True, many=False, read_only=True)
-
-    class Meta:
-        """Metaclass options."""
-
-        model = SupplierPriceBreak
-        fields = [
-            'pk',
-            'part',
-            'part_detail',
-            'quantity',
-            'price',
-            'price_currency',
-            'supplier',
-            'supplier_detail',
-            'updated',
-        ]

@@ -852,6 +852,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
+    class Meta:
+        """Meta options for InvenTreeSetting."""
+
+        verbose_name = "InvenTree Setting"
+        verbose_name_plural = "InvenTree Settings"
+
     def save(self, *args, **kwargs):
         """When saving a global setting, check to see if it requires a server restart.
 
@@ -1601,12 +1607,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
     typ = 'inventree'
 
-    class Meta:
-        """Meta options for InvenTreeSetting."""
-
-        verbose_name = "InvenTree Setting"
-        verbose_name_plural = "InvenTree Settings"
-
     key = models.CharField(
         max_length=50,
         blank=False,
@@ -1630,6 +1630,15 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object with a usercontext."""
+
+    class Meta:
+        """Meta options for InvenTreeUserSetting."""
+
+        verbose_name = "InvenTree User Setting"
+        verbose_name_plural = "InvenTree User Settings"
+        constraints = [
+            models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
+        ]
 
     SETTINGS = {
         'HOMEPAGE_PART_STARRED': {
@@ -1946,15 +1955,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     }
 
     typ = 'user'
-
-    class Meta:
-        """Meta options for InvenTreeUserSetting."""
-
-        verbose_name = "InvenTree User Setting"
-        verbose_name_plural = "InvenTree User Settings"
-        constraints = [
-            models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
-        ]
 
     key = models.CharField(
         max_length=50,

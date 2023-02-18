@@ -116,6 +116,11 @@ class ReferenceIndexingMixin(models.Model):
     # Name of the global setting which defines the required reference pattern for this model
     REFERENCE_PATTERN_SETTING = None
 
+    class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
+        abstract = True
+
     @classmethod
     def get_reference_pattern(cls):
         """Returns the reference pattern associated with this model.
@@ -272,11 +277,6 @@ class ReferenceIndexingMixin(models.Model):
         # Check that the reference field can be rebuild
         cls.rebuild_reference_field(value, validate=True)
 
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-
-        abstract = True
-
     @classmethod
     def rebuild_reference_field(cls, reference, validate=False):
         """Extract integer out of reference for sorting.
@@ -368,6 +368,10 @@ class InvenTreeAttachment(models.Model):
         user: User associated with file upload
         upload_date: Date the file was uploaded
     """
+
+    class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+        abstract = True
 
     def getSubdir(self):
         """Return the subdirectory under which attachments should be stored.
@@ -483,11 +487,6 @@ class InvenTreeAttachment(models.Model):
         except Exception:
             raise ValidationError(_("Error renaming file"))
 
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-
-        abstract = True
-
 
 class InvenTreeTree(MPTTModel):
     """Provides an abstracted self-referencing tree model for data categories.
@@ -503,7 +502,6 @@ class InvenTreeTree(MPTTModel):
 
     class Meta:
         """Metaclass defines extra model properties."""
-
         abstract = True
 
     class MPTTMeta:

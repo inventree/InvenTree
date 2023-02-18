@@ -77,8 +77,6 @@ class GlobalSettingsSerializer(SettingsSerializer):
 class UserSettingsSerializer(SettingsSerializer):
     """Serializer for the InvenTreeUserSetting model."""
 
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-
     class Meta:
         """Meta options for UserSettingsSerializer."""
 
@@ -96,6 +94,8 @@ class UserSettingsSerializer(SettingsSerializer):
             'api_url',
             'typ',
         ]
+
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
 
 
 class GenericReferencedSettingSerializer(SettingsSerializer):
@@ -140,6 +140,33 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
 class NotificationMessageSerializer(InvenTreeModelSerializer):
     """Serializer for the InvenTreeUserSetting model."""
 
+    class Meta:
+        """Meta options for NotificationMessageSerializer."""
+
+        model = NotificationMessage
+        fields = [
+            'pk',
+            'target',
+            'source',
+            'user',
+            'category',
+            'name',
+            'message',
+            'creation',
+            'age',
+            'age_human',
+            'read',
+        ]
+
+        read_only_fields = [
+            'category',
+            'name',
+            'message',
+            'creation',
+            'age',
+            'age_human',
+        ]
+
     target = serializers.SerializerMethodField(read_only=True)
     source = serializers.SerializerMethodField(read_only=True)
     user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -170,38 +197,9 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
         """Function to resolve generic object reference to source."""
         return get_objectreference(obj, 'source_content_type', 'source_object_id')
 
-    class Meta:
-        """Meta options for NotificationMessageSerializer."""
-
-        model = NotificationMessage
-        fields = [
-            'pk',
-            'target',
-            'source',
-            'user',
-            'category',
-            'name',
-            'message',
-            'creation',
-            'age',
-            'age_human',
-            'read',
-        ]
-
-        read_only_fields = [
-            'category',
-            'name',
-            'message',
-            'creation',
-            'age',
-            'age_human',
-        ]
-
 
 class NewsFeedEntrySerializer(InvenTreeModelSerializer):
     """Serializer for the NewsFeedEntry model."""
-
-    read = serializers.BooleanField()
 
     class Meta:
         """Meta options for NewsFeedEntrySerializer."""
@@ -217,6 +215,8 @@ class NewsFeedEntrySerializer(InvenTreeModelSerializer):
             'summary',
             'read',
         ]
+
+    read = serializers.BooleanField()
 
 
 class ConfigSerializer(serializers.Serializer):
