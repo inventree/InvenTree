@@ -30,6 +30,7 @@ from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
+from taggit.managers import TaggableManager
 
 import common.models
 import common.settings
@@ -376,6 +377,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     """
 
     objects = PartManager()
+    tags = TaggableManager()
 
     class Meta:
         """Metaclass defines extra model properties"""

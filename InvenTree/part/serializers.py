@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
+from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 import company.models
 import InvenTree.helpers
@@ -274,7 +275,7 @@ class PartParameterSerializer(InvenTreeModelSerializer):
         ]
 
 
-class PartBriefSerializer(InvenTreeModelSerializer):
+class PartBriefSerializer(TaggitSerializer, InvenTreeModelSerializer):
     """Serializer for Part (brief detail)"""
 
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
@@ -573,6 +574,8 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         write_only=True, required=False,
     )
 
+    tags = TagListSerializerField()
+
     class Meta:
         """Metaclass defining serializer fields"""
         model = Part
@@ -627,6 +630,8 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'duplicate',
             'initial_stock',
             'initial_supplier',
+
+            'tags',
         ]
 
         read_only_fields = [
