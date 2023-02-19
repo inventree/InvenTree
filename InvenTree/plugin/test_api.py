@@ -27,6 +27,10 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.PKG_URL = 'git+https://github.com/geoffrey-a-reed/minimal'
         super().setUp()
 
+    def test_plugin_url(self):
+        """Test API url."""
+        self.assertEqual(PluginConfig.objects.all().first().get_api_url(), '/api/plugins/')
+
     def test_plugin_install(self):
         """Test the plugin install command."""
         url = reverse('api-plugin-install')
