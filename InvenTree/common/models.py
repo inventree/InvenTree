@@ -2619,9 +2619,9 @@ def pre_save_user(sender, instance, **kwargs):
     if not instance._state.adding:
         org_inst = WebConnection.objects.get(pk=instance.pk)
         if instance.plugin != org_inst.plugin:
-            raise ValidationError({'plugin': 'You can not update the connection_key.'})
+            raise ValidationError({'plugin': 'You can not update the plugin.'})
         if instance.connection_key != org_inst.connection_key:
-            raise ValidationError({'connection_key': 'You can not update the plugin.'})
+            raise ValidationError({'connection_key': 'You can not update the connection_key.'})
 
 
 @dataclass()
