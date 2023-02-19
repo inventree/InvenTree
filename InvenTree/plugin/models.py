@@ -162,6 +162,7 @@ class PluginConfig(models.Model):
 
         return ret
 
+    @staticmethod
     def get_api_url():
         """Return the API URL associated with the PluginConfig model"""
         return reverse('api-plugin-list')
