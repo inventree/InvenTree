@@ -62,6 +62,14 @@ class PluginTagTests(TestCase):
         """Test that all errors are listed."""
         self.assertEqual(plugin_tags.plugin_errors(), registry.errors)
 
+    def test_tag_plugin_connections(self):
+        """Test that all plugin connections are listed."""
+        # Empty/Non-existing plugin
+        self.assertEqual(plugin_tags.plugin_connections('abc'), None)
+
+        # Full testcase
+        # TODO
+
 
 class InvenTreePluginTests(TestCase):
     """Tests for InvenTreePlugin."""
