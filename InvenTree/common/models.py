@@ -2619,7 +2619,7 @@ def pre_save_user(sender, instance, **kwargs):
     """Stop users from changing protected fields."""
     if not instance._state.adding:
         org_inst = WebConnection.objects.get(pk=instance.pk)
-        if instance.plugin != org_inst.plugin:
+        if instance.plugin_id != org_inst.plugin_id:
             raise ValidationError({'plugin': 'You can not update the plugin.'})
         if instance.connection_key != org_inst.connection_key:
             raise ValidationError({'connection_key': 'You can not update the connection_key.'})
