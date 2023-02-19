@@ -620,7 +620,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     )
 
     copy_category_parameters = serializers.BooleanField(
-        default=True,
+        default=True, required=False,
         label=_('Copy Category Parameters'),
         help_text=_('Copy parameter templates from selected part category'),
     )
