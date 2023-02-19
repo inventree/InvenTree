@@ -10,17 +10,25 @@ $('table').find('.boolean-setting').change(function() {
     var plugin = $(this).attr('plugin');
     var user = $(this).attr('user');
     var notification = $(this).attr('notification');
+    var is_global = true;
+    var connection_key = $(this).attr('connection_key');
+    var connection = $(this).attr('connection');
 
     var checked = this.checked;
 
-    // Global setting by default
-    var url = `/api/settings/global/${setting}/`;
+    if ($(this).attr('user')){
+        is_global = false;
+    }
 
-    if (notification) {
-        url = `/api/settings/notification/${pk}/`;
+    if (connection_key) {
+        url = `/api/plugins/settings/${plugin}/connection/${connection_key}/${connection}/${setting}/`;
     } else if (plugin) {
         url = `/api/plugins/settings/${plugin}/${setting}/`;
-    } else if (user) {
+    } else if (notification) {
+        url = `/api/settings/notification/${pk}/`;
+    } else if (is_global) {
+        url = `/api/settings/global/${setting}/`;
+    } else {
         url = `/api/settings/user/${setting}/`;
     }
 
@@ -47,6 +55,8 @@ $('table').find('.btn-edit-setting').click(function() {
     var plugin = $(this).attr('plugin');
     var is_global = true;
     var notification = $(this).attr('notification');
+    var connection_key = $(this).attr('connection_key');
+    var connection = $(this).attr('connection');
 
     if ($(this).attr('user')){
         is_global = false;
@@ -54,7 +64,9 @@ $('table').find('.btn-edit-setting').click(function() {
 
     var title = '';
 
-    if (plugin != null) {
+    if (connection_key) {
+        title = '{% trans "Edit Connection Setting" %}';
+    } else if (plugin != null) {
         title = '{% trans "Edit Plugin Setting" %}';
     } else if (notification) {
         title = '{% trans "Edit Notification Setting" %}';
@@ -69,6 +81,8 @@ $('table').find('.btn-edit-setting').click(function() {
         plugin: plugin,
         global: is_global,
         notification: notification,
+        connection_key: connection_key,
+        connection: connection,
         title: title,
     });
 });
@@ -90,3 +104,45 @@ $("#edit-password").on('click', function() {
         }
     );
 });
+
+{% plugins_enabled as plug %}
+{% if plug %}
+$("#new-connection").click(function() {
+    var plugin = $(this).attr('plugin');
+    var key = $(this).attr('key');
+
+    constructForm('{% url "api-plugin-connection-list" %}', {
+        fields: {
+            plugin: {value: plugin, hidden: true},
+            connection_key: {value: key, hidden: true},
+            name: {},
+            comment: {},
+            owner: {},
+        },
+        method: 'POST',
+        title: '{% trans "Create new connection" %}',
+        onSuccess: function() {location.reload();}
+    });
+});
+
+$('.supplier-connections').on('click', '.connection-edit', function() {
+    var pk = $(this).attr('pk');
+    constructForm(`/api/plugins/connection/${pk}/`, {
+        fields: {
+            name: {},
+            comment: {},
+            owner: {},
+        },
+        onSuccess: function() {location.reload();},
+    });
+});
+
+$('.supplier-connections').on('click', '.connection-delete', function() {
+    var pk = $(this).attr('pk');
+    constructForm(`/api/plugins/connection/${pk}/`, {
+        method: 'DELETE',
+        title: '{% trans "Delete Connection" %}',
+        onSuccess: function() {location.reload();},
+    });
+});
+{% endif %}
