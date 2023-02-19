@@ -2,7 +2,6 @@
 
 import functools
 
-from django.db import transaction
 from django.db.models import Count, F, Q
 from django.http import JsonResponse
 from django.urls import include, path, re_path

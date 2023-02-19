@@ -659,7 +659,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         if copy_category_parameters and instance.category is not None:
             # Get flattened list of parent categories
             categories = instance.category.get_ancestors(include_self=True)
-            
+
             # All parameter templates within these categories
             templates = PartCategoryParameterTemplate.objects.filter(
                 category__in=categories
