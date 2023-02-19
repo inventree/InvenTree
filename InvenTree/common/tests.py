@@ -16,8 +16,8 @@ from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
-                     NotificationEntry, NotificationMessage, WebhookEndpoint,
-                     WebhookMessage)
+                     NotificationEntry, NotificationMessage, WebConnection,
+                     WebhookEndpoint, WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 
@@ -925,3 +925,24 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
         # There should be some new exchange rate objects now
         self.assertTrue(Rate.objects.all().exists())
+
+
+class WebConnectionTests(TestCase):
+    """Tests for WebConnection."""
+
+    def setUp(self) -> None:
+        """Setup commmon parameters for tests."""
+        self.plg = registry.get_plugin('inventreebarcode')
+        self.instance = WebConnection.objects.create(
+            plugin=self.plg.db,
+            connection_key='123',
+            name='testname',
+        )
+
+    def test_base_functions(self):
+        """Test the base functions for WebConnections."""
+        # str
+        self.assertEqual(str(self.instance), f'{self.plg.slug} \\ 123 : testname')
+
+        # get_api_url
+        self.assertEqual(self.instance.get_api_url(), '/api/plugins/connection/')
