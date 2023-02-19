@@ -76,7 +76,7 @@ class PluginsRegistry:
             slug (str): Plugin slug
             state (bool): Plugin state - true = active, false = inactive
         """
-        if slug not in self.plugins_full:
+        if slug not in self.plugins_full:  # pragma: no cover
             logger.warning(f"Plugin registry has no record of plugin '{slug}'")
             return
 
