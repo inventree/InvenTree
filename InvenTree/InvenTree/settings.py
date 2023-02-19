@@ -635,7 +635,7 @@ Q_CLUSTER = {
 
 # Configure django-q sentry integration
 if SENTRY_ENABLED and SENTRY_DSN:
-    Q_CLUSTER['error_reporter'] = {
+    Q_CLUSTER['error_reporter'] = {  # pragma: no cover
         'sentry': {
             'dsn': SENTRY_DSN
         }
