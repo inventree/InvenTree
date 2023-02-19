@@ -6,6 +6,7 @@ from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -946,3 +947,32 @@ class WebConnectionTests(TestCase):
 
         # get_api_url
         self.assertEqual(self.instance.get_api_url(), '/api/plugins/connection/')
+
+    def test_field_protection(self):
+        """Test that the fields that are protected can not be changed."""
+
+        # Change connection_key - not allowed
+        with self.assertRaises(ValidationError) as ex:
+            self.instance.connection_key = 'abc'
+            self.instance.save()
+        self.assertEqual(str(ex.exception), "{'connection_key': ['You can not update the connection_key.']}")
+        # Reset key
+        self.instance.connection_key = '123'
+
+        # Change name - allowed
+        self.instance.name = 'testname1'
+        self.instance.save()
+        self.assertEqual(self.instance.name, 'testname1')
+
+        # Change plugin - not allowed
+        with self.assertRaises(ValidationError) as ex:
+            self.instance.plugin = registry.get_plugin('inventreecorenotificationsplugin').db
+            self.instance.save()
+        self.assertEqual(str(ex.exception), "{'plugin': ['You can not update the plugin.']}")
+        # Reset key
+        self.instance.plugin = self.plg.db
+
+        # Change name - allowed
+        self.instance.name = 'testname2'
+        self.instance.save()
+        self.assertEqual(self.instance.name, 'testname2')
