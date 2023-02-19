@@ -2539,15 +2539,15 @@ class WebConnection(models.Model):
     """Defines a Connection for a plugin or the core code base..
 
     Attributes:
-        plugin: TODO,
-        connection_key: TODO,
-        name: TODO,
-        comment: TODO,
-        active: TODO,
-        creator: TODO,
-        creation: TODO,
-        owner: TODO,
-        updated: TODO,
+        plugin: Plugin for which the connection is defined,
+        connection_key: Reference for connection,
+        name: Name for connection,
+        comment: (User) comment about connection,
+        active: Is the connection active?,
+        creator: User who created connection,
+        creation: Datetime when connection was created,
+        owner: Owner of connection,
+        updated: Datetime when connection was updated last
     """
 
     plugin = models.ForeignKey(
