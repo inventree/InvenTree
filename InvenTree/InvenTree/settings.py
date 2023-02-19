@@ -34,7 +34,7 @@ TESTING = 'test' in sys.argv
 
 # Note: The following fix is "required" for docker build workflow
 # Note: 2022-12-12 still unsure why...
-if TESTING and os.getenv('INVENTREE_DOCKER'):
+if TESTING and os.getenv('INVENTREE_DOCKER'):  # pragma: no cover
     # Ensure that sys.path includes global python libs
     site_packages = '/usr/local/lib/python3.9/site-packages'
 
