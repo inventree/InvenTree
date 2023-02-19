@@ -199,7 +199,7 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     # Debug toolbar access (only allowed in DEBUG mode)
-    if settings.DEBUG_TOOLBAR_ENABLED:
+    if settings.DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
         import debug_toolbar
         urlpatterns = [
             path('__debug__/', include(debug_toolbar.urls)),
