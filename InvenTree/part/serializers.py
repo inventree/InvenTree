@@ -454,6 +454,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'duplicate',
             'initial_stock',
             'initial_supplier',
+            'copy_category_parameters'
         ]
 
         read_only_fields = [
@@ -499,6 +500,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'duplicate',
             'initial_stock',
             'initial_supplier',
+            'copy_category_parameters'
         ]
 
         return fields
@@ -613,6 +615,12 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         write_only=True, required=False,
     )
 
+    copy_category_parameters = serializers.BooleanField(
+        default=True,
+        label=_('Copy Category Parameters'),
+        help_text=_('Copy parameter templates from selected part category'),
+    )
+
     @transaction.atomic
     def create(self, validated_data):
         """Custom method for creating a new Part instance using this serializer"""
@@ -620,8 +628,14 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         duplicate = validated_data.pop('duplicate', None)
         initial_stock = validated_data.pop('initial_stock', None)
         initial_supplier = validated_data.pop('initial_supplier', None)
+        copy_category_parameters = validated_data.pop('copy_category_parameters', False)
 
         instance = super().create(validated_data)
+
+        # Save user information
+        if self.context['request']:
+            instance.creation_user = self.context['request'].user
+            instance.save()
 
         # Copy data from original Part
         if duplicate:
