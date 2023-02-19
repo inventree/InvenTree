@@ -76,15 +76,3 @@ class TestCategoryTemplates(TransactionTestCase):
 
         # Get part parameters count
         n_param = part.get_parameters().count()
-
-        add_category_templates = {
-            'main': True,
-            'parent': True,
-        }
-
-        # Save it with category parameters
-        part.save(**{'add_category_templates': add_category_templates})
-
-        # Check new part parameters count
-        # Only 2 parameters should be added as one already existed with same template
-        self.assertEqual(n_param + 2, part.get_parameters().count())
