@@ -154,7 +154,7 @@ class ManufacturerPartSerializer(TaggitSerializer, InvenTreeModelSerializer):
             'tags',
         ]
 
-    tags = TagListSerializerField()
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
@@ -264,7 +264,7 @@ class SupplierPartSerializer(TaggitSerializer, InvenTreeModelSerializer):
             'barcode_hash',
         ]
 
-    tags = TagListSerializerField()
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""

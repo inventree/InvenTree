@@ -237,7 +237,7 @@ class StockItemSerializer(TaggitSerializer, InvenTree.serializers.InvenTreeModel
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
 
-    tags = TagListSerializerField()
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
@@ -614,7 +614,7 @@ class LocationSerializer(TaggitSerializer, InvenTree.serializers.InvenTreeModelS
 
     level = serializers.IntegerField(read_only=True)
 
-    tags = TagListSerializerField()
+    tags = TagListSerializerField(required=False)
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):

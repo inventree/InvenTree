@@ -463,7 +463,7 @@ class PartSerializer(TaggitSerializer, RemoteImageMixin, InvenTreeModelSerialize
             'barcode_hash',
         ]
 
-    tags = TagListSerializerField()
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for PartSerializer:
