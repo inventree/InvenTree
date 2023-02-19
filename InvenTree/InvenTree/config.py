@@ -159,7 +159,7 @@ def get_media_dir(create=True):
     md = get_setting('INVENTREE_MEDIA_ROOT', 'media_root')
 
     if not md:
-        raise FileNotFoundError('INVENTREE_MEDIA_ROOT not specified')
+        raise FileNotFoundError('INVENTREE_MEDIA_ROOT not specified')  # pragma: no cover
 
     md = Path(md).resolve()
 
@@ -175,7 +175,7 @@ def get_static_dir(create=True):
     sd = get_setting('INVENTREE_STATIC_ROOT', 'static_root')
 
     if not sd:
-        raise FileNotFoundError('INVENTREE_STATIC_ROOT not specified')
+        raise FileNotFoundError('INVENTREE_STATIC_ROOT not specified')  # pragma: no cover
 
     sd = Path(sd).resolve()
 
@@ -191,7 +191,7 @@ def get_backup_dir(create=True):
     bd = get_setting('INVENTREE_BACKUP_DIR', 'backup_dir')
 
     if not bd:
-        raise FileNotFoundError('INVENTREE_BACKUP_DIR not specified')
+        raise FileNotFoundError('INVENTREE_BACKUP_DIR not specified')  # pragma: no cover
 
     bd = Path(bd).resolve()
 
