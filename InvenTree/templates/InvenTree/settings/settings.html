@@ -36,8 +36,9 @@
 {% include "InvenTree/settings/label.html" %}
 {% include "InvenTree/settings/report.html" %}
 {% include "InvenTree/settings/part.html" %}
-{% include "InvenTree/settings/pricing.html" %}
+{% include "InvenTree/settings/part_stocktake.html" %}
 {% include "InvenTree/settings/category.html" %}
+{% include "InvenTree/settings/pricing.html" %}
 {% include "InvenTree/settings/stock.html" %}
 {% include "InvenTree/settings/build.html" %}
 {% include "InvenTree/settings/po.html" %}
@@ -54,6 +55,8 @@
 {% endif %}
 
 {% endblock %}
+
+{% include "InvenTree/settings/settings_js.html" %}
 
 {% block js_load %}
 {{ block.super }}
@@ -535,6 +538,16 @@ $('.supplier-connections').on('click', '.connection-delete', function() {
         onSuccess: function() {location.reload();},
     });
 });
+{% endif %}
+
+{% if user.is_staff %}
+    {% include "InvenTree/settings/settings_staff_js.html" %}
+    {% plugins_enabled as plug %}
+    {% if plug %}
+        $("#install-plugin").click(function() {
+            installPlugin();
+        });
+    {% endif %}
 {% endif %}
 
 enableSidebar('settings');

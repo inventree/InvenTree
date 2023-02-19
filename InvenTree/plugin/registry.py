@@ -110,7 +110,7 @@ class PluginsRegistry:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
 
-        logger.info('Start loading plugins')
+        logger.info('Loading plugins')
 
         # Set maintanace mode
         _maintenance = bool(get_maintenance_mode())
@@ -269,7 +269,7 @@ class PluginsRegistry:
         # Collect plugins from paths
         for plugin in self.plugin_dirs():
 
-            logger.info(f"Loading plugins from directory '{plugin}'")
+            logger.debug(f"Loading plugins from directory '{plugin}'")
 
             parent_path = None
             parent_obj = Path(plugin)
@@ -307,7 +307,7 @@ class PluginsRegistry:
 
         # Log collected plugins
         logger.info(f'Collected {len(collected_plugins)} plugins!')
-        logger.info(", ".join([a.__module__ for a in collected_plugins]))
+        logger.debug(", ".join([a.__module__ for a in collected_plugins]))
 
         return collected_plugins
 
@@ -384,7 +384,7 @@ class PluginsRegistry:
                 self.plugins_inactive[key] = plugin.db
             self.plugins_full[key] = plugin
 
-        logger.info('Starting plugin initialisation')
+        logger.debug('Starting plugin initialisation')
 
         # Initialize plugins
         for plg in self.plugin_modules:
@@ -426,9 +426,10 @@ class PluginsRegistry:
 
                 # Initialize package - we can be sure that an admin has activated the plugin
                 logger.info(f'Loading plugin `{plg_name}`')
+
                 try:
                     plg_i: InvenTreePlugin = plg()
-                    logger.info(f'Loaded plugin `{plg_name}`')
+                    logger.debug(f'Loaded plugin `{plg_name}`')
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
 

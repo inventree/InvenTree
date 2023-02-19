@@ -102,8 +102,10 @@ MEDIA_ROOT = config.get_media_dir()
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = get_setting(
+    "INVENTREE_ALLOWED_HOSTS",
     config_key='allowed_hosts',
-    default_value=['*']
+    default_value=['*'],
+    typecast=list,
 )
 
 # Cross Origin Resource Sharing (CORS) options
@@ -113,13 +115,16 @@ CORS_URLS_REGEX = r'^/api/.*$'
 
 # Extract CORS options from configuration file
 CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
+    "INVENTREE_CORS_ORIGIN_ALLOW_ALL",
     config_key='cors.allow_all',
     default_value=False,
 )
 
 CORS_ORIGIN_WHITELIST = get_setting(
+    "INVENTREE_CORS_ORIGIN_WHITELIST",
     config_key='cors.whitelist',
-    default_value=[]
+    default_value=[],
+    typecast=list,
 )
 
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
@@ -736,9 +741,11 @@ if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no 
     django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
-CURRENCIES = get_setting('INVENTREE_CURRENCIES', 'currencies', [
-    'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
-])
+CURRENCIES = get_setting(
+    'INVENTREE_CURRENCIES', 'currencies',
+    ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD'],
+    typecast=list,
+)
 
 # Maximum number of decimal places for currency rendering
 CURRENCY_DECIMAL_PLACES = 6
@@ -746,7 +753,7 @@ CURRENCY_DECIMAL_PLACES = 6
 # Check that each provided currency is supported
 for currency in CURRENCIES:
     if currency not in moneyed.CURRENCIES:  # pragma: no cover
-        print(f"Currency code '{currency}' is not supported")
+        logger.error(f"Currency code '{currency}' is not supported")
         sys.exit(1)
 
 # Custom currency exchange backend
@@ -795,7 +802,7 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 SITE_ID = 1
 
 # Load the allauth social backends
-SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [])
+SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list)
 
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover

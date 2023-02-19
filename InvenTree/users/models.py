@@ -21,7 +21,7 @@ logger = logging.getLogger("inventree")
 
 
 class RuleSet(models.Model):
-    """A RuleSet is somewhat like a superset of the django permission  class, in that in encapsulates a bunch of permissions.
+    """A RuleSet is somewhat like a superset of the django permission class, in that in encapsulates a bunch of permissions.
 
     There are *many* apps models used within InvenTree,
     so it makes sense to group them into "roles".
@@ -36,6 +36,7 @@ class RuleSet(models.Model):
         ('admin', _('Admin')),
         ('part_category', _('Part Categories')),
         ('part', _('Parts')),
+        ('stocktake', _('Stocktake')),
         ('stock_location', _('Stock Locations')),
         ('stock', _('Stock Items')),
         ('build', _('Build Orders')),
@@ -100,12 +101,15 @@ class RuleSet(models.Model):
             'part_partrelated',
             'part_partstar',
             'part_partcategorystar',
-            'part_partstocktake',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_manufacturerpartattachment',
             'label_partlabel',
+        ],
+        'stocktake': [
+            'part_partstocktake',
+            'part_partstocktakereport',
         ],
         'stock_location': [
             'stock_stocklocation',
@@ -133,6 +137,7 @@ class RuleSet(models.Model):
         ],
         'purchase_order': [
             'company_company',
+            'company_companyattachment',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_supplierpart',
@@ -145,6 +150,7 @@ class RuleSet(models.Model):
         ],
         'sales_order': [
             'company_company',
+            'company_companyattachment',
             'order_salesorder',
             'order_salesorderallocation',
             'order_salesorderattachment',
@@ -468,13 +474,13 @@ def update_group_roles(group, debug=False):
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
     for (parent, child) in RuleSet.RULESET_CHANGE_INHERIT:
-        parent_change_perm = f'{parent}.change_{parent}'
         parent_child_string = f'{parent}_{child}'
 
-        # Check if parent change permission exists
-        if parent_change_perm in group_permissions:
-            # Add child model permissions
-            for action in ['add', 'change', 'delete']:
+        # Check each type of permission
+        for action in ['view', 'change', 'add', 'delete']:
+            parent_perm = f'{parent}.{action}_{parent}'
+
+            if parent_perm in group_permissions:
                 child_perm = f'{parent}.{action}_{child}'
 
                 # Check if child permission not already in group
@@ -559,6 +565,14 @@ class Owner(models.Model):
     owner: Returns the Group or User instance combining the owner_type and owner_id fields
     """
 
+    class Meta:
+        """Metaclass defines extra model properties"""
+        # Ensure all owners are unique
+        constraints = [
+            UniqueConstraint(fields=['owner_type', 'owner_id'],
+                             name='unique_owner')
+        ]
+
     @classmethod
     def get_owners_matching_user(cls, user):
         """Return all "owner" objects matching the provided user.
@@ -590,14 +604,6 @@ class Owner(models.Model):
     def get_api_url():  # pragma: no cover
         """Returns the API endpoint URL associated with the Owner model"""
         return reverse('api-owner-list')
-
-    class Meta:
-        """Metaclass defines extra model properties"""
-        # Ensure all owners are unique
-        constraints = [
-            UniqueConstraint(fields=['owner_type', 'owner_id'],
-                             name='unique_owner')
-        ]
 
     owner_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
 

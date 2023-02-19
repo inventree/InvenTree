@@ -523,10 +523,10 @@ $('#stock-edit-status').click(function () {
 {% endif %}
 
 $("#show-qr-code").click(function() {
-    launchModalForm("{% url 'stock-item-qr' item.id %}",
-    {
-        no_post: true,
-    });
+    showQRDialog(
+        '{% trans "Stock Item QR Code" %}',
+        '{"stockitem": {{ item.pk }}}',
+    );
 });
 
 {% if barcodes %}

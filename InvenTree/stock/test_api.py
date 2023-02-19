@@ -306,6 +306,29 @@ class StockItemListTest(StockAPITestCase):
         # Return JSON-ified data
         return response.data
 
+    def test_top_level_filtering(self):
+        """Test filtering against "top level" stock location"""
+
+        # No filters, should return *all* items
+        response = self.get(self.list_url, {}, expected_code=200)
+        self.assertEqual(len(response.data), StockItem.objects.count())
+
+        # Filter with "cascade=False" (but no location specified)
+        # Should not result in any actual filtering
+        response = self.get(self.list_url, {'cascade': False}, expected_code=200)
+        self.assertEqual(len(response.data), StockItem.objects.count())
+
+        # Filter with "cascade=False" for the top-level location
+        response = self.get(self.list_url, {'location': 'null', 'cascade': False}, expected_code=200)
+        self.assertTrue(len(response.data) < StockItem.objects.count())
+
+        for result in response.data:
+            self.assertIsNone(result['location'])
+
+        # Filter with "cascade=True"
+        response = self.get(self.list_url, {'location': 'null', 'cascade': True}, expected_code=200)
+        self.assertEqual(len(response.data), StockItem.objects.count())
+
     def test_get_stock_list(self):
         """List *all* StockItem objects."""
         response = self.get_stock()
