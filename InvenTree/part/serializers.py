@@ -3,7 +3,6 @@
 import imghdr
 import io
 import logging
-
 from decimal import Decimal
 
 from django.core.files.base import ContentFile
