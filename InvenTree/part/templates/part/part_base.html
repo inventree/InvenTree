@@ -334,6 +334,7 @@
                         {% else %}
                         {% render_currency pricing.overall_min %} - {% render_currency pricing.overall_max %}
                         {% endif %}
+                        {% if part.units %}&nbsp / {{ part.units }}{% endif %}
                     </td>
                 </tr>
                 {% endif %}
