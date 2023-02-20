@@ -218,11 +218,25 @@ class WebConnectionSettingDetailTest(PluginMixin, InvenTreeAPITestCase):
         self.user.is_superuser = True
         self.user.save()
 
-        # Test endpoint to create connection
-        rsp = self.post(reverse('api-plugin-connection-list'), {'plugin': PLG.pk, 'connection_key': CON_KEY}, expected_code=201)
+        # Create connection endpoint
+        url = reverse('api-plugin-connection-list')
+        # Test right setting - should work
+        rsp = self.post(url, {'plugin': PLG.pk, 'connection_key': CON_KEY}, expected_code=201)
         self.assertEqual(rsp.data['plugin'], PLG.pk)
         self.assertEqual(rsp.data['connection_key'], CON_KEY)
         self.assertEqual(rsp.data['creator'], self.user.username)
+
+        # Test not unique connection - should fail
+        rsp = self.post(url, {'plugin': PLG.pk, 'connection_key': CON_KEY}, expected_code=400)
+        self.assertEqual(rsp.json(), ['This connection can only be set once.'])
+
+        # Test wrong plugin - should fail
+        rsp = self.post(url, {'plugin': registry.get_plugin('inventreebarcode').db.pk, 'connection_key': CON_KEY}, expected_code=400)
+        self.assertEqual(rsp.json(), {'plugin': 'The selected plugin is not a valid supplier plugin.'})
+
+        # Test wrong connection_setting - should fail
+        rsp = self.post(url, {'plugin': PLG.pk, 'connection_key': 'wrong'}, expected_code=400)
+        self.assertEqual(rsp.json(), {'plugin': 'The selected plugin does not declare the connection `wrong`.'})
 
         # Create connection
         con = WebConnection.objects.create(plugin=PLG, connection_key=CON_KEY, name=CON_NAME,)
