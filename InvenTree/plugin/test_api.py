@@ -216,7 +216,7 @@ class WebConnectionSettingDetailTest(PluginMixin, InvenTreeAPITestCase):
         SETTING_NAME = 'SETTING_A'
         CONNECTION_KEY = 'sample_account'
         CONNECTION_NAME = '1'
-        PLUGIN = registry.get_plugin(PLUGIN_NAME)
+        PLUGIN = registry.get_plugin(PLUGIN_NAME).db
 
         def test_url(setting=SETTING_NAME, key=CONNECTION_KEY, name=CONNECTION_NAME):
             return reverse(
@@ -225,15 +225,14 @@ class WebConnectionSettingDetailTest(PluginMixin, InvenTreeAPITestCase):
             )
 
         # Test endpoint to create connection
-        url = reverse('api-plugin-connection-list')
-        rsp = self.post(url, {'plugin': PLUGIN.db.pk, 'connection_key': CONNECTION_KEY}, expected_code=201)
-        self.assertEqual(rsp.data['plugin'], PLUGIN.db.pk)
+        rsp = self.post(reverse('api-plugin-connection-list'), {'plugin': PLUGIN.pk, 'connection_key': CONNECTION_KEY}, expected_code=201)
+        self.assertEqual(rsp.data['plugin'], PLUGIN.pk)
         self.assertEqual(rsp.data['connection_key'], CONNECTION_KEY)
         self.assertEqual(rsp.data['creator'], self.user.username)
 
         # Create connection
-        con = WebConnection.objects.create(plugin=PLUGIN.db, connection_key=CONNECTION_KEY, name=CONNECTION_NAME,)
-        ConnectionSetting.objects.create(plugin=PLUGIN.db, connection_key=CONNECTION_KEY, connection=con, key=SETTING_NAME)
+        con = WebConnection.objects.create(plugin=PLUGIN, connection_key=CONNECTION_KEY, name=CONNECTION_NAME,)
+        ConnectionSetting.objects.create(plugin=PLUGIN, connection_key=CONNECTION_KEY, connection=con, key=SETTING_NAME)
 
         # Detail endpoint
         # Test not active plugin - should fail
@@ -241,8 +240,8 @@ class WebConnectionSettingDetailTest(PluginMixin, InvenTreeAPITestCase):
         self.assertEqual(resp.json()['detail'], f"Plugin '{PLUGIN_NAME}' is not active")
 
         # Activate plugin
-        PLUGIN.db.active = True
-        PLUGIN.db.save()
+        PLUGIN.active = True
+        PLUGIN.save()
         # Test active plugin - should work
         data = self.get(test_url(), expected_code=200).data
         self.assertEqual(data['key'], SETTING_NAME)
