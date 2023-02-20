@@ -42,7 +42,9 @@ function addAttachmentButtonCallbacks(url, fields={}) {
     $('#new-attachment-link').click(function() {
 
         var link_fields = {
-            link: {},
+            link: {
+                icon: 'fa-link',
+            },
             comment: {},
         };
 
@@ -252,7 +254,9 @@ function loadAttachmentTable(url, options) {
 
                     constructForm(`${url}${pk}/`, {
                         fields: {
-                            link: {},
+                            link: {
+                                icon: 'fa-link',
+                            },
                             comment: {},
                         },
                         processResults: function(data, fields, opts) {
