@@ -41,6 +41,7 @@
     loadSimplePartTable,
     partDetail,
     partStockLabel,
+    partTestTemplateFields,
     toggleStar,
     validateBom,
 */
@@ -108,11 +109,13 @@ function partFields(options={}) {
             icon: 'fa-link',
         },
         default_location: {
+            icon: 'fa-sitemap',
             filters: {
                 structural: false,
             }
         },
         default_supplier: {
+            icon: 'fa-building',
             filters: {
                 part_detail: true,
                 supplier_detail: true,
@@ -209,9 +212,6 @@ function partFields(options={}) {
         delete fields['default_supplier'];
 
         fields.copy_category_parameters = {
-            type: 'boolean',
-            label: '{% trans "Copy Category Parameters" %}',
-            help_text: '{% trans "Copy parameter templates from selected part category" %}',
             value: global_settings.PART_CATEGORY_PARAMETERS,
             group: 'create',
         };
@@ -256,6 +256,7 @@ function categoryFields() {
         name: {},
         description: {},
         default_location: {
+            icon: 'fa-sitemap',
             filters: {
                 structural: false,
             }
@@ -412,6 +413,11 @@ function duplicatePart(pk, options={}) {
 
                 // By default, disable "is_template" when making a variant *of* a template
                 data.is_template = false;
+            }
+
+            // Clear IPN field if PART_ALLOW_DUPLICATE_IPN is set to False
+            if (!global_settings['PART_ALLOW_DUPLICATE_IPN']) {
+                data.IPN = '';
             }
 
             constructForm('{% url "api-part-list" %}', {
@@ -976,11 +982,21 @@ function loadPartStocktakeTable(partId, options={}) {
                     fields: {
                         item_count: {},
                         quantity: {},
-                        cost_min: {},
-                        cost_min_currency: {},
-                        cost_max: {},
-                        cost_max_currency: {},
-                        note: {},
+                        cost_min: {
+                            icon: 'fa-dollar-sign',
+                        },
+                        cost_min_currency: {
+                            icon: 'fa-coins',
+                        },
+                        cost_max: {
+                            icon: 'fa-dollar-sign',
+                        },
+                        cost_max_currency: {
+                            icon: 'fa-coins',
+                        },
+                        note: {
+                            icon: 'fa-sticky-note',
+                        },
                     },
                     title: '{% trans "Edit Stocktake Entry" %}',
                     onSuccess: function() {
@@ -2401,10 +2417,32 @@ function loadPartCategoryTable(table, options) {
     });
 }
 
+
+/* Construct a set of fields for the PartTestTemplate model form */
+function partTestTemplateFields(options={}) {
+    let fields = {
+        test_name: {},
+        description: {},
+        required: {},
+        requires_value: {},
+        requires_attachment: {},
+        part: {
+            hidden: true,
+        }
+    };
+
+    if (options.part) {
+        fields.part.value = options.part;
+    }
+
+    return fields;
+}
+
+
+/*
+ * Load PartTestTemplate table.
+ */
 function loadPartTestTemplateTable(table, options) {
-    /*
-     * Load PartTestTemplate table.
-     */
 
     var params = options.params || {};
 
@@ -2503,13 +2541,7 @@ function loadPartTestTemplateTable(table, options) {
                 var url = `/api/part/test-template/${pk}/`;
 
                 constructForm(url, {
-                    fields: {
-                        test_name: {},
-                        description: {},
-                        required: {},
-                        requires_value: {},
-                        requires_attachment: {},
-                    },
+                    fields: partTestTemplateFields(),
                     title: '{% trans "Edit Test Result Template" %}',
                     onSuccess: function() {
                         table.bootstrapTable('refresh');

@@ -122,6 +122,12 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
             'but may be located to child locations.'),
     )
 
+    external = models.BooleanField(
+        default=False,
+        verbose_name=_('External'),
+        help_text=_('This is an external stock location')
+    )
+
     def get_location_owner(self):
         """Get the closest "owner" for this location.
 

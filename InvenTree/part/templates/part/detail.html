@@ -793,17 +793,9 @@
 
             constructForm('{% url "api-part-test-template-list" %}', {
                 method: 'POST',
-                fields: {
-                    test_name: {},
-                    description: {},
-                    required: {},
-                    requires_value: {},
-                    requires_attachment: {},
-                    part: {
-                        value: {{ part.pk }},
-                        hidden: true,
-                    }
-                },
+                fields: partTestTemplateFields({
+                    part: {{ part.pk }}
+                }),
                 title: '{% trans "Add Test Result Template" %}',
                 onSuccess: function() {
                     $("#test-template-table").bootstrapTable("refresh");
