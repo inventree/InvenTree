@@ -584,6 +584,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'owner',
             'icon',
             'structural',
+            'external',
         ]
 
         read_only_fields = [
