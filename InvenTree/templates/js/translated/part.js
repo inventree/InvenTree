@@ -108,11 +108,13 @@ function partFields(options={}) {
             icon: 'fa-link',
         },
         default_location: {
+            icon: 'fa-sitemap',
             filters: {
                 structural: false,
             }
         },
         default_supplier: {
+            icon: 'fa-building',
             filters: {
                 part_detail: true,
                 supplier_detail: true,
@@ -253,6 +255,7 @@ function categoryFields() {
         name: {},
         description: {},
         default_location: {
+            icon: 'fa-sitemap',
             filters: {
                 structural: false,
             }
@@ -978,11 +981,21 @@ function loadPartStocktakeTable(partId, options={}) {
                     fields: {
                         item_count: {},
                         quantity: {},
-                        cost_min: {},
-                        cost_min_currency: {},
-                        cost_max: {},
-                        cost_max_currency: {},
-                        note: {},
+                        cost_min: {
+                            icon: 'fa-dollar-sign',
+                        },
+                        cost_min_currency: {
+                            icon: 'fa-coins',
+                        },
+                        cost_max: {
+                            icon: 'fa-dollar-sign',
+                        },
+                        cost_max_currency: {
+                            icon: 'fa-coins',
+                        },
+                        note: {
+                            icon: 'fa-sticky-note',
+                        },
                     },
                     title: '{% trans "Edit Stocktake Entry" %}',
                     onSuccess: function() {

@@ -128,7 +128,7 @@ function supplierPartFields(options={}) {
             icon: 'fa-link',
         },
         note: {
-            icon: 'fa-pencil-alt',
+            icon: 'fa-sticky-note',
         },
         packaging: {
             icon: 'fa-box',

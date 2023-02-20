@@ -623,6 +623,7 @@ function purchaseOrderFields(options={}) {
         reference: {
             icon: 'fa-hashtag',
         },
+        description: {},
         supplier: {
             icon: 'fa-building',
             secondary: {
@@ -636,7 +637,6 @@ function purchaseOrderFields(options={}) {
                 }
             }
         },
-        description: {},
         supplier_reference: {},
         target_date: {
             icon: 'fa-calendar-alt',
@@ -863,6 +863,7 @@ function poLineItemFields(options={}) {
             }
         },
         part: {
+            icon: 'fa-shapes',
             filters: {
                 part_detail: true,
                 supplier_detail: true,
@@ -969,6 +970,7 @@ function poLineItemFields(options={}) {
             icon: 'fa-calendar-alt',
         },
         destination: {
+            icon: 'fa-sitemap',
             filters: {
                 structural: false,
             }

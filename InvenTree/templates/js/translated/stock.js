@@ -2851,7 +2851,9 @@ function uninstallStockItem(installed_item_id, options={}) {
                         structural: false,
                     }
                 },
-                note: {},
+                note: {
+                    icon: 'fa-sticky-note',
+                },
             },
             preFormContent: function(opts) {
                 var html = '';
