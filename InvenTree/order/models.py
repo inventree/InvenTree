@@ -501,6 +501,11 @@ class PurchaseOrder(Order):
             # Take the 'pack_size' of the SupplierPart into account
             pack_quantity = Decimal(quantity) * Decimal(line.part.pack_size)
 
+            if line.purchase_price:
+                unit_purchase_price = line.purchase_price / line.part.pack_size
+            else:
+                unit_purchase_price = None
+
             # Determine if we should individually serialize the items, or not
             if type(serials) is list and len(serials) > 0:
                 serialize = True
@@ -519,7 +524,7 @@ class PurchaseOrder(Order):
                     status=status,
                     batch=batch_code,
                     serial=sn,
-                    purchase_price=line.purchase_price,
+                    purchase_price=unit_purchase_price,
                     barcode_hash=barcode_hash
                 )
 

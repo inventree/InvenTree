@@ -408,6 +408,7 @@ function bomItemFields() {
             hidden: true,
         },
         sub_part: {
+            icon: 'fa-shapes',
             secondary: {
                 title: '{% trans "New Part" %}',
                 fields: function() {
@@ -424,7 +425,9 @@ function bomItemFields() {
         quantity: {},
         reference: {},
         overage: {},
-        note: {},
+        note: {
+            icon: 'fa-sticky-note',
+        },
         allow_variants: {},
         inherited: {},
         consumable: {},

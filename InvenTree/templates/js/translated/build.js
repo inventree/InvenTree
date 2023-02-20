@@ -536,7 +536,9 @@ function completeBuildOutputs(build_id, outputs, options={}) {
                     structural: false,
                 },
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
             accept_incomplete_allocation: {},
         },
         confirm: true,

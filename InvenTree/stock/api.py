@@ -310,7 +310,8 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
 
     filterset_fields = [
         'name',
-        'structural'
+        'structural',
+        'external',
     ]
 
     search_fields = [
