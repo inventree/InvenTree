@@ -208,49 +208,49 @@ class WebConnectionSettingDetailTest(PluginMixin, InvenTreeAPITestCase):
 
     def test_plugin_url(self):
         """Test API url."""
+        SET_NAME = 'SETTING_A'
+        CON_KEY = 'sample_account'
+        CON_NAME = '1'
+        PLG_NAME = 'samplesupplier'
+        PLG = registry.get_plugin(PLG_NAME).db
+
+        def test_url(setting=SET_NAME, key=CON_KEY, name=CON_NAME):
+            return reverse(
+                'api-plugin-webconnection-setting-detail',
+                kwargs={'plugin': PLG_NAME, 'connection_key': key, 'connection': name, 'key': setting}
+            )
+
         # Make user as superuser
         self.user.is_superuser = True
         self.user.save()
 
-        PLUGIN_NAME = 'samplesupplier'
-        SETTING_NAME = 'SETTING_A'
-        CONNECTION_KEY = 'sample_account'
-        CONNECTION_NAME = '1'
-        PLUGIN = registry.get_plugin(PLUGIN_NAME).db
-
-        def test_url(setting=SETTING_NAME, key=CONNECTION_KEY, name=CONNECTION_NAME):
-            return reverse(
-                'api-plugin-webconnection-setting-detail',
-                kwargs={'plugin': PLUGIN_NAME, 'connection_key': key, 'connection': name, 'key': setting}
-            )
-
         # Test endpoint to create connection
-        rsp = self.post(reverse('api-plugin-connection-list'), {'plugin': PLUGIN.pk, 'connection_key': CONNECTION_KEY}, expected_code=201)
-        self.assertEqual(rsp.data['plugin'], PLUGIN.pk)
-        self.assertEqual(rsp.data['connection_key'], CONNECTION_KEY)
+        rsp = self.post(reverse('api-plugin-connection-list'), {'plugin': PLG.pk, 'connection_key': CON_KEY}, expected_code=201)
+        self.assertEqual(rsp.data['plugin'], PLG.pk)
+        self.assertEqual(rsp.data['connection_key'], CON_KEY)
         self.assertEqual(rsp.data['creator'], self.user.username)
 
         # Create connection
-        con = WebConnection.objects.create(plugin=PLUGIN, connection_key=CONNECTION_KEY, name=CONNECTION_NAME,)
-        ConnectionSetting.objects.create(plugin=PLUGIN, connection_key=CONNECTION_KEY, connection=con, key=SETTING_NAME)
+        con = WebConnection.objects.create(plugin=PLG, connection_key=CON_KEY, name=CON_NAME,)
+        ConnectionSetting.objects.create(plugin=PLG, connection_key=CON_KEY, connection=con, key=SET_NAME)
 
         # Detail endpoint
         # Test not active plugin - should fail
         resp = self.get(test_url(), expected_code=404)
-        self.assertEqual(resp.json()['detail'], f"Plugin '{PLUGIN_NAME}' is not active")
+        self.assertEqual(resp.json()['detail'], f"Plugin '{PLG_NAME}' is not active")
 
         # Activate plugin
-        PLUGIN.active = True
-        PLUGIN.save()
+        PLG.active = True
+        PLG.save()
         # Test active plugin - should work
         data = self.get(test_url(), expected_code=200).data
-        self.assertEqual(data['key'], SETTING_NAME)
-        self.assertEqual(data['description'], SampleSupplierPlugin.CONNECTIONS[CONNECTION_KEY].settings[SETTING_NAME]['description'])
+        self.assertEqual(data['key'], SET_NAME)
+        self.assertEqual(data['description'], SampleSupplierPlugin.CONNECTIONS[CON_KEY].settings[SET_NAME]['description'])
 
         # Test wrong connectionkey - should fail
         resp = self.get(test_url(key='wrong'), expected_code=404)
-        self.assertEqual(resp.json()['detail'], f"Plugin '{PLUGIN_NAME}' has no connection_key matching 'wrong'")
+        self.assertEqual(resp.json()['detail'], f"Plugin '{PLG_NAME}' has no connection_key matching 'wrong'")
 
         # Test wrong key - should fail
         resp = self.get(test_url(setting='wrong'), expected_code=404)
-        self.assertEqual(resp.json()['detail'], f"Plugin '{PLUGIN_NAME}' connection_key '{CONNECTION_KEY}' has no setting matching 'wrong'")
+        self.assertEqual(resp.json()['detail'], f"Plugin '{PLG_NAME}' connection_key '{CON_KEY}' has no setting matching 'wrong'")
