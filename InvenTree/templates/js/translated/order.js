@@ -4058,8 +4058,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     if (part.assembly) {
                         html += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build stock" %}');
                     }
-
-                    html += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
                 }
 
                 html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line item" %}');
@@ -4244,31 +4242,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
                             {}
                         );
                     }
-                }
-            );
-        });
-
-        // Callback for displaying price
-        $(table).find('.button-price').click(function() {
-            var pk = $(this).attr('pk');
-            var idx = $(this).closest('tr').attr('data-index');
-            var row = $(table).bootstrapTable('getData')[idx];
-
-            launchModalForm(
-                '{% url "line-pricing" %}',
-                {
-                    submit_text: '{% trans "Calculate price" %}',
-                    data: {
-                        line_item: pk,
-                        quantity: row.quantity,
-                    },
-                    buttons: [
-                        {
-                            name: 'update_price',
-                            title: '{% trans "Update Unit Price" %}'
-                        },
-                    ],
-                    success: reloadTable,
                 }
             );
         });

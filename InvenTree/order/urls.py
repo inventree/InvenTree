@@ -18,8 +18,6 @@ purchase_order_detail_urls = [
 
 purchase_order_urls = [
 
-    re_path(r'^pricing/', views.LineItemPricing.as_view(), name='line-pricing'),
-
     # Display detail view for a single purchase order
     re_path(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),
 

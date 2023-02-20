@@ -4,9 +4,7 @@ import logging
 from decimal import Decimal, InvalidOperation
 
 from django.db.utils import IntegrityError
-from django.forms import HiddenInput, IntegerField
 from django.http import HttpResponseRedirect
-from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -18,14 +16,11 @@ from common.views import FileManagementFormView
 from company.models import SupplierPart  # ManufacturerPart
 from InvenTree.helpers import DownloadFile
 from InvenTree.views import AjaxView, InvenTreeRoleMixin
-from part.models import Part
-from part.views import PartPricing
 from plugin.views import InvenTreePluginViewMixin
 
 from . import forms as order_forms
 from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
-from .models import (PurchaseOrder, PurchaseOrderLineItem, SalesOrder,
-                     SalesOrderLineItem)
+from .models import PurchaseOrder, PurchaseOrderLineItem, SalesOrder
 
 logger = logging.getLogger("inventree")
 
@@ -301,105 +296,3 @@ class PurchaseOrderExport(AjaxView):
         filedata = dataset.export(format=export_format)
 
         return DownloadFile(filedata, filename)
-
-
-class LineItemPricing(PartPricing):
-    """View for inspecting part pricing information."""
-
-    class EnhancedForm(PartPricing.form_class):
-        """Extra form options"""
-        pk = IntegerField(widget=HiddenInput())
-        so_line = IntegerField(widget=HiddenInput())
-
-    form_class = EnhancedForm
-
-    def get_part(self, id=False):
-        """Return the Part instance associated with this view"""
-        if 'line_item' in self.request.GET:
-            try:
-                part_id = self.request.GET.get('line_item')
-                part = SalesOrderLineItem.objects.get(id=part_id).part
-            except Part.DoesNotExist:
-                return None
-        elif 'pk' in self.request.POST:
-            try:
-                part_id = self.request.POST.get('pk')
-                part = Part.objects.get(id=part_id)
-            except Part.DoesNotExist:
-                return None
-        else:
-            return None
-
-        if id:
-            return part.id
-        return part
-
-    def get_so(self, pk=False):
-        """Return the SalesOrderLineItem associated with this view"""
-        so_line = self.request.GET.get('line_item', None)
-        if not so_line:
-            so_line = self.request.POST.get('so_line', None)
-
-        if so_line:
-            try:
-                sales_order = SalesOrderLineItem.objects.get(pk=so_line)
-                if pk:
-                    return sales_order.pk
-                return sales_order
-            except Part.DoesNotExist:
-                return None
-        return None
-
-    def get_quantity(self):
-        """Return set quantity in decimal format."""
-        qty = Decimal(self.request.GET.get('quantity', 1))
-        if qty == 1:
-            return Decimal(self.request.POST.get('quantity', 1))
-        return qty
-
-    def get_initials(self):
-        """Return initial context values for this view"""
-        initials = super().get_initials()
-        initials['pk'] = self.get_part(id=True)
-        initials['so_line'] = self.get_so(pk=True)
-        return initials
-
-    def post(self, request, *args, **kwargs):
-        """Respond to a POST request to get particular pricing information"""
-        REF = 'act-btn_'
-        act_btn = [a.replace(REF, '') for a in self.request.POST if REF in a]
-
-        # check if extra action was passed
-        if act_btn and act_btn[0] == 'update_price':
-            # get sales order
-            so_line = self.get_so()
-            if not so_line:
-                self.data = {'non_field_errors': [_('Sales order not found')]}
-            else:
-                quantity = self.get_quantity()
-                price = self.get_pricing(quantity).get('unit_part_price', None)
-
-                if not price:
-                    self.data = {'non_field_errors': [_('Price not found')]}
-                else:
-                    # set normal update note
-                    note = _('Updated {part} unit-price to {price}')
-
-                    # check qunatity and update if different
-                    if so_line.quantity != quantity:
-                        so_line.quantity = quantity
-                        note = _('Updated {part} unit-price to {price} and quantity to {qty}')
-
-                    # update sale_price
-                    so_line.sale_price = price
-                    so_line.save()
-
-                    # parse response
-                    data = {
-                        'form_valid': True,
-                        'success': note.format(part=str(so_line.part), price=str(so_line.sale_price), qty=quantity)
-                    }
-                    return JsonResponse(data=data)
-
-        # let the normal pricing view run
-        return super().post(request, *args, **kwargs)
