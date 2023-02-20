@@ -64,6 +64,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         priority: Priority of the build
     """
 
+    class Meta:
+        """Metaclass options for the BuildOrder model"""
+        verbose_name = _("Build Order")
+        verbose_name_plural = _("Build Orders")
+
     OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     # Global setting for specifying reference pattern
@@ -105,11 +110,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             raise ValidationError({
                 'parent': _('Invalid choice for parent build'),
             })
-
-    class Meta:
-        """Metaclass options for the BuildOrder model"""
-        verbose_name = _("Build Order")
-        verbose_name_plural = _("Build Orders")
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -282,7 +282,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('Responsible'),
-        help_text=_('User responsible for this build order'),
+        help_text=_('User or group responsible for this build order'),
         related_name='builds_responsible',
     )
 
@@ -1153,16 +1153,16 @@ class BuildItem(models.Model):
         install_into: Destination stock item (or None)
     """
 
-    @staticmethod
-    def get_api_url():
-        """Return the API URL used to access this model"""
-        return reverse('api-build-item-list')
-
     class Meta:
         """Serializer metaclass"""
         unique_together = [
             ('build', 'stock_item', 'install_into'),
         ]
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL used to access this model"""
+        return reverse('api-build-item-list')
 
     def save(self, *args, **kwargs):
         """Custom save method for the BuildItem model"""

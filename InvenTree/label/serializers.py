@@ -9,8 +9,6 @@ from .models import PartLabel, StockItemLabel, StockLocationLabel
 class StockItemLabelSerializer(InvenTreeModelSerializer):
     """Serializes a StockItemLabel object."""
 
-    label = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         """Metaclass options."""
 
@@ -24,11 +22,11 @@ class StockItemLabelSerializer(InvenTreeModelSerializer):
             'enabled',
         ]
 
+    label = InvenTreeAttachmentSerializerField(required=True)
+
 
 class StockLocationLabelSerializer(InvenTreeModelSerializer):
     """Serializes a StockLocationLabel object."""
-
-    label = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         """Metaclass options."""
@@ -43,11 +41,11 @@ class StockLocationLabelSerializer(InvenTreeModelSerializer):
             'enabled',
         ]
 
+    label = InvenTreeAttachmentSerializerField(required=True)
+
 
 class PartLabelSerializer(InvenTreeModelSerializer):
     """Serializes a PartLabel object."""
-
-    label = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         """Metaclass options."""
@@ -61,3 +59,5 @@ class PartLabelSerializer(InvenTreeModelSerializer):
             'filters',
             'enabled',
         ]
+
+    label = InvenTreeAttachmentSerializerField(required=True)

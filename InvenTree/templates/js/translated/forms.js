@@ -11,6 +11,7 @@
     modalShowSubmitButton,
     renderBuild,
     renderCompany,
+    renderGroup,
     renderManufacturerPart,
     renderOwner,
     renderPart,
@@ -973,6 +974,10 @@ function updateFieldValue(name, value, field, options) {
     }
 
     switch (field.type) {
+    case 'decimal':
+        // Strip trailing zeros
+        el.val(formatDecimal(value));
+        break;
     case 'boolean':
         if (value == true || value.toString().toLowerCase() == 'true') {
             el.prop('checked');
@@ -2072,6 +2077,9 @@ function renderModelData(name, model, data, parameters, options) {
         break;
     case 'user':
         renderer = renderUser;
+        break;
+    case 'group':
+        renderer = renderGroup;
         break;
     default:
         break;
