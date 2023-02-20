@@ -209,9 +209,6 @@ function partFields(options={}) {
         delete fields['default_supplier'];
 
         fields.copy_category_parameters = {
-            type: 'boolean',
-            label: '{% trans "Copy Category Parameters" %}',
-            help_text: '{% trans "Copy parameter templates from selected part category" %}',
             value: global_settings.PART_CATEGORY_PARAMETERS,
             group: 'create',
         };

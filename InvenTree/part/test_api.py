@@ -1363,6 +1363,51 @@ class PartCreationTests(PartAPITestBase):
                     self.assertEqual(part.bom_items.count(), 4 if bom else 0)
                     self.assertEqual(part.parameters.count(), 2 if params else 0)
 
+    def test_category_parameters(self):
+        """Test that category parameters are correctly applied"""
+
+        cat = PartCategory.objects.get(pk=1)
+
+        # Add some parameter template to the parent category
+        for pk in [1, 2, 3]:
+            PartCategoryParameterTemplate.objects.create(
+                parameter_template=PartParameterTemplate.objects.get(pk=pk),
+                category=cat,
+                default_value=f"Value {pk}"
+            )
+
+        self.assertEqual(cat.parameter_templates.count(), 3)
+
+        # Creat a new Part, without copying category parameters
+        data = self.post(
+            reverse('api-part-list'),
+            {
+                'category': 1,
+                'name': 'Some new part',
+                'description': 'A new part without parameters',
+                'copy_category_parameters': False,
+            },
+            expected_code=201,
+        ).data
+
+        prt = Part.objects.get(pk=data['pk'])
+        self.assertEqual(prt.parameters.count(), 0)
+
+        # Create a new part, this time copying category parameters
+        data = self.post(
+            reverse('api-part-list'),
+            {
+                'category': 1,
+                'name': 'Another new part',
+                'description': 'A new part with parameters',
+                'copy_category_parameters': True,
+            },
+            expected_code=201,
+        ).data
+
+        prt = Part.objects.get(pk=data['pk'])
+        self.assertEqual(prt.parameters.count(), 3)
+
 
 class PartDetailTests(PartAPITestBase):
     """Test that we can create / edit / delete Part objects via the API."""

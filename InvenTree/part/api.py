@@ -2,7 +2,6 @@
 
 import functools
 
-from django.db import transaction
 from django.db.models import Count, F, Q
 from django.http import JsonResponse
 from django.urls import include, path, re_path
@@ -1203,35 +1202,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
-
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        """We wish to save the user who created this part!
-
-        Note: Implementation copied from DRF class CreateModelMixin
-        """
-        # TODO: Unit tests for this function!
-
-        # Clean up input data
-        data = self.clean_data(request.data)
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-
-        part = serializer.save()
-        part.creation_user = self.request.user
-
-        # Optionally copy templates from category or parent category
-        copy_templates = {
-            'main': str2bool(data.get('copy_category_templates', False)),
-            'parent': str2bool(data.get('copy_parent_templates', False))
-        }
-
-        part.save(**{'add_category_templates': copy_templates})
-
-        headers = self.get_success_headers(serializer.data)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset object"""

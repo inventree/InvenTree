@@ -2,11 +2,12 @@
 
 import imghdr
 import io
+import logging
 from decimal import Decimal
 
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
-from django.db import models, transaction
+from django.db import IntegrityError, models, transaction
 from django.db.models import ExpressionWrapper, F, FloatField, Q
 from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy
@@ -41,6 +42,8 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartParameterTemplate, PartPricing, PartRelated,
                      PartSellPriceBreak, PartStar, PartStocktake,
                      PartStocktakeReport, PartTestTemplate)
+
+logger = logging.getLogger("inventree")
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -454,6 +457,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'duplicate',
             'initial_stock',
             'initial_supplier',
+            'copy_category_parameters'
         ]
 
         read_only_fields = [
@@ -499,6 +503,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'duplicate',
             'initial_stock',
             'initial_supplier',
+            'copy_category_parameters'
         ]
 
         return fields
@@ -613,6 +618,12 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         write_only=True, required=False,
     )
 
+    copy_category_parameters = serializers.BooleanField(
+        default=True, required=False,
+        label=_('Copy Category Parameters'),
+        help_text=_('Copy parameter templates from selected part category'),
+    )
+
     @transaction.atomic
     def create(self, validated_data):
         """Custom method for creating a new Part instance using this serializer"""
@@ -620,8 +631,14 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         duplicate = validated_data.pop('duplicate', None)
         initial_stock = validated_data.pop('initial_stock', None)
         initial_supplier = validated_data.pop('initial_supplier', None)
+        copy_category_parameters = validated_data.pop('copy_category_parameters', False)
 
         instance = super().create(validated_data)
+
+        # Save user information
+        if self.context['request']:
+            instance.creation_user = self.context['request'].user
+            instance.save()
 
         # Copy data from original Part
         if duplicate:
@@ -636,6 +653,34 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
             if duplicate['copy_parameters']:
                 instance.copy_parameters_from(original)
+
+        # Duplicate parameter data from part category (and parents)
+        if copy_category_parameters and instance.category is not None:
+            # Get flattened list of parent categories
+            categories = instance.category.get_ancestors(include_self=True)
+
+            # All parameter templates within these categories
+            templates = PartCategoryParameterTemplate.objects.filter(
+                category__in=categories
+            )
+
+            for template in templates:
+                # First ensure that the part doesn't have that parameter
+                if PartParameter.objects.filter(
+                    part=instance,
+                    template=template.parameter_template
+                ).exists():
+                    continue
+
+                try:
+                    PartParameter.create(
+                        part=instance,
+                        template=template.parameter_template,
+                        data=template.default_value,
+                        save=True
+                    )
+                except IntegrityError:
+                    logger.error(f"Could not create new PartParameter for part {instance}")
 
         # Create initial stock entry
         if initial_stock:
