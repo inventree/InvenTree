@@ -356,8 +356,7 @@ function createSupplierPartPriceBreak(part_id, options={}) {
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
-    })
-
+    });
 }
 
 
