@@ -41,6 +41,7 @@
     loadSimplePartTable,
     partDetail,
     partStockLabel,
+    partTestTemplateFields,
     toggleStar,
     validateBom,
 */
@@ -2416,10 +2417,32 @@ function loadPartCategoryTable(table, options) {
     });
 }
 
+
+/* Construct a set of fields for the PartTestTemplate model form */
+function partTestTemplateFields(options={}) {
+    let fields = {
+        test_name: {},
+        description: {},
+        required: {},
+        requires_value: {},
+        requires_attachment: {},
+        part: {
+            hidden: true,
+        }
+    };
+
+    if (options.part) {
+        fields.part.value = options.part;
+    }
+
+    return fields;
+}
+
+
+/*
+ * Load PartTestTemplate table.
+ */
 function loadPartTestTemplateTable(table, options) {
-    /*
-     * Load PartTestTemplate table.
-     */
 
     var params = options.params || {};
 
@@ -2518,13 +2541,7 @@ function loadPartTestTemplateTable(table, options) {
                 var url = `/api/part/test-template/${pk}/`;
 
                 constructForm(url, {
-                    fields: {
-                        test_name: {},
-                        description: {},
-                        required: {},
-                        requires_value: {},
-                        requires_attachment: {},
-                    },
+                    fields: partTestTemplateFields(),
                     title: '{% trans "Edit Test Result Template" %}',
                     onSuccess: function() {
                         table.bootstrapTable('refresh');
