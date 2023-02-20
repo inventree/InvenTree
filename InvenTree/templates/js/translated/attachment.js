@@ -25,7 +25,9 @@ function addAttachmentButtonCallbacks(url, fields={}) {
 
         var file_fields = {
             attachment: {},
-            comment: {},
+            comment: {
+                icon: 'fa-comment',
+            },
         };
 
         Object.assign(file_fields, fields);
@@ -45,7 +47,9 @@ function addAttachmentButtonCallbacks(url, fields={}) {
             link: {
                 icon: 'fa-link',
             },
-            comment: {},
+            comment: {
+                icon: 'fa-comment',
+            },
         };
 
         Object.assign(link_fields, fields);
@@ -257,7 +261,9 @@ function loadAttachmentTable(url, options) {
                             link: {
                                 icon: 'fa-link',
                             },
-                            comment: {},
+                            comment: {
+                                icon: 'fa-comment',
+                            },
                         },
                         processResults: function(data, fields, opts) {
                             // Remove the "link" field if the attachment is a file!
