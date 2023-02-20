@@ -314,7 +314,9 @@ function stockItemFields(options={}) {
         purchase_price: {
             icon: 'fa-dollar-sign',
         },
-        purchase_price_currency: {},
+        purchase_price_currency: {
+            icon: 'fa-coins',
+        },
         packaging: {
             icon: 'fa-box',
         },
@@ -685,7 +687,9 @@ function assignStockToCustomer(items, options={}) {
                     is_customer: true,
                 },
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
         },
         confirm: true,
         confirmMessage: '{% trans "Confirm stock assignment" %}',
@@ -854,7 +858,9 @@ function mergeStockItems(items, options={}) {
                     structural: false,
                 }
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
             allow_mismatched_suppliers: {},
             allow_mismatched_status: {},
         },
@@ -1563,7 +1569,9 @@ function loadStockTestResultsTable(table, options) {
                 result: {},
                 value: {},
                 attachment: {},
-                notes: {},
+                notes: {
+                    icon: 'fa-sticky-note',
+                },
                 stock_item: {
                     value: options.stock_item,
                     hidden: true,
@@ -1588,7 +1596,9 @@ function loadStockTestResultsTable(table, options) {
                 result: {},
                 value: {},
                 attachment: {},
-                notes: {},
+                notes: {
+                    icon: 'fa-sticky-note',
+                },
             },
             title: '{% trans "Edit Test Result" %}',
             onSuccess: reloadTestTable,
