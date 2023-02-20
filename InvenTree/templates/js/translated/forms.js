@@ -2083,7 +2083,6 @@ function renderModelData(name, model, data, parameters, options) {
         renderer = renderGroup;
         break;
     case 'webconnection':
-        console.log('rendering a webconnection');
         renderer = renderWebconnection;
         break;
     default:
