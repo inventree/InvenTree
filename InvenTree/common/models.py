@@ -46,6 +46,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+from plugin import registry
 
 logger = logging.getLogger('inventree')
 
@@ -852,6 +853,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
+    class Meta:
+        """Meta options for InvenTreeSetting."""
+
+        verbose_name = "InvenTree Setting"
+        verbose_name_plural = "InvenTree Settings"
+
     def save(self, *args, **kwargs):
         """When saving a global setting, check to see if it requires a server restart.
 
@@ -1601,12 +1608,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
     typ = 'inventree'
 
-    class Meta:
-        """Meta options for InvenTreeSetting."""
-
-        verbose_name = "InvenTree Setting"
-        verbose_name_plural = "InvenTree Settings"
-
     key = models.CharField(
         max_length=50,
         blank=False,
@@ -1628,8 +1629,26 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             return False
 
 
+def label_printer_options():
+    """Build a list of available label printer options."""
+    printers = [('', _('No Printer (Export to PDF)'))]
+    label_printer_plugins = registry.with_mixin('labels')
+    if label_printer_plugins:
+        printers.extend([(p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins])
+    return printers
+
+
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object with a usercontext."""
+
+    class Meta:
+        """Meta options for InvenTreeUserSetting."""
+
+        verbose_name = "InvenTree User Setting"
+        verbose_name_plural = "InvenTree User Settings"
+        constraints = [
+            models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
+        ]
 
     SETTINGS = {
         'HOMEPAGE_PART_STARRED': {
@@ -1770,6 +1789,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Display PDF labels in the browser, instead of downloading as a file'),
             'default': True,
             'validator': bool,
+        },
+
+        "LABEL_DEFAULT_PRINTER": {
+            'name': _('Default label printer'),
+            'description': _('Configure which label printer should be selected by default'),
+            'default': '',
+            'choices': label_printer_options
         },
 
         "REPORT_INLINE": {
@@ -1946,15 +1972,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     }
 
     typ = 'user'
-
-    class Meta:
-        """Meta options for InvenTreeUserSetting."""
-
-        verbose_name = "InvenTree User Setting"
-        verbose_name_plural = "InvenTree User Settings"
-        constraints = [
-            models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
-        ]
 
     key = models.CharField(
         max_length=50,

@@ -63,6 +63,10 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         responsible: User (or group) responsible for managing the order
     """
 
+    class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+        abstract = True
+
     def save(self, *args, **kwargs):
         """Custom save method for the order models:
 
@@ -74,11 +78,6 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
             self.creation_date = datetime.now().date()
 
         super().save(*args, **kwargs)
-
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-
-        abstract = True
 
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
@@ -502,6 +501,11 @@ class PurchaseOrder(Order):
             # Take the 'pack_size' of the SupplierPart into account
             pack_quantity = Decimal(quantity) * Decimal(line.part.pack_size)
 
+            if line.purchase_price:
+                unit_purchase_price = line.purchase_price / line.part.pack_size
+            else:
+                unit_purchase_price = None
+
             # Determine if we should individually serialize the items, or not
             if type(serials) is list and len(serials) > 0:
                 serialize = True
@@ -520,7 +524,7 @@ class PurchaseOrder(Order):
                     status=status,
                     batch=batch_code,
                     serial=sn,
-                    purchase_price=line.purchase_price,
+                    purchase_price=unit_purchase_price,
                     barcode_hash=barcode_hash
                 )
 
@@ -927,7 +931,6 @@ class OrderLineItem(models.Model):
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
-
         abstract = True
 
     quantity = RoundingDecimalField(
@@ -958,7 +961,6 @@ class OrderExtraLine(OrderLineItem):
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
-
         abstract = True
 
     context = models.JSONField(

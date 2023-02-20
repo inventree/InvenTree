@@ -113,6 +113,7 @@ class OrderFilter(rest_filters.FilterSet):
 
 class PurchaseOrderFilter(OrderFilter):
     """Custom API filters for the PurchaseOrderList endpoint."""
+
     class Meta:
         """Metaclass options."""
 
@@ -124,6 +125,7 @@ class PurchaseOrderFilter(OrderFilter):
 
 class SalesOrderFilter(OrderFilter):
     """Custom API filters for the SalesOrderList endpoint."""
+
     class Meta:
         """Metaclass options."""
 
@@ -1093,6 +1095,14 @@ class SalesOrderAllocationList(ListAPI):
 class SalesOrderShipmentFilter(rest_filters.FilterSet):
     """Custom filterset for the SalesOrderShipmentList endpoint."""
 
+    class Meta:
+        """Metaclass options."""
+
+        model = models.SalesOrderShipment
+        fields = [
+            'order',
+        ]
+
     shipped = rest_filters.BooleanFilter(label='shipped', method='filter_shipped')
 
     def filter_shipped(self, queryset, name, value):
@@ -1105,14 +1115,6 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
             queryset = queryset.filter(shipment_date=None)
 
         return queryset
-
-    class Meta:
-        """Metaclass options."""
-
-        model = models.SalesOrderShipment
-        fields = [
-            'order',
-        ]
 
 
 class SalesOrderShipmentList(ListCreateAPI):

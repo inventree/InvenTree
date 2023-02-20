@@ -2,11 +2,12 @@
 
 import imghdr
 import io
+import logging
 from decimal import Decimal
 
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
-from django.db import models, transaction
+from django.db import IntegrityError, models, transaction
 from django.db.models import ExpressionWrapper, F, FloatField, Q
 from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy
@@ -42,9 +43,30 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartSellPriceBreak, PartStar, PartStocktake,
                      PartStocktakeReport, PartTestTemplate)
 
+logger = logging.getLogger("inventree")
+
 
 class CategorySerializer(InvenTreeModelSerializer):
     """Serializer for PartCategory."""
+
+    class Meta:
+        """Metaclass defining serializer fields"""
+        model = PartCategory
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'default_location',
+            'default_keywords',
+            'level',
+            'parent',
+            'part_count',
+            'pathstring',
+            'starred',
+            'url',
+            'structural',
+            'icon',
+        ]
 
     def get_starred(self, category):
         """Return True if the category is directly "starred" by the current user."""
@@ -68,25 +90,6 @@ class CategorySerializer(InvenTreeModelSerializer):
     level = serializers.IntegerField(read_only=True)
 
     starred = serializers.SerializerMethodField()
-
-    class Meta:
-        """Metaclass defining serializer fields"""
-        model = PartCategory
-        fields = [
-            'pk',
-            'name',
-            'description',
-            'default_location',
-            'default_keywords',
-            'level',
-            'parent',
-            'part_count',
-            'pathstring',
-            'starred',
-            'url',
-            'structural',
-            'icon',
-        ]
 
 
 class CategoryTree(InvenTreeModelSerializer):
@@ -118,8 +121,6 @@ class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
 class PartTestTemplateSerializer(InvenTreeModelSerializer):
     """Serializer for the PartTestTemplate class."""
 
-    key = serializers.CharField(read_only=True)
-
     class Meta:
         """Metaclass defining serializer fields"""
         model = PartTestTemplate
@@ -135,15 +136,11 @@ class PartTestTemplateSerializer(InvenTreeModelSerializer):
             'requires_attachment',
         ]
 
+    key = serializers.CharField(read_only=True)
+
 
 class PartSalePriceSerializer(InvenTreeModelSerializer):
     """Serializer for sale prices for Part model."""
-
-    quantity = InvenTreeDecimalField()
-
-    price = InvenTreeMoneySerializer(allow_null=True)
-
-    price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
 
     class Meta:
         """Metaclass defining serializer fields"""
@@ -156,17 +153,15 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
             'price_currency',
         ]
 
+    quantity = InvenTreeDecimalField()
+
+    price = InvenTreeMoneySerializer(allow_null=True)
+
+    price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
+
 
 class PartInternalPriceSerializer(InvenTreeModelSerializer):
     """Serializer for internal prices for Part model."""
-
-    quantity = InvenTreeDecimalField()
-
-    price = InvenTreeMoneySerializer(
-        allow_null=True
-    )
-
-    price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
 
     class Meta:
         """Metaclass defining serializer fields"""
@@ -178,6 +173,14 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
             'price',
             'price_currency',
         ]
+
+    quantity = InvenTreeDecimalField()
+
+    price = InvenTreeMoneySerializer(
+        allow_null=True
+    )
+
+    price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
 
 
 class PartThumbSerializer(serializers.Serializer):
@@ -193,6 +196,13 @@ class PartThumbSerializer(serializers.Serializer):
 class PartThumbSerializerUpdate(InvenTreeModelSerializer):
     """Serializer for updating Part thumbnail."""
 
+    class Meta:
+        """Metaclass defining serializer fields"""
+        model = Part
+        fields = [
+            'image',
+        ]
+
     def validate_image(self, value):
         """Check that file is an image."""
         validate = imghdr.what(value)
@@ -201,13 +211,6 @@ class PartThumbSerializerUpdate(InvenTreeModelSerializer):
         return value
 
     image = InvenTreeAttachmentSerializerField(required=True)
-
-    class Meta:
-        """Metaclass defining serializer fields"""
-        model = Part
-        fields = [
-            'image',
-        ]
 
 
 class PartParameterTemplateSerializer(InvenTreeModelSerializer):
@@ -227,6 +230,17 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
 class PartParameterSerializer(InvenTreeModelSerializer):
     """JSON serializers for the PartParameter model."""
 
+    class Meta:
+        """Metaclass defining serializer fields"""
+        model = PartParameter
+        fields = [
+            'pk',
+            'part',
+            'template',
+            'template_detail',
+            'data'
+        ]
+
     def __init__(self, *args, **kwargs):
         """Custom initialization method for the serializer.
 
@@ -242,22 +256,9 @@ class PartParameterSerializer(InvenTreeModelSerializer):
 
     template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
 
-    class Meta:
-        """Metaclass defining serializer fields"""
-        model = PartParameter
-        fields = [
-            'pk',
-            'part',
-            'template',
-            'template_detail',
-            'data'
-        ]
-
 
 class PartBriefSerializer(InvenTreeModelSerializer):
     """Serializer for Part (brief detail)"""
-
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     class Meta:
         """Metaclass defining serializer fields"""
@@ -285,6 +286,8 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         read_only_fields = [
             'barcode_hash',
         ]
+
+    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
 
 class DuplicatePartSerializer(serializers.Serializer):
@@ -400,22 +403,66 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     Used when displaying all details of a single component.
     """
 
-    def get_api_url(self):
-        """Return the API url associated with this serializer"""
-        return reverse_lazy('api-part-list')
+    class Meta:
+        """Metaclass defining serializer fields"""
+        model = Part
+        partial = True
+        fields = [
+            'active',
+            'allocated_to_build_orders',
+            'allocated_to_sales_orders',
+            'assembly',
+            'barcode_hash',
+            'category',
+            'category_detail',
+            'component',
+            'default_expiry',
+            'default_location',
+            'default_supplier',
+            'description',
+            'full_name',
+            'image',
+            'in_stock',
+            'variant_stock',
+            'ordering',
+            'building',
+            'IPN',
+            'is_template',
+            'keywords',
+            'last_stocktake',
+            'link',
+            'minimum_stock',
+            'name',
+            'notes',
+            'parameters',
+            'pk',
+            'purchaseable',
+            'remote_image',
+            'revision',
+            'salable',
+            'starred',
+            'stock_item_count',
+            'suppliers',
+            'thumbnail',
+            'trackable',
+            'unallocated_stock',
+            'units',
+            'variant_of',
+            'virtual',
+            'pricing_min',
+            'pricing_max',
+            'responsible',
 
-    def skip_create_fields(self):
-        """Skip these fields when instantiating a new Part instance"""
-
-        fields = super().skip_create_fields()
-
-        fields += [
+            # Fields only used for Part creation
             'duplicate',
             'initial_stock',
             'initial_supplier',
+            'copy_category_parameters'
         ]
 
-        return fields
+        read_only_fields = [
+            'barcode_hash',
+        ]
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for PartSerializer:
@@ -442,6 +489,24 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields()[1:]:
                 self.fields.pop(f)
+
+    def get_api_url(self):
+        """Return the API url associated with this serializer"""
+        return reverse_lazy('api-part-list')
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new Part instance"""
+
+        fields = super().skip_create_fields()
+
+        fields += [
+            'duplicate',
+            'initial_stock',
+            'initial_supplier',
+            'copy_category_parameters'
+        ]
+
+        return fields
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -553,65 +618,11 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         write_only=True, required=False,
     )
 
-    class Meta:
-        """Metaclass defining serializer fields"""
-        model = Part
-        partial = True
-        fields = [
-            'active',
-            'allocated_to_build_orders',
-            'allocated_to_sales_orders',
-            'assembly',
-            'barcode_hash',
-            'category',
-            'category_detail',
-            'component',
-            'default_expiry',
-            'default_location',
-            'default_supplier',
-            'description',
-            'full_name',
-            'image',
-            'in_stock',
-            'variant_stock',
-            'ordering',
-            'building',
-            'IPN',
-            'is_template',
-            'keywords',
-            'last_stocktake',
-            'link',
-            'minimum_stock',
-            'name',
-            'notes',
-            'parameters',
-            'pk',
-            'purchaseable',
-            'remote_image',
-            'revision',
-            'salable',
-            'starred',
-            'stock_item_count',
-            'suppliers',
-            'thumbnail',
-            'trackable',
-            'unallocated_stock',
-            'units',
-            'variant_of',
-            'virtual',
-            'pricing_min',
-            'pricing_max',
-            'responsible',
-
-            # Fields only used for Part creation
-            'duplicate',
-            'initial_stock',
-            'initial_supplier',
-        ]
-
-        read_only_fields = [
-            'barcode_hash',
-        ]
+    copy_category_parameters = serializers.BooleanField(
+        default=True, required=False,
+        label=_('Copy Category Parameters'),
+        help_text=_('Copy parameter templates from selected part category'),
+    )
 
     @transaction.atomic
     def create(self, validated_data):
@@ -620,8 +631,14 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         duplicate = validated_data.pop('duplicate', None)
         initial_stock = validated_data.pop('initial_stock', None)
         initial_supplier = validated_data.pop('initial_supplier', None)
+        copy_category_parameters = validated_data.pop('copy_category_parameters', False)
 
         instance = super().create(validated_data)
+
+        # Save user information
+        if self.context['request']:
+            instance.creation_user = self.context['request'].user
+            instance.save()
 
         # Copy data from original Part
         if duplicate:
@@ -636,6 +653,34 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
             if duplicate['copy_parameters']:
                 instance.copy_parameters_from(original)
+
+        # Duplicate parameter data from part category (and parents)
+        if copy_category_parameters and instance.category is not None:
+            # Get flattened list of parent categories
+            categories = instance.category.get_ancestors(include_self=True)
+
+            # All parameter templates within these categories
+            templates = PartCategoryParameterTemplate.objects.filter(
+                category__in=categories
+            )
+
+            for template in templates:
+                # First ensure that the part doesn't have that parameter
+                if PartParameter.objects.filter(
+                    part=instance,
+                    template=template.parameter_template
+                ).exists():
+                    continue
+
+                try:
+                    PartParameter.create(
+                        part=instance,
+                        template=template.parameter_template,
+                        data=template.default_value,
+                        save=True
+                    )
+                except IntegrityError:
+                    logger.error(f"Could not create new PartParameter for part {instance}")
 
         # Create initial stock entry
         if initial_stock:
@@ -708,16 +753,6 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
 class PartStocktakeSerializer(InvenTreeModelSerializer):
     """Serializer for the PartStocktake model"""
 
-    quantity = serializers.FloatField()
-
-    user_detail = UserSerializer(source='user', read_only=True, many=False)
-
-    cost_min = InvenTreeMoneySerializer(allow_null=True)
-    cost_min_currency = InvenTreeCurrencySerializer()
-
-    cost_max = InvenTreeMoneySerializer(allow_null=True)
-    cost_max_currency = InvenTreeCurrencySerializer()
-
     class Meta:
         """Metaclass options"""
 
@@ -742,6 +777,16 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
             'user',
         ]
 
+    quantity = serializers.FloatField()
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
+
+    cost_min = InvenTreeMoneySerializer(allow_null=True)
+    cost_min_currency = InvenTreeCurrencySerializer()
+
+    cost_max = InvenTreeMoneySerializer(allow_null=True)
+    cost_max_currency = InvenTreeCurrencySerializer()
+
     def save(self):
         """Called when this serializer is saved"""
 
@@ -757,10 +802,6 @@ class PartStocktakeSerializer(InvenTreeModelSerializer):
 class PartStocktakeReportSerializer(InvenTreeModelSerializer):
     """Serializer for stocktake report class"""
 
-    user_detail = UserSerializer(source='user', read_only=True, many=False)
-
-    report = InvenTreeAttachmentSerializerField(read_only=True)
-
     class Meta:
         """Metaclass defines serializer fields"""
 
@@ -773,6 +814,10 @@ class PartStocktakeReportSerializer(InvenTreeModelSerializer):
             'user',
             'user_detail',
         ]
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
+
+    report = InvenTreeAttachmentSerializerField(read_only=True)
 
 
 class PartStocktakeReportGenerateSerializer(serializers.Serializer):
@@ -843,6 +888,32 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
 class PartPricingSerializer(InvenTreeModelSerializer):
     """Serializer for Part pricing information"""
 
+    class Meta:
+        """Metaclass defining serializer fields"""
+        model = PartPricing
+        fields = [
+            'currency',
+            'updated',
+            'scheduled_for_update',
+            'bom_cost_min',
+            'bom_cost_max',
+            'purchase_cost_min',
+            'purchase_cost_max',
+            'internal_cost_min',
+            'internal_cost_max',
+            'supplier_price_min',
+            'supplier_price_max',
+            'variant_cost_min',
+            'variant_cost_max',
+            'overall_min',
+            'overall_max',
+            'sale_price_min',
+            'sale_price_max',
+            'sale_history_min',
+            'sale_history_max',
+            'update',
+        ]
+
     currency = serializers.CharField(allow_null=True, read_only=True)
 
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
@@ -882,32 +953,6 @@ class PartPricingSerializer(InvenTreeModelSerializer):
         required=False,
     )
 
-    class Meta:
-        """Metaclass defining serializer fields"""
-        model = PartPricing
-        fields = [
-            'currency',
-            'updated',
-            'scheduled_for_update',
-            'bom_cost_min',
-            'bom_cost_max',
-            'purchase_cost_min',
-            'purchase_cost_max',
-            'internal_cost_min',
-            'internal_cost_max',
-            'supplier_price_min',
-            'supplier_price_max',
-            'variant_cost_min',
-            'variant_cost_max',
-            'overall_min',
-            'overall_max',
-            'sale_price_min',
-            'sale_price_max',
-            'sale_history_min',
-            'sale_history_max',
-            'update',
-        ]
-
     def save(self):
         """Called when the serializer is saved"""
         data = self.validated_data
@@ -921,9 +966,6 @@ class PartPricingSerializer(InvenTreeModelSerializer):
 class PartRelationSerializer(InvenTreeModelSerializer):
     """Serializer for a PartRelated model."""
 
-    part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
-    part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)
-
     class Meta:
         """Metaclass defining serializer fields"""
         model = PartRelated
@@ -935,12 +977,12 @@ class PartRelationSerializer(InvenTreeModelSerializer):
             'part_2_detail',
         ]
 
+    part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
+    part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)
+
 
 class PartStarSerializer(InvenTreeModelSerializer):
     """Serializer for a PartStar object."""
-
-    partname = serializers.CharField(source='part.full_name', read_only=True)
-    username = serializers.CharField(source='user.username', read_only=True)
 
     class Meta:
         """Metaclass defining serializer fields"""
@@ -953,11 +995,12 @@ class PartStarSerializer(InvenTreeModelSerializer):
             'username',
         ]
 
+    partname = serializers.CharField(source='part.full_name', read_only=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+
 
 class BomItemSubstituteSerializer(InvenTreeModelSerializer):
     """Serializer for the BomItemSubstitute class."""
-
-    part_detail = PartBriefSerializer(source='part', read_only=True, many=False)
 
     class Meta:
         """Metaclass defining serializer fields"""
@@ -969,9 +1012,59 @@ class BomItemSubstituteSerializer(InvenTreeModelSerializer):
             'part_detail',
         ]
 
+    part_detail = PartBriefSerializer(source='part', read_only=True, many=False)
+
 
 class BomItemSerializer(InvenTreeModelSerializer):
     """Serializer for BomItem object."""
+
+    class Meta:
+        """Metaclass defining serializer fields"""
+        model = BomItem
+        fields = [
+            'allow_variants',
+            'inherited',
+            'note',
+            'optional',
+            'consumable',
+            'overage',
+            'pk',
+            'part',
+            'part_detail',
+            'pricing_min',
+            'pricing_max',
+            'quantity',
+            'reference',
+            'sub_part',
+            'sub_part_detail',
+            'substitutes',
+            'validated',
+
+            # Annotated fields describing available quantity
+            'available_stock',
+            'available_substitute_stock',
+            'available_variant_stock',
+
+            # Annotated field describing quantity on order
+            'on_order',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Determine if extra detail fields are to be annotated on this serializer
+
+        - part_detail and sub_part_detail serializers are only included if requested.
+        - This saves a bunch of database requests
+        """
+        part_detail = kwargs.pop('part_detail', False)
+        sub_part_detail = kwargs.pop('sub_part_detail', False)
+
+        super(BomItemSerializer, self).__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail')
+
+        if sub_part_detail is not True:
+            self.fields.pop('sub_part_detail')
 
     quantity = InvenTreeDecimalField(required=True)
 
@@ -1004,23 +1097,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
     available_stock = serializers.FloatField(read_only=True)
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
-
-    def __init__(self, *args, **kwargs):
-        """Determine if extra detail fields are to be annotated on this serializer
-
-        - part_detail and sub_part_detail serializers are only included if requested.
-        - This saves a bunch of database requests
-        """
-        part_detail = kwargs.pop('part_detail', False)
-        sub_part_detail = kwargs.pop('sub_part_detail', False)
-
-        super(BomItemSerializer, self).__init__(*args, **kwargs)
-
-        if part_detail is not True:
-            self.fields.pop('part_detail')
-
-        if sub_part_detail is not True:
-            self.fields.pop('sub_part_detail')
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -1116,44 +1192,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         return queryset
 
-    class Meta:
-        """Metaclass defining serializer fields"""
-        model = BomItem
-        fields = [
-            'allow_variants',
-            'inherited',
-            'note',
-            'optional',
-            'consumable',
-            'overage',
-            'pk',
-            'part',
-            'part_detail',
-            'pricing_min',
-            'pricing_max',
-            'quantity',
-            'reference',
-            'sub_part',
-            'sub_part_detail',
-            'substitutes',
-            'validated',
-
-            # Annotated fields describing available quantity
-            'available_stock',
-            'available_substitute_stock',
-            'available_variant_stock',
-
-            # Annotated field describing quantity on order
-            'on_order',
-        ]
-
 
 class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
     """Serializer for the PartCategoryParameterTemplate model."""
-
-    parameter_template_detail = PartParameterTemplateSerializer(source='parameter_template', many=False, read_only=True)
-
-    category_detail = CategorySerializer(source='category', many=False, read_only=True)
 
     class Meta:
         """Metaclass defining serializer fields"""
@@ -1166,6 +1207,10 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
             'parameter_template_detail',
             'default_value',
         ]
+
+    parameter_template_detail = PartParameterTemplateSerializer(source='parameter_template', many=False, read_only=True)
+
+    category_detail = CategorySerializer(source='category', many=False, read_only=True)
 
 
 class PartCopyBOMSerializer(serializers.Serializer):

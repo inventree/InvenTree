@@ -562,6 +562,14 @@ class Owner(models.Model):
     owner: Returns the Group or User instance combining the owner_type and owner_id fields
     """
 
+    class Meta:
+        """Metaclass defines extra model properties"""
+        # Ensure all owners are unique
+        constraints = [
+            UniqueConstraint(fields=['owner_type', 'owner_id'],
+                             name='unique_owner')
+        ]
+
     @classmethod
     def get_owners_matching_user(cls, user):
         """Return all "owner" objects matching the provided user.
@@ -593,14 +601,6 @@ class Owner(models.Model):
     def get_api_url():  # pragma: no cover
         """Returns the API endpoint URL associated with the Owner model"""
         return reverse('api-owner-list')
-
-    class Meta:
-        """Metaclass defines extra model properties"""
-        # Ensure all owners are unique
-        constraints = [
-            UniqueConstraint(fields=['owner_type', 'owner_id'],
-                             name='unique_owner')
-        ]
 
     owner_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
 

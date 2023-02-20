@@ -117,6 +117,7 @@ function stockLocationFields(options={}) {
         description: {},
         owner: {},
         structural: {},
+        external: {},
         icon: {
             help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-box',
@@ -314,7 +315,9 @@ function stockItemFields(options={}) {
         purchase_price: {
             icon: 'fa-dollar-sign',
         },
-        purchase_price_currency: {},
+        purchase_price_currency: {
+            icon: 'fa-coins',
+        },
         packaging: {
             icon: 'fa-box',
         },
@@ -685,7 +688,9 @@ function assignStockToCustomer(items, options={}) {
                     is_customer: true,
                 },
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
         },
         confirm: true,
         confirmMessage: '{% trans "Confirm stock assignment" %}',
@@ -854,7 +859,9 @@ function mergeStockItems(items, options={}) {
                     structural: false,
                 }
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
             allow_mismatched_suppliers: {},
             allow_mismatched_status: {},
         },
@@ -1298,6 +1305,28 @@ function formatDate(row) {
     return html;
 }
 
+/* Construct set of default fields for a StockItemTestResult */
+function stockItemTestResultFields(options={}) {
+    let fields = {
+        test: {},
+        result: {},
+        value: {},
+        attachment: {},
+        notes: {
+            icon: 'fa-sticky-note',
+        },
+        stock_item: {
+            hidden: true,
+        },
+    };
+
+    if (options.stock_item) {
+        fields.stock_item.value = options.stock_item;
+    }
+
+    return fields;
+}
+
 /*
  * Load StockItemTestResult table
  */
@@ -1563,7 +1592,9 @@ function loadStockTestResultsTable(table, options) {
                 result: {},
                 value: {},
                 attachment: {},
-                notes: {},
+                notes: {
+                    icon: 'fa-sticky-note',
+                },
                 stock_item: {
                     value: options.stock_item,
                     hidden: true,
@@ -1583,13 +1614,7 @@ function loadStockTestResultsTable(table, options) {
         var url = `/api/stock/test/${pk}/`;
 
         constructForm(url, {
-            fields: {
-                test: {},
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {},
-            },
+            fields: stockItemTestResultFields(),
             title: '{% trans "Edit Test Result" %}',
             onSuccess: reloadTestTable,
         });
@@ -2491,6 +2516,24 @@ function loadStockLocationTable(table, options) {
                 title: '{% trans "Stock Items" %}',
                 switchable: true,
                 sortable: true,
+            },
+            {
+                field: 'structural',
+                title: '{% trans "Structural" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
+            },
+            {
+                field: 'external',
+                title: '{% trans "External" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
             }
         ]
     });
@@ -2841,7 +2884,9 @@ function uninstallStockItem(installed_item_id, options={}) {
                         structural: false,
                     }
                 },
-                note: {},
+                note: {
+                    icon: 'fa-sticky-note',
+                },
             },
             preFormContent: function(opts) {
                 var html = '';
