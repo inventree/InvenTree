@@ -45,8 +45,6 @@ def fix_purchase_price(apps, schema_editor):
     n_updated = 0
 
     for item in items:
-        print(item, item.purchase_price, item.supplier_part.pack_size)
-
         # Grab a reference to the associated PurchaseOrder
         # Trying to find an absolute match between this StockItem and an associated PurchaseOrderLineItem
         po = item.purchase_order
