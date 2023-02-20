@@ -928,7 +928,7 @@ class CurrencyAPITests(InvenTreeAPITestCase):
         self.assertTrue(Rate.objects.all().exists())
 
 
-class WebConnectionTests(TestCase):
+class WebConnectionTests(PluginMixin, TestCase):
     """Tests for WebConnection."""
 
     def setUp(self) -> None:
