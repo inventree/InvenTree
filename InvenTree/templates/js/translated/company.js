@@ -13,11 +13,13 @@
     createCompany,
     createManufacturerPart,
     createSupplierPart,
+    createSupplierPartPriceBreak,
     deleteManufacturerParts,
     deleteManufacturerPartParameters,
     deleteSupplierParts,
     duplicateSupplierPart,
     editCompany,
+    editSupplierPartPriceBreak,
     loadCompanyTable,
     loadManufacturerPartTable,
     loadManufacturerPartParameterTable,
@@ -318,6 +320,44 @@ function deleteSupplierParts(parts, options={}) {
         },
         onSuccess: options.success,
     });
+}
+
+
+/* Construct set of fields for SupplierPartPriceBreak form */
+function supplierPartPriceBreakFields(options={}) {
+    let fields = {
+        part: {
+            hidden: true,
+        },
+        quantity: {},
+        price: {
+            icon: 'fa-dollar-sign',
+        },
+        price_currency: {
+            icon: 'fa-coins',
+        },
+    };
+
+    return fields;
+}
+
+/* Create a new SupplierPartPriceBreak instance */
+function createSupplierPartPriceBreak(part_id, options={}) {
+
+    let fields = supplierPartPriceBreakFields(options);
+
+    fields.part.value = part_id;
+
+    constructForm('{% url "api-part-supplier-price-list" %}', {
+        fields: fields,
+        method: 'POST',
+        fields: fields,
+        title: '{% trans "Add Price Break" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    })
+
 }
 
 
@@ -1125,11 +1165,7 @@ function loadSupplierPriceBreakTable(options={}) {
             var pk = $(this).attr('pk');
 
             constructForm(`/api/company/price-break/${pk}/`, {
-                fields: {
-                    quantity: {},
-                    price: {},
-                    price_currency: {},
-                },
+                fields: supplierPartPriceBreakFields(),
                 title: '{% trans "Edit Price Break" %}',
                 onSuccess: function() {
                     table.bootstrapTable('refresh');
