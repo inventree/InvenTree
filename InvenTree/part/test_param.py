@@ -3,7 +3,7 @@
 import django.core.exceptions as django_exceptions
 from django.test import TestCase, TransactionTestCase
 
-from .models import (Part, PartCategory, PartCategoryParameterTemplate,
+from .models import (PartCategory, PartCategoryParameterTemplate,
                      PartParameter, PartParameterTemplate)
 
 
@@ -70,9 +70,3 @@ class TestCategoryTemplates(TransactionTestCase):
 
         n = PartCategoryParameterTemplate.objects.all().count()
         self.assertEqual(n, 3)
-
-        # Get test part
-        part = Part.objects.get(pk=1)
-
-        # Get part parameters count
-        n_param = part.get_parameters().count()
