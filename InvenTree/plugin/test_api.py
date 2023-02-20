@@ -255,3 +255,19 @@ class WebConnectionSettingDetailTest(PluginMixin, InvenTreeAPITestCase):
         data = self.get(url, expected_code=200).data
         self.assertEqual(data['key'], SETTING_NAME)
         self.assertEqual(data['description'], settings[SETTING_NAME]['description'])
+
+        # Wrong connectionkey - should fail
+        url = reverse(
+            'api-plugin-webconnection-setting-detail',
+            kwargs={'plugin': PLUGIN_NAME, 'connection_key': 'wrong', 'connection': '1', 'key': SETTING_NAME}
+        )
+        resp = self.get(url, expected_code=404)
+        self.assertEqual(resp.json()['detail'], f"Plugin '{PLUGIN_NAME}' has no connection_key matching 'wrong'")
+
+        # Wrong key - should fail
+        url = reverse(
+            'api-plugin-webconnection-setting-detail',
+            kwargs={'plugin': PLUGIN_NAME, 'connection_key': CONNECTION_NAME, 'connection': '1', 'key': 'wrong'}
+        )
+        resp = self.get(url, expected_code=404)
+        self.assertEqual(resp.json()['detail'], f"Plugin '{PLUGIN_NAME}' connection_key '{CONNECTION_NAME}' has no setting matching 'wrong'")

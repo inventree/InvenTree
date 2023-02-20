@@ -278,7 +278,7 @@ class WebConnectionSettingDetail(RetrieveUpdateAPI):
         # Check the setting exsists
         settings = connection_key[connection_key_slug].settings
         if key not in settings:
-            raise NotFound(detail=f"Plugin '{plugin_slug}' connection_key {connection_key_slug} has no setting matching '{key}'")
+            raise NotFound(detail=f"Plugin '{plugin_slug}' connection_key '{connection_key_slug}' has no setting matching '{key}'")
 
         return ConnectionSetting.get_setting_object(key, plugin=plugin, connection_key=connection_key_slug, connection_id=connection_slug)
 
