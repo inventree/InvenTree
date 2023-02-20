@@ -640,7 +640,9 @@ $("#stock-return-from-customer").click(function() {
                 value: {{ item.part.default_location.pk }},
                 {% endif %}
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
         },
         method: 'POST',
         title: '{% trans "Return to Stock" %}',
