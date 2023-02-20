@@ -214,12 +214,6 @@ class WebConnectionSettingDetailTest(PluginMixin, InvenTreeAPITestCase):
         PLG_NAME = 'samplesupplier'
         PLG = registry.get_plugin(PLG_NAME).db
 
-        def test_url(setting=SET_NAME, key=CON_KEY, name=CON_NAME):
-            return reverse(
-                'api-plugin-webconnection-setting-detail',
-                kwargs={'plugin': PLG_NAME, 'connection_key': key, 'connection': name, 'key': setting}
-            )
-
         # Make user as superuser
         self.user.is_superuser = True
         self.user.save()
@@ -235,6 +229,11 @@ class WebConnectionSettingDetailTest(PluginMixin, InvenTreeAPITestCase):
         ConnectionSetting.objects.create(plugin=PLG, connection_key=CON_KEY, connection=con, key=SET_NAME)
 
         # Detail endpoint
+        def test_url(setting=SET_NAME, key=CON_KEY, name=CON_NAME):
+            return reverse(
+                'api-plugin-webconnection-setting-detail',
+                kwargs={'plugin': PLG_NAME, 'connection_key': key, 'connection': name, 'key': setting}
+            )
         # Test not active plugin - should fail
         resp = self.get(test_url(), expected_code=404)
         self.assertEqual(resp.json()['detail'], f"Plugin '{PLG_NAME}' is not active")
