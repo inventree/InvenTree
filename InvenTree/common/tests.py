@@ -931,8 +931,8 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 class WebConnectionTests(PluginMixin, TestCase):
     """Tests for WebConnection."""
 
-    def setUp(self) -> None:
-        """Setup commmon parameters for tests."""
+    def test_base_functions(self):
+        """Test the base functions for WebConnections."""
         self.plg = registry.get_plugin('inventreebarcode')
         self.instance = WebConnection.objects.create(
             plugin=self.plg.db,
@@ -940,8 +940,6 @@ class WebConnectionTests(PluginMixin, TestCase):
             name='testname',
         )
 
-    def test_base_functions(self):
-        """Test the base functions for WebConnections."""
         # str
         self.assertEqual(str(self.instance), f'{self.plg.slug} \\ 123 : testname')
 
@@ -950,6 +948,12 @@ class WebConnectionTests(PluginMixin, TestCase):
 
     def test_field_protection(self):
         """Test that the fields that are protected can not be changed."""
+        self.plg = registry.get_plugin('inventreebarcode')
+        self.instance = WebConnection.objects.create(
+            plugin=self.plg.db,
+            connection_key='123',
+            name='testname',
+        )
 
         # Change connection_key - not allowed
         with self.assertRaises(ValidationError) as ex:
