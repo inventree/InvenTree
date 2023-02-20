@@ -4,9 +4,13 @@ from django.urls import reverse
 
 from rest_framework.exceptions import NotFound
 
+from common.models import WebConnection
 from InvenTree.api_tester import InvenTreeAPITestCase, PluginMixin
+from plugin import registry
 from plugin.api import check_plugin
+from plugin.base.supplier.models import ConnectionSetting
 from plugin.models import PluginConfig
+from plugin.samples.supplier.supplier_sample import SampleSupplierPlugin
 
 
 class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
@@ -197,3 +201,57 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         with self.assertRaises(NotFound) as exc:
             check_plugin(plugin_slug=None, plugin_pk='123')
         self.assertEqual(str(exc.exception.detail), "Plugin '123' not installed")
+
+
+class WebConnectionSettingDetailTest(PluginMixin, InvenTreeAPITestCase):
+    """Tests the web connection API endpoints."""
+
+    def test_plugin_url(self):
+        """Test API url."""
+        self.user.is_superuser = True
+        self.user.save()
+
+        PLUGIN_NAME = 'samplesupplier'
+        SETTING_NAME = 'SETTING_A'
+        CONNECTION_NAME = 'sample_account'
+
+        plg = registry.get_plugin(PLUGIN_NAME)
+        settings = SampleSupplierPlugin.CONNECTIONS[CONNECTION_NAME].settings
+
+        # Call add
+        url = reverse('api-plugin-connection-list')
+        rsp = self.post(url, {'plugin': plg.db.pk, 'connection_key': CONNECTION_NAME}, expected_code=201)
+        self.assertEqual(rsp.data['plugin'], plg.db.pk)
+        self.assertEqual(rsp.data['connection_key'], CONNECTION_NAME)
+        self.assertEqual(rsp.data['creator'], self.user.username)
+
+        # Create connection
+        con = WebConnection.objects.create(
+            plugin=plg.db,
+            connection_key=CONNECTION_NAME,
+            name='1',
+        )
+        ConnectionSetting.objects.create(
+            plugin=plg.db,
+            connection_key=CONNECTION_NAME,
+            connection=con,
+            key=SETTING_NAME,
+            value='VALUE_A',
+        )
+
+        url = reverse(
+            'api-plugin-webconnection-setting-detail',
+            kwargs={'plugin': PLUGIN_NAME, 'connection_key': CONNECTION_NAME, 'connection': '1', 'key': SETTING_NAME}
+        )
+
+        # Not active plugin - should fail
+        resp = self.get(url, expected_code=404)
+        self.assertEqual(resp.json()['detail'], f"Plugin '{PLUGIN_NAME}' is not active")
+
+        # Activate plugin
+        plg.db.active = True
+        plg.db.save()
+        # Active plugin - should work
+        data = self.get(url, expected_code=200).data
+        self.assertEqual(data['key'], SETTING_NAME)
+        self.assertEqual(data['description'], settings[SETTING_NAME]['description'])
