@@ -50,8 +50,8 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
-from users.models import Owner
 from plugin import registry
+from users.models import Owner
 
 logger = logging.getLogger('inventree')
 
