@@ -44,14 +44,6 @@ class BomItemTest(TestCase):
 
         self.assertEqual(self.bob.bom_count, 4)
 
-    def test_in_bom(self):
-        """Test BOM aggregation"""
-        parts = self.bob.getRequiredParts()
-
-        self.assertIn(self.orphan, parts)
-
-        self.assertTrue(self.bob.check_if_part_in_bom(self.orphan))
-
     def test_used_in(self):
         """Test that the 'used_in_count' attribute is calculated correctly"""
         self.assertEqual(self.bob.used_in_count, 1)

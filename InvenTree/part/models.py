@@ -1628,31 +1628,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         """
         self.bom_items.all().delete()
 
-    def getRequiredParts(self, recursive=False, parts=None):
-        """Return a list of parts required to make this part (i.e. BOM items).
-
-        Args:
-            recursive: If True iterate down through sub-assemblies
-            parts: Set of parts already found (to prevent recursion issues)
-        """
-        if parts is None:
-            parts = set()
-
-        bom_items = self.get_bom_items()
-
-        for bom_item in bom_items:
-
-            sub_part = bom_item.sub_part
-
-            if sub_part not in parts:
-
-                parts.add(sub_part)
-
-                if recursive:
-                    sub_part.getRequiredParts(recursive=True, parts=parts)
-
-        return parts
-
     @property
     def supplier_count(self):
         """Return the number of supplier parts available for this part."""
