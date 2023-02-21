@@ -445,9 +445,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         If the part image has been updated, then check if the "old" (previous) image is still used by another part.
         If not, it is considered "orphaned" and will be deleted.
         """
-        # Get category templates settings
-
-        add_category_templates = kwargs.pop('add_category_templates', False)
 
         if self.pk:
             previous = Part.objects.get(pk=self.pk)
@@ -470,34 +467,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             raise ValidationError({
                 'variant_of': _('Invalid choice for parent part'),
             })
-
-        if add_category_templates:
-            # Get part category
-            category = self.category
-
-            if category is not None:
-
-                template_list = []
-
-                parent_categories = category.get_ancestors(include_self=True)
-
-                for category in parent_categories:
-                    for template in category.get_parameter_templates():
-                        # Check that template wasn't already added
-                        if template.parameter_template not in template_list:
-
-                            template_list.append(template.parameter_template)
-
-                            try:
-                                PartParameter.create(
-                                    part=self,
-                                    template=template.parameter_template,
-                                    data=template.default_value,
-                                    save=True
-                                )
-                            except IntegrityError:
-                                # PartParameter already exists
-                                pass
 
     def __str__(self):
         """Return a string representation of the Part (for use in the admin interface)"""

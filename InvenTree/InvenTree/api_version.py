@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 96
+INVENTREE_API_VERSION = 97
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v97 -> 2023-02-20 : https://github.com/inventree/InvenTree/pull/4377
+    - Adds "external" attribute to StockLocation model
 
 v96 -> 2023-02-16 : https://github.com/inventree/InvenTree/pull/4345
     - Adds stocktake report generation functionality

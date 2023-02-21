@@ -589,6 +589,7 @@ class LocationSerializer(TaggitSerializer, InvenTree.serializers.InvenTreeModelS
             'owner',
             'icon',
             'structural',
+            'external',
 
             'tags',
         ]
