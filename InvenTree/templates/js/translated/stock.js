@@ -2041,9 +2041,27 @@ function loadStockTable(table, options) {
         title: '{% trans "Purchase Price" %}',
         sortable: false,
         formatter: function(value, row) {
-            return formatCurrency(value, {
+            let html = formatCurrency(value, {
                 currency: row.purchase_price_currency,
             });
+
+            var base = baseCurrency();
+
+            if (row.purchase_price_currency != base) {
+                let converted = convertCurrency(
+                    row.purchase_price,
+                    row.purchase_price_currency,
+                    base,
+                    getCurrencyConversionRates(),
+                );
+
+                if (converted) {
+                    converted = formatCurrency(converted, {currency: baseCurrency()});
+                    html += `<br><small><em>${converted}</em></small>`;
+                }
+            }
+
+            return html;
         }
     });
 
