@@ -1667,30 +1667,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         except (PartPricing.DoesNotExist, IntegrityError):
             pass
 
-    def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
-        """Return a simplified pricing string for this part.
-
-        Args:
-            quantity: Number of units to calculate price for
-            buy: Include supplier pricing (default = True)
-            bom: Include BOM pricing (default = True)
-            internal: Include internal pricing (default = False)
-        """
-        price_range = self.get_price_range(quantity, buy, bom, internal)
-
-        if price_range is None:
-            return None
-
-        min_price, max_price = price_range
-
-        if min_price == max_price:
-            return min_price
-
-        min_price = normalize(min_price)
-        max_price = normalize(max_price)
-
-        return "{a} - {b}".format(a=min_price, b=max_price)
-
     def get_supplier_price_range(self, quantity=1):
         """Return the supplier price range of this part:
 

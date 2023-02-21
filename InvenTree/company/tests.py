@@ -1,7 +1,6 @@
 """Unit tests for the models in the 'company' app"""
 
 import os
-from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -88,24 +87,6 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(p(5), 35)
         self.assertEqual(p(45), 315)
         self.assertEqual(p(55), 68.75)
-
-    def test_part_pricing(self):
-        """Unit tests for supplier part pricing"""
-        m2x4 = Part.objects.get(name='M2x4 LPHS')
-
-        self.assertEqual(m2x4.get_price_info(5.5), "38.5 - 41.25")
-        self.assertEqual(m2x4.get_price_info(10), "70 - 75")
-        self.assertEqual(m2x4.get_price_info(100), "125 - 350")
-
-        pmin, pmax = m2x4.get_price_range(5)
-        self.assertEqual(pmin, 35)
-        self.assertEqual(pmax, 37.5)
-
-        m3x12 = Part.objects.get(name='M3x12 SHCS')
-
-        self.assertEqual(m3x12.get_price_info(0.3), Decimal('2.4'))
-        self.assertEqual(m3x12.get_price_info(3), Decimal('24'))
-        self.assertIsNotNone(m3x12.get_price_info(50))
 
     def test_currency_validation(self):
         """Test validation for currency selection."""
