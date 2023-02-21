@@ -1686,16 +1686,16 @@ function addSecondaryModal(field, fields, options) {
     // Callback function when the secondary button is pressed
     $(options.modal).find(`#btn-new-${field_name}`).click(function() {
 
-        var secondary = field.secondary;
+        let secondary = field.secondary;
 
         // Determine the API query URL
-        var url = secondary.api_url || field.api_url;
+        let url = secondary.api_url || field.api_url;
 
         // If the "fields" attribute is a function, call it with data
         if (secondary.fields instanceof Function || secondary.fieldsFunction instanceof Function) {
 
             // Extract form values at time of button press
-            var data = extractFormData(fields, options);
+            let data = extractFormData(fields, options);
 
             // Backup and execute fields function in sequential executions of modal
             if (secondary.fields instanceof Function) {

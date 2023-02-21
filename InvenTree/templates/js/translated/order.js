@@ -758,7 +758,7 @@ function createPurchaseOrderLineItem(order, options={}) {
 /* Construct a set of fields for the SalesOrderLineItem form */
 function soLineItemFields(options={}) {
 
-    var fields = {
+    let fields = {
         order: {
             hidden: true,
         },
