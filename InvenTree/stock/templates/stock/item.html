@@ -313,17 +313,9 @@
 
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',
-            fields: {
-                test: {},
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {},
-                stock_item: {
-                    value: {{ item.pk }},
-                    hidden: true,
-                }
-            },
+            fields: stockItemTestResultFields({
+                stock_item: {{ item.pk }},
+            }),
             title: '{% trans "Add Test Result" %}',
             onSuccess: reloadTable,
         });

@@ -134,6 +134,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Structural" %}',
             },
+            external: {
+                type: 'bool',
+                title: '{% trans "External" %}',
+            },
         };
     }
 
