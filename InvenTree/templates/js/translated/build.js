@@ -1890,8 +1890,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 title: '{% trans "Quantity Per" %}',
                 sortable: true,
                 switchable: false,
-                formatter: function(value,row){
-                    var text = value; //parseFloat(value);
+                formatter: function(value, row) {
+                    var text = value;
 
                     if (row.sub_part_detail && row.sub_part_detail.units) {
                         text += ` <small>${row.sub_part_detail.units}</small>`;
