@@ -2569,6 +2569,12 @@ class PartPricing(common.models.MetaMixin):
         verbose_name=_('Part'),
     )
 
+    bom_cost_complete = models.BooleanField(
+        default=False,
+        verbose_name=_('Complete BOM Price'),
+        help_text=_('BOM pricing is complete for this part'),
+    )
+
     bom_cost_min = InvenTree.fields.InvenTreeModelMoneyField(
         null=True, blank=True,
         verbose_name=_('Minimum BOM Cost'),

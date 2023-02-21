@@ -895,6 +895,7 @@ class PartPricingSerializer(InvenTreeModelSerializer):
             'currency',
             'updated',
             'scheduled_for_update',
+            'bom_cost_complete',
             'bom_cost_min',
             'bom_cost_max',
             'purchase_cost_min',
@@ -914,11 +915,12 @@ class PartPricingSerializer(InvenTreeModelSerializer):
             'update',
         ]
 
-    currency = serializers.CharField(allow_null=True, read_only=True)
-
-    updated = serializers.DateTimeField(allow_null=True, read_only=True)
-
-    scheduled_for_update = serializers.BooleanField(read_only=True)
+        read_only_fields = [
+            'scheduled_for_update',
+            'bom_cost_complete',
+            'currency',
+            'updated',
+        ]
 
     # Custom serializers
     bom_cost_min = InvenTreeMoneySerializer(allow_null=True, read_only=True)
