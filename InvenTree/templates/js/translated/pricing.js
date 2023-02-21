@@ -427,6 +427,39 @@ function loadPartSupplierPricingTable(options={}) {
     options.params.base_part = part;
     options.params.supplier_detail = true;
     options.params.part_detail = true;
+    options.params.ordering = '-price';
+
+    // Setup button callbacks once table is loaded
+    function setupCallbacks() {
+
+        if (options.allowDelete) {
+            table.find('.button-price-break-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/company/price-break/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Price Break" %}',
+                    onSuccess: function() {
+                        table.bootstrapTable('refresh');
+                    },
+                });
+            });
+        }
+
+        if (options.allowDelete) {
+            table.find('.button-price-break-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/company/price-break/${pk}/`, {
+                    fields: supplierPartPriceBreakFields(),
+                    title: '{% trans "Edit Price Break" %}',
+                    onSuccess: function() {
+                        table.bootstrapTable('refresh');
+                    }
+                });
+            });
+        }
+    }
 
     table.inventreeTable({
         url: '{% url "api-part-supplier-price-list" %}',
@@ -441,6 +474,7 @@ function loadPartSupplierPricingTable(options={}) {
         formatNoMatches: function() {
             return '{% trans "No supplier pricing data available" %}';
         },
+        onPostBody: setupCallbacks,
         onLoadSuccess: function(data) {
             // Update supplier pricing chart
 
@@ -511,16 +545,26 @@ function loadPartSupplierPricingTable(options={}) {
                     }
 
                     // Convert to unit pricing
-                    var unit_price = row.price / row.part_detail.pack_size;
+                    let unit_price = row.price / row.part_detail.pack_size;
 
-                    var html = formatCurrency(unit_price, {
+                    let html = formatCurrency(unit_price, {
                         currency: row.price_currency
                     });
 
-                    if (row.updated != null) {
-                        html += `<span class='badge badge-right rounded-pill bg-dark'>${renderDate(row.updated)}</span>`;
-                    }
+                    if (options.allowEdit || options.allowDelete) {
 
+                        html += `<div class='btn-group float-right' role='group'>`;
+
+                        if (options.allowEdit) {
+                            html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
+                        }
+
+                        if (options.allowDelete) {
+                            html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
+                        }
+
+                        html += `</div>`;
+                    }
 
                     return html;
                 }

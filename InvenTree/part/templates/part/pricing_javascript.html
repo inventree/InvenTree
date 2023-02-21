@@ -41,6 +41,8 @@ loadPurchasePriceHistoryTable({
 // Supplier pricing information
 loadPartSupplierPricingTable({
     part: {{ part.pk }},
+    allowEdit: {% js_bool roles.purchase_order.change %},
+    allowDelete: {% js_bool roles.purchase_order.delete %},
 });
 {% endif %}
 

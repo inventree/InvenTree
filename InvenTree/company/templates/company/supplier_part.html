@@ -295,7 +295,9 @@ $("#barcode-unlink").click(function() {
 {% endif %}
 
 loadSupplierPriceBreakTable({
-    part: {{ part.pk }}
+    part: {{ part.pk }},
+    allowEdit: {% js_bool roles.purchase_order.change %},
+    allowDelete: {% js_bool roles.purchase_order.delete %},
 });
 
 $('#new-price-break').click(function() {

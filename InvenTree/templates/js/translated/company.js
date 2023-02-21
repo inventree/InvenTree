@@ -1144,33 +1144,43 @@ function loadSupplierPartTable(table, url, options) {
  */
 function loadSupplierPriceBreakTable(options={}) {
 
+    if (!options.part) {
+        console.error('No part provided to loadPurchasePriceHistoryTable');
+        return;
+    }
+
     var table = options.table || $('#price-break-table');
 
     // Setup button callbacks once table is loaded
     function setupCallbacks() {
-        table.find('.button-price-break-delete').click(function() {
-            var pk = $(this).attr('pk');
 
-            constructForm(`/api/company/price-break/${pk}/`, {
-                method: 'DELETE',
-                title: '{% trans "Delete Price Break" %}',
-                onSuccess: function() {
-                    table.bootstrapTable('refresh');
-                },
+        if (options.allowDelete) {
+            table.find('.button-price-break-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/company/price-break/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Price Break" %}',
+                    onSuccess: function() {
+                        table.bootstrapTable('refresh');
+                    },
+                });
             });
-        });
+        }
 
-        table.find('.button-price-break-edit').click(function() {
-            var pk = $(this).attr('pk');
+        if (options.allowDelete) {
+            table.find('.button-price-break-edit').click(function() {
+                var pk = $(this).attr('pk');
 
-            constructForm(`/api/company/price-break/${pk}/`, {
-                fields: supplierPartPriceBreakFields(),
-                title: '{% trans "Edit Price Break" %}',
-                onSuccess: function() {
-                    table.bootstrapTable('refresh');
-                }
+                constructForm(`/api/company/price-break/${pk}/`, {
+                    fields: supplierPartPriceBreakFields(),
+                    title: '{% trans "Edit Price Break" %}',
+                    onSuccess: function() {
+                        table.bootstrapTable('refresh');
+                    }
+                });
             });
-        });
+        }
     }
 
     setupFilterList('supplierpricebreak', table, '#filter-list-supplierpricebreak');
@@ -1211,14 +1221,21 @@ function loadSupplierPriceBreakTable(options={}) {
             },
             {
                 field: 'updated',
-                title: '{% trans "Last updated" %}',
+                title: '{% trans "Last Updated" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var html = renderDate(value);
 
                     html += `<div class='btn-group float-right' role='group'>`;
-                    html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
+
+                    if (options.allowEdit) {
+                        html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
+                    }
+
+                    if (options.allowDelete) {
+                        html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
+                    }
+
                     html += `</div>`;
 
                     return html;
