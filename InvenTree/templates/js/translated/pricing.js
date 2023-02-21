@@ -652,8 +652,12 @@ function initPriceBreakSet(table, options) {
                     value: part_id,
                 },
                 quantity: {},
-                price: {},
-                price_currency: {},
+                price: {
+                    icon: 'fa-dollar-sign',
+                },
+                price_currency: {
+                    icon: 'fa-coins',
+                },
             },
             method: 'POST',
             title: '{% trans "Add Price Break" %}',
@@ -677,8 +681,12 @@ function initPriceBreakSet(table, options) {
         constructForm(`${pb_url}${pk}/`, {
             fields: {
                 quantity: {},
-                price: {},
-                price_currency: {},
+                price: {
+                    icon: 'fa-dollar-sign',
+                },
+                price_currency: {
+                    icon: 'fa-coins',
+                },
             },
             title: '{% trans "Edit Price Break" %}',
             onSuccess: reloadPriceBreakTable,
