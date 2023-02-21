@@ -78,7 +78,8 @@ class ImportPluginSupplierPartSerializer(serializers.Serializer):
         # Try to import part
         plugin_cgf.plugin.import_part(
             term=data['reference'],
-            category=data['category']
+            category=data['category'],
+            user=self.context['request'].user
         )
 
 
