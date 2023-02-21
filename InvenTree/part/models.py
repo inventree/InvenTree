@@ -2571,7 +2571,7 @@ class PartPricing(common.models.MetaMixin):
 
     bom_cost_complete = models.BooleanField(
         default=False,
-        verbose_name=_('Complete BOM Price'),
+        verbose_name=_('Complete BOM Pricing'),
         help_text=_('BOM pricing is complete for this part'),
     )
 

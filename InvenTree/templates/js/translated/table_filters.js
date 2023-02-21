@@ -91,6 +91,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Has Pricing" %}',
             },
+            complete_bom_pricing: {
+                type: 'bool',
+                title: '{% trans "Complete BOM Pricing" %}',
+            },
         };
     }
 

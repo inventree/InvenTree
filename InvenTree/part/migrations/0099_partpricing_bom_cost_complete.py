@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partpricing',
             name='bom_cost_complete',
-            field=models.BooleanField(default=False, help_text='BOM pricing is complete for this part', verbose_name='Complete BOM Price'),
+            field=models.BooleanField(default=False, help_text='BOM pricing is complete for this part', verbose_name='Complete BOM Pricing'),
         ),
     ]
