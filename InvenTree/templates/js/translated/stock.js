@@ -311,7 +311,9 @@ function stockItemFields(options={}) {
             icon: 'fa-layer-group',
         },
         status: {},
-        expiry_date: {},
+        expiry_date: {
+            icon: 'fa-calendar-alt',
+        },
         purchase_price: {
             icon: 'fa-dollar-sign',
         },
@@ -324,7 +326,9 @@ function stockItemFields(options={}) {
         link: {
             icon: 'fa-link',
         },
-        owner: {},
+        owner: {
+            icon: 'fa-user',
+        },
         delete_on_deplete: {},
     };
 
