@@ -263,14 +263,6 @@ class PartTest(TestCase):
         self.assertEqual(float(self.r1.get_price(1)), 0.15)
         self.assertEqual(float(self.r1.get_price(10)), 1.0)
 
-    def test_internal_pricing(self):
-        """Check that the sell pricebreaks were loaded"""
-        self.assertTrue(self.r1.has_internal_price_breaks)
-        self.assertEqual(self.r1.internal_price_breaks.count(), 2)
-        # check that the sell pricebreaks work
-        self.assertEqual(float(self.r1.get_internal_price(1)), 0.08)
-        self.assertEqual(float(self.r1.get_internal_price(10)), 0.5)
-
     def test_metadata(self):
         """Unit tests for the Part metadata field."""
         p = Part.objects.get(pk=1)

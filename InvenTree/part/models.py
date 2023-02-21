@@ -1758,10 +1758,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         Returns:
             Minimum of the supplier, BOM, internal or purchase price. If no pricing available, returns None
         """
-        # only get internal price if set and should be used
-        if internal and self.has_internal_price_breaks:
-            internal_price = self.get_internal_price(quantity)
-            return internal_price, internal_price
 
         # only get purchase price if set and should be used
         if purchase:
@@ -1821,10 +1817,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             quantity=quantity,
             price=price
         )
-
-    def get_internal_price(self, quantity, moq=True, multiples=True, currency=None):
-        """Return the internal price of this Part at the specified quantity"""
-        return common.models.get_price(self, quantity, moq, multiples, currency, break_name='internal_price_breaks')
 
     @property
     def has_internal_price_breaks(self):
