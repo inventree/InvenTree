@@ -1,8 +1,6 @@
 
 """Unit tests for the BomItem model"""
 
-from decimal import Decimal
-
 import django.core.exceptions as django_exceptions
 from django.db import transaction
 from django.test import TestCase
@@ -116,20 +114,6 @@ class BomItemTest(TestCase):
         item.validate_hash()
 
         self.assertNotEqual(h1, h2)
-
-    def test_pricing(self):
-        """Test BOM pricing"""
-        self.bob.get_price(1)
-        self.assertEqual(
-            self.bob.get_bom_price_range(1, internal=True),
-            (Decimal(29.5), Decimal(89.5))
-        )
-        # remove internal price for R_2K2_0805
-        self.r1.internal_price_breaks.delete()
-        self.assertEqual(
-            self.bob.get_bom_price_range(1, internal=True),
-            (Decimal(27.5), Decimal(87.5))
-        )
 
     def test_substitutes(self):
         """Tests for BOM item substitutes."""
