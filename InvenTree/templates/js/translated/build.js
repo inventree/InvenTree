@@ -1978,7 +1978,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     if (row.sub_part_detail && row.sub_part_detail.units) {
                         progressbar_text += ` ${row.sub_part_detail.units}`;
                     }
-                    return makeProgressBar(allocated, required, {text:progressbar_text});
+                    return makeProgressBar(allocated, required, {text: progressbar_text});
                 },
                 sorter: function(valA, valB, rowA, rowB) {
                     // Custom sorting function for progress bars
