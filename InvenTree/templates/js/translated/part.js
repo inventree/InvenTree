@@ -616,7 +616,7 @@ function partStockLabel(part, options={}) {
     // Check for items on order
     if (part.ordering) {
         text += ` | {% trans "On Order" %}: ${part.ordering}`;
-    } 
+    }
 
     // Check for items beeing built
     if (part.building) {
