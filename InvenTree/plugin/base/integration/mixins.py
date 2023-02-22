@@ -10,6 +10,7 @@ import requests
 
 import InvenTree.helpers
 import part.models
+import stock.models
 from plugin.helpers import (MixinImplementationError, MixinNotImplementedError,
                             render_template, render_text)
 from plugin.models import PluginConfig, PluginSetting
@@ -276,14 +277,12 @@ class ValidationMixin:
         """
         return None
 
-    def validate_batch_code(self, batch_code: str, **kwargs):
+    def validate_batch_code(self, batch_code: str, item: stock.models.StockItem):
         """Validate the supplied batch code
 
         Arguments:
             batch_code: The proposed batch code (string)
-
-        kwargs:
-            stock_item: The StockItem instance for which this batch code is being validated
+            item: The StockItem instance we are validating against
 
         Returns:
             None or True (refer to class docstring)

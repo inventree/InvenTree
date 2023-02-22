@@ -79,7 +79,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             if serial[0] != part.name[0]:
                 raise ValidationError("Serial number must start with same letter as part")
 
-    def validate_batch_code(self, batch_code: str, **kwargs):
+    def validate_batch_code(self, batch_code: str, item):
         """Ensure that a particular batch code meets specification"""
 
         prefix = self.get_setting('BATCH_CODE_PREFIX')
@@ -87,10 +87,9 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if not batch_code.startswith(prefix):
             raise ValidationError(f"Batch code must start with '{prefix}'")
 
-        if stock_item := kwargs.get('stock_item', None):
-            if not stock_item.location or not stock_item.location.parent:
-                if batch_code.startswith('T'):
-                    raise ValidationError("Batch code cannot start with 'T' for a top level location")
+        if not item.location or not item.location.parent:
+            if not batch_code.startswith('T'):
+                raise ValidationError("Batch code must start with 'T' for a top level location")
 
     def generate_batch_code(self):
         """Generate a new batch code."""
