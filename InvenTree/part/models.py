@@ -539,6 +539,28 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return result
 
+    def validate_name(self, raise_error=True):
+        """Validate the name field for this Part instance
+
+        This function is exposed to any Validation plugins, and thus can be customized.
+        """
+
+        from plugin.registry import registry
+
+        for plugin in registry.with_mixin('validation'):
+            # Run the name through each custom validator
+            # If the plugin returns 'True' we will skip any subsequent validation
+
+            try:
+                result = plugin.validate_part_name(self.name, self)
+                if result:
+                    return
+            except ValidationError as exc:
+                if raise_error:
+                    raise ValidationError({
+                        'name': exc.message,
+                    })
+
     def validate_ipn(self, raise_error=True):
         """Ensure that the IPN (internal part number) is valid for this Part"
 
@@ -799,8 +821,11 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         if type(self.IPN) is str:
             self.IPN = self.IPN.strip()
 
-        # Run validation for the IPN field
+        # Run custom validation for the IPN field
         self.validate_ipn()
+
+        # Run custom validation for the name field
+        self.validate_name()
 
         if self.trackable:
             for part in self.get_used_in().all():
@@ -814,7 +839,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         max_length=100, blank=False,
         help_text=_('Part name'),
         verbose_name=_('Name'),
-        validators=[validators.validate_part_name]
     )
 
     is_template = models.BooleanField(

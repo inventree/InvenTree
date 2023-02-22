@@ -9,6 +9,7 @@ from django.urls import include, re_path
 import requests
 
 import InvenTree.helpers
+import part.models
 from plugin.helpers import (MixinImplementationError, MixinNotImplementedError,
                             render_template, render_text)
 from plugin.models import PluginConfig, PluginSetting
@@ -245,42 +246,47 @@ class ValidationMixin:
         super().__init__()
         self.add_mixin('validation', True, __class__)
 
-    def validate_part_name(self, name: str):
+    def validate_part_name(self, name: str, part: part.models.Part):
         """Perform validation on a proposed Part name
 
         Arguments:
             name: The proposed part name
+            part: The part instance we are validating against
 
         Returns:
-            None or True
+            None or True (refer to class docstring)
 
         Raises:
             ValidationError if the proposed name is objectionable
         """
         return None
 
-    def validate_part_ipn(self, ipn: str):
+    def validate_part_ipn(self, ipn: str, part: part.models.Part):
         """Perform validation on a proposed Part IPN (internal part number)
 
         Arguments:
             ipn: The proposed part IPN
+            part: The Part instance we are validating against
 
         Returns:
-            None or True
+            None or True (refer to class docstring)
 
         Raises:
             ValidationError if the proposed IPN is objectionable
         """
         return None
 
-    def validate_batch_code(self, batch_code: str):
+    def validate_batch_code(self, batch_code: str, **kwargs):
         """Validate the supplied batch code
 
         Arguments:
             batch_code: The proposed batch code (string)
 
+        kwargs:
+            stock_item: The StockItem instance for which this batch code is being validated
+
         Returns:
-            None or True
+            None or True (refer to class docstring)
 
         Raises:
             ValidationError if the proposed batch code is objectionable
@@ -305,7 +311,7 @@ class ValidationMixin:
             part: The Part instance for which this serial number is being validated
 
         Returns:
-            None or True
+            None or True (refer to class docstring)
 
         Raises:
             ValidationError if the proposed serial is objectionable

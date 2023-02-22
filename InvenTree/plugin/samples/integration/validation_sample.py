@@ -9,13 +9,16 @@ from plugin.mixins import SettingsMixin, ValidationMixin
 
 
 class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
-    """A sample plugin class for demonstrating custom validation functions"""
+    """A sample plugin class for demonstrating custom validation functions.
+
+    Simple of examples of custom validator code.
+    """
 
     NAME = "CustomValidator"
     SLUG = "validator"
     TITLE = "Custom Validator Plugin"
     DESCRIPTION = "A sample plugin for demonstrating custom validation functionality"
-    VERSION = "0.1"
+    VERSION = "0.2"
 
     SETTINGS = {
         'ILLEGAL_PART_CHARS': {
@@ -42,8 +45,15 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         }
     }
 
-    def validate_part_name(self, name: str):
-        """Validate part name"""
+    def validate_part_name(self, name: str, part):
+        """Custom validation for Part name field:
+
+        - Name must be shorter than the description field
+        - Name cannot contain illegal characters
+        """
+
+        if len(part.description) < len(name):
+            raise ValidationError("Part description cannot be shorter than the name")
 
         illegal_chars = self.get_setting('ILLEGAL_PART_CHARS')
 
@@ -51,7 +61,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             if c in name:
                 raise ValidationError(f"Illegal character in part name: '{c}'")
 
-    def validate_part_ipn(self, ipn: str):
+    def validate_part_ipn(self, ipn: str, part):
         """Validate part IPN"""
 
         if self.get_setting('IPN_MUST_CONTAIN_Q') and 'Q' not in ipn:
@@ -69,13 +79,18 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             if serial[0] != part.name[0]:
                 raise ValidationError("Serial number must start with same letter as part")
 
-    def validate_batch_code(self, batch_code: str):
+    def validate_batch_code(self, batch_code: str, **kwargs):
         """Ensure that a particular batch code meets specification"""
 
         prefix = self.get_setting('BATCH_CODE_PREFIX')
 
         if not batch_code.startswith(prefix):
             raise ValidationError(f"Batch code must start with '{prefix}'")
+
+        if stock_item := kwargs.get('stock_item', None):
+            if not stock_item.location or not stock_item.location.parent:
+                if batch_code.startswith('T'):
+                    raise ValidationError("Batch code cannot start with 'T' for a top level location")
 
     def generate_batch_code(self):
         """Generate a new batch code."""

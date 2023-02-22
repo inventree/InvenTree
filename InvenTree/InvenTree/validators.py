@@ -45,21 +45,6 @@ class AllowedURLValidator(validators.URLValidator):
         super().__call__(value)
 
 
-def validate_part_name(value):
-    """Validate the name field for a Part instance
-
-    This function is exposed to any Validation plugins, and thus can be customized.
-    """
-
-    from plugin.registry import registry
-
-    for plugin in registry.with_mixin('validation'):
-        # Run the name through each custom validator
-        # If the plugin returns 'True' we will skip any subsequent validation
-        if plugin.validate_part_name(value):
-            return
-
-
 def validate_purchase_order_reference(value):
     """Validate the 'reference' field of a PurchaseOrder."""
 

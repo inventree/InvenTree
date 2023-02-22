@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='part',
             name='name',
-            field=models.CharField(help_text='Part name (must be unique)', max_length=100, unique=True, validators=[InvenTree.validators.validate_part_name]),
+            field=models.CharField(help_text='Part name (must be unique)', max_length=100, unique=True),
         ),
         migrations.AlterUniqueTogether(
             name='part',

@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='part',
             name='name',
-            field=models.CharField(help_text='Part name', max_length=100, validators=[InvenTree.validators.validate_part_name]),
+            field=models.CharField(help_text='Part name', max_length=100),
         ),
     ]
