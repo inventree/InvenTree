@@ -415,7 +415,7 @@ class SupplierPartManager(models.Manager):
         )
 
 
-class SupplierPart(InvenTreeBarcodeMixin, common.models.MetaMixin):
+class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 
     Attributes:

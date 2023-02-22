@@ -433,6 +433,15 @@ class SupplierPartDetail(RetrieveUpdateDestroyAPI):
     ]
 
 
+class SupplierPartMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating SupplierPart metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a Company"""
+        return MetadataSerializer(SupplierPart, *args, **kwargs)
+
+    queryset = SupplierPart.objects.all()
+
 class SupplierPriceBreakFilter(rest_filters.FilterSet):
     """Custom API filters for the SupplierPriceBreak list endpoint"""
 
@@ -531,7 +540,10 @@ manufacturer_part_api_urls = [
 
 supplier_part_api_urls = [
 
-    re_path(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
+    re_path(r'^(?P<pk>\d+)/?', include([
+        re_path('^metadata/',SupplierPartMetadata.as_view(), name='api-supplier-part-detail'),
+        re_path('^.*$',SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
+    ]))
 
     # Catch anything else
     re_path(r'^.*$', SupplierPartList.as_view(), name='api-supplier-part-list'),
