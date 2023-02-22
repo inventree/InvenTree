@@ -311,18 +311,24 @@ function stockItemFields(options={}) {
             icon: 'fa-layer-group',
         },
         status: {},
-        expiry_date: {},
+        expiry_date: {
+            icon: 'fa-calendar-alt',
+        },
         purchase_price: {
             icon: 'fa-dollar-sign',
         },
-        purchase_price_currency: {},
+        purchase_price_currency: {
+            icon: 'fa-coins',
+        },
         packaging: {
             icon: 'fa-box',
         },
         link: {
             icon: 'fa-link',
         },
-        owner: {},
+        owner: {
+            icon: 'fa-user',
+        },
         delete_on_deplete: {},
     };
 
@@ -686,7 +692,9 @@ function assignStockToCustomer(items, options={}) {
                     is_customer: true,
                 },
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
         },
         confirm: true,
         confirmMessage: '{% trans "Confirm stock assignment" %}',
@@ -855,7 +863,9 @@ function mergeStockItems(items, options={}) {
                     structural: false,
                 }
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
             allow_mismatched_suppliers: {},
             allow_mismatched_status: {},
         },
@@ -1299,6 +1309,28 @@ function formatDate(row) {
     return html;
 }
 
+/* Construct set of default fields for a StockItemTestResult */
+function stockItemTestResultFields(options={}) {
+    let fields = {
+        test: {},
+        result: {},
+        value: {},
+        attachment: {},
+        notes: {
+            icon: 'fa-sticky-note',
+        },
+        stock_item: {
+            hidden: true,
+        },
+    };
+
+    if (options.stock_item) {
+        fields.stock_item.value = options.stock_item;
+    }
+
+    return fields;
+}
+
 /*
  * Load StockItemTestResult table
  */
@@ -1564,7 +1596,9 @@ function loadStockTestResultsTable(table, options) {
                 result: {},
                 value: {},
                 attachment: {},
-                notes: {},
+                notes: {
+                    icon: 'fa-sticky-note',
+                },
                 stock_item: {
                     value: options.stock_item,
                     hidden: true,
@@ -1584,13 +1618,7 @@ function loadStockTestResultsTable(table, options) {
         var url = `/api/stock/test/${pk}/`;
 
         constructForm(url, {
-            fields: {
-                test: {},
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {},
-            },
+            fields: stockItemTestResultFields(),
             title: '{% trans "Edit Test Result" %}',
             onSuccess: reloadTestTable,
         });
@@ -2860,7 +2888,9 @@ function uninstallStockItem(installed_item_id, options={}) {
                         structural: false,
                     }
                 },
-                note: {},
+                note: {
+                    icon: 'fa-sticky-note',
+                },
             },
             preFormContent: function(opts) {
                 var html = '';
