@@ -479,6 +479,9 @@ function completeBuildOutputs(build_id, outputs, options={}) {
             output_html += `{% trans "Serial Number" %}: ${output.serial}`;
         } else {
             output_html += `{% trans "Quantity" %}: ${output.quantity}`;
+            if (output.part_detail && output.part_detail.units) {
+                output_html += ` ${output.part_detail.units}  `;
+            }
         }
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
@@ -637,6 +640,9 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
             output_html += `{% trans "Serial Number" %}: ${output.serial}`;
         } else {
             output_html += `{% trans "Quantity" %}: ${output.quantity}`;
+            if (output.part_detail && output.part_detail.units) {
+                output_html += ` ${output.part_detail.units}  `;
+            }
         }
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
@@ -1247,6 +1253,9 @@ function loadBuildOutputTable(build_info, options={}) {
                         text = `{% trans "Serial Number" %}: ${row.serial}`;
                     } else {
                         text = `{% trans "Quantity" %}: ${row.quantity}`;
+                        if (row.part_detail && row.part_detail.units) {
+                            text += ` <small>${row.part_detail.units}</small>`;
+                        }
                     }
 
                     if (row.batch) {
@@ -1748,6 +1757,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                                 text = `{% trans "Serial Number" %}: ${serial}`;
                             } else {
                                 text = `{% trans "Quantity" %}: ${row.quantity}`;
+                                if (row.part_detail && row.part_detail.units) {
+                                    text += ` <small>${row.part_detail.units}</small>`;
+                                }
                             }
 
                             var pk = row.stock_item || row.pk;
@@ -1880,6 +1892,14 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 title: '{% trans "Quantity Per" %}',
                 sortable: true,
                 switchable: false,
+                formatter: function(value, row) {
+                    var text = value;
+
+                    if (row.sub_part_detail && row.sub_part_detail.units) {
+                        text += ` <small>${row.sub_part_detail.units}</small>`;
+                    }
+                    return text;
+                }
             },
             {
                 field: 'available_stock',
@@ -1903,6 +1923,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                     if (available_stock > 0) {
                         text += `${available_stock}`;
+                        if (row.sub_part_detail && row.sub_part_detail.units) {
+                            text += ` <small>${row.sub_part_detail.units}</small>`;
+                        }
                     }
 
                     var icons = '';
@@ -1953,7 +1976,11 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 formatter: function(value, row) {
                     var required = requiredQuantity(row);
                     var allocated = row.consumable ? required : allocatedQuantity(row);
-                    return makeProgressBar(allocated, required);
+                    var progressbar_text = `${allocated} / ${required}`;
+                    if (row.sub_part_detail && row.sub_part_detail.units) {
+                        progressbar_text += ` ${row.sub_part_detail.units}`;
+                    }
+                    return makeProgressBar(allocated, required, {text: progressbar_text});
                 },
                 sorter: function(valA, valB, rowA, rowB) {
                     // Custom sorting function for progress bars
