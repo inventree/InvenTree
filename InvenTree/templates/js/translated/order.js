@@ -3079,6 +3079,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
         showColumns: true,
         detailView: true,
         detailViewByClick: false,
+        buttons: constructExpandCollapseButtons(table),
         detailFilter: function(index, row) {
             return row.allocations.length > 0;
         },
