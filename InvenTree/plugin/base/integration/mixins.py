@@ -295,11 +295,14 @@ class ValidationMixin:
         """
         return None
 
-    def validate_serial_number(self, serial: str):
-        """Validate the supplied serial number
+    def validate_serial_number(self, serial: str, **kwargs):
+        """Validate the supplied serial number.
 
         Arguments:
             serial: The proposed serial number (string)
+
+        kwargs:
+            part: The Part instance for which this serial number is being validated
 
         Returns:
             None or True

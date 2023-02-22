@@ -538,7 +538,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return result
 
-    def validate_serial_number(self, serial: str, stock_item=None, check_duplicates=True, raise_error=False):
+    def validate_serial_number(self, serial: str, stock_item=None, check_duplicates=True, raise_error=False, **kwargs):
         """Validate a serial number against this Part instance.
 
         Note: This function is exposed to any Validation plugins, and thus can be customized.
@@ -563,6 +563,8 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         serial = str(serial).strip()
 
+        kwargs['part'] = self
+
         # First, throw the serial number against each of the loaded validation plugins
         from plugin.registry import registry
 
@@ -570,7 +572,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             for plugin in registry.with_mixin('validation'):
                 # Run the serial number through each custom validator
                 # If the plugin returns 'True' we will skip any subsequent validation
-                if plugin.validate_serial_number(serial):
+                if plugin.validate_serial_number(serial, **kwargs):
                     return True
         except ValidationError as exc:
             if raise_error:
@@ -620,7 +622,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         conflicts = []
 
         for serial in serials:
-            if not self.validate_serial_number(serial):
+            if not self.validate_serial_number(serial, part=self):
                 conflicts.append(serial)
 
         return conflicts
