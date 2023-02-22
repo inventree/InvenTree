@@ -50,6 +50,8 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         - Name must be shorter than the description field
         - Name cannot contain illegal characters
+
+        These examples are silly, but serve to demonstrate how the feature could be used
         """
 
         if len(part.description) < len(name):
@@ -62,13 +64,19 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
                 raise ValidationError(f"Illegal character in part name: '{c}'")
 
     def validate_part_ipn(self, ipn: str, part):
-        """Validate part IPN"""
+        """Validate part IPN
+
+        These examples are silly, but serve to demonstrate how the feature could be used
+        """
 
         if self.get_setting('IPN_MUST_CONTAIN_Q') and 'Q' not in ipn:
             raise ValidationError("IPN must contain 'Q'")
 
     def validate_serial_number(self, serial: str, part):
-        """Validate serial number for a given StockItem"""
+        """Validate serial number for a given StockItem
+
+        These examples are silly, but serve to demonstrate how the feature could be used
+        """
 
         if self.get_setting('SERIAL_MUST_BE_PALINDROME'):
             if serial != serial[::-1]:
@@ -79,16 +87,18 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             raise ValidationError("Serial number must start with same letter as part")
 
     def validate_batch_code(self, batch_code: str, item):
-        """Ensure that a particular batch code meets specification"""
+        """Ensure that a particular batch code meets specification.
+
+        These examples are silly, but serve to demonstrate how the feature could be used
+        """
 
         prefix = self.get_setting('BATCH_CODE_PREFIX')
 
         if not batch_code.startswith(prefix):
             raise ValidationError(f"Batch code must start with '{prefix}'")
 
-        if not item.location or not item.location.parent:
-            if not batch_code.startswith('T'):
-                raise ValidationError("Batch code must start with 'T' for a top level location")
+        if len(batch_code) > len(item.part.description):
+            raise ValidationError("Batch code cannot be longer than item description")
 
     def generate_batch_code(self):
         """Generate a new batch code."""
