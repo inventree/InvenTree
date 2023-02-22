@@ -2231,7 +2231,14 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
     var target = options.filter_target || '#filter-list-purchase-order-lines';
 
-    setupFilterList('purchaseorderlineitem', $(table), target, {download: true});
+    setupFilterList(
+        'purchaseorderlineitem',
+        $(table),
+        target,
+        {
+            download: true
+        }
+    );
 
     function setupCallbacks() {
         if (options.allow_edit) {
@@ -2596,7 +2603,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
     var filter_target = options.filter_target || '#filter-list-purchase-order-extra-lines';
 
-    setupFilterList('purchaseorderextraline', $(table), filter_target);
+    setupFilterList('purchaseorderextraline', $(table), filter_target, {download: true});
 
     // Table columns to display
     var columns = [
@@ -3072,6 +3079,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
         showColumns: true,
         detailView: true,
         detailViewByClick: false,
+        buttons: constructExpandCollapseButtons(table),
         detailFilter: function(index, row) {
             return row.allocations.length > 0;
         },
@@ -3871,7 +3879,14 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     var filter_target = options.filter_target || '#filter-list-sales-order-lines';
 
-    setupFilterList('salesorderlineitem', $(table), filter_target);
+    setupFilterList(
+        'salesorderlineitem',
+        $(table),
+        filter_target,
+        {
+            download: true,
+        }
+    );
 
     // Is the order pending?
     var pending = options.pending;
@@ -4333,6 +4348,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         uniqueId: 'pk',
         detailView: show_detail,
         detailViewByClick: false,
+        buttons: constructExpandCollapseButtons(table),
         detailFilter: function(index, row) {
             if (pending) {
                 // Order is pending
@@ -4395,7 +4411,7 @@ function loadSalesOrderExtraLineTable(table, options={}) {
 
     var filter_target = options.filter_target || '#filter-list-sales-order-extra-lines';
 
-    setupFilterList('salesorderextraline', $(table), filter_target);
+    setupFilterList('salesorderextraline', $(table), filter_target, {download: true});
 
     // Table columns to display
     var columns = [
