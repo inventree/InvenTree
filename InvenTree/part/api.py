@@ -2,7 +2,6 @@
 
 import functools
 
-from django.db import transaction
 from django.db.models import Count, F, Q
 from django.http import JsonResponse
 from django.urls import include, path, re_path
@@ -10,9 +9,8 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, serializers, status
+from rest_framework import filters, permissions, serializers, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 import order.models
@@ -38,7 +36,7 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartRelated, PartSellPriceBreak,
-                     PartStocktake, PartTestTemplate)
+                     PartStocktake, PartStocktakeReport, PartTestTemplate)
 
 
 class CategoryList(APIDownloadMixin, ListCreateAPI):
@@ -1205,35 +1203,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         else:
             return Response(data)
 
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        """We wish to save the user who created this part!
-
-        Note: Implementation copied from DRF class CreateModelMixin
-        """
-        # TODO: Unit tests for this function!
-
-        # Clean up input data
-        data = self.clean_data(request.data)
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-
-        part = serializer.save()
-        part.creation_user = self.request.user
-
-        # Optionally copy templates from category or parent category
-        copy_templates = {
-            'main': str2bool(data.get('copy_category_templates', False)),
-            'parent': str2bool(data.get('copy_parent_templates', False))
-        }
-
-        part.save(**{'add_category_templates': copy_templates})
-
-        headers = self.get_success_headers(serializer.data)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset object"""
         queryset = super().get_queryset(*args, **kwargs)
@@ -1342,15 +1311,11 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         # Does the user wish to filter by category?
         cat_id = params.get('category', None)
 
-        if cat_id is None:
-            # No category filtering if category is not specified
-            pass
-
-        else:
+        if cat_id is not None:
             # Category has been specified!
             if isNull(cat_id):
                 # A 'null' category is the top-level category
-                if cascade is False:
+                if not cascade:
                     # Do not cascade, only list parts in the top-level category
                     queryset = queryset.filter(category=None)
 
@@ -1392,20 +1357,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
                 parts_needed_to_complete_builds += [part.pk for part in build.required_parts_to_complete_build]
 
             queryset = queryset.filter(pk__in=parts_needed_to_complete_builds)
-
-        # Optionally limit the maximum number of returned results
-        # e.g. for displaying "recent part" list
-        max_results = params.get('max_results', None)
-
-        if max_results is not None:
-            try:
-                max_results = int(max_results)
-
-                if max_results > 0:
-                    queryset = queryset[:max_results]
-
-            except (ValueError):
-                pass
 
         return queryset
 
@@ -1616,9 +1567,11 @@ class PartStocktakeList(ListCreateAPI):
 
     ordering_fields = [
         'part',
+        'item_count',
         'quantity',
         'date',
         'user',
+        'pk',
     ]
 
     # Reverse date ordering by default
@@ -1633,10 +1586,46 @@ class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PartStocktake.objects.all()
     serializer_class = part_serializers.PartStocktakeSerializer
+
+
+class PartStocktakeReportList(ListAPI):
+    """API endpoint for listing part stocktake report information"""
+
+    queryset = PartStocktakeReport.objects.all()
+    serializer_class = part_serializers.PartStocktakeReportSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        'date',
+        'pk',
+    ]
+
+    # Newest first, by default
+    ordering = '-pk'
+
+
+class PartStocktakeReportGenerate(CreateAPI):
+    """API endpoint for manually generating a new PartStocktakeReport"""
+
+    serializer_class = part_serializers.PartStocktakeReportGenerateSerializer
+
     permission_classes = [
-        IsAdminUser,
+        permissions.IsAuthenticated,
         RolePermission,
     ]
+
+    role_required = 'stocktake'
+
+    def get_serializer_context(self):
+        """Extend serializer context data"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
 
 
 class BomFilter(rest_filters.FilterSet):
@@ -2056,6 +2045,12 @@ part_api_urls = [
 
     # Part stocktake data
     re_path(r'^stocktake/', include([
+
+        path(r'report/', include([
+            path('generate/', PartStocktakeReportGenerate.as_view(), name='api-part-stocktake-report-generate'),
+            re_path(r'^.*$', PartStocktakeReportList.as_view(), name='api-part-stocktake-report-list'),
+        ])),
+
         re_path(r'^(?P<pk>\d+)/', PartStocktakeDetail.as_view(), name='api-part-stocktake-detail'),
         re_path(r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
     ])),
@@ -2092,9 +2087,6 @@ part_api_urls = [
 
         # BOM download
         re_path(r'^bom-download/?', views.BomDownload.as_view(), name='api-bom-download'),
-
-        # QR code download
-        re_path(r'^qr_code/?', views.PartQRCode.as_view(), name='api-part-qr'),
 
         # Old pricing endpoint
         re_path(r'^pricing2/', views.PartPricing.as_view(), name='part-pricing'),

@@ -84,7 +84,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
         RuleSetInline,
     ]
 
-    list_display = ('name', 'admin', 'part_category', 'part', 'stock_location',
+    list_display = ('name', 'admin', 'part_category', 'part', 'stocktake', 'stock_location',
                     'stock_item', 'build', 'purchase_order', 'sales_order')
 
     def get_rule_set(self, obj, rule_set_type):
@@ -136,6 +136,10 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
     def part(self, obj):
         """Return the ruleset for the Part role"""
         return self.get_rule_set(obj, 'part')
+
+    def stocktake(self, obj):
+        """Return the ruleset for the Stocktake role"""
+        return self.get_rule_set(obj, 'stocktake')
 
     def stock_location(self, obj):
         """Return the ruleset for the StockLocation role"""

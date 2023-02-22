@@ -206,28 +206,7 @@ src="{% static 'img/blank_image.png' %}"
 
 $("#edit-order").click(function() {
 
-    constructForm('{% url "api-so-detail" order.pk %}', {
-        fields: {
-            reference: {
-                icon: 'fa-hashtag',
-            },
-            {% if order.lines.count == 0 and order.status == SalesOrderStatus.PENDING %}
-            customer: {
-            },
-            {% endif %}
-            customer_reference: {},
-            description: {},
-            target_date: {
-                icon: 'fa-calendar-alt',
-            },
-            link: {
-                icon: 'fa-link',
-            },
-            responsible: {
-                icon: 'fa-user',
-            },
-        },
-        title: '{% trans "Edit Sales Order" %}',
+    editSalesOrder({{ order.pk }}, {
         reload: true,
     });
 });

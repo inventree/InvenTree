@@ -7,8 +7,6 @@ from stock import views
 location_urls = [
 
     re_path(r'^(?P<pk>\d+)/', include([
-        re_path(r'^qr_code/?', views.StockLocationQRCode.as_view(), name='stock-location-qr'),
-
         # Anything else - direct to the location detail view
         re_path('^.*$', views.StockLocationDetail.as_view(), name='stock-location-detail'),
     ])),
@@ -16,8 +14,6 @@ location_urls = [
 ]
 
 stock_item_detail_urls = [
-    re_path(r'^qr_code/', views.StockItemQRCode.as_view(), name='stock-item-qr'),
-
     # Anything else - direct to the item detail view
     re_path('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
 ]

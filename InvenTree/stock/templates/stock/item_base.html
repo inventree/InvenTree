@@ -187,7 +187,10 @@
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Purchase Price" %}</td>
-        <td>{% include "price_data.html" with price=item.purchase_price %}</td>
+        <td>
+            {% include "price_data.html" with price=item.purchase_price %}
+            {% if item.part.units %} / {{ item.part.units }}{% endif %}
+        </td>
     </tr>
     {% endif %}
     {% if item.parent %}
@@ -523,10 +526,10 @@ $('#stock-edit-status').click(function () {
 {% endif %}
 
 $("#show-qr-code").click(function() {
-    launchModalForm("{% url 'stock-item-qr' item.id %}",
-    {
-        no_post: true,
-    });
+    showQRDialog(
+        '{% trans "Stock Item QR Code" %}',
+        '{"stockitem": {{ item.pk }}}',
+    );
 });
 
 {% if barcodes %}
@@ -637,7 +640,9 @@ $("#stock-return-from-customer").click(function() {
                 value: {{ item.part.default_location.pk }},
                 {% endif %}
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
         },
         method: 'POST',
         title: '{% trans "Return to Stock" %}',

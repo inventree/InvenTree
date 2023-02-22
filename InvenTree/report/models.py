@@ -180,6 +180,10 @@ class ReportTemplateBase(ReportBase):
     Able to be passed context data
     """
 
+    class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+        abstract = True
+
     # Pass a single top-level object to the report template
     object_to_print = None
 
@@ -254,11 +258,6 @@ class ReportTemplateBase(ReportBase):
         verbose_name=_('Enabled'),
         help_text=_('Report template is enabled'),
     )
-
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-
-        abstract = True
 
 
 class TestReport(ReportTemplateBase):

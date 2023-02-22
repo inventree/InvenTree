@@ -77,8 +77,6 @@ class GlobalSettingsSerializer(SettingsSerializer):
 class UserSettingsSerializer(SettingsSerializer):
     """Serializer for the InvenTreeUserSetting model."""
 
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-
     class Meta:
         """Meta options for UserSettingsSerializer."""
 
@@ -96,6 +94,8 @@ class UserSettingsSerializer(SettingsSerializer):
             'api_url',
             'typ',
         ]
+
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
 
 
 class GenericReferencedSettingSerializer(SettingsSerializer):
@@ -140,28 +140,41 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
 class NotificationMessageSerializer(InvenTreeModelSerializer):
     """Serializer for the InvenTreeUserSetting model."""
 
+    class Meta:
+        """Meta options for NotificationMessageSerializer."""
+
+        model = NotificationMessage
+        fields = [
+            'pk',
+            'target',
+            'source',
+            'user',
+            'category',
+            'name',
+            'message',
+            'creation',
+            'age',
+            'age_human',
+            'read',
+        ]
+
+        read_only_fields = [
+            'category',
+            'name',
+            'message',
+            'creation',
+            'age',
+            'age_human',
+        ]
+
     target = serializers.SerializerMethodField(read_only=True)
-
     source = serializers.SerializerMethodField(read_only=True)
-
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    category = serializers.CharField(read_only=True)
-
-    name = serializers.CharField(read_only=True)
-
-    message = serializers.CharField(read_only=True)
-
-    creation = serializers.CharField(read_only=True)
-
-    age = serializers.IntegerField(read_only=True)
-
-    age_human = serializers.CharField(read_only=True)
-
     read = serializers.BooleanField()
 
     def get_target(self, obj):
         """Function to resolve generic object reference to target."""
+
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
         if target and 'link' not in target:
@@ -184,29 +197,9 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
         """Function to resolve generic object reference to source."""
         return get_objectreference(obj, 'source_content_type', 'source_object_id')
 
-    class Meta:
-        """Meta options for NotificationMessageSerializer."""
-
-        model = NotificationMessage
-        fields = [
-            'pk',
-            'target',
-            'source',
-            'user',
-            'category',
-            'name',
-            'message',
-            'creation',
-            'age',
-            'age_human',
-            'read',
-        ]
-
 
 class NewsFeedEntrySerializer(InvenTreeModelSerializer):
     """Serializer for the NewsFeedEntry model."""
-
-    read = serializers.BooleanField()
 
     class Meta:
         """Meta options for NewsFeedEntrySerializer."""
@@ -222,6 +215,8 @@ class NewsFeedEntrySerializer(InvenTreeModelSerializer):
             'summary',
             'read',
         ]
+
+    read = serializers.BooleanField()
 
 
 class ConfigSerializer(serializers.Serializer):
