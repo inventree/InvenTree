@@ -4347,6 +4347,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         uniqueId: 'pk',
         detailView: show_detail,
         detailViewByClick: false,
+        buttons: constructExpandCollapseButtons(table),
         detailFilter: function(index, row) {
             if (pending) {
                 // Order is pending
