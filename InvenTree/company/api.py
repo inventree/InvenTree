@@ -195,6 +195,15 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ManufacturerPartSerializer
 
 
+class ManufacturerPartMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating ManufacturerPart metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a Company"""
+        return MetadataSerializer(ManufacturerPart, *args, **kwargs)
+
+    queryset = ManufacturerPart.objects.all()
+
 class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a ManufacturerPartAttachment (file upload)."""
 
@@ -510,7 +519,10 @@ manufacturer_part_api_urls = [
         re_path(r'^.*$', ManufacturerPartParameterList.as_view(), name='api-manufacturer-part-parameter-list'),
     ])),
 
-    re_path(r'^(?P<pk>\d+)/?', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
+    re_path(r'^(?P<pk>\d+)/?', include([
+        re_path('^metadata/', ManufacturerPartMetadata.as_view(), name='api-manufacturer-part-detail'),
+        re_path('^.*$', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
+    ])),
 
     # Catch anything else
     re_path(r'^.*$', ManufacturerPartList.as_view(), name='api-manufacturer-part-list'),
