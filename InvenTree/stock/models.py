@@ -529,7 +529,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
 
         for plugin in registry.with_mixin('validation'):
             try:
-                plugin.validate_batch_code(self.batch, stock_item=self)
+                plugin.validate_batch_code(self.batch, self)
             except ValidationError as exc:
                 raise ValidationError({
                     'batch': exc.message
