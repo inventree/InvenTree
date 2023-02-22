@@ -67,17 +67,16 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if self.get_setting('IPN_MUST_CONTAIN_Q') and 'Q' not in ipn:
             raise ValidationError("IPN must contain 'Q'")
 
-    def validate_serial_number(self, serial: str, **kwargs):
+    def validate_serial_number(self, serial: str, part):
         """Validate serial number for a given StockItem"""
 
         if self.get_setting('SERIAL_MUST_BE_PALINDROME'):
             if serial != serial[::-1]:
                 raise ValidationError("Serial must be a palindrome")
 
-        if part := kwargs.get('part', None):
-            # Serial must start with the same letter as the part, for some reason
-            if serial[0] != part.name[0]:
-                raise ValidationError("Serial number must start with same letter as part")
+        # Serial must start with the same letter as the linked part, for some reason
+        if serial[0] != part.name[0]:
+            raise ValidationError("Serial number must start with same letter as part")
 
     def validate_batch_code(self, batch_code: str, item):
         """Ensure that a particular batch code meets specification"""

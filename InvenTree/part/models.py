@@ -626,7 +626,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             for plugin in registry.with_mixin('validation'):
                 # Run the serial number through each custom validator
                 # If the plugin returns 'True' we will skip any subsequent validation
-                if plugin.validate_serial_number(serial, **kwargs):
+                if plugin.validate_serial_number(serial, self):
                     return True
         except ValidationError as exc:
             if raise_error:
