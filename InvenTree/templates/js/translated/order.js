@@ -2231,7 +2231,14 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
     var target = options.filter_target || '#filter-list-purchase-order-lines';
 
-    setupFilterList('purchaseorderlineitem', $(table), target, {download: true});
+    setupFilterList(
+        'purchaseorderlineitem',
+        $(table),
+        target,
+        {
+            download: true
+        }
+    );
 
     function setupCallbacks() {
         if (options.allow_edit) {
@@ -3871,7 +3878,14 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     var filter_target = options.filter_target || '#filter-list-sales-order-lines';
 
-    setupFilterList('salesorderlineitem', $(table), filter_target);
+    setupFilterList(
+        'salesorderlineitem',
+        $(table),
+        filter_target,
+        {
+            download: true,
+        }
+    );
 
     // Is the order pending?
     var pending = options.pending;

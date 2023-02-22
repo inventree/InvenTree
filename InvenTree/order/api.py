@@ -27,7 +27,7 @@ from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from order.admin import (PurchaseOrderLineItemResource, PurchaseOrderResource,
-                         SalesOrderResource)
+                         SalesOrderLineItemResource, SalesOrderResource)
 from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import Owner
@@ -857,7 +857,7 @@ class SalesOrderLineItemFilter(rest_filters.FilterSet):
         return queryset
 
 
-class SalesOrderLineItemList(ListCreateAPI):
+class SalesOrderLineItemList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrderLineItem objects."""
 
     queryset = models.SalesOrderLineItem.objects.all()
@@ -897,6 +897,16 @@ class SalesOrderLineItemList(ListCreateAPI):
         queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
 
         return queryset
+
+    def download_queryset(self, queryset, export_format):
+        """Download the requested queryset as a file"""
+
+        dataset = SalesOrderLineItemResource().export(queryset=queryset)
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_SalesOrderItems.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
