@@ -2603,7 +2603,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
     var filter_target = options.filter_target || '#filter-list-purchase-order-extra-lines';
 
-    setupFilterList('purchaseorderextraline', $(table), filter_target);
+    setupFilterList('purchaseorderextraline', $(table), filter_target, {download: true});
 
     // Table columns to display
     var columns = [
@@ -4411,7 +4411,7 @@ function loadSalesOrderExtraLineTable(table, options={}) {
 
     var filter_target = options.filter_target || '#filter-list-sales-order-extra-lines';
 
-    setupFilterList('salesorderextraline', $(table), filter_target);
+    setupFilterList('salesorderextraline', $(table), filter_target, {download: true});
 
     // Table columns to display
     var columns = [
