@@ -617,8 +617,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         serial = str(serial).strip()
 
-        kwargs['part'] = self
-
         # First, throw the serial number against each of the loaded validation plugins
         from plugin.registry import registry
 

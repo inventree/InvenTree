@@ -125,7 +125,7 @@
   pk: 10000
   fields:
     name: 'Chair Template'
-    description: 'A chair'
+    description: 'A chair, which is actually just a template part'
     is_template: True
     trackable: true
     salable: true
@@ -176,6 +176,7 @@
   pk: 10004
   fields:
     name: 'Green chair variant'
+    description: 'A green chair, which is a variant of the chair template'
     variant_of: 10003
     is_template: true
     category: 7

@@ -38,6 +38,12 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             'default': False,
             'validator': bool,
         },
+        'SERIAL_MUST_MATCH_PART': {
+            'name': 'Serial must match part',
+            'description': 'First letter of serial number must match first letter of part name',
+            'default': False,
+            'validator': bool,
+        },
         'BATCH_CODE_PREFIX': {
             'name': 'Batch prefix',
             'description': 'Required prefix for batch code',
@@ -82,9 +88,10 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             if serial != serial[::-1]:
                 raise ValidationError("Serial must be a palindrome")
 
-        # Serial must start with the same letter as the linked part, for some reason
-        if serial[0] != part.name[0]:
-            raise ValidationError("Serial number must start with same letter as part")
+        if self.get_setting('SERIAL_MUST_MATCH_PART'):
+            # Serial must start with the same letter as the linked part, for some reason
+            if serial[0] != part.name[0]:
+                raise ValidationError("Serial number must start with same letter as part")
 
     def validate_batch_code(self, batch_code: str, item):
         """Ensure that a particular batch code meets specification.
@@ -97,8 +104,9 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if not batch_code.startswith(prefix):
             raise ValidationError(f"Batch code must start with '{prefix}'")
 
-        if len(batch_code) > len(item.part.description):
-            raise ValidationError("Batch code cannot be longer than item description")
+        if len(item.part.description) > 0 and len(batch_code) > len(item.part.description):
+            print(batch_code, ">", item.part.description)
+            raise ValidationError("Batch code cannot be longer than part description")
 
     def generate_batch_code(self):
         """Generate a new batch code."""

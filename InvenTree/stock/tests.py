@@ -577,7 +577,7 @@ class StockTest(StockTestBase):
         """Tests for stock serialization."""
         p = Part.objects.create(
             name='trackable part',
-            description='trackable part',
+            description='A trackable part which can be tracked',
             trackable=True,
         )
 
@@ -1087,8 +1087,14 @@ class TestResultTest(StockTestBase):
         item.pk = None
         item.serial = None
         item.quantity = 50
-        item.batch = "B344"
 
+        # Try with a "long" batch code which will fail due to validatoin plugin
+        item.batch = "B344" * 10
+
+        with self.assertRaises(ValidationError):
+            item.save()
+
+        item.batch = "B123"
         item.save()
 
         # Do some tests!
