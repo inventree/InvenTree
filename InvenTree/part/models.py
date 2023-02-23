@@ -3512,7 +3512,7 @@ class BomItem(DataImportMixin, models.Model):
 
     inherited = models.BooleanField(
         default=False,
-        verbose_name=_('Inherited'),
+        verbose_name=_('Gets inherited'),
         help_text=_('This BOM item is inherited by BOMs for variant parts'),
     )
 
