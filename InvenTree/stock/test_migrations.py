@@ -99,9 +99,33 @@ class TestScheduledForDeletionMigration(MigratorTestCase):
                     scheduled_for_deletion=True
                 )
 
+        # For extra points, create some parent-child relationships between stock items
+        part = Part.objects.first()
+
+        item_1 = StockItem.objects.create(
+            part=part,
+            quantity=100,
+            level=0, tree_id=0,
+            lft=0, rght=0,
+            scheduled_for_deletion=True,
+        )
+
+        for ii in range(3):
+            StockItem.objects.create(
+                part=part,
+                quantity=200,
+                level=0, tree_id=0,
+                lft=0, rght=0,
+                scheduled_for_deletion=False,
+                parent=item_1,
+            )
+
+        self.assertEqual(StockItem.objects.count(), 29)
+
     def test_migration(self):
         """Test that all stock items were actually removed"""
 
         StockItem = self.new_state.apps.get_model('stock', 'stockitem')
 
-        self.assertEqual(StockItem.objects.count(), 0)
+        # All the "scheduled for deletion" items have been removed
+        self.assertEqual(StockItem.objects.count(), 3)
