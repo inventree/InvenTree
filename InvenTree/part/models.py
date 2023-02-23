@@ -1718,10 +1718,8 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         Ref: https://github.com/inventree/InvenTree/pull/3986
         """
 
-        try:
-            self.pricing.schedule_for_update()
-        except (PartPricing.DoesNotExist, IntegrityError):
-            pass
+        pricing = self.pricing
+        pricing.schedule_for_update()
 
     def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
         """Return a simplified pricing string for this part.
@@ -2295,9 +2293,11 @@ class PartPricing(common.models.MetaMixin):
         """Schedule this pricing to be updated"""
 
         try:
-            self.refresh_from_db()
+            if self.pk:
+                self.refresh_from_db()
         except (PartPricing.DoesNotExist, IntegrityError):
             # Error thrown if this PartPricing instance has already been removed
+            logger.warning(f"Error refreshing PartPricing instance for part '{self.part}'")
             return
 
         # Ensure that the referenced part still exists in the database
@@ -2305,6 +2305,7 @@ class PartPricing(common.models.MetaMixin):
             p = self.part
             p.refresh_from_db()
         except IntegrityError:
+            logger.error(f"Could not update PartPricing as Part '{self.part}' does not exist")
             return
 
         if self.scheduled_for_update:
@@ -2322,6 +2323,7 @@ class PartPricing(common.models.MetaMixin):
             self.save()
         except IntegrityError:
             # An IntegrityError here likely indicates that the referenced part has already been deleted
+            logger.error(f"Could not save PartPricing for part '{self.part}' to the database")
             return
 
         import part.tasks as part_tasks
