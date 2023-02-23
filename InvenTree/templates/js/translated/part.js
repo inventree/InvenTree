@@ -624,27 +624,32 @@ function partStockLabel(part, options={}) {
     }
 
     // Check for demand from unallocated build orders
-    var required = null;
+    var required_build_order_quantity = null;
+    var required_sales_order_quantity = null;
     inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
         async: false,
         success: function(response) {
-            required = 0;
+            required_build_order_quantity = 0;
             if (response.required_build_order_quantity) {
-                required = response.required_build_order_quantity;
+                required_build_order_quantity = response.required_build_order_quantity;
+            }
+            required_sales_order_quantity = 0;
+            if (response.required_sales_order_quantity) {
+                required_sales_order_quantity = response.required_sales_order_quantity;
             }
         }
     });
-    if (required == null) {
+    if ((required_build_order_quantity == null) || (required_sales_order_quantity == null)) {
         console.error(`Error loading part requirements for part ${part.pk}`);
         return;
     }
-    var demand = required - part.allocated_to_build_orders;
+    var demand = (required_build_order_quantity - part.allocated_to_build_orders) + (required_sales_order_quantity - part.allocated_to_sales_orders);
     if (demand) {
         text += ` | {% trans "Demand" %}: ${demand}`;
     }
 
     // Determine badge color based on overall stock health
-    var stock_health = part.in_stock + part.building + part.ordering - part.allocated_to_build_orders - part.minimum_stock - demand;
+    var stock_health = part.in_stock + part.building + part.ordering - part.minimum_stock - required_build_order_quantity - required_sales_order_quantity;
     var bg_class = '';
     if (stock_health < 0) {
         // Unsatisfied demand and/or below minimum stock
