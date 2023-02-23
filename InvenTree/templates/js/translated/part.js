@@ -644,7 +644,7 @@ function partStockLabel(part, options={}) {
     }
 
     // Determine badge color based on overall stock health
-    var stock_health = part.in_stock + part.building + part.ordering - part.minimum_stock - demand;
+    var stock_health = part.in_stock + part.building + part.ordering - part.allocated_to_build_orders - part.minimum_stock - demand;
     var bg_class = '';
     if (stock_health < 0) {
         // Unsatisfied demand and/or below minimum stock
