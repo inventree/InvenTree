@@ -73,7 +73,7 @@ function getAvailableTableFilters(tableKey) {
             },
             inherited: {
                 type: 'bool',
-                title: '{% trans "Inherited" %}',
+                title: '{% trans "Gets inherited" %}',
             },
             allow_variants: {
                 type: 'bool',
@@ -105,7 +105,7 @@ function getAvailableTableFilters(tableKey) {
         return {
             'inherited': {
                 type: 'bool',
-                title: '{% trans "Inherited" %}',
+                title: '{% trans "Gets inherited" %}',
             },
             'optional': {
                 type: 'bool',
