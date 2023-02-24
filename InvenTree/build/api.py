@@ -66,9 +66,9 @@ class BuildFilter(rest_filters.FilterSet):
 
         return queryset
 
-    assigned_to = rest_filters.NumberFilter(label='assigned_to', method='filter_assigned_to')
+    assigned_to = rest_filters.NumberFilter(label='responsible', method='filter_responsible')
 
-    def filter_assigned_to(self, queryset, name, value):
+    def filter_responsible(self, queryset, name, value):
         """Filter by orders which are assigned to the specified owner."""
         owners = []
         owners.append(Owner.objects.get(pk=value))
