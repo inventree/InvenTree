@@ -16,6 +16,7 @@ from InvenTree.tasks import offload_task
 from part.models import Part
 from plugin.base.label import label as plugin_label
 from plugin.registry import registry
+from plugin.serializers import MetadataSerializer
 from stock.models import StockItem, StockLocation
 
 from .models import PartLabel, StockItemLabel, StockLocationLabel
