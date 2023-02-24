@@ -292,6 +292,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'date',
                 title: '{% trans "Expiry Date after" %}',
             },
+            external: {
+                type: 'bool',
+                title: '{% trans "External Location" %}',
+            }
         };
 
         // Optional filters if stock expiry functionality is enabled
