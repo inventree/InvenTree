@@ -1492,6 +1492,16 @@ class PartParameterTemplateDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
 
+class PartParameterTemplateMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating PartParameterTemplate metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return a MetadataSerializer pointing to the referenced PartParameterTemplate instance"""
+        return MetadataSerializer(PartParameterTemplate, *args, **kwargs)
+
+    queryset = PartParameterTemplate.objects.all()
+
+
 class PartParameterList(ListCreateAPI):
     """API endpoint for accessing a list of PartParameter objects.
 
@@ -2045,7 +2055,10 @@ part_api_urls = [
     # Base URL for PartParameter API endpoints
     re_path(r'^parameter/', include([
         path('template/', include([
-            re_path(r'^(?P<pk>\d+)/', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
+            re_path(r'^(?P<pk>\d+)/', include([
+                re_path(r'^metadata/?', PartParameterTemplateMetadata.as_view(), name='api-part-parameter-template-metadata'),
+                re_path(r'^.*$', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
+            ])),
             re_path(r'^.*$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
         ])),
 
