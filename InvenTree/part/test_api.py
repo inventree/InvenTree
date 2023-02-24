@@ -128,7 +128,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             for jj in range(10):
                 Part.objects.create(
                     name=f"Part xyz {jj}_{ii}",
-                    description="A test part",
+                    description="A test part with a description",
                     category=child
                 )
 
@@ -2418,7 +2418,7 @@ class BomItemTest(InvenTreeAPITestCase):
             # Create a variant part!
             variant = Part.objects.create(
                 name=f"Variant_{ii}",
-                description="A variant part",
+                description="A variant part, with a description",
                 component=True,
                 variant_of=sub_part
             )
@@ -2616,7 +2616,7 @@ class BomItemTest(InvenTreeAPITestCase):
             # Create a variant part
             vp = Part.objects.create(
                 name=f"Var {i}",
-                description="Variant part",
+                description="Variant part description field",
                 variant_of=bom_item.sub_part,
             )
 
