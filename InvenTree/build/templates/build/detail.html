@@ -281,11 +281,6 @@
                         </ul>
                     </div>
 
-                    {% if build.has_tracked_bom_items %}
-                    {% include "expand_rows.html" with label="outputs" %}
-                    {% include "collapse_rows.html" with label="outputs" %}
-                    {% endif %}
-
                     {% include "filter_list.html" with id='incompletebuilditems' %}
                 </div>
                 {% endif %}
