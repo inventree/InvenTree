@@ -181,8 +181,8 @@ class StockTest(StockTestBase):
         # Ensure that 'global uniqueness' setting is enabled
         InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', True, self.user)
 
-        part_a = Part.objects.create(name='A', description='A', trackable=True)
-        part_b = Part.objects.create(name='B', description='B', trackable=True)
+        part_a = Part.objects.create(name='A', description='A part with a description', trackable=True)
+        part_b = Part.objects.create(name='B', description='B part with a description', trackable=True)
 
         # Create a StockItem for part_a
         StockItem.objects.create(
@@ -581,6 +581,9 @@ class StockTest(StockTestBase):
             trackable=True,
         )
 
+        # Ensure we do not have unique serials enabled
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, None)
+
         item = StockItem.objects.create(
             part=p,
             quantity=1,
@@ -608,7 +611,7 @@ class StockTest(StockTestBase):
         """Unit tests for "large" serial numbers which exceed integer encoding."""
         p = Part.objects.create(
             name='trackable part',
-            description='trackable part',
+            description='A trackable part with really big serial numbers',
             trackable=True,
         )
 
@@ -720,6 +723,9 @@ class StockTest(StockTestBase):
         n = StockItem.objects.filter(part=25).count()
 
         self.assertEqual(item.quantity, 10)
+
+        # Ensure we do not have unique serials enabled
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, None)
 
         item.serializeStock(3, [1, 2, 3], self.user)
 
@@ -1088,8 +1094,8 @@ class TestResultTest(StockTestBase):
         item.serial = None
         item.quantity = 50
 
-        # Try with a "long" batch code which will fail due to validatoin plugin
-        item.batch = "B344" * 10
+        # Try with an invalid batch code (according to sample validatoin plugin)
+        item.batch = "X234"
 
         with self.assertRaises(ValidationError):
             item.save()

@@ -47,7 +47,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         'BATCH_CODE_PREFIX': {
             'name': 'Batch prefix',
             'description': 'Required prefix for batch code',
-            'default': '',
+            'default': 'B',
         }
     }
 
@@ -101,11 +101,10 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         prefix = self.get_setting('BATCH_CODE_PREFIX')
 
-        if not batch_code.startswith(prefix):
+        if len(batch_code) > 0 and not batch_code.startswith(prefix):
             raise ValidationError(f"Batch code must start with '{prefix}'")
 
         if len(item.part.description) > 0 and len(batch_code) > len(item.part.description):
-            print(batch_code, ">", item.part.description)
             raise ValidationError("Batch code cannot be longer than part description")
 
     def generate_batch_code(self):
