@@ -70,11 +70,10 @@ class BuildFilter(rest_filters.FilterSet):
 
     def filter_responsible(self, queryset, name, value):
         """Filter by orders which are assigned to the specified owner."""
-        owners = []
-        owners.append(Owner.objects.get(pk=value))
+        owners = list(Owner.objects.filter(pk=value))
 
         # if we query by a user, also find all ownerships through group memberships
-        if owners[0].label() == 'user':
+        if len(owners) > 0 and owners[0].label() == 'user':
             owners = Owner.get_owners_matching_user(User.objects.get(pk=owners[0].owner_id))
 
         queryset = queryset.filter(responsible__in=owners)
