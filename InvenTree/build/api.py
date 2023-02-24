@@ -2,7 +2,7 @@
 
 from django.urls import include, re_path
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import User
 
 from rest_framework import filters
 from rest_framework.exceptions import ValidationError
