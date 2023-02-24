@@ -440,11 +440,11 @@ def run_backup():
     time.sleep(random.randint(1, 5))
 
     # Check for records of previous backup attempts
-    last_attempt = InvenTreeSetting.get_setting('INVENTREE_BACKUP_ATTEMPT', '', cache=False)
-    last_success = InvenTreeSetting.get_setting('INVENTREE_BACKUP_SUCCESS', '', cache=False)
+    last_attempt = InvenTreeSetting.get_setting('_INVENTREE_BACKUP_ATTEMPT', '', cache=False)
+    last_success = InvenTreeSetting.get_setting('_INVENTREE_BACKUP_SUCCESS', '', cache=False)
 
     try:
-        backup_n_days = int(InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1, cache=False))
+        backup_n_days = int(InvenTreeSetting.get_setting('_INVENTREE_BACKUP_DAYS', 1, cache=False))
     except Exception:
         backup_n_days = 1
 
@@ -463,7 +463,7 @@ def run_backup():
             return
 
     # Record the timestamp of most recent backup attempt
-    InvenTreeSetting.set_setting('INVENTREE_BACKUP_ATTEMPT', datetime.now().isoformat(), None)
+    InvenTreeSetting.set_setting('_INVENTREE_BACKUP_ATTEMPT', datetime.now().isoformat(), None)
 
     if not last_attempt:
         # If there is no record of a previous attempt, exit quickly
@@ -489,7 +489,7 @@ def run_backup():
     call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
 
     # Record the timestamp of most recent backup success
-    InvenTreeSetting.set_setting('INVENTREE_BACKUP_SUCCESS', datetime.now().isoformat(), None)
+    InvenTreeSetting.set_setting('_INVENTREE_BACKUP_SUCCESS', datetime.now().isoformat(), None)
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
