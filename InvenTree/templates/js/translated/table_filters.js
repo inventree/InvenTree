@@ -338,6 +338,19 @@ function getAvailableTableFilters(tableKey) {
 
     // Filters for the "Build" table
     if (tableKey == 'build') {
+        var ownersList = {};
+        inventreeGet(`/api/user/owner/`, {}, {
+            async: false,
+            success: function(response) {
+                for (key in response) {
+                    var owner = response[key];
+                    ownersList[owner.pk] = {
+                        key: owner.pk,
+                        value: `${owner.name} (${owner.label})`,
+                    };
+                }
+            }
+        });
         return {
             status: {
                 title: '{% trans "Build status" %}',
@@ -354,6 +367,10 @@ function getAvailableTableFilters(tableKey) {
             assigned_to_me: {
                 type: 'bool',
                 title: '{% trans "Assigned to me" %}',
+            },
+            assigned_to: {
+                title: '{% trans "Responsible" %}',
+                options: ownersList,
             },
         };
     }
