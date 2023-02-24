@@ -243,7 +243,7 @@ function generateFilterInput(tableKey, filterKey) {
 
         // options can be an object or a function, in which case we need to run
         // this callback first
-        if (options instanceof Function){
+        if (options instanceof Function) {
             options = options();
         }
         for (var key in options) {
