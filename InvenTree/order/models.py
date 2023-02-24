@@ -919,7 +919,7 @@ class SalesOrderAttachment(InvenTreeAttachment):
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='attachments')
 
 
-class OrderLineItem(models.Model):
+class OrderLineItem(MetadataMixin, models.Model):
     """Abstract model for an order line item.
 
     Attributes:

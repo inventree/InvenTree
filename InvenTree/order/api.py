@@ -600,6 +600,16 @@ class PurchaseOrderLineItemDetail(RetrieveUpdateDestroyAPI):
         return queryset
 
 
+class PurchaseOrderLineItemMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating PurchaseOrderLineItem metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a Company"""
+        return MetadataSerializer(models.PurchaseOrderLineItem, *args, **kwargs)
+
+    queryset = models.PurchaseOrderLineItem.objects.all()
+
+
 class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
 
@@ -612,6 +622,16 @@ class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
+
+
+class PurchaseOrderExtraLineItemMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating PurchaseOrderExtraLineItem metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance"""
+        return MetadataSerializer(models.PurchaseOrderExtraLineItem, *args, **kwargs)
+
+    queryset = models.PurchaseOrderExtraLineItem.objects.all()
 
 
 class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
@@ -918,6 +938,16 @@ class SalesOrderLineItemList(ListCreateAPI):
     ]
 
 
+class SalesOrderLineItemMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating SalesOrderLineItem metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance"""
+        return MetadataSerializer(models.SalesOrderLineItem, *args, **kwargs)
+
+    queryset = models.SalesOrderLineItem.objects.all()
+
+
 class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
@@ -930,6 +960,16 @@ class SalesOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
     queryset = models.SalesOrderExtraLine.objects.all()
     serializer_class = serializers.SalesOrderExtraLineSerializer
+
+
+class SalesOrderExtraLineItemMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating SalesExtraOrderLineItem metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance"""
+        return MetadataSerializer(models.SalesExtraOrderLineItem, *args, **kwargs)
+
+    queryset = models.SalesOrderExtraLineItem.objects.all()
 
 
 class SalesOrderLineItemDetail(RetrieveUpdateDestroyAPI):
@@ -1357,13 +1397,19 @@ order_api_urls = [
 
     # API endpoints for purchase order line items
     re_path(r'^po-line/', include([
-        path('<int:pk>/', PurchaseOrderLineItemDetail.as_view(), name='api-po-line-detail'),
+        path('<int:pk>/', include([
+            re_path(r'^metadata/', PurchaseOrderLineItemMetadata.as_view(), name='api-po-line-metadata'),
+            re_path(r'^.*$', PurchaseOrderLineItemDetail.as_view(), name='api-po-line-detail'),
+        ])),
         re_path(r'^.*$', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
     ])),
 
     # API endpoints for purchase order extra line
     re_path(r'^po-extra-line/', include([
-        path('<int:pk>/', PurchaseOrderExtraLineDetail.as_view(), name='api-po-extra-line-detail'),
+        path('<int:pk>/', include([
+            re_path(r'^metadata/', PurchaseOrderExtraLineItemMetadata.as_view(), name='api-po-extra-line-metadata'),
+            re_path(r'^.*$', PurchaseOrderExtraLineDetail.as_view(), name='api-po-extra-line-detail'),
+        ])),
         path('', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'),
     ])),
 
@@ -1400,13 +1446,19 @@ order_api_urls = [
 
     # API endpoints for sales order line items
     re_path(r'^so-line/', include([
-        path('<int:pk>/', SalesOrderLineItemDetail.as_view(), name='api-so-line-detail'),
+        path('<int:pk>/', include([
+            re_path(r'^metadata/', SalesOrderLineItemMetadata.as_view(), name='api-so-line-metadata'),
+            re_path(r'^.*$', SalesOrderLineItemDetail.as_view(), name='api-so-line-detail'),
+        ])),
         path('', SalesOrderLineItemList.as_view(), name='api-so-line-list'),
     ])),
 
     # API endpoints for sales order extra line
     re_path(r'^so-extra-line/', include([
-        path('<int:pk>/', SalesOrderExtraLineDetail.as_view(), name='api-so-extra-line-detail'),
+        path('<int:pk>/', include([
+            re_path(r'^metadata/', SalesOrderExtraLineItemMetadata.as_view(), name='api-so-extra-line-metadata'),
+            re_path(r'^.*$', SalesOrderExtraLineDetail.as_view(), name='api-so-extra-line-detail'),
+        ])),
         path('', SalesOrderExtraLineList.as_view(), name='api-so-extra-line-list'),
     ])),
 
