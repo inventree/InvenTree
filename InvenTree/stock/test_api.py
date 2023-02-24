@@ -951,7 +951,7 @@ class StockItemTest(StockAPITestCase):
 
         # First, construct a set of template / variant parts
         master_part = part.models.Part.objects.create(
-            name='Master', description='Master part',
+            name='Master', description='Master part which has variants',
             category=category,
             is_template=True,
         )

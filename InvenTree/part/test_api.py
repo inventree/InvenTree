@@ -741,7 +741,7 @@ class PartAPITest(PartAPITestBase):
 
         # First, construct a set of template / variant parts
         master_part = Part.objects.create(
-            name='Master', description='Master part',
+            name='Master', description='Master part which has some variants',
             category=category,
             is_template=True,
         )
