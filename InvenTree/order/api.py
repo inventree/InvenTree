@@ -1197,6 +1197,16 @@ class SalesOrderShipmentComplete(CreateAPI):
         return ctx
 
 
+class SalesOrderShipmentMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating SalesOrderShipment metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance """
+        return MetadataSerializer(models.SalesOrderShipment, *args, **kwargs)
+
+    queryset = models.SalesOrderShipment.objects.all()
+
+
 class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)"""
 
@@ -1423,6 +1433,7 @@ order_api_urls = [
         re_path(r'^shipment/', include([
             re_path(r'^(?P<pk>\d+)/', include([
                 path('ship/', SalesOrderShipmentComplete.as_view(), name='api-so-shipment-ship'),
+                re_path(r'^metadata/', SalesOrderShipmentMetadata.as_view(), name='api-so-shipment-metadata'),
                 re_path(r'^.*$', SalesOrderShipmentDetail.as_view(), name='api-so-shipment-detail'),
             ])),
             re_path(r'^.*$', SalesOrderShipmentList.as_view(), name='api-so-shipment-list'),
