@@ -377,7 +377,7 @@ def check_for_updates():
 
     # Save the version to the database
     common.models.InvenTreeSetting.set_setting(
-        'INVENTREE_LATEST_VERSION',
+        '_INVENTREE_LATEST_VERSION',
         tag,
         None
     )
