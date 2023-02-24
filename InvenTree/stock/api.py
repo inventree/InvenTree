@@ -420,7 +420,7 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.filter(StockItem.EXPIRED_FILTER)
         else:
             return queryset.exclude(StockItem.EXPIRED_FILTER)
-    
+
     external = rest_filters.BooleanFilter(label=_('External Location'), method='filter_external')
 
     def filter_external(self, queryset, name, value):
