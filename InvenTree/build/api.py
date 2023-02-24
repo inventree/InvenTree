@@ -66,18 +66,16 @@ class BuildFilter(rest_filters.FilterSet):
 
         return queryset
 
-    assigned_to = rest_filters.CharFilter(label='assigned_to', method='filter_assigned_to')
+    assigned_to = rest_filters.NumberFilter(label='assigned_to', method='filter_assigned_to')
 
     def filter_assigned_to(self, queryset, name, value):
-        """Filter by orders which are assigned to the specified user or group."""
-        user_or_group = User.objects.get(username=value)
+        """Filter by orders which are assigned to the specified owner."""
         owners = []
-        owners.append(Owner.get_owner(value))
-        print(owners)
+        owners.append(Owner.objects.get(pk=value))
 
-        # if we query by a user name, also find all ownerships through group memberships
-        if type(owners[0]) is User:
-            owners.append(Owner.get_owners_matching_user(owners[0]))
+        # if we query by a user, also find all ownerships through group memberships
+        if owners[0].label() == 'user':
+            owners = Owner.get_owners_matching_user(User.objects.get(pk=owners[0].owner_id))
 
         queryset = queryset.filter(responsible__in=owners)
 
