@@ -426,8 +426,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # Make sure that we get an error if we try to create part in the structural category
         with self.assertRaises(ValidationError):
             part = Part.objects.create(
-                name="Part which shall not be created",
-                description="-",
+                name="-",
+                description="Part which shall not be created",
                 category=structural_category
             )
 
@@ -444,8 +444,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         # Create the test part assigned to a non-structural category
         part = Part.objects.create(
-            name="Part which category will be changed to structural",
-            description="-",
+            name="-",
+            description="Part which category will be changed to structural",
             category=non_structural_category
         )
 
