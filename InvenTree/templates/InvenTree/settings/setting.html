@@ -28,7 +28,14 @@
         {% include "InvenTree/settings/setting_boolean.html" %}
         {% else %}
         <div id='setting-{{ setting.pk }}'>
-            <span id='setting-value-{{ setting.pk }}-{{ setting.typ }}' class='setting-{{ setting.typ }}' fieldname='{{ setting.key.upper }}'>
+            <span 
+                id='setting-value-{{ setting.pk }}-{{ setting.typ }}'
+                class='setting-{{ setting.typ }}'
+                fieldname='{{ setting.key.upper }}'
+                {% if local %}
+                local='{{ setting.local }}'
+                {% endif %}
+            >
                 {% if setting.value == '' %}
                 <em style='color: #855;'>{% trans "No value set" %}</em>
                 {% else %}

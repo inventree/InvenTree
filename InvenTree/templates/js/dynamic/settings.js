@@ -6,6 +6,7 @@
     user_settings,
     global_settings,
     plugins_enabled,
+    loadLocalSettings,
 */
 
 {% user_settings request.user as USER_SETTINGS %}
@@ -141,6 +142,21 @@ function editSetting(key, options={}) {
         },
         error: function(xhr) {
             showApiError(xhr, url);
+        }
+    });
+}
+
+
+function loadLocalSettings() {
+    $('table').find('.setting-local').each(function(index, e) {
+        e = $(e);
+        let val = inventreeSettingLoad(e.attr('local'), null);
+        if (val != null) {
+            if (e.is(':checkbox')) {
+                e.prop('checked', val);
+            } else {
+                e.text(val);
+            }
         }
     });
 }
