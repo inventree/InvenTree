@@ -377,7 +377,7 @@ def check_for_updates():
 
     # Save the version to the database
     common.models.InvenTreeSetting.set_setting(
-        'INVENTREE_LATEST_VERSION',
+        '_INVENTREE_LATEST_VERSION',
         tag,
         None
     )
@@ -440,11 +440,11 @@ def run_backup():
     time.sleep(random.randint(1, 5))
 
     # Check for records of previous backup attempts
-    last_attempt = InvenTreeSetting.get_setting('INVENTREE_BACKUP_ATTEMPT', '', cache=False)
-    last_success = InvenTreeSetting.get_setting('INVENTREE_BACKUP_SUCCESS', '', cache=False)
+    last_attempt = InvenTreeSetting.get_setting('_INVENTREE_BACKUP_ATTEMPT', '', cache=False)
+    last_success = InvenTreeSetting.get_setting('_INVENTREE_BACKUP_SUCCESS', '', cache=False)
 
     try:
-        backup_n_days = int(InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1, cache=False))
+        backup_n_days = int(InvenTreeSetting.get_setting('_INVENTREE_BACKUP_DAYS', 1, cache=False))
     except Exception:
         backup_n_days = 1
 
@@ -456,14 +456,14 @@ def run_backup():
 
     if last_attempt:
         # Do not attempt if the 'last attempt' at backup was within 12 hours
-        threshold = timezone.now() - timezone.timedelta(hours=12)
+        threshold = datetime.now() - timedelta(hours=12)
 
         if last_attempt > threshold:
             logger.info('Last backup attempt was too recent - skipping backup operation')
             return
 
     # Record the timestamp of most recent backup attempt
-    InvenTreeSetting.set_setting('INVENTREE_BACKUP_ATTEMPT', timezone.now().isoformat(), None)
+    InvenTreeSetting.set_setting('_INVENTREE_BACKUP_ATTEMPT', datetime.now().isoformat(), None)
 
     if not last_attempt:
         # If there is no record of a previous attempt, exit quickly
@@ -479,7 +479,7 @@ def run_backup():
 
     # Exit early if the backup was successful within the number of required days
     if last_success:
-        threshold = timezone.now() - timezone.timedelta(days=backup_n_days)
+        threshold = datetime.now() - timedelta(days=backup_n_days)
 
         if last_success > threshold:
             logger.info('Last successful backup was too recent - skipping backup operation')
@@ -489,7 +489,7 @@ def run_backup():
     call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
 
     # Record the timestamp of most recent backup success
-    InvenTreeSetting.set_setting('INVENTREE_BACKUP_SUCCESS', datetime.now().isoformat(), None)
+    InvenTreeSetting.set_setting('_INVENTREE_BACKUP_SUCCESS', datetime.now().isoformat(), None)
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
