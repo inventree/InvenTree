@@ -179,6 +179,10 @@ class BaseInvenTreeSetting(models.Model):
         """
         results = cls.objects.all()
 
+        if exclude_hidden:
+            # Keys which start with an undersore are used for internal functionality
+            results = results.exclude(key__startswith='_')
+
         # Optionally filter by user
         if user is not None:
             results = results.filter(user=user)
