@@ -54,6 +54,9 @@ def check_prohibited_tags(data):
         'load',
         'include',
         'url',
+        'local_setting_value_js',
+        'local_setting_default',
+        'local_setting_key',
     ]
 
     pattern = r"{% (\w+)\s"
