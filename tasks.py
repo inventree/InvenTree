@@ -620,4 +620,4 @@ def coverage(c):
     ))
 
     # Generate coverage report
-    c.run('coverage html')
+    c.run('coverage html -i')
