@@ -7,6 +7,8 @@
 {% setting_object key user=request.user as setting %}
 {% elif notification_setting %}
 {% setting_object key method=method user=request.user as setting %}
+{% elif local %}
+{% setting_object key local=local as setting %}
 {% else %}
 {% setting_object key as setting %}
 {% endif %}
@@ -26,7 +28,7 @@
         {% include "InvenTree/settings/setting_boolean.html" %}
         {% else %}
         <div id='setting-{{ setting.pk }}'>
-            <span id='setting-value-{{ setting.pk }}-{{ setting.typ }}' fieldname='{{ setting.key.upper }}'>
+            <span id='setting-value-{{ setting.pk }}-{{ setting.typ }}' class='setting-{{ setting.typ }}' fieldname='{{ setting.key.upper }}'>
                 {% if setting.value == '' %}
                 <em style='color: #855;'>{% trans "No value set" %}</em>
                 {% else %}
@@ -49,6 +51,9 @@
                     {% if notification_setting %}
                     notification=true
                     method='{{ setting.method }}'
+                    {% endif %}
+                    {% if local %}
+                    local='{{ setting.local }}'
                     {% endif %}
                 >
                     <span class='fas fa-edit icon-green'></span>

@@ -10,6 +10,7 @@ $('table').find('.boolean-setting').change(function() {
     var plugin = $(this).attr('plugin');
     var user = $(this).attr('user');
     var notification = $(this).attr('notification');
+    var local = $(this).attr('local');
 
     var checked = this.checked;
 
@@ -23,21 +24,24 @@ $('table').find('.boolean-setting').change(function() {
     } else if (user) {
         url = `/api/settings/user/${setting}/`;
     }
-
-    inventreePut(
-        url,
-        {
-            value: checked.toString(),
-        },
-        {
-            method: 'PATCH',
-            success: function(data) {
+    if (local) {
+        inventreeSave(local, checked)
+    } else {
+        inventreePut(
+            url,
+            {
+                value: checked.toString(),
             },
-            error: function(xhr) {
-                showApiError(xhr, url);
+            {
+                method: 'PATCH',
+                success: function(data) {
+                },
+                error: function(xhr) {
+                    showApiError(xhr, url);
+                }
             }
-        }
-    );
+        );
+    }
 
 });
 
@@ -46,31 +50,41 @@ $('table').find('.btn-edit-setting').click(function() {
     var setting = $(this).attr('setting');
     var plugin = $(this).attr('plugin');
     var is_global = true;
+    var local = false;
     var notification = $(this).attr('notification');
+    var local = $(this).attr('local');
 
     if ($(this).attr('user')){
         is_global = false;
     }
 
-    var title = '';
 
-    if (plugin != null) {
-        title = '{% trans "Edit Plugin Setting" %}';
-    } else if (notification) {
-        title = '{% trans "Edit Notification Setting" %}';
-        setting = $(this).attr('pk');
-    } else if (is_global) {
-        title = '{% trans "Edit Global Setting" %}';
+    if (local) {
+        editLocalSetting(setting, {
+            title: '{% trans "Edit Device Setting" %}',
+            local: local,
+        });
     } else {
-        title = '{% trans "Edit User Setting" %}';
-    }
+        var title = '';
 
-    editSetting(setting, {
-        plugin: plugin,
-        global: is_global,
-        notification: notification,
-        title: title,
-    });
+        if (plugin != null) {
+            title = '{% trans "Edit Plugin Setting" %}';
+        } else if (notification) {
+            title = '{% trans "Edit Notification Setting" %}';
+            setting = $(this).attr('pk');
+        } else if (is_global) {
+            title = '{% trans "Edit Global Setting" %}';
+        } else {
+            title = '{% trans "Edit User Setting" %}';
+        }
+
+        editSetting(setting, {
+            plugin: plugin,
+            global: is_global,
+            notification: notification,
+            title: title,
+        });
+    }
 });
 
 $("#edit-user").on('click', function() {

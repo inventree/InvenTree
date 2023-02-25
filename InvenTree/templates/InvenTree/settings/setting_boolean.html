@@ -1,6 +1,6 @@
 <div class='form-check form-switch'>
     <input
-        class='form-check-input boolean-setting'
+        class='form-check-input boolean-setting setting-{{ setting.typ }}'
         fieldname='{{ setting.key.upper }}'
         pk='{{ setting.pk }}'
         setting='{{ setting.key.upper }}'
@@ -13,6 +13,9 @@
         {% if notification_setting %}
         notification=true
         method='{{ setting.method }}'
+        {% endif %}
+        {% if local %}
+        local='{{ setting.local }}'
         {% endif %}
     >
 </div>

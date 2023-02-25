@@ -17,7 +17,8 @@ from django.utils.translation import gettext_lazy as _
 import moneyed.localization
 
 import InvenTree.helpers
-from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
+from common.models import (ColorTheme, InventreeLocalSetting, InvenTreeSetting,
+                           InvenTreeUserSetting)
 from common.settings import currency_code_default
 from InvenTree import settings, version
 from plugin import registry
@@ -357,6 +358,9 @@ def setting_object(key, *args, **kwargs):
     if 'user' in kwargs:
         return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
 
+    if 'local' in kwargs:
+        return InventreeLocalSetting.get_setting_object(key)
+
     return InvenTreeSetting.get_setting_object(key)
 
 
@@ -369,6 +373,29 @@ def settings_value(key, *args, **kwargs):
         return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
 
     return InvenTreeSetting.get_setting(key)
+
+
+@register.simple_tag()
+def local_setting_value_js(key, *args, **kwargs):
+    """Return javascript code to retrieve a local setting value.
+
+    Can be used inline.
+    Defaults to defined default value.
+    """
+    setting = InventreeLocalSetting.get_setting_object(key)
+    return mark_safe(f"inventreeLoad('{setting.local}', {InvenTree.helpers.py2js_value(setting.default_value)})")
+
+
+@register.simple_tag()
+def local_setting_default(key, *args, **kwargs):
+    """Return the default value of a setting formatted as a javascript literal"""
+    return mark_safe(InvenTree.helpers.py2js_value(InventreeLocalSetting.get_setting_default(key)))
+
+
+@register.simple_tag()
+def local_setting_key(key, *args, **kwargs):
+    """Return the localstorage key of a setting."""
+    return InventreeLocalSetting.get_setting_local(key)
 
 
 @register.simple_tag()

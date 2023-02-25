@@ -1,6 +1,7 @@
 {% load inventree_extras %}
 
 /* exported
+    editLocalSetting,
     editSetting,
     user_settings,
     global_settings,
@@ -27,6 +28,12 @@ const plugins_enabled = true;
 {% else %}
 const plugins_enabled = false;
 {% endif %}
+
+
+function editLocalSetting(key, options={}) {
+    let local = options.local;
+}
+
 
 /*
  * Interactively edit a setting value.

@@ -1105,3 +1105,19 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
             target_exclude=[exclude],
             context=context,
         )
+
+
+def py2js_value(value):
+    """Converts a python value to javsacript syntax"""
+    if value is None:
+        return 'null'
+
+    if isinstance(value, list):
+        return f'[{", ".join([py2js_value(x) for x in value])}]'
+    if isinstance(value, str):
+        return f"'{value}'"
+    if isinstance(value, bool):
+        return str(bool(value)).lower()
+    if isinstance(value, (int, float, Decimal)):
+        return decimal2string(value)
+    return 'undefined'

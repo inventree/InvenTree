@@ -1,23 +1,29 @@
 {% load i18n %}
+{% load inventree_extras %}
 
 /* exported
     enableBarcodeDetection
 */
 
 function enableBarcodeDetection() {
-    onScan.attachTo(document, {
-        reactToPaste: true,
-        onScan: function(barcode, iQty) {
-            console.log('Scanned: ' + iQty + 'x ' + barcode);
-            processDetectedBarcode(barcode);
-        },
-        ignoreIfFocusOn: 'input',
-        keyCodeMapper: barcodeKeyCodeMapper
-    });
+    if ({% local_setting_value_js "BARCODE_DETECTION_ENABLED" %}) {
+        onScan.attachTo(document, {
+            reactToPaste: {% local_setting_value_js "BARCODE_DETECTION_REACTTOPASTE" %},
+            minLength: {% local_setting_value_js "BARCODE_DETECTION_MINLENGTH" %},
+            suffixKeyCodes: {% local_setting_value_js "BARCODE_DETECTION_SUFFIX" %},
+            prefixKeyCodes: {% local_setting_value_js "BARCODE_DETECTION_PREFIX" %},
+            scanButtonKeyCode: {% local_setting_value_js "BARCODE_DETECTION_SCANBUTTONKEYCODE" %},
+            onScan: function(barcode, iQty) {
+                console.log('Scanned: ' + iQty + 'x ' + barcode);
+                processDetectedBarcode(barcode);
+            },
+            ignoreIfFocusOn: 'input',
+            keyCodeMapper: barcodeKeyCodeMapper
+        });
+    }
 }
 
 function barcodeKeyCodeMapper(event) {
-    let key = event.key;
     if (key !== undefined && key.length == 1) {
         return key;
     }

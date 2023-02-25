@@ -4,7 +4,6 @@
 
 {% plugins_enabled as plugins_enabled %}
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
-{% settings_value 'BARCODE_DETECTION_ENABLE' user=request.user as barcode_detection_enable %}
 {% settings_value 'REPORT_ENABLE_TEST_REPORT' as test_report_enabled %}
 {% settings_value "REPORT_ENABLE" as report_enabled %}
 {% settings_value "SERVER_RESTART_REQUIRED" as server_restart_required %}
@@ -153,6 +152,7 @@
 <script defer type='text/javascript' src="{% i18n_static 'api.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'attachment.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'barcode.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'barcode_detection.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'bom.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'build.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'charts.js' %}"></script>
@@ -175,11 +175,6 @@
 <script defer type='text/javascript' src="{% i18n_static 'table_filters.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'notification.js' %}"></script>
 
-{% if barcodes and barcode_detection_enable %}
-<!-- barcode detection -->
-<script defer type='text/javascript' src="{% static 'script/onscan.min.js' %}"></script>
-<script defer type='text/javascript' src="{% i18n_static 'barcode_detection.js' %}"></script>
-{% endif %}
 
 {% block js_load %}
 {% endblock %}
@@ -199,9 +194,7 @@ $(document).ready(function () {
     $('#barcode-scan').click(function() {
         barcodeScanDialog();
     });
-    {% if barcode_detection_enable %}
     enableBarcodeDetection();
-    {% endif %}
     {% endif %}
 
     moment.locale('{{ request.LANGUAGE_CODE }}');

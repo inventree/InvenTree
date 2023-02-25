@@ -83,10 +83,254 @@ class EmptyURLValidator(URLValidator):
             super().__call__(value)
 
 
-class BaseInvenTreeSetting(models.Model):
-    """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values)."""
-
+class BaseInvenTreeSettingInterface():
+    """Base class for all settings."""
     SETTINGS = {}
+
+    @property
+    def name(self):
+        """Return name for setting."""
+        return self.__class__.get_setting_name(self.key, **self.get_kwargs())
+
+    @property
+    def default_value(self):
+        """Return default_value for setting."""
+        return self.__class__.get_setting_default(self.key, **self.get_kwargs())
+
+    @property
+    def description(self):
+        """Return description for setting."""
+        return self.__class__.get_setting_description(self.key, **self.get_kwargs())
+
+    @property
+    def units(self):
+        """Return units for setting."""
+        return self.__class__.get_setting_units(self.key, **self.get_kwargs())
+
+    def is_bool(self):
+        """Check if this setting is required to be a boolean value."""
+        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
+
+        return self.__class__.validator_is_bool(validator)
+
+    def as_bool(self):
+        """Return the value of this setting converted to a boolean value.
+
+        Warning: Only use on values where is_bool evaluates to true!
+        """
+        return InvenTree.helpers.str2bool(self.value)
+
+    def setting_type(self):
+        """Return the field type identifier for this setting object."""
+        if self.is_bool():
+            return 'boolean'
+
+        elif self.is_int():
+            return 'integer'
+
+        elif self.is_model():
+            return 'related field'
+
+        else:
+            return 'string'
+
+    @classmethod
+    def validator_is_bool(cls, validator):
+        """Return if validator is for bool."""
+        if validator == bool:
+            return True
+
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == bool:
+                    return True
+
+        return False
+
+    def is_int(self,):
+        """Check if the setting is required to be an integer value."""
+        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
+
+        return self.__class__.validator_is_int(validator)
+
+    @classmethod
+    def validator_is_int(cls, validator):
+        """Return if validator is for int."""
+        if validator == int:
+            return True
+
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == int:
+                    return True
+
+        return False
+
+    def as_int(self):
+        """Return the value of this setting converted to a boolean value.
+
+        If an error occurs, return the default value
+        """
+        try:
+            value = int(self.value)
+        except (ValueError, TypeError):
+            value = self.default_value
+
+        return value
+
+    @classmethod
+    def is_protected(cls, key, **kwargs):
+        """Check if the setting value is protected."""
+        setting = cls.get_setting_definition(key, **kwargs)
+
+        return setting.get('protected', False)
+
+    @property
+    def protected(self):
+        """Returns if setting is protected from rendering."""
+        return self.__class__.is_protected(self.key, **self.get_kwargs())
+
+    @classmethod
+    def get_setting_definition(cls, key, **kwargs):
+        """Return the 'definition' of a particular settings value, as a dict object.
+
+        - The 'settings' dict can be passed as a kwarg
+        - If not passed, look for cls.SETTINGS
+        - Returns an empty dict if the key is not found
+        """
+        settings = kwargs.get('settings', cls.SETTINGS)
+
+        key = str(key).strip().upper()
+
+        if settings is not None and key in settings:
+            return settings[key]
+        else:
+            return {}
+
+    @classmethod
+    def get_setting_name(cls, key, **kwargs):
+        """Return the name of a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+        setting = cls.get_setting_definition(key, **kwargs)
+        return setting.get('name', '')
+
+    @classmethod
+    def get_setting_description(cls, key, **kwargs):
+        """Return the description for a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+        setting = cls.get_setting_definition(key, **kwargs)
+
+        return setting.get('description', '')
+
+    @classmethod
+    def get_setting_units(cls, key, **kwargs):
+        """Return the units for a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+        setting = cls.get_setting_definition(key, **kwargs)
+
+        return setting.get('units', '')
+
+    @classmethod
+    def get_setting_validator(cls, key, **kwargs):
+        """Return the validator for a particular setting.
+
+        If it does not exist, return None
+        """
+        setting = cls.get_setting_definition(key, **kwargs)
+
+        return setting.get('validator', None)
+
+    @classmethod
+    def get_setting_default(cls, key, **kwargs):
+        """Return the default value for a particular setting.
+
+        If it does not exist, return an empty string
+        """
+        setting = cls.get_setting_definition(key, **kwargs)
+
+        default = setting.get('default', '')
+
+        if callable(default):
+            return default()
+        else:
+            return default
+
+    @classmethod
+    def get_setting_choices(cls, key, **kwargs):
+        """Return the validator choices available for a particular setting."""
+        setting = cls.get_setting_definition(key, **kwargs)
+
+        choices = setting.get('choices', None)
+
+        if callable(choices):
+            # Evaluate the function (we expect it will return a list of tuples...)
+            return choices()
+
+        return choices
+
+    def choices(self):
+        """Return the available choices for this setting (or None if no choices are defined)."""
+        return self.__class__.get_setting_choices(self.key, **self.get_kwargs())
+
+    def valid_options(self):
+        """Return a list of valid options for this setting."""
+        choices = self.choices()
+
+        if not choices:
+            return None
+
+        return [opt[0] for opt in choices]
+
+    def is_choice(self):
+        """Check if this setting is a "choice" field."""
+        return self.__class__.get_setting_choices(self.key, **self.get_kwargs()) is not None
+
+    def as_choice(self):
+        """Render this setting as the "display" value of a choice field.
+
+        E.g. if the choices are:
+        [('A4', 'A4 paper'), ('A3', 'A3 paper')],
+        and the value is 'A4',
+        then display 'A4 paper'
+        """
+        choices = self.get_setting_choices(self.key, **self.get_kwargs())
+
+        if not choices:
+            return self.value
+
+        for value, display in choices:
+            if value == self.value:
+                return display
+
+        return self.value
+
+    def get_kwargs(self):
+        """Construct kwargs for doing class-based settings lookup, depending on *which* class we are.
+
+        This is necessary to abtract the settings object
+        from the implementing class (e.g plugins)
+
+        Subclasses should override this function to ensure the kwargs are correctly set.
+        """
+        return {}
+
+    @classmethod
+    def get_setting_object(cls, key, **kwargs):
+        """Return a setting object for a given key and kwargs.
+
+        Subclasses need to override this function.
+        """
+        raise NotImplementedError()
+
+
+class BaseInvenTreeSetting(BaseInvenTreeSettingInterface, models.Model):
+    """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values)."""
 
     class Meta:
         """Meta options for BaseInvenTreeSetting -> abstract stops creation of database entry."""
@@ -219,100 +463,6 @@ class BaseInvenTreeSetting(models.Model):
             settings[key] = value
 
         return settings
-
-    def get_kwargs(self):
-        """Construct kwargs for doing class-based settings lookup, depending on *which* class we are.
-
-        This is necessary to abtract the settings object
-        from the implementing class (e.g plugins)
-
-        Subclasses should override this function to ensure the kwargs are correctly set.
-        """
-        return {}
-
-    @classmethod
-    def get_setting_definition(cls, key, **kwargs):
-        """Return the 'definition' of a particular settings value, as a dict object.
-
-        - The 'settings' dict can be passed as a kwarg
-        - If not passed, look for cls.SETTINGS
-        - Returns an empty dict if the key is not found
-        """
-        settings = kwargs.get('settings', cls.SETTINGS)
-
-        key = str(key).strip().upper()
-
-        if settings is not None and key in settings:
-            return settings[key]
-        else:
-            return {}
-
-    @classmethod
-    def get_setting_name(cls, key, **kwargs):
-        """Return the name of a particular setting.
-
-        If it does not exist, return an empty string.
-        """
-        setting = cls.get_setting_definition(key, **kwargs)
-        return setting.get('name', '')
-
-    @classmethod
-    def get_setting_description(cls, key, **kwargs):
-        """Return the description for a particular setting.
-
-        If it does not exist, return an empty string.
-        """
-        setting = cls.get_setting_definition(key, **kwargs)
-
-        return setting.get('description', '')
-
-    @classmethod
-    def get_setting_units(cls, key, **kwargs):
-        """Return the units for a particular setting.
-
-        If it does not exist, return an empty string.
-        """
-        setting = cls.get_setting_definition(key, **kwargs)
-
-        return setting.get('units', '')
-
-    @classmethod
-    def get_setting_validator(cls, key, **kwargs):
-        """Return the validator for a particular setting.
-
-        If it does not exist, return None
-        """
-        setting = cls.get_setting_definition(key, **kwargs)
-
-        return setting.get('validator', None)
-
-    @classmethod
-    def get_setting_default(cls, key, **kwargs):
-        """Return the default value for a particular setting.
-
-        If it does not exist, return an empty string
-        """
-        setting = cls.get_setting_definition(key, **kwargs)
-
-        default = setting.get('default', '')
-
-        if callable(default):
-            return default()
-        else:
-            return default
-
-    @classmethod
-    def get_setting_choices(cls, key, **kwargs):
-        """Return the validator choices available for a particular setting."""
-        setting = cls.get_setting_definition(key, **kwargs)
-
-        choices = setting.get('choices', None)
-
-        if callable(choices):
-            # Evaluate the function (we expect it will return a list of tuples...)
-            return choices()
-
-        return choices
 
     @classmethod
     def get_setting_object(cls, key, **kwargs):
@@ -496,26 +646,6 @@ class BaseInvenTreeSetting(models.Model):
 
     value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
 
-    @property
-    def name(self):
-        """Return name for setting."""
-        return self.__class__.get_setting_name(self.key, **self.get_kwargs())
-
-    @property
-    def default_value(self):
-        """Return default_value for setting."""
-        return self.__class__.get_setting_default(self.key, **self.get_kwargs())
-
-    @property
-    def description(self):
-        """Return description for setting."""
-        return self.__class__.get_setting_description(self.key, **self.get_kwargs())
-
-    @property
-    def units(self):
-        """Return units for setting."""
-        return self.__class__.get_setting_units(self.key, **self.get_kwargs())
-
     def clean(self, **kwargs):
         """If a validator (or multiple validators) are defined for a particular setting key, run them against the 'value' field."""
         super().clean()
@@ -613,42 +743,6 @@ class BaseInvenTreeSetting(models.Model):
         except self.DoesNotExist:
             pass
 
-    def choices(self):
-        """Return the available choices for this setting (or None if no choices are defined)."""
-        return self.__class__.get_setting_choices(self.key, **self.get_kwargs())
-
-    def valid_options(self):
-        """Return a list of valid options for this setting."""
-        choices = self.choices()
-
-        if not choices:
-            return None
-
-        return [opt[0] for opt in choices]
-
-    def is_choice(self):
-        """Check if this setting is a "choice" field."""
-        return self.__class__.get_setting_choices(self.key, **self.get_kwargs()) is not None
-
-    def as_choice(self):
-        """Render this setting as the "display" value of a choice field.
-
-        E.g. if the choices are:
-        [('A4', 'A4 paper'), ('A3', 'A3 paper')],
-        and the value is 'A4',
-        then display 'A4 paper'
-        """
-        choices = self.get_setting_choices(self.key, **self.get_kwargs())
-
-        if not choices:
-            return self.value
-
-        for value, display in choices:
-            if value == self.value:
-                return display
-
-        return self.value
-
     def is_model(self):
         """Check if this setting references a model instance in the database."""
         return self.model_name() is not None
@@ -716,89 +810,6 @@ class BaseInvenTreeSetting(models.Model):
                 return reverse(url)
 
         return None
-
-    def is_bool(self):
-        """Check if this setting is required to be a boolean value."""
-        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
-
-        return self.__class__.validator_is_bool(validator)
-
-    def as_bool(self):
-        """Return the value of this setting converted to a boolean value.
-
-        Warning: Only use on values where is_bool evaluates to true!
-        """
-        return InvenTree.helpers.str2bool(self.value)
-
-    def setting_type(self):
-        """Return the field type identifier for this setting object."""
-        if self.is_bool():
-            return 'boolean'
-
-        elif self.is_int():
-            return 'integer'
-
-        elif self.is_model():
-            return 'related field'
-
-        else:
-            return 'string'
-
-    @classmethod
-    def validator_is_bool(cls, validator):
-        """Return if validator is for bool."""
-        if validator == bool:
-            return True
-
-        if type(validator) in [list, tuple]:
-            for v in validator:
-                if v == bool:
-                    return True
-
-        return False
-
-    def is_int(self,):
-        """Check if the setting is required to be an integer value."""
-        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
-
-        return self.__class__.validator_is_int(validator)
-
-    @classmethod
-    def validator_is_int(cls, validator):
-        """Return if validator is for int."""
-        if validator == int:
-            return True
-
-        if type(validator) in [list, tuple]:
-            for v in validator:
-                if v == int:
-                    return True
-
-        return False
-
-    def as_int(self):
-        """Return the value of this setting converted to a boolean value.
-
-        If an error occurs, return the default value
-        """
-        try:
-            value = int(self.value)
-        except (ValueError, TypeError):
-            value = self.default_value
-
-        return value
-
-    @classmethod
-    def is_protected(cls, key, **kwargs):
-        """Check if the setting value is protected."""
-        setting = cls.get_setting_definition(key, **kwargs)
-
-        return setting.get('protected', False)
-
-    @property
-    def protected(self):
-        """Returns if setting is protected from rendering."""
-        return self.__class__.is_protected(self.key, **self.get_kwargs())
 
 
 def settings_group_options():
@@ -1951,13 +1962,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
                 MinValueValidator(0),
             ],
             'default': 100,
-        },
-
-        'BARCODE_DETECTION_ENABLE': {
-            'name': _('Barcode detection'),
-            'description': _('Detect barcode input and automatically open corresponding page'),
-            'default': False,
-            'validator': bool,
         }
     }
 
@@ -1991,6 +1995,80 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         return {
             'user': self.user,
         }
+
+
+class InventreeLocalSetting(BaseInvenTreeSettingInterface):
+    """Setting for in-browser storage using localstorage"""
+
+    SETTINGS = {
+        'BARCODE_DETECTION_ENABLED': {
+            'name': _('Barcode detection enabled'),
+            'description': _('Detect barcode input and automatically open corresponding page'),
+            'local': 'barcode-detection-enabled',
+            'default': False,
+            'validator': bool,
+        },
+        'BARCODE_DETECTION_REACTTOPASTE': {
+            'name': _('Barcode detection reacts to paste'),
+            'description': _('Barcode input being pasted on the site is also detected. Enable if your barcode scanner pastes the date instead of emulating an keyboard'),
+            'local': 'barcode-detection-reactToPaste',
+            'default': True,
+            'validator': bool,
+        },
+        'BARCODE_DETECTION_MINLENGTH': {
+            'name': _('Minimum Barcode length'),
+            'description': _('The length of the shortest barcode you expect to scan'),
+            'local': 'barcode-detection-minLength',
+            'default': 6,
+            'validator': int,
+        },
+        'BARCODE_DETECTION_SCANBUTTONKEYCODE': {
+            'local': 'barcode-detection-scanButtonKeyCode',
+            'default': False,
+        },
+        'BARCODE_DETECTION_PREFIX': {
+            'local': 'barcode-detection-prefix',
+            'default': []
+        },
+        'BARCODE_DETECTION_SUFFIX': {
+            'local': 'barcode-detection-suffix',
+            'default': [9, 13]
+        },
+    }
+
+    _SETTING_KEYS = list(SETTINGS.keys())
+
+    typ = 'local'
+
+    def __init__(self, key):
+        """Create a instance with given key."""
+        super().__init__()
+        self.key = key
+        self.pk = self.__class__._SETTING_KEYS.index(self.key)
+
+    @property
+    def value(self):
+        """Return value for setting."""
+        return self.default_value
+
+    @property
+    def local(self):
+        """Return local key for setting."""
+        return self.__class__.get_setting_local(self.key, **self.get_kwargs())
+
+    @classmethod
+    def get_setting_local(cls, key, **kwargs):
+        """Return the local key of a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+        setting = cls.get_setting_definition(key, **kwargs)
+        return setting.get('local', '')
+
+    @classmethod
+    def get_setting_object(cls, key, **kwargs):
+        """Return a InventreeLocalSetting with given key."""
+        return InventreeLocalSetting(key)
 
 
 class PriceBreak(MetaMixin):

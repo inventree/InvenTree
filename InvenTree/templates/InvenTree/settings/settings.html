@@ -18,6 +18,10 @@
 
 {% block content %}
 
+{% if barcodes %}
+{% include "InvenTree/settings/device_barcode_scanner.html" %}
+{% endif %}
+
 {% include "InvenTree/settings/user.html" %}
 {% include "InvenTree/settings/user_settings.html" %}
 {% include "InvenTree/settings/user_homepage.html" %}

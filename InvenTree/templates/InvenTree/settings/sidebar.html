@@ -3,6 +3,13 @@
 {% load inventree_extras %}
 {% load plugin_extras %}
 
+{% if barcodes %}
+{% trans "Device Settings" as text %}
+{% include "sidebar_header.html" with text=text icon='fa-sliders-h' %}
+{% trans "Barcode Scanner" as text %}
+{% include "sidebar_item.html" with label='device-barcode-scanner' text=text icon="fa-barcode" %}
+{% endif %}
+
 {% trans "User Settings" as text %}
 {% include "sidebar_header.html" with text=text icon='fa-user-cog' %}
 
