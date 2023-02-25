@@ -359,6 +359,25 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Assigned to me" %}',
             },
+            assigned_to: {
+                title: '{% trans "Responsible" %}',
+                options: function() {
+                    var ownersList = {};
+                    inventreeGet(`/api/user/owner/`, {}, {
+                        async: false,
+                        success: function(response) {
+                            for (key in response) {
+                                var owner = response[key];
+                                ownersList[owner.pk] = {
+                                    key: owner.pk,
+                                    value: `${owner.name} (${owner.label})`,
+                                };
+                            }
+                        }
+                    });
+                    return ownersList;
+                },
+            },
         };
     }
 

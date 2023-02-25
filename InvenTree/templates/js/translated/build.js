@@ -2695,11 +2695,19 @@ function loadBuildTable(table, options) {
                 title: '{% trans "Responsible" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    if (value) {
-                        return row.responsible_detail.name;
-                    } else {
+                    if (!row.responsible_detail) {
                         return '-';
                     }
+
+                    var html = row.responsible_detail.name;
+
+                    if (row.responsible_detail.label == 'group') {
+                        html += `<span class='float-right fas fa-users'></span>`;
+                    } else {
+                        html += `<span class='float-right fas fa-user'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {
