@@ -383,7 +383,7 @@ def local_setting_value_js(key, *args, **kwargs):
     Defaults to defined default value.
     """
     setting = InventreeLocalSetting.get_setting_object(key)
-    return mark_safe(f"inventreeLoad('{setting.local}', {InvenTree.helpers.py2js_value(setting.default_value)})")
+    return mark_safe(f"inventreeSettingLoad('{setting.local}', {InvenTree.helpers.py2js_value(setting.default_value)})")
 
 
 @register.simple_tag()

@@ -13,6 +13,8 @@
     inventreeDocReady,
     inventreeLoad,
     inventreeSave,
+    inventreeSettingLoad,
+    inventreeSettingSave,
     sanitizeData,
 */
 
@@ -250,6 +252,38 @@ function inventreeLoad(name, defaultValue) {
         return value;
     }
 }
+
+/**
+ * Save a key:value pair to local storage
+ * @param {String} name - settting key
+ * @param {*} value - setting value
+ */
+function inventreeSettingSave(name, value) {
+
+    var key = `inventreeSetting-${name}`;
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+
+/**
+ * Retrieve a key:value pair from local storage
+ * @param {String} name - setting key
+ * @param {*} defaultValue - default value (returned if no matching key:value pair is found)
+ * @returns
+ */
+function inventreeSettingLoad(name, defaultValue) {
+
+    var key = `inventreeSetting-${name}`;
+
+    var value = localStorage.getItem(key);
+
+    if (value == null) {
+        return defaultValue;
+    } else {
+        return JSON.parse(value);
+    }
+}
+
 
 function loadBrandIcon(element, name) {
     // check if icon exists

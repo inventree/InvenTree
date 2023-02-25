@@ -25,7 +25,7 @@ $('table').find('.boolean-setting').change(function() {
         url = `/api/settings/user/${setting}/`;
     }
     if (local) {
-        inventreeSave(local, checked)
+        inventreeSettingSave(local, checked)
     } else {
         inventreePut(
             url,
