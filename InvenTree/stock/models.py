@@ -2004,7 +2004,7 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
         InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 
         # Schedule an update on parent part pricing
-        if InvenTree.ready.canAppAccessDatabase():
+        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
             instance.part.schedule_pricing_update(create=False)
 
 
@@ -2017,7 +2017,7 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
         # Run this check in the background
         InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 
-        if InvenTree.ready.canAppAccessDatabase():
+        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
             instance.part.schedule_pricing_update(create=True)
 
 

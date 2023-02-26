@@ -1690,7 +1690,10 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             create: Whether or not a new PartPricing object should be created if it does not already exist
         """
 
-        self.refresh_from_db()
+        try:
+            self.refresh_from_db()
+        except Part.DoesNotExist:
+            return
 
         try:
             pricing = self.pricing
