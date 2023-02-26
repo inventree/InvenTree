@@ -470,22 +470,19 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
         - Allows us to optionally pass extra fields based on the query.
         """
         self.starred_parts = kwargs.pop('starred_parts', [])
-
         category_detail = kwargs.pop('category_detail', False)
-
         parameters = kwargs.pop('parameters', False)
-
         create = kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
 
-        if category_detail is not True:
+        if not category_detail:
             self.fields.pop('category_detail')
 
-        if parameters is not True:
+        if not parameters:
             self.fields.pop('parameters')
 
-        if create is not True:
+        if not create:
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields()[1:]:
                 self.fields.pop(f)
