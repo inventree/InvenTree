@@ -451,7 +451,7 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_delete_part_with_stock_items(self):
         """Test deleting a part instance with stock items.
-        
+
         This is to test a specific edge condition which was discovered that caused an IntegrityError.
         Ref: https://github.com/inventree/InvenTree/issues/4419
 
@@ -472,7 +472,7 @@ class PartPricingTests(InvenTreeTestCase):
                 quantity=10,
                 purchase_price=Money(10, 'USD')
             )
-        
+
         # Check that a PartPricing object exists
         self.assertTrue(part.models.PartPricing.objects.filter(part=p).exists())
 
