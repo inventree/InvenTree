@@ -19,12 +19,23 @@
     withTitle,
 */
 
-function yesNoLabel(value) {
+function yesNoLabel(value, options={}) {
+    var text = '';
+    var color = '';
+
     if (value) {
-        return `<span class='badge rounded-pill bg-success'>{% trans "YES" %}</span>`;
+        text = '{% trans "YES" %}';
+        color = 'bg-success';
     } else {
-        return `<span class='badge rounded-pill bg-warning'>{% trans "NO" %}</span>`;
+        text = '{% trans "NO" %}';
+        color = 'bg-warning';
     }
+
+    if (options.muted) {
+        color = 'bg-secondary';
+    }
+
+    return `<span class='badge rounded-pill ${color}'>${text}</span>`;
 }
 
 
