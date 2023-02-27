@@ -180,6 +180,10 @@ class BaseInvenTreeSetting(models.Model):
         """
         results = cls.objects.all()
 
+        if exclude_hidden:
+            # Keys which start with an undersore are used for internal functionality
+            results = results.exclude(key__startswith='_')
+
         # Optionally filter by user
         if user is not None:
             results = results.filter(user=user)
@@ -1813,7 +1817,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         },
 
         'SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS': {
-            'name': _('Seach Supplier Parts'),
+            'name': _('Search Supplier Parts'),
             'description': _('Display supplier parts in search preview window'),
             'default': True,
             'validator': bool,

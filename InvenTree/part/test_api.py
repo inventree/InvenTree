@@ -5,6 +5,8 @@ from enum import IntEnum
 from random import randint
 
 from django.core.exceptions import ValidationError
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 import PIL
@@ -1702,6 +1704,60 @@ class PartDetailTests(PartAPITestBase):
         self.assertFalse('foo' in part.metadata)
         self.assertFalse('hello' in part.metadata)
         self.assertEqual(part.metadata['x'], 'y')
+
+
+class PartListTests(PartAPITestBase):
+    """Unit tests for the Part List API endpoint"""
+
+    def test_query_count(self):
+        """Test that the query count is unchanged, independent of query results"""
+
+        queries = [
+            {'limit': 1},
+            {'limit': 10},
+            {'limit': 50},
+            {'category': 1},
+            {},
+        ]
+
+        url = reverse('api-part-list')
+
+        # Create a bunch of extra parts (efficiently)
+        parts = []
+
+        for ii in range(100):
+            parts.append(Part(
+                name=f"Extra part {ii}",
+                description="A new part which will appear via the API",
+                level=0, tree_id=0,
+                lft=0, rght=0,
+            ))
+
+        Part.objects.bulk_create(parts)
+
+        for query in queries:
+
+            with CaptureQueriesContext(connection) as ctx:
+                self.get(url, query, expected_code=200)
+
+            # No more than 20 database queries
+            self.assertLess(len(ctx), 20)
+
+        # Test 'category_detail' annotation
+        for b in [False, True]:
+            with CaptureQueriesContext(connection) as ctx:
+                results = self.get(
+                    reverse('api-part-list'),
+                    {'category_detail': b},
+                    expected_code=200
+                )
+
+                for result in results.data:
+                    if b and result['category'] is not None:
+                        self.assertIn('category_detail', result)
+
+            # No more than 20 DB queries
+            self.assertLessEqual(len(ctx), 20)
 
 
 class PartNotesTests(InvenTreeAPITestCase):

@@ -1019,7 +1019,7 @@ function loadBomTable(table, options={}) {
 
     cols.push({
         field: 'inherited',
-        title: '{% trans "Inherited" %}',
+        title: '{% trans "Gets inherited" %}',
         searchable: false,
         formatter: function(value, row) {
             // This BOM item *is* inheritable, but is defined for this BOM
@@ -1029,10 +1029,7 @@ function loadBomTable(table, options={}) {
                 return yesNoLabel(true);
             } else {
                 // If this BOM item is inherited from a parent part
-                return renderLink(
-                    '{% trans "View BOM" %}',
-                    `/part/${row.part}/bom/`,
-                );
+                return yesNoLabel(true, {muted: true});
             }
         }
     });

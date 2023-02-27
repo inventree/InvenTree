@@ -448,3 +448,40 @@ class PartPricingTests(InvenTreeTestCase):
         from django_q.models import OrmQ
 
         self.assertEqual(OrmQ.objects.count(), 101)
+
+    def test_delete_part_with_stock_items(self):
+        """Test deleting a part instance with stock items.
+
+        This is to test a specific edge condition which was discovered that caused an IntegrityError.
+        Ref: https://github.com/inventree/InvenTree/issues/4419
+
+        Essentially a series of on_delete listeners caused a new PartPricing object to be created,
+        but it pointed to a Part instance which was slated to be deleted inside an atomic transaction.
+        """
+
+        p = part.models.Part.objects.create(
+            name="my part",
+            description="my part description",
+            active=False,
+        )
+
+        # Create some stock items
+        for _idx in range(3):
+            stock.models.StockItem.objects.create(
+                part=p,
+                quantity=10,
+                purchase_price=Money(10, 'USD')
+            )
+
+        # Check that a PartPricing object exists
+        self.assertTrue(part.models.PartPricing.objects.filter(part=p).exists())
+
+        # Delete the part
+        p.delete()
+
+        # Check that the PartPricing object has been deleted
+        self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())
+
+        # Try to update pricing (should fail gracefully as the Part has been deleted)
+        p.schedule_pricing_update(create=False)
+        self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())

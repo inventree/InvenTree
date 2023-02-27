@@ -1217,10 +1217,10 @@ function loadBuildOutputTable(build_info, options={}) {
             setupBuildOutputButtonCallbacks();
         },
         onLoadSuccess: function(rows) {
-
             updateAllocationData(rows);
             updateTestResultData(rows);
         },
+        buttons: constructExpandCollapseButtons(table),
         columns: [
             {
                 title: '',
@@ -1713,6 +1713,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         detailFilter: function(index, row) {
             return allocatedQuantity(row) > 0;
         },
+        buttons: constructExpandCollapseButtons(table),
         detailFormatter: function(index, row, element) {
             // Contruct an 'inner table' which shows which stock items have been allocated
 
@@ -2694,11 +2695,19 @@ function loadBuildTable(table, options) {
                 title: '{% trans "Responsible" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    if (value) {
-                        return row.responsible_detail.name;
-                    } else {
+                    if (!row.responsible_detail) {
                         return '-';
                     }
+
+                    var html = row.responsible_detail.name;
+
+                    if (row.responsible_detail.label == 'group') {
+                        html += `<span class='float-right fas fa-users'></span>`;
+                    } else {
+                        html += `<span class='float-right fas fa-user'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {
