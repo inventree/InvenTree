@@ -111,6 +111,12 @@ function renderStockItem(name, data, parameters={}, options={}) {
         location_detail = ` <small>- (<em>${data.location_detail.name}</em>)</small>`;
     }
 
+    var render_available_quantity = false;
+
+    if ('render_available_quantity' in parameters) {
+        render_available_quantity = parameters['render_available_quantity'];
+    }
+
     var stock_detail = '';
 
     if (data.quantity == 0) {
@@ -119,8 +125,12 @@ function renderStockItem(name, data, parameters={}, options={}) {
         if (data.serial && data.quantity == 1) {
             stock_detail = `{% trans "Serial Number" %}: ${data.serial}`;
         } else {
-            var available = data.quantity - data.allocated;
-            stock_detail = `{% trans "Available" %}: ${available}/${data.quantity}`;
+            if (render_available_quantity) {
+                var available = data.quantity - data.allocated;
+                stock_detail = `{% trans "Available" %}: ${available}`;
+            } else {
+                stock_detail = `{% trans "Quantity" %}: ${data.quantity}`;
+            }
         }
 
         if (data.batch) {
