@@ -119,7 +119,8 @@ function renderStockItem(name, data, parameters={}, options={}) {
         if (data.serial && data.quantity == 1) {
             stock_detail = `{% trans "Serial Number" %}: ${data.serial}`;
         } else {
-            stock_detail = `{% trans "Quantity" %}: ${data.quantity}`;
+            var available = data.quantity - data.allocated;
+            stock_detail = `{% trans "Available" %}: ${available}/${data.quantity}`;
         }
 
         if (data.batch) {
