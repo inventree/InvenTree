@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-26 12:34+0000\n"
-"PO-Revision-Date: 2023-02-26 22:32\n"
+"PO-Revision-Date: 2023-02-27 22:30\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2750,7 +2750,7 @@ msgstr "Alkatrészek megjelenítése a keresési előnézetben"
 
 #: common/models.py:1820
 msgid "Search Supplier Parts"
-msgstr ""
+msgstr "Beszállítói alkatrészek keresése"
 
 #: common/models.py:1821
 msgid "Display supplier parts in search preview window"
@@ -5465,7 +5465,7 @@ msgstr "Alkatrészjegyzék sor ellenőrző összeg"
 #: templates/js/translated/table_filters.js:76
 #: templates/js/translated/table_filters.js:108
 msgid "Gets inherited"
-msgstr ""
+msgstr "Öröklődött"
 
 #: part/models.py:3538
 msgid "This BOM item is inherited by BOMs for variant parts"
@@ -6938,7 +6938,7 @@ msgstr "Lejárati dátum"
 
 #: stock/api.py:424 templates/js/translated/table_filters.js:297
 msgid "External Location"
-msgstr ""
+msgstr "Külső hely"
 
 #: stock/api.py:585
 msgid "Quantity is required"
