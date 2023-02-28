@@ -487,6 +487,11 @@ function constructFormBody(fields, options) {
 
     var html = '';
 
+    // add additional content as a header on top (provided as html by the caller)
+    if (options.header_html) {
+        html += options.header_html;
+    }
+
     // Client must provide set of fields to be displayed,
     // otherwise *all* fields will be displayed
     var displayed_fields = options.fields || fields;

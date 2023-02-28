@@ -455,6 +455,12 @@ function getFilterOptionValue(tableKey, filterKey, valueKey) {
 
     // Iterate through a list of options
     if ('options' in filter) {
+        // options can be an object or a function, in which case we need to run
+        // this callback first
+        if (filter.options instanceof Function) {
+            filter.options = filter.options();
+        }
+
         for (var key in filter.options) {
 
             if (key == valueKey) {
