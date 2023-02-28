@@ -2702,7 +2702,7 @@ function loadBuildTable(table, options) {
 
                     var html = row.responsible_detail.name;
 
-                    if (row.responsible_detail.label == 'group') {
+                    if (row.responsible_detail.label == '{% trans "group" %}') {
                         html += `<span class='float-right fas fa-users'></span>`;
                     } else {
                         html += `<span class='float-right fas fa-user'></span>`;
