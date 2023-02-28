@@ -2296,6 +2296,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         render_part_detail: true,
                         render_location_detail: true,
                         render_pk: false,
+                        render_available_quantity: true,
                         auto_fill: true,
                         auto_fill_filters: auto_fill_filters,
                         onSelect: function(data, field, opts) {
