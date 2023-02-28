@@ -203,7 +203,7 @@ function createSupplierPart(options={}) {
                 part_model = response;
             }
         });
-        header = constructLabel('Base Part',{});
+        header = constructLabel('Base Part', {});
         header += renderPart('header', part_model);
         header += `<div>&nbsp;</div>`;
     }
