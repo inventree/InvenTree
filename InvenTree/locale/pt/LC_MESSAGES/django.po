@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-01 21:26+0000\n"
-"PO-Revision-Date: 2023-02-28 22:38\n"
+"POT-Creation-Date: 2023-02-28 21:17+0000\n"
+"PO-Revision-Date: 2023-03-01 22:38\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -104,7 +104,7 @@ msgstr "Erro de conexão"
 
 #: InvenTree/helpers.py:170 InvenTree/helpers.py:175
 msgid "Server responded with invalid status code"
-msgstr "O servidor respondeu com código de status inválido"
+msgstr "O servidor respondeu com código estado inválido"
 
 #: InvenTree/helpers.py:172
 msgid "Exception occurred"
@@ -112,7 +112,7 @@ msgstr "Ocorreu uma exceção"
 
 #: InvenTree/helpers.py:180
 msgid "Server responded with invalid Content-Length value"
-msgstr "O servidor respondeu com valor inválido de '{Content-Length}'"
+msgstr "O servidor respondeu com valor inválido do tamanho de conteúdo"
 
 #: InvenTree/helpers.py:183
 msgid "Image size is too large"
@@ -282,7 +282,7 @@ msgstr ""
 
 #: InvenTree/models.py:546
 msgid "Invalid choice"
-msgstr "Escolha invalida"
+msgstr "Escolha inválida"
 
 #: InvenTree/models.py:571 InvenTree/models.py:572 common/models.py:2201
 #: company/models.py:382 label/models.py:101 part/models.py:779
@@ -11550,8 +11550,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -11738,3 +11737,4 @@ msgstr ""
 #: users/models.py:231
 msgid "Permission to delete items"
 msgstr ""
+
