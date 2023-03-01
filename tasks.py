@@ -559,7 +559,7 @@ def test(c, disable_pty=False):
     pty = not disable_pty
 
     # Run coverage tests
-    manage(c, 'test', pty=pty)
+    manage(c, 'test', '--slowreport', pty=pty)
 
 
 @task(help={'dev': 'Set up development environment at the end'})
