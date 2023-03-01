@@ -601,7 +601,7 @@ class I18nStaticNode(StaticNode):
 
 
 # use the dynamic url - tag if in Debugging-Mode
-if False and settings.DEBUG:
+if settings.DEBUG:
 
     @register.simple_tag()
     def i18n_static(url_name):
