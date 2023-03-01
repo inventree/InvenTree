@@ -570,7 +570,30 @@ class I18nStaticNode(StaticNode):
             self.original = self.path.var
 
         if hasattr(context, 'request'):
-            self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
+
+            # Convert the "requested" language code to a standard format
+            language_code = context.request.LANGUAGE_CODE.lower().strip()
+            language_code = language_code.replace('_', '-')
+
+            # Find the first "best" match:
+            # - First, try the original requested code, e.g. 'pt-br'
+            # - Next, try a simpler version of the code e.g. 'pt'
+            # - Finally, fall back to english
+            options = [
+                language_code,
+                language_code.split('-')[0],
+                'en',
+            ]
+
+            for lng in options:
+                lng_file = os.path.join(
+                    djangosettings.STATIC_ROOT,
+                    self.original.format(lng=lng)
+                )
+
+                if os.path.exists(lng_file):
+                    self.path.var = self.original.format(lng=lng)
+                    break
 
         ret = super().render(context)
 
