@@ -718,7 +718,7 @@ LANGUAGES = [
     ('th', _('Thai')),
     ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
-    ('zh-cn', _('Chinese')),
+    ('zh-hans', _('Chinese')),
 ]
 
 # Testing interface translations
