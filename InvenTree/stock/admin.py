@@ -124,6 +124,12 @@ class StockItemResource(InvenTreeResource):
     stocktake_date = Field(attribute='stocktake_date', column_name=_('Stocktake'), widget=widgets.DateWidget())
     expiry_date = Field(attribute='expiry_date', column_name=_('Expiry Date'), widget=widgets.DateWidget())
 
+    def dehydrate_purchase_price(self, item):
+        """Render purchase pric as float"""
+
+        if item.purchase_price is not None:
+            return float(item.purchase_price.amount)
+
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
         """Rebuild after import to keep tree intact."""
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
