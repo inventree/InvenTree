@@ -224,9 +224,9 @@ class CategoryTest(TestCase):
             description='Top level category',
         )
 
-        B1 = PartCategory(name='B1', parent=A)
-        B2 = PartCategory(name='B2', parent=A)
-        B3 = PartCategory(name='B3', parent=A)
+        B1 = PartCategory.objects.create(name='B1', parent=A)
+        B2 = PartCategory.objects.create(name='B2', parent=A)
+        B3 = PartCategory.objects.create(name='B3', parent=A)
 
         C11 = PartCategory(name='C11', parent=B1)
         C12 = PartCategory(name='C12', parent=B1)
@@ -240,7 +240,7 @@ class CategoryTest(TestCase):
         C32 = PartCategory(name='C32', parent=B3)
         C33 = PartCategory(name='C33', parent=B3)
 
-        PartCategory.objects.bulk_create([B1, B2, B3, C11, C12, C13, C21, C22, C23, C31, C32, C33])
+        PartCategory.objects.bulk_create([C11, C12, C13, C21, C22, C23, C31, C32, C33])
 
         # Check that the tree_id value is correct
         for cat in [B1, B2, B3, C11, C22, C33]:
