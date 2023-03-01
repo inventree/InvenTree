@@ -571,8 +571,9 @@ class I18nStaticNode(StaticNode):
 
         if hasattr(context, 'request'):
 
-            # Find the "requested" language code
+            # Convert the "requested" language code to a standard format
             language_code = context.request.LANGUAGE_CODE.lower().strip()
+            language_code = language_code.replace('_', '-')
 
             # Find the first "best" match:
             # - First, try the original requested code, e.g. 'pt-br'
@@ -600,7 +601,7 @@ class I18nStaticNode(StaticNode):
 
 
 # use the dynamic url - tag if in Debugging-Mode
-if settings.DEBUG:
+if False and settings.DEBUG:
 
     @register.simple_tag()
     def i18n_static(url_name):
