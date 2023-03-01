@@ -100,7 +100,7 @@ class StockItemResource(InvenTreeResource):
     id = Field(attribute='pk', column_name=_('Stock Item ID'))
     part = Field(attribute='part', column_name=_('Part ID'), widget=widgets.ForeignKeyWidget(Part))
     part_name = Field(attribute='part__full_name', column_name=_('Part Name'), readonly=True)
-    quantity = Field(attribute='quantity', column_name=_('Quantity'))
+    quantity = Field(attribute='quantity', column_name=_('Quantity'), widget=widgets.DecimalWidget())
     serial = Field(attribute='serial', column_name=_('Serial'))
     batch = Field(attribute='batch', column_name=_('Batch'))
     status_label = Field(attribute='status_label', column_name=_('Status'), readonly=True)
