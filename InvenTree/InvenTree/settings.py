@@ -816,10 +816,7 @@ SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', []
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None)
-
-if SOCIALACCOUNT_PROVIDERS is None:
-    SOCIALACCOUNT_PROVIDERS = {}
+SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict)
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
