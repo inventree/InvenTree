@@ -256,19 +256,12 @@ class CategoryTest(TestCase):
 
         # At this point, we are confident that the tree is correctly structured
 
-        # Add some parts to category B3
-        parts = []
-
         for i in range(10):
-            parts.append(
-                Part(
-                    name=f'Part {i}',
-                    description='A test part',
-                    category=B3,
-                )
+            Part.objects.create(
+                name=f'Part {i}',
+                description='A test part',
+                category=B3,
             )
-
-        Part.objects.bulk_create(parts)
 
         self.assertEqual(Part.objects.filter(category=B3).count(), 10)
         self.assertEqual(Part.objects.filter(category=A).count(), 0)
