@@ -190,9 +190,13 @@ django==3.2.18 \
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
+    #   django-slowtests
 django-debug-toolbar==3.8.1 \
     --hash=sha256:24ef1a7d44d25e60d7951e378454c6509bf536dce7e7d9d36e7c387db499bc27 \
     --hash=sha256:879f8a4672d41621c06a4d322dcffa630fc4df056cada6e417ed01db0e5e0478
+    # via -r requirements-dev.in
+django-slowtests==1.1.1 \
+    --hash=sha256:3c6936d420c9df444ac03625b41d97de043c662bbde61fbcd33e4cd407d0c247
     # via -r requirements-dev.in
 django-test-migrations==1.2.0 \
     --hash=sha256:874884ff4e980583cd9f1c986bb9fbfe72b436e759be23004e4f52c26a15f363 \
