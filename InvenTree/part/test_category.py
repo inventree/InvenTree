@@ -256,8 +256,6 @@ class CategoryTest(TestCase):
 
         # At this point, we are confident that the tree is correctly structured
 
-        # Add some parts to category B3
-
         for i in range(10):
             Part.objects.create(
                 name=f'Part {i}',

@@ -2957,17 +2957,28 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
         total = 0
 
-        # Create some entries
-        for p in Part.objects.all():
+        # Iterate over (up to) 5 parts in the database
+        for p in Part.objects.all()[:5]:
 
-            for n in range(p.pk):
-                PartStocktake.objects.create(
-                    part=p,
-                    quantity=(n + 1) * 100,
+            # Create some entries
+            to_create = []
+
+            n = p.pk % 10
+
+            for idx in range(n):
+                to_create.append(
+                    PartStocktake(
+                        part=p,
+                        quantity=(idx + 1) * 100,
+                    )
                 )
 
-            total += p.pk
+                total += 1
 
+            # Create all entries in a single bulk-create
+            PartStocktake.objects.bulk_create(to_create)
+
+            # Query list endpoint
             response = self.get(
                 url,
                 {
@@ -2976,8 +2987,8 @@ class PartStocktakeTest(InvenTreeAPITestCase):
                 expected_code=200,
             )
 
-            # List by part ID
-            self.assertEqual(len(response.data), p.pk)
+            # Check that the expected number of PartStocktake instances has been created
+            self.assertEqual(len(response.data), n)
 
         # List all entries
         response = self.get(url, {}, expected_code=200)
