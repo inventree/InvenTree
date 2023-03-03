@@ -2152,10 +2152,19 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
             },
             {
+                field: 'total_price',
+                title: '{% trans "Total Cost" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value, row) {
+                    return formatCurrency(value);
+                },
+            },
+            {
                 field: 'responsible',
                 title: '{% trans "Responsible" %}',
                 switchable: true,
-                sortable: false,
+                sortable: true,
                 formatter: function(value, row) {
 
                     if (!row.responsible_detail) {

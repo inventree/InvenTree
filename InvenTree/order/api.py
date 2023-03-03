@@ -321,6 +321,7 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
         'target_date',
         'line_items',
         'status',
+        'responsible',
     ]
 
     ordering = '-reference'
