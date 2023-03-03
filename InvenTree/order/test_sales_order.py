@@ -7,6 +7,8 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
+from djmoney.money import Money
+
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
@@ -52,6 +54,15 @@ class SalesOrderTest(TestCase):
 
         # Create a line item
         self.line = SalesOrderLineItem.objects.create(quantity=50, order=self.order, part=self.part)
+
+    def test_total_price(self):
+        """Test for the total_price method"""
+
+        self.line.sale_price = Money(10, 'USD')
+        self.assertEqual(self.line.total_price, Money(500, 'USD'))
+
+        self.line.sale_price = Money(100, 'AUD')
+        self.assertEqual(self.line.total_price, Money(5000, 'AUD'))
 
     def test_so_reference(self):
         """Unit tests for sales order generation"""

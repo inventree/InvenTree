@@ -978,6 +978,13 @@ class OrderExtraLine(OrderLineItem):
         help_text=_('Unit price'),
     )
 
+    @property
+    def total_price(self):
+        """Return the total price for this line item."""
+
+        if self.price:
+            return self.price * self.quantity
+    
 
 class PurchaseOrderLineItem(OrderLineItem):
     """Model for a purchase order line item.
@@ -1085,6 +1092,13 @@ class PurchaseOrderLineItem(OrderLineItem):
         r = self.quantity - self.received
         return max(r, 0)
 
+    @property
+    def total_price(self):
+        """Return the total price for this line item"""
+
+        if self.purchase_price:
+            return self.purchase_price * self.quantity
+
 
 class PurchaseOrderExtraLine(OrderExtraLine):
     """Model for a single ExtraLine in a PurchaseOrder.
@@ -1170,6 +1184,13 @@ class SalesOrderLineItem(OrderLineItem):
         max_digits=15, decimal_places=5,
         validators=[MinValueValidator(0)]
     )
+
+    @property
+    def total_price(self):
+        """Return the total price for this line item"""
+
+        if self.sale_price:
+            return self.sale_price * self.quantity
 
     def fulfilled_quantity(self):
         """Return the total stock quantity fulfilled against this line item."""
