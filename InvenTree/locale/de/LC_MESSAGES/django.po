@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-28 21:17+0000\n"
-"PO-Revision-Date: 2023-02-28 22:38\n"
+"POT-Creation-Date: 2023-03-02 03:51+0000\n"
+"PO-Revision-Date: 2023-03-02 23:18\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -36,7 +36,7 @@ msgstr "Datum eingeben"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:41
 #: part/models.py:2919 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:120 stock/models.py:2094 stock/models.py:2202
+#: stock/admin.py:121 stock/models.py:2094 stock/models.py:2202
 #: stock/serializers.py:315 stock/serializers.py:448 stock/serializers.py:529
 #: stock/serializers.py:808 stock/serializers.py:907 stock/serializers.py:1039
 #: stock/templates/stock/stock_sidebar.html:25
@@ -217,7 +217,7 @@ msgstr "Datei zum Anhängen auswählen"
 #: order/models.py:1284 part/admin.py:39 part/models.py:835
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
-#: stock/admin.py:119 templates/js/translated/company.js:746
+#: stock/admin.py:120 templates/js/translated/company.js:746
 #: templates/js/translated/company.js:1066
 #: templates/js/translated/order.js:3146 templates/js/translated/part.js:1990
 msgid "Link"
@@ -446,107 +446,107 @@ msgstr "URL der Remote-Bilddatei"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Das Herunterladen von Bildern von Remote-URLs ist nicht aktiviert"
 
-#: InvenTree/settings.py:696
+#: InvenTree/settings.py:705
 msgid "Czech"
 msgstr "Tschechisch"
 
-#: InvenTree/settings.py:697
+#: InvenTree/settings.py:706
 msgid "Danish"
 msgstr "Dänisch"
 
-#: InvenTree/settings.py:698
+#: InvenTree/settings.py:707
 msgid "German"
 msgstr "Deutsch"
 
-#: InvenTree/settings.py:699
+#: InvenTree/settings.py:708
 msgid "Greek"
 msgstr "Griechisch"
 
-#: InvenTree/settings.py:700
+#: InvenTree/settings.py:709
 msgid "English"
 msgstr "Englisch"
 
-#: InvenTree/settings.py:701
+#: InvenTree/settings.py:710
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: InvenTree/settings.py:702
+#: InvenTree/settings.py:711
 msgid "Spanish (Mexican)"
 msgstr "Spanisch (Mexikanisch)"
 
-#: InvenTree/settings.py:703
+#: InvenTree/settings.py:712
 msgid "Farsi / Persian"
 msgstr "Persisch"
 
-#: InvenTree/settings.py:704
+#: InvenTree/settings.py:713
 msgid "French"
 msgstr "Französisch"
 
-#: InvenTree/settings.py:705
+#: InvenTree/settings.py:714
 msgid "Hebrew"
 msgstr "Hebräisch"
 
-#: InvenTree/settings.py:706
+#: InvenTree/settings.py:715
 msgid "Hungarian"
 msgstr "Ungarisch"
 
-#: InvenTree/settings.py:707
+#: InvenTree/settings.py:716
 msgid "Italian"
 msgstr "Italienisch"
 
-#: InvenTree/settings.py:708
+#: InvenTree/settings.py:717
 msgid "Japanese"
 msgstr "Japanisch"
 
-#: InvenTree/settings.py:709
+#: InvenTree/settings.py:718
 msgid "Korean"
 msgstr "Koreanisch"
 
-#: InvenTree/settings.py:710
+#: InvenTree/settings.py:719
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: InvenTree/settings.py:711
+#: InvenTree/settings.py:720
 msgid "Norwegian"
 msgstr "Norwegisch"
 
-#: InvenTree/settings.py:712
+#: InvenTree/settings.py:721
 msgid "Polish"
 msgstr "Polnisch"
 
-#: InvenTree/settings.py:713
+#: InvenTree/settings.py:722
 msgid "Portuguese"
 msgstr "Portugiesisch"
 
-#: InvenTree/settings.py:714
+#: InvenTree/settings.py:723
 msgid "Portuguese (Brazilian)"
 msgstr "Portugiesisch (Brasilien)"
 
-#: InvenTree/settings.py:715
+#: InvenTree/settings.py:724
 msgid "Russian"
 msgstr "Russisch"
 
-#: InvenTree/settings.py:716
+#: InvenTree/settings.py:725
 msgid "Slovenian"
 msgstr "Slowenisch"
 
-#: InvenTree/settings.py:717
+#: InvenTree/settings.py:726
 msgid "Swedish"
 msgstr "Schwedisch"
 
-#: InvenTree/settings.py:718
+#: InvenTree/settings.py:727
 msgid "Thai"
 msgstr "Thailändisch"
 
-#: InvenTree/settings.py:719
+#: InvenTree/settings.py:728
 msgid "Turkish"
 msgstr "Türkisch"
 
-#: InvenTree/settings.py:720
+#: InvenTree/settings.py:729
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
-#: InvenTree/settings.py:721
+#: InvenTree/settings.py:730
 msgid "Chinese"
 msgstr "Chinesisch"
 
@@ -3342,7 +3342,7 @@ msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Mindestpreis"
 
 #: company/models.py:554 company/templates/company/supplier_part.html:167
-#: stock/admin.py:118 stock/models.py:694
+#: stock/admin.py:119 stock/models.py:694
 #: stock/templates/stock/item_base.html:246
 #: templates/js/translated/company.js:1046
 #: templates/js/translated/stock.js:2070
@@ -4766,7 +4766,7 @@ msgstr "Benutzt in"
 msgid "Allocated"
 msgstr "Zugeordnet"
 
-#: part/admin.py:65 part/templates/part/part_base.html:244
+#: part/admin.py:65 part/templates/part/part_base.html:244 stock/admin.py:124
 #: templates/js/translated/part.js:623 templates/js/translated/part.js:1762
 #: templates/js/translated/part.js:1941
 msgid "Building"
@@ -4780,7 +4780,7 @@ msgstr "Minimale Kosten"
 msgid "Maximum Cost"
 msgstr "Maximale Kosten"
 
-#: part/admin.py:195 part/admin.py:269 stock/admin.py:42 stock/admin.py:115
+#: part/admin.py:195 part/admin.py:269 stock/admin.py:42 stock/admin.py:116
 msgid "Parent ID"
 msgstr "Eltern ID"
 
@@ -5935,7 +5935,7 @@ msgid "Add stocktake information"
 msgstr "Inventurinformationen hinzufügen"
 
 #: part/templates/part/detail.html:67 part/templates/part/part_sidebar.html:50
-#: stock/admin.py:124 templates/InvenTree/settings/part_stocktake.html:29
+#: stock/admin.py:130 templates/InvenTree/settings/part_stocktake.html:29
 #: templates/InvenTree/settings/sidebar.html:47
 #: templates/js/translated/stock.js:1946 users/models.py:39
 msgid "Stocktake"
@@ -6342,7 +6342,7 @@ msgstr "Preisübersicht"
 msgid "Refresh Part Pricing"
 msgstr "Preis aktualisieren"
 
-#: part/templates/part/prices.html:25 stock/admin.py:123
+#: part/templates/part/prices.html:25 stock/admin.py:129
 #: stock/templates/stock/item_base.html:443
 #: templates/js/translated/company.js:1093
 #: templates/js/translated/company.js:1102
@@ -6879,12 +6879,12 @@ msgstr "Verbaute Objekte"
 msgid "Serial"
 msgstr "Seriennummer"
 
-#: stock/admin.py:39 stock/admin.py:107
+#: stock/admin.py:39 stock/admin.py:108
 #: templates/js/translated/model_renderers.js:172
 msgid "Location ID"
 msgstr "Standort-ID"
 
-#: stock/admin.py:40 stock/admin.py:108
+#: stock/admin.py:40 stock/admin.py:109
 msgid "Location Name"
 msgstr "Ortsname"
 
@@ -6897,40 +6897,52 @@ msgstr "Lagerortpfad"
 msgid "Stock Item ID"
 msgstr "Lagerartikel ID"
 
-#: stock/admin.py:109 templates/js/translated/model_renderers.js:442
+#: stock/admin.py:107
+msgid "Status Code"
+msgstr ""
+
+#: stock/admin.py:110 templates/js/translated/model_renderers.js:442
 msgid "Supplier Part ID"
 msgstr "Zuliefererteil-ID"
 
-#: stock/admin.py:110
+#: stock/admin.py:111
 msgid "Supplier ID"
 msgstr "Zulieferer ID"
 
-#: stock/admin.py:111
+#: stock/admin.py:112
 msgid "Supplier Name"
 msgstr "Lieferant"
 
-#: stock/admin.py:112
+#: stock/admin.py:113
 msgid "Customer ID"
 msgstr "Kunden ID"
 
-#: stock/admin.py:113 stock/models.py:701
+#: stock/admin.py:114 stock/models.py:701
 #: stock/templates/stock/item_base.html:362
 msgid "Installed In"
 msgstr "verbaut in"
 
-#: stock/admin.py:114 templates/js/translated/model_renderers.js:190
+#: stock/admin.py:115 templates/js/translated/model_renderers.js:190
 msgid "Build ID"
 msgstr "Bauauftrag-ID"
 
-#: stock/admin.py:116
+#: stock/admin.py:117
 msgid "Sales Order ID"
 msgstr "Auftrags-ID"
 
-#: stock/admin.py:117
+#: stock/admin.py:118
 msgid "Purchase Order ID"
 msgstr "Bestellungs-ID"
 
-#: stock/admin.py:125 stock/models.py:774
+#: stock/admin.py:125
+msgid "Review Needed"
+msgstr ""
+
+#: stock/admin.py:126
+msgid "Delete on Deplete"
+msgstr ""
+
+#: stock/admin.py:131 stock/models.py:774
 #: stock/templates/stock/item_base.html:430
 #: templates/js/translated/stock.js:1960
 msgid "Expiry Date"
