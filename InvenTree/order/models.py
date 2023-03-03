@@ -984,7 +984,7 @@ class OrderExtraLine(OrderLineItem):
 
         if self.price:
             return self.price * self.quantity
-    
+
 
 class PurchaseOrderLineItem(OrderLineItem):
     """Model for a purchase order line item.
