@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-28 21:17+0000\n"
-"PO-Revision-Date: 2023-02-28 22:38\n"
+"POT-Creation-Date: 2023-03-02 03:51+0000\n"
+"PO-Revision-Date: 2023-03-02 23:18\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -36,7 +36,7 @@ msgstr "Seleccionar una fecha"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:41
 #: part/models.py:2919 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:120 stock/models.py:2094 stock/models.py:2202
+#: stock/admin.py:121 stock/models.py:2094 stock/models.py:2202
 #: stock/serializers.py:315 stock/serializers.py:448 stock/serializers.py:529
 #: stock/serializers.py:808 stock/serializers.py:907 stock/serializers.py:1039
 #: stock/templates/stock/stock_sidebar.html:25
@@ -217,7 +217,7 @@ msgstr "Seleccionar archivo para adjuntar"
 #: order/models.py:1284 part/admin.py:39 part/models.py:835
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
-#: stock/admin.py:119 templates/js/translated/company.js:746
+#: stock/admin.py:120 templates/js/translated/company.js:746
 #: templates/js/translated/company.js:1066
 #: templates/js/translated/order.js:3146 templates/js/translated/part.js:1990
 msgid "Link"
@@ -446,107 +446,107 @@ msgstr "URL del archivo de imagen remoto"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "La descarga de imágenes desde la URL remota no está habilitada"
 
-#: InvenTree/settings.py:696
+#: InvenTree/settings.py:705
 msgid "Czech"
 msgstr "Checo"
 
-#: InvenTree/settings.py:697
+#: InvenTree/settings.py:706
 msgid "Danish"
 msgstr "Danés"
 
-#: InvenTree/settings.py:698
+#: InvenTree/settings.py:707
 msgid "German"
 msgstr "Alemán"
 
-#: InvenTree/settings.py:699
+#: InvenTree/settings.py:708
 msgid "Greek"
 msgstr "Griego"
 
-#: InvenTree/settings.py:700
+#: InvenTree/settings.py:709
 msgid "English"
 msgstr "Inglés"
 
-#: InvenTree/settings.py:701
+#: InvenTree/settings.py:710
 msgid "Spanish"
 msgstr "Español"
 
-#: InvenTree/settings.py:702
+#: InvenTree/settings.py:711
 msgid "Spanish (Mexican)"
 msgstr "Español (México)"
 
-#: InvenTree/settings.py:703
+#: InvenTree/settings.py:712
 msgid "Farsi / Persian"
 msgstr "Farsi / persa"
 
-#: InvenTree/settings.py:704
+#: InvenTree/settings.py:713
 msgid "French"
 msgstr "Francés"
 
-#: InvenTree/settings.py:705
+#: InvenTree/settings.py:714
 msgid "Hebrew"
 msgstr "Hebreo"
 
-#: InvenTree/settings.py:706
+#: InvenTree/settings.py:715
 msgid "Hungarian"
 msgstr "Húngaro"
 
-#: InvenTree/settings.py:707
+#: InvenTree/settings.py:716
 msgid "Italian"
 msgstr "Italiano"
 
-#: InvenTree/settings.py:708
+#: InvenTree/settings.py:717
 msgid "Japanese"
 msgstr "Japonés"
 
-#: InvenTree/settings.py:709
+#: InvenTree/settings.py:718
 msgid "Korean"
 msgstr "Coreano"
 
-#: InvenTree/settings.py:710
+#: InvenTree/settings.py:719
 msgid "Dutch"
 msgstr "Holandés"
 
-#: InvenTree/settings.py:711
+#: InvenTree/settings.py:720
 msgid "Norwegian"
 msgstr "Noruego"
 
-#: InvenTree/settings.py:712
+#: InvenTree/settings.py:721
 msgid "Polish"
 msgstr "Polaco"
 
-#: InvenTree/settings.py:713
+#: InvenTree/settings.py:722
 msgid "Portuguese"
 msgstr "Portugués"
 
-#: InvenTree/settings.py:714
+#: InvenTree/settings.py:723
 msgid "Portuguese (Brazilian)"
 msgstr "Português (Brasil)"
 
-#: InvenTree/settings.py:715
+#: InvenTree/settings.py:724
 msgid "Russian"
 msgstr "Ruso (Русский)"
 
-#: InvenTree/settings.py:716
+#: InvenTree/settings.py:725
 msgid "Slovenian"
 msgstr ""
 
-#: InvenTree/settings.py:717
+#: InvenTree/settings.py:726
 msgid "Swedish"
 msgstr "Svenska"
 
-#: InvenTree/settings.py:718
+#: InvenTree/settings.py:727
 msgid "Thai"
 msgstr "Tailandés"
 
-#: InvenTree/settings.py:719
+#: InvenTree/settings.py:728
 msgid "Turkish"
 msgstr "Türkçe"
 
-#: InvenTree/settings.py:720
+#: InvenTree/settings.py:729
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: InvenTree/settings.py:721
+#: InvenTree/settings.py:730
 msgid "Chinese"
 msgstr "Chino (中文)"
 
@@ -1838,7 +1838,7 @@ msgstr "Moneda Predeterminada"
 
 #: common/models.py:939
 msgid "Select base currency for pricing caluclations"
-msgstr ""
+msgstr "Moneda a usar para el cálculo de precios"
 
 #: common/models.py:946
 msgid "Download from URL"
@@ -1924,23 +1924,23 @@ msgstr ""
 
 #: common/models.py:1038 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "Códigos de barras"
 
 #: common/models.py:1039
 msgid "Enable barcode scanner support"
-msgstr ""
+msgstr "Habilitar soporte para escáner de código de barras"
 
 #: common/models.py:1045
 msgid "Barcode Input Delay"
-msgstr ""
+msgstr "Retraso de entrada"
 
 #: common/models.py:1046
 msgid "Barcode input processing delay time"
-msgstr ""
+msgstr "Tiempo de retraso en la lectura de códigos de barras"
 
 #: common/models.py:1056
 msgid "Barcode Webcam Support"
-msgstr ""
+msgstr "Soporte para cámaras web"
 
 #: common/models.py:1057
 msgid "Allow barcode scanning via webcam in browser"
@@ -2389,19 +2389,19 @@ msgstr ""
 
 #: common/models.py:1451
 msgid "Enable password forgot"
-msgstr ""
+msgstr "Habilitar recuperación de contraseña"
 
 #: common/models.py:1452
 msgid "Enable password forgot function on the login pages"
-msgstr ""
+msgstr "Permitir a los usuarios recuperar su contraseña al iniciar sesión"
 
 #: common/models.py:1458
 msgid "Enable registration"
-msgstr ""
+msgstr "Habilitar registro"
 
 #: common/models.py:1459
 msgid "Enable self-registration for users on the login pages"
-msgstr ""
+msgstr "Permitir a usuarios registrarse por su cuenta"
 
 #: common/models.py:1465
 msgid "Enable SSO"
@@ -2421,11 +2421,11 @@ msgstr ""
 
 #: common/models.py:1479
 msgid "Email required"
-msgstr ""
+msgstr "Requerir email"
 
 #: common/models.py:1480
 msgid "Require user to supply mail on signup"
-msgstr ""
+msgstr "Requerir al usuario una dirección de correo electrónico al registrarse"
 
 #: common/models.py:1486
 msgid "Auto-fill SSO users"
@@ -2469,11 +2469,11 @@ msgstr ""
 
 #: common/models.py:1521
 msgid "Enforce MFA"
-msgstr ""
+msgstr "Requerir AFM"
 
 #: common/models.py:1522
 msgid "Users must use multifactor security."
-msgstr ""
+msgstr "Requerir a los usuarios el uso de Autenticación de Factor Múltiple"
 
 #: common/models.py:1528
 msgid "Check plugins on startup"
@@ -2709,11 +2709,11 @@ msgstr ""
 
 #: common/models.py:1785
 msgid "Show News"
-msgstr ""
+msgstr "Mostrar noticias"
 
 #: common/models.py:1786
 msgid "Show news on the homepage"
-msgstr ""
+msgstr "Mostrar las últimas novedades de InvenTree en la página de inicio"
 
 #: common/models.py:1792
 msgid "Inline label display"
@@ -3342,7 +3342,7 @@ msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
 #: company/models.py:554 company/templates/company/supplier_part.html:167
-#: stock/admin.py:118 stock/models.py:694
+#: stock/admin.py:119 stock/models.py:694
 #: stock/templates/stock/item_base.html:246
 #: templates/js/translated/company.js:1046
 #: templates/js/translated/stock.js:2070
@@ -4766,7 +4766,7 @@ msgstr "Usado En"
 msgid "Allocated"
 msgstr ""
 
-#: part/admin.py:65 part/templates/part/part_base.html:244
+#: part/admin.py:65 part/templates/part/part_base.html:244 stock/admin.py:124
 #: templates/js/translated/part.js:623 templates/js/translated/part.js:1762
 #: templates/js/translated/part.js:1941
 msgid "Building"
@@ -4780,7 +4780,7 @@ msgstr ""
 msgid "Maximum Cost"
 msgstr ""
 
-#: part/admin.py:195 part/admin.py:269 stock/admin.py:42 stock/admin.py:115
+#: part/admin.py:195 part/admin.py:269 stock/admin.py:42 stock/admin.py:116
 msgid "Parent ID"
 msgstr ""
 
@@ -4980,7 +4980,7 @@ msgstr "Palabras clave para mejorar la visibilidad en los resultados de búsqued
 #: templates/js/translated/notification.js:50
 #: templates/js/translated/part.js:1890 templates/js/translated/part.js:2155
 msgid "Category"
-msgstr ""
+msgstr "Categoría"
 
 #: part/models.py:817
 msgid "Part category"
@@ -5935,7 +5935,7 @@ msgid "Add stocktake information"
 msgstr ""
 
 #: part/templates/part/detail.html:67 part/templates/part/part_sidebar.html:50
-#: stock/admin.py:124 templates/InvenTree/settings/part_stocktake.html:29
+#: stock/admin.py:130 templates/InvenTree/settings/part_stocktake.html:29
 #: templates/InvenTree/settings/sidebar.html:47
 #: templates/js/translated/stock.js:1946 users/models.py:39
 msgid "Stocktake"
@@ -6342,7 +6342,7 @@ msgstr ""
 msgid "Refresh Part Pricing"
 msgstr ""
 
-#: part/templates/part/prices.html:25 stock/admin.py:123
+#: part/templates/part/prices.html:25 stock/admin.py:129
 #: stock/templates/stock/item_base.html:443
 #: templates/js/translated/company.js:1093
 #: templates/js/translated/company.js:1102
@@ -6558,12 +6558,12 @@ msgstr ""
 #: plugin/builtin/integration/core_notifications.py:39
 #: plugin/builtin/integration/core_notifications.py:80
 msgid "Enable email notifications"
-msgstr ""
+msgstr "Habilitar notificaciones por correo electrónico"
 
 #: plugin/builtin/integration/core_notifications.py:40
 #: plugin/builtin/integration/core_notifications.py:81
 msgid "Allow sending of emails for event notifications"
-msgstr ""
+msgstr "Habilitar el envío de correo electrónico para la notificación de eventos"
 
 #: plugin/builtin/integration/core_notifications.py:45
 msgid "Enable slack notifications"
@@ -6879,12 +6879,12 @@ msgstr ""
 msgid "Serial"
 msgstr ""
 
-#: stock/admin.py:39 stock/admin.py:107
+#: stock/admin.py:39 stock/admin.py:108
 #: templates/js/translated/model_renderers.js:172
 msgid "Location ID"
 msgstr ""
 
-#: stock/admin.py:40 stock/admin.py:108
+#: stock/admin.py:40 stock/admin.py:109
 msgid "Location Name"
 msgstr ""
 
@@ -6897,40 +6897,52 @@ msgstr "Ruta de Ubicación"
 msgid "Stock Item ID"
 msgstr ""
 
-#: stock/admin.py:109 templates/js/translated/model_renderers.js:442
+#: stock/admin.py:107
+msgid "Status Code"
+msgstr ""
+
+#: stock/admin.py:110 templates/js/translated/model_renderers.js:442
 msgid "Supplier Part ID"
 msgstr ""
 
-#: stock/admin.py:110
+#: stock/admin.py:111
 msgid "Supplier ID"
 msgstr ""
 
-#: stock/admin.py:111
+#: stock/admin.py:112
 msgid "Supplier Name"
 msgstr ""
 
-#: stock/admin.py:112
+#: stock/admin.py:113
 msgid "Customer ID"
 msgstr "ID del Cliente"
 
-#: stock/admin.py:113 stock/models.py:701
+#: stock/admin.py:114 stock/models.py:701
 #: stock/templates/stock/item_base.html:362
 msgid "Installed In"
 msgstr ""
 
-#: stock/admin.py:114 templates/js/translated/model_renderers.js:190
+#: stock/admin.py:115 templates/js/translated/model_renderers.js:190
 msgid "Build ID"
 msgstr ""
 
-#: stock/admin.py:116
+#: stock/admin.py:117
 msgid "Sales Order ID"
 msgstr "ID de Pedido de Entrega"
 
-#: stock/admin.py:117
+#: stock/admin.py:118
 msgid "Purchase Order ID"
 msgstr ""
 
-#: stock/admin.py:125 stock/models.py:774
+#: stock/admin.py:125
+msgid "Review Needed"
+msgstr ""
+
+#: stock/admin.py:126
+msgid "Delete on Deplete"
+msgstr ""
+
+#: stock/admin.py:131 stock/models.py:774
 #: stock/templates/stock/item_base.html:430
 #: templates/js/translated/stock.js:1960
 msgid "Expiry Date"
@@ -7821,7 +7833,7 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:17
 #: templates/InvenTree/settings/sidebar.html:33 templates/notifications.html:5
 msgid "Notifications"
-msgstr ""
+msgstr "Notificaciones"
 
 #: templates/InvenTree/notifications/notifications.html:39
 msgid "No unread notifications found"
@@ -7854,7 +7866,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/barcode.html:8
 msgid "Barcode Settings"
-msgstr ""
+msgstr "Ajustes de códigos de barras"
 
 #: templates/InvenTree/settings/build.html:8
 msgid "Build Order Settings"
@@ -7862,7 +7874,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/category.html:7
 msgid "Category Settings"
-msgstr ""
+msgstr "Ajustes de categorías"
 
 #: templates/InvenTree/settings/global.html:9
 msgid "Server Settings"
@@ -7871,12 +7883,12 @@ msgstr ""
 #: templates/InvenTree/settings/label.html:8
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
-msgstr ""
+msgstr "Ajustes de etiquetas"
 
 #: templates/InvenTree/settings/login.html:9
 #: templates/InvenTree/settings/sidebar.html:29
 msgid "Login Settings"
-msgstr ""
+msgstr "Inicio de sesión"
 
 #: templates/InvenTree/settings/login.html:16
 msgid "Outgoing email has not been configured. Some login and sign-up features may not work correctly!"
@@ -8075,16 +8087,16 @@ msgstr "Configuración de Precios"
 
 #: templates/InvenTree/settings/pricing.html:33
 msgid "Exchange Rates"
-msgstr ""
+msgstr "Conversión de divisas"
 
 #: templates/InvenTree/settings/pricing.html:37
 msgid "Update Now"
-msgstr ""
+msgstr "Actualizar"
 
 #: templates/InvenTree/settings/pricing.html:45
 #: templates/InvenTree/settings/pricing.html:49
 msgid "Last Update"
-msgstr ""
+msgstr "Última actualización"
 
 #: templates/InvenTree/settings/pricing.html:49
 msgid "Never"
@@ -8093,7 +8105,7 @@ msgstr ""
 #: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reporting.html:9
 msgid "Report Settings"
-msgstr ""
+msgstr "Ajustes de informes"
 
 #: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
@@ -8121,7 +8133,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:49
 msgid "Rate"
-msgstr ""
+msgstr "Tasa"
 
 #: templates/InvenTree/settings/settings_staff_js.html:117
 msgid "No category parameter templates found"
@@ -8174,12 +8186,12 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "Ajustes del usuario"
 
 #: templates/InvenTree/settings/sidebar.html:9
 #: templates/InvenTree/settings/user.html:12
 msgid "Account Settings"
-msgstr ""
+msgstr "Ajustes de la cuenta"
 
 #: templates/InvenTree/settings/sidebar.html:11
 #: templates/InvenTree/settings/user_display.html:9
@@ -8193,12 +8205,12 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
-msgstr ""
+msgstr "Ajustes de búsqueda"
 
 #: templates/InvenTree/settings/sidebar.html:19
 #: templates/InvenTree/settings/sidebar.html:39
 msgid "Reporting"
-msgstr ""
+msgstr "Informes"
 
 #: templates/InvenTree/settings/sidebar.html:24
 msgid "Global Settings"
@@ -8206,15 +8218,15 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:27
 msgid "Server Configuration"
-msgstr ""
+msgstr "Ajustes del servidor"
 
 #: templates/InvenTree/settings/sidebar.html:37
 msgid "Label Printing"
-msgstr ""
+msgstr "Impresión de etiquetas"
 
 #: templates/InvenTree/settings/sidebar.html:41
 msgid "Categories"
-msgstr ""
+msgstr "Categorías"
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
@@ -8234,19 +8246,19 @@ msgstr ""
 #: templates/js/translated/helpers.js:42 templates/notes_buttons.html:3
 #: templates/notes_buttons.html:4
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: templates/InvenTree/settings/user.html:32
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: templates/InvenTree/settings/user.html:36
 msgid "First Name"
-msgstr ""
+msgstr "Nombre"
 
 #: templates/InvenTree/settings/user.html:40
 msgid "Last Name"
-msgstr ""
+msgstr "Apellido"
 
 #: templates/InvenTree/settings/user.html:54
 msgid "The following email addresses are associated with your account:"
@@ -8274,19 +8286,19 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:95
 msgid "Warning:"
-msgstr ""
+msgstr "Advertencia:"
 
 #: templates/InvenTree/settings/user.html:96
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
-msgstr ""
+msgstr "Actualmente no tienes ninguna dirección de correo electrónico configurada. Es necesario tener una para recibir notificaciones, restablecer tu contraseña, etc."
 
 #: templates/InvenTree/settings/user.html:104
 msgid "Add Email Address"
-msgstr ""
+msgstr "Añadir dirección de correo electrónico"
 
 #: templates/InvenTree/settings/user.html:109
 msgid "Add Email"
-msgstr ""
+msgstr "Añadir dirección"
 
 #: templates/InvenTree/settings/user.html:117
 msgid "Social Accounts"
@@ -8306,7 +8318,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:174
 msgid "Multifactor"
-msgstr ""
+msgstr "Autenticación multifactor"
 
 #: templates/InvenTree/settings/user.html:179
 msgid "You have these factors available:"
@@ -8326,19 +8338,19 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:211
 msgid "Change factors"
-msgstr ""
+msgstr "Cambiar factores"
 
 #: templates/InvenTree/settings/user.html:212
 msgid "Setup multifactor"
-msgstr ""
+msgstr "Configurar factor"
 
 #: templates/InvenTree/settings/user.html:214
 msgid "Remove multifactor"
-msgstr ""
+msgstr "Eliminar factor"
 
 #: templates/InvenTree/settings/user.html:222
 msgid "Active Sessions"
-msgstr ""
+msgstr "Sesiones activas"
 
 #: templates/InvenTree/settings/user.html:228
 msgid "Log out active sessions (except this one)"
@@ -8358,15 +8370,15 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:243
 msgid "IP Address"
-msgstr ""
+msgstr "Dirección IP"
 
 #: templates/InvenTree/settings/user.html:244
 msgid "Device"
-msgstr ""
+msgstr "Dispositivo"
 
 #: templates/InvenTree/settings/user.html:245
 msgid "Last Activity"
-msgstr ""
+msgstr "Última actividad"
 
 #: templates/InvenTree/settings/user.html:258
 #, python-format
@@ -8437,7 +8449,7 @@ msgstr "¡Ayuda a los esfuerzos de traducción!"
 
 #: templates/InvenTree/settings/user_display.html:107
 msgid "Native language translation of the web application is community contributed via crowdin. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "La aplicación web es traducida por una comunidad de voluntarios a través de crowdin. Tus contribuciones serán bienvenidas."
 
 #: templates/InvenTree/settings/user_display.html:108
 msgid "InvenTree Translation Project"
@@ -8445,11 +8457,11 @@ msgstr "Participar en el Proyecto de Traducción de InvenTree"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
-msgstr ""
+msgstr "Ajustes de la página de inicio"
 
 #: templates/InvenTree/settings/user_notifications.html:9
 msgid "Notification Settings"
-msgstr ""
+msgstr "Ajustes de notificaciones"
 
 #: templates/about.html:9
 msgid "InvenTree Version"
@@ -8561,7 +8573,7 @@ msgstr ""
 #: templates/account/logout.html:27 templates/allauth_2fa/backup_tokens.html:35
 #: templates/allauth_2fa/remove.html:24 templates/allauth_2fa/setup.html:44
 msgid "Return to Site"
-msgstr ""
+msgstr "Volver al sitio"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
@@ -8663,27 +8675,27 @@ msgstr ""
 
 #: templates/allauth_2fa/setup.html:6
 msgid "Setup Two-Factor Authentication"
-msgstr ""
+msgstr "Configurar autenticación de dos factores"
 
 #: templates/allauth_2fa/setup.html:10
 msgid "Step 1"
-msgstr ""
+msgstr "Paso 1"
 
 #: templates/allauth_2fa/setup.html:14
 msgid "Scan the QR code below with a token generator of your choice (for instance Google Authenticator)."
-msgstr ""
+msgstr "Escanea el código QR de abajo con un generador de tokens de tu elección (por ejemplo Google Authenticator)."
 
 #: templates/allauth_2fa/setup.html:23
 msgid "Step 2"
-msgstr ""
+msgstr "Paso 2"
 
 #: templates/allauth_2fa/setup.html:27
 msgid "Input a token generated by the app:"
-msgstr ""
+msgstr "Ingresa un token generado por la aplicación:"
 
 #: templates/allauth_2fa/setup.html:37
 msgid "Verify"
-msgstr ""
+msgstr "Verificar"
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:61
 msgid "Add Link"
@@ -8979,7 +8991,7 @@ msgstr ""
 #: templates/js/translated/order.js:1309 templates/modals.html:15
 #: templates/modals.html:27 templates/modals.html:39 templates/modals.html:50
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: templates/js/translated/bom.js:275
 msgid "Download BOM Template"
@@ -9757,7 +9769,7 @@ msgstr "Cancelar"
 #: templates/js/translated/modals.js:731 templates/js/translated/modals.js:1039
 #: templates/modals.html:28 templates/modals.html:51
 msgid "Submit"
-msgstr ""
+msgstr "Aceptar"
 
 #: templates/js/translated/modals.js:148
 msgid "Form Title"

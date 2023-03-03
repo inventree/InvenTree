@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-28 21:17+0000\n"
-"PO-Revision-Date: 2023-02-28 22:38\n"
+"POT-Creation-Date: 2023-03-02 03:51+0000\n"
+"PO-Revision-Date: 2023-03-02 23:18\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -36,7 +36,7 @@ msgstr "Insira uma Data"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:41
 #: part/models.py:2919 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:120 stock/models.py:2094 stock/models.py:2202
+#: stock/admin.py:121 stock/models.py:2094 stock/models.py:2202
 #: stock/serializers.py:315 stock/serializers.py:448 stock/serializers.py:529
 #: stock/serializers.py:808 stock/serializers.py:907 stock/serializers.py:1039
 #: stock/templates/stock/stock_sidebar.html:25
@@ -92,11 +92,11 @@ msgstr "Voce precisa digital o mesmo email."
 
 #: InvenTree/forms.py:230 InvenTree/forms.py:236
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "O endereço primário de e-mail não é válido."
 
 #: InvenTree/forms.py:242
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "O domínio de e-mail providenciado não foi aprovado."
 
 #: InvenTree/helpers.py:166
 msgid "Connection error"
@@ -104,7 +104,7 @@ msgstr "Erro de conexão"
 
 #: InvenTree/helpers.py:170 InvenTree/helpers.py:175
 msgid "Server responded with invalid status code"
-msgstr "O servidor respondeu com código de status inválido"
+msgstr "O servidor respondeu com código estado inválido"
 
 #: InvenTree/helpers.py:172
 msgid "Exception occurred"
@@ -112,7 +112,7 @@ msgstr "Ocorreu uma exceção"
 
 #: InvenTree/helpers.py:180
 msgid "Server responded with invalid Content-Length value"
-msgstr "O servidor respondeu com valor inválido de '{Content-Length}'"
+msgstr "O servidor respondeu com valor inválido do tamanho de conteúdo"
 
 #: InvenTree/helpers.py:183
 msgid "Image size is too large"
@@ -217,7 +217,7 @@ msgstr "Selecione arquivo para anexar"
 #: order/models.py:1284 part/admin.py:39 part/models.py:835
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
-#: stock/admin.py:119 templates/js/translated/company.js:746
+#: stock/admin.py:120 templates/js/translated/company.js:746
 #: templates/js/translated/company.js:1066
 #: templates/js/translated/order.js:3146 templates/js/translated/part.js:1990
 msgid "Link"
@@ -278,11 +278,11 @@ msgstr "Erro renomeando o arquivo"
 
 #: InvenTree/models.py:527
 msgid "Duplicate names cannot exist under the same parent"
-msgstr ""
+msgstr "Nomes duplicados não podem existir sob o mesmo parental"
 
 #: InvenTree/models.py:546
 msgid "Invalid choice"
-msgstr "Escolha invalida"
+msgstr "Escolha inválida"
 
 #: InvenTree/models.py:571 InvenTree/models.py:572 common/models.py:2201
 #: company/models.py:382 label/models.py:101 part/models.py:779
@@ -377,11 +377,11 @@ msgstr "Preicsa ser um numero valido"
 #: company/templates/company/company_base.html:107 part/models.py:2766
 #: templates/InvenTree/settings/settings_staff_js.html:44
 msgid "Currency"
-msgstr ""
+msgstr "Moeda"
 
 #: InvenTree/serializers.py:85
 msgid "Select currency from available options"
-msgstr ""
+msgstr "Selecione a Moeda nas opções disponíveis"
 
 #: InvenTree/serializers.py:334
 msgid "Filename"
@@ -446,121 +446,121 @@ msgstr "URL do arquivo de imagem remoto"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Baixar imagens de URL remota não está habilitado"
 
-#: InvenTree/settings.py:696
+#: InvenTree/settings.py:705
 msgid "Czech"
 msgstr "Tcheco"
 
-#: InvenTree/settings.py:697
+#: InvenTree/settings.py:706
 msgid "Danish"
 msgstr "Dinamarquês"
 
-#: InvenTree/settings.py:698
+#: InvenTree/settings.py:707
 msgid "German"
 msgstr "Alemão"
 
-#: InvenTree/settings.py:699
+#: InvenTree/settings.py:708
 msgid "Greek"
 msgstr "Grego"
 
-#: InvenTree/settings.py:700
+#: InvenTree/settings.py:709
 msgid "English"
 msgstr "Inglês"
 
-#: InvenTree/settings.py:701
+#: InvenTree/settings.py:710
 msgid "Spanish"
 msgstr "Espanhol"
 
-#: InvenTree/settings.py:702
+#: InvenTree/settings.py:711
 msgid "Spanish (Mexican)"
 msgstr "Espanhol (Mexicano)"
 
-#: InvenTree/settings.py:703
+#: InvenTree/settings.py:712
 msgid "Farsi / Persian"
 msgstr "Persa"
 
-#: InvenTree/settings.py:704
+#: InvenTree/settings.py:713
 msgid "French"
 msgstr "Francês"
 
-#: InvenTree/settings.py:705
+#: InvenTree/settings.py:714
 msgid "Hebrew"
 msgstr "Hebraico"
 
-#: InvenTree/settings.py:706
+#: InvenTree/settings.py:715
 msgid "Hungarian"
 msgstr "Húngaro"
 
-#: InvenTree/settings.py:707
+#: InvenTree/settings.py:716
 msgid "Italian"
 msgstr "Italiano"
 
-#: InvenTree/settings.py:708
+#: InvenTree/settings.py:717
 msgid "Japanese"
 msgstr "Japonês"
 
-#: InvenTree/settings.py:709
+#: InvenTree/settings.py:718
 msgid "Korean"
 msgstr "Coreano"
 
-#: InvenTree/settings.py:710
+#: InvenTree/settings.py:719
 msgid "Dutch"
 msgstr "Holandês"
 
-#: InvenTree/settings.py:711
+#: InvenTree/settings.py:720
 msgid "Norwegian"
 msgstr "Norueguês"
 
-#: InvenTree/settings.py:712
+#: InvenTree/settings.py:721
 msgid "Polish"
 msgstr "Polonês"
 
-#: InvenTree/settings.py:713
+#: InvenTree/settings.py:722
 msgid "Portuguese"
-msgstr ""
+msgstr "Português"
 
-#: InvenTree/settings.py:714
+#: InvenTree/settings.py:723
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Português (Brasileiro)"
 
-#: InvenTree/settings.py:715
+#: InvenTree/settings.py:724
 msgid "Russian"
-msgstr ""
+msgstr "Russo"
 
-#: InvenTree/settings.py:716
+#: InvenTree/settings.py:725
 msgid "Slovenian"
-msgstr ""
+msgstr "Esloveno"
 
-#: InvenTree/settings.py:717
+#: InvenTree/settings.py:726
 msgid "Swedish"
-msgstr ""
+msgstr "Sueco"
 
-#: InvenTree/settings.py:718
+#: InvenTree/settings.py:727
 msgid "Thai"
-msgstr ""
+msgstr "Tailandês"
 
-#: InvenTree/settings.py:719
+#: InvenTree/settings.py:728
 msgid "Turkish"
-msgstr ""
+msgstr "Turco"
 
-#: InvenTree/settings.py:720
+#: InvenTree/settings.py:729
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
-#: InvenTree/settings.py:721
+#: InvenTree/settings.py:730
 msgid "Chinese"
-msgstr ""
+msgstr "Chinês"
 
 #: InvenTree/status.py:98 part/serializers.py:862
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Falha em verificar o histórico do trabalhador"
 
 #: InvenTree/status.py:102
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Serviço de fundo do e-mail não foi configurado"
 
 #: InvenTree/status.py:105
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Verificação de saúde do sistema InvenTree falhou"
 
 #: InvenTree/status_codes.py:99 InvenTree/status_codes.py:140
 #: InvenTree/status_codes.py:306 templates/js/translated/table_filters.js:389
@@ -569,49 +569,49 @@ msgstr "Pendente"
 
 #: InvenTree/status_codes.py:100
 msgid "Placed"
-msgstr ""
+msgstr "Colocado"
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:309
 #: order/templates/order/order_base.html:143
 #: order/templates/order/sales_order_base.html:133
 msgid "Complete"
-msgstr ""
+msgstr "Completado"
 
 #: InvenTree/status_codes.py:102 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:308
 msgid "Cancelled"
-msgstr ""
+msgstr "Cancelado"
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:143
 #: InvenTree/status_codes.py:183
 msgid "Lost"
-msgstr ""
+msgstr "Perdido"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:186
 msgid "Returned"
-msgstr ""
+msgstr "Retornado"
 
 #: InvenTree/status_codes.py:141 order/models.py:1167
 #: templates/js/translated/order.js:3734 templates/js/translated/order.js:4074
 msgid "Shipped"
-msgstr ""
+msgstr "Enviado"
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
-msgstr ""
+msgstr "Necessita de atenção"
 
 #: InvenTree/status_codes.py:181
 msgid "Damaged"
-msgstr ""
+msgstr "Danificado"
 
 #: InvenTree/status_codes.py:182
 msgid "Destroyed"
-msgstr ""
+msgstr "Destruído"
 
 #: InvenTree/status_codes.py:184
 msgid "Rejected"
@@ -619,148 +619,148 @@ msgstr "Rejeitado"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
-msgstr ""
+msgstr "Em quarentena"
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Entrada de rastreamento de estoque antiga"
 
 #: InvenTree/status_codes.py:261
 msgid "Stock item created"
-msgstr ""
+msgstr "Item de estoque criado"
 
 #: InvenTree/status_codes.py:263
 msgid "Edited stock item"
-msgstr ""
+msgstr "Item de estoque editado"
 
 #: InvenTree/status_codes.py:264
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Número de série atribuído"
 
 #: InvenTree/status_codes.py:266
 msgid "Stock counted"
-msgstr ""
+msgstr "Estoque contado"
 
 #: InvenTree/status_codes.py:267
 msgid "Stock manually added"
-msgstr ""
+msgstr "Estoque adicionado manualmente"
 
 #: InvenTree/status_codes.py:268
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Estoque removido manualmente"
 
 #: InvenTree/status_codes.py:270
 msgid "Location changed"
-msgstr ""
+msgstr "Local alterado"
 
 #: InvenTree/status_codes.py:272
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Instalado na montagem"
 
 #: InvenTree/status_codes.py:273
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Removido da montagem"
 
 #: InvenTree/status_codes.py:275
 msgid "Installed component item"
-msgstr ""
+msgstr "Instalado componente do Item"
 
 #: InvenTree/status_codes.py:276
 msgid "Removed component item"
-msgstr ""
+msgstr "Removido componente do Item"
 
 #: InvenTree/status_codes.py:278
 msgid "Split from parent item"
-msgstr ""
+msgstr "Separado do Item Paternal"
 
 #: InvenTree/status_codes.py:279
 msgid "Split child item"
-msgstr ""
+msgstr "Separar o Item filho"
 
 #: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2178
 msgid "Merged stock items"
-msgstr ""
+msgstr "Itens de estoque mesclados"
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
-msgstr ""
+msgstr "Convertido para variável"
 
 #: InvenTree/status_codes.py:285 templates/js/translated/table_filters.js:245
 msgid "Sent to customer"
-msgstr ""
+msgstr "Enviado ao cliente"
 
 #: InvenTree/status_codes.py:286
 msgid "Returned from customer"
-msgstr ""
+msgstr "Retornado ao cliente"
 
 #: InvenTree/status_codes.py:288
 msgid "Build order output created"
-msgstr ""
+msgstr "Criação dos pedidos de produção criado"
 
 #: InvenTree/status_codes.py:289
 msgid "Build order output completed"
-msgstr ""
+msgstr "Criação do pedido de produção completado"
 
 #: InvenTree/status_codes.py:290
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Usado na ordem de produção"
 
 #: InvenTree/status_codes.py:292
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Recebido referente ao pedido de compra"
 
 #: InvenTree/status_codes.py:307
 msgid "Production"
-msgstr ""
+msgstr "Produção"
 
 #: InvenTree/validators.py:20
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Não é um código de moeda válido"
 
 #: InvenTree/validators.py:91
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "IPN deve corresponder ao padrão regex {pat}"
 
 #: InvenTree/validators.py:133 InvenTree/validators.py:149
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Valor excedente não deve ser negativo"
 
 #: InvenTree/validators.py:151
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Excedente não deve exceder 100%"
 
 #: InvenTree/validators.py:158
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Valor de excedente inválido"
 
 #: InvenTree/views.py:409 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
-msgstr ""
+msgstr "Editar informações do usuário"
 
 #: InvenTree/views.py:421 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "Definir senha"
 
 #: InvenTree/views.py:443
 msgid "Password fields must match"
-msgstr ""
+msgstr "Os campos de senha devem coincidir"
 
 #: InvenTree/views.py:452
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Senha incorreta fornecida"
 
 #: InvenTree/views.py:651 templates/navbar.html:152
 msgid "System Information"
-msgstr ""
+msgstr "Informação do Sistema"
 
 #: InvenTree/views.py:658 templates/navbar.html:163
 msgid "About InvenTree"
-msgstr ""
+msgstr "Sobre o InvenTree"
 
 #: build/api.py:243
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "Produção deve ser cancelada antes de ser deletada"
 
 #: build/models.py:69 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -769,7 +769,7 @@ msgstr ""
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:799
 msgid "Build Order"
-msgstr ""
+msgstr "Ondem de Produção"
 
 #: build/models.py:70 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -780,15 +780,15 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:49
 #: templates/js/translated/search.js:254 users/models.py:42
 msgid "Build Orders"
-msgstr ""
+msgstr "Ordens de Produções"
 
 #: build/models.py:111
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Escolha de Produção parental inválida"
 
 #: build/models.py:155
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Referência do pedido de produção"
 
 #: build/models.py:156 order/models.py:240 order/models.py:655
 #: order/models.py:944 part/admin.py:277 part/models.py:3528
@@ -801,20 +801,20 @@ msgstr ""
 #: templates/js/translated/order.js:2613 templates/js/translated/order.js:3938
 #: templates/js/translated/order.js:4421 templates/js/translated/pricing.js:370
 msgid "Reference"
-msgstr ""
+msgstr "Referência"
 
 #: build/models.py:167
 msgid "Brief description of the build"
-msgstr ""
+msgstr "Breve descrição da produção"
 
 #: build/models.py:175 build/templates/build/build_base.html:172
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr ""
+msgstr "Produção Progenitor"
 
 #: build/models.py:176
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "Ordem de produção para qual este serviço está alocado"
 
 #: build/models.py:181 build/templates/build/build_base.html:80
 #: build/templates/build/detail.html:29 company/models.py:715
@@ -855,99 +855,99 @@ msgstr ""
 #: templates/js/translated/stock.js:2624 templates/js/translated/stock.js:2819
 #: templates/js/translated/stock.js:2958
 msgid "Part"
-msgstr ""
+msgstr "Peça"
 
 #: build/models.py:189
 msgid "Select part to build"
-msgstr ""
+msgstr "Selecionar peça para produção"
 
 #: build/models.py:194
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Referência do pedido de venda"
 
 #: build/models.py:198
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Ordem de Venda para qual esta produção está alocada"
 
 #: build/models.py:203 build/serializers.py:825
 #: templates/js/translated/build.js:2223 templates/js/translated/order.js:3277
 msgid "Source Location"
-msgstr ""
+msgstr "Local de Origem"
 
 #: build/models.py:207
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Selecione a localização para pegar do estoque para esta produção (deixe em branco para tirar a partir de qualquer local de estoque)"
 
 #: build/models.py:212
 msgid "Destination Location"
-msgstr ""
+msgstr "Local de Destino"
 
 #: build/models.py:216
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Selecione o local onde os itens concluídos serão armazenados"
 
 #: build/models.py:220
 msgid "Build Quantity"
-msgstr ""
+msgstr "Quantidade de Produção"
 
 #: build/models.py:223
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Número de itens em estoque para produzir"
 
 #: build/models.py:227
 msgid "Completed items"
-msgstr ""
+msgstr "Itens concluídos"
 
 #: build/models.py:229
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Número de itens em estoque concluídos"
 
 #: build/models.py:233
 msgid "Build Status"
-msgstr ""
+msgstr "Progresso da produção"
 
 #: build/models.py:237
 msgid "Build status code"
-msgstr ""
+msgstr "Código de situação da produção"
 
 #: build/models.py:246 build/serializers.py:226 order/serializers.py:448
 #: stock/models.py:732 templates/js/translated/order.js:1626
 msgid "Batch Code"
-msgstr ""
+msgstr "Código de Lote"
 
 #: build/models.py:250 build/serializers.py:227
 msgid "Batch code for this build output"
-msgstr ""
+msgstr "Código do lote para esta saída de produção"
 
 #: build/models.py:253 order/models.py:86 part/models.py:971
 #: part/templates/part/part_base.html:318 templates/js/translated/order.js:2947
 msgid "Creation Date"
-msgstr ""
+msgstr "Criado em"
 
 #: build/models.py:257 order/models.py:685
 msgid "Target completion date"
-msgstr ""
+msgstr "Data alvo final"
 
 #: build/models.py:258
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Data alvo para finalização de produção. Estará atrasado a partir deste dia."
 
 #: build/models.py:261 order/models.py:291
 #: templates/js/translated/build.js:2724
 msgid "Completion Date"
-msgstr ""
+msgstr "Data de conclusão"
 
 #: build/models.py:267
 msgid "completed by"
-msgstr ""
+msgstr "Concluído em"
 
 #: build/models.py:275 templates/js/translated/build.js:2684
 msgid "Issued by"
-msgstr ""
+msgstr "Emitido em"
 
 #: build/models.py:276
 msgid "User who issued this build order"
-msgstr ""
+msgstr "Usuário que emitiu esta ordem de produção"
 
 #: build/models.py:284 build/templates/build/build_base.html:193
 #: build/templates/build/detail.html:122 order/models.py:100
@@ -958,11 +958,11 @@ msgstr ""
 #: templates/js/translated/build.js:2696 templates/js/translated/order.js:2156
 #: templates/js/translated/table_filters.js:363
 msgid "Responsible"
-msgstr ""
+msgstr "Responsável"
 
 #: build/models.py:285
 msgid "User or group responsible for this build order"
-msgstr ""
+msgstr "Usuário ou grupo responsável para esta ordem de produção"
 
 #: build/models.py:290 build/templates/build/detail.html:108
 #: company/templates/company/manufacturer_part.html:107
@@ -970,75 +970,75 @@ msgstr ""
 #: part/templates/part/part_base.html:391 stock/models.py:726
 #: stock/templates/stock/item_base.html:206
 msgid "External Link"
-msgstr ""
+msgstr "Link Externo"
 
 #: build/models.py:295
 msgid "Extra build notes"
-msgstr ""
+msgstr "Notas de produção complementares"
 
 #: build/models.py:299
 msgid "Build Priority"
-msgstr ""
+msgstr "Prioridade de Produção"
 
 #: build/models.py:302
 msgid "Priority of this build order"
-msgstr ""
+msgstr "Prioridade desta ordem de produção"
 
 #: build/models.py:540
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "O Pedido de produção {build} foi concluído!"
 
 #: build/models.py:546
 msgid "A build order has been completed"
-msgstr ""
+msgstr "Um pedido de produção foi concluído"
 
 #: build/models.py:725
 msgid "No build output specified"
-msgstr ""
+msgstr "Nenhuma saída de produção especificada"
 
 #: build/models.py:728
 msgid "Build output is already completed"
-msgstr ""
+msgstr "Saída de produção já completada"
 
 #: build/models.py:731
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "Saída da produção não corresponde à Ordem de Produção"
 
 #: build/models.py:1188
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "Item de produção deve especificar a saída, pois peças mestres estão marcadas como rastreáveis"
 
 #: build/models.py:1197
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
-msgstr ""
+msgstr "Quantidade alocada ({q}) não deve exceder a quantidade disponível em estoque ({a})"
 
 #: build/models.py:1207 order/models.py:1418
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "O item do estoque está sobre-alocado"
 
 #: build/models.py:1213 order/models.py:1421
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Quantidade alocada deve ser maior que zero"
 
 #: build/models.py:1219
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "Quantidade deve ser 1 para estoque serializado"
 
 #: build/models.py:1276
 msgid "Selected stock item not found in BOM"
-msgstr ""
+msgstr "Item do estoque selecionado não encontrado na LDM"
 
 #: build/models.py:1345 stock/templates/stock/item_base.html:175
 #: templates/InvenTree/search.html:139 templates/js/translated/build.js:2612
 #: templates/navbar.html:38
 msgid "Build"
-msgstr ""
+msgstr "Produção"
 
 #: build/models.py:1346
 msgid "Build to allocate parts"
-msgstr ""
+msgstr "Faça uma Produção para atribuir peças"
 
 #: build/models.py:1362 build/serializers.py:674 order/serializers.py:1008
 #: order/serializers.py:1029 stock/serializers.py:386 stock/serializers.py:739
@@ -1053,11 +1053,11 @@ msgstr ""
 #: templates/js/translated/stock.js:625 templates/js/translated/stock.js:792
 #: templates/js/translated/stock.js:2697
 msgid "Stock Item"
-msgstr ""
+msgstr "Item de estoque"
 
 #: build/models.py:1363
 msgid "Source stock item"
-msgstr ""
+msgstr "Origem do item em estoque"
 
 #: build/models.py:1375 build/serializers.py:194
 #: build/templates/build/build_base.html:85
@@ -1097,85 +1097,85 @@ msgstr ""
 #: templates/js/translated/stock.js:650 templates/js/translated/stock.js:822
 #: templates/js/translated/stock.js:2746 templates/js/translated/stock.js:2831
 msgid "Quantity"
-msgstr ""
+msgstr "Quantidade"
 
 #: build/models.py:1376
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Quantidade do estoque para alocar à produção"
 
 #: build/models.py:1384
 msgid "Install into"
-msgstr ""
+msgstr "Instalar em"
 
 #: build/models.py:1385
 msgid "Destination stock item"
-msgstr ""
+msgstr "Destino do Item do Estoque"
 
 #: build/serializers.py:145 build/serializers.py:703
 #: templates/js/translated/build.js:1243
 msgid "Build Output"
-msgstr ""
+msgstr "Saída da Produção"
 
 #: build/serializers.py:157
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Saída de produção não coincide com a produção progenitora"
 
 #: build/serializers.py:161
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "Peça de saída não coincide com a peça da ordem de produção"
 
 #: build/serializers.py:165
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "Esta saída de produção já foi concluída"
 
 #: build/serializers.py:176
 msgid "This build output is not fully allocated"
-msgstr ""
+msgstr "A saída de produção não está completamente alocada"
 
 #: build/serializers.py:195
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Entre a quantidade da saída de produção"
 
 #: build/serializers.py:209 build/serializers.py:694 order/models.py:326
 #: order/serializers.py:321 order/serializers.py:443 part/serializers.py:1071
 #: part/serializers.py:1394 stock/models.py:586 stock/models.py:1338
 #: stock/serializers.py:288
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "Quantidade deve ser maior que zero"
 
 #: build/serializers.py:216
 msgid "Integer quantity required for trackable parts"
-msgstr ""
+msgstr "Quantidade inteira necessária para peças rastreáveis"
 
 #: build/serializers.py:219
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr ""
+msgstr "Quantidade inteira necessária, pois a lista de materiais contém peças rastreáveis"
 
 #: build/serializers.py:233 order/serializers.py:456 order/serializers.py:1186
 #: stock/serializers.py:297 templates/js/translated/order.js:1637
 #: templates/js/translated/stock.js:303 templates/js/translated/stock.js:497
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Números de Série"
 
 #: build/serializers.py:234
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Digite os números de série para saídas de produção"
 
 #: build/serializers.py:247
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "Alocar Números de Série Automaticamente"
 
 #: build/serializers.py:248
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr ""
+msgstr "Alocar automaticamente os itens necessários com os números de série correspondentes"
 
 #: build/serializers.py:283 stock/api.py:645
 msgid "The following serial numbers already exist or are invalid"
-msgstr ""
+msgstr "Os seguintes números de série já existem ou são inválidos"
 
 #: build/serializers.py:332 build/serializers.py:401
 msgid "A list of build outputs must be provided"
-msgstr ""
+msgstr "Uma lista de saídas de produção deve ser fornecida"
 
 #: build/serializers.py:371 order/serializers.py:429 order/serializers.py:548
 #: part/serializers.py:838 stock/serializers.py:308 stock/serializers.py:443
@@ -1190,7 +1190,7 @@ msgstr ""
 #: templates/js/translated/stock.js:1005 templates/js/translated/stock.js:1931
 #: templates/js/translated/stock.js:2638
 msgid "Location"
-msgstr ""
+msgstr "Local"
 
 #: build/serializers.py:372
 msgid "Location for completed build outputs"
@@ -1205,7 +1205,7 @@ msgstr ""
 #: templates/js/translated/order.js:2939 templates/js/translated/stock.js:1906
 #: templates/js/translated/stock.js:2715 templates/js/translated/stock.js:2847
 msgid "Status"
-msgstr ""
+msgstr "Situação"
 
 #: build/serializers.py:384
 msgid "Accept Incomplete Allocation"
@@ -1411,33 +1411,33 @@ msgstr ""
 
 #: build/templates/build/build_base.html:98
 msgid "No build outputs have been created for this build order"
-msgstr ""
+msgstr "Nenhuma saída de produção foi criada para esta ordem de serviço"
 
 #: build/templates/build/build_base.html:104
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
-msgstr ""
+msgstr "A ordem de produção está alocada para a Ordem de Venda %(link)s"
 
 #: build/templates/build/build_base.html:111
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
-msgstr ""
+msgstr "Essa ordem de produção é filha da ordem de produção %(link)s"
 
 #: build/templates/build/build_base.html:118
 msgid "Build Order is ready to mark as completed"
-msgstr ""
+msgstr "Ordem de produção está pronta para ser marcada como concluída"
 
 #: build/templates/build/build_base.html:123
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr ""
+msgstr "Ordem de produção não pode ser concluída, os resultados pendentes permanecem"
 
 #: build/templates/build/build_base.html:128
 msgid "Required build quantity has not yet been completed"
-msgstr ""
+msgstr "A quantidade de produção necessária ainda não foi concluída"
 
 #: build/templates/build/build_base.html:133
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr ""
+msgstr "Estoque não foi totalmente alocado para este Pedido de Produção"
 
 #: build/templates/build/build_base.html:154
 #: build/templates/build/detail.html:138 order/models.py:950
@@ -1448,12 +1448,12 @@ msgstr ""
 #: templates/js/translated/order.js:2479 templates/js/translated/order.js:2955
 #: templates/js/translated/order.js:3987 templates/js/translated/part.js:1470
 msgid "Target Date"
-msgstr ""
+msgstr "Data alvo"
 
 #: build/templates/build/build_base.html:159
 #, python-format
 msgid "This build was due on %(target)s"
-msgstr ""
+msgstr "Essa produção expirou em %(target)s"
 
 #: build/templates/build/build_base.html:159
 #: build/templates/build/build_base.html:211
@@ -1463,14 +1463,14 @@ msgstr ""
 #: templates/js/translated/table_filters.js:416
 #: templates/js/translated/table_filters.js:446
 msgid "Overdue"
-msgstr ""
+msgstr "Expirou"
 
 #: build/templates/build/build_base.html:166
 #: build/templates/build/detail.html:67 build/templates/build/detail.html:149
 #: order/templates/order/sales_order_base.html:171
 #: templates/js/translated/table_filters.js:455
 msgid "Completed"
-msgstr ""
+msgstr "Concluído"
 
 #: build/templates/build/build_base.html:179
 #: build/templates/build/detail.html:101 order/api.py:1292 order/models.py:1144
@@ -1483,22 +1483,22 @@ msgstr ""
 #: templates/email/overdue_sales_order.html:15
 #: templates/js/translated/order.js:2901 templates/js/translated/pricing.js:896
 msgid "Sales Order"
-msgstr ""
+msgstr "Pedido de Venda"
 
 #: build/templates/build/build_base.html:186
 #: build/templates/build/detail.html:115
 #: report/templates/report/inventree_build_order_base.html:152
 msgid "Issued By"
-msgstr ""
+msgstr "Emitido por"
 
 #: build/templates/build/build_base.html:200
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2633
 msgid "Priority"
-msgstr ""
+msgstr "Prioridade"
 
 #: build/templates/build/build_base.html:259
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Excluir Ordem de Produção"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -3342,7 +3342,7 @@ msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
 #: company/models.py:554 company/templates/company/supplier_part.html:167
-#: stock/admin.py:118 stock/models.py:694
+#: stock/admin.py:119 stock/models.py:694
 #: stock/templates/stock/item_base.html:246
 #: templates/js/translated/company.js:1046
 #: templates/js/translated/stock.js:2070
@@ -3962,7 +3962,7 @@ msgstr ""
 
 #: order/models.py:249 order/models.py:674
 msgid "Purchase order status"
-msgstr ""
+msgstr "Situação do pedido de compra"
 
 #: order/models.py:264
 msgid "Company from which the items are being ordered"
@@ -4437,7 +4437,7 @@ msgstr ""
 #: order/templates/order/order_base.html:103
 #: order/templates/order/sales_order_base.html:90
 msgid "Order Status"
-msgstr ""
+msgstr "Situação do pedido"
 
 #: order/templates/order/order_base.html:126
 msgid "No suppplier information available"
@@ -4766,7 +4766,7 @@ msgstr ""
 msgid "Allocated"
 msgstr ""
 
-#: part/admin.py:65 part/templates/part/part_base.html:244
+#: part/admin.py:65 part/templates/part/part_base.html:244 stock/admin.py:124
 #: templates/js/translated/part.js:623 templates/js/translated/part.js:1762
 #: templates/js/translated/part.js:1941
 msgid "Building"
@@ -4780,7 +4780,7 @@ msgstr ""
 msgid "Maximum Cost"
 msgstr ""
 
-#: part/admin.py:195 part/admin.py:269 stock/admin.py:42 stock/admin.py:115
+#: part/admin.py:195 part/admin.py:269 stock/admin.py:42 stock/admin.py:116
 msgid "Parent ID"
 msgstr ""
 
@@ -5935,7 +5935,7 @@ msgid "Add stocktake information"
 msgstr ""
 
 #: part/templates/part/detail.html:67 part/templates/part/part_sidebar.html:50
-#: stock/admin.py:124 templates/InvenTree/settings/part_stocktake.html:29
+#: stock/admin.py:130 templates/InvenTree/settings/part_stocktake.html:29
 #: templates/InvenTree/settings/sidebar.html:47
 #: templates/js/translated/stock.js:1946 users/models.py:39
 msgid "Stocktake"
@@ -6342,7 +6342,7 @@ msgstr ""
 msgid "Refresh Part Pricing"
 msgstr ""
 
-#: part/templates/part/prices.html:25 stock/admin.py:123
+#: part/templates/part/prices.html:25 stock/admin.py:129
 #: stock/templates/stock/item_base.html:443
 #: templates/js/translated/company.js:1093
 #: templates/js/translated/company.js:1102
@@ -6879,12 +6879,12 @@ msgstr ""
 msgid "Serial"
 msgstr ""
 
-#: stock/admin.py:39 stock/admin.py:107
+#: stock/admin.py:39 stock/admin.py:108
 #: templates/js/translated/model_renderers.js:172
 msgid "Location ID"
 msgstr ""
 
-#: stock/admin.py:40 stock/admin.py:108
+#: stock/admin.py:40 stock/admin.py:109
 msgid "Location Name"
 msgstr ""
 
@@ -6897,40 +6897,52 @@ msgstr ""
 msgid "Stock Item ID"
 msgstr ""
 
-#: stock/admin.py:109 templates/js/translated/model_renderers.js:442
+#: stock/admin.py:107
+msgid "Status Code"
+msgstr "Código da situação"
+
+#: stock/admin.py:110 templates/js/translated/model_renderers.js:442
 msgid "Supplier Part ID"
 msgstr ""
 
-#: stock/admin.py:110
+#: stock/admin.py:111
 msgid "Supplier ID"
 msgstr ""
 
-#: stock/admin.py:111
+#: stock/admin.py:112
 msgid "Supplier Name"
 msgstr ""
 
-#: stock/admin.py:112
+#: stock/admin.py:113
 msgid "Customer ID"
 msgstr ""
 
-#: stock/admin.py:113 stock/models.py:701
+#: stock/admin.py:114 stock/models.py:701
 #: stock/templates/stock/item_base.html:362
 msgid "Installed In"
 msgstr ""
 
-#: stock/admin.py:114 templates/js/translated/model_renderers.js:190
+#: stock/admin.py:115 templates/js/translated/model_renderers.js:190
 msgid "Build ID"
 msgstr ""
 
-#: stock/admin.py:116
+#: stock/admin.py:117
 msgid "Sales Order ID"
 msgstr ""
 
-#: stock/admin.py:117
+#: stock/admin.py:118
 msgid "Purchase Order ID"
 msgstr ""
 
-#: stock/admin.py:125 stock/models.py:774
+#: stock/admin.py:125
+msgid "Review Needed"
+msgstr ""
+
+#: stock/admin.py:126
+msgid "Delete on Deplete"
+msgstr ""
+
+#: stock/admin.py:131 stock/models.py:774
 #: stock/templates/stock/item_base.html:430
 #: templates/js/translated/stock.js:1960
 msgid "Expiry Date"
@@ -7167,7 +7179,7 @@ msgstr ""
 
 #: stock/models.py:1458
 msgid "Stock status codes must match"
-msgstr ""
+msgstr "Códigos de estado do estoque devem corresponder"
 
 #: stock/models.py:1627
 msgid "StockItem cannot be moved as it is not in stock"
@@ -7316,11 +7328,11 @@ msgstr ""
 
 #: stock/serializers.py:919
 msgid "Allow mismatched status"
-msgstr ""
+msgstr "Permitir estado incompatível"
 
 #: stock/serializers.py:920
 msgid "Allow stock items with different status codes to be merged"
-msgstr ""
+msgstr "Permitir a fusão de itens de estoque com estado diferentes"
 
 #: stock/serializers.py:930
 msgid "At least two stock items must be provided"
@@ -7554,7 +7566,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:522
 msgid "Edit Stock Status"
-msgstr ""
+msgstr "Editar Situação do Estoque"
 
 #: stock/templates/stock/item_base.html:530
 msgid "Stock Item QR Code"
@@ -8059,7 +8071,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:127
 msgid "Sign Status"
-msgstr ""
+msgstr "Placa da Situação"
 
 #: templates/InvenTree/settings/plugin_settings.html:132
 msgid "Sign Key"
@@ -10039,7 +10051,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:1676 templates/js/translated/stock.js:2238
 msgid "Stock Status"
-msgstr ""
+msgstr "Situação do Estoque"
 
 #: templates/js/translated/order.js:1769
 msgid "Order Code"
@@ -11023,15 +11035,15 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2253
 msgid "Set Stock Status"
-msgstr ""
+msgstr "Definir Estado do Estoque"
 
 #: templates/js/translated/stock.js:2267
 msgid "Select Status Code"
-msgstr ""
+msgstr "Selecionar Código de Situação"
 
 #: templates/js/translated/stock.js:2268
 msgid "Status code must be selected"
-msgstr ""
+msgstr "Código de Situação deve ser selecionado"
 
 #: templates/js/translated/stock.js:2500
 msgid "Load Subloactions"
@@ -11259,7 +11271,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:266
 #: templates/js/translated/table_filters.js:267
 msgid "Stock status"
-msgstr ""
+msgstr "Estado do Estoque"
 
 #: templates/js/translated/table_filters.js:270
 msgid "Has batch code"
@@ -11307,7 +11319,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:347
 msgid "Build status"
-msgstr ""
+msgstr "Estado da Produção"
 
 #: templates/js/translated/table_filters.js:360
 #: templates/js/translated/table_filters.js:420
@@ -11318,7 +11330,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:407
 #: templates/js/translated/table_filters.js:437
 msgid "Order status"
-msgstr ""
+msgstr "Situação dos Pedidos"
 
 #: templates/js/translated/table_filters.js:412
 #: templates/js/translated/table_filters.js:429
@@ -11592,7 +11604,7 @@ msgstr ""
 
 #: templates/stats.html:52
 msgid "Server status"
-msgstr ""
+msgstr "Estado do Servidor"
 
 #: templates/stats.html:55
 msgid "Healthy"
@@ -11660,11 +11672,11 @@ msgstr ""
 
 #: templates/stock_table.html:52
 msgid "Change status"
-msgstr ""
+msgstr "Alterar a situação"
 
 #: templates/stock_table.html:52
 msgid "Change stock status"
-msgstr ""
+msgstr "Alterar a situação do estoque"
 
 #: templates/stock_table.html:55
 msgid "Delete selected items"
