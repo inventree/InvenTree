@@ -5,14 +5,20 @@ import io
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
+
+from djmoney.money import Money
 
 from icalendar import Calendar
 from rest_framework import status
 
+from common.settings import currency_codes
 import order.models as models
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from company.models import Company
 from part.models import Part
 from stock.models import StockItem
 
@@ -90,6 +96,59 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'supplier_part': 1}, 1)
         self.filter({'supplier_part': 3}, 2)
         self.filter({'supplier_part': 4}, 0)
+
+    def test_total_price_annotation(self):
+        """Unit tests for the 'total_price' queryset annotation"""
+
+        # Ensure we have exchange rate data
+        self.generate_exchange_rates()
+
+        # Create some purchase order line items
+        lines = []
+
+        currencies = currency_codes()
+        n = len(currencies)
+
+        idx = 0
+
+        new_orders = []
+        
+        # Let's generate some more orders
+        for supplier in Company.objects.filter(is_supplier=True):
+            for _idx in range(10):
+                new_orders.append(
+                    models.PurchaseOrder(
+                        supplier=supplier,
+                        reference=f'PO-{idx + 100}'
+                    )
+                )
+
+                idx += 1
+
+        models.PurchaseOrder.objects.bulk_create(new_orders)
+
+        idx = 0
+
+        for po in models.PurchaseOrder.objects.all():
+            for sp in po.supplier.supplied_parts.all():
+                lines.append(
+                    models.PurchaseOrderLineItem(
+                        order=po,
+                        part=sp,
+                        quantity=idx + 1,
+                        purchase_price=Money((idx + 1) / 10, currencies[idx % n]),
+                    )
+                )
+        
+        models.PurchaseOrderLineItem.objects.bulk_create(lines)
+
+        # List all purchase orders
+        for limit in [1, 5, 10, 100]:
+            with CaptureQueriesContext(connection) as ctx:
+                response = self.get(self.LIST_URL, data={'limit': limit}, expected_code=200)
+
+                print(len(ctx), "queries for", len(response.data), "orders with limit =", limit)
+
 
     def test_overdue(self):
         """Test "overdue" status."""

@@ -8,6 +8,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.http.response import StreamingHttpResponse
 
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+
 from rest_framework.test import APITestCase
 
 from plugin import registry
@@ -113,7 +115,43 @@ class PluginMixin:
             self.plugin_confs = PluginConfig.objects.all()
 
 
-class InvenTreeAPITestCase(UserMixin, APITestCase):
+
+class ExchangeRateMixin:
+    """Mixin class for generating exchange rate data"""
+
+    def generate_exchange_rates(self):
+        """Helper function which generates some exchange rates to work with"""
+
+        rates = {
+            'AUD': 1.5,
+            'CAD': 1.7,
+            'GBP': 0.9,
+            'USD': 1.0,
+        }
+
+        # Create a dummy backend
+        ExchangeBackend.objects.create(
+            name='InvenTreeExchange',
+            base_currency='USD',
+        )
+
+        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+
+        items = []
+
+        for currency, rate in rates.items():
+            items.append(
+                Rate(
+                    currency=currency,
+                    value=rate,
+                    backend=backend,
+                )
+            )
+
+        Rate.objects.bulk_create(items)
+
+
+class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
     def getActions(self, url):
