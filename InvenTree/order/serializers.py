@@ -38,6 +38,8 @@ class AbstractOrderSerializer(serializers.Serializer):
         read_only=True,
     )
 
+    total_price_currency = InvenTreeCurrencySerializer(read_only=True)
+
 
 class AbstractExtraLineSerializer(serializers.Serializer):
     """Abstract Serializer for a ExtraLine object."""
