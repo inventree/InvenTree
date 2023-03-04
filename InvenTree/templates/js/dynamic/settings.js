@@ -44,7 +44,7 @@ function editSetting(key, options={}) {
     var url = '';
 
     if (plugin) {
-        url = `/api/plugin/settings/${plugin}/${key}/`;
+        url = `/api/plugins/settings/${plugin}/${key}/`;
     } else if (notification) {
         url = `/api/settings/notification/${pk}/`;
     } else if (global) {
@@ -118,15 +118,16 @@ function editSetting(key, options={}) {
                 },
                 onSuccess: function(response) {
 
-                    var setting = response.key;
+                    var setting_pk = response.pk;
+                    var setting_typ = response.typ;
 
                     if (reload_required) {
                         location.reload();
                     } else if (response.type == 'boolean') {
                         var enabled = response.value.toString().toLowerCase() == 'true';
-                        $(`#setting-value-${setting}`).prop('checked', enabled);
+                        $(`#setting-value-${setting_pk}-${setting_typ}`).prop('checked', enabled);
                     } else {
-                        $(`#setting-value-${setting}`).html(response.value);
+                        $(`#setting-value-${setting_pk}-${setting_typ}`).html(response.value);
                     }
                 }
             });

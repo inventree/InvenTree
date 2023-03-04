@@ -1,7 +1,7 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% decimal total_stock %}
+{% decimal total_stock %} {% include "part/part_units.html" %}
 
 {% if total_stock == 0 %}
 <span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>

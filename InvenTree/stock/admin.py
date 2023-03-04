@@ -1,12 +1,15 @@
+"""Admin for stock app."""
+
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-from import_export.resources import ModelResource
 
 from build.models import Build
 from company.models import Company, SupplierPart
+from InvenTree.admin import InvenTreeResource
 from order.models import PurchaseOrder, SalesOrder
 from part.models import Part
 
@@ -14,14 +17,12 @@ from .models import (StockItem, StockItemAttachment, StockItemTestResult,
                      StockItemTracking, StockLocation)
 
 
-class LocationResource(ModelResource):
-    """ Class for managing StockLocation data import/export """
-
-    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(StockLocation))
-
-    parent_name = Field(attribute='parent__name', readonly=True)
+class LocationResource(InvenTreeResource):
+    """Class for managing StockLocation data import/export."""
 
     class Meta:
+        """Metaclass options."""
+
         model = StockLocation
         skip_unchanged = True
         report_skipped = False
@@ -31,10 +32,22 @@ class LocationResource(ModelResource):
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
             'metadata',
+            'barcode_data', 'barcode_hash',
+            'owner', 'icon',
         ]
 
-    def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
+    id = Field(attribute='pk', column_name=_('Location ID'))
+    name = Field(attribute='name', column_name=_('Location Name'))
+    description = Field(attribute='description', column_name=_('Description'))
+    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    parent_name = Field(attribute='parent__name', column_name=_('Parent Name'), readonly=True)
+    pathstring = Field(attribute='pathstring', column_name=_('Location Path'))
 
+    # Calculated fields
+    items = Field(attribute='item_count', column_name=_('Stock Items'), widget=widgets.IntegerWidget())
+
+    def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
+        """Rebuild after import to keep tree intact."""
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
 
         # Rebuild the StockLocation tree(s)
@@ -42,13 +55,12 @@ class LocationResource(ModelResource):
 
 
 class LocationInline(admin.TabularInline):
-    """
-    Inline for sub-locations
-    """
+    """Inline for sub-locations."""
     model = StockLocation
 
 
 class LocationAdmin(ImportExportModelAdmin):
+    """Admin class for Location."""
 
     resource_class = LocationResource
 
@@ -65,51 +77,12 @@ class LocationAdmin(ImportExportModelAdmin):
     ]
 
 
-class StockItemResource(ModelResource):
-    """ Class for managing StockItem data import/export """
-
-    # Custom managers for ForeignKey fields
-    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
-
-    part_name = Field(attribute='part__full_name', readonly=True)
-
-    supplier_part = Field(attribute='supplier_part', widget=widgets.ForeignKeyWidget(SupplierPart))
-
-    supplier = Field(attribute='supplier_part__supplier__id', readonly=True)
-
-    customer = Field(attribute='customer', widget=widgets.ForeignKeyWidget(Company))
-
-    supplier_name = Field(attribute='supplier_part__supplier__name', readonly=True)
-
-    status_label = Field(attribute='status_label', readonly=True)
-
-    location = Field(attribute='location', widget=widgets.ForeignKeyWidget(StockLocation))
-
-    location_name = Field(attribute='location__name', readonly=True)
-
-    belongs_to = Field(attribute='belongs_to', widget=widgets.ForeignKeyWidget(StockItem))
-
-    build = Field(attribute='build', widget=widgets.ForeignKeyWidget(Build))
-
-    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(StockItem))
-
-    sales_order = Field(attribute='sales_order', widget=widgets.ForeignKeyWidget(SalesOrder))
-
-    purchase_order = Field(attribute='purchase_order', widget=widgets.ForeignKeyWidget(PurchaseOrder))
-
-    # Date management
-    updated = Field(attribute='updated', widget=widgets.DateWidget())
-
-    stocktake_date = Field(attribute='stocktake_date', widget=widgets.DateWidget())
-
-    def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
-
-        super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
-
-        # Rebuild the StockItem tree(s)
-        StockItem.objects.rebuild()
+class StockItemResource(InvenTreeResource):
+    """Class for managing StockItem data import/export."""
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItem
         skip_unchanged = True
         report_skipped = False
@@ -120,10 +93,59 @@ class StockItemResource(ModelResource):
             'lft', 'rght', 'tree_id', 'level',
             # Exclude internal fields
             'serial_int', 'metadata',
+            'barcode_hash', 'barcode_data',
+            'owner',
         ]
+
+    id = Field(attribute='pk', column_name=_('Stock Item ID'), widget=widgets.IntegerWidget())
+    part = Field(attribute='part', column_name=_('Part ID'), widget=widgets.ForeignKeyWidget(Part))
+    part_name = Field(attribute='part__full_name', column_name=_('Part Name'), readonly=True)
+    quantity = Field(attribute='quantity', column_name=_('Quantity'), widget=widgets.DecimalWidget())
+    serial = Field(attribute='serial', column_name=_('Serial'))
+    batch = Field(attribute='batch', column_name=_('Batch'))
+    status_label = Field(attribute='status_label', column_name=_('Status'), readonly=True)
+    status = Field(attribute='status', column_name=_('Status Code'), widget=widgets.IntegerWidget())
+    location = Field(attribute='location', column_name=_('Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    location_name = Field(attribute='location__name', column_name=_('Location Name'), readonly=True)
+    supplier_part = Field(attribute='supplier_part', column_name=_('Supplier Part ID'), widget=widgets.ForeignKeyWidget(SupplierPart))
+    supplier = Field(attribute='supplier_part__supplier__id', column_name=_('Supplier ID'), readonly=True, widget=widgets.IntegerWidget())
+    supplier_name = Field(attribute='supplier_part__supplier__name', column_name=_('Supplier Name'), readonly=True)
+    customer = Field(attribute='customer', column_name=_('Customer ID'), widget=widgets.ForeignKeyWidget(Company))
+    belongs_to = Field(attribute='belongs_to', column_name=_('Installed In'), widget=widgets.ForeignKeyWidget(StockItem))
+    build = Field(attribute='build', column_name=_('Build ID'), widget=widgets.ForeignKeyWidget(Build))
+    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(StockItem))
+    sales_order = Field(attribute='sales_order', column_name=_('Sales Order ID'), widget=widgets.ForeignKeyWidget(SalesOrder))
+    purchase_order = Field(attribute='purchase_order', column_name=_('Purchase Order ID'), widget=widgets.ForeignKeyWidget(PurchaseOrder))
+    packaging = Field(attribute='packaging', column_name=_('Packaging'))
+    link = Field(attribute='link', column_name=_('Link'))
+    notes = Field(attribute='notes', column_name=_('Notes'))
+
+    # Status fields (note that IntegerWidget exports better to excel than BooleanWidget)
+    is_building = Field(attribute='is_building', column_name=_('Building'), widget=widgets.IntegerWidget())
+    review_needed = Field(attribute='review_needed', column_name=_('Review Needed'), widget=widgets.IntegerWidget())
+    delete_on_deplete = Field(attribute='delete_on_deplete', column_name=_('Delete on Deplete'), widget=widgets.IntegerWidget())
+
+    # Date management
+    updated = Field(attribute='updated', column_name=_('Last Updated'), widget=widgets.DateWidget())
+    stocktake_date = Field(attribute='stocktake_date', column_name=_('Stocktake'), widget=widgets.DateWidget())
+    expiry_date = Field(attribute='expiry_date', column_name=_('Expiry Date'), widget=widgets.DateWidget())
+
+    def dehydrate_purchase_price(self, item):
+        """Render purchase pric as float"""
+
+        if item.purchase_price is not None:
+            return float(item.purchase_price.amount)
+
+    def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
+        """Rebuild after import to keep tree intact."""
+        super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
+
+        # Rebuild the StockItem tree(s)
+        StockItem.objects.rebuild()
 
 
 class StockItemAdmin(ImportExportModelAdmin):
+    """Admin class for StockItem."""
 
     resource_class = StockItemResource
 
@@ -152,6 +174,7 @@ class StockItemAdmin(ImportExportModelAdmin):
 
 
 class StockAttachmentAdmin(admin.ModelAdmin):
+    """Admin class for StockAttachment."""
 
     list_display = ('stock_item', 'attachment', 'comment')
 
@@ -161,6 +184,8 @@ class StockAttachmentAdmin(admin.ModelAdmin):
 
 
 class StockTrackingAdmin(ImportExportModelAdmin):
+    """Admin class for StockTracking."""
+
     list_display = ('item', 'date', 'label')
 
     autocomplete_fields = [
@@ -169,6 +194,7 @@ class StockTrackingAdmin(ImportExportModelAdmin):
 
 
 class StockItemTestResultAdmin(admin.ModelAdmin):
+    """Admin class for StockItemTestResult."""
 
     list_display = ('stock_item', 'test', 'result', 'value')
 

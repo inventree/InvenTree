@@ -2,12 +2,12 @@
 
 from django.db import migrations
 from common.models import InvenTreeSetting
-from InvenTree.settings import get_setting, CONFIG
+from InvenTree.config import get_setting
 
 def set_default_currency(apps, schema_editor):
     """ migrate the currency setting from config.yml to db """
     # get value from settings-file
-    base_currency = get_setting('INVENTREE_BASE_CURRENCY', CONFIG.get('base_currency', 'USD'))
+    base_currency = get_setting('INVENTREE_BASE_CURRENCY', 'base_currency', 'USD')
     # write to database
     InvenTreeSetting.set_setting('INVENTREE_DEFAULT_CURRENCY', base_currency, None, create=True)
 

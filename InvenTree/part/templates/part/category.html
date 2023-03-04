@@ -1,6 +1,7 @@
 {% extends "part/part_app_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block sidebar %}
 {% include 'part/category_sidebar.html' %}
@@ -12,16 +13,27 @@
 
 {% block heading %}
 {% if category %}
-{% trans "Part Category" %}: {{ category.name }}
+{% trans "Part Category" %}:
+{% settings_value "PART_CATEGORY_DEFAULT_ICON" as default_icon %}
+{% if category.icon or default_icon %}
+<span class="{{ category.icon|default:default_icon }}"></span>
+{% endif %}
+{{ category.name }}
 {% else %}
 {% trans "Parts" %}
 {% endif %}
 {% endblock %}
 
 {% block actions %}
-{% if user.is_staff and roles.part_category.change %}
+{% if category and user.is_staff and roles.part_category.change %}
 {% url 'admin:part_partcategory_change' category.pk as url %}
 {% include "admin_button.html" with url=url %}
+{% endif %}
+{% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
+{% if stocktake_enable and roles.stocktake.add %}
+<button type='button' class='btn btn-outline-secondary' id='category-stocktake' title='{% trans "Perform stocktake for this part category" %}'>
+    <span class='fas fa-clipboard-check'></span>
+</button>
 {% endif %}
 {% if category %}
 {% if starred_directly %}
@@ -56,11 +68,6 @@
     </ul>
 </div>
 {% endif %}
-{% endif %}
-{% if roles.part_category.add %}
-<button class='btn btn-success' id='cat-create' title='{% trans "Create new part category" %}'>
-    <span class='fas fa-plus-circle'></span> {% trans "New Category" %}
-</button>
 {% endif %}
 {% endblock %}
 
@@ -165,7 +172,7 @@
         <div class='btn-group' role='group'>
             <div class='btn-group' role='group'>
                 <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
-                    {% trans "Options" %}
+                    <span class='fas fa-tools' title='{% trans "Options" %}'></span>
                 </button>
                 <ul class='dropdown-menu'>
                     {% if roles.part.change %}
@@ -206,6 +213,12 @@
         <h4>{% trans "Part Parameters" %}</h4>
     </div>
     <div class='panel-content'>
+        <div id='param-button-toolbar'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="parameters" %}
+            </div>
+        </div>
+
         <table class='table table-striped table-condensed' data-toolbar='#param-button-toolbar' id='parametric-part-table'>
         </table>
     </div>
@@ -213,7 +226,17 @@
 
 <div class='panel panel-hidden' id='panel-subcategories'>
     <div class='panel-heading'>
-        <h4>{% trans "Subcategories" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Subcategories" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.part_category.add %}
+                <button class='btn btn-success' id='cat-create' title='{% trans "Create new part category" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Category" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='subcategory-button-toolbar'>
@@ -235,6 +258,20 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    {% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
+    {% if stocktake_enable and roles.stocktake.add %}
+    $('#category-stocktake').click(function() {
+        generateStocktakeReport({
+            category: {
+                {% if category %}value: {{ category.pk }},{% endif %}
+            },
+            location: {},
+            generate_report: {},
+            update_parts: {},
+        });
+    });
+    {% endif %}
 
     {% if category %}
 
@@ -282,7 +319,8 @@
             node.href = `/part/category/${node.pk}/`;
 
             return node;
-        }
+        },
+        defaultIcon: global_settings.PART_CATEGORY_DEFAULT_ICON,
     });
 
     onPanelLoad('subcategories', function() {
@@ -318,52 +356,26 @@
 
     {% if roles.part.add %}
     $("#part-create").click(function() {
-
-        var fields = partFields({
-            create: true,
+        createPart({
+            {% if category %}category: {{ category.pk }},{% endif %}
         });
-
-        {% if category %}
-        fields.category.value = {{ category.pk }};
-        {% endif %}
-
-        constructForm('{% url "api-part-list" %}', {
-            method: 'POST',
-            fields: fields,
-            groups: partGroups(),
-            title: '{% trans "Create Part" %}',
-            reloadFormAfterSuccess: true,
-            persist: true,
-            persistMessage: '{% trans "Create another part after this one" %}',
-            successMessage: '{% trans "Part created successfully" %}',
-            onSuccess: function(data) {
-                // Follow the new part
-                location.href = `/part/${data.pk}/`;
-            },
-        });
-
     });
     {% endif %}
 
     {% if category %}
     $("#cat-edit").click(function () {
-
         editCategory({{ category.pk }});
     });
 
-    {% if category.parent %}
-    var redirect = "{% url 'category-detail' category.parent.id %}";
-    {% else %}
-    var redirect = "{% url 'part-index' %}";
-    {% endif %}
 
     $('#cat-delete').click(function() {
-        launchModalForm(
-            "{% url 'category-delete' category.id %}",
-            {
-                redirect: redirect
-            }
-        );
+        deletePartCategory({{ category.pk }}, {
+            {% if category.parent %}
+            redirect: "{% url 'category-detail' category.parent.id %}",
+            {% else %}
+            redirect: "{% url 'part-index' %}",
+            {% endif %}
+        });
     });
 
     {% endif %}
@@ -378,7 +390,6 @@
                     {% else %}category: "null",
                     {% endif %}
                 },
-                buttons: ['#part-options'],
                 checkbox: true,
                 gridView: true,
             },

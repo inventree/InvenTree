@@ -1,0 +1,46 @@
+name: "Install problems"
+description: "If you have problems deploying InvenTree"
+labels: ["question", "triage:not-checked", "setup"]
+body:
+  - type: checkboxes
+    id: deployment
+    validations:
+      required: true
+    attributes:
+      label: "Deployment Method"
+      options:
+        - label: "Installer"
+        - label: "Docker Development"
+        - label: "Docker Production"
+        - label: "Bare metal Development"
+        - label: "Bare metal Production"
+        - label: "Digital Ocean image"
+        - label: "Other (please provide a link `Steps to Reproduce`"
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: "Describe the problem*"
+      description: "A clear and concise description of what is failing."
+  - type: textarea
+    id: steps-to-reproduce
+    validations:
+      required: true
+    attributes:
+      label: "Steps to Reproduce"
+      description: "Steps to reproduce the behaviour, please make it detailed"
+      placeholder: |
+        0. Link to all docs you used
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See the error
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Relevant log output"
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: bash
+    validations:
+      required: false

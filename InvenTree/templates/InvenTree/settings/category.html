@@ -8,14 +8,14 @@
 {% endblock %}
 
 {% block actions %}
-<button class='btn btn-success' id='new-cat-param' disabled=''>
+<button class='btn btn-success' id='new-cat-param'>
     <div class='fas fa-plus-circle'></div> {% trans "New Parameter" %}
 </button>
 {% endblock %}
 
 {% block content %}
 
-<div class='row'>
+<div class='row' id='cat-param-buttons'>
     <form action=''>
         <div class='col-sm-6' style='width: 250px'>
             <div class='form-group'><div class='controls'>

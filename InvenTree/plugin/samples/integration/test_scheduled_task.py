@@ -1,4 +1,4 @@
-""" Unit tests for scheduled tasks"""
+"""Unit tests for scheduled tasks."""
 
 from django.test import TestCase
 
@@ -9,10 +9,10 @@ from plugin.registry import call_function
 
 
 class ExampleScheduledTaskPluginTests(TestCase):
-    """ Tests for provided ScheduledTaskPlugin """
+    """Tests for provided ScheduledTaskPlugin."""
 
     def test_function(self):
-        """check if the scheduling works"""
+        """Check if the scheduling works."""
         # The plugin should be defined
         self.assertIn('schedule', registry.plugins)
         plg = registry.plugins['schedule']
@@ -31,6 +31,19 @@ class ExampleScheduledTaskPluginTests(TestCase):
         scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
         self.assertEqual(len(scheduled_plugin_tasks), 3)
 
+        # test updating the schedule
+        hello_schedule = Schedule.objects.get(name='plugin.schedule.hello')
+        self.assertEqual(hello_schedule.minutes, 45)
+        # change the schedule and reregister
+        plg.scheduled_tasks['hello']['minutes'] = 15
+        plg.register_tasks()
+
+        # Check that the schedule was updated
+        hello_schedule = Schedule.objects.get(name='plugin.schedule.hello')
+        scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
+        self.assertEqual(hello_schedule.minutes, 15)
+        self.assertEqual(len(scheduled_plugin_tasks), 3)
+
         # delete middle task
         # this is to check the system also deals with disappearing tasks
         scheduled_plugin_tasks[1].delete()
@@ -44,7 +57,7 @@ class ExampleScheduledTaskPluginTests(TestCase):
         self.assertEqual(len(scheduled_plugin_tasks), 0)
 
     def test_calling(self):
-        """check if a function can be called without errors"""
+        """Check if a function can be called without errors."""
         # Check with right parameters
         self.assertEqual(call_function('schedule', 'member_func'), False)
 
@@ -53,23 +66,22 @@ class ExampleScheduledTaskPluginTests(TestCase):
 
 
 class ScheduledTaskPluginTests(TestCase):
-    """ Tests for ScheduledTaskPluginTests mixin base """
+    """Tests for ScheduledTaskPluginTests mixin base."""
 
     def test_init(self):
-        """Check that all MixinImplementationErrors raise"""
+        """Check that all MixinImplementationErrors raise."""
         class Base(ScheduleMixin, InvenTreePlugin):
             NAME = 'APlugin'
 
         class NoSchedules(Base):
-            """Plugin without schedules"""
+            """Plugin without schedules."""
             pass
 
         with self.assertRaises(MixinImplementationError):
             NoSchedules()
 
         class WrongFuncSchedules(Base):
-            """
-            Plugin with broken functions
+            """Plugin with broken functions.
 
             This plugin is missing a func
             """
@@ -88,8 +100,7 @@ class ScheduledTaskPluginTests(TestCase):
             WrongFuncSchedules()
 
         class WrongFuncSchedules1(WrongFuncSchedules):
-            """
-            Plugin with broken functions
+            """Plugin with broken functions.
 
             This plugin is missing a schedule
             """
@@ -105,8 +116,7 @@ class ScheduledTaskPluginTests(TestCase):
             WrongFuncSchedules1()
 
         class WrongFuncSchedules2(WrongFuncSchedules):
-            """
-            Plugin with broken functions
+            """Plugin with broken functions.
 
             This plugin is missing a schedule
             """
@@ -122,8 +132,7 @@ class ScheduledTaskPluginTests(TestCase):
             WrongFuncSchedules2()
 
         class WrongFuncSchedules3(WrongFuncSchedules):
-            """
-            Plugin with broken functions
+            """Plugin with broken functions.
 
             This plugin has a broken schedule
             """
@@ -140,8 +149,7 @@ class ScheduledTaskPluginTests(TestCase):
             WrongFuncSchedules3()
 
         class WrongFuncSchedules4(WrongFuncSchedules):
-            """
-            Plugin with broken functions
+            """Plugin with broken functions.
 
             This plugin is missing a minute marker for its schedule
             """

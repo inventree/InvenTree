@@ -1,13 +1,185 @@
-"""
-InvenTree API version information
-"""
+"""InvenTree API version information."""
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 50
+INVENTREE_API_VERSION = 99
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v99 -> 2023-03-03 : https://github.com/inventree/InvenTree/pull/4445
+    - Adds sort by "responsible" to PurchaseOrderAPI
+
+v98 -> 2023-02-24 : https://github.com/inventree/InvenTree/pull/4408
+    - Adds "responsible" filter to Build API
+
+v97 -> 2023-02-20 : https://github.com/inventree/InvenTree/pull/4377
+    - Adds "external" attribute to StockLocation model
+
+v96 -> 2023-02-16 : https://github.com/inventree/InvenTree/pull/4345
+    - Adds stocktake report generation functionality
+
+v95 -> 2023-02-16 : https://github.com/inventree/InvenTree/pull/4346
+    - Adds "CompanyAttachment" model (and associated API endpoints)
+
+v94 -> 2023-02-10 : https://github.com/inventree/InvenTree/pull/4327
+    - Adds API endpoints for the "Group" auth model
+
+v93 -> 2023-02-03 : https://github.com/inventree/InvenTree/pull/4300
+    - Adds extra information to the currency exchange endpoint
+    - Adds API endpoint for manually updating exchange rates
+
+v92 -> 2023-02-02 : https://github.com/inventree/InvenTree/pull/4293
+    - Adds API endpoint for currency exchange information
+
+v91 -> 2023-01-31 : https://github.com/inventree/InvenTree/pull/4281
+    - Improves the API endpoint for creating new Part instances
+
+v90 -> 2023-01-25 : https://github.com/inventree/InvenTree/pull/4186/files
+    - Adds a dedicated endpoint to activate a plugin
+
+v89 -> 2023-01-25 : https://github.com/inventree/InvenTree/pull/4214
+    - Adds updated field to SupplierPart API
+    - Adds API date orddering for supplier part list
+
+v88 -> 2023-01-17: https://github.com/inventree/InvenTree/pull/4225
+    - Adds 'priority' field to Build model and api endpoints
+
+v87 -> 2023-01-04 : https://github.com/inventree/InvenTree/pull/4067
+    - Add API date filter for stock table on Expiry date
+
+v86 -> 2022-12-22 : https://github.com/inventree/InvenTree/pull/4069
+    - Adds API endpoints for part stocktake
+
+v85 -> 2022-12-21 : https://github.com/inventree/InvenTree/pull/3858
+    - Add endpoints serving ICS calendars for purchase and sales orders through API
+
+v84 -> 2022-12-21: https://github.com/inventree/InvenTree/pull/4083
+    - Add support for listing PO, BO, SO by their reference
+
+v83 -> 2022-11-19 : https://github.com/inventree/InvenTree/pull/3949
+    - Add support for structural Stock locations
+
+v82 -> 2022-11-16 : https://github.com/inventree/InvenTree/pull/3931
+    - Add support for structural Part categories
+
+v81 -> 2022-11-08 : https://github.com/inventree/InvenTree/pull/3710
+    - Adds cached pricing information to Part API
+    - Adds cached pricing information to BomItem API
+    - Allows Part and BomItem list endpoints to be filtered by 'has_pricing'
+    - Remove calculated 'price_string' values from API endpoints
+    - Allows PurchaseOrderLineItem API endpoint to be filtered by 'has_pricing'
+    - Allows SalesOrderLineItem API endpoint to be filtered by 'has_pricing'
+    - Allows SalesOrderLineItem API endpoint to be filtered by 'order_status'
+    - Adds more information to SupplierPriceBreak serializer
+
+v80 -> 2022-11-07 : https://github.com/inventree/InvenTree/pull/3906
+    - Adds 'barcode_hash' to Part API serializer
+    - Adds 'barcode_hash' to StockLocation API serializer
+    - Adds 'barcode_hash' to SupplierPart API serializer
+
+v79 -> 2022-11-03 : https://github.com/inventree/InvenTree/pull/3895
+    - Add metadata to Company
+
+v78 -> 2022-10-25 : https://github.com/inventree/InvenTree/pull/3854
+    - Make PartCategory to be filtered by name and description
+
+v77 -> 2022-10-12 : https://github.com/inventree/InvenTree/pull/3772
+    - Adds model permission checks for barcode assignment actions
+
+v76 -> 2022-09-10 : https://github.com/inventree/InvenTree/pull/3640
+    - Refactor of barcode data on the API
+    - StockItem.uid renamed to StockItem.barcode_hash
+
+v75 -> 2022-09-05 : https://github.com/inventree/InvenTree/pull/3644
+    - Adds "pack_size" attribute to SupplierPart API serializer
+
+v74 -> 2022-08-28 : https://github.com/inventree/InvenTree/pull/3615
+    - Add confirmation field for completing PurchaseOrder if the order has incomplete lines
+    - Add confirmation field for completing SalesOrder if the order has incomplete lines
+
+v73 -> 2022-08-24 : https://github.com/inventree/InvenTree/pull/3605
+    - Add 'description' field to PartParameterTemplate model
+
+v72 -> 2022-08-18 : https://github.com/inventree/InvenTree/pull/3567
+    - Allow PurchaseOrder to be duplicated via the API
+
+v71 -> 2022-08-18 : https://github.com/inventree/InvenTree/pull/3564
+    - Updates to the "part scheduling" API endpoint
+
+v70 -> 2022-08-02 : https://github.com/inventree/InvenTree/pull/3451
+    - Adds a 'depth' parameter to the PartCategory list API
+    - Adds a 'depth' parameter to the StockLocation list API
+
+v69 -> 2022-08-01 : https://github.com/inventree/InvenTree/pull/3443
+    - Updates the PartCategory list API:
+        - Improve query efficiency: O(n) becomes O(1)
+        - Rename 'parts' field to 'part_count'
+    - Updates the StockLocation list API:
+        - Improve query efficiency: O(n) becomes O(1)
+
+v68 -> 2022-07-27 : https://github.com/inventree/InvenTree/pull/3417
+    - Allows SupplierPart list to be filtered by SKU value
+    - Allows SupplierPart list to be filtered by MPN value
+
+v67 -> 2022-07-25 : https://github.com/inventree/InvenTree/pull/3395
+    - Adds a 'requirements' endpoint for Part instance
+    - Provides information on outstanding order requirements for a given part
+
+v66 -> 2022-07-24 : https://github.com/inventree/InvenTree/pull/3393
+    - Part images can now be downloaded from a remote URL via the API
+    - Company images can now be downloaded from a remote URL via the API
+
+v65 -> 2022-07-15 : https://github.com/inventree/InvenTree/pull/3335
+    - Annotates 'in_stock' quantity to the SupplierPart API
+
+v64 -> 2022-07-08 : https://github.com/inventree/InvenTree/pull/3310
+    - Annotate 'on_order' quantity to BOM list API
+    - Allow BOM List API endpoint to be filtered by "on_order" parameter
+
+v63 -> 2022-07-06 : https://github.com/inventree/InvenTree/pull/3301
+    - Allow BOM List API endpoint to be filtered by "available_stock" paramater
+
+v62 -> 2022-07-05 : https://github.com/inventree/InvenTree/pull/3296
+    - Allows search on BOM List API endpoint
+    - Allows ordering on BOM List API endpoint
+
+v61 -> 2022-06-12 : https://github.com/inventree/InvenTree/pull/3183
+    - Migrate the "Convert Stock Item" form class to use the API
+    - There is now an API endpoint for converting a stock item to a valid variant
+
+v60 -> 2022-06-08 : https://github.com/inventree/InvenTree/pull/3148
+    - Add availability data fields to the SupplierPart model
+
+v59 -> 2022-06-07 : https://github.com/inventree/InvenTree/pull/3154
+    - Adds further improvements to BulkDelete mixin class
+    - Fixes multiple bugs in custom OPTIONS metadata implementation
+    - Adds 'bulk delete' for Notifications
+
+v58 -> 2022-06-06 : https://github.com/inventree/InvenTree/pull/3146
+    - Adds a BulkDelete API mixin class for fast, safe deletion of multiple objects with a single API request
+
+v57 -> 2022-06-05 : https://github.com/inventree/InvenTree/pull/3130
+    - Transfer PartCategoryTemplateParameter actions to the API
+
+v56 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3123
+    - Expose the PartParameterTemplate model to use the API
+
+v55 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3120
+    - Converts the 'StockItemReturn' functionality to make use of the API
+
+v54 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3117
+    - Adds 'available_stock' annotation on the SalesOrderLineItem API
+    - Adds (well, fixes) 'overdue' annotation on the SalesOrderLineItem API
+
+v53 -> 2022-06-01 : https://github.com/inventree/InvenTree/pull/3110
+    - Adds extra search fields to the BuildOrder list API endpoint
+
+v52 -> 2022-05-31 : https://github.com/inventree/InvenTree/pull/3103
+    - Allow part list API to be searched by supplier SKU
+
+v51 -> 2022-05-24 : https://github.com/inventree/InvenTree/pull/3058
+    - Adds new fields to the SalesOrderShipment model
 
 v50 -> 2022-05-18 : https://github.com/inventree/InvenTree/pull/2912
     - Implement Attachments for manufacturer parts

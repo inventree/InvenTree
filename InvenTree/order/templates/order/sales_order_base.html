@@ -64,7 +64,7 @@ src="{% static 'img/blank_image.png' %}"
 
 </div>
 {% if order.status == SalesOrderStatus.PENDING %}
-<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'{% if not order.is_completed %} disabled{% endif %}>
+<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
     <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
 </button>
 {% endif %}
@@ -78,7 +78,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}{{ order.reference }}{% include "clip.html"%}</td>
+        <td>{{ order.reference }}{% include "clip.html"%}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info-circle'></span></td>
@@ -188,7 +188,15 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Total cost" %}</td>
-        <td id="soTotalPrice">{{ order.get_total_price }}</td>
+        <td id="soTotalPrice">
+            {% with order.get_total_price as tp %}
+            {% if tp == None %}
+            <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
+            {% else %}
+            {% include "price_data.html" with price=tp %}
+            {% endif %}
+            {% endwith %}
+        </td>
     </tr>
 </table>
 {% endblock %}
@@ -198,28 +206,7 @@ src="{% static 'img/blank_image.png' %}"
 
 $("#edit-order").click(function() {
 
-    constructForm('{% url "api-so-detail" order.pk %}', {
-        fields: {
-            reference: {
-                prefix: global_settings.SALESORDER_REFERENCE_PREFIX,
-            },
-            {% if order.lines.count == 0 and order.status == SalesOrderStatus.PENDING %}
-            customer: {
-            },
-            {% endif %}
-            customer_reference: {},
-            description: {},
-            target_date: {
-                icon: 'fa-calendar-alt',
-            },
-            link: {
-                icon: 'fa-link',
-            },
-            responsible: {
-                icon: 'fa-user',
-            },
-        },
-        title: '{% trans "Edit Sales Order" %}',
+    editSalesOrder({{ order.pk }}, {
         reload: true,
     });
 });
@@ -245,12 +232,12 @@ $("#cancel-order").click(function() {
 });
 
 $("#complete-order").click(function() {
-    constructForm('{% url "api-so-complete" order.id %}', {
-        method: 'POST',
-        title: '{% trans "Complete Sales Order" %}',
-        confirm: true,
-        reload: true,
-    });
+    completeSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
 });
 
 {% if report_enabled %}

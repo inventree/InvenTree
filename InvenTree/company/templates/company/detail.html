@@ -14,7 +14,7 @@
             <h4>{% trans "Supplier Parts" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.purchase_order.add %}
+                {% if roles.purchase_order.add and not part.virtual %}
                     <button class="btn btn-success" id='supplier-part-create' title='{% trans "Create new supplier part" %}'>
                         <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
                     </button>
@@ -28,8 +28,8 @@
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
                     <div class='btn-group'>
-                        <button class="btn btn-primary dropdown-toggle" id='supplier-table-options' type="button" data-bs-toggle="dropdown">{% trans "Options" %}
-                            <span class="caret"></span>
+                        <button class="btn btn-primary dropdown-toggle" id='supplier-table-options' type="button" data-bs-toggle="dropdown">
+                            <span class='fas fa-tools'></span> <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
                             {% if roles.purchase_order.add %}
@@ -61,7 +61,7 @@
             <h4>{% trans "Manufacturer Parts" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.purchase_order.add %}
+                {% if roles.purchase_order.add and not part.virtual %}
                     <button type="button" class="btn btn-success" id='manufacturer-part-create' title='{% trans "Create new manufacturer part" %}'>
                         <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
                     </button>
@@ -75,7 +75,8 @@
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
                     <div class='btn-group' role='group'>
-                        <button class="btn btn-primary dropdown-toggle" id='manufacturer-table-options' type="button" data-bs-toggle="dropdown">{% trans "Options" %}
+                        <button class="btn btn-primary dropdown-toggle" id='manufacturer-table-options' type="button" data-bs-toggle="dropdown">
+                            <span class='fas fa-tools'></span>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
@@ -193,10 +194,53 @@
     </div>
 </div>
 
+<div class='panel panel-hidden' id='panel-attachments'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "attachment_table.html" %}
+    </div>
+</div>
+
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
+
+    onPanelLoad("attachments", function() {
+        loadAttachmentTable('{% url "api-company-attachment-list" %}', {
+            filters: {
+                company: {{ company.pk }},
+            },
+            fields: {
+                company: {
+                    value: {{ company.pk }},
+                    hidden: true
+                }
+            }
+        });
+
+        enableDragAndDrop(
+            '#attachment-dropzone',
+            '{% url "api-company-attachment-list" %}',
+            {
+                data: {
+                    company: {{ company.id }},
+                },
+                label: 'attachment',
+                success: function(data, status, xhr) {
+                    reloadAttachmentTable();
+                }
+            }
+        );
+    });
 
     onPanelLoad('company-notes', function() {
 
@@ -307,20 +351,18 @@
         }
     );
 
-    linkButtonsToSelection($("#manufacturer-part-table"), ['#manufacturer-table-options']);
-
     $("#multi-manufacturer-part-delete").click(function() {
-        var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
+        var selections = getTableData('#manufacturer-part-table');
 
         deleteManufacturerParts(selections, {
-            onSuccess: function() {
+            success: function() {
                 $("#manufacturer-part-table").bootstrapTable("refresh");
             }
         });
     });
 
     $("#multi-manufacturer-part-order").click(function() {
-        var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
+        var selections = getTableData('#manufacturer-part-table');
 
         var parts = [];
 
@@ -364,34 +406,20 @@
         }
     );
 
-    linkButtonsToSelection($("#supplier-part-table"), ['#supplier-table-options']);
-
     $("#multi-supplier-part-delete").click(function() {
-        var selections = $("#supplier-part-table").bootstrapTable("getSelections");
 
-        var requests = [];
+        var selections = getTableData("#supplier-part-table");
 
-        showQuestionDialog(
-            '{% trans "Delete Supplier Parts?" %}',
-            '{% trans "All selected supplier parts will be deleted" %}',
-            {
-                accept: function() {
-                    selections.forEach(function(part) {
-                        var url = `/api/company/part/${part.pk}/`;
-
-                        requests.push(inventreeDelete(url));
-                    });
-
-                    $.when.apply($, requests).done(function() {
-                        $('#supplier-part-table').bootstrapTable('refresh');
-                    });
-                }
+        deleteSupplierParts(selections, {
+            success: function() {
+                $('#supplier-part-table').bootstrapTable('refresh');
             }
-        );
+        });
     });
 
     $("#multi-supplier-part-order").click(function() {
-        var selections = $("#supplier-part-table").bootstrapTable("getSelections");
+
+        var selections = getTableData('#supplier-part-table');
 
         var parts = [];
 

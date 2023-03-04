@@ -1,0 +1,23 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block page_title %}
+{% inventree_title %} | {% trans "Permission Denied" %}
+{% endblock %}
+
+{% block content %}
+<h3>{% trans "Authentication Failure" %}</h3>
+
+<div class='alert alert-danger alert-block'>
+    {% trans "You have been logged out from InvenTree." %}
+</div>
+<hr>
+<div class='btn-group float-right' role='group'>
+    <a type='button' class='btn btn-primary' href='{% url "account_login" %}'>
+        <span class='fas fa-sign-in-alt'></span> {% trans "Login" %}
+    </a>
+</div>
+
+{% endblock %}

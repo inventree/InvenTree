@@ -1,6 +1,4 @@
-"""
-Django views for interacting with Order app
-"""
+"""Django views for interacting with Order app."""
 
 import logging
 from decimal import Decimal, InvalidOperation
@@ -33,48 +31,36 @@ logger = logging.getLogger("inventree")
 
 
 class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
-    """ List view for all purchase orders """
+    """List view for all purchase orders."""
 
     model = PurchaseOrder
     template_name = 'order/purchase_orders.html'
     context_object_name = 'orders'
 
     def get_queryset(self):
-        """ Retrieve the list of purchase orders,
-        ensure that the most recent ones are returned first. """
-
+        """Retrieve the list of purchase orders, ensure that the most recent ones are returned first."""
         queryset = PurchaseOrder.objects.all().order_by('-creation_date')
 
         return queryset
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        return ctx
-
 
 class SalesOrderIndex(InvenTreeRoleMixin, ListView):
-
+    """SalesOrder index (list) view class"""
     model = SalesOrder
     template_name = 'order/sales_orders.html'
     context_object_name = 'orders'
 
 
 class PurchaseOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """ Detail view for a PurchaseOrder object """
+    """Detail view for a PurchaseOrder object."""
 
     context_object_name = 'order'
     queryset = PurchaseOrder.objects.all().prefetch_related('lines')
     template_name = 'order/purchase_order_detail.html'
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        return ctx
-
 
 class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """ Detail view for a SalesOrder object """
+    """Detail view for a SalesOrder object."""
 
     context_object_name = 'order'
     queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
@@ -82,9 +68,10 @@ class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView)
 
 
 class PurchaseOrderUpload(FileManagementFormView):
-    ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
+    """PurchaseOrder: Upload file, match to fields and parts (using multi-Step form)"""
 
     class OrderFileManager(FileManager):
+        """Specify required fields"""
         REQUIRED_HEADERS = [
             'Quantity',
         ]
@@ -126,13 +113,11 @@ class PurchaseOrderUpload(FileManagementFormView):
     file_manager_class = OrderFileManager
 
     def get_order(self):
-        """ Get order or return 404 """
-
+        """Get order or return 404."""
         return get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
 
     def get_context_data(self, form, **kwargs):
-        """ Handle context data for order """
-
+        """Handle context data for order."""
         context = super().get_context_data(form=form, **kwargs)
 
         order = self.get_order()
@@ -142,11 +127,11 @@ class PurchaseOrderUpload(FileManagementFormView):
         return context
 
     def get_field_selection(self):
-        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
+        """Once data columns have been selected, attempt to pre-select the proper data from the database.
+
         This function is called once the field selection has been validated.
         The pre-fill data are then passed through to the SupplierPart selection form.
         """
-
         order = self.get_order()
 
         self.allowed_items = SupplierPart.objects.filter(supplier=order.supplier).prefetch_related('manufacturer_part')
@@ -231,8 +216,7 @@ class PurchaseOrderUpload(FileManagementFormView):
                 row['notes'] = notes
 
     def done(self, form_list, **kwargs):
-        """ Once all the data is in, process it to add PurchaseOrderLineItem instances to the order """
-
+        """Once all the data is in, process it to add PurchaseOrderLineItem instances to the order."""
         order = self.get_order()
         items = self.get_clean_items()
 
@@ -263,8 +247,7 @@ class PurchaseOrderUpload(FileManagementFormView):
 
 
 class SalesOrderExport(AjaxView):
-    """
-    Export a sales order
+    """Export a sales order.
 
     - File format can optionally be passed as a query parameter e.g. ?format=CSV
     - Default file format is CSV
@@ -275,7 +258,7 @@ class SalesOrderExport(AjaxView):
     role_required = 'sales_order.view'
 
     def get(self, request, *args, **kwargs):
-
+        """Perform GET request to export SalesOrder dataset"""
         order = get_object_or_404(SalesOrder, pk=self.kwargs.get('pk', None))
 
         export_format = request.GET.get('format', 'csv')
@@ -290,7 +273,7 @@ class SalesOrderExport(AjaxView):
 
 
 class PurchaseOrderExport(AjaxView):
-    """ File download for a purchase order
+    """File download for a purchase order.
 
     - File format can be optionally passed as a query param e.g. ?format=CSV
     - Default file format is CSV
@@ -302,7 +285,7 @@ class PurchaseOrderExport(AjaxView):
     role_required = 'purchase_order.view'
 
     def get(self, request, *args, **kwargs):
-
+        """Perform GET request to export PurchaseOrder dataset"""
         order = get_object_or_404(PurchaseOrder, pk=self.kwargs.get('pk', None))
 
         export_format = request.GET.get('format', 'csv')
@@ -321,15 +304,17 @@ class PurchaseOrderExport(AjaxView):
 
 
 class LineItemPricing(PartPricing):
-    """ View for inspecting part pricing information """
+    """View for inspecting part pricing information."""
 
     class EnhancedForm(PartPricing.form_class):
+        """Extra form options"""
         pk = IntegerField(widget=HiddenInput())
         so_line = IntegerField(widget=HiddenInput())
 
     form_class = EnhancedForm
 
     def get_part(self, id=False):
+        """Return the Part instance associated with this view"""
         if 'line_item' in self.request.GET:
             try:
                 part_id = self.request.GET.get('line_item')
@@ -350,6 +335,7 @@ class LineItemPricing(PartPricing):
         return part
 
     def get_so(self, pk=False):
+        """Return the SalesOrderLineItem associated with this view"""
         so_line = self.request.GET.get('line_item', None)
         if not so_line:
             so_line = self.request.POST.get('so_line', None)
@@ -365,20 +351,21 @@ class LineItemPricing(PartPricing):
         return None
 
     def get_quantity(self):
-        """ Return set quantity in decimal format """
+        """Return set quantity in decimal format."""
         qty = Decimal(self.request.GET.get('quantity', 1))
         if qty == 1:
             return Decimal(self.request.POST.get('quantity', 1))
         return qty
 
     def get_initials(self):
+        """Return initial context values for this view"""
         initials = super().get_initials()
         initials['pk'] = self.get_part(id=True)
         initials['so_line'] = self.get_so(pk=True)
         return initials
 
     def post(self, request, *args, **kwargs):
-        # parse extra actions
+        """Respond to a POST request to get particular pricing information"""
         REF = 'act-btn_'
         act_btn = [a.replace(REF, '') for a in self.request.POST if REF in a]
 

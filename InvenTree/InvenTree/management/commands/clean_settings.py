@@ -1,6 +1,4 @@
-"""
-Custom management command to cleanup old settings that are not defined anymore
-"""
+"""Custom management command to cleanup old settings that are not defined anymore."""
 
 import logging
 
@@ -10,12 +8,10 @@ logger = logging.getLogger('inventree')
 
 
 class Command(BaseCommand):
-    """
-    Cleanup old (undefined) settings in the database
-    """
+    """Cleanup old (undefined) settings in the database."""
 
     def handle(self, *args, **kwargs):
-
+        """Cleanup old (undefined) settings in the database."""
         logger.info("Collecting settings")
         from common.models import InvenTreeSetting, InvenTreeUserSetting
 

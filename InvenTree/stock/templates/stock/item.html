@@ -17,11 +17,6 @@
             <h4>{% trans "Stock Tracking Information" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if user_owns_item and roles.stock.change and not item.is_building %}
-                <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>
-                    <span class='fas fa-plus-circle'></span> {% trans "New Entry" %}
-                </button>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -152,9 +147,11 @@
             <h4>{% trans "Installed Stock Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
+                {% if roles.stock.add %}
                 <button type='button' class='btn btn-success' id='stock-item-install'>
                     <span class='fas fa-plus-circle'></span> {% trans "Install Stock Item" %}
                 </button>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -270,10 +267,43 @@
 
     {% if user.is_staff %}
     $("#delete-test-results").click(function() {
-        launchModalForm(
-            "{% url 'stock-item-delete-test-data' item.id %}",
+
+        var url = '{% url "api-stock-test-result-list" %}';
+
+        inventreeGet(
+            url,
             {
-                success: reloadTable,
+                stock_item: {{ item.pk }},
+            },
+            {
+                success: function(response) {
+
+                    var items = [];
+
+                    // Ensure that we are only deleting the correct test results
+                    response.forEach(function(result) {
+                        items.push(result.pk);
+                    });
+
+                    var html = `
+                    <div class='alert alert-block alert-danger'>
+                        {% trans "Delete all test results for this stock item" %}
+                    </div>`;
+
+                    constructForm(url, {
+                        form_data: {
+                            items: items,
+                            filters: {
+                                stock_item: {{ item.pk }},
+                            }
+                        },
+                        multi_delete: true,
+                        method: 'DELETE',
+                        title: '{% trans "Delete Test Data" %}',
+                        preFormContent: html,
+                        onSuccess: reloadTable,
+                    });
+                }
             }
         );
     });
@@ -283,17 +313,9 @@
 
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',
-            fields: {
-                test: {},
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {},
-                stock_item: {
-                    value: {{ item.pk }},
-                    hidden: true,
-                }
-            },
+            fields: stockItemTestResultFields({
+                stock_item: {{ item.pk }},
+            }),
             title: '{% trans "Add Test Result" %}',
             onSuccess: reloadTable,
         });
@@ -314,15 +336,6 @@
         url: "{% url 'api-stock-list' %}",
     });
     {% endif %}
-
-    $("#new-entry").click(function() {
-        launchModalForm(
-            "{% url 'stock-tracking-create' item.id %}",
-            {
-                reload: true,
-            }
-        );
-    });
 
     loadStockTrackingTable($("#track-table"), {
         params: {

@@ -8,8 +8,9 @@
   {% csrf_token %}
   {{ form|crispy }}
 
-  <button type="submit" class="btn btn-primary">
-    {% trans 'Authenticate' %}
+  <hr>
+  <button type="submit" class="btn btn-primary float-right">
+    <span class='fas fa-check-circle'></span> {% trans 'Authenticate' %}
   </button>
 </form>
 {% endblock %}

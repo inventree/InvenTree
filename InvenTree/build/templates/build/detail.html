@@ -67,7 +67,7 @@
                     <td>{% trans "Completed" %}</td>
                     <td>{% progress_bar build.completed build.quantity id='build-completed-2' max_width='150px' %}</td>
                 </tr>
-                {% if build.active and build.has_untracked_bom_items %}
+                {% if build.active and has_untracked_bom_items %}
                 <tr>
                     <td><span class='fas fa-list'></span></td>
                     <td>{% trans "Allocated Parts" %}</td>
@@ -86,6 +86,13 @@
                     <td><span class='fas fa-sitemap'></span></td>
                     <td>{% trans "Parent Build" %}</td>
                     <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a>{% include "clip.html"%}</td>
+                </tr>
+                {% endif %}
+                {% if build.priority != 0 %}
+                <tr>
+                    <td><span class="fa-solid fa-arrow-up-9-1"></span></td>
+                    <td>{% trans "Priority" %}</td>
+                    <td>{{ build.priority }}</td>
                 </tr>
                 {% endif %}
                 {% if build.sales_order %}
@@ -172,7 +179,7 @@
             <h4>{% trans "Allocate Stock to Build" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if build.active and build.has_untracked_bom_items %}
+                {% if roles.build.add and build.active and has_untracked_bom_items %}
                 <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
                     <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
                 </button>
@@ -192,7 +199,7 @@
         </div>
     </div>
     <div class='panel-content'>
-        {% if build.has_untracked_bom_items %}
+        {% if has_untracked_bom_items %}
         {% if build.active %}
         {% if build.are_untracked_parts_allocated %}
         <div class='alert alert-block alert-success'>
@@ -229,7 +236,7 @@
             <h4>{% trans "Incomplete Build Outputs" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if build.active %}
+                {% if roles.build.add and build.active %}
                 <button class='btn btn-success' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Build Output" %}
                 </button>
@@ -249,12 +256,16 @@
                             <span class='fas fa-tools'></span> <span class='caret'></span>
                         </button>
                         <ul class='dropdown-menu'>
+                            {% if roles.build.add %}
                             <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected build outputs" %}'>
                                 <span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}
                             </a></li>
+                            {% endif %}
+                            {% if roles.build.delete %}
                             <li><a class='dropdown-item' href='#' id='multi-output-delete' title='{% trans "Delete selected build outputs" %}'>
                                 <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete outputs" %}
                             </a></li>
+                            {% endif %}
                         </ul>
                     </div>
 
@@ -269,16 +280,6 @@
                             </a></li>
                         </ul>
                     </div>
-
-                    {% if build.has_tracked_bom_items %}
-                    <button id='outputs-expand' class='btn btn-outline-secondary' type='button' title='{% trans "Expand all build output rows" %}'>
-                        <span class='fas fa-expand'></span>
-                    </button>
-
-                    <button id='outputs-collapse' class='btn btn-outline-secondary' type='button' title='{% trans "Collapse all build output rows" %}'>
-                        <span class='fas fa-compress'></span>
-                    </button>
-                    {% endif %}
 
                     {% include "filter_list.html" with id='incompletebuilditems' %}
                 </div>
@@ -355,8 +356,9 @@ onPanelLoad('completed', function() {
 
 onPanelLoad('children', function() {
     loadBuildTable($('#sub-build-table'), {
-        url: '{% url "api-build-list" %}',
+        locale: '{{ request.LANGUAGE_CODE }}',
         filterTarget: "#filter-list-sub-build",
+        parentBuild: {{ build.pk }},
         params: {
             ancestor: {{ build.pk }},
         }
@@ -374,7 +376,7 @@ onPanelLoad('attachments', function() {
             },
             label: 'attachment',
             success: function(data, status, xhr) {
-                location.reload();
+                $('#attachment-table').bootstrapTable('refresh');
             }
         }
     );
@@ -429,7 +431,7 @@ onPanelLoad('outputs', function() {
     {% endif %}
 });
 
-{% if build.active and build.has_untracked_bom_items %}
+{% if build.active and has_untracked_bom_items %}
 
 function loadUntrackedStockTable() {
 
@@ -455,7 +457,9 @@ function loadUntrackedStockTable() {
     );
 }
 
-loadUntrackedStockTable();
+onPanelLoad('allocate', function() {
+    loadUntrackedStockTable();
+});
 
 {% endif %}
 
@@ -464,7 +468,7 @@ $('#btn-create-output').click(function() {
     createBuildOutput(
         {{ build.pk }},
         {
-            trackable_parts: {% if build.part.has_trackable_parts %}true{% else %}false{% endif%},
+            trackable_parts: {% js_bool build.part.has_trackable_parts %},
         }
     );
 });
@@ -527,11 +531,7 @@ $('#btn-unallocate').on('click', function() {
 
 $('#allocate-selected-items').click(function() {
 
-    var bom_items = $("#allocation-table-untracked").bootstrapTable("getSelections");
-
-    if (bom_items.length == 0) {
-        bom_items = $("#allocation-table-untracked").bootstrapTable('getData');
-    }
+    var bom_items = getTableData('#allocation-table-untracked');
 
     allocateStockToBuild(
         {{ build.pk }},

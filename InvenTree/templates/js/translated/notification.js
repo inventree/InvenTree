@@ -1,135 +1,93 @@
 {% load i18n %}
 
 /* exported
-    showAlertOrCache,
-    showCachedAlerts,
+    loadNotificationTable,
     startNotificationWatcher,
     stopNotificationWatcher,
     openNotificationPanel,
     closeNotificationPanel,
 */
 
-/*
- * Add a cached alert message to sesion storage
- */
-function addCachedAlert(message, options={}) {
-
-    var alerts = sessionStorage.getItem('inventree-alerts');
-
-    if (alerts) {
-        alerts = JSON.parse(alerts);
-    } else {
-        alerts = [];
-    }
-
-    alerts.push({
-        message: message,
-        style: options.style || 'success',
-        icon: options.icon,
-    });
-
-    sessionStorage.setItem('inventree-alerts', JSON.stringify(alerts));
-}
-
 
 /*
- * Remove all cached alert messages
+ * Load notification table
  */
-function clearCachedAlerts() {
-    sessionStorage.removeItem('inventree-alerts');
-}
+function loadNotificationTable(table, options={}, enableDelete=false) {
 
+    var params = options.params || {};
+    var read = typeof(params.read) === 'undefined' ? true : params.read;
 
-/*
- * Display an alert, or cache to display on reload
- */
-function showAlertOrCache(message, cache, options={}) {
+    setupFilterList(`notifications-${options.name}`, $(table));
 
-    if (cache) {
-        addCachedAlert(message, options);
-    } else {
-        showMessage(message, options);
-    }
-}
-
-
-/*
- * Display cached alert messages when loading a page
- */
-function showCachedAlerts() {
-
-    var alerts = JSON.parse(sessionStorage.getItem('inventree-alerts')) || [];
-
-    alerts.forEach(function(alert) {
-        showMessage(
-            alert.message,
+    $(table).inventreeTable({
+        url: options.url,
+        name: options.name,
+        groupBy: false,
+        search: true,
+        queryParams: {
+            ordering: 'age',
+            read: read,
+        },
+        paginationVAlign: 'bottom',
+        formatNoMatches: options.no_matches,
+        columns: [
             {
-                style: alert.style || 'success',
-                icon: alert.icon,
+                field: 'pk',
+                title: '{% trans "ID" %}',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'age',
+                title: '{% trans "Age" %}',
+                sortable: 'true',
+                formatter: function(value, row) {
+                    return row.age_human;
+                }
+            },
+            {
+                field: 'category',
+                title: '{% trans "Category" %}',
+                sortable: 'true',
+            },
+            {
+                field: 'name',
+                title: '{% trans "Notification" %}',
+                formatter: function(value, row) {
+                    if (row.target && row.target.link) {
+                        return renderLink(value, row.target.link);
+                    } else {
+                        return value;
+                    }
+                }
+            },
+            {
+                field: 'message',
+                title: '{% trans "Message" %}',
+            },
+            {
+                formatter: function(value, row, index, field) {
+                    var bRead = getReadEditButton(row.pk, row.read);
+
+                    if (enableDelete) {
+                        var bDel = `<button title='{% trans "Delete Notification" %}' class='notification-delete btn btn-outline-secondary' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
+                    } else {
+                        var bDel = '';
+                    }
+
+                    var html = `<div class='btn-group float-right' role='group'>${bRead}${bDel}</div>`;
+
+                    return html;
+                }
             }
-        );
+        ]
     });
 
-    clearCachedAlerts();
-}
-
-
-/*
- * Display an alert message at the top of the screen.
- * The message will contain a "close" button,
- * and also dismiss automatically after a certain amount of time.
- *
- * arguments:
- * - message: Text / HTML content to display
- *
- * options:
- * - style: alert style e.g. 'success' / 'warning'
- * - timeout: Time (in milliseconds) after which the message will be dismissed
- */
-function showMessage(message, options={}) {
-
-    var style = options.style || 'info';
-
-    var timeout = options.timeout || 5000;
-
-    var target = options.target || $('#alerts');
-
-    var details = '';
-
-    if (options.details) {
-        details = `<p><small>${options.details}</p></small>`;
-    }
-
-    // Hacky function to get the next available ID
-    var id = 1;
-
-    while ($(`#alert-${id}`).exists()) {
-        id++;
-    }
-
-    var icon = '';
-
-    if (options.icon) {
-        icon = `<span class='${options.icon}'></span>`;
-    }
-
-    // Construct the alert
-    var html = `
-    <div id='alert-${id}' class='alert alert-${style} alert-dismissible fade show' role='alert'>
-        ${icon}
-        <b>${message}</b>
-        ${details}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    `;
-
-    target.append(html);
-
-    // Remove the alert automatically after a specified period of time
-    $(`#alert-${id}`).delay(timeout).slideUp(200, function() {
-        $(this).alert(close);
+    $(table).on('click', '.notification-read', function() {
+        updateNotificationReadState($(this));
     });
 }
+
 
 var notificationWatcher = null; // reference for the notificationWatcher
 /**
@@ -190,32 +148,50 @@ function notificationCheck(force = false) {
  * - panel_caller: this button was clicked in the notification panel
  **/
 function updateNotificationReadState(btn, panel_caller=false) {
-    var url = `/api/notifications/${btn.attr('pk')}/${btn.attr('target')}/`;
 
-    inventreePut(url, {}, {
-        method: 'POST',
-        success: function() {
-            // update the notification tables if they were declared
-            if (window.updateNotifications) {
-                window.updateNotifications();
-            }
+    // Determine 'read' status of the notification
+    var status = btn.attr('target') == 'read';
+    var pk = btn.attr('pk');
 
-            // update current notification count
-            var count = parseInt($('#notification-counter').html());
-            if (btn.attr('target') == 'read') {
-                count = count - 1;
-            } else {
-                count = count + 1;
-            }
-            // update notification indicator now
-            updateNotificationIndicator(count);
+    var url = `/api/notifications/${pk}/`;
 
-            // remove notification if called from notification panel
-            if (panel_caller) {
-                btn.parent().parent().remove();
+    inventreePut(
+        url,
+        {
+            read: status,
+        },
+        {
+            method: 'PATCH',
+            success: function() {
+                // update the notification tables if they were declared
+                if (window.updateNotifications) {
+                    window.updateNotifications();
+                }
+
+                // update current notification count
+                var count = parseInt($('#notification-counter').html());
+
+                if (status) {
+                    count = count - 1;
+                } else {
+                    count = count + 1;
+                }
+
+                // Prevent negative notification count
+                if (count < 0) {
+                    count = 0;
+                }
+
+                // update notification indicator now
+                updateNotificationIndicator(count);
+
+                // remove notification if called from notification panel
+                if (panel_caller) {
+                    btn.parent().parent().remove();
+                }
             }
         }
-    });
+    );
 };
 
 /**
@@ -238,7 +214,7 @@ function getReadEditButton(pk, state, small=false) {
     }
 
     var style = (small) ? 'btn-sm ' : '';
-    return `<button title='${bReadText}' class='notification-read btn ${style}btn-outline-secondary' type='button' pk='${pk}' target='${bReadTarget}'><span class='${bReadIcon}'></span></button>`;
+    return `<button title='${bReadText}' class='notification-read btn ${style}btn-outline-secondary float-right' type='button' pk='${pk}' target='${bReadTarget}'><span class='${bReadIcon}'></span></button>`;
 }
 
 /**
@@ -252,6 +228,7 @@ function openNotificationPanel() {
         '/api/notifications/',
         {
             read: false,
+            ordering: '-creation',
         },
         {
             success: function(response) {
@@ -261,20 +238,21 @@ function openNotificationPanel() {
                     // build up items
                     response.forEach(function(item, index) {
                         html += '<li class="list-group-item">';
-                        // d-flex justify-content-between align-items-start
-                        html += '<div>';
-                        html += `<span class="badge rounded-pill bg-primary">${item.category}</span><span class="ms-2">${item.name}</span>`;
-                        html += '</div>';
+                        html += `<div>`;
+                        html += `<span class="badge bg-secondary rounded-pill">${item.name}</span>`;
+                        html += getReadEditButton(item.pk, item.read, true);
+                        html += `</div>`;
+
                         if (item.target) {
-                            var link_text = `${item.target.model}: ${item.target.name}`;
+                            var link_text = `${item.target.name}`;
                             if (item.target.link) {
                                 link_text = `<a href='${item.target.link}'>${link_text}</a>`;
                             }
                             html += link_text;
                         }
+
                         html += '<div>';
-                        html += `<span class="text-muted">${item.age_human}</span>`;
-                        html += getReadEditButton(item.pk, item.read, true);
+                        html += `<span class="text-muted"><small>${item.age_human}</small></span>`;
                         html += '</div></li>';
                     });
 

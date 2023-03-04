@@ -56,7 +56,7 @@ def update_history(apps, schema_editor):
                 try:
                     deltas['quantity']: float(q)
                     updated = True
-                except:
+                except Exception:
                     print(f"WARNING: Error converting quantity '{q}'")
 
 
@@ -89,7 +89,7 @@ def update_history(apps, schema_editor):
 
                         # Ensure that 'quantity' is stored too in this case
                         deltas['quantity'] = float(q)
-                    except:
+                    except Exception:
                         print(f"WARNING: Error converting removed quantity '{removed}'")
                 else:
                     print(f"Could not decode '{title}'")
@@ -168,7 +168,7 @@ def update_history(apps, schema_editor):
 
                         # Ensure that 'quantity' is stored too in this case
                         deltas['quantity'] = float(q)
-                    except:
+                    except Exception:
                         print(f"WARNING: Error converting added quantity '{added}'")
 
                 else:

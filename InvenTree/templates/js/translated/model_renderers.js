@@ -8,6 +8,7 @@
 /* exported
     renderBuild,
     renderCompany,
+    renderGroup,
     renderManufacturerPart,
     renderOwner,
     renderPart,
@@ -15,6 +16,7 @@
     renderStockItem,
     renderStockLocation,
     renderSupplierPart,
+    renderUser,
 */
 
 
@@ -29,6 +31,18 @@
  * - parameters: The field parameters provided via an OPTIONS request to the endpoint.
  * - options: User options provided by the client
  */
+
+
+/*
+ * Trim the supplied string to ensure the string length is limited to the provided value
+ */
+function trim(data, max_length=100) {
+    if (data.length > max_length) {
+        data = data.slice(0, max_length - 3) + '...';
+    }
+
+    return data;
+}
 
 
 // Should the ID be rendered for this string
@@ -55,7 +69,7 @@ function renderCompany(name, data, parameters={}, options={}) {
 
     var html = select2Thumbnail(data.image);
 
-    html += `<span><b>${data.name}</b></span> - <i>${data.description}</i>`;
+    html += `<span><b>${data.name}</b></span> - <i>${trim(data.description)}</i>`;
 
     html += renderId('{% trans "Company ID" %}', data.pk, parameters);
 
@@ -97,6 +111,12 @@ function renderStockItem(name, data, parameters={}, options={}) {
         location_detail = ` <small>- (<em>${data.location_detail.name}</em>)</small>`;
     }
 
+    var render_available_quantity = false;
+
+    if ('render_available_quantity' in parameters) {
+        render_available_quantity = parameters['render_available_quantity'];
+    }
+
     var stock_detail = '';
 
     if (data.quantity == 0) {
@@ -105,7 +125,12 @@ function renderStockItem(name, data, parameters={}, options={}) {
         if (data.serial && data.quantity == 1) {
             stock_detail = `{% trans "Serial Number" %}: ${data.serial}`;
         } else {
-            stock_detail = `{% trans "Quantity" %}: ${data.quantity}`;
+            if (render_available_quantity) {
+                var available = data.quantity - data.allocated;
+                stock_detail = `{% trans "Available" %}: ${available}`;
+            } else {
+                stock_detail = `{% trans "Quantity" %}: ${data.quantity}`;
+            }
         }
 
         if (data.batch) {
@@ -141,7 +166,7 @@ function renderStockLocation(name, data, parameters={}, options={}) {
     }
 
     if (render_description && data.description) {
-        html += ` - <i>${data.description}</i>`;
+        html += ` - <i>${trim(data.description)}</i>`;
     }
 
     html += renderId('{% trans "Location ID" %}', data.pk, parameters);
@@ -177,7 +202,7 @@ function renderPart(name, data, parameters={}, options={}) {
     html += ` <span>${data.full_name || data.name}</span>`;
 
     if (data.description) {
-        html += ` - <i><small>${data.description}</small></i>`;
+        html += ` - <i><small>${trim(data.description)}</small></i>`;
     }
 
     var stock_data = '';
@@ -202,6 +227,17 @@ function renderPart(name, data, parameters={}, options={}) {
     </span>`;
 
     return html;
+}
+
+
+// Renderer for "Group" model
+// eslint-disable-next-line no-unused-vars
+function renderGroup(name, data, parameters={}, options={}) {
+
+    var html = `<span>${data.name}</span>`;
+
+    return html;
+
 }
 
 // Renderer for "User" model
@@ -243,20 +279,24 @@ function renderOwner(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderPurchaseOrder(name, data, parameters={}, options={}) {
 
-    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-    var html = `<span>${prefix}${data.reference}</span>`;
-
-    var thumbnail = null;
+    var html = '';
 
     if (data.supplier_detail) {
         thumbnail = data.supplier_detail.thumbnail || data.supplier_detail.image;
 
-        html += ' - ' + select2Thumbnail(thumbnail);
-        html += `<span>${data.supplier_detail.name}</span>`;
+        html += select2Thumbnail(thumbnail);
+    }
+
+    html += `<span>${data.reference}</span>`;
+
+    var thumbnail = null;
+
+    if (data.supplier_detail) {
+        html += ` - <span>${data.supplier_detail.name}</span>`;
     }
 
     if (data.description) {
-        html += ` - <em>${data.description}</em>`;
+        html += ` - <em>${trim(data.description)}</em>`;
     }
 
     html += renderId('{% trans "Order ID" %}', data.pk, parameters);
@@ -269,8 +309,7 @@ function renderPurchaseOrder(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderSalesOrder(name, data, parameters={}, options={}) {
 
-    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-    var html = `<span>${prefix}${data.reference}</span>`;
+    var html = `<span>${data.reference}</span>`;
 
     var thumbnail = null;
 
@@ -282,7 +321,7 @@ function renderSalesOrder(name, data, parameters={}, options={}) {
     }
 
     if (data.description) {
-        html += ` - <em>${data.description}</em>`;
+        html += ` - <em>${trim(data.description)}</em>`;
     }
 
     html += renderId('{% trans "Order ID" %}', data.pk, parameters);
@@ -295,10 +334,8 @@ function renderSalesOrder(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderSalesOrderShipment(name, data, parameters={}, options={}) {
 
-    var so_prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
-
     var html = `
-    <span>${so_prefix}${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
+    <span>${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
     <span class='float-right'>
         <small>{% trans "Shipment ID" %}: ${data.pk}</small>
     </span>
@@ -319,7 +356,7 @@ function renderPartCategory(name, data, parameters={}, options={}) {
     var html = `<span>${level}${data.pathstring}</span>`;
 
     if (data.description) {
-        html += ` - <i>${data.description}</i>`;
+        html += ` - <i>${trim(data.description)}</i>`;
     }
 
     html += renderId('{% trans "Category ID" %}', data.pk, parameters);

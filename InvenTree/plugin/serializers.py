@@ -1,8 +1,5 @@
-"""
-JSON serializers for plugin app
-"""
+"""JSON serializers for plugin app."""
 
-import os
 import subprocess
 
 from django.conf import settings
@@ -13,28 +10,33 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
+from InvenTree.tasks import check_for_migrations, offload_task
 from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
 
 
 class MetadataSerializer(serializers.ModelSerializer):
-    """
-    Serializer class for model metadata API access.
-    """
+    """Serializer class for model metadata API access."""
 
     metadata = serializers.JSONField(required=True)
 
-    def __init__(self, model_type, *args, **kwargs):
-
-        self.Meta.model = model_type
-        super().__init__(*args, **kwargs)
-
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'metadata',
         ]
 
-    def update(self, instance, data):
+    def __init__(self, model_type, *args, **kwargs):
+        """Initialize the metadata serializer with information on the model type"""
+        self.Meta.model = model_type
+        super().__init__(*args, **kwargs)
 
+    def update(self, instance, data):
+        """Perform update on the metadata field:
+
+        - If this is a partial (PATCH) update, try to 'merge' data in
+        - Else, if it is a PUT update, overwrite any existing metadata
+        """
         if self.partial:
             # Default behaviour is to "merge" new data in
             metadata = instance.metadata.copy() if instance.metadata else {}
@@ -45,14 +47,10 @@ class MetadataSerializer(serializers.ModelSerializer):
 
 
 class PluginConfigSerializer(serializers.ModelSerializer):
-    """
-    Serializer for a PluginConfig:
-    """
-
-    meta = serializers.DictField(read_only=True)
-    mixins = serializers.DictField(read_only=True)
+    """Serializer for a PluginConfig."""
 
     class Meta:
+        """Meta for serializer."""
         model = PluginConfig
         fields = [
             'key',
@@ -62,11 +60,20 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'mixins',
         ]
 
+    meta = serializers.DictField(read_only=True)
+    mixins = serializers.DictField(read_only=True)
+
 
 class PluginConfigInstallSerializer(serializers.Serializer):
-    """
-    Serializer for installing a new plugin
-    """
+    """Serializer for installing a new plugin."""
+
+    class Meta:
+        """Meta for serializer."""
+        fields = [
+            'url',
+            'packagename',
+            'confirm',
+        ]
 
     url = serializers.CharField(
         required=False,
@@ -85,14 +92,11 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         help_text=_('This will install this plugin now into the current instance. The instance will go into maintenance.')
     )
 
-    class Meta:
-        fields = [
-            'url',
-            'packagename',
-            'confirm',
-        ]
-
     def validate(self, data):
+        """Validate inputs.
+
+        Make sure both confirm and url are provided.
+        """
         super().validate(data)
 
         # check the base requirements are met
@@ -105,6 +109,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         return data
 
     def save(self):
+        """Install a plugin from a package registry and set operational results as instance data."""
         data = self.validated_data
 
         packagename = data.get('packagename', '')
@@ -139,7 +144,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         success = False
         # execute pypi
         try:
-            result = subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR))
+            result = subprocess.check_output(command, cwd=settings.BASE_DIR.parent)
             ret['result'] = str(result, 'utf-8')
             ret['success'] = True
             success = True
@@ -152,13 +157,18 @@ class PluginConfigInstallSerializer(serializers.Serializer):
             with open(settings.PLUGIN_FILE, "a") as plugin_file:
                 plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
 
+        # Check for migrations
+        offload_task(check_for_migrations, worker=True)
+
         return ret
 
 
+class PluginConfigEmptySerializer(serializers.Serializer):
+    """Serializer for a PluginConfig."""
+
+
 class PluginSettingSerializer(GenericReferencedSettingSerializer):
-    """
-    Serializer for the PluginSetting model
-    """
+    """Serializer for the PluginSetting model."""
 
     MODEL = PluginSetting
     EXTRA_FIELDS = [
@@ -169,9 +179,7 @@ class PluginSettingSerializer(GenericReferencedSettingSerializer):
 
 
 class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
-    """
-    Serializer for the PluginSetting model
-    """
+    """Serializer for the PluginSetting model."""
 
     MODEL = NotificationUserSetting
     EXTRA_FIELDS = ['method', ]

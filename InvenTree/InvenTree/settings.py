@@ -1,5 +1,4 @@
-"""
-Django settings for InvenTree project.
+"""Django settings for InvenTree project.
 
 In practice the settings in this file should not be adjusted,
 instead settings can be configured in the config.yaml file
@@ -8,69 +7,68 @@ located in the top level project directory.
 This allows implementation configuration to be hidden from source control,
 as well as separate configuration parameters from the more complex
 database setup in this file.
-
 """
 
 import logging
 import os
-import random
 import socket
-import string
 import sys
-from datetime import datetime
+from pathlib import Path
 
 import django.conf.locale
-from django.contrib.messages import constants as messages
-from django.core.files.storage import default_storage
+import django.core.exceptions
+from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
-import yaml
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
-from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
+from . import config
+from .config import get_boolean_setting, get_custom_file, get_setting
 
-
-def _is_true(x):
-    # Shortcut function to determine if a value "looks" like a boolean
-    return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true']
-
+INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
-# Are enviroment variables manipulated by tests? Needs to be set by testing code
+
+if TESTING:
+
+    # Use a weaker password hasher for testing (improves testing speed)
+    PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher',]
+
+    # Enable slow-test-runner
+    TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
+    NUM_SLOW_TESTS = 25
+
+    # Note: The following fix is "required" for docker build workflow
+    # Note: 2022-12-12 still unsure why...
+    if os.getenv('INVENTREE_DOCKER'):
+        # Ensure that sys.path includes global python libs
+        site_packages = '/usr/local/lib/python3.9/site-packages'
+
+        if site_packages not in sys.path:
+            print("Adding missing site-packages path:", site_packages)
+            sys.path.append(site_packages)
+
+# Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
 
 # New requirement for django 3.2+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = get_base_dir()
+# Build paths inside the project like this: BASE_DIR.joinpath(...)
+BASE_DIR = config.get_base_dir()
 
-cfg_filename = get_config_file()
-
-with open(cfg_filename, 'r') as cfg:
-    CONFIG = yaml.safe_load(cfg)
-
-# We will place any config files in the same directory as the config file
-config_dir = os.path.dirname(cfg_filename)
+# Load configuration data
+CONFIG = config.load_config_data(set_cache=True)
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = _is_true(get_setting(
-    'INVENTREE_DEBUG',
-    CONFIG.get('debug', True)
-))
-
-DOCKER = _is_true(get_setting(
-    'INVENTREE_DOCKER',
-    False
-))
+DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
 
 # Configure logging settings
-log_level = get_setting(
-    'INVENTREE_LOG_LEVEL',
-    CONFIG.get('log_level', 'WARNING')
-)
+log_level = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 
 logging.basicConfig(
     level=log_level,
@@ -102,74 +100,22 @@ LOGGING = {
 # Get a logger instance for this setup file
 logger = logging.getLogger("inventree")
 
-"""
-Specify a secret key to be used by django.
-
-Following options are tested, in descending order of preference:
-
-A) Check for environment variable INVENTREE_SECRET_KEY => Use raw key data
-B) Check for environment variable INVENTREE_SECRET_KEY_FILE => Load key data from file
-C) Look for default key file "secret_key.txt"
-d) Create "secret_key.txt" if it does not exist
-"""
-
-if os.getenv("INVENTREE_SECRET_KEY"):
-    # Secret key passed in directly
-    SECRET_KEY = os.getenv("INVENTREE_SECRET_KEY").strip()  # pragma: no cover
-    logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover
-else:
-    # Secret key passed in by file location
-    key_file = os.getenv("INVENTREE_SECRET_KEY_FILE")
-
-    if key_file:
-        key_file = os.path.abspath(key_file)  # pragma: no cover
-    else:
-        # default secret key location
-        key_file = os.path.join(BASE_DIR, "secret_key.txt")
-        key_file = os.path.abspath(key_file)
-
-    if not os.path.exists(key_file):  # pragma: no cover
-        logger.info(f"Generating random key file at '{key_file}'")
-        # Create a random key file
-        with open(key_file, 'w') as f:
-            options = string.digits + string.ascii_letters + string.punctuation
-            key = ''.join([random.choice(options) for i in range(100)])
-            f.write(key)
-
-    logger.info(f"Loading SECRET_KEY from '{key_file}'")
-
-    try:
-        SECRET_KEY = open(key_file, "r").read().strip()
-    except Exception:  # pragma: no cover
-        logger.exception(f"Couldn't load keyfile {key_file}")
-        sys.exit(-1)
+# Load SECRET_KEY
+SECRET_KEY = config.get_secret_key()
 
 # The filesystem location for served static files
-STATIC_ROOT = os.path.abspath(
-    get_setting(
-        'INVENTREE_STATIC_ROOT',
-        CONFIG.get('static_root', None)
-    )
-)
+STATIC_ROOT = config.get_static_dir()
 
-if STATIC_ROOT is None:  # pragma: no cover
-    print("ERROR: INVENTREE_STATIC_ROOT directory not defined")
-    sys.exit(1)
-
-# The filesystem location for served static files
-MEDIA_ROOT = os.path.abspath(
-    get_setting(
-        'INVENTREE_MEDIA_ROOT',
-        CONFIG.get('media_root', None)
-    )
-)
-
-if MEDIA_ROOT is None:  # pragma: no cover
-    print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
-    sys.exit(1)
+# The filesystem location for uploaded meadia files
+MEDIA_ROOT = config.get_media_dir()
 
 # List of allowed hosts (default = allow all)
-ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
+ALLOWED_HOSTS = get_setting(
+    "INVENTREE_ALLOWED_HOSTS",
+    config_key='allowed_hosts',
+    default_value=['*'],
+    typecast=list,
+)
 
 # Cross Origin Resource Sharing (CORS) options
 
@@ -177,13 +123,21 @@ ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
 CORS_URLS_REGEX = r'^/api/.*$'
 
 # Extract CORS options from configuration file
-cors_opt = CONFIG.get('cors', None)
+CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
+    "INVENTREE_CORS_ORIGIN_ALLOW_ALL",
+    config_key='cors.allow_all',
+    default_value=False,
+)
 
-if cors_opt:
-    CORS_ORIGIN_ALLOW_ALL = cors_opt.get('allow_all', False)
+CORS_ORIGIN_WHITELIST = get_setting(
+    "INVENTREE_CORS_ORIGIN_WHITELIST",
+    config_key='cors.whitelist',
+    default_value=[],
+    typecast=list,
+)
 
-    if not CORS_ORIGIN_ALLOW_ALL:
-        CORS_ORIGIN_WHITELIST = cors_opt.get('whitelist', [])  # pragma: no cover
+# Needed for the parts importer, directly impacts the maximum parts that can be uploaded
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
@@ -192,42 +146,42 @@ STATICFILES_DIRS = []
 
 # Translated Template settings
 STATICFILES_I18_PREFIX = 'i18n'
-STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js', 'translated')
-STATICFILES_I18_TRG = os.path.join(BASE_DIR, 'InvenTree', 'static_i18n')
+STATICFILES_I18_SRC = BASE_DIR.joinpath('templates', 'js', 'translated')
+STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
-STATICFILES_I18_TRG = os.path.join(STATICFILES_I18_TRG, STATICFILES_I18_PREFIX)
+STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
 
 STATFILES_I18_PROCESSORS = [
     'InvenTree.context.status_codes',
 ]
 
 # Color Themes Directory
-STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
+STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
-if DEBUG:
-    logger.info("InvenTree running with DEBUG enabled")
+# Database backup options
+# Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
+DBBACKUP_SEND_EMAIL = False
+DBBACKUP_STORAGE = get_setting(
+    'INVENTREE_BACKUP_STORAGE',
+    'backup_storage',
+    'django.core.files.storage.FileSystemStorage'
+)
 
-logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
-logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
+# Default backup configuration
+DBBACKUP_STORAGE_OPTIONS = get_setting('INVENTREE_BACKUP_OPTIONS', 'backup_options', None)
+if DBBACKUP_STORAGE_OPTIONS is None:
+    DBBACKUP_STORAGE_OPTIONS = {
+        'location': config.get_backup_dir(),
+    }
 
 # Application definition
 
 INSTALLED_APPS = [
-
-    # Core django modules
+    # Admin site integration
     'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'user_sessions',                # db user sessions
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-
-    # Maintenance
-    'maintenance_mode',
 
     # InvenTree apps
     'build.apps.BuildConfig',
@@ -242,6 +196,17 @@ INSTALLED_APPS = [
     'plugin.apps.PluginAppConfig',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
+    # Core django modules
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'user_sessions',                # db user sessions
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    # Maintenance
+    'maintenance_mode',
+
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
     'rest_framework',                       # DRF (Django Rest Framework)
@@ -251,14 +216,13 @@ INSTALLED_APPS = [
     'import_export',                        # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',    # Automatically delete orphaned MEDIA files
     'mptt',                                 # Modified Preorder Tree Traversal
-    'markdownx',                            # Markdown editing
     'markdownify',                          # Markdown template rendering
-    'django_admin_shell',                   # Python shell for the admin interface
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
     'django_q',
     'formtools',                            # Form wizard tools
+    'dbbackup',                             # Backups - django-dbbackup
 
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
@@ -269,6 +233,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+
+    'django_ical',                          # For exporting calendars
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -288,10 +254,8 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'InvenTree.middleware.AuthRequiredMiddleware',
     'InvenTree.middleware.Check2FAMiddleware',                  # Check if the user should be forced to use MFA
     'maintenance_mode.middleware.MaintenanceModeMiddleware',
+    'InvenTree.middleware.InvenTreeExceptionProcessor',         # Error reporting
 ])
-
-# Error reporting middleware
-MIDDLEWARE.append('error_report.middleware.ExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
@@ -299,11 +263,31 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
+DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
+
 # If the debug toolbar is enabled, add the modules
-if DEBUG and CONFIG.get('debug_toolbar', False):  # pragma: no cover
+if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
     logger.info("Running with DEBUG_TOOLBAR enabled")
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+
+    DEBUG_TOOLBAR_CONFIG = {
+        'RESULTS_CACHE_SIZE': 100,
+        'OBSERVE_REQUEST_CALLBACK': lambda x: False,
+    }
+
+# Internal IP addresses allowed to see the debug toolbar
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
+# Internal flag to determine if we are running in docker mode
+DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
+
+if DOCKER:  # pragma: no cover
+    # Internal IP addresses are different when running under docker
+    hostname, ___, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
 # Allow secure http developer server in debug mode
 if DEBUG:
@@ -314,7 +298,8 @@ if DEBUG:
 # Base URL for admin pages (default="admin")
 INVENTREE_ADMIN_URL = get_setting(
     'INVENTREE_ADMIN_URL',
-    CONFIG.get('admin_url', 'admin'),
+    config_key='admin_url',
+    default_value='admin'
 )
 
 ROOT_URLCONF = 'InvenTree.urls'
@@ -323,10 +308,10 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),
+            BASE_DIR.joinpath('templates'),
             # Allow templates in the reporting directory to be accessed
-            os.path.join(MEDIA_ROOT, 'report'),
-            os.path.join(MEDIA_ROOT, 'label'),
+            MEDIA_ROOT.joinpath('report'),
+            MEDIA_ROOT.joinpath('label'),
         ],
         'OPTIONS': {
             'context_processors': [
@@ -351,6 +336,12 @@ TEMPLATES = [
     },
 ]
 
+if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
+    # Note that the APP_DIRS value must be set when using debug_toolbar
+    # But this will kill template loading for plugins
+    TEMPLATES[0]['APP_DIRS'] = True
+    del TEMPLATES[0]['OPTIONS']['loaders']
+
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
@@ -366,8 +357,15 @@ REST_FRAMEWORK = {
         'InvenTree.permissions.RolePermission',
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-    'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata'
+    'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
 }
+
+if DEBUG:
+    # Enable browsable API if in DEBUG mode
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
@@ -397,13 +395,19 @@ for key in db_keys:
     env_var = os.environ.get(env_key, None)
 
     if env_var:
+        # Make use PORT is int
+        if key == 'PORT':
+            try:
+                env_var = int(env_var)
+            except ValueError:
+                logger.error(f"Invalid number for {env_key}: {env_var}")
         # Override configuration value
         db_config[key] = env_var
 
 # Check that required database configuration options are specified
-reqiured_keys = ['ENGINE', 'NAME']
+required_keys = ['ENGINE', 'NAME']
 
-for key in reqiured_keys:
+for key in required_keys:
     if key not in db_config:  # pragma: no cover
         error_msg = f'Missing required database configuration value {key}'
         logger.error(error_msg)
@@ -433,6 +437,10 @@ if db_engine in ['sqlite3', 'postgresql', 'mysql']:
 db_name = db_config['NAME']
 db_host = db_config.get('HOST', "''")
 
+if 'sqlite' in db_engine:
+    db_name = str(Path(db_name).resolve())
+    db_config['NAME'] = db_name
+
 logger.info(f"DB_ENGINE: {db_engine}")
 logger.info(f"DB_NAME: {db_name}")
 logger.info(f"DB_HOST: {db_host}")
@@ -461,7 +469,7 @@ if "postgres" in db_engine:  # pragma: no cover
         # long to connect to the database server
         # # seconds, 2 is minium allowed by libpq
         db_options["connect_timeout"] = int(
-            os.getenv("INVENTREE_DB_TIMEOUT", 2)
+            get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 2)
         )
 
     # Setup TCP keepalive
@@ -472,23 +480,27 @@ if "postgres" in db_engine:  # pragma: no cover
     # # 0 - TCP Keepalives disabled; 1 - enabled
     if "keepalives" not in db_options:
         db_options["keepalives"] = int(
-            os.getenv("INVENTREE_DB_TCP_KEEPALIVES", "1")
+            get_setting('INVENTREE_DB_TCP_KEEPALIVES', 'database.tcp_keepalives', 1)
         )
-    # # Seconds after connection is idle to send keep alive
+
+    # Seconds after connection is idle to send keep alive
     if "keepalives_idle" not in db_options:
         db_options["keepalives_idle"] = int(
-            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_IDLE", "1")
+            get_setting('INVENTREE_DB_TCP_KEEPALIVES_IDLE', 'database.tcp_keepalives_idle', 1)
         )
-    # # Seconds after missing ACK to send another keep alive
+
+    # Seconds after missing ACK to send another keep alive
     if "keepalives_interval" not in db_options:
         db_options["keepalives_interval"] = int(
-            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_INTERVAL", "1")
+            get_setting("INVENTREE_DB_TCP_KEEPALIVES_INTERVAL", "database.tcp_keepalives_internal", "1")
         )
-    # # Number of missing ACKs before we close the connection
+
+    # Number of missing ACKs before we close the connection
     if "keepalives_count" not in db_options:
         db_options["keepalives_count"] = int(
-            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_COUNT", "5")
+            get_setting("INVENTREE_DB_TCP_KEEPALIVES_COUNT", "database.tcp_keepalives_count", "5")
         )
+
     # # Milliseconds for how long pending data should remain unacked
     # by the remote server
     # TODO: Supported starting in PSQL 11
@@ -501,17 +513,11 @@ if "postgres" in db_engine:  # pragma: no cover
     # https://www.postgresql.org/docs/devel/transaction-iso.html
     # https://docs.djangoproject.com/en/3.2/ref/databases/#isolation-level
     if "isolation_level" not in db_options:
-        serializable = _is_true(
-            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
-        )
-        db_options["isolation_level"] = (
-            ISOLATION_LEVEL_SERIALIZABLE
-            if serializable
-            else ISOLATION_LEVEL_READ_COMMITTED
-        )
+        serializable = get_boolean_setting('INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False)
+        db_options["isolation_level"] = ISOLATION_LEVEL_SERIALIZABLE if serializable else ISOLATION_LEVEL_READ_COMMITTED
 
 # Specific options for MySql / MariaDB backend
-if "mysql" in db_engine:  # pragma: no cover
+elif "mysql" in db_engine:  # pragma: no cover
     # TODO TCP time outs and keepalives
 
     # MariaDB's default isolation level is Repeatable Read which is
@@ -521,15 +527,11 @@ if "mysql" in db_engine:  # pragma: no cover
     # https://mariadb.com/kb/en/mariadb-transactions-and-isolation-levels-for-sql-server-users/#changing-the-isolation-level
     # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
     if "isolation_level" not in db_options:
-        serializable = _is_true(
-            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
-        )
-        db_options["isolation_level"] = (
-            "serializable" if serializable else "read committed"
-        )
+        serializable = get_boolean_setting('INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False)
+        db_options["isolation_level"] = "serializable" if serializable else "read committed"
 
 # Specific options for sqlite backend
-if "sqlite" in db_engine:
+elif "sqlite" in db_engine:
     # TODO: Verify timeouts are not an issue because no network is involved for SQLite
 
     # SQLite's default isolation level is Serializable due to SQLite's
@@ -548,19 +550,44 @@ db_config['TEST'] = {
 
 # Set collation option for mysql test database
 if 'mysql' in db_engine:
-    db_config['TEST']['COLLATION'] = 'utf8_general_ci'
+    db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
 
 DATABASES = {
     'default': db_config
 }
 
-_cache_config = CONFIG.get("cache", {})
-_cache_host = _cache_config.get("host", os.getenv("INVENTREE_CACHE_HOST"))
-_cache_port = _cache_config.get(
-    "port", os.getenv("INVENTREE_CACHE_PORT", "6379")
-)
+# login settings
+REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
+REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
 
-if _cache_host:  # pragma: no cover
+# sentry.io integration for error reporting
+SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
+# Default Sentry DSN (can be overriden if user wants custom sentry integration)
+INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
+SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', INVENTREE_DSN)
+SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
+
+if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), ],
+        traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
+        send_default_pii=True
+    )
+    inventree_tags = {
+        'testing': TESTING,
+        'docker': DOCKER,
+        'debug': DEBUG,
+        'remote': REMOTE_LOGIN,
+    }
+    for key, val in inventree_tags.items():
+        sentry_sdk.set_tag(f'inventree_{key}', val)
+
+# Cache configuration
+cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)
+cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379', typecast=int)
+
+if cache_host:  # pragma: no cover
     # We are going to rely upon a possibly non-localhost for our cache,
     # so don't wait too long for the cache as nothing in the cache should be
     # irreplacable.
@@ -569,7 +596,7 @@ if _cache_host:  # pragma: no cover
         "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),
         "SOCKET_TIMEOUT": int(os.getenv("CACHE_SOCKET_TIMEOUT", "2")),
         "CONNECTION_POOL_KWARGS": {
-            "socket_keepalive": _is_true(
+            "socket_keepalive": config.is_true(
                 os.getenv("CACHE_TCP_KEEPALIVE", "1")
             ),
             "socket_keepalive_options": {
@@ -591,7 +618,7 @@ if _cache_host:  # pragma: no cover
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": f"redis://{_cache_host}:{_cache_port}/0",
+            "LOCATION": f"redis://{cache_host}:{cache_port}/0",
             "OPTIONS": _cache_options,
         },
     }
@@ -602,32 +629,40 @@ else:
         },
     }
 
-try:
-    # 4 background workers seems like a sensible default
-    background_workers = int(os.environ.get('INVENTREE_BACKGROUND_WORKERS', 4))
-except ValueError:  # pragma: no cover
-    background_workers = 4
+_q_worker_timeout = int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90))
 
-# django-q configuration
+# django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
-    'workers': background_workers,
-    'timeout': 90,
-    'retry': 120,
+    'label': 'Background Tasks',
+    'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
+    'timeout': _q_worker_timeout,
+    'retry': min(120, _q_worker_timeout + 30),
+    'max_attempts': int(get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)),
     'queue_limit': 50,
+    'catch_up': False,
     'bulk': 10,
     'orm': 'default',
+    'cache': 'default',
     'sync': False,
 }
 
-if _cache_host:  # pragma: no cover
+# Configure django-q sentry integration
+if SENTRY_ENABLED and SENTRY_DSN:
+    Q_CLUSTER['error_reporter'] = {
+        'sentry': {
+            'dsn': SENTRY_DSN
+        }
+    }
+
+if cache_host:  # pragma: no cover
     # If using external redis cache, make the cache the broker for Django Q
     # as well
     Q_CLUSTER["django_redis"] = "worker"
 
 # database user sessions
 SESSION_ENGINE = 'user_sessions.backends.db'
-LOGOUT_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = get_setting('INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index')
 SILENCED_SYSTEM_CHECKS = [
     'admin.E410',
 ]
@@ -653,7 +688,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Extra (optional) URL validators
 # See https://docs.djangoproject.com/en/2.2/ref/validators/#django.core.validators.URLValidator
 
-EXTRA_URL_SCHEMES = CONFIG.get('extra_url_schemes', [])
+EXTRA_URL_SCHEMES = get_setting('INVENTREE_EXTRA_URL_SCHEMES', 'extra_url_schemes', [])
 
 if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
     logger.warning("extra_url_schemes not correctly formatted")
@@ -661,12 +696,14 @@ if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
-
-LANGUAGE_CODE = CONFIG.get('language', 'en-us')
+LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
+# Store language settings for 30 days
+LANGUAGE_COOKIE_AGE = 2592000
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
     ('cs', _('Czech')),
+    ('da', _('Danish')),
     ('de', _('German')),
     ('el', _('Greek')),
     ('en', _('English')),
@@ -685,15 +722,16 @@ LANGUAGES = [
     ('pt', _('Portuguese')),
     ('pt-BR', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
+    ('sl', _('Slovenian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
-    ('zh-cn', _('Chinese')),
+    ('zh-hans', _('Chinese')),
 ]
 
 # Testing interface translations
-if get_setting('TEST_TRANSLATIONS', False):  # pragma: no cover
+if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no cover
     # Set default language
     LANGUAGE_CODE = 'xx'
 
@@ -712,81 +750,44 @@ if get_setting('TEST_TRANSLATIONS', False):  # pragma: no cover
     django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
-CURRENCIES = CONFIG.get(
-    'currencies',
-    [
-        'AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
-    ],
+CURRENCIES = get_setting(
+    'INVENTREE_CURRENCIES', 'currencies',
+    ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD'],
+    typecast=list,
 )
+
+# Maximum number of decimal places for currency rendering
+CURRENCY_DECIMAL_PLACES = 6
 
 # Check that each provided currency is supported
 for currency in CURRENCIES:
     if currency not in moneyed.CURRENCIES:  # pragma: no cover
-        print(f"Currency code '{currency}' is not supported")
+        logger.error(f"Currency code '{currency}' is not supported")
         sys.exit(1)
-
 
 # Custom currency exchange backend
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 
-# Extract email settings from the config file
-email_config = CONFIG.get('email', {})
+# Email configuration options
+EMAIL_BACKEND = get_setting('INVENTREE_EMAIL_BACKEND', 'email.backend', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
+EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
+EMAIL_HOST_USER = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
+EMAIL_HOST_PASSWORD = get_setting('INVENTREE_EMAIL_PASSWORD', 'email.password', '')
+EMAIL_SUBJECT_PREFIX = get_setting('INVENTREE_EMAIL_PREFIX', 'email.prefix', '[InvenTree] ')
+EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
+EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
 
-EMAIL_BACKEND = get_setting(
-    'INVENTREE_EMAIL_BACKEND',
-    email_config.get('backend', 'django.core.mail.backends.smtp.EmailBackend')
-)
-
-# Email backend settings
-EMAIL_HOST = get_setting(
-    'INVENTREE_EMAIL_HOST',
-    email_config.get('host', '')
-)
-
-EMAIL_PORT = get_setting(
-    'INVENTREE_EMAIL_PORT',
-    email_config.get('port', 25)
-)
-
-EMAIL_HOST_USER = get_setting(
-    'INVENTREE_EMAIL_USERNAME',
-    email_config.get('username', ''),
-)
-
-EMAIL_HOST_PASSWORD = get_setting(
-    'INVENTREE_EMAIL_PASSWORD',
-    email_config.get('password', ''),
-)
-
-DEFAULT_FROM_EMAIL = get_setting(
-    'INVENTREE_EMAIL_SENDER',
-    email_config.get('sender', ''),
-)
-
-EMAIL_SUBJECT_PREFIX = '[InvenTree] '
+DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_SENDER', 'email.sender', '')
 
 EMAIL_USE_LOCALTIME = False
-
-EMAIL_USE_TLS = get_setting(
-    'INVENTREE_EMAIL_TLS',
-    email_config.get('tls', False),
-)
-
-EMAIL_USE_SSL = get_setting(
-    'INVENTREE_EMAIL_SSL',
-    email_config.get('ssl', False),
-)
-
 EMAIL_TIMEOUT = 60
 
 LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'locale/'),
+    BASE_DIR.joinpath('locale/'),
 )
 
-TIME_ZONE = get_setting(
-    'INVENTREE_TIMEZONE',
-    CONFIG.get('timezone', 'UTC')
-)
+TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
 USE_I18N = True
 
@@ -807,32 +808,24 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-# Internal IP addresses allowed to see the debug toolbar
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
-
-MESSAGE_TAGS = {
-    messages.SUCCESS: 'alert alert-block alert-success',
-    messages.ERROR: 'alert alert-block alert-danger',
-    messages.INFO: 'alert alert-block alert-info',
-}
-
 SITE_ID = 1
 
 # Load the allauth social backends
-SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list)
+
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
+SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict)
+
+SOCIALACCOUNT_STORE_TOKENS = True
 
 # settings for allauth
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', CONFIG.get('login_confirm_days', 3))
-
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', CONFIG.get('login_attempts', 5))
-
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int)
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int)
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting('INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', 'http')
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+ACCOUNT_PREVENT_ENUMERATION = True
 
 # override forms / adapters
 ACCOUNT_FORMS = {
@@ -849,83 +842,73 @@ ACCOUNT_FORMS = {
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 
-# login settings
-REMOTE_LOGIN = get_setting('INVENTREE_REMOTE_LOGIN', CONFIG.get('remote_login', False))
-REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', CONFIG.get('remote_login_header', 'REMOTE_USER'))
-
-# Markdownx configuration
-# Ref: https://neutronx.github.io/django-markdownx/customization/
-MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
-
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
 
-MARKDOWNIFY_WHITELIST_TAGS = [
-    'a',
-    'abbr',
-    'b',
-    'blockquote',
-    'em',
-    'h1', 'h2', 'h3',
-    'i',
-    'img',
-    'li',
-    'ol',
-    'p',
-    'strong',
-    'ul'
-]
+MARKDOWNIFY = {
+    'default': {
+        'BLEACH': True,
+        'WHITELIST_ATTRS': [
+            'href',
+            'src',
+            'alt',
+        ],
+        'MARKDOWN_EXTENSIONS': [
+            'markdown.extensions.extra'
+        ],
+        'WHITELIST_TAGS': [
+            'a',
+            'abbr',
+            'b',
+            'blockquote',
+            'em',
+            'h1', 'h2', 'h3',
+            'i',
+            'img',
+            'li',
+            'ol',
+            'p',
+            'strong',
+            'ul',
+            'table',
+            'thead',
+            'tbody',
+            'th',
+            'tr',
+            'td'
+        ],
+    }
+}
 
-MARKDOWNIFY_WHITELIST_ATTRS = [
-    'href',
-    'src',
-    'alt',
+# Ignore these error typeps for in-database error logging
+IGNORED_ERRORS = [
+    Http404,
+    django.core.exceptions.PermissionDenied,
 ]
-
-MARKDOWNIFY_BLEACH = False
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60
-MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.DefaultStorageBackend'
+MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.StaticStorageBackend'
 
 # Are plugins enabled?
-PLUGINS_ENABLED = _is_true(get_setting(
-    'INVENTREE_PLUGINS_ENABLED',
-    CONFIG.get('plugins_enabled', False),
-))
+PLUGINS_ENABLED = get_boolean_setting('INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False)
 
-PLUGIN_FILE = get_plugin_file()
-
-# Plugin Directories (local plugins will be loaded from these directories)
-PLUGIN_DIRS = ['plugin.builtin', ]
-
-if not TESTING:
-    # load local deploy directory in prod
-    PLUGIN_DIRS.append('plugins')  # pragma: no cover
-
-if DEBUG or TESTING:
-    # load samples in debug mode
-    PLUGIN_DIRS.append('plugin.samples')
+PLUGIN_FILE = config.get_plugin_file()
 
 # Plugin test settings
-PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
-PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
-PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?
-PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
+PLUGIN_TESTING = get_setting('INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING)                     # Are plugins beeing tested?
+PLUGIN_TESTING_SETUP = get_setting('INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False)     # Load plugins from setup hooks in testing?
+PLUGIN_TESTING_EVENTS = False                                                                           # Flag if events are tested right now
+PLUGIN_RETRY = get_setting('INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5)                                 # How often should plugin loading be tried?
+PLUGIN_FILE_CHECKED = False                                                                             # Was the plugin file checked?
 
 # User interface customization values
-CUSTOMIZE = get_setting(
-    'INVENTREE_CUSTOMIZE',
-    CONFIG.get('customize', {}),
-    {}
-)
+CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True)
+CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
 
-CUSTOM_LOGO = get_setting(
-    'INVENTREE_CUSTOM_LOGO',
-    CUSTOMIZE.get('logo', False)
-)
+CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
+if DEBUG:
+    logger.info("InvenTree running with DEBUG enabled")
 
-# check that the logo-file exsists in media
-if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):
-    CUSTOM_LOGO = False
-    logger.warning("The custom logo file could not be found in the default media storage")
+logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
+logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")

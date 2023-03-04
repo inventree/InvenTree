@@ -2,16 +2,21 @@
 
 {% get_providers as socialaccount_providers %}
 
+<ul class='sso-provider-list'>
 {% for provider in socialaccount_providers %}
+<li class='sso-provider-link'>
 {% if provider.id == "openid" %}
 {% for brand in provider.get_brands %}
-  <a title="{{brand.name}}"
-     class="btn btn-primary socialaccount_provider {{provider.id}} {{brand.id}}"
-     href="{% provider_login_url provider.id openid=brand.openid_url process=process %}"
-     ><span class='brand-icon' brand_name='{{provider.id}}'></span> {{brand.name}}</a>
+  <a title="{{brand.name}}" brand_name='{{ provider.id }}'
+     class="btn btn-light socialaccount_provider {{provider.id}} {{brand.id}}"
+     href="{% provider_login_url provider.id openid=brand.openid_url process=process %}">
+     <span class='brand-icon' brand_name='{{provider.id}}'></span> {{ brand.name }}</a>
 {% endfor %}
 {% endif %}
-  <a title="{{provider.name}}" class="btn btn-primary socialaccount_provider {{provider.id}}"
+  <a title="{{provider.name}}" brand_name='{{ provider.id }}'
+     class="btn btn-light socialaccount_provider {{provider.id}}"
      href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"
-     ><span class='brand-icon' brand_name='{{provider.id}}'></span> {{provider.name}}</a>
+     ><span class='brand-icon' brand_name='{{provider.id}}'></span> {{ provider.name }}</a>
+</li>
 {% endfor %}
+</ul>

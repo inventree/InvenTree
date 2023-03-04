@@ -5,11 +5,13 @@
 {% load i18n %}
 {% load static %}
 
+
 {% block sidebar %}
 {% include 'order/po_sidebar.html' %}
 {% endblock %}
 
 {% block page_content %}
+{% settings_value "PURCHASEORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
 
 <div class='panel panel-hidden' id='panel-order-items'>
     <div class='panel-heading'>
@@ -18,7 +20,7 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.purchase_order.change %}
-                {% if order.status == PurchaseOrderStatus.PENDING %}
+                {% if order.is_pending or allow_extra_editing %}
                 <a class='btn btn-primary' href='{% url "po-upload" order.id %}' role='button'>
                     <span class='fas fa-file-upload side-icon'></span> {% trans "Upload File" %}
                 </a>
@@ -48,10 +50,12 @@
             <h4>{% trans "Extra Lines" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.purchase_order.change and order.status == PurchaseOrderStatus.PENDING %}
+                {% if roles.purchase_order.change %}
+                {% if order.is_pending or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-po-extra-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
                 </button>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -135,7 +139,7 @@
             },
             label: 'attachment',
             success: function(data, status, xhr) {
-                location.reload();
+                $('#attachment-table').bootstrapTable('refresh');
             }
         }
     );
@@ -168,34 +172,23 @@
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $('#new-po-line').click(function() {
 
-    var fields = poLineItemFields({
-        order: {{ order.pk }},
+    createPurchaseOrderLineItem({{ order.pk }}, {
         {% if order.supplier %}
         supplier: {{ order.supplier.pk }},
         {% if order.supplier.currency %}
         currency: '{{ order.supplier.currency }}',
         {% endif %}
         {% endif %}
-    });
-
-    constructForm('{% url "api-po-line-list" %}', {
-        fields: fields,
-        method: 'POST',
-        title: '{% trans "Add Line Item" %}',
         onSuccess: function() {
             $('#po-line-table').bootstrapTable('refresh');
-        },
+        }
     });
 });
 
 {% elif order.status == PurchaseOrderStatus.PLACED %}
 
     $('#receive-selected-items').click(function() {
-        var items = $("#po-line-table").bootstrapTable('getSelections');
-
-        if (items.length == 0) {
-            items = $("#po-line-table").bootstrapTable('getData');
-        }
+        var items = getTableData('#po-line-table');
 
         receivePurchaseOrderItems(
             {{ order.id }},
@@ -220,6 +213,9 @@ loadPurchaseOrderLineItemTable('#po-line-table', {
     {% else %}
     allow_edit: false,
     {% endif %}
+    {% if order.status == PurchaseOrderStatus.PENDING %}
+    pending: true,
+    {% endif %}
     {% if order.status == PurchaseOrderStatus.PLACED and roles.purchase_order.change %}
     allow_receive: true,
     {% else %}
@@ -232,6 +228,10 @@ $("#new-po-extra-line").click(function() {
     var fields = extraLineFields({
         order: {{ order.pk }},
     });
+
+    {% if order.supplier.currency %}
+    fields.price_currency.value = '{{ order.supplier.currency }}';
+    {% endif %}
 
     constructForm('{% url "api-po-extra-line-list" %}', {
         fields: fields,
@@ -248,6 +248,12 @@ loadPurchaseOrderExtraLineTable(
     {
         order: {{ order.pk }},
         status: {{ order.status }},
+        {% if order.is_pending %}
+        pending: true,
+        {% endif %}
+        {% if roles.purchase_order.change %}
+        allow_edit: true,
+        {% endif %}
     }
 );
 

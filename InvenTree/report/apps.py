@@ -1,6 +1,9 @@
+"""Config options for the 'report' app"""
+
 import logging
 import os
 import shutil
+from pathlib import Path
 
 from django.apps import AppConfig
 from django.conf import settings
@@ -11,40 +14,36 @@ logger = logging.getLogger("inventree")
 
 
 class ReportConfig(AppConfig):
+    """Configuration class for the 'report' app"""
     name = 'report'
 
     def ready(self):
-        """
-        This function is called whenever the report app is loaded
-        """
-
+        """This function is called whenever the report app is loaded."""
         if canAppAccessDatabase(allow_test=True):
             self.create_default_test_reports()
             self.create_default_build_reports()
+            self.create_default_bill_of_materials_reports()
+            self.create_default_purchase_order_reports()
+            self.create_default_sales_order_reports()
 
     def create_default_reports(self, model, reports):
-        """
-        Copy defualt report files across to the media directory.
-        """
-
+        """Copy defualt report files across to the media directory."""
         # Source directory for report templates
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
+        src_dir = Path(__file__).parent.joinpath(
             'templates',
             'report',
         )
 
         # Destination directory
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
+        dst_dir = settings.MEDIA_ROOT.joinpath(
             'report',
             'inventree',
             model.getSubdir(),
         )
 
-        if not os.path.exists(dst_dir):
+        if not dst_dir.exists():
             logger.info(f"Creating missing directory: '{dst_dir}'")
-            os.makedirs(dst_dir, exist_ok=True)
+            dst_dir.mkdir(parents=True, exist_ok=True)
 
         # Copy each report template across (if required)
         for report in reports:
@@ -57,10 +56,10 @@ class ReportConfig(AppConfig):
                 report['file'],
             )
 
-            src_file = os.path.join(src_dir, report['file'])
-            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
+            src_file = src_dir.joinpath(report['file'])
+            dst_file = settings.MEDIA_ROOT.joinpath(filename)
 
-            if not os.path.exists(dst_file):
+            if not dst_file.exists():
                 logger.info(f"Copying test report template '{dst_file}'")
                 shutil.copyfile(src_file, dst_file)
 
@@ -78,18 +77,14 @@ class ReportConfig(AppConfig):
                     enabled=True
                 )
 
-            except:
+            except Exception:
                 pass
 
     def create_default_test_reports(self):
-        """
-        Create database entries for the default TestReport templates,
-        if they do not already exist
-        """
-
+        """Create database entries for the default TestReport templates, if they do not already exist."""
         try:
             from .models import TestReport
-        except:  # pragma: no cover
+        except Exception:  # pragma: no cover
             # Database is not ready yet
             return
 
@@ -104,15 +99,30 @@ class ReportConfig(AppConfig):
 
         self.create_default_reports(TestReport, reports)
 
-    def create_default_build_reports(self):
-        """
-        Create database entries for the default BuildReport templates
-        (if they do not already exist)
-        """
+    def create_default_bill_of_materials_reports(self):
+        """Create database entries for the default Bill of Material templates (if they do not already exist)"""
+        try:
+            from .models import BillOfMaterialsReport
+        except Exception:  # pragma: no cover
+            # Database is not ready yet
+            return
 
+        # List of Build reports to copy across
+        reports = [
+            {
+                'file': 'inventree_bill_of_materials_report.html',
+                'name': 'Bill of Materials',
+                'description': 'Bill of Materials report',
+            }
+        ]
+
+        self.create_default_reports(BillOfMaterialsReport, reports)
+
+    def create_default_build_reports(self):
+        """Create database entries for the default BuildReport templates (if they do not already exist)"""
         try:
             from .models import BuildReport
-        except:  # pragma: no cover
+        except Exception:  # pragma: no cover
             # Database is not ready yet
             return
 
@@ -126,3 +136,41 @@ class ReportConfig(AppConfig):
         ]
 
         self.create_default_reports(BuildReport, reports)
+
+    def create_default_purchase_order_reports(self):
+        """Create database entries for the default SalesOrderReport templates (if they do not already exist)"""
+        try:
+            from .models import PurchaseOrderReport
+        except Exception:  # pragma: no cover
+            # Database is not ready yet
+            return
+
+        # List of Build reports to copy across
+        reports = [
+            {
+                'file': 'inventree_po_report.html',
+                'name': 'InvenTree Purchase Order',
+                'description': 'Purchase Order example report',
+            }
+        ]
+
+        self.create_default_reports(PurchaseOrderReport, reports)
+
+    def create_default_sales_order_reports(self):
+        """Create database entries for the default Sales Order report templates (if they do not already exist)"""
+        try:
+            from .models import SalesOrderReport
+        except Exception:  # pragma: no cover
+            # Database is not ready yet
+            return
+
+        # List of Build reports to copy across
+        reports = [
+            {
+                'file': 'inventree_so_report.html',
+                'name': 'InvenTree Sales Order',
+                'description': 'Sales Order example report',
+            }
+        ]
+
+        self.create_default_reports(SalesOrderReport, reports)

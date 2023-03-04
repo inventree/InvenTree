@@ -25,9 +25,12 @@ def update_serials(apps, schema_editor):
         if result and len(result.groups()) == 1:
             try:
                 serial = int(result.groups()[0])
-            except:
+            except Exception:
                 serial = 0
 
+        # Ensure the integer value is not too large for the database field
+        if serial > 0x7fffffff:
+            serial = 0x7fffffff
 
         item.serial_int = serial
         item.save()

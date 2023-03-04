@@ -1,4 +1,6 @@
-""" Unit tests for base mixins for plugins """
+"""Unit tests for base mixins for plugins."""
+
+import os
 
 from django.conf import settings
 from django.test import TestCase
@@ -8,6 +10,7 @@ from error_report.models import Error
 
 from InvenTree.helpers import InvenTreeTestCase
 from plugin import InvenTreePlugin
+from plugin.base.integration.mixins import PanelMixin
 from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import (APICallMixin, AppMixin, NavigationMixin,
                            SettingsMixin, UrlsMixin)
@@ -16,7 +19,10 @@ from plugin.urls import PLUGIN_BASE
 
 
 class BaseMixinDefinition:
+    """Mixin to test the meta functions of all mixins."""
+
     def test_mixin_name(self):
+        """Test that the mixin registers itseld correctly."""
         # mixin name
         self.assertIn(self.MIXIN_NAME, [item['key'] for item in self.mixin.registered_mixins])
         # human name
@@ -24,6 +30,8 @@ class BaseMixinDefinition:
 
 
 class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
+    """Tests for SettingsMixin."""
+
     MIXIN_HUMAN_NAME = 'Settings'
     MIXIN_NAME = 'settings'
     MIXIN_ENABLE_CHECK = 'has_settings'
@@ -31,6 +39,7 @@ class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
     TEST_SETTINGS = {'SETTING1': {'default': '123', }}
 
     def setUp(self):
+        """Setup for all tests."""
         class SettingsCls(SettingsMixin, InvenTreePlugin):
             SETTINGS = self.TEST_SETTINGS
         self.mixin = SettingsCls()
@@ -42,6 +51,7 @@ class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
         super().setUp()
 
     def test_function(self):
+        """Test that the mixin functions."""
         # settings variable
         self.assertEqual(self.mixin.settings, self.TEST_SETTINGS)
 
@@ -59,11 +69,14 @@ class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
 
 
 class UrlsMixinTest(BaseMixinDefinition, TestCase):
+    """Tests for UrlsMixin."""
+
     MIXIN_HUMAN_NAME = 'URLs'
     MIXIN_NAME = 'urls'
     MIXIN_ENABLE_CHECK = 'has_urls'
 
     def setUp(self):
+        """Setup for all tests."""
         class UrlsCls(UrlsMixin, InvenTreePlugin):
             def test():
                 return 'ccc'
@@ -75,6 +88,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         self.mixin_nothing = NoUrlsCls()
 
     def test_function(self):
+        """Test that the mixin functions."""
         plg_name = self.mixin.plugin_name()
 
         # base_url
@@ -98,26 +112,32 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
 
 
 class AppMixinTest(BaseMixinDefinition, TestCase):
+    """Tests for AppMixin."""
+
     MIXIN_HUMAN_NAME = 'App registration'
     MIXIN_NAME = 'app'
     MIXIN_ENABLE_CHECK = 'has_app'
 
     def setUp(self):
+        """Setup for all tests."""
         class TestCls(AppMixin, InvenTreePlugin):
             pass
         self.mixin = TestCls()
 
     def test_function(self):
-        # test that this plugin is in settings
+        """Test that the sample plugin registers in settings."""
         self.assertIn('plugin.samples.integration', settings.INSTALLED_APPS)
 
 
 class NavigationMixinTest(BaseMixinDefinition, TestCase):
+    """Tests for NavigationMixin."""
+
     MIXIN_HUMAN_NAME = 'Navigation Links'
     MIXIN_NAME = 'navigation'
     MIXIN_ENABLE_CHECK = 'has_naviation'
 
     def setUp(self):
+        """Setup for all tests."""
         class NavigationCls(NavigationMixin, InvenTreePlugin):
             NAVIGATION = [
                 {'name': 'aa', 'link': 'plugin:test:test_view'},
@@ -130,6 +150,7 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
         self.nothing_mixin = NothingNavigationCls()
 
     def test_function(self):
+        """Test that a correct configuration functions."""
         # check right configuration
         self.assertEqual(self.mixin.navigation, [{'name': 'aa', 'link': 'plugin:test:test_view'}, ])
 
@@ -138,7 +159,7 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.nothing_mixin.navigation_name, '')
 
     def test_fail(self):
-        # check wrong links fails
+        """Test that wrong links fail."""
         with self.assertRaises(NotImplementedError):
             class NavigationCls(NavigationMixin, InvenTreePlugin):
                 NAVIGATION = ['aa', 'aa']
@@ -146,11 +167,15 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
 
 
 class APICallMixinTest(BaseMixinDefinition, TestCase):
+    """Tests for APICallMixin."""
+
     MIXIN_HUMAN_NAME = 'API calls'
     MIXIN_NAME = 'api_call'
     MIXIN_ENABLE_CHECK = 'has_api_call'
 
     def setUp(self):
+        """Setup for all tests."""
+
         class MixinCls(APICallMixin, SettingsMixin, InvenTreePlugin):
             NAME = "Sample API Caller"
 
@@ -162,40 +187,54 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
                 'API_URL': {
                     'name': 'External URL',
                     'description': 'Where is your API located?',
-                    'default': 'reqres.in',
+                    'default': 'https://api.github.com',
                 },
             }
+
             API_URL_SETTING = 'API_URL'
             API_TOKEN_SETTING = 'API_TOKEN'
 
+            @property
+            def api_url(self):
+                """Override API URL for this test"""
+                return "https://api.github.com"
+
             def get_external_url(self, simple: bool = True):
-                '''
-                returns data from the sample endpoint
-                '''
-                return self.api_call('api/users/2', simple_response=simple)
+                """Returns data from the sample endpoint."""
+                return self.api_call('orgs/inventree', simple_response=simple)
+
         self.mixin = MixinCls()
+
+        # If running in github workflow, make use of GITHUB_TOKEN
+        if settings.TESTING:
+            token = os.getenv('GITHUB_TOKEN', None)
+
+            if token:
+                self.mixin.set_setting('API_TOKEN', token)
 
         class WrongCLS(APICallMixin, InvenTreePlugin):
             pass
+
         self.mixin_wrong = WrongCLS()
 
         class WrongCLS2(APICallMixin, InvenTreePlugin):
             API_URL_SETTING = 'test'
+
         self.mixin_wrong2 = WrongCLS2()
 
     def test_base_setup(self):
-        """Test that the base settings work"""
+        """Test that the base settings work."""
         # check init
         self.assertTrue(self.mixin.has_api_call)
         # api_url
-        self.assertEqual('https://reqres.in', self.mixin.api_url)
+        self.assertEqual('https://api.github.com', self.mixin.api_url)
 
         # api_headers
         headers = self.mixin.api_headers
-        self.assertEqual(headers, {'Bearer': '', 'Content-Type': 'application/json'})
+        self.assertEqual(headers['Content-Type'], 'application/json')
 
     def test_args(self):
-        """Test that building up args work"""
+        """Test that building up args work."""
         # api_build_url_args
         # 1 arg
         result = self.mixin.api_build_url_args({'a': 'b'})
@@ -208,37 +247,41 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(result, '?a=b&c=d,e,f')
 
     def test_api_call(self):
-        """Test that api calls work"""
+        """Test that api calls work."""
         # api_call
         result = self.mixin.get_external_url()
         self.assertTrue(result)
-        self.assertIn('data', result,)
+
+        for key in ['login', 'email', 'name', 'twitter_username']:
+            self.assertIn(key, result)
 
         # api_call without json conversion
         result = self.mixin.get_external_url(False)
         self.assertTrue(result)
         self.assertEqual(result.reason, 'OK')
 
-        # api_call with full url
-        result = self.mixin.api_call('https://reqres.in/api/users/2', endpoint_is_url=True)
-        self.assertTrue(result)
-
         # api_call with post and data
         result = self.mixin.api_call(
-            'api/users/',
-            data={"name": "morpheus", "job": "leader"},
-            method='POST'
+            'https://reqres.in/api/users/',
+            json={"name": "morpheus", "job": "leader"},
+            method='POST',
+            endpoint_is_url=True,
         )
+
         self.assertTrue(result)
         self.assertEqual(result['name'], 'morpheus')
 
-        # api_call with filter
-        result = self.mixin.api_call('api/users', url_args={'page': '2'})
+        # api_call with endpoint with leading slash
+        result = self.mixin.api_call('/orgs/inventree', simple_response=False)
         self.assertTrue(result)
-        self.assertEqual(result['page'], 2)
+        self.assertEqual(result.reason, 'OK')
+
+        # api_call with filter
+        result = self.mixin.api_call('repos/inventree/InvenTree/stargazers', url_args={'page': '2'})
+        self.assertTrue(result)
 
     def test_function_errors(self):
-        """Test function errors"""
+        """Test function errors."""
         # wrongly defined plugins should not load
         with self.assertRaises(MixinNotImplementedError):
             self.mixin_wrong.has_api_call()
@@ -247,9 +290,28 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         with self.assertRaises(MixinNotImplementedError):
             self.mixin_wrong2.has_api_call()
 
+        # Too many data arguments
+        with self.assertRaises(ValueError):
+            self.mixin.api_call(
+                'https://reqres.in/api/users/',
+                json={"a": 1, }, data={"a": 1},
+            )
+
+        # Sending a request with a wrong data format should result in 40
+        result = self.mixin.api_call(
+            'https://reqres.in/api/users/',
+            data={"name": "morpheus", "job": "leader"},
+            method='POST',
+            endpoint_is_url=True,
+            simple_response=False
+        )
+
+        self.assertEqual(result.status_code, 400)
+        self.assertIn('Bad Request', str(result.content))
+
 
 class PanelMixinTests(InvenTreeTestCase):
-    """Test that the PanelMixin plugin operates correctly"""
+    """Test that the PanelMixin plugin operates correctly."""
 
     fixtures = [
         'category',
@@ -261,8 +323,7 @@ class PanelMixinTests(InvenTreeTestCase):
     roles = 'all'
 
     def test_installed(self):
-        """Test that the sample panel plugin is installed"""
-
+        """Test that the sample panel plugin is installed."""
         plugins = registry.with_mixin('panel')
 
         self.assertTrue(len(plugins) > 0)
@@ -274,8 +335,7 @@ class PanelMixinTests(InvenTreeTestCase):
         self.assertEqual(len(plugins), 0)
 
     def test_disabled(self):
-        """Test that the panels *do not load* if the plugin is not enabled"""
-
+        """Test that the panels *do not load* if the plugin is not enabled."""
         plugin = registry.get_plugin('samplepanel')
 
         plugin.set_setting('ENABLE_HELLO_WORLD', True)
@@ -304,10 +364,7 @@ class PanelMixinTests(InvenTreeTestCase):
             self.assertNotIn('Custom Part Panel', str(response.content))
 
     def test_enabled(self):
-        """
-        Test that the panels *do* load if the plugin is enabled
-        """
-
+        """Test that the panels *do* load if the plugin is enabled."""
         plugin = registry.get_plugin('samplepanel')
 
         self.assertEqual(len(registry.with_mixin('panel', active=True)), 0)
@@ -324,7 +381,7 @@ class PanelMixinTests(InvenTreeTestCase):
         urls = [
             reverse('part-detail', kwargs={'pk': 1}),
             reverse('stock-item-detail', kwargs={'pk': 2}),
-            reverse('stock-location-detail', kwargs={'pk': 1}),
+            reverse('stock-location-detail', kwargs={'pk': 2}),
         ]
 
         plugin.set_setting('ENABLE_HELLO_WORLD', False)
@@ -379,3 +436,12 @@ class PanelMixinTests(InvenTreeTestCase):
 
         # Assert that each request threw an error
         self.assertEqual(Error.objects.count(), n_errors + len(urls))
+
+    def test_mixin(self):
+        """Test that ImplementationError is raised."""
+        with self.assertRaises(MixinNotImplementedError):
+            class Wrong(PanelMixin, InvenTreePlugin):
+                pass
+
+            plugin = Wrong()
+            plugin.get_custom_panels('abc', 'abc')

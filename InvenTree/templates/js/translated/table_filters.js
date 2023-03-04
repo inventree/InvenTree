@@ -59,17 +59,37 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Assembled Part" %}',
             },
+            available_stock: {
+                type: 'bool',
+                title: '{% trans "Has Available Stock" %}',
+            },
+            on_order: {
+                type: 'bool',
+                title: '{% trans "On Order" %}',
+            },
             validated: {
                 type: 'bool',
                 title: '{% trans "Validated" %}',
             },
             inherited: {
                 type: 'bool',
-                title: '{% trans "Inherited" %}',
+                title: '{% trans "Gets inherited" %}',
             },
             allow_variants: {
                 type: 'bool',
                 title: '{% trans "Allow Variant Stock" %}',
+            },
+            optional: {
+                type: 'bool',
+                title: '{% trans "Optional" %}',
+            },
+            consumable: {
+                type: 'bool',
+                title: '{% trans "Consumable" %}',
+            },
+            has_pricing: {
+                type: 'bool',
+                title: '{% trans "Has Pricing" %}',
             },
         };
     }
@@ -85,7 +105,7 @@ function getAvailableTableFilters(tableKey) {
         return {
             'inherited': {
                 type: 'bool',
-                title: '{% trans "Inherited" %}',
+                title: '{% trans "Gets inherited" %}',
             },
             'optional': {
                 type: 'bool',
@@ -110,6 +130,14 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Include sublocations" %}',
                 description: '{% trans "Include locations" %}',
             },
+            structural: {
+                type: 'bool',
+                title: '{% trans "Structural" %}',
+            },
+            external: {
+                type: 'bool',
+                title: '{% trans "External" %}',
+            },
         };
     }
 
@@ -120,6 +148,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Include subcategories" %}',
                 description: '{% trans "Include subcategories" %}',
+            },
+            structural: {
+                type: 'bool',
+                title: '{% trans "Structural" %}',
             },
             starred: {
                 type: 'bool',
@@ -252,6 +284,18 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Has purchase price" %}',
                 description: '{% trans "Show stock items which have a purchase price set" %}',
             },
+            expiry_date_lte: {
+                type: 'date',
+                title: '{% trans "Expiry Date before" %}',
+            },
+            expiry_date_gte: {
+                type: 'date',
+                title: '{% trans "Expiry Date after" %}',
+            },
+            external: {
+                type: 'bool',
+                title: '{% trans "External Location" %}',
+            }
         };
 
         // Optional filters if stock expiry functionality is enabled
@@ -314,6 +358,25 @@ function getAvailableTableFilters(tableKey) {
             assigned_to_me: {
                 type: 'bool',
                 title: '{% trans "Assigned to me" %}',
+            },
+            assigned_to: {
+                title: '{% trans "Responsible" %}',
+                options: function() {
+                    var ownersList = {};
+                    inventreeGet(`/api/user/owner/`, {}, {
+                        async: false,
+                        success: function(response) {
+                            for (key in response) {
+                                var owner = response[key];
+                                ownersList[owner.pk] = {
+                                    key: owner.pk,
+                                    value: `${owner.name} (${owner.label})`,
+                                };
+                            }
+                        }
+                    });
+                    return ownersList;
+                },
             },
         };
     }
@@ -429,19 +492,27 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Include subcategories" %}',
                 description: '{% trans "Include parts in subcategories" %}',
             },
-            has_ipn: {
-                type: 'bool',
-                title: '{% trans "Has IPN" %}',
-                description: '{% trans "Part has internal part number" %}',
-            },
             active: {
                 type: 'bool',
                 title: '{% trans "Active" %}',
                 description: '{% trans "Show active parts" %}',
             },
-            is_template: {
+            assembly: {
                 type: 'bool',
-                title: '{% trans "Template" %}',
+                title: '{% trans "Assembly" %}',
+            },
+            unallocated_stock: {
+                type: 'bool',
+                title: '{% trans "Available stock" %}',
+            },
+            component: {
+                type: 'bool',
+                title: '{% trans "Component" %}',
+            },
+            has_ipn: {
+                type: 'bool',
+                title: '{% trans "Has IPN" %}',
+                description: '{% trans "Part has internal part number" %}',
             },
             has_stock: {
                 type: 'bool',
@@ -451,33 +522,37 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Low stock" %}',
             },
-            unallocated_stock: {
+            purchaseable: {
                 type: 'bool',
-                title: '{% trans "Available stock" %}',
-            },
-            assembly: {
-                type: 'bool',
-                title: '{% trans "Assembly" %}',
-            },
-            component: {
-                type: 'bool',
-                title: '{% trans "Component" %}',
-            },
-            starred: {
-                type: 'bool',
-                title: '{% trans "Subscribed" %}',
+                title: '{% trans "Purchasable" %}',
             },
             salable: {
                 type: 'bool',
                 title: '{% trans "Salable" %}',
             },
+            starred: {
+                type: 'bool',
+                title: '{% trans "Subscribed" %}',
+            },
+            stocktake: {
+                type: 'bool',
+                title: '{% trans "Has stocktake entries" %}',
+            },
+            is_template: {
+                type: 'bool',
+                title: '{% trans "Template" %}',
+            },
             trackable: {
                 type: 'bool',
                 title: '{% trans "Trackable" %}',
             },
-            purchaseable: {
+            virtual: {
                 type: 'bool',
-                title: '{% trans "Purchasable" %}',
+                title: '{% trans "Virtual" %}',
+            },
+            has_pricing: {
+                type: 'bool',
+                title: '{% trans "Has Pricing" %}',
             },
         };
     }

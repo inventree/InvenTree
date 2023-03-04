@@ -12,15 +12,18 @@
     --label-yellow: #fdc82a;
 
     --bs-body-color: #68686a;
+
+    --scanner-upscale: 5;
+    --scanner-margin: 10%;
 }
 
 main {
-    overflow-x: clip;
+    overflow-x: auto;
 }
 
 .login-screen {
-    background: url(/static/img/paper_splash.jpg) no-repeat center fixed;
     background-size: cover;
+    background-position: center;
     height: 100vh;
     font-family: 'Numans', sans-serif;
     color: #eee;
@@ -63,27 +66,7 @@ main {
     background-color: #EEEEF5;
 }
 
-.markdownx .row {
-    margin: 5px;
-    padding: 5px;
-    border: 1px solid #cce;
-    border-radius: 4px;
-}
-
-.markdownx-editor {
-    width: 100%;
-    border: 1px solid #cce;
-    border-radius: 3px;
-    padding: 10px;
-}
-
 .panel-content {
-    padding: 10px;
-}
-
-.markdownx-preview {
-    border: 1px solid #cce;
-    border-radius: 3px;
     padding: 10px;
 }
 
@@ -470,15 +453,15 @@ main {
 }
 
 .part-thumb {
-    width: 200px;
-    height: 200px;
+    width: 256px;
+    height: 256px;
     margin: 2px;
     padding: 3px;
     object-fit: contain;
 }
 
 .part-thumb-container:hover .part-thumb-overlay {
-    opacity: 1;
+    opacity: 0.75;
 }
 
 .part-thumb-overlay {
@@ -487,8 +470,6 @@ main {
     left: 0;
     opacity: 0;
     transition: .25s ease;
-    padding-top: 10px;
-    padding-left: 25px;
     margin: 5px;
 }
 
@@ -699,6 +680,10 @@ main {
     color: #A94442;
 }
 
+.form-error-message {
+    display: block;
+}
+
 .modal input {
     width: 100%;
 }
@@ -727,6 +712,33 @@ input[type="submit"] {
 
 .modal .btn-form-secondary {
     margin-bottom: 10px;
+}
+
+/* Make barcode scanner responsive and performant */
+#barcode_scan_video video {
+    width: calc(100% * var(--scanner-upscale)) !important;
+    transform: scale(calc(1 / var(--scanner-upscale)));
+    margin: calc(-100% * (var(--scanner-upscale) - 1) / 2);
+    display: inline-block !important;
+}
+
+@-moz-document url-prefix() {
+    #barcode_scan_video video {
+        margin-top: calc(-100% * (var(--scanner-upscale) - 1) / 2 + 50%);
+        margin-bottom: calc(-100% * (var(--scanner-upscale) - 1) / 2 + 50%);
+    }
+
+    @media (pointer:coarse) {
+        #barcode_scan_video video {
+            margin-top: calc(-100% * (var(--scanner-upscale)) / 2 - 20%);
+            margin-bottom: calc(-100% * (var(--scanner-upscale)) / 2 - 20%);
+        }
+    }
+}
+
+#barcode_scan_video #qr-shaded-region {
+    border: none !important;
+    margin: var(--scanner-margin);
 }
 
 .sidebar-list-group-item {
@@ -857,6 +869,11 @@ input[type="submit"] {
 
 .panel-inventree .card {
     padding: 10px;
+}
+
+.card-thumb {
+    max-width: 64px;
+    max-height: 64px;
 }
 
 .float-right {
@@ -1047,4 +1064,30 @@ a {
     padding: 3px;
     margin-top: 3px;
     overflow: hidden;
+}
+
+.treeview .node-icon {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+}
+
+.sso-header {
+    text-align: center;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.sso-provider-list {
+    width: 100%;
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+.sso-provider-link {
+    width: 100%;
+}
+
+.sso-provider-link a {
+    width:  100%;
+    text-align: left;
 }

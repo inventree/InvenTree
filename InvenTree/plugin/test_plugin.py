@@ -1,43 +1,48 @@
-"""
-Unit tests for plugins
-"""
+"""Unit tests for plugins."""
 
+import os
+import shutil
+import subprocess
+import tempfile
 from datetime import datetime
+from pathlib import Path
+from unittest import mock
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import IntegrationPluginBase, InvenTreePlugin, registry
+from plugin import InvenTreePlugin, registry
 from plugin.samples.integration.another_sample import (NoIntegrationPlugin,
                                                        WrongIntegrationPlugin)
 from plugin.samples.integration.sample import SampleIntegrationPlugin
 
 
 class PluginTagTests(TestCase):
-    """ Tests for the plugin extras """
+    """Tests for the plugin extras."""
 
     def setUp(self):
+        """Setup for all tests."""
         self.sample = SampleIntegrationPlugin()
         self.plugin_no = NoIntegrationPlugin()
         self.plugin_wrong = WrongIntegrationPlugin()
 
     def test_tag_plugin_list(self):
-        """test that all plugins are listed"""
+        """Test that all plugins are listed."""
         self.assertEqual(plugin_tags.plugin_list(), registry.plugins)
 
     def test_tag_incative_plugin_list(self):
-        """test that all inactive plugins are listed"""
+        """Test that all inactive plugins are listed."""
         self.assertEqual(plugin_tags.inactive_plugin_list(), registry.plugins_inactive)
 
     def test_tag_plugin_settings(self):
-        """check all plugins are listed"""
+        """Check all plugins are listed."""
         self.assertEqual(
             plugin_tags.plugin_settings(self.sample),
             registry.mixins_settings.get(self.sample)
         )
 
     def test_tag_mixin_enabled(self):
-        """check that mixin enabled functions work"""
+        """Check that mixin enabled functions work."""
         key = 'urls'
         # mixin enabled
         self.assertEqual(plugin_tags.mixin_enabled(self.sample, key), True)
@@ -47,25 +52,26 @@ class PluginTagTests(TestCase):
         self.assertEqual(plugin_tags.mixin_enabled(self.plugin_no, key), False)
 
     def test_tag_safe_url(self):
-        """test that the safe url tag works expected"""
+        """Test that the safe url tag works expected."""
         # right url
-        self.assertEqual(plugin_tags.safe_url('api-plugin-install'), '/api/plugin/install/')
+        self.assertEqual(plugin_tags.safe_url('api-plugin-install'), '/api/plugins/install/')
         # wrong url
         self.assertEqual(plugin_tags.safe_url('indexas'), None)
 
     def test_tag_plugin_errors(self):
-        """test that all errors are listed"""
+        """Test that all errors are listed."""
         self.assertEqual(plugin_tags.plugin_errors(), registry.errors)
 
 
 class InvenTreePluginTests(TestCase):
-    """ Tests for InvenTreePlugin """
+    """Tests for InvenTreePlugin."""
 
     def setUp(self):
+        """Setup for all tests."""
         self.plugin = InvenTreePlugin()
 
         class NamedPlugin(InvenTreePlugin):
-            """a named plugin"""
+            """a named plugin."""
             NAME = 'abc123'
 
         self.named_plugin = NamedPlugin()
@@ -94,22 +100,30 @@ class InvenTreePluginTests(TestCase):
         self.plugin_name = NameInvenTreePlugin()
         self.plugin_sample = SampleIntegrationPlugin()
 
+        class VersionInvenTreePlugin(InvenTreePlugin):
+            NAME = 'Version'
+
+            MIN_VERSION = '0.1.0'
+            MAX_VERSION = '0.1.3'
+
+        self.plugin_version = VersionInvenTreePlugin()
+
     def test_basic_plugin_init(self):
-        """check if a basic plugin intis"""
+        """Check if a basic plugin intis."""
         self.assertEqual(self.plugin.NAME, '')
         self.assertEqual(self.plugin.plugin_name(), '')
 
     def test_basic_plugin_name(self):
-        """check if the name of a basic plugin can be set"""
+        """Check if the name of a basic plugin can be set."""
         self.assertEqual(self.named_plugin.NAME, 'abc123')
         self.assertEqual(self.named_plugin.plugin_name(), 'abc123')
 
     def test_basic_is_active(self):
-        """check if a basic plugin is active"""
+        """Check if a basic plugin is active."""
         self.assertEqual(self.plugin.is_active(), False)
 
     def test_action_name(self):
-        """check the name definition possibilities"""
+        """Check the name definition possibilities."""
         # plugin_name
         self.assertEqual(self.plugin.plugin_name(), '')
         self.assertEqual(self.plugin_simple.plugin_name(), 'SimplePlugin')
@@ -156,18 +170,87 @@ class InvenTreePluginTests(TestCase):
         self.assertEqual(self.plugin_name.license, 'MIT')
 
     def test_depreciation(self):
-        """Check if depreciations raise as expected"""
-
+        """Check if depreciations raise as expected."""
         # check deprecation warning is firing
         with self.assertWarns(DeprecationWarning):
             self.assertEqual(self.plugin_old.slug, 'old')
             # check default value is used
             self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
 
-        # check usage of the old class fires
-        class OldPlugin(IntegrationPluginBase):
-            pass
+    def test_version(self):
+        """Test Version checks"""
 
-        with self.assertWarns(DeprecationWarning):
-            plg = OldPlugin()
-            self.assertIsInstance(plg, InvenTreePlugin)
+        self.assertFalse(self.plugin_version.check_version([0, 0, 3]))
+        self.assertTrue(self.plugin_version.check_version([0, 1, 0]))
+        self.assertFalse(self.plugin_version.check_version([0, 1, 4]))
+
+        plug = registry.plugins_full.get('version')
+        self.assertEqual(plug.is_active(), False)
+
+
+class RegistryTests(TestCase):
+    """Tests for registry loading methods."""
+
+    def mockDir(self) -> None:
+        """Returns path to mock dir"""
+        return str(Path(__file__).parent.joinpath('mock').absolute())
+
+    def run_package_test(self, directory):
+        """General runner for testing package based installs."""
+
+        # Patch environment varible to add dir
+        envs = {'INVENTREE_PLUGIN_TEST_DIR': directory}
+        with mock.patch.dict(os.environ, envs):
+            # Reload to redicsover plugins
+            registry.reload_plugins(full_reload=True)
+
+            # Depends on the meta set in InvenTree/plugin/mock/simple:SimplePlugin
+            plg = registry.get_plugin('simple')
+            self.assertEqual(plg.slug, 'simple')
+            self.assertEqual(plg.human_name, 'SimplePlugin')
+
+    def test_custom_loading(self):
+        """Test if data in custom dir is loaded correctly."""
+        test_dir = Path('plugin_test_dir')
+
+        # Patch env
+        envs = {'INVENTREE_PLUGIN_TEST_DIR': 'plugin_test_dir'}
+        with mock.patch.dict(os.environ, envs):
+            # Run plugin directory discovery again
+            registry.plugin_dirs()
+
+            # Check the directory was created
+            self.assertTrue(test_dir.exists())
+
+        # Clean folder up
+        shutil.rmtree(test_dir, ignore_errors=True)
+
+    def test_subfolder_loading(self):
+        """Test that plugins in subfolders get loaded."""
+        self.run_package_test(self.mockDir())
+
+    def test_folder_loading(self):
+        """Test that plugins in folders outside of BASE_DIR get loaded."""
+
+        # Run in temporary directory -> always a new random name
+        with tempfile.TemporaryDirectory() as tmp:
+            # Fill directory with sample data
+            new_dir = Path(tmp).joinpath('mock')
+            shutil.copytree(self.mockDir(), new_dir)
+
+            # Run tests
+            self.run_package_test(str(new_dir))
+
+    @override_settings(PLUGIN_TESTING_SETUP=True)
+    def test_package_loading(self):
+        """Test that package distributed plugins work."""
+        # Install sample package
+        subprocess.check_output('pip install inventree-zapier'.split())
+
+        # Reload to discover plugin
+        registry.reload_plugins(full_reload=True)
+
+        # Test that plugin was installed
+        plg = registry.get_plugin('zapier')
+        self.assertEqual(plg.slug, 'zapier')
+        self.assertEqual(plg.name, 'inventree_zapier')

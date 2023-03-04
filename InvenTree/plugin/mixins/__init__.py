@@ -1,6 +1,4 @@
-"""
-Utility class to enable simpler imports
-"""
+"""Utility class to enable simpler imports."""
 
 from common.notifications import (BulkNotificationMethod,
                                   SingleNotificationMethod)
@@ -10,7 +8,8 @@ from ..base.barcodes.mixins import BarcodeMixin
 from ..base.event.mixins import EventMixin
 from ..base.integration.mixins import (APICallMixin, AppMixin, NavigationMixin,
                                        PanelMixin, ScheduleMixin,
-                                       SettingsMixin, UrlsMixin)
+                                       SettingsContentMixin, SettingsMixin,
+                                       UrlsMixin, ValidationMixin)
 from ..base.label.mixins import LabelPrintingMixin
 from ..base.locate.mixins import LocateMixin
 
@@ -21,12 +20,14 @@ __all__ = [
     'LabelPrintingMixin',
     'NavigationMixin',
     'ScheduleMixin',
+    'SettingsContentMixin',
     'SettingsMixin',
     'UrlsMixin',
     'PanelMixin',
     'ActionMixin',
     'BarcodeMixin',
     'LocateMixin',
+    'ValidationMixin',
     'SingleNotificationMethod',
     'BulkNotificationMethod',
 ]

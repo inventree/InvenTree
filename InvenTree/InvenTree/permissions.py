@@ -1,12 +1,14 @@
+"""Permission set for InvenTree."""
+
+from functools import wraps
+
 from rest_framework import permissions
 
 import users.models
 
 
 class RolePermission(permissions.BasePermission):
-    """
-    Role mixin for API endpoints, allowing us to specify the user "role"
-    which is required for certain operations.
+    """Role mixin for API endpoints, allowing us to specify the user "role" which is required for certain operations.
 
     Each endpoint can have one or more of the following actions:
     - GET
@@ -25,14 +27,10 @@ class RolePermission(permissions.BasePermission):
     to perform the specified action.
 
     For example, a DELETE action will be rejected unless the user has the "part.remove" permission
-
     """
 
     def has_permission(self, request, view):
-        """
-        Determine if the current user has the specified permissions
-        """
-
+        """Determine if the current user has the specified permissions."""
         user = request.user
 
         # Superuser can do it all
@@ -51,6 +49,10 @@ class RolePermission(permissions.BasePermission):
 
         permission = rolemap[request.method]
 
+        # The required role may be defined for the view class
+        if role := getattr(view, 'role_required', None):
+            return users.models.check_user_role(user, role, permission)
+
         try:
             # Extract the model name associated with this request
             model = view.serializer_class.Meta.model
@@ -64,6 +66,20 @@ class RolePermission(permissions.BasePermission):
             # then we don't need a permission
             return True
 
-        result = users.models.RuleSet.check_table_permission(user, table, permission)
+        return users.models.RuleSet.check_table_permission(user, table, permission)
 
-        return result
+
+class IsSuperuser(permissions.IsAdminUser):
+    """Allows access only to superuser users."""
+
+    def has_permission(self, request, view):
+        """Check if the user is a superuser."""
+        return bool(request.user and request.user.is_superuser)
+
+
+def auth_exempt(view_func):
+    """Mark a view function as being exempt from auth requirements."""
+    def wrapped_view(*args, **kwargs):
+        return view_func(*args, **kwargs)
+    wrapped_view.auth_exempt = True
+    return wraps(view_func)(wrapped_view)

@@ -44,7 +44,7 @@ function printLabels(url, plugin=null) {
             }
         });
     } else {
-        window.location.href = url;
+        window.open(url);
     }
 
 }
@@ -235,7 +235,7 @@ function selectLabel(labels, items, options={}) {
     // Request a list of available label printing plugins from the server
     if (plugins_enabled) {
         inventreeGet(
-            `/api/plugin/`,
+            `/api/plugins/`,
             {
                 mixin: 'labels',
             },
@@ -262,7 +262,11 @@ function selectLabel(labels, items, options={}) {
         `;
 
         plugins.forEach(function(plugin) {
-            plugin_selection += `<option value='${plugin.key}' title='${plugin.meta.human_name}'>${plugin.name} - <small>${plugin.meta.human_name}</small></option>`;
+            var selected = '';
+            if (user_settings['LABEL_DEFAULT_PRINTER'] == plugin.key) {
+                selected = ' selected';
+            }
+            plugin_selection += `<option value='${plugin.key}' title='${plugin.meta.human_name}'${selected}>${plugin.name} - <small>${plugin.meta.human_name}</small></option>`;
         });
 
         plugin_selection += `
@@ -321,6 +325,7 @@ function selectLabel(labels, items, options={}) {
     });
 
     modalEnable(modal, true);
+    modalShowSubmitButton(modal, true);
     modalSetTitle(modal, '{% trans "Select Label Template" %}');
     modalSetContent(modal, html);
 

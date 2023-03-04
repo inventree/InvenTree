@@ -6,10 +6,12 @@
     inventreeFormDataUpload,
     inventreeGet,
     inventreePut,
+    global_settings,
     modalEnable,
     modalShowSubmitButton,
     renderBuild,
     renderCompany,
+    renderGroup,
     renderManufacturerPart,
     renderOwner,
     renderPart,
@@ -247,35 +249,40 @@ function constructChangeForm(fields, options) {
  */
 function constructDeleteForm(fields, options) {
 
-    // Force the "confirm" property if not set
-    if (!('confirm' in options)) {
-        options.confirm = true;
+    // If we are deleting a specific "instance" (i.e. a single object)
+    // then we request the instance information first
+
+    // However we may be performing a "multi-delete" (against a list endpoint),
+    // in which case we do not want to perform such a request!
+
+    if (options.multi_delete) {
+        constructFormBody(fields, options);
+    } else {
+        // Request existing data from the API endpoint
+        // This data can be used to render some information on the form
+        $.ajax({
+            url: options.url,
+            type: 'GET',
+            contentType: 'application/json',
+            dataType: 'json',
+            accepts: {
+                json: 'application/json',
+            },
+            success: function(data) {
+
+                // Store the instance data
+                options.instance = data;
+
+                constructFormBody(fields, options);
+            },
+            error: function(xhr) {
+                // TODO: Handle error here
+                console.error(`Error in constructDeleteForm at '${options.url}`);
+
+                showApiError(xhr, options.url);
+            }
+        });
     }
-
-    // Request existing data from the API endpoint
-    // This data can be used to render some information on the form
-    $.ajax({
-        url: options.url,
-        type: 'GET',
-        contentType: 'application/json',
-        dataType: 'json',
-        accepts: {
-            json: 'application/json',
-        },
-        success: function(data) {
-
-            // Store the instance data
-            options.instance = data;
-
-            constructFormBody(fields, options);
-        },
-        error: function(xhr) {
-            // TODO: Handle error here
-            console.error(`Error in constructDeleteForm at '${options.url}`);
-
-            showApiError(xhr, options.url);
-        }
-    });
 }
 
 
@@ -319,8 +326,6 @@ function constructForm(url, options) {
         constructFormBody({}, options);
     }
 
-    options.fields = options.fields || {};
-
     // Save the URL
     options.url = url;
 
@@ -339,8 +344,18 @@ function constructForm(url, options) {
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
 
+        // Copy across entire actions struct
+        options.actions = OPTIONS.actions.POST || OPTIONS.actions.PUT || OPTIONS.actions.PATCH || OPTIONS.actions.DELETE || {};
+
         // Extract any custom 'context' information from the OPTIONS data
         options.context = OPTIONS.context || {};
+
+        // Construct fields (can be a static parameter or a function)
+        if (options.fieldsFunction) {
+            options.fields = options.fieldsFunction(options);
+        } else {
+            options.fields = options.fields || {};
+        }
 
         /*
          * Determine what "type" of form we want to construct,
@@ -416,6 +431,52 @@ function constructForm(url, options) {
 
 
 /*
+ * Extracted information about a 'nested field' from the API metadata:
+ *
+ * - Nested fields are designated using a '__' (double underscore) separator
+ * - Currently only single-depth nesting is supported
+ */
+function extractNestedField(field_name, fields) {
+
+    var field_path = field_name.split('__');
+    var parent_name = field_path[0];
+    var child_name = field_path[1];
+
+    var parent_field = fields[parent_name];
+    var child_field = null;
+
+    // Check that the parent field exists
+    if (!parent_field) {
+        console.warn(`Expected parent field '${parent_name}' missing from API metadata`);
+        return;
+    }
+
+    // Check that the parent field is a 'nested object'
+    if (parent_field.type != 'nested object') {
+        console.warn(`Parent field '${parent_name}' is not designated as a nested object`);
+        return;
+    }
+
+    // Check that the field has a 'children' attribute
+    if ('children' in parent_field) {
+        child_field = parent_field['children'][child_name];
+    } else {
+        console.warn(`Parent field '${parent_name}' missing 'children' field`);
+        return;
+    }
+
+    if (child_field) {
+        // Mark this as a nested child field
+        child_field['nested_child'] = true;
+        child_field['parent_name'] = parent_name;
+        child_field['child_name'] = child_name;
+    }
+
+    return child_field;
+}
+
+
+/*
  * Construct a modal form based on the provided options
  *
  * arguments:
@@ -426,9 +487,29 @@ function constructFormBody(fields, options) {
 
     var html = '';
 
+    // add additional content as a header on top (provided as html by the caller)
+    if (options.header_html) {
+        html += options.header_html;
+    }
+
     // Client must provide set of fields to be displayed,
     // otherwise *all* fields will be displayed
     var displayed_fields = options.fields || fields;
+
+    // Override default option values if a 'DELETE' form is specified
+    if (options.method == 'DELETE') {
+        if (!('confirm' in options)) {
+            options.confirm = true;
+        }
+
+        if (!('submitClass' in options)) {
+            options.submitClass = 'danger';
+        }
+
+        if (!('submitText' in options)) {
+            options.submitText = '{% trans "Delete" %}';
+        }
+    }
 
     // Handle initial data overrides
     if (options.data) {
@@ -447,9 +528,21 @@ function constructFormBody(fields, options) {
         }
     }
 
+
     // Provide each field object with its own name
     for (field in fields) {
         fields[field].name = field;
+
+        /* Handle metadata for 'nested' fields.
+         * - Nested fields are designated using a '__' (double underscore) separator
+         * - Currently only single depth nesting is supported
+         */
+        if (field.includes('__')) {
+            var nested_field_info = extractNestedField(field, fields);
+
+            // Update the field data
+            fields[field] = Object.assign(fields[field], nested_field_info);
+        }
 
         // If any "instance_filters" are defined for the endpoint, copy them across (overwrite)
         if (fields[field].instance_filters) {
@@ -552,7 +645,7 @@ function constructFormBody(fields, options) {
     $(modal).find('#modal-footer-buttons').html('');
 
     // Insert "confirm" button (if required)
-    if (options.confirm) {
+    if (options.confirm && global_settings.INVENTREE_REQUIRE_CONFIRM) {
         insertConfirmButton(options);
     }
 
@@ -586,7 +679,7 @@ function constructFormBody(fields, options) {
 
         // Immediately disable the "submit" button,
         // to prevent the form being submitted multiple times!
-        $(options.modal).find('#modal-form-submit').prop('disabled', true);
+        enableSubmitButton(options, false);
 
         // Run custom code before normal form submission
         if (options.beforeSubmit) {
@@ -629,13 +722,13 @@ function insertConfirmButton(options) {
     $(options.modal).find('#modal-footer-buttons').append(html);
 
     // Disable the 'submit' button
-    $(options.modal).find('#modal-form-submit').prop('disabled', true);
+    enableSubmitButton(options, false);
 
     // Trigger event
     $(options.modal).find('#modal-confirm').change(function() {
         var enabled = this.checked;
 
-        $(options.modal).find('#modal-form-submit').prop('disabled', !enabled);
+        enableSubmitButton(options, enabled);
     });
 }
 
@@ -715,7 +808,8 @@ function submitFormData(fields, options) {
     // Only used if file / image upload is required
     var form_data = new FormData();
 
-    var data = {};
+    // We can (optionally) provide a "starting point" for the submitted data
+    var data = options.form_data || {};
 
     var has_files = false;
 
@@ -772,7 +866,16 @@ function submitFormData(fields, options) {
                 // Normal field (not a file or image)
                 form_data.append(name, value);
 
-                data[name] = value;
+                if (field.parent_name && field.child_name) {
+                    // "Nested" fields are handled a little differently
+                    if (!(field.parent_name in data)) {
+                        data[field.parent_name] = {};
+                    }
+
+                    data[field.parent_name][field.child_name] = value;
+                } else {
+                    data[name] = value;
+                }
             }
         } else {
             console.warn(`Could not find field matching '${name}'`);
@@ -797,7 +900,7 @@ function submitFormData(fields, options) {
     }
 
     // Show the progress spinner
-    $(options.modal).find('#modal-progress-spinner').show();
+    showModalSpinner(options.modal);
 
     // Submit data
     upload_func(
@@ -876,6 +979,10 @@ function updateFieldValue(name, value, field, options) {
     }
 
     switch (field.type) {
+    case 'decimal':
+        // Strip trailing zeros
+        el.val(formatDecimal(value));
+        break;
     case 'boolean':
         if (value == true || value.toString().toLowerCase() == 'true') {
             el.prop('checked');
@@ -924,7 +1031,7 @@ function getFormFieldElement(name, options) {
 /*
  * Check that a "numerical" input field has a valid number in it.
  * An invalid number is expunged at the client side by the getFormFieldValue() function,
- * which means that an empty string '' is sent to the server if the number is not valud.
+ * which means that an empty string '' is sent to the server if the number is not valid.
  * This can result in confusing error messages displayed under the form field.
  *
  * So, we can invalid numbers and display errors *before* the form is submitted!
@@ -933,7 +1040,8 @@ function validateFormField(name, options) {
 
     if (getFormFieldElement(name, options)) {
 
-        var el = document.getElementById(`id_${name}`);
+        var field_name = getFieldName(name, options);
+        var el = document.getElementById(`id_${field_name}`);
 
         if (el.validity.valueMissing) {
             // Accept empty strings (server will validate)
@@ -980,6 +1088,11 @@ function getFormFieldValue(name, field={}, options={}) {
         if (!value || value.length == 0) {
             value = null;
         }
+        break;
+    case 'string':
+    case 'url':
+    case 'email':
+        value = sanitizeInputString(el.val());
         break;
     default:
         value = el.val();
@@ -1053,7 +1166,7 @@ function handleFormSuccess(response, options) {
 
         // Reset the status of the "submit" button
         if (options.modal) {
-            $(options.modal).find('#modal-form-submit').prop('disabled', false);
+            enableSubmitButton(options, true);
         }
 
         // Remove any error flags from the form
@@ -1135,7 +1248,7 @@ function clearFormErrors(options={}) {
  *
  */
 
-function handleNestedErrors(errors, field_name, options={}) {
+function handleNestedArrayErrors(errors, field_name, options={}) {
 
     var error_list = errors[field_name];
 
@@ -1148,7 +1261,7 @@ function handleNestedErrors(errors, field_name, options={}) {
 
     // Nest list must be provided!
     if (!nest_list) {
-        console.warn(`handleNestedErrors missing nesting options for field '${fieldName}'`);
+        console.warn(`handleNestedArrayErrors missing nesting options for field '${fieldName}'`);
         return;
     }
 
@@ -1157,7 +1270,7 @@ function handleNestedErrors(errors, field_name, options={}) {
         var error_item = error_list[idx];
 
         if (idx >= nest_list.length) {
-            console.warn(`handleNestedErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
+            console.warn(`handleNestedArrayErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
             break;
         }
 
@@ -1194,12 +1307,7 @@ function handleNestedErrors(errors, field_name, options={}) {
             // Find the target (nested) field
             var target = `${field_name}_${sub_field_name}_${nest_id}`;
 
-            for (var ii = errors.length-1; ii >= 0; ii--) {
-
-                var error_text = errors[ii];
-
-                addFieldErrorMessage(target, error_text, ii, options);
-            }
+            addFieldErrorMessage(target, errors, options);
         }
     }
 }
@@ -1218,7 +1326,7 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     // Reset the status of the "submit" button
     if (options.modal) {
-        $(options.modal).find('#modal-form-submit').prop('disabled', false);
+        enableSubmitButton(options, true);
     }
 
     // Remove any existing error messages from the form
@@ -1263,34 +1371,45 @@ function handleFormErrors(errors, fields={}, options={}) {
     for (var field_name in errors) {
 
         var field = fields[field_name] || {};
+        var field_errors = errors[field_name];
 
-        if ((field.type == 'field') && ('child' in field)) {
-            // This is a "nested" field
-            handleNestedErrors(errors, field_name, options);
+        if ((field.type == 'nested object') && ('children' in field)) {
+            // Handle multi-level nested errors
+
+            for (var sub_field in field_errors) {
+                var sub_field_name = `${field_name}__${sub_field}`;
+                var sub_field_errors = field_errors[sub_field];
+
+                if (!first_error_field && sub_field_errors && isFieldVisible(sub_field_name, options)) {
+                    first_error_field = sub_field_name;
+                }
+
+                addFieldErrorMessage(sub_field_name, sub_field_errors, options);
+            }
+        } else if ((field.type == 'field') && ('child' in field)) {
+            // This is a "nested" array field
+            handleNestedArrayErrors(errors, field_name, options);
         } else {
             // This is a "simple" field
-
-            var field_errors = errors[field_name];
-
-            if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
+            if (!first_error_field && field_errors && isFieldVisible(field_name, options)) {
                 first_error_field = field_name;
             }
 
-            // Add an entry for each returned error message
-            for (var ii = field_errors.length-1; ii >= 0; ii--) {
-
-                var error_text = field_errors[ii];
-
-                addFieldErrorMessage(field_name, error_text, ii, options);
-            }
+            addFieldErrorMessage(field_name, field_errors, options);
         }
     }
 
     if (first_error_field) {
         // Ensure that the field in question is visible
-        document.querySelector(`#div_id_${field_name}`).scrollIntoView({
-            behavior: 'smooth',
-        });
+        var error_element = document.querySelector(`#div_id_${first_error_field}`);
+
+        if (error_element) {
+            error_element.scrollIntoView({
+                behavior: 'smooth',
+            });
+        } else {
+            console.warn(`Could not scroll to field '${first_error_field}' - element not found`);
+        }
     } else {
         // Scroll to the top of the form
         $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
@@ -1304,6 +1423,16 @@ function handleFormErrors(errors, fields={}, options={}) {
  * Add a rendered error message to the provided field
  */
 function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
+
+    // Handle a 'list' of error message recursively
+    if (typeof(error_text) == 'object') {
+        // Iterate backwards through the list
+        for (var ii = error_text.length - 1; ii >= 0; ii--) {
+            addFieldErrorMessage(name, error_text[ii], ii, options);
+        }
+
+        return;
+    }
 
     field_name = getFieldName(name, options);
 
@@ -1691,7 +1820,8 @@ function initializeRelatedField(field, fields, options={}) {
                 var query = field.filters || {};
 
                 // Add search and pagination options
-                query.search = params.term;
+                query.search = sanitizeInputString(params.term);
+
                 query.offset = offset;
                 query.limit = pageSize;
 
@@ -1953,6 +2083,9 @@ function renderModelData(name, model, data, parameters, options) {
     case 'user':
         renderer = renderUser;
         break;
+    case 'group':
+        renderer = renderGroup;
+        break;
     default:
         break;
     }
@@ -2022,8 +2155,10 @@ function constructField(name, parameters, options={}) {
         return constructHiddenInput(field_name, parameters, options);
     }
 
+    var group_name = parameters.group || parameters.parent_name;
+
     // Are we ending a group?
-    if (options.current_group && parameters.group != options.current_group) {
+    if (options.current_group && group_name != options.current_group) {
         html += `</div></div>`;
 
         // Null out the current "group" so we can start a new one
@@ -2031,9 +2166,9 @@ function constructField(name, parameters, options={}) {
     }
 
     // Are we starting a new group?
-    if (parameters.group) {
+    if (group_name) {
 
-        var group = parameters.group;
+        var group = group_name;
 
         var group_id = getFieldName(group, options);
 
@@ -2041,7 +2176,7 @@ function constructField(name, parameters, options={}) {
 
         // Are we starting a new group?
         // Add HTML for the start of a separate panel
-        if (parameters.group != options.current_group) {
+        if (group_name != options.current_group) {
 
             html += `
             <div class='panel form-panel' id='form-panel-${group_id}' group='${group}'>
@@ -2055,7 +2190,7 @@ function constructField(name, parameters, options={}) {
                 html += `<div>`;
             }
 
-            html += `<h4 style='display: inline;'>${group_options.title || group}</h4>`;
+            html += `<h5 style='display: inline;'>${group_options.title || group}</h5>`;
 
             if (group_options.collapsible) {
                 html += `</a>`;
@@ -2295,16 +2430,6 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
     } else if (parameters.default != null) {
         // Otherwise, a defualt value?
         opts.push(`value='${parameters.default}'`);
-    }
-
-    // Maximum input length
-    if (parameters.max_length != null) {
-        opts.push(`maxlength='${parameters.max_length}'`);
-    }
-
-    // Minimum input length
-    if (parameters.min_length != null) {
-        opts.push(`minlength='${parameters.min_length}'`);
     }
 
     // Maximum value
@@ -2625,7 +2750,7 @@ function selectImportFields(url, data={}, options={}) {
                 columns.push(getFormFieldValue(`column_${idx}`, {}, opts));
             }
 
-            $(opts.modal).find('#modal-progress-spinner').show();
+            showModalSpinner(opts.modal);
 
             inventreePut(
                 opts.url,

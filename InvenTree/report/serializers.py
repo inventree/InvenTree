@@ -1,3 +1,4 @@
+"""API serializers for the reporting models"""
 
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
                                    InvenTreeModelSerializer)
@@ -7,10 +8,11 @@ from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
 
 
 class TestReportSerializer(InvenTreeModelSerializer):
-
-    template = InvenTreeAttachmentSerializerField(required=True)
+    """Serializer class for the TestReport model"""
 
     class Meta:
+        """Metaclass options."""
+
         model = TestReport
         fields = [
             'pk',
@@ -21,12 +23,15 @@ class TestReportSerializer(InvenTreeModelSerializer):
             'enabled',
         ]
 
-
-class BuildReportSerializer(InvenTreeModelSerializer):
-
     template = InvenTreeAttachmentSerializerField(required=True)
 
+
+class BuildReportSerializer(InvenTreeModelSerializer):
+    """Serializer class for the BuildReport model"""
+
     class Meta:
+        """Metaclass options."""
+
         model = BuildReport
         fields = [
             'pk',
@@ -37,12 +42,15 @@ class BuildReportSerializer(InvenTreeModelSerializer):
             'enabled',
         ]
 
-
-class BOMReportSerializer(InvenTreeModelSerializer):
-
     template = InvenTreeAttachmentSerializerField(required=True)
 
+
+class BOMReportSerializer(InvenTreeModelSerializer):
+    """Serializer class for the BillOfMaterialsReport model"""
+
     class Meta:
+        """Metaclass options."""
+
         model = BillOfMaterialsReport
         fields = [
             'pk',
@@ -53,12 +61,15 @@ class BOMReportSerializer(InvenTreeModelSerializer):
             'enabled',
         ]
 
-
-class PurchaseOrderReportSerializer(InvenTreeModelSerializer):
-
     template = InvenTreeAttachmentSerializerField(required=True)
 
+
+class PurchaseOrderReportSerializer(InvenTreeModelSerializer):
+    """Serializer class for the PurchaseOrdeReport model"""
+
     class Meta:
+        """Metaclass options."""
+
         model = PurchaseOrderReport
         fields = [
             'pk',
@@ -69,12 +80,15 @@ class PurchaseOrderReportSerializer(InvenTreeModelSerializer):
             'enabled',
         ]
 
-
-class SalesOrderReportSerializer(InvenTreeModelSerializer):
-
     template = InvenTreeAttachmentSerializerField(required=True)
 
+
+class SalesOrderReportSerializer(InvenTreeModelSerializer):
+    """Serializer class for the SalesOrderReport model"""
+
     class Meta:
+        """Metaclass options."""
+
         model = SalesOrderReport
         fields = [
             'pk',
@@ -84,3 +98,5 @@ class SalesOrderReportSerializer(InvenTreeModelSerializer):
             'filters',
             'enabled',
         ]
+
+    template = InvenTreeAttachmentSerializerField(required=True)

@@ -1,0 +1,24 @@
+{% extends "email/email.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block title %}
+{{ message }}
+{% if link %}
+<p>{% trans "Click on the following link to view this order" %}: <a href="{{ link }}">{{ link }}</a></p>
+{% endif %}
+{% endblock title %}
+
+{% block body %}
+<tr style="height: 3rem; border-bottom: 1px solid">
+    <th>{% trans "Purchase Order" %}</th>
+    <th>{% trans "Supplier" %}</th>
+</tr>
+
+<tr style="height: 3rem">
+    <td style="text-align: center;">{{ order }}</td>
+    <td style="text-align: center;">{{ order.supplier }}</td>
+</tr>
+
+{% endblock body %}

@@ -182,6 +182,8 @@ function getFilterOptionList(tableKey, filterKey) {
                 value: '{% trans "false" %}',
             },
         };
+    } else if (settings.type == 'date') {
+        return 'date';
     } else if ('options' in settings) {
         return settings.options;
     }
@@ -233,10 +235,17 @@ function generateFilterInput(tableKey, filterKey) {
     // A 'null' options list means that a simple text-input dialog should be used
     if (options == null) {
         html = `<input class='form-control filter-input' id='${id}' name='value'></input>`;
+    } else if (options == 'date') {
+        html = `<input type='date' class='dateinput form-control filter-input' id='${id}' name='value'></input>`;
     } else {
         // Return a 'select' input with the available values
         html = `<select class='form-control filter-input' id='${id}' name='value'>`;
 
+        // options can be an object or a function, in which case we need to run
+        // this callback first
+        if (options instanceof Function) {
+            options = options();
+        }
         for (var key in options) {
             var option = options[key];
             html += `<option value='${key}'>${option.value}</option>`;
@@ -324,7 +333,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 
     // Callback for reloading the table
     element.find(`#reload-${tableKey}`).click(function() {
-        $(table).bootstrapTable('refresh');
+        reloadTableFilters(table);
     });
 
     // Add a callback for downloading table data
@@ -446,6 +455,12 @@ function getFilterOptionValue(tableKey, filterKey, valueKey) {
 
     // Iterate through a list of options
     if ('options' in filter) {
+        // options can be an object or a function, in which case we need to run
+        // this callback first
+        if (filter.options instanceof Function) {
+            filter.options = filter.options();
+        }
+
         for (var key in filter.options) {
 
             if (key == valueKey) {

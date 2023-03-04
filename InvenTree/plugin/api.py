@@ -1,26 +1,26 @@
-"""
-JSON API for the plugin app
-"""
+"""API for the plugin app."""
 
-from django.conf import settings
 from django.urls import include, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, permissions, status
+from rest_framework import filters, permissions, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
+from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
+                              RetrieveUpdateDestroyAPI, UpdateAPI)
+from InvenTree.permissions import IsSuperuser
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
 from plugin.models import PluginConfig, PluginSetting
-from plugin.registry import registry
+from plugin.plugin import InvenTreePlugin
 
 
-class PluginList(generics.ListAPIView):
-    """ API endpoint for list of PluginConfig objects
+class PluginList(ListAPI):
+    """API endpoint for list of PluginConfig objects.
 
     - GET: Return a list of all PluginConfig objects
     """
@@ -34,6 +34,10 @@ class PluginList(generics.ListAPIView):
     queryset = PluginConfig.objects.all()
 
     def filter_queryset(self, queryset):
+        """Filter for API requests.
+
+        Filter by mixin with the `mixin` flag
+        """
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -58,7 +62,7 @@ class PluginList(generics.ListAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'active',
     ]
 
@@ -78,8 +82,8 @@ class PluginList(generics.ListAPIView):
     ]
 
 
-class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API detail endpoint for PluginConfig object
+class PluginDetail(RetrieveUpdateDestroyAPI):
+    """API detail endpoint for PluginConfig object.
 
     get:
     Return a single PluginConfig object
@@ -95,15 +99,18 @@ class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PluginSerializers.PluginConfigSerializer
 
 
-class PluginInstall(generics.CreateAPIView):
-    """
-    Endpoint for installing a new plugin
-    """
+class PluginInstall(CreateAPI):
+    """Endpoint for installing a new plugin."""
+
     queryset = PluginConfig.objects.none()
     serializer_class = PluginSerializers.PluginConfigInstallSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        """Install a plugin via the API"""
+        # Clean up input data
+        data = self.clean_data(request.data)
+
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         result = self.perform_create(serializer)
         result['input'] = serializer.data
@@ -111,12 +118,32 @@ class PluginInstall(generics.CreateAPIView):
         return Response(result, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
+        """Saving the serializer instance performs plugin installation"""
         return serializer.save()
 
 
-class PluginSettingList(generics.ListAPIView):
-    """
-    List endpoint for all plugin related settings.
+class PluginActivate(UpdateAPI):
+    """Endpoint for activating a plugin."""
+
+    queryset = PluginConfig.objects.all()
+    serializer_class = PluginSerializers.PluginConfigEmptySerializer
+    permission_classes = [IsSuperuser, ]
+
+    def get_object(self):
+        """Returns the object for the view."""
+        if self.request.data.get('pk', None):
+            return self.queryset.get(pk=self.request.data.get('pk'))
+        return super().get_object()
+
+    def perform_update(self, serializer):
+        """Activate the plugin."""
+        instance = serializer.instance
+        instance.active = True
+        instance.save()
+
+
+class PluginSettingList(ListAPI):
+    """List endpoint for all plugin related settings.
 
     - read only
     - only accessible by staff users
@@ -133,15 +160,58 @@ class PluginSettingList(generics.ListAPIView):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'plugin__active',
         'plugin__key',
     ]
 
 
-class PluginSettingDetail(generics.RetrieveUpdateAPIView):
+def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
+    """Check that a plugin for the provided slug exsists and get the config.
+
+    Args:
+        plugin_slug (str): Slug for plugin.
+        plugin_pk (int): Primary key for plugin.
+
+    Raises:
+        NotFound: If plugin is not installed
+        NotFound: If plugin is not correctly registered
+        NotFound: If plugin is not active
+
+    Returns:
+        InvenTreePlugin: The config object for the provided plugin.
     """
-    Detail endpoint for a plugin-specific setting.
+    # Make sure that a plugin reference is specified
+    if plugin_slug is None and plugin_pk is None:
+        raise NotFound(detail="Plugin not specified")
+
+    # Define filter
+    filter = {}
+    if plugin_slug:
+        filter['key'] = plugin_slug
+    elif plugin_pk:
+        filter['pk'] = plugin_pk
+    ref = plugin_slug or plugin_pk
+
+    # Check that the 'plugin' specified is valid
+    try:
+        plugin_cgf = PluginConfig.objects.get(**filter)
+    except PluginConfig.DoesNotExist:
+        raise NotFound(detail=f"Plugin '{ref}' not installed")
+
+    if plugin_cgf is None:
+        # This only occurs if the plugin mechanism broke
+        raise NotFound(detail=f"Plugin '{ref}' not found")  # pragma: no cover
+
+    # Check that the plugin is activated
+    if not plugin_cgf.active:
+        raise NotFound(detail=f"Plugin '{ref}' is not active")
+
+    return plugin_cgf.plugin
+
+
+class PluginSettingDetail(RetrieveUpdateAPI):
+    """Detail endpoint for a plugin-specific setting.
 
     Note that these cannot be created or deleted via the API
     """
@@ -150,31 +220,20 @@ class PluginSettingDetail(generics.RetrieveUpdateAPIView):
     serializer_class = PluginSerializers.PluginSettingSerializer
 
     def get_object(self):
-        """
-        Lookup the plugin setting object, based on the URL.
-        The URL provides the 'slug' of the plugin, and the 'key' of the setting.
+        """Lookup the plugin setting object, based on the URL.
 
+        The URL provides the 'slug' of the plugin, and the 'key' of the setting.
         Both the 'slug' and 'key' must be valid, else a 404 error is raised
         """
-
-        plugin_slug = self.kwargs['plugin']
         key = self.kwargs['key']
 
-        # Check that the 'plugin' specified is valid!
-        if not PluginConfig.objects.filter(key=plugin_slug).exists():
-            raise NotFound(detail=f"Plugin '{plugin_slug}' not installed")
+        # Look up plugin
+        plugin = check_plugin(plugin_slug=self.kwargs.get('plugin'), plugin_pk=self.kwargs.get('pk'))
 
-        # Get the list of settings available for the specified plugin
-        plugin = registry.get_plugin(plugin_slug)
-
-        if plugin is None:
-            # This only occurs if the plugin mechanism broke
-            raise NotFound(detail=f"Plugin '{plugin_slug}' not found")  # pragma: no cover
-
-        settings = getattr(plugin, 'SETTINGS', {})
+        settings = getattr(plugin, 'settings', {})
 
         if key not in settings:
-            raise NotFound(detail=f"Plugin '{plugin_slug}' has no setting matching '{key}'")
+            raise NotFound(detail=f"Plugin '{plugin.slug}' has no setting matching '{key}'")
 
         return PluginSetting.get_setting_object(key, plugin=plugin)
 
@@ -188,28 +247,25 @@ plugin_api_urls = [
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
     re_path(r'^barcode/', include(barcode_api_urls)),
     re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
+    re_path(r'^plugins/', include([
+        # Plugin settings URLs
+        re_path(r'^settings/', include([
+            re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),    # Used for admin interface
+            re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
+        ])),
+
+        # Detail views for a single PluginConfig item
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^settings/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail-pk'),
+            re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-detail-activate'),
+            re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
+        ])),
+
+        # Plugin managment
+        re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
+        re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'),
+
+        # Anything else
+        re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
+    ]))
 ]
-
-general_plugin_api_urls = [
-
-    # Plugin settings URLs
-    re_path(r'^settings/', include([
-        re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
-        re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
-    ])),
-
-    # Detail views for a single PluginConfig item
-    re_path(r'^(?P<pk>\d+)/', include([
-        re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
-    ])),
-
-    re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
-
-    # Anything else
-    re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
-]
-
-if settings.PLUGINS_ENABLED:
-    plugin_api_urls.append(
-        re_path(r'^plugin/', include(general_plugin_api_urls))
-    )

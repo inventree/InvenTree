@@ -1,6 +1,4 @@
-"""
-Unit tests for the part model database migrations
-"""
+"""Unit tests for the part model database migrations."""
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
@@ -8,18 +6,13 @@ from InvenTree import helpers
 
 
 class TestForwardMigrations(MigratorTestCase):
-    """
-    Test entire schema migration sequence for the part app
-    """
+    """Test entire schema migration sequence for the part app."""
 
     migrate_from = ('part', helpers.getOldestMigrationFile('part'))
     migrate_to = ('part', helpers.getNewestMigrationFile('part'))
 
     def prepare(self):
-        """
-        Create initial data
-        """
-
+        """Create initial data."""
         Part = self.old_state.apps.get_model('part', 'part')
 
         Part.objects.create(name='A', description='My part A')
@@ -39,7 +32,7 @@ class TestForwardMigrations(MigratorTestCase):
             print(p.is_template)
 
     def test_models_exist(self):
-
+        """Test that the Part model can still be accessed at the end of schema migration"""
         Part = self.new_state.apps.get_model('part', 'part')
 
         self.assertEqual(Part.objects.count(), 5)
@@ -49,3 +42,7 @@ class TestForwardMigrations(MigratorTestCase):
             part.save()
             part.is_template = False
             part.save()
+
+        for name in ['A', 'C', 'E']:
+            part = Part.objects.get(name=name)
+            self.assertEqual(part.description, f"My part {name}")

@@ -20,9 +20,11 @@
             <h4>{% trans "Part Stock" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
+                {% if roles.stock.add and not part.virtual %}
                 <button type='button' class='btn btn-success' id='new-stock-item' title='{% trans "Create new stock item" %}'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}
                 </button>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -38,10 +40,39 @@
         <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Scheduling" %}</h4>
             {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button class='btn btn-primary' type='button' id='btn-schedule-reload' title='{% trans "Refresh scheduling data" %}'>
+                    <span class='fas fa-redo-alt'></span> {% trans "Refresh" %}
+                </button>
+            </div>
         </div>
     </div>
     <div class='panel-content'>
         {% include "part/part_scheduling.html" %}
+    </div>
+</div>
+{% endif %}
+
+{% settings_value 'STOCKTAKE_ENABLE' as stocktake_enable %}
+{% settings_value 'DISPLAY_STOCKTAKE_TAB' user=request.user as show_stocktake %}
+{% if stocktake_enable and show_stocktake %}
+<div class='panel panel-hidden' id='panel-stocktake'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Stocktake" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.stocktake.add %}
+                <button class='btn btn-success' type='button' id='btn-stocktake' title='{% trans "Add stocktake information" %}'>
+                    <span class='fas fa-clipboard-check'></span> {% trans "Stocktake" %}
+                </button>
+                {% endif %}
+                <!-- TODO: Buttons -->
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "part/part_stocktake.html" %}
     </div>
 </div>
 {% endif %}
@@ -124,11 +155,9 @@
     </div>
 </div>
 
-{% if part.purchaseable or part.salable %}
 <div class='panel panel-hidden' id='panel-pricing'>
     {% include "part/prices.html" %}
 </div>
-{% endif %}
 
 <div class='panel panel-hidden' id='panel-part-notes'>
     <div class='panel-heading'>
@@ -270,7 +299,7 @@
                 </div>
 
                 {% if roles.part.change %}
-                <button class='btn btn-success' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
+                <button class='btn btn-success' type='button' title='{% trans "Add BOM Item" %}' id='bom-item-new'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
                 </button>
                 {% endif %}
@@ -360,7 +389,9 @@
                 <div id='opt-dropdown' class="btn-group">
                     <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>{% trans "Delete" %}</a></li>
+                        <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>
+                            <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}
+                        </a></li>
                     </ul>
                 </div>
                 {% include "filter_list.html" with id="supplier-part" %}
@@ -416,14 +447,46 @@
             'part-notes',
             '{% url "api-part-detail" part.pk %}',
             {
-                editable: {% if roles.part.change %}true{% else %}false{% endif %},
+                editable: {% js_bool roles.part.change %},
             }
         );
     });
 
     // Load the "scheduling" tab
     onPanelLoad('scheduling', function() {
-        loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
+        var chart = loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
+
+        $('#btn-schedule-reload').click(function() {
+
+            if (chart != null) {
+                chart.destroy();
+            }
+
+            chart = loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
+        });
+    });
+
+    // Load the "stocktake" tab
+    onPanelLoad('stocktake', function() {
+        loadPartStocktakeTable({{ part.pk }}, {
+            allow_edit: {% js_bool roles.stocktake.change %},
+            allow_delete: {% js_bool roles.stocktake.delete %},
+        });
+
+        {% if roles.stocktake.add %}
+        $('#btn-stocktake').click(function() {
+            generateStocktakeReport({
+                part: {
+                    value: {{ part.pk }}
+                },
+                location: {},
+                generate_report: {
+                    value: false,
+                },
+                update_parts: {},
+            });
+        });
+        {% endif %}
     });
 
     // Load the "suppliers" tab
@@ -443,27 +506,11 @@
 
         $("#supplier-part-delete").click(function() {
 
-            var selections = $("#supplier-part-table").bootstrapTable("getSelections");
+            var selections = getTableData('#supplier-part-table');
 
-            var requests = [];
-
-            showQuestionDialog(
-                '{% trans "Delete Supplier Parts?" %}',
-                '{% trans "All selected supplier parts will be deleted" %}',
-                {
-                    accept: function() {
-                        selections.forEach(function(part) {
-                            var url = `/api/company/part/${part.pk}/`;
-
-                            requests.push(inventreeDelete(url));
-                        });
-
-                        $.when.apply($, requests).done(function() {
-                            reloadSupplierPartTable();
-                        });
-                    }
-                }
-            );
+            deleteSupplierParts(selections, {
+                success: reloadSupplierPartTable,
+            });
         });
 
         loadSupplierPartTable(
@@ -472,7 +519,7 @@
             {
                 params: {
                     part: {{ part.id }},
-                    part_detail: false,
+                    part_detail: true,
                     supplier_detail: true,
                     manufacturer_detail: true,
                 },
@@ -497,10 +544,10 @@
 
         $("#manufacturer-part-delete").click(function() {
 
-            var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
+            var selectionss = getTableData('#manufacturer-part-table');
 
             deleteManufacturerParts(selections, {
-                onSuccess: function() {
+                success: function() {
                     $("#manufacturer-part-table").bootstrapTable("refresh");
                 }
             });
@@ -528,7 +575,7 @@
         });
 
         loadBuildTable($("#build-table"), {
-            url: "{% url 'api-build-list' %}",
+            locale: '{{ request.LANGUAGE_CODE }}',
             params: {
                 part: {{ part.id }},
             }
@@ -587,11 +634,7 @@
         $('#bom-item-delete').click(function() {
 
             // Get a list of the selected BOM items
-            var rows = $("#bom-table").bootstrapTable('getSelections');
-
-            if (rows.length == 0) {
-                rows = $('#bom-table').bootstrapTable('getData');
-            }
+            var rows = getTableData('#bom-table');
 
             deleteBomItems(rows, {
                 success: function() {
@@ -613,20 +656,8 @@
             });
         });
 
-        $("#bom-item-new").click(function () {
-
-            var fields = bomItemFields();
-
-            fields.part.value = {{ part.pk }};
-            fields.sub_part.filters = {
-                active: true,
-            };
-
-            constructForm('{% url "api-bom-list" %}', {
-                fields: fields,
-                method: 'POST',
-                title: '{% trans "Create BOM Item" %}',
-                focus: 'sub_part',
+        $("[id^=bom-item-new]").click(function () {
+            addBomItem({{ part.pk }}, {
                 onSuccess: function() {
                     $('#bom-table').bootstrapTable('refresh');
                 }
@@ -708,17 +739,6 @@
         });
     });
 
-    // Load the BOM table data in the pricing view
-    {% if part.has_bom and roles.sales_order.view %}
-    loadBomTable($("#bom-pricing-table"), {
-        editable: false,
-        bom_url: "{% url 'api-bom-list' %}",
-        part_url: "{% url 'api-part-list' %}",
-        parent_id: {{ part.id }} ,
-        sub_part_detail: true,
-    });
-    {% endif %}
-
     onPanelLoad("purchase-orders", function() {
         loadPartPurchaseOrderTable(
             "#purchase-order-table",
@@ -744,7 +764,11 @@
                 success: function(part) {
                     orderParts(
                         [part],
-                        {}
+                        {
+                            onSuccess: function() {
+                                $("#purchase-order-table").bootstrapTable('refresh');
+                            }
+                        }
                     );
                 }
             }
@@ -769,17 +793,9 @@
 
             constructForm('{% url "api-part-test-template-list" %}', {
                 method: 'POST',
-                fields: {
-                    test_name: {},
-                    description: {},
-                    required: {},
-                    requires_value: {},
-                    requires_attachment: {},
-                    part: {
-                        value: {{ part.pk }},
-                        hidden: true,
-                    }
-                },
+                fields: partTestTemplateFields({
+                    part: {{ part.pk }}
+                }),
                 title: '{% trans "Add Test Result Template" %}',
                 onSuccess: function() {
                     $("#test-template-table").bootstrapTable("refresh");
@@ -826,7 +842,6 @@
     onPanelLoad("part-parameters", function() {
         loadPartParameterTable(
             '#parameter-table',
-            '{% url "api-part-parameter-list" %}',
             {
                 params: {
                     part: {{ part.pk }},
@@ -847,7 +862,11 @@
                         value: {{ part.pk }},
                         hidden: true,
                     },
-                    template: {},
+                    template: {
+                        filters: {
+                            ordering: 'name',
+                        },
+                    },
                     data: {},
                 },
                 title: '{% trans "Add Parameter" %}',
@@ -903,152 +922,9 @@
         );
     });
 
-
-    {% default_currency as currency %}
-
-    // history graphs
-    {% if price_history %}
-        var purchasepricedata = {
-                labels: [
-                    {% for line in price_history %}'{% render_date line.date %}',{% endfor %}
-                ],
-                datasets: [{
-                    label: '{% blocktrans %}Purchase Unit Price - {{currency}}{% endblocktrans %}',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    yAxisID: 'y',
-                    data: [
-                        {% for line in price_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
-                    ],
-                    borderWidth: 1,
-                    type: 'line'
-                },
-                {% if 'price_diff' in price_history.0 %}
-                {
-                    label: '{% blocktrans %}Unit Price-Cost Difference - {{currency}}{% endblocktrans %}',
-                    backgroundColor: 'rgba(68, 157, 68, 0.2)',
-                    borderColor: 'rgb(68, 157, 68)',
-                    yAxisID: 'y2',
-                    data: [
-                        {% for line in price_history %}{{ line.price_diff|stringformat:".2f" }},{% endfor %}
-                    ],
-                    borderWidth: 1,
-                    type: 'line',
-                    hidden: true,
-                },
-                {
-                    label: '{% blocktrans %}Supplier Unit Cost - {{currency}}{% endblocktrans %}',
-                    backgroundColor: 'rgba(70, 127, 155, 0.2)',
-                    borderColor: 'rgb(70, 127, 155)',
-                    yAxisID: 'y',
-                    data: [
-                        {% for line in price_history %}{{ line.price_part|stringformat:".2f" }},{% endfor %}
-                    ],
-                    borderWidth: 1,
-                    type: 'line',
-                    hidden: true,
-                },
-                {% endif %}
-                {
-                    label: '{% trans "Quantity" %}',
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                    borderColor: 'rgb(255, 206, 86)',
-                    yAxisID: 'y1',
-                    data: [
-                        {% for line in price_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
-                    ],
-                    borderWidth: 1
-                }]
-            }
-        var StockPriceChart = loadStockPricingChart($('#StockPriceChart'), purchasepricedata)
-    {% endif %}
-
-    {% if bom_parts %}
-        var bom_colors =  randomColor({hue: 'green', count: {{ bom_parts|length }} })
-        var bomdata = {
-            labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
-            datasets:  [
-            {
-              label: 'Price',
-              data: [{% for line in bom_parts %}{{ line.min_price }},{% endfor %}],
-                backgroundColor: bom_colors,
-            },
-            {% if bom_pie_max %}
-            {
-                label: 'Max Price',
-                data: [{% for line in bom_parts %}{{ line.max_price }},{% endfor %}],
-                backgroundColor: bom_colors,
-              },
-            {% endif %}
-            ]
-        };
-        var BomChart = loadBomChart(document.getElementById('BomChart'), bomdata)
-    {% endif %}
-
-
-    // Internal pricebreaks
-    {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
-    {% if show_internal_price and roles.sales_order.view %}
-        initPriceBreakSet(
-            $('#internal-price-break-table'),
-            {
-                part_id: {{part.id}},
-                pb_human_name: 'internal price break',
-                pb_url_slug: 'internal-price',
-                pb_url: '{% url 'api-part-internal-price-list' %}',
-                pb_new_btn: $('#new-internal-price-break'),
-                pb_new_url: '{% url 'api-part-internal-price-list' %}',
-                linkedGraph: $('#InternalPriceBreakChart'),
-            },
-        );
-    {% endif %}
-
-    // Sales pricebreaks
-    {% if part.salable and roles.sales_order.view %}
-        initPriceBreakSet(
-            $('#price-break-table'),
-            {
-                part_id: {{part.id}},
-                pb_human_name: 'sale price break',
-                pb_url_slug: 'sale-price',
-                pb_url: "{% url 'api-part-sale-price-list' %}",
-                pb_new_btn: $('#new-price-break'),
-                pb_new_url: '{% url 'api-part-sale-price-list' %}',
-                linkedGraph: $('#SalePriceBreakChart'),
-            },
-        );
-    {% endif %}
-
-    // Sale price history
-    {% if sale_history %}
-            var salepricedata = {
-                    labels: [
-                        {% for line in sale_history %}'{% render_date line.date %}',{% endfor %}
-                    ],
-                    datasets: [{
-                        label: '{% blocktrans %}Unit Price - {{currency}}{% endblocktrans %}',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        yAxisID: 'y',
-                        data: [
-                            {% for line in sale_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
-                        ],
-                        borderWidth: 1,
-                    },
-                    {
-                        label: '{% trans "Quantity" %}',
-                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                        borderColor: 'rgb(255, 206, 86)',
-                        yAxisID: 'y1',
-                        data: [
-                            {% for line in sale_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
-                        ],
-                        borderWidth: 1,
-                        type: 'bar',
-                    }]
-                }
-            var SalePriceChart = loadSellPricingChart($('#SalePriceChart'), salepricedata)
-    {% endif %}
+    onPanelLoad('pricing', function() {
+        {% include "part/pricing_javascript.html" %}
+    });
 
     enableSidebar('part');
 
