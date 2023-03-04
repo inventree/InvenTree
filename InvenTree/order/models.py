@@ -957,6 +957,24 @@ class OrderLineItem(models.Model):
         """Metaclass options. Abstract ensures no database table is created."""
         abstract = True
 
+    def save(self, *args, **kwargs):
+        """Custom save method for the OrderLineItem model
+
+        Calls save method on the linked order
+        """
+
+        super().save(*args, **kwargs)
+        self.order.save()
+
+    def delete(self, *args, **kwargs):
+        """Custom delete method for the OrderLineItem model
+
+        Calls save method on the linked order
+        """
+
+        super().delete(*args, **kwargs)
+        self.order.save()
+
     quantity = RoundingDecimalField(
         verbose_name=_('Quantity'),
         help_text=_('Item quantity'),

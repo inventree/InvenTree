@@ -106,6 +106,7 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
             'target_date',
             'notes',
             'total_price',
+            'total_price_currency',
         ]
 
         read_only_fields = [
@@ -669,6 +670,7 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
             'shipment_date',
             'target_date',
             'total_price',
+            'total_price_currency',
         ]
 
         read_only_fields = [
