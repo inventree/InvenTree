@@ -2270,7 +2270,7 @@ function deletePurchaseOrderLineItems(items, options={}) {
             items: ids,
         },
         preFormContent: html,
-        onSuccess:  function() {
+        onSuccess: function() {
             // Refresh the table once the line items are deleted
             $('#po-line-table').bootstrapTable('refresh');
         },
@@ -2373,7 +2373,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
             // Callback for bulk deleting mutliple lines
             $('#po-lines-bulk-delete').off('click').on('click', function() {
-                var rows = getTableData("#po-line-table");
+                var rows = getTableData('#po-line-table');
 
                 deletePurchaseOrderLineItems(rows);
             });
