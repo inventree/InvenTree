@@ -9,7 +9,6 @@ from django.contrib.auth.models import Group
 from django.http.response import StreamingHttpResponse
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-
 from rest_framework.test import APITestCase
 
 from plugin import registry
@@ -113,7 +112,6 @@ class PluginMixin:
         if not self.plugin_confs:
             registry.reload_plugins()
             self.plugin_confs = PluginConfig.objects.all()
-
 
 
 class ExchangeRateMixin:

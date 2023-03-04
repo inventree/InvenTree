@@ -10,15 +10,14 @@ from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 from djmoney.money import Money
-
 from icalendar import Calendar
 from rest_framework import status
 
-from common.settings import currency_codes
 import order.models as models
+from common.settings import currency_codes
+from company.models import Company
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
-from company.models import Company
 from part.models import Part
 from stock.models import StockItem
 
@@ -112,7 +111,7 @@ class PurchaseOrderTest(OrderTest):
         idx = 0
 
         new_orders = []
-        
+
         # Let's generate some more orders
         for supplier in Company.objects.filter(is_supplier=True):
             for _idx in range(10):
@@ -139,7 +138,7 @@ class PurchaseOrderTest(OrderTest):
                         purchase_price=Money((idx + 1) / 10, currencies[idx % n]),
                     )
                 )
-        
+
         models.PurchaseOrderLineItem.objects.bulk_create(lines)
 
         # List all purchase orders
@@ -148,7 +147,6 @@ class PurchaseOrderTest(OrderTest):
                 response = self.get(self.LIST_URL, data={'limit': limit}, expected_code=200)
 
                 print(len(ctx), "queries for", len(response.data), "orders with limit =", limit)
-
 
     def test_overdue(self):
         """Test "overdue" status."""

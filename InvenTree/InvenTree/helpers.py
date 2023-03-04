@@ -1061,7 +1061,6 @@ def inheritors(cls):
 
 class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
     """Testcase with user setup buildin."""
-    
     pass
 
 
