@@ -146,7 +146,11 @@ class PurchaseOrderTest(OrderTest):
             with CaptureQueriesContext(connection) as ctx:
                 response = self.get(self.LIST_URL, data={'limit': limit}, expected_code=200)
 
-                print(len(ctx), "queries for", len(response.data), "orders with limit =", limit)
+                # Total database queries must be below 15, independent of the number of results
+                self.assertLess(len(ctx), 15)
+
+                for result in response.data['results']:
+                    self.assertIn('total_price', result)
 
     def test_overdue(self):
         """Test "overdue" status."""
