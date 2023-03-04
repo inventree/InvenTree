@@ -53,6 +53,7 @@ steps:
     INVENTREE_DB_NAME: inventree
     INVENTREE_MEDIA_ROOT: ./media
     INVENTREE_STATIC_ROOT: ./static
+    INVENTREE_BACKUP_ROOT: ./backup
     INVENTREE_PLUGINS_ENABLED: true
 
 - task: PublishTestResults@2
