@@ -34,7 +34,6 @@ class AbstractOrderSerializer(serializers.Serializer):
     """Abstract field definitions for OrderSerializers."""
 
     total_price = InvenTreeMoneySerializer(
-        source='get_total_price',
         allow_null=True,
         read_only=True,
     )
