@@ -2157,7 +2157,9 @@ function loadPurchaseOrderTable(table, options) {
                 switchable: true,
                 sortable: false,
                 formatter: function(value, row) {
-                    return formatCurrency(value);
+                    return formatCurrency(value, {
+                        currency: row.total_price_currency,
+                    });
                 },
             },
             {
@@ -2979,6 +2981,17 @@ function loadSalesOrderTable(table, options) {
                 field: 'line_items',
                 title: '{% trans "Items" %}'
             },
+            {
+                field: 'total_price',
+                title: '{% trans "Total Cost" %}',
+                switchable: true,
+                sortable: true,
+                formatter: function(value, row) {
+                    return formatCurrency(value, {
+                        currency: row.total_price_currency,
+                    });
+                }
+            }
         ],
     });
 }
