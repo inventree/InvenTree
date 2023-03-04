@@ -914,6 +914,7 @@ function poLineItemFields(options={}) {
                                 // Returned prices are in increasing order of quantity
                                 if (response.length > 0) {
                                     var idx = 0;
+                                    var index = 0;
 
                                     for (var idx = 0; idx < response.length; idx++) {
                                         if (response[idx].quantity > quantity) {
@@ -2213,6 +2214,70 @@ function loadPurchaseOrderTable(table, options) {
 }
 
 
+/*
+ * Delete the selected Purchase Order Line Items from the database
+ */
+function deletePurchaseOrderLineItems(items, options={}) {
+
+    function renderItem(item, opts={}) {
+
+        var part = item.part_detail;
+        var thumb = thumbnailImage(item.part_detail.thumbnail || item.part_detail.image);
+
+        var html = `
+        <tr>
+            <td>${thumb} ${part.full_name}</td>
+            <td>${part.description}</td>
+            <td>${item.supplier_part_detail.SKU}</td>
+            <td>${item.supplier_part_detail.manufacturer_part_detail.MPN}</td>
+            <td>${item.quantity}
+        </tr>
+        `;
+
+        return html;
+    }
+
+    var rows = '';
+    var ids = [];
+
+    items.forEach(function(item) {
+        rows += renderItem(item);
+        ids.push(item.pk);
+    });
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected Line items will be deleted" %}
+    </div>
+
+    <table class='table table-striped table-condensed'>
+        <tr>
+            <th>{% trans "Part" %}</th>
+            <th>{% trans "Description" %}</th>
+            <th>{% trans "SKU" %}</th>
+            <th>{% trans "MPN" %}</th>
+            <th>{% trans "Quantity" %}</th>
+        </tr>
+        ${rows}
+    </table>
+    `;
+
+    constructForm('{% url "api-po-line-list" %}', {
+        method: 'DELETE',
+        multi_delete: true,
+        title: '{% trans "Delete selected Line items?" %}',
+        form_data: {
+            items: ids,
+        },
+        preFormContent: html,
+        onSuccess:  function() {
+            // Refresh the table once the line items are deleted
+            $('#po-line-table').bootstrapTable('refresh');
+        },
+    });
+}
+
+
 /**
  * Load a table displaying line items for a particular PurchasesOrder
  * @param {String} table - HTML ID tag e.g. '#table'
@@ -2304,6 +2369,13 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                         $(table).bootstrapTable('refresh');
                     }
                 });
+            });
+
+            // Callback for bulk deleting mutliple lines
+            $('#po-lines-bulk-delete').off('click').on('click', function() {
+                var rows = getTableData("#po-line-table");
+
+                deletePurchaseOrderLineItems(rows);
             });
         }
 
@@ -2568,6 +2640,13 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             }
         ]
     });
+
+    linkButtonsToSelection(
+        table,
+        [
+            '#multi-select-options',
+        ]
+    );
 
 }
 
