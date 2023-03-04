@@ -322,6 +322,7 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
         'line_items',
         'status',
         'responsible',
+        'total_price',
     ]
 
     ordering = '-reference'
@@ -783,6 +784,7 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
         'target_date',
         'line_items',
         'shipment_date',
+        'total_price',
     ]
 
     search_fields = [
