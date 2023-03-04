@@ -77,6 +77,9 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         if not self.creation_date:
             self.creation_date = datetime.now().date()
 
+        # Recalculate total_price for this order
+        self.update_total_price(commit=False)
+
         super().save(*args, **kwargs)
 
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
@@ -109,6 +112,20 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         verbose_name=_('Total Price'),
         help_text=_('Total price for this order')
     )
+
+    def update_total_price(self, commit=True):
+        """Recalculate and save the total_price for this order"""
+
+        # First, ensure this instance is still in the database
+        try:
+            self.refresh_from_db()
+        except Exception:
+            return
+
+        self.total_price = self.calculate_total_price()
+
+        if commit:
+            self.save()
 
     def calculate_total_price(self, target_currency=None):
         """Calculates the total price of all order lines, and converts to the specified target currency.
