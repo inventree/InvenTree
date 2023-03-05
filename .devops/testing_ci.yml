@@ -49,7 +49,7 @@ steps:
     pushd '$(projectRoot)'
     invoke update
     coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
-    coverage xml
+    coverage xml -i
   displayName: 'Run tests'
   env:
     INVENTREE_DB_ENGINE: sqlite3
