@@ -51,6 +51,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
     Instances of this class:
 
     - PuchaseOrder
+    - SalesOrder
 
     Attributes:
         reference: Unique order number / reference / code
@@ -76,6 +77,9 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
         if not self.creation_date:
             self.creation_date = datetime.now().date()
+
+        # Recalculate total_price for this order
+        self.update_total_price(commit=False)
 
         super().save(*args, **kwargs)
 
@@ -103,7 +107,22 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
     notes = InvenTreeNotesField(help_text=_('Order notes'))
 
-    def get_total_price(self, target_currency=None):
+    total_price = InvenTreeModelMoneyField(
+        null=True, blank=True,
+        allow_negative=False,
+        verbose_name=_('Total Price'),
+        help_text=_('Total price for this order')
+    )
+
+    def update_total_price(self, commit=True):
+        """Recalculate and save the total_price for this order"""
+
+        self.total_price = self.calculate_total_price()
+
+        if commit:
+            self.save()
+
+    def calculate_total_price(self, target_currency=None):
         """Calculates the total price of all order lines, and converts to the specified target currency.
 
         If not specified, the default system currency is used.
@@ -134,7 +153,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                 # Record the error, try to press on
                 kind, info, data = sys.exc_info()
 
-                log_error('order.get_total_price')
+                log_error('order.calculate_total_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid
@@ -151,7 +170,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
             except MissingRate:
                 # Record the error, try to press on
 
-                log_error('order.get_total_price')
+                log_error('order.calculate_total_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid
@@ -932,6 +951,24 @@ class OrderLineItem(models.Model):
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
         abstract = True
+
+    def save(self, *args, **kwargs):
+        """Custom save method for the OrderLineItem model
+
+        Calls save method on the linked order
+        """
+
+        super().save(*args, **kwargs)
+        self.order.save()
+
+    def delete(self, *args, **kwargs):
+        """Custom delete method for the OrderLineItem model
+
+        Calls save method on the linked order
+        """
+
+        super().delete(*args, **kwargs)
+        self.order.save()
 
     quantity = RoundingDecimalField(
         verbose_name=_('Quantity'),
