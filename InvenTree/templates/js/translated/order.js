@@ -2223,13 +2223,14 @@ function deletePurchaseOrderLineItems(items, options={}) {
 
         var part = item.part_detail;
         var thumb = thumbnailImage(item.part_detail.thumbnail || item.part_detail.image);
+        var MPN = item.supplier_part_detail.manufacturer_part_detail ? item.supplier_part_detail.manufacturer_part_detail.MPN : '-';
 
         var html = `
         <tr>
             <td>${thumb} ${part.full_name}</td>
             <td>${part.description}</td>
             <td>${item.supplier_part_detail.SKU}</td>
-            <td>${item.supplier_part_detail.manufacturer_part_detail.MPN}</td>
+            <td>${MPN}</td>
             <td>${item.quantity}
         </tr>
         `;
@@ -2373,7 +2374,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
             // Callback for bulk deleting mutliple lines
             $('#po-lines-bulk-delete').off('click').on('click', function() {
-                var rows = getTableData('#po-line-table');
+                var rows = getTableData('   #po-line-table');
 
                 deletePurchaseOrderLineItems(rows);
             });
