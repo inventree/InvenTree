@@ -5,6 +5,8 @@ from enum import IntEnum
 from random import randint
 
 from django.core.exceptions import ValidationError
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 import PIL
@@ -1704,6 +1706,60 @@ class PartDetailTests(PartAPITestBase):
         self.assertEqual(part.metadata['x'], 'y')
 
 
+class PartListTests(PartAPITestBase):
+    """Unit tests for the Part List API endpoint"""
+
+    def test_query_count(self):
+        """Test that the query count is unchanged, independent of query results"""
+
+        queries = [
+            {'limit': 1},
+            {'limit': 10},
+            {'limit': 50},
+            {'category': 1},
+            {},
+        ]
+
+        url = reverse('api-part-list')
+
+        # Create a bunch of extra parts (efficiently)
+        parts = []
+
+        for ii in range(100):
+            parts.append(Part(
+                name=f"Extra part {ii}",
+                description="A new part which will appear via the API",
+                level=0, tree_id=0,
+                lft=0, rght=0,
+            ))
+
+        Part.objects.bulk_create(parts)
+
+        for query in queries:
+
+            with CaptureQueriesContext(connection) as ctx:
+                self.get(url, query, expected_code=200)
+
+            # No more than 20 database queries
+            self.assertLess(len(ctx), 20)
+
+        # Test 'category_detail' annotation
+        for b in [False, True]:
+            with CaptureQueriesContext(connection) as ctx:
+                results = self.get(
+                    reverse('api-part-list'),
+                    {'category_detail': b},
+                    expected_code=200
+                )
+
+                for result in results.data:
+                    if b and result['category'] is not None:
+                        self.assertIn('category_detail', result)
+
+            # No more than 20 DB queries
+            self.assertLessEqual(len(ctx), 20)
+
+
 class PartNotesTests(InvenTreeAPITestCase):
     """Tests for the 'notes' field (markdown field)"""
 
@@ -2901,17 +2957,28 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
         total = 0
 
-        # Create some entries
-        for p in Part.objects.all():
+        # Iterate over (up to) 5 parts in the database
+        for p in Part.objects.all()[:5]:
 
-            for n in range(p.pk):
-                PartStocktake.objects.create(
-                    part=p,
-                    quantity=(n + 1) * 100,
+            # Create some entries
+            to_create = []
+
+            n = p.pk % 10
+
+            for idx in range(n):
+                to_create.append(
+                    PartStocktake(
+                        part=p,
+                        quantity=(idx + 1) * 100,
+                    )
                 )
 
-            total += p.pk
+                total += 1
 
+            # Create all entries in a single bulk-create
+            PartStocktake.objects.bulk_create(to_create)
+
+            # Query list endpoint
             response = self.get(
                 url,
                 {
@@ -2920,8 +2987,8 @@ class PartStocktakeTest(InvenTreeAPITestCase):
                 expected_code=200,
             )
 
-            # List by part ID
-            self.assertEqual(len(response.data), p.pk)
+            # Check that the expected number of PartStocktake instances has been created
+            self.assertEqual(len(response.data), n)
 
         # List all entries
         response = self.get(url, {}, expected_code=200)

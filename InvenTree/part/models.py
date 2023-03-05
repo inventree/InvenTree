@@ -1736,18 +1736,32 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return pricing
 
-    def schedule_pricing_update(self):
+    def schedule_pricing_update(self, create: bool = False):
         """Helper function to schedule a pricing update.
 
         Importantly, catches any errors which may occur during deletion of related objects,
         in particular due to post_delete signals.
 
         Ref: https://github.com/inventree/InvenTree/pull/3986
+
+        Arguments:
+            create: Whether or not a new PartPricing object should be created if it does not already exist
         """
 
         try:
-            self.pricing.schedule_for_update()
-        except (PartPricing.DoesNotExist, IntegrityError):
+            self.refresh_from_db()
+        except Part.DoesNotExist:
+            return
+
+        try:
+            pricing = self.pricing
+
+            if create or pricing.pk:
+                pricing.schedule_for_update()
+        except IntegrityError:
+            # If this part instance has been deleted,
+            # some post-delete or post-save signals may still be fired
+            # which can cause issues down the track
             pass
 
     def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
@@ -2321,10 +2335,16 @@ class PartPricing(common.models.MetaMixin):
     def schedule_for_update(self, counter: int = 0):
         """Schedule this pricing to be updated"""
 
+        if not self.part or not self.part.pk or not Part.objects.filter(pk=self.part.pk).exists():
+            logger.warning("Referenced part instance does not exist - skipping pricing update.")
+            return
+
         try:
-            self.refresh_from_db()
+            if self.pk:
+                self.refresh_from_db()
         except (PartPricing.DoesNotExist, IntegrityError):
             # Error thrown if this PartPricing instance has already been removed
+            logger.warning(f"Error refreshing PartPricing instance for part '{self.part}'")
             return
 
         # Ensure that the referenced part still exists in the database
@@ -2332,6 +2352,7 @@ class PartPricing(common.models.MetaMixin):
             p = self.part
             p.refresh_from_db()
         except IntegrityError:
+            logger.error(f"Could not update PartPricing as Part '{self.part}' does not exist")
             return
 
         if self.scheduled_for_update:
@@ -2349,6 +2370,7 @@ class PartPricing(common.models.MetaMixin):
             self.save()
         except IntegrityError:
             # An IntegrityError here likely indicates that the referenced part has already been deleted
+            logger.error(f"Could not save PartPricing for part '{self.part}' to the database")
             return
 
         import part.tasks as part_tasks
@@ -3570,7 +3592,7 @@ class BomItem(DataImportMixin, models.Model):
 
     inherited = models.BooleanField(
         default=False,
-        verbose_name=_('Inherited'),
+        verbose_name=_('Gets inherited'),
         help_text=_('This BOM item is inherited by BOMs for variant parts'),
     )
 
@@ -3766,7 +3788,7 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
 
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        instance.part.schedule_pricing_update()
+        instance.part.schedule_pricing_update(create=True)
 
 
 @receiver(post_delete, sender=BomItem, dispatch_uid='post_delete_bom_item')
@@ -3777,7 +3799,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
 
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        instance.part.schedule_pricing_update()
+        instance.part.schedule_pricing_update(create=False)
 
 
 class BomItemSubstitute(models.Model):

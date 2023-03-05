@@ -15,10 +15,17 @@ from django.conf import settings
 from django.core import mail as django_mail
 from django.core.exceptions import AppRegistryNotReady
 from django.core.management import call_command
-from django.db.utils import OperationalError, ProgrammingError
+from django.db import DEFAULT_DB_ALIAS, connections
+from django.db.migrations.executor import MigrationExecutor
+from django.db.utils import (NotSupportedError, OperationalError,
+                             ProgrammingError)
 from django.utils import timezone
 
 import requests
+from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
+                                   set_maintenance_mode)
+
+from InvenTree.config import get_setting
 
 logger = logging.getLogger("inventree")
 
@@ -377,7 +384,7 @@ def check_for_updates():
 
     # Save the version to the database
     common.models.InvenTreeSetting.set_setting(
-        'INVENTREE_LATEST_VERSION',
+        '_INVENTREE_LATEST_VERSION',
         tag,
         None
     )
@@ -440,11 +447,11 @@ def run_backup():
     time.sleep(random.randint(1, 5))
 
     # Check for records of previous backup attempts
-    last_attempt = InvenTreeSetting.get_setting('INVENTREE_BACKUP_ATTEMPT', '', cache=False)
-    last_success = InvenTreeSetting.get_setting('INVENTREE_BACKUP_SUCCESS', '', cache=False)
+    last_attempt = InvenTreeSetting.get_setting('_INVENTREE_BACKUP_ATTEMPT', '', cache=False)
+    last_success = InvenTreeSetting.get_setting('_INVENTREE_BACKUP_SUCCESS', '', cache=False)
 
     try:
-        backup_n_days = int(InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1, cache=False))
+        backup_n_days = int(InvenTreeSetting.get_setting('_INVENTREE_BACKUP_DAYS', 1, cache=False))
     except Exception:
         backup_n_days = 1
 
@@ -456,14 +463,14 @@ def run_backup():
 
     if last_attempt:
         # Do not attempt if the 'last attempt' at backup was within 12 hours
-        threshold = timezone.now() - timezone.timedelta(hours=12)
+        threshold = datetime.now() - timedelta(hours=12)
 
         if last_attempt > threshold:
             logger.info('Last backup attempt was too recent - skipping backup operation')
             return
 
     # Record the timestamp of most recent backup attempt
-    InvenTreeSetting.set_setting('INVENTREE_BACKUP_ATTEMPT', timezone.now().isoformat(), None)
+    InvenTreeSetting.set_setting('_INVENTREE_BACKUP_ATTEMPT', datetime.now().isoformat(), None)
 
     if not last_attempt:
         # If there is no record of a previous attempt, exit quickly
@@ -479,7 +486,7 @@ def run_backup():
 
     # Exit early if the backup was successful within the number of required days
     if last_success:
-        threshold = timezone.now() - timezone.timedelta(days=backup_n_days)
+        threshold = datetime.now() - timedelta(days=backup_n_days)
 
         if last_success > threshold:
             logger.info('Last successful backup was too recent - skipping backup operation')
@@ -489,7 +496,7 @@ def run_backup():
     call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
 
     # Record the timestamp of most recent backup success
-    InvenTreeSetting.set_setting('INVENTREE_BACKUP_SUCCESS', datetime.now().isoformat(), None)
+    InvenTreeSetting.set_setting('_INVENTREE_BACKUP_SUCCESS', datetime.now().isoformat(), None)
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
@@ -506,3 +513,74 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         fail_silently=False,
         html_message=html_message
     )
+
+
+@scheduled_task(ScheduledTask.DAILY)
+def check_for_migrations(worker: bool = True):
+    """Checks if migrations are needed.
+
+    If the setting auto_update is enabled we will start updateing.
+    """
+    # Test if auto-updates are enabled
+    if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+        return
+
+    from plugin import registry
+
+    plan = get_migration_plan()
+
+    # Check if there are any open migrations
+    if not plan:
+        logger.info('There are no open migrations')
+        return
+
+    logger.info('There are open migrations')
+
+    # Log open migrations
+    for migration in plan:
+        logger.info(migration[0])
+
+    # Set the application to maintenance mode - no access from now on.
+    logger.info('Going into maintenance')
+    set_maintenance_mode(True)
+    logger.info('Mainentance mode is on now')
+
+    # Check if we are worker - go kill all other workers then.
+    # Only the frontend workers run updates.
+    if worker:
+        logger.info('Current process is a worker - shutting down cluster')
+
+    # Ok now we are ready to go ahead!
+    # To be sure we are in maintenance this is wrapped
+    with maintenance_mode_on():
+        logger.info('Starting migrations')
+        print('Starting migrations')
+
+        try:
+            call_command('migrate', interactive=False)
+        except NotSupportedError as e:  # pragma: no cover
+            if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
+                raise e
+            logger.error(f'Error during migrations: {e}')
+
+        print('Migrations done')
+        logger.info('Ran migrations')
+
+    # Make sure we are out of maintenance again
+    logger.info('Checking InvenTree left maintenance mode')
+    if get_maintenance_mode():
+
+        logger.warning('Mainentance was still on - releasing now')
+        set_maintenance_mode(False)
+        logger.info('Released out of maintenance')
+
+    # We should be current now - triggering full reload to make sure all models
+    # are loaded fully in their new state.
+    registry.reload_plugins(full_reload=True, force_reload=True)
+
+
+def get_migration_plan():
+    """Returns a list of migrations which are needed to be run."""
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+    plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
+    return plan

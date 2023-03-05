@@ -584,54 +584,92 @@ function duplicateBom(part_id, options={}) {
  * Construct a "badge" label showing stock information for this particular part
  */
 function partStockLabel(part, options={}) {
+    var classes = options.classes || '';
 
     // Prevent literal string 'null' from being displayed
     var units = part.units || '';
 
+    var text = '';
+
+    // Check for stock
     if (part.in_stock) {
         // There IS stock available for this part
 
         // Is stock "low" (below the 'minimum_stock' quantity)?
         if ((part.minimum_stock > 0) && (part.minimum_stock > part.in_stock)) {
-            return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Low stock" %}: ${part.in_stock} ${units}</span>`;
+            text += `{% trans "Low stock" %}: ${part.in_stock}`;
         } else if (part.unallocated_stock == 0) {
-            if (part.ordering) {
-                // There is no available stock, but stock is on order
-                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering} ${units}</span>`;
-            } else if (part.building) {
-                // There is no available stock, but stock is being built
-                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building} ${units}</span>`;
-            } else {
-                // There is no available stock at all
-                return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "No stock available" %}</span>`;
-            }
+            // There is no available stock at all
+            text += `{% trans "No stock available" %}`;
         } else if (part.unallocated_stock < part.in_stock) {
             // Unallocated quanttiy is less than total quantity
-            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock} ${units}</span>`;
+            text += `{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}`;
         } else {
             // Stock is completely available
-            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock} ${units}</span>`;
+            text += `{% trans "Available" %}: ${part.unallocated_stock}`;
         }
     } else {
         // There IS NO stock available for this part
-
-        if (part.ordering) {
-            // There is no stock, but stock is on order
-            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering} ${units}</span>`;
-        } else if (part.building) {
-            // There is no stock, but stock is being built
-            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building} ${units}</span>`;
-        } else {
-            // There is no stock
-            var unit_badge = '';
-            if (units) {
-                // show units next to [No Stock] badge
-                unit_badge = `<span class='badge rounded-pill text-muted bg-muted ${options.classes}'>{% trans "Unit" %}: ${units}</span> `;
-            }
-            return `${unit_badge}<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
-        }
+        text += `{% trans "No Stock" %}`;
     }
 
+    // Check for items on order
+    if (part.ordering) {
+        text += ` | {% trans "On Order" %}: ${part.ordering}`;
+    }
+
+    // Check for items beeing built
+    if (part.building) {
+        text += ` | {% trans "Building" %}: ${part.building}`;
+    }
+
+    // Check for demand from unallocated build orders
+    var required_build_order_quantity = null;
+    var required_sales_order_quantity = null;
+    inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
+        async: false,
+        success: function(response) {
+            required_build_order_quantity = 0;
+            if (response.required_build_order_quantity) {
+                required_build_order_quantity = response.required_build_order_quantity;
+            }
+            required_sales_order_quantity = 0;
+            if (response.required_sales_order_quantity) {
+                required_sales_order_quantity = response.required_sales_order_quantity;
+            }
+        }
+    });
+    if ((required_build_order_quantity == null) || (required_sales_order_quantity == null)) {
+        console.error(`Error loading part requirements for part ${part.pk}`);
+        return;
+    }
+    var demand = (required_build_order_quantity - part.allocated_to_build_orders) + (required_sales_order_quantity - part.allocated_to_sales_orders);
+    if (demand) {
+        text += ` | {% trans "Demand" %}: ${demand}`;
+    }
+
+    // Determine badge color based on overall stock health
+    var stock_health = part.in_stock + part.building + part.ordering - part.minimum_stock - required_build_order_quantity - required_sales_order_quantity;
+    var bg_class = '';
+    if (stock_health < 0) {
+        // Unsatisfied demand and/or below minimum stock
+        bg_class = 'bg-danger';
+    } else if (stock_health == 0) {
+        // Demand and minimum stock matched exactly by available stock and incoming/building
+        bg_class = 'bg-warning';
+    } else {
+        // Surplus stock available or already incoming/building in sufficient quantities
+        bg_class = 'bg-success';
+    }
+
+    // show units next to stock badge
+    var unit_badge = '';
+    if (units && !options.no_units) {
+        unit_badge = `<span class='badge rounded-pill text-muted bg-muted ${classes}'>{% trans "Unit" %}: ${units}</span> `;
+    }
+
+    // return badge html
+    return `${unit_badge}<span class='badge rounded-pill ${bg_class} ${classes}'>${text}</span>`;
 }
 
 

@@ -12,9 +12,8 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 
 import InvenTree.tasks
+from InvenTree.config import get_setting
 from InvenTree.ready import canAppAccessDatabase, isInTestMode
-
-from .config import get_setting
 
 logger = logging.getLogger("inventree")
 
@@ -24,8 +23,18 @@ class InvenTreeConfig(AppConfig):
     name = 'InvenTree'
 
     def ready(self):
-        """Setup background tasks and update exchange rates."""
+        """Run system wide setup init steps.
+
+        Like:
+        - Checking if migrations should be run
+        - Cleaning up tasks
+        - Starting regular tasks
+        - Updateing exchange rates
+        - Collecting notification mehods
+        - Adding users set in the current environment
+        """
         if canAppAccessDatabase() or settings.TESTING_ENV:
+            InvenTree.tasks.check_for_migrations(worker=False)
 
             self.remove_obsolete_tasks()
 

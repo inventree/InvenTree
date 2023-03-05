@@ -34,10 +34,11 @@ class AbstractOrderSerializer(serializers.Serializer):
     """Abstract field definitions for OrderSerializers."""
 
     total_price = InvenTreeMoneySerializer(
-        source='get_total_price',
         allow_null=True,
         read_only=True,
     )
+
+    total_price_currency = InvenTreeCurrencySerializer(read_only=True)
 
 
 class AbstractExtraLineSerializer(serializers.Serializer):
@@ -105,6 +106,7 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
             'target_date',
             'notes',
             'total_price',
+            'total_price_currency',
         ]
 
         read_only_fields = [
@@ -668,6 +670,7 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
             'shipment_date',
             'target_date',
             'total_price',
+            'total_price_currency',
         ]
 
         read_only_fields = [

@@ -822,6 +822,17 @@ class TestSettings(helpers.InvenTreeTestCase):
         with self.in_env_context({TEST_ENV_NAME: '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
+        # test typecasting to dict - None should be mapped to empty dict
+        self.assertEqual(config.get_setting(TEST_ENV_NAME, None, None, typecast=dict), {})
+
+        # test typecasting to dict - valid JSON string should be mapped to corresponding dict
+        with self.in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
+            self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {"a": 1})
+
+        # test typecasting to dict - invalid JSON string should be mapped to empty dict
+        with self.in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
+            self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
+
 
 class TestInstanceName(helpers.InvenTreeTestCase):
     """Unit tests for instance name."""

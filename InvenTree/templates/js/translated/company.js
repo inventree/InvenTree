@@ -146,7 +146,7 @@ function supplierPartFields(options={}) {
 }
 
 /*
- * Launch a form to create a new ManufacturerPart
+ * Launch a form to create a new SupplierPart
  */
 function createSupplierPart(options={}) {
 
@@ -194,11 +194,26 @@ function createSupplierPart(options={}) {
         }
     };
 
+    var header = '';
+    if (options.part) {
+        var part_model = {};
+        inventreeGet(`/api/part/${options.part}/.*`, {}, {
+            async: false,
+            success: function(response) {
+                part_model = response;
+            }
+        });
+        header = constructLabel('Base Part', {});
+        header += renderPart('header', part_model);
+        header += `<div>&nbsp;</div>`;
+    }
+
     constructForm('{% url "api-supplier-part-list" %}', {
         fields: fields,
         method: 'POST',
         title: '{% trans "Add Supplier Part" %}',
         onSuccess: options.onSuccess,
+        header_html: header,
     });
 }
 

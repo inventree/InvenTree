@@ -1,7 +1,11 @@
 """Unit tests for task management."""
 
+import os
 from datetime import timedelta
 
+from django.conf import settings
+from django.core.management import call_command
+from django.db.utils import NotSupportedError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -108,12 +112,41 @@ class InvenTreeTaskTests(TestCase):
     def test_task_check_for_updates(self):
         """Test the task check_for_updates."""
         # Check that setting should be empty
-        self.assertEqual(InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION'), '')
+        self.assertEqual(InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION'), '')
 
         # Get new version
         InvenTree.tasks.offload_task(InvenTree.tasks.check_for_updates)
 
         # Check that setting is not empty
-        response = InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION')
+        response = InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION')
         self.assertNotEqual(response, '')
         self.assertTrue(bool(response))
+
+    def test_task_check_for_migrations(self):
+        """Test the task check_for_migrations."""
+        # Update disabled
+        InvenTree.tasks.check_for_migrations()
+
+        # Update enabled - no migrations
+        os.environ['INVENTREE_AUTO_UPDATE'] = 'True'
+        InvenTree.tasks.check_for_migrations()
+
+        # Create migration
+        self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 0)
+        call_command('makemigrations', ['InvenTree', '--empty'], interactive=False)
+        self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 1)
+
+        # Run with migrations - catch no foreigner error
+        try:
+            InvenTree.tasks.check_for_migrations()
+        except NotSupportedError as e:  # pragma: no cover
+            if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
+                raise e
+
+        # Cleanup
+        try:
+            migration_name = InvenTree.tasks.get_migration_plan()[0][0].name + '.py'
+            migration_path = settings.BASE_DIR / 'InvenTree' / 'migrations' / migration_name
+            migration_path.unlink()
+        except IndexError:  # pragma: no cover
+            pass

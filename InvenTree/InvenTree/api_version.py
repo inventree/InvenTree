@@ -2,10 +2,16 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 97
+INVENTREE_API_VERSION = 99
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v99 -> 2023-03-03 : https://github.com/inventree/InvenTree/pull/4445
+    - Adds sort by "responsible" to PurchaseOrderAPI
+
+v98 -> 2023-02-24 : https://github.com/inventree/InvenTree/pull/4408
+    - Adds "responsible" filter to Build API
 
 v97 -> 2023-02-20 : https://github.com/inventree/InvenTree/pull/4377
     - Adds "external" attribute to StockLocation model
