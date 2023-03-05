@@ -51,6 +51,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
     Instances of this class:
 
     - PuchaseOrder
+    - SalesOrder
 
     Attributes:
         reference: Unique order number / reference / code
@@ -115,12 +116,6 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
     def update_total_price(self, commit=True):
         """Recalculate and save the total_price for this order"""
-
-        # First, ensure this instance is still in the database
-        try:
-            self.refresh_from_db()
-        except Exception:
-            return
 
         self.total_price = self.calculate_total_price()
 
