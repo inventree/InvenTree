@@ -941,6 +941,13 @@ class OrderLineItem(models.Model):
         validators=[MinValueValidator(0)],
     )
 
+    @property
+    def total_line_price(self):
+        """Return the total price for this line item"""
+
+        if self.price:
+            return self.quantity * self.price
+
     reference = models.CharField(max_length=100, blank=True, verbose_name=_('Reference'), help_text=_('Line item reference'))
 
     notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
@@ -1057,6 +1064,11 @@ class PurchaseOrderLineItem(OrderLineItem):
         help_text=_('Unit purchase price'),
     )
 
+    @property
+    def price(self):
+        """Return the 'purchase_price' field as 'price'"""
+        return self.purchase_price
+
     destination = TreeForeignKey(
         'stock.StockLocation', on_delete=models.SET_NULL,
         verbose_name=_('Destination'),
@@ -1162,6 +1174,11 @@ class SalesOrderLineItem(OrderLineItem):
         verbose_name=_('Sale Price'),
         help_text=_('Unit sale price'),
     )
+
+    @property
+    def price(self):
+        """Return the 'sale_price' field as 'price'"""
+        return self.sale_price
 
     shipped = RoundingDecimalField(
         verbose_name=_('Shipped'),
