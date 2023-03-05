@@ -109,7 +109,6 @@ table td.expand {
             <td>{% decimal line.quantity %}</td>
             <td>{% include "price_data.html" with price=line.purchase_price %}</td>
             <td>{% include "price_data.html" with price=line.total_line_price %}</td>
-            <td>TODO</td>
             <td>{{ line.notes }}</td>
         </tr>
         {% endfor %}
