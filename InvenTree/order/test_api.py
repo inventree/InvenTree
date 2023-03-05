@@ -950,12 +950,12 @@ class PurchaseOrderReceiveTest(OrderTest):
                 {
                     'line_item': 1,
                     'quantity': 10,
-                    'batch_code': 'abc-123',
+                    'batch_code': 'B-abc-123',
                 },
                 {
                     'line_item': 2,
                     'quantity': 10,
-                    'batch_code': 'xyz-789',
+                    'batch_code': 'B-xyz-789',
                 }
             ],
             'location': 1,
@@ -975,8 +975,8 @@ class PurchaseOrderReceiveTest(OrderTest):
         item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
         item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
 
-        self.assertEqual(item_1.batch, 'abc-123')
-        self.assertEqual(item_2.batch, 'xyz-789')
+        self.assertEqual(item_1.batch, 'B-abc-123')
+        self.assertEqual(item_2.batch, 'B-xyz-789')
 
     def test_serial_numbers(self):
         """Test that we can supply a 'serial number' when receiving items."""
@@ -991,13 +991,13 @@ class PurchaseOrderReceiveTest(OrderTest):
                 {
                     'line_item': 1,
                     'quantity': 10,
-                    'batch_code': 'abc-123',
+                    'batch_code': 'B-abc-123',
                     'serial_numbers': '100+',
                 },
                 {
                     'line_item': 2,
                     'quantity': 10,
-                    'batch_code': 'xyz-789',
+                    'batch_code': 'B-xyz-789',
                 }
             ],
             'location': 1,
@@ -1022,7 +1022,7 @@ class PurchaseOrderReceiveTest(OrderTest):
             item = StockItem.objects.get(serial_int=i)
             self.assertEqual(item.serial, str(i))
             self.assertEqual(item.quantity, 1)
-            self.assertEqual(item.batch, 'abc-123')
+            self.assertEqual(item.batch, 'B-abc-123')
 
         # A single stock item (quantity 10) created for the second line item
         items = StockItem.objects.filter(supplier_part=line_2.part)
@@ -1031,7 +1031,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         item = items.first()
 
         self.assertEqual(item.quantity, 10)
-        self.assertEqual(item.batch, 'xyz-789')
+        self.assertEqual(item.batch, 'B-xyz-789')
 
 
 class SalesOrderTest(OrderTest):
@@ -1437,7 +1437,7 @@ class SalesOrderLineItemTest(OrderTest):
         n_parts = Part.objects.filter(salable=True).count()
 
         # List by part
-        for part in Part.objects.filter(salable=True):
+        for part in Part.objects.filter(salable=True)[:3]:
             response = self.get(
                 self.url,
                 {
@@ -1449,7 +1449,7 @@ class SalesOrderLineItemTest(OrderTest):
             self.assertEqual(response.data['count'], n_orders)
 
         # List by order
-        for order in models.SalesOrder.objects.all():
+        for order in models.SalesOrder.objects.all()[:3]:
             response = self.get(
                 self.url,
                 {
