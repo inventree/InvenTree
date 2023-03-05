@@ -33,7 +33,7 @@ from common.notifications import (InvenTreeNotificationBodies,
                                   NotificationBody, trigger_notification)
 from common.settings import currency_code_default
 
-from .api_tester import UserMixin
+from .api_tester import ExchangeRateMixin, UserMixin
 from .settings import MEDIA_URL, STATIC_URL
 
 logger = logging.getLogger('inventree')
@@ -1059,7 +1059,7 @@ def inheritors(cls):
     return subcls
 
 
-class InvenTreeTestCase(UserMixin, TestCase):
+class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
     """Testcase with user setup buildin."""
     pass
 

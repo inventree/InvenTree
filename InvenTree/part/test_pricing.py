@@ -2,7 +2,6 @@
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from djmoney.money import Money
 
 import common.models
@@ -17,31 +16,6 @@ from InvenTree.status_codes import PurchaseOrderStatus
 
 class PartPricingTests(InvenTreeTestCase):
     """Unit tests for part pricing calculations"""
-
-    def generate_exchange_rates(self):
-        """Generate some exchange rates to work with"""
-
-        rates = {
-            'AUD': 1.5,
-            'CAD': 1.7,
-            'GBP': 0.9,
-            'USD': 1.0,
-        }
-
-        # Create a dummy backend
-        ExchangeBackend.objects.create(
-            name='InvenTreeExchange',
-            base_currency='USD',
-        )
-
-        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-
-        for currency, rate in rates.items():
-            Rate.objects.create(
-                currency=currency,
-                value=rate,
-                backend=backend,
-            )
 
     def setUp(self):
         """Setup routines"""
