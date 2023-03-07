@@ -592,13 +592,13 @@ function partStockLabel(part, options={}) {
     let elements = [];
 
     // Check for stock
-    if (part.in_stock) {
+    if (part.total_in_stock) {
         // There IS stock available for this part
 
         // Is stock "low" (below the 'minimum_stock' quantity)?
-        if ((part.minimum_stock > 0) && (part.minimum_stock > part.in_stock)) {
-            elements.push(`{% trans "Low stock" %}: ${part.in_stock}`);
-        } else if (part.unallocated_stock == 0) {
+        if ((part.minimum_stock > 0) && (part.minimum_stock > part.total_in_stock)) {
+            elements.push(`{% trans "Low stock" %}: ${part.total_in_stock}`);
+        } else if (part.unallocated_stock <= 0) {
             // There is no available stock at all
             elements.push(`{% trans "No stock available" %}`);
         } else if (part.unallocated_stock < part.in_stock) {
@@ -630,7 +630,7 @@ function partStockLabel(part, options={}) {
     }
 
     // Determine badge color based on overall stock health
-    var stock_health = part.in_stock + part.building + part.ordering - part.minimum_stock;
+    var stock_health = part.unallocated_stock + part.building + part.ordering - part.minimum_stock;
 
     // TODO: Refactor the API to include this information, so we don't have to request it!
     if (!options.noDemandInfo) {
@@ -667,6 +667,7 @@ function partStockLabel(part, options={}) {
     }
 
     var bg_class = '';
+
     if (stock_health < 0) {
         // Unsatisfied demand and/or below minimum stock
         bg_class = 'bg-danger';
@@ -678,16 +679,19 @@ function partStockLabel(part, options={}) {
         bg_class = 'bg-success';
     }
 
-    // show units next to stock badge
+    // Display units next to stock badge
     let unit_badge = '';
+
     if (units && !options.no_units) {
         unit_badge = `<span class='badge rounded-pill text-muted bg-muted ${classes}'>{% trans "Unit" %}: ${units}</span> `;
     }
 
-    let text = elements.join(' | ');
-
-    // return badge html
-    return `${unit_badge}<span class='badge rounded-pill ${bg_class} ${classes}'>${text}</span>`;
+    if (elements.length > 0) {
+        let text = elements.join(' | ');
+        return `${unit_badge}<span class='badge rounded-pill ${bg_class} ${classes}'>${text}</span>`;
+    } else {
+        return '';
+    }
 }
 
 
