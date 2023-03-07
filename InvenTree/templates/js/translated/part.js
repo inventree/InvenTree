@@ -1902,10 +1902,11 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
-    col = {
+    columns.push({
         sortName: 'category',
         field: 'category_detail',
         title: '{% trans "Category" %}',
+        sortable: true,
         formatter: function(value, row) {
             if (row.category && row.category_detail) {
                 var text = shortenString(row.category_detail.pathstring);
@@ -1914,81 +1915,26 @@ function loadPartTable(table, url, options={}) {
                 return '<em>{% trans "No category" %}</em>';
             }
         }
-    };
+    });
 
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
 
-    columns.push(col);
-
-    col = {
-        field: 'unallocated_stock',
+    columns.push({
+        field: 'total_in_stock',
         title: '{% trans "Stock" %}',
-        searchable: false,
+        sortable: true,
         formatter: function(value, row) {
 
-            var text = '';
+            var text = renderLink(value, `/part/${row.pk}/?display=part-stock`);
 
-            var total_stock = row.in_stock;
-
-            if (row.variant_stock) {
-                total_stock += row.variant_stock;
-            }
-
-            var text = `${total_stock}`;
-
-            // Construct extra informational badges
-            var badges = '';
-
-            if (total_stock == 0) {
-                badges += `<span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "No stock" %}'></span>`;
-            } else if (total_stock < row.minimum_stock) {
-                badges += `<span class='fas fa-exclamation-circle icon-yellow float-right' title='{% trans "Low stock" %}'></span>`;
-            }
-
-            if (row.ordering && row.ordering > 0) {
-                badges += renderLink(
-                    `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.ordering}'></span>`,
-                    `/part/${row.pk}/?display=purchase-orders`
-                );
-            }
-
-            if (row.building && row.building > 0) {
-                badges += renderLink(
-                    `<span class='fas fa-tools float-right' title='{% trans "Building" %}: ${row.building}'></span>`,
-                    `/part/${row.pk}/?display=build-orders`
-                );
-            }
-
-            if (row.variant_stock && row.variant_stock > 0) {
-                badges += `<span class='fas fa-info-circle float-right' title='{% trans "Includes variant stock" %}'></span>`;
-            }
-
-            if (row.allocated_to_build_orders > 0) {
-                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to build orders" %}: ${row.allocated_to_build_orders}'></span>`;
-            }
-
-            if (row.allocated_to_sales_orders > 0) {
-                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to sales orders" %}: ${row.allocated_to_sales_orders}'></span>`;
-            }
-
-            if (row.units) {
-                text += ` <small>${row.units}</small>`;
-            }
-
-            text = renderLink(text, `/part/${row.pk}/?display=part-stock`);
-            text += badges;
+            text += partStockLabel(row, {
+                noDemandInfo: true,
+                hideTotalStock: true,
+                classes: 'float-right',
+            });
 
             return text;
         }
-    };
-
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
-
-    columns.push(col);
+    });
 
     // Pricing information
     columns.push({
@@ -2003,6 +1949,7 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    // External link / URL
     columns.push({
         field: 'link',
         title: '{% trans "Link" %}',
