@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 99
+INVENTREE_API_VERSION = 100
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v100 -> 2023-03-07 : https://github.com/inventree/InvenTree/pull/4462
+    - Adds 'total_in_stock' to Part serializer, and supports API ordering
 
 v99 -> 2023-03-03 : https://github.com/inventree/InvenTree/pull/4445
     - Adds sort by "responsible" to PurchaseOrderAPI
