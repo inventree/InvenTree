@@ -33,39 +33,41 @@ class UserMixin:
     # Set list of roles automatically associated with the user
     roles = []
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
+        super().setUpTestData()
 
         # Create a user to log in with
-        self.user = get_user_model().objects.create_user(
-            username=self.username,
-            password=self.password,
-            email=self.email
+        cls.user = get_user_model().objects.create_user(
+            username=cls.username,
+            password=cls.password,
+            email=cls.email
         )
 
         # Create a group for the user
-        self.group = Group.objects.create(name='my_test_group')
-        self.user.groups.add(self.group)
+        cls.group = Group.objects.create(name='my_test_group')
+        cls.user.groups.add(cls.group)
 
-        if self.superuser:
-            self.user.is_superuser = True
+        if cls.superuser:
+            cls.user.is_superuser = True
 
-        if self.is_staff:
-            self.user.is_staff = True
+        if cls.is_staff:
+            cls.user.is_staff = True
 
-        self.user.save()
+        cls.user.save()
 
         # Assign all roles if set
-        if self.roles == 'all':
-            self.assignRole(assign_all=True)
+        if cls.roles == 'all':
+            cls.assignRole(assign_all=True)
+
         # else filter the roles
         else:
-            for role in self.roles:
-                self.assignRole(role)
+            for role in cls.roles:
+                cls.assignRole(role)
 
-        if self.auto_login:
-            self.client.login(username=self.username, password=self.password)
+        if cls.auto_login:
+            cls.client.login(username=cls.username, password=cls.password)
 
     def assignRole(self, role=None, assign_all: bool = False):
         """Set the user roles for the registered user.

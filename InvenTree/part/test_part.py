@@ -531,15 +531,16 @@ class PartSubscriptionTests(InvenTreeTestCase):
         'part',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Create category and part data as part of setup routine"""
-        super().setUp()
+        super().setUpTestData()
 
-        # electronics / IC / MCU
-        self.category = PartCategory.objects.get(pk=4)
+        # Electronics / IC / MCU
+        cls.category = PartCategory.objects.get(pk=4)
 
-        self.part = Part.objects.create(
-            category=self.category,
+        cls.part = Part.objects.create(
+            category=cls.category,
             name='STM32F103',
             description='Currently worth a lot of money',
             is_template=True,
