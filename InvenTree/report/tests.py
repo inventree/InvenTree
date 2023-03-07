@@ -137,6 +137,14 @@ class ReportTagTest(TestCase):
             logo = report_tags.logo_image()
             self.assertIn('inventree.png', logo)
 
+    def test_maths_tags(self):
+        """Simple tests for mathematical operator tags"""
+
+        self.assertEqual(report_tags.add(1, 2), 3)
+        self.assertEqual(report_tags.subtract(10, 4.2), 5.8)
+        self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
+        self.assertEqual(report_tags.divide(100, 5), 20)
+
 
 class BarcodeTagTest(TestCase):
     """Unit tests for the barcode template tags"""
