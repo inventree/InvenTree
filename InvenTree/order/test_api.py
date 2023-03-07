@@ -603,6 +603,26 @@ class PurchaseOrderLineItemTest(OrderTest):
         self.filter({'has_pricing': 1}, 0)
         self.filter({'has_pricing': 0}, 5)
 
+    def test_po_line_bulk_delete(self):
+        """Test that we can bulk delete multiple PurchaseOrderLineItems via the API."""
+        n = models.PurchaseOrderLineItem.objects.count()
+
+        self.assignRole('purchase_order.delete')
+
+        url = reverse('api-po-line-list')
+
+        # Try to delete a set of line items via their IDs
+        self.delete(
+            url,
+            {
+                'items': [1, 2],
+            },
+            expected_code=204,
+        )
+
+        # We should have 2 less PurchaseOrderLineItems after deletign them
+        self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
+
 
 class PurchaseOrderDownloadTest(OrderTest):
     """Unit tests for downloading PurchaseOrder data via the API endpoint."""
