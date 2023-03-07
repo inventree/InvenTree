@@ -495,7 +495,7 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
         return queryset
 
 
-class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateAPI):
+class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateDestroyAPIView):
     """API endpoint for accessing a list of PurchaseOrderLineItem objects.
 
     - GET: Return a list of PurchaseOrder Line Item objects
