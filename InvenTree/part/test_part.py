@@ -134,14 +134,16 @@ class PartTest(TestCase):
         'part_pricebreaks'
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Create some Part instances as part of init routine"""
-        super().setUp()
 
-        self.r1 = Part.objects.get(name='R_2K2_0805')
-        self.r2 = Part.objects.get(name='R_4K7_0603')
+        super().setUpTestData()
 
-        self.c1 = Part.objects.get(name='C_22N_0805')
+        cls.r1 = Part.objects.get(name='R_2K2_0805')
+        cls.r2 = Part.objects.get(name='R_4K7_0603')
+
+        cls.c1 = Part.objects.get(name='C_22N_0805')
 
         Part.objects.rebuild()
 
