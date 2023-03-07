@@ -1717,7 +1717,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         detailFormatter: function(index, row, element) {
             // Contruct an 'inner table' which shows which stock items have been allocated
 
-            var subTableId = `allocation-table-${row.pk}`;
+            var subTableId = `allocation-table-${outputId}-${row.pk}`;
 
             var html = `<div class='sub-table'><table class='table table-condensed table-striped' id='${subTableId}'></table></div>`;
 
