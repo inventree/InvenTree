@@ -215,7 +215,7 @@ class PartPricingTests(InvenTreeTestCase):
         # Create a part
         p = part.models.Part.objects.create(
             name='Test part for pricing',
-            description='hello world',
+            description='hello world, this is a part description',
         )
 
         # Create some stock items

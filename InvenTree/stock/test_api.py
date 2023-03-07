@@ -161,7 +161,7 @@ class StockLocationTest(StockAPITestCase):
             # Create stock items in the location to be deleted
             for jj in range(3):
                 stock_items.append(StockItem.objects.create(
-                    batch=f"Stock Item xyz {jj}",
+                    batch=f"Batch xyz {jj}",
                     location=stock_location_to_delete,
                     part=part
                 ))
@@ -180,7 +180,7 @@ class StockLocationTest(StockAPITestCase):
                 # Create stock items in the sub locations
                 for jj in range(3):
                     child_stock_locations_items.append(StockItem.objects.create(
-                        batch=f"Stock item in sub location xyz {jj}",
+                        batch=f"B xyz {jj}",
                         part=part,
                         location=child
                     ))
@@ -272,7 +272,7 @@ class StockLocationTest(StockAPITestCase):
 
         # Create the test stock item located to a non-structural category
         item = StockItem.objects.create(
-            batch="Item which will be tried to relocated to a structural location",
+            batch="BBB",
             location=non_structural_location,
             part=part
         )
@@ -951,7 +951,7 @@ class StockItemTest(StockAPITestCase):
 
         # First, construct a set of template / variant parts
         master_part = part.models.Part.objects.create(
-            name='Master', description='Master part',
+            name='Master', description='Master part which has variants',
             category=category,
             is_template=True,
         )

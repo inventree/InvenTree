@@ -9,13 +9,16 @@ from plugin.mixins import SettingsMixin, ValidationMixin
 
 
 class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
-    """A sample plugin class for demonstrating custom validation functions"""
+    """A sample plugin class for demonstrating custom validation functions.
+
+    Simple of examples of custom validator code.
+    """
 
     NAME = "CustomValidator"
     SLUG = "validator"
     TITLE = "Custom Validator Plugin"
     DESCRIPTION = "A sample plugin for demonstrating custom validation functionality"
-    VERSION = "0.1"
+    VERSION = "0.2"
 
     SETTINGS = {
         'ILLEGAL_PART_CHARS': {
@@ -35,15 +38,30 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             'default': False,
             'validator': bool,
         },
+        'SERIAL_MUST_MATCH_PART': {
+            'name': 'Serial must match part',
+            'description': 'First letter of serial number must match first letter of part name',
+            'default': False,
+            'validator': bool,
+        },
         'BATCH_CODE_PREFIX': {
             'name': 'Batch prefix',
             'description': 'Required prefix for batch code',
-            'default': '',
-        }
+            'default': 'B',
+        },
     }
 
-    def validate_part_name(self, name: str):
-        """Validate part name"""
+    def validate_part_name(self, name: str, part):
+        """Custom validation for Part name field:
+
+        - Name must be shorter than the description field
+        - Name cannot contain illegal characters
+
+        These examples are silly, but serve to demonstrate how the feature could be used
+        """
+
+        if len(part.description) < len(name):
+            raise ValidationError("Part description cannot be shorter than the name")
 
         illegal_chars = self.get_setting('ILLEGAL_PART_CHARS')
 
@@ -51,26 +69,41 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             if c in name:
                 raise ValidationError(f"Illegal character in part name: '{c}'")
 
-    def validate_part_ipn(self, ipn: str):
-        """Validate part IPN"""
+    def validate_part_ipn(self, ipn: str, part):
+        """Validate part IPN
+
+        These examples are silly, but serve to demonstrate how the feature could be used
+        """
 
         if self.get_setting('IPN_MUST_CONTAIN_Q') and 'Q' not in ipn:
             raise ValidationError("IPN must contain 'Q'")
 
-    def validate_serial_number(self, serial: str):
-        """Validate serial number for a given StockItem"""
+    def validate_serial_number(self, serial: str, part):
+        """Validate serial number for a given StockItem
+
+        These examples are silly, but serve to demonstrate how the feature could be used
+        """
 
         if self.get_setting('SERIAL_MUST_BE_PALINDROME'):
             if serial != serial[::-1]:
                 raise ValidationError("Serial must be a palindrome")
 
-    def validate_batch_code(self, batch_code: str):
-        """Ensure that a particular batch code meets specification"""
+        if self.get_setting('SERIAL_MUST_MATCH_PART'):
+            # Serial must start with the same letter as the linked part, for some reason
+            if serial[0] != part.name[0]:
+                raise ValidationError("Serial number must start with same letter as part")
+
+    def validate_batch_code(self, batch_code: str, item):
+        """Ensure that a particular batch code meets specification.
+
+        These examples are silly, but serve to demonstrate how the feature could be used
+        """
 
         prefix = self.get_setting('BATCH_CODE_PREFIX')
 
-        if not batch_code.startswith(prefix):
-            raise ValidationError(f"Batch code must start with '{prefix}'")
+        if len(batch_code) > 0:
+            if prefix and not batch_code.startswith(prefix):
+                raise ValidationError(f"Batch code must start with '{prefix}'")
 
     def generate_batch_code(self):
         """Generate a new batch code."""

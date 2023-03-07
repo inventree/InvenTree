@@ -11,8 +11,6 @@ from django.utils.translation import gettext_lazy as _
 from jinja2 import Template
 from moneyed import CURRENCIES
 
-import common.models
-
 
 def validate_currency_code(code):
     """Check that a given code is a valid currency code."""
@@ -45,50 +43,6 @@ class AllowedURLValidator(validators.URLValidator):
         """Validate the URL."""
         self.schemes = allowable_url_schemes()
         super().__call__(value)
-
-
-def validate_part_name(value):
-    """Validate the name field for a Part instance
-
-    This function is exposed to any Validation plugins, and thus can be customized.
-    """
-
-    from plugin.registry import registry
-
-    for plugin in registry.with_mixin('validation'):
-        # Run the name through each custom validator
-        # If the plugin returns 'True' we will skip any subsequent validation
-        if plugin.validate_part_name(value):
-            return
-
-
-def validate_part_ipn(value):
-    """Validate the IPN field for a Part instance.
-
-    This function is exposed to any Validation plugins, and thus can be customized.
-
-    If no validation errors are raised, the IPN is also validated against a configurable regex pattern.
-    """
-
-    from plugin.registry import registry
-
-    plugins = registry.with_mixin('validation')
-
-    for plugin in plugins:
-        # Run the IPN through each custom validator
-        # If the plugin returns 'True' we will skip any subsequent validation
-        if plugin.validate_part_ipn(value):
-            return
-
-    # If we get to here, none of the plugins have raised an error
-
-    pattern = common.models.InvenTreeSetting.get_setting('PART_IPN_REGEX')
-
-    if pattern:
-        match = re.search(pattern, value)
-
-        if match is None:
-            raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
 
 
 def validate_purchase_order_reference(value):
