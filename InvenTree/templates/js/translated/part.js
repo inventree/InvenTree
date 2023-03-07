@@ -589,7 +589,7 @@ function partStockLabel(part, options={}) {
     // Prevent literal string 'null' from being displayed
     var units = part.units || '';
 
-    var text = '';
+    let elements = [];
 
     // Check for stock
     if (part.in_stock) {
@@ -597,35 +597,48 @@ function partStockLabel(part, options={}) {
 
         // Is stock "low" (below the 'minimum_stock' quantity)?
         if ((part.minimum_stock > 0) && (part.minimum_stock > part.in_stock)) {
-            text += `{% trans "Low stock" %}: ${part.in_stock}`;
+            elements.push(`{% trans "Low stock" %}: ${part.in_stock}`);
         } else if (part.unallocated_stock == 0) {
             // There is no available stock at all
-            text += `{% trans "No stock available" %}`;
+            elements.push(`{% trans "No stock available" %}`);
         } else if (part.unallocated_stock < part.in_stock) {
-            // Unallocated quanttiy is less than total quantity
-            text += `{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}`;
+            // Unallocated quantity is less than total quantity
+            if (options.hideTotalStock) {
+                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}`);
+            } else {
+                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}`);
+            }
         } else {
             // Stock is completely available
-            text += `{% trans "Available" %}: ${part.unallocated_stock}`;
+            if (!options.hideTotalStock) {
+                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}`);
+            }
         }
     } else {
         // There IS NO stock available for this part
-        text += `{% trans "No Stock" %}`;
+        elements.push(`{% trans "No Stock" %}`);
     }
 
     // Check for items on order
     if (part.ordering) {
-        text += ` | {% trans "On Order" %}: ${part.ordering}`;
+        elements.push(`{% trans "On Order" %}: ${part.ordering}`);
     }
 
     // Check for items beeing built
     if (part.building) {
-        text += ` | {% trans "Building" %}: ${part.building}`;
+        elements.push(`{% trans "Building" %}: ${part.building}`);
     }
+
+    // Determine badge color based on overall stock health
+    var stock_health = part.in_stock + part.building + part.ordering - part.minimum_stock;
+
+    // TODO: Refactor the API to include this information, so we don't have to request it!
+    if (!options.noDemandInfo) {
 
     // Check for demand from unallocated build orders
     var required_build_order_quantity = null;
     var required_sales_order_quantity = null;
+
     inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
         async: false,
         success: function(response) {
@@ -639,17 +652,20 @@ function partStockLabel(part, options={}) {
             }
         }
     });
+
     if ((required_build_order_quantity == null) || (required_sales_order_quantity == null)) {
         console.error(`Error loading part requirements for part ${part.pk}`);
         return;
     }
+
     var demand = (required_build_order_quantity - part.allocated_to_build_orders) + (required_sales_order_quantity - part.allocated_to_sales_orders);
     if (demand) {
-        text += ` | {% trans "Demand" %}: ${demand}`;
+            elements.push(`{% trans "Demand" %}: ${demand}`);
+        }
+
+        stock_health -= (required_build_order_quantity + required_sales_order_quantity);
     }
 
-    // Determine badge color based on overall stock health
-    var stock_health = part.in_stock + part.building + part.ordering - part.minimum_stock - required_build_order_quantity - required_sales_order_quantity;
     var bg_class = '';
     if (stock_health < 0) {
         // Unsatisfied demand and/or below minimum stock
@@ -663,10 +679,12 @@ function partStockLabel(part, options={}) {
     }
 
     // show units next to stock badge
-    var unit_badge = '';
+    let unit_badge = '';
     if (units && !options.no_units) {
         unit_badge = `<span class='badge rounded-pill text-muted bg-muted ${classes}'>{% trans "Unit" %}: ${units}</span> `;
     }
+
+    let text = elements.join(' | ');
 
     // return badge html
     return `${unit_badge}<span class='badge rounded-pill ${bg_class} ${classes}'>${text}</span>`;
