@@ -1838,8 +1838,6 @@ function loadPartTable(table, url, options={}) {
 
     var filters = {};
 
-    var col = null;
-
     if (!options.disableFilters) {
         filters = loadTableFilters('parts');
     }
