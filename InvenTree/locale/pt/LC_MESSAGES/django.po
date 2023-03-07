@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-05 13:01+0000\n"
-"PO-Revision-Date: 2023-03-06 11:38\n"
+"PO-Revision-Date: 2023-03-07 11:36\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -1811,207 +1811,207 @@ msgstr "Usar o nome da instância na barra de título"
 
 #: common/models.py:917
 msgid "Restrict showing `about`"
-msgstr ""
+msgstr "Restringir a exibição 'sobre'"
 
 #: common/models.py:918
 msgid "Show the `about` modal only to superusers"
-msgstr ""
+msgstr "Mostrar 'sobre' modal apenas para superusuários"
 
 #: common/models.py:924 company/models.py:98 company/models.py:99
 msgid "Company name"
-msgstr ""
+msgstr "Nome da empresa"
 
 #: common/models.py:925
 msgid "Internal company name"
-msgstr ""
+msgstr "Nome interno da Empresa"
 
 #: common/models.py:930
 msgid "Base URL"
-msgstr ""
+msgstr "URL de Base"
 
 #: common/models.py:931
 msgid "Base URL for server instance"
-msgstr ""
+msgstr "URL Base da instância do servidor"
 
 #: common/models.py:938
 msgid "Default Currency"
-msgstr ""
+msgstr "Moeda Padrão"
 
 #: common/models.py:939
 msgid "Select base currency for pricing caluclations"
-msgstr ""
+msgstr "Selecione a moeda padrão para os cálculos"
 
 #: common/models.py:946
 msgid "Download from URL"
-msgstr ""
+msgstr "Baixar do URL"
 
 #: common/models.py:947
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "Permitir baixar imagens remotas e arquivos de URLs externos"
 
 #: common/models.py:953
 msgid "Download Size Limit"
-msgstr ""
+msgstr "Limite de tamanho para baixar"
 
 #: common/models.py:954
 msgid "Maximum allowable download size for remote image"
-msgstr ""
+msgstr "Maior tamanho de imagem remota baixada permitida"
 
 #: common/models.py:965
 msgid "User-agent used to download from URL"
-msgstr ""
+msgstr "Usuário-agente utilizado para baixar da URL"
 
 #: common/models.py:966
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
-msgstr ""
+msgstr "Permitir a substituição de imagens e arquivos usados baixados por usuário-agente (deixar em branco por padrão)"
 
 #: common/models.py:971
 msgid "Require confirm"
-msgstr ""
+msgstr "Exigir confirmação"
 
 #: common/models.py:972
 msgid "Require explicit user confirmation for certain action."
-msgstr ""
+msgstr "Exigir confirmação explícita do usuário para uma certa ação."
 
 #: common/models.py:978
 msgid "Tree Depth"
-msgstr ""
+msgstr "Profundidade da árvore"
 
 #: common/models.py:979
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
-msgstr ""
+msgstr "Profundidade padrão de visualização da árvore. Níveis mais profundos podem ser carregados gradualmente conforme necessário."
 
 #: common/models.py:988
 msgid "Automatic Backup"
-msgstr ""
+msgstr "Cópia de Segurança Automática"
 
 #: common/models.py:989
 msgid "Enable automatic backup of database and media files"
-msgstr ""
+msgstr "Ativar cópia de segurança automática do banco de dados e arquivos de mídia"
 
 #: common/models.py:995
 msgid "Days Between Backup"
-msgstr ""
+msgstr "Dias entre as cópias de segurança"
 
 #: common/models.py:996
 msgid "Specify number of days between automated backup events"
-msgstr ""
+msgstr "Especificar o número de dia entre as cópias de segurança"
 
 #: common/models.py:1005
 msgid "Delete Old Tasks"
-msgstr ""
+msgstr "Apagar Tarefas Antigas"
 
 #: common/models.py:1006
 msgid "Background task results will be deleted after specified number of days"
-msgstr ""
+msgstr "Os resultados da tarefa no plano de fundo serão excluídos após um número especificado de dias"
 
 #: common/models.py:1016
 msgid "Delete Error Logs"
-msgstr ""
+msgstr "Excluir Registros de Erros"
 
 #: common/models.py:1017
 msgid "Error logs will be deleted after specified number of days"
-msgstr ""
+msgstr "Registros de erros serão excluídos após um número especificado de dias"
 
 #: common/models.py:1027 templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
 #: templates/InvenTree/notifications/notifications.html:77
 msgid "Delete Notifications"
-msgstr ""
+msgstr "Apagar notificações"
 
 #: common/models.py:1028
 msgid "User notifications will be deleted after specified number of days"
-msgstr ""
+msgstr "Notificações de usuários será excluído após um número especificado de dias"
 
 #: common/models.py:1038 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "Suporte aos códigos de barras"
 
 #: common/models.py:1039
 msgid "Enable barcode scanner support"
-msgstr ""
+msgstr "Habilitar suporte a leitor de códigos de barras"
 
 #: common/models.py:1045
 msgid "Barcode Input Delay"
-msgstr ""
+msgstr "Atraso na entrada de código de barras"
 
 #: common/models.py:1046
 msgid "Barcode input processing delay time"
-msgstr ""
+msgstr "Tempo de atraso de processamento de entrada de barras"
 
 #: common/models.py:1056
 msgid "Barcode Webcam Support"
-msgstr ""
+msgstr "Suporte a código de barras via Câmera"
 
 #: common/models.py:1057
 msgid "Allow barcode scanning via webcam in browser"
-msgstr ""
+msgstr "Permitir escanear código de barras por câmera pelo navegador"
 
 #: common/models.py:1063
 msgid "IPN Regex"
-msgstr ""
+msgstr "Regex IPN"
 
 #: common/models.py:1064
 msgid "Regular expression pattern for matching Part IPN"
-msgstr ""
+msgstr "Padrão de expressão regular adequado para Peça IPN"
 
 #: common/models.py:1068
 msgid "Allow Duplicate IPN"
-msgstr ""
+msgstr "Permitir Duplicação IPN"
 
 #: common/models.py:1069
 msgid "Allow multiple parts to share the same IPN"
-msgstr ""
+msgstr "Permitir que várias peças compartilhem o mesmo IPN"
 
 #: common/models.py:1075
 msgid "Allow Editing IPN"
-msgstr ""
+msgstr "Permitir Edição IPN"
 
 #: common/models.py:1076
 msgid "Allow changing the IPN value while editing a part"
-msgstr ""
+msgstr "Permitir trocar o valor do IPN enquanto se edita a peça"
 
 #: common/models.py:1082
 msgid "Copy Part BOM Data"
-msgstr ""
+msgstr "Copiar dados da LDM da Peça"
 
 #: common/models.py:1083
 msgid "Copy BOM data by default when duplicating a part"
-msgstr ""
+msgstr "Copiar dados da LDM por padrão quando duplicar a peça"
 
 #: common/models.py:1089
 msgid "Copy Part Parameter Data"
-msgstr ""
+msgstr "Copiar Dados de Parâmetro da Peça"
 
 #: common/models.py:1090
 msgid "Copy parameter data by default when duplicating a part"
-msgstr ""
+msgstr "Copiar dados de parâmetros por padrão quando duplicar uma peça"
 
 #: common/models.py:1096
 msgid "Copy Part Test Data"
-msgstr ""
+msgstr "Copiar Dados Teste da Peça"
 
 #: common/models.py:1097
 msgid "Copy test data by default when duplicating a part"
-msgstr ""
+msgstr "Copiar dados de teste por padrão quando duplicar a peça"
 
 #: common/models.py:1103
 msgid "Copy Category Parameter Templates"
-msgstr ""
+msgstr "Copiar Parâmetros dos Modelos de Categoria"
 
 #: common/models.py:1104
 msgid "Copy category parameter templates when creating a part"
-msgstr ""
+msgstr "Copiar parâmetros do modelo de categoria quando criar uma peça"
 
 #: common/models.py:1110 part/admin.py:55 part/models.py:3307
 #: report/models.py:158 templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:543
 msgid "Template"
-msgstr ""
+msgstr "Modelo"
 
 #: common/models.py:1111
 msgid "Parts are templates by default"
-msgstr ""
+msgstr "Peças são modelos por padrão"
 
 #: common/models.py:1117 part/admin.py:51 part/admin.py:282 part/models.py:927
 #: templates/js/translated/bom.js:1602
@@ -2142,175 +2142,175 @@ msgstr "Sobrescrever histórico de compra"
 
 #: common/models.py:1220
 msgid "Historical purchase order pricing overrides supplier price breaks"
-msgstr ""
+msgstr "Histórico do pedido de compra substitui os intervalos dos preços do fornecedor"
 
 #: common/models.py:1226
 msgid "Use Stock Item Pricing"
-msgstr ""
+msgstr "Usar Preços do Item em Estoque"
 
 #: common/models.py:1227
 msgid "Use pricing from manually entered stock data for pricing calculations"
-msgstr ""
+msgstr "Usar preço inserido manualmente no estoque para cálculos de valores"
 
 #: common/models.py:1233
 msgid "Stock Item Pricing Age"
-msgstr ""
+msgstr "Idade do preço do Item em Estoque"
 
 #: common/models.py:1234
 msgid "Exclude stock items older than this number of days from pricing calculations"
-msgstr ""
+msgstr "Não incluir itens em estoque mais velhos que este número de dias no cálculo de preços"
 
 #: common/models.py:1244
 msgid "Use Variant Pricing"
-msgstr ""
+msgstr "Usar Preço Variável"
 
 #: common/models.py:1245
 msgid "Include variant pricing in overall pricing calculations"
-msgstr ""
+msgstr "Incluir preços variáveis nos cálculos de valores gerais"
 
 #: common/models.py:1251
 msgid "Active Variants Only"
-msgstr ""
+msgstr "Apenas Ativar Variáveis"
 
 #: common/models.py:1252
 msgid "Only use active variant parts for calculating variant pricing"
-msgstr ""
+msgstr "Apenas usar peças variáveis ativas para calcular preço variáveis"
 
 #: common/models.py:1258
 msgid "Pricing Rebuild Time"
-msgstr ""
+msgstr "Tempo de Reconstituição de Preço"
 
 #: common/models.py:1259
 msgid "Number of days before part pricing is automatically updated"
-msgstr ""
+msgstr "Número de dias antes da atualização automática dos preços das peças"
 
 #: common/models.py:1260 common/models.py:1383
 msgid "days"
-msgstr ""
+msgstr "dias"
 
 #: common/models.py:1269
 msgid "Internal Prices"
-msgstr ""
+msgstr "Preços Internos"
 
 #: common/models.py:1270
 msgid "Enable internal prices for parts"
-msgstr ""
+msgstr "Habilitar preços internos para peças"
 
 #: common/models.py:1276
 msgid "Internal Price Override"
-msgstr ""
+msgstr "Sobrepor Valor Interno"
 
 #: common/models.py:1277
 msgid "If available, internal prices override price range calculations"
-msgstr ""
+msgstr "Se disponível, preços internos sobrepõe variação de cálculos de preço"
 
 #: common/models.py:1283
 msgid "Enable label printing"
-msgstr ""
+msgstr "Ativar impressão de etiquetas"
 
 #: common/models.py:1284
 msgid "Enable label printing from the web interface"
-msgstr ""
+msgstr "Ativar impressão de etiqueta pela interface da internet"
 
 #: common/models.py:1290
 msgid "Label Image DPI"
-msgstr ""
+msgstr "DPI da Imagem na Etiqueta"
 
 #: common/models.py:1291
 msgid "DPI resolution when generating image files to supply to label printing plugins"
-msgstr ""
+msgstr "Resolução de DPI quando gerar arquivo de imagens para fornecer à extensão de impressão de etiquetas"
 
 #: common/models.py:1300
 msgid "Enable Reports"
-msgstr ""
+msgstr "Habilitar Relatórios"
 
 #: common/models.py:1301
 msgid "Enable generation of reports"
-msgstr ""
+msgstr "Ativar geração de relatórios"
 
 #: common/models.py:1307 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "Modo de depuração"
 
 #: common/models.py:1308
 msgid "Generate reports in debug mode (HTML output)"
-msgstr ""
+msgstr "Gerar relatórios em modo de depuração (saída HTML)"
 
 #: common/models.py:1314
 msgid "Page Size"
-msgstr ""
+msgstr "Tamanho da página"
 
 #: common/models.py:1315
 msgid "Default page size for PDF reports"
-msgstr ""
+msgstr "Tamanho padrão da página PDF para relatórios"
 
 #: common/models.py:1325
 msgid "Enable Test Reports"
-msgstr ""
+msgstr "Ativar Relatórios Teste"
 
 #: common/models.py:1326
 msgid "Enable generation of test reports"
-msgstr ""
+msgstr "Ativar geração de relatórios de teste"
 
 #: common/models.py:1332
 msgid "Attach Test Reports"
-msgstr ""
+msgstr "Anexar Relatórios de Teste"
 
 #: common/models.py:1333
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
-msgstr ""
+msgstr "Quando imprimir um Relatório de Teste, anexar uma cópia do mesmo ao item de estoque associado"
 
 #: common/models.py:1339
 msgid "Globally Unique Serials"
-msgstr ""
+msgstr "Seriais Únicos Globais"
 
 #: common/models.py:1340
 msgid "Serial numbers for stock items must be globally unique"
-msgstr ""
+msgstr "Números de série para itens de estoque devem ser globalmente únicos"
 
 #: common/models.py:1346
 msgid "Autofill Serial Numbers"
-msgstr ""
+msgstr "Preenchimento automático de Números Seriais"
 
 #: common/models.py:1347
 msgid "Autofill serial numbers in forms"
-msgstr ""
+msgstr "Preencher números de série automaticamente no formulário"
 
 #: common/models.py:1353
 msgid "Delete Depleted Stock"
-msgstr ""
+msgstr "Excluir Estoque Esgotado"
 
 #: common/models.py:1354
 msgid "Determines default behaviour when a stock item is depleted"
-msgstr ""
+msgstr "Determina o comportamento padrão quando um item de estoque é esgotado"
 
 #: common/models.py:1360
 msgid "Batch Code Template"
-msgstr ""
+msgstr "Modelo de Código de Lote"
 
 #: common/models.py:1361
 msgid "Template for generating default batch codes for stock items"
-msgstr ""
+msgstr "Modelo para gerar códigos de lote padrão para itens de estoque"
 
 #: common/models.py:1366
 msgid "Stock Expiry"
-msgstr ""
+msgstr "Validade do Estoque"
 
 #: common/models.py:1367
 msgid "Enable stock expiry functionality"
-msgstr ""
+msgstr "Ativar função de validade de estoque"
 
 #: common/models.py:1373
 msgid "Sell Expired Stock"
-msgstr ""
+msgstr "Vender estoque expirado"
 
 #: common/models.py:1374
 msgid "Allow sale of expired stock"
-msgstr ""
+msgstr "Permitir venda de estoque expirado"
 
 #: common/models.py:1380
 msgid "Stock Stale Time"
-msgstr ""
+msgstr "Tempo de Estoque Inativo"
 
 #: common/models.py:1381
 msgid "Number of days stock items are considered stale before expiring"
@@ -2342,63 +2342,63 @@ msgstr ""
 
 #: common/models.py:1408
 msgid "Build Order Reference Pattern"
-msgstr ""
+msgstr "Modelo de Referência de Pedidos de Produção"
 
 #: common/models.py:1409
 msgid "Required pattern for generating Build Order reference field"
-msgstr ""
+msgstr "Modelo necessário para gerar campo de referência do Pedido de Produção"
 
 #: common/models.py:1415
 msgid "Sales Order Reference Pattern"
-msgstr ""
+msgstr "Modelo de Referência de Pedidos de Venda"
 
 #: common/models.py:1416
 msgid "Required pattern for generating Sales Order reference field"
-msgstr ""
+msgstr "Modelo necessário para gerar campo de referência do Pedido de Venda"
 
 #: common/models.py:1422
 msgid "Sales Order Default Shipment"
-msgstr ""
+msgstr "Envio Padrão de Pedidos de Venda"
 
 #: common/models.py:1423
 msgid "Enable creation of default shipment with sales orders"
-msgstr ""
+msgstr "Habilitar criação de envio padrão com Pedidos de Vendas"
 
 #: common/models.py:1429
 msgid "Edit Completed Sales Orders"
-msgstr ""
+msgstr "Editar os Pedidos de Vendas concluídos"
 
 #: common/models.py:1430
 msgid "Allow editing of sales orders after they have been shipped or completed"
-msgstr ""
+msgstr "Permitir a edição de pedidos de vendas após serem enviados ou concluídos"
 
 #: common/models.py:1436
 msgid "Purchase Order Reference Pattern"
-msgstr ""
+msgstr "Modelo de Referência de Pedidos de Compras"
 
 #: common/models.py:1437
 msgid "Required pattern for generating Purchase Order reference field"
-msgstr ""
+msgstr "Modelo necessário para gerar campo de referência do Pedido de Compra"
 
 #: common/models.py:1443
 msgid "Edit Completed Purchase Orders"
-msgstr ""
+msgstr "Editar Pedidos de Compra Concluídos"
 
 #: common/models.py:1444
 msgid "Allow editing of purchase orders after they have been shipped or completed"
-msgstr ""
+msgstr "Permitir a edição de pedidos de compras após serem enviados ou concluídos"
 
 #: common/models.py:1451
 msgid "Enable password forgot"
-msgstr ""
+msgstr "Habitar esquecer senha"
 
 #: common/models.py:1452
 msgid "Enable password forgot function on the login pages"
-msgstr ""
+msgstr "Habilitar a função \"Esqueci minha senha\" nas páginas de acesso"
 
 #: common/models.py:1458
 msgid "Enable registration"
-msgstr ""
+msgstr "Habilitar cadastro"
 
 #: common/models.py:1459
 msgid "Enable self-registration for users on the login pages"
