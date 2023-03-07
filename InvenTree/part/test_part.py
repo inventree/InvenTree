@@ -632,14 +632,16 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         'stock'
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Add an email address as part of initialization"""
-        super().setUp()
-        # Add Mailadress
-        EmailAddress.objects.create(user=self.user, email='test@testing.com')
+        super().setUpTestData()
+
+        # Add email address
+        EmailAddress.objects.create(user=cls.user, email='test@testing.com')
 
         # Define part that will be tested
-        self.part = Part.objects.get(name='R_2K2_0805')
+        cls.part = Part.objects.get(name='R_2K2_0805')
 
     def _notification_run(self, run_class=None):
         """Run a notification test suit through.

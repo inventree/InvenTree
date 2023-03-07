@@ -50,9 +50,10 @@ class StockLocationTest(StockAPITestCase):
 
     list_url = reverse('api-location-list')
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
+        super().setUpTestData()
 
         # Add some stock locations
         StockLocation.objects.create(name='top', description='top category')
@@ -1413,30 +1414,32 @@ class StockMergeTest(StockAPITestCase):
 
     URL = reverse('api-stock-merge')
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
 
-        self.part = part.models.Part.objects.get(pk=25)
-        self.loc = StockLocation.objects.get(pk=1)
-        self.sp_1 = company.models.SupplierPart.objects.get(pk=100)
-        self.sp_2 = company.models.SupplierPart.objects.get(pk=101)
+        super().setUpTestData()
 
-        self.item_1 = StockItem.objects.create(
-            part=self.part,
-            supplier_part=self.sp_1,
+        cls.part = part.models.Part.objects.get(pk=25)
+        cls.loc = StockLocation.objects.get(pk=1)
+        cls.sp_1 = company.models.SupplierPart.objects.get(pk=100)
+        cls.sp_2 = company.models.SupplierPart.objects.get(pk=101)
+
+        cls.item_1 = StockItem.objects.create(
+            part=cls.part,
+            supplier_part=cls.sp_1,
             quantity=100,
         )
 
-        self.item_2 = StockItem.objects.create(
-            part=self.part,
-            supplier_part=self.sp_2,
+        cls.item_2 = StockItem.objects.create(
+            part=cls.part,
+            supplier_part=cls.sp_2,
             quantity=100,
         )
 
-        self.item_3 = StockItem.objects.create(
-            part=self.part,
-            supplier_part=self.sp_2,
+        cls.item_3 = StockItem.objects.create(
+            part=cls.part,
+            supplier_part=cls.sp_2,
             quantity=50,
         )
 
