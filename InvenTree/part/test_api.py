@@ -1323,7 +1323,7 @@ class PartCreationTests(PartAPITestBase):
         url = reverse('api-part-list')
 
         name = "KaltgerÃ¤testecker"
-        description = "Gerät"
+        description = "Gerät KaltgerÃ¤testecker strange chars should get through"
 
         data = {
             "name": name,
@@ -1347,7 +1347,7 @@ class PartCreationTests(PartAPITestBase):
                         reverse('api-part-list'),
                         {
                             'name': f'thing_{bom}{img}{params}',
-                            'description': 'Some description',
+                            'description': 'Some long description text for this part',
                             'category': 1,
                             'duplicate': {
                                 'part': 100,
