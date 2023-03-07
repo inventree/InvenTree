@@ -35,7 +35,7 @@ class UserMixin:
 
     @classmethod
     def setUpTestData(cls):
-        """Setup for all tests."""
+        """Run setup for all tests in a given class"""
         super().setUpTestData()
 
         # Create a user to log in with
@@ -59,32 +59,43 @@ class UserMixin:
 
         # Assign all roles if set
         if cls.roles == 'all':
-            cls.assignRole(assign_all=True)
+            cls.assignRole(group=cls.group, assign_all=True)
 
         # else filter the roles
         else:
             for role in cls.roles:
-                cls.assignRole(role)
+                cls.assignRole(role=role, group=cls.group)
 
-        if cls.auto_login:
-            cls.client.login(username=cls.username, password=cls.password)
+    def setUp(self):
+        """Run setup for individual test methods"""
 
-    def assignRole(self, role=None, assign_all: bool = False):
+        if self.auto_login:
+            self.client.login(username=self.username, password=self.password)
+
+    @classmethod
+    def assignRole(cls, role=None, assign_all: bool = False, group=None):
         """Set the user roles for the registered user.
 
         Arguments:
             role: Role of the format 'rule.permission' e.g. 'part.add'
             assign_all: Set to True to assign *all* roles
+            group: The group to assign roles to (or leave None to use the group assigned to this class)
         """
+
+        if group is None:
+            group = cls.group
 
         if type(assign_all) is not bool:
             # Raise exception if common mistake is made!
-            raise TypeError('assign_all must be a boolean value')
+            raise TypeError('assignRole: assign_all must be a boolean value')
+
+        if not role and not assign_all:
+            raise ValueError('assignRole: either role must be provided, or assign_all must be set')
 
         if not assign_all and role:
             rule, perm = role.split('.')
 
-        for ruleset in self.group.rule_sets.all():
+        for ruleset in group.rule_sets.all():
 
             if assign_all or ruleset.name == rule:
 
