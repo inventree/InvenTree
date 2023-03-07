@@ -1337,6 +1337,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         'creation_date',
         'IPN',
         'in_stock',
+        'total_in_stock',
         'unallocated_stock',
         'category',
         'last_stocktake',
