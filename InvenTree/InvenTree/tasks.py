@@ -442,6 +442,14 @@ def check_for_updates():
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
         return
 
+    interval = int(common.models.InvenTreeSetting.get_setting('INVENTREE_UPDATE_CHECK_INTERVAL', 7, cache=False))
+
+    # Check if we should check for updates *today*
+    if not check_daily_holdoff('check_for_updates', interval):
+        return
+
+    logger.info("Checking for InvenTree software updates")
+
     headers = {}
 
     # If running within github actions, use authentication token
@@ -485,6 +493,9 @@ def check_for_updates():
         tag,
         None
     )
+
+    # Record that this task was successful
+    record_task_success('check_for_updates')
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -539,7 +550,7 @@ def run_backup():
         # Backups are not enabled - exit early
         return
 
-    interval = int(InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1))
+    interval = int(InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1, cache=False))
 
     # Check if should run this task *today*
     if not check_daily_holdoff('run_backup', interval):
