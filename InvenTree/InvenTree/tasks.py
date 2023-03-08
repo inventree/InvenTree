@@ -102,6 +102,22 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     attempt_key = f'_{task_name}_ATTEMPT'
     success_key = f'_{task_name}_SUCCESS'
 
+    # Check for recent success information
+    last_success = InvenTreeSetting.get_setting(success_key, '', cache=False)
+
+    if last_success:
+        try:
+            last_success = datetime.fromisoformat(last_success)
+        except ValueError:
+            last_success = None
+
+    if last_success:
+        threshold = datetime.now() - timedelta(days=n_days)
+
+        if last_success > threshold:
+            logger.info(f"Last successful run for '{task_name}' was too recent - skipping task")
+            return False
+
     # Check for any information we have about this task
     last_attempt = InvenTreeSetting.get_setting(attempt_key, '', cache=False)
 
@@ -131,22 +147,6 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
 
     # Record this attempt
     record_task_attempt(task_name)
-
-    # Check for recent success information
-    last_success = InvenTreeSetting.get_setting(success_key, '', cache=False)
-
-    if last_success:
-        try:
-            last_success = datetime.fromisoformat(last_success)
-        except ValueError:
-            last_success = None
-
-    if last_success:
-        threshold = datetime.now() - timedelta(days=n_days)
-
-        if last_success > threshold:
-            logger.info(f"Last successful run for '{task_name}' was too recent - skipping task")
-            return False
 
     # No reason *not* to run this task now
     return True
