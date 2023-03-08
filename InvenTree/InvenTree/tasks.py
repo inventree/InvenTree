@@ -451,7 +451,7 @@ def run_backup():
     last_success = InvenTreeSetting.get_setting('_INVENTREE_BACKUP_SUCCESS', '', cache=False)
 
     try:
-        backup_n_days = int(InvenTreeSetting.get_setting('_INVENTREE_BACKUP_DAYS', 1, cache=False))
+        backup_n_days = int(InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1, cache=False))
     except Exception:
         backup_n_days = 1
 
