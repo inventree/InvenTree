@@ -984,6 +984,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_CHECK_VERSION_DAYS': {
+            'name': _('Check for Updates'),
+            'description': _('How often to check for updates (set to zero to disable)'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 7,
+            'units': 'days',
+        },
+
         'INVENTREE_BACKUP_ENABLE': {
             'name': _('Automatic Backup'),
             'description': _('Enable automatic backup of database and media files'),
@@ -999,6 +1010,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
                 MinValueValidator(1),
             ],
             'default': 1,
+            'units': 'days',
         },
 
         'INVENTREE_DELETE_TASKS_DAYS': {
