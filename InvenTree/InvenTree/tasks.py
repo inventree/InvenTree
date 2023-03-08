@@ -74,7 +74,7 @@ def raise_warning(msg):
         warnings.warn(msg)
 
 
-def check_daily_holdoff(task_name: str, setting_name: str) -> bool:
+def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     """Check if a periodic task should be run, based on the provided setting name.
 
     Arguments:
@@ -93,11 +93,11 @@ def check_daily_holdoff(task_name: str, setting_name: str) -> bool:
 
     from common.models import InvenTreeSetting
 
+    if n_days <= 0:
+        logger.info(f"Specified interval for task '{task_name}' < 1 - task will not run")
+
     # Sleep a random number of seconds to prevent worker conflict
     time.sleep(random.randint(1, 5))
-
-    # Convert the setting to an integer
-    n_days = int(InvenTreeSetting.get_setting(setting_name, 1, cache=False))
 
     attempt_key = f'_{task_name}_ATTEMPT'
     success_key = f'_{task_name}_SUCCESS'
@@ -119,14 +119,18 @@ def check_daily_holdoff(task_name: str, setting_name: str) -> bool:
             logger.info(f"Last attempt for '{task_name}' was too recent - skipping task")
             return False
 
-        # Record this attempt
-        InvenTreeSetting.set_setting(attempt_key, datetime.now().isoformat(), None)
-
     else:
         # If there is no record of a recent attempt, exit now
         # This prevents tasks with multi-day period from all running on a clean server launch
         logger.info(f"No previous attempt recorded for '{task_name}' - waiting until tomorrow")
+
+        # Record this attempt
+        record_task_attempt(task_name)
+
         return False
+
+    # Record this attempt
+    record_task_attempt(task_name)
 
     # Check for recent success information
     last_success = InvenTreeSetting.get_setting(success_key, '', cache=False)
@@ -148,8 +152,16 @@ def check_daily_holdoff(task_name: str, setting_name: str) -> bool:
     return True
 
 
+def record_task_attempt(task_name: str):
+    """Record that a multi-day task has been attempted *now*"""
+
+    from common.models import InvenTreeSetting
+
+    InvenTreeSetting.set_setting(f'_{task_name}_ATTEMPT', datetime.now().isoformat(), None)
+
+
 def record_task_success(task_name: str):
-    """Record that a multi-day periodic task was successful *now*"""
+    """Record that a multi-day task was successful *now*"""
 
     from common.models import InvenTreeSetting
 
@@ -527,8 +539,10 @@ def run_backup():
         # Backups are not enabled - exit early
         return
 
+    interval = int(InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1))
+
     # Check if should run this task *today*
-    if not check_daily_holdoff('run_backup', 'INVENTREE_BACKUP_DAYS'):
+    if not check_daily_holdoff('run_backup', interval):
         return
 
     logger.info("Performing automated database backup task")
