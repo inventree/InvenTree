@@ -679,19 +679,19 @@ function partStockLabel(part, options={}) {
         bg_class = 'bg-success';
     }
 
-    // Display units next to stock badge
-    let unit_badge = '';
+    let output = '';
 
+    // Display units next to stock badge
     if (units && !options.no_units) {
-        unit_badge = `<span class='badge rounded-pill text-muted bg-muted ${classes}'>{% trans "Unit" %}: ${units}</span> `;
+        output += `<span class='badge rounded-pill text-muted bg-muted ${classes}'>{% trans "Unit" %}: ${units}</span> `;
     }
 
     if (elements.length > 0) {
         let text = elements.join(' | ');
-        return `${unit_badge}<span class='badge rounded-pill ${bg_class} ${classes}'>${text}</span>`;
-    } else {
-        return '';
+        output += `<span class='badge rounded-pill ${bg_class} ${classes}'>${text}</span>`;
     }
+
+    return output;
 }
 
 
