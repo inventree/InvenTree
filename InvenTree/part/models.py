@@ -3583,7 +3583,7 @@ class BomItem(DataImportMixin, models.Model):
                                help_text=_('Estimated build wastage quantity (absolute or percentage)')
                                )
 
-    reference = models.CharField(max_length=500, blank=True, verbose_name=_('Reference'), help_text=_('BOM item reference'))
+    reference = models.CharField(max_length=5000, blank=True, verbose_name=_('Reference'), help_text=_('BOM item reference'))
 
     # Note attached to this BOM line item
     note = models.CharField(max_length=500, blank=True, verbose_name=_('Note'), help_text=_('BOM item notes'))
