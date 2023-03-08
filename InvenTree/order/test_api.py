@@ -1408,25 +1408,33 @@ class SalesOrderLineItemTest(OrderTest):
 
     LIST_URL = reverse('api-so-line-list')
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Init routine for this unit test class"""
-        super().setUp()
+        super().setUpTestData()
 
         # List of salable parts
         parts = Part.objects.filter(salable=True)
+
+        lines = []
 
         # Create a bunch of SalesOrderLineItems for each order
         for idx, so in enumerate(models.SalesOrder.objects.all()):
 
             for part in parts:
-                models.SalesOrderLineItem.objects.create(
-                    order=so,
-                    part=part,
-                    quantity=(idx + 1) * 5,
-                    reference=f"Order {so.reference} - line {idx}",
+                lines.append(
+                    models.SalesOrderLineItem(
+                        order=so,
+                        part=part,
+                        quantity=(idx + 1) * 5,
+                        reference=f"Order {so.reference} - line {idx}",
+                    )
                 )
 
-        self.url = reverse('api-so-line-list')
+        # Bulk create
+        models.SalesOrderLineItem.objects.bulk_create(lines)
+
+        cls.url = reverse('api-so-line-list')
 
     def test_so_line_list(self):
         """Test list endpoint"""

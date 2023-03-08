@@ -25,33 +25,34 @@ class SalesOrderTest(TestCase):
         'users',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Initial setup for this set of unit tests"""
         # Create a Company to ship the goods to
-        self.customer = Company.objects.create(name="ABC Co", description="My customer", is_customer=True)
+        cls.customer = Company.objects.create(name="ABC Co", description="My customer", is_customer=True)
 
         # Create a Part to ship
-        self.part = Part.objects.create(name='Spanner', salable=True, description='A spanner that I sell')
+        cls.part = Part.objects.create(name='Spanner', salable=True, description='A spanner that I sell')
 
         # Create some stock!
-        self.Sa = StockItem.objects.create(part=self.part, quantity=100)
-        self.Sb = StockItem.objects.create(part=self.part, quantity=200)
+        cls.Sa = StockItem.objects.create(part=cls.part, quantity=100)
+        cls.Sb = StockItem.objects.create(part=cls.part, quantity=200)
 
         # Create a SalesOrder to ship against
-        self.order = SalesOrder.objects.create(
-            customer=self.customer,
+        cls.order = SalesOrder.objects.create(
+            customer=cls.customer,
             reference='SO-1234',
             customer_reference='ABC 55555'
         )
 
         # Create a Shipment against this SalesOrder
-        self.shipment = SalesOrderShipment.objects.create(
-            order=self.order,
+        cls.shipment = SalesOrderShipment.objects.create(
+            order=cls.order,
             reference='SO-001',
         )
 
         # Create a line item
-        self.line = SalesOrderLineItem.objects.create(quantity=50, order=self.order, part=self.part)
+        cls.line = SalesOrderLineItem.objects.create(quantity=50, order=cls.order, part=cls.part)
 
     def test_so_reference(self):
         """Unit tests for sales order generation"""

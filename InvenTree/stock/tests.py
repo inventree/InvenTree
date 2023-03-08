@@ -30,19 +30,20 @@ class StockTestBase(InvenTreeTestCase):
         'stock_tests',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
+        super().setUpTestData()
 
         # Extract some shortcuts from the fixtures
-        self.home = StockLocation.objects.get(name='Home')
-        self.bathroom = StockLocation.objects.get(name='Bathroom')
-        self.diningroom = StockLocation.objects.get(name='Dining Room')
+        cls.home = StockLocation.objects.get(name='Home')
+        cls.bathroom = StockLocation.objects.get(name='Bathroom')
+        cls.diningroom = StockLocation.objects.get(name='Dining Room')
 
-        self.office = StockLocation.objects.get(name='Office')
-        self.drawer1 = StockLocation.objects.get(name='Drawer_1')
-        self.drawer2 = StockLocation.objects.get(name='Drawer_2')
-        self.drawer3 = StockLocation.objects.get(name='Drawer_3')
+        cls.office = StockLocation.objects.get(name='Office')
+        cls.drawer1 = StockLocation.objects.get(name='Drawer_1')
+        cls.drawer2 = StockLocation.objects.get(name='Drawer_2')
+        cls.drawer3 = StockLocation.objects.get(name='Drawer_3')
 
         # Ensure the MPTT objects are correctly rebuild
         Part.objects.rebuild()

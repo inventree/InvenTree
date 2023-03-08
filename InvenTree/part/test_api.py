@@ -1893,15 +1893,16 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         'part.change',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Create test data as part of setup routine"""
-        super().setUp()
+        super().setUpTestData()
 
         # Ensure the part "variant" tree is correctly structured
         Part.objects.rebuild()
 
         # Add a new part
-        self.part = Part.objects.create(
+        cls.part = Part.objects.create(
             name='Banana',
             description='This is a banana',
             category=PartCategory.objects.get(pk=1),
@@ -1910,12 +1911,12 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         # Create some stock items associated with the part
 
         # First create 600 units which are OK
-        StockItem.objects.create(part=self.part, quantity=100)
-        StockItem.objects.create(part=self.part, quantity=200)
-        StockItem.objects.create(part=self.part, quantity=300)
+        StockItem.objects.create(part=cls.part, quantity=100)
+        StockItem.objects.create(part=cls.part, quantity=200)
+        StockItem.objects.create(part=cls.part, quantity=300)
 
         # Now create another 400 units which are LOST
-        StockItem.objects.create(part=self.part, quantity=400, status=StockStatus.LOST)
+        StockItem.objects.create(part=cls.part, quantity=400, status=StockStatus.LOST)
 
     def get_part_data(self):
         """Helper function for retrieving part data"""

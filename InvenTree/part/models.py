@@ -2357,12 +2357,12 @@ class PartPricing(common.models.MetaMixin):
 
         if self.scheduled_for_update:
             # Ignore if the pricing is already scheduled to be updated
-            logger.info(f"Pricing for {p} already scheduled for update - skipping")
+            logger.debug(f"Pricing for {p} already scheduled for update - skipping")
             return
 
         if counter > 25:
             # Prevent infinite recursion / stack depth issues
-            logger.info(counter, f"Skipping pricing update for {p} - maximum depth exceeded")
+            logger.debug(counter, f"Skipping pricing update for {p} - maximum depth exceeded")
             return
 
         try:

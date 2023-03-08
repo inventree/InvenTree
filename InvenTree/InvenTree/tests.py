@@ -390,10 +390,10 @@ class TestMPTT(TestCase):
         'location',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
-
+        super().setUpTestData()
         StockLocation.objects.rebuild()
 
     def test_self_as_parent(self):
