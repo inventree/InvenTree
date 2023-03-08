@@ -39,6 +39,8 @@ class BomUploadTest(InvenTreeAPITestCase):
                     description="A subcomponent that can be used in a BOM",
                     component=True,
                     assembly=False,
+                    lft=0, rght=0,
+                    level=0, tree_id=0,
                 )
             )
 

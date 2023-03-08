@@ -1391,7 +1391,7 @@ class SalesOrderLineItemTest(OrderTest):
     @classmethod
     def setUpTestData(cls):
         """Init routine for this unit test class"""
-        super().setUp()
+        super().setUpTestData()
 
         # List of salable parts
         parts = Part.objects.filter(salable=True)
