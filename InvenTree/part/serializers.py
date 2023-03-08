@@ -281,6 +281,8 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'trackable',
             'virtual',
             'units',
+            'pricing_min',
+            'pricing_max',
         ]
 
         read_only_fields = [
@@ -288,6 +290,10 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         ]
 
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+    # Pricing fields
+    pricing_min = InvenTreeMoneySerializer(source='pricing_data.overall_min', allow_null=True, read_only=True)
+    pricing_max = InvenTreeMoneySerializer(source='pricing_data.overall_max', allow_null=True, read_only=True)
 
 
 class DuplicatePartSerializer(serializers.Serializer):
