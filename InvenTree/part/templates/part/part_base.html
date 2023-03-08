@@ -215,7 +215,7 @@
         </tr>
         {% endif %}
         {% if part.component %}
-        {% if required_build_order_quantity > 0 %}
+        {% if required_build_order_quantity > 0 or allocated_build_order_quantity > 0 %}
         <tr>
             <td><span class='fas fa-tools'></span></td>
             <td>{% trans "Allocated to Build Orders" %}</td>
@@ -224,7 +224,7 @@
         {% endif %}
         {% endif %}
         {% if part.salable %}
-        {% if required_sales_order_quantity > 0 %}
+        {% if required_sales_order_quantity > 0 or allocated_sales_order_quantity > 0 %}
         <tr>
             <td><span class='fas fa-truck'></span></td>
             <td>{% trans "Allocated to Sales Orders" %}</td>
