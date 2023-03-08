@@ -8,7 +8,7 @@ from rest_framework import status
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import InvenTreeTestCase
-from users.models import RuleSet
+from users.models import RuleSet, update_group_roles
 
 
 class HTMLAPITests(InvenTreeTestCase):
@@ -125,6 +125,10 @@ class APITests(InvenTreeAPITestCase):
         Also tests that it is *not* accessible if the client is not logged in.
         """
         url = reverse('api-user-roles')
+
+        # Delete all rules
+        self.group.rule_sets.all().delete()
+        update_group_roles(self.group)
 
         response = self.client.get(url, format='json')
 
