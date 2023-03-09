@@ -135,16 +135,6 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
             logger.info(f"Last attempt for '{task_name}' was too recent - skipping task")
             return False
 
-    else:
-        # If there is no record of a recent attempt, exit now
-        # This prevents tasks with multi-day period from all running on a clean server launch
-        logger.info(f"No previous attempt recorded for '{task_name}' - waiting until tomorrow")
-
-        # Record this attempt
-        record_task_attempt(task_name)
-
-        return False
-
     # Record this attempt
     record_task_attempt(task_name)
 
