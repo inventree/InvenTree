@@ -984,6 +984,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_UPDATE_CHECK_INTERVAL': {
+            'name': _('Update Check Inverval'),
+            'description': _('How often to check for updates (set to zero to disable)'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 7,
+            'units': _('days'),
+        },
+
         'INVENTREE_BACKUP_ENABLE': {
             'name': _('Automatic Backup'),
             'description': _('Enable automatic backup of database and media files'),
@@ -992,20 +1003,21 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_BACKUP_DAYS': {
-            'name': _('Days Between Backup'),
+            'name': _('Auto Backup Interval'),
             'description': _('Specify number of days between automated backup events'),
             'validator': [
                 int,
                 MinValueValidator(1),
             ],
             'default': 1,
+            'units': _('days'),
         },
 
         'INVENTREE_DELETE_TASKS_DAYS': {
-            'name': _('Delete Old Tasks'),
+            'name': _('Task Deletion Interval'),
             'description': _('Background task results will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7),
@@ -1013,10 +1025,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_DELETE_ERRORS_DAYS': {
-            'name': _('Delete Error Logs'),
+            'name': _('Error Log Deletion Interval'),
             'description': _('Error logs will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7)
@@ -1024,10 +1036,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
-            'name': _('Delete Notifications'),
+            'name': _('Notification Deletion Interval'),
             'description': _('User notifications will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7),
@@ -1233,7 +1245,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Stock Item Pricing Age'),
             'description': _('Exclude stock items older than this number of days from pricing calculations'),
             'default': 0,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(0),
@@ -1255,7 +1267,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'PRICING_UPDATE_DAYS': {
-            'name': _('Pricing Rebuild Time'),
+            'name': _('Pricing Rebuild Interval'),
             'description': _('Number of days before part pricing is automatically updated'),
             'units': _('days'),
             'default': 30,
@@ -1598,10 +1610,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'STOCKTAKE_DELETE_REPORT_DAYS': {
-            'name': _('Delete Old Reports'),
+            'name': _('Report Deletion Interval'),
             'description': _('Stocktake reports will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7),
