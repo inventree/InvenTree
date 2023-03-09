@@ -29,19 +29,11 @@ from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, status, version
 from .tasks import offload_task
-from .validators import validate_overage, validate_part_name
+from .validators import validate_overage
 
 
 class ValidatorTest(TestCase):
     """Simple tests for custom field validators."""
-
-    def test_part_name(self):
-        """Test part name validator."""
-        validate_part_name('hello world')
-
-        # Validate with some strange chars
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_part_name('### <> This | name is not } valid')
 
     def test_overage(self):
         """Test overage validator."""
@@ -398,10 +390,10 @@ class TestMPTT(TestCase):
         'location',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
-
+        super().setUpTestData()
         StockLocation.objects.rebuild()
 
     def test_self_as_parent(self):

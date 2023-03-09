@@ -20,6 +20,8 @@ class PartPricingTests(InvenTreeTestCase):
     def setUp(self):
         """Setup routines"""
 
+        super().setUp()
+
         self.generate_exchange_rates()
 
         # Create a new part for performing pricing calculations
@@ -28,8 +30,6 @@ class PartPricingTests(InvenTreeTestCase):
             description='A part with pricing',
             assembly=True
         )
-
-        return super().setUp()
 
     def create_price_breaks(self):
         """Create some price breaks for the part, in various currencies"""
@@ -215,7 +215,7 @@ class PartPricingTests(InvenTreeTestCase):
         # Create a part
         p = part.models.Part.objects.create(
             name='Test part for pricing',
-            description='hello world',
+            description='hello world, this is a part description',
         )
 
         # Create some stock items

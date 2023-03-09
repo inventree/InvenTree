@@ -130,7 +130,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             for jj in range(10):
                 Part.objects.create(
                     name=f"Part xyz {jj}_{ii}",
-                    description="A test part",
+                    description="A test part with a description",
                     category=child
                 )
 
@@ -428,8 +428,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # Make sure that we get an error if we try to create part in the structural category
         with self.assertRaises(ValidationError):
             part = Part.objects.create(
-                name="Part which shall not be created",
-                description="-",
+                name="-",
+                description="Part which shall not be created",
                 category=structural_category
             )
 
@@ -446,8 +446,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         # Create the test part assigned to a non-structural category
         part = Part.objects.create(
-            name="Part which category will be changed to structural",
-            description="-",
+            name="-",
+            description="Part which category will be changed to structural",
             category=non_structural_category
         )
 
@@ -743,7 +743,7 @@ class PartAPITest(PartAPITestBase):
 
         # First, construct a set of template / variant parts
         master_part = Part.objects.create(
-            name='Master', description='Master part',
+            name='Master', description='Master part which has some variants',
             category=category,
             is_template=True,
         )
@@ -1323,7 +1323,7 @@ class PartCreationTests(PartAPITestBase):
         url = reverse('api-part-list')
 
         name = "KaltgerÃ¤testecker"
-        description = "Gerät"
+        description = "Gerät KaltgerÃ¤testecker strange chars should get through"
 
         data = {
             "name": name,
@@ -1347,7 +1347,7 @@ class PartCreationTests(PartAPITestBase):
                         reverse('api-part-list'),
                         {
                             'name': f'thing_{bom}{img}{params}',
-                            'description': 'Some description',
+                            'description': 'Some long description text for this part',
                             'category': 1,
                             'duplicate': {
                                 'part': 100,
@@ -1893,15 +1893,16 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         'part.change',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Create test data as part of setup routine"""
-        super().setUp()
+        super().setUpTestData()
 
         # Ensure the part "variant" tree is correctly structured
         Part.objects.rebuild()
 
         # Add a new part
-        self.part = Part.objects.create(
+        cls.part = Part.objects.create(
             name='Banana',
             description='This is a banana',
             category=PartCategory.objects.get(pk=1),
@@ -1910,12 +1911,12 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         # Create some stock items associated with the part
 
         # First create 600 units which are OK
-        StockItem.objects.create(part=self.part, quantity=100)
-        StockItem.objects.create(part=self.part, quantity=200)
-        StockItem.objects.create(part=self.part, quantity=300)
+        StockItem.objects.create(part=cls.part, quantity=100)
+        StockItem.objects.create(part=cls.part, quantity=200)
+        StockItem.objects.create(part=cls.part, quantity=300)
 
         # Now create another 400 units which are LOST
-        StockItem.objects.create(part=self.part, quantity=400, status=StockStatus.LOST)
+        StockItem.objects.create(part=cls.part, quantity=400, status=StockStatus.LOST)
 
     def get_part_data(self):
         """Helper function for retrieving part data"""
@@ -2474,7 +2475,7 @@ class BomItemTest(InvenTreeAPITestCase):
             # Create a variant part!
             variant = Part.objects.create(
                 name=f"Variant_{ii}",
-                description="A variant part",
+                description="A variant part, with a description",
                 component=True,
                 variant_of=sub_part
             )
@@ -2672,7 +2673,7 @@ class BomItemTest(InvenTreeAPITestCase):
             # Create a variant part
             vp = Part.objects.create(
                 name=f"Var {i}",
-                description="Variant part",
+                description="Variant part description field",
                 variant_of=bom_item.sub_part,
             )
 

@@ -281,6 +281,8 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'trackable',
             'virtual',
             'units',
+            'pricing_min',
+            'pricing_max',
         ]
 
         read_only_fields = [
@@ -288,6 +290,10 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         ]
 
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+    # Pricing fields
+    pricing_min = InvenTreeMoneySerializer(source='pricing_data.overall_min', allow_null=True, read_only=True)
+    pricing_max = InvenTreeMoneySerializer(source='pricing_data.overall_max', allow_null=True, read_only=True)
 
 
 class DuplicatePartSerializer(serializers.Serializer):
@@ -423,7 +429,6 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'full_name',
             'image',
             'in_stock',
-            'variant_stock',
             'ordering',
             'building',
             'IPN',
@@ -444,10 +449,12 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'stock_item_count',
             'suppliers',
             'thumbnail',
+            'total_in_stock',
             'trackable',
             'unallocated_stock',
             'units',
             'variant_of',
+            'variant_stock',
             'virtual',
             'pricing_min',
             'pricing_max',
@@ -554,11 +561,20 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             allocated_to_build_orders=part.filters.annotate_build_order_allocations(),
         )
 
+        # Annotate the queryset with the 'total_in_stock' quantity
+        # This is the 'in_stock' quantity summed with the 'variant_stock' quantity
+        queryset = queryset.annotate(
+            total_in_stock=ExpressionWrapper(
+                F('in_stock') + F('variant_stock'),
+                output_field=models.DecimalField(),
+            )
+        )
+
         # Annotate with the total 'available stock' quantity
         # This is the current stock, minus any allocations
         queryset = queryset.annotate(
             unallocated_stock=ExpressionWrapper(
-                F('in_stock') - F('allocated_to_sales_orders') - F('allocated_to_build_orders'),
+                F('total_in_stock') - F('allocated_to_sales_orders') - F('allocated_to_build_orders'),
                 output_field=models.DecimalField(),
             )
         )
@@ -579,6 +595,7 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
     building = serializers.FloatField(read_only=True)
     in_stock = serializers.FloatField(read_only=True)
     variant_stock = serializers.FloatField(read_only=True)
+    total_in_stock = serializers.FloatField(read_only=True)
     ordering = serializers.FloatField(read_only=True)
     stock_item_count = serializers.IntegerField(read_only=True)
     suppliers = serializers.IntegerField(read_only=True)

@@ -589,68 +589,85 @@ function partStockLabel(part, options={}) {
     // Prevent literal string 'null' from being displayed
     var units = part.units || '';
 
-    var text = '';
+    let elements = [];
 
     // Check for stock
-    if (part.in_stock) {
+    if (part.total_in_stock) {
         // There IS stock available for this part
 
         // Is stock "low" (below the 'minimum_stock' quantity)?
-        if ((part.minimum_stock > 0) && (part.minimum_stock > part.in_stock)) {
-            text += `{% trans "Low stock" %}: ${part.in_stock}`;
-        } else if (part.unallocated_stock == 0) {
+        if ((part.minimum_stock > 0) && (part.minimum_stock > part.total_in_stock)) {
+            elements.push(`{% trans "Low stock" %}: ${part.total_in_stock}`);
+        } else if (part.unallocated_stock <= 0) {
             // There is no available stock at all
-            text += `{% trans "No stock available" %}`;
+            elements.push(`{% trans "No stock available" %}`);
         } else if (part.unallocated_stock < part.in_stock) {
-            // Unallocated quanttiy is less than total quantity
-            text += `{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}`;
+            // Unallocated quantity is less than total quantity
+            if (options.hideTotalStock) {
+                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}`);
+            } else {
+                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}`);
+            }
         } else {
             // Stock is completely available
-            text += `{% trans "Available" %}: ${part.unallocated_stock}`;
+            if (!options.hideTotalStock) {
+                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}`);
+            }
         }
     } else {
         // There IS NO stock available for this part
-        text += `{% trans "No Stock" %}`;
+        elements.push(`{% trans "No Stock" %}`);
     }
 
     // Check for items on order
     if (part.ordering) {
-        text += ` | {% trans "On Order" %}: ${part.ordering}`;
+        elements.push(`{% trans "On Order" %}: ${part.ordering}`);
     }
 
     // Check for items beeing built
     if (part.building) {
-        text += ` | {% trans "Building" %}: ${part.building}`;
-    }
-
-    // Check for demand from unallocated build orders
-    var required_build_order_quantity = null;
-    var required_sales_order_quantity = null;
-    inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
-        async: false,
-        success: function(response) {
-            required_build_order_quantity = 0;
-            if (response.required_build_order_quantity) {
-                required_build_order_quantity = response.required_build_order_quantity;
-            }
-            required_sales_order_quantity = 0;
-            if (response.required_sales_order_quantity) {
-                required_sales_order_quantity = response.required_sales_order_quantity;
-            }
-        }
-    });
-    if ((required_build_order_quantity == null) || (required_sales_order_quantity == null)) {
-        console.error(`Error loading part requirements for part ${part.pk}`);
-        return;
-    }
-    var demand = (required_build_order_quantity - part.allocated_to_build_orders) + (required_sales_order_quantity - part.allocated_to_sales_orders);
-    if (demand) {
-        text += ` | {% trans "Demand" %}: ${demand}`;
+        elements.push(`{% trans "Building" %}: ${part.building}`);
     }
 
     // Determine badge color based on overall stock health
-    var stock_health = part.in_stock + part.building + part.ordering - part.minimum_stock - required_build_order_quantity - required_sales_order_quantity;
+    var stock_health = part.unallocated_stock + part.building + part.ordering - part.minimum_stock;
+
+    // TODO: Refactor the API to include this information, so we don't have to request it!
+    if (!options.noDemandInfo) {
+
+        // Check for demand from unallocated build orders
+        var required_build_order_quantity = null;
+        var required_sales_order_quantity = null;
+
+        inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
+            async: false,
+            success: function(response) {
+                required_build_order_quantity = 0;
+                if (response.required_build_order_quantity) {
+                    required_build_order_quantity = response.required_build_order_quantity;
+                }
+                required_sales_order_quantity = 0;
+                if (response.required_sales_order_quantity) {
+                    required_sales_order_quantity = response.required_sales_order_quantity;
+                }
+            }
+        });
+
+        if ((required_build_order_quantity == null) || (required_sales_order_quantity == null)) {
+            console.error(`Error loading part requirements for part ${part.pk}`);
+            return;
+        }
+
+        var demand = (required_build_order_quantity - part.allocated_to_build_orders) + (required_sales_order_quantity - part.allocated_to_sales_orders);
+        if (demand) {
+            elements.push(`{% trans "Demand" %}: ${demand}`);
+        }
+
+        stock_health -= (required_build_order_quantity + required_sales_order_quantity);
+    }
+
     var bg_class = '';
+
     if (stock_health < 0) {
         // Unsatisfied demand and/or below minimum stock
         bg_class = 'bg-danger';
@@ -662,14 +679,19 @@ function partStockLabel(part, options={}) {
         bg_class = 'bg-success';
     }
 
-    // show units next to stock badge
-    var unit_badge = '';
+    let output = '';
+
+    // Display units next to stock badge
     if (units && !options.no_units) {
-        unit_badge = `<span class='badge rounded-pill text-muted bg-muted ${classes}'>{% trans "Unit" %}: ${units}</span> `;
+        output += `<span class='badge rounded-pill text-muted bg-muted ${classes}'>{% trans "Unit" %}: ${units}</span> `;
     }
 
-    // return badge html
-    return `${unit_badge}<span class='badge rounded-pill ${bg_class} ${classes}'>${text}</span>`;
+    if (elements.length > 0) {
+        let text = elements.join(' | ');
+        output += `<span class='badge rounded-pill ${bg_class} ${classes}'>${text}</span>`;
+    }
+
+    return output;
 }
 
 
@@ -1150,24 +1172,25 @@ function loadPartVariantTable(table, partId, options={}) {
             title: '{% trans "Description" %}',
         },
         {
-            field: 'in_stock',
+            field: 'total_in_stock',
             title: '{% trans "Stock" %}',
             sortable: true,
             formatter: function(value, row) {
 
-                var base_stock = row.in_stock;
-                var variant_stock = row.variant_stock || 0;
+                var text = renderLink(value, `/part/${row.pk}/?display=part-stock`);
 
-                var total = base_stock + variant_stock;
+                text += partStockLabel(row, {
+                    noDemandInfo: true,
+                    hideTotalStock: true,
+                    classes: 'float-right',
+                });
 
-                var text = `${total}`;
-
-                if (variant_stock > 0) {
+                if (row.variant_stock > 0) {
                     text = `<em>${text}</em>`;
                     text += `<span title='{% trans "Includes variant stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
                 }
 
-                return renderLink(text, `/part/${row.pk}/?display=part-stock`);
+                return text;
             }
         },
         {
@@ -1815,8 +1838,6 @@ function loadPartTable(table, url, options={}) {
 
     var filters = {};
 
-    var col = null;
-
     if (!options.disableFilters) {
         filters = loadTableFilters('parts');
     }
@@ -1884,10 +1905,11 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
-    col = {
+    columns.push({
         sortName: 'category',
         field: 'category_detail',
         title: '{% trans "Category" %}',
+        sortable: true,
         formatter: function(value, row) {
             if (row.category && row.category_detail) {
                 var text = shortenString(row.category_detail.pathstring);
@@ -1896,81 +1918,26 @@ function loadPartTable(table, url, options={}) {
                 return '<em>{% trans "No category" %}</em>';
             }
         }
-    };
+    });
 
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
 
-    columns.push(col);
-
-    col = {
-        field: 'unallocated_stock',
+    columns.push({
+        field: 'total_in_stock',
         title: '{% trans "Stock" %}',
-        searchable: false,
+        sortable: true,
         formatter: function(value, row) {
 
-            var text = '';
+            var text = renderLink(value, `/part/${row.pk}/?display=part-stock`);
 
-            var total_stock = row.in_stock;
-
-            if (row.variant_stock) {
-                total_stock += row.variant_stock;
-            }
-
-            var text = `${total_stock}`;
-
-            // Construct extra informational badges
-            var badges = '';
-
-            if (total_stock == 0) {
-                badges += `<span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "No stock" %}'></span>`;
-            } else if (total_stock < row.minimum_stock) {
-                badges += `<span class='fas fa-exclamation-circle icon-yellow float-right' title='{% trans "Low stock" %}'></span>`;
-            }
-
-            if (row.ordering && row.ordering > 0) {
-                badges += renderLink(
-                    `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.ordering}'></span>`,
-                    `/part/${row.pk}/?display=purchase-orders`
-                );
-            }
-
-            if (row.building && row.building > 0) {
-                badges += renderLink(
-                    `<span class='fas fa-tools float-right' title='{% trans "Building" %}: ${row.building}'></span>`,
-                    `/part/${row.pk}/?display=build-orders`
-                );
-            }
-
-            if (row.variant_stock && row.variant_stock > 0) {
-                badges += `<span class='fas fa-info-circle float-right' title='{% trans "Includes variant stock" %}'></span>`;
-            }
-
-            if (row.allocated_to_build_orders > 0) {
-                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to build orders" %}: ${row.allocated_to_build_orders}'></span>`;
-            }
-
-            if (row.allocated_to_sales_orders > 0) {
-                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to sales orders" %}: ${row.allocated_to_sales_orders}'></span>`;
-            }
-
-            if (row.units) {
-                text += ` <small>${row.units}</small>`;
-            }
-
-            text = renderLink(text, `/part/${row.pk}/?display=part-stock`);
-            text += badges;
+            text += partStockLabel(row, {
+                noDemandInfo: true,
+                hideTotalStock: true,
+                classes: 'float-right',
+            });
 
             return text;
         }
-    };
-
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
-
-    columns.push(col);
+    });
 
     // Pricing information
     columns.push({
@@ -1985,6 +1952,7 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    // External link / URL
     columns.push({
         field: 'link',
         title: '{% trans "Link" %}',

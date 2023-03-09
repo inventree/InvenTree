@@ -208,3 +208,10 @@ def multiply(x, y):
 def divide(x, y):
     """Divide one number by another"""
     return x / y
+
+
+@register.simple_tag
+def render_currency(money, **kwargs):
+    """Render a currency / Money object"""
+
+    return InvenTree.helpers.render_currency(money, **kwargs)
