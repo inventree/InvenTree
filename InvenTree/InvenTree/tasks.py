@@ -95,6 +95,7 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
 
     if n_days <= 0:
         logger.info(f"Specified interval for task '{task_name}' < 1 - task will not run")
+        return False
 
     # Sleep a random number of seconds to prevent worker conflict
     time.sleep(random.randint(1, 5))
