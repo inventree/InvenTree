@@ -525,6 +525,7 @@ def DownloadFile(data, filename, content_type='application/text', inline=False) 
         A StreamingHttpResponse object wrapping the supplied data
     """
     filename = WrapWithQuotes(filename)
+    length = len(data)
 
     if type(data) == str:
         wrapper = FileWrapper(io.StringIO(data))
@@ -532,7 +533,9 @@ def DownloadFile(data, filename, content_type='application/text', inline=False) 
         wrapper = FileWrapper(io.BytesIO(data))
 
     response = StreamingHttpResponse(wrapper, content_type=content_type)
-    response['Content-Length'] = len(data)
+    if type(data) == str:
+        length = len(bytes(data, response.charset))
+    response['Content-Length'] = length
 
     disposition = "inline" if inline else "attachment"
 
