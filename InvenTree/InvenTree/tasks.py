@@ -148,6 +148,8 @@ def record_task_attempt(task_name: str):
 
     from common.models import InvenTreeSetting
 
+    logger.info(f"Logging task attempt for '{task_name}'")
+
     InvenTreeSetting.set_setting(f'_{task_name}_ATTEMPT', datetime.now().isoformat(), None)
 
 

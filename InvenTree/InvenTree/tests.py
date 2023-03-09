@@ -919,6 +919,12 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             self.assertIn('Specified interval', str(cm.output))
 
         with self.assertLogs(logger='inventree', level='INFO') as cm:
+            # First call should run without issue
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task')
+            self.assertTrue(result)
+            self.assertIn("Logging task attempt for 'dummy_task'", str(cm.output))
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
             # An attempt has been logged, but it is too recent
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
