@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-09 06:47+0000\n"
-"PO-Revision-Date: 2023-03-09 11:30\n"
+"PO-Revision-Date: 2023-03-10 11:38\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -1880,11 +1880,11 @@ msgstr "Profundidade padrão de visualização da árvore. Níveis mais profundo
 
 #: common/models.py:988
 msgid "Update Check Inverval"
-msgstr ""
+msgstr "Atualizar Verificação de Intervalo"
 
 #: common/models.py:989
 msgid "How often to check for updates (set to zero to disable)"
-msgstr ""
+msgstr "Frequência para verificar atualizações (defina como zero para desativar)"
 
 #: common/models.py:995 common/models.py:1013 common/models.py:1020
 #: common/models.py:1031 common/models.py:1042 common/models.py:1248
@@ -1902,7 +1902,7 @@ msgstr "Ativar cópia de segurança automática do banco de dados e arquivos de 
 
 #: common/models.py:1006
 msgid "Auto Backup Interval"
-msgstr ""
+msgstr "Intervalo de Backup Automático"
 
 #: common/models.py:1007
 msgid "Specify number of days between automated backup events"
@@ -1910,7 +1910,7 @@ msgstr "Especificar o número de dia entre as cópias de segurança"
 
 #: common/models.py:1017
 msgid "Task Deletion Interval"
-msgstr ""
+msgstr "Intervalo para Excluir da Tarefa"
 
 #: common/models.py:1018
 msgid "Background task results will be deleted after specified number of days"
@@ -1918,7 +1918,7 @@ msgstr "Os resultados da tarefa no plano de fundo serão excluídos após um nú
 
 #: common/models.py:1028
 msgid "Error Log Deletion Interval"
-msgstr ""
+msgstr "Intervalo para Excluir do Registro de Erro"
 
 #: common/models.py:1029
 msgid "Error logs will be deleted after specified number of days"
@@ -1926,7 +1926,7 @@ msgstr "Registros de erros serão excluídos após um número especificado de di
 
 #: common/models.py:1039
 msgid "Notification Deletion Interval"
-msgstr ""
+msgstr "Intervalo para Excluir de Notificação"
 
 #: common/models.py:1040
 msgid "User notifications will be deleted after specified number of days"
@@ -2187,7 +2187,7 @@ msgstr "Apenas usar peças variáveis ativas para calcular preço variáveis"
 
 #: common/models.py:1270
 msgid "Pricing Rebuild Interval"
-msgstr ""
+msgstr "Intervalo de Reconstrução de Preços"
 
 #: common/models.py:1271
 msgid "Number of days before part pricing is automatically updated"
@@ -2555,7 +2555,7 @@ msgstr "Número de dias entre gravação do balanço de estoque (coloque zero pa
 
 #: common/models.py:1613
 msgid "Report Deletion Interval"
-msgstr ""
+msgstr "Intervalo para Excluir o Relatório"
 
 #: common/models.py:1614
 msgid "Stocktake reports will be deleted after specified number of days"
@@ -2923,7 +2923,7 @@ msgstr "Limite máximo de comprimento para frases exibidas nas visualizações d
 
 #: common/models.py:2036
 msgid "Price break quantity"
-msgstr ""
+msgstr "Quantidade de Parcelamentos"
 
 #: common/models.py:2043 company/serializers.py:407 order/models.py:1021
 #: templates/js/translated/company.js:1219 templates/js/translated/part.js:1545
@@ -2973,7 +2973,7 @@ msgstr "Segredo"
 
 #: common/models.py:2243
 msgid "Shared secret for HMAC"
-msgstr ""
+msgstr "Segredo compartilhado para HMAC"
 
 #: common/models.py:2349
 msgid "Message ID"
@@ -3009,7 +3009,7 @@ msgstr "Corpo da mensagem"
 
 #: common/models.py:2383
 msgid "Endpoint on which this message was received"
-msgstr ""
+msgstr "Ponto do qual esta mensagem foi recebida"
 
 #: common/models.py:2388
 msgid "Worked on"
@@ -3091,11 +3091,11 @@ msgstr "Coincindir Itens"
 
 #: common/views.py:420
 msgid "Fields matching failed"
-msgstr ""
+msgstr "Os campos não correspondem"
 
 #: common/views.py:481
 msgid "Parts imported"
-msgstr ""
+msgstr "Peças importadas"
 
 #: common/views.py:509 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
@@ -3106,114 +3106,114 @@ msgstr ""
 #: templates/patterns/wizard/match_fields.html:26
 #: templates/patterns/wizard/upload.html:35
 msgid "Previous Step"
-msgstr ""
+msgstr "Passo Anterior"
 
 #: company/models.py:103
 msgid "Company description"
-msgstr ""
+msgstr "Descrição da empresa"
 
 #: company/models.py:104
 msgid "Description of the company"
-msgstr ""
+msgstr "Descrição da empresa"
 
 #: company/models.py:110 company/templates/company/company_base.html:101
 #: templates/InvenTree/settings/plugin_settings.html:55
 #: templates/js/translated/company.js:503
 msgid "Website"
-msgstr ""
+msgstr "Página Web"
 
 #: company/models.py:111
 msgid "Company website URL"
-msgstr ""
+msgstr "URL do Site da empresa"
 
 #: company/models.py:115 company/templates/company/company_base.html:119
 msgid "Address"
-msgstr ""
+msgstr "Endereço"
 
 #: company/models.py:116
 msgid "Company address"
-msgstr ""
+msgstr "Endereço da empresa"
 
 #: company/models.py:119
 msgid "Phone number"
-msgstr ""
+msgstr "Número de telefone"
 
 #: company/models.py:120
 msgid "Contact phone number"
-msgstr ""
+msgstr "Número de telefone do contato"
 
 #: company/models.py:123 company/templates/company/company_base.html:133
 #: templates/InvenTree/settings/user.html:48
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: company/models.py:123
 msgid "Contact email address"
-msgstr ""
+msgstr "Endereço de e-mail do contato"
 
 #: company/models.py:126 company/templates/company/company_base.html:140
 msgid "Contact"
-msgstr ""
+msgstr "Contato"
 
 #: company/models.py:127
 msgid "Point of contact"
-msgstr ""
+msgstr "Ponto de contato"
 
 #: company/models.py:129
 msgid "Link to external company information"
-msgstr ""
+msgstr "Link para informações externas da empresa"
 
 #: company/models.py:140 part/models.py:906
 msgid "Image"
-msgstr ""
+msgstr "Imagem"
 
 #: company/models.py:143 company/templates/company/detail.html:185
 msgid "Company Notes"
-msgstr ""
+msgstr "Notas da Empresa"
 
 #: company/models.py:145
 msgid "is customer"
-msgstr ""
+msgstr "é cliente"
 
 #: company/models.py:145
 msgid "Do you sell items to this company?"
-msgstr ""
+msgstr "Você vende itens para esta empresa?"
 
 #: company/models.py:147
 msgid "is supplier"
-msgstr ""
+msgstr "é fornecedor"
 
 #: company/models.py:147
 msgid "Do you purchase items from this company?"
-msgstr ""
+msgstr "Você compra itens desta empresa?"
 
 #: company/models.py:149
 msgid "is manufacturer"
-msgstr ""
+msgstr "é fabricante"
 
 #: company/models.py:149
 msgid "Does this company manufacture parts?"
-msgstr ""
+msgstr "Esta empresa fabrica peças?"
 
 #: company/models.py:156
 msgid "Default currency used for this company"
-msgstr ""
+msgstr "Moeda padrão utilizada para esta empresa"
 
 #: company/models.py:222 company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12
 #: templates/InvenTree/search.html:179 templates/js/translated/company.js:476
 msgid "Company"
-msgstr ""
+msgstr "Empresa"
 
 #: company/models.py:272 company/models.py:507 stock/models.py:669
 #: stock/serializers.py:143 stock/templates/stock/item_base.html:143
 #: templates/js/translated/bom.js:591
 msgid "Base Part"
-msgstr ""
+msgstr "Peça base"
 
 #: company/models.py:276 company/models.py:511
 msgid "Select part"
-msgstr ""
+msgstr "Selecionar peça"
 
 #: company/models.py:287 company/templates/company/company_base.html:77
 #: company/templates/company/manufacturer_part.html:90
@@ -3225,11 +3225,11 @@ msgstr ""
 #: templates/js/translated/company.js:1011
 #: templates/js/translated/table_filters.js:474
 msgid "Manufacturer"
-msgstr ""
+msgstr "Fabricante"
 
 #: company/models.py:288
 msgid "Select manufacturer"
-msgstr ""
+msgstr "Selecionar fabricante"
 
 #: company/models.py:294 company/templates/company/manufacturer_part.html:101
 #: company/templates/company/supplier_part.html:160 part/serializers.py:365
@@ -3240,30 +3240,30 @@ msgstr ""
 #: templates/js/translated/order.js:2259 templates/js/translated/order.js:2469
 #: templates/js/translated/part.js:1467
 msgid "MPN"
-msgstr ""
+msgstr "NPF"
 
 #: company/models.py:295
 msgid "Manufacturer Part Number"
-msgstr ""
+msgstr "Número de Peça do Fabricante"
 
 #: company/models.py:301
 msgid "URL for external manufacturer part link"
-msgstr ""
+msgstr "URL do link externo da peça do fabricante"
 
 #: company/models.py:307
 msgid "Manufacturer part description"
-msgstr ""
+msgstr "Descrição da peça do fabricante"
 
 #: company/models.py:352 company/models.py:376 company/models.py:530
 #: company/templates/company/manufacturer_part.html:7
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:223
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Peça do Fabricante"
 
 #: company/models.py:383
 msgid "Parameter name"
-msgstr ""
+msgstr "Nome do parâmetro"
 
 #: company/models.py:389
 #: report/templates/report/inventree_test_report_base.html:95
@@ -3271,26 +3271,26 @@ msgstr ""
 #: templates/js/translated/company.js:854 templates/js/translated/part.js:1289
 #: templates/js/translated/stock.js:1442
 msgid "Value"
-msgstr ""
+msgstr "Valor"
 
 #: company/models.py:390
 msgid "Parameter value"
-msgstr ""
+msgstr "Valor do Parâmetro"
 
 #: company/models.py:396 part/admin.py:40 part/models.py:979
 #: part/models.py:3325 part/templates/part/part_base.html:286
 #: templates/InvenTree/settings/settings_staff_js.html:255
 #: templates/js/translated/company.js:860 templates/js/translated/part.js:1295
 msgid "Units"
-msgstr ""
+msgstr "Unidades"
 
 #: company/models.py:397
 msgid "Parameter units"
-msgstr ""
+msgstr "Unidades do parâmetro"
 
 #: company/models.py:475
 msgid "Linked manufacturer part must reference the same base part"
-msgstr ""
+msgstr "Parte do fabricante vinculado deve fazer referência à mesma peça base"
 
 #: company/models.py:517 company/templates/company/company_base.html:82
 #: company/templates/company/supplier_part.html:136 order/models.py:282
@@ -3303,11 +3303,11 @@ msgstr ""
 #: templates/js/translated/part.js:1435 templates/js/translated/pricing.js:482
 #: templates/js/translated/table_filters.js:478
 msgid "Supplier"
-msgstr ""
+msgstr "Fornecedor"
 
 #: company/models.py:518
 msgid "Select supplier"
-msgstr ""
+msgstr "Selecione o fornecedor"
 
 #: company/models.py:523 company/templates/company/supplier_part.html:146
 #: part/bom.py:286 part/bom.py:314 part/serializers.py:354
@@ -3315,23 +3315,23 @@ msgstr ""
 #: templates/js/translated/order.js:2456 templates/js/translated/part.js:1453
 #: templates/js/translated/pricing.js:494
 msgid "SKU"
-msgstr ""
+msgstr "Código (SKU)"
 
 #: company/models.py:524 part/serializers.py:354
 msgid "Supplier stock keeping unit"
-msgstr ""
+msgstr "Unidade de reserva de estoque fornecedor"
 
 #: company/models.py:531
 msgid "Select manufacturer part"
-msgstr ""
+msgstr "Selecionar peça do fabricante"
 
 #: company/models.py:537
 msgid "URL for external supplier part link"
-msgstr ""
+msgstr "URL do link externo da peça do fabricante"
 
 #: company/models.py:543
 msgid "Supplier part description"
-msgstr ""
+msgstr "Descrição da peça fornecedor"
 
 #: company/models.py:548 company/templates/company/supplier_part.html:181
 #: part/admin.py:278 part/models.py:3589 part/templates/part/upload_bom.html:59
@@ -3340,11 +3340,11 @@ msgstr ""
 #: report/templates/report/inventree_so_report_base.html:95
 #: stock/serializers.py:393
 msgid "Note"
-msgstr ""
+msgstr "Anotação"
 
 #: company/models.py:552 part/models.py:1908
 msgid "base cost"
-msgstr ""
+msgstr "preço base"
 
 #: company/models.py:552 part/models.py:1908
 msgid "Minimum charge (e.g. stocking fee)"
@@ -3617,33 +3617,33 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:39
 #: templates/js/translated/company.js:771
 msgid "Edit manufacturer part"
-msgstr ""
+msgstr "Editar peça do fabricante"
 
 #: company/templates/company/manufacturer_part.html:43
 #: templates/js/translated/company.js:772
 msgid "Delete manufacturer part"
-msgstr ""
+msgstr "Excluir peça do fabricante"
 
 #: company/templates/company/manufacturer_part.html:65
 #: company/templates/company/supplier_part.html:98
 msgid "Internal Part"
-msgstr ""
+msgstr "Peça Interna"
 
 #: company/templates/company/manufacturer_part.html:95
 msgid "No manufacturer information available"
-msgstr ""
+msgstr "Nenhuma informação do fabricante disponível"
 
 #: company/templates/company/manufacturer_part.html:119
 #: company/templates/company/supplier_part.html:15 company/views.py:32
 #: part/admin.py:60 part/templates/part/part_sidebar.html:33
 #: templates/InvenTree/search.html:191 templates/navbar.html:48
 msgid "Suppliers"
-msgstr ""
+msgstr "Fornecedores"
 
 #: company/templates/company/manufacturer_part.html:136
 #: part/templates/part/detail.html:392
 msgid "Delete supplier parts"
-msgstr ""
+msgstr "Excluir peças do fornecedor"
 
 #: company/templates/company/manufacturer_part.html:136
 #: company/templates/company/manufacturer_part.html:183
@@ -3652,46 +3652,46 @@ msgstr ""
 #: templates/js/translated/part.js:307 templates/js/translated/stock.js:188
 #: users/models.py:231
 msgid "Delete"
-msgstr ""
+msgstr "Excluir"
 
 #: company/templates/company/manufacturer_part.html:166
 #: company/templates/company/manufacturer_part_sidebar.html:5
 #: part/templates/part/category_sidebar.html:19
 #: part/templates/part/detail.html:208 part/templates/part/part_sidebar.html:8
 msgid "Parameters"
-msgstr ""
+msgstr "Parâmetros"
 
 #: company/templates/company/manufacturer_part.html:170
 #: part/templates/part/detail.html:213
 #: templates/InvenTree/settings/category.html:12
 #: templates/InvenTree/settings/part.html:63
 msgid "New Parameter"
-msgstr ""
+msgstr "Novo parâmetro"
 
 #: company/templates/company/manufacturer_part.html:183
 msgid "Delete parameters"
-msgstr ""
+msgstr "Excluir parâmetros"
 
 #: company/templates/company/manufacturer_part.html:245
 #: part/templates/part/detail.html:872
 msgid "Add Parameter"
-msgstr ""
+msgstr "Adicionar parâmetro"
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Peças Fabricadas"
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
-msgstr ""
+msgstr "Peças fornecidas"
 
 #: company/templates/company/sidebar.html:16
 msgid "Supplied Stock Items"
-msgstr ""
+msgstr "Itens fornecidos em estoque"
 
 #: company/templates/company/sidebar.html:22
 msgid "Assigned Stock Items"
-msgstr ""
+msgstr "Itens de Estoque atribuídos"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:678
@@ -3699,21 +3699,21 @@ msgstr ""
 #: templates/js/translated/company.js:1000
 #: templates/js/translated/order.js:1266 templates/js/translated/stock.js:2010
 msgid "Supplier Part"
-msgstr ""
+msgstr "Fornecedor da Peça"
 
 #: company/templates/company/supplier_part.html:36
 #: part/templates/part/part_base.html:43
 #: stock/templates/stock/item_base.html:41
 #: stock/templates/stock/location.html:54
 msgid "Barcode actions"
-msgstr ""
+msgstr "Ações de código de barras"
 
 #: company/templates/company/supplier_part.html:40
 #: part/templates/part/part_base.html:46
 #: stock/templates/stock/item_base.html:45
 #: stock/templates/stock/location.html:56 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr ""
+msgstr "Mostrar QR Code"
 
 #: company/templates/company/supplier_part.html:42
 #: stock/templates/stock/item_base.html:48
@@ -3721,102 +3721,102 @@ msgstr ""
 #: templates/js/translated/barcode.js:454
 #: templates/js/translated/barcode.js:459
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Desatribuir Código de Barras"
 
 #: company/templates/company/supplier_part.html:44
 #: part/templates/part/part_base.html:51
 #: stock/templates/stock/item_base.html:50
 #: stock/templates/stock/location.html:60
 msgid "Link Barcode"
-msgstr ""
+msgstr "Atribuir Código de Barras"
 
 #: company/templates/company/supplier_part.html:51
 msgid "Supplier part actions"
-msgstr ""
+msgstr "Ações de peças do fornecedor"
 
 #: company/templates/company/supplier_part.html:56
 #: company/templates/company/supplier_part.html:57
 #: company/templates/company/supplier_part.html:222
 #: part/templates/part/detail.html:112
 msgid "Order Part"
-msgstr ""
+msgstr "Pedir Peça"
 
 #: company/templates/company/supplier_part.html:61
 #: company/templates/company/supplier_part.html:62
 msgid "Update Availability"
-msgstr ""
+msgstr "Atualizar disponibilidade"
 
 #: company/templates/company/supplier_part.html:64
 #: company/templates/company/supplier_part.html:65
 #: templates/js/translated/company.js:265
 msgid "Edit Supplier Part"
-msgstr ""
+msgstr "Editar Fornecedor da Peça"
 
 #: company/templates/company/supplier_part.html:69
 #: company/templates/company/supplier_part.html:70
 #: templates/js/translated/company.js:240
 msgid "Duplicate Supplier Part"
-msgstr ""
+msgstr "Duplicar Peça do Fornecedor"
 
 #: company/templates/company/supplier_part.html:74
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "Excluir Fornecedor da Peça"
 
 #: company/templates/company/supplier_part.html:75
 msgid "Delete Supplier  Part"
-msgstr ""
+msgstr "Excluir Fornecedor da Peça"
 
 #: company/templates/company/supplier_part.html:122
 #: part/templates/part/part_base.html:307
 #: stock/templates/stock/item_base.html:161
 #: stock/templates/stock/location.html:156
 msgid "Barcode Identifier"
-msgstr ""
+msgstr "Identificador de Código de Barras"
 
 #: company/templates/company/supplier_part.html:140
 msgid "No supplier information available"
-msgstr ""
+msgstr "Nenhuma informação do fornecedor está disponível"
 
 #: company/templates/company/supplier_part.html:200
 msgid "Supplier Part Stock"
-msgstr ""
+msgstr "Estoque de Peça do Fornecedor"
 
 #: company/templates/company/supplier_part.html:203
 #: part/templates/part/detail.html:24 stock/templates/stock/location.html:203
 msgid "Create new stock item"
-msgstr ""
+msgstr "Criar novo item de estoque"
 
 #: company/templates/company/supplier_part.html:204
 #: part/templates/part/detail.html:25 stock/templates/stock/location.html:204
 #: templates/js/translated/stock.js:473
 msgid "New Stock Item"
-msgstr ""
+msgstr "Novo item de estoque"
 
 #: company/templates/company/supplier_part.html:217
 msgid "Supplier Part Orders"
-msgstr ""
+msgstr "Pedidos de peças do fornecedor"
 
 #: company/templates/company/supplier_part.html:242
 msgid "Pricing Information"
-msgstr ""
+msgstr "Informações de Preço"
 
 #: company/templates/company/supplier_part.html:247
 #: templates/js/translated/company.js:370
 #: templates/js/translated/pricing.js:668
 msgid "Add Price Break"
-msgstr ""
+msgstr "Adicionar parcela de preço"
 
 #: company/templates/company/supplier_part.html:274
 msgid "Supplier Part QR Code"
-msgstr ""
+msgstr "QR Code da Peça do Fornecedor"
 
 #: company/templates/company/supplier_part.html:285
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Vincular Código de Barras à Parte do Fornecedor"
 
 #: company/templates/company/supplier_part.html:360
 msgid "Update Part Availability"
-msgstr ""
+msgstr "Atualizar disponibilidade de peças"
 
 #: company/templates/company/supplier_part_sidebar.html:5 part/tasks.py:288
 #: part/templates/part/category.html:204
@@ -3829,52 +3829,52 @@ msgstr ""
 #: templates/js/translated/search.js:225 templates/js/translated/stock.js:2619
 #: users/models.py:41
 msgid "Stock Items"
-msgstr ""
+msgstr "Itens de Estoque"
 
 #: company/templates/company/supplier_part_sidebar.html:9
 msgid "Supplier Part Pricing"
-msgstr ""
+msgstr "Preço do Fornecedor Peça"
 
 #: company/views.py:33
 msgid "New Supplier"
-msgstr ""
+msgstr "Novo Fornecedor"
 
 #: company/views.py:39
 msgid "New Manufacturer"
-msgstr ""
+msgstr "Novo Fabricante"
 
 #: company/views.py:44 templates/InvenTree/search.html:211
 #: templates/navbar.html:60
 msgid "Customers"
-msgstr ""
+msgstr "Clientes"
 
 #: company/views.py:45
 msgid "New Customer"
-msgstr ""
+msgstr "Novo Cliente"
 
 #: company/views.py:52 templates/js/translated/search.js:270
 msgid "Companies"
-msgstr ""
+msgstr "Empresas"
 
 #: company/views.py:53
 msgid "New Company"
-msgstr ""
+msgstr "Nova Empresa"
 
 #: label/models.py:102
 msgid "Label name"
-msgstr ""
+msgstr "Nome da etiqueta"
 
 #: label/models.py:109
 msgid "Label description"
-msgstr ""
+msgstr "Descrição da etiqueta"
 
 #: label/models.py:116
 msgid "Label"
-msgstr ""
+msgstr "Etiqueta"
 
 #: label/models.py:117
 msgid "Label template file"
-msgstr ""
+msgstr "Arquivo de modelo de etiqueta"
 
 #: label/models.py:123 report/models.py:258
 msgid "Enabled"
@@ -4097,212 +4097,212 @@ msgstr ""
 
 #: order/models.py:1022
 msgid "Unit price"
-msgstr ""
+msgstr "Preço Unitário"
 
 #: order/models.py:1052
 msgid "Supplier part must match supplier"
-msgstr ""
+msgstr "A peça do fornecedor deve corresponder ao fornecedor"
 
 #: order/models.py:1060
 msgid "deleted"
-msgstr ""
+msgstr "excluído"
 
 #: order/models.py:1066 order/models.py:1151 order/models.py:1192
 #: order/models.py:1291 order/models.py:1423
 #: templates/js/translated/order.js:3684
 msgid "Order"
-msgstr ""
+msgstr "Pedido"
 
 #: order/models.py:1085
 msgid "Supplier part"
-msgstr ""
+msgstr "Fornecedor da Peça"
 
 #: order/models.py:1092 order/templates/order/order_base.html:178
 #: templates/js/translated/order.js:1772 templates/js/translated/order.js:2585
 #: templates/js/translated/part.js:1529 templates/js/translated/part.js:1561
 #: templates/js/translated/table_filters.js:393
 msgid "Received"
-msgstr ""
+msgstr "Recebido"
 
 #: order/models.py:1093
 msgid "Number of items received"
-msgstr ""
+msgstr "Número de itens recebidos"
 
 #: order/models.py:1100 stock/models.py:811 stock/serializers.py:229
 #: stock/templates/stock/item_base.html:189
 #: templates/js/translated/stock.js:2041
 msgid "Purchase Price"
-msgstr ""
+msgstr "Preço de Compra"
 
 #: order/models.py:1101
 msgid "Unit purchase price"
-msgstr ""
+msgstr "Preço unitário de compra"
 
 #: order/models.py:1114
 msgid "Where does the Purchaser want this item to be stored?"
-msgstr ""
+msgstr "Onde o Comprador quer que este item seja armazenado?"
 
 #: order/models.py:1180
 msgid "Virtual part cannot be assigned to a sales order"
-msgstr ""
+msgstr "Peça virtual não pode ser atribuída a um pedido de venda"
 
 #: order/models.py:1185
 msgid "Only salable parts can be assigned to a sales order"
-msgstr ""
+msgstr "Apenas peças vendáveis podem ser atribuídas a um pedido de venda"
 
 #: order/models.py:1211 part/templates/part/part_pricing.html:107
 #: part/templates/part/prices.html:128 templates/js/translated/pricing.js:924
 msgid "Sale Price"
-msgstr ""
+msgstr "Preço de Venda"
 
 #: order/models.py:1212
 msgid "Unit sale price"
-msgstr ""
+msgstr "Preço de venda unitário"
 
 #: order/models.py:1222
 msgid "Shipped quantity"
-msgstr ""
+msgstr "Quantidade enviada"
 
 #: order/models.py:1298
 msgid "Date of shipment"
-msgstr ""
+msgstr "Data do envio"
 
 #: order/models.py:1305
 msgid "Checked By"
-msgstr ""
+msgstr "Verificado por"
 
 #: order/models.py:1306
 msgid "User who checked this shipment"
-msgstr ""
+msgstr "Usuário que verificou esta remessa"
 
 #: order/models.py:1313 order/models.py:1498 order/serializers.py:1200
 #: order/serializers.py:1328 templates/js/translated/model_renderers.js:338
 msgid "Shipment"
-msgstr ""
+msgstr "Remessa"
 
 #: order/models.py:1314
 msgid "Shipment number"
-msgstr ""
+msgstr "Número do Envio"
 
 #: order/models.py:1318
 msgid "Shipment notes"
-msgstr ""
+msgstr "Notas de envio"
 
 #: order/models.py:1324
 msgid "Tracking Number"
-msgstr ""
+msgstr "Número de Rastreamento"
 
 #: order/models.py:1325
 msgid "Shipment tracking information"
-msgstr ""
+msgstr "Informação de rastreamento da remessa"
 
 #: order/models.py:1332
 msgid "Invoice Number"
-msgstr ""
+msgstr "Número da Fatura"
 
 #: order/models.py:1333
 msgid "Reference number for associated invoice"
-msgstr ""
+msgstr "Número de referência para fatura associada"
 
 #: order/models.py:1351
 msgid "Shipment has already been sent"
-msgstr ""
+msgstr "O pedido já foi enviado"
 
 #: order/models.py:1354
 msgid "Shipment has no allocated stock items"
-msgstr ""
+msgstr "Remessa não foi alocada nos itens de estoque"
 
 #: order/models.py:1457 order/models.py:1459
 msgid "Stock item has not been assigned"
-msgstr ""
+msgstr "O item do estoque não foi atribuído"
 
 #: order/models.py:1463
 msgid "Cannot allocate stock item to a line with a different part"
-msgstr ""
+msgstr "Não é possível alocar o item de estoque para uma linha de uma peça diferente"
 
 #: order/models.py:1465
 msgid "Cannot allocate stock to a line without a part"
-msgstr ""
+msgstr "Não é possível alocar uma linha sem uma peça"
 
 #: order/models.py:1468
 msgid "Allocation quantity cannot exceed stock quantity"
-msgstr ""
+msgstr "A quantidade de alocação não pode exceder a quantidade em estoque"
 
 #: order/models.py:1478 order/serializers.py:1062
 msgid "Quantity must be 1 for serialized stock item"
-msgstr ""
+msgstr "Quantidade deve ser 1 para item de estoque serializado"
 
 #: order/models.py:1481
 msgid "Sales order does not match shipment"
-msgstr ""
+msgstr "Pedidos de venda não coincidem com a remessa"
 
 #: order/models.py:1482
 msgid "Shipment does not match sales order"
-msgstr ""
+msgstr "Remessa não coincide com pedido de venda"
 
 #: order/models.py:1490
 msgid "Line"
-msgstr ""
+msgstr "Linha"
 
 #: order/models.py:1499
 msgid "Sales order shipment reference"
-msgstr ""
+msgstr "Referência de remessa do pedido de venda"
 
 #: order/models.py:1512
 msgid "Item"
-msgstr ""
+msgstr "Item"
 
 #: order/models.py:1513
 msgid "Select stock item to allocate"
-msgstr ""
+msgstr "Selecione o item de estoque para alocar"
 
 #: order/models.py:1516
 msgid "Enter stock allocation quantity"
-msgstr ""
+msgstr "Insira a quantidade de atribuição de estoque"
 
 #: order/serializers.py:192
 msgid "Order cannot be cancelled"
-msgstr ""
+msgstr "Pedido não pode ser cancelado"
 
 #: order/serializers.py:207 order/serializers.py:1080
 msgid "Allow order to be closed with incomplete line items"
-msgstr ""
+msgstr "Permitir que o pedido seja fechado com itens de linha incompletos"
 
 #: order/serializers.py:218 order/serializers.py:1091
 msgid "Order has incomplete line items"
-msgstr ""
+msgstr "O pedido tem itens da linha incompletos"
 
 #: order/serializers.py:330
 msgid "Order is not open"
-msgstr ""
+msgstr "O pedido não está aberto"
 
 #: order/serializers.py:348
 msgid "Purchase price currency"
-msgstr ""
+msgstr "Moeda de preço de compra"
 
 #: order/serializers.py:366
 msgid "Supplier part must be specified"
-msgstr ""
+msgstr "A peça do fornecedor deve ser especificada"
 
 #: order/serializers.py:371
 msgid "Purchase order must be specified"
-msgstr ""
+msgstr "O pedido de compra deve ser especificado"
 
 #: order/serializers.py:377
 msgid "Supplier must match purchase order"
-msgstr ""
+msgstr "O fornecedor deve corresponder o pedido de compra"
 
 #: order/serializers.py:378
 msgid "Purchase order must match supplier"
-msgstr ""
+msgstr "Pedido de compra deve corresponder ao fornecedor"
 
 #: order/serializers.py:416 order/serializers.py:1168
 msgid "Line Item"
-msgstr ""
+msgstr "Itens de linha"
 
 #: order/serializers.py:422
 msgid "Line item does not match purchase order"
-msgstr ""
+msgstr "O item de linha não corresponde ao pedido de compra"
 
 #: order/serializers.py:432 order/serializers.py:551
 msgid "Select destination location for received items"
@@ -4562,15 +4562,15 @@ msgstr ""
 
 #: order/templates/order/order_wizard/match_parts.html:29
 msgid "Select Supplier Part"
-msgstr ""
+msgstr "Selecionar Fornecedor da Peça"
 
 #: order/templates/order/order_wizard/po_upload.html:8
 msgid "Return to Orders"
-msgstr ""
+msgstr "Retornar para Pedidos"
 
 #: order/templates/order/order_wizard/po_upload.html:13
 msgid "Upload File for Purchase Order"
-msgstr ""
+msgstr "Carregar Arquivo para o Pedido de Compra"
 
 #: order/templates/order/order_wizard/po_upload.html:14
 msgid "Order is already processed. Files cannot be uploaded."
