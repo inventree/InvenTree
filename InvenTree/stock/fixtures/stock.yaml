@@ -81,7 +81,7 @@
   pk: 102
   fields:
     part: 25
-    batch: 'ABCDE'
+    batch: 'BCDE'
     location: 7
     quantity: 0
     level: 0
@@ -109,7 +109,7 @@
     part: 10001
     location: 7
     quantity: 5
-    batch: "AAA"
+    batch: "BBAAA"
     level: 0
     tree_id: 0
     lft: 0

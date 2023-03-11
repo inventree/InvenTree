@@ -5,12 +5,17 @@ import io
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
+from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
 
 import order.models as models
+from common.settings import currency_codes
+from company.models import Company
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from part.models import Part
@@ -90,6 +95,65 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'supplier_part': 1}, 1)
         self.filter({'supplier_part': 3}, 2)
         self.filter({'supplier_part': 4}, 0)
+
+    def test_total_price(self):
+        """Unit tests for the 'total_price' field"""
+
+        # Ensure we have exchange rate data
+        self.generate_exchange_rates()
+
+        currencies = currency_codes()
+        n = len(currencies)
+
+        idx = 0
+
+        new_orders = []
+
+        # Let's generate some more orders
+        for supplier in Company.objects.filter(is_supplier=True):
+            for _idx in range(10):
+                new_orders.append(
+                    models.PurchaseOrder(
+                        supplier=supplier,
+                        reference=f'PO-{idx + 100}'
+                    )
+                )
+
+                idx += 1
+
+        models.PurchaseOrder.objects.bulk_create(new_orders)
+
+        idx = 0
+
+        # Create some purchase order line items
+        lines = []
+
+        for po in models.PurchaseOrder.objects.all():
+            for sp in po.supplier.supplied_parts.all():
+                lines.append(
+                    models.PurchaseOrderLineItem(
+                        order=po,
+                        part=sp,
+                        quantity=idx + 1,
+                        purchase_price=Money((idx + 1) / 10, currencies[idx % n]),
+                    )
+                )
+
+                idx += 1
+
+        models.PurchaseOrderLineItem.objects.bulk_create(lines)
+
+        # List all purchase orders
+        for limit in [1, 5, 10, 100]:
+            with CaptureQueriesContext(connection) as ctx:
+                response = self.get(self.LIST_URL, data={'limit': limit}, expected_code=200)
+
+                # Total database queries must be below 15, independent of the number of results
+                self.assertLess(len(ctx), 15)
+
+                for result in response.data['results']:
+                    self.assertIn('total_price', result)
+                    self.assertIn('total_price_currency', result)
 
     def test_overdue(self):
         """Test "overdue" status."""
@@ -539,6 +603,26 @@ class PurchaseOrderLineItemTest(OrderTest):
         self.filter({'has_pricing': 1}, 0)
         self.filter({'has_pricing': 0}, 5)
 
+    def test_po_line_bulk_delete(self):
+        """Test that we can bulk delete multiple PurchaseOrderLineItems via the API."""
+        n = models.PurchaseOrderLineItem.objects.count()
+
+        self.assignRole('purchase_order.delete')
+
+        url = reverse('api-po-line-list')
+
+        # Try to delete a set of line items via their IDs
+        self.delete(
+            url,
+            {
+                'items': [1, 2],
+            },
+            expected_code=204,
+        )
+
+        # We should have 2 less PurchaseOrderLineItems after deletign them
+        self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
+
 
 class PurchaseOrderDownloadTest(OrderTest):
     """Unit tests for downloading PurchaseOrder data via the API endpoint."""
@@ -886,12 +970,12 @@ class PurchaseOrderReceiveTest(OrderTest):
                 {
                     'line_item': 1,
                     'quantity': 10,
-                    'batch_code': 'abc-123',
+                    'batch_code': 'B-abc-123',
                 },
                 {
                     'line_item': 2,
                     'quantity': 10,
-                    'batch_code': 'xyz-789',
+                    'batch_code': 'B-xyz-789',
                 }
             ],
             'location': 1,
@@ -911,8 +995,8 @@ class PurchaseOrderReceiveTest(OrderTest):
         item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
         item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
 
-        self.assertEqual(item_1.batch, 'abc-123')
-        self.assertEqual(item_2.batch, 'xyz-789')
+        self.assertEqual(item_1.batch, 'B-abc-123')
+        self.assertEqual(item_2.batch, 'B-xyz-789')
 
     def test_serial_numbers(self):
         """Test that we can supply a 'serial number' when receiving items."""
@@ -927,13 +1011,13 @@ class PurchaseOrderReceiveTest(OrderTest):
                 {
                     'line_item': 1,
                     'quantity': 10,
-                    'batch_code': 'abc-123',
+                    'batch_code': 'B-abc-123',
                     'serial_numbers': '100+',
                 },
                 {
                     'line_item': 2,
                     'quantity': 10,
-                    'batch_code': 'xyz-789',
+                    'batch_code': 'B-xyz-789',
                 }
             ],
             'location': 1,
@@ -958,7 +1042,7 @@ class PurchaseOrderReceiveTest(OrderTest):
             item = StockItem.objects.get(serial_int=i)
             self.assertEqual(item.serial, str(i))
             self.assertEqual(item.quantity, 1)
-            self.assertEqual(item.batch, 'abc-123')
+            self.assertEqual(item.batch, 'B-abc-123')
 
         # A single stock item (quantity 10) created for the second line item
         items = StockItem.objects.filter(supplier_part=line_2.part)
@@ -967,7 +1051,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         item = items.first()
 
         self.assertEqual(item.quantity, 10)
-        self.assertEqual(item.batch, 'xyz-789')
+        self.assertEqual(item.batch, 'B-xyz-789')
 
 
 class SalesOrderTest(OrderTest):
@@ -1000,6 +1084,79 @@ class SalesOrderTest(OrderTest):
         # Filter by "assigned_to_me"
         self.filter({'assigned_to_me': 1}, 0)
         self.filter({'assigned_to_me': 0}, 5)
+
+    def test_total_price(self):
+        """Unit tests for the 'total_price' field"""
+
+        # Ensure we have exchange rate data
+        self.generate_exchange_rates()
+
+        currencies = currency_codes()
+        n = len(currencies)
+
+        idx = 0
+        new_orders = []
+
+        # Generate some new SalesOrders
+        for customer in Company.objects.filter(is_customer=True):
+            for _idx in range(10):
+                new_orders.append(
+                    models.SalesOrder(
+                        customer=customer,
+                        reference=f'SO-{idx + 100}',
+                    )
+                )
+
+                idx += 1
+
+        models.SalesOrder.objects.bulk_create(new_orders)
+
+        idx = 0
+
+        # Create some new SalesOrderLineItem objects
+
+        lines = []
+        extra_lines = []
+
+        for so in models.SalesOrder.objects.all():
+            for p in Part.objects.filter(salable=True):
+                lines.append(
+                    models.SalesOrderLineItem(
+                        order=so,
+                        part=p,
+                        quantity=idx + 1,
+                        sale_price=Money((idx + 1) / 5, currencies[idx % n])
+                    )
+                )
+
+                idx += 1
+
+            # Create some extra lines against this order
+            for ii in range(3):
+                extra_lines.append(
+                    models.SalesOrderExtraLine(
+                        order=so,
+                        quantity=(idx + 2) % 10,
+                        price=Money(10, 'CAD'),
+                    )
+                )
+
+        models.SalesOrderLineItem.objects.bulk_create(lines)
+        models.SalesOrderExtraLine.objects.bulk_create(extra_lines)
+
+        # List all SalesOrder objects and count queries
+        for limit in [1, 5, 10, 100]:
+            with CaptureQueriesContext(connection) as ctx:
+                response = self.get(self.LIST_URL, data={'limit': limit}, expected_code=200)
+
+                # Total database queries must be less than 15
+                self.assertLess(len(ctx), 15)
+
+                n = len(response.data['results'])
+
+                for result in response.data['results']:
+                    self.assertIn('total_price', result)
+                    self.assertIn('total_price_currency', result)
 
     def test_overdue(self):
         """Test "overdue" status."""
@@ -1251,25 +1408,33 @@ class SalesOrderLineItemTest(OrderTest):
 
     LIST_URL = reverse('api-so-line-list')
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Init routine for this unit test class"""
-        super().setUp()
+        super().setUpTestData()
 
         # List of salable parts
         parts = Part.objects.filter(salable=True)
+
+        lines = []
 
         # Create a bunch of SalesOrderLineItems for each order
         for idx, so in enumerate(models.SalesOrder.objects.all()):
 
             for part in parts:
-                models.SalesOrderLineItem.objects.create(
-                    order=so,
-                    part=part,
-                    quantity=(idx + 1) * 5,
-                    reference=f"Order {so.reference} - line {idx}",
+                lines.append(
+                    models.SalesOrderLineItem(
+                        order=so,
+                        part=part,
+                        quantity=(idx + 1) * 5,
+                        reference=f"Order {so.reference} - line {idx}",
+                    )
                 )
 
-        self.url = reverse('api-so-line-list')
+        # Bulk create
+        models.SalesOrderLineItem.objects.bulk_create(lines)
+
+        cls.url = reverse('api-so-line-list')
 
     def test_so_line_list(self):
         """Test list endpoint"""
@@ -1300,7 +1465,7 @@ class SalesOrderLineItemTest(OrderTest):
         n_parts = Part.objects.filter(salable=True).count()
 
         # List by part
-        for part in Part.objects.filter(salable=True):
+        for part in Part.objects.filter(salable=True)[:3]:
             response = self.get(
                 self.url,
                 {
@@ -1312,7 +1477,7 @@ class SalesOrderLineItemTest(OrderTest):
             self.assertEqual(response.data['count'], n_orders)
 
         # List by order
-        for order in models.SalesOrder.objects.all():
+        for order in models.SalesOrder.objects.all()[:3]:
             response = self.get(
                 self.url,
                 {

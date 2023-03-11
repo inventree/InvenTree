@@ -19,15 +19,19 @@ class CategoryTest(TestCase):
         'params',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Extract some interesting categories for time-saving"""
-        self.electronics = PartCategory.objects.get(name='Electronics')
-        self.mechanical = PartCategory.objects.get(name='Mechanical')
-        self.resistors = PartCategory.objects.get(name='Resistors')
-        self.capacitors = PartCategory.objects.get(name='Capacitors')
-        self.fasteners = PartCategory.objects.get(name='Fasteners')
-        self.ic = PartCategory.objects.get(name='IC')
-        self.transceivers = PartCategory.objects.get(name='Transceivers')
+
+        super().setUpTestData()
+
+        cls.electronics = PartCategory.objects.get(name='Electronics')
+        cls.mechanical = PartCategory.objects.get(name='Mechanical')
+        cls.resistors = PartCategory.objects.get(name='Resistors')
+        cls.capacitors = PartCategory.objects.get(name='Capacitors')
+        cls.fasteners = PartCategory.objects.get(name='Fasteners')
+        cls.ic = PartCategory.objects.get(name='IC')
+        cls.transceivers = PartCategory.objects.get(name='Transceivers')
 
     def test_parents(self):
         """Test that the parent fields are properly set, based on the test fixtures."""
@@ -255,8 +259,6 @@ class CategoryTest(TestCase):
         self.assertEqual(ancestors[2], C31)
 
         # At this point, we are confident that the tree is correctly structured
-
-        # Add some parts to category B3
 
         for i in range(10):
             Part.objects.create(

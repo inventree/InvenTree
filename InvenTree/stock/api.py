@@ -421,6 +421,16 @@ class StockFilter(rest_filters.FilterSet):
         else:
             return queryset.exclude(StockItem.EXPIRED_FILTER)
 
+    external = rest_filters.BooleanFilter(label=_('External Location'), method='filter_external')
+
+    def filter_external(self, queryset, name, value):
+        """Filter by whether or not the stock item is located in an external location"""
+
+        if str2bool(value):
+            return queryset.filter(location__external=True)
+        else:
+            return queryset.exclude(location__external=True)
+
     in_stock = rest_filters.BooleanFilter(label='In Stock', method='filter_in_stock')
 
     def filter_in_stock(self, queryset, name, value):

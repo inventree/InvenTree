@@ -321,6 +321,8 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
         'target_date',
         'line_items',
         'status',
+        'responsible',
+        'total_price',
     ]
 
     ordering = '-reference'
@@ -493,7 +495,7 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
         return queryset
 
 
-class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateAPI):
+class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateDestroyAPIView):
     """API endpoint for accessing a list of PurchaseOrderLineItem objects.
 
     - GET: Return a list of PurchaseOrder Line Item objects
@@ -802,6 +804,7 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
         'target_date',
         'line_items',
         'shipment_date',
+        'total_price',
     ]
 
     search_fields = [

@@ -2,6 +2,7 @@
 
 from django.urls import include, re_path
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 
 from rest_framework import filters
 from rest_framework.exceptions import ValidationError
@@ -64,6 +65,20 @@ class BuildFilter(rest_filters.FilterSet):
             queryset = queryset.filter(responsible__in=owners)
         else:
             queryset = queryset.exclude(responsible__in=owners)
+
+        return queryset
+
+    assigned_to = rest_filters.NumberFilter(label='responsible', method='filter_responsible')
+
+    def filter_responsible(self, queryset, name, value):
+        """Filter by orders which are assigned to the specified owner."""
+        owners = list(Owner.objects.filter(pk=value))
+
+        # if we query by a user, also find all ownerships through group memberships
+        if len(owners) > 0 and owners[0].label() == 'user':
+            owners = Owner.get_owners_matching_user(User.objects.get(pk=owners[0].owner_id))
+
+        queryset = queryset.filter(responsible__in=owners)
 
         return queryset
 

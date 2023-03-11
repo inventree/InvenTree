@@ -2041,9 +2041,107 @@ function loadStockTable(table, options) {
         title: '{% trans "Purchase Price" %}',
         sortable: false,
         formatter: function(value, row) {
-            return formatCurrency(value, {
+            let html = formatCurrency(value, {
                 currency: row.purchase_price_currency,
             });
+
+            var base = baseCurrency();
+
+            if (row.purchase_price_currency != base) {
+                let converted = convertCurrency(
+                    row.purchase_price,
+                    row.purchase_price_currency,
+                    base,
+                    getCurrencyConversionRates(),
+                );
+
+                if (converted) {
+                    converted = formatCurrency(converted, {currency: baseCurrency()});
+                    html += `<br><small><em>${converted}</em></small>`;
+                }
+            }
+
+            return html;
+        }
+    });
+
+    // Total value of stock
+    // This is not sortable, and may default to the 'price range' for the parent part
+    columns.push({
+        field: 'stock_value',
+        title: '{% trans "Stock Value" %}',
+        sortable: false,
+        switchable: true,
+        formatter: function(value, row) {
+            let min_price = row.purchase_price;
+            let max_price = row.purchase_price;
+            let currency = row.purchase_price_currency;
+
+            if (min_price == null && max_price == null && row.part_detail) {
+                min_price = row.part_detail.pricing_min;
+                max_price = row.part_detail.pricing_max;
+                currency = baseCurrency();
+            }
+
+            return formatPriceRange(
+                min_price,
+                max_price,
+                {
+                    quantity: row.quantity,
+                    currency: currency
+                }
+            );
+        },
+        footerFormatter: function(data) {
+            // Display overall range of value for the selected items
+            let rates = getCurrencyConversionRates();
+            let base = baseCurrency();
+
+            let min_price = calculateTotalPrice(
+                data,
+                function(row) {
+                    return row.quantity * (row.purchase_price || row.part_detail.pricing_min);
+                },
+                function(row) {
+                    if (row.purchase_price) {
+                        return row.purchase_price_currency;
+                    } else {
+                        return base;
+                    }
+                },
+                {
+                    currency: base,
+                    rates: rates,
+                    raw: true,
+                }
+            );
+
+            let max_price = calculateTotalPrice(
+                data,
+                function(row) {
+                    return row.quantity * (row.purchase_price || row.part_detail.pricing_max);
+                },
+                function(row) {
+                    if (row.purchase_price) {
+                        return row.purchase_price_currency;
+                    } else {
+                        return base;
+                    }
+                },
+                {
+                    currency: base,
+                    rates: rates,
+                    raw: true,
+                }
+            );
+
+            return formatPriceRange(
+                min_price,
+                max_price,
+                {
+                    currency: base,
+                }
+            );
         }
     });
 
@@ -2067,6 +2165,7 @@ function loadStockTable(table, options) {
         name: 'stock',
         original: original,
         showColumns: true,
+        showFooter: true,
         columns: columns,
     });
 
