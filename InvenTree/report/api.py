@@ -294,13 +294,13 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
 
             valid_report_ids = set()
 
-            for report in queryset.all():
+            for qreport in queryset.all():
 
                 matches = True
 
                 # Filter string defined for the report object
                 try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                    filters = InvenTree.helpers.validateFilterString(qreport.filters)
                 except Exception:
                     continue
 
@@ -316,7 +316,7 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
                         break
 
                 if matches:
-                    valid_report_ids.add(report.pk)
+                    valid_report_ids.add(qreport.pk)
                 else:
                     continue
 
@@ -390,12 +390,12 @@ class BOMReportList(ReportListView, PartReportMixin):
 
             valid_report_ids = set()
 
-            for report in queryset.all():
+            for qreport in queryset.all():
 
                 matches = True
 
                 try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                    filters = InvenTree.helpers.validateFilterString(qreport.filters)
                 except ValidationError:
                     # Filters are ill-defined
                     continue
@@ -412,7 +412,7 @@ class BOMReportList(ReportListView, PartReportMixin):
                         break
 
                 if matches:
-                    valid_report_ids.add(report.pk)
+                    valid_report_ids.add(qreport.pk)
                 else:
                     continue
 
@@ -473,12 +473,12 @@ class BuildReportList(ReportListView, BuildReportMixin):
 
             valid_build_ids = set()
 
-            for report in queryset.all():
+            for qreport in queryset.all():
 
                 matches = True
 
                 try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                    filters = InvenTree.helpers.validateFilterString(qreport.filters)
                 except ValidationError:
                     continue
 
@@ -494,7 +494,7 @@ class BuildReportList(ReportListView, BuildReportMixin):
                         break
 
                 if matches:
-                    valid_build_ids.add(report.pk)
+                    valid_build_ids.add(qreport.pk)
                 else:
                     continue
 
@@ -549,13 +549,13 @@ class PurchaseOrderReportList(ReportListView, OrderReportMixin):
 
             valid_report_ids = set()
 
-            for report in queryset.all():
+            for qreport in queryset.all():
 
                 matches = True
 
                 # Filter string defined for the report object
                 try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                    filters = InvenTree.helpers.validateFilterString(qreport.filters)
                 except Exception:
                     continue
 
@@ -571,7 +571,7 @@ class PurchaseOrderReportList(ReportListView, OrderReportMixin):
                         break
 
                 if matches:
-                    valid_report_ids.add(report.pk)
+                    valid_report_ids.add(qreport.pk)
                 else:
                     continue
 
@@ -628,13 +628,13 @@ class SalesOrderReportList(ReportListView, OrderReportMixin):
 
             valid_report_ids = set()
 
-            for report in queryset.all():
+            for qreport in queryset.all():
 
                 matches = True
 
                 # Filter string defined for the report object
                 try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                    filters = InvenTree.helpers.validateFilterString(qreport.filters)
                 except Exception:
                     continue
 
@@ -650,7 +650,7 @@ class SalesOrderReportList(ReportListView, OrderReportMixin):
                         break
 
                 if matches:
-                    valid_report_ids.add(report.pk)
+                    valid_report_ids.add(qreport.pk)
                 else:
                     continue
 
