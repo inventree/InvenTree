@@ -642,9 +642,9 @@ class PurchaseOrderExtraLineItemMetadata(RetrieveUpdateAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance"""
-        return MetadataSerializer(models.PurchaseOrderExtraLineItem, *args, **kwargs)
+        return MetadataSerializer(models.PurchaseOrderExtraLine, *args, **kwargs)
 
-    queryset = models.PurchaseOrderExtraLineItem.objects.all()
+    queryset = models.PurchaseOrderExtraLine.objects.all()
 
 
 class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
