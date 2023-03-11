@@ -12,7 +12,7 @@ from rest_framework.exceptions import NotFound
 import common.models
 import InvenTree.helpers
 from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
-+                              RetrieveUpdateDestroyAPI)
+                              RetrieveUpdateDestroyAPI)
 from InvenTree.tasks import offload_task
 from part.models import Part
 from plugin.base.label import label as plugin_label
