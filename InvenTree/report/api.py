@@ -19,8 +19,6 @@ import part.models
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI, RetrieveUpdateDestroyAPI
 from stock.models import StockItem, StockItemAttachment
 import report.models
-from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     SalesOrderReport, TestReport)
 from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           PurchaseOrderReportSerializer,
                           SalesOrderReportSerializer, TestReportSerializer)
@@ -274,7 +272,7 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
     - item: Filter by stock item(s)
     """
 
-    queryset = TestReport.objects.all()
+    queryset = report.models.TestReport.objects.all()
     serializer_class = TestReportSerializer
 
     def filter_queryset(self, queryset):
@@ -330,14 +328,14 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
 class StockItemTestReportDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single TestReport object."""
 
-    queryset = TestReport.objects.all()
+    queryset = report.models.TestReport.objects.all()
     serializer_class = TestReportSerializer
 
 
 class StockItemTestReportPrint(RetrieveAPI, StockItemReportMixin, ReportPrintMixin):
     """API endpoint for printing a TestReport object."""
 
-    queryset = TestReport.objects.all()
+    queryset = report.models.TestReport.objects.all()
     serializer_class = TestReportSerializer
 
     def report_callback(self, item, report, request):
@@ -372,7 +370,7 @@ class BOMReportList(ReportListView, PartReportMixin):
     - part: Filter by part(s)
     """
 
-    queryset = BillOfMaterialsReport.objects.all()
+    queryset = report.models.BillOfMaterialsReport.objects.all()
     serializer_class = BOMReportSerializer
 
     def filter_queryset(self, queryset):
@@ -427,14 +425,14 @@ class BOMReportList(ReportListView, PartReportMixin):
 class BOMReportDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single BillOfMaterialReport object."""
 
-    queryset = BillOfMaterialsReport.objects.all()
+    queryset = report.models.BillOfMaterialsReport.objects.all()
     serializer_class = BOMReportSerializer
 
 
 class BOMReportPrint(RetrieveAPI, PartReportMixin, ReportPrintMixin):
     """API endpoint for printing a BillOfMaterialReport object."""
 
-    queryset = BillOfMaterialsReport.objects.all()
+    queryset = report.models.BillOfMaterialsReport.objects.all()
     serializer_class = BOMReportSerializer
 
     def get(self, request, *args, **kwargs):
@@ -453,7 +451,7 @@ class BuildReportList(ReportListView, BuildReportMixin):
     - build: Filter by Build object
     """
 
-    queryset = BuildReport.objects.all()
+    queryset = report.models.BuildReport.objects.all()
     serializer_class = BuildReportSerializer
 
     def filter_queryset(self, queryset):
@@ -509,14 +507,14 @@ class BuildReportList(ReportListView, BuildReportMixin):
 class BuildReportDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single BuildReport object."""
 
-    queryset = BuildReport.objects.all()
+    queryset = report.models.BuildReport.objects.all()
     serializer_class = BuildReportSerializer
 
 
 class BuildReportPrint(RetrieveAPI, BuildReportMixin, ReportPrintMixin):
     """API endpoint for printing a BuildReport."""
 
-    queryset = BuildReport.objects.all()
+    queryset = report.models.BuildReport.objects.all()
     serializer_class = BuildReportSerializer
 
     def get(self, request, *ars, **kwargs):
@@ -530,7 +528,7 @@ class PurchaseOrderReportList(ReportListView, OrderReportMixin):
     """API list endpoint for the PurchaseOrderReport model"""
     OrderModel = order.models.PurchaseOrder
 
-    queryset = PurchaseOrderReport.objects.all()
+    queryset = report.models.PurchaseOrderReport.objects.all()
     serializer_class = PurchaseOrderReportSerializer
 
     def filter_queryset(self, queryset):
@@ -586,7 +584,7 @@ class PurchaseOrderReportList(ReportListView, OrderReportMixin):
 class PurchaseOrderReportDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single PurchaseOrderReport object."""
 
-    queryset = PurchaseOrderReport.objects.all()
+    queryset = report.models.PurchaseOrderReport.objects.all()
     serializer_class = PurchaseOrderReportSerializer
 
 
@@ -595,7 +593,7 @@ class PurchaseOrderReportPrint(RetrieveAPI, OrderReportMixin, ReportPrintMixin):
 
     OrderModel = order.models.PurchaseOrder
 
-    queryset = PurchaseOrderReport.objects.all()
+    queryset = report.models.PurchaseOrderReport.objects.all()
     serializer_class = PurchaseOrderReportSerializer
 
     def get(self, request, *args, **kwargs):
@@ -609,7 +607,7 @@ class SalesOrderReportList(ReportListView, OrderReportMixin):
     """API list endpoint for the SalesOrderReport model"""
     OrderModel = order.models.SalesOrder
 
-    queryset = SalesOrderReport.objects.all()
+    queryset = report.models.SalesOrderReport.objects.all()
     serializer_class = SalesOrderReportSerializer
 
     def filter_queryset(self, queryset):
@@ -665,7 +663,7 @@ class SalesOrderReportList(ReportListView, OrderReportMixin):
 class SalesOrderReportDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single SalesOrderReport object."""
 
-    queryset = SalesOrderReport.objects.all()
+    queryset = report.models.SalesOrderReport.objects.all()
     serializer_class = SalesOrderReportSerializer
 
 
@@ -674,7 +672,7 @@ class SalesOrderReportPrint(RetrieveAPI, OrderReportMixin, ReportPrintMixin):
 
     OrderModel = order.models.SalesOrder
 
-    queryset = SalesOrderReport.objects.all()
+    queryset = report.models.SalesOrderReport.objects.all()
     serializer_class = SalesOrderReportSerializer
 
     def get(self, request, *args, **kwargs):
