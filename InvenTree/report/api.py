@@ -688,7 +688,7 @@ class ReportMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating Report metadata."""
 
     def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance"""
+        """Return correct MetadataSerializer instance depending on which model is requested"""
         # Get type of report, make sure its one of the allowed values
         reporttype = self.kwargs.get('reporttype', None)
         assert reporttype in ['PurchaseOrder', 'SalesOrder', 'Build', 'BillOfMaterials', 'Test']
@@ -697,6 +697,7 @@ class ReportMetadata(RetrieveUpdateAPI):
         return MetadataSerializer(UseModel, *args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
+        """Return correct queryset depending on which model is requested"""
         # Get type of report, make sure its one of the allowed values
         reporttype = self.kwargs.get('reporttype', None)
         assert reporttype in ['PurchaseOrder', 'SalesOrder', 'Build', 'BillOfMaterials', 'Test']
