@@ -20,6 +20,7 @@ import common.models
 import order.models
 import part.models
 import stock.models
+from plugin.models import MetadataMixin
 from InvenTree.helpers import validateFilterString
 
 try:
@@ -174,7 +175,7 @@ class ReportBase(models.Model):
     )
 
 
-class ReportTemplateBase(ReportBase):
+class ReportTemplateBase(MetadataMixin, ReportBase):
     """Reporting template model.
 
     Able to be passed context data
