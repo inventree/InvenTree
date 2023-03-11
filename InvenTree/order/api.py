@@ -997,13 +997,13 @@ class SalesOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
 
 class SalesOrderExtraLineItemMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating SalesExtraOrderLineItem metadata."""
+    """API endpoint for viewing / updating SalesExtraOrderExtraLine metadata."""
 
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance"""
-        return MetadataSerializer(models.SalesExtraOrderLineItem, *args, **kwargs)
+        return MetadataSerializer(models.SalesExtraOrderLine, *args, **kwargs)
 
-    queryset = models.SalesOrderExtraLineItem.objects.all()
+    queryset = models.SalesOrderExtraLine.objects.all()
 
 
 class SalesOrderLineItemDetail(RetrieveUpdateDestroyAPI):
