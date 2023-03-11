@@ -16,11 +16,12 @@ import common.models
 import InvenTree.helpers
 import order.models
 import part.models
+import report.models
 from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
 from plugin.serializers import MetadataSerializer
 from stock.models import StockItem, StockItemAttachment
-import report.models
+
 from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           PurchaseOrderReportSerializer,
                           SalesOrderReportSerializer, TestReportSerializer)
