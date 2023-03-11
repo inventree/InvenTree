@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-09 06:47+0000\n"
-"PO-Revision-Date: 2023-03-10 11:38\n"
+"PO-Revision-Date: 2023-03-11 11:38\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -3348,7 +3348,7 @@ msgstr "preço base"
 
 #: company/models.py:552 part/models.py:1908
 msgid "Minimum charge (e.g. stocking fee)"
-msgstr ""
+msgstr "Taxa mínima (ex.: taxa de estoque)"
 
 #: company/models.py:554 company/templates/company/supplier_part.html:167
 #: stock/admin.py:119 stock/models.py:695
@@ -3356,11 +3356,11 @@ msgstr ""
 #: templates/js/translated/company.js:1046
 #: templates/js/translated/stock.js:2150
 msgid "Packaging"
-msgstr ""
+msgstr "Embalagem"
 
 #: company/models.py:554
 msgid "Part packaging"
-msgstr ""
+msgstr "Embalagem de peças"
 
 #: company/models.py:557 company/serializers.py:302
 #: company/templates/company/supplier_part.html:174
@@ -3369,19 +3369,19 @@ msgstr ""
 #: templates/js/translated/order.js:2500 templates/js/translated/order.js:2517
 #: templates/js/translated/part.js:1485 templates/js/translated/part.js:1537
 msgid "Pack Quantity"
-msgstr ""
+msgstr "Quantidade de embalagens"
 
 #: company/models.py:558
 msgid "Unit quantity supplied in a single pack"
-msgstr ""
+msgstr "Quantidade fornecida em um único pacote"
 
 #: company/models.py:564 part/models.py:1910
 msgid "multiple"
-msgstr ""
+msgstr "múltiplo"
 
 #: company/models.py:564
 msgid "Order multiple"
-msgstr ""
+msgstr "Pedir múltiplos"
 
 #: company/models.py:572 company/templates/company/supplier_part.html:115
 #: templates/email/build_order_required_stock.html:19
@@ -3393,65 +3393,65 @@ msgstr ""
 #: templates/js/translated/part.js:614
 #: templates/js/translated/table_filters.js:210
 msgid "Available"
-msgstr ""
+msgstr "Disponível"
 
 #: company/models.py:573
 msgid "Quantity available from supplier"
-msgstr ""
+msgstr "Quantidade disponível do fornecedor"
 
 #: company/models.py:577
 msgid "Availability Updated"
-msgstr ""
+msgstr "Disponibilidade Atualizada"
 
 #: company/models.py:578
 msgid "Date of last update of availability data"
-msgstr ""
+msgstr "Data da última atualização da disponibilidade dos dados"
 
 #: company/serializers.py:96
 msgid "Default currency used for this supplier"
-msgstr ""
+msgstr "Moeda padrão utilizada para este fornecedor"
 
 #: company/templates/company/company_base.html:22
 #: templates/js/translated/order.js:742
 msgid "Create Purchase Order"
-msgstr ""
+msgstr "Criar Pedido de compra"
 
 #: company/templates/company/company_base.html:28
 msgid "Company actions"
-msgstr ""
+msgstr "Ações da empresa"
 
 #: company/templates/company/company_base.html:33
 msgid "Edit company information"
-msgstr ""
+msgstr "Editar Informações da Empresa"
 
 #: company/templates/company/company_base.html:34
 #: templates/js/translated/company.js:419
 msgid "Edit Company"
-msgstr ""
+msgstr "Editar Empresa"
 
 #: company/templates/company/company_base.html:38
 msgid "Delete company"
-msgstr ""
+msgstr "Excluir a empresa"
 
 #: company/templates/company/company_base.html:39
 #: company/templates/company/company_base.html:163
 msgid "Delete Company"
-msgstr ""
+msgstr "Excluir Empresa"
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:12
 msgid "Upload new image"
-msgstr ""
+msgstr "Carregar nova imagem"
 
 #: company/templates/company/company_base.html:59
 #: part/templates/part/part_thumb.html:14
 msgid "Download image from URL"
-msgstr ""
+msgstr "Baixar imagem do URL"
 
 #: company/templates/company/company_base.html:61
 #: part/templates/part/part_thumb.html:16
 msgid "Delete image"
-msgstr ""
+msgstr "Excluir imagem"
 
 #: company/templates/company/company_base.html:87 order/models.py:688
 #: order/templates/order/sales_order_base.html:116 stock/models.py:714
@@ -3462,90 +3462,90 @@ msgstr ""
 #: templates/js/translated/stock.js:2760
 #: templates/js/translated/table_filters.js:482
 msgid "Customer"
-msgstr ""
+msgstr "Cliente"
 
 #: company/templates/company/company_base.html:112
 msgid "Uses default currency"
-msgstr ""
+msgstr "Usar moeda padrão"
 
 #: company/templates/company/company_base.html:126
 msgid "Phone"
-msgstr ""
+msgstr "Telefone"
 
 #: company/templates/company/company_base.html:206
 #: part/templates/part/part_base.html:531
 msgid "Remove Image"
-msgstr ""
+msgstr "Remover imagem"
 
 #: company/templates/company/company_base.html:207
 msgid "Remove associated image from this company"
-msgstr ""
+msgstr "Remover imagem associada a esta empresa"
 
 #: company/templates/company/company_base.html:209
 #: part/templates/part/part_base.html:534
 #: templates/InvenTree/settings/user.html:87
 #: templates/InvenTree/settings/user.html:149
 msgid "Remove"
-msgstr ""
+msgstr "Remover"
 
 #: company/templates/company/company_base.html:238
 #: part/templates/part/part_base.html:563
 msgid "Upload Image"
-msgstr ""
+msgstr "Enviar imagem"
 
 #: company/templates/company/company_base.html:253
 #: part/templates/part/part_base.html:618
 msgid "Download Image"
-msgstr ""
+msgstr "Baixar Imagem"
 
 #: company/templates/company/detail.html:14
 #: company/templates/company/manufacturer_part_sidebar.html:7
 #: templates/InvenTree/search.html:120 templates/js/translated/search.js:172
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Peças do Fornecedor"
 
 #: company/templates/company/detail.html:18
 msgid "Create new supplier part"
-msgstr ""
+msgstr "Criar nova peça do fornecedor"
 
 #: company/templates/company/detail.html:19
 #: company/templates/company/manufacturer_part.html:123
 #: part/templates/part/detail.html:381
 msgid "New Supplier Part"
-msgstr ""
+msgstr "Nova peça do fornecedor"
 
 #: company/templates/company/detail.html:36
 #: company/templates/company/detail.html:84
 #: part/templates/part/category.html:183
 msgid "Order parts"
-msgstr ""
+msgstr "Pedir peças"
 
 #: company/templates/company/detail.html:41
 #: company/templates/company/detail.html:89
 msgid "Delete parts"
-msgstr ""
+msgstr "Excluir peças"
 
 #: company/templates/company/detail.html:42
 #: company/templates/company/detail.html:90
 msgid "Delete Parts"
-msgstr ""
+msgstr "Excluir Peças"
 
 #: company/templates/company/detail.html:61 templates/InvenTree/search.html:105
 #: templates/js/translated/search.js:185
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Fabricantes de peças"
 
 #: company/templates/company/detail.html:65
 msgid "Create new manufacturer part"
-msgstr ""
+msgstr "Criar novo fabricante de peça"
 
 #: company/templates/company/detail.html:66 part/templates/part/detail.html:411
 msgid "New Manufacturer Part"
-msgstr ""
+msgstr "Nova peça do fabricante"
 
 #: company/templates/company/detail.html:107
 msgid "Supplier Stock"
-msgstr ""
+msgstr "Estoque do Fornecedor"
 
 #: company/templates/company/detail.html:117
 #: company/templates/company/sidebar.html:12
@@ -3559,17 +3559,17 @@ msgstr ""
 #: templates/js/translated/search.js:293 templates/navbar.html:50
 #: users/models.py:43
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Pedidos de compra"
 
 #: company/templates/company/detail.html:121
 #: order/templates/order/purchase_orders.html:17
 msgid "Create new purchase order"
-msgstr ""
+msgstr "Criar novo pedido de compra"
 
 #: company/templates/company/detail.html:122
 #: order/templates/order/purchase_orders.html:18
 msgid "New Purchase Order"
-msgstr ""
+msgstr "Novo Pedido de Compra"
 
 #: company/templates/company/detail.html:143
 #: company/templates/company/sidebar.html:20
@@ -3582,37 +3582,37 @@ msgstr ""
 #: templates/js/translated/search.js:317 templates/navbar.html:61
 #: users/models.py:44
 msgid "Sales Orders"
-msgstr ""
+msgstr "Pedidos de vendas"
 
 #: company/templates/company/detail.html:147
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
-msgstr ""
+msgstr "Criar novo pedido de venda"
 
 #: company/templates/company/detail.html:148
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
-msgstr ""
+msgstr "Novo Pedido de Venda"
 
 #: company/templates/company/detail.html:168
 #: templates/js/translated/build.js:1745
 msgid "Assigned Stock"
-msgstr ""
+msgstr "Estoque Atribuído"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
-msgstr ""
+msgstr "Lista de fornecedores"
 
 #: company/templates/company/manufacturer_part.html:15 company/views.py:38
 #: templates/InvenTree/search.html:181 templates/navbar.html:49
 msgid "Manufacturers"
-msgstr ""
+msgstr "Fabricantes"
 
 #: company/templates/company/manufacturer_part.html:35
 #: company/templates/company/supplier_part.html:221
 #: part/templates/part/detail.html:111 part/templates/part/part_base.html:85
 msgid "Order part"
-msgstr ""
+msgstr "Pedir peça"
 
 #: company/templates/company/manufacturer_part.html:39
 #: templates/js/translated/company.js:771
@@ -3878,35 +3878,35 @@ msgstr "Arquivo de modelo de etiqueta"
 
 #: label/models.py:123 report/models.py:258
 msgid "Enabled"
-msgstr ""
+msgstr "Habilitado"
 
 #: label/models.py:124
 msgid "Label template is enabled"
-msgstr ""
+msgstr "Modelo de Etiqueta Habilitado"
 
 #: label/models.py:129
 msgid "Width [mm]"
-msgstr ""
+msgstr "Largura [mm]"
 
 #: label/models.py:130
 msgid "Label width, specified in mm"
-msgstr ""
+msgstr "Largura da etiqueta, em mm"
 
 #: label/models.py:136
 msgid "Height [mm]"
-msgstr ""
+msgstr "Altura [mm]"
 
 #: label/models.py:137
 msgid "Label height, specified in mm"
-msgstr ""
+msgstr "Altura da Etiqueta, em mm"
 
 #: label/models.py:143 report/models.py:251
 msgid "Filename Pattern"
-msgstr ""
+msgstr "Padrão de Nome de Arquivo"
 
 #: label/models.py:144
 msgid "Pattern for generating label filenames"
-msgstr ""
+msgstr "Padrão para gerar nomes do arquivo das etiquetas"
 
 #: label/models.py:233
 msgid "Query filters (comma-separated list of key=value pairs),"
@@ -4306,154 +4306,154 @@ msgstr "O item de linha não corresponde ao pedido de compra"
 
 #: order/serializers.py:432 order/serializers.py:551
 msgid "Select destination location for received items"
-msgstr ""
+msgstr "Selecione o local de destino para os itens recebidos"
 
 #: order/serializers.py:451 templates/js/translated/order.js:1628
 msgid "Enter batch code for incoming stock items"
-msgstr ""
+msgstr "Digite o código do lote para itens de estoque recebidos"
 
 #: order/serializers.py:459 templates/js/translated/order.js:1639
 msgid "Enter serial numbers for incoming stock items"
-msgstr ""
+msgstr "Digite o número de série para itens de estoque recebidos"
 
 #: order/serializers.py:473
 msgid "Unique identifier field"
-msgstr ""
+msgstr "Identificador de exclusivo"
 
 #: order/serializers.py:487
 msgid "Barcode is already in use"
-msgstr ""
+msgstr "Código de barras já em uso"
 
 #: order/serializers.py:513
 msgid "An integer quantity must be provided for trackable parts"
-msgstr ""
+msgstr "Quantidade inteira deve ser fornecida para peças rastreáveis"
 
 #: order/serializers.py:567
 msgid "Line items must be provided"
-msgstr ""
+msgstr "Itens de linha deve ser providenciados"
 
 #: order/serializers.py:584
 msgid "Destination location must be specified"
-msgstr ""
+msgstr "Loca de destino deve ser especificado"
 
 #: order/serializers.py:595
 msgid "Supplied barcode values must be unique"
-msgstr ""
+msgstr "Código de barras fornecido deve ser único"
 
 #: order/serializers.py:905
 msgid "Sale price currency"
-msgstr ""
+msgstr "Moeda de preço de venda"
 
 #: order/serializers.py:960
 msgid "No shipment details provided"
-msgstr ""
+msgstr "Nenhum detalhe da remessa fornecido"
 
 #: order/serializers.py:1023 order/serializers.py:1177
 msgid "Line item is not associated with this order"
-msgstr ""
+msgstr "Item de linha não está associado a este pedido"
 
 #: order/serializers.py:1045
 msgid "Quantity must be positive"
-msgstr ""
+msgstr "Quantidade deve ser positiva"
 
 #: order/serializers.py:1190
 msgid "Enter serial numbers to allocate"
-msgstr ""
+msgstr "Digite números de série para alocar"
 
 #: order/serializers.py:1212 order/serializers.py:1336
 msgid "Shipment has already been shipped"
-msgstr ""
+msgstr "O pedido já foi enviado"
 
 #: order/serializers.py:1215 order/serializers.py:1339
 msgid "Shipment is not associated with this order"
-msgstr ""
+msgstr "O envio não está associado a este pedido"
 
 #: order/serializers.py:1269
 msgid "No match found for the following serial numbers"
-msgstr ""
+msgstr "Nenhuma correspondência encontrada para os seguintes números de série"
 
 #: order/serializers.py:1279
 msgid "The following serial numbers are already allocated"
-msgstr ""
+msgstr "Os seguintes números de série já estão alocados"
 
 #: order/tasks.py:26
 msgid "Overdue Purchase Order"
-msgstr ""
+msgstr "Pedido de compra vencido"
 
 #: order/tasks.py:31
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
-msgstr ""
+msgstr "Pedido de compra {po} está atrasada"
 
 #: order/tasks.py:89
 msgid "Overdue Sales Order"
-msgstr ""
+msgstr "Pedido de venda vencido"
 
 #: order/tasks.py:94
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
-msgstr ""
+msgstr "Pedido de venda {so} está atrasada"
 
 #: order/templates/order/order_base.html:33
 msgid "Print purchase order report"
-msgstr ""
+msgstr "Imprimir relatório do pedido de compra"
 
 #: order/templates/order/order_base.html:35
 #: order/templates/order/sales_order_base.html:45
 msgid "Export order to file"
-msgstr ""
+msgstr "Exportar pedido ao arquivo"
 
 #: order/templates/order/order_base.html:41
 #: order/templates/order/sales_order_base.html:54
 msgid "Order actions"
-msgstr ""
+msgstr "Ações de pedido"
 
 #: order/templates/order/order_base.html:46
 #: order/templates/order/sales_order_base.html:58
 msgid "Edit order"
-msgstr ""
+msgstr "Editar pedido"
 
 #: order/templates/order/order_base.html:50
 #: order/templates/order/sales_order_base.html:61
 msgid "Cancel order"
-msgstr ""
+msgstr "Cancelar pedido"
 
 #: order/templates/order/order_base.html:55
 msgid "Duplicate order"
-msgstr ""
+msgstr "Duplicar pedido"
 
 #: order/templates/order/order_base.html:61
 #: order/templates/order/order_base.html:62
 msgid "Submit Order"
-msgstr ""
+msgstr "Enviar pedido"
 
 #: order/templates/order/order_base.html:65
 msgid "Receive items"
-msgstr ""
+msgstr "Receber itens"
 
 #: order/templates/order/order_base.html:67
 #: order/templates/order/purchase_order_detail.html:32
 msgid "Receive Items"
-msgstr ""
+msgstr "Receber Itens"
 
 #: order/templates/order/order_base.html:69
 msgid "Mark order as complete"
-msgstr ""
+msgstr "Marcar pedido como concluído"
 
 #: order/templates/order/order_base.html:71
 #: order/templates/order/sales_order_base.html:68
 msgid "Complete Order"
-msgstr ""
+msgstr "Completar Pedido"
 
 #: order/templates/order/order_base.html:93
 #: order/templates/order/sales_order_base.html:80
 msgid "Order Reference"
-msgstr ""
+msgstr "Referência do Pedido"
 
 #: order/templates/order/order_base.html:98
 #: order/templates/order/sales_order_base.html:85
 msgid "Order Description"
-msgstr ""
+msgstr "Descrição do Pedido"
 
 #: order/templates/order/order_base.html:103
 #: order/templates/order/sales_order_base.html:90
@@ -4462,47 +4462,47 @@ msgstr "Situação do pedido"
 
 #: order/templates/order/order_base.html:126
 msgid "No suppplier information available"
-msgstr ""
+msgstr "Nenhuma informação do fornecedor disponível"
 
 #: order/templates/order/order_base.html:139
 #: order/templates/order/sales_order_base.html:129
 msgid "Completed Line Items"
-msgstr ""
+msgstr "Itens de Linha Concluídos"
 
 #: order/templates/order/order_base.html:145
 #: order/templates/order/sales_order_base.html:135
 #: order/templates/order/sales_order_base.html:145
 msgid "Incomplete"
-msgstr ""
+msgstr "Incompleto"
 
 #: order/templates/order/order_base.html:164
 #: report/templates/report/inventree_build_order_base.html:121
 msgid "Issued"
-msgstr ""
+msgstr "Emitido"
 
 #: order/templates/order/order_base.html:192
 #: order/templates/order/sales_order_base.html:190
 msgid "Total cost"
-msgstr ""
+msgstr "Custo total"
 
 #: order/templates/order/order_base.html:196
 #: order/templates/order/sales_order_base.html:194
 msgid "Total cost could not be calculated"
-msgstr ""
+msgstr "O custo total não pôde ser calculado"
 
 #: order/templates/order/order_wizard/match_fields.html:9
 #: part/templates/part/import_wizard/ajax_match_fields.html:9
 #: part/templates/part/import_wizard/match_fields.html:9
 #: templates/patterns/wizard/match_fields.html:8
 msgid "Missing selections for the following required columns"
-msgstr ""
+msgstr "Seleções ausentes para as seguintes colunas necessárias"
 
 #: order/templates/order/order_wizard/match_fields.html:20
 #: part/templates/part/import_wizard/ajax_match_fields.html:20
 #: part/templates/part/import_wizard/match_fields.html:20
 #: templates/patterns/wizard/match_fields.html:19
 msgid "Duplicate selections found, see below. Fix them then retry submitting."
-msgstr ""
+msgstr "Seleções duplicadas encontradas, veja abaixo. Corrija-as e tente enviar novamente."
 
 #: order/templates/order/order_wizard/match_fields.html:29
 #: order/templates/order/order_wizard/match_parts.html:21
@@ -4510,28 +4510,28 @@ msgstr ""
 #: part/templates/part/import_wizard/match_references.html:21
 #: templates/patterns/wizard/match_fields.html:28
 msgid "Submit Selections"
-msgstr ""
+msgstr "Enviar Seleções"
 
 #: order/templates/order/order_wizard/match_fields.html:35
 #: part/templates/part/import_wizard/ajax_match_fields.html:28
 #: part/templates/part/import_wizard/match_fields.html:35
 #: templates/patterns/wizard/match_fields.html:34
 msgid "File Fields"
-msgstr ""
+msgstr "Campos de arquivo"
 
 #: order/templates/order/order_wizard/match_fields.html:42
 #: part/templates/part/import_wizard/ajax_match_fields.html:35
 #: part/templates/part/import_wizard/match_fields.html:42
 #: templates/patterns/wizard/match_fields.html:41
 msgid "Remove column"
-msgstr ""
+msgstr "Remover coluna"
 
 #: order/templates/order/order_wizard/match_fields.html:60
 #: part/templates/part/import_wizard/ajax_match_fields.html:53
 #: part/templates/part/import_wizard/match_fields.html:60
 #: templates/patterns/wizard/match_fields.html:59
 msgid "Duplicate selection"
-msgstr ""
+msgstr "Duplicar seleção"
 
 #: order/templates/order/order_wizard/match_fields.html:71
 #: order/templates/order/order_wizard/match_parts.html:52
@@ -4546,19 +4546,19 @@ msgstr ""
 #: templates/js/translated/stock.js:833
 #: templates/patterns/wizard/match_fields.html:70
 msgid "Remove row"
-msgstr ""
+msgstr "Remover linha"
 
 #: order/templates/order/order_wizard/match_parts.html:12
 #: part/templates/part/import_wizard/ajax_match_references.html:12
 #: part/templates/part/import_wizard/match_references.html:12
 msgid "Errors exist in the submitted data"
-msgstr ""
+msgstr "Há erros nos dados enviados"
 
 #: order/templates/order/order_wizard/match_parts.html:28
 #: part/templates/part/import_wizard/ajax_match_references.html:21
 #: part/templates/part/import_wizard/match_references.html:28
 msgid "Row"
-msgstr ""
+msgstr "Linha"
 
 #: order/templates/order/order_wizard/match_parts.html:29
 msgid "Select Supplier Part"
@@ -4815,7 +4815,7 @@ msgstr ""
 #: part/admin.py:199 part/templates/part/category.html:87
 #: part/templates/part/category.html:100
 msgid "Category Path"
-msgstr ""
+msgstr "Caminho da Categoria"
 
 #: part/admin.py:202 part/models.py:384 part/templates/part/cat_link.html:3
 #: part/templates/part/category.html:23 part/templates/part/category.html:140
@@ -4826,41 +4826,41 @@ msgstr ""
 #: templates/js/translated/part.js:2418 templates/js/translated/search.js:146
 #: templates/navbar.html:24 users/models.py:38
 msgid "Parts"
-msgstr ""
+msgstr "Peças"
 
 #: part/admin.py:264
 msgid "BOM Level"
-msgstr ""
+msgstr "Nível da LDM"
 
 #: part/admin.py:266
 msgid "BOM Item ID"
-msgstr ""
+msgstr "ID Item LDM"
 
 #: part/admin.py:270
 msgid "Parent IPN"
-msgstr ""
+msgstr "IPN Paternal"
 
 #: part/admin.py:273 part/models.py:3467
 msgid "Part IPN"
-msgstr ""
+msgstr "IPN da Peça"
 
 #: part/admin.py:279 templates/js/translated/pricing.js:342
 #: templates/js/translated/pricing.js:991
 msgid "Minimum Price"
-msgstr ""
+msgstr "Preço Mínimo"
 
 #: part/admin.py:280 templates/js/translated/pricing.js:337
 #: templates/js/translated/pricing.js:999
 msgid "Maximum Price"
-msgstr ""
+msgstr "Preço Máximo"
 
 #: part/api.py:534
 msgid "Incoming Purchase Order"
-msgstr ""
+msgstr "Pedido de compra recebido"
 
 #: part/api.py:554
 msgid "Outgoing Sales Order"
-msgstr ""
+msgstr "Pedidos de Venda Feitos"
 
 #: part/api.py:572
 msgid "Stock produced by Build Order"
