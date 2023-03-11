@@ -296,7 +296,7 @@ class BuildOrderMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating BuildOrder metadata."""
 
     def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance """
+        """Return MetadataSerializer instance"""
         return MetadataSerializer(Build, *args, **kwargs)
 
     queryset = Build.objects.all()
@@ -477,7 +477,7 @@ class BuildItemMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating BuildItem metadata."""
 
     def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance """
+        """Return MetadataSerializer instance"""
         return MetadataSerializer(BuildItem, *args, **kwargs)
 
     queryset = BuildItem.objects.all()

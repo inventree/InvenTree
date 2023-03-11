@@ -1235,7 +1235,7 @@ class SalesOrderShipmentMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating SalesOrderShipment metadata."""
 
     def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance """
+        """Return MetadataSerializer instance"""
         return MetadataSerializer(models.SalesOrderShipment, *args, **kwargs)
 
     queryset = models.SalesOrderShipment.objects.all()
