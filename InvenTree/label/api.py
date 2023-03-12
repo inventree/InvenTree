@@ -404,7 +404,7 @@ label_api_urls = [
         # Detail views
         re_path(r'^(?P<pk>\d+)/', include([
             re_path(r'print/?', StockItemLabelPrint.as_view(), name='api-stockitem-label-print'),
-            re_path(r'metadata/', StockItemLabelMetadata.as_view(), name='api-stockitem-label-print'),
+            re_path(r'metadata/', StockItemLabelMetadata.as_view(), name='api-stockitem-label-metadata'),
             re_path(r'^.*$', StockItemLabelDetail.as_view(), name='api-stockitem-label-detail'),
         ])),
 
@@ -417,7 +417,7 @@ label_api_urls = [
         # Detail views
         re_path(r'^(?P<pk>\d+)/', include([
             re_path(r'print/?', StockLocationLabelPrint.as_view(), name='api-stocklocation-label-print'),
-            re_path(r'metadata/', StockLocationLabelMetadata.as_view(), name='api-stocklocation-label-print'),
+            re_path(r'metadata/', StockLocationLabelMetadata.as_view(), name='api-stocklocation-label-metadata'),
             re_path(r'^.*$', StockLocationLabelDetail.as_view(), name='api-stocklocation-label-detail'),
         ])),
 
@@ -430,7 +430,7 @@ label_api_urls = [
         # Detail views
         re_path(r'^(?P<pk>\d+)/', include([
             re_path(r'^print/', PartLabelPrint.as_view(), name='api-part-label-print'),
-            re_path(r'^metadata/', PartLabelMetadata.as_view(), name='api-part-label-print'),
+            re_path(r'^metadata/', PartLabelMetadata.as_view(), name='api-part-label-metadata'),
             re_path(r'^.*$', PartLabelDetail.as_view(), name='api-part-label-detail'),
         ])),
 
