@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-09 06:47+0000\n"
-"PO-Revision-Date: 2023-03-11 11:38\n"
+"PO-Revision-Date: 2023-03-13 07:46\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1880,11 +1880,11 @@ msgstr "Standard Ebene für Baumansicht. Tiefere Ebenen kann bei Bedarf nachgela
 
 #: common/models.py:988
 msgid "Update Check Inverval"
-msgstr "Update Check Inverval"
+msgstr "Update Check Intervall"
 
 #: common/models.py:989
 msgid "How often to check for updates (set to zero to disable)"
-msgstr "Wie oft nach Updates suchen. (setze auf 0 zum Deaktivieren)"
+msgstr "Wie oft soll nach Updates gesucht werden? (0 zum Deaktivieren eingeben)"
 
 #: common/models.py:995 common/models.py:1013 common/models.py:1020
 #: common/models.py:1031 common/models.py:1042 common/models.py:1248
@@ -1902,7 +1902,7 @@ msgstr "Automatische Sicherung der Datenbank- und Mediendateien aktivieren"
 
 #: common/models.py:1006
 msgid "Auto Backup Interval"
-msgstr "Auto Backup Interval"
+msgstr "Intervall für automatische Sicherung"
 
 #: common/models.py:1007
 msgid "Specify number of days between automated backup events"
@@ -1910,7 +1910,7 @@ msgstr "Anzahl der Tage zwischen automatischen Sicherungen"
 
 #: common/models.py:1017
 msgid "Task Deletion Interval"
-msgstr "Aufgaben Löschinterval"
+msgstr "Löschinterval für Aufgaben"
 
 #: common/models.py:1018
 msgid "Background task results will be deleted after specified number of days"
@@ -1918,7 +1918,7 @@ msgstr "Ergebnisse der Hintergrundaufgabe werden nach der angegebenen Anzahl von
 
 #: common/models.py:1028
 msgid "Error Log Deletion Interval"
-msgstr "Fehlerprotokoll Löschintervall"
+msgstr "Löschintervall für Fehlerprotokolle"
 
 #: common/models.py:1029
 msgid "Error logs will be deleted after specified number of days"
@@ -1926,7 +1926,7 @@ msgstr "Fehlerprotokolle werden nach der angegebenen Anzahl von Tagen gelöscht"
 
 #: common/models.py:1039
 msgid "Notification Deletion Interval"
-msgstr "Benachrichtigungslöschintervall"
+msgstr "Löschintervall für Benachrichtigungen"
 
 #: common/models.py:1040
 msgid "User notifications will be deleted after specified number of days"
@@ -2187,7 +2187,7 @@ msgstr "Nur aktive Variantenteile zur Berechnung der Variantenbepreisung verwend
 
 #: common/models.py:1270
 msgid "Pricing Rebuild Interval"
-msgstr "Preis Rebuild-Intervall"
+msgstr "Intervall für Neuberechnung von Preisen"
 
 #: common/models.py:1271
 msgid "Number of days before part pricing is automatically updated"
@@ -2555,7 +2555,7 @@ msgstr "Anzahl der Tage zwischen automatischen Bestandsaufnahmen (zum Deaktivier
 
 #: common/models.py:1613
 msgid "Report Deletion Interval"
-msgstr "Berichts Löschintervall"
+msgstr "Löschintervall für Berichte"
 
 #: common/models.py:1614
 msgid "Stocktake reports will be deleted after specified number of days"
@@ -2755,7 +2755,7 @@ msgstr "Teile in der Suchvorschau anzeigen"
 
 #: common/models.py:1832
 msgid "Search Supplier Parts"
-msgstr "Zuliefererteile durchsuchen"
+msgstr "Zulieferteile durchsuchen"
 
 #: common/models.py:1833
 msgid "Display supplier parts in search preview window"
