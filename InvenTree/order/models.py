@@ -46,8 +46,12 @@ from users import models as UserModels
 logger = logging.getLogger('inventree')
 
 
-class TotalPriceMixin:
+class TotalPriceMixin(models.Model):
     """Mixin which provides 'total_price' field for an order"""
+
+    class Meta:
+        """Meta for MetadataMixin."""
+        abstract = True
 
     def save(self, *args, **kwargs):
         """Update the total_price field when saved"""
@@ -1573,7 +1577,7 @@ class ReturnOrder(Order):
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the ReturnOrder model"""
-        return reverse('api-return-list')
+        return reverse('api-return-order-list')
 
     @classmethod
     def api_defaults(cls, request):
@@ -1645,7 +1649,7 @@ class ReturnOrderAttachment(InvenTreeAttachment):
     def get_api_url():
         """Return the API URL associated with the ReturnOrderAttachment class"""
 
-        return reverse('api-return-attachment-list')
+        return reverse('api-return-order-attachment-list')
 
     def getSubdir(self):
         """Return the directory path where ReturnOrderAttachment files are located"""

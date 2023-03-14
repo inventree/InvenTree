@@ -28,7 +28,7 @@ from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from order.admin import (PurchaseOrderExtraLineResource,
                          PurchaseOrderLineItemResource, PurchaseOrderResource,
-                         SalesOrderExtraLineResource,
+                         ReturnOrderResource, SalesOrderExtraLineResource,
                          SalesOrderLineItemResource, SalesOrderResource)
 from part.models import Part
 from plugin.serializers import MetadataSerializer
@@ -1213,6 +1213,106 @@ class PurchaseOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = serializers.PurchaseOrderAttachmentSerializer
 
 
+class ReturnOrderFilter(OrderFilter):
+    """Custom API filters for the ReturnOrderList endpoint"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = models.ReturnOrder
+        fields = [
+            'customer',
+        ]
+
+
+class ReturnOrderList(APIDownloadMixin, ListCreateAPI):
+    """API endpoint for accessing a list of ReturnOrder objects"""
+
+    queryset = models.ReturnOrder.objects.all()
+    serializer_class = serializers.ReturnOrderSerializer
+    filterset_class = ReturnOrderFilter
+
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer instance for this endpoint"""
+        try:
+            kwargs['customer_detail'] = str2bool(
+                self.request.query_params.get('customer_detail', False)
+            )
+        except AttributeError:
+            pass
+
+        # Ensure the context is passed through to the serializer
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def download_queryset(self, queryset, export_format):
+        """Download this queryset as a file"""
+
+        dataset = ReturnOrderResource().export(queryset=queryset)
+        filedata = dataset.export(export_format)
+        filename = f"InvenTree_ReturnOrders.{export_format}"
+
+        return DownloadFile(filedata, filename)
+
+    def filter_queryset(self, queryset):
+        """Custom queryset filtering not supported by the ReturnOrderFilter class"""
+
+        return queryset
+
+    filter_backends = [
+        rest_filters.DjangoFilterBackend,
+        filters.SearchFilter,
+        InvenTreeOrderingFilter,
+    ]
+
+    ordering_field_aliases = {
+        'reference': ['reference_int', 'reference'],
+    }
+
+    filterset_fields = [
+        'customer',
+    ]
+
+    ordering_fields = [
+        'creation_date',
+        'reference',
+        'customer__name',
+        'customer_reference',
+        'status',
+        'target_date',
+    ]
+
+    search_fields = [
+        'customer__name',
+        'reference',
+        'description',
+        'customer_reference',
+    ]
+
+    ordering = '-reference'
+
+
+class ReturnOrderDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single ReturnOrder object"""
+
+    queryset = models.ReturnOrder.objects.all()
+    serializer_class = serializers.ReturnOrderSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this endpoint"""
+        try:
+            kwargs['customer_detail'] = str2bool(
+                self.request.query_params.get('customer_detail', False)
+            )
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+
 class OrderCalendarExport(ICalFeed):
     """Calendar export for Purchase/Sales Orders
 
@@ -1448,6 +1548,16 @@ order_api_urls = [
     re_path(r'^so-allocation/', include([
         path('<int:pk>/', SalesOrderAllocationDetail.as_view(), name='api-so-allocation-detail'),
         re_path(r'^.*$', SalesOrderAllocationList.as_view(), name='api-so-allocation-list'),
+    ])),
+
+    # API endpoints for return orders
+    re_path(r'^return/', include([
+
+        # Return Order detail
+        path('<int:pk>/', ReturnOrderDetail.as_view(), name='api-return-order-detail'),
+
+        # Return Order list
+        re_path(r'^.*$', ReturnOrderList.as_view(), name='api-return-order-list'),
     ])),
 
     # API endpoint for subscribing to ICS calendar of purchase/sales orders

@@ -277,6 +277,19 @@ class SalesOrderAllocationAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('line', 'shipment', 'item',)
 
 
+class ReturnOrderResource(InvenTreeResource):
+    """Class for managing import / export of ReturnOrder data"""
+
+    class Meta:
+        """Metaclass options"""
+        model = models.ReturnOrder
+        skip_unchanged = True
+        clean_model_instances = True
+        exclude = [
+            'metadata',
+        ]
+
+
 class ReturnOrderAdmin(ImportExportModelAdmin):
     """Admin class for the ReturnOrder model"""
 

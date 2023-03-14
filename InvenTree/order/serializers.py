@@ -645,7 +645,7 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
 
 
 class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
-    """Serializers for the SalesOrder object."""
+    """Serializer for the SalesOrder model class"""
 
     class Meta:
         """Metaclass options."""
@@ -1394,6 +1394,81 @@ class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
         """Metaclass options."""
 
         model = order.models.SalesOrderAttachment
+
+        fields = InvenTreeAttachmentSerializer.attachment_fields([
+            'order',
+        ])
+
+
+class ReturnOrderSerializer(InvenTreeModelSerializer):
+    """Serializer for the ReturnOrder model class"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = order.models.ReturnOrder
+
+        fields = [
+            'pk',
+            'creation_date',
+            'customer',
+            'customer_detail',
+            'customer_reference',
+            'description',
+            'link',
+            'notes',
+            'reference',
+            'responsible',
+            'responsible_detail',
+            'status',
+            'status_text',
+        ]
+
+        read_only_fields = [
+            'status',
+            'creation_date',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer"""
+
+        customer_detail = kwargs.pop('customer_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if customer_detail is not True:
+            self.fields.pop('customer_detail')
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Custom annotation for the serializer queryset"""
+
+        # TODO
+        return queryset
+
+    customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
+
+    status_text = serializers.CharField(source='get_status_display', read_only=True)
+
+    responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
+
+    reference = serializers.CharField(required=True)
+
+    def validate_reference(self, reference):
+        """Custom validation for the reference field"""
+
+        order.models.ReturnOrder.validate_reference_field(reference)
+
+        return reference
+
+
+class ReturnOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
+    """Serializer for the ReturnOrderAttachment model"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = order.models.ReturnOrderAttachment
 
         fields = InvenTreeAttachmentSerializer.attachment_fields([
             'order',
