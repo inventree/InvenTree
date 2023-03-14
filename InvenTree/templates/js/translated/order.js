@@ -2,21 +2,7 @@
 {% load inventree_extras %}
 
 /* globals
-    companyFormFields,
-    constructForm,
-    createSupplierPart,
-    global_settings,
-    imageHoverIcon,
     inventreeGet,
-    launchModalForm,
-    loadTableFilters,
-    makeIconBadge,
-    purchaseOrderStatusDisplay,
-    receivePurchaseOrderItems,
-    renderLink,
-    salesOrderStatusDisplay,
-    setupFilterList,
-    supplierPartFields,
 */
 
 /* exported
@@ -29,6 +15,7 @@
     removePurchaseOrderLineItem,
     loadOrderTotal,
     extraLineFields,
+    reloadTotal,
 */
 
 

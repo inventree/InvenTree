@@ -4,23 +4,17 @@
 /* globals
     companyFormFields,
     constructForm,
-    createSupplierPart,
     global_settings,
     imageHoverIcon,
-    inventreeGet,
-    launchModalForm,
     loadTableFilters,
-    makeIconBadge,
-    purchaseOrderStatusDisplay,
-    receivePurchaseOrderItems,
     renderLink,
-    salesOrderStatusDisplay,
+    returnOrderStatusDisplay,
     setupFilterList,
-    supplierPartFields,
 */
 
 /* exported
     createReturnOrder,
+    editReturnOrder,
     loadReturnOrderTable,
 */
 

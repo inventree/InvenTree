@@ -3,7 +3,6 @@
 {% load inventree_extras %}
 
 /* globals
-    global_settings
 */
 
 /* exported

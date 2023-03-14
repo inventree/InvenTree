@@ -14,7 +14,6 @@
     purchaseOrderStatusDisplay,
     receivePurchaseOrderItems,
     renderLink,
-    salesOrderStatusDisplay,
     setupFilterList,
     supplierPartFields,
 */
