@@ -6,6 +6,7 @@ import decimal
 import hashlib
 import logging
 import os
+import re
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
@@ -538,7 +539,60 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return result
 
-    def validate_serial_number(self, serial: str, stock_item=None, check_duplicates=True, raise_error=False):
+    def validate_name(self, raise_error=True):
+        """Validate the name field for this Part instance
+
+        This function is exposed to any Validation plugins, and thus can be customized.
+        """
+
+        from plugin.registry import registry
+
+        for plugin in registry.with_mixin('validation'):
+            # Run the name through each custom validator
+            # If the plugin returns 'True' we will skip any subsequent validation
+
+            try:
+                result = plugin.validate_part_name(self.name, self)
+                if result:
+                    return
+            except ValidationError as exc:
+                if raise_error:
+                    raise ValidationError({
+                        'name': exc.message,
+                    })
+
+    def validate_ipn(self, raise_error=True):
+        """Ensure that the IPN (internal part number) is valid for this Part"
+
+        - Validation is handled by custom plugins
+        - By default, no validation checks are perfomed
+        """
+
+        from plugin.registry import registry
+
+        for plugin in registry.with_mixin('validation'):
+            try:
+                result = plugin.validate_part_ipn(self.IPN, self)
+
+                if result:
+                    # A "true" result force skips any subsequent checks
+                    break
+            except ValidationError as exc:
+                if raise_error:
+                    raise ValidationError({
+                        'IPN': exc.message
+                    })
+
+        # If we get to here, none of the plugins have raised an error
+        pattern = common.models.InvenTreeSetting.get_setting('PART_IPN_REGEX', '', create=False).strip()
+
+        if pattern:
+            match = re.search(pattern, self.IPN)
+
+            if match is None:
+                raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
+
+    def validate_serial_number(self, serial: str, stock_item=None, check_duplicates=True, raise_error=False, **kwargs):
         """Validate a serial number against this Part instance.
 
         Note: This function is exposed to any Validation plugins, and thus can be customized.
@@ -570,7 +624,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             for plugin in registry.with_mixin('validation'):
                 # Run the serial number through each custom validator
                 # If the plugin returns 'True' we will skip any subsequent validation
-                if plugin.validate_serial_number(serial):
+                if plugin.validate_serial_number(serial, self):
                     return True
         except ValidationError as exc:
             if raise_error:
@@ -620,7 +674,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         conflicts = []
 
         for serial in serials:
-            if not self.validate_serial_number(serial):
+            if not self.validate_serial_number(serial, part=self):
                 conflicts.append(serial)
 
         return conflicts
@@ -765,6 +819,12 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         if type(self.IPN) is str:
             self.IPN = self.IPN.strip()
 
+        # Run custom validation for the IPN field
+        self.validate_ipn()
+
+        # Run custom validation for the name field
+        self.validate_name()
+
         if self.trackable:
             for part in self.get_used_in().all():
 
@@ -777,7 +837,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         max_length=100, blank=False,
         help_text=_('Part name'),
         verbose_name=_('Name'),
-        validators=[validators.validate_part_name]
     )
 
     is_template = models.BooleanField(
@@ -821,7 +880,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         max_length=100, blank=True, null=True,
         verbose_name=_('IPN'),
         help_text=_('Internal Part Number'),
-        validators=[validators.validate_part_ipn]
     )
 
     revision = models.CharField(
@@ -2299,12 +2357,12 @@ class PartPricing(common.models.MetaMixin):
 
         if self.scheduled_for_update:
             # Ignore if the pricing is already scheduled to be updated
-            logger.info(f"Pricing for {p} already scheduled for update - skipping")
+            logger.debug(f"Pricing for {p} already scheduled for update - skipping")
             return
 
         if counter > 25:
             # Prevent infinite recursion / stack depth issues
-            logger.info(counter, f"Skipping pricing update for {p} - maximum depth exceeded")
+            logger.debug(counter, f"Skipping pricing update for {p} - maximum depth exceeded")
             return
 
         try:
@@ -3485,6 +3543,10 @@ class BomItem(DataImportMixin, models.Model):
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a BomItem instance"""
         self.clean()
+
+        # Update the 'validated' field based on checksum calculation
+        self.validated = self.is_line_valid
+
         super().save(*args, **kwargs)
 
     # A link to the parent part
@@ -3525,12 +3587,21 @@ class BomItem(DataImportMixin, models.Model):
                                help_text=_('Estimated build wastage quantity (absolute or percentage)')
                                )
 
-    reference = models.CharField(max_length=500, blank=True, verbose_name=_('Reference'), help_text=_('BOM item reference'))
+    reference = models.CharField(max_length=5000, blank=True, verbose_name=_('Reference'), help_text=_('BOM item reference'))
 
     # Note attached to this BOM line item
     note = models.CharField(max_length=500, blank=True, verbose_name=_('Note'), help_text=_('BOM item notes'))
 
-    checksum = models.CharField(max_length=128, blank=True, verbose_name=_('Checksum'), help_text=_('BOM line checksum'))
+    checksum = models.CharField(
+        max_length=128, blank=True,
+        verbose_name=_('Checksum'), help_text=_('BOM line checksum')
+    )
+
+    validated = models.BooleanField(
+        default=False,
+        verbose_name=_('Validated'),
+        help_text=_('This BOM item has been validated')
+    )
 
     inherited = models.BooleanField(
         default=False,

@@ -107,8 +107,8 @@ table td.expand {
             </td>
             <td>{{ line.reference }}</td>
             <td>{% decimal line.quantity %}</td>
-            <td>{% include "price_data.html" with price=line.purchase_price %}</td>
-            <td>{% include "price_data.html" with price=line.total_line_price %}</td>
+            <td>{% render_currency line.price decimal_places=2 %}</td>
+            <td>{% render_currency line.total_line_price decimal_places=2 %}</td>
             <td>{{ line.notes }}</td>
         </tr>
         {% endfor %}
@@ -120,8 +120,8 @@ table td.expand {
             <td><!-- No part --></td>
             <td>{{ line.reference }}</td>
             <td>{% decimal line.quantity %}</td>
-            <td>{% include "price_data.html" with price=line.price %}</td>
-            <td>{% include "price_data.html" with price=line.total_line_price %}</td>
+            <td>{% render_currency line.price decimal_places=2 %}</td>
+            <td>{% render_currency line.total_line_price decimal_places=2 %}</td>
             <td>{{ line.notes }}</td>
         </tr>
         {% endfor %}
@@ -132,7 +132,7 @@ table td.expand {
             <td></td>
             <td></td>
             <th>{% trans "Total" %}</th>
-            <td>{% include "price_data.html" with price=order.total_price %}</td>
+            <td>{% render_currency order.total_price decimal_places=2 currency=order.supplier.currency %}</td>
             <td></td>
         </tr>
 

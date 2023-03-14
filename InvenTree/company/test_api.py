@@ -17,11 +17,14 @@ class CompanyTest(InvenTreeAPITestCase):
         'purchase_order.change',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Perform initialization for the unit test class"""
-        super().setUp()
 
-        self.acme = Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
+        super().setUpTestData()
+
+        # Create some company objects to work with
+        cls.acme = Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
         Company.objects.create(name='Drippy Cup Co.', description='Customer', is_customer=True, is_supplier=False)
         Company.objects.create(name='Sippy Cup Emporium', description='Another supplier')
 

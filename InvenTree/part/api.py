@@ -1337,6 +1337,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         'creation_date',
         'IPN',
         'in_stock',
+        'total_in_stock',
         'unallocated_stock',
         'category',
         'last_stocktake',
@@ -1597,11 +1598,17 @@ class PartStocktakeReportGenerate(CreateAPI):
 class BomFilter(rest_filters.FilterSet):
     """Custom filters for the BOM list."""
 
-    # Boolean filters for BOM item
-    optional = rest_filters.BooleanFilter(label='BOM item is optional')
-    consumable = rest_filters.BooleanFilter(label='BOM item is consumable')
-    inherited = rest_filters.BooleanFilter(label='BOM item gets inherited')
-    allow_variants = rest_filters.BooleanFilter(label='Variants are allowed')
+    class Meta:
+        """Metaclass options"""
+
+        model = BomItem
+        fields = [
+            'optional',
+            'consumable',
+            'inherited',
+            'allow_variants',
+            'validated',
+        ]
 
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(label='Master part is active', field_name='part__active')
@@ -1610,29 +1617,6 @@ class BomFilter(rest_filters.FilterSet):
     # Filters for linked 'sub_part'
     sub_part_trackable = rest_filters.BooleanFilter(label='Sub part is trackable', field_name='sub_part__trackable')
     sub_part_assembly = rest_filters.BooleanFilter(label='Sub part is an assembly', field_name='sub_part__assembly')
-
-    validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
-
-    def filter_validated(self, queryset, name, value):
-        """Filter by which lines have actually been validated"""
-        pks = []
-
-        value = str2bool(value)
-
-        # Shortcut for quicker filtering - BomItem with empty 'checksum' values are not validated
-        if value:
-            queryset = queryset.exclude(checksum=None).exclude(checksum='')
-
-        for bom_item in queryset.all():
-            if bom_item.is_line_valid:
-                pks.append(bom_item.pk)
-
-        if value:
-            queryset = queryset.filter(pk__in=pks)
-        else:
-            queryset = queryset.exclude(pk__in=pks)
-
-        return queryset
 
     available_stock = rest_filters.BooleanFilter(label="Has available stock", method="filter_available_stock")
 
@@ -1811,9 +1795,6 @@ class BomList(ListCreateDestroyAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         InvenTreeOrderingFilter,
-    ]
-
-    filterset_fields = [
     ]
 
     search_fields = [

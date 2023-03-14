@@ -188,7 +188,7 @@
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Purchase Price" %}</td>
         <td>
-            {% include "price_data.html" with price=item.purchase_price %}
+            {% render_currency item.purchase_price %}
             {% if item.part.units %} / {{ item.part.units }}{% endif %}
         </td>
     </tr>

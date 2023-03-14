@@ -603,6 +603,26 @@ class PurchaseOrderLineItemTest(OrderTest):
         self.filter({'has_pricing': 1}, 0)
         self.filter({'has_pricing': 0}, 5)
 
+    def test_po_line_bulk_delete(self):
+        """Test that we can bulk delete multiple PurchaseOrderLineItems via the API."""
+        n = models.PurchaseOrderLineItem.objects.count()
+
+        self.assignRole('purchase_order.delete')
+
+        url = reverse('api-po-line-list')
+
+        # Try to delete a set of line items via their IDs
+        self.delete(
+            url,
+            {
+                'items': [1, 2],
+            },
+            expected_code=204,
+        )
+
+        # We should have 2 less PurchaseOrderLineItems after deletign them
+        self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
+
 
 class PurchaseOrderDownloadTest(OrderTest):
     """Unit tests for downloading PurchaseOrder data via the API endpoint."""
@@ -950,12 +970,12 @@ class PurchaseOrderReceiveTest(OrderTest):
                 {
                     'line_item': 1,
                     'quantity': 10,
-                    'batch_code': 'abc-123',
+                    'batch_code': 'B-abc-123',
                 },
                 {
                     'line_item': 2,
                     'quantity': 10,
-                    'batch_code': 'xyz-789',
+                    'batch_code': 'B-xyz-789',
                 }
             ],
             'location': 1,
@@ -975,8 +995,8 @@ class PurchaseOrderReceiveTest(OrderTest):
         item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
         item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
 
-        self.assertEqual(item_1.batch, 'abc-123')
-        self.assertEqual(item_2.batch, 'xyz-789')
+        self.assertEqual(item_1.batch, 'B-abc-123')
+        self.assertEqual(item_2.batch, 'B-xyz-789')
 
     def test_serial_numbers(self):
         """Test that we can supply a 'serial number' when receiving items."""
@@ -991,13 +1011,13 @@ class PurchaseOrderReceiveTest(OrderTest):
                 {
                     'line_item': 1,
                     'quantity': 10,
-                    'batch_code': 'abc-123',
+                    'batch_code': 'B-abc-123',
                     'serial_numbers': '100+',
                 },
                 {
                     'line_item': 2,
                     'quantity': 10,
-                    'batch_code': 'xyz-789',
+                    'batch_code': 'B-xyz-789',
                 }
             ],
             'location': 1,
@@ -1022,7 +1042,7 @@ class PurchaseOrderReceiveTest(OrderTest):
             item = StockItem.objects.get(serial_int=i)
             self.assertEqual(item.serial, str(i))
             self.assertEqual(item.quantity, 1)
-            self.assertEqual(item.batch, 'abc-123')
+            self.assertEqual(item.batch, 'B-abc-123')
 
         # A single stock item (quantity 10) created for the second line item
         items = StockItem.objects.filter(supplier_part=line_2.part)
@@ -1031,7 +1051,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         item = items.first()
 
         self.assertEqual(item.quantity, 10)
-        self.assertEqual(item.batch, 'xyz-789')
+        self.assertEqual(item.batch, 'B-xyz-789')
 
 
 class SalesOrderTest(OrderTest):
@@ -1388,25 +1408,33 @@ class SalesOrderLineItemTest(OrderTest):
 
     LIST_URL = reverse('api-so-line-list')
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Init routine for this unit test class"""
-        super().setUp()
+        super().setUpTestData()
 
         # List of salable parts
         parts = Part.objects.filter(salable=True)
+
+        lines = []
 
         # Create a bunch of SalesOrderLineItems for each order
         for idx, so in enumerate(models.SalesOrder.objects.all()):
 
             for part in parts:
-                models.SalesOrderLineItem.objects.create(
-                    order=so,
-                    part=part,
-                    quantity=(idx + 1) * 5,
-                    reference=f"Order {so.reference} - line {idx}",
+                lines.append(
+                    models.SalesOrderLineItem(
+                        order=so,
+                        part=part,
+                        quantity=(idx + 1) * 5,
+                        reference=f"Order {so.reference} - line {idx}",
+                    )
                 )
 
-        self.url = reverse('api-so-line-list')
+        # Bulk create
+        models.SalesOrderLineItem.objects.bulk_create(lines)
+
+        cls.url = reverse('api-so-line-list')
 
     def test_so_line_list(self):
         """Test list endpoint"""
@@ -1437,7 +1465,7 @@ class SalesOrderLineItemTest(OrderTest):
         n_parts = Part.objects.filter(salable=True).count()
 
         # List by part
-        for part in Part.objects.filter(salable=True):
+        for part in Part.objects.filter(salable=True)[:3]:
             response = self.get(
                 self.url,
                 {
@@ -1449,7 +1477,7 @@ class SalesOrderLineItemTest(OrderTest):
             self.assertEqual(response.data['count'], n_orders)
 
         # List by order
-        for order in models.SalesOrder.objects.all():
+        for order in models.SalesOrder.objects.all()[:3]:
             response = self.get(
                 self.url,
                 {

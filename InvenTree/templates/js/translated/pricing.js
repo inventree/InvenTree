@@ -136,7 +136,7 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
 
     var currency = options.currency;
 
-    var rates = getCurrencyConversionRates();
+    var rates = options.rates || getCurrencyConversionRates();
 
     if (!rates) {
         console.error('Could not retrieve currency conversion information from the server');
