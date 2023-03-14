@@ -688,7 +688,7 @@ report_api_urls = [
     # Purchase order reports
     re_path(r'po/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/', PurchaseOrderReportPrint.as_view(), name='api-po-report-print'),
             path('', PurchaseOrderReportDetail.as_view(), name='api-po-report-detail'),
         ])),
@@ -700,7 +700,7 @@ report_api_urls = [
     # Sales order reports
     re_path(r'so/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/', SalesOrderReportPrint.as_view(), name='api-so-report-print'),
             path('', SalesOrderReportDetail.as_view(), name='api-so-report-detail'),
         ])),
@@ -711,7 +711,7 @@ report_api_urls = [
     # Build reports
     re_path(r'build/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
             re_path(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
         ])),
@@ -724,7 +724,7 @@ report_api_urls = [
     re_path(r'bom/', include([
 
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
             re_path(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
         ])),
@@ -736,7 +736,7 @@ report_api_urls = [
     # Stock item test reports
     re_path(r'test/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
             re_path(r'^.*$', StockItemTestReportDetail.as_view(), name='api-stockitem-testreport-detail'),
         ])),
