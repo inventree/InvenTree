@@ -42,6 +42,7 @@ class RuleSet(models.Model):
         ('build', _('Build Orders')),
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
+        ('returns', _('Returns')),
     ]
 
     RULESET_NAMES = [
@@ -155,6 +156,14 @@ class RuleSet(models.Model):
             'order_salesorderextraline',
             'order_salesordershipment',
             'report_salesorderreport',
+        ],
+        'returns': [
+            'company_company',
+            'company_companyattachment',
+            'order_returnorder',
+            'order_returnorderlineitem',
+            'order_returnorderextraline',
+            'order_returnorderattachment',
         ]
     }
 
