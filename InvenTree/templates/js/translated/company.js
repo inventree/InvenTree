@@ -11,16 +11,20 @@
 
 /* exported
     createCompany,
+    createContact,
     createManufacturerPart,
     createSupplierPart,
     createSupplierPartPriceBreak,
+    deleteContacts,
     deleteManufacturerParts,
     deleteManufacturerPartParameters,
     deleteSupplierParts,
     duplicateSupplierPart,
     editCompany,
+    editContact,
     editSupplierPartPriceBreak,
     loadCompanyTable,
+    loadContactTable,
     loadManufacturerPartTable,
     loadManufacturerPartParameterTable,
     loadSupplierPartTable,
@@ -443,15 +447,15 @@ function createCompany(options={}) {
 }
 
 
+/*
+ * Load company listing data into specified table.
+ *
+ * Args:
+ * - table: Table element on the page
+ * - url: Base URL for the API query
+ * - options: table options.
+ */
 function loadCompanyTable(table, url, options={}) {
-    /*
-     * Load company listing data into specified table.
-     *
-     * Args:
-     * - table: Table element on the page
-     * - url: Base URL for the API query
-     * - options: table options.
-     */
 
     // Query parameters
     var params = options.params || {};
@@ -543,6 +547,234 @@ function loadCompanyTable(table, url, options={}) {
         showColumns: true,
         name: options.pagetype || 'company',
         columns: columns,
+    });
+}
+
+
+/*
+ * Construct a set of form fields for the Contact model
+ */
+function contactFields(options={}) {
+
+    let fields = {
+        company: {
+            icon: 'fa-building',
+        },
+        name: {
+            icon: 'fa-user',
+        },
+        phone: {
+            icon: 'fa-phone'
+        },
+        email: {
+            icon: 'fa-at',
+        },
+        role: {
+            icon: 'fa-user-tag',
+        },
+    };
+
+    if (options.company) {
+        fields.company.value = options.company;
+    }
+
+    return fields;
+}
+
+
+/*
+ * Launches a form to create a new Contact
+ */
+function createContact(options={}) {
+    let fields = options.fields || contactFields(options);
+
+    constructForm('{% url "api-contact-list" %}', {
+        method: 'POST',
+        fields: fields,
+        title: '{% trans "Create New Contact" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * Launches a form to edit an existing Contact
+ */
+function editContact(pk, options={}) {
+    let fields = options.fields || contactFields(options);
+
+    constructForm(`/api/company/contact/${pk}/`, {
+        fields: fields,
+        title: '{% trans "Edit Contact" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(respnose, options);
+        }
+    });
+}
+
+
+/*
+ * Launches a form to delete one (or more) contacts
+ */
+function deleteContacts(contacts, options={}) {
+
+    if (contacts.length == 0) {
+        return;
+    }
+
+    function renderContact(contact) {
+        return `
+        <tr>
+            <td>${contact.name}</td>
+            <td>${contact.email}</td>
+            <td>${contact.role}</td>
+        </tr>`;
+    }
+
+    let rows = '';
+    let ids = [];
+
+    contacts.forEach(function(contact) {
+        rows += renderContact(contact);
+        ids.push(contact.pk);
+    });
+
+    let html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected contacts will be deleted" %}
+    </div>
+    <table class='table table-striped table-condensed'>
+    <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Email" %}</th>
+        <th>{% trans "Role" %}</th>
+    </tr>
+    ${rows}
+    </table>`;
+
+    constructForm('{% url "api-contact-list" %}', {
+        method: 'DELETE',
+        multi_delete: true,
+        title: '{% trans "Delete Contacts" %}',
+        preFormContent: html,
+        form_data: {
+            items: ids,
+        },
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * Load table listing company contacts
+ */
+function loadContactTable(table, options={}) {
+
+    var params = options.params || {};
+
+    var filters = loadTableFilters('contact');
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('contact', $(table), '#filter-list-contacts');
+
+    $(table).inventreeTable({
+        url: '{% url "api-contact-list" %}',
+        queryParams: filters,
+        original: params,
+        idField: 'pk',
+        uniqueId: 'pk',
+        sidePagination: 'server',
+        formatNoMatches: function() {
+            return '{% trans "No contacts found" %}';
+        },
+        showColumns: true,
+        name: 'contacts',
+        columns: [
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                sortable: true,
+                switchable: false,
+            },
+            {
+                field: 'phone',
+                title: '{% trans "Phone Number" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                field: 'email',
+                title: '{% trans "Email Address" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                field: 'role',
+                title: '{% trans "Role" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'actions',
+                title: '',
+                sortable: false,
+                switchable: false,
+                visible: options.allow_edit || options.allow_delete,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+                    if (options.allow_edit) {
+                        html += makeIconButton('fa-edit icon-blue', 'btn-contact-edit', pk, '{% trans "Edit Contact" %}');
+                    }
+
+                    if (options.allow_delete) {
+                        html += makeIconButton('fa-trash-alt icon-red', 'btn-contact-delete', pk, '{% trans "Delete Contact" %}');
+                    }
+
+                    html += '</div>';
+                    return html;
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Edit button callback
+            if (options.allow_edit) {
+                $(table).find('.btn-contact-edit').click(function() {
+                    var pk = $(this).attr('pk');
+                    editContact(pk, {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    });
+                });
+            }
+
+            // Delete button callback
+            if (options.allow_delete) {
+                $(table).find('.btn-contact-delete').click(function() {
+                    var pk = $(this).attr('pk');
+
+                    var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                    if (row && row.pk) {
+
+                        deleteContacts([row], {
+                            onSuccess: function() {
+                                $(table).bootstrapTable('refresh');
+                            }
+                        });
+                    }
+                });
+            }
+        }
     });
 }
 
