@@ -3,6 +3,7 @@
 import json
 import os
 import time
+from datetime import datetime, timedelta
 from decimal import Decimal
 from unittest import mock
 
@@ -905,6 +906,58 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             1, 2, 3, 4, 5,
             force_async=True
         )
+
+    def test_daily_holdoff(self):
+        """Tests for daily task holdoff helper functions"""
+
+        import InvenTree.tasks
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            # With a non-positive interval, task will not run
+            result = InvenTree.tasks.check_daily_holdoff('some_task', 0)
+            self.assertFalse(result)
+            self.assertIn('Specified interval', str(cm.output))
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            # First call should run without issue
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task')
+            self.assertTrue(result)
+            self.assertIn("Logging task attempt for 'dummy_task'", str(cm.output))
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            # An attempt has been logged, but it is too recent
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task')
+            self.assertFalse(result)
+            self.assertIn("Last attempt for 'dummy_task' was too recent", str(cm.output))
+
+        # Mark last attempt a few days ago - should now return True
+        t_old = datetime.now() - timedelta(days=3)
+        t_old = t_old.isoformat()
+        InvenTreeSetting.set_setting('_dummy_task_ATTEMPT', t_old, None)
+
+        result = InvenTree.tasks.check_daily_holdoff('dummy_task', 5)
+        self.assertTrue(result)
+
+        # Last attempt should have been updated
+        self.assertNotEqual(t_old, InvenTreeSetting.get_setting('_dummy_task_ATTEMPT', '', cache=False))
+
+        # Last attempt should prevent us now
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task')
+            self.assertFalse(result)
+            self.assertIn("Last attempt for 'dummy_task' was too recent", str(cm.output))
+
+        # Configure so a task was successful too recently
+        InvenTreeSetting.set_setting('_dummy_task_ATTEMPT', t_old, None)
+        InvenTreeSetting.set_setting('_dummy_task_SUCCESS', t_old, None)
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task', 7)
+            self.assertFalse(result)
+            self.assertIn('Last successful run for', str(cm.output))
+
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task', 2)
+            self.assertTrue(result)
 
 
 class BarcodeMixinTest(helpers.InvenTreeTestCase):

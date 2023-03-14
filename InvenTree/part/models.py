@@ -3543,6 +3543,10 @@ class BomItem(DataImportMixin, models.Model):
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a BomItem instance"""
         self.clean()
+
+        # Update the 'validated' field based on checksum calculation
+        self.validated = self.is_line_valid
+
         super().save(*args, **kwargs)
 
     # A link to the parent part
@@ -3588,7 +3592,16 @@ class BomItem(DataImportMixin, models.Model):
     # Note attached to this BOM line item
     note = models.CharField(max_length=500, blank=True, verbose_name=_('Note'), help_text=_('BOM item notes'))
 
-    checksum = models.CharField(max_length=128, blank=True, verbose_name=_('Checksum'), help_text=_('BOM line checksum'))
+    checksum = models.CharField(
+        max_length=128, blank=True,
+        verbose_name=_('Checksum'), help_text=_('BOM line checksum')
+    )
+
+    validated = models.BooleanField(
+        default=False,
+        verbose_name=_('Validated'),
+        help_text=_('This BOM item has been validated')
+    )
 
     inherited = models.BooleanField(
         default=False,

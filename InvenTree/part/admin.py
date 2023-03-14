@@ -259,6 +259,7 @@ class BomItemResource(InvenTreeResource):
             'id',
             'part',
             'sub_part',
+            'validated',
         ]
 
     level = Field(attribute='level', column_name=_('BOM Level'), readonly=True)
