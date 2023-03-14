@@ -179,6 +179,13 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% render_date order.complete_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.received_by }}</span></td>
     </tr>
     {% endif %}
+    {% if order.contact %}
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Contact" %}</td>
+        <td>{{ order.contact.name }}</td>
+    </tr>
+    {% endif %}
     {% if order.responsible %}
     <tr>
         <td><span class='fas fa-users'></span></td>
