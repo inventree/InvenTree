@@ -89,6 +89,14 @@ class GeneralExtraLineList(APIDownloadMixin):
 class OrderFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the OrderList endpoint."""
 
+    # Filter against order status
+    status = rest_filters.NumberFilter(label="Order Status", method='filter_status')
+
+    def filter_status(self, queryset, name, value):
+        """Filter by integer status code"""
+
+        return queryset.filter(status=value)
+
     # Exact match for reference
     reference = rest_filters.CharFilter(
         label='Filter by exact reference',
@@ -260,13 +268,6 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
                 queryset = queryset.filter(models.PurchaseOrder.OVERDUE_FILTER)
             else:
                 queryset = queryset.exclude(models.PurchaseOrder.OVERDUE_FILTER)
-
-        # Special filtering for 'status' field
-        status = params.get('status', None)
-
-        if status is not None:
-            # First attempt to filter by integer value
-            queryset = queryset.filter(status=status)
 
         # Attempt to filter by part
         part = params.get('part', None)
@@ -735,11 +736,6 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
                 queryset = queryset.filter(models.SalesOrder.OVERDUE_FILTER)
             else:
                 queryset = queryset.exclude(models.SalesOrder.OVERDUE_FILTER)
-
-        status = params.get('status', None)
-
-        if status is not None:
-            queryset = queryset.filter(status=status)
 
         # Filter by "Part"
         # Only return SalesOrder which have LineItem referencing the part
@@ -1258,6 +1254,8 @@ class ReturnOrderList(APIDownloadMixin, ListCreateAPI):
     def filter_queryset(self, queryset):
         """Custom queryset filtering not supported by the ReturnOrderFilter class"""
 
+        queryset = super().filter_queryset(queryset)
+
         return queryset
 
     filter_backends = [
@@ -1269,10 +1267,6 @@ class ReturnOrderList(APIDownloadMixin, ListCreateAPI):
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
     }
-
-    filterset_fields = [
-        'customer',
-    ]
 
     ordering_fields = [
         'creation_date',

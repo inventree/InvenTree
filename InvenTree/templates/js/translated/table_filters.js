@@ -4,6 +4,9 @@
 
 /* globals
     global_settings
+    purchaseOrderCodes,
+    returnOrderCodes,
+    salesOrderCodes,
 */
 
 /* exported
@@ -14,6 +17,20 @@
 function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
+
+    // Filters for "returnorder" table
+    if (tableKey == 'returnorder') {
+        return {
+            status: {
+                title: '{% trans "Order status" %}',
+                options: returnOrderCodes
+            },
+            assigned_to_me: {
+                type: 'bool',
+                title: '{% trans "Assigned to me" %}',
+            },
+        };
+    }
 
     // Filters for "variant" table
     if (tableKey == 'variants') {
@@ -433,6 +450,10 @@ function getAvailableTableFilters(tableKey) {
             overdue: {
                 type: 'bool',
                 title: '{% trans "Overdue" %}',
+            },
+            assigned_to_me: {
+                type: 'bool',
+                title: '{% trans "Assigned to me" %}',
             },
         };
     }
