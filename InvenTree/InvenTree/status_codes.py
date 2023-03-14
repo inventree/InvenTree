@@ -320,3 +320,23 @@ class BuildStatus(StatusCode):
         PENDING,
         PRODUCTION,
     ]
+
+
+class ReturnOrderStatus(StatusCode):
+    """Defines a set of status codes for a ReturnOrder"""
+
+    PENDING = 10
+    COMPLETE = 30
+    CANCELLED = 40
+
+    options = {
+        PENDING: _("Pending"),
+        COMPLETE: _("Complete"),
+        CANCELLED: _("Cancelled"),
+    }
+
+    colors = {
+        PENDING: 'secondary',
+        COMPLETE: 'success',
+        CANCELLED: 'danger',
+    }

@@ -34,8 +34,9 @@ from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               InvenTreeURLField, RoundingDecimalField)
 from InvenTree.helpers import decimal2string, getSetting, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
-from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
-                                    StockHistoryCode, StockStatus)
+from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderStatus,
+                                    SalesOrderStatus, StockHistoryCode,
+                                    StockStatus)
 from part import models as PartModels
 from plugin.events import trigger_event
 from plugin.models import MetadataMixin
@@ -199,7 +200,7 @@ class PurchaseOrder(Order):
 
     @classmethod
     def api_defaults(cls, request):
-        """Return default values for thsi model when issuing an API OPTIONS request"""
+        """Return default values for this model when issuing an API OPTIONS request"""
 
         defaults = {
             'reference': order.validators.generate_next_purchase_order_reference(),
@@ -684,13 +685,16 @@ class SalesOrder(Order):
         on_delete=models.SET_NULL,
         null=True,
         limit_choices_to={'is_customer': True},
-        related_name='sales_orders',
+        related_name='return_orders',
         verbose_name=_('Customer'),
         help_text=_("Company to which the items are being sold"),
     )
 
-    status = models.PositiveIntegerField(default=SalesOrderStatus.PENDING, choices=SalesOrderStatus.items(),
-                                         verbose_name=_('Status'), help_text=_('Purchase order status'))
+    status = models.PositiveIntegerField(
+        default=SalesOrderStatus.PENDING,
+        choices=SalesOrderStatus.items(),
+        verbose_name=_('Status'), help_text=_('Purchase order status')
+    )
 
     @property
     def status_text(self):
@@ -1547,3 +1551,100 @@ class SalesOrderAllocation(models.Model):
         # (It may have changed if the stock was split)
         self.item = item
         self.save()
+
+
+class ReturnOrder(Order):
+    """A ReturnOrder represents goods returned from a customer, e.g. an RMA or warranty
+
+    Attributes:
+        customer: Reference to the customer
+        sales_order: Reference to an existing SalesOrder (optional)
+        status: The status of the order (refer to status_codes.ReturnOrderStatus)
+    """
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the ReturnOrder model"""
+        return reverse('api-return-list')
+
+    @classmethod
+    def api_defaults(cls, request):
+        """Return default values for this model when issuing an API OPTIONS request"""
+        defaults = {
+            'reference': order.validators.generate_next_return_order_reference(),
+        }
+
+        return defaults
+
+    REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
+
+    def __str__(self):
+        """Render a string representation of this ReturnOrder"""
+
+        return f"{self.reference} - {self.customer.name if self.customer else _('no customer')}"
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        verbose_name=_('Reference'),
+        help_text=_('Return Order reference'),
+        default=order.validators.generate_next_return_order_reference,
+        validators=[
+            order.validators.validate_return_order_reference,
+        ]
+    )
+
+    customer = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={'is_customer': True},
+        related_name='sales_orders',
+        verbose_name=_('Customer'),
+        help_text=_("Company from which items are being returned"),
+    )
+
+    status = models.PositiveIntegerField(
+        default=ReturnOrderStatus.PENDING,
+        choices=ReturnOrderStatus.items(),
+        verbose_name=_('Status'), help_text=_('Return order status')
+    )
+
+    customer_reference = models.CharField(
+        max_length=64, blank=True,
+        verbose_name=_('Customer Reference '),
+        help_text=_("Customer order reference code")
+    )
+
+    issue_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Issue Date'),
+        help_text=_('Date order was issued')
+    )
+
+    complete_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Completion Date'),
+        help_text=_('Date order was completed')
+    )
+
+
+class ReturnOrderAttachment(InvenTreeAttachment):
+    """Model for storing file attachments against a ReturnOrder object"""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the ReturnOrderAttachment class"""
+
+        return reverse('api-return-attachment-list')
+
+    def getSubdir(self):
+        """Return the directory path where ReturnOrderAttachment files are located"""
+        return os.path.join('return_files', str(self.order.id))
+
+    order = models.ForeignKey(
+        ReturnOrder,
+        on_delete=models.CASCADE,
+        related_name='attachments',
+    )

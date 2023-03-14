@@ -1,0 +1,18 @@
+{% extends "panel.html" %}
+{% load i18n %}
+
+{% block label %}return-order{% endblock %}
+
+{% block heading %}
+{% trans "Return Order Settings" %}
+{% endblock %}
+
+{% block content %}
+
+<table class='table table-striped table-condensed'>
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="RETURNORDER_REFERENCE_PATTERN" %}
+    </tbody>
+</table>
+
+{% endblock %}
