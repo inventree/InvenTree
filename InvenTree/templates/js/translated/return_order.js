@@ -201,8 +201,7 @@ function loadReturnOrderTable(table, options={}) {
                 field: 'status',
                 title: '{% trans "Status" %}',
                 formatter: function(value, row) {
-                    return 'todo';
-                    return salesOrderStatusDisplay(row.status);
+                    return returnOrderStatusDisplay(row.status);
                 }
             },
             {
@@ -213,6 +212,27 @@ function loadReturnOrderTable(table, options={}) {
                     return renderDate(value);
                 }
             },
+            {
+                field: 'responsible',
+                title: '{% trans "Responsible" %}',
+                switchable: true,
+                sortable: true,
+                formatter: function(value, row) {
+                    if (!row.responsible_detail) {
+                        return '-';
+                    }
+
+                    let html = row.responsible_detail.name;
+
+                    if (row.responsible_detail.label == 'group') {
+                        html += `<span class='float-right fas fa-users'></span>`;
+                    } else {
+                        html += `<span class='float-right fas fa-user'></span>`;
+                    }
+
+                    return html;
+                }
+            }
         ]
     });
 }

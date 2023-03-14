@@ -114,6 +114,7 @@ translated_javascript_urls = [
     re_path(r'^sales_order.js', DynamicJsView.as_view(template_name='js/translated/sales_order.js'), name='sales_order.js'),
     re_path(r'^search.js', DynamicJsView.as_view(template_name='js/translated/search.js'), name='search.js'),
     re_path(r'^stock.js', DynamicJsView.as_view(template_name='js/translated/stock.js'), name='stock.js'),
+    re_path(r'^status_codes.js', DynamicJsView.as_view(template_name='js/translated/status_codes.js'), name='status_codes.js'),
     re_path(r'^plugin.js', DynamicJsView.as_view(template_name='js/translated/plugin.js'), name='plugin.js'),
     re_path(r'^pricing.js', DynamicJsView.as_view(template_name='js/translated/pricing.js'), name='pricing.js'),
     re_path(r'^news.js', DynamicJsView.as_view(template_name='js/translated/news.js'), name='news.js'),
