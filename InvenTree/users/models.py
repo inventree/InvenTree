@@ -136,6 +136,7 @@ class RuleSet(models.Model):
         'purchase_order': [
             'company_company',
             'company_companyattachment',
+            'company_contact',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_supplierpart',
@@ -149,6 +150,7 @@ class RuleSet(models.Model):
         'sales_order': [
             'company_company',
             'company_companyattachment',
+            'company_contact',
             'order_salesorder',
             'order_salesorderallocation',
             'order_salesorderattachment',
@@ -160,6 +162,7 @@ class RuleSet(models.Model):
         'return_order': [
             'company_company',
             'company_companyattachment',
+            'company_contact',
             'order_returnorder',
             'order_returnorderlineitem',
             'order_returnorderextraline',
@@ -181,7 +184,6 @@ class RuleSet(models.Model):
         'common_webhookmessage',
         'common_notificationentry',
         'common_notificationmessage',
-        'company_contact',
         'users_owner',
 
         # Third-party tables

@@ -235,6 +235,11 @@ class Contact(models.Model):
         role: position in company
     """
 
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the Contcat model"""
+        return reverse('api-contact-list')
+
     company = models.ForeignKey(Company, related_name='contacts',
                                 on_delete=models.CASCADE)
 

@@ -17,7 +17,8 @@ import order.models
 import part.filters
 import stock.models
 import stock.serializers
-from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
+from company.serializers import (CompanyBriefSerializer, ContactSerializer,
+                                 SupplierPartSerializer)
 from InvenTree.helpers import extract_serial_numbers, normalize, str2bool
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeCurrencySerializer,
@@ -1411,6 +1412,8 @@ class ReturnOrderSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'creation_date',
+            'contact',
+            'contact_detail',
             'customer',
             'customer_detail',
             'customer_reference',
@@ -1445,6 +1448,8 @@ class ReturnOrderSerializer(InvenTreeModelSerializer):
 
         # TODO
         return queryset
+
+    contact_detail = ContactSerializer(source='contact', many=False, read_only=True)
 
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
 

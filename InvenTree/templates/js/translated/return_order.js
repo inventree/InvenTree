@@ -50,6 +50,9 @@ function returnOrderFields(options={}) {
         link: {
             icon: 'fa-link',
         },
+        contact: {
+            icon: 'fa-user',
+        },
         responsible: {
             icon: 'fa-user',
         }

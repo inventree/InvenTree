@@ -2044,6 +2044,9 @@ function renderModelData(name, model, data, parameters, options) {
     case 'company':
         renderer = renderCompany;
         break;
+    case 'contact':
+        renderer = renderContact;
+        break;
     case 'stockitem':
         renderer = renderStockItem;
         break;

@@ -170,6 +170,18 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
         super().save(*args, **kwargs)
 
+    def clean(self):
+        """Custom clean method for the generic order class"""
+
+        super().clean()
+
+        # Check that the referenced 'contact' matches the correct 'company'
+        if self.company and self.contact:
+            if self.contact.company != self.company:
+                raise ValidationError({
+                    "contact": _("Contact does not match selected company")
+                })
+
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
     link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
@@ -304,6 +316,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         verbose_name=_('Supplier'),
         help_text=_('Company from which the items are being ordered')
     )
+
+    @property
+    def company(self):
+        """Accessor helper for Order base class"""
+        return self.suplier
 
     supplier_reference = models.CharField(max_length=64, blank=True, verbose_name=_('Supplier Reference'), help_text=_("Supplier order reference code"))
 
@@ -710,6 +727,11 @@ class SalesOrder(TotalPriceMixin, Order):
         verbose_name=_('Customer'),
         help_text=_("Company to which the items are being sold"),
     )
+
+    @property
+    def company(self):
+        """Accessor helper for Order base"""
+        return self.customer
 
     status = models.PositiveIntegerField(
         default=SalesOrderStatus.PENDING,
@@ -1625,6 +1647,11 @@ class ReturnOrder(Order):
         verbose_name=_('Customer'),
         help_text=_("Company from which items are being returned"),
     )
+
+    @property
+    def company(self):
+        """Accessor helper for Order base class"""
+        return self.customer
 
     status = models.PositiveIntegerField(
         default=ReturnOrderStatus.PENDING,

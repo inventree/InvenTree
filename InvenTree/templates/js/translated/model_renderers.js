@@ -8,6 +8,7 @@
 /* exported
     renderBuild,
     renderCompany,
+    renderContact,
     renderGroup,
     renderManufacturerPart,
     renderOwner,
@@ -67,11 +68,26 @@ function renderId(title, pk, parameters={}) {
 // eslint-disable-next-line no-unused-vars
 function renderCompany(name, data, parameters={}, options={}) {
 
-    var html = select2Thumbnail(data.image);
+    let html = select2Thumbnail(data.image);
 
     html += `<span><b>${data.name}</b></span> - <i>${trim(data.description)}</i>`;
 
     html += renderId('{% trans "Company ID" %}', data.pk, parameters);
+
+    return html;
+}
+
+
+// Renderer for the "Contact" model
+// eslint-disable-next-line no-unused-vars
+function renderContact(name, data, parameters={}, options={}) {
+    let html = `<span><b>${data.name}</b>`;
+
+    if (data.email) {
+        html += `- <i>${data.email}</i>`;
+
+        html += renderId('{% trans "Contact ID" %}', data.pk, parameters);
+    }
 
     return html;
 }
@@ -138,7 +154,7 @@ function renderStockItem(name, data, parameters={}, options={}) {
         }
     }
 
-    var html = `
+    let html = `
     <span>
         ${part_detail}
         ${stock_detail}
@@ -157,7 +173,7 @@ function renderStockLocation(name, data, parameters={}, options={}) {
 
     var level = '- '.repeat(data.level);
 
-    var html = `<span>${level}${data.pathstring}</span>`;
+    let html = `<span>${level}${data.pathstring}</span>`;
 
     var render_description = true;
 
@@ -183,7 +199,7 @@ function renderBuild(name, data, parameters={}, options={}) {
         image = data.part_detail.thumbnail;
     }
 
-    var html = select2Thumbnail(image);
+    let html = select2Thumbnail(image);
 
     html += `<span><b>${data.reference}</b> - ${data.quantity} x ${data.part_detail.full_name}</span>`;
 
@@ -197,7 +213,7 @@ function renderBuild(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderPart(name, data, parameters={}, options={}) {
 
-    var html = select2Thumbnail(data.image);
+    let html = select2Thumbnail(data.image);
 
     html += ` <span>${data.full_name || data.name}</span>`;
 
@@ -234,7 +250,7 @@ function renderPart(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderGroup(name, data, parameters={}, options={}) {
 
-    var html = `<span>${data.name}</span>`;
+    let html = `<span>${data.name}</span>`;
 
     return html;
 
@@ -244,7 +260,7 @@ function renderGroup(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderUser(name, data, parameters={}, options={}) {
 
-    var html = `<span>${data.username}</span>`;
+    let html = `<span>${data.username}</span>`;
 
     if (data.first_name && data.last_name) {
         html += ` - <i>${data.first_name} ${data.last_name}</i>`;
@@ -258,7 +274,7 @@ function renderUser(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderOwner(name, data, parameters={}, options={}) {
 
-    var html = `<span>${data.name}</span>`;
+    let html = `<span>${data.name}</span>`;
 
     switch (data.label) {
     case 'user':
@@ -279,7 +295,7 @@ function renderOwner(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderPurchaseOrder(name, data, parameters={}, options={}) {
 
-    var html = '';
+    let html = '';
 
     if (data.supplier_detail) {
         thumbnail = data.supplier_detail.thumbnail || data.supplier_detail.image;
@@ -309,7 +325,7 @@ function renderPurchaseOrder(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderSalesOrder(name, data, parameters={}, options={}) {
 
-    var html = `<span>${data.reference}</span>`;
+    let html = `<span>${data.reference}</span>`;
 
     var thumbnail = null;
 
@@ -334,7 +350,7 @@ function renderSalesOrder(name, data, parameters={}, options={}) {
 // eslint-disable-next-line no-unused-vars
 function renderSalesOrderShipment(name, data, parameters={}, options={}) {
 
-    var html = `
+    let html = `
     <span>${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
     <span class='float-right'>
         <small>{% trans "Shipment ID" %}: ${data.pk}</small>
@@ -353,7 +369,7 @@ function renderPartCategory(name, data, parameters={}, options={}) {
 
     var level = '- '.repeat(data.level);
 
-    var html = `<span>${level}${data.pathstring}</span>`;
+    let html = `<span>${level}${data.pathstring}</span>`;
 
     if (data.description) {
         html += ` - <i>${trim(data.description)}</i>`;
@@ -373,7 +389,7 @@ function renderPartParameterTemplate(name, data, parameters={}, options={}) {
         units = ` [${data.units}]`;
     }
 
-    var html = `<span>${data.name}${units}</span>`;
+    let html = `<span>${data.name}${units}</span>`;
 
     return html;
 }
@@ -394,7 +410,7 @@ function renderManufacturerPart(name, data, parameters={}, options={}) {
         part_image = data.part_detail.thumbnail || data.part_detail.image;
     }
 
-    var html = '';
+    let html = '';
 
     html += select2Thumbnail(manufacturer_image);
     html += select2Thumbnail(part_image);
@@ -423,7 +439,7 @@ function renderSupplierPart(name, data, parameters={}, options={}) {
         part_image = data.part_detail.thumbnail || data.part_detail.image;
     }
 
-    var html = '';
+    let html = '';
 
     html += select2Thumbnail(supplier_image);
 
