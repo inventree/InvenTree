@@ -62,7 +62,7 @@
             <li><a class='dropdown-item' href="{% url 'sales-order-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
             {% endif %}
             {% if roles.returns.view %}
-            <li><a class='dropdown-item' href="{% url 'return-order-index' %}"><span class='fas fa-undo icon-header'></span>{% trans "Returns" %}</a></li>
+            <li><a class='dropdown-item' href="{% url 'return-order-index' %}"><span class='fas fa-undo icon-header'></span>{% trans "Return Orders" %}</a></li>
             {% endif %}
           </ul>
         </li>
