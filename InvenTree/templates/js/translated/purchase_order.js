@@ -20,41 +20,22 @@
 */
 
 /* exported
-    allocateStockToSalesOrder,
     cancelPurchaseOrder,
-    cancelSalesOrder,
     completePurchaseOrder,
-    completeSalesOrder,
-    completeSalesOrderShipment,
-    completePendingShipments,
     createPurchaseOrder,
     createPurchaseOrderLineItem,
-    createReturnOrder,
-    createSalesOrder,
-    createSalesOrderLineItem,
-    createSalesOrderShipment,
     duplicatePurchaseOrder,
     editPurchaseOrder,
     editPurchaseOrderLineItem,
-    editSalesOrder,
-    exportOrder,
     issuePurchaseOrder,
     loadPurchaseOrderLineItemTable,
     loadPurchaseOrderExtraLineTable
     loadPurchaseOrderTable,
-    loadReturnOrderTable,
-    loadSalesOrderAllocationTable,
-    loadSalesOrderLineItemTable,
-    loadSalesOrderExtraLineTable
-    loadSalesOrderShipmentTable,
-    loadSalesOrderTable,
     newPurchaseOrderFromOrderWizard,
     newSupplierPartFromOrderWizard,
     orderParts,
     removeOrderRowFromOrderWizard,
     removePurchaseOrderLineItem,
-    loadOrderTotal,
-    extraLineFields,
 */
 
 
