@@ -99,6 +99,8 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
             'reference',
             'responsible',
             'responsible_detail',
+            'contact',
+            'contact_detail',
             'supplier',
             'supplier_detail',
             'supplier_reference',
@@ -147,6 +149,8 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
         )
 
         return queryset
+
+    contact_detail = ContactSerializer(source='contact', many=False, read_only=True)
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
 

@@ -70,6 +70,18 @@ function purchaseOrderFields(options={}) {
         link: {
             icon: 'fa-link',
         },
+        contact: {
+            icon: 'fa-user',
+            adjustFilters: function(filters) {
+                let supplier = getFormFieldValue('supplier', {}, {modal: options.modal});
+
+                if (supplier) {
+                    filters.company = supplier;
+                }
+
+                return filters;
+            }
+        },
         responsible: {
             icon: 'fa-user',
         },
