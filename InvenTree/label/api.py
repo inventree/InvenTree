@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse, JsonResponse
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
@@ -370,7 +370,7 @@ label_api_urls = [
     # Stock item labels
     re_path(r'stock/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', StockItemLabelPrint.as_view(), name='api-stockitem-label-print'),
             re_path(r'^.*$', StockItemLabelDetail.as_view(), name='api-stockitem-label-detail'),
         ])),
@@ -382,7 +382,7 @@ label_api_urls = [
     # Stock location labels
     re_path(r'location/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', StockLocationLabelPrint.as_view(), name='api-stocklocation-label-print'),
             re_path(r'^.*$', StockLocationLabelDetail.as_view(), name='api-stocklocation-label-detail'),
         ])),
@@ -394,7 +394,7 @@ label_api_urls = [
     # Part labels
     re_path(r'^part/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'^print/', PartLabelPrint.as_view(), name='api-part-label-print'),
             re_path(r'^.*$', PartLabelDetail.as_view(), name='api-part-label-detail'),
         ])),

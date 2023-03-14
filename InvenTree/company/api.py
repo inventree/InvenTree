@@ -535,12 +535,12 @@ manufacturer_part_api_urls = [
 
     # Base URL for ManufacturerPartAttachment API endpoints
     re_path(r'^attachment/', include([
-        re_path(r'^(?P<pk>\d+)/', ManufacturerPartAttachmentDetail.as_view(), name='api-manufacturer-part-attachment-detail'),
+        path(r'<int:pk>/', ManufacturerPartAttachmentDetail.as_view(), name='api-manufacturer-part-attachment-detail'),
         re_path(r'^$', ManufacturerPartAttachmentList.as_view(), name='api-manufacturer-part-attachment-list'),
     ])),
 
     re_path(r'^parameter/', include([
-        re_path(r'^(?P<pk>\d+)/', ManufacturerPartParameterDetail.as_view(), name='api-manufacturer-part-parameter-detail'),
+        path(r'<int:pk>/', ManufacturerPartParameterDetail.as_view(), name='api-manufacturer-part-parameter-detail'),
 
         # Catch anything else
         re_path(r'^.*$', ManufacturerPartParameterList.as_view(), name='api-manufacturer-part-parameter-list'),
@@ -580,7 +580,7 @@ company_api_urls = [
     ])),
 
     re_path(r'^attachment/', include([
-        re_path(r'^(?P<pk>\d+)/', CompanyAttachmentDetail.as_view(), name='api-company-attachment-detail'),
+        path(r'<int:pk>/', CompanyAttachmentDetail.as_view(), name='api-company-attachment-detail'),
         re_path(r'^$', CompanyAttachmentList.as_view(), name='api-company-attachment-list'),
     ])),
 
