@@ -28,7 +28,7 @@ import InvenTree.tasks
 import order.validators
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
-from company.models import Company, SupplierPart
+from company.models import Company, Contact, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               InvenTreeURLField, RoundingDecimalField)
@@ -189,6 +189,15 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         blank=True, null=True,
         help_text=_('User or group responsible for this order'),
         verbose_name=_('Responsible'),
+        related_name='+',
+    )
+
+    contact = models.ForeignKey(
+        Contact,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Contact'),
+        help_text=_('Point of contact for this order'),
         related_name='+',
     )
 
