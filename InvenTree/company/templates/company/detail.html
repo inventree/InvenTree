@@ -184,7 +184,7 @@
 </div>
 {% endif %}
 
-{% if roles.return_order.view %}
+{% if roles.return_order.view and return_order_enabled %}
 <div class='panel panel-hidden' id='panel-return-orders'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -359,6 +359,7 @@
 
     {% if company.is_customer %}
 
+    {% if return_order_enabled %}
     // Callback function when the 'return orders' panel is loaded
     onPanelLoad('return-orders', function() {
 
@@ -378,6 +379,7 @@
         });
         {% endif %}
     });
+    {% endif %}
 
     // Callback function when the 'assigned stock' panel is loaded
     onPanelLoad('assigned-stock', function() {

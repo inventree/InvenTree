@@ -1423,6 +1423,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': build.validators.validate_build_order_reference_pattern,
         },
 
+        'RETURNORDER_ENABLED': {
+            'name': _('Enable Return Orders'),
+            'description': _('Enable return order functionality in the user interface'),
+            'validator': bool,
+            'default': False,
+        },
+
         'RETURNORDER_REFERENCE_PATTERN': {
             'name': _('Return Order Reference Pattern'),
             'description': _('Required pattern for generating Return Order reference field'),
