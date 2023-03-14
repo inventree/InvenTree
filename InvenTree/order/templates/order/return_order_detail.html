@@ -1,0 +1,111 @@
+{% extends "order/return_order_base.html" %}
+
+{% load inventree_extras %}
+{% load status_codes %}
+{% load i18n %}
+{% load static %}
+
+{% block sidebar %}
+{% include "order/return_order_sidebar.html"  %}
+{% endblock %}
+
+{% block page_content %}
+
+<div class='panel panel-hidden' id='panel-order-details'>
+    <div class='panel-heading'>
+        <h4>{% trans "Order Details" %}</h4>
+        {% include "spacer.html" %}
+    </div>
+    <div class='panel-content'>
+        <!-- TODO: Order details here -->
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-order-attachments'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "attachment_table.html" %}
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-order-notes'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Order Notes" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "notes_buttons.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <textarea id='order-notes'></textarea>
+    </div>
+</div>
+
+
+{% endblock page_content %}
+
+{% block js_ready %}
+{{ block.super }}
+
+// Callback function when the 'details' panel is loaded
+onPanelLoad('order-details', function() {
+    // TODO
+});
+
+// Callback function when the 'notes' panel is loaded
+onPanelLoad('order-notes', function() {
+    setupNotesField(
+        'order-notes',
+        '{% url "api-return-order-detail" order.pk %}',
+        {
+            {% if roles.purchase_order.change %}
+            editable: true,
+            {% else %}
+            editable: false,
+            {% endif %}
+        }
+    );
+});
+
+// Callback function when the 'attachments' panel is loaded
+onPanelLoad('order-attachments', function() {
+    enableDragAndDrop(
+        '#attachment-dropzone',
+        '{% url "api-return-order-attachment-list" %}',
+        {
+            data: {
+                order: {{ order.id }},
+            },
+            label: 'attachment',
+            success: function(data, status, xhr) {
+                reloadAttachmentTable();
+            }
+        }
+    );
+
+    loadAttachmentTable('{% url "api-return-order-attachment-list" %}', {
+        filters: {
+            order: {{ order.pk }},
+        },
+        fields: {
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
+            },
+        }
+    });
+});
+
+enableSidebar('returnorder');
+
+{% endblock js_ready %}

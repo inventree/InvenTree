@@ -4,7 +4,8 @@ from django import template
 from django.utils.safestring import mark_safe
 
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    SalesOrderStatus, StockStatus)
+                                    ReturnOrderStatus, SalesOrderStatus,
+                                    StockStatus)
 
 register = template.Library()
 
@@ -19,6 +20,12 @@ def purchase_order_status_label(key, *args, **kwargs):
 def sales_order_status_label(key, *args, **kwargs):
     """Render a SalesOrder status label."""
     return mark_safe(SalesOrderStatus.render(key, large=kwargs.get('large', False)))
+
+
+@register.simple_tag
+def return_order_status_label(key, *args, **kwargs):
+    """Render a ReturnOrder status label"""
+    return mark_safe(ReturnOrderStatus.render(key, large=kwargs.get('large', False)))
 
 
 @register.simple_tag

@@ -1313,6 +1313,28 @@ class ReturnOrderDetail(RetrieveUpdateDestroyAPI):
         return self.serializer_class(*args, **kwargs)
 
 
+class ReturnOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
+    """API endpoint for listing (and creating) a ReturnOrderAttachment (file upload)"""
+
+    queryset = models.ReturnOrderAttachment.objects.all()
+    serializer_class = serializers.ReturnOrderAttachmentSerializer
+
+    filter_backends = [
+        rest_filters.DjangoFilterBackend,
+    ]
+
+    filterset_fields = [
+        'order',
+    ]
+
+
+class ReturnOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
+    """Detail endpoint for the ReturnOrderAttachment model"""
+
+    queryset = models.ReturnOrderAttachment.objects.all()
+    serializer_class = serializers.ReturnOrderAttachmentSerializer
+
+
 class OrderCalendarExport(ICalFeed):
     """Calendar export for Purchase/Sales Orders
 
@@ -1474,7 +1496,7 @@ order_api_urls = [
         ])),
 
         # Individual purchase order detail URLs
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'),
             re_path(r'^complete/', PurchaseOrderComplete.as_view(), name='api-po-complete'),
             re_path(r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
@@ -1509,7 +1531,7 @@ order_api_urls = [
         ])),
 
         re_path(r'^shipment/', include([
-            re_path(r'^(?P<pk>\d+)/', include([
+            path(r'<int:pk>/', include([
                 path('ship/', SalesOrderShipmentComplete.as_view(), name='api-so-shipment-ship'),
                 re_path(r'^.*$', SalesOrderShipmentDetail.as_view(), name='api-so-shipment-detail'),
             ])),
@@ -1517,7 +1539,7 @@ order_api_urls = [
         ])),
 
         # Sales order detail view
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
             re_path(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),
             re_path(r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
@@ -1552,6 +1574,11 @@ order_api_urls = [
 
     # API endpoints for return orders
     re_path(r'^return/', include([
+
+        re_path(r'^attachment/', include([
+            path('<int:pk>/', ReturnOrderAttachmentDetail.as_view(), name='api-return-order-attachment-detail'),
+            re_path(r'^.*$', ReturnOrderAttachmentList.as_view(), name='api-return-order-attachment-list'),
+        ])),
 
         # Return Order detail
         path('<int:pk>/', ReturnOrderDetail.as_view(), name='api-return-order-detail'),

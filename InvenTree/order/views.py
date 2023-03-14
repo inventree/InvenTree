@@ -75,6 +75,14 @@ class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView)
     template_name = 'order/sales_order_detail.html'
 
 
+class ReturnOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
+    """Detail view for a ReturnOrder object"""
+
+    context_object_name = 'order'
+    queryset = ReturnOrder.objects.all()
+    template_name = 'order/return_order_detail.html'
+
+
 class PurchaseOrderUpload(FileManagementFormView):
     """PurchaseOrder: Upload file, match to fields and parts (using multi-Step form)"""
 

@@ -1122,7 +1122,10 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
         include_symbol: Render with the appropriate currency symbol
     """
 
-    if money is None or money.amount is None:
+    if money in [None, '']:
+        return '-'
+
+    if type(money) is not Money:
         return '-'
 
     if currency is not None:

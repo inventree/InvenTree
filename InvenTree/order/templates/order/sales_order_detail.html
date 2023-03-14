@@ -209,30 +209,32 @@
         );
     });
 
-    enableDragAndDrop(
-        '#attachment-dropzone',
-        '{% url "api-so-attachment-list" %}',
-        {
-            data: {
-                order: {{ order.id }},
-            },
-            label: 'attachment',
-            success: function(data, status, xhr) {
-                reloadAttachmentTable();
+    onPanelLoad('order-attachments', function() {
+        enableDragAndDrop(
+            '#attachment-dropzone',
+            '{% url "api-so-attachment-list" %}',
+            {
+                data: {
+                    order: {{ order.id }},
+                },
+                label: 'attachment',
+                success: function(data, status, xhr) {
+                    reloadAttachmentTable();
+                }
             }
-        }
-    );
+        );
 
-    loadAttachmentTable('{% url "api-so-attachment-list" %}', {
-        filters: {
-            order: {{ order.pk }},
-        },
-        fields: {
-            order: {
-                value: {{ order.pk }},
-                hidden: true,
+        loadAttachmentTable('{% url "api-so-attachment-list" %}', {
+            filters: {
+                order: {{ order.pk }},
             },
-        }
+            fields: {
+            order: {
+                    value: {{ order.pk }},
+                    hidden: true,
+                },
+            }
+        });
     });
 
     loadBuildTable($("#builds-table"), {

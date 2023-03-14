@@ -1,0 +1,115 @@
+{% extends "page_base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+{% load status_codes %}
+
+{% block page_title %}
+{% inventree_title %} | {% trans "Return Order" %}
+{% endblock page_title %}
+
+{% block breadcrumbs %}
+<li class='breadcrumb-item'><a href='{% url "return-order-index" %}'>{% trans "Return Orders" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page"><a href='{% url "return-order-detail" order.id %}'>{{ order }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block thumbnail %}
+<img class='part-thumb'
+{% if order.customer and order.customer.image %}
+src="{{ order.customer.image.url }}"
+{% else %}
+src="{% static 'img/blank_image.png' %}"
+{% endif %}
+/>
+{% endblock thumbnail%}
+
+{% block heading %}
+{% trans "Return Order" %} {{ order.reference }}
+{% endblock heading %}
+
+{% block actions %}
+{% if user.is_staff and roles.return_order.change %}
+{% url 'admin:order_returnorder_change' order.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+<!-- TODO: Printing actions -->
+<!-- TODO: Order actions-->
+{% endblock actions %}
+
+{% block details %}
+
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Order Reference" %}</td>
+        <td>{{ order.reference }}{% include "clip.html"%}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-info-circle'></span></td>
+        <td>{% trans "Order Description" %}</td>
+        <td>{{ order.description }}{% include "clip.html" %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-info'></span></td>
+        <td>{% trans "Order Status" %}</td>
+        <td>
+            {% return_order_status_label order.status %}
+        </td>
+    </tr>
+</table>
+
+{% endblock details %}
+
+{% block details_right %}
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    {% if order.customer %}
+    <tr>
+        <td><span class='fas fa-building'></span></td>
+        <td>{% trans "Customer" %}</td>
+        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html"%}</td>
+    </tr>
+    {% endif %}
+    {% if order.customer_reference %}
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Customer Reference" %}</td>
+        <td>{{ order.customer_reference }}{% include "clip.html"%}</td>
+    </tr>
+    {% endif %}
+    {% if order.link %}
+    <tr>
+        <td><span class='fas fa-link'></span></td>
+        <td>External Link</td>
+        <td><a href="{{ order.link }}">{{ order.link }}</a>{% include "clip.html"%}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Created" %}</td>
+        <td>{% render_date order.creation_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
+    </tr>
+    {% if order.responsible %}
+    <tr>
+        <td><span class='fas fa-users'></span></td>
+        <td>{% trans "Responsible" %}</td>
+        <td>{{ order.responsible }}</td>
+    </tr>
+    {% endif %}
+</table>
+{% endblock details_right %}
+
+{% block js_ready %}
+{{ block.super }}
+
+<!-- TODO: Javascript callbacks -->
+
+{% if report_enabled %}
+<!-- TODO: Report callbacks -->
+{% endif %}
+
+<!-- TODO: Export order callback -->
+
+{% endblock js_ready %}

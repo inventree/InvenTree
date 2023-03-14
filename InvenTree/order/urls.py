@@ -4,7 +4,7 @@
 - Detail view of Purchase Orders
 """
 
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from . import views
 
@@ -21,7 +21,7 @@ purchase_order_urls = [
     re_path(r'^pricing/', views.LineItemPricing.as_view(), name='line-pricing'),
 
     # Display detail view for a single purchase order
-    re_path(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),
+    path(r'<int:pk>/', include(purchase_order_detail_urls)),
 
     # Display complete list of purchase orders
     re_path(r'^.*$', views.PurchaseOrderIndex.as_view(), name='purchase-order-index'),
@@ -35,7 +35,7 @@ sales_order_detail_urls = [
 
 sales_order_urls = [
     # Display detail view for a single SalesOrder
-    re_path(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),
+    path(r'<int:pk>/', include(sales_order_detail_urls)),
 
     # Display list of all sales orders
     re_path(r'^.*$', views.SalesOrderIndex.as_view(), name='sales-order-index'),
@@ -43,6 +43,7 @@ sales_order_urls = [
 
 
 return_order_urls = [
+    path(r'<int:pk>/', views.ReturnOrderDetail.as_view(), name='return-order-detail'),
 
     # Display list of all return orders
     re_path(r'^.*$', views.ReturnOrderIndex.as_view(), name='return-order-index'),
