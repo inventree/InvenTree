@@ -1099,8 +1099,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
 
-    validated = serializers.BooleanField(read_only=True, source='is_line_valid')
-
     on_order = serializers.FloatField(read_only=True)
 
     # Cached pricing fields
