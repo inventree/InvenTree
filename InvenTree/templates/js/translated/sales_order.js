@@ -14,7 +14,6 @@
     renderLink,
     salesOrderStatusDisplay,
     setupFilterList,
-    supplierPartFields,
 */
 
 /* exported

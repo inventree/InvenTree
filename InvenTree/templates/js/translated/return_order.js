@@ -4,7 +4,6 @@
 /* globals
     companyFormFields,
     constructForm,
-    global_settings,
     imageHoverIcon,
     loadTableFilters,
     renderLink,
