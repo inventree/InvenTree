@@ -46,67 +46,15 @@ from users import models as UserModels
 logger = logging.getLogger('inventree')
 
 
-class Order(MetadataMixin, ReferenceIndexingMixin):
-    """Abstract model for an order.
-
-    Instances of this class:
-
-    - PuchaseOrder
-    - SalesOrder
-
-    Attributes:
-        reference: Unique order number / reference / code
-        description: Long form description (required)
-        notes: Extra note field (optional)
-        creation_date: Automatic date of order creation
-        created_by: User who created this order (automatically captured)
-        issue_date: Date the order was issued
-        complete_date: Date the order was completed
-        responsible: User (or group) responsible for managing the order
-    """
-
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-        abstract = True
+class TotalPriceMixin:
+    """Mixin which provides 'total_price' field for an order"""
 
     def save(self, *args, **kwargs):
-        """Custom save method for the order models:
-
-        Ensures that the reference field is rebuilt whenever the instance is saved.
-        """
-        self.reference_int = self.rebuild_reference_field(self.reference)
-
-        if not self.creation_date:
-            self.creation_date = datetime.now().date()
+        """Update the total_price field when saved"""
 
         # Recalculate total_price for this order
         self.update_total_price(commit=False)
-
         super().save(*args, **kwargs)
-
-    description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
-
-    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
-
-    creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation Date'))
-
-    created_by = models.ForeignKey(User,
-                                   on_delete=models.SET_NULL,
-                                   blank=True, null=True,
-                                   related_name='+',
-                                   verbose_name=_('Created By')
-                                   )
-
-    responsible = models.ForeignKey(
-        UserModels.Owner,
-        on_delete=models.SET_NULL,
-        blank=True, null=True,
-        help_text=_('User or group responsible for this order'),
-        verbose_name=_('Responsible'),
-        related_name='+',
-    )
-
-    notes = InvenTreeNotesField(help_text=_('Order notes'))
 
     total_price = InvenTreeModelMoneyField(
         null=True, blank=True,
@@ -183,7 +131,67 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         return total
 
 
-class PurchaseOrder(Order):
+class Order(MetadataMixin, ReferenceIndexingMixin):
+    """Abstract model for an order.
+
+    Instances of this class:
+
+    - PuchaseOrder
+    - SalesOrder
+
+    Attributes:
+        reference: Unique order number / reference / code
+        description: Long form description (required)
+        notes: Extra note field (optional)
+        creation_date: Automatic date of order creation
+        created_by: User who created this order (automatically captured)
+        issue_date: Date the order was issued
+        complete_date: Date the order was completed
+        responsible: User (or group) responsible for managing the order
+    """
+
+    class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        """Custom save method for the order models:
+
+        Ensures that the reference field is rebuilt whenever the instance is saved.
+        """
+        self.reference_int = self.rebuild_reference_field(self.reference)
+
+        if not self.creation_date:
+            self.creation_date = datetime.now().date()
+
+        super().save(*args, **kwargs)
+
+    description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
+
+    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
+
+    creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation Date'))
+
+    created_by = models.ForeignKey(User,
+                                   on_delete=models.SET_NULL,
+                                   blank=True, null=True,
+                                   related_name='+',
+                                   verbose_name=_('Created By')
+                                   )
+
+    responsible = models.ForeignKey(
+        UserModels.Owner,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        help_text=_('User or group responsible for this order'),
+        verbose_name=_('Responsible'),
+        related_name='+',
+    )
+
+    notes = InvenTreeNotesField(help_text=_('Order notes'))
+
+
+class PurchaseOrder(TotalPriceMixin, Order):
     """A PurchaseOrder represents goods shipped inwards from an external supplier.
 
     Attributes:
@@ -596,7 +604,7 @@ def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **
         notify_responsible(instance, sender, exclude=instance.created_by)
 
 
-class SalesOrder(Order):
+class SalesOrder(TotalPriceMixin, Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer.
 
     Attributes:
