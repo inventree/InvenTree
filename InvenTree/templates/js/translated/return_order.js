@@ -52,6 +52,15 @@ function returnOrderFields(options={}) {
         },
         contact: {
             icon: 'fa-user',
+            adjustFilters: function(filters) {
+                let customer = getFormFieldValue('customer', {}, {modal: options.modal});
+
+                if (customer) {
+                    filters.company = customer;
+                }
+
+                return filters;
+            }
         },
         responsible: {
             icon: 'fa-user',
