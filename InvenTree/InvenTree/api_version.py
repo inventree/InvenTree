@@ -9,6 +9,7 @@ Increment this API version number whenever there is a significant change to the 
 
 v102 -> 2023-03-14 : https://github.com/inventree/InvenTree/pull/4488
     - Adds various endpoints for new "ReturnOrder" models
+    - Exposes API endpoints for "Contact" model
 
 v101 -> 2023-03-07 : https://github.com/inventree/InvenTree/pull/4462
     - Adds 'total_in_stock' to Part serializer, and supports API ordering

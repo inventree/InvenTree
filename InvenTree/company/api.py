@@ -1,7 +1,7 @@
 """Provides a JSON API for the Company app."""
 
 from django.db.models import Q
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,10 +15,11 @@ from InvenTree.mixins import (ListCreateAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
 from plugin.serializers import MetadataSerializer
 
-from .models import (Company, CompanyAttachment, ManufacturerPart,
+from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
                      ManufacturerPartAttachment, ManufacturerPartParameter,
                      SupplierPart, SupplierPriceBreak)
 from .serializers import (CompanyAttachmentSerializer, CompanySerializer,
+                          ContactSerializer,
                           ManufacturerPartAttachmentSerializer,
                           ManufacturerPartParameterSerializer,
                           ManufacturerPartSerializer, SupplierPartSerializer,
@@ -116,6 +117,41 @@ class CompanyAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
 
     queryset = CompanyAttachment.objects.all()
     serializer_class = CompanyAttachmentSerializer
+
+
+class ContactList(ListCreateDestroyAPIView):
+    """API endpoint for list view of Company model"""
+
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filterset_fields = [
+        'company',
+    ]
+
+    search_fields = [
+        'company__name',
+        'name',
+    ]
+
+    ordering_fields = [
+        'name',
+    ]
+
+    ordering = 'name'
+
+
+class ContactDetail(RetrieveUpdateDestroyAPI):
+    """Detail endpoint for Company model"""
+
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
 
 
 class ManufacturerPartFilter(rest_filters.FilterSet):
@@ -546,6 +582,11 @@ company_api_urls = [
     re_path(r'^attachment/', include([
         re_path(r'^(?P<pk>\d+)/', CompanyAttachmentDetail.as_view(), name='api-company-attachment-detail'),
         re_path(r'^$', CompanyAttachmentList.as_view(), name='api-company-attachment-list'),
+    ])),
+
+    re_path(r'^contact/', include([
+        path('<int:pk>/', ContactDetail.as_view(), name='api-contact-detail'),
+        re_path(r'^.*$', ContactList.as_view(), name='api-contact-list'),
     ])),
 
     re_path(r'^.*$', CompanyList.as_view(), name='api-company-list'),
