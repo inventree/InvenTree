@@ -177,6 +177,13 @@ src="{% static 'img/blank_image.png' %}"
         </td>
     </tr>
     {% endif %}
+    {% if order.contact %}
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Contact" %}</td>
+        <td>{{ order.contact.name }}</td>
+    </tr>
+    {% endif %}
     {% if order.responsible %}
     <tr>
         <td><span class='fas fa-users'></span></td>

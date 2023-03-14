@@ -662,6 +662,8 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
             'creation_date',
             'customer',
             'customer_detail',
+            'contact',
+            'contact_detail',
             'customer_reference',
             'description',
             'line_items',
@@ -714,6 +716,8 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
         )
 
         return queryset
+
+    contact_detail = ContactSerializer(source='contact', many=False, read_only=True)
 
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
 
