@@ -320,7 +320,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @property
     def company(self):
         """Accessor helper for Order base class"""
-        return self.suplier
+        return self.supplier
 
     supplier_reference = models.CharField(max_length=64, blank=True, verbose_name=_('Supplier Reference'), help_text=_("Supplier order reference code"))
 
