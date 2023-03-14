@@ -163,7 +163,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
 
     def return_order(self, obj):
         """Return the ruleset ofr the ReturnOrder role"""
-        return self.get_rule_set(obj, 'returns')
+        return self.get_rule_set(obj, 'return_order')
 
     def get_formsets_with_inlines(self, request, obj=None):
         """Return all inline formsets"""

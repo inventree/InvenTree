@@ -42,7 +42,7 @@ class RuleSet(models.Model):
         ('build', _('Build Orders')),
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
-        ('returns', _('Returns')),
+        ('return_order', _('Return Orders')),
     ]
 
     RULESET_NAMES = [
@@ -157,7 +157,7 @@ class RuleSet(models.Model):
             'order_salesordershipment',
             'report_salesorderreport',
         ],
-        'returns': [
+        'return_order': [
             'company_company',
             'company_companyattachment',
             'order_returnorder',
