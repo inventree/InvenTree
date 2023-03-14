@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<li class='breadcrumb-item'><a href='{% url "so-index" %}'>{% trans "Sales Orders" %}</a></li>
+<li class='breadcrumb-item'><a href='{% url "sales-order-index" %}'>{% trans "Sales Orders" %}</a></li>
 <li class="breadcrumb-item active" aria-current="page"><a href='{% url "so-detail" order.id %}'>{{ order }}</a></li>
 {% endblock %}
 

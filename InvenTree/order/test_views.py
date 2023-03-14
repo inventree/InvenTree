@@ -32,7 +32,7 @@ class OrderListTest(OrderViewTestCase):
     """Unit tests for the PurchaseOrder index page"""
     def test_order_list(self):
         """Tests for the PurchaseOrder index page"""
-        response = self.client.get(reverse('po-index'))
+        response = self.client.get(reverse('purchase-order-index'))
 
         self.assertEqual(response.status_code, 200)
 

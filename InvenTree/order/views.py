@@ -24,8 +24,8 @@ from plugin.views import InvenTreePluginViewMixin
 
 from . import forms as order_forms
 from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
-from .models import (PurchaseOrder, PurchaseOrderLineItem, SalesOrder,
-                     SalesOrderLineItem)
+from .models import (PurchaseOrder, PurchaseOrderLineItem, ReturnOrder,
+                     SalesOrder, SalesOrderLineItem)
 
 logger = logging.getLogger("inventree")
 
@@ -48,6 +48,14 @@ class SalesOrderIndex(InvenTreeRoleMixin, ListView):
     """SalesOrder index (list) view class"""
     model = SalesOrder
     template_name = 'order/sales_orders.html'
+    context_object_name = 'orders'
+
+
+class ReturnOrderIndex(InvenTreeRoleMixin, ListView):
+    """ReturnOrder index (list) view"""
+
+    model = ReturnOrder
+    template_name = 'order/return_orders.html'
     context_object_name = 'orders'
 
 
