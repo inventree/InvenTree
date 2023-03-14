@@ -20,41 +20,8 @@
 */
 
 /* exported
-    allocateStockToSalesOrder,
-    cancelPurchaseOrder,
-    cancelSalesOrder,
-    completePurchaseOrder,
-    completeSalesOrder,
-    completeSalesOrderShipment,
-    completePendingShipments,
-    createPurchaseOrder,
-    createPurchaseOrderLineItem,
     createReturnOrder,
-    createSalesOrder,
-    createSalesOrderLineItem,
-    createSalesOrderShipment,
-    duplicatePurchaseOrder,
-    editPurchaseOrder,
-    editPurchaseOrderLineItem,
-    editSalesOrder,
-    exportOrder,
-    issuePurchaseOrder,
-    loadPurchaseOrderLineItemTable,
-    loadPurchaseOrderExtraLineTable
-    loadPurchaseOrderTable,
     loadReturnOrderTable,
-    loadSalesOrderAllocationTable,
-    loadSalesOrderLineItemTable,
-    loadSalesOrderExtraLineTable
-    loadSalesOrderShipmentTable,
-    loadSalesOrderTable,
-    newPurchaseOrderFromOrderWizard,
-    newSupplierPartFromOrderWizard,
-    orderParts,
-    removeOrderRowFromOrderWizard,
-    removePurchaseOrderLineItem,
-    loadOrderTotal,
-    extraLineFields,
 */
 
 
@@ -109,6 +76,21 @@ function createReturnOrder(options={}) {
         onSuccess: function(data) {
             location.href = `/order/return-order/${data.pk}/`;
         },
+    });
+}
+
+
+/*
+ * Edit an existing Return Order
+ */
+function editReturnOrder(order_id, options={}) {
+
+    constructForm(`/api/order/return/${order_id}/`, {
+        fields: returnOrderFields(options),
+        title: '{% trans "Edit Return Order" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
     });
 }
 

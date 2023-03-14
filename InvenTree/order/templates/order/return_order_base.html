@@ -35,6 +35,22 @@ src="{% static 'img/blank_image.png' %}"
 {% endif %}
 <!-- TODO: Printing actions -->
 <!-- TODO: Order actions-->
+
+{% if roles.return_order.change %}
+<!-- Order actions -->
+<div class='btn-group' role='group'>
+    <button id='order-options' title='{% trans "Order actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-tools'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
+        {% if order.status == ReturnOrderStatus.PENDING %}
+        <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+
 {% endblock actions %}
 
 {% block details %}
@@ -104,7 +120,17 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-<!-- TODO: Javascript callbacks -->
+{% if roles.return_order.change %}
+$('#edit-order').click(function() {
+    editReturnOrder({{ order.pk }}, {
+        reload: true,
+    });
+});
+
+$('#cancel-order').click(function() {
+    // TODO: Cancel order
+});
+{% endif %}
 
 {% if report_enabled %}
 <!-- TODO: Report callbacks -->
