@@ -1071,6 +1071,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'PART_ENABLE_REVISION': {
+            'name': _('Part Revisions'),
+            'description': _('Enable revision field for Part'),
+            'validator': bool,
+            'default': True,
+        },
+
         'PART_IPN_REGEX': {
             'name': _('IPN Regex'),
             'description': _('Regular expression pattern for matching Part IPN')
