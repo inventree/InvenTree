@@ -273,7 +273,8 @@
                 <td>{{ part.IPN }}{% include "clip.html"%}</td>
             </tr>
             {% endif %}
-            {% if part.revision %}
+            {% settings_value "PART_ENABLE_REVISION" as show_revision %}
+            {% if show_revision and part.revision %}
             <tr>
                 <td><span class='fas fa-code-branch'></span></td>
                 <td>{% trans "Revision" %}</td>
