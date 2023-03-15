@@ -677,7 +677,11 @@
 
         {% if report_enabled %}
         $("#print-bom-report").click(function() {
-            printBomReports([{{ part.pk }}]);
+            printReports({
+                items: [{{ part.pk }}],
+                key: 'part',
+                url: '{% url "api-bom-report-list" %}'
+            });
         });
         {% endif %}
     });

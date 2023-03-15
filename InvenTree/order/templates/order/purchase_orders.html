@@ -63,8 +63,12 @@ $("#order-print").click(function() {
         orders.push(row.pk);
     });
 
-    printPurchaseOrderReports(orders);
-})
+    printReports({
+        items: orders,
+        key: 'order',
+        url: '{% url "api-po-report-list" %}',
+    });
+});
 {% endif %}
 
 $("#po-create").click(function() {

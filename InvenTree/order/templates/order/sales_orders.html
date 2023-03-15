@@ -64,8 +64,12 @@ $("#order-print").click(function() {
         orders.push(row.pk);
     });
 
-    printSalesOrderReports(orders);
-})
+    printReports({
+        items: orders,
+        key: 'order',
+        url: '{% url "api-so-report-list" %}',
+    });
+});
 {% endif %}
 
 $("#so-create").click(function() {

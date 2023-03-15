@@ -493,7 +493,11 @@ $('#stock-uninstall').click(function() {
 });
 
 $("#stock-test-report").click(function() {
-    printTestReports([{{ item.pk }}]);
+    printReports({
+        items: [{{ item.pk }}],
+        key: 'item',
+        url: '{% url "api-stockitem-testreport-list" %}',
+    });
 });
 
 $("#print-label").click(function() {

@@ -250,7 +250,11 @@ $("#complete-order").click(function() {
 
 {% if report_enabled %}
 $('#print-order-report').click(function() {
-    printSalesOrderReports([{{ order.pk }}]);
+    printReports({
+        items: [{{ order.pk }}],
+        key: 'order',
+        url: '{% url "api-so-report-list" %}',
+    });
 });
 {% endif %}
 

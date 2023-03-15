@@ -71,7 +71,11 @@ $('#multi-build-print').click(function() {
         build_ids.push(row.pk);
     });
 
-    printBuildReports(build_ids);
+    printReports({
+        items: build_ids,
+        key: 'build',
+        url: '{% url "api-build-report-list" %}'
+    });
 });
 {% endif %}
 

@@ -25,7 +25,7 @@
     modalSubmit,
     openModal,
     printStockItemLabels,
-    printTestReports,
+    printReports,
     renderLink,
     scanItemsIntoLocation,
     showAlertDialog,
@@ -2216,7 +2216,11 @@ function loadStockTable(table, options) {
             items.push(item.pk);
         });
 
-        printTestReports(items);
+        printReports({
+            items: items,
+            key: 'item',
+            url: '{% url "api-stockitem-testreport-list" %}',
+        });
     });
 
     if (global_settings.BARCODE_ENABLE) {

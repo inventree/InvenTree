@@ -54,7 +54,21 @@
 loadReturnOrderTable('#return-order-table', {});
 
 {% if report_enabled %}
-<!-- TODO: report button callbacks -->
+$("#order-print").click(function() {
+    var rows = getTableData('#return-order-table');
+
+    var orders = [];
+
+    rows.forEach(function(row) {
+        orders.push(row.pk);
+    });
+
+    printReports({
+        url: '{% url "api-return-order-report-list" %}',
+        key: 'order',
+        items: orders,
+    });
+});
 {% endif %}
 
 $('#return-order-create').click(function() {
