@@ -67,6 +67,11 @@ def validate_sales_order_filters(filters):
     return validateFilterString(filters, model=order.models.SalesOrder)
 
 
+def validate_return_order_filters(filters):
+    """Validate filter string against ReturnOrder model"""
+    return validateFilterString(filters, model=order.models.ReturnOrder)
+
+
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
     """Class for rendering a HTML template to a PDF."""
 
@@ -464,6 +469,42 @@ class SalesOrderReport(ReportTemplateBase):
             'order': order,
             'reference': order.reference,
             'title': str(order),
+        }
+
+
+class ReturnOrderReport(ReportTemplateBase):
+    """Render a custom report against a ReturnOrder object"""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the ReturnOrderReport model"""
+        return reverse('api-return-order-report-list')
+
+    @classmethod
+    def getSubdir(cls):
+        """Return the directory where the ReturnOrderReport templates are stored"""
+        return 'returnorder'
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Filters'),
+        help_text=_('Return order query filters'),
+        validators=[
+            validate_return_order_filters,
+        ]
+    )
+
+    def get_context_data(self, request):
+        """Return custom context data for the ReturnOrderReport template"""
+
+        order = self.object_to_print
+
+        return {
+            'order': order,
+            'description': order.description,
+            'reference': order.reference,
+            'customer': order.customer,
         }
 
 
