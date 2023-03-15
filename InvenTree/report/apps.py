@@ -8,8 +8,6 @@ from pathlib import Path
 from django.apps import AppConfig
 from django.conf import settings
 
-from InvenTree.ready import canAppAccessDatabase
-
 logger = logging.getLogger("inventree")
 
 
@@ -19,6 +17,14 @@ class ReportConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the report app is loaded."""
+
+        from InvenTree.ready import canAppAccessDatabase
+
+        # Configure logging for PDF generation (disable "info" messages)
+        logging.getLogger('fontTools').setLevel(logging.WARNING)
+        logging.getLogger('weasyprint').setLevel(logging.WARNING)
+
+        # Create entries for default report templates
         if canAppAccessDatabase(allow_test=True):
             self.create_default_test_reports()
             self.create_default_build_reports()
