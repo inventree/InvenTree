@@ -45,7 +45,7 @@ class LabelFilterMixin:
         ids = []
 
         # Construct a list of possible query parameter value options
-        # e.g. if self.ITEM_KEY = 'part' -> ['part', 'part', 'parts', parts[]']
+        # e.g. if self.ITEM_KEY = 'part' -> ['part', 'part[]', 'parts', parts[]']
         for k in [self.ITEM_KEY + x for x in ['', '[]', 's', 's[]']]:
             if ids := self.request.query_params.getlist(k, []):
                 # Return the first list of matches
