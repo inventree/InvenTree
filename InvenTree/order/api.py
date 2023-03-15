@@ -1228,6 +1228,18 @@ class ReturnOrderList(APIDownloadMixin, ListCreateAPI):
     serializer_class = serializers.ReturnOrderSerializer
     filterset_class = ReturnOrderFilter
 
+    def create(self, request, *args, **kwargs):
+        """Save user information on create."""
+        serializer = self.get_serializer(data=self.clean_data(request.data))
+        serializer.is_valid(raise_exception=True)
+
+        item = serializer.save()
+        item.created_by = request.user
+        item.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint"""
         try:
