@@ -299,8 +299,11 @@
 
         var locs = [{{ location.pk }}];
 
-        printStockLocationLabels(locs);
-
+        printLabels({
+            items: locs,
+            key: 'location',
+            url: '{% url "api-stocklocation-label-list" %}',
+        });
     });
 
     $('#multi-location-print-label').click(function() {
@@ -313,7 +316,11 @@
             locations.push(loc.pk);
         });
 
-        printStockLocationLabels(locations);
+        printLabels({
+            items: locations,
+            key: 'location',
+            url: '{% url "api-stocklocation-label-list" %}',
+        });
     });
     {% endif %}
 

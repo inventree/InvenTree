@@ -501,7 +501,11 @@ $("#stock-test-report").click(function() {
 });
 
 $("#print-label").click(function() {
-    printStockItemLabels([{{ item.pk }}]);
+    printLabels({
+        items: [{{ item.pk }}],
+        url: '{% url "api-stockitem-label-list" %}',
+        key: 'item',
+    });
 });
 
 {% if roles.stock.change %}

@@ -17,14 +17,14 @@
     printReports,
 */
 
+/**
+ * Present the user with the available reports,
+ * and allow them to select which report to print.
+ *
+ * The intent is that the available report templates have been requested
+ * (via AJAX) from the server.
+ */
 function selectReport(reports, items, options={}) {
-    /**
-     * Present the user with the available reports,
-     * and allow them to select which report to print.
-     *
-     * The intent is that the available report templates have been requested
-     * (via AJAX) from the server.
-     */
 
     // If there is only a single report available, just print!
     if (reports.length == 1) {
@@ -112,7 +112,7 @@ function selectReport(reports, items, options={}) {
  * - Request printed document
  *
  * Required options:
- * - url: The list URL for the particular template
+ * - url: The list URL for the particular template type
  * - items: The list of objects to print
  * - key: The key to use in the query parameters
  */
@@ -132,7 +132,7 @@ function printReports(options) {
 
     params[options.key] = options.items;
 
-    // Request a list of available reports
+    // Request a list of available report templates
     inventreeGet(options.url, params, {
         success: function(response) {
             if (response.length == 0) {

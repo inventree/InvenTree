@@ -24,7 +24,7 @@
     modalSetTitle,
     modalSubmit,
     openModal,
-    printStockItemLabels,
+    printLabels,
     printReports,
     renderLink,
     scanItemsIntoLocation,
@@ -2204,7 +2204,11 @@ function loadStockTable(table, options) {
             items.push(item.pk);
         });
 
-        printStockItemLabels(items);
+        printLabels({
+            items: items,
+            key: 'item',
+            url: '{% url "api-stockitem-label-list" %}',
+        });
     });
 
     $('#multi-item-print-test-report').click(function() {

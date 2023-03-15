@@ -1417,8 +1417,11 @@ function loadBuildOutputTable(build_info, options={}) {
             stock_id_values.push(output.pk);
         });
 
-        printStockItemLabels(stock_id_values);
-    });
+        printLabels({
+            items: stock_id_values,
+            key: 'item',
+            url: '{% url "api-stockitem-label-list" %}',
+        });    });
 
     $('#outputs-expand').click(function() {
         $(table).bootstrapTable('expandAllRows');

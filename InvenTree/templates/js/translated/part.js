@@ -12,7 +12,7 @@
     loadTableFilters,
     makeIconBadge,
     makeIconButton,
-    printPartLabels,
+    printLabels,
     renderLink,
     setFormGroupVisibility,
     setupFilterList,
@@ -2182,7 +2182,11 @@ function loadPartTable(table, url, options={}) {
             items.push(item.pk);
         });
 
-        printPartLabels(items);
+        printLabels({
+            items: items,
+            key: 'part',
+            url: '{% url "api-part-label-list" %}',
+        });
     });
 }
 
