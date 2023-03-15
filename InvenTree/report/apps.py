@@ -187,7 +187,11 @@ class ReportConfig(AppConfig):
 
         # List of templates to copy across
         reports = [
-            # TODO
+            {
+                'file': 'inventree_return_order_report.html',
+                'name': 'InvenTree Return Order',
+                'description': 'Return Order example report',
+            }
         ]
 
         self.create_default_reports(ReturnOrderReport, reports)
