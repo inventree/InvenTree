@@ -33,8 +33,21 @@ src="{% static 'img/blank_image.png' %}"
 {% url 'admin:order_returnorder_change' order.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
-<!-- TODO: Printing actions -->
-<!-- TODO: Order actions-->
+<!-- Printing actions -->
+<div class='btn-group' role='group'>
+    <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-print'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        {% if report_enabled %}
+        <li><a class='dropdown-item' href='#' id='print-order-report'><span class='fas fa-file-pdf'></span> {% trans "Print return order report" %}</a></li>
+        {% endif %}
+        <li><a class='dropdown-item' href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
+        <!--
+        <li><a class='dropdown-item' href='#' id='print-packing-list'><span class='fas fa-clipboard-list'></span>{% trans "Print packing list" %}</a></li>
+        -->
+    </ul>
+</div>
 
 {% if roles.return_order.change %}
 <!-- Order actions -->
@@ -140,7 +153,13 @@ $('#cancel-order').click(function() {
 {% endif %}
 
 {% if report_enabled %}
-<!-- TODO: Report callbacks -->
+$('#print-order-report').click(function() {
+    printReports({
+        items: [{{ order.pk }}],
+        key: 'order',
+        url: '{% url "api-return-order-report-list" %}',
+    });
+});
 {% endif %}
 
 <!-- TODO: Export order callback -->
