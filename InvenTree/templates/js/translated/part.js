@@ -1160,6 +1160,8 @@ function loadPartVariantTable(table, partId, options={}) {
         {
             field: 'revision',
             title: '{% trans "Revision" %}',
+            switchable: global_settings.PART_ENABLE_REVISION,
+            visible: global_settings.PART_ENABLE_REVISION,
             sortable: true,
         },
         {
@@ -1883,6 +1885,14 @@ function loadPartTable(table, url, options={}) {
         field: 'IPN',
         title: '{% trans "IPN" %}',
         sortable: !options.params.ordering
+    });
+
+    columns.push({
+        field: 'revision',
+        title: '{% trans "Revision" %}',
+        switchable: global_settings.PART_ENABLE_REVISION,
+        visible: global_settings.PART_ENABLE_REVISION,
+        sortable: true,
     });
 
     columns.push({
