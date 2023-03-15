@@ -20,9 +20,10 @@ from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from stock.models import StockItem, StockItemAttachment
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     SalesOrderReport, TestReport)
+                     ReturnOrderReport, SalesOrderReport, TestReport)
 from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           PurchaseOrderReportSerializer,
+                          ReturnOrderReportSerializer,
                           SalesOrderReportSerializer, TestReportSerializer)
 
 
@@ -410,6 +411,31 @@ class SalesOrderReportPrint(SalesOrderReportMixin, ReportPrintMixin, RetrieveAPI
     pass
 
 
+class ReturnOrderReportMixin(ReportFilterMixin):
+    """Mixin for the ReturnOrderReport report template"""
+
+    ITEM_MODEL = order.models.ReturnOrder
+    ITEM_KEY = 'order'
+
+    queryset = ReturnOrderReport.objects.all()
+    serializer_class = ReturnOrderReportSerializer
+
+
+class ReturnOrderReportList(ReturnOrderReportMixin, ReportListView):
+    """API list endpoint for the ReturnOrderReport model"""
+    pass
+
+
+class ReturnOrderReportDetail(ReturnOrderReportMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single ReturnOrderReport object"""
+    pass
+
+
+class ReturnOrderReportPrint(ReturnOrderReportMixin, ReportPrintMixin, RetrieveAPI):
+    """API endpoint for printing a ReturnOrderReport object"""
+    pass
+
+
 report_api_urls = [
 
     # Purchase order reports
@@ -433,6 +459,15 @@ report_api_urls = [
         ])),
 
         path('', SalesOrderReportList.as_view(), name='api-so-report-list'),
+    ])),
+
+    # Return order reports
+    re_path(r'return-order/', include([
+        path(r'<int:pk>/', include([
+            path(r'print/', ReturnOrderReportPrint.as_view(), name='api-return-order-report-print'),
+            path('', ReturnOrderReportDetail.as_view(), name='api-return-order-report-detail'),
+        ])),
+        path('', ReturnOrderReportList.as_view(), name='api-return-order-report-list'),
     ])),
 
     # Build reports
