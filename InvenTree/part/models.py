@@ -2083,6 +2083,16 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
 
         return tests
 
+    def getTestTemplateMap(self, **kwargs):
+        """Return a map of all test templates associated with this Part"""
+
+        templates = {}
+
+        for template in self.getTestTemplates(**kwargs):
+            templates[template.key] = template
+
+        return templates
+
     def getRequiredTests(self):
         """Return the tests which are required by this part"""
         return self.getTestTemplates(required=True)

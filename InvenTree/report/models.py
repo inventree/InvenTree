@@ -307,6 +307,30 @@ class TestReport(ReportTemplateBase):
 
         return items.exists()
 
+    def get_test_keys(self, stock_item):
+        """Construct a flattened list of test 'keys' for this StockItem:
+
+        - First, any 'required' tests
+        - Second, any 'non required' tests
+        - Finally, any test results which do not match a test
+        """
+
+        keys = []
+
+        for test in stock_item.part.getTestTemplates(required=True):
+            if test.key not in keys:
+                keys.append(test.key)
+
+        for test in stock_item.part.getTestTemplates(required=False):
+            if test.key not in keys:
+                keys.append(test.key)
+
+        for result in stock_item.testResultList(include_installed=self.include_installed):
+            if result.key not in keys:
+                keys.append(result.key)
+
+        return list(keys)
+
     def get_context_data(self, request):
         """Return custom context data for the TestReport template"""
         stock_item = self.object_to_print
@@ -316,6 +340,9 @@ class TestReport(ReportTemplateBase):
             'serial': stock_item.serial,
             'part': stock_item.part,
             'parameters': stock_item.part.parameters_map(),
+            'test_keys': self.get_test_keys(stock_item),
+            'test_template_list': stock_item.part.getTestTemplates(),
+            'test_template_map': stock_item.part.getTestTemplateMap(),
             'results': stock_item.testResultMap(include_installed=self.include_installed),
             'result_list': stock_item.testResultList(include_installed=self.include_installed),
             'installed_items': stock_item.get_installed_items(cascade=True),
