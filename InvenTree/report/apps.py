@@ -25,6 +25,7 @@ class ReportConfig(AppConfig):
             self.create_default_bill_of_materials_reports()
             self.create_default_purchase_order_reports()
             self.create_default_sales_order_reports()
+            self.create_default_return_order_reports()
 
     def create_default_reports(self, model, reports):
         """Copy defualt report files across to the media directory."""
@@ -174,3 +175,19 @@ class ReportConfig(AppConfig):
         ]
 
         self.create_default_reports(SalesOrderReport, reports)
+
+    def create_default_return_order_reports(self):
+        """Create database entries for the default ReturnOrderReport templates"""
+
+        try:
+            from report.models import ReturnOrderReport
+        except Exception:  # pragma: no cover
+            # Database not yet ready
+            return
+
+        # List of templates to copy across
+        reports = [
+            # TODO
+        ]
+
+        self.create_default_reports(ReturnOrderReport, reports)
