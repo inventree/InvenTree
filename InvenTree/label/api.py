@@ -185,7 +185,7 @@ class LabelPrintMixin(LabelFilterMixin):
         outputs = []
 
         # In debug mode, generate single HTML output, rather than PDF
-        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE', cache=False)
 
         label_name = "label.pdf"
 
@@ -260,7 +260,7 @@ class LabelPrintMixin(LabelFilterMixin):
 
             pdf = outputs[0].get_document().copy(pages).write_pdf()
 
-            inline = common.models.InvenTreeUserSetting.get_setting('LABEL_INLINE', user=request.user)
+            inline = common.models.InvenTreeUserSetting.get_setting('LABEL_INLINE', user=request.user, cache=False)
 
             return InvenTree.helpers.DownloadFile(
                 pdf,

@@ -167,7 +167,7 @@ class ReportPrintMixin:
         outputs = []
 
         # In debug mode, generate single HTML output, rather than PDF
-        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE', cache=False)
 
         # Start with a default report name
         report_name = "report.pdf"
@@ -236,7 +236,7 @@ class ReportPrintMixin:
                     status=400,
                 )
 
-            inline = common.models.InvenTreeUserSetting.get_setting('REPORT_INLINE', user=request.user)
+            inline = common.models.InvenTreeUserSetting.get_setting('REPORT_INLINE', user=request.user, cache=False)
 
             return InvenTree.helpers.DownloadFile(
                 pdf,
@@ -285,7 +285,7 @@ class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, Retri
     def report_callback(self, item, report, request):
         """Callback to (optionally) save a copy of the generated report"""
 
-        if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT'):
+        if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT', cache=False):
 
             # Construct a PDF file object
             pdf = report.get_document().write_pdf()
