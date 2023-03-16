@@ -16,7 +16,13 @@
         <div class='d-flex flex-wrap'>
             <h4>{% trans "Line Items" %}</h4>
             {% include "spacer.html" %}
-            <!-- TODO: Actions -->
+            <div class='btn-group' role='group'>
+                {% if roles.return_order.add %}
+                <button type='button' class='btn btn-success' id='new-so-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
+                </button>
+                {% endif %}
+            </div>
         </div>
     </div>
     <div class='panel-content'>
@@ -33,7 +39,7 @@
             <h4>{% trans "Extra Lines" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.return_order.change %}
+                {% if roles.return_order.add %}
                 <button type='button' class='btn btn-success' id='new-return-order-extra-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
                 </button>
