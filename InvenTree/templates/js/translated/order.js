@@ -315,5 +315,5 @@ function loadExtraLineTable(options={}) {
                 }
             },
         ]
-    })
+    });
 }

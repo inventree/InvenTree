@@ -1421,7 +1421,8 @@ function loadBuildOutputTable(build_info, options={}) {
             items: stock_id_values,
             key: 'item',
             url: '{% url "api-stockitem-label-list" %}',
-        });    });
+        });
+    });
 
     $('#outputs-expand').click(function() {
         $(table).bootstrapTable('expandAllRows');
