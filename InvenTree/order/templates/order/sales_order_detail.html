@@ -289,15 +289,21 @@
         });
     });
 
-    loadSalesOrderExtraLineTable(
-        '#so-extra-lines-table',
-        {
-            order: {{ order.pk }},
-            status: {{ order.status }},
-            {% if roles.sales_order.change %}allow_edit: true,{% endif %}
-            {% if order.is_pending %}pending: true,{% endif %}
-        }
-    );
+    loadExtraLineTable({
+        order: {{ order.pk }},
+        table: '#so-extra-lines-table',
+        url: '{% url "api-so-extra-line-list" %}',
+        name: 'salesorderextraline',
+        filtertarget: '#filter-list-sales-order-extra-lines',
+        {% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
+        {% if order.is_pending or allow_edit %}
+        allow_edit: {% js_bool roles.sales_order.change %},
+        allow_delete: {% js_bool roles.sales_order.delete %},
+        {% else %}
+        allow_edit: false,
+        allow_delete: false,
+        {% endif %}
+    });
 
     loadOrderTotal(
         '#soTotalPrice',

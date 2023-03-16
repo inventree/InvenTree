@@ -259,19 +259,21 @@ $("#new-po-extra-line").click(function() {
     });
 });
 
-loadPurchaseOrderExtraLineTable(
-    '#po-extra-lines-table',
-    {
-        order: {{ order.pk }},
-        status: {{ order.status }},
-        {% if order.is_pending %}
-        pending: true,
-        {% endif %}
-        {% if roles.purchase_order.change %}
-        allow_edit: true,
-        {% endif %}
-    }
-);
+loadExtraLineTable({
+    table: '#po-extra-lines-table',
+    order: {{ order.pk }},
+    url: '{% url "api-po-extra-line-list" %}',
+    name: 'purchaseorderextraline',
+    filtertarget: '#filter-list-purchase-order-extra-lines',
+    {% settings_value "PURCHASEORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
+    {% if order.is_pending or allow_edit %}
+    allow_edit: {% js_bool roles.purchase_order.change %},
+    allow_delete: {% js_bool roles.purchase_order.delete %},
+    {% else %}
+    allow_edit: false,
+    allow_delete: false,
+    {% endif %}
+});
 
 loadOrderTotal(
     '#poTotalPrice',
