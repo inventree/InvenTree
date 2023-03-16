@@ -2468,7 +2468,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "Link" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
-                            return renderLink(value, value);
+                        return renderLink(value, value);
                     } else {
                         return '';
                     }
