@@ -146,30 +146,32 @@
         );
     });
 
-    enableDragAndDrop(
-        '#attachment-dropzone',
-        '{% url "api-po-attachment-list" %}',
-        {
-            data: {
-                order: {{ order.id }},
-            },
-            label: 'attachment',
-            success: function(data, status, xhr) {
-                $('#attachment-table').bootstrapTable('refresh');
+    onPanelLoad('order-attachments', function() {
+        enableDragAndDrop(
+            '#attachment-dropzone',
+            '{% url "api-po-attachment-list" %}',
+            {
+                data: {
+                    order: {{ order.id }},
+                },
+                label: 'attachment',
+                success: function(data, status, xhr) {
+                    $('#attachment-table').bootstrapTable('refresh');
+                }
             }
-        }
-    );
+        );
 
-    loadAttachmentTable('{% url "api-po-attachment-list" %}', {
-        filters: {
-            order: {{ order.pk }},
-        },
-        fields: {
-            order: {
-                value: {{ order.pk }},
-                hidden: true,
+        loadAttachmentTable('{% url "api-po-attachment-list" %}', {
+            filters: {
+                order: {{ order.pk }},
+            },
+            fields: {
+                order: {
+                    value: {{ order.pk }},
+                    hidden: true,
+                }
             }
-        }
+        });
     });
 
     loadStockTable($("#stock-table"), {
@@ -219,60 +221,62 @@ $('#new-po-line').click(function() {
 
 {% endif %}
 
-loadPurchaseOrderLineItemTable('#po-line-table', {
-    order: {{ order.pk }},
-    {% if order.supplier %}
-    supplier: {{ order.supplier.pk }},
-    {% endif %}
-    {% if roles.purchase_order.change %}
-    allow_edit: true,
-    {% else %}
-    allow_edit: false,
-    {% endif %}
-    {% if order.status == PurchaseOrderStatus.PENDING %}
-    pending: true,
-    {% endif %}
-    {% if order.status == PurchaseOrderStatus.PLACED and roles.purchase_order.change %}
-    allow_receive: true,
-    {% else %}
-    allow_receive: false,
-    {% endif %}
-});
-
-$("#new-po-extra-line").click(function() {
-
-    var fields = extraLineFields({
+onPanelLoad('order-items', function() {
+    loadPurchaseOrderLineItemTable('#po-line-table', {
         order: {{ order.pk }},
+        {% if order.supplier %}
+        supplier: {{ order.supplier.pk }},
+        {% endif %}
+        {% if roles.purchase_order.change %}
+        allow_edit: true,
+        {% else %}
+        allow_edit: false,
+        {% endif %}
+        {% if order.status == PurchaseOrderStatus.PENDING %}
+        pending: true,
+        {% endif %}
+        {% if order.status == PurchaseOrderStatus.PLACED and roles.purchase_order.change %}
+        allow_receive: true,
+        {% else %}
+        allow_receive: false,
+        {% endif %}
     });
 
-    {% if order.supplier.currency %}
-    fields.price_currency.value = '{{ order.supplier.currency }}';
-    {% endif %}
+    $("#new-po-extra-line").click(function() {
 
-    constructForm('{% url "api-po-extra-line-list" %}', {
-        fields: fields,
-        method: 'POST',
-        title: '{% trans "Add Order Line" %}',
-        onSuccess: function() {
-            $("#po-extra-lines-table").bootstrapTable("refresh");
-        },
+        var fields = extraLineFields({
+            order: {{ order.pk }},
+        });
+
+        {% if order.supplier.currency %}
+        fields.price_currency.value = '{{ order.supplier.currency }}';
+        {% endif %}
+
+        constructForm('{% url "api-po-extra-line-list" %}', {
+            fields: fields,
+            method: 'POST',
+            title: '{% trans "Add Order Line" %}',
+            onSuccess: function() {
+                $("#po-extra-lines-table").bootstrapTable("refresh");
+            },
+        });
     });
-});
 
-loadExtraLineTable({
-    table: '#po-extra-lines-table',
-    order: {{ order.pk }},
-    url: '{% url "api-po-extra-line-list" %}',
-    name: 'purchaseorderextraline',
-    filtertarget: '#filter-list-purchase-order-extra-lines',
-    {% settings_value "PURCHASEORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
-    {% if order.is_pending or allow_edit %}
-    allow_edit: {% js_bool roles.purchase_order.change %},
-    allow_delete: {% js_bool roles.purchase_order.delete %},
-    {% else %}
-    allow_edit: false,
-    allow_delete: false,
-    {% endif %}
+    loadExtraLineTable({
+        table: '#po-extra-lines-table',
+        order: {{ order.pk }},
+        url: '{% url "api-po-extra-line-list" %}',
+        name: 'purchaseorderextraline',
+        filtertarget: '#filter-list-purchase-order-extra-lines',
+        {% settings_value "PURCHASEORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
+        {% if order.is_pending or allow_edit %}
+        allow_edit: {% js_bool roles.purchase_order.change %},
+        allow_delete: {% js_bool roles.purchase_order.delete %},
+        {% else %}
+        allow_edit: false,
+        allow_delete: false,
+        {% endif %}
+    });
 });
 
 loadOrderTotal(

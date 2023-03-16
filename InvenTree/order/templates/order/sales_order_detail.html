@@ -244,66 +244,70 @@
         },
     });
 
-    $("#new-so-line").click(function() {
-        createSalesOrderLineItem({
-            order: {{ order.pk }},
-            onSuccess: function() {
-                $("#so-lines-table").bootstrapTable("refresh");
+    onPanelLoad('order-items', function() {
+
+        $("#new-so-line").click(function() {
+            createSalesOrderLineItem({
+                order: {{ order.pk }},
+                onSuccess: function() {
+                    $("#so-lines-table").bootstrapTable("refresh");
+                }
+            });
+
+            // Create a new SalesOrderLine item
+            var fields = soLineItemFields({
+                order: {{ order.pk }},
+            });
+        });
+
+        loadSalesOrderLineItemTable(
+            '#so-lines-table',
+            {
+                order: {{ order.pk }},
+                reference: '{{ order.reference }}',
+                status: {{ order.status }},
+                {% if roles.sales_order.change %}
+                allow_edit: true,
+                {% endif %}
+                {% if order.is_pending %}
+                pending: true,
+                {% endif %}
             }
+        );
+
+        $("#new-so-extra-line").click(function() {
+
+            var fields = extraLineFields({
+                order: {{ order.pk }},
+            });
+
+            constructForm('{% url "api-so-extra-line-list" %}', {
+                fields: fields,
+                method: 'POST',
+                title: '{% trans "Add Extra Line" %}',
+                onSuccess: function() {
+                    $("#so-extra-lines-table").bootstrapTable("refresh");
+                },
+            });
         });
 
-        // Create a new SalesOrderLine item
-        var fields = soLineItemFields({
+        loadExtraLineTable({
             order: {{ order.pk }},
-        });
-    });
-
-    loadSalesOrderLineItemTable(
-        '#so-lines-table',
-        {
-            order: {{ order.pk }},
-            reference: '{{ order.reference }}',
-            status: {{ order.status }},
-            {% if roles.sales_order.change %}
-            allow_edit: true,
+            table: '#so-extra-lines-table',
+            url: '{% url "api-so-extra-line-list" %}',
+            name: 'salesorderextraline',
+            filtertarget: '#filter-list-sales-order-extra-lines',
+            {% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
+            {% if order.is_pending or allow_edit %}
+            allow_edit: {% js_bool roles.sales_order.change %},
+            allow_delete: {% js_bool roles.sales_order.delete %},
+            {% else %}
+            allow_edit: false,
+            allow_delete: false,
             {% endif %}
-            {% if order.is_pending %}
-            pending: true,
-            {% endif %}
-        }
-    );
-
-    $("#new-so-extra-line").click(function() {
-
-        var fields = extraLineFields({
-            order: {{ order.pk }},
-        });
-
-        constructForm('{% url "api-so-extra-line-list" %}', {
-            fields: fields,
-            method: 'POST',
-            title: '{% trans "Add Extra Line" %}',
-            onSuccess: function() {
-                $("#so-extra-lines-table").bootstrapTable("refresh");
-            },
         });
     });
 
-    loadExtraLineTable({
-        order: {{ order.pk }},
-        table: '#so-extra-lines-table',
-        url: '{% url "api-so-extra-line-list" %}',
-        name: 'salesorderextraline',
-        filtertarget: '#filter-list-sales-order-extra-lines',
-        {% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
-        {% if order.is_pending or allow_edit %}
-        allow_edit: {% js_bool roles.sales_order.change %},
-        allow_delete: {% js_bool roles.sales_order.delete %},
-        {% else %}
-        allow_edit: false,
-        allow_delete: false,
-        {% endif %}
-    });
 
     loadOrderTotal(
         '#soTotalPrice',
