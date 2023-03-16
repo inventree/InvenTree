@@ -1467,7 +1467,11 @@ class SalesOrderExtraLine(OrderExtraLine):
         """Return the API URL associated with the SalesOrderExtraLine model"""
         return reverse('api-so-extra-line-list')
 
-    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='extra_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
+    order = models.ForeignKey(
+        SalesOrder, on_delete=models.CASCADE,
+        related_name='extra_lines',
+        verbose_name=_('Order'), help_text=_('Sales Order')
+    )
 
 
 class SalesOrderAllocation(models.Model):

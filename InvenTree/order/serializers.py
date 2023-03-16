@@ -31,8 +31,8 @@ from part.serializers import PartBriefSerializer
 from users.serializers import OwnerSerializer
 
 
-class AbstractOrderSerializer(serializers.Serializer):
-    """Abstract field definitions for OrderSerializers."""
+class TotalPriceMixin(serializers.Serializer):
+    """Serializer mixin which provides total price fields"""
 
     total_price = InvenTreeMoneySerializer(
         allow_null=True,
@@ -40,6 +40,64 @@ class AbstractOrderSerializer(serializers.Serializer):
     )
 
     total_price_currency = InvenTreeCurrencySerializer(read_only=True)
+
+
+class AbstractOrderSerializer(serializers.Serializer):
+    """Abstract serializer class which provides fields common to all order types"""
+
+    # Number of line items in this order
+    line_items = serializers.IntegerField(read_only=True)
+
+    # Human-readable status text (read-only)
+    status_text = serializers.CharField(source='get_status_display', read_only=True)
+
+    # status field cannot be set directly
+    status = serializers.IntegerField(read_only=True)
+
+    # Reference string is *required*
+    reference = serializers.CharField(required=True)
+
+    # Detail for point-of-contact field
+    contact_detail = ContactSerializer(source='contact', many=False, read_only=True)
+
+    # Detail for responsible field
+    responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
+
+    def validate_reference(self, reference):
+        """Custom validation for the reference field"""
+
+        self.Meta.model.validate_reference_field(reference)
+        return reference
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add extra information to the queryset"""
+
+        queryset = queryset.annotate(
+            line_items=SubqueryCount('lines')
+        )
+
+        return queryset
+
+    @staticmethod
+    def order_fields(extra_fields):
+        """Construct a set of fields for this serializer"""
+
+        return [
+            'pk',
+            'creation_date',
+            'description',
+            'line_items',
+            'link',
+            'reference',
+            'responsible',
+            'responsible_detail',
+            'contact',
+            'contact_detail',
+            'status',
+            'status_text',
+            'notes',
+        ] + extra_fields
 
 
 class AbstractExtraLineSerializer(serializers.Serializer):
@@ -79,7 +137,7 @@ class AbstractExtraLineMeta:
     ]
 
 
-class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
+class PurchaseOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer):
     """Serializer for a PurchaseOrder object."""
 
     class Meta:
@@ -87,33 +145,19 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
 
         model = order.models.PurchaseOrder
 
-        fields = [
-            'pk',
+        fields = AbstractOrderSerializer.order_fields([
             'issue_date',
             'complete_date',
-            'creation_date',
-            'description',
-            'line_items',
-            'link',
             'overdue',
-            'reference',
-            'responsible',
-            'responsible_detail',
-            'contact',
-            'contact_detail',
             'supplier',
             'supplier_detail',
             'supplier_reference',
-            'status',
-            'status_text',
             'target_date',
-            'notes',
             'total_price',
             'total_price_currency',
-        ]
+        ])
 
         read_only_fields = [
-            'status'
             'issue_date',
             'complete_date',
             'creation_date',
@@ -135,9 +179,7 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
         - Number of lines in the PurchaseOrder
         - Overdue status of the PurchaseOrder
         """
-        queryset = queryset.annotate(
-            line_items=SubqueryCount('lines')
-        )
+        queryset = AbstractOrderSerializer.annotate_queryset(queryset)
 
         queryset = queryset.annotate(
             overdue=Case(
@@ -150,27 +192,9 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
 
         return queryset
 
-    contact_detail = ContactSerializer(source='contact', many=False, read_only=True)
-
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
 
-    line_items = serializers.IntegerField(read_only=True)
-
-    status_text = serializers.CharField(source='get_status_display', read_only=True)
-
     overdue = serializers.BooleanField(required=False, read_only=True)
-
-    reference = serializers.CharField(required=True)
-
-    def validate_reference(self, reference):
-        """Custom validation for the reference field"""
-
-        # Ensure that the reference matches the required pattern
-        order.models.PurchaseOrder.validate_reference_field(reference)
-
-        return reference
-
-    responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
 
 
 class PurchaseOrderCancelSerializer(serializers.Serializer):
@@ -649,7 +673,7 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
         ])
 
 
-class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
+class SalesOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer):
     """Serializer for the SalesOrder model class"""
 
     class Meta:
@@ -657,28 +681,16 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
 
         model = order.models.SalesOrder
 
-        fields = [
-            'pk',
-            'creation_date',
+        fields = AbstractOrderSerializer.order_fields([
             'customer',
             'customer_detail',
-            'contact',
-            'contact_detail',
             'customer_reference',
-            'description',
-            'line_items',
-            'link',
-            'notes',
             'overdue',
-            'reference',
-            'responsible',
-            'status',
-            'status_text',
             'shipment_date',
             'target_date',
             'total_price',
             'total_price_currency',
-        ]
+        ])
 
         read_only_fields = [
             'status',
@@ -702,9 +714,7 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
         - Number of line items in the SalesOrder
         - Overdue status of the SalesOrder
         """
-        queryset = queryset.annotate(
-            line_items=SubqueryCount('lines')
-        )
+        queryset = AbstractOrderSerializer.annotate_queryset(queryset)
 
         queryset = queryset.annotate(
             overdue=Case(
@@ -717,25 +727,9 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
 
         return queryset
 
-    contact_detail = ContactSerializer(source='contact', many=False, read_only=True)
-
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
 
-    line_items = serializers.IntegerField(read_only=True)
-
-    status_text = serializers.CharField(source='get_status_display', read_only=True)
-
     overdue = serializers.BooleanField(required=False, read_only=True)
-
-    reference = serializers.CharField(required=True)
-
-    def validate_reference(self, reference):
-        """Custom validation for the reference field"""
-
-        # Ensure that the reference matches the required pattern
-        order.models.SalesOrder.validate_reference_field(reference)
-
-        return reference
 
 
 class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
@@ -1388,12 +1382,12 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 class SalesOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
     """Serializer for a SalesOrderExtraLine object."""
 
-    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
-
     class Meta(AbstractExtraLineMeta):
         """Metaclass options."""
 
         model = order.models.SalesOrderExtraLine
+
+    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
 
 class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
@@ -1409,7 +1403,7 @@ class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
         ])
 
 
-class ReturnOrderSerializer(InvenTreeModelSerializer):
+class ReturnOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     """Serializer for the ReturnOrder model class"""
 
     class Meta:
@@ -1417,26 +1411,13 @@ class ReturnOrderSerializer(InvenTreeModelSerializer):
 
         model = order.models.ReturnOrder
 
-        fields = [
-            'pk',
-            'creation_date',
-            'contact',
-            'contact_detail',
+        fields = AbstractOrderSerializer.order_fields([
             'customer',
             'customer_detail',
             'customer_reference',
-            'description',
-            'link',
-            'notes',
-            'reference',
-            'responsible',
-            'responsible_detail',
-            'status',
-            'status_text',
-        ]
+        ])
 
         read_only_fields = [
-            'status',
             'creation_date',
         ]
 
@@ -1454,25 +1435,10 @@ class ReturnOrderSerializer(InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """Custom annotation for the serializer queryset"""
 
-        # TODO
+        queryset = AbstractOrderSerializer.annotate_queryset(queryset)
         return queryset
 
-    contact_detail = ContactSerializer(source='contact', many=False, read_only=True)
-
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
-
-    status_text = serializers.CharField(source='get_status_display', read_only=True)
-
-    responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
-
-    reference = serializers.CharField(required=True)
-
-    def validate_reference(self, reference):
-        """Custom validation for the reference field"""
-
-        order.models.ReturnOrder.validate_reference_field(reference)
-
-        return reference
 
 
 class ReturnOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
