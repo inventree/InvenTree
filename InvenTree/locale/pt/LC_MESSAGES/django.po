@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-15 05:45+0000\n"
-"PO-Revision-Date: 2023-03-15 07:53\n"
+"PO-Revision-Date: 2023-03-16 07:56\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -1958,11 +1958,11 @@ msgstr "Permitir escanear código de barras por câmera pelo navegador"
 
 #: common/models.py:1075
 msgid "Part Revisions"
-msgstr ""
+msgstr "Revisões de peças"
 
 #: common/models.py:1076
 msgid "Enable revision field for Part"
-msgstr ""
+msgstr "Habilitar campo de revisão para a Peça"
 
 #: common/models.py:1082
 msgid "IPN Regex"
@@ -5140,115 +5140,115 @@ msgstr "Custo mínimo das peças componentes"
 
 #: part/models.py:2848
 msgid "Maximum BOM Cost"
-msgstr ""
+msgstr "Custo Máximo da LDM"
 
 #: part/models.py:2849
 msgid "Maximum cost of component parts"
-msgstr ""
+msgstr "Custo máximo das peças componentes"
 
 #: part/models.py:2854
 msgid "Minimum Purchase Cost"
-msgstr ""
+msgstr "Custo Mínimo de Compra"
 
 #: part/models.py:2855
 msgid "Minimum historical purchase cost"
-msgstr ""
+msgstr "Custo mínimo histórico de compra"
 
 #: part/models.py:2860
 msgid "Maximum Purchase Cost"
-msgstr ""
+msgstr "Custo Máximo de Compra"
 
 #: part/models.py:2861
 msgid "Maximum historical purchase cost"
-msgstr ""
+msgstr "Custo máximo histórico de compra"
 
 #: part/models.py:2866
 msgid "Minimum Internal Price"
-msgstr ""
+msgstr "Preço Interno Mínimo"
 
 #: part/models.py:2867
 msgid "Minimum cost based on internal price breaks"
-msgstr ""
+msgstr "Custo mínimo baseado nos intervalos de preço internos"
 
 #: part/models.py:2872
 msgid "Maximum Internal Price"
-msgstr ""
+msgstr "Preço Interno Máximo"
 
 #: part/models.py:2873
 msgid "Maximum cost based on internal price breaks"
-msgstr ""
+msgstr "Custo máximo baseado nos intervalos de preço internos"
 
 #: part/models.py:2878
 msgid "Minimum Supplier Price"
-msgstr ""
+msgstr "Preço Mínimo do Fornecedor"
 
 #: part/models.py:2879
 msgid "Minimum price of part from external suppliers"
-msgstr ""
+msgstr "Preço mínimo da peça de fornecedores externos"
 
 #: part/models.py:2884
 msgid "Maximum Supplier Price"
-msgstr ""
+msgstr "Preço Máximo do Fornecedor"
 
 #: part/models.py:2885
 msgid "Maximum price of part from external suppliers"
-msgstr ""
+msgstr "Preço máximo da peça de fornecedores externos"
 
 #: part/models.py:2890
 msgid "Minimum Variant Cost"
-msgstr ""
+msgstr "Custo Mínimo variável"
 
 #: part/models.py:2891
 msgid "Calculated minimum cost of variant parts"
-msgstr ""
+msgstr "Custo mínimo calculado das peças variáveis"
 
 #: part/models.py:2896
 msgid "Maximum Variant Cost"
-msgstr ""
+msgstr "Custo Máximo Variável"
 
 #: part/models.py:2897
 msgid "Calculated maximum cost of variant parts"
-msgstr ""
+msgstr "Custo máximo calculado das peças variáveis"
 
 #: part/models.py:2903
 msgid "Calculated overall minimum cost"
-msgstr ""
+msgstr "Custo total mínimo calculado"
 
 #: part/models.py:2909
 msgid "Calculated overall maximum cost"
-msgstr ""
+msgstr "Custo total máximo calculado"
 
 #: part/models.py:2914
 msgid "Minimum Sale Price"
-msgstr ""
+msgstr "Preço Mínimo de Venda"
 
 #: part/models.py:2915
 msgid "Minimum sale price based on price breaks"
-msgstr ""
+msgstr "Preço mínimo de venda baseado nos intervalos de preço"
 
 #: part/models.py:2920
 msgid "Maximum Sale Price"
-msgstr ""
+msgstr "Preço Máximo de Venda"
 
 #: part/models.py:2921
 msgid "Maximum sale price based on price breaks"
-msgstr ""
+msgstr "Preço máximo de venda baseado nos intervalos de preço"
 
 #: part/models.py:2926
 msgid "Minimum Sale Cost"
-msgstr ""
+msgstr "Custo Mínimo de Venda"
 
 #: part/models.py:2927
 msgid "Minimum historical sale price"
-msgstr ""
+msgstr "Preço histórico mínimo de venda"
 
 #: part/models.py:2932
 msgid "Maximum Sale Cost"
-msgstr ""
+msgstr "Custo Máximo de Venda"
 
 #: part/models.py:2933
 msgid "Maximum historical sale price"
-msgstr ""
+msgstr "Preço histórico máximo de venda"
 
 #: part/models.py:2952
 msgid "Part for stocktake"
@@ -5256,7 +5256,7 @@ msgstr "Peça para Balanço"
 
 #: part/models.py:2957
 msgid "Item Count"
-msgstr ""
+msgstr "Total de Itens"
 
 #: part/models.py:2958
 msgid "Number of individual stock entries at time of stocktake"
@@ -5276,7 +5276,7 @@ msgstr "Estoque total disponível no momento do balanço"
 #: templates/js/translated/pricing.js:796
 #: templates/js/translated/pricing.js:917 templates/js/translated/stock.js:2669
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: part/models.py:2970
 msgid "Date stocktake was performed"
@@ -5284,7 +5284,7 @@ msgstr "Data de realização do balanço"
 
 #: part/models.py:2978
 msgid "Additional notes"
-msgstr ""
+msgstr "Notas adicionais"
 
 #: part/models.py:2986
 msgid "User who performed this stocktake"
@@ -5292,23 +5292,23 @@ msgstr "Usuário que fez o balanço"
 
 #: part/models.py:2991
 msgid "Minimum Stock Cost"
-msgstr ""
+msgstr "Custo Mínimo de Estoque"
 
 #: part/models.py:2992
 msgid "Estimated minimum cost of stock on hand"
-msgstr ""
+msgstr "Custo mínimo estimado de estoque disponível"
 
 #: part/models.py:2997
 msgid "Maximum Stock Cost"
-msgstr ""
+msgstr "Custo Máximo de Estoque"
 
 #: part/models.py:2998
 msgid "Estimated maximum cost of stock on hand"
-msgstr ""
+msgstr "Custo máximo estimado de estoque disponível"
 
 #: part/models.py:3059 templates/InvenTree/settings/settings_staff_js.html:363
 msgid "Report"
-msgstr ""
+msgstr "Reportar"
 
 #: part/models.py:3060
 msgid "Stocktake report file (generated internally)"
@@ -5316,7 +5316,7 @@ msgstr "Arquivo de Relatório de Balanço (gerado internamente)"
 
 #: part/models.py:3065 templates/InvenTree/settings/settings_staff_js.html:370
 msgid "Part Count"
-msgstr ""
+msgstr "Contagem de Peças"
 
 #: part/models.py:3066
 msgid "Number of parts covered by stocktake"
@@ -5328,48 +5328,48 @@ msgstr "Usuário que solicitou este relatório de balanço"
 
 #: part/models.py:3210
 msgid "Test templates can only be created for trackable parts"
-msgstr ""
+msgstr "Modelos de teste só podem ser criados para peças rastreáveis"
 
 #: part/models.py:3227
 msgid "Test with this name already exists for this part"
-msgstr ""
+msgstr "O teste com este nome já existe para esta peça"
 
 #: part/models.py:3247 templates/js/translated/part.js:2496
 msgid "Test Name"
-msgstr ""
+msgstr "Nome de Teste"
 
 #: part/models.py:3248
 msgid "Enter a name for the test"
-msgstr ""
+msgstr "Insira um nome para o teste"
 
 #: part/models.py:3253
 msgid "Test Description"
-msgstr ""
+msgstr "Descrição do Teste"
 
 #: part/models.py:3254
 msgid "Enter description for this test"
-msgstr ""
+msgstr "Digite a descrição para este teste"
 
 #: part/models.py:3259 templates/js/translated/part.js:2505
 #: templates/js/translated/table_filters.js:338
 msgid "Required"
-msgstr ""
+msgstr "Requerido"
 
 #: part/models.py:3260
 msgid "Is this test required to pass?"
-msgstr ""
+msgstr "Este teste é obrigatório passar?"
 
 #: part/models.py:3265 templates/js/translated/part.js:2513
 msgid "Requires Value"
-msgstr ""
+msgstr "Requer Valor"
 
 #: part/models.py:3266
 msgid "Does this test require a value when adding a test result?"
-msgstr ""
+msgstr "Este teste requer um valor ao adicionar um resultado de teste?"
 
 #: part/models.py:3271 templates/js/translated/part.js:2520
 msgid "Requires Attachment"
-msgstr ""
+msgstr "Anexo obrigatório"
 
 #: part/models.py:3272
 msgid "Does this test require a file attachment when adding a test result?"
@@ -5648,40 +5648,40 @@ msgstr ""
 
 #: part/serializers.py:400
 msgid "Supplier part matching this SKU already exists"
-msgstr ""
+msgstr "A peça do fornecedor que corresponde a essa SKU já existe"
 
 #: part/serializers.py:621 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:393
 msgid "Duplicate Part"
-msgstr ""
+msgstr "Peça duplicada"
 
 #: part/serializers.py:621
 msgid "Copy initial data from another Part"
-msgstr ""
+msgstr "Copiar dados iniciais de outra peça"
 
 #: part/serializers.py:626 templates/js/translated/part.js:69
 msgid "Initial Stock"
-msgstr ""
+msgstr "Estoque inicial"
 
 #: part/serializers.py:626
 msgid "Create Part with initial stock quantity"
-msgstr ""
+msgstr "Criar peça com a quantidade inicial de estoque"
 
 #: part/serializers.py:631
 msgid "Supplier Information"
-msgstr ""
+msgstr "Informações do Fornecedor"
 
 #: part/serializers.py:631
 msgid "Add initial supplier information for this part"
-msgstr ""
+msgstr "Adicionar informação inicial de fornecedor para esta peça"
 
 #: part/serializers.py:637
 msgid "Copy Category Parameters"
-msgstr ""
+msgstr "Copiar Parâmetros da Categoria"
 
 #: part/serializers.py:638
 msgid "Copy parameter templates from selected part category"
-msgstr ""
+msgstr "Copiar modelos de parâmetros a partir de categoria de peça selecionada"
 
 #: part/serializers.py:843
 msgid "Limit stocktake report to a particular part, and any variant parts"
@@ -5689,51 +5689,51 @@ msgstr "Limitar o relatório de balanço a uma determinada peça e quaisquer pe�
 
 #: part/serializers.py:849
 msgid "Limit stocktake report to a particular part category, and any child categories"
-msgstr ""
+msgstr "Limitar o relatório de balanço a uma determinada categoria, e qualquer peças filhas"
 
 #: part/serializers.py:855
 msgid "Limit stocktake report to a particular stock location, and any child locations"
-msgstr ""
+msgstr "Limitar o relatório de balanço a um determinado local de estoque, e qualquer local filho"
 
 #: part/serializers.py:860
 msgid "Generate Report"
-msgstr ""
+msgstr "Gerar relatório"
 
 #: part/serializers.py:861
 msgid "Generate report file containing calculated stocktake data"
-msgstr ""
+msgstr "Gerar arquivo de relatório contendo dados de estoque calculados"
 
 #: part/serializers.py:866
 msgid "Update Parts"
-msgstr ""
+msgstr "Atualizar Peças"
 
 #: part/serializers.py:867
 msgid "Update specified parts with calculated stocktake data"
-msgstr ""
+msgstr "Atualizar peças especificadas com dados de estoque calculados"
 
 #: part/serializers.py:875
 msgid "Stocktake functionality is not enabled"
-msgstr ""
+msgstr "Função de Balanço de Estoque não está ativada"
 
 #: part/serializers.py:964
 msgid "Update"
-msgstr ""
+msgstr "Atualizar"
 
 #: part/serializers.py:965
 msgid "Update pricing for this part"
-msgstr ""
+msgstr "Atualizar preços desta peça"
 
 #: part/serializers.py:1247
 msgid "Select part to copy BOM from"
-msgstr ""
+msgstr "Selecionar peça para copiar a LDM"
 
 #: part/serializers.py:1255
 msgid "Remove Existing Data"
-msgstr ""
+msgstr "Remover Dado Existente"
 
 #: part/serializers.py:1256
 msgid "Remove existing BOM items before copying"
-msgstr ""
+msgstr "Remova itens LDM existentes antes de copiar"
 
 #: part/serializers.py:1261
 msgid "Include Inherited"
@@ -5820,11 +5820,11 @@ msgstr ""
 
 #: part/tasks.py:355
 msgid "Stocktake Report Available"
-msgstr ""
+msgstr "Balanço de Estoque Disponível"
 
 #: part/tasks.py:356
 msgid "A new stocktake report is available for download"
-msgstr ""
+msgstr "Um novo relatório de balanço do estoque está disponível para baixar"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
@@ -5855,7 +5855,7 @@ msgstr ""
 
 #: part/templates/part/category.html:34
 msgid "Perform stocktake for this part category"
-msgstr ""
+msgstr "Fazer balanço de estoque para esta categoria de peça"
 
 #: part/templates/part/category.html:40 part/templates/part/category.html:44
 msgid "You are subscribed to notifications for this category"
@@ -5978,7 +5978,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:66
 msgid "Add stocktake information"
-msgstr ""
+msgstr "Adicionar informações de balanço de estoque"
 
 #: part/templates/part/detail.html:67 part/templates/part/part_sidebar.html:50
 #: stock/admin.py:130 templates/InvenTree/settings/part_stocktake.html:29
@@ -7630,7 +7630,7 @@ msgstr "Inativo"
 
 #: stock/templates/stock/item_base.html:452
 msgid "No stocktake performed"
-msgstr ""
+msgstr "Nenhum balanço feito"
 
 #: stock/templates/stock/item_base.html:522
 msgid "Edit Stock Status"
@@ -7674,7 +7674,7 @@ msgstr ""
 
 #: stock/templates/stock/location.html:37
 msgid "Perform stocktake for this stock location"
-msgstr ""
+msgstr "Fazer balanço para o estoque deste local"
 
 #: stock/templates/stock/location.html:44
 msgid "Locate stock location"
@@ -10530,31 +10530,31 @@ msgstr ""
 
 #: templates/js/translated/part.js:807
 msgid "Schedule generation of a new stocktake report."
-msgstr ""
+msgstr "Programar geração de um novo relatório de balanço."
 
 #: templates/js/translated/part.js:807
 msgid "Once complete, the stocktake report will be available for download."
-msgstr ""
+msgstr "Uma vez concluído, o relatório de estoque estará disponível para baixar."
 
 #: templates/js/translated/part.js:815
 msgid "Generate Stocktake Report"
-msgstr ""
+msgstr "Gerar Relatório de Balanço"
 
 #: templates/js/translated/part.js:819
 msgid "Stocktake report scheduled"
-msgstr ""
+msgstr "Relatório de balanço agendado"
 
 #: templates/js/translated/part.js:972
 msgid "No stocktake information available"
-msgstr ""
+msgstr "Nenhuma informação de balanço disponível"
 
 #: templates/js/translated/part.js:1030 templates/js/translated/part.js:1068
 msgid "Edit Stocktake Entry"
-msgstr ""
+msgstr "Editar Lançamento de Balanço"
 
 #: templates/js/translated/part.js:1034 templates/js/translated/part.js:1080
 msgid "Delete Stocktake Entry"
-msgstr ""
+msgstr "Apagar Lançamento de Balanço"
 
 #: templates/js/translated/part.js:1212
 msgid "No variants found"
@@ -11430,7 +11430,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:539
 msgid "Has stocktake entries"
-msgstr ""
+msgstr "Tem entradas em balanço"
 
 #: templates/js/translated/tables.js:71
 msgid "Display calendar view"
@@ -11700,7 +11700,7 @@ msgstr ""
 
 #: templates/stock_table.html:47
 msgid "Stocktake selected stock items"
-msgstr ""
+msgstr "Fazer balanço de itens do estoque selecionados"
 
 #: templates/stock_table.html:48
 msgid "Move selected stock items"
