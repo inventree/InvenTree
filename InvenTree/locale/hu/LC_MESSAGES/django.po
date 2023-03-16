@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-15 05:45+0000\n"
-"PO-Revision-Date: 2023-03-15 07:52\n"
+"PO-Revision-Date: 2023-03-16 07:56\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1959,11 +1959,11 @@ msgstr "Webkamerás kódolvasás engedélyezése a böngészőből"
 
 #: common/models.py:1075
 msgid "Part Revisions"
-msgstr ""
+msgstr "Alkatrész változatok"
 
 #: common/models.py:1076
 msgid "Enable revision field for Part"
-msgstr ""
+msgstr "Alkatrész változat vagy verziószám tulajdonság használata"
 
 #: common/models.py:1082
 msgid "IPN Regex"
