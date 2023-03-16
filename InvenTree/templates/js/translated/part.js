@@ -98,7 +98,9 @@ function partFields(options={}) {
         },
         name: {},
         IPN: {},
-        revision: {},
+        revision: {
+            icon: 'fa-code-branch',
+        },
         description: {},
         variant_of: {},
         keywords: {
@@ -174,9 +176,14 @@ function partFields(options={}) {
         };
     }
 
-    // Pop expiry field
+    // Pop 'expiry' field
     if (!global_settings.STOCK_ENABLE_EXPIRY) {
         delete fields['default_expiry'];
+    }
+
+    // Pop 'revision' field
+    if (!global_settings.PART_ENABLE_REVISION) {
+        delete fields['revision'];
     }
 
     if (options.create || options.duplicate) {
@@ -1113,19 +1120,7 @@ function loadPartVariantTable(table, partId, options={}) {
             formatter: function(value, row) {
                 var html = '';
 
-                var name = '';
-
-                if (row.IPN) {
-                    name += row.IPN;
-                    name += ' | ';
-                }
-
-                name += value;
-
-                if (row.revision) {
-                    name += ' | ';
-                    name += row.revision;
-                }
+                var name = row.full_name || row.name;
 
                 if (row.is_template) {
                     name = '<i>' + name + '</i>';
@@ -1165,6 +1160,8 @@ function loadPartVariantTable(table, partId, options={}) {
         {
             field: 'revision',
             title: '{% trans "Revision" %}',
+            switchable: global_settings.PART_ENABLE_REVISION,
+            visible: global_settings.PART_ENABLE_REVISION,
             sortable: true,
         },
         {
@@ -1888,6 +1885,14 @@ function loadPartTable(table, url, options={}) {
         field: 'IPN',
         title: '{% trans "IPN" %}',
         sortable: !options.params.ordering
+    });
+
+    columns.push({
+        field: 'revision',
+        title: '{% trans "Revision" %}',
+        switchable: global_settings.PART_ENABLE_REVISION,
+        visible: global_settings.PART_ENABLE_REVISION,
+        sortable: true,
     });
 
     columns.push({
