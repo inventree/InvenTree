@@ -1319,6 +1319,25 @@ class ReturnOrderDetail(RetrieveUpdateDestroyAPI):
         return self.serializer_class(*args, **kwargs)
 
 
+class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
+    """API endpoint for accessing a list of ReturnOrderExtraLine objects"""
+
+    queryset = models.ReturnOrderExtraLine.objects.all()
+    serializer_class = serializers.ReturnOrderExtraLineSerializer
+
+    def download_queryset(self, queryset, export_format):
+        """Download this queryset as a file"""
+
+        raise NotImplementedError("download_queryset not yet implemented")
+
+
+class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a ReturnOrderExtraLine object"""
+
+    queryset = models.ReturnOrderExtraLine.objects.all()
+    serializer_class = serializers.ReturnOrderExtraLineSerializer
+
+
 class ReturnOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a ReturnOrderAttachment (file upload)"""
 
@@ -1580,6 +1599,12 @@ order_api_urls = [
 
     # API endpoints for return orders
     re_path(r'^return/', include([
+
+        # API endpoints for return order extra line
+        re_path(r'^extra-line/', include([
+            path('<int:pk>/', ReturnOrderExtraLineDetail.as_view(), name='api-return-order-extra-line-detail'),
+            path('', ReturnOrderExtraLineList.as_view(), name='api-return-order-extra-line-list'),
+        ])),
 
         re_path(r'^attachment/', include([
             path('<int:pk>/', ReturnOrderAttachmentDetail.as_view(), name='api-return-order-attachment-detail'),

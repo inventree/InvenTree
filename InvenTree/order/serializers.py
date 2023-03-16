@@ -1441,6 +1441,16 @@ class ReturnOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
 
 
+class ReturnOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
+    """Serializer for a ReturnOrderExtraLine object"""
+
+    class Meta(AbstractExtraLineMeta):
+        """Metaclass options"""
+        model = order.models.ReturnOrderExtraLine
+
+    order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
+
+
 class ReturnOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
     """Serializer for the ReturnOrderAttachment model"""
 

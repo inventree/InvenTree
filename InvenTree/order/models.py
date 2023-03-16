@@ -1682,6 +1682,21 @@ class ReturnOrder(Order):
     )
 
 
+class ReturnOrderExtraLine(OrderExtraLine):
+    """Model for a single ExtraLine in a ReturnOrder"""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the ReturnOrderExtraLine model"""
+        return reverse('api-return-order-extra-line-list')
+
+    order = models.ForeignKey(
+        ReturnOrder, on_delete=models.CASCADE,
+        related_name='extra_lines',
+        verbose_name=_('Order'), help_text=_('Return Order')
+    )
+
+
 class ReturnOrderAttachment(InvenTreeAttachment):
     """Model for storing file attachments against a ReturnOrder object"""
 
