@@ -318,20 +318,23 @@ def setting_object(key, *args, **kwargs):
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
     """
+
+    cache = kwargs.get('cache', True)
+
     if 'plugin' in kwargs:
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 
         plugin = kwargs['plugin']
 
-        return PluginSetting.get_setting_object(key, plugin=plugin)
+        return PluginSetting.get_setting_object(key, plugin=plugin, cache=cache)
 
     if 'method' in kwargs:
-        return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'])
+        return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'], cache=cache)
 
     if 'user' in kwargs:
-        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'], cache=cache)
 
-    return InvenTreeSetting.get_setting_object(key)
+    return InvenTreeSetting.get_setting_object(key, cache=cache)
 
 
 @register.simple_tag()
