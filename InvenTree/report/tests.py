@@ -407,6 +407,9 @@ class BuildReportTest(ReportTest):
         self.assertEqual(headers['Content-Type'], 'application/pdf')
         self.assertEqual(headers['Content-Disposition'], 'inline; filename="report.pdf"')
 
+    def test_metadata(self):
+        # Run at end, after other tests?
+        super().test_metadata()
 
 class BOMReportTest(ReportTest):
     """Unit test class fot the BillOfMaterialsReport model"""
@@ -416,6 +419,9 @@ class BOMReportTest(ReportTest):
     detail_url = 'api-bom-report-detail'
     print_url = 'api-bom-report-print'
 
+    def test_metadata(self):
+        # Run at end, after other tests?
+        super().test_metadata()
 
 class PurchaseOrderReportTest(ReportTest):
     """Unit test class fort he PurchaseOrderReport model"""
@@ -425,6 +431,9 @@ class PurchaseOrderReportTest(ReportTest):
     detail_url = 'api-po-report-detail'
     print_url = 'api-po-report-print'
 
+    def test_metadata(self):
+        # Run at end, after other tests?
+        super().test_metadata()
 
 class SalesOrderReportTest(ReportTest):
     """Unit test class for the SalesOrderReport model"""
@@ -433,3 +442,7 @@ class SalesOrderReportTest(ReportTest):
     list_url = 'api-so-report-list'
     detail_url = 'api-so-report-detail'
     print_url = 'api-so-report-print'
+
+    def test_metadata(self):
+        # Run at end, after other tests?
+        super().test_metadata()
