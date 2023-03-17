@@ -10,6 +10,7 @@ from django_q.models import OrmQ
 from rest_framework import filters, permissions
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
+from rest_framework.views import APIView
 
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
@@ -208,3 +209,76 @@ class AttachmentMixin:
         attachment = serializer.save()
         attachment.user = self.request.user
         attachment.save()
+
+
+class APISearchView(APIView):
+    """A general-purpose 'search' API endpoint
+
+    Returns hits against a number of different models simultaneously,
+    to consolidate multiple API requests into a single query.
+
+    Is much more efficient and simplifies code!
+    """
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get_result_types(self):
+        """Construct a list of search types we can return"""
+
+        import build.api
+        import company.api
+        import order.api
+        import part.api
+        import stock.api
+
+        return {
+            'build': build.api.BuildList,
+            'company': company.api.CompanyList,
+            'manufacturerpart': company.api.ManufacturerPartList,
+            'supplierpart': company.api.SupplierPartList,
+            'part': part.api.PartList,
+            'partcategory': part.api.CategoryList,
+            'purchaseorder': order.api.PurchaseOrderList,
+            'stock': stock.api.StockList,
+            'stocklocation': stock.api.StockLocationList,
+            'salesorder': order.api.SalesOrderList,
+        }
+
+    def post(self, request, *args, **kwargs):
+        """Perform search query against available models"""
+
+        data = request.data
+
+        # Enforce a 'limit' parameter
+        try:
+            limit = int(data.get('limit', 1))
+        except ValueError:
+            limit = 1
+
+        results = {}
+
+        for key, cls in self.get_result_types().items():
+            # Only return results which are specifically requested
+            if key in data:
+
+                params = data[key]
+
+                # Enforce limit
+                params['limit'] = limit
+
+                # Ignore if the params are wrong
+                if type(params) is not dict:
+                    continue
+
+                view = cls()
+
+                # Override regular query params with specific ones for this search request
+                request._request.GET = params
+                view.request = request
+
+                # Update results dict with particular query
+                results[key] = view.list(request, *args, **kwargs).data
+
+        return Response(results)
