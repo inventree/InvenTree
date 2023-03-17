@@ -12,7 +12,7 @@ from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
 from InvenTree import status_codes as status
 from order.models import (SalesOrder, SalesOrderAllocation, SalesOrderLineItem,
-                          SalesOrderShipment)
+                          SalesOrderExtraLineItem, SalesOrderShipment)
 from part.models import Part
 from stock.models import StockItem
 from users.models import Owner
@@ -293,3 +293,21 @@ class SalesOrderTest(TestCase):
 
         # However *no* notification should have been generated for the creating user
         self.assertFalse(messages.filter(user__pk=3).exists())
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [SalesOrder, SalesOrderLineItem, SalesOrderExtraLineItem, SalesOrderShipment]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)

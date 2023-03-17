@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from InvenTree.helpers import InvenTreeTestCase
 
-from .models import Build
+from .models import Build, BuildItem
 from stock.models import StockItem
 
 from InvenTree.status_codes import BuildStatus
@@ -133,3 +133,21 @@ class TestBuildViews(InvenTreeTestCase):
         content = str(response.content)
 
         self.assertIn(build.title, content)
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [Build, BuildItem]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)
