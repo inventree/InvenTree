@@ -387,7 +387,7 @@ class OrderTest(TestCase):
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
-        for model in [PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderExtraLineItem]:
+        for model in [PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderExtraLine]:
             p = model.objects.first()
             self.assertIsNone(p.metadata)
 
