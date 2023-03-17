@@ -4,6 +4,8 @@ from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse, JsonResponse
 from django.urls import include, re_path
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
@@ -47,7 +49,7 @@ class LabelFilterMixin:
         ids = []
 
         # Construct a list of possible query parameter value options
-        # e.g. if self.ITEM_KEY = 'part' -> ['part', 'part', 'parts', parts[]']
+        # e.g. if self.ITEM_KEY = 'part' -> ['part', 'part[]', 'parts', parts[]']
         for k in [self.ITEM_KEY + x for x in ['', '[]', 's', 's[]']]:
             if ids := self.request.query_params.getlist(k, []):
                 # Return the first list of matches
@@ -136,8 +138,14 @@ class LabelListView(LabelFilterMixin, ListAPI):
     ]
 
 
+@method_decorator(cache_page(5), name='dispatch')
 class LabelPrintMixin(LabelFilterMixin):
     """Mixin for printing labels."""
+
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        """Prevent caching when printing report templates"""
+        return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request against this endpoint to print labels"""
@@ -272,15 +280,8 @@ class LabelPrintMixin(LabelFilterMixin):
             )
 
 
-class StockItemLabelList(LabelListView):
-    """API endpoint for viewing list of StockItemLabel objects.
-
-    Filterable by:
-
-    - enabled: Filter by enabled / disabled status
-    - item: Filter by single stock item
-    - items: Filter by list of stock items
-    """
+class StockItemLabelMixin:
+    """Mixin for StockItemLabel endpoints"""
 
     queryset = StockItemLabel.objects.all()
     serializer_class = StockItemLabelSerializer
@@ -289,11 +290,21 @@ class StockItemLabelList(LabelListView):
     ITEM_KEY = 'item'
 
 
-class StockItemLabelDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for a single StockItemLabel object."""
+class StockItemLabelList(StockItemLabelMixin, LabelListView):
+    """API endpoint for viewing list of StockItemLabel objects.
 
-    queryset = StockItemLabel.objects.all()
-    serializer_class = StockItemLabelSerializer
+    Filterable by:
+
+    - enabled: Filter by enabled / disabled status
+    - item: Filter by single stock item
+    - items: Filter by list of stock items
+    """
+    pass
+
+
+class StockItemLabelDetail(StockItemLabelMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single StockItemLabel object."""
+    pass
 
 
 class StockItemLabelMetadata(RetrieveUpdateAPI):
@@ -306,25 +317,13 @@ class StockItemLabelMetadata(RetrieveUpdateAPI):
     queryset = StockItemLabel.objects.all()
 
 
-class StockItemLabelPrint(LabelPrintMixin, RetrieveAPI):
+class StockItemLabelPrint(StockItemLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockItemLabel object."""
-
-    queryset = StockItemLabel.objects.all()
-    serializer_class = StockItemLabelSerializer
-
-    ITEM_MODEL = StockItem
-    ITEM_KEY = 'item'
+    pass
 
 
-class StockLocationLabelList(LabelListView):
-    """API endpoint for viewiing list of StockLocationLabel objects.
-
-    Filterable by:
-
-    - enabled: Filter by enabled / disabled status
-    - location: Filter by a single stock location
-    - locations: Filter by list of stock locations
-    """
+class StockLocationLabelMixin:
+    """Mixin for StockLocationLabel endpoints"""
 
     queryset = StockLocationLabel.objects.all()
     serializer_class = StockLocationLabelSerializer
@@ -333,11 +332,21 @@ class StockLocationLabelList(LabelListView):
     ITEM_KEY = 'location'
 
 
-class StockLocationLabelDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for a single StockLocationLabel object."""
+class StockLocationLabelList(StockLocationLabelMixin, LabelListView):
+    """API endpoint for viewiing list of StockLocationLabel objects.
 
-    queryset = StockLocationLabel.objects.all()
-    serializer_class = StockLocationLabelSerializer
+    Filterable by:
+
+    - enabled: Filter by enabled / disabled status
+    - location: Filter by a single stock location
+    - locations: Filter by list of stock locations
+    """
+    pass
+
+
+class StockLocationLabelDetail(StockLocationLabelMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single StockLocationLabel object."""
+    pass
 
 
 class StockLocationLabelMetadata(RetrieveUpdateAPI):
@@ -350,19 +359,13 @@ class StockLocationLabelMetadata(RetrieveUpdateAPI):
     queryset = StockLocationLabel.objects.all()
 
 
-class StockLocationLabelPrint(LabelPrintMixin, RetrieveAPI):
+class StockLocationLabelPrint(StockLocationLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockLocationLabel object."""
-
-    queryset = StockLocationLabel.objects.all()
-    seiralizer_class = StockLocationLabelSerializer
-
-    ITEM_MODEL = StockLocation
-    ITEM_KEY = 'location'
+    pass
 
 
-class PartLabelList(LabelListView):
-    """API endpoint for viewing list of PartLabel objects."""
-
+class PartLabelMixin:
+    """Mixin for PartLabel endpoints"""
     queryset = PartLabel.objects.all()
     serializer_class = PartLabelSerializer
 
@@ -370,11 +373,9 @@ class PartLabelList(LabelListView):
     ITEM_KEY = 'part'
 
 
-class PartLabelDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for a single PartLabel object."""
-
-    queryset = PartLabel.objects.all()
-    serializer_class = PartLabelSerializer
+class PartLabelList(PartLabelMixin, LabelListView):
+    """API endpoint for viewing list of PartLabel objects."""
+    pass
 
 
 class PartLabelMetadata(RetrieveUpdateAPI):
@@ -387,14 +388,14 @@ class PartLabelMetadata(RetrieveUpdateAPI):
     queryset = PartLabel.objects.all()
 
 
-class PartLabelPrint(LabelPrintMixin, RetrieveAPI):
+class PartLabelDetail(PartLabelMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single PartLabel object."""
+    pass
+
+
+class PartLabelPrint(PartLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a PartLabel object."""
-
-    queryset = PartLabel.objects.all()
-    serializer_class = PartLabelSerializer
-
-    ITEM_MODEL = Part
-    ITEM_KEY = 'part'
+    pass
 
 
 label_api_urls = [
