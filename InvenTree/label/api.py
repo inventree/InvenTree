@@ -270,7 +270,17 @@ class LabelPrintMixin(LabelFilterMixin):
             )
 
 
-class StockItemLabelList(LabelListView):
+class StockItemLabelMixin:
+    """Mixin for StockItemLabel endpoints"""
+
+    queryset = StockItemLabel.objects.all()
+    serializer_class = StockItemLabelSerializer
+
+    ITEM_MODEL = StockItem
+    ITEM_KEY = 'item'
+
+
+class StockItemLabelList(StockItemLabelMixin, LabelListView):
     """API endpoint for viewing list of StockItemLabel objects.
 
     Filterable by:
@@ -279,32 +289,30 @@ class StockItemLabelList(LabelListView):
     - item: Filter by single stock item
     - items: Filter by list of stock items
     """
-
-    queryset = StockItemLabel.objects.all()
-    serializer_class = StockItemLabelSerializer
-
-    ITEM_MODEL = StockItem
-    ITEM_KEY = 'item'
+    pass
 
 
-class StockItemLabelDetail(RetrieveUpdateDestroyAPI):
+class StockItemLabelDetail(StockItemLabelMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single StockItemLabel object."""
-
-    queryset = StockItemLabel.objects.all()
-    serializer_class = StockItemLabelSerializer
+    pass
 
 
-class StockItemLabelPrint(LabelPrintMixin, RetrieveAPI):
+class StockItemLabelPrint(StockItemLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockItemLabel object."""
-
-    queryset = StockItemLabel.objects.all()
-    serializer_class = StockItemLabelSerializer
-
-    ITEM_MODEL = StockItem
-    ITEM_KEY = 'item'
+    pass
 
 
-class StockLocationLabelList(LabelListView):
+class StockLocationLabelMixin:
+    """Mixin for StockLocationLabel endpoints"""
+
+    queryset = StockLocationLabel.objects.all()
+    serializer_class = StockLocationLabelSerializer
+
+    ITEM_MODEL = StockLocation
+    ITEM_KEY = 'location'
+
+
+class StockLocationLabelList(StockLocationLabelMixin, LabelListView):
     """API endpoint for viewiing list of StockLocationLabel objects.
 
     Filterable by:
@@ -313,56 +321,41 @@ class StockLocationLabelList(LabelListView):
     - location: Filter by a single stock location
     - locations: Filter by list of stock locations
     """
-
-    queryset = StockLocationLabel.objects.all()
-    serializer_class = StockLocationLabelSerializer
-
-    ITEM_MODEL = StockLocation
-    ITEM_KEY = 'location'
+    pass
 
 
-class StockLocationLabelDetail(RetrieveUpdateDestroyAPI):
+class StockLocationLabelDetail(StockLocationLabelMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single StockLocationLabel object."""
-
-    queryset = StockLocationLabel.objects.all()
-    serializer_class = StockLocationLabelSerializer
+    pass
 
 
-class StockLocationLabelPrint(LabelPrintMixin, RetrieveAPI):
+class StockLocationLabelPrint(StockLocationLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockLocationLabel object."""
-
-    queryset = StockLocationLabel.objects.all()
-    seiralizer_class = StockLocationLabelSerializer
-
-    ITEM_MODEL = StockLocation
-    ITEM_KEY = 'location'
+    pass
 
 
-class PartLabelList(LabelListView):
+class PartLabelMixin:
+    """Mixin for PartLabel endpoints"""
+    queryset = PartLabel.objects.all()
+    serializer_class = PartLabelSerializer
+
+    ITEM_MODEL = Part
+    ITEM_KEY = 'part'
+
+
+class PartLabelList(PartLabelMixin, LabelListView):
     """API endpoint for viewing list of PartLabel objects."""
-
-    queryset = PartLabel.objects.all()
-    serializer_class = PartLabelSerializer
-
-    ITEM_MODEL = Part
-    ITEM_KEY = 'part'
+    pass
 
 
-class PartLabelDetail(RetrieveUpdateDestroyAPI):
+class PartLabelDetail(PartLabelMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single PartLabel object."""
-
-    queryset = PartLabel.objects.all()
-    serializer_class = PartLabelSerializer
+    pass
 
 
-class PartLabelPrint(LabelPrintMixin, RetrieveAPI):
+class PartLabelPrint(PartLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a PartLabel object."""
-
-    queryset = PartLabel.objects.all()
-    serializer_class = PartLabelSerializer
-
-    ITEM_MODEL = Part
-    ITEM_KEY = 'part'
+    pass
 
 
 label_api_urls = [
