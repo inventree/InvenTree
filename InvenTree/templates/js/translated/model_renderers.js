@@ -415,8 +415,13 @@ function renderManufacturerPart(name, data, parameters={}, options={}) {
     html += select2Thumbnail(manufacturer_image);
     html += select2Thumbnail(part_image);
 
-    html += ` <span><b>${data.manufacturer_detail.name}</b> - ${data.MPN}</span>`;
-    html += ` - <i>${data.part_detail.full_name}</i>`;
+    if (data.manufacturer_detail) {
+        html += ` <span><b>${data.manufacturer_detail.name}</b> - ${data.MPN}</span>`;
+    }
+
+    if (data.part_detail) {
+        html += ` - <i>${data.part_detail.full_name}</i>`;
+    }
 
     html += renderId('{% trans "Manufacturer Part ID" %}', data.pk, parameters);
 

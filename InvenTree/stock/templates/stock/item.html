@@ -259,7 +259,6 @@
         $("#test-result-table").bootstrapTable("refresh");
     }
 
-    {% if item.has_test_reports %}
     $("#test-report").click(function() {
         printReports({
             items: [{{ item.pk }}],
@@ -267,7 +266,6 @@
             url: '{% url "api-stockitem-testreport-list" %}',
         });
     });
-    {% endif %}
 
     {% if user.is_staff %}
     $("#delete-test-results").click(function() {
