@@ -334,7 +334,7 @@ class BuildReportMixin(ReportFilterMixin):
     """Mixin for the BuildReport report template"""
 
     ITEM_MODEL = build.models.Build
-    ITE_KEY = 'build'
+    ITEM_KEY = 'build'
 
     queryset = BuildReport.objects.all()
     serializer_class = BuildReportSerializer
