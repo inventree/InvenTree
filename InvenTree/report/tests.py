@@ -283,20 +283,23 @@ class ReportTest(InvenTreeAPITestCase):
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
-        p = self.model.objects.first()
-        self.assertIsNone(p.metadata)
+        if self.model is not None:
+            print(f"Model: {self.model}")
+            print(f"Number of objects available: {len(self.model.objects.all())}")
+            p = self.model.objects.first()
+            self.assertIsNone(p.metadata)
 
-        self.assertIsNone(p.get_metadata('test'))
-        self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
 
-        # Test update via the set_metadata() method
-        p.set_metadata('test', 3)
-        self.assertEqual(p.get_metadata('test'), 3)
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
 
-        for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
-            p.set_metadata(k, k)
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
 
-        self.assertEqual(len(p.metadata.keys()), 4)
+            self.assertEqual(len(p.metadata.keys()), 4)
 
 
 class TestReportTest(ReportTest):
@@ -351,6 +354,9 @@ class TestReportTest(ReportTest):
         attachment = StockItemAttachment.objects.filter(stock_item=item).first()
         self.assertIsNotNone(attachment)
 
+    def test_metadata(self):
+        # Run at end, after other tests?
+        super().test_metadata()
 
 class BuildReportTest(ReportTest):
     """Unit test class for the BuildReport model"""

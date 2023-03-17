@@ -12,7 +12,7 @@ from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
 from InvenTree import status_codes as status
 from order.models import (SalesOrder, SalesOrderAllocation, SalesOrderLineItem,
-                          SalesOrderExtraLineItem, SalesOrderShipment)
+                          SalesOrderExtraLine, SalesOrderShipment)
 from part.models import Part
 from stock.models import StockItem
 from users.models import Owner
