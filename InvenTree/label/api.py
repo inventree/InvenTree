@@ -4,6 +4,8 @@ from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse, JsonResponse
 from django.urls import include, re_path
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
@@ -134,8 +136,14 @@ class LabelListView(LabelFilterMixin, ListAPI):
     ]
 
 
+@method_decorator(cache_page(5), name='dispatch')
 class LabelPrintMixin(LabelFilterMixin):
     """Mixin for printing labels."""
+
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        """Prevent caching when printing report templates"""
+        return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request against this endpoint to print labels"""
