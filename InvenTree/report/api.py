@@ -5,7 +5,9 @@ from django.core.files.base import ContentFile
 from django.http import HttpResponse
 from django.template.exceptions import TemplateDoesNotExist
 from django.urls import include, path, re_path
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
@@ -138,8 +140,14 @@ class ReportFilterMixin:
         return queryset
 
 
+@method_decorator(cache_page(5), name='dispatch')
 class ReportPrintMixin:
     """Mixin for printing reports."""
+
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        """Prevent caching when printing report templates"""
+        return super().dispatch(*args, **kwargs)
 
     def report_callback(self, object, report, request):
         """Callback function for each object/report combination.
