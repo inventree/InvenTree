@@ -251,11 +251,18 @@ class APISearchView(APIView):
 
         data = request.data
 
+        search = data.get('search', '')
+
         # Enforce a 'limit' parameter
         try:
             limit = int(data.get('limit', 1))
         except ValueError:
             limit = 1
+
+        try:
+            offset = int(data.get('offset', 0))
+        except ValueError:
+            offset = 0
 
         results = {}
 
@@ -265,8 +272,14 @@ class APISearchView(APIView):
 
                 params = data[key]
 
+                params['search'] = search
+
                 # Enforce limit
                 params['limit'] = limit
+                params['offset'] = offset
+
+                # Enforce json encoding
+                params['format'] = 'json'
 
                 # Ignore if the params are wrong
                 if type(params) is not dict:
@@ -277,6 +290,7 @@ class APISearchView(APIView):
                 # Override regular query params with specific ones for this search request
                 request._request.GET = params
                 view.request = request
+                view.format_kwarg = 'format'
 
                 # Update results dict with particular query
                 results[key] = view.list(request, *args, **kwargs).data
