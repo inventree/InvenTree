@@ -255,8 +255,6 @@ function updateSearch() {
                     if (resultType.key in response) {
                         let result = response[resultType.key];
 
-                        console.log(resultType.key, '->', result);
-
                         if (result.count != null && result.count > 0 && result.results) {
                             addSearchResults(result.results, resultType);
                         }
@@ -297,6 +295,10 @@ function addSearchQuery(key, title, query_params, render_params={}) {
 
     searchQuery[key] = query_params;
 
+    render_params.showImage = true;
+    render_params.showLink = true;
+    render_params.showLabels = true;
+
     searchResultTypes.push({
         key: key,
         title: title,
@@ -321,6 +323,7 @@ function addSearchResults(results, resultType) {
 
     let key = resultType.key;
     let title = resultType.title;
+    let url = resultType.url;
     let renderer = resultType.renderer;
     let renderParams = resultType.renderParams;
 
@@ -350,11 +353,7 @@ function addSearchResults(results, resultType) {
 
         var pk = result.pk || result.id;
 
-        var html = renderer(key, result, renderParams);
-
-        if (renderParams.url) {
-            html = `<a href='${renderParams.url}/${pk}/'>` + html + `</a>`;
-        }
+        var html = renderer(result, renderParams);
 
         var result_html = `
         <div class='search-result-entry' id='search-result-${key}-${pk}'>
