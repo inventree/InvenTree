@@ -303,44 +303,6 @@ function addSearchQuery(key, title, query_params, render_params={}) {
         renderer: getModelRenderer(key),
         renderParams: render_params,
     });
-
-    // TODO: DELETE M
-    return;
-
-    // Include current search term
-    query_params.search = searchTextCurrent;
-
-    // How many results to show in each group?
-    query_params.offset = 0;
-    query_params.limit = user_settings.SEARCH_PREVIEW_RESULTS;
-
-    // Do not display "pk" value for search results
-    render_params.render_pk = false;
-
-    // Add the result group to the panel
-    $('#offcanvas-search').find('#search-results').append(`
-    <div class='search-result-group-wrapper' id='search-results-wrapper-${key}'></div>
-    `);
-
-    var request = inventreeGet(
-        query_url,
-        query_params,
-        {
-            success: function(response) {
-                addSearchResults(
-                    key,
-                    response.results,
-                    title,
-                    render_func,
-                    render_params,
-                );
-            }
-        },
-    );
-
-    // Add the query to the stack
-    searchQueries.push(request);
-
 }
 
 
