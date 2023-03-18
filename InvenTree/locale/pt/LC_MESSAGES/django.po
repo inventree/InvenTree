@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-17 04:40+0000\n"
-"PO-Revision-Date: 2023-03-17 08:03\n"
+"PO-Revision-Date: 2023-03-18 08:05\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -5493,15 +5493,15 @@ msgstr "Notas do Item LDM"
 
 #: part/models.py:3597
 msgid "Checksum"
-msgstr ""
+msgstr "Soma de verificação"
 
 #: part/models.py:3597
 msgid "BOM line checksum"
-msgstr ""
+msgstr "Soma de Verificação da LDM da linha"
 
 #: part/models.py:3602 templates/js/translated/table_filters.js:72
 msgid "Validated"
-msgstr ""
+msgstr "Validado"
 
 #: part/models.py:3603
 msgid "This BOM item has been validated"
@@ -5537,19 +5537,19 @@ msgstr ""
 
 #: part/models.py:3828
 msgid "BOM Item Substitute"
-msgstr ""
+msgstr "Substituir Item da LDM"
 
 #: part/models.py:3849
 msgid "Substitute part cannot be the same as the master part"
-msgstr ""
+msgstr "A peça de substituição não pode ser a mesma que a peça mestre"
 
 #: part/models.py:3862
 msgid "Parent BOM item"
-msgstr ""
+msgstr "Item LDM Parental"
 
 #: part/models.py:3870
 msgid "Substitute part"
-msgstr ""
+msgstr "Substituir peça"
 
 #: part/models.py:3885
 msgid "Part 1"
@@ -5561,19 +5561,19 @@ msgstr "Parte 2"
 
 #: part/models.py:3889
 msgid "Select Related Part"
-msgstr ""
+msgstr "Selecionar Peça Relacionada"
 
 #: part/models.py:3907
 msgid "Part relationship cannot be created between a part and itself"
-msgstr ""
+msgstr "Relacionamento da peça não pode ser criada com ela mesma"
 
 #: part/models.py:3911
 msgid "Duplicate relationship already exists"
-msgstr ""
+msgstr "Relação duplicada já existe"
 
 #: part/serializers.py:160 part/serializers.py:183 stock/serializers.py:234
 msgid "Purchase currency of this stock item"
-msgstr ""
+msgstr "Moeda de compra deste item de estoque"
 
 #: part/serializers.py:307
 msgid "Original Part"
@@ -5738,86 +5738,86 @@ msgstr "Remova itens LDM existentes antes de copiar"
 
 #: part/serializers.py:1261
 msgid "Include Inherited"
-msgstr ""
+msgstr "Incluir Herdados"
 
 #: part/serializers.py:1262
 msgid "Include BOM items which are inherited from templated parts"
-msgstr ""
+msgstr "Incluir itens LDM que são herdados de peças modelo"
 
 #: part/serializers.py:1267
 msgid "Skip Invalid Rows"
-msgstr ""
+msgstr "Pular Linhas inválidas"
 
 #: part/serializers.py:1268
 msgid "Enable this option to skip invalid rows"
-msgstr ""
+msgstr "Habilitar esta opção para pular linhas inválidas"
 
 #: part/serializers.py:1273
 msgid "Copy Substitute Parts"
-msgstr ""
+msgstr "Copiar Peças Substitutas"
 
 #: part/serializers.py:1274
 msgid "Copy substitute parts when duplicate BOM items"
-msgstr ""
+msgstr "Copiar peças de substitutas quando duplicar itens de LDM"
 
 #: part/serializers.py:1314
 msgid "Clear Existing BOM"
-msgstr ""
+msgstr "Limpar LDM Existente"
 
 #: part/serializers.py:1315
 msgid "Delete existing BOM items before uploading"
-msgstr ""
+msgstr "Apagar itens LDM existentes antes de carregar"
 
 #: part/serializers.py:1345
 msgid "No part column specified"
-msgstr ""
+msgstr "Nenhuma coluna de peça especificada"
 
 #: part/serializers.py:1388
 msgid "Multiple matching parts found"
-msgstr ""
+msgstr "Múltiplas peças correspondentes encontradas"
 
 #: part/serializers.py:1391
 msgid "No matching part found"
-msgstr ""
+msgstr "Nenhuma peça correspondente encontrada"
 
 #: part/serializers.py:1394
 msgid "Part is not designated as a component"
-msgstr ""
+msgstr "Peça não está designada como componente"
 
 #: part/serializers.py:1403
 msgid "Quantity not provided"
-msgstr ""
+msgstr "Quantidade não foi fornecida"
 
 #: part/serializers.py:1411
 msgid "Invalid quantity"
-msgstr ""
+msgstr "Quantidade Inválida"
 
 #: part/serializers.py:1432
 msgid "At least one BOM item is required"
-msgstr ""
+msgstr "Pelo menos um item LDM é necessário"
 
 #: part/tasks.py:36
 msgid "Low stock notification"
-msgstr ""
+msgstr "Notificação de estoque baixo"
 
 #: part/tasks.py:37
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
-msgstr ""
+msgstr "O estoque disponível para {part.name} caiu abaixo do nível mínimo definido"
 
 #: part/tasks.py:289 templates/js/translated/order.js:2512
 #: templates/js/translated/part.js:988 templates/js/translated/part.js:1482
 #: templates/js/translated/part.js:1534
 msgid "Total Quantity"
-msgstr ""
+msgstr "Quantidade Total"
 
 #: part/tasks.py:290
 msgid "Total Cost Min"
-msgstr ""
+msgstr "Custo Min Total"
 
 #: part/tasks.py:291
 msgid "Total Cost Max"
-msgstr ""
+msgstr "Custo Max Total"
 
 #: part/tasks.py:355
 msgid "Stocktake Report Available"
@@ -5829,30 +5829,30 @@ msgstr "Um novo relatório de balanço do estoque está disponível para baixar"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
-msgstr ""
+msgstr "Você não tem permissões para editar a LDM."
 
 #: part/templates/part/bom.html:15
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
-msgstr ""
+msgstr "A LDM para <em>%(part)s</em> foi alterada e deve ser validada.<br>"
 
 #: part/templates/part/bom.html:17
 #, python-format
 msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr ""
+msgstr "A LDM de <em>%(part)s</em> foi verificada pela última vez por %(checker)s em %(check_date)s"
 
 #: part/templates/part/bom.html:21
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr ""
+msgstr "A LDM para <em>%(part)s</em> não foi validada."
 
 #: part/templates/part/bom.html:30 part/templates/part/detail.html:291
 msgid "BOM actions"
-msgstr ""
+msgstr "Ações da LDM"
 
 #: part/templates/part/bom.html:34
 msgid "Delete Items"
-msgstr ""
+msgstr "Excluir itens"
 
 #: part/templates/part/category.html:34
 msgid "Perform stocktake for this part category"
@@ -5860,52 +5860,52 @@ msgstr "Fazer balanço de estoque para esta categoria de peça"
 
 #: part/templates/part/category.html:40 part/templates/part/category.html:44
 msgid "You are subscribed to notifications for this category"
-msgstr ""
+msgstr "Você está inscrito para notificações desta categoria"
 
 #: part/templates/part/category.html:48
 msgid "Subscribe to notifications for this category"
-msgstr ""
+msgstr "Inscrever-se para notificações desta categoria"
 
 #: part/templates/part/category.html:54
 msgid "Category Actions"
-msgstr ""
+msgstr "Ações de Categoria"
 
 #: part/templates/part/category.html:59
 msgid "Edit category"
-msgstr ""
+msgstr "Editar categoria"
 
 #: part/templates/part/category.html:60
 msgid "Edit Category"
-msgstr ""
+msgstr "Editar Categoria"
 
 #: part/templates/part/category.html:64
 msgid "Delete category"
-msgstr ""
+msgstr "Excluir categoria"
 
 #: part/templates/part/category.html:65
 msgid "Delete Category"
-msgstr ""
+msgstr "Excluir Categoria"
 
 #: part/templates/part/category.html:101
 msgid "Top level part category"
-msgstr ""
+msgstr "Categoria de peça de nível superior"
 
 #: part/templates/part/category.html:121 part/templates/part/category.html:230
 #: part/templates/part/category_sidebar.html:7
 msgid "Subcategories"
-msgstr ""
+msgstr "Sub-categorias"
 
 #: part/templates/part/category.html:126
 msgid "Parts (Including subcategories)"
-msgstr ""
+msgstr "Peças (incluindo subcategorias)"
 
 #: part/templates/part/category.html:164
 msgid "Create new part"
-msgstr ""
+msgstr "Criar nova peça"
 
 #: part/templates/part/category.html:165 templates/js/translated/bom.js:413
 msgid "New Part"
-msgstr ""
+msgstr "Nova Peça"
 
 #: part/templates/part/category.html:175 part/templates/part/detail.html:390
 #: part/templates/part/detail.html:421
@@ -5962,7 +5962,7 @@ msgstr "A nova peça pode ser uma duplicata dessas peças existentes"
 #: part/templates/part/create_part.html:17
 #, python-format
 msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
-msgstr ""
+msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% correspondência)"
 
 #: part/templates/part/detail.html:20
 msgid "Part Stock"
@@ -6047,7 +6047,7 @@ msgstr "Imprimir Relatório da LDM"
 
 #: part/templates/part/detail.html:295
 msgid "Upload BOM"
-msgstr ""
+msgstr "Carregar LDM"
 
 #: part/templates/part/detail.html:297
 msgid "Validate BOM"
@@ -6270,43 +6270,43 @@ msgstr ""
 #: part/templates/part/part_base.html:365
 #: stock/templates/stock/item_base.html:334
 msgid "Search for serial number"
-msgstr ""
+msgstr "Procurar por número serial"
 
 #: part/templates/part/part_base.html:453
 msgid "Part QR Code"
-msgstr ""
+msgstr "QR Code da Peça"
 
 #: part/templates/part/part_base.html:470
 msgid "Link Barcode to Part"
-msgstr ""
+msgstr "Vincular Código de Barras à Peça"
 
 #: part/templates/part/part_base.html:516
 msgid "Calculate"
-msgstr ""
+msgstr "Calcular"
 
 #: part/templates/part/part_base.html:533
 msgid "Remove associated image from this part"
-msgstr ""
+msgstr "Remover imagem associada a esta peça"
 
 #: part/templates/part/part_base.html:585
 msgid "No matching images found"
-msgstr ""
+msgstr "Nenhuma imagem correspondente encontrada"
 
 #: part/templates/part/part_base.html:681
 msgid "Hide Part Details"
-msgstr ""
+msgstr "Esconder Detalhes da Peça"
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:73
 #: part/templates/part/prices.html:216 templates/js/translated/pricing.js:469
 msgid "Supplier Pricing"
-msgstr ""
+msgstr "Preço do fornecedor"
 
 #: part/templates/part/part_pricing.html:26
 #: part/templates/part/part_pricing.html:52
 #: part/templates/part/part_pricing.html:95
 #: part/templates/part/part_pricing.html:110
 msgid "Unit Cost"
-msgstr ""
+msgstr "Custo unitário"
 
 #: part/templates/part/part_pricing.html:32
 #: part/templates/part/part_pricing.html:58
@@ -6315,44 +6315,44 @@ msgstr ""
 #: templates/js/translated/order.js:2157 templates/js/translated/order.js:3078
 #: templates/js/translated/part.js:994
 msgid "Total Cost"
-msgstr ""
+msgstr "Custo Total"
 
 #: part/templates/part/part_pricing.html:40
 msgid "No supplier pricing available"
-msgstr ""
+msgstr "Nenhuma informação dos preços do fornecedor disponível"
 
 #: part/templates/part/part_pricing.html:48 part/templates/part/prices.html:87
 #: part/templates/part/prices.html:240
 msgid "BOM Pricing"
-msgstr ""
+msgstr "Preço LDM"
 
 #: part/templates/part/part_pricing.html:66
 msgid "Unit Purchase Price"
-msgstr ""
+msgstr "Preço Unitário de Compra"
 
 #: part/templates/part/part_pricing.html:72
 msgid "Total Purchase Price"
-msgstr ""
+msgstr "Preço Total de Compra"
 
 #: part/templates/part/part_pricing.html:83
 msgid "No BOM pricing available"
-msgstr ""
+msgstr "Preços LDM indisponíveis"
 
 #: part/templates/part/part_pricing.html:92
 msgid "Internal Price"
-msgstr ""
+msgstr "Preço Interno"
 
 #: part/templates/part/part_pricing.html:123
 msgid "No pricing information is available for this part."
-msgstr ""
+msgstr "Nenhuma informação de preço está disponível para esta peça."
 
 #: part/templates/part/part_scheduling.html:14
 msgid "Scheduled Quantity"
-msgstr ""
+msgstr "Quantidade Agendada"
 
 #: part/templates/part/part_sidebar.html:11
 msgid "Variants"
-msgstr ""
+msgstr "Variantes"
 
 #: part/templates/part/part_sidebar.html:14
 #: stock/templates/stock/loc_link.html:3 stock/templates/stock/location.html:24
@@ -6363,32 +6363,32 @@ msgstr ""
 #: templates/js/translated/part.js:1931 templates/js/translated/stock.js:1004
 #: templates/js/translated/stock.js:1835 templates/navbar.html:31
 msgid "Stock"
-msgstr ""
+msgstr "Estoque"
 
 #: part/templates/part/part_sidebar.html:30
 #: templates/InvenTree/settings/sidebar.html:35
 msgid "Pricing"
-msgstr ""
+msgstr "Preços"
 
 #: part/templates/part/part_sidebar.html:44
 msgid "Scheduling"
-msgstr ""
+msgstr "Agendamento"
 
 #: part/templates/part/part_sidebar.html:54
 msgid "Test Templates"
-msgstr ""
+msgstr "Testar Modelos"
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
-msgstr ""
+msgstr "Selecionar de imagens existentes"
 
 #: part/templates/part/prices.html:11
 msgid "Pricing Overview"
-msgstr ""
+msgstr "Resumo de Preços"
 
 #: part/templates/part/prices.html:14
 msgid "Refresh Part Pricing"
-msgstr ""
+msgstr "Atualizar Preço da Peça"
 
 #: part/templates/part/prices.html:25 stock/admin.py:129
 #: stock/templates/stock/item_base.html:443
@@ -6396,96 +6396,96 @@ msgstr ""
 #: templates/js/translated/company.js:1102
 #: templates/js/translated/stock.js:1976
 msgid "Last Updated"
-msgstr ""
+msgstr "Última atualização"
 
 #: part/templates/part/prices.html:34 part/templates/part/prices.html:116
 msgid "Price Category"
-msgstr ""
+msgstr "Categoria de preço"
 
 #: part/templates/part/prices.html:35 part/templates/part/prices.html:117
 msgid "Minimum"
-msgstr ""
+msgstr "Mínimo"
 
 #: part/templates/part/prices.html:36 part/templates/part/prices.html:118
 msgid "Maximum"
-msgstr ""
+msgstr "Máximo"
 
 #: part/templates/part/prices.html:48 part/templates/part/prices.html:163
 msgid "Internal Pricing"
-msgstr ""
+msgstr "Preço Interno"
 
 #: part/templates/part/prices.html:61 part/templates/part/prices.html:195
 msgid "Purchase History"
-msgstr ""
+msgstr "Histórico de Compras"
 
 #: part/templates/part/prices.html:95 part/templates/part/prices.html:264
 msgid "Variant Pricing"
-msgstr ""
+msgstr "Preço Variável"
 
 #: part/templates/part/prices.html:102
 msgid "Overall Pricing"
-msgstr ""
+msgstr "Preços Gerais"
 
 #: part/templates/part/prices.html:138 part/templates/part/prices.html:316
 msgid "Sale History"
-msgstr ""
+msgstr "Histórico de vendas"
 
 #: part/templates/part/prices.html:146
 msgid "Sale price data is not available for this part"
-msgstr ""
+msgstr "Dados de preço de venda não estão disponíveis para esta peça"
 
 #: part/templates/part/prices.html:153
 msgid "Price range data is not available for this part."
-msgstr ""
+msgstr "Dados do intervalo de preços não estão disponíveis para esta peça."
 
 #: part/templates/part/prices.html:164 part/templates/part/prices.html:196
 #: part/templates/part/prices.html:217 part/templates/part/prices.html:241
 #: part/templates/part/prices.html:265 part/templates/part/prices.html:288
 #: part/templates/part/prices.html:317
 msgid "Jump to overview"
-msgstr ""
+msgstr "Ir para visão geral"
 
 #: part/templates/part/prices.html:169
 msgid "Add Internal Price Break"
-msgstr ""
+msgstr "Adicionar intervalo de preço interno"
 
 #: part/templates/part/prices.html:287
 msgid "Sale Pricing"
-msgstr ""
+msgstr "Preço de Venda"
 
 #: part/templates/part/prices.html:293
 msgid "Add Sell Price Break"
-msgstr ""
+msgstr "Adicionar intervalo de preço de venda"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:626
 #: templates/js/translated/part.js:1770 templates/js/translated/part.js:1772
 msgid "No Stock"
-msgstr ""
+msgstr "Sem Estoque"
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:158
 msgid "Low Stock"
-msgstr ""
+msgstr "Estoque Baixo"
 
 #: part/templates/part/upload_bom.html:8
 msgid "Return to BOM"
-msgstr ""
+msgstr "Voltar à LDM"
 
 #: part/templates/part/upload_bom.html:13
 msgid "Upload Bill of Materials"
-msgstr ""
+msgstr "Carregar a Lista de materiais"
 
 #: part/templates/part/upload_bom.html:19
 msgid "BOM upload requirements"
-msgstr ""
+msgstr "Requisitos para carregar LDM"
 
 #: part/templates/part/upload_bom.html:23
 #: part/templates/part/upload_bom.html:90
 msgid "Upload BOM File"
-msgstr ""
+msgstr "Carregar Arquivo LDM"
 
 #: part/templates/part/upload_bom.html:29
 msgid "Submit BOM Data"
-msgstr ""
+msgstr "Enviar Dados LDM"
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
