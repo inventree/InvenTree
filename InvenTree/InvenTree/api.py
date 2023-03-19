@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
+import users.models
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
@@ -241,9 +242,9 @@ class APISearchView(APIView):
             'part': part.api.PartList,
             'partcategory': part.api.CategoryList,
             'purchaseorder': order.api.PurchaseOrderList,
+            'salesorder': order.api.SalesOrderList,
             'stockitem': stock.api.StockList,
             'stocklocation': stock.api.StockLocationList,
-            'salesorder': order.api.SalesOrderList,
         }
 
     def post(self, request, *args, **kwargs):
@@ -292,7 +293,22 @@ class APISearchView(APIView):
                 view.request = request
                 view.format_kwarg = 'format'
 
-                # Update results dict with particular query
-                results[key] = view.list(request, *args, **kwargs).data
+                # Check permissions and update results dict with particular query
+                model = view.serializer_class.Meta.model
+                app_label = model._meta.app_label
+                model_name = model._meta.model_name
+                table = f'{app_label}_{model_name}'
+
+                try:
+                    if users.models.RuleSet.check_table_permission(request.user, table, 'view'):
+                        results[key] = view.list(request, *args, **kwargs).data
+                    else:
+                        results[key] = {
+                            'error': _('User does not have permission to view this model')
+                        }
+                except Exception as exc:
+                    results[key] = {
+                        'error': str(exc)
+                    }
 
         return Response(results)
