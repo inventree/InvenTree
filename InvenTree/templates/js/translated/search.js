@@ -256,7 +256,7 @@ function updateSearch() {
     `);
 
     // Send off the search query
-    searchQuery = inventreePut(
+    searchRequest = inventreePut(
         '{% url "api-search" %}',
         searchQuery,
         {
