@@ -60,6 +60,10 @@ function openSearchPanel() {
 
     var panel = $('#offcanvas-search');
 
+    let search_input = panel.find('#search-input');
+    search_input.find('#search-input').val('');
+    search_input.focus();
+
     clearSearchResults();
 
     // Request user roles if we do not have them
@@ -72,7 +76,7 @@ function openSearchPanel() {
     }
 
     // Callback for text input changed
-    panel.find('#search-input').on('keyup change', searchTextChanged);
+    search_input.on('keyup change', searchTextChanged);
 
     // Callback for "clear search" button
     panel.find('#search-clear').click(function(event) {
@@ -80,7 +84,7 @@ function openSearchPanel() {
         // Prevent this button from actually submitting the form
         event.preventDefault();
 
-        panel.find('#search-input').val('');
+        search_input('#search-input').val('');
         clearSearchResults();
     });
 
@@ -243,6 +247,14 @@ function updateSearch() {
         addSearchQuery('salesorder', '{% trans "Sales Orders" %}', filters);
     }
 
+    let ctx = $('#offcanvas-search').find('#search-context');
+
+    ctx.html(`
+    <div class='alert alert-block alert-secondary'>
+        <span class='fas fa-spinner fa-spin'></span> <em>{% trans "Searching" %}</em>
+    </div>
+    `);
+
     // Send off the search query
     searchQuery = inventreePut(
         '{% url "api-search" %}',
@@ -251,15 +263,29 @@ function updateSearch() {
             method: 'POST',
             success: function(response) {
 
+                let any_results = false;
+
                 searchResultTypes.forEach(function(resultType) {
                     if (resultType.key in response) {
                         let result = response[resultType.key];
 
                         if (result.count != null && result.count > 0 && result.results) {
                             addSearchResults(result.results, resultType);
+
+                            any_results = true;
                         }
                     }
                 });
+
+                if (any_results) {
+                    ctx.html('');
+                } else {
+                    ctx.html(`
+                    <div class='alert alert-block alert-warning'>
+                        <span class='fas fa-exclamation-circle'></span> <em>{% trans "No results" %}</em>
+                    </div>
+                    `);
+                }
             },
             complete: function() {
                 // Hide the "pending" icon
@@ -274,11 +300,13 @@ function clearSearchResults() {
 
     var panel = $('#offcanvas-search');
 
-    // Ensure the 'no results found' element is visible
-    panel.find('#search-no-results').show();
-
-    // Ensure that the 'searching' element is hidden
     panel.find('#search-pending').hide();
+
+    panel.find('#search-context').html(`
+    <div class='alert alert-block alert-info'>
+        <span class='fas fa-search'></span> <em>{% trans "Enter search query" %}</em>
+    </div>
+    `);
 
     // Delete any existing search results
     panel.find('#search-results').empty();
