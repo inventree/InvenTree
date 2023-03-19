@@ -351,7 +351,6 @@ function addSearchResults(results, resultType) {
 
     let key = resultType.key;
     let title = resultType.title;
-    let url = resultType.url;
     let renderer = resultType.renderer;
     let renderParams = resultType.renderParams;
 

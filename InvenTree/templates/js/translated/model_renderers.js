@@ -42,40 +42,40 @@ function getModelRenderer(model) {
 
     // Find a custom renderer
     switch (model) {
-        case 'company':
-            return renderCompany;
-        case 'stockitem':
-            return renderStockItem;
-        case 'stocklocation':
-            return renderStockLocation;
-        case 'part':
-            return renderPart;
-        case 'partcategory':
-            return renderPartCategory;
-        case 'partparametertemplate':
-            return renderPartParameterTemplate;
-        case 'purchaseorder':
-            return renderPurchaseOrder;
-        case 'salesorder':
-            return renderSalesOrder;
-        case 'salesordershipment':
-            return renderSalesOrderShipment;
-        case 'manufacturerpart':
-            return renderManufacturerPart;
-        case 'supplierpart':
-            return renderSupplierPart;
-        case 'build':
-            return renderBuild;
-        case 'owner':
-            return renderOwner;
-        case 'user':
-            return renderUser;
-        case 'group':
-            return renderGroup;
-        default:
-            // Un-handled model type
-            console.error(`Rendering not implemented for model '${model}'`);
-            return null;
+    case 'company':
+        return renderCompany;
+    case 'stockitem':
+        return renderStockItem;
+    case 'stocklocation':
+        return renderStockLocation;
+    case 'part':
+        return renderPart;
+    case 'partcategory':
+        return renderPartCategory;
+    case 'partparametertemplate':
+        return renderPartParameterTemplate;
+    case 'purchaseorder':
+        return renderPurchaseOrder;
+    case 'salesorder':
+        return renderSalesOrder;
+    case 'salesordershipment':
+        return renderSalesOrderShipment;
+    case 'manufacturerpart':
+        return renderManufacturerPart;
+    case 'supplierpart':
+        return renderSupplierPart;
+    case 'build':
+        return renderBuild;
+    case 'owner':
+        return renderOwner;
+    case 'user':
+        return renderUser;
+    case 'group':
+        return renderGroup;
+    default:
+        // Un-handled model type
+        console.error(`Rendering not implemented for model '${model}'`);
+        return null;
     }
 }
 
