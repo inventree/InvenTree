@@ -89,7 +89,7 @@ function getModelRenderer(model) {
  *  - text: Primary text
  *  - pk: primary key (unique ID) of the model instance
  *  - textSecondary: Secondary text
- *  - link: href for link target (is enabled or disabled by showLink option)
+ *  - url: href for link target (is enabled or disabled by showLink option)
  *  - labels: extra labels to display
  *
  * options:
@@ -143,7 +143,7 @@ function renderCompany(data, parameters={}) {
             image: data.image || blankImage(),
             text: data.name,
             textSecondary: shortenString(data.description),
-            link: `/company/${data.pk}/`,
+            url: data.url || `/company/${data.pk}/`,
         },
         parameters
     );
