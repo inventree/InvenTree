@@ -167,7 +167,10 @@ function loadExtraLineTable(options={}) {
     // Helper function to reload table
     function reloadExtraLineTable() {
         $(table).bootstrapTable('refresh');
-        reloadTotal();
+
+        if (options.pricing) {
+            reloadTotal();
+        }
     }
 
     // Configure callback functions once the table is loaded
