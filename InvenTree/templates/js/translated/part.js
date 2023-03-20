@@ -640,7 +640,7 @@ function partStockLabel(part, options={}) {
     var stock_health = part.unallocated_stock + part.building + part.ordering - part.minimum_stock;
 
     // TODO: Refactor the API to include this information, so we don't have to request it!
-    if (!options.noDemandInfo) {
+    if (options.showDemandInfo) {
 
         // Check for demand from unallocated build orders
         var required_build_order_quantity = null;

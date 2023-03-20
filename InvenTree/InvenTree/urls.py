@@ -30,7 +30,7 @@ from stock.api import stock_api_urls
 from stock.urls import stock_urls
 from users.api import user_urls
 
-from .api import InfoView, NotFoundView
+from .api import APISearchView, InfoView, NotFoundView
 from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
                     CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
@@ -43,6 +43,10 @@ admin.site.site_header = "InvenTree Admin"
 
 
 apipatterns = [
+
+    # Global search
+    path('search/', APISearchView.as_view(), name='api-search'),
+
     re_path(r'^settings/', include(settings_api_urls)),
     re_path(r'^part/', include(part_api_urls)),
     re_path(r'^bom/', include(bom_api_urls)),
@@ -58,7 +62,7 @@ apipatterns = [
     # Plugin endpoints
     path('', include(plugin_api_urls)),
 
-    # Webhook enpoint
+    # Webhook endpoints
     path('', include(common_api_urls)),
 
     # InvenTree information endpoint
