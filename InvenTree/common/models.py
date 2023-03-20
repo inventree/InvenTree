@@ -1940,6 +1940,20 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
         },
 
+        'SEARCH_PREVIEW_SHOW_RETURN_ORDERS': {
+            'name': _('Search Return Orders'),
+            'description': _('Display return orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS': {
+            'name': _('Exclude Inactive Return Orders'),
+            'description': _('Exclude inactive return orders from search preview window'),
+            'validator': bool,
+            'default': True,
+        },
+
         'SEARCH_PREVIEW_RESULTS': {
             'name': _('Search Preview Results'),
             'description': _('Number of results to show in each section of the search preview window'),

@@ -15,6 +15,7 @@
     renderOwner,
     renderPart,
     renderPartCategory,
+    renderReturnOrder,
     renderStockItem,
     renderStockLocation,
     renderSupplierPart,
@@ -58,6 +59,8 @@ function getModelRenderer(model) {
         return renderPurchaseOrder;
     case 'salesorder':
         return renderSalesOrder;
+    case 'returnorder':
+        return renderReturnOrder;
     case 'salesordershipment':
         return renderSalesOrderShipment;
     case 'manufacturerpart':
@@ -356,6 +359,26 @@ function renderSalesOrder(data, parameters={}) {
             url: data.url || `/order/sales-order/${data.pk}/`,
         },
         parameters
+    );
+}
+
+
+// Renderer for "ReturnOrder" model
+function renderReturnOrder(data, parameters={}) {
+    let image = blankImage();
+
+    if (data.customer_detail) {
+        image = data.customer_detail.thumbnail || data.customer_detail.image || blankImage();
+    }
+
+    return renderModel(
+        {
+            image: image,
+            text: `${data.reference} - ${data.customer_detail.name}`,
+            textSecondary: shortenString(data.description),
+            url: data.url || `/order/return-order/${data.pk}/`,
+        },
+        parameters,
     );
 }
 
