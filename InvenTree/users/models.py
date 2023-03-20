@@ -261,8 +261,7 @@ class RuleSet(models.Model):
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
-
-        logger.info(f"User '{name}' failed permission check for {table}.{permission}")
+        logger.debug(f"User '{name}' failed permission check for {table}.{permission}")
 
         return False
 
@@ -451,7 +450,7 @@ def update_group_roles(group, debug=False):
             group.permissions.add(permission)
 
         if debug:  # pragma: no cover
-            logger.info(f"Adding permission {perm} to group {group.name}")
+            logger.debug(f"Adding permission {perm} to group {group.name}")
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -466,7 +465,7 @@ def update_group_roles(group, debug=False):
             group.permissions.remove(permission)
 
         if debug:  # pragma: no cover
-            logger.info(f"Removing permission {perm} from group {group.name}")
+            logger.debug(f"Removing permission {perm} from group {group.name}")
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
@@ -488,7 +487,7 @@ def update_group_roles(group, debug=False):
                     permission = get_permission_object(child_perm)
                     if permission:
                         group.permissions.add(permission)
-                        logger.info(f"Adding permission {child_perm} to group {group.name}")
+                        logger.debug(f"Adding permission {child_perm} to group {group.name}")
 
 
 def clear_user_role_cache(user):

@@ -2463,6 +2463,18 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 },
             },
             {
+                sortable: false,
+                field: 'supplier_part_detail.link',
+                title: '{% trans "Link" %}',
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, value);
+                    } else {
+                        return '';
+                    }
+                },
+            },
+            {
                 sortable: true,
                 sortName: 'MPN',
                 field: 'supplier_part_detail.manufacturer_part_detail.MPN',
