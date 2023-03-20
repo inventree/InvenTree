@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-17 04:40+0000\n"
-"PO-Revision-Date: 2023-03-17 08:03\n"
+"POT-Creation-Date: 2023-03-19 20:22+0000\n"
+"PO-Revision-Date: 2023-03-20 12:05\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -17,9 +17,13 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
-#: InvenTree/api.py:61
+#: InvenTree/api.py:63
 msgid "API endpoint not found"
 msgstr "API eindpunt niet gevonden"
+
+#: InvenTree/api.py:307
+msgid "User does not have permission to view this model"
+msgstr ""
 
 #: InvenTree/exceptions.py:79
 msgid "Error details can be found in the admin panel"
@@ -775,7 +779,7 @@ msgstr "Productieorder"
 #: part/templates/part/part_sidebar.html:22 templates/InvenTree/index.html:221
 #: templates/InvenTree/search.html:141
 #: templates/InvenTree/settings/sidebar.html:49
-#: templates/js/translated/search.js:254 users/models.py:42
+#: templates/js/translated/search.js:214 users/models.py:42
 msgid "Build Orders"
 msgstr "Productieorders"
 
@@ -1081,7 +1085,7 @@ msgstr "Bron voorraadartikel"
 #: templates/js/translated/build.js:1255 templates/js/translated/build.js:1760
 #: templates/js/translated/build.js:2238
 #: templates/js/translated/company.js:1214
-#: templates/js/translated/model_renderers.js:132
+#: templates/js/translated/model_renderers.js:187
 #: templates/js/translated/order.js:128 templates/js/translated/order.js:1268
 #: templates/js/translated/order.js:2260 templates/js/translated/order.js:2499
 #: templates/js/translated/order.js:2722 templates/js/translated/order.js:3405
@@ -1527,7 +1531,7 @@ msgstr "Toegewezen Onderdelen"
 #: build/templates/build/detail.html:80 stock/admin.py:105
 #: stock/templates/stock/item_base.html:168
 #: templates/js/translated/build.js:1262
-#: templates/js/translated/model_renderers.js:137
+#: templates/js/translated/model_renderers.js:192
 #: templates/js/translated/stock.js:1075 templates/js/translated/stock.js:1920
 #: templates/js/translated/stock.js:2935
 #: templates/js/translated/table_filters.js:183
@@ -3397,7 +3401,7 @@ msgstr "Order meerdere"
 #: templates/email/low_stock_notification.html:18
 #: templates/js/translated/bom.js:1125 templates/js/translated/build.js:1907
 #: templates/js/translated/build.js:2816
-#: templates/js/translated/model_renderers.js:130
+#: templates/js/translated/model_renderers.js:185
 #: templates/js/translated/part.js:614 templates/js/translated/part.js:616
 #: templates/js/translated/part.js:621
 #: templates/js/translated/table_filters.js:210
@@ -3509,7 +3513,7 @@ msgstr "Afbeelding Downloaden"
 
 #: company/templates/company/detail.html:14
 #: company/templates/company/manufacturer_part_sidebar.html:7
-#: templates/InvenTree/search.html:120 templates/js/translated/search.js:172
+#: templates/InvenTree/search.html:120 templates/js/translated/search.js:175
 msgid "Supplier Parts"
 msgstr ""
 
@@ -3540,7 +3544,7 @@ msgid "Delete Parts"
 msgstr "Verwijder Onderdelen"
 
 #: company/templates/company/detail.html:61 templates/InvenTree/search.html:105
-#: templates/js/translated/search.js:185
+#: templates/js/translated/search.js:179
 msgid "Manufacturer Parts"
 msgstr "Fabrikant onderdelen"
 
@@ -3565,7 +3569,7 @@ msgstr ""
 #: part/templates/part/detail.html:108 part/templates/part/part_sidebar.html:35
 #: templates/InvenTree/index.html:252 templates/InvenTree/search.html:200
 #: templates/InvenTree/settings/sidebar.html:51
-#: templates/js/translated/search.js:293 templates/navbar.html:50
+#: templates/js/translated/search.js:233 templates/navbar.html:50
 #: users/models.py:43
 msgid "Purchase Orders"
 msgstr "Inkooporders"
@@ -3588,7 +3592,7 @@ msgstr "Nieuwe Inkooporder"
 #: part/templates/part/detail.html:131 part/templates/part/part_sidebar.html:39
 #: templates/InvenTree/index.html:283 templates/InvenTree/search.html:220
 #: templates/InvenTree/settings/sidebar.html:53
-#: templates/js/translated/search.js:317 templates/navbar.html:61
+#: templates/js/translated/search.js:247 templates/navbar.html:61
 #: users/models.py:44
 msgid "Sales Orders"
 msgstr "Verkooporders"
@@ -3657,7 +3661,7 @@ msgstr "Verwijder leveranciersonderdelen"
 #: company/templates/company/manufacturer_part.html:136
 #: company/templates/company/manufacturer_part.html:183
 #: part/templates/part/detail.html:393 part/templates/part/detail.html:423
-#: templates/js/translated/forms.js:510 templates/js/translated/helpers.js:47
+#: templates/js/translated/forms.js:499 templates/js/translated/helpers.js:47
 #: templates/js/translated/part.js:314 templates/js/translated/stock.js:188
 #: users/models.py:231
 msgid "Delete"
@@ -3835,7 +3839,7 @@ msgstr ""
 #: stock/templates/stock/location.html:200
 #: stock/templates/stock/location_sidebar.html:7
 #: templates/InvenTree/search.html:155 templates/js/translated/part.js:982
-#: templates/js/translated/search.js:225 templates/js/translated/stock.js:2619
+#: templates/js/translated/search.js:200 templates/js/translated/stock.js:2619
 #: users/models.py:41
 msgid "Stock Items"
 msgstr "Voorraadartikelen"
@@ -3861,7 +3865,7 @@ msgstr "Klanten"
 msgid "New Customer"
 msgstr "Nieuwe Klant"
 
-#: company/views.py:52 templates/js/translated/search.js:270
+#: company/views.py:52 templates/js/translated/search.js:220
 msgid "Companies"
 msgstr "Bedrijven"
 
@@ -4185,7 +4189,7 @@ msgid "User who checked this shipment"
 msgstr "Gebruiker die deze zending gecontroleerd heeft"
 
 #: order/models.py:1313 order/models.py:1498 order/serializers.py:1200
-#: order/serializers.py:1328 templates/js/translated/model_renderers.js:338
+#: order/serializers.py:1328 templates/js/translated/model_renderers.js:369
 msgid "Shipment"
 msgstr "Zending"
 
@@ -4727,7 +4731,7 @@ msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr "{part} stukprijs bijgewerkt naar {price} en aantal naar {qty}"
 
 #: part/admin.py:33 part/admin.py:273 part/models.py:3459 part/tasks.py:283
-#: stock/admin.py:101 templates/js/translated/model_renderers.js:225
+#: stock/admin.py:101
 msgid "Part ID"
 msgstr ""
 
@@ -4758,7 +4762,6 @@ msgid "Keywords"
 msgstr ""
 
 #: part/admin.py:42 part/admin.py:192 part/tasks.py:286
-#: templates/js/translated/model_renderers.js:362
 msgid "Category ID"
 msgstr ""
 
@@ -4833,7 +4836,7 @@ msgstr ""
 #: part/templates/part/category_sidebar.html:9
 #: templates/InvenTree/index.html:85 templates/InvenTree/search.html:84
 #: templates/InvenTree/settings/sidebar.html:43
-#: templates/js/translated/part.js:2423 templates/js/translated/search.js:146
+#: templates/js/translated/part.js:2423 templates/js/translated/search.js:158
 #: templates/navbar.html:24 users/models.py:38
 msgid "Parts"
 msgstr ""
@@ -4916,7 +4919,7 @@ msgid "Part Category"
 msgstr ""
 
 #: part/models.py:73 part/templates/part/category.html:135
-#: templates/InvenTree/search.html:97 templates/js/translated/search.js:200
+#: templates/InvenTree/search.html:97 templates/js/translated/search.js:186
 #: users/models.py:37
 msgid "Part Categories"
 msgstr ""
@@ -6223,7 +6226,7 @@ msgstr ""
 #: part/templates/part/part_base.html:148
 #: templates/js/translated/company.js:714
 #: templates/js/translated/company.js:975
-#: templates/js/translated/model_renderers.js:217
+#: templates/js/translated/model_renderers.js:253
 #: templates/js/translated/part.js:736 templates/js/translated/part.js:1149
 msgid "Inactive"
 msgstr ""
@@ -6909,7 +6912,7 @@ msgstr ""
 #: stock/models.py:719 stock/templates/stock/item_base.html:323
 #: templates/js/translated/build.js:479 templates/js/translated/build.js:640
 #: templates/js/translated/build.js:1253 templates/js/translated/build.js:1758
-#: templates/js/translated/model_renderers.js:126
+#: templates/js/translated/model_renderers.js:181
 #: templates/js/translated/order.js:126 templates/js/translated/order.js:3815
 #: templates/js/translated/order.js:3902 templates/js/translated/stock.js:528
 msgid "Serial Number"
@@ -6949,7 +6952,6 @@ msgid "Serial"
 msgstr ""
 
 #: stock/admin.py:39 stock/admin.py:108
-#: templates/js/translated/model_renderers.js:172
 msgid "Location ID"
 msgstr ""
 
@@ -6970,7 +6972,7 @@ msgstr ""
 msgid "Status Code"
 msgstr ""
 
-#: stock/admin.py:110 templates/js/translated/model_renderers.js:447
+#: stock/admin.py:110
 msgid "Supplier Part ID"
 msgstr ""
 
@@ -6991,7 +6993,7 @@ msgstr ""
 msgid "Installed In"
 msgstr ""
 
-#: stock/admin.py:115 templates/js/translated/model_renderers.js:190
+#: stock/admin.py:115
 msgid "Build ID"
 msgstr ""
 
@@ -7040,7 +7042,7 @@ msgid "Stock Location"
 msgstr "Voorraadlocatie"
 
 #: stock/models.py:54 stock/templates/stock/location.html:183
-#: templates/InvenTree/search.html:167 templates/js/translated/search.js:240
+#: templates/InvenTree/search.html:167 templates/js/translated/search.js:206
 #: users/models.py:40
 msgid "Stock Locations"
 msgstr "Voorraadlocaties"
@@ -8613,7 +8615,7 @@ msgstr ""
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr ""
 
-#: templates/account/email_confirm.html:22 templates/js/translated/forms.js:713
+#: templates/account/email_confirm.html:22 templates/js/translated/forms.js:702
 msgid "Confirm"
 msgstr "Bevestigen"
 
@@ -9716,61 +9718,61 @@ msgstr ""
 msgid "Create filter"
 msgstr ""
 
-#: templates/js/translated/forms.js:373 templates/js/translated/forms.js:388
-#: templates/js/translated/forms.js:402 templates/js/translated/forms.js:416
+#: templates/js/translated/forms.js:362 templates/js/translated/forms.js:377
+#: templates/js/translated/forms.js:391 templates/js/translated/forms.js:405
 msgid "Action Prohibited"
 msgstr ""
 
-#: templates/js/translated/forms.js:375
+#: templates/js/translated/forms.js:364
 msgid "Create operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:390
+#: templates/js/translated/forms.js:379
 msgid "Update operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:404
+#: templates/js/translated/forms.js:393
 msgid "Delete operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:418
+#: templates/js/translated/forms.js:407
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:739
+#: templates/js/translated/forms.js:728
 msgid "Keep this form open"
 msgstr ""
 
-#: templates/js/translated/forms.js:840
+#: templates/js/translated/forms.js:829
 msgid "Enter a valid number"
 msgstr ""
 
-#: templates/js/translated/forms.js:1346 templates/modals.html:19
+#: templates/js/translated/forms.js:1335 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1800
+#: templates/js/translated/forms.js:1789
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:2016 templates/search.html:29
+#: templates/js/translated/forms.js:2005 templates/js/translated/search.js:254
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:2274
+#: templates/js/translated/forms.js:2210
 msgid "Clear input"
 msgstr ""
 
-#: templates/js/translated/forms.js:2730
+#: templates/js/translated/forms.js:2666
 msgid "File Column"
 msgstr ""
 
-#: templates/js/translated/forms.js:2730
+#: templates/js/translated/forms.js:2666
 msgid "Field Name"
 msgstr ""
 
-#: templates/js/translated/forms.js:2742
+#: templates/js/translated/forms.js:2678
 msgid "Select Columns"
 msgstr ""
 
@@ -9902,28 +9904,6 @@ msgstr ""
 #: templates/js/translated/modals.js:1139
 msgid "Error requesting form data"
 msgstr ""
-
-#: templates/js/translated/model_renderers.js:74
-msgid "Company ID"
-msgstr ""
-
-#: templates/js/translated/model_renderers.js:146
-msgid "Stock ID"
-msgstr ""
-
-#: templates/js/translated/model_renderers.js:302
-#: templates/js/translated/model_renderers.js:327
-msgid "Order ID"
-msgstr "Order-ID"
-
-#: templates/js/translated/model_renderers.js:340
-#: templates/js/translated/model_renderers.js:344
-msgid "Shipment ID"
-msgstr ""
-
-#: templates/js/translated/model_renderers.js:410
-msgid "Manufacturer Part ID"
-msgstr "Onderdeelnummer Fabrikant"
 
 #: templates/js/translated/news.js:24
 msgid "No news found"
@@ -10791,11 +10771,19 @@ msgstr "Selecteer Verkooporders"
 msgid "Sales Order(s) must be selected before printing report"
 msgstr "Verkooporder(s) moeten geselecteerd zijn voordat u rapport afdrukt"
 
-#: templates/js/translated/search.js:410
+#: templates/js/translated/search.js:285
+msgid "No results"
+msgstr ""
+
+#: templates/js/translated/search.js:307 templates/search.html:25
+msgid "Enter search query"
+msgstr ""
+
+#: templates/js/translated/search.js:365
 msgid "Minimize results"
 msgstr ""
 
-#: templates/js/translated/search.js:413
+#: templates/js/translated/search.js:368
 msgid "Remove results"
 msgstr ""
 
@@ -11561,16 +11549,8 @@ msgstr ""
 msgid "Clear search"
 msgstr ""
 
-#: templates/search.html:16
-msgid "Filter results"
-msgstr ""
-
-#: templates/search.html:20
+#: templates/search.html:15
 msgid "Close search menu"
-msgstr ""
-
-#: templates/search.html:35
-msgid "No search results"
 msgstr ""
 
 #: templates/socialaccount/authentication_error.html:5
