@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-19 20:22+0000\n"
-"PO-Revision-Date: 2023-03-20 12:05\n"
+"PO-Revision-Date: 2023-03-21 12:07\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -23,7 +23,7 @@ msgstr "API-Endpunkt nicht gefunden"
 
 #: InvenTree/api.py:307
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "Benutzer hat keine Berechtigung, dieses Modell anzuzeigen"
 
 #: InvenTree/exceptions.py:79
 msgid "Error details can be found in the admin panel"
@@ -1885,11 +1885,11 @@ msgstr "Standard Ebene für Baumansicht. Tiefere Ebenen kann bei Bedarf nachgela
 
 #: common/models.py:988
 msgid "Update Check Inverval"
-msgstr "Update Check Intervall"
+msgstr "Intervall für die Suche nach Updates"
 
 #: common/models.py:989
 msgid "How often to check for updates (set to zero to disable)"
-msgstr "Wie oft soll nach Updates gesucht werden? (0 zum Deaktivieren eingeben)"
+msgstr "Wie oft soll nach Updates gesucht werden? (auf 0 setzen zum Deaktivieren)"
 
 #: common/models.py:995 common/models.py:1013 common/models.py:1020
 #: common/models.py:1031 common/models.py:1042 common/models.py:1255
@@ -1963,11 +1963,11 @@ msgstr "Barcode-Scannen über Webcam im Browser erlauben"
 
 #: common/models.py:1075
 msgid "Part Revisions"
-msgstr ""
+msgstr "Artikelrevisionen"
 
 #: common/models.py:1076
 msgid "Enable revision field for Part"
-msgstr ""
+msgstr "Revisions-Feld für Artikel aktivieren"
 
 #: common/models.py:1082
 msgid "IPN Regex"
@@ -5508,7 +5508,7 @@ msgstr "überprüft"
 
 #: part/models.py:3603
 msgid "This BOM item has been validated"
-msgstr ""
+msgstr "Diese Stücklistenposition wurde validiert"
 
 #: part/models.py:3608 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1022
@@ -10773,11 +10773,11 @@ msgstr "Auftrag muss vor dem Berichtsdruck ausgewählt werden"
 
 #: templates/js/translated/search.js:285
 msgid "No results"
-msgstr ""
+msgstr "Keine Ergebnisse"
 
 #: templates/js/translated/search.js:307 templates/search.html:25
 msgid "Enter search query"
-msgstr ""
+msgstr "Suchbegriff eingeben"
 
 #: templates/js/translated/search.js:365
 msgid "Minimize results"
