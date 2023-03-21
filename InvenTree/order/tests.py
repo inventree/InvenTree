@@ -18,7 +18,8 @@ from part.models import Part
 from stock.models import StockItem, StockLocation
 from users.models import Owner
 
-from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderExtraLine
+from .models import (PurchaseOrder, PurchaseOrderExtraLine,
+                     PurchaseOrderLineItem)
 
 
 class OrderTest(TestCase):
