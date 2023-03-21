@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from InvenTree.helpers import InvenTreeTestCase
 
-from .models import Build, BuildItem
+from .models import Build
 from stock.models import StockItem
 
 from InvenTree.status_codes import BuildStatus
