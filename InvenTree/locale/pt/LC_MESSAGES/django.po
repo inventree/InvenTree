@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-19 20:22+0000\n"
-"PO-Revision-Date: 2023-03-20 12:05\n"
+"PO-Revision-Date: 2023-03-21 12:07\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -6083,145 +6083,145 @@ msgstr "Fabricantes da peça"
 
 #: part/templates/part/detail.html:423
 msgid "Delete manufacturer parts"
-msgstr ""
+msgstr "Apagar peças do fabricante"
 
 #: part/templates/part/detail.html:703
 msgid "Related Part"
-msgstr ""
+msgstr "Peça Relacionada"
 
 #: part/templates/part/detail.html:711
 msgid "Add Related Part"
-msgstr ""
+msgstr "Adicionar peça relacionada"
 
 #: part/templates/part/detail.html:799
 msgid "Add Test Result Template"
-msgstr ""
+msgstr "Adicionar Modelo de Resultado de Teste"
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:14
 msgid "Insufficient privileges."
-msgstr ""
+msgstr "Permissões insuficientes."
 
 #: part/templates/part/import_wizard/part_upload.html:8
 msgid "Return to Parts"
-msgstr ""
+msgstr "Retornar para Peças"
 
 #: part/templates/part/import_wizard/part_upload.html:13
 msgid "Import Parts from File"
-msgstr ""
+msgstr "Importar Peças de um Arquivo"
 
 #: part/templates/part/import_wizard/part_upload.html:31
 msgid "Requirements for part import"
-msgstr ""
+msgstr "Requerimentos para importar peça"
 
 #: part/templates/part/import_wizard/part_upload.html:33
 msgid "The part import file must contain the required named columns as provided in the "
-msgstr ""
+msgstr "O arquivo para importar peças deve conter as colunas nomeadas como fornecido na "
 
 #: part/templates/part/import_wizard/part_upload.html:33
 msgid "Part Import Template"
-msgstr ""
+msgstr "Modelo de importação de Peças"
 
 #: part/templates/part/import_wizard/part_upload.html:89
 msgid "Download Part Import Template"
-msgstr ""
+msgstr "Baixar Modelo de Importação de Peça"
 
 #: part/templates/part/import_wizard/part_upload.html:92
 #: templates/js/translated/bom.js:278 templates/js/translated/bom.js:312
 #: templates/js/translated/order.js:1087 templates/js/translated/tables.js:168
 msgid "Format"
-msgstr ""
+msgstr "Formato"
 
 #: part/templates/part/import_wizard/part_upload.html:93
 #: templates/js/translated/bom.js:279 templates/js/translated/bom.js:313
 #: templates/js/translated/order.js:1088
 msgid "Select file format"
-msgstr ""
+msgstr "Selecione o formato de arquivo"
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
-msgstr ""
+msgstr "Lista de Peças"
 
 #: part/templates/part/part_base.html:27 part/templates/part/part_base.html:31
 msgid "You are subscribed to notifications for this part"
-msgstr ""
+msgstr "Você está inscrito para notificações desta peça"
 
 #: part/templates/part/part_base.html:35
 msgid "Subscribe to notifications for this part"
-msgstr ""
+msgstr "Inscrever-se para notificações desta peça"
 
 #: part/templates/part/part_base.html:49
 msgid "Unink Barcode"
-msgstr ""
+msgstr "Desatribuir Código de Barras"
 
 #: part/templates/part/part_base.html:54
 #: stock/templates/stock/item_base.html:63
 #: stock/templates/stock/location.html:73
 msgid "Print Label"
-msgstr ""
+msgstr "Imprimir Etiqueta"
 
 #: part/templates/part/part_base.html:60
 msgid "Show pricing information"
-msgstr ""
+msgstr "Mostrar informações de preços"
 
 #: part/templates/part/part_base.html:65
 #: stock/templates/stock/item_base.html:111
 #: stock/templates/stock/location.html:81
 msgid "Stock actions"
-msgstr ""
+msgstr "Ações de Estoque"
 
 #: part/templates/part/part_base.html:72
 msgid "Count part stock"
-msgstr ""
+msgstr "Contagem peça em estoque"
 
 #: part/templates/part/part_base.html:78
 msgid "Transfer part stock"
-msgstr ""
+msgstr "Transferir estoque de peça"
 
 #: part/templates/part/part_base.html:93
 msgid "Part actions"
-msgstr ""
+msgstr "Ações de peça"
 
 #: part/templates/part/part_base.html:96
 msgid "Duplicate part"
-msgstr ""
+msgstr "Peça duplicada"
 
 #: part/templates/part/part_base.html:99
 msgid "Edit part"
-msgstr ""
+msgstr "Editar peça"
 
 #: part/templates/part/part_base.html:102
 msgid "Delete part"
-msgstr ""
+msgstr "Excluir peça"
 
 #: part/templates/part/part_base.html:121
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "Esta é uma peça modelo (as variantes podem ser feitas a partir desta peça)"
 
 #: part/templates/part/part_base.html:125
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "Peças pode ser montada a partir de outras peças"
 
 #: part/templates/part/part_base.html:129
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "Peça pode ser usada em montagens"
 
 #: part/templates/part/part_base.html:133
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "Peça em estoque é controlada por número de série"
 
 #: part/templates/part/part_base.html:137
 msgid "Part can be purchased from external suppliers"
-msgstr ""
+msgstr "Peça pode ser comprada de fornecedores externos"
 
 #: part/templates/part/part_base.html:141
 msgid "Part can be sold to customers"
-msgstr ""
+msgstr "Peça pode ser vendida a clientes"
 
 #: part/templates/part/part_base.html:147
 #: part/templates/part/part_base.html:155
 msgid "Part is virtual (not a physical part)"
-msgstr ""
+msgstr "Peça é virtual (não é algo físico)"
 
 #: part/templates/part/part_base.html:148
 #: templates/js/translated/company.js:714
@@ -6229,46 +6229,46 @@ msgstr ""
 #: templates/js/translated/model_renderers.js:253
 #: templates/js/translated/part.js:736 templates/js/translated/part.js:1149
 msgid "Inactive"
-msgstr ""
+msgstr "Inativo"
 
 #: part/templates/part/part_base.html:165
 #: part/templates/part/part_base.html:687
 msgid "Show Part Details"
-msgstr ""
+msgstr "Mostrar Detalhes de Peça"
 
 #: part/templates/part/part_base.html:183
 #, python-format
 msgid "This part is a variant of %(link)s"
-msgstr ""
+msgstr "Esta peça é uma variante de %(link)s"
 
 #: part/templates/part/part_base.html:221
 #: stock/templates/stock/item_base.html:385
 msgid "Allocated to Build Orders"
-msgstr ""
+msgstr "Alocado para Pedidos de Construção"
 
 #: part/templates/part/part_base.html:230
 #: stock/templates/stock/item_base.html:378
 msgid "Allocated to Sales Orders"
-msgstr ""
+msgstr "Alocado para Pedidos de Venda"
 
 #: part/templates/part/part_base.html:238 templates/js/translated/bom.js:1173
 msgid "Can Build"
-msgstr ""
+msgstr "Pode Produzir"
 
 #: part/templates/part/part_base.html:294
 msgid "Minimum stock level"
-msgstr ""
+msgstr "Nível mínimo de estoque"
 
 #: part/templates/part/part_base.html:331 templates/js/translated/bom.js:1039
 #: templates/js/translated/part.js:1195 templates/js/translated/part.js:1951
 #: templates/js/translated/pricing.js:375
 #: templates/js/translated/pricing.js:1021
 msgid "Price Range"
-msgstr ""
+msgstr "Faixa de Preço"
 
 #: part/templates/part/part_base.html:361
 msgid "Latest Serial Number"
-msgstr ""
+msgstr "Último Número de Série"
 
 #: part/templates/part/part_base.html:365
 #: stock/templates/stock/item_base.html:334
@@ -6492,7 +6492,7 @@ msgstr "Enviar Dados LDM"
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
-msgstr ""
+msgstr "Requisitos para carregar a LDM"
 
 #: part/templates/part/upload_bom.html:39
 msgid "The BOM file must contain the required named columns as provided in the "
@@ -6666,222 +6666,222 @@ msgstr ""
 
 #: plugin/models.py:101
 msgid "Is the plugin active"
-msgstr ""
+msgstr "O plug-in está ativo"
 
 #: plugin/models.py:133 templates/InvenTree/settings/plugin_details.html:47
 msgid "Unvailable"
-msgstr ""
+msgstr "Indisponível"
 
 #: plugin/models.py:164
 msgid "Sample plugin"
-msgstr ""
+msgstr "Plug-in de exemplo"
 
 #: plugin/models.py:173
 msgid "Builtin Plugin"
-msgstr ""
+msgstr "Plugin embutido"
 
 #: plugin/models.py:198 templates/InvenTree/settings/plugin_settings.html:10
 msgid "Plugin"
-msgstr ""
+msgstr "Extensões"
 
 #: plugin/models.py:263
 msgid "Method"
-msgstr ""
+msgstr "Método"
 
 #: plugin/plugin.py:257
 msgid "No author found"
-msgstr ""
+msgstr "Nenhum autor encontrado"
 
 #: plugin/plugin.py:269
 msgid "No date found"
-msgstr ""
+msgstr "Nenhum dado encontrado"
 
 #: plugin/registry.py:450
 msgid "Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!"
-msgstr ""
+msgstr "O plugin `{plg_name}` não é compatível com a versão atual do InvenTree {version.inventreeVersion()}!"
 
 #: plugin/registry.py:452
 #, python-brace-format
 msgid "Plugin requires at least version {plg_i.MIN_VERSION}"
-msgstr ""
+msgstr "Extensão requer pelo menos a versão {plg_i.MIN_VERSION}"
 
 #: plugin/registry.py:454
 #, python-brace-format
 msgid "Plugin requires at most version {plg_i.MAX_VERSION}"
-msgstr ""
+msgstr "Extensão requer no máximo a versão {plg_i.MAX_VERSION}"
 
 #: plugin/samples/integration/sample.py:39
 msgid "Enable PO"
-msgstr ""
+msgstr "Ativar PO"
 
 #: plugin/samples/integration/sample.py:40
 msgid "Enable PO functionality in InvenTree interface"
-msgstr ""
+msgstr "Ativar a funcionalidade PO na interface InvenTree"
 
 #: plugin/samples/integration/sample.py:45
 msgid "API Key"
-msgstr ""
+msgstr "Chave API"
 
 #: plugin/samples/integration/sample.py:46
 msgid "Key required for accessing external API"
-msgstr ""
+msgstr "Chave necessária para acesso à API externa"
 
 #: plugin/samples/integration/sample.py:49
 msgid "Numerical"
-msgstr ""
+msgstr "Numérico"
 
 #: plugin/samples/integration/sample.py:50
 msgid "A numerical setting"
-msgstr ""
+msgstr "Uma configuração numérica"
 
 #: plugin/samples/integration/sample.py:55
 msgid "Choice Setting"
-msgstr ""
+msgstr "Configurações de Escolha"
 
 #: plugin/samples/integration/sample.py:56
 msgid "A setting with multiple choices"
-msgstr ""
+msgstr "Uma configuração com várias escolhas"
 
 #: plugin/serializers.py:81
 msgid "Source URL"
-msgstr ""
+msgstr "URL de origem"
 
 #: plugin/serializers.py:82
 msgid "Source for the package - this can be a custom registry or a VCS path"
-msgstr ""
+msgstr "Fonte do pacote — este pode ser um registro personalizado ou um caminho de VCS"
 
 #: plugin/serializers.py:87
 msgid "Package Name"
-msgstr ""
+msgstr "Nome do Pacote"
 
 #: plugin/serializers.py:88
 msgid "Name for the Plugin Package - can also contain a version indicator"
-msgstr ""
+msgstr "Nome para o Pacote da Extensão — também pode conter um indicador de versão"
 
 #: plugin/serializers.py:91
 msgid "Confirm plugin installation"
-msgstr ""
+msgstr "Confirmar instalação da extensão"
 
 #: plugin/serializers.py:92
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
-msgstr ""
+msgstr "Isto instalará a extensão agora na instância atual. A instância irá entrar em manutenção."
 
 #: plugin/serializers.py:104
 msgid "Installation not confirmed"
-msgstr ""
+msgstr "Instalação não confirmada"
 
 #: plugin/serializers.py:106
 msgid "Either packagename of URL must be provided"
-msgstr ""
+msgstr "Qualquer nome do pacote URL deve ser fornecido"
 
 #: report/api.py:169
 msgid "No valid objects provided to template"
-msgstr ""
+msgstr "Nenhum objeto válido fornecido para o modelo"
 
 #: report/api.py:205 report/api.py:241
 #, python-brace-format
 msgid "Template file '{template}' is missing or does not exist"
-msgstr ""
+msgstr "Arquivo modelo '{template}' perdido ou não existe"
 
 #: report/api.py:305
 msgid "Test report"
-msgstr ""
+msgstr "Relatório de teste"
 
 #: report/models.py:153
 msgid "Template name"
-msgstr ""
+msgstr "Nome do modelo"
 
 #: report/models.py:159
 msgid "Report template file"
-msgstr ""
+msgstr "Arquivo modelo de relatório"
 
 #: report/models.py:166
 msgid "Report template description"
-msgstr ""
+msgstr "Descrição do modelo de relatório"
 
 #: report/models.py:172
 msgid "Report revision number (auto-increments)"
-msgstr ""
+msgstr "Relatar número de revisão (auto-incrementos)"
 
 #: report/models.py:252
 msgid "Pattern for generating report filenames"
-msgstr ""
+msgstr "Padrão para gerar nomes de arquivo de relatórios"
 
 #: report/models.py:259
 msgid "Report template is enabled"
-msgstr ""
+msgstr "Modelo de relatório Habilitado"
 
 #: report/models.py:280
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
-msgstr ""
+msgstr "Filtros de consulta de itens de estoque(lista de valores separados por vírgula)"
 
 #: report/models.py:288
 msgid "Include Installed Tests"
-msgstr ""
+msgstr "Incluir testes instalados"
 
 #: report/models.py:289
 msgid "Include test results for stock items installed inside assembled item"
-msgstr ""
+msgstr "Incluir resultados de testes para itens de estoque instalados dentro de item montado"
 
 #: report/models.py:336
 msgid "Build Filters"
-msgstr ""
+msgstr "Filtros de Produção"
 
 #: report/models.py:337
 msgid "Build query filters (comma-separated list of key=value pairs"
-msgstr ""
+msgstr "Filtros de consulta de produção (lista de valores separados por vírgula"
 
 #: report/models.py:376
 msgid "Part Filters"
-msgstr ""
+msgstr "Filtros de Peças"
 
 #: report/models.py:377
 msgid "Part query filters (comma-separated list of key=value pairs"
-msgstr ""
+msgstr "Filtros de consulta de peças (lista de valores separados por vírgula"
 
 #: report/models.py:411
 msgid "Purchase order query filters"
-msgstr ""
+msgstr "Filtros de consultas de pedidos de compra"
 
 #: report/models.py:449
 msgid "Sales order query filters"
-msgstr ""
+msgstr "Filtros de consultas de pedidos de venda"
 
 #: report/models.py:501
 msgid "Snippet"
-msgstr ""
+msgstr "Recorte"
 
 #: report/models.py:502
 msgid "Report snippet file"
-msgstr ""
+msgstr "Relatar arquivo de recorte"
 
 #: report/models.py:506
 msgid "Snippet file description"
-msgstr ""
+msgstr "Descrição do arquivo de recorte"
 
 #: report/models.py:543
 msgid "Asset"
-msgstr ""
+msgstr "Ativos"
 
 #: report/models.py:544
 msgid "Report asset file"
-msgstr ""
+msgstr "Reportar arquivo de ativos"
 
 #: report/models.py:551
 msgid "Asset file description"
-msgstr ""
+msgstr "Descrição do arquivo de ativos"
 
 #: report/templates/report/inventree_bill_of_materials_report.html:133
 msgid "Materials needed"
-msgstr ""
+msgstr "Materiais necessários"
 
 #: report/templates/report/inventree_build_order_base.html:146
 msgid "Required For"
-msgstr ""
+msgstr "Necessário para"
 
 #: report/templates/report/inventree_po_report_base.html:77
 msgid "Supplier was deleted"
-msgstr ""
+msgstr "Fornecedor foi excluído"
 
 #: report/templates/report/inventree_po_report_base.html:92
 #: report/templates/report/inventree_so_report_base.html:93
@@ -6891,22 +6891,22 @@ msgstr ""
 #: templates/js/translated/pricing.js:580
 #: templates/js/translated/pricing.js:804
 msgid "Unit Price"
-msgstr ""
+msgstr "Preço unitário"
 
 #: report/templates/report/inventree_po_report_base.html:117
 #: report/templates/report/inventree_so_report_base.html:118
 msgid "Extra Line Items"
-msgstr ""
+msgstr "Extra Itens de Linha"
 
 #: report/templates/report/inventree_po_report_base.html:134
 #: report/templates/report/inventree_so_report_base.html:135
 #: templates/js/translated/order.js:2445 templates/js/translated/order.js:4046
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: report/templates/report/inventree_test_report_base.html:21
 msgid "Stock Item Test Report"
-msgstr ""
+msgstr "Relatório Teste do Item em Estoque"
 
 #: report/templates/report/inventree_test_report_base.html:79
 #: stock/models.py:719 stock/templates/stock/item_base.html:323
@@ -6916,7 +6916,7 @@ msgstr ""
 #: templates/js/translated/order.js:126 templates/js/translated/order.js:3815
 #: templates/js/translated/order.js:3902 templates/js/translated/stock.js:528
 msgid "Serial Number"
-msgstr ""
+msgstr "Número de Sério"
 
 #: report/templates/report/inventree_test_report_base.html:88
 msgid "Test Results"
@@ -6962,11 +6962,11 @@ msgstr ""
 #: stock/admin.py:44 stock/templates/stock/location.html:129
 #: stock/templates/stock/location.html:135
 msgid "Location Path"
-msgstr ""
+msgstr "Caminho do local"
 
 #: stock/admin.py:100
 msgid "Stock Item ID"
-msgstr ""
+msgstr "ID do item estoque"
 
 #: stock/admin.py:107
 msgid "Status Code"
@@ -6974,24 +6974,24 @@ msgstr "Código da situação"
 
 #: stock/admin.py:110
 msgid "Supplier Part ID"
-msgstr ""
+msgstr "Número da Peça do Fornecedor"
 
 #: stock/admin.py:111
 msgid "Supplier ID"
-msgstr ""
+msgstr "ID do Fornecedor"
 
 #: stock/admin.py:112
 msgid "Supplier Name"
-msgstr ""
+msgstr "Nome do Fornecedor"
 
 #: stock/admin.py:113
 msgid "Customer ID"
-msgstr ""
+msgstr "ID Cliente"
 
 #: stock/admin.py:114 stock/models.py:702
 #: stock/templates/stock/item_base.html:362
 msgid "Installed In"
-msgstr ""
+msgstr "Instalado em"
 
 #: stock/admin.py:115
 msgid "Build ID"
@@ -6999,15 +6999,15 @@ msgstr ""
 
 #: stock/admin.py:117
 msgid "Sales Order ID"
-msgstr ""
+msgstr "ID do pedido de venda"
 
 #: stock/admin.py:118
 msgid "Purchase Order ID"
-msgstr ""
+msgstr "ID da ordem de compra"
 
 #: stock/admin.py:125
 msgid "Review Needed"
-msgstr ""
+msgstr "Revisão Necessária"
 
 #: stock/admin.py:126
 msgid "Delete on Deplete"
@@ -7021,53 +7021,53 @@ msgstr ""
 
 #: stock/api.py:424 templates/js/translated/table_filters.js:297
 msgid "External Location"
-msgstr ""
+msgstr "Localização externa"
 
 #: stock/api.py:585
 msgid "Quantity is required"
-msgstr ""
+msgstr "Quantidade obrigatória"
 
 #: stock/api.py:592
 msgid "Valid part must be supplied"
-msgstr ""
+msgstr "Uma peça válida deve ser fornecida"
 
 #: stock/api.py:617
 msgid "Serial numbers cannot be supplied for a non-trackable part"
-msgstr ""
+msgstr "Números de série não podem ser fornecidos para uma parte não rastreável"
 
 #: stock/models.py:53 stock/models.py:686
 #: stock/templates/stock/location.html:17
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
-msgstr ""
+msgstr "Localizacao do estoque"
 
 #: stock/models.py:54 stock/templates/stock/location.html:183
 #: templates/InvenTree/search.html:167 templates/js/translated/search.js:206
 #: users/models.py:40
 msgid "Stock Locations"
-msgstr ""
+msgstr "Locais de estoque"
 
 #: stock/models.py:113 stock/models.py:816
 #: stock/templates/stock/item_base.html:253
 msgid "Owner"
-msgstr ""
+msgstr "Responsavel"
 
 #: stock/models.py:114 stock/models.py:817
 msgid "Select Owner"
-msgstr ""
+msgstr "Selecionar Responsável"
 
 #: stock/models.py:121
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
-msgstr ""
+msgstr "Os itens de estoque podem não estar diretamente localizados em um local de estoque estrutural, mas podem ser localizados em locais filhos."
 
 #: stock/models.py:127 templates/js/translated/stock.js:2634
 #: templates/js/translated/table_filters.js:139
 msgid "External"
-msgstr ""
+msgstr "Externo"
 
 #: stock/models.py:128
 msgid "This is an external stock location"
-msgstr ""
+msgstr "Esta é uma localização de estoque externo"
 
 #: stock/models.py:170
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
@@ -7140,15 +7140,15 @@ msgstr ""
 
 #: stock/models.py:740
 msgid "Stock Quantity"
-msgstr ""
+msgstr "Quantidade de Estoque"
 
 #: stock/models.py:747
 msgid "Source Build"
-msgstr ""
+msgstr "Produção de Origem"
 
 #: stock/models.py:749
 msgid "Build for this stock item"
-msgstr ""
+msgstr "Produção para este item de estoque"
 
 #: stock/models.py:760
 msgid "Source Purchase Order"
@@ -7156,27 +7156,27 @@ msgstr ""
 
 #: stock/models.py:763
 msgid "Purchase order for this stock item"
-msgstr ""
+msgstr "Pedido de Compra para este item de estoque"
 
 #: stock/models.py:769
 msgid "Destination Sales Order"
-msgstr ""
+msgstr "Destino do Pedido de Venda"
 
 #: stock/models.py:776
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
-msgstr ""
+msgstr "Data de validade para o item de estoque. Estoque será considerado expirado após este dia"
 
 #: stock/models.py:791
 msgid "Delete on deplete"
-msgstr ""
+msgstr "Excluir quando esgotado"
 
 #: stock/models.py:791
 msgid "Delete this Stock Item when stock is depleted"
-msgstr ""
+msgstr "Excluir este item de estoque quando o estoque for esgotado"
 
 #: stock/models.py:804 stock/templates/stock/item.html:132
 msgid "Stock Item Notes"
-msgstr ""
+msgstr "Notas de Item Estoque"
 
 #: stock/models.py:812
 msgid "Single unit purchase price at time of purchase"
