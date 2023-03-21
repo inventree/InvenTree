@@ -110,3 +110,11 @@
     order: 1
     part: 5
     quantity: 1
+
+# An extra line item
+- model: order.purchaseorderextraline
+  pk: 1
+  fields:
+    order: 7
+    reference: 'Freight cost'
+    quantity: 1

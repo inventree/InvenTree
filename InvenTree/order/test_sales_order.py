@@ -11,8 +11,9 @@ import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
 from InvenTree import status_codes as status
-from order.models import (SalesOrder, SalesOrderAllocation, SalesOrderLineItem,
-                          SalesOrderExtraLine, SalesOrderShipment)
+from order.models import (SalesOrder, SalesOrderAllocation,
+                          SalesOrderExtraLine, SalesOrderLineItem,
+                          SalesOrderShipment)
 from part.models import Part
 from stock.models import StockItem
 from users.models import Owner
@@ -53,6 +54,9 @@ class SalesOrderTest(TestCase):
 
         # Create a line item
         cls.line = SalesOrderLineItem.objects.create(quantity=50, order=cls.order, part=cls.part)
+
+        # Create an extra line
+        cls.extraline = SalesOrderExtraLine.objects.create(quantity=1, order=cls.order, reference="Extra line")
 
     def test_so_reference(self):
         """Unit tests for sales order generation"""
@@ -298,6 +302,7 @@ class SalesOrderTest(TestCase):
         """Unit tests for the metadata field."""
         for model in [SalesOrder, SalesOrderLineItem, SalesOrderExtraLine, SalesOrderShipment]:
             p = model.objects.first()
+
             self.assertIsNone(p.metadata)
 
             self.assertIsNone(p.get_metadata('test'))

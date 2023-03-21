@@ -572,6 +572,11 @@ class BuildTest(BuildTestBase):
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
+
+        # Make sure a BuildItem exists before trying to run this test
+        b = BuildItem(stock_item=self.stock_1_2, build=self.build, install_into=self.output_1, quantity=10)
+        b.save()
+
         for model in [Build, BuildItem]:
             p = model.objects.first()
             self.assertIsNone(p.metadata)
