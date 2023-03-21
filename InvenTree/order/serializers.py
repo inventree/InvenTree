@@ -63,6 +63,9 @@ class AbstractOrderSerializer(serializers.Serializer):
     # Detail for responsible field
     responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
 
+    # Boolean field indicating if this order is overdue (Note: must be annotated)
+    overdue = serializers.BooleanField(required=False, read_only=True)
+
     def validate_reference(self, reference):
         """Custom validation for the reference field"""
 
@@ -86,6 +89,7 @@ class AbstractOrderSerializer(serializers.Serializer):
         return [
             'pk',
             'creation_date',
+            'target_date',
             'description',
             'line_items',
             'link',
@@ -97,6 +101,7 @@ class AbstractOrderSerializer(serializers.Serializer):
             'status',
             'status_text',
             'notes',
+            'overdue',
         ] + extra_fields
 
 
@@ -148,11 +153,9 @@ class PurchaseOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTre
         fields = AbstractOrderSerializer.order_fields([
             'issue_date',
             'complete_date',
-            'overdue',
             'supplier',
             'supplier_detail',
             'supplier_reference',
-            'target_date',
             'total_price',
             'total_price_currency',
         ])
@@ -184,7 +187,8 @@ class PurchaseOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTre
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    order.models.PurchaseOrder.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
+                    order.models.PurchaseOrder.overdue_filter(),
+                    then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField())
             )
@@ -193,8 +197,6 @@ class PurchaseOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTre
         return queryset
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
-
-    overdue = serializers.BooleanField(required=False, read_only=True)
 
 
 class PurchaseOrderCancelSerializer(serializers.Serializer):
@@ -336,7 +338,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    Q(order__status__in=PurchaseOrderStatus.OPEN) & order.models.PurchaseOrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField())
+                    order.models.PurchaseOrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField())
                 ),
                 default=Value(False, output_field=BooleanField()),
             )
@@ -685,9 +687,7 @@ class SalesOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTreeMo
             'customer',
             'customer_detail',
             'customer_reference',
-            'overdue',
             'shipment_date',
-            'target_date',
             'total_price',
             'total_price_currency',
         ])
@@ -719,7 +719,8 @@ class SalesOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTreeMo
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    order.models.SalesOrder.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
+                    order.models.SalesOrder.overdue_filter(),
+                    then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField())
             )
@@ -728,8 +729,6 @@ class SalesOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTreeMo
         return queryset
 
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
-
-    overdue = serializers.BooleanField(required=False, read_only=True)
 
 
 class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
@@ -1435,7 +1434,18 @@ class ReturnOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """Custom annotation for the serializer queryset"""
 
-        queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+        # queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    order.models.ReturnOrder.overdue_filter(),
+                    then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField())
+            )
+        )
+
         return queryset
 
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)

@@ -182,9 +182,34 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                     "contact": _("Contact does not match selected company")
                 })
 
+    @classmethod
+    def overdue_filter(cls):
+        """A generic implementation of an 'overdue' filter for the Model class
+
+        It requires any subclasses to implement the get_status_class() class method
+        """
+
+        today = datetime.now().date()
+        return Q(status__in=cls.get_status_class().OPEN) & ~Q(target_date=None) & Q(target_date__lt=today)
+
+    @property
+    def is_overdue(self):
+        """Method to determine if this order is overdue.
+
+        Makes use of the overdue_filter() method to avoid code duplication
+        """
+
+        return self.__class__.objects.filter(pk=self.pk).filter(self.__class__.overdue_filter()).exists()
+
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
     link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
+
+    target_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Target Date'),
+        help_text=_('Expected date for order delivery. Order will be overdue after this date.'),
+    )
 
     creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation Date'))
 
@@ -215,6 +240,12 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
     notes = InvenTreeNotesField(help_text=_('Order notes'))
 
+    @classmethod
+    def get_status_class(cls):
+        """Return the enumeration class which represents the 'status' field for this model"""
+
+        raise NotImplementedError(f"get_status_class() not implemented for {__class__}")
+
 
 class PurchaseOrder(TotalPriceMixin, Order):
     """A PurchaseOrder represents goods shipped inwards from an external supplier.
@@ -232,6 +263,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return reverse('api-po-list')
 
     @classmethod
+    def get_status_class(cls):
+        """Return the PurchasOrderStatus class"""
+        return PurchaseOrderStatus
+
+    @classmethod
     def api_defaults(cls, request):
         """Return default values for this model when issuing an API OPTIONS request"""
 
@@ -240,8 +276,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         }
 
         return defaults
-
-    OVERDUE_FILTER = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     # Global setting for specifying reference pattern
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
@@ -336,12 +370,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         blank=True, null=True,
         verbose_name=_('Issue Date'),
         help_text=_('Date order was issued')
-    )
-
-    target_date = models.DateField(
-        blank=True, null=True,
-        verbose_name=_('Target Delivery Date'),
-        help_text=_('Expected date for order delivery. Order will be overdue after this date.'),
     )
 
     complete_date = models.DateField(
@@ -455,17 +483,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def is_pending(self):
         """Return True if the PurchaseOrder is 'pending'"""
         return self.status == PurchaseOrderStatus.PENDING
-
-    @property
-    def is_overdue(self):
-        """Returns True if this PurchaseOrder is "overdue".
-
-        Makes use of the OVERDUE_FILTER to avoid code duplication.
-        """
-        query = PurchaseOrder.objects.filter(pk=self.pk)
-        query = query.filter(PurchaseOrder.OVERDUE_FILTER)
-
-        return query.exists()
 
     def can_cancel(self):
         """A PurchaseOrder can only be cancelled under the following circumstances.
@@ -635,18 +652,17 @@ def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **
 
 
 class SalesOrder(TotalPriceMixin, Order):
-    """A SalesOrder represents a list of goods shipped outwards to a customer.
-
-    Attributes:
-        customer: Reference to the company receiving the goods in the order
-        customer_reference: Optional field for customer order reference code
-        target_date: Target date for SalesOrder completion (optional)
-    """
+    """A SalesOrder represents a list of goods shipped outwards to a customer."""
 
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the SalesOrder model"""
         return reverse('api-so-list')
+
+    @classmethod
+    def get_status_class(cls):
+        """Return the SalesOrderStatus class"""
+        return SalesOrderStatus
 
     @classmethod
     def api_defaults(cls, request):
@@ -656,8 +672,6 @@ class SalesOrder(TotalPriceMixin, Order):
         }
 
         return defaults
-
-    OVERDUE_FILTER = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     # Global setting for specifying reference pattern
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
@@ -746,12 +760,6 @@ class SalesOrder(TotalPriceMixin, Order):
 
     customer_reference = models.CharField(max_length=64, blank=True, verbose_name=_('Customer Reference '), help_text=_("Customer order reference code"))
 
-    target_date = models.DateField(
-        null=True, blank=True,
-        verbose_name=_('Target completion date'),
-        help_text=_('Target date for order completion. Order will be overdue after this date.')
-    )
-
     shipment_date = models.DateField(blank=True, null=True, verbose_name=_('Shipment Date'))
 
     shipped_by = models.ForeignKey(
@@ -761,17 +769,6 @@ class SalesOrder(TotalPriceMixin, Order):
         related_name='+',
         verbose_name=_('shipped by')
     )
-
-    @property
-    def is_overdue(self):
-        """Returns true if this SalesOrder is "overdue".
-
-        Makes use of the OVERDUE_FILTER to avoid code duplication.
-        """
-        query = SalesOrder.objects.filter(pk=self.pk)
-        query = query.filter(SalesOrder.OVERDUE_FILTER)
-
-        return query.exists()
 
     @property
     def is_pending(self):
@@ -1613,6 +1610,11 @@ class ReturnOrder(Order):
     def get_api_url():
         """Return the API URL associated with the ReturnOrder model"""
         return reverse('api-return-order-list')
+
+    @classmethod
+    def get_status_class(cls):
+        """Return the ReturnOrderStatus class"""
+        return ReturnOrderStatus
 
     @classmethod
     def api_defaults(cls, request):

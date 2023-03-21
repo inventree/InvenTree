@@ -25,6 +25,14 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Order status" %}',
                 options: returnOrderCodes
             },
+            outstanding: {
+                type: 'bool',
+                title: '{% trans "Outstanding" %}',
+            },
+            overdue: {
+                type: 'bool',
+                title: '{% trans "Overdue" %}',
+            },
             assigned_to_me: {
                 type: 'bool',
                 title: '{% trans "Assigned to me" %}',

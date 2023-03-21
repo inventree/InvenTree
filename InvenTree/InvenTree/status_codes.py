@@ -325,18 +325,30 @@ class BuildStatus(StatusCode):
 class ReturnOrderStatus(StatusCode):
     """Defines a set of status codes for a ReturnOrder"""
 
+    # Order is pending, waiting for receipt of items
     PENDING = 10
+
+    # Items have been received, and are being inspected
+    IN_PROGRESS = 20
+
     COMPLETE = 30
     CANCELLED = 40
 
+    OPEN = [
+        PENDING,
+        IN_PROGRESS,
+    ]
+
     options = {
         PENDING: _("Pending"),
+        IN_PROGRESS: _("In Progress"),
         COMPLETE: _("Complete"),
         CANCELLED: _("Cancelled"),
     }
 
     colors = {
         PENDING: 'secondary',
+        IN_PROGRESS: 'primary',
         COMPLETE: 'success',
         CANCELLED: 'danger',
     }

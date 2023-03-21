@@ -108,17 +108,37 @@ class OrderFilter(rest_filters.FilterSet):
 
     def filter_assigned_to_me(self, queryset, name, value):
         """Filter by orders which are assigned to the current user."""
-        value = str2bool(value)
 
         # Work out who "me" is!
         owners = Owner.get_owners_matching_user(self.request.user)
 
-        if value:
-            queryset = queryset.filter(responsible__in=owners)
+        if str2bool(value):
+            return queryset.filter(responsible__in=owners)
         else:
-            queryset = queryset.exclude(responsible__in=owners)
+            return queryset.exclude(responsible__in=owners)
 
-        return queryset
+    overdue = rest_filters.BooleanFilter(label='overdue', method='filter_overdue')
+
+    def filter_overdue(self, queryset, name, value):
+        """Generic filter for determining if an order is 'overdue'.
+
+        Note that the overdue_filter() classmethod must be defined for the model
+        """
+
+        if str2bool(value):
+            return queryset.filter(self.Meta.model.overdue_filter())
+        else:
+            return queryset.exclude(self.Meta.model.overdue_filter())
+
+    outstanding = rest_filters.BooleanFilter(label='outstanding', method='filter_outstanding')
+
+    def filter_outstanding(self, queryset, name, value):
+        """Generic filter for determining if an order is 'outstanding'"""
+
+        if str2bool(value):
+            return queryset.filter(status__in=self.Meta.model.get_status_class().OPEN)
+        else:
+            return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
 
 class PurchaseOrderFilter(OrderFilter):
@@ -130,18 +150,6 @@ class PurchaseOrderFilter(OrderFilter):
         model = models.PurchaseOrder
         fields = [
             'supplier',
-        ]
-
-
-class SalesOrderFilter(OrderFilter):
-    """Custom API filters for the SalesOrderList endpoint."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = models.SalesOrder
-        fields = [
-            'customer',
         ]
 
 
@@ -246,28 +254,6 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
-
-        # Filter by 'outstanding' status
-        outstanding = params.get('outstanding', None)
-
-        if outstanding is not None:
-            outstanding = str2bool(outstanding)
-
-            if outstanding:
-                queryset = queryset.filter(status__in=PurchaseOrderStatus.OPEN)
-            else:
-                queryset = queryset.exclude(status__in=PurchaseOrderStatus.OPEN)
-
-        # Filter by 'overdue' status
-        overdue = params.get('overdue', None)
-
-        if overdue is not None:
-            overdue = str2bool(overdue)
-
-            if overdue:
-                queryset = queryset.filter(models.PurchaseOrder.OVERDUE_FILTER)
-            else:
-                queryset = queryset.exclude(models.PurchaseOrder.OVERDUE_FILTER)
 
         # Attempt to filter by part
         part = params.get('part', None)
@@ -650,6 +636,18 @@ class SalesOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = serializers.SalesOrderAttachmentSerializer
 
 
+class SalesOrderFilter(OrderFilter):
+    """Custom API filters for the SalesOrderList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.SalesOrder
+        fields = [
+            'customer',
+        ]
+
+
 class SalesOrderList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrder objects.
 
@@ -714,28 +712,6 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
-
-        # Filter by 'outstanding' status
-        outstanding = params.get('outstanding', None)
-
-        if outstanding is not None:
-            outstanding = str2bool(outstanding)
-
-            if outstanding:
-                queryset = queryset.filter(status__in=SalesOrderStatus.OPEN)
-            else:
-                queryset = queryset.exclude(status__in=SalesOrderStatus.OPEN)
-
-        # Filter by 'overdue' status
-        overdue = params.get('overdue', None)
-
-        if overdue is not None:
-            overdue = str2bool(overdue)
-
-            if overdue:
-                queryset = queryset.filter(models.SalesOrder.OVERDUE_FILTER)
-            else:
-                queryset = queryset.exclude(models.SalesOrder.OVERDUE_FILTER)
 
         # Filter by "Part"
         # Only return SalesOrder which have LineItem referencing the part
@@ -1254,6 +1230,18 @@ class ReturnOrderList(APIDownloadMixin, ListCreateAPI):
 
         return self.serializer_class(*args, **kwargs)
 
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint"""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'customer',
+        )
+
+        queryset = serializers.ReturnOrderSerializer.annotate_queryset(queryset)
+
+        return queryset
+
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file"""
 
@@ -1317,6 +1305,18 @@ class ReturnOrderDetail(RetrieveUpdateDestroyAPI):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint"""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'customer',
+        )
+
+        queryset = serializers.ReturnOrderSerializer.annotate_queryset(queryset)
+
+        return queryset
 
 
 class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):

@@ -40,6 +40,9 @@ function returnOrderFields(options={}) {
             }
         },
         customer_reference: {},
+        target_date: {
+            icon: 'fa-calendar-alt',
+        },
         link: {
             icon: 'fa-link',
         },
@@ -155,7 +158,12 @@ function loadReturnOrderTable(table, options={}) {
                 field: 'reference',
                 title: '{% trans "Return Order" %}',
                 formatter: function(value, row) {
-                    var html = renderLink(value, `/order/return-order/${row.pk}/`);
+                    let html = renderLink(value, `/order/return-order/${row.pk}/`);
+
+                    if (row.overdue) {
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
+                    }
+
                     return html;
                 },
             },
@@ -195,6 +203,14 @@ function loadReturnOrderTable(table, options={}) {
                 sortable: true,
                 field: 'creation_date',
                 title: '{% trans "Creation Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
+            },
+            {
+                sortable: true,
+                field: 'target_date',
+                title: '{% trans "Target Date" %}',
                 formatter: function(value) {
                     return renderDate(value);
                 }
