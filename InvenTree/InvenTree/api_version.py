@@ -2,12 +2,12 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 102
+INVENTREE_API_VERSION = 103
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v102 -> 2023-03-17 : https://github.com/inventree/InvenTree/pull/4410
+v103 -> 2023-03-17 : https://github.com/inventree/InvenTree/pull/4410
     - Add metadata to several more models
 
 v102 -> 2023-03-18 : https://github.com/inventree/InvenTree/pull/4505
