@@ -10,6 +10,9 @@ Increment this API version number whenever there is a significant change to the 
 v102 -> 2023-03-17 : https://github.com/inventree/InvenTree/pull/4410
     - Add metadata to several more models
 
+v102 -> 2023-03-18 : https://github.com/inventree/InvenTree/pull/4505
+    - Adds global search API endpoint for consolidated search results
+
 v101 -> 2023-03-07 : https://github.com/inventree/InvenTree/pull/4462
     - Adds 'total_in_stock' to Part serializer, and supports API ordering
 
