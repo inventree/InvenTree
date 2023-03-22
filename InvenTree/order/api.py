@@ -1093,10 +1093,6 @@ class SalesOrderAllocationList(ListAPI):
         rest_filters.DjangoFilterBackend,
     ]
 
-    # Default filterable fields
-    filterset_fields = [
-    ]
-
 
 class SalesOrderShipmentFilter(rest_filters.FilterSet):
     """Custom filterset for the SalesOrderShipmentList endpoint."""
