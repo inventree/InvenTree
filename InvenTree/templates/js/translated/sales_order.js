@@ -825,9 +825,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
             constructForm(`{% url "api-so-shipment-list" %}${pk}/`, {
                 fields: fields,
                 title: '{% trans "Edit Shipment" %}',
-                onSuccess: function() {
-                    $(table).bootstrapTable('refresh');
-                }
+                refreshTable: table,
             });
         });
 
@@ -843,9 +841,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
             constructForm(`{% url "api-so-shipment-list" %}${pk}/`, {
                 title: '{% trans "Delete Shipment" %}',
                 method: 'DELETE',
-                onSuccess: function() {
-                    $(table).bootstrapTable('refresh');
-                }
+                refreshTable: table,
             });
         });
     }
@@ -1424,10 +1420,7 @@ function showAllocationSubTable(index, row, element, options) {
                         quantity: {},
                     },
                     title: '{% trans "Edit Stock Allocation" %}',
-                    onSuccess: function() {
-                        // Refresh the parent table
-                        $(options.table).bootstrapTable('refresh');
-                    },
+                    refreshTable: options.table,
                 },
             );
         });
@@ -1442,10 +1435,7 @@ function showAllocationSubTable(index, row, element, options) {
                     method: 'DELETE',
                     confirmMessage: '{% trans "Confirm Delete Operation" %}',
                     title: '{% trans "Delete Stock Allocation" %}',
-                    onSuccess: function() {
-                        // Refresh the parent table
-                        $(options.table).bootstrapTable('refresh');
-                    }
+                    refreshTable: options.table,
                 }
             );
         });
@@ -1925,9 +1915,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         fields: fields,
                         data: data,
                         title: '{% trans "Duplicate Line Item" %}',
-                        onSuccess: function(response) {
-                            $(table).bootstrapTable('refresh');
-                        }
+                        refreshTable: table,
                     });
                 }
             });
@@ -1981,9 +1969,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                                     auto_fill: true,
                                 }
                             },
-                            onSuccess: function() {
-                                $(table).bootstrapTable('refresh');
-                            }
+                            refreshTable: table,
                         });
                     }
                 }

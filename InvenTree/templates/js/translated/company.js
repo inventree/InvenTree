@@ -603,7 +603,7 @@ function editContact(pk, options={}) {
         fields: fields,
         title: '{% trans "Edit Contact" %}',
         onSuccess: function(response) {
-            handleFormSuccess(respnose, options);
+            handleFormSuccess(response, options);
         }
     });
 }
@@ -1098,9 +1098,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
                         units: {},
                     },
                     title: '{% trans "Edit Parameter" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
             $(table).find('.button-parameter-delete').click(function() {
@@ -1109,9 +1107,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
                 constructForm(`{% url "api-manufacturer-part-parameter-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Parameter" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
         }
@@ -1366,9 +1362,7 @@ function loadSupplierPriceBreakTable(options={}) {
             constructForm(`{% url "api-part-supplier-price-list" %}${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Delete Price Break" %}',
-                onSuccess: function() {
-                    table.bootstrapTable('refresh');
-                },
+                refreshTable: table,
             });
         });
 
@@ -1378,9 +1372,7 @@ function loadSupplierPriceBreakTable(options={}) {
             constructForm(`{% url "api-part-supplier-price-list" %}${pk}/`, {
                 fields: supplierPartPriceBreakFields(),
                 title: '{% trans "Edit Price Break" %}',
-                onSuccess: function() {
-                    table.bootstrapTable('refresh');
-                }
+                refreshTable: table,
             });
         });
     }

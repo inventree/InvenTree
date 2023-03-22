@@ -1696,10 +1696,7 @@ function deletePurchaseOrderLineItems(items, options={}) {
             items: ids,
         },
         preFormContent: html,
-        onSuccess: function() {
-            // Refresh the table once the line items are deleted
-            $('#po-line-table').bootstrapTable('refresh');
-        },
+        refreshTable: '#po-line-table',
     });
 }
 
@@ -1755,9 +1752,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                             fields: fields,
                             data: data,
                             title: '{% trans "Duplicate Line Item" %}',
-                            onSuccess: function(response) {
-                                $(table).bootstrapTable('refresh');
-                            }
+                            refreshTable: table,
                         });
                     }
                 });
@@ -1772,9 +1767,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 constructForm(`{% url "api-po-line-list" %}${pk}/`, {
                     fields: fields,
                     title: '{% trans "Edit Line Item" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
 
@@ -1785,9 +1778,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 constructForm(`{% url "api-po-line-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Line Item" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
 

@@ -308,7 +308,7 @@ function constructDeleteForm(fields, options) {
  * - confirmText: Text for confirm button (default = "Confirm")
  *
  */
-function constructForm(url, options) {
+function constructForm(url, options={}) {
 
     // An "empty" form will be defined locally
     if (url == null) {
@@ -1167,6 +1167,25 @@ function handleFormSuccess(response, options) {
         if (!options.preventClose) {
             // Note: The modal will be deleted automatically after closing
             $(options.modal).modal('hide');
+        }
+
+        // Refresh a table
+        if (options.refreshTable) {
+            let tbl = options.refreshTable;
+
+            if (tbl) {
+                if (typeof tbl === 'string' || tbl instanceof String) {
+                    tbl = $(tbl);
+                }
+
+                if (tbl.exists()) {
+                    tbl.bootstrapTable('refresh');
+                } else {
+                    console.error(`Invalid table named passed to options.refreshTable: ${optoins.refreshTable}`);
+                }
+            } else {
+                console.error(`Null value passed to options.refreshTable`);
+            }
         }
 
         if (options.onSuccess) {

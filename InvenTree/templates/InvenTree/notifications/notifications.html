@@ -75,9 +75,7 @@ $('#history-delete').click(function() {
             multi_delete: true,
             preFormContent: html,
             title: '{% trans "Delete Notifications" %}',
-            onSuccess: function() {
-                $('#history-table').bootstrapTable('refresh');
-            },
+            refreshTable: '#history-table',
             form_data: {
                 filters: {
                     read: true,

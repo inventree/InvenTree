@@ -349,9 +349,7 @@ function loadReturnOrderLineItemTable(options={}) {
                 constructForm(`{% url "api-return-order-line-list" %}${pk}/`, {
                     fields: returnOrderLineItemFields(),
                     title: '{% trans "Edit Line Item" %}',
-                    onSuccess: function(response) {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
         }
@@ -364,9 +362,7 @@ function loadReturnOrderLineItemTable(options={}) {
                 constructForm(`{% url "api-return-order-line-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Line Item" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
         }
@@ -395,6 +391,8 @@ function loadReturnOrderLineItemTable(options={}) {
                 title: '{% trans "Item" %}',
                 formatter: function(value, row) {
                     let html = '';
+
+                    html += thumbnailImage(row.part_detail.thumbnail || row.part_detail.image) + ' ';
 
                     html += renderLink(
                         `${row.part_detail.full_name} - {% trans "Serial Number" %}: ${row.item_detail.serial}`,

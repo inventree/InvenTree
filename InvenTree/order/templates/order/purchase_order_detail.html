@@ -256,9 +256,7 @@ onPanelLoad('order-items', function() {
             fields: fields,
             method: 'POST',
             title: '{% trans "Add Order Line" %}',
-            onSuccess: function() {
-                $("#po-extra-lines-table").bootstrapTable("refresh");
-            },
+            refreshTable: '#po-extra-lines-table',
         });
     });
 

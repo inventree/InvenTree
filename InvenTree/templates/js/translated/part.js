@@ -1060,9 +1060,7 @@ function loadPartStocktakeTable(partId, options={}) {
                         },
                     },
                     title: '{% trans "Edit Stocktake Entry" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
 
@@ -1072,9 +1070,7 @@ function loadPartStocktakeTable(partId, options={}) {
                 constructForm(`{% url "api-part-stocktake-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Stocktake Entry" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
         }
@@ -1309,9 +1305,7 @@ function loadPartParameterTable(table, options) {
                         data: {},
                     },
                     title: '{% trans "Edit Parameter" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
 
@@ -1321,9 +1315,7 @@ function loadPartParameterTable(table, options) {
                 constructForm(`{% url "api-part-parameter-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Parameter" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
         }
@@ -1630,9 +1622,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
                 constructForm(`{% url "api-part-related-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Part Relationship" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
         },
@@ -2519,9 +2509,7 @@ function loadPartTestTemplateTable(table, options) {
                 constructForm(url, {
                     method: 'DELETE',
                     title: '{% trans "Delete Test Result Template" %}',
-                    onSuccess: function() {
-                        table.bootstrapTable('refresh');
-                    },
+                    refreshTable: table,
                 });
             });
         }

@@ -285,9 +285,7 @@
                 fields: fields,
                 method: 'POST',
                 title: '{% trans "Add Extra Line" %}',
-                onSuccess: function() {
-                    $("#so-extra-lines-table").bootstrapTable("refresh");
-                },
+                refreshTable: '#so-extra-lines-table',
             });
         });
 

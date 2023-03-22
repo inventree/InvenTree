@@ -133,9 +133,7 @@ onPanelLoad('order-details', function() {
             fields: fields,
             method: 'POST',
             title: '{% trans "Add Extra Line" %}',
-            onSuccess: function() {
-                $("#return-order-extra-lines-table").bootstrapTable('refresh');
-            }
+            refreshTable: '#return-order-extra-lines-table',
         });
     });
 });
