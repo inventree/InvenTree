@@ -204,7 +204,7 @@ function createSupplierPart(options={}) {
             }
         });
         header = constructLabel('Base Part', {});
-        header += renderPart('header', part_model);
+        header += renderPart(part_model);
         header += `<div>&nbsp;</div>`;
     }
 
@@ -279,7 +279,7 @@ function deleteSupplierParts(parts, options={}) {
         return;
     }
 
-    function renderPart(sup_part) {
+    function renderPartRow(sup_part) {
         var part = sup_part.part_detail;
         var thumb = thumbnailImage(part.thumbnail || part.image);
         var supplier = '-';
@@ -306,7 +306,7 @@ function deleteSupplierParts(parts, options={}) {
     var ids = [];
 
     parts.forEach(function(sup_part) {
-        rows += renderPart(sup_part);
+        rows += renderPartRow(sup_part);
         ids.push(sup_part.pk);
     });
 
@@ -557,7 +557,7 @@ function deleteManufacturerParts(selections, options={}) {
         return;
     }
 
-    function renderPart(man_part, opts={}) {
+    function renderPartRow(man_part, opts={}) {
         var part = man_part.part_detail;
         var thumb = thumbnailImage(part.thumbnail || part.image);
 
@@ -573,7 +573,7 @@ function deleteManufacturerParts(selections, options={}) {
     var ids = [];
 
     selections.forEach(function(man_part) {
-        rows += renderPart(man_part);
+        rows += renderPartRow(man_part);
         ids.push(man_part.pk);
     });
 
