@@ -1023,11 +1023,11 @@ function loadPartStocktakeTable(partId, options={}) {
                     let html = '';
 
                     if (options.allow_edit) {
-                        html += makeIconButton('fa-edit icon-blue', 'button-edit-stocktake', row.pk, '{% trans "Edit Stocktake Entry" %}');
+                        html += makeEditButton('button-edit-stocktake', row.pk, '{% trans "Edit Stocktake Entry" %}');
                     }
 
                     if (options.allow_delete) {
-                        html += makeIconButton('fa-trash-alt icon-red', 'button-delete-stocktake', row.pk, '{% trans "Delete Stocktake Entry" %}');
+                        html += makeDeleteButton('button-delete-stocktake', row.pk, '{% trans "Delete Stocktake Entry" %}');
                     }
 
                     return wrapButtons(buttons);
@@ -1292,8 +1292,8 @@ function loadPartParameterTable(table, options) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeIconButton('fa-edit icon-blue', 'button-parameter-edit', pk, '{% trans "Edit parameter" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-parameter-delete', pk, '{% trans "Delete parameter" %}');
+                    html += makeEditButton('button-parameter-edit', pk, '{% trans "Edit parameter" %}');
+                    html += makeDeleteButton('button-parameter-delete', pk, '{% trans "Delete parameter" %}');
 
                     return wrapButtons(html);
                 }
@@ -1607,7 +1607,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
             switchable: false,
             formatter: function(value, row) {
                 let html = '';
-                html += makeIconButton('fa-trash-alt icon-red', 'button-related-delete', row.pk, '{% trans "Delete part relationship" %}');
+                html += makeDeleteButton('button-related-delete', row.pk, '{% trans "Delete part relationship" %}');
 
                 return wrapButtons(html);
             }
@@ -2483,8 +2483,8 @@ function loadPartTestTemplateTable(table, options) {
                     if (row.part == part) {
                         let html = '';
 
-                        html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
-                        html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
+                        html += makeEditButton('button-test-edit', pk, '{% trans "Edit test result" %}');
+                        html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test result" %}');
 
                         return wrapButtons(html);
                     } else {

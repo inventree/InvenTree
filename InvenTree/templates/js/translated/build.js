@@ -398,8 +398,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
     );
 
     // Add a button to "delete" this build output
-    html += makeIconButton(
-        'fa-trash-alt icon-red',
+    html += makeDeleteButton(
         'button-output-delete',
         output_id,
         '{% trans "Delete build output" %}',
@@ -483,7 +482,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', pk, '{% trans "Remove row" %}');
+        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
 
         buttons += '</div>';
 
@@ -644,7 +643,7 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', pk, '{% trans "Remove row" %}');
+        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
 
         buttons += '</div>';
 
@@ -1789,9 +1788,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                             var html = '';
 
-                            html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+                            html += makeEditButton('button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
 
-                            html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
+                            html += makeDeleteButton('button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
 
                             return wrapButtons(html);
                         }
@@ -2030,8 +2029,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', row.sub_part, '{% trans "Allocate stock" %}');
                     }
 
-                    html += makeIconButton(
-                        'fa-minus-circle icon-red', 'button-unallocate', row.sub_part,
+                    html += makeRemoveButton(
+                        'button-unallocate',
+                        row.sub_part,
                         '{% trans "Unallocate stock" %}',
                         {
                             disabled: allocatedQuantity(row) == 0,
@@ -2099,8 +2099,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
         var delete_button = `<div class='btn-group float-right' role='group'>`;
 
-        delete_button += makeIconButton(
-            'fa-times icon-red',
+        delete_button += makeRemoveButton(
             'button-row-remove',
             pk,
             '{% trans "Remove row" %}',

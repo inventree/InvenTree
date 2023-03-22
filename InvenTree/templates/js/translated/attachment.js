@@ -331,8 +331,7 @@ function loadAttachmentTable(url, options) {
                     let buttons = '';
 
                     if (permissions.change) {
-                        buttons += makeIconButton(
-                            'fa-edit icon-blue',
+                        buttons += makeEditButton(
                             'button-attachment-edit',
                             row.pk,
                             '{% trans "Edit attachment" %}',
@@ -340,8 +339,7 @@ function loadAttachmentTable(url, options) {
                     }
 
                     if (permissions.delete) {
-                        buttons += makeIconButton(
-                            'fa-trash-alt icon-red',
+                        buttons += makeDeleteButton(
                             'button-attachment-delete',
                             row.pk,
                             '{% trans "Delete attachment" %}',

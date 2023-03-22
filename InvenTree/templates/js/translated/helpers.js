@@ -203,6 +203,38 @@ function makeIconButton(icon, cls, pk, title, options={}) {
 
 
 /*
+ * Helper function for making a common 'edit' button
+ */
+function makeEditButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-edit icon-blue', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'copy' button
+ */
+function makeCopyButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-clone', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'delete' button
+ */
+function makeDeleteButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-trash-alt icon-red', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'remove' button
+ */
+function makeRemoveButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-times-circle icon-red', cls, pk, title, options);
+}
+
+
+/*
  * Render a progessbar!
  *
  * @param value is the current value of the progress bar

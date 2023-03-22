@@ -636,8 +636,7 @@ function orderParts(parts_list, options) {
         let buttons = '';
 
         if (parts.length > 1) {
-            buttons += makeIconButton(
-                'fa-times icon-red',
+            buttons += makeRemoveButton(
                 'button-row-remove',
                 pk,
                 '{% trans "Remove row" %}',
@@ -1144,8 +1143,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         }
 
         if (line_items.length > 1) {
-            buttons += makeIconButton(
-                'fa-times icon-red',
+            buttons += makeRemoveButton(
                 'button-row-remove',
                 pk,
                 '{% trans "Remove row" %}',
@@ -2062,9 +2060,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     }
 
                     if (options.allow_edit) {
-                        buttons += makeIconButton('fa-clone', 'button-line-duplicate', pk, '{% trans "Duplicate line item" %}');
-                        buttons += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
-                        buttons += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
+                        buttons += makeCopyButton('button-line-duplicate', pk, '{% trans "Duplicate line item" %}');
+                        buttons += makeEditButton('button-line-edit', pk, '{% trans "Edit line item" %}');
+                        buttons += makeDeleteButton('button-line-delete', pk, '{% trans "Delete line item" %}');
                     }
 
                     return wrapButtons(buttons);

@@ -521,7 +521,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
                 <td>${imageHoverIcon(item.part_detail.thumbnail)} ${item.part_detail.name}</td>
                 <td>${location_info}</td>
                 <td>${item.quantity}</td>
-                <td>${makeIconButton('fa-times-circle icon-red', 'button-item-remove', item.pk, '{% trans "Remove stock item" %}')}</td>
+                <td>${makeRemoveButton('button-item-remove', item.pk, '{% trans "Remove stock item" %}')}</td>
             </tr>`;
         });
 

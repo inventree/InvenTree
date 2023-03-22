@@ -98,8 +98,8 @@ function constructBomUploadTable(data, options={}) {
 
         let buttons = '';
 
-        buttons += makeIconButton('fa-info-circle', 'button-row-data', idx, '{% trans "Display row data" %}');
-        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', idx, '{% trans "Remove row" %}');
+        buttons += makeInfoButton('button-row-data', idx, '{% trans "Display row data" %}');
+        buttons += makeRemoveButton('button-row-remove', idx, '{% trans "Remove row" %}');
 
         buttons = wrapButtons(buttons);
 
@@ -557,7 +557,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
         var buttons = '';
 
-        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', pk, '{% trans "Remove substitute part" %}');
+        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove substitute part" %}');
 
         // Render a single row
         var html = `
@@ -1240,9 +1240,9 @@ function loadBomTable(table, options={}) {
 
                     var bSubs = makeIconButton('fa-exchange-alt icon-blue', 'bom-substitutes-button', row.pk, '{% trans "Edit substitute parts" %}');
 
-                    var bEdit = makeIconButton('fa-edit icon-blue', 'bom-edit-button', row.pk, '{% trans "Edit BOM Item" %}');
+                    var bEdit = makeEditButton('bom-edit-button', row.pk, '{% trans "Edit BOM Item" %}');
 
-                    var bDelt = makeIconButton('fa-trash-alt icon-red', 'bom-delete-button', row.pk, '{% trans "Delete BOM Item" %}');
+                    var bDelt = makeDeleteButton('bom-delete-button', row.pk, '{% trans "Delete BOM Item" %}');
 
 
                     if (!row.validated) {

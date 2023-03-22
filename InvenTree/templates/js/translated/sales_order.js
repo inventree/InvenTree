@@ -799,7 +799,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
 
         let html = '';
 
-        html += makeIconButton('fa-edit icon-blue', 'button-shipment-edit', pk, '{% trans "Edit shipment" %}');
+        html += makeEditButton('button-shipment-edit', pk, '{% trans "Edit shipment" %}');
 
         if (!options.shipped) {
             html += makeIconButton('fa-truck icon-green', 'button-shipment-ship', pk, '{% trans "Complete shipment" %}');
@@ -807,7 +807,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
 
         var enable_delete = row.allocations && row.allocations.length == 0;
 
-        html += makeIconButton('fa-trash-alt icon-red', 'button-shipment-delete', pk, '{% trans "Delete shipment" %}', {disabled: !enable_delete});
+        html += makeDeleteButton('button-shipment-delete', pk, '{% trans "Delete shipment" %}', {disabled: !enable_delete});
 
         return wrapButtons(html);
     }
@@ -974,8 +974,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
         var thumb = thumbnailImage(part.thumbnail || part.image);
 
         let delete_button = wrapButtons(
-            makeIconButton(
-                'fa-times icon-red',
+            makeRemoveButton(
                 'button-row-remove',
                 pk,
                 '{% trans "Remove row" %}',
@@ -1510,8 +1509,8 @@ function showAllocationSubTable(index, row, element, options) {
                     if (row.shipment_date) {
                         html += `<span class='badge bg-success badge-right'>{% trans "Shipped" %}</span>`;
                     } else {
-                        html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
-                        html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
+                        html += makeEditButton('button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+                        html += makeDeleteButton('button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
                     }
 
                     return wrapButtons(html);
@@ -1881,8 +1880,8 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     buttons += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
                 }
 
-                buttons += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line item" %}');
-                buttons += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
+                buttons += makeCopyButton('button-duplicate', pk, '{% trans "Duplicate line item" %}');
+                buttons += makeEditButton('button-edit', pk, '{% trans "Edit line item" %}');
 
                 var delete_disabled = false;
 
@@ -1897,7 +1896,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 }
 
                 // Prevent deletion of the line item if items have been allocated or shipped!
-                buttons += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, title, {disabled: delete_disabled});
+                buttons += makeDeleteButton('button-delete', pk, title, {disabled: delete_disabled});
 
                 return wrapButtons(buttons);
             }

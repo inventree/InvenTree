@@ -723,11 +723,11 @@ function loadContactTable(table, options={}) {
                     let html = '';
 
                     if (options.allow_edit) {
-                        html += makeIconButton('fa-edit icon-blue', 'btn-contact-edit', pk, '{% trans "Edit Contact" %}');
+                        html += makeEditButton('btn-contact-edit', pk, '{% trans "Edit Contact" %}');
                     }
 
                     if (options.allow_delete) {
-                        html += makeIconButton('fa-trash-alt icon-red', 'btn-contact-delete', pk, '{% trans "Delete Contact" %}');
+                        html += makeDeleteButton('btn-contact-delete', pk, '{% trans "Delete Contact" %}');
                     }
 
                     return wrapButtons(html);
@@ -984,8 +984,8 @@ function loadManufacturerPartTable(table, url, options) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeIconButton('fa-edit icon-blue', 'button-manufacturer-part-edit', pk, '{% trans "Edit manufacturer part" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-manufacturer-part-delete', pk, '{% trans "Delete manufacturer part" %}');
+                    html += makeEditButton('button-manufacturer-part-edit', pk, '{% trans "Edit manufacturer part" %}');
+                    html += makeDeleteButton('button-manufacturer-part-delete', pk, '{% trans "Delete manufacturer part" %}');
 
                     return wrapButtons(html);
                 }
@@ -1079,8 +1079,8 @@ function loadManufacturerPartParameterTable(table, url, options) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeIconButton('fa-edit icon-blue', 'button-parameter-edit', pk, '{% trans "Edit parameter" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-parameter-delete', pk, '{% trans "Delete parameter" %}');
+                    html += makeEditButton('button-parameter-edit', pk, '{% trans "Edit parameter" %}');
+                    html += makeDeleteButton('button-parameter-delete', pk, '{% trans "Delete parameter" %}');
 
                     return wrapButtons(html);
                 }
@@ -1311,8 +1311,8 @@ function loadSupplierPartTable(table, url, options) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeIconButton('fa-edit icon-blue', 'button-supplier-part-edit', pk, '{% trans "Edit supplier part" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-supplier-part-delete', pk, '{% trans "Delete supplier part" %}');
+                    html += makeEditButton('button-supplier-part-edit', pk, '{% trans "Edit supplier part" %}');
+                    html += makeDeleteButton('button-supplier-part-delete', pk, '{% trans "Delete supplier part" %}');
 
                     return wrapButtons(html);
                 }
@@ -1430,8 +1430,8 @@ function loadSupplierPriceBreakTable(options={}) {
 
                     let buttons = '';
 
-                    buttons += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
-                    buttons += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
+                    buttons += makeEditButton('button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
+                    buttons += makeDeleteButton('button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
 
                     html += wrapButtons(buttons);
 

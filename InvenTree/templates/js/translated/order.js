@@ -302,12 +302,12 @@ function loadExtraLineTable(options={}) {
                         var pk = row.pk;
 
                         if (options.allow_edit) {
-                            html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
-                            html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
+                            html += makeCopyButton('button-duplicate', pk, '{% trans "Duplicate line" %}');
+                            html += makeEditButton('button-edit', pk, '{% trans "Edit line" %}');
                         }
 
                         if (options.allow_delete) {
-                            html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
+                            html += makeDeleteButton('button-delete', pk, '{% trans "Delete line" %}', );
                         }
                     }
 

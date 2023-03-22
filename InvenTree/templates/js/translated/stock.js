@@ -656,8 +656,7 @@ function assignStockToCustomer(items, options={}) {
 
         var buttons = `<div class='btn-group' role='group'>`;
 
-        buttons += makeIconButton(
-            'fa-times icon-red',
+        buttons += makeRemoveButton(
             'button-stock-item-remove',
             pk,
             '{% trans "Remove row" %}',
@@ -1093,8 +1092,7 @@ function adjustStock(action, items, options={}) {
             );
         }
 
-        let buttons = wrapButtons(makeIconButton(
-            'fa-times icon-red',
+        let buttons = wrapButtons(makeRemoveButton(
             'button-stock-item-remove',
             pk,
             '{% trans "Remove stock item" %}',
@@ -1359,8 +1357,8 @@ function loadStockTestResultsTable(table, options) {
 
         if (!grouped && row.result != null) {
             var pk = row.pk;
-            html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
-            html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
+            html += makeEditButton('button-test-edit', pk, '{% trans "Edit test result" %}');
+            html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test result" %}');
         }
 
         return wrapButtons(buttons);
