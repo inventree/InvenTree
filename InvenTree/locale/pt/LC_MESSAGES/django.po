@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-19 20:22+0000\n"
-"PO-Revision-Date: 2023-03-21 12:07\n"
+"PO-Revision-Date: 2023-03-22 12:04\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -6496,62 +6496,62 @@ msgstr "Requisitos para carregar a LDM"
 
 #: part/templates/part/upload_bom.html:39
 msgid "The BOM file must contain the required named columns as provided in the "
-msgstr ""
+msgstr "O arquivo da LDM deve conter as colunas nomeadas como fornecido na "
 
 #: part/templates/part/upload_bom.html:39
 msgid "BOM Upload Template"
-msgstr ""
+msgstr "Carregar Modelo de LDM"
 
 #: part/templates/part/upload_bom.html:40
 msgid "Each part must already exist in the database"
-msgstr ""
+msgstr "Cada peça deve existir no banco de dados"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
-msgstr ""
+msgstr "Criar variante de peça"
 
 #: part/templates/part/variant_part.html:10
 #, python-format
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-msgstr ""
+msgstr "Criar uma nova variante do modelo <em>'%(full_name)s'</em>."
 
 #: part/templatetags/inventree_extras.py:187
 msgid "Unknown database"
-msgstr ""
+msgstr "Banco de dados desconhecido"
 
 #: part/templatetags/inventree_extras.py:239
 #, python-brace-format
 msgid "{title} v{version}"
-msgstr ""
+msgstr "{title} v{version}"
 
 #: part/views.py:110
 msgid "Match References"
-msgstr ""
+msgstr "Referências de combinações"
 
 #: part/views.py:238
 #, python-brace-format
 msgid "Can't import part {name} because there is no category assigned"
-msgstr ""
+msgstr "Não é possível importar a peça {name} pois não há uma categoria atribuída"
 
 #: part/views.py:379
 msgid "Select Part Image"
-msgstr ""
+msgstr "Selecionar Imagem da Peça"
 
 #: part/views.py:405
 msgid "Updated part image"
-msgstr ""
+msgstr "Atualizar imagem da peça"
 
 #: part/views.py:408
 msgid "Part image not found"
-msgstr ""
+msgstr "Imagem da peça não encontrada"
 
 #: part/views.py:503
 msgid "Part Pricing"
-msgstr ""
+msgstr "Preço Peça"
 
 #: plugin/apps.py:55
 msgid "Your environment has an outdated git version. This prevents InvenTree from loading plugin details."
-msgstr ""
+msgstr "Seu ambiente tem uma versão git desatualizada. Isto impede que o InvenTree carregue detalhes da extensão."
 
 #: plugin/base/action/api.py:27
 msgid "No action specified"
@@ -6563,31 +6563,31 @@ msgstr "Nenhuma ação correspondente encontrada"
 
 #: plugin/base/barcodes/api.py:54 plugin/base/barcodes/api.py:110
 msgid "Missing barcode data"
-msgstr ""
+msgstr "Faltando dados do código de barras"
 
 #: plugin/base/barcodes/api.py:80
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Nenhum resultado encontrado para os dados do código de barras"
 
 #: plugin/base/barcodes/api.py:84
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Coincidência encontrada para dados de código de barras"
 
 #: plugin/base/barcodes/api.py:120
 msgid "Barcode matches existing item"
-msgstr ""
+msgstr "Código de barras corresponde ao item existente"
 
 #: plugin/base/barcodes/api.py:217
 msgid "No match found for provided value"
-msgstr ""
+msgstr "Nenhuma correspondência encontrada para o valor fornecido"
 
 #: plugin/base/label/label.py:60
 msgid "Label printing failed"
-msgstr ""
+msgstr "Impressão de etiqueta falhou"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:26
 msgid "InvenTree Barcodes"
-msgstr ""
+msgstr "Códigos de Barras InvenTree"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:27
 msgid "Provides native support for barcodes"
