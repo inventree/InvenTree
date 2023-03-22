@@ -277,15 +277,13 @@
 
         $("#new-so-extra-line").click(function() {
 
-            var fields = extraLineFields({
+            createExtraLineItem({
                 order: {{ order.pk }},
-            });
-
-            constructForm('{% url "api-so-extra-line-list" %}', {
-                fields: fields,
-                method: 'POST',
-                title: '{% trans "Add Extra Line" %}',
-                refreshTable: '#so-extra-lines-table',
+                table: '#so-extra-lines-table',
+                url: '{% url "api-so-extra-line-list" %}',
+                {% if order.customer.currency %}
+                currency: '{{ order.customer.currency }}',
+                {% endif %}
             });
         });
 

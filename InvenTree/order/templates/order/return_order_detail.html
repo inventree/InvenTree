@@ -125,15 +125,14 @@ onPanelLoad('order-details', function() {
     });
 
     $('#new-return-order-extra-line').click(function() {
-        let fields = extraLineFields({
-            order: {{ order.pk }},
-        });
 
-        constructForm('{% url "api-return-order-extra-line-list" %}', {
-            fields: fields,
-            method: 'POST',
-            title: '{% trans "Add Extra Line" %}',
-            refreshTable: '#return-order-extra-lines-table',
+        createExtraLineItem({
+            order: {{ order.pk }},
+            table: '#return-order-extra-lines-table',
+            url: '{% url "api-return-order-extra-line-list" %}',
+            {% if order.customer.currency %}
+            currency: '{{ order.customer.currency }}',
+            {% endif %}
         });
     });
 });

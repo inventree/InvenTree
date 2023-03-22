@@ -6,6 +6,8 @@
 */
 
 /* exported
+    createExtraLineItem,
+    editExtraLineItem,
     exportOrder,
     issuePurchaseOrder,
     newPurchaseOrderFromOrderWizard,
@@ -48,9 +50,34 @@ function extraLineFields(options={}) {
 }
 
 
+/*
+ * Create a new ExtraLineItem
+ */
+function createExtraLineItem(options={}) {
 
+    let fields = extraLineFields({
+        order: options.order,
+    });
+
+    if (options.currency) {
+        fields.price_currency.value = options.currency;
+    }
+
+    constructForm(options.url, {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Extra Line Item" %}',
+        onSuccess: function(response) {
+            if (options.table) {
+                reloadBootstrapTable(options.table);
+            }
+        }
+    });
+}
+
+
+/* Remove a part selection from an order form. */
 function removeOrderRowFromOrderWizard(e) {
-    /* Remove a part selection from an order form. */
 
     e = e || window.event;
 

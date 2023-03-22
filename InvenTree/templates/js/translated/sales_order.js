@@ -32,8 +32,7 @@
     loadSalesOrderShipmentTable,
     loadSalesOrderTable,
     orderParts,
-    loadOrderTotal,
-    extraLineFields,
+    loadOrderTotal
 */
 
 

@@ -244,19 +244,13 @@ onPanelLoad('order-items', function() {
 
     $("#new-po-extra-line").click(function() {
 
-        var fields = extraLineFields({
+        createExtraLineItem({
             order: {{ order.pk }},
-        });
-
-        {% if order.supplier.currency %}
-        fields.price_currency.value = '{{ order.supplier.currency }}';
-        {% endif %}
-
-        constructForm('{% url "api-po-extra-line-list" %}', {
-            fields: fields,
-            method: 'POST',
-            title: '{% trans "Add Order Line" %}',
-            refreshTable: '#po-extra-lines-table',
+            table: '#po-extra-lines-table',
+            url: '{% url "api-po-extra-line-list" %}',
+            {% if order.supplier.currency %}
+            currency: '{{ order.supplier.currency }}',
+            {% endif %}
         });
     });
 

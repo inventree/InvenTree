@@ -1171,21 +1171,7 @@ function handleFormSuccess(response, options) {
 
         // Refresh a table
         if (options.refreshTable) {
-            let tbl = options.refreshTable;
-
-            if (tbl) {
-                if (typeof tbl === 'string' || tbl instanceof String) {
-                    tbl = $(tbl);
-                }
-
-                if (tbl.exists()) {
-                    tbl.bootstrapTable('refresh');
-                } else {
-                    console.error(`Invalid table named passed to options.refreshTable: ${optoins.refreshTable}`);
-                }
-            } else {
-                console.error(`Null value passed to options.refreshTable`);
-            }
+            reloadBootstrapTable(options.refreshTable);
         }
 
         if (options.onSuccess) {
