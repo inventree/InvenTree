@@ -141,6 +141,26 @@ class OrderFilter(rest_filters.FilterSet):
             return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
 
+class LineItemFilter(rest_filters.FilterSet):
+    """Base class for custom API filters for order line item list(s)"""
+
+    # Filter by order status
+    order_status = rest_filters.NumberFilter(label='order_status', field_name='order__status')
+
+    has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method='filter_has_pricing')
+
+    def filter_has_pricing(self, queryset, name, value):
+        """Filter by whether or not the line item has pricing information"""
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.exclude(purchase_price=None)
+        else:
+            queryset = queryset.filter(purchase_price=None)
+
+        return queryset
+
+
 class PurchaseOrderFilter(OrderFilter):
     """Custom API filters for the PurchaseOrderList endpoint."""
 
@@ -422,7 +442,7 @@ class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
     serializer_class = serializers.PurchaseOrderReceiveSerializer
 
 
-class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
+class PurchaseOrderLineItemFilter(LineItemFilter):
     """Custom filters for the PurchaseOrderLineItemList endpoint."""
 
     class Meta:
@@ -438,16 +458,11 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
 
     def filter_pending(self, queryset, name, value):
         """Filter by "pending" status (order status = pending)"""
-        value = str2bool(value)
 
-        if value:
-            queryset = queryset.filter(order__status__in=PurchaseOrderStatus.OPEN)
+        if str2bool(value):
+            return queryset.filter(order__status__in=PurchaseOrderStatus.OPEN)
         else:
-            queryset = queryset.exclude(order__status__in=PurchaseOrderStatus.OPEN)
-
-        return queryset
-
-    order_status = rest_filters.NumberFilter(label='order_status', field_name='order__status')
+            return queryset.exclude(order__status__in=PurchaseOrderStatus.OPEN)
 
     received = rest_filters.BooleanFilter(label='received', method='filter_received')
 
@@ -468,30 +483,12 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
 
         return queryset
 
-    has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method='filter_has_pricing')
 
-    def filter_has_pricing(self, queryset, name, value):
-        """Filter by whether or not the line item has pricing information"""
-        value = str2bool(value)
-
-        if value:
-            queryset = queryset.exclude(purchase_price=None)
-        else:
-            queryset = queryset.filter(purchase_price=None)
-
-        return queryset
-
-
-class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateDestroyAPIView):
-    """API endpoint for accessing a list of PurchaseOrderLineItem objects.
-
-    - GET: Return a list of PurchaseOrder Line Item objects
-    - POST: Create a new PurchaseOrderLineItem object
-    """
+class PurchaseOrderLineItemMixin:
+    """Mixin class for PurchaseOrderLineItem endpoints"""
 
     queryset = models.PurchaseOrderLineItem.objects.all()
     serializer_class = serializers.PurchaseOrderLineItemSerializer
-    filterset_class = PurchaseOrderLineItemFilter
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint"""
@@ -512,6 +509,16 @@ class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateDestroyAPIView):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
+
+
+class PurchaseOrderLineItemList(PurchaseOrderLineItemMixin, APIDownloadMixin, ListCreateDestroyAPIView):
+    """API endpoint for accessing a list of PurchaseOrderLineItem objects.
+
+    - GET: Return a list of PurchaseOrder Line Item objects
+    - POST: Create a new PurchaseOrderLineItem object
+    """
+
+    filterset_class = PurchaseOrderLineItemFilter
 
     def filter_queryset(self, queryset):
         """Additional filtering options."""
@@ -576,19 +583,9 @@ class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateDestroyAPIView):
     ]
 
 
-class PurchaseOrderLineItemDetail(RetrieveUpdateDestroyAPI):
+class PurchaseOrderLineItemDetail(PurchaseOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for PurchaseOrderLineItem object."""
-
-    queryset = models.PurchaseOrderLineItem.objects.all()
-    serializer_class = serializers.PurchaseOrderLineItemSerializer
-
-    def get_queryset(self):
-        """Return annotated queryset for this endpoint"""
-        queryset = super().get_queryset()
-
-        queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(queryset)
-
-        return queryset
+    pass
 
 
 class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
@@ -797,7 +794,7 @@ class SalesOrderDetail(RetrieveUpdateDestroyAPI):
         return queryset
 
 
-class SalesOrderLineItemFilter(rest_filters.FilterSet):
+class SalesOrderLineItemFilter(LineItemFilter):
     """Custom filters for SalesOrderLineItemList endpoint."""
 
     class Meta:
@@ -808,22 +805,6 @@ class SalesOrderLineItemFilter(rest_filters.FilterSet):
             'order',
             'part',
         ]
-
-    has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method='filter_has_pricing')
-
-    def filter_has_pricing(self, queryset, name, value):
-        """Filter by whether or not the line item has pricing information"""
-
-        value = str2bool(value)
-
-        if value:
-            queryset = queryset.exclude(sale_price=None)
-        else:
-            queryset = queryset.filter(sale_price=None)
-
-        return queryset
-
-    order_status = rest_filters.NumberFilter(label='Order Status', field_name='order__status')
 
     completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
 
@@ -844,12 +825,11 @@ class SalesOrderLineItemFilter(rest_filters.FilterSet):
         return queryset
 
 
-class SalesOrderLineItemList(APIDownloadMixin, ListCreateAPI):
-    """API endpoint for accessing a list of SalesOrderLineItem objects."""
+class SalesOrderLineItemMixin:
+    """Mixin class for SalesOrderLineItem endpoints"""
 
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SalesOrderLineItemSerializer
-    filterset_class = SalesOrderLineItemFilter
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer for this endpoint with extra data as requested"""
@@ -885,6 +865,12 @@ class SalesOrderLineItemList(APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
+
+class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCreateAPI):
+    """API endpoint for accessing a list of SalesOrderLineItem objects."""
+
+    filterset_class = SalesOrderLineItemFilter
+
     def download_queryset(self, queryset, export_format):
         """Download the requested queryset as a file"""
 
@@ -915,6 +901,11 @@ class SalesOrderLineItemList(APIDownloadMixin, ListCreateAPI):
     ]
 
 
+class SalesOrderLineItemDetail(SalesOrderLineItemMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a SalesOrderLineItem object."""
+    pass
+
+
 class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
@@ -936,21 +927,6 @@ class SalesOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
     queryset = models.SalesOrderExtraLine.objects.all()
     serializer_class = serializers.SalesOrderExtraLineSerializer
-
-
-class SalesOrderLineItemDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a SalesOrderLineItem object."""
-
-    queryset = models.SalesOrderLineItem.objects.all()
-    serializer_class = serializers.SalesOrderLineItemSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint"""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
-
-        return queryset
 
 
 class SalesOrderContextMixin:
@@ -1315,6 +1291,89 @@ class ReturnOrderDetail(RetrieveUpdateDestroyAPI):
         return queryset
 
 
+class ReturnOrderLineItemFilter(LineItemFilter):
+    """Custom filters for the ReturnOrderLineItemList endpoint"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = models.ReturnOrderLineItem
+        fields = [
+            'order',
+            'item',
+        ]
+
+    outcome = rest_filters.NumberFilter(label='outcome')
+
+
+class ReturnOrderLineItemMixin:
+    """Mixin class for ReturnOrderLineItem endpoints"""
+
+    queryset = models.ReturnOrderLineItem.objects.all()
+    serializer_class = serializers.ReturnOrderLineItemSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer for this endpoint with extra data as requested"""
+
+        try:
+            params = self.request.query_params
+
+            kwargs['order_detail'] = str2bool(params.get('order_detail'), False)
+            kwargs['item_detail'] = str2bool(params.get('item_detail'), False)
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint"""
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'order',
+            'item',
+        )
+
+        return queryset
+
+
+class ReturnOrderLineItemList(ReturnOrderLineItemMixin, APIDownloadMixin, ListCreateAPI):
+    """API endpoint for accessing a list of ReturnOrderLineItemList objects"""
+
+    filterset_class = ReturnOrderLineItemFilter
+
+    def download_queryset(self, queryset, export_format):
+        """Download the requested queryset as a file"""
+
+        raise NotImplementedError("download_queryset not yet implemented for this endpoint")
+
+    filter_backends = [
+        rest_filters.DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        'reference',
+        'target_date',
+    ]
+
+    search_fields = [
+        'item_serial',
+        'item__part__name',
+        'item__part__description',
+        'reference',
+    ]
+
+
+class ReturnOrderLineItemDetail(ReturnOrderLineItemMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a ReturnOrderLineItem object"""
+    pass
+
+
 class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of ReturnOrderExtraLine objects"""
 
@@ -1596,12 +1655,6 @@ order_api_urls = [
     # API endpoints for return orders
     re_path(r'^return/', include([
 
-        # API endpoints for return order extra line
-        re_path(r'^extra-line/', include([
-            path('<int:pk>/', ReturnOrderExtraLineDetail.as_view(), name='api-return-order-extra-line-detail'),
-            path('', ReturnOrderExtraLineList.as_view(), name='api-return-order-extra-line-list'),
-        ])),
-
         re_path(r'^attachment/', include([
             path('<int:pk>/', ReturnOrderAttachmentDetail.as_view(), name='api-return-order-attachment-detail'),
             re_path(r'^.*$', ReturnOrderAttachmentList.as_view(), name='api-return-order-attachment-list'),
@@ -1612,6 +1665,18 @@ order_api_urls = [
 
         # Return Order list
         re_path(r'^.*$', ReturnOrderList.as_view(), name='api-return-order-list'),
+    ])),
+
+    # API endpoints for reutrn order lines
+    re_path(r'^return-line/', include([
+        path('<int:pk>/', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
+        path('', ReturnOrderLineItemList.as_view(), name='api-return-order-line-list'),
+    ])),
+
+    # API endpoints for return order extra line
+    re_path(r'^return-extra-line/', include([
+        path('<int:pk>/', ReturnOrderExtraLineDetail.as_view(), name='api-return-order-extra-line-detail'),
+        path('', ReturnOrderExtraLineList.as_view(), name='api-return-order-extra-line-list'),
     ])),
 
     # API endpoint for subscribing to ICS calendar of purchase/sales orders
