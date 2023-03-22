@@ -550,13 +550,7 @@ function loadSalesOrderTable(table, options) {
     options.params = options.params || {};
     options.params['customer_detail'] = true;
 
-    var filters = loadTableFilters('salesorder');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
-
-    options.url = options.url || '{% url "api-so-list" %}';
+    var filters = loadTableFilters('salesorder', options.params);
 
     var target = '#filter-list-salesorder';
 
@@ -625,7 +619,7 @@ function loadSalesOrderTable(table, options) {
     }
 
     $(table).inventreeTable({
-        url: options.url,
+        url: '{% url "api-so-list" %}',
         queryParams: filters,
         name: 'salesorder',
         groupBy: false,
@@ -784,11 +778,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
     // Filter by "shipped" status
     options.params.shipped = options.shipped || false;
 
-    var filters = loadTableFilters('salesordershipment');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
+    var filters = loadTableFilters('salesordershipment', options.params);
 
     setupFilterList('salesordershipment', $(table), options.filter_target);
 
@@ -1345,11 +1335,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
     options.params['item_detail'] = true;
     options.params['order_detail'] = true;
 
-    var filters = loadTableFilters('salesorderallocation');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
+    let filters = loadTableFilters('salesorderallocation', options.params);
 
     setupFilterList('salesorderallocation', $(table));
 
@@ -1644,11 +1630,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
     options.params.part_detail = true;
     options.params.allocations = true;
 
-    var filters = loadTableFilters('salesorderlineitem');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
+    var filters = loadTableFilters('salesorderlineitem', options.params);
 
     options.url = options.url || '{% url "api-so-line-list" %}';
 

@@ -457,14 +457,8 @@ function createCompany(options={}) {
  */
 function loadCompanyTable(table, url, options={}) {
 
-    // Query parameters
-    var params = options.params || {};
-
-    var filters = loadTableFilters('company');
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    let params = options.params || {};
+    let filters = loadTableFilters('company', params);
 
     setupFilterList('company', $(table));
 
@@ -676,11 +670,7 @@ function loadContactTable(table, options={}) {
 
     var params = options.params || {};
 
-    var filters = loadTableFilters('contact');
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('contact', params);
 
     setupFilterList('contact', $(table), '#filter-list-contacts');
 
@@ -885,21 +875,16 @@ function deleteManufacturerPartParameters(selections, options={}) {
 }
 
 
+/*
+ * Load manufacturer part table
+ */
 function loadManufacturerPartTable(table, url, options) {
-    /*
-     * Load manufacturer part table
-     *
-     */
 
     // Query parameters
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters('manufacturer-part');
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('manufacturer-part', params);
 
     var filterTarget = options.filterTarget || '#filter-list-manufacturer-part';
 
@@ -1042,20 +1027,15 @@ function loadManufacturerPartTable(table, url, options) {
 }
 
 
+/*
+ * Load table of ManufacturerPartParameter objects
+ */
 function loadManufacturerPartParameterTable(table, url, options) {
-    /*
-     * Load table of ManufacturerPartParameter objects
-     */
 
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters('manufacturer-part-parameters');
-
-    // Overwrite explicit parameters
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('manufacturer-part-parameters', params);
 
     setupFilterList('manufacturer-part-parameters', $(table));
 
@@ -1146,21 +1126,16 @@ function loadManufacturerPartParameterTable(table, url, options) {
 }
 
 
+/*
+ * Load supplier part table
+ */
 function loadSupplierPartTable(table, url, options) {
-    /*
-     * Load supplier part table
-     *
-     */
 
     // Query parameters
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters('supplier-part');
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('supplier-part', params);
 
     setupFilterList('supplier-part', $(table));
 

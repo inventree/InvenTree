@@ -151,9 +151,7 @@ function loadExtraLineTable(options={}) {
         filters = loadTableFilters(options.name);
     }
 
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
+    Object.assign(filters, options.params);
 
     setupFilterList(
         options.name,

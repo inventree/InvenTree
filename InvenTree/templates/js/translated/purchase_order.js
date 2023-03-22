@@ -1420,15 +1420,9 @@ function loadPurchaseOrderTable(table, options) {
 
     options.params['supplier_detail'] = true;
 
-    var filters = loadTableFilters('purchaseorder');
+    var filters = loadTableFilters('purchaseorder', options.params);
 
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
-
-    var target = '#filter-list-purchaseorder';
-
-    setupFilterList('purchaseorder', $(table), target, {download: true});
+    setupFilterList('purchaseorder', $(table), '#filter-list-purchaseorder', {download: true});
 
     var display_mode = inventreeLoad('purchaseorder-table-display-mode', 'list');
 
@@ -1734,18 +1728,12 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
         options.allow_edit = false;
     }
 
-    var filters = loadTableFilters('purchaseorderlineitem');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
-
-    var target = options.filter_target || '#filter-list-purchase-order-lines';
+    var filters = loadTableFilters('purchaseorderlineitem', options.params);
 
     setupFilterList(
         'purchaseorderlineitem',
         $(table),
-        target,
+        options.filter_target || '#filter-list-purchase-order-lines',
         {
             download: true
         }

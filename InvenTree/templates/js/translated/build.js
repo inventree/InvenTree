@@ -768,11 +768,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
     options.params['location_detail'] = true;
     options.params['stock_detail'] = true;
 
-    var filters = loadTableFilters('buildorderallocation');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
+    var filters = loadTableFilters('buildorderallocation', options.params);
 
     setupFilterList('buildorderallocation', $(table));
 
@@ -1486,13 +1482,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     }
 
     // Filters
-    var filters = loadTableFilters('builditems');
-
-    var params = options.params || {};
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('builditems', options.params);
 
     setupFilterList('builditems', $(table), options.filterTarget);
 
@@ -2488,17 +2478,9 @@ function loadBuildTable(table, options) {
 
     var params = options.params || {};
 
-    var filters = {};
-
     params['part_detail'] = true;
 
-    if (!options.disableFilters) {
-        filters = loadTableFilters('build');
-    }
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('build', params);
 
     var filterTarget = options.filterTarget || null;
 

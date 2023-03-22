@@ -43,7 +43,7 @@ function defaultFilters() {
  * @param tableKey - String key for the particular table
  * @param defaults - Default filters for this table e.g. 'cascade=1&location=5'
  */
-function loadTableFilters(tableKey) {
+function loadTableFilters(tableKey, query={}) {
 
     var lookup = 'table-filters-' + tableKey.toLowerCase();
 
@@ -66,6 +66,9 @@ function loadTableFilters(tableKey) {
             }
         }
     });
+
+    // Override configurable filters with hard-coded query
+    Object.assign(filters, query);
 
     return filters;
 }

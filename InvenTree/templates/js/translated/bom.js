@@ -785,9 +785,7 @@ function loadBomTable(table, options={}) {
         filters = loadTableFilters('bom');
     }
 
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    Object.assign(filters, params);
 
     setupFilterList('bom', $(table));
 
@@ -1508,15 +1506,7 @@ function loadUsedInTable(table, part_id, options={}) {
     params.part_detail = true;
     params.sub_part_detail = true;
 
-    var filters = {};
-
-    if (!options.disableFilters) {
-        filters = loadTableFilters('usedin');
-    }
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('usedin', params);
 
     setupFilterList('usedin', $(table), options.filterTarget || '#filter-list-usedin');
 

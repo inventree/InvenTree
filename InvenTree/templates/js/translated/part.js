@@ -953,11 +953,7 @@ function loadPartStocktakeTable(partId, options={}) {
 
     params.part = partId;
 
-    var filters = loadTableFilters('stocktake');
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('stocktake', params);
 
     setupFilterList('stocktake', $(table), '#filter-list-partstocktake');
 
@@ -1088,7 +1084,8 @@ function loadPartStocktakeTable(partId, options={}) {
 }
 
 
-/* Load part variant table
+/*
+ * Load part variant table
  */
 function loadPartVariantTable(table, partId, options={}) {
 
@@ -1097,11 +1094,7 @@ function loadPartVariantTable(table, partId, options={}) {
     params.ancestor = partId;
 
     // Load filters
-    var filters = loadTableFilters('variants');
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('variants', params);
 
     setupFilterList('variants', $(table));
 
@@ -1247,11 +1240,7 @@ function loadPartParameterTable(table, options) {
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters('part-parameters');
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('part-parameters', params);
 
     var filterTarget = options.filterTarget || '#filter-list-parameters';
 
@@ -1361,11 +1350,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
     options.params.part_detail = true;
     options.params.order_detail = true;
 
-    var filters = loadTableFilters('purchaseorderlineitem');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
+    var filters = loadTableFilters('purchaseorderlineitem', options.params);
 
     setupFilterList('purchaseorderlineitem', $(table), '#filter-list-partpurchaseorders');
 
@@ -1833,15 +1818,7 @@ function loadPartTable(table, url, options={}) {
 
     var params = options.params || {};
 
-    var filters = {};
-
-    if (!options.disableFilters) {
-        filters = loadTableFilters('parts');
-    }
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('parts', options.params);
 
     setupFilterList('parts', $(table), options.filterTarget, {download: true});
 
@@ -2205,14 +2182,7 @@ function loadPartCategoryTable(table, options) {
 
     var filterListElement = options.filterList || '#filter-list-category';
 
-    var filters = {};
-
     var filterKey = options.filterKey || options.name || 'category';
-
-    if (!options.disableFilters) {
-        filters = loadTableFilters(filterKey);
-    }
-
 
     var tree_view = options.allowTreeView && inventreeLoad('category-tree-view') == 1;
 
@@ -2221,12 +2191,7 @@ function loadPartCategoryTable(table, options) {
         params.depth = global_settings.INVENTREE_TREE_DEPTH;
     }
 
-    var original = {};
-
-    for (var key in params) {
-        original[key] = params[key];
-        filters[key] = params[key];
-    }
+    let filters = loadTableFilters(filterKey, params);
 
     setupFilterList(filterKey, table, filterListElement, {download: true});
 
@@ -2274,7 +2239,7 @@ function loadPartCategoryTable(table, options) {
         serverSort: !tree_view,
         search: !tree_view,
         name: 'category',
-        original: original,
+        original: params,
         showColumns: true,
         sortable: true,
         buttons: options.allowTreeView ? [
@@ -2465,13 +2430,7 @@ function loadPartTestTemplateTable(table, options) {
 
     var filterListElement = options.filterList || '#filter-list-parttests';
 
-    var filters = loadTableFilters('parttests');
-
-    var original = {};
-
-    for (var k in params) {
-        original[k] = params[k];
-    }
+    var filters = loadTableFilters('parttests', params);
 
     setupFilterList('parttests', table, filterListElement);
 
@@ -2488,7 +2447,7 @@ function loadPartTestTemplateTable(table, options) {
         url: '{% url "api-part-test-template-list" %}',
         queryParams: filters,
         name: 'testtemplate',
-        original: original,
+        original: params,
         columns: [
             {
                 field: 'pk',

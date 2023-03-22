@@ -1341,18 +1341,11 @@ function loadStockTestResultsTable(table, options) {
 
     var filterKey = options.filterKey || options.name || 'stocktests';
 
-    var filters = loadTableFilters(filterKey);
-
-    var params = {
+    let params = {
         part: options.part,
     };
 
-    var original = {};
-
-    for (var k in params) {
-        original[k] = params[k];
-        filters[k] = params[k];
-    }
+    var filters = loadTableFilters(filterKey, params);
 
     setupFilterList(filterKey, table, filterTarget);
 
@@ -1396,7 +1389,7 @@ function loadStockTestResultsTable(table, options) {
             return '{% trans "No test results found" %}';
         },
         queryParams: filters,
-        original: original,
+        original: params,
         onPostBody: function() {
             table.treegrid({
                 treeColumn: 0,
@@ -1723,19 +1716,9 @@ function loadStockTable(table, options) {
 
     var filterTarget = options.filterTarget || '#filter-list-stock';
 
-    var filters = {};
+    let filters = loadTableFilters(filterKey, params);
 
     var filterKey = options.filterKey || options.name || 'stock';
-
-    if (!options.disableFilters) {
-        filters = loadTableFilters(filterKey);
-    }
-
-    var original = {};
-
-    for (var k in params) {
-        original[k] = params[k];
-    }
 
     setupFilterList(filterKey, table, filterTarget, {download: true});
 
@@ -2163,7 +2146,7 @@ function loadStockTable(table, options) {
         queryParams: filters,
         sidePagination: 'server',
         name: 'stock',
-        original: original,
+        original: params,
         showColumns: true,
         showFooter: true,
         columns: columns,
@@ -2416,19 +2399,9 @@ function loadStockLocationTable(table, options) {
         params.depth = global_settings.INVENTREE_TREE_DEPTH;
     }
 
-    var filters = {};
-
     var filterKey = options.filterKey || options.name || 'location';
 
-    if (!options.disableFilters) {
-        filters = loadTableFilters(filterKey);
-    }
-
-    var original = {};
-
-    for (var k in params) {
-        original[k] = params[k];
-    }
+    let filters = loadTableFilters(filterKey, params);
 
     setupFilterList(filterKey, table, filterListElement, {download: true});
 
@@ -2480,7 +2453,7 @@ function loadStockLocationTable(table, options) {
         url: options.url || '{% url "api-location-list" %}',
         queryParams: filters,
         name: 'location',
-        original: original,
+        original: params,
         sortable: true,
         showColumns: true,
         onPostBody: function() {
@@ -2650,26 +2623,20 @@ function loadStockLocationTable(table, options) {
     });
 }
 
+/*
+ * Load stock history / tracking table for a given StockItem
+ */
 function loadStockTrackingTable(table, options) {
 
     var cols = [];
 
-    var filterTarget = '#filter-list-stocktracking';
+    const filterKey = 'stocktracking';
 
-    var filterKey = 'stocktracking';
+    let params = options.params || {};
 
-    var filters = loadTableFilters(filterKey);
+    let filters = loadTableFilters(filterKey, params);
 
-    var params = options.params;
-
-    var original = {};
-
-    for (var k in params) {
-        original[k] = params[k];
-        filters[k] = params[k];
-    }
-
-    setupFilterList(filterKey, table, filterTarget);
+    setupFilterList(filterKey, table, '#filter-list-stocktracking');
 
     // Date
     cols.push({
@@ -2861,7 +2828,7 @@ function loadStockTrackingTable(table, options) {
     table.inventreeTable({
         method: 'get',
         queryParams: filters,
-        original: original,
+        original: params,
         columns: cols,
         url: options.url,
     });
