@@ -203,6 +203,14 @@ function makeIconButton(icon, cls, pk, title, options={}) {
 
 
 /*
+ * Helper function for making a common 'info' button
+ */
+function makeInfoButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-info-circle', cls, pk, title, options);
+}
+
+
+/*
  * Helper function for making a common 'edit' button
  */
 function makeEditButton(cls, pk, title, options={}) {

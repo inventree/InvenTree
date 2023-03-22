@@ -149,7 +149,7 @@ function postBarcodeData(barcode_data, options={}) {
 
     var modal = options.modal || '#modal-form';
 
-    var url = options.url || '/api/barcode/';
+    var url = options.url || '{% url "api-barcode-scan" %}';
 
     var data = options.data || {};
 
@@ -462,7 +462,7 @@ function unlinkBarcode(data, options={}) {
             accept_text: '{% trans "Unlink" %}',
             accept: function() {
                 inventreePut(
-                    '/api/barcode/unlink/',
+                    '{% url "api-barcode-unlink" %}',
                     data,
                     {
                         method: 'POST',
@@ -691,7 +691,7 @@ function barcodeCheckInStockLocations(location_id, options={}) {
                 if ('stocklocation' in response) {
                     var pk = response.stocklocation.pk;
 
-                    var url = `/api/stock/location/${pk}/`;
+                    var url = `{% url "api-location-list" %}${pk}/`;
 
                     // Move the scanned location into *this* location
                     inventreePut(
@@ -812,7 +812,7 @@ function scanItemsIntoLocation(item_list, options={}) {
 
                     var pk = response.stocklocation.pk;
 
-                    inventreeGet(`/api/stock/location/${pk}/`, {}, {
+                    inventreeGet(`{% url "api-location-list" %}${pk}/`, {}, {
                         success: function(response) {
 
                             stock_location = response;

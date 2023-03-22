@@ -341,7 +341,35 @@ function loadReturnOrderLineItemTable(options={}) {
     setupFilterList('returnorderlines', $(table), '#filter-list-returnorderlines', {download: true});
 
     function setupCallbacks() {
-        // TODO
+        if (options.allow_edit) {
+            // Callback for "edit" button
+            $(table).find('.button-line-edit').click(function() {
+                let pk = $(this).attr('pk');
+
+                constructForm(`{% url "api-return-order-line-list" %}${pk}/`, {
+                    fields: returnOrderLineItemFields(),
+                    title: '{% trans "Edit Line Item" %}',
+                    onSuccess: function(response) {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        }
+
+        if (options.allow_delete) {
+            // Callback for "delete" button
+            $(table).find('.button-line-delete').click(function() {
+                let pk = $(this).attr('pk');
+
+                constructForm(`{% url "api-return-order-line-list" %}${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Line Item" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        }
     }
 
     $(table).inventreeTable({
@@ -416,7 +444,18 @@ function loadReturnOrderLineItemTable(options={}) {
                 title: '',
                 switchable: false,
                 formatter: function(value, row) {
-                    return `buttons ${row.pk}`;
+                    let buttons = '';
+                    let pk = row.pk;
+
+                    if (options.allow_edit) {
+                        buttons += makeEditButton('button-line-edit', pk, '{% trans "Edit line item" %}');
+                    }
+
+                    if (options.allow_delete) {
+                        buttons += makeDeleteButton('button-line-delete', pk, '{% trans "Delete line item" %}');
+                    }
+
+                    return wrapButtons(buttons);
                 }
             }
         ]

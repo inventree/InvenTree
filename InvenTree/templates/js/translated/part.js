@@ -366,7 +366,7 @@ function createPart(options={}) {
  */
 function editPart(pk) {
 
-    var url = `/api/part/${pk}/`;
+    var url = `{% url "api-part-list" %}${pk}/`;
 
     var fields = partFields({
         edit: true
@@ -397,7 +397,7 @@ function duplicatePart(pk, options={}) {
     }
 
     // First we need all the part information
-    inventreeGet(`/api/part/${pk}/`, {}, {
+    inventreeGet(`{% url "api-part-list" %}${pk}/`, {}, {
 
         success: function(data) {
 
@@ -446,7 +446,7 @@ function duplicatePart(pk, options={}) {
 // Launch form to delete a part
 function deletePart(pk, options={}) {
 
-    inventreeGet(`/api/part/${pk}/`, {}, {
+    inventreeGet(`{% url "api-part-list" %}${pk}/`, {}, {
         success: function(part) {
             if (part.active) {
                 showAlertDialog(
@@ -473,7 +473,7 @@ function deletePart(pk, options={}) {
             </div>`;
 
             constructForm(
-                `/api/part/${pk}/`,
+                `{% url "api-part-list" %}${pk}/`,
                 {
                     method: 'DELETE',
                     title: '{% trans "Delete Part" %}',
@@ -646,7 +646,7 @@ function partStockLabel(part, options={}) {
         var required_build_order_quantity = null;
         var required_sales_order_quantity = null;
 
-        inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
+        inventreeGet(`{% url "api-part-list" %}${part.pk}/requirements/`, {}, {
             async: false,
             success: function(response) {
                 required_build_order_quantity = 0;
@@ -2120,7 +2120,7 @@ function loadPartTable(table, url, options={}) {
                         var part = parts.shift();
 
                         inventreePut(
-                            `/api/part/${part}/`,
+                            `{% url "api-part-list" %}${part}/`,
                             {
                                 category: category,
                             },
@@ -2544,7 +2544,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
     var was_error = false;
 
     // First, grab updated data for the particular part
-    inventreeGet(`/api/part/${part_id}/`, {}, {
+    inventreeGet(`{% url "api-part-list" %}${part_id}/`, {}, {
         async: false,
         success: function(response) {
             part_info = response;
@@ -2583,7 +2583,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
      * and arranged in increasing chronological order
      */
     inventreeGet(
-        `/api/part/${part_id}/scheduling/`,
+        `{% url "api-part-list" %}${part_id}/scheduling/`,
         {},
         {
             async: false,

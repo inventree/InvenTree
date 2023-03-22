@@ -110,6 +110,8 @@ onPanelLoad('order-details', function() {
     loadReturnOrderLineItemTable({
         table: '#return-order-lines-table',
         order: {{ order.pk }},
+        allow_edit: {% js_bool roles.return_order.change %},
+        allow_delete: {% js_bool roles.return_order.delete %},
     });
 
     loadExtraLineTable({

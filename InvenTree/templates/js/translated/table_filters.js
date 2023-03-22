@@ -377,7 +377,7 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Responsible" %}',
                 options: function() {
                     var ownersList = {};
-                    inventreeGet(`/api/user/owner/`, {}, {
+                    inventreeGet('{% url "api-owner-list" %}', {}, {
                         async: false,
                         success: function(response) {
                             for (key in response) {

@@ -215,7 +215,7 @@ function salesOrderShipmentFields(options={}) {
 function completeSalesOrderShipment(shipment_id, options={}) {
 
     // Request the list of stock items which will be shipped
-    inventreeGet(`/api/order/so/shipment/${shipment_id}/`, {}, {
+    inventreeGet(`{% url "api-so-shipment-list" %}${shipment_id}/`, {}, {
         success: function(shipment) {
             var allocations = shipment.allocations;
 
@@ -314,7 +314,7 @@ function completePendingShipments(order_id, options={}) {
     var pending_shipments = null;
 
     // Request the list of stock items which will be shipped
-    inventreeGet(`/api/order/so/shipment/.*`,
+    inventreeGet(`{% url "api-so-shipment-list" %}`,
         {
             order: order_id,
             shipped: false
@@ -1915,7 +1915,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-duplicate').click(function() {
             var pk = $(this).attr('pk');
 
-            inventreeGet(`/api/order/so-line/${pk}/`, {}, {
+            inventreeGet(`{% url "api-so-line-list" %}${pk}/`, {}, {
                 success: function(data) {
 
                     let fields = soLineItemFields();
@@ -1959,7 +1959,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-add-by-sn').click(function() {
             var pk = $(this).attr('pk');
 
-            inventreeGet(`/api/order/so-line/${pk}/`, {},
+            inventreeGet(`{% url "api-so-line-list" %}${pk}/`, {},
                 {
                     success: function(response) {
 

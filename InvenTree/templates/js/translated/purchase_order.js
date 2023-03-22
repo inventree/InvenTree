@@ -187,7 +187,7 @@ function duplicatePurchaseOrder(order_id, options={}) {
 
     options.duplicate_order = order_id;
 
-    inventreeGet(`/api/order/po/${order_id}/`, {}, {
+    inventreeGet(`{% url "api-po-list" %}${order_id}/`, {}, {
         success: function(data) {
 
             // Clear out data we do not want to be duplicated
@@ -233,7 +233,7 @@ function poLineItemFields(options={}) {
                 }
 
                 // Request information about the particular supplier part
-                inventreeGet(`/api/company/part/${value}/`,
+                inventreeGet(`{% url "api-supplier-part-list" %}${value}/`,
                     {
                         part_detail: true,
                     },
@@ -816,7 +816,7 @@ function orderParts(parts_list, options) {
                 }, null, opts);
 
                 // Request 'requirements' information for each part
-                inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
+                inventreeGet(`{% url "api-part-list" %}${part.pk}/requirements/`, {}, {
                     success: function(response) {
                         var required = response.required || 0;
                         var allocated = response.allocated || 0;
@@ -1743,7 +1743,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             $(table).find('.button-line-duplicate').click(function() {
                 var pk = $(this).attr('pk');
 
-                inventreeGet(`/api/order/po-line/${pk}/`, {}, {
+                inventreeGet(`{% url "api-po-line-list" %}${pk}/`, {}, {
                     success: function(data) {
 
                         var fields = poLineItemFields({
@@ -2052,8 +2052,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '',
                 formatter: function(value, row, index, field) {
                     let buttons = '';
-
-                    var pk = row.pk;
+                    let pk = row.pk;
 
                     if (options.allow_receive && row.received < row.quantity) {
                         buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Receive line item" %}');

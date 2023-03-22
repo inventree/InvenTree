@@ -88,7 +88,7 @@ function serializeStockItem(pk, options={}) {
 
     if (options.part) {
         // Work out the next available serial number
-        inventreeGet(`/api/part/${options.part}/serial-numbers/`, {}, {
+        inventreeGet(`{% url "api-part-list" %}${options.part}/serial-numbers/`, {}, {
             success: function(data) {
                 if (data.next) {
                     options.fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
@@ -230,7 +230,7 @@ function stockItemFields(options={}) {
                         enableFormInput('serial_numbers', opts);
 
                         // Request part serial number information from the server
-                        inventreeGet(`/api/part/${data.pk}/serial-numbers/`, {}, {
+                        inventreeGet(`{% url "api-part-list" %}${data.pk}/serial-numbers/`, {}, {
                             success: function(data) {
                                 var placeholder = '';
                                 if (data.next) {
@@ -379,7 +379,7 @@ function duplicateStockItem(pk, options) {
     }
 
     // First, we need the StockItem information
-    inventreeGet(`/api/stock/${pk}/`, {}, {
+    inventreeGet(`{% url "api-stock-list" %}${pk}/`, {}, {
         success: function(data) {
 
             // Do not duplicate the serial number

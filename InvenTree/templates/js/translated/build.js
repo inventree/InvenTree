@@ -312,7 +312,7 @@ function createBuildOutput(build_id, options) {
                 };
 
                 // Work out the next available serial numbers
-                inventreeGet(`/api/part/${build.part}/serial-numbers/`, {}, {
+                inventreeGet(`{% url "api-part-list" %}${build.part}/serial-numbers/`, {}, {
                     success: function(data) {
                         if (data.next) {
                             fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
@@ -2080,7 +2080,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
     if (output_id) {
         // Request information on the particular build output (stock item)
-        inventreeGet(`/api/stock/${output_id}/`, {}, {
+        inventreeGet(`{% url "api-stock-list" %}${output_id}/`, {}, {
             success: function(output) {
                 if (output.quantity == 1 && output.serial != null) {
                     auto_fill_filters.serial = output.serial;
