@@ -147,20 +147,6 @@
     });
 
     onPanelLoad('order-attachments', function() {
-        enableDragAndDrop(
-            '#attachment-dropzone',
-            '{% url "api-po-attachment-list" %}',
-            {
-                data: {
-                    order: {{ order.id }},
-                },
-                label: 'attachment',
-                success: function(data, status, xhr) {
-                    $('#attachment-table').bootstrapTable('refresh');
-                }
-            }
-        );
-
         loadAttachmentTable('{% url "api-po-attachment-list" %}', {
             filters: {
                 order: {{ order.pk }},

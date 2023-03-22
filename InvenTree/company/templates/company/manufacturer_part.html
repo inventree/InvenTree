@@ -209,25 +209,7 @@ onPanelLoad("attachments", function() {
             }
         }
     });
-
-    enableDragAndDrop(
-        '#attachment-dropzone',
-        '{% url "api-manufacturer-part-attachment-list" %}',
-        {
-            data: {
-                manufacturer_part: {{ part.id }},
-            },
-            label: 'attachment',
-            success: function(data, status, xhr) {
-                reloadAttachmentTable();
-            }
-        }
-    );
 });
-
-function reloadParameters() {
-    $("#parameter-table").bootstrapTable("refresh");
-}
 
 $('#parameter-create').click(function() {
 
@@ -243,7 +225,7 @@ $('#parameter-create').click(function() {
             }
         },
         title: '{% trans "Add Parameter" %}',
-        onSuccess: reloadParameters
+        refreshTable: '#parameter-table',
     });
 });
 

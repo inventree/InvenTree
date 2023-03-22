@@ -548,7 +548,7 @@
 
             deleteManufacturerParts(selections, {
                 success: function() {
-                    $("#manufacturer-part-table").bootstrapTable("refresh");
+                    $("#manufacturer-part-table").bootstrapTable('refresh');
                 }
             });
         });
@@ -558,7 +558,7 @@
             createManufacturerPart({
                 part: {{ part.pk }},
                 onSuccess: function() {
-                    $("#manufacturer-part-table").bootstrapTable("refresh");
+                    $("#manufacturer-part-table").bootstrapTable('refresh');
                 }
             });
         });
@@ -904,20 +904,6 @@
                 }
             }
         });
-
-        enableDragAndDrop(
-            '#attachment-dropzone',
-            '{% url "api-part-attachment-list" %}',
-            {
-                data: {
-                    part: {{ part.id }},
-                },
-                label: 'attachment',
-                success: function(data, status, xhr) {
-                    reloadAttachmentTable();
-                }
-            }
-        );
     });
 
     onPanelLoad('pricing', function() {

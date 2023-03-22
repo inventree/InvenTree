@@ -367,20 +367,6 @@ onPanelLoad('children', function() {
 
 onPanelLoad('attachments', function() {
 
-    enableDragAndDrop(
-        '#attachment-dropzone',
-        '{% url "api-build-attachment-list" %}',
-        {
-            data: {
-                build: {{ build.id }},
-            },
-            label: 'attachment',
-            success: function(data, status, xhr) {
-                $('#attachment-table').bootstrapTable('refresh');
-            }
-        }
-    );
-
     loadAttachmentTable('{% url "api-build-attachment-list" %}', {
         filters: {
             build: {{ build.pk }},
@@ -408,10 +394,6 @@ onPanelLoad('notes', function() {
         }
     );
 });
-
-function reloadTable() {
-    $('#allocation-table-untracked').bootstrapTable('refresh');
-}
 
 onPanelLoad('outputs', function() {
     {% if build.active %}

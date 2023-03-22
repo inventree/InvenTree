@@ -154,19 +154,6 @@ onPanelLoad('order-notes', function() {
 
 // Callback function when the 'attachments' panel is loaded
 onPanelLoad('order-attachments', function() {
-    enableDragAndDrop(
-        '#attachment-dropzone',
-        '{% url "api-return-order-attachment-list" %}',
-        {
-            data: {
-                order: {{ order.id }},
-            },
-            label: 'attachment',
-            success: function(data, status, xhr) {
-                reloadAttachmentTable();
-            }
-        }
-    );
 
     loadAttachmentTable('{% url "api-return-order-attachment-list" %}', {
         filters: {

@@ -8,8 +8,7 @@
 /* exported
     attachmentLink,
     addAttachmentButtonCallbacks,
-    loadAttachmentTable,
-    reloadAttachmentTable,
+    loadAttachmentTable
 */
 
 
@@ -35,7 +34,7 @@ function addAttachmentButtonCallbacks(url, fields={}) {
         constructForm(url, {
             fields: file_fields,
             method: 'POST',
-            onSuccess: reloadAttachmentTable,
+            refreshTable: '#attachment-table',
             title: '{% trans "Add Attachment" %}',
         });
     });
@@ -57,7 +56,7 @@ function addAttachmentButtonCallbacks(url, fields={}) {
         constructForm(url, {
             fields: link_fields,
             method: 'POST',
-            onSuccess: reloadAttachmentTable,
+            refreshTable: '#attachment-table',
             title: '{% trans "Add Link" %}',
         });
     });
@@ -125,12 +124,6 @@ function deleteAttachments(attachments, url, options={}) {
         },
         refreshTable: '#attachment-table',
     });
-}
-
-
-function reloadAttachmentTable() {
-
-    $('#attachment-table').bootstrapTable('refresh');
 }
 
 
@@ -268,7 +261,7 @@ function loadAttachmentTable(url, options) {
                                 delete opts.fields.link;
                             }
                         },
-                        onSuccess: reloadAttachmentTable,
+                        refreshTable: '#attachment-table',
                         title: '{% trans "Edit Attachment" %}',
                     });
                 });
@@ -347,4 +340,18 @@ function loadAttachmentTable(url, options) {
             }
         ]
     });
+
+    // Enable drag-and-drop functionality
+    enableDragAndDrop(
+        '#attachment-dropzone',
+        url,
+        {
+            data: options.filters,
+            label: 'attachment',
+            method: 'POST',
+            success: function() {
+                reloadBootstrapTable('#attachment-table');
+            }
+        }
+    );
 }

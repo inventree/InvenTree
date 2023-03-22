@@ -210,19 +210,6 @@
     });
 
     onPanelLoad('order-attachments', function() {
-        enableDragAndDrop(
-            '#attachment-dropzone',
-            '{% url "api-so-attachment-list" %}',
-            {
-                data: {
-                    order: {{ order.id }},
-                },
-                label: 'attachment',
-                success: function(data, status, xhr) {
-                    reloadAttachmentTable();
-                }
-            }
-        );
 
         loadAttachmentTable('{% url "api-so-attachment-list" %}', {
             filters: {
@@ -250,7 +237,7 @@
             createSalesOrderLineItem({
                 order: {{ order.pk }},
                 onSuccess: function() {
-                    $("#so-lines-table").bootstrapTable("refresh");
+                    $("#so-lines-table").bootstrapTable('refresh');
                 }
             });
 

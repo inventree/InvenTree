@@ -292,20 +292,6 @@
                 }
             }
         });
-
-        enableDragAndDrop(
-            '#attachment-dropzone',
-            '{% url "api-company-attachment-list" %}',
-            {
-                data: {
-                    company: {{ company.id }},
-                },
-                label: 'attachment',
-                success: function(data, status, xhr) {
-                    reloadAttachmentTable();
-                }
-            }
-        );
     });
 
     // Callback function when the 'contacts' panel is loaded
@@ -455,7 +441,7 @@
         createManufacturerPart({
             manufacturer: {{ company.pk }},
             onSuccess: function() {
-                $("#part-table").bootstrapTable("refresh");
+                $("#part-table").bootstrapTable('refresh');
             }
         });
     });
@@ -477,7 +463,7 @@
 
         deleteManufacturerParts(selections, {
             success: function() {
-                $("#manufacturer-part-table").bootstrapTable("refresh");
+                $("#manufacturer-part-table").bootstrapTable('refresh');
             }
         });
     });

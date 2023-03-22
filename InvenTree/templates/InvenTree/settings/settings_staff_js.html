@@ -284,9 +284,7 @@ onPanelLoad('parts', function() {
             },
             method: 'POST',
             title: '{% trans "Create Part Parameter Template" %}',
-            onSuccess: function() {
-                $("#param-table").bootstrapTable('refresh');
-            },
+            refreshTable: '#param-table',
         });
     });
 
