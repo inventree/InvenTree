@@ -320,44 +320,6 @@ class AjaxView(AjaxMixin, View):
         return self.renderJsonResponse(request)
 
 
-class QRCodeView(AjaxView):
-    """An 'AJAXified' view for displaying a QR code.
-
-    Subclasses should implement the get_qr_data(self) function.
-    """
-
-    ajax_template_name = "qr_code.html"
-
-    def get(self, request, *args, **kwargs):
-        """Return json with qr-code data."""
-        self.request = request
-        self.pk = self.kwargs['pk']
-        return self.renderJsonResponse(request, None, context=self.get_context_data())
-
-    def get_qr_data(self):
-        """Returns the text object to render to a QR code.
-
-        The actual rendering will be handled by the template
-        """
-        return None
-
-    def get_context_data(self):
-        """Get context data for passing to the rendering template.
-
-        Explicity passes the parameter 'qr_data'
-        """
-        context = {}
-
-        qr = self.get_qr_data()
-
-        if qr:
-            context['qr_data'] = qr
-        else:
-            context['error_msg'] = 'Error generating QR code'
-
-        return context
-
-
 class AjaxUpdateView(AjaxMixin, UpdateView):
     """An 'AJAXified' UpdateView for updating an object in the db.
 

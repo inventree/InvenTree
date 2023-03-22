@@ -12,6 +12,7 @@
     reloadtable,
     renderLink,
     reloadTableFilters,
+    constructExpandCollapseButtons,
     constructOrderTableButtons,
 */
 
@@ -95,6 +96,28 @@ function constructOrderTableButtons(options={}) {
     }
 
     return buttons;
+}
+
+
+/*
+ * Construct buttons to expand / collapse all rows in a table
+ */
+function constructExpandCollapseButtons(table, idx=0) {
+
+    return [
+        {
+            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% trans "Expand all rows" %}'><span class='fas fa-expand'></span></button>`,
+            event: function() {
+                $(table).bootstrapTable('expandAllRows');
+            }
+        },
+        {
+            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% trans "Collapse all rows" %}'><span class='fas fa-compress'></span></button>`,
+            event: function() {
+                $(table).bootstrapTable('collapseAllRows');
+            }
+        }
+    ];
 }
 
 

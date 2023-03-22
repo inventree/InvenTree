@@ -11,6 +11,7 @@
 
 <table class='table table-striped table-condensed'>
     <tbody>
+        {% include "InvenTree/settings/setting.html" with key="PART_ENABLE_REVISION" %}
         {% include "InvenTree/settings/setting.html" with key="PART_IPN_REGEX" %}
         {% include "InvenTree/settings/setting.html" with key="PART_ALLOW_DUPLICATE_IPN" %}
         {% include "InvenTree/settings/setting.html" with key="PART_ALLOW_EDIT_IPN" %}

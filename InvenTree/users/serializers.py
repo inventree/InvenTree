@@ -12,10 +12,6 @@ from .models import Owner
 class OwnerSerializer(InvenTreeModelSerializer):
     """Serializer for an "Owner" (either a "user" or a "group")"""
 
-    name = serializers.CharField(read_only=True)
-
-    label = serializers.CharField(read_only=True)
-
     class Meta:
         """Metaclass defines serializer fields."""
         model = Owner
@@ -25,6 +21,10 @@ class OwnerSerializer(InvenTreeModelSerializer):
             'name',
             'label',
         ]
+
+    name = serializers.CharField(read_only=True)
+
+    label = serializers.CharField(read_only=True)
 
 
 class GroupSerializer(InvenTreeModelSerializer):

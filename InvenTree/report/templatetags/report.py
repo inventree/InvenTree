@@ -184,3 +184,34 @@ def internal_link(link, text):
         return text
 
     return mark_safe(f'<a href="{url}">{text}</a>')
+
+
+@register.simple_tag()
+def add(x, y, *args, **kwargs):
+    """Add two numbers together."""
+    return x + y
+
+
+@register.simple_tag()
+def subtract(x, y):
+    """Subtract one number from another"""
+    return x - y
+
+
+@register.simple_tag()
+def multiply(x, y):
+    """Multiply two numbers together"""
+    return x * y
+
+
+@register.simple_tag()
+def divide(x, y):
+    """Divide one number by another"""
+    return x / y
+
+
+@register.simple_tag
+def render_currency(money, **kwargs):
+    """Render a currency / Money object"""
+
+    return InvenTree.helpers.render_currency(money, **kwargs)

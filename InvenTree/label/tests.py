@@ -27,9 +27,10 @@ class LabelTest(InvenTreeAPITestCase):
         'stock'
     ]
 
-    def setUp(self) -> None:
+    @classmethod
+    def setUpTestData(cls):
         """Ensure that some label instances exist as part of init routine"""
-        super().setUp()
+        super().setUpTestData()
         apps.get_app_config('label').create_labels()
 
     def test_default_labels(self):

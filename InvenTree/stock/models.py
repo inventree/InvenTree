@@ -47,6 +47,12 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     Stock locations can be hierarchical as required
     """
 
+    class Meta:
+        """Metaclass defines extra model properties"""
+
+        verbose_name = _('Stock Location')
+        verbose_name_plural = _('Stock Locations')
+
     def delete_recursive(self, *args, **kwargs):
         """This function handles the recursive deletion of sub-locations depending on kwargs contents"""
         delete_stock_items = kwargs.get('delete_stock_items', False)
@@ -114,6 +120,12 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         help_text=_(
             'Stock items may not be directly located into a structural stock locations, '
             'but may be located to child locations.'),
+    )
+
+    external = models.BooleanField(
+        default=False,
+        verbose_name=_('External'),
+        help_text=_('This is an external stock location')
     )
 
     def get_location_owner(self):
@@ -517,7 +529,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
 
         for plugin in registry.with_mixin('validation'):
             try:
-                plugin.validate_batch_code(self.batch)
+                plugin.validate_batch_code(self.batch, self)
             except ValidationError as exc:
                 raise ValidationError({
                     'batch': exc.message
@@ -548,6 +560,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
         if type(self.batch) is str:
             self.batch = self.batch.strip()
 
+        # Custom validation of batch code
         self.validate_batch_code()
 
         try:
@@ -1992,8 +2005,8 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
         InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 
         # Schedule an update on parent part pricing
-        if InvenTree.ready.canAppAccessDatabase():
-            instance.part.schedule_pricing_update()
+        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
+            instance.part.schedule_pricing_update(create=False)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2005,8 +2018,8 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
         # Run this check in the background
         InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 
-        if InvenTree.ready.canAppAccessDatabase():
-            instance.part.schedule_pricing_update()
+        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
+            instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemAttachment(InvenTreeAttachment):

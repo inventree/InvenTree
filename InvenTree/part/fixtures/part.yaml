@@ -95,7 +95,7 @@
   pk: 100
   fields:
     name: 'Bob'
-    description: 'Can we build it?'
+    description: 'Can we build it? Yes we can!'
     assembly: true
     salable: true
     purchaseable: false
@@ -112,7 +112,7 @@
   pk: 101
   fields:
     name: 'Assembly'
-    description: 'A high level assembly'
+    description: 'A high level assembly part'
     salable: true
     active: True
     tree_id: 0
@@ -125,7 +125,7 @@
   pk: 10000
   fields:
     name: 'Chair Template'
-    description: 'A chair'
+    description: 'A chair, which is actually just a template part'
     is_template: True
     trackable: true
     salable: true
@@ -139,6 +139,7 @@
   pk: 10001
   fields:
     name: 'Blue Chair'
+    description: 'A variant chair part which is blue'
     variant_of: 10000
     trackable: true
     category: 7
@@ -151,6 +152,7 @@
   pk: 10002
   fields:
     name: 'Red chair'
+    description: 'A variant chair part which is red'
     variant_of: 10000
     IPN: "R.CH"
     trackable: true
@@ -164,6 +166,7 @@
   pk: 10003
   fields:
     name: 'Green chair'
+    description: 'A template chair part which is green'
     variant_of: 10000
     category: 7
     trackable: true
@@ -176,6 +179,7 @@
   pk: 10004
   fields:
     name: 'Green chair variant'
+    description: 'A green chair, which is a variant of the chair template'
     variant_of: 10003
     is_template: true
     category: 7

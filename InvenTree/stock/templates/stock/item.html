@@ -259,11 +259,9 @@
         $("#test-result-table").bootstrapTable("refresh");
     }
 
-    {% if item.has_test_reports %}
     $("#test-report").click(function() {
         printTestReports([{{ item.pk }}]);
     });
-    {% endif %}
 
     {% if user.is_staff %}
     $("#delete-test-results").click(function() {
@@ -313,17 +311,9 @@
 
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',
-            fields: {
-                test: {},
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {},
-                stock_item: {
-                    value: {{ item.pk }},
-                    hidden: true,
-                }
-            },
+            fields: stockItemTestResultFields({
+                stock_item: {{ item.pk }},
+            }),
             title: '{% trans "Add Test Result" %}',
             onSuccess: reloadTable,
         });

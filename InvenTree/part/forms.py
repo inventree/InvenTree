@@ -34,16 +34,16 @@ class BomMatchItemForm(MatchItemForm):
 class PartPriceForm(forms.Form):
     """Simple form for viewing part pricing information."""
 
-    quantity = forms.IntegerField(
-        required=True,
-        initial=1,
-        label=_('Quantity'),
-        help_text=_('Input quantity for price calculation')
-    )
-
     class Meta:
         """Metaclass defines fields for this form"""
         model = Part
         fields = [
             'quantity',
         ]
+
+    quantity = forms.IntegerField(
+        required=True,
+        initial=1,
+        label=_('Quantity'),
+        help_text=_('Input quantity for price calculation')
+    )

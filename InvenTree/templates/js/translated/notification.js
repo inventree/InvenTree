@@ -51,24 +51,15 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
                 sortable: 'true',
             },
             {
-                field: 'target',
-                title: '{% trans "Item" %}',
-                sortable: 'true',
-                formatter: function(value, row, index, field) {
-                    if (value == null) {
-                        return '';
-                    }
-
-                    var html = `${value.model}: ${value.name}`;
-                    if (value.link ) {
-                        html = `<a href='${value.link}'>${html}</a>`;
-                    }
-                    return html;
-                }
-            },
-            {
                 field: 'name',
-                title: '{% trans "Name" %}',
+                title: '{% trans "Notification" %}',
+                formatter: function(value, row) {
+                    if (row.target && row.target.link) {
+                        return renderLink(value, row.target.link);
+                    } else {
+                        return value;
+                    }
+                }
             },
             {
                 field: 'message',

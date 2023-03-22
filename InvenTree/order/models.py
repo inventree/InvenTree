@@ -51,6 +51,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
     Instances of this class:
 
     - PuchaseOrder
+    - SalesOrder
 
     Attributes:
         reference: Unique order number / reference / code
@@ -63,6 +64,10 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         responsible: User (or group) responsible for managing the order
     """
 
+    class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+        abstract = True
+
     def save(self, *args, **kwargs):
         """Custom save method for the order models:
 
@@ -73,12 +78,10 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         if not self.creation_date:
             self.creation_date = datetime.now().date()
 
+        # Recalculate total_price for this order
+        self.update_total_price(commit=False)
+
         super().save(*args, **kwargs)
-
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-
-        abstract = True
 
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
@@ -104,7 +107,22 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
     notes = InvenTreeNotesField(help_text=_('Order notes'))
 
-    def get_total_price(self, target_currency=None):
+    total_price = InvenTreeModelMoneyField(
+        null=True, blank=True,
+        allow_negative=False,
+        verbose_name=_('Total Price'),
+        help_text=_('Total price for this order')
+    )
+
+    def update_total_price(self, commit=True):
+        """Recalculate and save the total_price for this order"""
+
+        self.total_price = self.calculate_total_price()
+
+        if commit:
+            self.save()
+
+    def calculate_total_price(self, target_currency=None):
         """Calculates the total price of all order lines, and converts to the specified target currency.
 
         If not specified, the default system currency is used.
@@ -135,7 +153,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                 # Record the error, try to press on
                 kind, info, data = sys.exc_info()
 
-                log_error('order.get_total_price')
+                log_error('order.calculate_total_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid
@@ -152,7 +170,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
             except MissingRate:
                 # Record the error, try to press on
 
-                log_error('order.get_total_price')
+                log_error('order.calculate_total_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid
@@ -390,7 +408,7 @@ class PurchaseOrder(Order):
             # Schedule pricing update for any referenced parts
             for line in self.lines.all():
                 if line.part and line.part.part:
-                    line.part.part.schedule_pricing_update()
+                    line.part.part.schedule_pricing_update(create=True)
 
             trigger_event('purchaseorder.completed', id=self.pk)
 
@@ -502,6 +520,11 @@ class PurchaseOrder(Order):
             # Take the 'pack_size' of the SupplierPart into account
             pack_quantity = Decimal(quantity) * Decimal(line.part.pack_size)
 
+            if line.purchase_price:
+                unit_purchase_price = line.purchase_price / line.part.pack_size
+            else:
+                unit_purchase_price = None
+
             # Determine if we should individually serialize the items, or not
             if type(serials) is list and len(serials) > 0:
                 serialize = True
@@ -520,7 +543,7 @@ class PurchaseOrder(Order):
                     status=status,
                     batch=batch_code,
                     serial=sn,
-                    purchase_price=line.purchase_price,
+                    purchase_price=unit_purchase_price,
                     barcode_hash=barcode_hash
                 )
 
@@ -778,7 +801,7 @@ class SalesOrder(Order):
 
         # Schedule pricing update for any referenced parts
         for line in self.lines.all():
-            line.part.schedule_pricing_update()
+            line.part.schedule_pricing_update(create=True)
 
         trigger_event('salesorder.completed', id=self.pk)
 
@@ -927,8 +950,25 @@ class OrderLineItem(models.Model):
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
-
         abstract = True
+
+    def save(self, *args, **kwargs):
+        """Custom save method for the OrderLineItem model
+
+        Calls save method on the linked order
+        """
+
+        super().save(*args, **kwargs)
+        self.order.save()
+
+    def delete(self, *args, **kwargs):
+        """Custom delete method for the OrderLineItem model
+
+        Calls save method on the linked order
+        """
+
+        super().delete(*args, **kwargs)
+        self.order.save()
 
     quantity = RoundingDecimalField(
         verbose_name=_('Quantity'),
@@ -937,6 +977,13 @@ class OrderLineItem(models.Model):
         max_digits=15, decimal_places=5,
         validators=[MinValueValidator(0)],
     )
+
+    @property
+    def total_line_price(self):
+        """Return the total price for this line item"""
+
+        if self.price:
+            return self.quantity * self.price
 
     reference = models.CharField(max_length=100, blank=True, verbose_name=_('Reference'), help_text=_('Line item reference'))
 
@@ -958,7 +1005,6 @@ class OrderExtraLine(OrderLineItem):
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
-
         abstract = True
 
     context = models.JSONField(
@@ -1054,6 +1100,11 @@ class PurchaseOrderLineItem(OrderLineItem):
         verbose_name=_('Purchase Price'),
         help_text=_('Unit purchase price'),
     )
+
+    @property
+    def price(self):
+        """Return the 'purchase_price' field as 'price'"""
+        return self.purchase_price
 
     destination = TreeForeignKey(
         'stock.StockLocation', on_delete=models.SET_NULL,
@@ -1160,6 +1211,11 @@ class SalesOrderLineItem(OrderLineItem):
         verbose_name=_('Sale Price'),
         help_text=_('Unit sale price'),
     )
+
+    @property
+    def price(self):
+        """Return the 'sale_price' field as 'price'"""
+        return self.sale_price
 
     shipped = RoundingDecimalField(
         verbose_name=_('Shipped'),

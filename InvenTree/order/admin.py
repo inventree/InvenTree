@@ -101,12 +101,6 @@ class SalesOrderAdmin(ImportExportModelAdmin):
 class PurchaseOrderResource(InvenTreeResource):
     """Class for managing import / export of PurchaseOrder data."""
 
-    # Add number of line items
-    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
-
-    # Is this order overdue?
-    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
-
     class Meta:
         """Metaclass"""
         model = PurchaseOrder
@@ -116,9 +110,22 @@ class PurchaseOrderResource(InvenTreeResource):
             'metadata',
         ]
 
+    # Add number of line items
+    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
+
+    # Is this order overdue?
+    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
+
 
 class PurchaseOrderLineItemResource(InvenTreeResource):
     """Class for managing import / export of PurchaseOrderLineItem data."""
+
+    class Meta:
+        """Metaclass"""
+        model = PurchaseOrderLineItem
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
 
     part_name = Field(attribute='part__part__name', readonly=True)
 
@@ -127,13 +134,6 @@ class PurchaseOrderLineItemResource(InvenTreeResource):
     MPN = Field(attribute='part__MPN', readonly=True)
 
     SKU = Field(attribute='part__SKU', readonly=True)
-
-    class Meta:
-        """Metaclass"""
-        model = PurchaseOrderLineItem
-        skip_unchanged = True
-        report_skipped = False
-        clean_model_instances = True
 
 
 class PurchaseOrderExtraLineResource(InvenTreeResource):
@@ -148,12 +148,6 @@ class PurchaseOrderExtraLineResource(InvenTreeResource):
 class SalesOrderResource(InvenTreeResource):
     """Class for managing import / export of SalesOrder data."""
 
-    # Add number of line items
-    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
-
-    # Is this order overdue?
-    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
-
     class Meta:
         """Metaclass options"""
         model = SalesOrder
@@ -163,9 +157,22 @@ class SalesOrderResource(InvenTreeResource):
             'metadata',
         ]
 
+    # Add number of line items
+    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
+
+    # Is this order overdue?
+    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
+
 
 class SalesOrderLineItemResource(InvenTreeResource):
     """Class for managing import / export of SalesOrderLineItem data."""
+
+    class Meta:
+        """Metaclass options"""
+        model = SalesOrderLineItem
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
 
     part_name = Field(attribute='part__name', readonly=True)
 
@@ -184,13 +191,6 @@ class SalesOrderLineItemResource(InvenTreeResource):
             return str(item.sale_price)
         else:
             return ''
-
-    class Meta:
-        """Metaclass options"""
-        model = SalesOrderLineItem
-        skip_unchanged = True
-        report_skipped = False
-        clean_model_instances = True
 
 
 class SalesOrderExtraLineResource(InvenTreeResource):

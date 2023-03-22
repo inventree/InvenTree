@@ -19,12 +19,23 @@
     withTitle,
 */
 
-function yesNoLabel(value) {
+function yesNoLabel(value, options={}) {
+    var text = '';
+    var color = '';
+
     if (value) {
-        return `<span class='badge rounded-pill bg-success'>{% trans "YES" %}</span>`;
+        text = '{% trans "YES" %}';
+        color = 'bg-success';
     } else {
-        return `<span class='badge rounded-pill bg-warning'>{% trans "NO" %}</span>`;
+        text = '{% trans "NO" %}';
+        color = 'bg-warning';
     }
+
+    if (options.muted) {
+        color = 'bg-secondary';
+    }
+
+    return `<span class='badge rounded-pill ${color}'>${text}</span>`;
 }
 
 
@@ -47,7 +58,7 @@ function deleteButton(url, text='{% trans "Delete" %}') {
 function shortenString(input_string, options={}) {
 
     // Maximum length can be provided via options argument, or via a user-configurable setting
-    var max_length = options.max_length || user_settings.TABLE_STRING_MAX_LENGTH;
+    var max_length = options.max_length || user_settings.TABLE_STRING_MAX_LENGTH || 100;
 
     if (!max_length || !input_string) {
         return input_string;
@@ -272,6 +283,10 @@ function renderLink(text, url, options={}) {
 
     if (options.tooltip != false) {
         extras += ` title="${url}"`;
+    }
+
+    if (options.download) {
+        extras += ` download`;
     }
 
     return `<a href="${url}" ${extras}>${text}</a>`;

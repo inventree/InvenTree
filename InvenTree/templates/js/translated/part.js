@@ -27,6 +27,7 @@
     duplicatePart,
     editCategory,
     editPart,
+    generateStocktakeReport,
     loadParametricPartTable,
     loadPartCategoryTable,
     loadPartParameterTable,
@@ -40,7 +41,7 @@
     loadSimplePartTable,
     partDetail,
     partStockLabel,
-    performStocktake,
+    partTestTemplateFields,
     toggleStar,
     validateBom,
 */
@@ -97,7 +98,9 @@ function partFields(options={}) {
         },
         name: {},
         IPN: {},
-        revision: {},
+        revision: {
+            icon: 'fa-code-branch',
+        },
         description: {},
         variant_of: {},
         keywords: {
@@ -108,11 +111,13 @@ function partFields(options={}) {
             icon: 'fa-link',
         },
         default_location: {
+            icon: 'fa-sitemap',
             filters: {
                 structural: false,
             }
         },
         default_supplier: {
+            icon: 'fa-building',
             filters: {
                 part_detail: true,
                 supplier_detail: true,
@@ -171,9 +176,14 @@ function partFields(options={}) {
         };
     }
 
-    // Pop expiry field
+    // Pop 'expiry' field
     if (!global_settings.STOCK_ENABLE_EXPIRY) {
         delete fields['default_expiry'];
+    }
+
+    // Pop 'revision' field
+    if (!global_settings.PART_ENABLE_REVISION) {
+        delete fields['revision'];
     }
 
     if (options.create || options.duplicate) {
@@ -209,9 +219,6 @@ function partFields(options={}) {
         delete fields['default_supplier'];
 
         fields.copy_category_parameters = {
-            type: 'boolean',
-            label: '{% trans "Copy Category Parameters" %}',
-            help_text: '{% trans "Copy parameter templates from selected part category" %}',
             value: global_settings.PART_CATEGORY_PARAMETERS,
             group: 'create',
         };
@@ -256,6 +263,7 @@ function categoryFields() {
         name: {},
         description: {},
         default_location: {
+            icon: 'fa-sitemap',
             filters: {
                 structural: false,
             }
@@ -412,6 +420,11 @@ function duplicatePart(pk, options={}) {
 
                 // By default, disable "is_template" when making a variant *of* a template
                 data.is_template = false;
+            }
+
+            // Clear IPN field if PART_ALLOW_DUPLICATE_IPN is set to False
+            if (!global_settings['PART_ALLOW_DUPLICATE_IPN']) {
+                data.IPN = '';
             }
 
             constructForm('{% url "api-part-list" %}', {
@@ -578,54 +591,114 @@ function duplicateBom(part_id, options={}) {
  * Construct a "badge" label showing stock information for this particular part
  */
 function partStockLabel(part, options={}) {
+    var classes = options.classes || '';
 
     // Prevent literal string 'null' from being displayed
     var units = part.units || '';
 
-    if (part.in_stock) {
+    let elements = [];
+
+    // Check for stock
+    if (part.total_in_stock) {
         // There IS stock available for this part
 
         // Is stock "low" (below the 'minimum_stock' quantity)?
-        if ((part.minimum_stock > 0) && (part.minimum_stock > part.in_stock)) {
-            return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Low stock" %}: ${part.in_stock} ${units}</span>`;
-        } else if (part.unallocated_stock == 0) {
-            if (part.ordering) {
-                // There is no available stock, but stock is on order
-                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering} ${units}</span>`;
-            } else if (part.building) {
-                // There is no available stock, but stock is being built
-                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building} ${units}</span>`;
-            } else {
-                // There is no available stock at all
-                return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "No stock available" %}</span>`;
-            }
+        if ((part.minimum_stock > 0) && (part.minimum_stock > part.total_in_stock)) {
+            elements.push(`{% trans "Low stock" %}: ${part.total_in_stock}`);
+        } else if (part.unallocated_stock <= 0) {
+            // There is no available stock at all
+            elements.push(`{% trans "No stock available" %}`);
         } else if (part.unallocated_stock < part.in_stock) {
-            // Unallocated quanttiy is less than total quantity
-            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock} ${units}</span>`;
+            // Unallocated quantity is less than total quantity
+            if (options.hideTotalStock) {
+                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}`);
+            } else {
+                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}`);
+            }
         } else {
             // Stock is completely available
-            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock} ${units}</span>`;
+            if (!options.hideTotalStock) {
+                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}`);
+            }
         }
     } else {
         // There IS NO stock available for this part
-
-        if (part.ordering) {
-            // There is no stock, but stock is on order
-            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering} ${units}</span>`;
-        } else if (part.building) {
-            // There is no stock, but stock is being built
-            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building} ${units}</span>`;
-        } else {
-            // There is no stock
-            var unit_badge = '';
-            if (units) {
-                // show units next to [No Stock] badge
-                unit_badge = `<span class='badge rounded-pill text-muted bg-muted ${options.classes}'>{% trans "Unit" %}: ${units}</span> `;
-            }
-            return `${unit_badge}<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
-        }
+        elements.push(`{% trans "No Stock" %}`);
     }
 
+    // Check for items on order
+    if (part.ordering) {
+        elements.push(`{% trans "On Order" %}: ${part.ordering}`);
+    }
+
+    // Check for items beeing built
+    if (part.building) {
+        elements.push(`{% trans "Building" %}: ${part.building}`);
+    }
+
+    // Determine badge color based on overall stock health
+    var stock_health = part.unallocated_stock + part.building + part.ordering - part.minimum_stock;
+
+    // TODO: Refactor the API to include this information, so we don't have to request it!
+    if (options.showDemandInfo) {
+
+        // Check for demand from unallocated build orders
+        var required_build_order_quantity = null;
+        var required_sales_order_quantity = null;
+
+        inventreeGet(`/api/part/${part.pk}/requirements/`, {}, {
+            async: false,
+            success: function(response) {
+                required_build_order_quantity = 0;
+                if (response.required_build_order_quantity) {
+                    required_build_order_quantity = response.required_build_order_quantity;
+                }
+                required_sales_order_quantity = 0;
+                if (response.required_sales_order_quantity) {
+                    required_sales_order_quantity = response.required_sales_order_quantity;
+                }
+            }
+        });
+
+        if ((required_build_order_quantity == null) || (required_sales_order_quantity == null)) {
+            console.error(`Error loading part requirements for part ${part.pk}`);
+            return;
+        }
+
+        var demand = (required_build_order_quantity - part.allocated_to_build_orders) + (required_sales_order_quantity - part.allocated_to_sales_orders);
+        if (demand) {
+            elements.push(`{% trans "Demand" %}: ${demand}`);
+        }
+
+        stock_health -= (required_build_order_quantity + required_sales_order_quantity);
+    }
+
+    var bg_class = '';
+
+    if (stock_health < 0) {
+        // Unsatisfied demand and/or below minimum stock
+        bg_class = 'bg-danger';
+    } else if (stock_health == 0) {
+        // Demand and minimum stock matched exactly by available stock and incoming/building
+        bg_class = 'bg-warning';
+    } else {
+        // Surplus stock available or already incoming/building in sufficient quantities
+        bg_class = 'bg-success';
+    }
+
+    let output = '';
+
+    // Display units next to stock badge
+    if (units && !options.no_units) {
+        output += `<span class='badge rounded-pill text-muted bg-muted ${classes}'>{% trans "Unit" %}: ${units}</span> `;
+    }
+
+    if (elements.length > 0) {
+        let text = elements.join(' | ');
+        output += `<span class='badge rounded-pill ${bg_class} ${classes}'>${text}</span>`;
+    }
+
+    return output;
 }
 
 
@@ -702,126 +775,170 @@ function partDetail(part, options={}) {
 
 
 /*
- * Guide user through "stocktake" process
+ * Initiate generation of a stocktake report
  */
-function performStocktake(partId, options={}) {
+function generateStocktakeReport(options={}) {
 
-    var part_quantity = 0;
+    let fields = {
+    };
 
-    var date_threshold = moment().subtract(30, 'days');
-
-    // Helper function for formatting a StockItem row
-    function buildStockItemRow(item) {
-
-        var pk = item.pk;
-
-        // Part detail
-        var part = partDetail(item.part_detail, {
-            thumb: true,
-        });
-
-        // Location detail
-        var location = locationDetail(item);
-
-        // Quantity detail
-        var quantity = item.quantity;
-
-        part_quantity += item.quantity;
-
-        if (item.serial && item.quantity == 1) {
-            quantity = `{% trans "Serial" %}: ${item.serial}`;
-        }
-
-        quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
-
-        // Last update
-        var updated = item.stocktake_date || item.updated;
-
-        var update_rendered = renderDate(updated);
-
-        if (updated) {
-            if (moment(updated) < date_threshold) {
-                update_rendered += `<div class='float-right' title='{% trans "Stock item has not been checked recently" %}'><span class='fas fa-calendar-alt icon-red'></span></div>`;
-            }
-        }
-
-        // Actions
-        var actions = `<div class='btn-group float-right' role='group'>`;
-
-        // TODO: Future work
-        // actions += makeIconButton('fa-check-circle icon-green', 'button-line-count', pk, '{% trans "Update item" %}');
-        // actions += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete item" %}');
-
-        actions += `</div>`;
-
-        return `
-        <tr>
-            <td id='part-${pk}'>${part}</td>
-            <td id='loc-${pk}'>${location}</td>
-            <td id='quantity-${pk}'>${quantity}</td>
-            <td id='updated-${pk}'>${update_rendered}</td>
-            <td id='actions-${pk}'>${actions}</td>
-        </tr>`;
+    if (options.part != null) {
+        fields.part = options.part;
     }
 
-    // First, load stock information for the part
-    inventreeGet(
-        '{% url "api-stock-list" %}',
+    if (options.category != null) {
+        fields.category = options.category;
+    }
+
+    if (options.location != null) {
+        fields.location = options.location;
+    }
+
+    if (options.generate_report) {
+        fields.generate_report = options.generate_report;
+    }
+
+    if (options.update_parts) {
+        fields.update_parts = options.update_parts;
+    }
+
+    let content = `
+    <div class='alert alert-block alert-info'>
+    {% trans "Schedule generation of a new stocktake report." %} {% trans "Once complete, the stocktake report will be available for download." %}
+    </div>
+    `;
+
+    constructForm(
+        '{% url "api-part-stocktake-report-generate" %}',
         {
-            part: partId,
-            in_stock: true,
-            location_detail: true,
-            part_detail: true,
-            include_variants: true,
-            ordering: '-stock',
-        },
-        {
-            success: function(response) {
-                var html = '';
-
-                html += `
-                <table class='table table-striped table-condensed'>
-                    <thead>
-                        <tr>
-                            <th>{% trans "Stock Item" %}</th>
-                            <th>{% trans "Location" %}</th>
-                            <th>{% trans "Quantity" %}</th>
-                            <th>{% trans "Updated" %}</th>
-                            <th><!-- Actions --></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                `;
-
-                response.forEach(function(item) {
-                    html += buildStockItemRow(item);
-                });
-
-                html += `</tbody></table>`;
-
-                constructForm(`/api/part/stocktake/`, {
-                    preFormContent: html,
-                    method: 'POST',
-                    title: '{% trans "Part Stocktake" %}',
-                    confirm: true,
-                    fields: {
-                        part: {
-                            value: partId,
-                            hidden: true,
-                        },
-                        quantity: {
-                            value: part_quantity,
-                        },
-                        note: {},
-                    },
-                    onSuccess: function(response) {
-                        handleFormSuccess(response, options);
-                    }
+            method: 'POST',
+            title: '{% trans "Generate Stocktake Report" %}',
+            preFormContent: content,
+            fields: fields,
+            onSuccess: function(response) {
+                showMessage('{% trans "Stocktake report scheduled" %}', {
+                    style: 'success',
                 });
             }
         }
     );
 }
+
+var stocktakeChart = null;
+
+/*
+ * Load chart to display part stocktake information
+ */
+function loadStocktakeChart(data, options={}) {
+
+    var chart = 'part-stocktake-chart';
+    var context = document.getElementById(chart);
+
+    var quantity_data = [];
+    var cost_min_data = [];
+    var cost_max_data = [];
+
+    var base_currency = baseCurrency();
+    var rate_data = getCurrencyConversionRates();
+
+    data.forEach(function(row) {
+        var date = moment(row.date);
+        quantity_data.push({
+            x: date,
+            y: row.quantity
+        });
+
+        if (row.cost_min) {
+            cost_min_data.push({
+                x: date,
+                y: convertCurrency(
+                    row.cost_min,
+                    row.cost_min_currency || base_currency,
+                    base_currency,
+                    rate_data
+                ),
+            });
+        }
+
+        if (row.cost_max) {
+            cost_max_data.push({
+                x: date,
+                y: convertCurrency(
+                    row.cost_max,
+                    row.cost_max_currency || base_currency,
+                    base_currency,
+                    rate_data
+                ),
+            });
+        }
+    });
+
+    var chart_data = {
+        datasets: [
+            {
+                label: '{% trans "Quantity" %}',
+                data: quantity_data,
+                backgroundColor: 'rgba(160, 80, 220, 0.75)',
+                borderWidth: 3,
+                borderColor: 'rgb(160, 80, 220)',
+                yAxisID: 'y',
+            },
+            {
+                label: '{% trans "Minimum Cost" %}',
+                data: cost_min_data,
+                backgroundColor: 'rgba(220, 160, 80, 0.25)',
+                borderWidth: 2,
+                borderColor: 'rgba(220, 160, 80, 0.35)',
+                borderDash: [10, 5],
+                yAxisID: 'y1',
+                fill: '+1',
+            },
+            {
+                label: '{% trans "Maximum Cost" %}',
+                data: cost_max_data,
+                backgroundColor: 'rgba(220, 160, 80, 0.25)',
+                borderWidth: 2,
+                borderColor: 'rgba(220, 160, 80, 0.35)',
+                borderDash: [10, 5],
+                yAxisID: 'y1',
+                fill: '-1',
+            }
+        ]
+    };
+
+    if (stocktakeChart != null) {
+        stocktakeChart.destroy();
+    }
+
+    stocktakeChart = new Chart(context, {
+        type: 'scatter',
+        data: chart_data,
+        options: {
+            showLine: true,
+            scales: {
+                x: {
+                    type: 'time',
+                    // suggestedMax: today.format(),
+                    position: 'bottom',
+                    time: {
+                        minUnit: 'day',
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                }
+            },
+        }
+    });
+}
+
 
 
 /*
@@ -829,6 +946,7 @@ function performStocktake(partId, options={}) {
  */
 function loadPartStocktakeTable(partId, options={}) {
 
+    // HTML elements
     var table = options.table || '#part-stocktake-table';
 
     var params = options.params || {};
@@ -853,12 +971,31 @@ function loadPartStocktakeTable(partId, options={}) {
         formatNoMatches: function() {
             return '{% trans "No stocktake information available" %}';
         },
+        onLoadSuccess: function(response) {
+            var data = response.results || response;
+
+            loadStocktakeChart(data);
+        },
         columns: [
             {
+                field: 'item_count',
+                title: '{% trans "Stock Items" %}',
+                switchable: true,
+                sortable: true,
+            },
+            {
                 field: 'quantity',
-                title: '{% trans "Quantity" %}',
+                title: '{% trans "Total Quantity" %}',
                 switchable: false,
                 sortable: true,
+            },
+            {
+                field: 'cost',
+                title: '{% trans "Total Cost" %}',
+                switchable: false,
+                formatter: function(value, row) {
+                    return formatPriceRange(row.cost_min, row.cost_max);
+                }
             },
             {
                 field: 'note',
@@ -883,7 +1020,7 @@ function loadPartStocktakeTable(partId, options={}) {
             {
                 field: 'actions',
                 title: '',
-                visible: options.admin,
+                visible: options.allow_edit || options.allow_delete,
                 switchable: false,
                 sortable: false,
                 formatter: function(value, row) {
@@ -910,8 +1047,23 @@ function loadPartStocktakeTable(partId, options={}) {
 
                 constructForm(`/api/part/stocktake/${pk}/`, {
                     fields: {
+                        item_count: {},
                         quantity: {},
-                        note: {},
+                        cost_min: {
+                            icon: 'fa-dollar-sign',
+                        },
+                        cost_min_currency: {
+                            icon: 'fa-coins',
+                        },
+                        cost_max: {
+                            icon: 'fa-dollar-sign',
+                        },
+                        cost_max_currency: {
+                            icon: 'fa-coins',
+                        },
+                        note: {
+                            icon: 'fa-sticky-note',
+                        },
                     },
                     title: '{% trans "Edit Stocktake Entry" %}',
                     onSuccess: function() {
@@ -968,19 +1120,7 @@ function loadPartVariantTable(table, partId, options={}) {
             formatter: function(value, row) {
                 var html = '';
 
-                var name = '';
-
-                if (row.IPN) {
-                    name += row.IPN;
-                    name += ' | ';
-                }
-
-                name += value;
-
-                if (row.revision) {
-                    name += ' | ';
-                    name += row.revision;
-                }
+                var name = row.full_name || row.name;
 
                 if (row.is_template) {
                     name = '<i>' + name + '</i>';
@@ -1020,6 +1160,8 @@ function loadPartVariantTable(table, partId, options={}) {
         {
             field: 'revision',
             title: '{% trans "Revision" %}',
+            switchable: global_settings.PART_ENABLE_REVISION,
+            visible: global_settings.PART_ENABLE_REVISION,
             sortable: true,
         },
         {
@@ -1027,24 +1169,25 @@ function loadPartVariantTable(table, partId, options={}) {
             title: '{% trans "Description" %}',
         },
         {
-            field: 'in_stock',
+            field: 'total_in_stock',
             title: '{% trans "Stock" %}',
             sortable: true,
             formatter: function(value, row) {
 
-                var base_stock = row.in_stock;
-                var variant_stock = row.variant_stock || 0;
+                var text = renderLink(value, `/part/${row.pk}/?display=part-stock`);
 
-                var total = base_stock + variant_stock;
+                text += partStockLabel(row, {
+                    noDemandInfo: true,
+                    hideTotalStock: true,
+                    classes: 'float-right',
+                });
 
-                var text = `${total}`;
-
-                if (variant_stock > 0) {
+                if (row.variant_stock > 0) {
                     text = `<em>${text}</em>`;
                     text += `<span title='{% trans "Includes variant stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
                 }
 
-                return renderLink(text, `/part/${row.pk}/?display=part-stock`);
+                return text;
             }
         },
         {
@@ -1692,8 +1835,6 @@ function loadPartTable(table, url, options={}) {
 
     var filters = {};
 
-    var col = null;
-
     if (!options.disableFilters) {
         filters = loadTableFilters('parts');
     }
@@ -1747,6 +1888,14 @@ function loadPartTable(table, url, options={}) {
     });
 
     columns.push({
+        field: 'revision',
+        title: '{% trans "Revision" %}',
+        switchable: global_settings.PART_ENABLE_REVISION,
+        visible: global_settings.PART_ENABLE_REVISION,
+        sortable: true,
+    });
+
+    columns.push({
         field: 'description',
         title: '{% trans "Description" %}',
         formatter: function(value, row) {
@@ -1761,95 +1910,39 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
-    col = {
+    columns.push({
         sortName: 'category',
         field: 'category_detail',
         title: '{% trans "Category" %}',
+        sortable: true,
         formatter: function(value, row) {
-
-            var text = shortenString(row.category_detail.pathstring);
-
-            if (row.category) {
+            if (row.category && row.category_detail) {
+                var text = shortenString(row.category_detail.pathstring);
                 return withTitle(renderLink(text, `/part/category/${row.category}/`), row.category_detail.pathstring);
             } else {
-                return '{% trans "No category" %}';
+                return '<em>{% trans "No category" %}</em>';
             }
         }
-    };
+    });
 
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
 
-    columns.push(col);
-
-    col = {
-        field: 'unallocated_stock',
+    columns.push({
+        field: 'total_in_stock',
         title: '{% trans "Stock" %}',
-        searchable: false,
+        sortable: true,
         formatter: function(value, row) {
 
-            var text = '';
+            var text = renderLink(value, `/part/${row.pk}/?display=part-stock`);
 
-            var total_stock = row.in_stock;
-
-            if (row.variant_stock) {
-                total_stock += row.variant_stock;
-            }
-
-            var text = `${total_stock}`;
-
-            // Construct extra informational badges
-            var badges = '';
-
-            if (total_stock == 0) {
-                badges += `<span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "No stock" %}'></span>`;
-            } else if (total_stock < row.minimum_stock) {
-                badges += `<span class='fas fa-exclamation-circle icon-yellow float-right' title='{% trans "Low stock" %}'></span>`;
-            }
-
-            if (row.ordering && row.ordering > 0) {
-                badges += renderLink(
-                    `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.ordering}'></span>`,
-                    `/part/${row.pk}/?display=purchase-orders`
-                );
-            }
-
-            if (row.building && row.building > 0) {
-                badges += renderLink(
-                    `<span class='fas fa-tools float-right' title='{% trans "Building" %}: ${row.building}'></span>`,
-                    `/part/${row.pk}/?display=build-orders`
-                );
-            }
-
-            if (row.variant_stock && row.variant_stock > 0) {
-                badges += `<span class='fas fa-info-circle float-right' title='{% trans "Includes variant stock" %}'></span>`;
-            }
-
-            if (row.allocated_to_build_orders > 0) {
-                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to build orders" %}: ${row.allocated_to_build_orders}'></span>`;
-            }
-
-            if (row.allocated_to_sales_orders > 0) {
-                badges += `<span class='fas fa-bookmark icon-yellow float-right' title='{% trans "Allocated to sales orders" %}: ${row.allocated_to_sales_orders}'></span>`;
-            }
-
-            if (row.units) {
-                text += ` <small>${row.units}</small>`;
-            }
-
-            text = renderLink(text, `/part/${row.pk}/?display=part-stock`);
-            text += badges;
+            text += partStockLabel(row, {
+                noDemandInfo: true,
+                hideTotalStock: true,
+                classes: 'float-right',
+            });
 
             return text;
         }
-    };
-
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
-
-    columns.push(col);
+    });
 
     // Pricing information
     columns.push({
@@ -1864,6 +1957,7 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    // External link / URL
     columns.push({
         field: 'link',
         title: '{% trans "Link" %}',
@@ -2334,10 +2428,32 @@ function loadPartCategoryTable(table, options) {
     });
 }
 
+
+/* Construct a set of fields for the PartTestTemplate model form */
+function partTestTemplateFields(options={}) {
+    let fields = {
+        test_name: {},
+        description: {},
+        required: {},
+        requires_value: {},
+        requires_attachment: {},
+        part: {
+            hidden: true,
+        }
+    };
+
+    if (options.part) {
+        fields.part.value = options.part;
+    }
+
+    return fields;
+}
+
+
+/*
+ * Load PartTestTemplate table.
+ */
 function loadPartTestTemplateTable(table, options) {
-    /*
-     * Load PartTestTemplate table.
-     */
 
     var params = options.params || {};
 
@@ -2436,13 +2552,7 @@ function loadPartTestTemplateTable(table, options) {
                 var url = `/api/part/test-template/${pk}/`;
 
                 constructForm(url, {
-                    fields: {
-                        test_name: {},
-                        description: {},
-                        required: {},
-                        requires_value: {},
-                        requires_attachment: {},
-                    },
+                    fields: partTestTemplateFields(),
                     title: '{% trans "Edit Test Result Template" %}',
                     onSuccess: function() {
                         table.bootstrapTable('refresh');

@@ -81,11 +81,6 @@ class Company(MetadataMixin, models.Model):
         currency_code: Specifies the default currency for the company
     """
 
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the Company model"""
-        return reverse('api-company-list')
-
     class Meta:
         """Metaclass defines extra model options"""
         ordering = ['name', ]
@@ -93,6 +88,11 @@ class Company(MetadataMixin, models.Model):
             UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
         ]
         verbose_name_plural = "Companies"
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the Company model"""
+        return reverse('api-company-list')
 
     name = models.CharField(max_length=100, blank=False,
                             help_text=_('Company name'),
@@ -258,14 +258,14 @@ class ManufacturerPart(models.Model):
         description: Descriptive notes field
     """
 
+    class Meta:
+        """Metaclass defines extra model options"""
+        unique_together = ('part', 'manufacturer', 'MPN')
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the ManufacturerPart instance"""
         return reverse('api-manufacturer-part-list')
-
-    class Meta:
-        """Metaclass defines extra model options"""
-        unique_together = ('part', 'manufacturer', 'MPN')
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='manufacturer_parts',
@@ -360,14 +360,14 @@ class ManufacturerPartParameter(models.Model):
     Each parameter is a simple string (text) value.
     """
 
+    class Meta:
+        """Metaclass defines extra model options"""
+        unique_together = ('manufacturer_part', 'name')
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the ManufacturerPartParameter model"""
         return reverse('api-manufacturer-part-parameter-list')
-
-    class Meta:
-        """Metaclass defines extra model options"""
-        unique_together = ('manufacturer_part', 'name')
 
     manufacturer_part = models.ForeignKey(
         ManufacturerPart,
@@ -434,6 +434,13 @@ class SupplierPart(InvenTreeBarcodeMixin, common.models.MetaMixin):
         updated: Date that the SupplierPart was last updated
     """
 
+    class Meta:
+        """Metaclass defines extra model options"""
+        unique_together = ('part', 'supplier', 'SKU')
+
+        # This model was moved from the 'Part' app
+        db_table = 'part_supplierpart'
+
     objects = SupplierPartManager()
 
     @staticmethod
@@ -452,13 +459,6 @@ class SupplierPart(InvenTreeBarcodeMixin, common.models.MetaMixin):
                 'part': self.part.pk
             }
         }
-
-    class Meta:
-        """Metaclass defines extra model options"""
-        unique_together = ('part', 'supplier', 'SKU')
-
-        # This model was moved from the 'Part' app
-        db_table = 'part_supplierpart'
 
     def clean(self):
         """Custom clean action for the SupplierPart model:
@@ -696,13 +696,6 @@ class SupplierPriceBreak(common.models.PriceBreak):
         currency: Reference to the currency of this pricebreak (leave empty for base currency)
     """
 
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the SupplierPriceBreak model"""
-        return reverse('api-part-supplier-price-list')
-
-    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
-
     class Meta:
         """Metaclass defines extra model options"""
         unique_together = ("part", "quantity")
@@ -714,6 +707,13 @@ class SupplierPriceBreak(common.models.PriceBreak):
         """Format a string representation of a SupplierPriceBreak instance"""
         return f'{self.part.SKU} - {self.price} @ {self.quantity}'
 
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the SupplierPriceBreak model"""
+        return reverse('api-part-supplier-price-list')
+
+    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
+
 
 @receiver(post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break')
 def after_save_supplier_price(sender, instance, created, **kwargs):
@@ -722,7 +722,7 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
 
         if instance.part and instance.part.part:
-            instance.part.part.schedule_pricing_update()
+            instance.part.part.schedule_pricing_update(create=True)
 
 
 @receiver(post_delete, sender=SupplierPriceBreak, dispatch_uid='post_delete_supplier_price_break')
@@ -732,4 +732,4 @@ def after_delete_supplier_price(sender, instance, **kwargs):
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
 
         if instance.part and instance.part.part:
-            instance.part.part.schedule_pricing_update()
+            instance.part.part.schedule_pricing_update(create=False)

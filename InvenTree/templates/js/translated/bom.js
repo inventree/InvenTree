@@ -408,6 +408,7 @@ function bomItemFields() {
             hidden: true,
         },
         sub_part: {
+            icon: 'fa-shapes',
             secondary: {
                 title: '{% trans "New Part" %}',
                 fields: function() {
@@ -424,7 +425,9 @@ function bomItemFields() {
         quantity: {},
         reference: {},
         overage: {},
-        note: {},
+        note: {
+            icon: 'fa-sticky-note',
+        },
         allow_variants: {},
         inherited: {},
         consumable: {},
@@ -1016,7 +1019,7 @@ function loadBomTable(table, options={}) {
 
     cols.push({
         field: 'inherited',
-        title: '{% trans "Inherited" %}',
+        title: '{% trans "Gets inherited" %}',
         searchable: false,
         formatter: function(value, row) {
             // This BOM item *is* inheritable, but is defined for this BOM
@@ -1026,10 +1029,7 @@ function loadBomTable(table, options={}) {
                 return yesNoLabel(true);
             } else {
                 // If this BOM item is inherited from a parent part
-                return renderLink(
-                    '{% trans "View BOM" %}',
-                    `/part/${row.part}/bom/`,
-                );
+                return yesNoLabel(true, {muted: true});
             }
         }
     });

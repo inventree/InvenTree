@@ -479,6 +479,9 @@ function completeBuildOutputs(build_id, outputs, options={}) {
             output_html += `{% trans "Serial Number" %}: ${output.serial}`;
         } else {
             output_html += `{% trans "Quantity" %}: ${output.quantity}`;
+            if (output.part_detail && output.part_detail.units) {
+                output_html += ` ${output.part_detail.units}  `;
+            }
         }
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
@@ -536,7 +539,9 @@ function completeBuildOutputs(build_id, outputs, options={}) {
                     structural: false,
                 },
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
             accept_incomplete_allocation: {},
         },
         confirm: true,
@@ -635,6 +640,9 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
             output_html += `{% trans "Serial Number" %}: ${output.serial}`;
         } else {
             output_html += `{% trans "Quantity" %}: ${output.quantity}`;
+            if (output.part_detail && output.part_detail.units) {
+                output_html += ` ${output.part_detail.units}  `;
+            }
         }
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
@@ -1209,10 +1217,10 @@ function loadBuildOutputTable(build_info, options={}) {
             setupBuildOutputButtonCallbacks();
         },
         onLoadSuccess: function(rows) {
-
             updateAllocationData(rows);
             updateTestResultData(rows);
         },
+        buttons: constructExpandCollapseButtons(table),
         columns: [
             {
                 title: '',
@@ -1245,6 +1253,9 @@ function loadBuildOutputTable(build_info, options={}) {
                         text = `{% trans "Serial Number" %}: ${row.serial}`;
                     } else {
                         text = `{% trans "Quantity" %}: ${row.quantity}`;
+                        if (row.part_detail && row.part_detail.units) {
+                            text += ` <small>${row.part_detail.units}</small>`;
+                        }
                     }
 
                     if (row.batch) {
@@ -1702,10 +1713,11 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         detailFilter: function(index, row) {
             return allocatedQuantity(row) > 0;
         },
+        buttons: constructExpandCollapseButtons(table),
         detailFormatter: function(index, row, element) {
             // Contruct an 'inner table' which shows which stock items have been allocated
 
-            var subTableId = `allocation-table-${row.pk}`;
+            var subTableId = `allocation-table-${outputId}-${row.pk}`;
 
             var html = `<div class='sub-table'><table class='table table-condensed table-striped' id='${subTableId}'></table></div>`;
 
@@ -1746,6 +1758,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                                 text = `{% trans "Serial Number" %}: ${serial}`;
                             } else {
                                 text = `{% trans "Quantity" %}: ${row.quantity}`;
+                                if (row.part_detail && row.part_detail.units) {
+                                    text += ` <small>${row.part_detail.units}</small>`;
+                                }
                             }
 
                             var pk = row.stock_item || row.pk;
@@ -1878,6 +1893,14 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 title: '{% trans "Quantity Per" %}',
                 sortable: true,
                 switchable: false,
+                formatter: function(value, row) {
+                    var text = value;
+
+                    if (row.sub_part_detail && row.sub_part_detail.units) {
+                        text += ` <small>${row.sub_part_detail.units}</small>`;
+                    }
+                    return text;
+                }
             },
             {
                 field: 'available_stock',
@@ -1901,6 +1924,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                     if (available_stock > 0) {
                         text += `${available_stock}`;
+                        if (row.sub_part_detail && row.sub_part_detail.units) {
+                            text += ` <small>${row.sub_part_detail.units}</small>`;
+                        }
                     }
 
                     var icons = '';
@@ -1951,7 +1977,11 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 formatter: function(value, row) {
                     var required = requiredQuantity(row);
                     var allocated = row.consumable ? required : allocatedQuantity(row);
-                    return makeProgressBar(allocated, required);
+                    var progressbar_text = `${allocated} / ${required}`;
+                    if (row.sub_part_detail && row.sub_part_detail.units) {
+                        progressbar_text += ` ${row.sub_part_detail.units}`;
+                    }
+                    return makeProgressBar(allocated, required, {text: progressbar_text});
                 },
                 sorter: function(valA, valB, rowA, rowB) {
                     // Custom sorting function for progress bars
@@ -2266,6 +2296,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         render_part_detail: true,
                         render_location_detail: true,
                         render_pk: false,
+                        render_available_quantity: true,
                         auto_fill: true,
                         auto_fill_filters: auto_fill_filters,
                         onSelect: function(data, field, opts) {
@@ -2665,11 +2696,19 @@ function loadBuildTable(table, options) {
                 title: '{% trans "Responsible" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    if (value) {
-                        return row.responsible_detail.name;
-                    } else {
+                    if (!row.responsible_detail) {
                         return '-';
                     }
+
+                    var html = row.responsible_detail.name;
+
+                    if (row.responsible_detail.label == '{% trans "group" %}') {
+                        html += `<span class='float-right fas fa-users'></span>`;
+                    } else {
+                        html += `<span class='float-right fas fa-user'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {

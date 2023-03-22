@@ -191,11 +191,11 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Total cost" %}</td>
         <td id="poTotalPrice">
-            {% with order.get_total_price as tp %}
+            {% with order.total_price as tp %}
             {% if tp == None %}
             <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
             {% else %}
-            {% include "price_data.html" with price=tp %}
+            {% render_currency tp currency=order.supplier.currency %}
             {% endif %}
             {% endwith %}
         </td>

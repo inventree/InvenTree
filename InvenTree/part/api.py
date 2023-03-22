@@ -2,7 +2,6 @@
 
 import functools
 
-from django.db import transaction
 from django.db.models import Count, F, Q
 from django.http import JsonResponse
 from django.urls import include, path, re_path
@@ -10,9 +9,8 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, serializers, status
+from rest_framework import filters, permissions, serializers, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 import order.models
@@ -38,7 +36,7 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameter,
                      PartParameterTemplate, PartRelated, PartSellPriceBreak,
-                     PartStocktake, PartTestTemplate)
+                     PartStocktake, PartStocktakeReport, PartTestTemplate)
 
 
 class CategoryList(APIDownloadMixin, ListCreateAPI):
@@ -1120,6 +1118,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
             params = self.request.query_params
 
             kwargs['parameters'] = str2bool(params.get('parameters', None))
+            kwargs['category_detail'] = str2bool(params.get('category_detail', False))
 
         except AttributeError:
             pass
@@ -1158,41 +1157,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
 
         data = serializer.data
 
-        # Do we wish to include PartCategory detail?
-        if str2bool(request.query_params.get('category_detail', False)):
-
-            # Work out which part categories we need to query
-            category_ids = set()
-
-            for part in data:
-                cat_id = part['category']
-
-                if cat_id is not None:
-                    category_ids.add(cat_id)
-
-            # Fetch only the required PartCategory objects from the database
-            categories = PartCategory.objects.filter(pk__in=category_ids).prefetch_related(
-                'parts',
-                'parent',
-                'children',
-            )
-
-            category_map = {}
-
-            # Serialize each PartCategory object
-            for category in categories:
-                category_map[category.pk] = part_serializers.CategorySerializer(category).data
-
-            for part in data:
-                cat_id = part['category']
-
-                if cat_id is not None and cat_id in category_map.keys():
-                    detail = category_map[cat_id]
-                else:
-                    detail = None
-
-                part['category_detail'] = detail
-
         """
         Determine the response type based on the request.
         a) For HTTP requests (e.g. via the browseable API) return a DRF response
@@ -1204,35 +1168,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
-
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        """We wish to save the user who created this part!
-
-        Note: Implementation copied from DRF class CreateModelMixin
-        """
-        # TODO: Unit tests for this function!
-
-        # Clean up input data
-        data = self.clean_data(request.data)
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-
-        part = serializer.save()
-        part.creation_user = self.request.user
-
-        # Optionally copy templates from category or parent category
-        copy_templates = {
-            'main': str2bool(data.get('copy_category_templates', False)),
-            'parent': str2bool(data.get('copy_parent_templates', False))
-        }
-
-        part.save(**{'add_category_templates': copy_templates})
-
-        headers = self.get_success_headers(serializer.data)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset object"""
@@ -1342,15 +1277,11 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         # Does the user wish to filter by category?
         cat_id = params.get('category', None)
 
-        if cat_id is None:
-            # No category filtering if category is not specified
-            pass
-
-        else:
+        if cat_id is not None:
             # Category has been specified!
             if isNull(cat_id):
                 # A 'null' category is the top-level category
-                if cascade is False:
+                if not cascade:
                     # Do not cascade, only list parts in the top-level category
                     queryset = queryset.filter(category=None)
 
@@ -1393,20 +1324,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
 
             queryset = queryset.filter(pk__in=parts_needed_to_complete_builds)
 
-        # Optionally limit the maximum number of returned results
-        # e.g. for displaying "recent part" list
-        max_results = params.get('max_results', None)
-
-        if max_results is not None:
-            try:
-                max_results = int(max_results)
-
-                if max_results > 0:
-                    queryset = queryset[:max_results]
-
-            except (ValueError):
-                pass
-
         return queryset
 
     filter_backends = [
@@ -1420,6 +1337,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         'creation_date',
         'IPN',
         'in_stock',
+        'total_in_stock',
         'unallocated_stock',
         'category',
         'last_stocktake',
@@ -1616,9 +1534,11 @@ class PartStocktakeList(ListCreateAPI):
 
     ordering_fields = [
         'part',
+        'item_count',
         'quantity',
         'date',
         'user',
+        'pk',
     ]
 
     # Reverse date ordering by default
@@ -1633,20 +1553,62 @@ class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PartStocktake.objects.all()
     serializer_class = part_serializers.PartStocktakeSerializer
+
+
+class PartStocktakeReportList(ListAPI):
+    """API endpoint for listing part stocktake report information"""
+
+    queryset = PartStocktakeReport.objects.all()
+    serializer_class = part_serializers.PartStocktakeReportSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        'date',
+        'pk',
+    ]
+
+    # Newest first, by default
+    ordering = '-pk'
+
+
+class PartStocktakeReportGenerate(CreateAPI):
+    """API endpoint for manually generating a new PartStocktakeReport"""
+
+    serializer_class = part_serializers.PartStocktakeReportGenerateSerializer
+
     permission_classes = [
-        IsAdminUser,
+        permissions.IsAuthenticated,
         RolePermission,
     ]
+
+    role_required = 'stocktake'
+
+    def get_serializer_context(self):
+        """Extend serializer context data"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        return context
 
 
 class BomFilter(rest_filters.FilterSet):
     """Custom filters for the BOM list."""
 
-    # Boolean filters for BOM item
-    optional = rest_filters.BooleanFilter(label='BOM item is optional')
-    consumable = rest_filters.BooleanFilter(label='BOM item is consumable')
-    inherited = rest_filters.BooleanFilter(label='BOM item is inherited')
-    allow_variants = rest_filters.BooleanFilter(label='Variants are allowed')
+    class Meta:
+        """Metaclass options"""
+
+        model = BomItem
+        fields = [
+            'optional',
+            'consumable',
+            'inherited',
+            'allow_variants',
+            'validated',
+        ]
 
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(label='Master part is active', field_name='part__active')
@@ -1655,29 +1617,6 @@ class BomFilter(rest_filters.FilterSet):
     # Filters for linked 'sub_part'
     sub_part_trackable = rest_filters.BooleanFilter(label='Sub part is trackable', field_name='sub_part__trackable')
     sub_part_assembly = rest_filters.BooleanFilter(label='Sub part is an assembly', field_name='sub_part__assembly')
-
-    validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
-
-    def filter_validated(self, queryset, name, value):
-        """Filter by which lines have actually been validated"""
-        pks = []
-
-        value = str2bool(value)
-
-        # Shortcut for quicker filtering - BomItem with empty 'checksum' values are not validated
-        if value:
-            queryset = queryset.exclude(checksum=None).exclude(checksum='')
-
-        for bom_item in queryset.all():
-            if bom_item.is_line_valid:
-                pks.append(bom_item.pk)
-
-        if value:
-            queryset = queryset.filter(pk__in=pks)
-        else:
-            queryset = queryset.exclude(pk__in=pks)
-
-        return queryset
 
     available_stock = rest_filters.BooleanFilter(label="Has available stock", method="filter_available_stock")
 
@@ -1856,9 +1795,6 @@ class BomList(ListCreateDestroyAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         InvenTreeOrderingFilter,
-    ]
-
-    filterset_fields = [
     ]
 
     search_fields = [
@@ -2056,6 +1992,12 @@ part_api_urls = [
 
     # Part stocktake data
     re_path(r'^stocktake/', include([
+
+        path(r'report/', include([
+            path('generate/', PartStocktakeReportGenerate.as_view(), name='api-part-stocktake-report-generate'),
+            re_path(r'^.*$', PartStocktakeReportList.as_view(), name='api-part-stocktake-report-list'),
+        ])),
+
         re_path(r'^(?P<pk>\d+)/', PartStocktakeDetail.as_view(), name='api-part-stocktake-detail'),
         re_path(r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
     ])),
@@ -2092,9 +2034,6 @@ part_api_urls = [
 
         # BOM download
         re_path(r'^bom-download/?', views.BomDownload.as_view(), name='api-bom-download'),
-
-        # QR code download
-        re_path(r'^qr_code/?', views.PartQRCode.as_view(), name='api-part-qr'),
 
         # Old pricing endpoint
         re_path(r'^pricing2/', views.PartPricing.as_view(), name='part-pricing'),

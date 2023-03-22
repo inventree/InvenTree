@@ -106,9 +106,9 @@ var cached_exchange_rates = null;
 /*
  * Retrieve currency conversion rate information from the server
  */
-function getCurrencyConversionRates() {
+function getCurrencyConversionRates(cache=true) {
 
-    if (cached_exchange_rates != null) {
+    if (cache && cached_exchange_rates != null) {
         return cached_exchange_rates;
     }
 
@@ -136,7 +136,7 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
 
     var currency = options.currency;
 
-    var rates = getCurrencyConversionRates();
+    var rates = options.rates || getCurrencyConversionRates();
 
     if (!rates) {
         console.error('Could not retrieve currency conversion information from the server');
@@ -205,6 +205,11 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
         total += value;
     }
 
+    // Return raw total instead of formatted value
+    if (options.raw) {
+        return total;
+    }
+
     return formatCurrency(total, {
         currency: currency,
     });
@@ -229,6 +234,11 @@ function convertCurrency(value, source_currency, target_currency, rate_data) {
     // Short circuit the case where the currencies are the same
     if (source_currency == target_currency) {
         return value;
+    }
+
+    if (rate_data == null) {
+        console.error('convertCurrency() called without rate_data');
+        return null;
     }
 
     if (!('base_currency' in rate_data)) {
@@ -647,8 +657,12 @@ function initPriceBreakSet(table, options) {
                     value: part_id,
                 },
                 quantity: {},
-                price: {},
-                price_currency: {},
+                price: {
+                    icon: 'fa-dollar-sign',
+                },
+                price_currency: {
+                    icon: 'fa-coins',
+                },
             },
             method: 'POST',
             title: '{% trans "Add Price Break" %}',
@@ -672,8 +686,12 @@ function initPriceBreakSet(table, options) {
         constructForm(`${pb_url}${pk}/`, {
             fields: {
                 quantity: {},
-                price: {},
-                price_currency: {},
+                price: {
+                    icon: 'fa-dollar-sign',
+                },
+                price_currency: {
+                    icon: 'fa-coins',
+                },
             },
             title: '{% trans "Edit Price Break" %}',
             onSuccess: reloadPriceBreakTable,

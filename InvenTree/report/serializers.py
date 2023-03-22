@@ -10,8 +10,6 @@ from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
 class TestReportSerializer(InvenTreeModelSerializer):
     """Serializer class for the TestReport model"""
 
-    template = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         """Metaclass options."""
 
@@ -25,11 +23,11 @@ class TestReportSerializer(InvenTreeModelSerializer):
             'enabled',
         ]
 
+    template = InvenTreeAttachmentSerializerField(required=True)
+
 
 class BuildReportSerializer(InvenTreeModelSerializer):
     """Serializer class for the BuildReport model"""
-
-    template = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         """Metaclass options."""
@@ -44,10 +42,11 @@ class BuildReportSerializer(InvenTreeModelSerializer):
             'enabled',
         ]
 
+    template = InvenTreeAttachmentSerializerField(required=True)
+
 
 class BOMReportSerializer(InvenTreeModelSerializer):
     """Serializer class for the BillOfMaterialsReport model"""
-    template = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         """Metaclass options."""
@@ -62,10 +61,11 @@ class BOMReportSerializer(InvenTreeModelSerializer):
             'enabled',
         ]
 
+    template = InvenTreeAttachmentSerializerField(required=True)
+
 
 class PurchaseOrderReportSerializer(InvenTreeModelSerializer):
     """Serializer class for the PurchaseOrdeReport model"""
-    template = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         """Metaclass options."""
@@ -80,10 +80,11 @@ class PurchaseOrderReportSerializer(InvenTreeModelSerializer):
             'enabled',
         ]
 
+    template = InvenTreeAttachmentSerializerField(required=True)
+
 
 class SalesOrderReportSerializer(InvenTreeModelSerializer):
     """Serializer class for the SalesOrderReport model"""
-    template = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         """Metaclass options."""
@@ -97,3 +98,5 @@ class SalesOrderReportSerializer(InvenTreeModelSerializer):
             'filters',
             'enabled',
         ]
+
+    template = InvenTreeAttachmentSerializerField(required=True)

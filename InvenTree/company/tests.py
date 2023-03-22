@@ -26,8 +26,12 @@ class CompanySimpleTest(TestCase):
         'price_breaks',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Perform initialization for the tests in this class"""
+
+        super().setUpTestData()
+
         Company.objects.create(name='ABC Co.',
                                description='Seller of ABC products',
                                website='www.abc-sales.com',
@@ -35,10 +39,10 @@ class CompanySimpleTest(TestCase):
                                is_customer=False,
                                is_supplier=True)
 
-        self.acme0001 = SupplierPart.objects.get(SKU='ACME0001')
-        self.acme0002 = SupplierPart.objects.get(SKU='ACME0002')
-        self.zerglphs = SupplierPart.objects.get(SKU='ZERGLPHS')
-        self.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
+        cls.acme0001 = SupplierPart.objects.get(SKU='ACME0001')
+        cls.acme0002 = SupplierPart.objects.get(SKU='ACME0002')
+        cls.zerglphs = SupplierPart.objects.get(SKU='ZERGLPHS')
+        cls.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
 
     def test_company_model(self):
         """Tests for the company model data"""

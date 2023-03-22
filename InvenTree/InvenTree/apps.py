@@ -12,9 +12,8 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 
 import InvenTree.tasks
+from InvenTree.config import get_setting
 from InvenTree.ready import canAppAccessDatabase, isInTestMode
-
-from .config import get_setting
 
 logger = logging.getLogger("inventree")
 
@@ -24,8 +23,18 @@ class InvenTreeConfig(AppConfig):
     name = 'InvenTree'
 
     def ready(self):
-        """Setup background tasks and update exchange rates."""
+        """Run system wide setup init steps.
+
+        Like:
+        - Checking if migrations should be run
+        - Cleaning up tasks
+        - Starting regular tasks
+        - Updateing exchange rates
+        - Collecting notification mehods
+        - Adding users set in the current environment
+        """
         if canAppAccessDatabase() or settings.TESTING_ENV:
+            InvenTree.tasks.check_for_migrations(worker=False)
 
             self.remove_obsolete_tasks()
 
@@ -60,7 +69,10 @@ class InvenTreeConfig(AppConfig):
 
         logger.info("Starting background tasks...")
 
-        for task in InvenTree.tasks.tasks.task_list:
+        # List of collected tasks found with the @scheduled_task decorator
+        tasks = InvenTree.tasks.tasks.task_list
+
+        for task in tasks:
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
             InvenTree.tasks.schedule_task(
                 ref_name,
@@ -75,7 +87,7 @@ class InvenTreeConfig(AppConfig):
             force_async=True,
         )
 
-        logger.info("Started background tasks...")
+        logger.info(f"Started {len(tasks)} scheduled background tasks...")
 
     def collect_tasks(self):
         """Collect all background tasks."""

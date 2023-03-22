@@ -26,20 +26,22 @@ from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
-from order.admin import (PurchaseOrderLineItemResource, PurchaseOrderResource,
-                         SalesOrderResource)
+from order.admin import (PurchaseOrderExtraLineResource,
+                         PurchaseOrderLineItemResource, PurchaseOrderResource,
+                         SalesOrderExtraLineResource,
+                         SalesOrderLineItemResource, SalesOrderResource)
 from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import Owner
 
 
-class GeneralExtraLineList:
+class GeneralExtraLineList(APIDownloadMixin):
     """General template for ExtraLine API classes."""
 
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for this endpoint"""
         try:
-            params = self.request.query_params
+            params = self.request.query_params3
 
             kwargs['order_detail'] = str2bool(params.get('order_detail', False))
         except AttributeError:
@@ -113,6 +115,7 @@ class OrderFilter(rest_filters.FilterSet):
 
 class PurchaseOrderFilter(OrderFilter):
     """Custom API filters for the PurchaseOrderList endpoint."""
+
     class Meta:
         """Metaclass options."""
 
@@ -124,6 +127,7 @@ class PurchaseOrderFilter(OrderFilter):
 
 class SalesOrderFilter(OrderFilter):
     """Custom API filters for the SalesOrderList endpoint."""
+
     class Meta:
         """Metaclass options."""
 
@@ -317,6 +321,8 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
         'target_date',
         'line_items',
         'status',
+        'responsible',
+        'total_price',
     ]
 
     ordering = '-reference'
@@ -489,7 +495,7 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
         return queryset
 
 
-class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateAPI):
+class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateDestroyAPIView):
     """API endpoint for accessing a list of PurchaseOrderLineItem objects.
 
     - GET: Return a list of PurchaseOrder Line Item objects
@@ -604,6 +610,15 @@ class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
+    def download_queryset(self, queryset, export_format):
+        """Download this queryset as a file"""
+
+        dataset = PurchaseOrderExtraLineResource().export(queryset=queryset)
+        filedata = dataset.export(export_format)
+        filename = f"InvenTree_ExtraPurchaseOrderLines.{export_format}"
+
+        return DownloadFile(filedata, filename)
+
 
 class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a PurchaseOrderExtraLine object."""
@@ -684,6 +699,7 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
 
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file"""
+
         dataset = SalesOrderResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
@@ -768,6 +784,7 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
         'target_date',
         'line_items',
         'shipment_date',
+        'total_price',
     ]
 
     search_fields = [
@@ -855,7 +872,7 @@ class SalesOrderLineItemFilter(rest_filters.FilterSet):
         return queryset
 
 
-class SalesOrderLineItemList(ListCreateAPI):
+class SalesOrderLineItemList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrderLineItem objects."""
 
     queryset = models.SalesOrderLineItem.objects.all()
@@ -896,6 +913,16 @@ class SalesOrderLineItemList(ListCreateAPI):
 
         return queryset
 
+    def download_queryset(self, queryset, export_format):
+        """Download the requested queryset as a file"""
+
+        dataset = SalesOrderLineItemResource().export(queryset=queryset)
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_SalesOrderItems.{export_format}"
+
+        return DownloadFile(filedata, filename)
+
     filter_backends = [
         rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
@@ -921,6 +948,15 @@ class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
 
     queryset = models.SalesOrderExtraLine.objects.all()
     serializer_class = serializers.SalesOrderExtraLineSerializer
+
+    def download_queryset(self, queryset, export_format):
+        """Download this queryset as a file"""
+
+        dataset = SalesOrderExtraLineResource().export(queryset=queryset)
+        filedata = dataset.export(export_format)
+        filename = f"InvenTree_ExtraSalesOrderLines.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
 
 class SalesOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
@@ -1093,6 +1129,14 @@ class SalesOrderAllocationList(ListAPI):
 class SalesOrderShipmentFilter(rest_filters.FilterSet):
     """Custom filterset for the SalesOrderShipmentList endpoint."""
 
+    class Meta:
+        """Metaclass options."""
+
+        model = models.SalesOrderShipment
+        fields = [
+            'order',
+        ]
+
     shipped = rest_filters.BooleanFilter(label='shipped', method='filter_shipped')
 
     def filter_shipped(self, queryset, name, value):
@@ -1105,14 +1149,6 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
             queryset = queryset.filter(shipment_date=None)
 
         return queryset
-
-    class Meta:
-        """Metaclass options."""
-
-        model = models.SalesOrderShipment
-        fields = [
-            'order',
-        ]
 
 
 class SalesOrderShipmentList(ListCreateAPI):

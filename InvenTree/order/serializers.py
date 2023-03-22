@@ -17,10 +17,10 @@ import order.models
 import part.filters
 import stock.models
 import stock.serializers
-from common.settings import currency_code_mappings
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from InvenTree.helpers import extract_serial_numbers, normalize, str2bool
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
+                                   InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeModelSerializer,
                                    InvenTreeMoneySerializer)
@@ -34,10 +34,11 @@ class AbstractOrderSerializer(serializers.Serializer):
     """Abstract field definitions for OrderSerializers."""
 
     total_price = InvenTreeMoneySerializer(
-        source='get_total_price',
         allow_null=True,
         read_only=True,
     )
+
+    total_price_currency = InvenTreeCurrencySerializer(read_only=True)
 
 
 class AbstractExtraLineSerializer(serializers.Serializer):
@@ -58,10 +59,7 @@ class AbstractExtraLineSerializer(serializers.Serializer):
         allow_null=True
     )
 
-    price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        help_text=_('Price currency'),
-    )
+    price_currency = InvenTreeCurrencySerializer()
 
 
 class AbstractExtraLineMeta:
@@ -82,6 +80,41 @@ class AbstractExtraLineMeta:
 
 class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     """Serializer for a PurchaseOrder object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.PurchaseOrder
+
+        fields = [
+            'pk',
+            'issue_date',
+            'complete_date',
+            'creation_date',
+            'description',
+            'line_items',
+            'link',
+            'overdue',
+            'reference',
+            'responsible',
+            'responsible_detail',
+            'supplier',
+            'supplier_detail',
+            'supplier_reference',
+            'status',
+            'status_text',
+            'target_date',
+            'notes',
+            'total_price',
+            'total_price_currency',
+        ]
+
+        read_only_fields = [
+            'status'
+            'issue_date',
+            'complete_date',
+            'creation_date',
+        ]
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer"""
@@ -134,40 +167,6 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer)
 
     responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
 
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.PurchaseOrder
-
-        fields = [
-            'pk',
-            'issue_date',
-            'complete_date',
-            'creation_date',
-            'description',
-            'line_items',
-            'link',
-            'overdue',
-            'reference',
-            'responsible',
-            'responsible_detail',
-            'supplier',
-            'supplier_detail',
-            'supplier_reference',
-            'status',
-            'status_text',
-            'target_date',
-            'notes',
-            'total_price',
-        ]
-
-        read_only_fields = [
-            'status'
-            'issue_date',
-            'complete_date',
-            'creation_date',
-        ]
-
 
 class PurchaseOrderCancelSerializer(serializers.Serializer):
     """Serializer for cancelling a PurchaseOrder."""
@@ -198,6 +197,11 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
 class PurchaseOrderCompleteSerializer(serializers.Serializer):
     """Serializer for completing a purchase order."""
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = []
+
     accept_incomplete = serializers.BooleanField(
         label=_('Accept Incomplete'),
         help_text=_('Allow order to be closed with incomplete line items'),
@@ -214,11 +218,6 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
             raise ValidationError(_("Order has incomplete line items"))
 
         return value
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = []
 
     def get_context_data(self):
         """Custom context information for this serializer."""
@@ -250,6 +249,47 @@ class PurchaseOrderIssueSerializer(serializers.Serializer):
 
 class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
     """Serializer class for the PurchaseOrderLineItem model"""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.PurchaseOrderLineItem
+
+        fields = [
+            'pk',
+            'quantity',
+            'reference',
+            'notes',
+            'order',
+            'order_detail',
+            'overdue',
+            'part',
+            'part_detail',
+            'supplier_part_detail',
+            'received',
+            'purchase_price',
+            'purchase_price_currency',
+            'destination',
+            'destination_detail',
+            'target_date',
+            'total_price',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer"""
+        part_detail = kwargs.pop('part_detail', False)
+
+        order_detail = kwargs.pop('order_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail')
+            self.fields.pop('supplier_part_detail')
+
+        if order_detail is not True:
+            self.fields.pop('order_detail')
+
     @staticmethod
     def annotate_queryset(queryset):
         """Add some extra annotations to this queryset:
@@ -274,21 +314,6 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         )
 
         return queryset
-
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer"""
-        part_detail = kwargs.pop('part_detail', False)
-
-        order_detail = kwargs.pop('order_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if part_detail is not True:
-            self.fields.pop('part_detail')
-            self.fields.pop('supplier_part_detail')
-
-        if order_detail is not True:
-            self.fields.pop('order_detail')
 
     quantity = serializers.FloatField(min_value=0, required=True)
 
@@ -316,16 +341,11 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
 
-    purchase_price = InvenTreeMoneySerializer(
-        allow_null=True
-    )
+    purchase_price = InvenTreeMoneySerializer(allow_null=True)
 
     destination_detail = stock.serializers.LocationBriefSerializer(source='get_destination', read_only=True)
 
-    purchase_price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        help_text=_('Purchase price currency'),
-    )
+    purchase_price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase price currency'))
 
     order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
 
@@ -359,31 +379,6 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
             })
 
         return data
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.PurchaseOrderLineItem
-
-        fields = [
-            'pk',
-            'quantity',
-            'reference',
-            'notes',
-            'order',
-            'order_detail',
-            'overdue',
-            'part',
-            'part_detail',
-            'supplier_part_detail',
-            'received',
-            'purchase_price',
-            'purchase_price_currency',
-            'destination',
-            'destination_detail',
-            'target_date',
-            'total_price',
-        ]
 
 
 class PurchaseOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
@@ -538,6 +533,14 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
 class PurchaseOrderReceiveSerializer(serializers.Serializer):
     """Serializer for receiving items against a purchase order."""
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            'items',
+            'location',
+        ]
+
     items = PurchaseOrderLineItemReceiveSerializer(many=True)
 
     location = serializers.PrimaryKeyRelatedField(
@@ -627,14 +630,6 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     # Catch model errors and re-throw as DRF errors
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
 
-    class Meta:
-        """Metaclass options."""
-
-        fields = [
-            'items',
-            'location',
-        ]
-
 
 class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
     """Serializers for the PurchaseOrderAttachment model."""
@@ -651,6 +646,38 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
 
 class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     """Serializers for the SalesOrder object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.SalesOrder
+
+        fields = [
+            'pk',
+            'creation_date',
+            'customer',
+            'customer_detail',
+            'customer_reference',
+            'description',
+            'line_items',
+            'link',
+            'notes',
+            'overdue',
+            'reference',
+            'responsible',
+            'status',
+            'status_text',
+            'shipment_date',
+            'target_date',
+            'total_price',
+            'total_price_currency',
+        ]
+
+        read_only_fields = [
+            'status',
+            'creation_date',
+            'shipment_date',
+        ]
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer"""
@@ -701,37 +728,6 @@ class SalesOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
 
         return reference
 
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.SalesOrder
-
-        fields = [
-            'pk',
-            'creation_date',
-            'customer',
-            'customer_detail',
-            'customer_reference',
-            'description',
-            'line_items',
-            'link',
-            'notes',
-            'overdue',
-            'reference',
-            'responsible',
-            'status',
-            'status_text',
-            'shipment_date',
-            'target_date',
-            'total_price',
-        ]
-
-        read_only_fields = [
-            'status',
-            'creation_date',
-            'shipment_date',
-        ]
-
 
 class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     """Serializer for the SalesOrderAllocation model.
@@ -739,20 +735,28 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     This includes some fields from the related model objects.
     """
 
-    part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
-    order = serializers.PrimaryKeyRelatedField(source='line.order', many=False, read_only=True)
-    serial = serializers.CharField(source='get_serial', read_only=True)
-    quantity = serializers.FloatField(read_only=False)
-    location = serializers.PrimaryKeyRelatedField(source='item.location', many=False, read_only=True)
+    class Meta:
+        """Metaclass options."""
 
-    # Extra detail fields
-    order_detail = SalesOrderSerializer(source='line.order', many=False, read_only=True)
-    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
-    item_detail = stock.serializers.StockItemSerializer(source='item', many=False, read_only=True)
-    location_detail = stock.serializers.LocationSerializer(source='item.location', many=False, read_only=True)
-    customer_detail = CompanyBriefSerializer(source='line.order.customer', many=False, read_only=True)
+        model = order.models.SalesOrderAllocation
 
-    shipment_date = serializers.DateField(source='shipment.shipment_date', read_only=True)
+        fields = [
+            'pk',
+            'line',
+            'customer_detail',
+            'serial',
+            'quantity',
+            'location',
+            'location_detail',
+            'item',
+            'item_detail',
+            'order',
+            'order_detail',
+            'part',
+            'part_detail',
+            'shipment',
+            'shipment_date',
+        ]
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer"""
@@ -779,32 +783,73 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         if not customer_detail:
             self.fields.pop('customer_detail')
 
-    class Meta:
-        """Metaclass options."""
+    part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
+    order = serializers.PrimaryKeyRelatedField(source='line.order', many=False, read_only=True)
+    serial = serializers.CharField(source='get_serial', read_only=True)
+    quantity = serializers.FloatField(read_only=False)
+    location = serializers.PrimaryKeyRelatedField(source='item.location', many=False, read_only=True)
 
-        model = order.models.SalesOrderAllocation
+    # Extra detail fields
+    order_detail = SalesOrderSerializer(source='line.order', many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
+    item_detail = stock.serializers.StockItemSerializer(source='item', many=False, read_only=True)
+    location_detail = stock.serializers.LocationSerializer(source='item.location', many=False, read_only=True)
+    customer_detail = CompanyBriefSerializer(source='line.order.customer', many=False, read_only=True)
 
-        fields = [
-            'pk',
-            'line',
-            'customer_detail',
-            'serial',
-            'quantity',
-            'location',
-            'location_detail',
-            'item',
-            'item_detail',
-            'order',
-            'order_detail',
-            'part',
-            'part_detail',
-            'shipment',
-            'shipment_date',
-        ]
+    shipment_date = serializers.DateField(source='shipment.shipment_date', read_only=True)
 
 
 class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
     """Serializer for a SalesOrderLineItem object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.SalesOrderLineItem
+
+        fields = [
+            'pk',
+            'allocated',
+            'allocations',
+            'available_stock',
+            'customer_detail',
+            'quantity',
+            'reference',
+            'notes',
+            'order',
+            'order_detail',
+            'overdue',
+            'part',
+            'part_detail',
+            'sale_price',
+            'sale_price_currency',
+            'shipped',
+            'target_date',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Initializion routine for the serializer:
+
+        - Add extra related serializer information if required
+        """
+        part_detail = kwargs.pop('part_detail', False)
+        order_detail = kwargs.pop('order_detail', False)
+        allocations = kwargs.pop('allocations', False)
+        customer_detail = kwargs.pop('customer_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail')
+
+        if order_detail is not True:
+            self.fields.pop('order_detail')
+
+        if allocations is not True:
+            self.fields.pop('allocations')
+
+        if customer_detail is not True:
+            self.fields.pop('customer_detail')
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -840,30 +885,6 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
 
         return queryset
 
-    def __init__(self, *args, **kwargs):
-        """Initializion routine for the serializer:
-
-        - Add extra related serializer information if required
-        """
-        part_detail = kwargs.pop('part_detail', False)
-        order_detail = kwargs.pop('order_detail', False)
-        allocations = kwargs.pop('allocations', False)
-        customer_detail = kwargs.pop('customer_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if part_detail is not True:
-            self.fields.pop('part_detail')
-
-        if order_detail is not True:
-            self.fields.pop('order_detail')
-
-        if allocations is not True:
-            self.fields.pop('allocations')
-
-        if customer_detail is not True:
-            self.fields.pop('customer_detail')
-
     customer_detail = CompanyBriefSerializer(source='order.customer', many=False, read_only=True)
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
@@ -879,47 +900,13 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
 
     shipped = InvenTreeDecimalField(read_only=True)
 
-    sale_price = InvenTreeMoneySerializer(
-        allow_null=True
-    )
+    sale_price = InvenTreeMoneySerializer(allow_null=True)
 
-    sale_price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        help_text=_('Sale price currency'),
-    )
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.SalesOrderLineItem
-
-        fields = [
-            'pk',
-            'allocated',
-            'allocations',
-            'available_stock',
-            'customer_detail',
-            'quantity',
-            'reference',
-            'notes',
-            'order',
-            'order_detail',
-            'overdue',
-            'part',
-            'part_detail',
-            'sale_price',
-            'sale_price_currency',
-            'shipped',
-            'target_date',
-        ]
+    sale_price_currency = InvenTreeCurrencySerializer(help_text=_('Sale price currency'))
 
 
 class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
     """Serializer for the SalesOrderShipment class."""
-
-    allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
-
-    order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
 
     class Meta:
         """Metaclass options."""
@@ -939,6 +926,10 @@ class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
             'link',
             'notes',
         ]
+
+    allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
+
+    order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
 
 
 class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):

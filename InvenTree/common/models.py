@@ -46,6 +46,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+from plugin import registry
 
 logger = logging.getLogger('inventree')
 
@@ -178,6 +179,10 @@ class BaseInvenTreeSetting(models.Model):
         are assigned their default values
         """
         results = cls.objects.all()
+
+        if exclude_hidden:
+            # Keys which start with an undersore are used for internal functionality
+            results = results.exclude(key__startswith='_')
 
         # Optionally filter by user
         if user is not None:
@@ -852,6 +857,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
+    class Meta:
+        """Meta options for InvenTreeSetting."""
+
+        verbose_name = "InvenTree Setting"
+        verbose_name_plural = "InvenTree Settings"
+
     def save(self, *args, **kwargs):
         """When saving a global setting, check to see if it requires a server restart.
 
@@ -973,6 +984,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_UPDATE_CHECK_INTERVAL': {
+            'name': _('Update Check Inverval'),
+            'description': _('How often to check for updates (set to zero to disable)'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 7,
+            'units': _('days'),
+        },
+
         'INVENTREE_BACKUP_ENABLE': {
             'name': _('Automatic Backup'),
             'description': _('Enable automatic backup of database and media files'),
@@ -981,20 +1003,21 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_BACKUP_DAYS': {
-            'name': _('Days Between Backup'),
+            'name': _('Auto Backup Interval'),
             'description': _('Specify number of days between automated backup events'),
             'validator': [
                 int,
                 MinValueValidator(1),
             ],
             'default': 1,
+            'units': _('days'),
         },
 
         'INVENTREE_DELETE_TASKS_DAYS': {
-            'name': _('Delete Old Tasks'),
+            'name': _('Task Deletion Interval'),
             'description': _('Background task results will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7),
@@ -1002,10 +1025,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_DELETE_ERRORS_DAYS': {
-            'name': _('Delete Error Logs'),
+            'name': _('Error Log Deletion Interval'),
             'description': _('Error logs will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7)
@@ -1013,10 +1036,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
-            'name': _('Delete Notifications'),
+            'name': _('Notification Deletion Interval'),
             'description': _('User notifications will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7),
@@ -1046,6 +1069,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Allow barcode scanning via webcam in browser'),
             'default': True,
             'validator': bool,
+        },
+
+        'PART_ENABLE_REVISION': {
+            'name': _('Part Revisions'),
+            'description': _('Enable revision field for Part'),
+            'validator': bool,
+            'default': True,
         },
 
         'PART_IPN_REGEX': {
@@ -1222,7 +1252,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Stock Item Pricing Age'),
             'description': _('Exclude stock items older than this number of days from pricing calculations'),
             'default': 0,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(0),
@@ -1244,7 +1274,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'PRICING_UPDATE_DAYS': {
-            'name': _('Pricing Rebuild Time'),
+            'name': _('Pricing Rebuild Interval'),
             'description': _('Number of days before part pricing is automatically updated'),
             'units': _('days'),
             'default': 30,
@@ -1568,15 +1598,38 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
+        'STOCKTAKE_ENABLE': {
+            'name': _('Stocktake Functionality'),
+            'description': _('Enable stocktake functionality for recording stock levels and calculating stock value'),
+            'validator': bool,
+            'default': False,
+        },
+
+        'STOCKTAKE_AUTO_DAYS': {
+            'name': _('Automatic Stocktake Period'),
+            'description': _('Number of days between automatic stocktake recording (set to zero to disable)'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 0,
+        },
+
+        'STOCKTAKE_DELETE_REPORT_DAYS': {
+            'name': _('Report Deletion Interval'),
+            'description': _('Stocktake reports will be deleted after specified number of days'),
+            'default': 30,
+            'units': _('days'),
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
     }
 
     typ = 'inventree'
-
-    class Meta:
-        """Meta options for InvenTreeSetting."""
-
-        verbose_name = "InvenTree Setting"
-        verbose_name_plural = "InvenTree Settings"
 
     key = models.CharField(
         max_length=50,
@@ -1599,8 +1652,26 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             return False
 
 
+def label_printer_options():
+    """Build a list of available label printer options."""
+    printers = [('', _('No Printer (Export to PDF)'))]
+    label_printer_plugins = registry.with_mixin('labels')
+    if label_printer_plugins:
+        printers.extend([(p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins])
+    return printers
+
+
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object with a usercontext."""
+
+    class Meta:
+        """Meta options for InvenTreeUserSetting."""
+
+        verbose_name = "InvenTree User Setting"
+        verbose_name_plural = "InvenTree User Settings"
+        constraints = [
+            models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
+        ]
 
     SETTINGS = {
         'HOMEPAGE_PART_STARRED': {
@@ -1743,6 +1814,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        "LABEL_DEFAULT_PRINTER": {
+            'name': _('Default label printer'),
+            'description': _('Configure which label printer should be selected by default'),
+            'default': '',
+            'choices': label_printer_options
+        },
+
         "REPORT_INLINE": {
             'name': _('Inline report display'),
             'description': _('Display PDF reports in the browser, instead of downloading as a file'),
@@ -1758,7 +1836,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         },
 
         'SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS': {
-            'name': _('Seach Supplier Parts'),
+            'name': _('Search Supplier Parts'),
             'description': _('Display supplier parts in search preview window'),
             'default': True,
             'validator': bool,
@@ -1900,7 +1978,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
         'DISPLAY_STOCKTAKE_TAB': {
             'name': _('Part Stocktake'),
-            'description': _('Display part stocktake information'),
+            'description': _('Display part stocktake information (if stocktake functionality is enabled)'),
             'default': True,
             'validator': bool,
         },
@@ -1917,15 +1995,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     }
 
     typ = 'user'
-
-    class Meta:
-        """Meta options for InvenTreeUserSetting."""
-
-        verbose_name = "InvenTree User Setting"
-        verbose_name_plural = "InvenTree User Settings"
-        constraints = [
-            models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
-        ]
 
     key = models.CharField(
         max_length=50,

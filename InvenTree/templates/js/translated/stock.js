@@ -117,6 +117,7 @@ function stockLocationFields(options={}) {
         description: {},
         owner: {},
         structural: {},
+        external: {},
         icon: {
             help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-box',
@@ -310,18 +311,24 @@ function stockItemFields(options={}) {
             icon: 'fa-layer-group',
         },
         status: {},
-        expiry_date: {},
+        expiry_date: {
+            icon: 'fa-calendar-alt',
+        },
         purchase_price: {
             icon: 'fa-dollar-sign',
         },
-        purchase_price_currency: {},
+        purchase_price_currency: {
+            icon: 'fa-coins',
+        },
         packaging: {
             icon: 'fa-box',
         },
         link: {
             icon: 'fa-link',
         },
-        owner: {},
+        owner: {
+            icon: 'fa-user',
+        },
         delete_on_deplete: {},
     };
 
@@ -685,7 +692,9 @@ function assignStockToCustomer(items, options={}) {
                     is_customer: true,
                 },
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
         },
         confirm: true,
         confirmMessage: '{% trans "Confirm stock assignment" %}',
@@ -854,7 +863,9 @@ function mergeStockItems(items, options={}) {
                     structural: false,
                 }
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
             allow_mismatched_suppliers: {},
             allow_mismatched_status: {},
         },
@@ -1045,6 +1056,10 @@ function adjustStock(action, items, options={}) {
         });
 
         var quantity = item.quantity;
+
+        if (item.part_detail.units != null) {
+            quantity += ` ${item.part_detail.units}`;
+        }
 
         var location = locationDetail(item, false);
 
@@ -1292,6 +1307,28 @@ function formatDate(row) {
     }
 
     return html;
+}
+
+/* Construct set of default fields for a StockItemTestResult */
+function stockItemTestResultFields(options={}) {
+    let fields = {
+        test: {},
+        result: {},
+        value: {},
+        attachment: {},
+        notes: {
+            icon: 'fa-sticky-note',
+        },
+        stock_item: {
+            hidden: true,
+        },
+    };
+
+    if (options.stock_item) {
+        fields.stock_item.value = options.stock_item;
+    }
+
+    return fields;
 }
 
 /*
@@ -1559,7 +1596,9 @@ function loadStockTestResultsTable(table, options) {
                 result: {},
                 value: {},
                 attachment: {},
-                notes: {},
+                notes: {
+                    icon: 'fa-sticky-note',
+                },
                 stock_item: {
                     value: options.stock_item,
                     hidden: true,
@@ -1579,13 +1618,7 @@ function loadStockTestResultsTable(table, options) {
         var url = `/api/stock/test/${pk}/`;
 
         constructForm(url, {
-            fields: {
-                test: {},
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {},
-            },
+            fields: stockItemTestResultFields(),
             title: '{% trans "Edit Test Result" %}',
             onSuccess: reloadTestTable,
         });
@@ -2008,9 +2041,107 @@ function loadStockTable(table, options) {
         title: '{% trans "Purchase Price" %}',
         sortable: false,
         formatter: function(value, row) {
-            return formatCurrency(value, {
+            let html = formatCurrency(value, {
                 currency: row.purchase_price_currency,
             });
+
+            var base = baseCurrency();
+
+            if (row.purchase_price_currency != base) {
+                let converted = convertCurrency(
+                    row.purchase_price,
+                    row.purchase_price_currency,
+                    base,
+                    getCurrencyConversionRates(),
+                );
+
+                if (converted) {
+                    converted = formatCurrency(converted, {currency: baseCurrency()});
+                    html += `<br><small><em>${converted}</em></small>`;
+                }
+            }
+
+            return html;
+        }
+    });
+
+    // Total value of stock
+    // This is not sortable, and may default to the 'price range' for the parent part
+    columns.push({
+        field: 'stock_value',
+        title: '{% trans "Stock Value" %}',
+        sortable: false,
+        switchable: true,
+        formatter: function(value, row) {
+            let min_price = row.purchase_price;
+            let max_price = row.purchase_price;
+            let currency = row.purchase_price_currency;
+
+            if (min_price == null && max_price == null && row.part_detail) {
+                min_price = row.part_detail.pricing_min;
+                max_price = row.part_detail.pricing_max;
+                currency = baseCurrency();
+            }
+
+            return formatPriceRange(
+                min_price,
+                max_price,
+                {
+                    quantity: row.quantity,
+                    currency: currency
+                }
+            );
+        },
+        footerFormatter: function(data) {
+            // Display overall range of value for the selected items
+            let rates = getCurrencyConversionRates();
+            let base = baseCurrency();
+
+            let min_price = calculateTotalPrice(
+                data,
+                function(row) {
+                    return row.quantity * (row.purchase_price || row.part_detail.pricing_min);
+                },
+                function(row) {
+                    if (row.purchase_price) {
+                        return row.purchase_price_currency;
+                    } else {
+                        return base;
+                    }
+                },
+                {
+                    currency: base,
+                    rates: rates,
+                    raw: true,
+                }
+            );
+
+            let max_price = calculateTotalPrice(
+                data,
+                function(row) {
+                    return row.quantity * (row.purchase_price || row.part_detail.pricing_max);
+                },
+                function(row) {
+                    if (row.purchase_price) {
+                        return row.purchase_price_currency;
+                    } else {
+                        return base;
+                    }
+                },
+                {
+                    currency: base,
+                    rates: rates,
+                    raw: true,
+                }
+            );
+
+            return formatPriceRange(
+                min_price,
+                max_price,
+                {
+                    currency: base,
+                }
+            );
         }
     });
 
@@ -2034,6 +2165,7 @@ function loadStockTable(table, options) {
         name: 'stock',
         original: original,
         showColumns: true,
+        showFooter: true,
         columns: columns,
     });
 
@@ -2487,6 +2619,24 @@ function loadStockLocationTable(table, options) {
                 title: '{% trans "Stock Items" %}',
                 switchable: true,
                 sortable: true,
+            },
+            {
+                field: 'structural',
+                title: '{% trans "Structural" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
+            },
+            {
+                field: 'external',
+                title: '{% trans "External" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
             }
         ]
     });
@@ -2738,7 +2888,7 @@ function loadInstalledInTable(table, options) {
     table.inventreeTable({
         url: '{% url "api-stock-list" %}',
         queryParams: {
-            installed_in: options.stock_item,
+            belongs_to: options.stock_item,
             part_detail: true,
         },
         formatNoMatches: function() {
@@ -2837,7 +2987,9 @@ function uninstallStockItem(installed_item_id, options={}) {
                         structural: false,
                     }
                 },
-                note: {},
+                note: {
+                    icon: 'fa-sticky-note',
+                },
             },
             preFormContent: function(opts) {
                 var html = '';
