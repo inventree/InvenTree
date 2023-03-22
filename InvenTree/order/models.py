@@ -26,6 +26,8 @@ import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.tasks
 import order.validators
+import stock.models
+import users.models as UserModels
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Company, Contact, SupplierPart
@@ -34,14 +36,12 @@ from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               InvenTreeURLField, RoundingDecimalField)
 from InvenTree.helpers import decimal2string, getSetting, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
-from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderStatus,
-                                    SalesOrderStatus, StockHistoryCode,
-                                    StockStatus)
+from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
+                                    ReturnOrderStatus, SalesOrderStatus,
+                                    StockHistoryCode, StockStatus)
 from part import models as PartModels
 from plugin.events import trigger_event
 from plugin.models import MetadataMixin
-from stock import models as stock_models
-from users import models as UserModels
 
 logger = logging.getLogger('inventree')
 
@@ -89,19 +89,14 @@ class TotalPriceMixin(models.Model):
 
         total = Money(0, target_currency)
 
-        # gather name reference
-        price_ref_tag = 'sale_price' if isinstance(self, SalesOrder) else 'purchase_price'
-
         # order items
         for line in self.lines.all():
 
-            price_ref = getattr(line, price_ref_tag)
-
-            if not price_ref:
+            if not line.price:
                 continue
 
             try:
-                total += line.quantity * convert_money(price_ref, target_currency)
+                total += line.quantity * convert_money(line.price, target_currency)
             except MissingRate:
                 # Record the error, try to press on
                 kind, info, data = sys.exc_info()
@@ -590,7 +585,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             for sn in serials:
 
-                stock = stock_models.StockItem(
+                item = stock.models.StockItem(
                     part=line.part.part,
                     supplier_part=line.part,
                     location=location,
@@ -603,14 +598,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     barcode_hash=barcode_hash
                 )
 
-                stock.save(add_note=False)
+                item.save(add_note=False)
 
                 tracking_info = {
                     'status': status,
                     'purchaseorder': self.pk,
                 }
 
-                stock.add_tracking_entry(
+                item.add_tracking_entry(
                     StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
                     user,
                     notes=notes,
@@ -1165,9 +1160,9 @@ class PurchaseOrderLineItem(OrderLineItem):
               stock items location will be reported as the location for the
               entire line.
         """
-        for stock in stock_models.StockItem.objects.filter(supplier_part=self.part, purchase_order=self.order):
-            if stock.location:
-                return stock.location
+        for item in stock.models.StockItem.objects.filter(supplier_part=self.part, purchase_order=self.order):
+            if item.location:
+                return item.location
         if self.destination:
             return self.destination
         if self.part and self.part.part and self.part.part.default_location:
@@ -1503,7 +1498,7 @@ class SalesOrderAllocation(models.Model):
         try:
             if not self.item:
                 raise ValidationError({'item': _('Stock item has not been assigned')})
-        except stock_models.StockItem.DoesNotExist:
+        except stock.models.StockItem.DoesNotExist:
             raise ValidationError({'item': _('Stock item has not been assigned')})
 
         try:
@@ -1597,7 +1592,7 @@ class SalesOrderAllocation(models.Model):
         self.save()
 
 
-class ReturnOrder(Order):
+class ReturnOrder(TotalPriceMixin, Order):
     """A ReturnOrder represents goods returned from a customer, e.g. an RMA or warranty
 
     Attributes:
@@ -1682,6 +1677,72 @@ class ReturnOrder(Order):
         verbose_name=_('Completion Date'),
         help_text=_('Date order was completed')
     )
+
+
+class ReturnOrderLineItem(OrderLineItem):
+    """Model for a single LineItem in a ReturnOrder"""
+
+    class Meta:
+        """Metaclass options for this model"""
+
+        unique_together = [
+            ('order', 'item'),
+        ]
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with this model"""
+        return reverse('api-return-order-line-list')
+
+    def clean(self):
+        """Perform extra validation steps for the ReturnOrderLineItem model"""
+
+        super().clean()
+
+        if self.item and not self.item.serialized:
+            raise ValidationError({
+                'item': _("Only serialized items can be assigned to a Return Order"),
+            })
+
+    order = models.ForeignKey(
+        ReturnOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Order'),
+        help_text=_('Return Order'),
+    )
+
+    item = models.ForeignKey(
+        stock.models.StockItem,
+        on_delete=models.CASCADE,
+        related_name='return_order_lines',
+        verbose_name=_('Stock Item'),
+    )
+
+    received_date = models.BooleanField(
+        null=True, blank=True,
+        verbose_name=_('Received'),
+        help_text=_('The date this this return item was received'),
+    )
+
+    @property
+    def received(self):
+        """Return True if this item has been received"""
+        return self.received_date is not None
+
+    outcome = models.PositiveIntegerField(
+        default=ReturnOrderLineStatus.PENDING,
+        choices=ReturnOrderLineStatus.items(),
+        verbose_name=_('Outcome'), help_text=_('Outcome for this line item')
+    )
+
+    price = InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Price'),
+        help_text=_('Cost associated with return or repair for this line item'),
+    )
+
+    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 
 
 class ReturnOrderExtraLine(OrderExtraLine):

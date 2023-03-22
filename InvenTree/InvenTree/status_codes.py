@@ -352,3 +352,42 @@ class ReturnOrderStatus(StatusCode):
         COMPLETE: 'success',
         CANCELLED: 'danger',
     }
+
+
+class ReturnOrderLineStatus(StatusCode):
+    """Defines a set of status codes for a ReturnOrderLineItem"""
+
+    PENDING = 10
+
+    # Item is to be returned to customer, no other action
+    RETURN = 20
+
+    # Item is to be repaired, and returned to customer
+    REPAIR = 30
+
+    # Item is to be replaced (new item shipped)
+    REPLACE = 40
+
+    # Item is to be refunded (cannot be repaired)
+    REFUND = 50
+
+    # Item is rejected
+    REJECT = 60
+
+    options = {
+        PENDING: _('Pending'),
+        RETURN: _('Return'),
+        REPAIR: _('Repair'),
+        REFUND: _('Refund'),
+        REPLACE: _('Replace'),
+        REJECT: _('Reject')
+    }
+
+    colors = {
+        PENDING: 'secondary',
+        RETURN: 'success',
+        REPAIR: 'primary',
+        REFUND: 'info',
+        REPLACE: 'warning',
+        REJECT: 'danger',
+    }

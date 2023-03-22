@@ -7,8 +7,9 @@
 
 /* exported
     buildStatusDisplay,
-    returnOrderStatusDisplay,
     purchaseOrderStatusDisplay,
+    returnOrderStatusDisplay,
+    returnOrderLineItemStatusDisplay,
     salesOrderStatusDisplay,
     stockHistoryStatusDisplay,
     stockStatusDisplay,
@@ -20,3 +21,4 @@
 {% include "status_codes.html" with label='purchaseOrder' options=PurchaseOrderStatus.list %}
 {% include "status_codes.html" with label='salesOrder' options=SalesOrderStatus.list %}
 {% include "status_codes.html" with label='returnOrder' options=ReturnOrderStatus.list %}
+{% include "status_codes.html" with label='returnOrderLineItem' options=ReturnOrderLineStatus.list %}

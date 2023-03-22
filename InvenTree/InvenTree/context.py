@@ -4,8 +4,9 @@
 
 import InvenTree.status
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    ReturnOrderStatus, SalesOrderStatus,
-                                    StockHistoryCode, StockStatus)
+                                    ReturnOrderLineStatus, ReturnOrderStatus,
+                                    SalesOrderStatus, StockHistoryCode,
+                                    StockStatus)
 from users.models import RuleSet, check_user_role
 
 
@@ -59,6 +60,7 @@ def status_codes(request):
     return {
         # Expose the StatusCode classes to the templates
         'ReturnOrderStatus': ReturnOrderStatus,
+        'ReturnOrderLineStatus': ReturnOrderLineStatus,
         'SalesOrderStatus': SalesOrderStatus,
         'PurchaseOrderStatus': PurchaseOrderStatus,
         'BuildStatus': BuildStatus,
