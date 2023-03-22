@@ -626,7 +626,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             </div>
             `;
 
-            constructForm(`/api/bom/substitute/${pk}/`, {
+            constructForm(`{% url "api-bom-substitute-list" %}${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Remove Substitute Part" %}',
                 preFormContent: pre,
@@ -1434,7 +1434,7 @@ function loadBomTable(table, options={}) {
 
             var fields = bomItemFields();
 
-            constructForm(`/api/bom/${pk}/`, {
+            constructForm(`{% url "api-bom-list" %}${pk}/`, {
                 fields: fields,
                 title: '{% trans "Edit BOM Item" %}',
                 focus: 'sub_part',

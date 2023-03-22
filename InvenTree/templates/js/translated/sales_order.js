@@ -113,7 +113,7 @@ function createSalesOrder(options={}) {
  */
 function editSalesOrder(order_id, options={}) {
 
-    constructForm(`/api/order/so/${order_id}/`, {
+    constructForm(`{% url "api-so-list" %}${order_id}/`, {
         fields: salesOrderFields(options),
         title: '{% trans "Edit Sales Order" %}',
         onSuccess: function(response) {
@@ -267,7 +267,7 @@ function completeSalesOrderShipment(shipment_id, options={}) {
                 `;
             }
 
-            constructForm(`/api/order/so/shipment/${shipment_id}/ship/`, {
+            constructForm(`{% url "api-so-shipment-list" %}${shipment_id}/ship/`, {
                 method: 'POST',
                 title: `{% trans "Complete Shipment" %} ${shipment.reference}`,
                 fields: {
@@ -357,7 +357,7 @@ function completePendingShipments(order_id, options={}) {
         </div>
         `;
 
-        constructForm(`/api/order/so/shipment/0/ship/`, {
+        constructForm(`{% url "api-so-shipment-list" %}0/ship/`, {
             method: 'POST',
             title: '{% trans "Complete Shipments" %}',
             preFormContent: html,
@@ -825,7 +825,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
 
             delete fields.order;
 
-            constructForm(`/api/order/so/shipment/${pk}/`, {
+            constructForm(`{% url "api-so-shipment-list" %}${pk}/`, {
                 fields: fields,
                 title: '{% trans "Edit Shipment" %}',
                 onSuccess: function() {
@@ -843,7 +843,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
         $(table).find('.button-shipment-delete').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/so/shipment/${pk}/`, {
+            constructForm(`{% url "api-so-shipment-list" %}${pk}/`, {
                 title: '{% trans "Delete Shipment" %}',
                 method: 'DELETE',
                 onSuccess: function() {
@@ -1080,7 +1080,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
         </tbody>
     </table>`;
 
-    constructForm(`/api/order/so/${order_id}/allocate/`, {
+    constructForm(`{% url "api-so-list" %}${order_id}/allocate/`, {
         method: 'POST',
         fields: {
             shipment: {
@@ -1945,7 +1945,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-edit').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/so-line/${pk}/`, {
+            constructForm(`{% url "api-so-line-list" %}${pk}/`, {
                 fields: soLineItemFields(),
                 title: '{% trans "Edit Line Item" %}',
                 onSuccess: reloadTable,
@@ -1956,7 +1956,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-delete').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/so-line/${pk}/`, {
+            constructForm(`{% url "api-so-line-list" %}${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Delete Line Item" %}',
                 onSuccess: reloadTable,
@@ -1971,7 +1971,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 {
                     success: function(response) {
 
-                        constructForm(`/api/order/so/${options.order}/allocate-serials/`, {
+                        constructForm(`{% url "api-so-line-list" %}${options.order}/allocate-serials/`, {
                             method: 'POST',
                             title: '{% trans "Allocate Serial Numbers" %}',
                             fields: {

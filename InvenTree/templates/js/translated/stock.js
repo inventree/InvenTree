@@ -1716,9 +1716,9 @@ function loadStockTable(table, options) {
 
     var filterTarget = options.filterTarget || '#filter-list-stock';
 
-    let filters = loadTableFilters(filterKey, params);
+    const filterKey = options.filterKey || options.name || 'stock';
 
-    var filterKey = options.filterKey || options.name || 'stock';
+    let filters = loadTableFilters(filterKey, params);
 
     setupFilterList(filterKey, table, filterTarget, {download: true});
 

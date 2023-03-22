@@ -88,7 +88,7 @@ $('#history-delete').click(function() {
 });
 
 $("#history-table").on('click', '.notification-delete', function() {
-    constructForm(`/api/notifications/${$(this).attr('pk')}/`, {
+    constructForm(`{% url "api-notifications-list" %}${$(this).attr('pk')}/`, {
         method: 'DELETE',
         title: '{% trans "Delete Notification" %}',
         onSuccess: function(data) {

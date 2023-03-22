@@ -542,7 +542,7 @@ function validateBom(part_id, options={}) {
     </div>
     `;
 
-    constructForm(`/api/part/${part_id}/bom-validate/`, {
+    constructForm(`{% url "api-part-list" %}${part_id}/bom-validate/`, {
         method: 'PUT',
         fields: {
             valid: {},
@@ -560,7 +560,7 @@ function validateBom(part_id, options={}) {
 /* Duplicate a BOM */
 function duplicateBom(part_id, options={}) {
 
-    constructForm(`/api/part/${part_id}/bom-copy/`, {
+    constructForm(`{% url "api-part-list" %}${part_id}/bom-copy/`, {
         method: 'POST',
         fields: {
             part: {
@@ -1041,7 +1041,7 @@ function loadPartStocktakeTable(partId, options={}) {
             $(table).find('.button-edit-stocktake').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/part/stocktake/${pk}/`, {
+                constructForm(`{% url "api-part-stocktake-list" %}${pk}/`, {
                     fields: {
                         item_count: {},
                         quantity: {},
@@ -1071,7 +1071,7 @@ function loadPartStocktakeTable(partId, options={}) {
             $(table).find('.button-delete-stocktake').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/part/stocktake/${pk}/`, {
+                constructForm(`{% url "api-part-stocktake-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Stocktake Entry" %}',
                     onSuccess: function() {
@@ -1309,7 +1309,7 @@ function loadPartParameterTable(table, options) {
             $(table).find('.button-parameter-edit').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/part/parameter/${pk}/`, {
+                constructForm(`{% url "api-part-parameter-list" %}${pk}/`, {
                     fields: {
                         data: {},
                     },
@@ -1323,7 +1323,7 @@ function loadPartParameterTable(table, options) {
             $(table).find('.button-parameter-delete').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/part/parameter/${pk}/`, {
+                constructForm(`{% url "api-part-parameter-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Parameter" %}',
                     onSuccess: function() {
@@ -1637,7 +1637,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
             $(table).find('.button-related-delete').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/part/related/${pk}/`, {
+                constructForm(`{% url "api-part-related-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Part Relationship" %}',
                     onSuccess: function() {

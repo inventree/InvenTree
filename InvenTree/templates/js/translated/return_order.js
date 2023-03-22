@@ -13,8 +13,11 @@
 
 /* exported
     createReturnOrder,
+    createReturnOrderLineItem,
     editReturnOrder,
+    editReturnOrderLineItem,
     loadReturnOrderTable,
+    loadReturnOrderLineItemTable,
 */
 
 
@@ -93,7 +96,7 @@ function createReturnOrder(options={}) {
  */
 function editReturnOrder(order_id, options={}) {
 
-    constructForm(`/api/order/return/${order_id}/`, {
+    constructForm(`{% url "api-return-order-list" %}${order_id}/`, {
         fields: returnOrderFields(options),
         title: '{% trans "Edit Return Order" %}',
         onSuccess: function(response) {
@@ -114,11 +117,7 @@ function loadReturnOrderTable(table, options={}) {
     options.params = options.params || {};
     options.params['customer_detail'] = true;
 
-    var filters = loadTableFilters('returnorder');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
+    let filters = loadTableFilters('returnorder', options.params);
 
     setupFilterList('returnorder', $(table), '#filter-list-returnorder', {download: true});
 
@@ -234,6 +233,171 @@ function loadReturnOrderTable(table, options={}) {
                     }
 
                     return html;
+                }
+            }
+        ]
+    });
+}
+
+
+/*
+ * Construct a set of fields for a ReturnOrderLineItem form
+ */
+function returnOrderLineItemFields(options={}) {
+
+    let fields = {
+        order: {
+            filters: {
+                customer_detail: true,
+            }
+        },
+        item: {
+            // TODO
+        },
+        reference: {},
+        price: {
+            icon: 'fa-dollar-sign',
+        },
+        price_currency: {
+            icone: 'fa-coins',
+        },
+        target_date: {
+            icon: 'fa-calendar-alt',
+        },
+        notes: {
+            icon: 'fa-sticky-note',
+        }
+    };
+
+    return fields;
+}
+
+
+/*
+ * Create a new ReturnOrderLineItem
+ */
+function createReturnOrderLineItem(options={}) {
+
+    let fields = returnOrderLineItemFields();
+
+    fields.order.value = options.order;
+
+    constructForm('{% url "api-return-order-line-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Line Item" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+
+}
+
+
+/*
+ * Edit an existing ReturnOrderLineItem
+ */
+function editReturnOrderLineItem(pk, options={}) {
+
+    let fields = returnOrderLineItemFields();
+
+    constructForm(`{% url "api-return-order-line-list" %}${pk}/`, {
+        fields: fields,
+        title: '{% trans "Edit Line Item" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * Load a table displaying line items for a particular ReturnOrder
+ */
+function loadReturnOrderLineItemTable(options={}) {
+
+    var table = options.table;
+
+    options.params = options.params || {};
+
+    options.params.order = options.order;
+    options.params.item_detail = true;
+    options.params.order_detail = false;
+
+    let filters = loadTableFilters('returnorderlineitem', options.params);
+
+    setupFilterList('returnorderlines', $(table), '#filter-list-returnorderlines', {download: true});
+
+    function setupCallbacks() {
+        // TODO
+    }
+
+    $(table).inventreeTable({
+        url: '{% url "api-return-order-line-list" %}',
+        name: 'returnorderlineitems',
+        formatNoMatches: function() {
+            return '{% trans "No matching line items" %}';
+        },
+        onPostBody: setupCallbacks,
+        queryParams: filters,
+        original: options.params,
+        showColumns: true,
+        showFooter: true,
+        uniqueId: 'pk',
+        columns: [
+            {
+                checkbox: true,
+                switchable: false,
+            },
+            {
+                field: 'item',
+                sortable: true,
+                title: '{% trans "Item" %}',
+                formatter: function(value, row) {
+                    return `item: ${value}`;
+                }
+            },
+            {
+                field: 'reference',
+                title: '{% trans "Reference" %}',
+            },
+            {
+                field: 'price',
+                title: '{% trans "Price" %}',
+                formatter: function(value, row) {
+                    return formatCurrency(row.price, {
+                        currency: row.price_currency,
+                    });
+                }
+            },
+            {
+                sortable: true,
+                field: 'target_date',
+                title: '{% trans "Target Date" %}',
+                formatter: function(value, row) {
+                    let html = renderDate(value);
+
+                    if (row.overdue) {
+                        html += `<span class='fas fa-calendar-times icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    }
+
+                    return html;
+                }
+            },
+            {
+                field: 'received',
+                title: '{% trans "Received" %}',
+            },
+            {
+                field: 'notes',
+                title: '{% trans "Notes" %}',
+            },
+            {
+                field: 'buttons',
+                title: '',
+                switchable: false,
+                formatter: function(value, row) {
+                    return `buttons ${row.pk}`;
                 }
             }
         ]

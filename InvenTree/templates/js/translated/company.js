@@ -230,7 +230,7 @@ function duplicateSupplierPart(part, options={}) {
     var fields = options.fields || supplierPartFields();
 
     // Retrieve information for the supplied part
-    inventreeGet(`/api/company/part/${part}/`, {}, {
+    inventreeGet(`{% url "api-supplier-part-list" %}${part}/`, {}, {
         success: function(data) {
 
             // Remove fields which we do not want to duplicate
@@ -238,7 +238,7 @@ function duplicateSupplierPart(part, options={}) {
             delete data['available'];
             delete data['availability_updated'];
 
-            constructForm(`/api/company/part/`, {
+            constructForm('{% url "api-supplier-part-list" %}', {
                 method: 'POST',
                 fields: fields,
                 title: '{% trans "Duplicate Supplier Part" %}',
@@ -264,7 +264,7 @@ function editSupplierPart(part, options={}) {
         fields.part.hidden = true;
     }
 
-    constructForm(`/api/company/part/${part}/`, {
+    constructForm(`{% url "api-supplier-part-list" %}${part}/`, {
         fields: fields,
         title: options.title || '{% trans "Edit Supplier Part" %}',
         onSuccess: options.onSuccess
@@ -599,7 +599,7 @@ function createContact(options={}) {
 function editContact(pk, options={}) {
     let fields = options.fields || contactFields(options);
 
-    constructForm(`/api/company/contact/${pk}/`, {
+    constructForm(`{% url "api-contact-list" %}${pk}/`, {
         fields: fields,
         title: '{% trans "Edit Contact" %}',
         onSuccess: function(response) {
@@ -1098,7 +1098,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
             $(table).find('.button-parameter-edit').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/company/part/manufacturer/parameter/${pk}/`, {
+                constructForm(`{% url "api-manufacturer-part-parameter-list" %}${pk}/`, {
                     fields: {
                         name: {},
                         value: {},
@@ -1113,7 +1113,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
             $(table).find('.button-parameter-delete').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/company/part/manufacturer/parameter/${pk}/`, {
+                constructForm(`{% url "api-manufacturer-part-parameter-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Parameter" %}',
                     onSuccess: function() {
@@ -1373,7 +1373,7 @@ function loadSupplierPriceBreakTable(options={}) {
         table.find('.button-price-break-delete').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/company/price-break/${pk}/`, {
+            constructForm(`{% url "api-part-supplier-price-list" %}${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Delete Price Break" %}',
                 onSuccess: function() {
@@ -1385,7 +1385,7 @@ function loadSupplierPriceBreakTable(options={}) {
         table.find('.button-price-break-edit').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/company/price-break/${pk}/`, {
+            constructForm(`{% url "api-part-supplier-price-list" %}${pk}/`, {
                 fields: supplierPartPriceBreakFields(),
                 title: '{% trans "Edit Price Break" %}',
                 onSuccess: function() {

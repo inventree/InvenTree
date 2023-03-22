@@ -137,7 +137,7 @@ function editPurchaseOrder(pk, options={}) {
 
     var fields = purchaseOrderFields(options);
 
-    constructForm(`/api/order/po/${pk}/`, {
+    constructForm(`{% url "api-po-list" %}${pk}/`, {
         fields: fields,
         title: '{% trans "Edit Purchase Order" %}',
         onSuccess: function(response) {
@@ -1216,7 +1216,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
     </table>
     `;
 
-    constructForm(`/api/order/po/${order_id}/receive/`, {
+    constructForm(`{% url "api-po-list" %}${order_id}/receive/`, {
         method: 'POST',
         fields: {
             location: {
@@ -1772,7 +1772,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
                 var fields = poLineItemFields(options);
 
-                constructForm(`/api/order/po-line/${pk}/`, {
+                constructForm(`{% url "api-po-line-list" %}${pk}/`, {
                     fields: fields,
                     title: '{% trans "Edit Line Item" %}',
                     onSuccess: function() {
@@ -1785,7 +1785,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             $(table).find('.button-line-delete').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/order/po-line/${pk}/`, {
+                constructForm(`{% url "api-po-line-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Line Item" %}',
                     onSuccess: function() {
@@ -2000,7 +2000,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                         var html = renderDate(row.target_date);
 
                         if (row.overdue) {
-                            html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                            html += `<span class='fas fa-calendar-times icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
                         }
 
                         return html;

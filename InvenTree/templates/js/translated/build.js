@@ -90,7 +90,7 @@ function editBuildOrder(pk) {
 
     var fields = buildFormFields();
 
-    constructForm(`/api/build/${pk}/`, {
+    constructForm(`{% url "api-build-list" %}${pk}/`, {
         fields: fields,
         reload: true,
         title: '{% trans "Edit Build Order" %}',
@@ -147,7 +147,7 @@ function newBuildOrder(options={}) {
  */
 function duplicateBuildOrder(build_id, options={}) {
 
-    inventreeGet(`/api/build/${build_id}/`, {}, {
+    inventreeGet(`{% url "api-build-list" %}${build_id}/`, {}, {
         success: function(data) {
             // Clear out data we do not want to be duplicated
             delete data['pk'];
@@ -166,7 +166,7 @@ function duplicateBuildOrder(build_id, options={}) {
 function cancelBuildOrder(build_id, options={}) {
 
     constructForm(
-        `/api/build/${build_id}/cancel/`,
+        `{% url "api-build-list" %}${build_id}/cancel/`,
         {
             method: 'POST',
             title: '{% trans "Cancel Build Order" %}',
@@ -208,7 +208,7 @@ function cancelBuildOrder(build_id, options={}) {
 /* Construct a form to "complete" (finish) a build order */
 function completeBuildOrder(build_id, options={}) {
 
-    constructForm(`/api/build/${build_id}/finish/`, {
+    constructForm(`{% url "api-build-list" %}${build_id}/finish/`, {
         fieldsFunction: function(opts) {
             var ctx = opts.context || {};
 
@@ -287,7 +287,7 @@ function createBuildOutput(build_id, options) {
 
     // Request build order information from the server
     inventreeGet(
-        `/api/build/${build_id}/`,
+        `{% url "api-build-list" %}${build_id}/`,
         {},
         {
             success: function(build) {
@@ -341,7 +341,7 @@ function createBuildOutput(build_id, options) {
                     `;
                 }
 
-                constructForm(`/api/build/${build_id}/create-output/`, {
+                constructForm(`{% url "api-build-list" %}${build_id}/create-output/`, {
                     method: 'POST',
                     title: '{% trans "Create Build Output" %}',
                     confirm: true,
@@ -421,7 +421,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
  */
 function unallocateStock(build_id, options={}) {
 
-    var url = `/api/build/${build_id}/unallocate/`;
+    var url = `{% url "api-build-list" %}${build_id}/unallocate/`;
 
     var html = `
     <div class='alert alert-block alert-warning'>
@@ -529,7 +529,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
         </tbody>
     </table>`;
 
-    constructForm(`/api/build/${build_id}/complete/`, {
+    constructForm(`{% url "api-build-list" %}${build_id}/complete/`, {
         method: 'POST',
         preFormContent: html,
         fields: {
@@ -690,7 +690,7 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
         </tbody>
     </table>`;
 
-    constructForm(`/api/build/${build_id}/delete-outputs/`, {
+    constructForm(`{% url "api-build-list" %}${build_id}/delete-outputs/`, {
         method: 'POST',
         preFormContent: html,
         fields: {},
@@ -1808,7 +1808,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             subTable.find('.button-allocation-edit').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/build/item/${pk}/`, {
+                constructForm(`{% url "api-build-item-list" %}${pk}/`, {
                     fields: {
                         quantity: {},
                     },
@@ -1820,7 +1820,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             subTable.find('.button-allocation-delete').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/build/item/${pk}/`, {
+                constructForm(`{% url "api-build-item-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Remove Allocation" %}',
                     onSuccess: reloadAllocationData,
@@ -2239,7 +2239,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
     </table>
     `;
 
-    constructForm(`/api/build/${build_id}/allocate/`, {
+    constructForm(`{% url "api-build-list" %}${build_id}/allocate/`, {
         method: 'POST',
         fields: {},
         preFormContent: html,
@@ -2453,7 +2453,7 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
         },
     };
 
-    constructForm(`/api/build/${build_id}/auto-allocate/`, {
+    constructForm(`{% url "api-build-list" %}${build_id}/auto-allocate/`, {
         method: 'POST',
         fields: fields,
         title: '{% trans "Allocate Stock Items" %}',
