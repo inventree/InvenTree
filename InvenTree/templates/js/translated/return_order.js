@@ -334,6 +334,7 @@ function loadReturnOrderLineItemTable(options={}) {
     options.params.order = options.order;
     options.params.item_detail = true;
     options.params.order_detail = false;
+    options.params.part_detail = true;
 
     let filters = loadTableFilters('returnorderlineitem', options.params);
 
@@ -365,7 +366,14 @@ function loadReturnOrderLineItemTable(options={}) {
                 sortable: true,
                 title: '{% trans "Item" %}',
                 formatter: function(value, row) {
-                    return `item: ${value}`;
+                    let html = '';
+
+                    html += renderLink(
+                        `${row.part_detail.full_name} - {% trans "Serial Number" %}: ${row.item_detail.serial}`,
+                        `/stock/item/${row.item}/`
+                    );
+
+                    return html;
                 }
             },
             {

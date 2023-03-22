@@ -161,9 +161,6 @@ function renderStockItem(data, parameters={}) {
     let render_location_detail = ('render_location_detail' in parameters) ? parameters.render_location_detail : false;
     let render_available_quantity = ('render_available_quantity' in parameters) ? parameters.render_available_quantity : false;
 
-    if (render_part_detail) {
-    }
-
     let text = '';
     let stock_detail = '';
 

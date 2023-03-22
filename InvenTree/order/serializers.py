@@ -1467,6 +1467,7 @@ class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
             'item_detail',
             'received_date',
             'outcome',
+            'part_detail',
             'price',
             'price_currency',
             'link',
@@ -1480,6 +1481,7 @@ class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
 
         order_detail = kwargs.pop('order_detail', False)
         item_detail = kwargs.pop('item_detail', False)
+        part_detail = kwargs.pop('part_detail', False)
 
         super().__init__(*args, **kwargs)
 
@@ -1489,8 +1491,12 @@ class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
         if not item_detail:
             self.fields.pop('item_detail')
 
+        if not part_detail:
+            self.fields.pop('part_detail')
+
     order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
     item_detail = stock.serializers.StockItemSerializer(source='item', many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
 
     price = InvenTreeMoneySerializer(allow_null=True)
     price_currency = InvenTreeCurrencySerializer(help_text=_('Line price currency'))

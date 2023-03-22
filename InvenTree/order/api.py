@@ -1318,8 +1318,9 @@ class ReturnOrderLineItemMixin:
         try:
             params = self.request.query_params
 
-            kwargs['order_detail'] = str2bool(params.get('order_detail'), False)
-            kwargs['item_detail'] = str2bool(params.get('item_detail'), False)
+            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
+            kwargs['item_detail'] = str2bool(params.get('item_detail', True))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
         except AttributeError:
             pass
 
@@ -1335,6 +1336,7 @@ class ReturnOrderLineItemMixin:
         queryset = queryset.prefetch_related(
             'order',
             'item',
+            'item__part',
         )
 
         return queryset
