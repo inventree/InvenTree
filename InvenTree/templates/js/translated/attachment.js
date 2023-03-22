@@ -1,7 +1,6 @@
 {% load i18n %}
 
 /* globals
-    makeIconButton,
     renderLink,
     wrapButtons,
 */
@@ -124,10 +123,7 @@ function deleteAttachments(attachments, url, options={}) {
             items: ids,
             filters: options.filters,
         },
-        onSuccess: function() {
-            // Refresh the table once all attachments are deleted
-            $('#attachment-table').bootstrapTable('refresh');
-        }
+        refreshTable: '#attachment-table',
     });
 }
 

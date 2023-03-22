@@ -1030,7 +1030,7 @@ function loadPartStocktakeTable(partId, options={}) {
                         html += makeDeleteButton('button-delete-stocktake', row.pk, '{% trans "Delete Stocktake Entry" %}');
                     }
 
-                    return wrapButtons(buttons);
+                    return wrapButtons(html);
                 }
             }
         ],

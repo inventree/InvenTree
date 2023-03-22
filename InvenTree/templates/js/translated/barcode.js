@@ -3,7 +3,6 @@
 /* globals
     imageHoverIcon,
     inventreePut,
-    makeIconButton,
     modalEnable,
     modalSetContent,
     modalSetTitle,

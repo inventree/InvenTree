@@ -1478,7 +1478,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     }
 
     // Filters
-    var filters = loadTableFilters('builditems', options.params);
+    let filters = loadTableFilters('builditems', options.params);
 
     setupFilterList('builditems', $(table), options.filterTarget);
 
@@ -1693,6 +1693,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         name: 'build-allocation',
         uniqueId: 'sub_part',
         search: options.search || false,
+        queryParams: filters,
+        original: options.params,
         onPostBody: function(data) {
             // Setup button callbacks
             setupCallbacks();

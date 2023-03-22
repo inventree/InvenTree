@@ -4,7 +4,6 @@
     constructForm,
     imageHoverIcon,
     loadTableFilters,
-    makeIconButton,
     renderLink,
     setupFilterList,
 */

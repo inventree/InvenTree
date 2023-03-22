@@ -825,11 +825,12 @@ function mergeStockItems(items, options={}) {
 
         let buttons = wrapButtons(
             makeIconButton(
-            'fa-times icon-red',
-            'button-stock-item-remove',
-            pk,
-            '{% trans "Remove row" %}',
-        ));
+                'fa-times icon-red',
+                'button-stock-item-remove',
+                pk,
+                '{% trans "Remove row" %}',
+            )
+        );
 
         html += `
         <tr id='stock_item_${pk}' class='stock-item-row'>
@@ -1361,7 +1362,7 @@ function loadStockTestResultsTable(table, options) {
             html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test result" %}');
         }
 
-        return wrapButtons(buttons);
+        return wrapButtons(html);
     }
 
     var parent_node = 'parent node';
