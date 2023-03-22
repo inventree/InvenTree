@@ -1451,6 +1451,51 @@ class ReturnOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
 
 
+class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
+    """Serializer for a ReturnOrderLineItem object"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = order.models.ReturnOrderLineItem
+
+        fields = [
+            'pk',
+            'order',
+            'order_detail',
+            'item',
+            'item_detail',
+            'received_date',
+            'outcome',
+            'price',
+            'price_currency',
+            'link',
+            'reference',
+            'notes',
+            'target_date',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer"""
+
+        order_detail = kwargs.pop('order_detail', False)
+        item_detail = kwargs.pop('item_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not order_detail:
+            self.fields.pop('order_detail')
+
+        if not item_detail:
+            self.fields.pop('item_detail')
+
+    order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
+    item_detail = stock.serializers.StockItemSerializer(source='item', many=False, read_only=True)
+
+    price = InvenTreeMoneySerializer(allow_null=True)
+    price_currency = InvenTreeCurrencySerializer(help_text=_('Line price currency'))
+
+
 class ReturnOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
     """Serializer for a ReturnOrderExtraLine object"""
 
