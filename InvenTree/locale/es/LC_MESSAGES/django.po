@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-19 20:22+0000\n"
-"PO-Revision-Date: 2023-03-20 12:05\n"
+"PO-Revision-Date: 2023-03-22 12:04\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -941,15 +941,15 @@ msgstr "Fecha de Finalización"
 
 #: build/models.py:267
 msgid "completed by"
-msgstr ""
+msgstr "terminado por"
 
 #: build/models.py:275 templates/js/translated/build.js:2684
 msgid "Issued by"
-msgstr ""
+msgstr "Emitido por"
 
 #: build/models.py:276
 msgid "User who issued this build order"
-msgstr ""
+msgstr "El usuario que emitió esta orden"
 
 #: build/models.py:284 build/templates/build/build_base.html:193
 #: build/templates/build/detail.html:122 order/models.py:104
@@ -964,7 +964,7 @@ msgstr "Responsable"
 
 #: build/models.py:285
 msgid "User or group responsible for this build order"
-msgstr ""
+msgstr "Usuario o grupo responsable de esta orden de fabricación"
 
 #: build/models.py:290 build/templates/build/detail.html:108
 #: company/templates/company/manufacturer_part.html:107
@@ -976,7 +976,7 @@ msgstr "Enlaces Externo"
 
 #: build/models.py:295
 msgid "Extra build notes"
-msgstr ""
+msgstr "Notas adicionales de fabricación"
 
 #: build/models.py:299
 msgid "Build Priority"
@@ -1022,11 +1022,11 @@ msgstr ""
 
 #: build/models.py:1213 order/models.py:1475
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Cantidad asignada debe ser mayor que cero"
 
 #: build/models.py:1219
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "La cantidad debe ser 1 para el stock serializado"
 
 #: build/models.py:1276
 msgid "Selected stock item not found in BOM"
@@ -1104,15 +1104,15 @@ msgstr "Cantidad"
 
 #: build/models.py:1376
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Cantidad de stock a asignar para construir"
 
 #: build/models.py:1384
 msgid "Install into"
-msgstr ""
+msgstr "Instalar en"
 
 #: build/models.py:1385
 msgid "Destination stock item"
-msgstr ""
+msgstr "Artículo de stock de destino"
 
 #: build/serializers.py:145 build/serializers.py:703
 #: templates/js/translated/build.js:1243
@@ -1162,11 +1162,11 @@ msgstr "Números de serie"
 
 #: build/serializers.py:234
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Introduzca los números de serie de salidas de construcción"
 
 #: build/serializers.py:247
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "Autoasignar Números de Serie"
 
 #: build/serializers.py:248
 msgid "Automatically allocate required items with matching serial numbers"
@@ -1326,11 +1326,11 @@ msgstr ""
 
 #: build/serializers.py:826
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr ""
+msgstr "Ubicación de stock donde las piezas deben ser obtenidas (dejar en blanco para tomar de cualquier ubicación)"
 
 #: build/serializers.py:834
 msgid "Exclude Location"
-msgstr ""
+msgstr "Excluir ubicación"
 
 #: build/serializers.py:835
 msgid "Exclude stock items from this selected location"
@@ -1381,15 +1381,15 @@ msgstr "Acciones de impresión"
 
 #: build/templates/build/build_base.html:43
 msgid "Print build order report"
-msgstr ""
+msgstr "Imprimir informe de orden de fabricación"
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
-msgstr ""
+msgstr "Acciones de fabricación"
 
 #: build/templates/build/build_base.html:54
 msgid "Edit Build"
-msgstr ""
+msgstr "Editar fabricación"
 
 #: build/templates/build/build_base.html:56
 msgid "Cancel Build"
