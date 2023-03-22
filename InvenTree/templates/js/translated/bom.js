@@ -96,12 +96,12 @@ function constructBomUploadTable(data, options={}) {
         var optional = constructRowField('optional');
         var note = constructRowField('note');
 
-        var buttons = `<div class='btn-group float-right' role='group'>`;
+        let buttons = '';
 
         buttons += makeIconButton('fa-info-circle', 'button-row-data', idx, '{% trans "Display row data" %}');
         buttons += makeIconButton('fa-times icon-red', 'button-row-remove', idx, '{% trans "Remove row" %}');
 
-        buttons += `</div>`;
+        buttons = wrapButtons(buttons);
 
         var html = `
         <tr id='items_${idx}' class='bom-import-row' idx='${idx}'>
@@ -1244,7 +1244,6 @@ function loadBomTable(table, options={}) {
 
                     var bDelt = makeIconButton('fa-trash-alt icon-red', 'bom-delete-button', row.pk, '{% trans "Delete BOM Item" %}');
 
-                    var html = `<div class='btn-group float-right' role='group' style='min-width: 100px;'>`;
 
                     if (!row.validated) {
                         html += bValidate;
@@ -1252,13 +1251,13 @@ function loadBomTable(table, options={}) {
                         html += bValid;
                     }
 
-                    html += bEdit;
-                    html += bSubs;
-                    html += bDelt;
+                    var buttons = '';
+                    buttons += bEdit;
+                    buttons += bSubs;
+                    buttons += bDelt;
 
-                    html += `</div>`;
+                    return wrapButtons(buttons);
 
-                    return html;
                 } else {
                     // Return a link to the external BOM
 

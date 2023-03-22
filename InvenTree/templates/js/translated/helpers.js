@@ -17,6 +17,7 @@
     thumbnailImage
     yesNoLabel,
     withTitle,
+    wrapButtons,
 */
 
 function yesNoLabel(value, options={}) {
@@ -155,6 +156,20 @@ function makeIconBadge(icon, title) {
     var html = `<span class='icon-badge fas ${icon} float-right' title='${title}'></span>`;
 
     return html;
+}
+
+
+/*
+ * Wrap list of buttons in a button group <div>
+ */
+function wrapButtons(buttons) {
+
+    if (!buttons) {
+        // Return empty element if no buttons are provided
+        return '';
+    }
+
+    return `<div class='btn-group float-right' role='group'>${buttons}</div>`;
 }
 
 

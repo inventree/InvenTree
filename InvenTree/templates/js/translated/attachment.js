@@ -3,6 +3,7 @@
 /* globals
     makeIconButton,
     renderLink,
+    wrapButtons,
 */
 
 /* exported
@@ -327,12 +328,10 @@ function loadAttachmentTable(url, options) {
             {
                 field: 'actions',
                 formatter: function(value, row) {
-                    var html = '';
-
-                    html = `<div class='btn-group float-right' role='group'>`;
+                    let buttons = '';
 
                     if (permissions.change) {
-                        html += makeIconButton(
+                        buttons += makeIconButton(
                             'fa-edit icon-blue',
                             'button-attachment-edit',
                             row.pk,
@@ -341,7 +340,7 @@ function loadAttachmentTable(url, options) {
                     }
 
                     if (permissions.delete) {
-                        html += makeIconButton(
+                        buttons += makeIconButton(
                             'fa-trash-alt icon-red',
                             'button-attachment-delete',
                             row.pk,
@@ -349,9 +348,7 @@ function loadAttachmentTable(url, options) {
                         );
                     }
 
-                    html += `</div>`;
-
-                    return html;
+                    return wrapButtons(buttons);
                 }
             }
         ]

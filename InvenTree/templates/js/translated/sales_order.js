@@ -797,7 +797,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
         // Construct "actions" for the given shipment row
         var pk = row.pk;
 
-        var html = `<div class='btn-group float-right' role='group'>`;
+        let html = '';
 
         html += makeIconButton('fa-edit icon-blue', 'button-shipment-edit', pk, '{% trans "Edit shipment" %}');
 
@@ -809,10 +809,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
 
         html += makeIconButton('fa-trash-alt icon-red', 'button-shipment-delete', pk, '{% trans "Delete shipment" %}', {disabled: !enable_delete});
 
-        html += `</div>`;
-
-        return html;
-
+        return wrapButtons(html);
     }
 
     function setupShipmentCallbacks() {
@@ -976,13 +973,13 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
 
         var thumb = thumbnailImage(part.thumbnail || part.image);
 
-        var delete_button = `<div class='btn-group float-right' role='group'>`;
-
-        delete_button += makeIconButton(
-            'fa-times icon-red',
-            'button-row-remove',
-            pk,
-            '{% trans "Remove row" %}',
+        let delete_button = wrapButtons(
+            makeIconButton(
+                'fa-times icon-red',
+                'button-row-remove',
+                pk,
+                '{% trans "Remove row" %}',
+            )
         );
 
         delete_button += '</div>';
@@ -1507,8 +1504,8 @@ function showAllocationSubTable(index, row, element, options) {
                 title: '',
                 formatter: function(value, row, index, field) {
 
-                    var html = `<div class='btn-group float-right' role='group'>`;
-                    var pk = row.pk;
+                    let html = '';
+                    let pk = row.pk;
 
                     if (row.shipment_date) {
                         html += `<span class='badge bg-success badge-right'>{% trans "Shipped" %}</span>`;
@@ -1517,9 +1514,7 @@ function showAllocationSubTable(index, row, element, options) {
                         html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
                     }
 
-                    html += '</div>';
-
-                    return html;
+                    return wrapButtons(html);
                 },
             },
         ],
@@ -1862,7 +1857,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             switchable: false,
             formatter: function(value, row, index, field) {
 
-                var html = `<div class='btn-group float-right' role='group'>`;
+                let buttons = '';
 
                 var pk = row.pk;
 
@@ -1870,24 +1865,24 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     var part = row.part_detail;
 
                     if (part.trackable) {
-                        html += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% trans "Allocate serial numbers" %}');
+                        buttons += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% trans "Allocate serial numbers" %}');
                     }
 
-                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Allocate stock" %}');
+                    buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Allocate stock" %}');
 
                     if (part.purchaseable) {
-                        html += makeIconButton('fa-shopping-cart', 'button-buy', row.part, '{% trans "Purchase stock" %}');
+                        buttons += makeIconButton('fa-shopping-cart', 'button-buy', row.part, '{% trans "Purchase stock" %}');
                     }
 
                     if (part.assembly) {
-                        html += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build stock" %}');
+                        buttons += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build stock" %}');
                     }
 
-                    html += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
+                    buttons += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
                 }
 
-                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line item" %}');
-                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
+                buttons += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line item" %}');
+                buttons += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
 
                 var delete_disabled = false;
 
@@ -1902,11 +1897,9 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 }
 
                 // Prevent deletion of the line item if items have been allocated or shipped!
-                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, title, {disabled: delete_disabled});
+                buttons += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, title, {disabled: delete_disabled});
 
-                html += `</div>`;
-
-                return html;
+                return wrapButtons(buttons);
             }
         });
     }

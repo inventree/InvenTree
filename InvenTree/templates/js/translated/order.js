@@ -296,7 +296,7 @@ function loadExtraLineTable(options={}) {
                 switchable: false,
                 formatter: function(value, row, index, field) {
 
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    let html = '';
 
                     if (options.allow_edit || options.allow_delete) {
                         var pk = row.pk;
@@ -311,8 +311,7 @@ function loadExtraLineTable(options={}) {
                         }
                     }
 
-                    html += `</div>`;
-                    return html;
+                    return wrapButtons(html);
                 }
             },
         ]

@@ -824,14 +824,13 @@ function mergeStockItems(items, options={}) {
 
         quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
 
-        var buttons = `<div class='btn-group' role='group'>`;
-
-        buttons += makeIconButton(
+        let buttons = wrapButtons(
+            makeIconButton(
             'fa-times icon-red',
             'button-stock-item-remove',
             pk,
             '{% trans "Remove row" %}',
-        );
+        ));
 
         html += `
         <tr id='stock_item_${pk}' class='stock-item-row'>
@@ -1094,16 +1093,12 @@ function adjustStock(action, items, options={}) {
             );
         }
 
-        var buttons = `<div class='btn-group float-right' role='group'>`;
-
-        buttons += makeIconButton(
+        let buttons = wrapButtons(makeIconButton(
             'fa-times icon-red',
             'button-stock-item-remove',
             pk,
             '{% trans "Remove stock item" %}',
-        );
-
-        buttons += `</div>`;
+        ));
 
         html += `
         <tr id='stock_item_${pk}' class='stock-item-row'>
@@ -1353,7 +1348,7 @@ function loadStockTestResultsTable(table, options) {
 
         // Helper function for rendering buttons
 
-        var html = `<div class='btn-group float-right' role='group'>`;
+        let html = '';
 
         if (row.requires_attachment == false && row.requires_value == false && !row.result) {
             // Enable a "quick tick" option for this test result
@@ -1368,9 +1363,7 @@ function loadStockTestResultsTable(table, options) {
             html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
         }
 
-        html += '</div>';
-
-        return html;
+        return wrapButtons(buttons);
     }
 
     var parent_node = 'parent node';
@@ -2899,14 +2892,12 @@ function loadInstalledInTable(table, options) {
                 title: '',
                 switchable: false,
                 formatter: function(value, row) {
-                    var pk = row.pk;
-                    var html = '';
+                    let pk = row.pk;
+                    let html = '';
 
-                    html += `<div class='btn-group float-right' role='group'>`;
                     html += makeIconButton('fa-unlink', 'button-uninstall', pk, '{% trans "Uninstall Stock Item" %}');
-                    html += `</div>`;
 
-                    return html;
+                    return wrapButtons(html);
                 }
             }
         ],

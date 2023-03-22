@@ -720,7 +720,8 @@ function loadContactTable(table, options={}) {
                 formatter: function(value, row) {
                     var pk = row.pk;
 
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    let html = '';
+
                     if (options.allow_edit) {
                         html += makeIconButton('fa-edit icon-blue', 'btn-contact-edit', pk, '{% trans "Edit Contact" %}');
                     }
@@ -729,8 +730,7 @@ function loadContactTable(table, options={}) {
                         html += makeIconButton('fa-trash-alt icon-red', 'btn-contact-delete', pk, '{% trans "Delete Contact" %}');
                     }
 
-                    html += '</div>';
-                    return html;
+                    return wrapButtons(html);
                 }
             }
         ],
@@ -981,16 +981,13 @@ function loadManufacturerPartTable(table, url, options) {
                 sortable: false,
                 switchable: false,
                 formatter: function(value, row) {
-                    var pk = row.pk;
-
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    let pk = row.pk;
+                    let html = '';
 
                     html += makeIconButton('fa-edit icon-blue', 'button-manufacturer-part-edit', pk, '{% trans "Edit manufacturer part" %}');
                     html += makeIconButton('fa-trash-alt icon-red', 'button-manufacturer-part-delete', pk, '{% trans "Delete manufacturer part" %}');
 
-                    html += '</div>';
-
-                    return html;
+                    return wrapButtons(html);
                 }
             }
         ],
@@ -1079,17 +1076,13 @@ function loadManufacturerPartParameterTable(table, url, options) {
                 switchable: false,
                 sortable: false,
                 formatter: function(value, row) {
-
-                    var pk = row.pk;
-
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    let pk = row.pk;
+                    let html = '';
 
                     html += makeIconButton('fa-edit icon-blue', 'button-parameter-edit', pk, '{% trans "Edit parameter" %}');
                     html += makeIconButton('fa-trash-alt icon-red', 'button-parameter-delete', pk, '{% trans "Delete parameter" %}');
 
-                    html += `</div>`;
-
-                    return html;
+                    return wrapButtons(html);
                 }
             }
         ],
@@ -1315,16 +1308,13 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: false,
                 switchable: false,
                 formatter: function(value, row) {
-                    var pk = row.pk;
-
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    let pk = row.pk;
+                    let html = '';
 
                     html += makeIconButton('fa-edit icon-blue', 'button-supplier-part-edit', pk, '{% trans "Edit supplier part" %}');
                     html += makeIconButton('fa-trash-alt icon-red', 'button-supplier-part-delete', pk, '{% trans "Delete supplier part" %}');
 
-                    html += '</div>';
-
-                    return html;
+                    return wrapButtons(html);
                 }
             }
         ],
@@ -1438,10 +1428,12 @@ function loadSupplierPriceBreakTable(options={}) {
                 formatter: function(value, row) {
                     var html = renderDate(value);
 
-                    html += `<div class='btn-group float-right' role='group'>`;
-                    html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
-                    html += `</div>`;
+                    let buttons = '';
+
+                    buttons += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
+                    buttons += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
+
+                    html += wrapButtons(buttons);
 
                     return html;
                 }

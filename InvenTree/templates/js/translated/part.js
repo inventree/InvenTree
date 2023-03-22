@@ -1020,7 +1020,7 @@ function loadPartStocktakeTable(partId, options={}) {
                 switchable: false,
                 sortable: false,
                 formatter: function(value, row) {
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    let html = '';
 
                     if (options.allow_edit) {
                         html += makeIconButton('fa-edit icon-blue', 'button-edit-stocktake', row.pk, '{% trans "Edit Stocktake Entry" %}');
@@ -1030,9 +1030,7 @@ function loadPartStocktakeTable(partId, options={}) {
                         html += makeIconButton('fa-trash-alt icon-red', 'button-delete-stocktake', row.pk, '{% trans "Delete Stocktake Entry" %}');
                     }
 
-                    html += `</div>`;
-
-                    return html;
+                    return wrapButtons(buttons);
                 }
             }
         ],
@@ -1291,16 +1289,13 @@ function loadPartParameterTable(table, options) {
                 switchable: false,
                 sortable: false,
                 formatter: function(value, row) {
-                    var pk = row.pk;
-
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    let pk = row.pk;
+                    let html = '';
 
                     html += makeIconButton('fa-edit icon-blue', 'button-parameter-edit', pk, '{% trans "Edit parameter" %}');
                     html += makeIconButton('fa-trash-alt icon-red', 'button-parameter-delete', pk, '{% trans "Delete parameter" %}');
 
-                    html += `</div>`;
-
-                    return html;
+                    return wrapButtons(html);
                 }
             }
         ],
@@ -1542,13 +1537,12 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                         // Already recevied
                         return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
                     } else if (row.order_detail && row.order_detail.status == {{ PurchaseOrderStatus.PLACED }}) {
-                        var html = `<div class='btn-group' role='group'>`;
+                        let html = '';
                         var pk = row.pk;
 
                         html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
 
-                        html += `</div>`;
-                        return html;
+                        return wrapButtons(html);
                     } else {
                         return '';
                     }
@@ -1612,14 +1606,10 @@ function loadRelatedPartsTable(table, part_id, options={}) {
             title: '',
             switchable: false,
             formatter: function(value, row) {
-
-                var html = `<div class='btn-group float-right' role='group'>`;
-
+                let html = '';
                 html += makeIconButton('fa-trash-alt icon-red', 'button-related-delete', row.pk, '{% trans "Delete part relationship" %}');
 
-                html += '</div>';
-
-                return html;
+                return wrapButtons(html);
             }
         }
     ];
@@ -2491,14 +2481,12 @@ function loadPartTestTemplateTable(table, options) {
                     var pk = row.pk;
 
                     if (row.part == part) {
-                        var html = `<div class='btn-group float-right' role='group'>`;
+                        let html = '';
 
                         html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
 
-                        html += `</div>`;
-
-                        return html;
+                        return wrapButtons(html);
                     } else {
                         var text = '{% trans "This test is defined for a parent part" %}';
 

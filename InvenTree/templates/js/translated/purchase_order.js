@@ -633,7 +633,7 @@ function orderParts(parts_list, options) {
             }
         );
 
-        var buttons = `<div class='btn-group float-right' role='group'>`;
+        let buttons = '';
 
         if (parts.length > 1) {
             buttons += makeIconButton(
@@ -652,7 +652,7 @@ function orderParts(parts_list, options) {
             '{% trans "Add to purchase order" %}',
         );
 
-        buttons += `</div>`;
+        buttons = wrapButtons(buttons);
 
         var html = `
         <tr id='order_row_${pk}' class='part-order-row'>
@@ -1119,7 +1119,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         );
 
         // Button to remove the row
-        var buttons = `<div class='btn-group float-right' role='group'>`;
+        let buttons = '';
 
         buttons += makeIconButton(
             'fa-layer-group',
@@ -1152,7 +1152,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             );
         }
 
-        buttons += '</div>';
+        buttons = wrapButtons(buttons);
 
         var html = `
         <tr id='receive_row_${pk}' class='stock-receive-row'>
@@ -1374,11 +1374,10 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
 }
 
 
+/*
+ * Edit a purchase order line item in a modal form.
+ */
 function editPurchaseOrderLineItem(e) {
-
-    /* Edit a purchase order line item in a modal form.
-     */
-
     e = e || window.event;
 
     var src = e.target || e.srcElement;
@@ -1391,10 +1390,10 @@ function editPurchaseOrderLineItem(e) {
     });
 }
 
+/*
+ * Delete a purchase order line item in a modal form
+ */
 function removePurchaseOrderLineItem(e) {
-
-    /* Delete a purchase order line item in a modal form
-     */
 
     e = e || window.event;
 
@@ -2054,23 +2053,21 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'buttons',
                 title: '',
                 formatter: function(value, row, index, field) {
-                    var html = `<div class='btn-group' role='group'>`;
+                    let buttons = '';
 
                     var pk = row.pk;
 
                     if (options.allow_receive && row.received < row.quantity) {
-                        html += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+                        buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Receive line item" %}');
                     }
 
                     if (options.allow_edit) {
-                        html += makeIconButton('fa-clone', 'button-line-duplicate', pk, '{% trans "Duplicate line item" %}');
-                        html += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
-                        html += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
+                        buttons += makeIconButton('fa-clone', 'button-line-duplicate', pk, '{% trans "Duplicate line item" %}');
+                        buttons += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
+                        buttons += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
                     }
 
-                    html += `</div>`;
-
-                    return html;
+                    return wrapButtons(buttons);
                 },
             }
         ]

@@ -364,7 +364,7 @@ function createBuildOutput(build_id, options) {
  */
 function makeBuildOutputButtons(output_id, build_info, options={}) {
 
-    var html = `<div class='btn-group float-right' role='group'>`;
+    var html = '';
 
     // Tracked parts? Must be individually allocated
     if (options.has_bom_items) {
@@ -405,10 +405,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
         '{% trans "Delete build output" %}',
     );
 
-    html += `</div>`;
-
-    return html;
-
+    return wrapButtons(html);
 }
 
 
@@ -1790,15 +1787,13 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                             var pk = row.pk;
 
-                            var html = `<div class='btn-group float-right' role='group'>`;
+                            var html = '';
 
                             html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
 
                             html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
 
-                            html += `</div>`;
-
-                            return html;
+                            return wrapButtons(html);
                         }
                     }
                 ]
@@ -2021,7 +2016,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     }
 
                     // Generate action buttons for this build output
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    let html = '';
 
                     if (allocatedQuantity(row) < requiredQuantity(row)) {
                         if (row.sub_part_detail.assembly) {
@@ -2043,9 +2038,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         }
                     );
 
-                    html += '</div>';
-
-                    return html;
+                    return wrapButtons(html);
                 }
             },
         ]
