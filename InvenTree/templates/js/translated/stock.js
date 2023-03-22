@@ -1693,28 +1693,26 @@ function locationDetail(row, showLink=true) {
 }
 
 
+/* Load data into a stock table with adjustable options.
+ * Fetches data (via AJAX) and loads into a bootstrap table.
+ * Also links in default button callbacks.
+ *
+ * Options:
+ *  url - URL for the stock query
+ *  params - query params for augmenting stock data request
+ *  buttons - Which buttons to link to stock selection callbacks
+ *  filterList - <ul> element where filters are displayed
+ *  disableFilters: If true, disable custom filters
+ */
 function loadStockTable(table, options) {
-    /* Load data into a stock table with adjustable options.
-     * Fetches data (via AJAX) and loads into a bootstrap table.
-     * Also links in default button callbacks.
-     *
-     * Options:
-     *  url - URL for the stock query
-     *  params - query params for augmenting stock data request
-     *  groupByField - Column for grouping stock items
-     *  buttons - Which buttons to link to stock selection callbacks
-     *  filterList - <ul> element where filters are displayed
-     *  disableFilters: If true, disable custom filters
-     */
 
     // List of user-params which override the default filters
-
     options.params['location_detail'] = true;
     options.params['part_detail'] = true;
 
     var params = options.params || {};
 
-    var filterTarget = options.filterTarget || '#filter-list-stock';
+    const filterTarget = options.filterTarget || '#filter-list-stock';
 
     const filterKey = options.filterKey || options.name || 'stock';
 
@@ -1727,20 +1725,7 @@ function loadStockTable(table, options) {
         filters[key] = params[key];
     }
 
-    var grouping = true;
-
-    if ('grouping' in options) {
-        grouping = options.grouping;
-    }
-
     var col = null;
-
-    // Explicitly disable part grouping functionality
-    // Might be able to add this in later on,
-    // but there is a bug which makes this crash if paginating on the server side.
-    // Ref: https://github.com/wenzhixin/bootstrap-table/issues/3250
-    // eslint-disable-next-line no-unused-vars
-    grouping = false;
 
     var columns = [
         {

@@ -252,7 +252,10 @@ function returnOrderLineItemFields(options={}) {
             }
         },
         item: {
-            // TODO
+            filters: {
+                part_detail: true,
+                serialized: true,
+            }
         },
         reference: {},
         price: {
@@ -280,7 +283,16 @@ function createReturnOrderLineItem(options={}) {
 
     let fields = returnOrderLineItemFields();
 
-    fields.order.value = options.order;
+    if (options.order) {
+        fields.order.value = options.order;
+        fields.order.hidden = true;
+    }
+
+    if (options.customer) {
+        Object.assign(fields.item.filters, {
+            customer: options.customer
+        });
+    }
 
     constructForm('{% url "api-return-order-line-list" %}', {
         fields: fields,
@@ -290,7 +302,6 @@ function createReturnOrderLineItem(options={}) {
             handleFormSuccess(response, options);
         }
     });
-
 }
 
 

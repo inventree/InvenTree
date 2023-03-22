@@ -1716,7 +1716,8 @@ class ReturnOrderLineItem(OrderLineItem):
         stock.models.StockItem,
         on_delete=models.CASCADE,
         related_name='return_order_lines',
-        verbose_name=_('Stock Item'),
+        verbose_name=_('Item'),
+        help_text=_('Select item to return from customer')
     )
 
     received_date = models.BooleanField(

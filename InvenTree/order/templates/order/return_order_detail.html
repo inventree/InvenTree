@@ -18,7 +18,7 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.return_order.add %}
-                <button type='button' class='btn btn-success' id='new-so-line'>
+                <button type='button' class='btn btn-success' id='new-return-order-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
                 {% endif %}
@@ -96,6 +96,16 @@
 
 // Callback function when the 'details' panel is loaded
 onPanelLoad('order-details', function() {
+
+    $('#new-return-order-line').click(function() {
+        createReturnOrderLineItem({
+            order: {{ order.pk }},
+            customer: {{ order.customer.pk }},
+            onSuccess: function() {
+                $('#return-order-lines-table').bootstrapTable('refresh');
+            }
+        });
+    });
 
     loadReturnOrderLineItemTable({
         table: '#return-order-lines-table',
