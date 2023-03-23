@@ -192,7 +192,13 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
             if response.status_code != expected_code:
                 print(f"Unexpected response at '{url}': status_code = {response.status_code}")
-                print(response.data)
+
+                if hasattr(response, 'data'):
+                    print('data:', response.data)
+                if hasattr(response, 'body'):
+                    print('body:', response.body)
+                if hasattr(response, 'content'):
+                    print('content:', response.content)
 
             self.assertEqual(response.status_code, expected_code)
 
