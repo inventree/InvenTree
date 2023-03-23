@@ -136,7 +136,7 @@ class LabelListView(LabelFilterMixin, ListAPI):
     ]
 
 
-@method_decorator(cache_page(2), name='dispatch')
+@method_decorator(cache_page(1), name='dispatch')
 class LabelPrintMixin(LabelFilterMixin):
     """Mixin for printing labels."""
 
