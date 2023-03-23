@@ -171,15 +171,45 @@ class PurchaseOrderFilter(OrderFilter):
         ]
 
 
-class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
+class PurchaseOrderMixin:
+    """Mixin class for PurchaseOrder endpoints"""
+
+    queryset = models.PurchaseOrder.objects.all()
+    serializer_class = serializers.PurchaseOrderSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this endpoint"""
+        try:
+            kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
+        except AttributeError:
+            pass
+
+        # Ensure the request context is passed through
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+        """Return the annotated queryset for this endpoint"""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'supplier',
+            'lines',
+        )
+
+        queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
+
+        return queryset
+
+
+class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrder objects.
 
     - GET: Return list of PurchaseOrder objects (with filters)
     - POST: Create a new PurchaseOrder object
     """
 
-    queryset = models.PurchaseOrder.objects.all()
-    serializer_class = serializers.PurchaseOrderSerializer
     filterset_class = PurchaseOrderFilter
 
     def create(self, request, *args, **kwargs):
@@ -229,31 +259,6 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint"""
-        try:
-            kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
-        except AttributeError:
-            pass
-
-        # Ensure the request context is passed through
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
-
-    def get_queryset(self, *args, **kwargs):
-        """Return the annotated queryset for this endpoint"""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = queryset.prefetch_related(
-            'supplier',
-            'lines',
-        )
-
-        queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
-
-        return queryset
 
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a file"""
@@ -333,36 +338,9 @@ class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
     ordering = '-reference'
 
 
-class PurchaseOrderDetail(RetrieveUpdateDestroyAPI):
+class PurchaseOrderDetail(PurchaseOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a PurchaseOrder object."""
-
-    queryset = models.PurchaseOrder.objects.all()
-    serializer_class = serializers.PurchaseOrderSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint"""
-        try:
-            kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
-        except AttributeError:
-            pass
-
-        # Ensure the request context is passed through
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
-
-    def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint"""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = queryset.prefetch_related(
-            'supplier',
-            'lines',
-        )
-
-        queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
-
-        return queryset
+    pass
 
 
 class PurchaseOrderContextMixin:
@@ -639,28 +617,11 @@ class SalesOrderFilter(OrderFilter):
         ]
 
 
-class SalesOrderList(APIDownloadMixin, ListCreateAPI):
-    """API endpoint for accessing a list of SalesOrder objects.
-
-    - GET: Return list of SalesOrder objects (with filters)
-    - POST: Create a new SalesOrder
-    """
+class SalesOrderMixin:
+    """Mixin class for SalesOrder endpoints"""
 
     queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderSerializer
-    filterset_class = SalesOrderFilter
-
-    def create(self, request, *args, **kwargs):
-        """Save user information on create."""
-        serializer = self.get_serializer(data=self.clean_data(request.data))
-        serializer.is_valid(raise_exception=True)
-
-        item = serializer.save()
-        item.created_by = request.user
-        item.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint"""
@@ -686,6 +647,28 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
 
         return queryset
+
+
+class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
+    """API endpoint for accessing a list of SalesOrder objects.
+
+    - GET: Return list of SalesOrder objects (with filters)
+    - POST: Create a new SalesOrder
+    """
+
+    filterset_class = SalesOrderFilter
+
+    def create(self, request, *args, **kwargs):
+        """Save user information on create."""
+        serializer = self.get_serializer(data=self.clean_data(request.data))
+        serializer.is_valid(raise_exception=True)
+
+        item = serializer.save()
+        item.created_by = request.user
+        item.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file"""
@@ -760,32 +743,9 @@ class SalesOrderList(APIDownloadMixin, ListCreateAPI):
     ordering = '-reference'
 
 
-class SalesOrderDetail(RetrieveUpdateDestroyAPI):
+class SalesOrderDetail(SalesOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrder object."""
-
-    queryset = models.SalesOrder.objects.all()
-    serializer_class = serializers.SalesOrderSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint"""
-        try:
-            kwargs['customer_detail'] = str2bool(self.request.query_params.get('customer_detail', False))
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
-
-    def get_queryset(self, *args, **kwargs):
-        """Return the annotated queryset for this serializer"""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = queryset.prefetch_related('customer', 'lines')
-
-        queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
-
-        return queryset
+    pass
 
 
 class SalesOrderLineItemFilter(LineItemFilter):
@@ -1155,24 +1115,11 @@ class ReturnOrderFilter(OrderFilter):
         ]
 
 
-class ReturnOrderList(APIDownloadMixin, ListCreateAPI):
-    """API endpoint for accessing a list of ReturnOrder objects"""
+class ReturnOrderMixin:
+    """Mixin class for ReturnOrder endpoints"""
 
     queryset = models.ReturnOrder.objects.all()
     serializer_class = serializers.ReturnOrderSerializer
-    filterset_class = ReturnOrderFilter
-
-    def create(self, request, *args, **kwargs):
-        """Save user information on create."""
-        serializer = self.get_serializer(data=self.clean_data(request.data))
-        serializer.is_valid(raise_exception=True)
-
-        item = serializer.save()
-        item.created_by = request.user
-        item.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint"""
@@ -1200,6 +1147,24 @@ class ReturnOrderList(APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
+
+class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
+    """API endpoint for accessing a list of ReturnOrder objects"""
+
+    filterset_class = ReturnOrderFilter
+
+    def create(self, request, *args, **kwargs):
+        """Save user information on create."""
+        serializer = self.get_serializer(data=self.clean_data(request.data))
+        serializer.is_valid(raise_exception=True)
+
+        item = serializer.save()
+        item.created_by = request.user
+        item.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file"""
 
@@ -1208,13 +1173,6 @@ class ReturnOrderList(APIDownloadMixin, ListCreateAPI):
         filename = f"InvenTree_ReturnOrders.{export_format}"
 
         return DownloadFile(filedata, filename)
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering not supported by the ReturnOrderFilter class"""
-
-        queryset = super().filter_queryset(queryset)
-
-        return queryset
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
@@ -1245,36 +1203,9 @@ class ReturnOrderList(APIDownloadMixin, ListCreateAPI):
     ordering = '-reference'
 
 
-class ReturnOrderDetail(RetrieveUpdateDestroyAPI):
+class ReturnOrderDetail(ReturnOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single ReturnOrder object"""
-
-    queryset = models.ReturnOrder.objects.all()
-    serializer_class = serializers.ReturnOrderSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint"""
-        try:
-            kwargs['customer_detail'] = str2bool(
-                self.request.query_params.get('customer_detail', False)
-            )
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
-
-    def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint"""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = queryset.prefetch_related(
-            'customer',
-        )
-
-        queryset = serializers.ReturnOrderSerializer.annotate_queryset(queryset)
-
-        return queryset
+    pass
 
 
 class ReturnOrderLineItemFilter(LineItemFilter):
