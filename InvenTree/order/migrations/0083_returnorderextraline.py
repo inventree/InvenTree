@@ -11,7 +11,7 @@ import djmoney.models.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0081_auto_20230314_1259'),
+        ('order', '0082_auto_20230314_1259'),
     ]
 
     operations = [

@@ -8,7 +8,7 @@ import report.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('report', '0016_auto_20210513_1303'),
+        ('report', '0017_auto_20230317_0816'),
     ]
 
     operations = [

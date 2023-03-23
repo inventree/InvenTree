@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('company', '0054_companyattachment'),
         ('users', '0006_alter_ruleset_name'),
-        ('order', '0079_auto_20230304_0904'),
+        ('order', '0080_auto_20230317_0816'),
     ]
 
     operations = [

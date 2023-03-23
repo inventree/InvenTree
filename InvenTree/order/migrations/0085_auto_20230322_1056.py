@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('stock', '0095_stocklocation_external'),
-        ('order', '0083_auto_20230321_1111'),
+        ('order', '0084_auto_20230321_1111'),
     ]
 
     operations = [
