@@ -296,8 +296,11 @@ class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, Retri
         if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT', cache=False):
 
             # Construct a PDF file object
-            pdf = report.get_document().write_pdf()
-            pdf_content = ContentFile(pdf, "test_report.pdf")
+            try:
+                pdf = report.get_document().write_pdf()
+                pdf_content = ContentFile(pdf, "test_report.pdf")
+            except TemplateDoesNotExist:
+                return
 
             StockItemAttachment.objects.create(
                 attachment=pdf_content,
