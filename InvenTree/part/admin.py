@@ -318,7 +318,7 @@ class BomItemResource(InvenTreeResource):
         is_importing = getattr(self, 'is_importing', False)
         include_pricing = getattr(self, 'include_pricing', False)
 
-        to_remove = []
+        to_remove = ['metadata']
 
         if is_importing or not include_pricing:
             # Remove pricing fields in this instance

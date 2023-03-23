@@ -977,7 +977,7 @@ class SalesOrderAttachment(InvenTreeAttachment):
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='attachments')
 
 
-class OrderLineItem(models.Model):
+class OrderLineItem(MetadataMixin, models.Model):
     """Abstract model for an order line item.
 
     Attributes:
@@ -1295,7 +1295,7 @@ class SalesOrderLineItem(OrderLineItem):
         return self.shipped >= self.quantity
 
 
-class SalesOrderShipment(models.Model):
+class SalesOrderShipment(MetadataMixin, models.Model):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 
     - Points to a single SalesOrder object

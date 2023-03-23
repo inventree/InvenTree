@@ -2,15 +2,18 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 103
+INVENTREE_API_VERSION = 104
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v103 -> 2023-03-20 : https://github.com/inventree/InvenTree/pull/4488
+v104 -> 2023-03-23 : https://github.com/inventree/InvenTree/pull/4488
     - Adds various endpoints for new "ReturnOrder" models
     - Adds various endpoints for new "ReturnOrderReport" templates
     - Exposes API endpoints for "Contact" model
+
+v103 -> 2023-03-17 : https://github.com/inventree/InvenTree/pull/4410
+    - Add metadata to several more models
 
 v102 -> 2023-03-18 : https://github.com/inventree/InvenTree/pull/4505
 - Adds global search API endpoint for consolidated search results
