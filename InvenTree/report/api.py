@@ -294,7 +294,7 @@ class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, Retri
     def report_callback(self, item, report, request):
         """Callback to (optionally) save a copy of the generated report"""
 
-        if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT'):
+        if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT', cache=False):
 
             # Construct a PDF file object
             pdf = report.get_document().write_pdf()
