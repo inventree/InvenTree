@@ -18,7 +18,8 @@ from part.models import Part
 from stock.models import StockItem, StockLocation
 from users.models import Owner
 
-from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import (PurchaseOrder, PurchaseOrderExtraLine,
+                     PurchaseOrderLineItem)
 
 
 class OrderTest(TestCase):
@@ -384,3 +385,21 @@ class OrderTest(TestCase):
 
         # However *no* notification should have been generated for the creating user
         self.assertFalse(messages.filter(user__pk=3).exists())
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderExtraLine]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)

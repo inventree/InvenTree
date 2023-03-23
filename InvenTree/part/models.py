@@ -3277,7 +3277,7 @@ def validate_template_name(name):
     """Placeholder for legacy function used in migrations."""
 
 
-class PartParameterTemplate(models.Model):
+class PartParameterTemplate(MetadataMixin, models.Model):
     """A PartParameterTemplate provides a template for key:value pairs for extra parameters fields/values to be added to a Part.
 
     This allows users to arbitrarily assign data fields to a Part beyond the built-in attributes.
@@ -3419,7 +3419,7 @@ class PartCategoryParameterTemplate(models.Model):
                                      help_text=_('Default Parameter Value'))
 
 
-class BomItem(DataImportMixin, models.Model):
+class BomItem(DataImportMixin, MetadataMixin, models.Model):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
