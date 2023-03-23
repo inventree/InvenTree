@@ -151,14 +151,12 @@ class LineItemFilter(rest_filters.FilterSet):
 
     def filter_has_pricing(self, queryset, name, value):
         """Filter by whether or not the line item has pricing information"""
-        value = str2bool(value)
+        filters = {self.Meta.price_field: None}
 
-        if value:
-            queryset = queryset.exclude(purchase_price=None)
+        if str2bool(value):
+            return queryset.exclude(**filters)
         else:
-            queryset = queryset.filter(purchase_price=None)
-
-        return queryset
+            return queryset.filter(**filters)
 
 
 class PurchaseOrderFilter(OrderFilter):
@@ -447,7 +445,7 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
 
     class Meta:
         """Metaclass options."""
-
+        price_field = 'purchase_price'
         model = models.PurchaseOrderLineItem
         fields = [
             'order',
@@ -471,17 +469,13 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
 
         A line is considered "received" when received >= quantity
         """
-        value = str2bool(value)
-
         q = Q(received__gte=F('quantity'))
 
-        if value:
-            queryset = queryset.filter(q)
+        if str2bool(value):
+            return queryset.filter(q)
         else:
             # Only count "pending" orders
-            queryset = queryset.exclude(q).filter(order__status__in=PurchaseOrderStatus.OPEN)
-
-        return queryset
+            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatus.OPEN)
 
 
 class PurchaseOrderLineItemMixin:
@@ -799,7 +793,7 @@ class SalesOrderLineItemFilter(LineItemFilter):
 
     class Meta:
         """Metaclass options."""
-
+        price_field = 'sale_price'
         model = models.SalesOrderLineItem
         fields = [
             'order',
@@ -813,16 +807,12 @@ class SalesOrderLineItemFilter(LineItemFilter):
 
         A line is completed when shipped >= quantity
         """
-        value = str2bool(value)
-
         q = Q(shipped__gte=F('quantity'))
 
-        if value:
-            queryset = queryset.filter(q)
+        if str2bool(value):
+            return queryset.filter(q)
         else:
-            queryset = queryset.exclude(q)
-
-        return queryset
+            return queryset.exclude(q)
 
 
 class SalesOrderLineItemMixin:
@@ -1085,14 +1075,10 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
 
     def filter_shipped(self, queryset, name, value):
         """Filter SalesOrder list by 'shipped' status (boolean)"""
-        value = str2bool(value)
-
-        if value:
-            queryset = queryset.exclude(shipment_date=None)
+        if str2bool(value):
+            return queryset.exclude(shipment_date=None)
         else:
-            queryset = queryset.filter(shipment_date=None)
-
-        return queryset
+            return queryset.filter(shipment_date=None)
 
 
 class SalesOrderShipmentList(ListCreateAPI):
@@ -1296,7 +1282,7 @@ class ReturnOrderLineItemFilter(LineItemFilter):
 
     class Meta:
         """Metaclass options"""
-
+        price_field = 'price'
         model = models.ReturnOrderLineItem
         fields = [
             'order',
