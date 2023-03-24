@@ -1896,6 +1896,18 @@ function loadStockTable(table, options) {
             }
 
             return html;
+        },
+        footerFormatter: function(data) {
+            // Display "total" stock quantity of all rendered rows
+            let total = 0;
+
+            data.forEach(function(row) {
+                if (row.quantity != null) {
+                    total += row.quantity;
+                }
+            });
+
+            return total;
         }
     };
 
