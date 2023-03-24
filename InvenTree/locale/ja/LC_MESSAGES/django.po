@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-23 10:52+0000\n"
-"PO-Revision-Date: 2023-03-23 12:01\n"
+"POT-Creation-Date: 2023-03-24 10:23+0000\n"
+"PO-Revision-Date: 2023-03-24 12:24\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -10779,11 +10779,19 @@ msgstr ""
 msgid "Enter search query"
 msgstr ""
 
-#: templates/js/translated/search.js:365
+#: templates/js/translated/search.js:357
+msgid "result"
+msgstr ""
+
+#: templates/js/translated/search.js:357
+msgid "results"
+msgstr ""
+
+#: templates/js/translated/search.js:367
 msgid "Minimize results"
 msgstr ""
 
-#: templates/js/translated/search.js:368
+#: templates/js/translated/search.js:370
 msgid "Remove results"
 msgstr ""
 
