@@ -1112,7 +1112,7 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
         )
 
 
-def render_currency(money, decimal_places=None, currency=None, include_symbol=True):
+def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None):
     """Render a currency / Money object to a formatted string (e.g. for reports)
 
     Arguments:
@@ -1120,6 +1120,7 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
         decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         currency: Optionally convert to the specified currency
         include_symbol: Render with the appropriate currency symbol
+        min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
     """
 
     if money is None or money.amount is None:
@@ -1136,13 +1137,16 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
     if decimal_places is None:
         decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
 
+    if min_decimal_places is None:
+        min_decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN', 0)
+
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
 
     if '.' in value:
         decimals = len(value.split('.')[-1])
 
-        decimals = max(decimals, 2)
+        decimals = max(decimals, min_decimal_places)
         decimals = min(decimals, decimal_places)
 
         decimal_places = decimals
