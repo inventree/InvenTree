@@ -21,6 +21,7 @@ import order.models
 import part.models
 import stock.models
 from InvenTree.helpers import validateFilterString
+from plugin.models import MetadataMixin
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -174,7 +175,7 @@ class ReportBase(models.Model):
     )
 
 
-class ReportTemplateBase(ReportBase):
+class ReportTemplateBase(MetadataMixin, ReportBase):
     """Reporting template model.
 
     Able to be passed context data

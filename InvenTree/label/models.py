@@ -17,6 +17,7 @@ import common.models
 import part.models
 import stock.models
 from InvenTree.helpers import normalize, validateFilterString
+from plugin.models import MetadataMixin
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -70,7 +71,7 @@ class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'label.pdf')
 
 
-class LabelTemplate(models.Model):
+class LabelTemplate(MetadataMixin, models.Model):
     """Base class for generic, filterable labels."""
 
     class Meta:

@@ -270,7 +270,7 @@ function updateSearch() {
                         let result = response[resultType.key];
 
                         if (result.count != null && result.count > 0 && result.results) {
-                            addSearchResults(result.results, resultType);
+                            addSearchResults(result.results, resultType, result.count);
 
                             any_results = true;
                         }
@@ -337,7 +337,7 @@ function addSearchQuery(key, title, query_params, render_params={}) {
 
 
 // Add a group of results to the list
-function addSearchResults(results, resultType) {
+function addSearchResults(results, resultType, resultCount) {
 
     if (results.length == 0) {
         // Do not display this group, as there are no results
@@ -354,12 +354,14 @@ function addSearchResults(results, resultType) {
     let renderer = resultType.renderer;
     let renderParams = resultType.renderParams;
 
+    let resultText = resultCount == 1 ? '{% trans "result" %}' : '{% trans "results" %}';
+
     // Add the result group to the panel
     panel.find('#search-results').append(`
     <div class='search-result-group-wrapper' id='search-results-wrapper-${key}'>
         <div class='search-result-group' id='search-results-${key}'>
             <div class='search-result-header' style='display: flex;'>
-                <h5>${title}</h5>
+                <h5>${title}</h5><span class='float-right'><em><small>&nbsp;-&nbsp;${resultCount} ${resultText}</small></em></span>
                 <span class='flex' style='flex-grow: 1;'></span>
                 <div class='search-result-group-buttons btn-group float-right' role='group'>
                     <button class='btn btn-outline-secondary' id='hide-results-${key}' title='{% trans "Minimize results" %}'>

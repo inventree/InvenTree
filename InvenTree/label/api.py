@@ -13,11 +13,13 @@ from rest_framework.exceptions import NotFound
 
 import common.models
 import InvenTree.helpers
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
+                              RetrieveUpdateDestroyAPI)
 from InvenTree.tasks import offload_task
 from part.models import Part
 from plugin.base.label import label as plugin_label
 from plugin.registry import registry
+from plugin.serializers import MetadataSerializer
 from stock.models import StockItem, StockLocation
 
 from .models import PartLabel, StockItemLabel, StockLocationLabel
@@ -305,6 +307,16 @@ class StockItemLabelDetail(StockItemLabelMixin, RetrieveUpdateDestroyAPI):
     pass
 
 
+class StockItemLabelMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating StockItemLabel metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a Company"""
+        return MetadataSerializer(StockItemLabel, *args, **kwargs)
+
+    queryset = StockItemLabel.objects.all()
+
+
 class StockItemLabelPrint(StockItemLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockItemLabel object."""
     pass
@@ -337,6 +349,16 @@ class StockLocationLabelDetail(StockLocationLabelMixin, RetrieveUpdateDestroyAPI
     pass
 
 
+class StockLocationLabelMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating StockLocationLabel metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a Company"""
+        return MetadataSerializer(StockLocationLabel, *args, **kwargs)
+
+    queryset = StockLocationLabel.objects.all()
+
+
 class StockLocationLabelPrint(StockLocationLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockLocationLabel object."""
     pass
@@ -356,6 +378,16 @@ class PartLabelList(PartLabelMixin, LabelListView):
     pass
 
 
+class PartLabelMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating PartLabel metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a Company"""
+        return MetadataSerializer(PartLabel, *args, **kwargs)
+
+    queryset = PartLabel.objects.all()
+
+
 class PartLabelDetail(PartLabelMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single PartLabel object."""
     pass
@@ -373,6 +405,7 @@ label_api_urls = [
         # Detail views
         re_path(r'^(?P<pk>\d+)/', include([
             re_path(r'print/?', StockItemLabelPrint.as_view(), name='api-stockitem-label-print'),
+            re_path(r'metadata/', StockItemLabelMetadata.as_view(), name='api-stockitem-label-metadata'),
             re_path(r'^.*$', StockItemLabelDetail.as_view(), name='api-stockitem-label-detail'),
         ])),
 
@@ -385,6 +418,7 @@ label_api_urls = [
         # Detail views
         re_path(r'^(?P<pk>\d+)/', include([
             re_path(r'print/?', StockLocationLabelPrint.as_view(), name='api-stocklocation-label-print'),
+            re_path(r'metadata/', StockLocationLabelMetadata.as_view(), name='api-stocklocation-label-metadata'),
             re_path(r'^.*$', StockLocationLabelDetail.as_view(), name='api-stocklocation-label-detail'),
         ])),
 
@@ -397,6 +431,7 @@ label_api_urls = [
         # Detail views
         re_path(r'^(?P<pk>\d+)/', include([
             re_path(r'^print/', PartLabelPrint.as_view(), name='api-part-label-print'),
+            re_path(r'^metadata/', PartLabelMetadata.as_view(), name='api-part-label-metadata'),
             re_path(r'^.*$', PartLabelDetail.as_view(), name='api-part-label-detail'),
         ])),
 
