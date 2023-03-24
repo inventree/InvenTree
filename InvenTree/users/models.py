@@ -167,7 +167,7 @@ class RuleSet(models.Model):
             'order_returnorderlineitem',
             'order_returnorderextraline',
             'order_returnorderattachment',
-            'order_returnorderreport',
+            'report_returnorderreport',
         ]
     }
 
