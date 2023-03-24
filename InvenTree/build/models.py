@@ -33,6 +33,7 @@ import InvenTree.ready
 import InvenTree.tasks
 
 from plugin.events import trigger_event
+from plugin.models import MetadataMixin
 
 import common.notifications
 from part import models as PartModels
@@ -40,7 +41,7 @@ from stock import models as StockModels
 from users import models as UserModels
 
 
-class Build(MPTTModel, ReferenceIndexingMixin):
+class Build(MPTTModel, MetadataMixin, ReferenceIndexingMixin):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -1140,7 +1141,7 @@ class BuildOrderAttachment(InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
-class BuildItem(models.Model):
+class BuildItem(MetadataMixin, models.Model):
     """A BuildItem links multiple StockItem objects to a Build.
 
     These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.

@@ -1459,6 +1459,16 @@ class PartParameterTemplateDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
 
+class PartParameterTemplateMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating PartParameterTemplate metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return a MetadataSerializer pointing to the referenced PartParameterTemplate instance"""
+        return MetadataSerializer(PartParameterTemplate, *args, **kwargs)
+
+    queryset = PartParameterTemplate.objects.all()
+
+
 class PartParameterList(ListCreateAPI):
     """API endpoint for accessing a list of PartParameter objects.
 
@@ -1926,6 +1936,16 @@ class BomItemSubstituteDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.BomItemSubstituteSerializer
 
 
+class BomItemMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating PartBOM metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return a MetadataSerializer pointing to the referenced PartCategory instance"""
+        return MetadataSerializer(BomItem, *args, **kwargs)
+
+    queryset = BomItem.objects.all()
+
+
 part_api_urls = [
 
     # Base URL for PartCategory API endpoints
@@ -1933,8 +1953,8 @@ part_api_urls = [
         re_path(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
 
         re_path(r'^parameters/', include([
-            re_path('^(?P<pk>\d+)/', CategoryParameterDetail.as_view(), name='api-part-category-parameter-detail'),
-            re_path('^.*$', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
+            re_path(r'^(?P<pk>\d+)/', CategoryParameterDetail.as_view(), name='api-part-category-parameter-detail'),
+            re_path(r'^.*$', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
         ])),
 
         # Category detail endpoints
@@ -1982,7 +2002,10 @@ part_api_urls = [
     # Base URL for PartParameter API endpoints
     re_path(r'^parameter/', include([
         path('template/', include([
-            re_path(r'^(?P<pk>\d+)/', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
+            re_path(r'^(?P<pk>\d+)/', include([
+                re_path(r'^metadata/?', PartParameterTemplateMetadata.as_view(), name='api-part-parameter-template-metadata'),
+                re_path(r'^.*$', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
+            ])),
             re_path(r'^.*$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
         ])),
 
@@ -2059,6 +2082,7 @@ bom_api_urls = [
     # BOM Item Detail
     re_path(r'^(?P<pk>\d+)/', include([
         re_path(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
+        re_path(r'^metadata/?', BomItemMetadata.as_view(), name='api-bom-item-metadata'),
         re_path(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
 
