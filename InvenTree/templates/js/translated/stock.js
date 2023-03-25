@@ -1710,7 +1710,17 @@ function loadStockTable(table, options) {
 
     let filters = loadTableFilters(filterKey, params);
 
-    setupFilterList(filterKey, table, filterTarget, {download: true});
+    setupFilterList(filterKey, table, filterTarget, {
+        download: true,
+        report: {
+            url: '{% url "api-stockitem-testreport-list" %}',
+            key: 'item',
+        },
+        labels: {
+            url: '{% url "api-stockitem-label-list" %}',
+            key: 'item',
+        }
+    });
 
     // Override the default values, or add new ones
     for (var key in params) {
@@ -2130,7 +2140,6 @@ function loadStockTable(table, options) {
     });
 
     var buttons = [
-        '#stock-print-options',
         '#stock-options',
     ];
 
@@ -2154,39 +2163,6 @@ function loadStockTable(table, options) {
     }
 
     // Automatically link button callbacks
-
-    $('#multi-item-print-label').click(function() {
-        var selections = getTableData(table);
-
-        var items = [];
-
-        selections.forEach(function(item) {
-            items.push(item.pk);
-        });
-
-        printLabels({
-            items: items,
-            key: 'item',
-            url: '{% url "api-stockitem-label-list" %}',
-        });
-    });
-
-    $('#multi-item-print-test-report').click(function() {
-        var selections = getTableData(table);
-
-        var items = [];
-
-        selections.forEach(function(item) {
-            items.push(item.pk);
-        });
-
-        printReports({
-            items: items,
-            key: 'item',
-            url: '{% url "api-stockitem-testreport-list" %}',
-        });
-    });
-
     if (global_settings.BARCODE_ENABLE) {
         $('#multi-item-barcode-scan-into-location').click(function() {
             var selections = getTableData(table);
@@ -2380,7 +2356,13 @@ function loadStockLocationTable(table, options) {
 
     let filters = loadTableFilters(filterKey, params);
 
-    setupFilterList(filterKey, table, filterListElement, {download: true});
+    setupFilterList(filterKey, table, filterListElement, {
+        download: true,
+        labels: {
+            url: '{% url "api-stocklocation-label-list" %}',
+            key: 'location'
+        }
+    });
 
     for (var key in params) {
         filters[key] = params[key];

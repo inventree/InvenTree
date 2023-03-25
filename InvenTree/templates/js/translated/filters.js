@@ -312,8 +312,17 @@ function setupFilterList(tableKey, table, target, options={}) {
     if (options.report && global_settings.REPORT_ENABLE) {
         buttons += makeFilterButton({
             id: `print-report-${tableKey}`,
-            title: '{% trans "Print selected reports" %}',
+            title: options.report.title || '{% trans "Print reports for selected items" %}',
             icon: 'fa-print',
+        });
+    }
+
+    // Add 'print labels' button
+    if (options.labels && global_settings.LABEL_ENABLE) {
+        buttons += makeFilterButton({
+            id: `print-labels-${tableKey}`,
+            title: options.labels.title || '{% trans "Print labels for selected items" %}',
+            icon: 'fa-tag',
         });
     }
 
@@ -388,6 +397,24 @@ function setupFilterList(tableKey, table, target, options={}) {
                 items: items,
                 url: options.report.url,
                 key: options.report.key
+            });
+        });
+    }
+
+    // Callback for printing labels
+    if (options.labels && global_settings.LABEL_ENABLE) {
+        element.find(`#print-labels-${tableKey}`).click(function() {
+            let data = getTableData(table);
+            let items = [];
+
+            data.forEach(function(row) {
+                items.push(row.pk);
+            });
+
+            printLabels({
+                items: items,
+                url: options.labels.url,
+                key: options.labels.key,
             });
         });
     }

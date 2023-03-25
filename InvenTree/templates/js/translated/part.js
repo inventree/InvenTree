@@ -1800,7 +1800,13 @@ function loadPartTable(table, url, options={}) {
 
     var filters = loadTableFilters('parts', options.params);
 
-    setupFilterList('parts', $(table), options.filterTarget, {download: true});
+    setupFilterList('parts', $(table), options.filterTarget, {
+        download: true,
+        labels: {
+            url: '{% url "api-part-label-list" %}',
+            key: 'part',
+        }
+    });
 
     var columns = [
         {
@@ -2131,23 +2137,6 @@ function loadPartTable(table, url, options={}) {
                 showModalSpinner(opts.modal);
                 setCategory();
             },
-        });
-    });
-
-    // Callback function for the "print label" button
-    $('#multi-part-print-label').click(function() {
-        var selections = getTableData(table);
-
-        var items = [];
-
-        selections.forEach(function(item) {
-            items.push(item.pk);
-        });
-
-        printLabels({
-            items: items,
-            key: 'part',
-            url: '{% url "api-part-label-list" %}',
         });
     });
 }
