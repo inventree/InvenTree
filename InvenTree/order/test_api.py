@@ -1812,6 +1812,24 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         'return_order',
     ]
 
+    def test_options(self):
+        """Test the OPTIONS endpoint"""
+
+        self.assignRole('return_order.add')
+        data = self.options(reverse('api-return-order-list'), expected_code=200).data
+
+        self.assertEqual(data['name'], 'Return Order List')
+
+        # Some checks on the 'reference' field
+        post = data['actions']['POST']
+        reference = post['reference']
+
+        self.assertEqual(reference['default'], 'RMA-0007')
+        self.assertEqual(reference['label'], 'Reference')
+        self.assertEqual(reference['help_text'], 'Return Order reference')
+        self.assertEqual(reference['required'], True)
+        self.assertEqual(reference['type'], 'string')
+
     def test_list(self):
         """Tests for the list endpoint"""
 
@@ -1877,3 +1895,66 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
         for result in data:
             self.assertEqual(result['status'], 20)
+
+    def test_create(self):
+        """Test creation of ReturnOrder via the API"""
+
+        url = reverse('api-return-order-list')
+
+        # Do not have required permissions yet
+        self.post(
+            url,
+            {
+                'customer': 1,
+                'description': 'a return order',
+            },
+            expected_code=403
+        )
+
+        self.assignRole('return_order.add')
+
+        data = self.post(
+            url,
+            {
+                'customer': 4,
+                'customer_reference': 'cr',
+                'description': 'a return order',
+            },
+            expected_code=201
+        ).data
+
+        # Reference automatically generated
+        self.assertEqual(data['reference'], 'RMA-0007')
+        self.assertEqual(data['customer_reference'], 'cr')
+
+    def test_update(self):
+        """Test that we can update a ReturnOrder via the API"""
+
+        url = reverse('api-return-order-detail', kwargs={'pk': 1})
+
+        # Test detail endpoint
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['reference'], 'RMA-001')
+
+        # Attempt to update, incorrect permissions
+        self.patch(
+            url,
+            {
+                'customer_reference': 'My customer reference',
+            },
+            expected_code=403
+        )
+
+        self.assignRole('return_order.change')
+
+        self.patch(
+            url,
+            {
+                'customer_reference': 'customer ref',
+            },
+            expected_code=200
+        )
+
+        rma = models.ReturnOrder.objects.get(pk=1)
+        self.assertEqual(rma.customer_reference, 'customer ref')
