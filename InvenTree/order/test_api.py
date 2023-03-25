@@ -1802,3 +1802,78 @@ class SalesOrderAllocateTest(OrderTest):
         response = self.get(url, expected_code=200)
 
         self.assertEqual(len(response.data), 1 + 3 * models.SalesOrder.objects.count())
+
+
+class ReturnOrderTests(InvenTreeAPITestCase):
+    """Unit tests for ReturnOrder API endpoints"""
+
+    fixtures = [
+        'company',
+        'return_order',
+    ]
+
+    def test_list(self):
+        """Tests for the list endpoint"""
+
+        url = reverse('api-return-order-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 6)
+
+        # Paginated query
+        data = self.get(
+            url,
+            {
+                'limit': 1,
+                'ordering': 'reference',
+                'customer_detail': True,
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['count'], 6)
+        self.assertEqual(len(data['results']), 1)
+        result = data['results'][0]
+        self.assertEqual(result['reference'], 'RMA-001')
+        self.assertEqual(result['customer_detail']['name'], 'A customer')
+
+        # Reverse ordering
+        data = self.get(
+            url,
+            {
+                'ordering': '-reference',
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data[0]['reference'], 'RMA-006')
+
+        # Filter by customer
+        for cmp_id in [4, 5]:
+            data = self.get(
+                url,
+                {
+                    'customer': cmp_id,
+                },
+                expected_code=200
+            ).data
+
+            self.assertEqual(len(data), 3)
+
+            for result in data:
+                self.assertEqual(result['customer'], cmp_id)
+
+        # Filter by status
+        data = self.get(
+            url,
+            {
+                'status': 20,
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(len(data), 2)
+
+        for result in data:
+            self.assertEqual(result['status'], 20)
