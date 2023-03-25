@@ -165,17 +165,25 @@ class ExchangeRateMixin:
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
-    def printUnexpectedResponse(self, url, method, response):
+    def checkResponse(self, url, method, expected_code, response):
         """Debug output for an unexpected response"""
 
-        print(f"Unexpected {method} response at '{url}': status_code = {response.status_code}")
+        # No expected code, return
+        if expected_code is None:
+            return
 
-        if hasattr(response, 'data'):
-            print('data:', response.data)
-        if hasattr(response, 'body'):
-            print('body:', response.body)
-        if hasattr(response, 'content'):
-            print('content:', response.content)
+        if expected_code != response.status_code:
+
+            print(f"Unexpected {method} response at '{url}': status_code = {response.status_code}")
+
+            if hasattr(response, 'data'):
+                print('data:', response.data)
+            if hasattr(response, 'body'):
+                print('body:', response.body)
+            if hasattr(response, 'content'):
+                print('content:', response.content)
+
+        self.assertEqual(expected_code, response.status_code)
 
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.
@@ -200,12 +208,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         response = self.client.get(url, data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                self.printUnexpectedResponse(url, 'GET', response)
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'GET', expected_code, response)
 
         return response
 
@@ -218,12 +221,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         response = self.client.post(url, data=data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                self.printUnexpectedResponse(url, 'POST', response)
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'POST', expected_code, response)
 
         return response
 
@@ -235,12 +233,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         response = self.client.delete(url, data=data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                self.printUnexpectedResponse(url, 'DELETE', response)
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'DELETE', expected_code, response)
 
         return response
 
@@ -248,12 +241,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue a PATCH request."""
         response = self.client.patch(url, data=data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                self.printUnexpectedResponse(url, 'PATCH', response)
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'PATCH', expected_code, response)
 
         return response
 
@@ -261,11 +249,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue a PUT request."""
         response = self.client.put(url, data=data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                self.printUnexpectedResponse(url, 'PUT', response)
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'PUT', expected_code, response)
 
         return response
 
@@ -273,11 +257,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue an OPTIONS request."""
         response = self.client.options(url, format='json')
 
-        if expected_code is not None:
-            if response.status_code != expected_code:
-                self.printUnexpectedResponse(url, 'OPTIONS', response)
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'OPTIONS', expected_code, response)
 
         return response
 
