@@ -1216,9 +1216,20 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'PRICING_DECIMAL_PLACES_MIN': {
+            'name': _('Minimum Pricing Decimal Places'),
+            'description': _('Minimum number of decimal places to display when rendering pricing data'),
+            'default': 0,
+            'validator': [
+                int,
+                MinValueValidator(0),
+                MaxValueValidator(4),
+            ]
+        },
+
         'PRICING_DECIMAL_PLACES': {
-            'name': _('Pricing Decimal Places'),
-            'description': _('Number of decimal places to display when rendering pricing data'),
+            'name': _('Maximum Pricing Decimal Places'),
+            'description': _('Maximum umber of decimal places to display when rendering pricing data'),
             'default': 6,
             'validator': [
                 int,
