@@ -1419,7 +1419,13 @@ function loadPurchaseOrderTable(table, options) {
 
     var filters = loadTableFilters('purchaseorder', options.params);
 
-    setupFilterList('purchaseorder', $(table), '#filter-list-purchaseorder', {download: true});
+    setupFilterList('purchaseorder', $(table), '#filter-list-purchaseorder', {
+        download: true,
+        report: {
+            url: '{% url "api-po-report-list" %}',
+            key: 'order',
+        }
+    });
 
     var display_mode = inventreeLoad('purchaseorder-table-display-mode', 'list');
 

@@ -551,9 +551,13 @@ function loadSalesOrderTable(table, options) {
 
     var filters = loadTableFilters('salesorder', options.params);
 
-    var target = '#filter-list-salesorder';
-
-    setupFilterList('salesorder', $(table), target, {download: true});
+    setupFilterList('salesorder', $(table), '#filter-list-salesorder', {
+        download: true,
+        report: {
+            url: '{% url "api-so-report-list" %}',
+            key: 'order'
+        }
+    });
 
     var display_mode = inventreeLoad('salesorder-table-display-mode', 'list');
 

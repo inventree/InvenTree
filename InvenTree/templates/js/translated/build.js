@@ -2478,7 +2478,13 @@ function loadBuildTable(table, options) {
 
     var filterTarget = options.filterTarget || null;
 
-    setupFilterList('build', table, filterTarget, {download: true});
+    setupFilterList('build', table, filterTarget, {
+        download: true,
+        report: {
+            url: '{% url "api-build-report-list" %}',
+            key: 'build',
+        }
+    });
 
     // Which display mode to use for the build table?
     var display_mode = inventreeLoad('build-table-display-mode', 'list');

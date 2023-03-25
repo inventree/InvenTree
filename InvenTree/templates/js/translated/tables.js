@@ -142,7 +142,7 @@ function constructExpandCollapseButtons(table, idx=0) {
  */
 function getTableData(table, allowEmpty=false) {
 
-    var data = $(table).bootstrapTable('getSelections');
+    let data = $(table).bootstrapTable('getSelections');
 
     if (data.length == 0 && !allowEmpty) {
         data = $(table).bootstrapTable('getData');

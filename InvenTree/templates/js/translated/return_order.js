@@ -119,7 +119,13 @@ function loadReturnOrderTable(table, options={}) {
 
     let filters = loadTableFilters('returnorder', options.params);
 
-    setupFilterList('returnorder', $(table), '#filter-list-returnorder', {download: true});
+    setupFilterList('returnorder', $(table), '#filter-list-returnorder', {
+        download: true,
+        report: {
+            url: '{% url "api-return-order-report-list" %}',
+            key: 'order',
+        }
+    });
 
     let display_mode = inventreeLoad('returnorder-table-display-mode', 'list');
 
