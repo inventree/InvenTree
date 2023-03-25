@@ -164,7 +164,7 @@ function printLabels(options) {
     if (!options.items || options.items.length == 0) {
         showAlertDialog(
             '{% trans "Select Items" %}',
-            '{% trans "No items selected for printing" }',
+            '{% trans "No items selected for printing" %}',
         );
         return;
     }

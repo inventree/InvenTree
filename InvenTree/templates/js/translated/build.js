@@ -885,7 +885,12 @@ function loadBuildOutputTable(build_info, options={}) {
         filters[key] = params[key];
     }
 
-    setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems');
+    setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems', {
+        labels: {
+            url: '{% url "api-stockitem-label-list" %}',
+            key: 'item',
+        }
+    });
 
     function setupBuildOutputButtonCallbacks() {
 
@@ -1397,23 +1402,6 @@ function loadBuildOutputTable(build_info, options={}) {
                 }
             }
         );
-    });
-
-    // Print stock item labels
-    $('#incomplete-output-print-label').click(function() {
-        var outputs = getTableData(table);
-
-        var stock_id_values = [];
-
-        outputs.forEach(function(output) {
-            stock_id_values.push(output.pk);
-        });
-
-        printLabels({
-            items: stock_id_values,
-            key: 'item',
-            url: '{% url "api-stockitem-label-list" %}',
-        });
     });
 
     $('#outputs-expand').click(function() {
