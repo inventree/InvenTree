@@ -1434,7 +1434,7 @@ class ReturnOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """Custom annotation for the serializer queryset"""
 
-        # queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+        queryset = AbstractOrderSerializer.annotate_queryset(queryset)
 
         queryset = queryset.annotate(
             overdue=Case(

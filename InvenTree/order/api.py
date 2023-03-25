@@ -1239,6 +1239,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
         'reference',
         'customer__name',
         'customer_reference',
+        'line_items',
         'status',
         'target_date',
     ]

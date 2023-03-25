@@ -215,6 +215,11 @@ function loadReturnOrderTable(table, options={}) {
                 }
             },
             {
+                field: 'line_items',
+                title: '{% trans "Items" %}',
+                sortable: true,
+            },
+            {
                 field: 'responsible',
                 title: '{% trans "Responsible" %}',
                 switchable: true,
