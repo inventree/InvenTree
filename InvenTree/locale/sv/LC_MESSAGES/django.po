@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-24 13:36+0000\n"
-"PO-Revision-Date: 2023-03-25 12:31\n"
+"PO-Revision-Date: 2023-03-27 11:21\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -23,7 +23,7 @@ msgstr "API-slutpunkt hittades inte"
 
 #: InvenTree/api.py:307
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "Användaren har inte behörighet att se denna modell"
 
 #: InvenTree/exceptions.py:79
 msgid "Error details can be found in the admin panel"
@@ -96,11 +96,11 @@ msgstr "Du måste ange samma e-post varje gång."
 
 #: InvenTree/forms.py:230 InvenTree/forms.py:236
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "Den angivna primära e-postadressen är inte giltig."
 
 #: InvenTree/forms.py:242
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "Den angivna e-postdomänen är inte godkänd."
 
 #: InvenTree/helpers.py:168
 msgid "Connection error"
@@ -2768,7 +2768,7 @@ msgstr ""
 
 #: common/models.py:1843
 msgid "Search Parts"
-msgstr ""
+msgstr "Sök efter artiklar"
 
 #: common/models.py:1844
 msgid "Display parts in search preview window"
@@ -2776,7 +2776,7 @@ msgstr ""
 
 #: common/models.py:1850
 msgid "Search Supplier Parts"
-msgstr ""
+msgstr "Sök efter leverantörsartikel"
 
 #: common/models.py:1851
 msgid "Display supplier parts in search preview window"
@@ -2784,7 +2784,7 @@ msgstr ""
 
 #: common/models.py:1857
 msgid "Search Manufacturer Parts"
-msgstr ""
+msgstr "Sök efter tillverkarartikel"
 
 #: common/models.py:1858
 msgid "Display manufacturer parts in search preview window"
@@ -4847,7 +4847,7 @@ msgstr ""
 #: templates/js/translated/part.js:2423 templates/js/translated/search.js:158
 #: templates/navbar.html:24 users/models.py:38
 msgid "Parts"
-msgstr ""
+msgstr "Artiklar"
 
 #: part/admin.py:265
 msgid "BOM Level"
@@ -9466,7 +9466,7 @@ msgstr ""
 #: templates/js/translated/order.js:1134 templates/js/translated/order.js:3377
 #: templates/js/translated/report.js:225
 msgid "Select Parts"
-msgstr ""
+msgstr "Välj artiklar"
 
 #: templates/js/translated/build.js:2081 templates/js/translated/order.js:3378
 msgid "You must select at least one part to allocate"
