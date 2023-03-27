@@ -1678,6 +1678,16 @@ class ReturnOrder(TotalPriceMixin, Order):
         help_text=_('Date order was completed')
     )
 
+    @property
+    def is_pending(self):
+        """Return True if this order is pending"""
+        return self.status == ReturnOrderStatus.PENDING
+
+    @property
+    def is_received(self):
+        """Return True if this order is fully received"""
+        return not self.lines.filter(received_date=None).exists()
+
     @transaction.atomic
     def place_order(self):
         """Issue this ReturnOrder (if currently pending)"""
@@ -1688,6 +1698,60 @@ class ReturnOrder(TotalPriceMixin, Order):
             self.save()
 
             trigger_event('returnorder.placed', id=self.pk)
+
+    @transaction.atomic
+    def receive_line_item(self, line, location, user, note=''):
+        """Receive a line item against this ReturnOrder:
+
+        - Transfers the StockItem to the specified location
+        - Marks the StockItem as "quarantined"
+        - Adds a tracking entry to the StockItem
+        - Removes the 'customer' reference from the StockItem
+        """
+
+        # Prevent an item from being "received" multiple times
+        if line.received_date is not None:
+            logger.warning("receive_line_item called with item already returned")
+            return
+
+        # Update the StockItem
+        stock_item = line.item
+
+        deltas = {
+            'status': stock_item.status,
+            'returnorder': self.pk,
+            'location': location,
+        }
+
+        if stock_item.customer:
+            deltas['customer'] = stock_item.customer
+
+        stock_item.status = StockStatus.QUARANTINED
+        stock_item.location = location
+        stock_item.customer = None
+        stock_item.save(add_note=False)
+
+        # Add a tracking entry to the StockItem
+        stock_item.add_tracking_entry(
+            StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER,
+            user,
+            notes=note,
+            deltas=deltas,
+            location=location,
+            returnorder=self,
+        )
+
+        # Update the LineItem
+        line.received_date = datetime.now().date()
+        line.save()
+
+        # Notify responsible users
+        notify_responsible(
+            self,
+            ReturnOrder,
+            exclude=user,
+            content=InvenTreeNotificationBodies.ReturnOrderItemsReceived,
+        )
 
 
 class ReturnOrderLineItem(OrderLineItem):

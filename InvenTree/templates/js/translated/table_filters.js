@@ -40,6 +40,20 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
+    // Filters for "returnorderlineitem" table
+    if (tableKey == 'returnorderlineitem') {
+        return {
+            received: {
+                type: 'bool',
+                title: '{% trans "Received" %}',
+            },
+            outcome: {
+                title: '{% trans "Outcome" %}',
+                options: returnOrderLineItemCodes,
+            }
+        };
+    }
+
     // Filters for "variant" table
     if (tableKey == 'variants') {
         return {

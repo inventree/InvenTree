@@ -1302,6 +1302,16 @@ class ReturnOrderLineItemFilter(LineItemFilter):
 
     outcome = rest_filters.NumberFilter(label='outcome')
 
+    received = rest_filters.BooleanFilter(label='received', method='filter_received')
+
+    def filter_received(self, queryset, name, value):
+        """Filter by 'received' field"""
+
+        if str2bool(value):
+            return queryset.exclude(received_date=None)
+        else:
+            return queryset.filter(received_date=None)
+
 
 class ReturnOrderLineItemMixin:
     """Mixin class for ReturnOrderLineItem endpoints"""
@@ -1358,6 +1368,7 @@ class ReturnOrderLineItemList(ReturnOrderLineItemMixin, APIDownloadMixin, ListCr
     ordering_fields = [
         'reference',
         'target_date',
+        'received_date',
     ]
 
     search_fields = [

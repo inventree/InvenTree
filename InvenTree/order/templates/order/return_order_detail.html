@@ -18,9 +18,15 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.return_order.add %}
+                {% if order.is_pending %}
                 <button type='button' class='btn btn-success' id='new-return-order-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
+                {% elif order.status == ReturnOrderStatus.IN_PROGRESS %}
+                <button type='button' class='btn btn-primary' id='receive-line-items' title='{% trans "Receive Line Items" %}'>
+                    <span class='fas fa-sign-in-alt'></span> {% trans "Receive Line Items" %}
+                </button>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -97,31 +103,30 @@
 // Callback function when the 'details' panel is loaded
 onPanelLoad('order-details', function() {
 
+    {% if roles.return_order.add %}
+
+    $('#receive-line-items').click(function() {
+        let items = getTableData('#return-order-lines-table');
+
+        receiveReturnOrderItems(
+            {{ order.pk }},
+            items,
+            {
+                onSuccess: function() {
+                    reloadBootstrapTable('#return-order-lines-table');
+                }
+            }
+        );
+    });
+
     $('#new-return-order-line').click(function() {
         createReturnOrderLineItem({
             order: {{ order.pk }},
             customer: {{ order.customer.pk }},
             onSuccess: function() {
-                $('#return-order-lines-table').bootstrapTable('refresh');
+                reloadBootstrapTable('#return-order-lines-table');
             }
         });
-    });
-
-    loadReturnOrderLineItemTable({
-        table: '#return-order-lines-table',
-        order: {{ order.pk }},
-        allow_edit: {% js_bool roles.return_order.change %},
-        allow_delete: {% js_bool roles.return_order.delete %},
-    });
-
-    loadExtraLineTable({
-        order: {{ order.pk }},
-        url: '{% url "api-return-order-extra-line-list" %}',
-        table: "#return-order-extra-lines-table",
-        name: 'returnorderextralines',
-        filtertarget: '#filter-list-return-order-extra-lines',
-        allow_edit: {% js_bool roles.return_order.change %},
-        allow_delete: {% js_bool roles.return_order.delete %},
     });
 
     $('#new-return-order-extra-line').click(function() {
@@ -134,6 +139,28 @@ onPanelLoad('order-details', function() {
             currency: '{{ order.customer.currency }}',
             {% endif %}
         });
+    });
+
+    {% endif %}
+
+    loadReturnOrderLineItemTable({
+        table: '#return-order-lines-table',
+        order: {{ order.pk }},
+        {% if order.status == ReturnOrderStatus.IN_PROGRESS %}
+        allow_receive: true,
+        {% endif %}
+        allow_edit: {% js_bool roles.return_order.change %},
+        allow_delete: {% js_bool roles.return_order.delete %},
+    });
+
+    loadExtraLineTable({
+        order: {{ order.pk }},
+        url: '{% url "api-return-order-extra-line-list" %}',
+        table: "#return-order-extra-lines-table",
+        name: 'returnorderextralines',
+        filtertarget: '#filter-list-return-order-extra-lines',
+        allow_edit: {% js_bool roles.return_order.change %},
+        allow_delete: {% js_bool roles.return_order.delete %},
     });
 });
 

@@ -404,7 +404,7 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
                 ${thumb} ${line_item.part_detail.full_name}
             </td>
             <td id='item_${pk}'>
-                ${line.serial}
+                ${line_item.item_detail.serial}
             </td>
             <td id='actions_${pk}'>${buttons}</td>
         </tr>`;
@@ -454,7 +454,53 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
             });
         },
         onSubmit: function(fields, opts) {
-            // TODO
+            // Extract data elements from the form
+            let data = {
+                items: [],
+                location: getFormFieldValue('location', {}, opts),
+            };
+
+            let item_pk_values = [];
+
+            line_items.forEach(function(item) {
+                let pk = item.pk;
+                let row = $(opts.modal).find(`#receive_row_${pk}`);
+
+                if (row.exists()) {
+                    data.items.push({
+                        item: pk,
+                    });
+                    item_pk_values.push(pk);
+                }
+            });
+
+            opts.nested = {
+                'items': item_pk_values,
+            };
+
+            inventreePut(
+                opts.url,
+                data,
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        $(opts.modal).modal('hide');
+
+                        handleFormSuccess(response, options);
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr, opts.url);
+                            break;
+                        }
+                    }
+                }
+            )
         }
     });
 }
@@ -476,30 +522,29 @@ function loadReturnOrderLineItemTable(options={}) {
 
     let filters = loadTableFilters('returnorderlineitem', options.params);
 
-    setupFilterList('returnorderlines', $(table), '#filter-list-returnorderlines', {download: true});
+    setupFilterList('returnorderlineitem', $(table), '#filter-list-returnorderlines', {download: true});
 
     function setupCallbacks() {
         if (options.allow_edit) {
 
             // Callback for "receive" button
-            $(table).find('.button-line-receive').click(function() {
-                let pk = $(this).attr('pk');
+            if (options.allow_receive) {
+                $(table).find('.button-line-receive').click(function() {
+                    let pk = $(this).attr('pk');
 
-                const date = new Date();
+                    let line = $(table).bootstrapTable('getRowByUniqueId', pk);
 
-                inventreePut(
-                    `{% url "api-return-order-line-list" %}${pk}/`,
-                    {
-                        'received_date': date.toISOString().split("T")[0]
-                    },
-                    {
-                        method: 'PATCH',
-                        success: function() {
-                            reloadBootstrapTable(table);
+                    receiveReturnOrderItems(
+                        options.order,
+                        [line],
+                        {
+                            onSuccess: function(response) {
+                                reloadBootstrapTable(table);
+                            }
                         }
-                    }
-                );
-            });
+                    );
+                });
+            }
 
             // Callback for "edit" button
             $(table).find('.button-line-edit').click(function() {
@@ -545,21 +590,24 @@ function loadReturnOrderLineItemTable(options={}) {
                 switchable: false,
             },
             {
+                field: 'part',
+                sortable: true,
+                switchable: false,
+                title: '{% trans "Part" %}',
+                formatter: function(value, row) {
+                    let part = row.part_detail;
+                    let html = thumbnailImage(part.thumbnail) + ' ';
+                    html += renderLink(part.full_name, `/part/${part.pk}/`);
+                    return html;
+                }
+            },
+            {
                 field: 'item',
                 sortable: true,
                 switchable: false,
                 title: '{% trans "Item" %}',
                 formatter: function(value, row) {
-                    let html = '';
-
-                    html += thumbnailImage(row.part_detail.thumbnail || row.part_detail.image) + ' ';
-
-                    html += renderLink(
-                        `${row.part_detail.full_name} - {% trans "Serial Number" %}: ${row.item_detail.serial}`,
-                        `/stock/item/${row.item}/`
-                    );
-
-                    return html;
+                    return renderLink(`{% trans "Serial Number" %}: ${row.item_detail.serial}`, `/stock/item/${row.item}/`);
                 }
             },
             {
@@ -598,8 +646,9 @@ function loadReturnOrderLineItemTable(options={}) {
                 }
             },
             {
-                field: 'received',
+                field: 'received_date',
                 title: '{% trans "Received" %}',
+                sortable: true,
                 formatter: function(value) {
                     if (!value) {
                         yesNoLabel(value);
@@ -622,7 +671,7 @@ function loadReturnOrderLineItemTable(options={}) {
 
                     if (options.allow_edit) {
 
-                        if (!row.received) {
+                        if (options.allow_receive && !row.received_date) {
                             buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Mark item as received" %}');
                         }
 

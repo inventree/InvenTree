@@ -25,8 +25,8 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeModelSerializer,
                                    InvenTreeMoneySerializer)
-from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
-                                    StockStatus)
+from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderStatus,
+                                    SalesOrderStatus, StockStatus)
 from part.serializers import PartBriefSerializer
 from users.serializers import OwnerSerializer
 
@@ -1461,7 +1461,7 @@ class ReturnOrderIssueSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to 'issue' the order"""
         order = self.context['order']
-        order.place_order()
+        order.issue_order()
 
 
 class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
@@ -1474,18 +1474,21 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
         ]
 
     item = serializers.PrimaryKeyRelatedField(
-        queryset=stock.models.StockItem.objects.all(),
+        queryset=order.models.ReturnOrderLineItem.objects.all(),
         many=False,
         allow_null=False,
         required=True,
-        label=_('Stock Item'),
+        label=_('Return order line item'),
     )
 
     def validate_line_item(self, item):
         """Validation for a single line item"""
 
-        if not item.customer or item.customer != self.context['order'].customer:
-            raise ValidationError(_("Selected item is not assigned to customer"))
+        if item.order != self.context['order']:
+            raise ValidationError(_("Line item does not match return order"))
+
+        if item.received:
+            raise ValidationError(_("Line item has already been received"))
 
         return item
 
@@ -1506,15 +1509,47 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
         many=False,
-        allow_null=True,
+        allow_null=False,
+        required=True,
         label=_('Location'),
         help_text=_('Select destination location for received items'),
     )
 
+    def validate(self, data):
+        """Perform data validation for this serializer"""
+
+        order = self.context['order']
+        if order.status != ReturnOrderStatus.IN_PROGRESS:
+            raise ValidationError(_("Items can only received against orders which are in progress"))
+
+        data = super().validate(data)
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError(_("Line items must be provided"))
+
+        return data
+
     @transaction.atomic
     def save(self):
         """Saving this serializer marks the returned items as received"""
-        ...
+
+        order = self.context['order']
+        request = self.context['request']
+
+        data = self.validated_data
+        items = data['items']
+        location = data['location']
+
+        with transaction.atomic():
+            for item in items:
+                line_item = item['item']
+                order.receive_line_item(
+                    line_item,
+                    location,
+                    request.user
+                )
 
 
 class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
