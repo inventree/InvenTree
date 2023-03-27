@@ -57,7 +57,9 @@ src="{% static 'img/blank_image.png' %}"
     </button>
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
+        {% if order.is_open %}
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
+        {% endif %}
     </ul>
     {% if order.status == ReturnOrderStatus.PENDING %}
     <button type='button' class='btn btn-primary' id='submit-order' title='{% trans "Submit Order" %}'>
@@ -190,6 +192,14 @@ $('#submit-order').click(function() {
     });
 });
 {% elif order.status == ReturnOrderStatus.IN_PROGRESS %}
+$('#complete-order').click(function() {
+    completeReturnOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+})
 {% endif %}
 
 $('#edit-order').click(function() {
@@ -198,9 +208,16 @@ $('#edit-order').click(function() {
     });
 });
 
+{% if order.is_open %}
 $('#cancel-order').click(function() {
-    // TODO: Cancel order
+    cancelReturnOrder(
+        {{ order.pk }},
+        {
+            reload: true
+        }
+    );
 });
+{% endif %}
 {% endif %}
 
 {% if report_enabled %}

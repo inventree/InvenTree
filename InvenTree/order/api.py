@@ -1275,9 +1275,18 @@ class ReturnOrderContextMixin:
         return context
 
 
+class ReturnOrderCancel(ReturnOrderContextMixin, CreateAPI):
+    """API endpoint to cancel a ReturnOrder"""
+    serializer_class = serializers.ReturnOrderCancelSerializer
+
+
+class ReturnOrderComplete(ReturnOrderContextMixin, CreateAPI):
+    """API endpoint to complete a ReturnOrder"""
+    serializer_class = serializers.ReturnOrderCompleteSerializer
+
+
 class ReturnOrderIssue(ReturnOrderContextMixin, CreateAPI):
     """API endpoint to issue (place) a ReturnOrder"""
-
     serializer_class = serializers.ReturnOrderIssueSerializer
 
 
@@ -1685,6 +1694,8 @@ order_api_urls = [
 
         # Return Order detail endpoints
         path('<int:pk>/', include([
+            re_path(r'cancel/', ReturnOrderCancel.as_view(), name='api-return-order-cancel'),
+            re_path(r'complete/', ReturnOrderComplete.as_view(), name='api-return-order-complete'),
             re_path(r'issue/', ReturnOrderIssue.as_view(), name='api-return-order-issue'),
             re_path(r'receive/', ReturnOrderReceive.as_view(), name='api-return-order-receive'),
             re_path(r'.*$', ReturnOrderDetail.as_view(), name='api-return-order-detail'),

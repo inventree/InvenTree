@@ -12,6 +12,8 @@
 */
 
 /* exported
+    cancelReturnOrder,
+    completeReturnOrder,
     createReturnOrder,
     createReturnOrderLineItem,
     editReturnOrder,
@@ -126,6 +128,56 @@ function issueReturnOrder(order_id, options={}) {
             handleFormSuccess(response, options);
         }
     });
+}
+
+
+/*
+ * Launches a modal form to cancel a ReturnOrder
+ */
+function cancelReturnOrder(order_id, options={}) {
+
+    let html = `
+    <div class='alert alert-danger alert-block'>
+    {% trans "Are you sure you wish to cancel this Return Order?" %}
+    </div>`;
+
+    constructForm(
+        `{% url "api-return-order-list" %}${order_id}/cancel/`,
+        {
+            method: 'POST',
+            title: '{% trans "Cancel Return Order" %}',
+            confirm: true,
+            preFormContent: html,
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
+}
+
+
+/*
+ * Launches a modal form to mark a ReturnOrder as "complete"
+ */
+function completeReturnOrder(order_id, options={}) {
+    let html = `
+    <div class='alert alert-block alert-warning'>
+    {% trans "Mark this order as complete?" %}
+    </div>
+    `;
+
+    constructForm(
+        `{% url "api-return-order-list" %}${order_id}/complete/`,
+        {
+            method: 'POST',
+            title: '{% trans "Complete Return Order" %}',
+            confirm: true,
+            preFormContent: html,
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
 }
 
 

@@ -1684,9 +1684,34 @@ class ReturnOrder(TotalPriceMixin, Order):
         return self.status == ReturnOrderStatus.PENDING
 
     @property
+    def is_open(self):
+        """Return True if this order is outstanding"""
+        return self.status in ReturnOrderStatus.OPEN
+
+    @property
     def is_received(self):
         """Return True if this order is fully received"""
         return not self.lines.filter(received_date=None).exists()
+
+    @transaction.atomic
+    def cancel_order(self):
+        """Cancel this ReturnOrder (if not already cancelled)"""
+        if self.status != ReturnOrderStatus.CANCELLED:
+            self.status = ReturnOrderStatus.CANCELLED
+            self.save()
+
+            trigger_event('returnorder.cancelled', id=self.pk)
+
+    @transaction.atomic
+    def complete_order(self):
+        """Complete this ReturnOrder (if not already completed)"""
+
+        if self.status == ReturnOrderStatus.IN_PROGRESS:
+            self.status = ReturnOrderStatus.COMPLETE
+            self.complete_date = datetime.now().date()
+            self.save()
+
+            trigger_event('returnorder.completed', id=self.pk)
 
     @transaction.atomic
     def place_order(self):

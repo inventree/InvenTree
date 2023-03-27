@@ -1464,6 +1464,32 @@ class ReturnOrderIssueSerializer(serializers.Serializer):
         order.issue_order()
 
 
+class ReturnOrderCancelSerializer(serializers.Serializer):
+    """Serializer for cancelling a ReturnOrder"""
+
+    class Meta:
+        """Metaclass options"""
+        fields = []
+
+    def save(self):
+        """Save the serializer to 'cancel' the order"""
+        order = self.context['order']
+        order.cancel_order()
+
+
+class ReturnOrderCompleteSerializer(serializers.Serializer):
+    """Serializer for completing a ReturnOrder"""
+
+    class Meta:
+        """Metaclass options"""
+        fields = []
+
+    def save(self):
+        """Save the serializer to 'complete' the order"""
+        order = self.context['order']
+        order.complete_order()
+
+
 class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
     """Serializer for receiving a single line item against a ReturnOrder"""
 
