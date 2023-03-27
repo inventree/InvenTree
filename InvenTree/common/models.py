@@ -1455,6 +1455,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': order.validators.validate_return_order_reference_pattern,
         },
 
+        'RETURNORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Return Orders'),
+            'description': _('Allow editing of return orders after they have been completed'),
+            'default': False,
+            'validator': bool,
+        },
+
         'SALESORDER_REFERENCE_PATTERN': {
             'name': _('Sales Order Reference Pattern'),
             'description': _('Required pattern for generating Sales Order reference field'),

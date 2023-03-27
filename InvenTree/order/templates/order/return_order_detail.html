@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block page_content %}
+{% settings_value "RETURNORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
 
 <div class='panel panel-hidden' id='panel-order-details'>
     <div class='panel-heading'>
@@ -18,11 +19,12 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.return_order.add %}
-                {% if order.is_pending %}
+                {% if order.is_open or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-return-order-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
-                {% elif order.status == ReturnOrderStatus.IN_PROGRESS %}
+                {% endif %}
+                {% if order.status == ReturnOrderStatus.IN_PROGRESS %}
                 <button type='button' class='btn btn-primary' id='receive-line-items' title='{% trans "Receive Line Items" %}'>
                     <span class='fas fa-sign-in-alt'></span> {% trans "Receive Line Items" %}
                 </button>
@@ -143,14 +145,18 @@ onPanelLoad('order-details', function() {
 
     {% endif %}
 
+    {% settings_value "RETURNORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
+
     loadReturnOrderLineItemTable({
         table: '#return-order-lines-table',
         order: {{ order.pk }},
         {% if order.status == ReturnOrderStatus.IN_PROGRESS %}
         allow_receive: true,
         {% endif %}
+        {% if order.is_open or allow_extra_editing %}
         allow_edit: {% js_bool roles.return_order.change %},
         allow_delete: {% js_bool roles.return_order.delete %},
+        {% endif %}
     });
 
     loadExtraLineTable({
@@ -159,8 +165,10 @@ onPanelLoad('order-details', function() {
         table: "#return-order-extra-lines-table",
         name: 'returnorderextralines',
         filtertarget: '#filter-list-return-order-extra-lines',
+        {% if order.is_open or allow_extra_editing %}
         allow_edit: {% js_bool roles.return_order.change %},
         allow_delete: {% js_bool roles.return_order.delete %},
+        {% endif %}
     });
 });
 

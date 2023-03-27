@@ -27,7 +27,7 @@
                 <button type='button' class='btn btn-success' id='new-po-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
-                {% elif order.status == PurchaseOrderStatus.PLACED %}
+                {% if order.status == PurchaseOrderStatus.PLACED %}
                 <button type='button' class='btn btn-primary' id='receive-selected-items' title='{% trans "Receive Line Items" %}'>
                     <span class='fas fa-sign-in-alt'></span> {% trans "Receive Line Items" %}
                 </button>
