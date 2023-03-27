@@ -194,7 +194,6 @@ class SalesOrderExtraLineResource(InvenTreeResource):
 
     class Meta(GeneralExtraLineMeta):
         """Metaclass options."""
-
         model = models.SalesOrderExtraLine
 
 
@@ -290,6 +289,11 @@ class ReturnOrderResource(InvenTreeResource):
         ]
 
 
+class ReturnOrderLineItemInlineAdmin(admin.StackedInline):
+    """Inline admin class for the ReturnOrderLineItem model"""
+    model = models.ReturnOrderLineItem
+
+
 class ReturnOrderAdmin(ImportExportModelAdmin):
     """Admin class for the ReturnOrder model"""
 
@@ -313,6 +317,46 @@ class ReturnOrderAdmin(ImportExportModelAdmin):
         'customer',
     ]
 
+    inlines = [
+        ReturnOrderLineItemInlineAdmin
+    ]
+
+
+class ReturnOrderLineItemResource(InvenTreeResource):
+    """Class for managing import / export of ReturnOrderLineItem data"""
+
+    class Meta:
+        """Metaclass options"""
+        model = models.ReturnOrderLineItem
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+
+
+class ReturnOrderLineItemAdmin(ImportExportModelAdmin):
+    """Admin class for ReturnOrderLine model"""
+
+    resource_class = ReturnOrderLineItemResource
+
+    list_display = [
+        'order',
+        'item',
+        'reference',
+    ]
+
+
+class ReturnOrderExtraLineClass(InvenTreeResource):
+    """Class for managing import/export of ReturnOrderExtraLine data"""
+
+    class Meta(GeneralExtraLineMeta):
+        """Metaclass options"""
+        model = models.ReturnOrderExtraLine
+
+
+class ReturnOrdeerExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
+    """Admin class for the ReturnOrderExtraLine model"""
+    resource_class = ReturnOrderExtraLineClass
+
 
 # Purchase Order models
 admin.site.register(models.PurchaseOrder, PurchaseOrderAdmin)
@@ -328,3 +372,5 @@ admin.site.register(models.SalesOrderAllocation, SalesOrderAllocationAdmin)
 
 # Return Order models
 admin.site.register(models.ReturnOrder, ReturnOrderAdmin)
+admin.site.register(models.ReturnOrderLineItem, ReturnOrderLineItemAdmin)
+admin.site.register(models.ReturnOrderExtraLine, ReturnOrdeerExtraLineAdmin)
