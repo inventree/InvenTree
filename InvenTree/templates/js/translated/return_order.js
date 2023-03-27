@@ -322,11 +322,12 @@ function loadReturnOrderTable(table, options={}) {
                 }
             },
             {
+                // TODO: Add in the 'total cost' field
                 field: 'total_price',
                 title: '{% trans "Total Cost" %}',
                 switchable: true,
                 sortable: true,
-                visible: false,  // TODO
+                visible: false,
                 formatter: function(value, row) {
                     return formatCurrency(value, {
                         currency: row.total_price_currency
@@ -552,7 +553,7 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
                         }
                     }
                 }
-            )
+            );
         }
     });
 }

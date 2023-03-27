@@ -24,8 +24,6 @@
     modalSetTitle,
     modalSubmit,
     openModal,
-    printLabels,
-    printReports,
     renderLink,
     scanItemsIntoLocation,
     showAlertDialog,

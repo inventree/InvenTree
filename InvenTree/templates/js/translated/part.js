@@ -12,7 +12,6 @@
     loadTableFilters,
     makeIconBadge,
     makeIconButton,
-    printLabels,
     renderLink,
     setFormGroupVisibility,
     setupFilterList,

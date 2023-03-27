@@ -25,6 +25,11 @@
     wrapButtons,
 */
 
+/* exported
+    makeIcon,
+*/
+
+
 function yesNoLabel(value, options={}) {
     var text = '';
     var color = '';
