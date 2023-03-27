@@ -169,9 +169,11 @@ function makeIcon(icon, title='', options={}) {
  */
 function makeIconBadge(icon, title='', options={}) {
 
+    let content = options.content || '';
+
     let html = `
     <span class='icon-badge fas ${icon} float-right' title='${title}'>
-    ${options.content}
+        ${content}
     </span>`;
 
     return html;
