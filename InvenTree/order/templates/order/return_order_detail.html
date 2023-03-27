@@ -48,9 +48,11 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.return_order.add %}
+                {% if order.is_open or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-return-order-extra-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
                 </button>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
