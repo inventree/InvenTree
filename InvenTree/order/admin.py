@@ -289,11 +289,6 @@ class ReturnOrderResource(InvenTreeResource):
         ]
 
 
-class ReturnOrderLineItemInlineAdmin(admin.StackedInline):
-    """Inline admin class for the ReturnOrderLineItem model"""
-    model = models.ReturnOrderLineItem
-
-
 class ReturnOrderAdmin(ImportExportModelAdmin):
     """Admin class for the ReturnOrder model"""
 
@@ -315,10 +310,6 @@ class ReturnOrderAdmin(ImportExportModelAdmin):
 
     autocomplete_fields = [
         'customer',
-    ]
-
-    inlines = [
-        ReturnOrderLineItemInlineAdmin
     ]
 
 
