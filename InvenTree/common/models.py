@@ -1229,7 +1229,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'PRICING_DECIMAL_PLACES': {
             'name': _('Maximum Pricing Decimal Places'),
-            'description': _('Maximum umber of decimal places to display when rendering pricing data'),
+            'description': _('Maximum number of decimal places to display when rendering pricing data'),
             'default': 6,
             'validator': [
                 int,
