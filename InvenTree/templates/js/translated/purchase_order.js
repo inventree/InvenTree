@@ -460,25 +460,20 @@ function cancelPurchaseOrder(order_id, options={}) {
  */
 function issuePurchaseOrder(order_id, options={}) {
 
-    constructForm(
-        `/api/order/po/${order_id}/issue/`,
-        {
-            method: 'POST',
-            title: '{% trans "Issue Purchase Order" %}',
-            confirm: true,
-            preFormContent: function(opts) {
-                var html = `
-                <div class='alert alert-block alert-warning'>
-                {% trans 'After placing this purchase order, line items will no longer be editable.' %}
-                </div>`;
+    let html = `
+    <div class='alert alert-block alert-warning'>
+    {% trans 'After placing this order, line items will no longer be editable.' %}
+    </div>`;
 
-                return html;
-            },
-            onSuccess: function(response) {
-                handleFormSuccess(response, options);
-            }
+    constructForm(`{% url "api-po-list" %}${order_id}/issue/`, {
+        method: 'POST',
+        title: '{% trans "Issue Purchase Order" %}',
+        confirm: true,
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
         }
-    );
+    });
 }
 
 
@@ -1143,11 +1138,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         }
 
         if (line_items.length > 1) {
-            buttons += makeRemoveButton(
-                'button-row-remove',
-                pk,
-                '{% trans "Remove row" %}',
-            );
+            buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
         }
 
         buttons = wrapButtons(buttons);

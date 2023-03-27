@@ -57,10 +57,17 @@ src="{% static 'img/blank_image.png' %}"
     </button>
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
-        {% if order.status == ReturnOrderStatus.PENDING %}
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
-        {% endif %}
     </ul>
+    {% if order.status == ReturnOrderStatus.PENDING %}
+    <button type='button' class='btn btn-primary' id='submit-order' title='{% trans "Submit Order" %}'>
+        <span class='fas fa-paper-plane'></span> {% trans "Submit Order" %}
+    </button>
+    {% elif order.status == ReturnOrderStatus.IN_PROGRESS %}
+    <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
+        <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
+    </button>
+    {% endif %}
 </div>
 {% endif %}
 
@@ -123,6 +130,13 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Created" %}</td>
         <td>{% render_date order.creation_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
     </tr>
+    {% if order.issue_date %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Issued" %}</td>
+        <td>{% render_date order.issue_date %}</td>
+    </tr>
+    {% endif %}
     {% if order.target_date %}
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
@@ -168,6 +182,16 @@ src="{% static 'img/blank_image.png' %}"
 {{ block.super }}
 
 {% if roles.return_order.change %}
+
+{% if order.status == ReturnOrderStatus.PENDING %}
+$('#submit-order').click(function() {
+    issueReturnOrder({{ order.pk }}, {
+        reload: true,
+    });
+});
+{% elif order.status == ReturnOrderStatus.IN_PROGRESS %}
+{% endif %}
+
 $('#edit-order').click(function() {
     editReturnOrder({{ order.pk }}, {
         reload: true,

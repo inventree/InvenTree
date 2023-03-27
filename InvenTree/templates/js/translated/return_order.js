@@ -16,6 +16,7 @@
     createReturnOrderLineItem,
     editReturnOrder,
     editReturnOrderLineItem,
+    issueReturnOrder,
     loadReturnOrderTable,
     loadReturnOrderLineItemTable,
 */
@@ -99,6 +100,28 @@ function editReturnOrder(order_id, options={}) {
     constructForm(`{% url "api-return-order-list" %}${order_id}/`, {
         fields: returnOrderFields(options),
         title: '{% trans "Edit Return Order" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * "Issue" a ReturnOrder, to mark it as "in progress"
+ */
+function issueReturnOrder(order_id, options={}) {
+
+    let html = `
+    <div class='alert alert-block alert-warning'>
+    {% trans 'After placing this order, line items will no longer be editable.' %}
+    </div>`;
+
+    constructForm(`{% url "api-return-order-list" %}${order_id}/issue/`, {
+        method: 'POST',
+        title: '{% trans "Issue Return Order" %}',
+        confirm: true,
+        preFormContent: html,
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -349,6 +372,95 @@ function editReturnOrderLineItem(pk, options={}) {
 
 
 /*
+ * Receive one or more items against a ReturnOrder
+ */
+function receiveReturnOrderItems(order_id, line_items, options={}) {
+
+    if (line_items.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Line Items"% }',
+            '{% trans "At least one line item must be selected" %}'
+        );
+        return;
+    }
+
+    function renderLineItem(line_item) {
+        let pk = line_item.pk;
+
+        // Render thumbnail + description
+        let thumb = thumbnailImage(line_item.part_detail.thumbnail);
+
+        let buttons = '';
+
+        if (line_items.length > 1) {
+            buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
+        }
+
+        buttons = wrapButtons(buttons);
+
+        let html = `
+        <tr id='receive_row_${pk}' class='stock-receive-row'>
+            <td id='part_${pk}'>
+                ${thumb} ${line_item.part_detail.full_name}
+            </td>
+            <td id='item_${pk}'>
+                ${line.serial}
+            </td>
+            <td id='actions_${pk}'>${buttons}</td>
+        </tr>`;
+
+        return html;
+    }
+
+    let table_entries = '';
+
+    line_items.forEach(function(item) {
+        if (!item.received_date) {
+            table_entries += renderLineItem(item);
+        }
+    });
+
+    let html = '';
+
+    html += `
+    <table class='table table-striped table-condensed' id='order-receive-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th>{% trans "Serial Number" %}</th>
+            </tr>
+        </thead>
+        <tbody>${table_entries}</tbody>
+    </table>`;
+
+    constructForm(`{% url "api-return-order-list" %}${order_id}/receive/`, {
+        method: 'POST',
+        preFormContent: html,
+        fields: {
+            location: {
+                filters: {
+                    strucutral: false,
+                }
+            }
+        },
+        confirm: true,
+        confirmMessage: '{% trans "Confirm receipt of items" %}',
+        title: '{% trans "Receive Return Order Items" %}',
+        afterRender: function(fields, opts) {
+            // Add callback to remove rows
+            $(opts.modal).find('.button-row-remove').click(function() {
+                let pk = $(this).attr('pk');
+                $(opts.modal).find(`#receive_row_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, opts) {
+            // TODO
+        }
+    });
+}
+
+
+/*
  * Load a table displaying line items for a particular ReturnOrder
  */
 function loadReturnOrderLineItemTable(options={}) {
@@ -368,6 +480,27 @@ function loadReturnOrderLineItemTable(options={}) {
 
     function setupCallbacks() {
         if (options.allow_edit) {
+
+            // Callback for "receive" button
+            $(table).find('.button-line-receive').click(function() {
+                let pk = $(this).attr('pk');
+
+                const date = new Date();
+
+                inventreePut(
+                    `{% url "api-return-order-line-list" %}${pk}/`,
+                    {
+                        'received_date': date.toISOString().split("T")[0]
+                    },
+                    {
+                        method: 'PATCH',
+                        success: function() {
+                            reloadBootstrapTable(table);
+                        }
+                    }
+                );
+            });
+
             // Callback for "edit" button
             $(table).find('.button-line-edit').click(function() {
                 let pk = $(this).attr('pk');

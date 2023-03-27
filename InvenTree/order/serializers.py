@@ -562,7 +562,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
 
 
 class PurchaseOrderReceiveSerializer(serializers.Serializer):
-    """Serializer for receiving items against a purchase order."""
+    """Serializer for receiving items against a PurchaseOrder."""
 
     class Meta:
         """Metaclass options."""
@@ -1449,6 +1449,72 @@ class ReturnOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
         return queryset
 
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
+
+
+class ReturnOrderIssueSerializer(serializers.Serializer):
+    """Serializer for issuing a ReturnOrder"""
+
+    class Meta:
+        """Metaclass options"""
+        fields = []
+
+    def save(self):
+        """Save the serializer to 'issue' the order"""
+        order = self.context['order']
+        order.place_order()
+
+
+class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
+    """Serializer for receiving a single line item against a ReturnOrder"""
+
+    class Meta:
+        """Metaclass options"""
+        fields = [
+            'item',
+        ]
+
+    item = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    def validate_line_item(self, item):
+        """Validation for a single line item"""
+
+        if not item.customer or item.customer != self.context['order'].customer:
+            raise ValidationError(_("Selected item is not assigned to customer"))
+
+        return item
+
+
+class ReturnOrderReceiveSerializer(serializers.Serializer):
+    """Serializer for receiving items against a ReturnOrder"""
+
+    class Meta:
+        """Metaclass options"""
+
+        fields = [
+            'items',
+            'location',
+        ]
+
+    items = ReturnOrderLineItemReceiveSerializer(many=True)
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Select destination location for received items'),
+    )
+
+    @transaction.atomic
+    def save(self):
+        """Saving this serializer marks the returned items as received"""
+        ...
 
 
 class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):

@@ -17,7 +17,8 @@ import order.models as models
 from common.settings import currency_codes
 from company.models import Company
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderStatus,
+                                    SalesOrderStatus)
 from part.models import Part
 from stock.models import StockItem
 
@@ -1958,3 +1959,22 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
         rma = models.ReturnOrder.objects.get(pk=1)
         self.assertEqual(rma.customer_reference, 'customer ref')
+
+    def test_ro_issue(self):
+        """Test the 'issue' order for a ReturnOrder"""
+
+        order = models.ReturnOrder.objects.get(pk=1)
+        self.assertEqual(order.status, ReturnOrderStatus.PENDING)
+        self.assertIsNone(order.issue_date)
+
+        url = reverse('api-return-order-issue', kwargs={'pk': 1})
+
+        # POST without required permissions
+        self.post(url, expected_code=403)
+
+        self.assignRole('return_order.add')
+
+        self.post(url, expected_code=201)
+        order.refresh_from_db()
+        self.assertEqual(order.status, ReturnOrderStatus.IN_PROGRESS)
+        self.assertIsNotNone(order.issue_date)

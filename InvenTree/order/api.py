@@ -346,6 +346,8 @@ class PurchaseOrderDetail(PurchaseOrderMixin, RetrieveUpdateDestroyAPI):
 class PurchaseOrderContextMixin:
     """Mixin to add purchase order object as serializer context variable."""
 
+    queryset = models.PurchaseOrder.objects.all()
+
     def get_serializer_context(self):
         """Add the PurchaseOrder object to the serializer context."""
         context = super().get_serializer_context()
@@ -367,23 +369,17 @@ class PurchaseOrderCancel(PurchaseOrderContextMixin, CreateAPI):
     The purchase order must be in a state which can be cancelled
     """
 
-    queryset = models.PurchaseOrder.objects.all()
-
     serializer_class = serializers.PurchaseOrderCancelSerializer
 
 
 class PurchaseOrderComplete(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to 'complete' a purchase order."""
 
-    queryset = models.PurchaseOrder.objects.all()
-
     serializer_class = serializers.PurchaseOrderCompleteSerializer
 
 
 class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'issue' (send) a purchase order."""
-
-    queryset = models.PurchaseOrder.objects.all()
+    """API endpoint to 'issue' (place) a PurchaseOrder."""
 
     serializer_class = serializers.PurchaseOrderIssueSerializer
 
@@ -399,7 +395,7 @@ class PurchaseOrderMetadata(RetrieveUpdateAPI):
 
 
 class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to receive stock items against a purchase order.
+    """API endpoint to receive stock items against a PurchaseOrder.
 
     - The purchase order is specified in the URL.
     - Items to receive are specified as a list called "items" with the following options:
@@ -1259,6 +1255,39 @@ class ReturnOrderDetail(ReturnOrderMixin, RetrieveUpdateDestroyAPI):
     pass
 
 
+class ReturnOrderContextMixin:
+    """Simple mixin class to add a ReturnOrder to the serializer context"""
+
+    queryset = models.ReturnOrder.objects.all()
+
+    def get_serializer_context(self):
+        """Add the PurchaseOrder object to the serializer context."""
+        context = super().get_serializer_context()
+
+        # Pass the ReturnOrder instance through to the serializer for validation
+        try:
+            context['order'] = models.ReturnOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except Exception:
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+
+class ReturnOrderIssue(ReturnOrderContextMixin, CreateAPI):
+    """API endpoint to issue (place) a ReturnOrder"""
+
+    serializer_class = serializers.ReturnOrderIssueSerializer
+
+
+class ReturnOrderReceive(ReturnOrderContextMixin, CreateAPI):
+    """API endpoint to receive items against a ReturnOrder"""
+
+    queryset = models.ReturnOrder.objects.none()
+    serializer_class = serializers.ReturnOrderReceiveSerializer
+
+
 class ReturnOrderLineItemFilter(LineItemFilter):
     """Custom filters for the ReturnOrderLineItemList endpoint"""
 
@@ -1636,28 +1665,32 @@ order_api_urls = [
     ])),
 
     # API endpoints for return orders
-    re_path(r'^return/', include([
+    re_path(r'^ro/', include([
 
         re_path(r'^attachment/', include([
             path('<int:pk>/', ReturnOrderAttachmentDetail.as_view(), name='api-return-order-attachment-detail'),
             re_path(r'^.*$', ReturnOrderAttachmentList.as_view(), name='api-return-order-attachment-list'),
         ])),
 
-        # Return Order detail
-        path('<int:pk>/', ReturnOrderDetail.as_view(), name='api-return-order-detail'),
+        # Return Order detail endpoints
+        path('<int:pk>/', include([
+            re_path(r'issue/', ReturnOrderIssue.as_view(), name='api-return-order-issue'),
+            re_path(r'receive/', ReturnOrderReceive.as_view(), name='api-return-order-receive'),
+            re_path(r'.*$', ReturnOrderDetail.as_view(), name='api-return-order-detail'),
+        ])),
 
         # Return Order list
         re_path(r'^.*$', ReturnOrderList.as_view(), name='api-return-order-list'),
     ])),
 
     # API endpoints for reutrn order lines
-    re_path(r'^return-line/', include([
+    re_path(r'^ro-line/', include([
         path('<int:pk>/', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
         path('', ReturnOrderLineItemList.as_view(), name='api-return-order-line-list'),
     ])),
 
     # API endpoints for return order extra line
-    re_path(r'^return-extra-line/', include([
+    re_path(r'^ro-extra-line/', include([
         path('<int:pk>/', ReturnOrderExtraLineDetail.as_view(), name='api-return-order-extra-line-detail'),
         path('', ReturnOrderExtraLineList.as_view(), name='api-return-order-extra-line-list'),
     ])),

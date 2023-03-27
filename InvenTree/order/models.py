@@ -1678,6 +1678,17 @@ class ReturnOrder(TotalPriceMixin, Order):
         help_text=_('Date order was completed')
     )
 
+    @transaction.atomic
+    def place_order(self):
+        """Issue this ReturnOrder (if currently pending)"""
+
+        if self.status == ReturnOrderStatus.PENDING:
+            self.status = ReturnOrderStatus.IN_PROGRESS
+            self.issue_date = datetime.now().date()
+            self.save()
+
+            trigger_event('returnorder.placed', id=self.pk)
+
 
 class ReturnOrderLineItem(OrderLineItem):
     """Model for a single LineItem in a ReturnOrder"""
