@@ -147,6 +147,20 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.responsible }}</td>
     </tr>
     {% endif %}
+
+    <tr>
+        <td><span class='fas fa-dollar-sign'></span></td>
+        <td>{% trans "Total Cost" %}</td>
+        <td id='roTotalPrice'>
+            {% with order.total_price as tp %}
+            {% if tp == None %}
+            <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
+            {% else %}
+            {% render_currency tp currency=order.customer.currency %}
+            {% endif %}
+            {% endwith %}
+        </td>
+    </tr>
 </table>
 {% endblock details_right %}
 

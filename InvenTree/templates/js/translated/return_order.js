@@ -245,6 +245,18 @@ function loadReturnOrderTable(table, options={}) {
 
                     return html;
                 }
+            },
+            {
+                field: 'total_price',
+                title: '{% trans "Total Cost" %}',
+                switchable: true,
+                sortable: true,
+                visible: false,  // TODO
+                formatter: function(value, row) {
+                    return formatCurrency(value, {
+                        currency: row.total_price_currency
+                    });
+                }
             }
         ]
     });
@@ -269,11 +281,14 @@ function returnOrderLineItemFields(options={}) {
             }
         },
         reference: {},
+        outcome: {
+            icon: 'fa-route',
+        },
         price: {
             icon: 'fa-dollar-sign',
         },
         price_currency: {
-            icone: 'fa-coins',
+            icon: 'fa-coins',
         },
         target_date: {
             icon: 'fa-calendar-alt',
@@ -399,6 +414,7 @@ function loadReturnOrderLineItemTable(options={}) {
             {
                 field: 'item',
                 sortable: true,
+                switchable: false,
                 title: '{% trans "Item" %}',
                 formatter: function(value, row) {
                     let html = '';
@@ -416,6 +432,14 @@ function loadReturnOrderLineItemTable(options={}) {
             {
                 field: 'reference',
                 title: '{% trans "Reference" %}',
+            },
+            {
+                field: 'outcome',
+                title: '{% trans "Outcome" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    return returnOrderLineItemStatusDisplay(value);
+                }
             },
             {
                 field: 'price',
@@ -443,6 +467,13 @@ function loadReturnOrderLineItemTable(options={}) {
             {
                 field: 'received',
                 title: '{% trans "Received" %}',
+                formatter: function(value) {
+                    if (!value) {
+                        yesNoLabel(value);
+                    } else {
+                        return renderDate(value);
+                    }
+                }
             },
             {
                 field: 'notes',
@@ -457,6 +488,11 @@ function loadReturnOrderLineItemTable(options={}) {
                     let pk = row.pk;
 
                     if (options.allow_edit) {
+
+                        if (!row.received) {
+                            buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Mark item as received" %}');
+                        }
+
                         buttons += makeEditButton('button-line-edit', pk, '{% trans "Edit line item" %}');
                     }
 

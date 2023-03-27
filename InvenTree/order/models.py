@@ -1720,7 +1720,7 @@ class ReturnOrderLineItem(OrderLineItem):
         help_text=_('Select item to return from customer')
     )
 
-    received_date = models.BooleanField(
+    received_date = models.DateField(
         null=True, blank=True,
         verbose_name=_('Received'),
         help_text=_('The date this this return item was received'),
