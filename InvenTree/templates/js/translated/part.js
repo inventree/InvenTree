@@ -1446,12 +1446,16 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
                 formatter: function(value, row) {
-                    var data = value;
+                    let data = value;
 
                     if (row.supplier_part_detail.pack_size != 1.0) {
-                        var pack_size = row.supplier_part_detail.pack_size;
-                        var total = value * pack_size;
-                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
+                        let pack_size = row.supplier_part_detail.pack_size;
+                        let total = value * pack_size;
+
+                        data += makeIconBadge(
+                            'fa-info-circle icon-blue',
+                            `{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}`
+                        );
                     }
 
                     return data;
@@ -1487,7 +1491,10 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                     }
 
                     if (overdue) {
-                        html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                        html += makeIconBadge(
+                            'fa-calendar-alt icon-red',
+                            '{% trans "This line item is overdue" %}',
+                        );
                     }
 
                     return html;
@@ -2577,15 +2584,15 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
                     if (date == null) {
                         date_string = '<em>{% trans "No date specified" %}</em>';
-                        date_string += `<span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "No date specified" %}'></span>`;
+                        date_string += makeIconBadge('fa-exclamation-circle icon-red', '{% trans "No date specified" %}');
                     } else if (date < today) {
-                        date_string += `<span class='fas fa-exclamation-circle icon-yellow float-right' title='{% trans "Specified date is in the past" %}'></span>`;
+                        date_string += makeIconBadge('fa-exclamation-circle icon-yellow', '{% trans "Specified date is in the past" %}');
                     }
 
                     var quantity_string = entry.quantity + entry.speculative_quantity;
 
                     if (entry.speculative_quantity != 0) {
-                        quantity_string += `<span class='fas fa-question-circle icon-blue float-right' title='{% trans "Speculative" %}'></span>`;
+                        quantity_string += makeIconBadge('fa-question-circle icon-blue', '{% trans "Speculative" %}');
                     }
 
                     // Add an entry to the scheduling table

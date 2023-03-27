@@ -1913,9 +1913,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         icons += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Consumable item" %}'></span>`;
                     } else {
                         if (available_stock < (required - allocated)) {
-                            icons += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                            icons += makeIconBadge('fa-times-circle icon-red', '{% trans "Insufficient stock available" %}');
                         } else {
-                            icons += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                            icons += makeIconBadge('fa-check-circle icon-green', '{% trans "Sufficient stock available" %}');
                         }
 
                         if (available_stock <= 0) {
@@ -1931,13 +1931,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             }
 
                             if (extra) {
-                                icons += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                                icons += makeInfoButton('fa-info-circle icon-blue', extra);
                             }
                         }
                     }
 
                     if (row.on_order && row.on_order > 0) {
-                        icons += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
+                        makeIconBadge('fa-shopping-cart', '{% trans "On Order" %}', {
+                            content: row.on_order,
+                        });
                     }
 
                     return renderLink(text, url) + icons;

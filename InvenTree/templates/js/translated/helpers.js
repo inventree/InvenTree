@@ -154,11 +154,25 @@ function select2Thumbnail(image) {
 
 
 /*
+ * Construct a simple FontAwesome icon span
+ */
+function makeIcon(icon, title='', options={}) {
+
+    let classes = options.classes || 'fas';
+
+    return `<span class='${classes} ${icon}' title='${title}'></span>`;
+}
+
+
+/*
  * Construct an 'icon badge' which floats to the right of an object
  */
-function makeIconBadge(icon, title) {
+function makeIconBadge(icon, title='', options={}) {
 
-    var html = `<span class='icon-badge fas ${icon} float-right' title='${title}'></span>`;
+    let html = `
+    <span class='icon-badge fas ${icon} float-right' title='${title}'>
+    ${options.content}
+    </span>`;
 
     return html;
 }

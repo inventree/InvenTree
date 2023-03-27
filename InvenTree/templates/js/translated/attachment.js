@@ -78,9 +78,9 @@ function deleteAttachments(attachments, url, options={}) {
         var icon = '';
 
         if (attachment.filename) {
-            icon = `<span class='fas fa-file-alt'></span>`;
+            icon = makeIcon(attachmentIcon(attachment.filename), '');
         } else if (attachment.link) {
-            icon = `<span class='fas fa-link'></span>`;
+            icon = makeIcon('fa-link', '');
         }
 
         return `
@@ -128,14 +128,9 @@ function deleteAttachments(attachments, url, options={}) {
 
 
 /*
- * Render a link (with icon) to an internal attachment (file)
+ * Return a particular icon based on filename extension
  */
-function attachmentLink(filename) {
-
-    if (!filename) {
-        return null;
-    }
-
+function attachmentIcon(filename) {
     // Default file icon (if no better choice is found)
     let icon = 'fa-file-alt';
     let fn = filename.toLowerCase();
@@ -161,10 +156,25 @@ function attachmentLink(filename) {
         });
     }
 
-    let split = filename.split('/');
-    fn = split[split.length - 1];
+    return icon;
+}
 
-    let html = `<span class='fas ${icon}'></span> ${fn}`;
+
+/*
+ * Render a link (with icon) to an internal attachment (file)
+ */
+function attachmentLink(filename) {
+
+    if (!filename) {
+        return null;
+    }
+
+    let split = filename.split('/');
+    let fn = split[split.length - 1];
+
+    let icon = attachmentIcon(filename);
+
+    let html = makeIcon(icon) + ` ${fn}`;
 
     return renderLink(html, filename, {download: true});
 
@@ -289,7 +299,7 @@ function loadAttachmentTable(url, options) {
                     if (row.attachment) {
                         return attachmentLink(row.attachment);
                     } else if (row.link) {
-                        var html = `<span class='fas fa-link'></span> ${row.link}`;
+                        let html = makeIcon('fa-link') + ` ${row.link}`;
                         return renderLink(html, row.link);
                     } else {
                         return '-';

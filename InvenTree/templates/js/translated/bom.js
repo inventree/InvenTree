@@ -1140,7 +1140,7 @@ function loadBomTable(table, options={}) {
             }
 
             if (available_stock <= 0) {
-                text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "No Stock Available" %}'></span>`;
+                text += makeIconBadge('fa-times-circle icon-red', '{% trans "No Stock Available" %}');
             } else {
                 var extra = '';
 
@@ -1158,7 +1158,10 @@ function loadBomTable(table, options={}) {
             }
 
             if (row.on_order && row.on_order > 0) {
-                text += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
+                text += makeIconBadge(
+                    'fa-shopping-cart',
+                    `{% trans "On Order" %}: ${row.on_order}`,
+                );
             }
 
             return renderLink(text, url);
@@ -1270,7 +1273,7 @@ function loadBomTable(table, options={}) {
             footerFormatter: function(data) {
                 return `
                 <button class='btn btn-success float-right' type='button' title='{% trans "Add BOM Item" %}' id='bom-item-new-footer'>
-                    <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
+                    ${makeIcon('fa-plus-circle')} {% trans "Add BOM Item" %}
                 </button>
                 `;
             }

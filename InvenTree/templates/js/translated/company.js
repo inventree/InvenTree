@@ -919,11 +919,11 @@ function loadManufacturerPartTable(table, url, options) {
                     var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, url);
 
                     if (row.part_detail.is_template) {
-                        html += `<span class='fas fa-clone float-right' title='{% trans "Template part" %}'></span>`;
+                        html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
                     }
 
                     if (row.part_detail.assembly) {
-                        html += `<span class='fas fa-tools float-right' title='{% trans "Assembled part" %}'></span>`;
+                        html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
                     }
 
                     if (!row.part_detail.active) {
@@ -1159,11 +1159,11 @@ function loadSupplierPartTable(table, url, options) {
                     var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, url);
 
                     if (row.part_detail.is_template) {
-                        html += `<span class='fas fa-clone float-right' title='{% trans "Template part" %}'></span>`;
+                        html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
                     }
 
                     if (row.part_detail.assembly) {
-                        html += `<span class='fas fa-tools float-right' title='{% trans "Assembled part" %}'></span>`;
+                        html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
                     }
 
                     if (!row.part_detail.active) {
@@ -1283,9 +1283,13 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 formatter: function(value, row) {
                     if (row.availability_updated) {
-                        var html = formatDecimal(value);
-                        var date = renderDate(row.availability_updated, {showTime: true});
-                        html += `<span class='fas fa-info-circle float-right' title='{% trans "Last Updated" %}: ${date}'></span>`;
+                        let html = formatDecimal(value);
+                        let date = renderDate(row.availability_updated, {showTime: true});
+
+                        html += makeIconBadge(
+                            'fa-info-circle',
+                            `{% trans "Last Updated" %}: ${date}`
+                        );
                         return html;
                     } else {
                         return '-';

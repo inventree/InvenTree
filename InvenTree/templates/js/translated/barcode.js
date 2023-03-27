@@ -42,11 +42,11 @@ function makeBarcodeInput(placeholderText='', hintText='') {
         <div class='controls'>
             <div class='input-group'>
                 <span class='input-group-text'>
-                    <span class='fas fa-qrcode'></span>
+                    ${makeIcon('fa-qrcode')}
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
                 <button title='{% trans "Scan barcode using connected webcam" %}' id='barcode_scan_btn' type='button' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'>
-                    <span class='fas fa-camera'></span>
+                    ${makeIcon('fa-camera')}
                 </button>
             </div>
             <div id='hint_barcode_data' class='help-block'>${hintText}</div>
@@ -131,7 +131,7 @@ function makeNotesField(options={}) {
         <div class='controls'>
             <div class='input-group'>
                 <span class='input-group-text'>
-                    <span class='fas fa-sticky-note'></span>
+                    ${makeIcon('fa-sticky-note')}
                 </span>
                 <input id='notes' class='textinput textInput form-control' type='text' name='notes' placeholder='${placeholder}'>
             </div>

@@ -1429,7 +1429,7 @@ function loadStockTestResultsTable(table, options) {
                     var html = value;
 
                     if (row.attachment) {
-                        var text = `<span class='fas fa-file-alt float-right'></span>`;
+                        let text = makeIconBadge('fa-file-alt', '');
                         html += renderLink(text, row.attachment, {download: true});
                     }
 

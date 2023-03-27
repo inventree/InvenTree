@@ -1736,7 +1736,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     var html = renderDate(row.target_date);
 
                     if (row.overdue) {
-                        html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                        html += makeIconBadge('fa-calendar-times', '{% trans "This line item is overdue" %}');
                     }
 
                     return html;
@@ -1773,9 +1773,9 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                     if (required > 0) {
                         if (available >= required) {
-                            html += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                            html += makeIconBadge('fa-check-circle icon-green', '{% trans "Sufficient stock available" %}');
                         } else {
-                            html += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                            html += makeIconBadge('fa-times-circle icon-red', '{% trans "Insufficient stock available" %}');
                         }
                     }
 

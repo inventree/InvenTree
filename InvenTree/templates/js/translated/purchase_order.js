@@ -1994,7 +1994,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                         var html = renderDate(row.target_date);
 
                         if (row.overdue) {
-                            html += `<span class='fas fa-calendar-times icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                            html += makeIconBadge('fa-calendar-times icon-red', '{% trans "This line item is overdue" %}');
                         }
 
                         return html;
