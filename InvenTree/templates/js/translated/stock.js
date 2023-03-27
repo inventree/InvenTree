@@ -2681,10 +2681,10 @@ function loadStockTrackingTable(table, options) {
                 html += '</td></tr>';
             }
 
-            // Purchase Order Information
+            // PurchaseOrder Information
             if (details.purchaseorder) {
 
-                html += `<tr><th>{% trans "Purchase Order" %}</td>`;
+                html += `<tr><th>{% trans "Purchase Order" %}</th>`;
 
                 html += '<td>';
 
@@ -2698,6 +2698,40 @@ function loadStockTrackingTable(table, options) {
                 }
 
                 html += '</td></tr>';
+            }
+
+            // SalesOrder information
+            if (details.salesorder) {
+                html += `<tr><th>{% trans "Sales Order" %}</th>`;
+                html += '<td>';
+
+                if (details.salesorder_detail) {
+                    html += renderLink(
+                        details.salesorder_detail.reference,
+                        `/order/sales-order/${details.salesorder}`
+                    );
+                } else {
+                    html += `<em>{% trans "Sales Order no longer exists" %}</em>`;
+                }
+
+                html += `</td></tr>`;
+            }
+
+            // ReturnOrder information
+            if (details.returnorder) {
+                html += `<tr><th>{% trans "Return Order" %}</th>`;
+                html += '<td>';
+
+                if (details.returnorder_detail) {
+                    html += renderLink(
+                        details.returnorder_detail.reference,
+                        `/order/return-order/${details.returnorder}/`
+                    );
+                } else {
+                    html += `<em>{% trans "Return Order no longer exists" %}</em>`;
+                }
+
+                html += `</td></tr>`;
             }
 
             // Customer information
@@ -2742,12 +2776,7 @@ function loadStockTrackingTable(table, options) {
                 html += `<tr><th>{% trans "Status" %}</td>`;
 
                 html += '<td>';
-                html += stockStatusDisplay(
-                    details.status,
-                    {
-                        classes: 'float-right',
-                    }
-                );
+                html += stockStatusDisplay(details.status);
                 html += '</td></tr>';
 
             }

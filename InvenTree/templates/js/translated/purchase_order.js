@@ -1806,10 +1806,10 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     {
                         success: function() {
                             // Reload the line item table
-                            $(table).bootstrapTable('refresh');
+                            reloadBootstrapTable(table);
 
                             // Reload the "received stock" table
-                            $('#stock-table').bootstrapTable('refresh');
+                            reloadBootstrapTable('#stock-table');
                         }
                     }
                 );

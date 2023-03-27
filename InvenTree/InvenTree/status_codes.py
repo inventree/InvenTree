@@ -247,9 +247,13 @@ class StockHistoryCode(StatusCode):
     BUILD_CONSUMED = 57
 
     # Sales order codes
+    SHIPPED_AGAINST_SALES_ORDER = 60
 
     # Purchase order codes
     RECEIVED_AGAINST_PURCHASE_ORDER = 70
+
+    # Return order codes
+    RETURNED_AGAINST_RETURN_ORDER = 80
 
     # Customer actions
     SENT_TO_CUSTOMER = 100
@@ -289,8 +293,11 @@ class StockHistoryCode(StatusCode):
         BUILD_OUTPUT_COMPLETED: _('Build order output completed'),
         BUILD_CONSUMED: _('Consumed by build order'),
 
-        RECEIVED_AGAINST_PURCHASE_ORDER: _('Received against purchase order')
+        SHIPPED_AGAINST_SALES_ORDER: _("Shipped against Sales Order"),
 
+        RECEIVED_AGAINST_PURCHASE_ORDER: _('Received against Purchase Order'),
+
+        RETURNED_AGAINST_RETURN_ORDER: _('Returned against Return Order'),
     }
 
 

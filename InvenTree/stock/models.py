@@ -457,8 +457,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
                 if old.status != self.status:
                     deltas['status'] = self.status
 
-                # TODO - Other interesting changes we are interested in...
-
                 if add_note and len(deltas) > 0:
                     self.add_tracking_entry(
                         StockHistoryCode.EDITED,
@@ -960,17 +958,22 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
         item.customer = customer
         item.location = None
 
-        item.save()
+        item.save(add_note=False)
 
-        # TODO - Remove any stock item allocations from this stock item
+        code = StockHistoryCode.SENT_TO_CUSTOMER
+        deltas = {
+            'customer': customer.pk,
+            'customer_name': customer.pk,
+        }
+
+        if order:
+            code = StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
+            deltas['salesorder'] = order.pk
 
         item.add_tracking_entry(
-            StockHistoryCode.SENT_TO_CUSTOMER,
+            code,
             user,
-            {
-                'customer': customer.id,
-                'customer_name': customer.name,
-            },
+            deltas,
             notes=notes,
         )
 

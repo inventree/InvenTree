@@ -30,8 +30,10 @@ from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
-from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
-from order.serializers import PurchaseOrderSerializer
+from order.models import (PurchaseOrder, ReturnOrder, SalesOrder,
+                          SalesOrderAllocation)
+from order.serializers import (PurchaseOrderSerializer, ReturnOrderSerializer,
+                               SalesOrderSerializer)
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from plugin.serializers import MetadataSerializer
@@ -1262,12 +1264,30 @@ class StockTrackingList(ListAPI):
                 except Exception:
                     pass
 
-            # Add purchaseorder detail
+            # Add PurchaseOrder detail
             if 'purchaseorder' in deltas:
                 try:
                     order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
                     serializer = PurchaseOrderSerializer(order)
                     deltas['purchaseorder_detail'] = serializer.data
+                except Exception:
+                    pass
+
+            # Add SalesOrder detail
+            if 'salesorder' in deltas:
+                try:
+                    order = SalesOrder.objects.get(pk=deltas['salesorder'])
+                    serializer = SalesOrderSerializer(order)
+                    deltas['salesorder_detail'] = serializer.data
+                except Exception:
+                    pass
+
+            # Add ReturnOrder detail
+            if 'returnorder' in deltas:
+                try:
+                    order = ReturnOrder.objects.get(pk=deltas['returnorder'])
+                    serializer = ReturnOrderSerializer(order)
+                    deltas['returnorder_detail'] = serializer.data
                 except Exception:
                     pass
 
