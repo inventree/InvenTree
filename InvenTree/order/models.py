@@ -252,6 +252,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
         target_date: Expected delivery target date for PurchaseOrder completion (optional)
     """
 
+    def get_absolute_url(self):
+        """Get the 'web' URL for this order"""
+        return reverse('po-detail', kwargs={'pk': self.pk})
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the PurchaseOrder model"""
@@ -372,10 +376,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         verbose_name=_('Completion Date'),
         help_text=_('Date order was completed')
     )
-
-    def get_absolute_url(self):
-        """Return the web URL of the detail view for this order"""
-        return reverse('po-detail', kwargs={'pk': self.id})
 
     @transaction.atomic
     def add_line_item(self, supplier_part, quantity, group: bool = True, reference: str = '', purchase_price=None):
@@ -649,6 +649,10 @@ def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **
 class SalesOrder(TotalPriceMixin, Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer."""
 
+    def get_absolute_url(self):
+        """Get the 'web' URL for this order"""
+        return reverse('so-detail', kwargs={'pk': self.pk})
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the SalesOrder model"""
@@ -710,10 +714,6 @@ class SalesOrder(TotalPriceMixin, Order):
         """Render a string representation of this SalesOrder"""
 
         return f"{self.reference} - {self.customer.name if self.customer else _('deleted')}"
-
-    def get_absolute_url(self):
-        """Return the web URL for the detail view of this order"""
-        return reverse('so-detail', kwargs={'pk': self.id})
 
     reference = models.CharField(
         unique=True,
@@ -1600,6 +1600,10 @@ class ReturnOrder(TotalPriceMixin, Order):
         sales_order: Reference to an existing SalesOrder (optional)
         status: The status of the order (refer to status_codes.ReturnOrderStatus)
     """
+
+    def get_absolute_url(self):
+        """Get the 'web' URL for this order"""
+        return reverse('return-order-detail', kwargs={'pk': self.pk})
 
     @staticmethod
     def get_api_url():

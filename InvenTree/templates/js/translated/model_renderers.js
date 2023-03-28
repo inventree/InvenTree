@@ -10,6 +10,7 @@
     getModelRenderer,
     renderBuild,
     renderCompany,
+    renderContact,
     renderGroup,
     renderManufacturerPart,
     renderOwner,
@@ -45,6 +46,8 @@ function getModelRenderer(model) {
     switch (model) {
     case 'company':
         return renderCompany;
+    case 'contact':
+        return renderContact;
     case 'stockitem':
         return renderStockItem;
     case 'stocklocation':
@@ -147,6 +150,17 @@ function renderCompany(data, parameters={}) {
             text: data.name,
             textSecondary: shortenString(data.description),
             url: data.url || `/company/${data.pk}/`,
+        },
+        parameters
+    );
+}
+
+
+// Renderer for "Contact" model
+function renderContact(data, parameters={}) {
+    return renderModel(
+        {
+            text: data.name,
         },
         parameters
     );
