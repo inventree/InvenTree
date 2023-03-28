@@ -995,7 +995,9 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
         """
         notes = kwargs.get('notes', '')
 
-        tracking_info = {}
+        tracking_info = {
+            'location': location.pk,
+        }
 
         if self.customer:
             tracking_info['customer'] = self.customer.id
