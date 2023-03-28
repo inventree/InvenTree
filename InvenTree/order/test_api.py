@@ -17,8 +17,9 @@ import order.models as models
 from common.settings import currency_codes
 from company.models import Company
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderStatus,
-                                    SalesOrderStatus)
+from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
+                                    ReturnOrderStatus, SalesOrderStatus,
+                                    StockStatus)
 from part.models import Part
 from stock.models import StockItem
 
@@ -1809,8 +1810,13 @@ class ReturnOrderTests(InvenTreeAPITestCase):
     """Unit tests for ReturnOrder API endpoints"""
 
     fixtures = [
+        'category',
         'company',
         'return_order',
+        'part',
+        'location',
+        'supplier_part',
+        'stock',
     ]
 
     def test_options(self):
@@ -1978,3 +1984,106 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         order.refresh_from_db()
         self.assertEqual(order.status, ReturnOrderStatus.IN_PROGRESS)
         self.assertIsNotNone(order.issue_date)
+
+    def test_receive(self):
+        """Test that we can receive items against a ReturnOrder"""
+
+        customer = Company.objects.get(pk=4)
+
+        # Create an order
+        rma = models.ReturnOrder.objects.create(
+            customer=customer,
+            description='A return order',
+        )
+
+        self.assertEqual(rma.reference, 'RMA-0007')
+
+        # Create some line items
+        part = Part.objects.get(pk=25)
+        for idx in range(3):
+            stock_item = StockItem.objects.create(
+                part=part, customer=customer,
+                quantity=1, serial=idx
+            )
+
+            line_item = models.ReturnOrderLineItem.objects.create(
+                order=rma,
+                item=stock_item,
+            )
+
+            self.assertEqual(line_item.outcome, ReturnOrderLineStatus.PENDING)
+            self.assertIsNone(line_item.received_date)
+            self.assertFalse(line_item.received)
+
+        self.assertEqual(rma.lines.count(), 3)
+
+        def receive(items, location=None, expected_code=400):
+            """Helper function to receive items against this ReturnOrder"""
+            url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
+
+            response = self.post(
+                url,
+                {
+                    'items': items,
+                    'location': location,
+                },
+                expected_code=expected_code
+            )
+
+            return response.data
+
+        # Receive without required permissions
+        receive([], expected_code=403)
+
+        self.assignRole('return_order.add')
+
+        # Receive, without any location
+        data = receive([], expected_code=400)
+        self.assertIn('This field may not be null', str(data['location']))
+
+        # Receive, with incorrect order code
+        data = receive([], 1, expected_code=400)
+        self.assertIn('Items can only be received against orders which are in progress', str(data))
+
+        # Issue the order (via the API)
+        self.assertIsNone(rma.issue_date)
+        self.post(
+            reverse("api-return-order-issue", kwargs={"pk": rma.pk}),
+            expected_code=201,
+        )
+
+        rma.refresh_from_db()
+        self.assertIsNotNone(rma.issue_date)
+        self.assertEqual(rma.status, ReturnOrderStatus.IN_PROGRESS)
+
+        # Receive, without any items
+        data = receive([], 1, expected_code=400)
+        self.assertIn('Line items must be provided', str(data))
+
+        # Get a reference to one of the stock items
+        stock_item = rma.lines.first().item
+
+        n_tracking = stock_item.tracking_info.count()
+
+        # Receive items successfully
+        data = receive(
+            [{'item': line.pk} for line in rma.lines.all()],
+            1,
+            expected_code=201
+        )
+
+        # Check that all line items have been received
+        for line in rma.lines.all():
+            self.assertTrue(line.received)
+            self.assertIsNotNone(line.received_date)
+
+        # A single tracking entry should have been added to the item
+        self.assertEqual(stock_item.tracking_info.count(), n_tracking + 1)
+
+        tracking_entry = stock_item.tracking_info.last()
+        deltas = tracking_entry.deltas
+
+        self.assertEqual(deltas['status'], StockStatus.QUARANTINED)
+        self.assertEqual(deltas['customer'], customer.pk)
+        self.assertEqual(deltas['location'], 1)
+        self.assertEqual(deltas['returnorder'], rma.pk)

@@ -1770,6 +1770,8 @@ class ReturnOrder(TotalPriceMixin, Order):
         line.received_date = datetime.now().date()
         line.save()
 
+        trigger_event('returnorder.received', id=self.pk)
+
         # Notify responsible users
         notify_responsible(
             self,

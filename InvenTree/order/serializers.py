@@ -1546,7 +1546,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
 
         order = self.context['order']
         if order.status != ReturnOrderStatus.IN_PROGRESS:
-            raise ValidationError(_("Items can only received against orders which are in progress"))
+            raise ValidationError(_("Items can only be received against orders which are in progress"))
 
         data = super().validate(data)
 
