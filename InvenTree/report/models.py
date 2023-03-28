@@ -533,6 +533,9 @@ class ReturnOrderReport(ReportTemplateBase):
             'description': order.description,
             'reference': order.reference,
             'customer': order.customer,
+            'lines': order.lines,
+            'extra_lines': order.extra_lines,
+            'title': str(order),
         }
 
 
