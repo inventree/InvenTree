@@ -1822,7 +1822,7 @@ class ReturnOrderLineItem(OrderLineItem):
 
     received_date = models.DateField(
         null=True, blank=True,
-        verbose_name=_('Received'),
+        verbose_name=_('Received Date'),
         help_text=_('The date this this return item was received'),
     )
 

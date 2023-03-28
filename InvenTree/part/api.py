@@ -1008,7 +1008,7 @@ class PartMixin:
 
     starred_parts = None
 
-    create = False
+    is_create = False
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset object for the PartDetail endpoint"""
@@ -1024,7 +1024,7 @@ class PartMixin:
         kwargs['context'] = self.get_serializer_context()
 
         # Indicate that we can create a new Part via this endpoint
-        kwargs['create'] = self.create
+        kwargs['create'] = self.is_create
 
         # Pass a list of "starred" parts to the current user to the serializer
         # We do this to reduce the number of database queries required!
@@ -1056,7 +1056,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance"""
 
     filterset_class = PartFilter
-    create = True
+    is_create = True
 
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a data file"""
