@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-24 13:36+0000\n"
-"PO-Revision-Date: 2023-03-25 12:31\n"
+"POT-Creation-Date: 2023-03-27 21:25+0000\n"
+"PO-Revision-Date: 2023-03-28 11:29\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -2155,7 +2155,7 @@ msgid "Maximum Pricing Decimal Places"
 msgstr ""
 
 #: common/models.py:1232
-msgid "Maximum umber of decimal places to display when rendering pricing data"
+msgid "Maximum number of decimal places to display when rendering pricing data"
 msgstr ""
 
 #: common/models.py:1242
