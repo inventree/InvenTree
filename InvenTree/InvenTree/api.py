@@ -242,6 +242,7 @@ class APISearchView(APIView):
             'part': part.api.PartList,
             'partcategory': part.api.CategoryList,
             'purchaseorder': order.api.PurchaseOrderList,
+            'returnorder': order.api.ReturnOrderList,
             'salesorder': order.api.SalesOrderList,
             'stockitem': stock.api.StockList,
             'stocklocation': stock.api.StockLocationList,

@@ -1,6 +1,6 @@
 """JSON API for the Build app."""
 
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
@@ -509,13 +509,13 @@ build_api_urls = [
 
     # Attachments
     re_path(r'^attachment/', include([
-        re_path(r'^(?P<pk>\d+)/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
+        path(r'<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
         re_path(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
     ])),
 
     # Build Items
     re_path(r'^item/', include([
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'^metadata/', BuildItemMetadata.as_view(), name='api-build-item-metadata'),
             re_path(r'^.*$', BuildItemDetail.as_view(), name='api-build-item-detail'),
         ])),
@@ -523,7 +523,7 @@ build_api_urls = [
     ])),
 
     # Build Detail
-    re_path(r'^(?P<pk>\d+)/', include([
+    path(r'<int:pk>/', include([
         re_path(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
         re_path(r'^auto-allocate/', BuildAutoAllocate.as_view(), name='api-build-auto-allocate'),
         re_path(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),

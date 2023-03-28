@@ -24,9 +24,10 @@ from plugin.serializers import MetadataSerializer
 from stock.models import StockItem, StockItemAttachment
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     SalesOrderReport, TestReport)
+                     ReturnOrderReport, SalesOrderReport, TestReport)
 from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           PurchaseOrderReportSerializer,
+                          ReturnOrderReportSerializer,
                           SalesOrderReportSerializer, TestReportSerializer)
 
 
@@ -423,6 +424,31 @@ class SalesOrderReportPrint(SalesOrderReportMixin, ReportPrintMixin, RetrieveAPI
     pass
 
 
+class ReturnOrderReportMixin(ReportFilterMixin):
+    """Mixin for the ReturnOrderReport report template"""
+
+    ITEM_MODEL = order.models.ReturnOrder
+    ITEM_KEY = 'order'
+
+    queryset = ReturnOrderReport.objects.all()
+    serializer_class = ReturnOrderReportSerializer
+
+
+class ReturnOrderReportList(ReturnOrderReportMixin, ReportListView):
+    """API list endpoint for the ReturnOrderReport model"""
+    pass
+
+
+class ReturnOrderReportDetail(ReturnOrderReportMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single ReturnOrderReport object"""
+    pass
+
+
+class ReturnOrderReportPrint(ReturnOrderReportMixin, ReportPrintMixin, RetrieveAPI):
+    """API endpoint for printing a ReturnOrderReport object"""
+    pass
+
+
 class ReportMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating Report metadata."""
     MODEL_REF = 'reportmodel'
@@ -453,7 +479,7 @@ report_api_urls = [
     # Purchase order reports
     re_path(r'po/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/', PurchaseOrderReportPrint.as_view(), name='api-po-report-print'),
             re_path(r'metadata/', ReportMetadata.as_view(), {ReportMetadata.MODEL_REF: PurchaseOrderReport}, name='api-po-report-metadata'),
             path('', PurchaseOrderReportDetail.as_view(), name='api-po-report-detail'),
@@ -466,7 +492,7 @@ report_api_urls = [
     # Sales order reports
     re_path(r'so/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/', SalesOrderReportPrint.as_view(), name='api-so-report-print'),
             re_path(r'metadata/', ReportMetadata.as_view(), {ReportMetadata.MODEL_REF: SalesOrderReport}, name='api-so-report-metadata'),
             path('', SalesOrderReportDetail.as_view(), name='api-so-report-detail'),
@@ -475,10 +501,19 @@ report_api_urls = [
         path('', SalesOrderReportList.as_view(), name='api-so-report-list'),
     ])),
 
+    # Return order reports
+    re_path(r'return-order/', include([
+        path(r'<int:pk>/', include([
+            path(r'print/', ReturnOrderReportPrint.as_view(), name='api-return-order-report-print'),
+            path('', ReturnOrderReportDetail.as_view(), name='api-return-order-report-detail'),
+        ])),
+        path('', ReturnOrderReportList.as_view(), name='api-return-order-report-list'),
+    ])),
+
     # Build reports
     re_path(r'build/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
             re_path(r'metadata/', ReportMetadata.as_view(), {ReportMetadata.MODEL_REF: BuildReport}, name='api-build-report-metadata'),
             re_path(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
@@ -492,7 +527,7 @@ report_api_urls = [
     re_path(r'bom/', include([
 
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
             re_path(r'metadata/', ReportMetadata.as_view(), {ReportMetadata.MODEL_REF: BillOfMaterialsReport}, name='api-bom-report-metadata'),
             re_path(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
@@ -505,7 +540,7 @@ report_api_urls = [
     # Stock item test reports
     re_path(r'test/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
             re_path(r'metadata/', ReportMetadata.as_view(), {ReportMetadata.MODEL_REF: TestReport}, name='api-stockitem-testreport-metadata'),
             re_path(r'^.*$', StockItemTestReportDetail.as_view(), name='api-stockitem-testreport-detail'),

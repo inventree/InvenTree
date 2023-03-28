@@ -475,7 +475,11 @@
 
     {% if labels_enabled %}
     $('#print-label').click(function() {
-        printPartLabels([{{ part.pk }}]);
+        printLabels({
+            items: [{{ part.pk }}],
+            key: 'part',
+            url: '{% url "api-part-label-list" %}',
+        });
     });
     {% endif %}
 

@@ -29,11 +29,6 @@
     <div id='table-buttons'>
         <div class='button-toolbar container-fluid' style='float: right;'>
             <div class='btn-group'>
-                {% if report_enabled %}
-                <button id='order-print' class='btn btn-outline-secondary' title='{% trans "Print Order Reports" %}'>
-                    <span class='fas fa-print'></span>
-                </button>
-                {% endif %}
                 {% include "filter_list.html" with id="salesorder" %}
             </div>
         </div>
@@ -53,20 +48,6 @@
 loadSalesOrderTable("#sales-order-table", {
     url: "{% url 'api-so-list' %}",
 });
-
-{% if report_enabled %}
-$("#order-print").click(function() {
-    var rows = getTableData('#sales-order-table');
-
-    var orders = [];
-
-    rows.forEach(function(row) {
-        orders.push(row.pk);
-    });
-
-    printSalesOrderReports(orders);
-})
-{% endif %}
 
 $("#so-create").click(function() {
     createSalesOrder();

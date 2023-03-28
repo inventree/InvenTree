@@ -1,13 +1,13 @@
 """URL lookup for Build app."""
 
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from . import views
 
 
 build_urls = [
 
-    re_path(r'^(?P<pk>\d+)/', include([
+    path(r'<int:pk>/', include([
         re_path(r'^.*$', views.BuildDetail.as_view(), name='build-detail'),
     ])),
 

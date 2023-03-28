@@ -222,7 +222,7 @@ function updateSearch() {
 
     if (checkPermission('purchase_order') && user_settings.SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS) {
 
-        var filters = {
+        let filters = {
             supplier_detail: true,
         };
 
@@ -235,7 +235,7 @@ function updateSearch() {
 
     if (checkPermission('sales_order') && user_settings.SEARCH_PREVIEW_SHOW_SALES_ORDERS) {
 
-        var filters = {
+        let filters = {
             customer_detail: true,
         };
 
@@ -245,6 +245,19 @@ function updateSearch() {
         }
 
         addSearchQuery('salesorder', '{% trans "Sales Orders" %}', filters);
+    }
+
+    if (checkPermission('return_order') && user_settings.SEARCH_PREVIEW_SHOW_RETURN_ORDERS) {
+        let filters = {
+            customer_detail: true,
+        };
+
+        // Hide inactive (not "outstanding" orders)
+        if (user_settings.SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS) {
+            filters.outstanding = true;
+        }
+
+        addSearchQuery('returnorder', '{% trans "Return Orders" %}', filters);
     }
 
     let ctx = $('#offcanvas-search').find('#search-context');
@@ -270,7 +283,7 @@ function updateSearch() {
                         let result = response[resultType.key];
 
                         if (result.count != null && result.count > 0 && result.results) {
-                            addSearchResults(result.results, resultType);
+                            addSearchResults(result.results, resultType, result.count);
 
                             any_results = true;
                         }
@@ -337,7 +350,7 @@ function addSearchQuery(key, title, query_params, render_params={}) {
 
 
 // Add a group of results to the list
-function addSearchResults(results, resultType) {
+function addSearchResults(results, resultType, resultCount) {
 
     if (results.length == 0) {
         // Do not display this group, as there are no results
@@ -354,12 +367,14 @@ function addSearchResults(results, resultType) {
     let renderer = resultType.renderer;
     let renderParams = resultType.renderParams;
 
+    let resultText = resultCount == 1 ? '{% trans "result" %}' : '{% trans "results" %}';
+
     // Add the result group to the panel
     panel.find('#search-results').append(`
     <div class='search-result-group-wrapper' id='search-results-wrapper-${key}'>
         <div class='search-result-group' id='search-results-${key}'>
             <div class='search-result-header' style='display: flex;'>
-                <h5>${title}</h5>
+                <h5>${title}</h5><span class='float-right'><em><small>&nbsp;-&nbsp;${resultCount} ${resultText}</small></em></span>
                 <span class='flex' style='flex-grow: 1;'></span>
                 <div class='search-result-group-buttons btn-group float-right' role='group'>
                     <button class='btn btn-outline-secondary' id='hide-results-${key}' title='{% trans "Minimize results" %}'>

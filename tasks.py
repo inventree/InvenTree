@@ -578,7 +578,7 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
 
     # Get test data
     print("Cloning demo dataset ...")
-    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v')
+    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v --depth=1')
     print("========================================")
 
     # Make sure migrations are done - might have just deleted sqlite database
