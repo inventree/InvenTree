@@ -7,7 +7,7 @@
 
 {% block sidebar %}
 {% include "order/return_order_sidebar.html"  %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block page_content %}
 {% settings_value "RETURNORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
@@ -97,7 +97,6 @@
         <textarea id='order-notes'></textarea>
     </div>
 </div>
-
 
 {% endblock page_content %}
 

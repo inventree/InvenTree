@@ -7,16 +7,16 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Purchase Order" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumbs %}
 <li class='breadcrumb-item'><a href='{% url "purchase-order-index" %}'>{% trans "Purchase Orders" %}</a></li>
 <li class="breadcrumb-item active" aria-current="page"><a href='{% url "po-detail" order.id %}'>{{ order }}</a></li>
-{% endblock %}
+{% endblock breadcrumbs %}
 
 {% block heading %}
 {% trans "Purchase Order" %}: {{ order.reference }}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% if user.is_staff and roles.purchase_order.change %}
@@ -81,7 +81,7 @@ src="{{ order.supplier.image.url }}"
 src="{% static 'img/blank_image.png' %}"
 {% endif %}
 />
-{% endblock %}
+{% endblock thumbnail %}
 
 {% block details %}
 
@@ -110,7 +110,7 @@ src="{% static 'img/blank_image.png' %}"
 
 </table>
 
-{% endblock %}
+{% endblock details %}
 
 {% block details_right %}
 <table class='table table-condensed table-striped'>
@@ -210,11 +210,10 @@ src="{% static 'img/blank_image.png' %}"
         </td>
     </tr>
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 {% block js_ready %}
 {{ block.super }}
-
 
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $("#place-order").click(function() {
@@ -306,4 +305,4 @@ $("#export-order").click(function() {
 });
 
 
-{% endblock %}
+{% endblock js_ready %}
