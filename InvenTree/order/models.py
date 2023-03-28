@@ -1758,6 +1758,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         stock_item.status = StockStatus.QUARANTINED
         stock_item.location = location
         stock_item.customer = None
+        stock_item.sales_order = None
         stock_item.save(add_note=False)
 
         # Add a tracking entry to the StockItem
