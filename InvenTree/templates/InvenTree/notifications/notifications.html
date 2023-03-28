@@ -75,9 +75,7 @@ $('#history-delete').click(function() {
             multi_delete: true,
             preFormContent: html,
             title: '{% trans "Delete Notifications" %}',
-            onSuccess: function() {
-                $('#history-table').bootstrapTable('refresh');
-            },
+            refreshTable: '#history-table',
             form_data: {
                 filters: {
                     read: true,
@@ -88,7 +86,7 @@ $('#history-delete').click(function() {
 });
 
 $("#history-table").on('click', '.notification-delete', function() {
-    constructForm(`/api/notifications/${$(this).attr('pk')}/`, {
+    constructForm(`{% url "api-notifications-list" %}${$(this).attr('pk')}/`, {
         method: 'DELETE',
         title: '{% trans "Delete Notification" %}',
         onSuccess: function(data) {

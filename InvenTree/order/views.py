@@ -24,8 +24,8 @@ from plugin.views import InvenTreePluginViewMixin
 
 from . import forms as order_forms
 from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
-from .models import (PurchaseOrder, PurchaseOrderLineItem, SalesOrder,
-                     SalesOrderLineItem)
+from .models import (PurchaseOrder, PurchaseOrderLineItem, ReturnOrder,
+                     SalesOrder, SalesOrderLineItem)
 
 logger = logging.getLogger("inventree")
 
@@ -51,6 +51,14 @@ class SalesOrderIndex(InvenTreeRoleMixin, ListView):
     context_object_name = 'orders'
 
 
+class ReturnOrderIndex(InvenTreeRoleMixin, ListView):
+    """ReturnOrder index (list) view"""
+
+    model = ReturnOrder
+    template_name = 'order/return_orders.html'
+    context_object_name = 'orders'
+
+
 class PurchaseOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """Detail view for a PurchaseOrder object."""
 
@@ -65,6 +73,14 @@ class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView)
     context_object_name = 'order'
     queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
     template_name = 'order/sales_order_detail.html'
+
+
+class ReturnOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
+    """Detail view for a ReturnOrder object"""
+
+    context_object_name = 'order'
+    queryset = ReturnOrder.objects.all()
+    template_name = 'order/return_order_detail.html'
 
 
 class PurchaseOrderUpload(FileManagementFormView):

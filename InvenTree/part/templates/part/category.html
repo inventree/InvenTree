@@ -183,11 +183,6 @@
                     <li><a class='dropdown-item' href='#' id='multi-part-order' title='{% trans "Order parts" %}'>
                         <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
                     </a></li>
-                    {% if report_enabled %}
-                    <li><a class='dropdown-item' href='#' id='multi-part-print-label' title='{% trans "Print Labels" %}'>
-                        <span class='fas fa-tag'></span> {% trans "Print Labels" %}
-                    </a></li>
-                    {% endif %}
                 </ul>
             </div>
             {% include "filter_list.html" with id="parts" %}

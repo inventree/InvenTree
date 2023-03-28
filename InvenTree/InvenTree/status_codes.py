@@ -247,9 +247,13 @@ class StockHistoryCode(StatusCode):
     BUILD_CONSUMED = 57
 
     # Sales order codes
+    SHIPPED_AGAINST_SALES_ORDER = 60
 
     # Purchase order codes
     RECEIVED_AGAINST_PURCHASE_ORDER = 70
+
+    # Return order codes
+    RETURNED_AGAINST_RETURN_ORDER = 80
 
     # Customer actions
     SENT_TO_CUSTOMER = 100
@@ -289,8 +293,11 @@ class StockHistoryCode(StatusCode):
         BUILD_OUTPUT_COMPLETED: _('Build order output completed'),
         BUILD_CONSUMED: _('Consumed by build order'),
 
-        RECEIVED_AGAINST_PURCHASE_ORDER: _('Received against purchase order')
+        SHIPPED_AGAINST_SALES_ORDER: _("Shipped against Sales Order"),
 
+        RECEIVED_AGAINST_PURCHASE_ORDER: _('Received against Purchase Order'),
+
+        RETURNED_AGAINST_RETURN_ORDER: _('Returned against Return Order'),
     }
 
 
@@ -320,3 +327,74 @@ class BuildStatus(StatusCode):
         PENDING,
         PRODUCTION,
     ]
+
+
+class ReturnOrderStatus(StatusCode):
+    """Defines a set of status codes for a ReturnOrder"""
+
+    # Order is pending, waiting for receipt of items
+    PENDING = 10
+
+    # Items have been received, and are being inspected
+    IN_PROGRESS = 20
+
+    COMPLETE = 30
+    CANCELLED = 40
+
+    OPEN = [
+        PENDING,
+        IN_PROGRESS,
+    ]
+
+    options = {
+        PENDING: _("Pending"),
+        IN_PROGRESS: _("In Progress"),
+        COMPLETE: _("Complete"),
+        CANCELLED: _("Cancelled"),
+    }
+
+    colors = {
+        PENDING: 'secondary',
+        IN_PROGRESS: 'primary',
+        COMPLETE: 'success',
+        CANCELLED: 'danger',
+    }
+
+
+class ReturnOrderLineStatus(StatusCode):
+    """Defines a set of status codes for a ReturnOrderLineItem"""
+
+    PENDING = 10
+
+    # Item is to be returned to customer, no other action
+    RETURN = 20
+
+    # Item is to be repaired, and returned to customer
+    REPAIR = 30
+
+    # Item is to be replaced (new item shipped)
+    REPLACE = 40
+
+    # Item is to be refunded (cannot be repaired)
+    REFUND = 50
+
+    # Item is rejected
+    REJECT = 60
+
+    options = {
+        PENDING: _('Pending'),
+        RETURN: _('Return'),
+        REPAIR: _('Repair'),
+        REFUND: _('Refund'),
+        REPLACE: _('Replace'),
+        REJECT: _('Reject')
+    }
+
+    colors = {
+        PENDING: 'secondary',
+        RETURN: 'success',
+        REPAIR: 'primary',
+        REFUND: 'info',
+        REPLACE: 'warning',
+        REJECT: 'danger',
+    }

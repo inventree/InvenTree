@@ -305,6 +305,13 @@ class InvenTreeNotificationBodies:
         template='email/purchase_order_received.html',
     )
 
+    ReturnOrderItemsReceived = NotificationBody(
+        name=_('Items Received'),
+        slug='return_order.items_received',
+        message=_('Items have been received against a return order'),
+        template='email/return_order_received.html',
+    )
+
 
 def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     """Send out a notification."""

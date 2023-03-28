@@ -491,7 +491,7 @@ class StockTest(StockTestBase):
         # Check that a tracking item was added
         track = StockItemTracking.objects.filter(item=ait).latest('id')
 
-        self.assertEqual(track.tracking_type, StockHistoryCode.SENT_TO_CUSTOMER)
+        self.assertEqual(track.tracking_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER)
         self.assertIn('Allocated some stock', track.notes)
 
     def test_return_from_customer(self):
