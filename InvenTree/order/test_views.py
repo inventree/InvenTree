@@ -70,7 +70,7 @@ class SalesOrderViews(OrderViewTestCase):
 
     def test_detail(self):
         """Test SalesOrder detail view"""
-        response = self.client.get(reverse('so-detai', args=(1,)))
+        response = self.client.get(reverse('so-detail', args=(1,)))
         self.assertEqual(response.status_code, 200)
 
 
