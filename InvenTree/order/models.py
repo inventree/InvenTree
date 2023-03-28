@@ -1739,18 +1739,18 @@ class ReturnOrder(TotalPriceMixin, Order):
             logger.warning("receive_line_item called with item already returned")
             return
 
-        # Update the StockItem
         stock_item = line.item
 
         deltas = {
-            'status': stock_item.status,
+            'status': StockStatus.QUARANTINED,
             'returnorder': self.pk,
-            'location': location,
+            'location': location.pk,
         }
 
         if stock_item.customer:
-            deltas['customer'] = stock_item.customer
+            deltas['customer'] = stock_item.customer.pk
 
+        # Update the StockItem
         stock_item.status = StockStatus.QUARANTINED
         stock_item.location = location
         stock_item.customer = None
