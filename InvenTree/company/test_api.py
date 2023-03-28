@@ -205,11 +205,13 @@ class ContactTest(InvenTreeAPITestCase):
 
         n = Contact.objects.count()
 
+        company = Company.objects.first()
+
         # Without required permissions, creation should fail
         self.post(
             self.url,
             {
-                'company': 1,
+                'company': company.pk,
                 'name': 'Joe Bloggs',
             },
             expected_code=403
@@ -220,7 +222,7 @@ class ContactTest(InvenTreeAPITestCase):
         self.post(
             self.url,
             {
-                'company': 1,
+                'company': company.pk,
                 'name': 'Joe Bloggs',
             },
             expected_code=201
