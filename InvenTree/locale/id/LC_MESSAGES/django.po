@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 08:09+0000\n"
-"PO-Revision-Date: 2023-03-28 11:29\n"
+"POT-Creation-Date: 2023-03-29 05:06+0000\n"
+"PO-Revision-Date: 2023-03-29 11:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -721,22 +721,16 @@ msgid "Consumed by build order"
 msgstr "Terpakai oleh order produksi"
 
 #: InvenTree/status_codes.py:296
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Shipped against Sales Order"
-msgstr "Diterima dari order pembelian"
+msgstr ""
 
 #: InvenTree/status_codes.py:298
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Received against Purchase Order"
-msgstr "Diterima dari order pembelian"
+msgstr ""
 
 #: InvenTree/status_codes.py:300
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Returned against Return Order"
-msgstr "Diterima dari order pembelian"
+msgstr ""
 
 #: InvenTree/status_codes.py:314
 msgid "Production"
@@ -747,10 +741,8 @@ msgid "In Progress"
 msgstr ""
 
 #: InvenTree/status_codes.py:386
-#, fuzzy
-#| msgid "Returned"
 msgid "Return"
-msgstr "Dikembalikan"
+msgstr ""
 
 #: InvenTree/status_codes.py:387
 msgid "Repair"
@@ -761,16 +753,12 @@ msgid "Refund"
 msgstr ""
 
 #: InvenTree/status_codes.py:389
-#, fuzzy
-#| msgid "Placed"
 msgid "Replace"
-msgstr "Diletakkan"
+msgstr ""
 
 #: InvenTree/status_codes.py:390
-#, fuzzy
-#| msgid "Rejected"
 msgid "Reject"
-msgstr "Ditolak"
+msgstr ""
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
@@ -2468,20 +2456,16 @@ msgid "Enable return order functionality in the user interface"
 msgstr ""
 
 #: common/models.py:1452
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Return Order Reference Pattern"
-msgstr "Referensi Order Produksi"
+msgstr ""
 
 #: common/models.py:1453
 msgid "Required pattern for generating Return Order reference field"
 msgstr ""
 
 #: common/models.py:1459
-#, fuzzy
-#| msgid "Completed items"
 msgid "Edit Completed Return Orders"
-msgstr "Item selesai"
+msgstr ""
 
 #: common/models.py:1460
 msgid "Allow editing of return orders after they have been completed"
@@ -3218,10 +3202,8 @@ msgid "Items have been received against a purchase order"
 msgstr ""
 
 #: common/notifications.py:311
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Items have been received against a return order"
-msgstr "Diterima dari order pembelian"
+msgstr ""
 
 #: common/notifications.py:423
 msgid "Error raised by plugin"
@@ -3777,10 +3759,8 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:260 templates/navbar.html:65
 #: users/models.py:45
-#, fuzzy
-#| msgid "Returned"
 msgid "Return Orders"
-msgstr "Dikembalikan"
+msgstr ""
 
 #: company/templates/company/detail.html:195
 #: order/templates/order/return_orders.html:21
@@ -4168,10 +4148,8 @@ msgid "Total price for this order"
 msgstr ""
 
 #: order/models.py:177
-#, fuzzy
-#| msgid "Build output does not match the parent build"
 msgid "Contact does not match selected company"
-msgstr "Hasil produksi tidak sesuai dengan produksi induk"
+msgstr ""
 
 #: order/models.py:199
 msgid "Order description"
@@ -4478,10 +4456,8 @@ msgid "Enter stock allocation quantity"
 msgstr ""
 
 #: order/models.py:1639
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Return Order reference"
-msgstr "Referensi Order Produksi"
+msgstr ""
 
 #: order/models.py:1653
 msgid "Company from which items are being returned"
@@ -4501,16 +4477,12 @@ msgstr ""
 #: report/templates/report/inventree_return_order_report_base.html:13
 #: templates/js/translated/return_order.js:239
 #: templates/js/translated/stock.js:2720
-#, fuzzy
-#| msgid "Returned"
 msgid "Return Order"
-msgstr "Dikembalikan"
+msgstr ""
 
 #: order/models.py:1830
-#, fuzzy
-#| msgid "Returned from customer"
 msgid "Select item to return from customer"
-msgstr "Dikembalikan pelanggan"
+msgstr ""
 
 #: order/models.py:1835
 msgid "Received Date"
@@ -4654,16 +4626,12 @@ msgid "Return order line item"
 msgstr ""
 
 #: order/serializers.py:1514
-#, fuzzy
-#| msgid "Build output does not match Build Order"
 msgid "Line item does not match return order"
-msgstr "Hasil produksi tidak sesuai dengan order produksi"
+msgstr ""
 
 #: order/serializers.py:1517
-#, fuzzy
-#| msgid "This build output has already been completed"
 msgid "Line item has already been received"
-msgstr "Hasil produksi ini sudah diselesaikan"
+msgstr ""
 
 #: order/serializers.py:1549
 msgid "Items can only be received against orders which are in progress"
@@ -4955,10 +4923,8 @@ msgid "Order Notes"
 msgstr ""
 
 #: order/templates/order/return_order_base.html:43
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Print return order report"
-msgstr "Cetak laporan order produksi"
+msgstr ""
 
 #: order/templates/order/return_order_base.html:47
 #: order/templates/order/sales_order_base.html:47
@@ -9960,22 +9926,16 @@ msgid "Delete Contacts"
 msgstr ""
 
 #: templates/js/translated/company.js:684
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No contacts found"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/js/translated/company.js:697
-#, fuzzy
-#| msgid "Serial Numbers"
 msgid "Phone Number"
-msgstr "Nomor Seri"
+msgstr ""
 
 #: templates/js/translated/company.js:703
-#, fuzzy
-#| msgid "Email address confirmation"
 msgid "Email Address"
-msgstr "Konfirmasi alamat email"
+msgstr ""
 
 #: templates/js/translated/company.js:729
 msgid "Delete Contact"
@@ -10204,10 +10164,8 @@ msgid "Select Label Template"
 msgstr ""
 
 #: templates/js/translated/label.js:166 templates/js/translated/report.js:123
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Select Items"
-msgstr "Stok Item"
+msgstr ""
 
 #: templates/js/translated/label.js:167
 msgid "No items selected for printing"
@@ -10982,16 +10940,12 @@ msgid "Cancel Return Order"
 msgstr ""
 
 #: templates/js/translated/return_order.js:173
-#, fuzzy
-#| msgid "Complete Build"
 msgid "Complete Return Order"
-msgstr "Selesaikan Produksi"
+msgstr ""
 
 #: templates/js/translated/return_order.js:221
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No return orders found"
-msgstr "Tidak ada nomor seri ditemukan"
+msgstr ""
 
 #: templates/js/translated/return_order.js:258
 #: templates/js/translated/sales_order.js:700
@@ -11537,10 +11491,8 @@ msgid "Purchase order no longer exists"
 msgstr ""
 
 #: templates/js/translated/stock.js:2712
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order no longer exists"
-msgstr "Referensi Order Penjualan"
+msgstr ""
 
 #: templates/js/translated/stock.js:2729
 msgid "Return Order no longer exists"
@@ -12025,8 +11977,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12205,3 +12156,4 @@ msgstr ""
 #: users/models.py:243
 msgid "Permission to delete items"
 msgstr ""
+
