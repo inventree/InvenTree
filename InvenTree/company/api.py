@@ -1,7 +1,7 @@
 """Provides a JSON API for the Company app."""
 
 from django.db.models import Q
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,10 +15,11 @@ from InvenTree.mixins import (ListCreateAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
 from plugin.serializers import MetadataSerializer
 
-from .models import (Company, CompanyAttachment, ManufacturerPart,
+from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
                      ManufacturerPartAttachment, ManufacturerPartParameter,
                      SupplierPart, SupplierPriceBreak)
 from .serializers import (CompanyAttachmentSerializer, CompanySerializer,
+                          ContactSerializer,
                           ManufacturerPartAttachmentSerializer,
                           ManufacturerPartParameterSerializer,
                           ManufacturerPartSerializer, SupplierPartSerializer,
@@ -118,6 +119,41 @@ class CompanyAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = CompanyAttachmentSerializer
 
 
+class ContactList(ListCreateDestroyAPIView):
+    """API endpoint for list view of Company model"""
+
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filterset_fields = [
+        'company',
+    ]
+
+    search_fields = [
+        'company__name',
+        'name',
+    ]
+
+    ordering_fields = [
+        'name',
+    ]
+
+    ordering = 'name'
+
+
+class ContactDetail(RetrieveUpdateDestroyAPI):
+    """Detail endpoint for Company model"""
+
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
+
 class ManufacturerPartFilter(rest_filters.FilterSet):
     """Custom API filters for the ManufacturerPart list endpoint."""
 
@@ -193,6 +229,16 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
 
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
+
+
+class ManufacturerPartMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating ManufacturerPart metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a Company"""
+        return MetadataSerializer(ManufacturerPart, *args, **kwargs)
+
+    queryset = ManufacturerPart.objects.all()
 
 
 class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
@@ -424,6 +470,16 @@ class SupplierPartDetail(RetrieveUpdateDestroyAPI):
     ]
 
 
+class SupplierPartMetadata(RetrieveUpdateAPI):
+    """API endpoint for viewing / updating SupplierPart metadata."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a Company"""
+        return MetadataSerializer(SupplierPart, *args, **kwargs)
+
+    queryset = SupplierPart.objects.all()
+
+
 class SupplierPriceBreakFilter(rest_filters.FilterSet):
     """Custom API filters for the SupplierPriceBreak list endpoint"""
 
@@ -499,18 +555,21 @@ manufacturer_part_api_urls = [
 
     # Base URL for ManufacturerPartAttachment API endpoints
     re_path(r'^attachment/', include([
-        re_path(r'^(?P<pk>\d+)/', ManufacturerPartAttachmentDetail.as_view(), name='api-manufacturer-part-attachment-detail'),
+        path(r'<int:pk>/', ManufacturerPartAttachmentDetail.as_view(), name='api-manufacturer-part-attachment-detail'),
         re_path(r'^$', ManufacturerPartAttachmentList.as_view(), name='api-manufacturer-part-attachment-list'),
     ])),
 
     re_path(r'^parameter/', include([
-        re_path(r'^(?P<pk>\d+)/', ManufacturerPartParameterDetail.as_view(), name='api-manufacturer-part-parameter-detail'),
+        path(r'<int:pk>/', ManufacturerPartParameterDetail.as_view(), name='api-manufacturer-part-parameter-detail'),
 
         # Catch anything else
         re_path(r'^.*$', ManufacturerPartParameterList.as_view(), name='api-manufacturer-part-parameter-list'),
     ])),
 
-    re_path(r'^(?P<pk>\d+)/?', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
+    re_path(r'^(?P<pk>\d+)/?', include([
+        re_path('^metadata/', ManufacturerPartMetadata.as_view(), name='api-manufacturer-part-metadata'),
+        re_path('^.*$', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
+    ])),
 
     # Catch anything else
     re_path(r'^.*$', ManufacturerPartList.as_view(), name='api-manufacturer-part-list'),
@@ -519,7 +578,10 @@ manufacturer_part_api_urls = [
 
 supplier_part_api_urls = [
 
-    re_path(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
+    re_path(r'^(?P<pk>\d+)/?', include([
+        re_path('^metadata/', SupplierPartMetadata.as_view(), name='api-supplier-part-metadata'),
+        re_path('^.*$', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
+    ])),
 
     # Catch anything else
     re_path(r'^.*$', SupplierPartList.as_view(), name='api-supplier-part-list'),
@@ -544,8 +606,13 @@ company_api_urls = [
     ])),
 
     re_path(r'^attachment/', include([
-        re_path(r'^(?P<pk>\d+)/', CompanyAttachmentDetail.as_view(), name='api-company-attachment-detail'),
+        path(r'<int:pk>/', CompanyAttachmentDetail.as_view(), name='api-company-attachment-detail'),
         re_path(r'^$', CompanyAttachmentList.as_view(), name='api-company-attachment-list'),
+    ])),
+
+    re_path(r'^contact/', include([
+        path('<int:pk>/', ContactDetail.as_view(), name='api-contact-detail'),
+        re_path(r'^.*$', ContactList.as_view(), name='api-contact-list'),
     ])),
 
     re_path(r'^.*$', CompanyList.as_view(), name='api-company-list'),

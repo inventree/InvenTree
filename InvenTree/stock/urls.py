@@ -1,12 +1,12 @@
 """URL lookup for Stock app."""
 
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from stock import views
 
 location_urls = [
 
-    re_path(r'^(?P<pk>\d+)/', include([
+    path(r'<int:pk>/', include([
         # Anything else - direct to the location detail view
         re_path('^.*$', views.StockLocationDetail.as_view(), name='stock-location-detail'),
     ])),

@@ -301,7 +301,7 @@ loadSupplierPriceBreakTable({
 $('#new-price-break').click(function() {
     createSupplierPartPriceBreak({{ part.pk }}, {
         onSuccess: function() {
-            $("#price-break-table").bootstrapTable("refresh");
+            $("#price-break-table").bootstrapTable('refresh');
         }
     });
 

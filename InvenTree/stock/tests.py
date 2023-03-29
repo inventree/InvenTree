@@ -491,7 +491,7 @@ class StockTest(StockTestBase):
         # Check that a tracking item was added
         track = StockItemTracking.objects.filter(item=ait).latest('id')
 
-        self.assertEqual(track.tracking_type, StockHistoryCode.SENT_TO_CUSTOMER)
+        self.assertEqual(track.tracking_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER)
         self.assertIn('Allocated some stock', track.notes)
 
     def test_return_from_customer(self):
@@ -917,6 +917,24 @@ class StockTest(StockTestBase):
 
         self.assertEqual(C21.get_ancestors().count(), 1)
         self.assertEqual(C22.get_ancestors().count(), 1)
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [StockItem, StockLocation]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)
 
 
 class StockBarcodeTest(StockTestBase):

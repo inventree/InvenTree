@@ -8,8 +8,6 @@ from pathlib import Path
 from django.apps import AppConfig
 from django.conf import settings
 
-from InvenTree.ready import canAppAccessDatabase
-
 logger = logging.getLogger("inventree")
 
 
@@ -19,12 +17,21 @@ class ReportConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the report app is loaded."""
+
+        from InvenTree.ready import canAppAccessDatabase
+
+        # Configure logging for PDF generation (disable "info" messages)
+        logging.getLogger('fontTools').setLevel(logging.WARNING)
+        logging.getLogger('weasyprint').setLevel(logging.WARNING)
+
+        # Create entries for default report templates
         if canAppAccessDatabase(allow_test=True):
             self.create_default_test_reports()
             self.create_default_build_reports()
             self.create_default_bill_of_materials_reports()
             self.create_default_purchase_order_reports()
             self.create_default_sales_order_reports()
+            self.create_default_return_order_reports()
 
     def create_default_reports(self, model, reports):
         """Copy defualt report files across to the media directory."""
@@ -174,3 +181,23 @@ class ReportConfig(AppConfig):
         ]
 
         self.create_default_reports(SalesOrderReport, reports)
+
+    def create_default_return_order_reports(self):
+        """Create database entries for the default ReturnOrderReport templates"""
+
+        try:
+            from report.models import ReturnOrderReport
+        except Exception:  # pragma: no cover
+            # Database not yet ready
+            return
+
+        # List of templates to copy across
+        reports = [
+            {
+                'file': 'inventree_return_order_report.html',
+                'name': 'InvenTree Return Order',
+                'description': 'Return Order example report',
+            }
+        ]
+
+        self.create_default_reports(ReturnOrderReport, reports)

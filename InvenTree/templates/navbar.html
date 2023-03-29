@@ -47,18 +47,23 @@
           <ul class='dropdown-menu' aria-labelledby="buyMenuDropdown">
             <li><a class='dropdown-item' href="{% url 'supplier-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
             <li><a class='dropdown-item' href="{% url 'manufacturer-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
-            <li><a class='dropdown-item' href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
+            <li><a class='dropdown-item' href="{% url 'purchase-order-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
           </ul>
         </li>
         {% endif %}
-        {% if roles.sales_order.view %}
+        {% if roles.sales_order.view or roles.return_order.view %}
         <li class='nav-item dropdown'>
           <a class='nav-link dropdown-toggle' href='#' id='sellMenuDropdown' role='button' data-bs-toggle='dropdown'>
             <span class='fas fa-truck icon-header'></span>{% trans "Sell" %}
           </a>
           <ul class='dropdown-menu'>
             <li><a class='dropdown-item' href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
-            <li><a class='dropdown-item' href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
+            {% if roles.sales_order.view %}
+            <li><a class='dropdown-item' href="{% url 'sales-order-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
+            {% endif %}
+            {% if roles.return_order.view and return_order_enabled %}
+            <li><a class='dropdown-item' href="{% url 'return-order-index' %}"><span class='fas fa-undo icon-header'></span>{% trans "Return Orders" %}</a></li>
+            {% endif %}
           </ul>
         </li>
         {% endif %}

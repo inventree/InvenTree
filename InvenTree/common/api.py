@@ -457,7 +457,7 @@ settings_api_urls = [
     # Notification settings
     re_path(r'^notification/', include([
         # Notification Settings Detail
-        re_path(r'^(?P<pk>\d+)/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
+        path(r'<int:pk>/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
 
         # Notification Settings List
         re_path(r'^.*$', NotificationUserSettingsList.as_view(), name='api-notifcation-setting-list'),
@@ -486,7 +486,7 @@ common_api_urls = [
     # Notifications
     re_path(r'^notifications/', include([
         # Individual purchase order detail URLs
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
         ])),
         # Read all
@@ -498,7 +498,7 @@ common_api_urls = [
 
     # News
     re_path(r'^news/', include([
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'.*$', NewsFeedEntryDetail.as_view(), name='api-news-detail'),
         ])),
         re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),

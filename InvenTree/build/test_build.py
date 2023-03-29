@@ -570,6 +570,29 @@ class BuildTest(BuildTestBase):
 
         self.assertTrue(messages.filter(user__pk=4).exists())
 
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+
+        # Make sure a BuildItem exists before trying to run this test
+        b = BuildItem(stock_item=self.stock_1_2, build=self.build, install_into=self.output_1, quantity=10)
+        b.save()
+
+        for model in [Build, BuildItem]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)
+
 
 class AutoAllocationTests(BuildTestBase):
     """Tests for auto allocating stock against a build order"""

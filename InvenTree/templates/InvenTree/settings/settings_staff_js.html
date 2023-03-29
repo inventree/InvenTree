@@ -284,9 +284,7 @@ onPanelLoad('parts', function() {
             },
             method: 'POST',
             title: '{% trans "Create Part Parameter Template" %}',
-            onSuccess: function() {
-                $("#param-table").bootstrapTable('refresh');
-            },
+            refreshTable: '#param-table',
         });
     });
 
@@ -303,9 +301,7 @@ onPanelLoad('parts', function() {
                     description: {},
                 },
                 title: '{% trans "Edit Part Parameter Template" %}',
-                onSuccess: function() {
-                    $("#param-table").bootstrapTable('refresh');
-                },
+                refreshTable: '#param-table',
             }
         );
     });
@@ -325,9 +321,7 @@ onPanelLoad('parts', function() {
                 method: 'DELETE',
                 preFormContent: html,
                 title: '{% trans "Delete Part Parameter Template" %}',
-                onSuccess: function() {
-                    $("#param-table").bootstrapTable('refresh');
-                },
+                refreshTable: '#param-table',
             }
         );
     });
