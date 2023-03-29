@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 08:09+0000\n"
-"PO-Revision-Date: 2023-03-28 11:28\n"
+"POT-Creation-Date: 2023-03-29 05:06+0000\n"
+"PO-Revision-Date: 2023-03-29 11:40\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -721,38 +721,28 @@ msgid "Consumed by build order"
 msgstr "Verbruikt door productieorder"
 
 #: InvenTree/status_codes.py:296
-#, fuzzy
-#| msgid "Edit Sales Order"
 msgid "Shipped against Sales Order"
-msgstr "Verkooporder bewerken"
+msgstr ""
 
 #: InvenTree/status_codes.py:298
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Received against Purchase Order"
-msgstr "Ontvangen tegen inkooporder"
+msgstr ""
 
 #: InvenTree/status_codes.py:300
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Returned against Return Order"
-msgstr "Ontvangen tegen inkooporder"
+msgstr ""
 
 #: InvenTree/status_codes.py:314
 msgid "Production"
 msgstr "Productie"
 
 #: InvenTree/status_codes.py:351
-#, fuzzy
-#| msgid "Build Orders In Progress"
 msgid "In Progress"
-msgstr "Productieorders in Uitvoering"
+msgstr ""
 
 #: InvenTree/status_codes.py:386
-#, fuzzy
-#| msgid "Returned"
 msgid "Return"
-msgstr "Retour"
+msgstr ""
 
 #: InvenTree/status_codes.py:387
 msgid "Repair"
@@ -763,16 +753,12 @@ msgid "Refund"
 msgstr ""
 
 #: InvenTree/status_codes.py:389
-#, fuzzy
-#| msgid "Placed"
 msgid "Replace"
-msgstr "Geplaatst"
+msgstr ""
 
 #: InvenTree/status_codes.py:390
-#, fuzzy
-#| msgid "Rejected"
 msgid "Reject"
-msgstr "Afgewezen"
+msgstr ""
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
@@ -2462,34 +2448,24 @@ msgid "Required pattern for generating Build Order reference field"
 msgstr "Vereist patroon voor het genereren van het Bouworderreferentieveld"
 
 #: common/models.py:1445
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Enable Return Orders"
-msgstr "Terug naar Orders"
+msgstr ""
 
 #: common/models.py:1446
-#, fuzzy
-#| msgid "Enable label printing from the web interface"
 msgid "Enable return order functionality in the user interface"
-msgstr "Printen van labels via de webinterface inschakelen"
+msgstr ""
 
 #: common/models.py:1452
-#, fuzzy
-#| msgid "Build Order Reference Pattern"
 msgid "Return Order Reference Pattern"
-msgstr "Productieorderreferentiepatroon"
+msgstr ""
 
 #: common/models.py:1453
-#, fuzzy
-#| msgid "Required pattern for generating Build Order reference field"
 msgid "Required pattern for generating Return Order reference field"
-msgstr "Vereist patroon voor het genereren van het Bouworderreferentieveld"
+msgstr ""
 
 #: common/models.py:1459
-#, fuzzy
-#| msgid "Complete Order"
 msgid "Edit Completed Return Orders"
-msgstr "Order Voltooien"
+msgstr ""
 
 #: common/models.py:1460
 msgid "Allow editing of return orders after they have been completed"
@@ -3000,28 +2976,20 @@ msgid "Exclude inactive sales orders from search preview window"
 msgstr "Inactieve verkooporders weglaten in het zoekvenster"
 
 #: common/models.py:1962
-#, fuzzy
-#| msgid "Search Sales Orders"
 msgid "Search Return Orders"
-msgstr "Verkooporders zoeken"
+msgstr ""
 
 #: common/models.py:1963
-#, fuzzy
-#| msgid "Display sales orders in search preview window"
 msgid "Display return orders in search preview window"
-msgstr "Toon verkooporders in het zoekvenster"
+msgstr ""
 
 #: common/models.py:1969
-#, fuzzy
-#| msgid "Exclude Inactive Sales Orders"
 msgid "Exclude Inactive Return Orders"
-msgstr "Inactieve Verkooporders Weglaten"
+msgstr ""
 
 #: common/models.py:1970
-#, fuzzy
-#| msgid "Exclude inactive sales orders from search preview window"
 msgid "Exclude inactive return orders from search preview window"
-msgstr "Inactieve verkooporders weglaten in het zoekvenster"
+msgstr ""
 
 #: common/models.py:1976
 msgid "Search Preview Results"
@@ -3234,10 +3202,8 @@ msgid "Items have been received against a purchase order"
 msgstr "Artikelen zijn ontvangen tegen een inkooporder"
 
 #: common/notifications.py:311
-#, fuzzy
-#| msgid "Items have been received against a purchase order"
 msgid "Items have been received against a return order"
-msgstr "Artikelen zijn ontvangen tegen een inkooporder"
+msgstr ""
 
 #: common/notifications.py:423
 msgid "Error raised by plugin"
@@ -3793,37 +3759,27 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:260 templates/navbar.html:65
 #: users/models.py:45
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Return Orders"
-msgstr "Terug naar Orders"
+msgstr ""
 
 #: company/templates/company/detail.html:195
 #: order/templates/order/return_orders.html:21
-#, fuzzy
-#| msgid "Create new sales order"
 msgid "Create new return order"
-msgstr "Nieuwe inkooporder aanmaken"
+msgstr ""
 
 #: company/templates/company/detail.html:196
 #: order/templates/order/return_orders.html:22
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "New Return Order"
-msgstr "Terug naar Orders"
+msgstr ""
 
 #: company/templates/company/detail.html:236
-#, fuzzy
-#| msgid "Company Notes"
 msgid "Company Contacts"
-msgstr "Opmerkingen Bedrijf"
+msgstr ""
 
 #: company/templates/company/detail.html:240
 #: company/templates/company/detail.html:241
-#, fuzzy
-#| msgid "Contact"
 msgid "Add Contact"
-msgstr "Contact"
+msgstr ""
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -3920,10 +3876,8 @@ msgid "Assigned Stock Items"
 msgstr "Toegewezen Voorraadartikelen"
 
 #: company/templates/company/sidebar.html:33
-#, fuzzy
-#| msgid "Contact"
 msgid "Contacts"
-msgstr "Contact"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:676
@@ -4194,10 +4148,8 @@ msgid "Total price for this order"
 msgstr ""
 
 #: order/models.py:177
-#, fuzzy
-#| msgid "Shipment does not match sales order"
 msgid "Contact does not match selected company"
-msgstr "Verzending komt niet overeen met verkooporder"
+msgstr ""
 
 #: order/models.py:199
 msgid "Order description"
@@ -4220,10 +4172,8 @@ msgid "User or group responsible for this order"
 msgstr "Gebruiker of groep verantwoordelijk voor deze order"
 
 #: order/models.py:232
-#, fuzzy
-#| msgid "Point of contact"
 msgid "Point of contact for this order"
-msgstr "Contactpunt"
+msgstr ""
 
 #: order/models.py:236
 msgid "Order notes"
@@ -4506,28 +4456,20 @@ msgid "Enter stock allocation quantity"
 msgstr "Voer voorraadtoewijzingshoeveelheid in"
 
 #: order/models.py:1639
-#, fuzzy
-#| msgid "Order reference"
 msgid "Return Order reference"
-msgstr "Orderreferentie"
+msgstr ""
 
 #: order/models.py:1653
-#, fuzzy
-#| msgid "Company from which the items are being ordered"
 msgid "Company from which items are being returned"
-msgstr "Bedrijf waar de artikelen van worden besteld"
+msgstr ""
 
 #: order/models.py:1664
-#, fuzzy
-#| msgid "Purchase order status"
 msgid "Return order status"
-msgstr "Inkooporder status"
+msgstr ""
 
 #: order/models.py:1814
-#, fuzzy
-#| msgid "Only salable parts can be assigned to a sales order"
 msgid "Only serialized items can be assigned to a Return Order"
-msgstr "Alleen verkoopbare onderdelen kunnen aan een verkooporder worden toegewezen"
+msgstr ""
 
 #: order/models.py:1822 order/models.py:1870
 #: order/templates/order/return_order_base.html:9
@@ -4535,22 +4477,16 @@ msgstr "Alleen verkoopbare onderdelen kunnen aan een verkooporder worden toegewe
 #: report/templates/report/inventree_return_order_report_base.html:13
 #: templates/js/translated/return_order.js:239
 #: templates/js/translated/stock.js:2720
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Return Order"
-msgstr "Terug naar Orders"
+msgstr ""
 
 #: order/models.py:1830
-#, fuzzy
-#| msgid "Returned from customer"
 msgid "Select item to return from customer"
-msgstr "Geretourneerd door klant"
+msgstr ""
 
 #: order/models.py:1835
-#, fuzzy
-#| msgid "Received Items"
 msgid "Received Date"
-msgstr "Ontvangen Artikelen"
+msgstr ""
 
 #: order/models.py:1836
 msgid "The date this this return item was received"
@@ -4562,10 +4498,8 @@ msgid "Outcome"
 msgstr ""
 
 #: order/models.py:1847
-#, fuzzy
-#| msgid "Purchase order for this stock item"
 msgid "Outcome for this line item"
-msgstr "Inkooporder voor dit voorraadartikel"
+msgstr ""
 
 #: order/models.py:1853
 msgid "Cost associated with return or repair for this line item"
@@ -4688,34 +4622,24 @@ msgid "The following serial numbers are already allocated"
 msgstr "De volgende serienummers zijn al toegewezen"
 
 #: order/serializers.py:1507
-#, fuzzy
-#| msgid "Delete line item"
 msgid "Return order line item"
-msgstr "Artikel verwijderen"
+msgstr ""
 
 #: order/serializers.py:1514
-#, fuzzy
-#| msgid "Line item does not match purchase order"
 msgid "Line item does not match return order"
-msgstr "Artikelregel komt niet overeen met inkooporder"
+msgstr ""
 
 #: order/serializers.py:1517
-#, fuzzy
-#| msgid "All line items have been received"
 msgid "Line item has already been received"
-msgstr "Alle artikelen zijn ontvangen"
+msgstr ""
 
 #: order/serializers.py:1549
-#, fuzzy
-#| msgid "Items have been received against a purchase order"
 msgid "Items can only be received against orders which are in progress"
-msgstr "Artikelen zijn ontvangen tegen een inkooporder"
+msgstr ""
 
 #: order/serializers.py:1629
-#, fuzzy
-#| msgid "Sale price currency"
 msgid "Line price currency"
-msgstr "Valuta verkoopprijs"
+msgstr ""
 
 #: order/tasks.py:26
 msgid "Overdue Purchase Order"
@@ -4968,10 +4892,8 @@ msgstr "Artikel toevoegen"
 #: order/templates/order/purchase_order_detail.html:33
 #: order/templates/order/return_order_detail.html:28
 #: order/templates/order/return_order_detail.html:29
-#, fuzzy
-#| msgid "Receive line item"
 msgid "Receive Line Items"
-msgstr "Artikel ontvangen"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/purchase_order_detail.html:51
@@ -5001,10 +4923,8 @@ msgid "Order Notes"
 msgstr "Ordernotities"
 
 #: order/templates/order/return_order_base.html:43
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Print return order report"
-msgstr "Print productieorderrapport"
+msgstr ""
 
 #: order/templates/order/return_order_base.html:47
 #: order/templates/order/sales_order_base.html:47
@@ -5032,10 +4952,8 @@ msgid "Total Cost"
 msgstr ""
 
 #: order/templates/order/return_order_sidebar.html:5
-#, fuzzy
-#| msgid "Build Order Details"
 msgid "Order Details"
-msgstr "Productieorderdetails"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:43
 msgid "Print sales order report"
@@ -7208,10 +7126,8 @@ msgid "Sales order query filters"
 msgstr "Verkooporder zoekopdracht filters"
 
 #: report/models.py:520
-#, fuzzy
-#| msgid "Sales order query filters"
 msgid "Return order query filters"
-msgstr "Verkooporder zoekopdracht filters"
+msgstr ""
 
 #: report/models.py:573
 msgid "Snippet"
@@ -7314,10 +7230,8 @@ msgid "Fail"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:139
-#, fuzzy
-#| msgid "Restart required"
 msgid "No result (required)"
-msgstr "Opnieuw opstarten vereist"
+msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:141
 msgid "No result"
@@ -8569,10 +8483,8 @@ msgid "Report Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/returns.html:7
-#, fuzzy
-#| msgid "Build Order Settings"
 msgid "Return Order Settings"
-msgstr "Productieorderinstellingen"
+msgstr ""
 
 #: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
@@ -9992,17 +9904,13 @@ msgid "No company information found"
 msgstr ""
 
 #: templates/js/translated/company.js:587
-#, fuzzy
-#| msgid "Create new stock item"
 msgid "Create New Contact"
-msgstr "Nieuw voorraadartikel aanmaken"
+msgstr ""
 
 #: templates/js/translated/company.js:603
 #: templates/js/translated/company.js:725
-#, fuzzy
-#| msgid "Contact"
 msgid "Edit Contact"
-msgstr "Contact"
+msgstr ""
 
 #: templates/js/translated/company.js:639
 msgid "All selected contacts will be deleted"
@@ -10014,34 +9922,24 @@ msgid "Role"
 msgstr ""
 
 #: templates/js/translated/company.js:653
-#, fuzzy
-#| msgid "Delete outputs"
 msgid "Delete Contacts"
-msgstr "Verwijder uitvoeren"
+msgstr ""
 
 #: templates/js/translated/company.js:684
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No contacts found"
-msgstr "Geen overeenkomende actie gevonden"
+msgstr ""
 
 #: templates/js/translated/company.js:697
-#, fuzzy
-#| msgid "Phone number"
 msgid "Phone Number"
-msgstr "Telefoonnummer"
+msgstr ""
 
 #: templates/js/translated/company.js:703
-#, fuzzy
-#| msgid "Address"
 msgid "Email Address"
-msgstr "Adres"
+msgstr ""
 
 #: templates/js/translated/company.js:729
-#, fuzzy
-#| msgid "Delete Company"
 msgid "Delete Contact"
-msgstr "Bedrijf verwijderen"
+msgstr ""
 
 #: templates/js/translated/company.js:803
 msgid "All selected manufacturer parts will be deleted"
@@ -10152,22 +10050,16 @@ msgid "Select filter"
 msgstr ""
 
 #: templates/js/translated/filters.js:315
-#, fuzzy
-#| msgid "Order selected items"
 msgid "Print reports for selected items"
-msgstr "Geselecteerde artikelen bestellen"
+msgstr ""
 
 #: templates/js/translated/filters.js:324
-#, fuzzy
-#| msgid "Order selected items"
 msgid "Print labels for selected items"
-msgstr "Geselecteerde artikelen bestellen"
+msgstr ""
 
 #: templates/js/translated/filters.js:333
-#, fuzzy
-#| msgid "Download Image"
 msgid "Download table data"
-msgstr "Afbeelding Downloaden"
+msgstr ""
 
 #: templates/js/translated/filters.js:340
 msgid "Reload table data"
@@ -10272,26 +10164,20 @@ msgid "Select Label Template"
 msgstr ""
 
 #: templates/js/translated/label.js:166 templates/js/translated/report.js:123
-#, fuzzy
-#| msgid "Select Line Items"
 msgid "Select Items"
-msgstr "Selecteer artikelen"
+msgstr ""
 
 #: templates/js/translated/label.js:167
-#, fuzzy
-#| msgid "Sales Order(s) must be selected before printing report"
 msgid "No items selected for printing"
-msgstr "Verkooporder(s) moeten geselecteerd zijn voordat u rapport afdrukt"
+msgstr ""
 
 #: templates/js/translated/label.js:183
 msgid "No Labels Found"
 msgstr ""
 
 #: templates/js/translated/label.js:184
-#, fuzzy
-#| msgid "No report templates found which match selected orders"
 msgid "No label templates found which match the selected items"
-msgstr "Geen rapportsjablonen gevonden die overeenkomen met geselecteerde orders"
+msgstr ""
 
 #: templates/js/translated/label.js:203
 msgid "Labels sent to printer"
@@ -10385,10 +10271,8 @@ msgid "Notifications will load here"
 msgstr ""
 
 #: templates/js/translated/order.js:69
-#, fuzzy
-#| msgid "Add Extra Line"
 msgid "Add Extra Line Item"
-msgstr "Extra Regel Toevoegen"
+msgstr ""
 
 #: templates/js/translated/order.js:106
 msgid "Export Order"
@@ -10866,10 +10750,8 @@ msgstr "Deze inkooporder kan niet geannuleerd worden"
 
 #: templates/js/translated/purchase_order.js:468
 #: templates/js/translated/return_order.js:119
-#, fuzzy
-#| msgid "After placing this purchase order, line items will no longer be editable."
 msgid "After placing this order, line items will no longer be editable."
-msgstr "Na het plaatsen van de inkooporder zijn de artikelen niet meer bewerkbaar."
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:473
 msgid "Issue Purchase Order"
@@ -11029,10 +10911,8 @@ msgid "No Reports Found"
 msgstr ""
 
 #: templates/js/translated/report.js:141
-#, fuzzy
-#| msgid "No report templates found which match selected orders"
 msgid "No report templates found which match the selected items"
-msgstr "Geen rapportsjablonen gevonden die overeenkomen met geselecteerde orders"
+msgstr ""
 
 #: templates/js/translated/return_order.js:40
 #: templates/js/translated/sales_order.js:52
@@ -11040,46 +10920,32 @@ msgid "Add Customer"
 msgstr ""
 
 #: templates/js/translated/return_order.js:89
-#, fuzzy
-#| msgid "Create Build Order"
 msgid "Create Return Order"
-msgstr "Maak Productieorder"
+msgstr ""
 
 #: templates/js/translated/return_order.js:104
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Edit Return Order"
-msgstr "Terug naar Orders"
+msgstr ""
 
 #: templates/js/translated/return_order.js:124
-#, fuzzy
-#| msgid "Issue Purchase Order"
 msgid "Issue Return Order"
-msgstr "Geef inkooporder uit"
+msgstr ""
 
 #: templates/js/translated/return_order.js:141
-#, fuzzy
-#| msgid "Are you sure you wish to cancel this purchase order?"
 msgid "Are you sure you wish to cancel this Return Order?"
-msgstr "Weet u zeker dat u deze inkooporder wilt annuleren?"
+msgstr ""
 
 #: templates/js/translated/return_order.js:148
-#, fuzzy
-#| msgid "Cancel Build Order"
 msgid "Cancel Return Order"
-msgstr "Annuleer Productieorder"
+msgstr ""
 
 #: templates/js/translated/return_order.js:173
-#, fuzzy
-#| msgid "Complete Order"
 msgid "Complete Return Order"
-msgstr "Order Voltooien"
+msgstr ""
 
 #: templates/js/translated/return_order.js:221
-#, fuzzy
-#| msgid "No sales orders found"
 msgid "No return orders found"
-msgstr "Geen verkooporder gevonden"
+msgstr ""
 
 #: templates/js/translated/return_order.js:258
 #: templates/js/translated/sales_order.js:700
@@ -11087,10 +10953,8 @@ msgid "Invalid Customer"
 msgstr "Ongeldige Klant"
 
 #: templates/js/translated/return_order.js:501
-#, fuzzy
-#| msgid "Receive Purchase Order Items"
 msgid "Receive Return Order Items"
-msgstr "Ontvang Artikelen Inkooporder"
+msgstr ""
 
 #: templates/js/translated/return_order.js:632
 #: templates/js/translated/sales_order.js:2080
@@ -11098,10 +10962,8 @@ msgid "No matching line items"
 msgstr "Geen overeenkomende artikelen"
 
 #: templates/js/translated/return_order.js:728
-#, fuzzy
-#| msgid "Number of items received"
 msgid "Mark item as received"
-msgstr "Aantal ontvangen artikelen"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:102
 msgid "Create Sales Order"
@@ -11629,16 +11491,12 @@ msgid "Purchase order no longer exists"
 msgstr "Inkooporder bestaat niet meer"
 
 #: templates/js/translated/stock.js:2712
-#, fuzzy
-#| msgid "Purchase order no longer exists"
 msgid "Sales Order no longer exists"
-msgstr "Inkooporder bestaat niet meer"
+msgstr ""
 
 #: templates/js/translated/stock.js:2729
-#, fuzzy
-#| msgid "Purchase order no longer exists"
 msgid "Return Order no longer exists"
-msgstr "Inkooporder bestaat niet meer"
+msgstr ""
 
 #: templates/js/translated/stock.js:2748
 msgid "Customer no longer exists"
@@ -12119,8 +11977,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12300,41 +12157,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Printing Actions"
-#~ msgstr "Afdrukacties"
-
-#~ msgid "Print labels"
-#~ msgstr "Labels afdrukken"
-
-#~ msgid "Print Build Orders"
-#~ msgstr "Print Productieorders"
-
-#~ msgid "Target Delivery Date"
-#~ msgstr "Streefdatum Levering"
-
-#~ msgid "Target date for order completion. Order will be overdue after this date."
-#~ msgstr "Streefdatum voor voltooien order. De order is na deze datum achterstallig."
-
-#~ msgid "Receive selected items"
-#~ msgstr "Geselecteerde artikelen ontvangen"
-
-#~ msgid "Add Order Line"
-#~ msgstr "Voeg Orderregel toe"
-
-#~ msgid "Print Order Reports"
-#~ msgstr "Print Rapporten Order"
-
-#~ msgid "No matching line"
-#~ msgstr "Geen overeenkomende regel"
-
-#~ msgid "No matching lines"
-#~ msgstr "Geen overeenkomende regels"
-
-#~ msgid "Select Purchase Orders"
-#~ msgstr "Selecteer Inkooporders"
-
-#~ msgid "Purchase Order(s) must be selected before printing report"
-#~ msgstr "Inkooporder(s) moeten geselecteerd zijn voordat u rapport afdrukt"
-
-#~ msgid "Select Sales Orders"
-#~ msgstr "Selecteer Verkooporders"
