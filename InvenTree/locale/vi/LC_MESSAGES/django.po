@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 08:09+0000\n"
-"PO-Revision-Date: 2023-03-28 11:28\n"
+"POT-Creation-Date: 2023-03-29 05:06+0000\n"
+"PO-Revision-Date: 2023-03-29 11:39\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -725,10 +725,8 @@ msgid "Shipped against Sales Order"
 msgstr ""
 
 #: InvenTree/status_codes.py:298
-#, fuzzy
-#| msgid "Purchase Order"
 msgid "Received against Purchase Order"
-msgstr "Đơn hàng"
+msgstr ""
 
 #: InvenTree/status_codes.py:300
 msgid "Returned against Return Order"
@@ -2978,10 +2976,8 @@ msgid "Exclude inactive sales orders from search preview window"
 msgstr ""
 
 #: common/models.py:1962
-#, fuzzy
-#| msgid "Search Settings"
 msgid "Search Return Orders"
-msgstr "Cài đặt tìm kiếm"
+msgstr ""
 
 #: common/models.py:1963
 msgid "Display return orders in search preview window"
@@ -3763,10 +3759,8 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:260 templates/navbar.html:65
 #: users/models.py:45
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Return Orders"
-msgstr "Tạo đơn hàng"
+msgstr ""
 
 #: company/templates/company/detail.html:195
 #: order/templates/order/return_orders.html:21
@@ -4483,10 +4477,8 @@ msgstr ""
 #: report/templates/report/inventree_return_order_report_base.html:13
 #: templates/js/translated/return_order.js:239
 #: templates/js/translated/stock.js:2720
-#, fuzzy
-#| msgid "Purchase Order"
 msgid "Return Order"
-msgstr "Đơn hàng"
+msgstr ""
 
 #: order/models.py:1830
 msgid "Select item to return from customer"
@@ -8491,10 +8483,8 @@ msgid "Report Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/returns.html:7
-#, fuzzy
-#| msgid "User Settings"
 msgid "Return Order Settings"
-msgstr "Cài đặt người dùng"
+msgstr ""
 
 #: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
@@ -9923,10 +9913,8 @@ msgid "Edit Contact"
 msgstr ""
 
 #: templates/js/translated/company.js:639
-#, fuzzy
-#| msgid "All selected parameters will be deleted"
 msgid "All selected contacts will be deleted"
-msgstr "Tất cả những thống số được chọn sẽ bị xoá"
+msgstr ""
 
 #: templates/js/translated/company.js:645
 #: templates/js/translated/company.js:709
@@ -9934,16 +9922,12 @@ msgid "Role"
 msgstr ""
 
 #: templates/js/translated/company.js:653
-#, fuzzy
-#| msgid "Delete parameters"
 msgid "Delete Contacts"
-msgstr "Xóa các thông số"
+msgstr ""
 
 #: templates/js/translated/company.js:684
-#, fuzzy
-#| msgid "No parameters found"
 msgid "No contacts found"
-msgstr "Không có thông số được tìm thấy"
+msgstr ""
 
 #: templates/js/translated/company.js:697
 msgid "Phone Number"
@@ -10948,26 +10932,20 @@ msgid "Issue Return Order"
 msgstr ""
 
 #: templates/js/translated/return_order.js:141
-#, fuzzy
-#| msgid "Are you sure you want to sign out?"
 msgid "Are you sure you wish to cancel this Return Order?"
-msgstr "Bạn có chắc bạn muốn đăng xuất không?"
+msgstr ""
 
 #: templates/js/translated/return_order.js:148
 msgid "Cancel Return Order"
 msgstr ""
 
 #: templates/js/translated/return_order.js:173
-#, fuzzy
-#| msgid "Completed"
 msgid "Complete Return Order"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: templates/js/translated/return_order.js:221
-#, fuzzy
-#| msgid "No parameters found"
 msgid "No return orders found"
-msgstr "Không có thông số được tìm thấy"
+msgstr ""
 
 #: templates/js/translated/return_order.js:258
 #: templates/js/translated/sales_order.js:700
@@ -11999,8 +11977,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12179,3 +12156,4 @@ msgstr ""
 #: users/models.py:243
 msgid "Permission to delete items"
 msgstr ""
+
