@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 08:09+0000\n"
-"PO-Revision-Date: 2023-03-28 11:28\n"
+"POT-Creation-Date: 2023-03-29 05:06+0000\n"
+"PO-Revision-Date: 2023-03-29 11:40\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -721,22 +721,16 @@ msgid "Consumed by build order"
 msgstr "Konsumeras av byggorder"
 
 #: InvenTree/status_codes.py:296
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Shipped against Sales Order"
-msgstr "Mottagen mot inköpsorder"
+msgstr ""
 
 #: InvenTree/status_codes.py:298
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Received against Purchase Order"
-msgstr "Mottagen mot inköpsorder"
+msgstr ""
 
 #: InvenTree/status_codes.py:300
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Returned against Return Order"
-msgstr "Mottagen mot inköpsorder"
+msgstr ""
 
 #: InvenTree/status_codes.py:314
 msgid "Production"
@@ -747,10 +741,8 @@ msgid "In Progress"
 msgstr ""
 
 #: InvenTree/status_codes.py:386
-#, fuzzy
-#| msgid "Returned"
 msgid "Return"
-msgstr "Återlämnad"
+msgstr ""
 
 #: InvenTree/status_codes.py:387
 msgid "Repair"
@@ -761,16 +753,12 @@ msgid "Refund"
 msgstr ""
 
 #: InvenTree/status_codes.py:389
-#, fuzzy
-#| msgid "Placed"
 msgid "Replace"
-msgstr "Placerad"
+msgstr ""
 
 #: InvenTree/status_codes.py:390
-#, fuzzy
-#| msgid "Rejected"
 msgid "Reject"
-msgstr "Avvisad"
+msgstr ""
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
@@ -2460,32 +2448,24 @@ msgid "Required pattern for generating Build Order reference field"
 msgstr ""
 
 #: common/models.py:1445
-#, fuzzy
-#| msgid "Enable Test Reports"
 msgid "Enable Return Orders"
-msgstr "Aktivera testrapporter"
+msgstr ""
 
 #: common/models.py:1446
-#, fuzzy
-#| msgid "Enable label printing from the web interface"
 msgid "Enable return order functionality in the user interface"
-msgstr "Aktivera etikettutskrift från webbgränssnittet"
+msgstr ""
 
 #: common/models.py:1452
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Return Order Reference Pattern"
-msgstr "Byggorderreferens"
+msgstr ""
 
 #: common/models.py:1453
 msgid "Required pattern for generating Return Order reference field"
 msgstr ""
 
 #: common/models.py:1459
-#, fuzzy
-#| msgid "Completed items"
 msgid "Edit Completed Return Orders"
-msgstr "Slutförda objekt"
+msgstr ""
 
 #: common/models.py:1460
 msgid "Allow editing of return orders after they have been completed"
@@ -3222,10 +3202,8 @@ msgid "Items have been received against a purchase order"
 msgstr ""
 
 #: common/notifications.py:311
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Items have been received against a return order"
-msgstr "Mottagen mot inköpsorder"
+msgstr ""
 
 #: common/notifications.py:423
 msgid "Error raised by plugin"
@@ -3781,10 +3759,8 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:260 templates/navbar.html:65
 #: users/models.py:45
-#, fuzzy
-#| msgid "Returned"
 msgid "Return Orders"
-msgstr "Återlämnad"
+msgstr ""
 
 #: company/templates/company/detail.html:195
 #: order/templates/order/return_orders.html:21
@@ -3793,16 +3769,12 @@ msgstr ""
 
 #: company/templates/company/detail.html:196
 #: order/templates/order/return_orders.html:22
-#, fuzzy
-#| msgid "New Build Order"
 msgid "New Return Order"
-msgstr "Ny byggorder"
+msgstr ""
 
 #: company/templates/company/detail.html:236
-#, fuzzy
-#| msgid "Company name"
 msgid "Company Contacts"
-msgstr "Företagsnamn"
+msgstr ""
 
 #: company/templates/company/detail.html:240
 #: company/templates/company/detail.html:241
@@ -4176,10 +4148,8 @@ msgid "Total price for this order"
 msgstr ""
 
 #: order/models.py:177
-#, fuzzy
-#| msgid "Build output does not match the parent build"
 msgid "Contact does not match selected company"
-msgstr "Byggutdata matchar inte överordnad version"
+msgstr ""
 
 #: order/models.py:199
 msgid "Order description"
@@ -4486,10 +4456,8 @@ msgid "Enter stock allocation quantity"
 msgstr ""
 
 #: order/models.py:1639
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Return Order reference"
-msgstr "Byggorderreferens"
+msgstr ""
 
 #: order/models.py:1653
 msgid "Company from which items are being returned"
@@ -4509,16 +4477,12 @@ msgstr ""
 #: report/templates/report/inventree_return_order_report_base.html:13
 #: templates/js/translated/return_order.js:239
 #: templates/js/translated/stock.js:2720
-#, fuzzy
-#| msgid "Returned"
 msgid "Return Order"
-msgstr "Återlämnad"
+msgstr ""
 
 #: order/models.py:1830
-#, fuzzy
-#| msgid "Returned from customer"
 msgid "Select item to return from customer"
-msgstr "Returnerad från kund"
+msgstr ""
 
 #: order/models.py:1835
 msgid "Received Date"
@@ -4662,10 +4626,8 @@ msgid "Return order line item"
 msgstr ""
 
 #: order/serializers.py:1514
-#, fuzzy
-#| msgid "Build output does not match Build Order"
 msgid "Line item does not match return order"
-msgstr "Byggutgång matchar inte bygg order"
+msgstr ""
 
 #: order/serializers.py:1517
 msgid "Line item has already been received"
@@ -4990,10 +4952,8 @@ msgid "Total Cost"
 msgstr ""
 
 #: order/templates/order/return_order_sidebar.html:5
-#, fuzzy
-#| msgid "Order Parts"
 msgid "Order Details"
-msgstr "Beställ delar"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:43
 msgid "Print sales order report"
@@ -7270,10 +7230,8 @@ msgid "Fail"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:139
-#, fuzzy
-#| msgid "Restart required"
 msgid "No result (required)"
-msgstr "Omstart krävs"
+msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:141
 msgid "No result"
@@ -9968,22 +9926,16 @@ msgid "Delete Contacts"
 msgstr ""
 
 #: templates/js/translated/company.js:684
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No contacts found"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: templates/js/translated/company.js:697
-#, fuzzy
-#| msgid "Serial Numbers"
 msgid "Phone Number"
-msgstr "Serienummer"
+msgstr ""
 
 #: templates/js/translated/company.js:703
-#, fuzzy
-#| msgid "Email address confirmation"
 msgid "Email Address"
-msgstr "Bekräfta e-postadress"
+msgstr ""
 
 #: templates/js/translated/company.js:729
 msgid "Delete Contact"
@@ -10212,10 +10164,8 @@ msgid "Select Label Template"
 msgstr ""
 
 #: templates/js/translated/label.js:166 templates/js/translated/report.js:123
-#, fuzzy
-#| msgid "Select Parts"
 msgid "Select Items"
-msgstr "Välj artiklar"
+msgstr ""
 
 #: templates/js/translated/label.js:167
 msgid "No items selected for printing"
@@ -10986,22 +10936,16 @@ msgid "Are you sure you wish to cancel this Return Order?"
 msgstr ""
 
 #: templates/js/translated/return_order.js:148
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Cancel Return Order"
-msgstr "Försäljningsorder"
+msgstr ""
 
 #: templates/js/translated/return_order.js:173
-#, fuzzy
-#| msgid "Complete Build"
 msgid "Complete Return Order"
-msgstr "Färdigställ bygget"
+msgstr ""
 
 #: templates/js/translated/return_order.js:221
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No return orders found"
-msgstr "Inga serienummer hittades"
+msgstr ""
 
 #: templates/js/translated/return_order.js:258
 #: templates/js/translated/sales_order.js:700
@@ -11547,10 +11491,8 @@ msgid "Purchase order no longer exists"
 msgstr ""
 
 #: templates/js/translated/stock.js:2712
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order no longer exists"
-msgstr "Försäljningsorderreferens"
+msgstr ""
 
 #: templates/js/translated/stock.js:2729
 msgid "Return Order no longer exists"
@@ -12035,8 +11977,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12216,8 +12157,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Print labels"
-#~ msgstr "Skriv ut etiketter"
-
-#~ msgid "Print Build Orders"
-#~ msgstr "Skriv ut byggorder"
