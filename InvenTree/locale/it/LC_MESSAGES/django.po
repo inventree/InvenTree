@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 08:09+0000\n"
-"PO-Revision-Date: 2023-03-28 11:28\n"
+"POT-Creation-Date: 2023-03-29 05:06+0000\n"
+"PO-Revision-Date: 2023-03-29 11:39\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -721,38 +721,28 @@ msgid "Consumed by build order"
 msgstr "Impegnato dall'ordine di costruzione"
 
 #: InvenTree/status_codes.py:296
-#, fuzzy
-#| msgid "Edit Sales Order"
 msgid "Shipped against Sales Order"
-msgstr "Modifica Ordine di Vendita"
+msgstr ""
 
 #: InvenTree/status_codes.py:298
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Received against Purchase Order"
-msgstr "Ricevuto contro l'ordine di acquisto"
+msgstr ""
 
 #: InvenTree/status_codes.py:300
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Returned against Return Order"
-msgstr "Ricevuto contro l'ordine di acquisto"
+msgstr ""
 
 #: InvenTree/status_codes.py:314
 msgid "Production"
 msgstr "Produzione"
 
 #: InvenTree/status_codes.py:351
-#, fuzzy
-#| msgid "Progress"
 msgid "In Progress"
-msgstr "Avanzamento"
+msgstr ""
 
 #: InvenTree/status_codes.py:386
-#, fuzzy
-#| msgid "Returned"
 msgid "Return"
-msgstr "Reso"
+msgstr ""
 
 #: InvenTree/status_codes.py:387
 msgid "Repair"
@@ -763,16 +753,12 @@ msgid "Refund"
 msgstr ""
 
 #: InvenTree/status_codes.py:389
-#, fuzzy
-#| msgid "Placed"
 msgid "Replace"
-msgstr "Inviato"
+msgstr ""
 
 #: InvenTree/status_codes.py:390
-#, fuzzy
-#| msgid "Rejected"
 msgid "Reject"
-msgstr "Respinto"
+msgstr ""
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
@@ -2462,40 +2448,28 @@ msgid "Required pattern for generating Build Order reference field"
 msgstr "Modello richiesto per generare il campo di riferimento ordine di produzione"
 
 #: common/models.py:1445
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Enable Return Orders"
-msgstr "Ritorna agli Ordini"
+msgstr ""
 
 #: common/models.py:1446
-#, fuzzy
-#| msgid "Enable PO functionality in InvenTree interface"
 msgid "Enable return order functionality in the user interface"
-msgstr "Abilita funzionalità PO nell'interfaccia InvenTree"
+msgstr ""
 
 #: common/models.py:1452
-#, fuzzy
-#| msgid "Build Order Reference Pattern"
 msgid "Return Order Reference Pattern"
-msgstr "Modello Di Riferimento Ordine Di Produzione"
+msgstr ""
 
 #: common/models.py:1453
-#, fuzzy
-#| msgid "Required pattern for generating Build Order reference field"
 msgid "Required pattern for generating Return Order reference field"
-msgstr "Modello richiesto per generare il campo di riferimento ordine di produzione"
+msgstr ""
 
 #: common/models.py:1459
-#, fuzzy
-#| msgid "Edit Completed Sales Orders"
 msgid "Edit Completed Return Orders"
-msgstr "Modifica Ordini Di Vendita Completati"
+msgstr ""
 
 #: common/models.py:1460
-#, fuzzy
-#| msgid "Allow editing of sales orders after they have been shipped or completed"
 msgid "Allow editing of return orders after they have been completed"
-msgstr "Consenti la modifica degli ordini di vendita dopo che sono stati spediti o completati"
+msgstr ""
 
 #: common/models.py:1466
 msgid "Sales Order Reference Pattern"
@@ -3002,28 +2976,20 @@ msgid "Exclude inactive sales orders from search preview window"
 msgstr "Escludi ordini di vendita inattivi dalla finestra di anteprima di ricerca"
 
 #: common/models.py:1962
-#, fuzzy
-#| msgid "Search Build Orders"
 msgid "Search Return Orders"
-msgstr "Cerca Ordini Di Produzione"
+msgstr ""
 
 #: common/models.py:1963
-#, fuzzy
-#| msgid "Display build orders in search preview window"
 msgid "Display return orders in search preview window"
-msgstr "Mostra gli ordini di produzione nella finestra di anteprima di ricerca"
+msgstr ""
 
 #: common/models.py:1969
-#, fuzzy
-#| msgid "Exclude Inactive Sales Orders"
 msgid "Exclude Inactive Return Orders"
-msgstr "Escludi Ordini Di Vendita Inattivi"
+msgstr ""
 
 #: common/models.py:1970
-#, fuzzy
-#| msgid "Exclude inactive sales orders from search preview window"
 msgid "Exclude inactive return orders from search preview window"
-msgstr "Escludi ordini di vendita inattivi dalla finestra di anteprima di ricerca"
+msgstr ""
 
 #: common/models.py:1976
 msgid "Search Preview Results"
@@ -3236,10 +3202,8 @@ msgid "Items have been received against a purchase order"
 msgstr "Gli elementi sono stati ricevuti a fronte di un ordine di acquisto"
 
 #: common/notifications.py:311
-#, fuzzy
-#| msgid "Items have been received against a purchase order"
 msgid "Items have been received against a return order"
-msgstr "Gli elementi sono stati ricevuti a fronte di un ordine di acquisto"
+msgstr ""
 
 #: common/notifications.py:423
 msgid "Error raised by plugin"
@@ -3795,37 +3759,27 @@ msgstr "Assegna Giacenza"
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:260 templates/navbar.html:65
 #: users/models.py:45
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Return Orders"
-msgstr "Ritorna agli Ordini"
+msgstr ""
 
 #: company/templates/company/detail.html:195
 #: order/templates/order/return_orders.html:21
-#, fuzzy
-#| msgid "Create new sales order"
 msgid "Create new return order"
-msgstr "Crea nuovo ordine di vendita"
+msgstr ""
 
 #: company/templates/company/detail.html:196
 #: order/templates/order/return_orders.html:22
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "New Return Order"
-msgstr "Ritorna agli Ordini"
+msgstr ""
 
 #: company/templates/company/detail.html:236
-#, fuzzy
-#| msgid "Company actions"
 msgid "Company Contacts"
-msgstr "Azioni Azienda"
+msgstr ""
 
 #: company/templates/company/detail.html:240
 #: company/templates/company/detail.html:241
-#, fuzzy
-#| msgid "Contact"
 msgid "Add Contact"
-msgstr "Contatto"
+msgstr ""
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -3922,10 +3876,8 @@ msgid "Assigned Stock Items"
 msgstr "Elementi in Giacenza Impegnati"
 
 #: company/templates/company/sidebar.html:33
-#, fuzzy
-#| msgid "Contact"
 msgid "Contacts"
-msgstr "Contatto"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:676
@@ -4196,10 +4148,8 @@ msgid "Total price for this order"
 msgstr ""
 
 #: order/models.py:177
-#, fuzzy
-#| msgid "Quantity does not match serial numbers"
 msgid "Contact does not match selected company"
-msgstr "La quantità non corrisponde ai numeri di serie"
+msgstr ""
 
 #: order/models.py:199
 msgid "Order description"
@@ -4222,10 +4172,8 @@ msgid "User or group responsible for this order"
 msgstr "Utente o gruppo responsabile di questo ordine"
 
 #: order/models.py:232
-#, fuzzy
-#| msgid "Point of contact"
 msgid "Point of contact for this order"
-msgstr "Punto di contatto"
+msgstr ""
 
 #: order/models.py:236
 msgid "Order notes"
@@ -4508,28 +4456,20 @@ msgid "Enter stock allocation quantity"
 msgstr "Inserisci la quantità assegnata alla giacenza"
 
 #: order/models.py:1639
-#, fuzzy
-#| msgid "Order reference"
 msgid "Return Order reference"
-msgstr "Riferimento ordine"
+msgstr ""
 
 #: order/models.py:1653
-#, fuzzy
-#| msgid "Company from which the items are being ordered"
 msgid "Company from which items are being returned"
-msgstr "Azienda da cui sono stati ordinati gli articoli"
+msgstr ""
 
 #: order/models.py:1664
-#, fuzzy
-#| msgid "Purchase order status"
 msgid "Return order status"
-msgstr "Stato ordine d'acquisto"
+msgstr ""
 
 #: order/models.py:1814
-#, fuzzy
-#| msgid "Only salable parts can be assigned to a sales order"
 msgid "Only serialized items can be assigned to a Return Order"
-msgstr "Solo gli articoli vendibili possono essere assegnati a un ordine di vendita"
+msgstr ""
 
 #: order/models.py:1822 order/models.py:1870
 #: order/templates/order/return_order_base.html:9
@@ -4537,28 +4477,20 @@ msgstr "Solo gli articoli vendibili possono essere assegnati a un ordine di vend
 #: report/templates/report/inventree_return_order_report_base.html:13
 #: templates/js/translated/return_order.js:239
 #: templates/js/translated/stock.js:2720
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Return Order"
-msgstr "Ritorna agli Ordini"
+msgstr ""
 
 #: order/models.py:1830
-#, fuzzy
-#| msgid "Returned from customer"
 msgid "Select item to return from customer"
-msgstr "Restituito dal cliente"
+msgstr ""
 
 #: order/models.py:1835
-#, fuzzy
-#| msgid "Received Items"
 msgid "Received Date"
-msgstr "Elementi Ricevuti"
+msgstr ""
 
 #: order/models.py:1836
-#, fuzzy
-#| msgid "Endpoint on which this message was received"
 msgid "The date this this return item was received"
-msgstr "Scadenza in cui questo messaggio è stato ricevuto"
+msgstr ""
 
 #: order/models.py:1847 templates/js/translated/return_order.js:672
 #: templates/js/translated/table_filters.js:51
@@ -4566,10 +4498,8 @@ msgid "Outcome"
 msgstr ""
 
 #: order/models.py:1847
-#, fuzzy
-#| msgid "Batch code for this stock item"
 msgid "Outcome for this line item"
-msgstr "Codice lotto per questo elemento di magazzino"
+msgstr ""
 
 #: order/models.py:1853
 msgid "Cost associated with return or repair for this line item"
@@ -4692,34 +4622,24 @@ msgid "The following serial numbers are already allocated"
 msgstr "I seguenti numeri di serie sono già assegnati"
 
 #: order/serializers.py:1507
-#, fuzzy
-#| msgid "Delete line item"
 msgid "Return order line item"
-msgstr "Cancella linea elemento"
+msgstr ""
 
 #: order/serializers.py:1514
-#, fuzzy
-#| msgid "Line item does not match purchase order"
 msgid "Line item does not match return order"
-msgstr "L'elemento di riga non corrisponde all'ordine di acquisto"
+msgstr ""
 
 #: order/serializers.py:1517
-#, fuzzy
-#| msgid "All line items have been received"
 msgid "Line item has already been received"
-msgstr "Tutti gli elementi della riga sono stati ricevuti"
+msgstr ""
 
 #: order/serializers.py:1549
-#, fuzzy
-#| msgid "Items have been received against a purchase order"
 msgid "Items can only be received against orders which are in progress"
-msgstr "Gli elementi sono stati ricevuti a fronte di un ordine di acquisto"
+msgstr ""
 
 #: order/serializers.py:1629
-#, fuzzy
-#| msgid "Sale price currency"
 msgid "Line price currency"
-msgstr "Valuta prezzo di vendita"
+msgstr ""
 
 #: order/tasks.py:26
 msgid "Overdue Purchase Order"
@@ -4972,10 +4892,8 @@ msgstr "Aggiungi Elemento Riga"
 #: order/templates/order/purchase_order_detail.html:33
 #: order/templates/order/return_order_detail.html:28
 #: order/templates/order/return_order_detail.html:29
-#, fuzzy
-#| msgid "Receive line item"
 msgid "Receive Line Items"
-msgstr "Ricevi linea elemento"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/purchase_order_detail.html:51
@@ -5005,10 +4923,8 @@ msgid "Order Notes"
 msgstr "Note dell'Ordine"
 
 #: order/templates/order/return_order_base.html:43
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Print return order report"
-msgstr "Stampa report ordine di produzione"
+msgstr ""
 
 #: order/templates/order/return_order_base.html:47
 #: order/templates/order/sales_order_base.html:47
@@ -5036,10 +4952,8 @@ msgid "Total Cost"
 msgstr "Costo Totale"
 
 #: order/templates/order/return_order_sidebar.html:5
-#, fuzzy
-#| msgid "Build Order Details"
 msgid "Order Details"
-msgstr "Dettagli Ordine di Produzione"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:43
 msgid "Print sales order report"
@@ -7212,10 +7126,8 @@ msgid "Sales order query filters"
 msgstr "Ordine di Vendita filtra la ricerca"
 
 #: report/models.py:520
-#, fuzzy
-#| msgid "Sales order query filters"
 msgid "Return order query filters"
-msgstr "Ordine di Vendita filtra la ricerca"
+msgstr ""
 
 #: report/models.py:573
 msgid "Snippet"
@@ -7318,16 +7230,12 @@ msgid "Fail"
 msgstr "Fallito"
 
 #: report/templates/report/inventree_test_report_base.html:139
-#, fuzzy
-#| msgid "No results found"
 msgid "No result (required)"
-msgstr "Nessun risultato trovato"
+msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:141
-#, fuzzy
-#| msgid "No results found"
 msgid "No result"
-msgstr "Nessun risultato trovato"
+msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:154
 #: stock/templates/stock/stock_sidebar.html:16
@@ -8575,10 +8483,8 @@ msgid "Report Settings"
 msgstr "Impostazioni Report"
 
 #: templates/InvenTree/settings/returns.html:7
-#, fuzzy
-#| msgid "Build Order Settings"
 msgid "Return Order Settings"
-msgstr "Impostazione Ordine di Produzione"
+msgstr ""
 
 #: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
@@ -9998,23 +9904,17 @@ msgid "No company information found"
 msgstr "Nessuna informazione azienda trovata"
 
 #: templates/js/translated/company.js:587
-#, fuzzy
-#| msgid "Create new part"
 msgid "Create New Contact"
-msgstr "Crea nuovo articolo"
+msgstr ""
 
 #: templates/js/translated/company.js:603
 #: templates/js/translated/company.js:725
-#, fuzzy
-#| msgid "Contact"
 msgid "Edit Contact"
-msgstr "Contatto"
+msgstr ""
 
 #: templates/js/translated/company.js:639
-#, fuzzy
-#| msgid "All selected attachments will be deleted"
 msgid "All selected contacts will be deleted"
-msgstr "Tutti gli allegati selezionati saranno eliminati"
+msgstr ""
 
 #: templates/js/translated/company.js:645
 #: templates/js/translated/company.js:709
@@ -10022,34 +9922,24 @@ msgid "Role"
 msgstr ""
 
 #: templates/js/translated/company.js:653
-#, fuzzy
-#| msgid "Delete outputs"
 msgid "Delete Contacts"
-msgstr "Cancella l'output"
+msgstr ""
 
 #: templates/js/translated/company.js:684
-#, fuzzy
-#| msgid "No parts found"
 msgid "No contacts found"
-msgstr "Nessun articolo trovato"
+msgstr ""
 
 #: templates/js/translated/company.js:697
-#, fuzzy
-#| msgid "Phone number"
 msgid "Phone Number"
-msgstr "Telefono"
+msgstr ""
 
 #: templates/js/translated/company.js:703
-#, fuzzy
-#| msgid "Add Email Address"
 msgid "Email Address"
-msgstr "Aggiungi indirizzo email"
+msgstr ""
 
 #: templates/js/translated/company.js:729
-#, fuzzy
-#| msgid "Delete part"
 msgid "Delete Contact"
-msgstr "Cancella articolo"
+msgstr ""
 
 #: templates/js/translated/company.js:803
 msgid "All selected manufacturer parts will be deleted"
@@ -10160,28 +10050,20 @@ msgid "Select filter"
 msgstr "Seleziona filtro"
 
 #: templates/js/translated/filters.js:315
-#, fuzzy
-#| msgid "Order selected items"
 msgid "Print reports for selected items"
-msgstr "Ordina articolo selezionato"
+msgstr ""
 
 #: templates/js/translated/filters.js:324
-#, fuzzy
-#| msgid "Order selected items"
 msgid "Print labels for selected items"
-msgstr "Ordina articolo selezionato"
+msgstr ""
 
 #: templates/js/translated/filters.js:333
-#, fuzzy
-#| msgid "Download data"
 msgid "Download table data"
-msgstr "Scarica dati"
+msgstr ""
 
 #: templates/js/translated/filters.js:340
-#, fuzzy
-#| msgid "Reload data"
 msgid "Reload table data"
-msgstr "Ricarica dati"
+msgstr ""
 
 #: templates/js/translated/filters.js:349
 msgid "Add new filter"
@@ -10282,26 +10164,20 @@ msgid "Select Label Template"
 msgstr "Seleziona Modello Etichetta"
 
 #: templates/js/translated/label.js:166 templates/js/translated/report.js:123
-#, fuzzy
-#| msgid "Select theme"
 msgid "Select Items"
-msgstr "Seleziona tema"
+msgstr ""
 
 #: templates/js/translated/label.js:167
-#, fuzzy
-#| msgid "Stock item(s) must be selected before printing labels"
 msgid "No items selected for printing"
-msgstr "Gli elementi disponibili devono essere selezionati prima di stampare le etichette"
+msgstr ""
 
 #: templates/js/translated/label.js:183
 msgid "No Labels Found"
 msgstr "Nessuna etichetta trovata"
 
 #: templates/js/translated/label.js:184
-#, fuzzy
-#| msgid "No labels found which match the selected part(s)"
 msgid "No label templates found which match the selected items"
-msgstr "Nessuna etichetta trovata che corrisponde agli elementi stock selezionati"
+msgstr ""
 
 #: templates/js/translated/label.js:203
 msgid "Labels sent to printer"
@@ -10395,10 +10271,8 @@ msgid "Notifications will load here"
 msgstr "Le notifiche verranno caricate qui"
 
 #: templates/js/translated/order.js:69
-#, fuzzy
-#| msgid "Add Extra Line"
 msgid "Add Extra Line Item"
-msgstr "Aggiungi Linea Extra"
+msgstr ""
 
 #: templates/js/translated/order.js:106
 msgid "Export Order"
@@ -10876,10 +10750,8 @@ msgstr "Questo ordine d'acquisto non può essere cancellato"
 
 #: templates/js/translated/purchase_order.js:468
 #: templates/js/translated/return_order.js:119
-#, fuzzy
-#| msgid "After placing this purchase order, line items will no longer be editable."
 msgid "After placing this order, line items will no longer be editable."
-msgstr "Dopo aver effettuato questo ordine d'acquisto, gli elementi di riga non saranno più modificabili."
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:473
 msgid "Issue Purchase Order"
@@ -11039,10 +10911,8 @@ msgid "No Reports Found"
 msgstr "Nessun Report Trovato"
 
 #: templates/js/translated/report.js:141
-#, fuzzy
-#| msgid "No report templates found which match selected orders"
 msgid "No report templates found which match the selected items"
-msgstr "Nessun modello di report trovato che corrisponde agli ordini selezionati"
+msgstr ""
 
 #: templates/js/translated/return_order.js:40
 #: templates/js/translated/sales_order.js:52
@@ -11050,46 +10920,32 @@ msgid "Add Customer"
 msgstr "Aggiungi cliente"
 
 #: templates/js/translated/return_order.js:89
-#, fuzzy
-#| msgid "Create Build Order"
 msgid "Create Return Order"
-msgstr "Crea Ordine di Produzione"
+msgstr ""
 
 #: templates/js/translated/return_order.js:104
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Edit Return Order"
-msgstr "Ritorna agli Ordini"
+msgstr ""
 
 #: templates/js/translated/return_order.js:124
-#, fuzzy
-#| msgid "Issue Purchase Order"
 msgid "Issue Return Order"
-msgstr "Problema Ordine di Acquisto"
+msgstr ""
 
 #: templates/js/translated/return_order.js:141
-#, fuzzy
-#| msgid "Are you sure you wish to cancel this purchase order?"
 msgid "Are you sure you wish to cancel this Return Order?"
-msgstr "Sei sicuro di voler annullare questo ordine di acquisto?"
+msgstr ""
 
 #: templates/js/translated/return_order.js:148
-#, fuzzy
-#| msgid "Cancel Build Order"
 msgid "Cancel Return Order"
-msgstr "Annulla Ordine Di Produzione"
+msgstr ""
 
 #: templates/js/translated/return_order.js:173
-#, fuzzy
-#| msgid "Complete Order"
 msgid "Complete Return Order"
-msgstr "Completa l'ordine"
+msgstr ""
 
 #: templates/js/translated/return_order.js:221
-#, fuzzy
-#| msgid "No sales orders found"
 msgid "No return orders found"
-msgstr "Non sono state trovati ordini di vendita"
+msgstr ""
 
 #: templates/js/translated/return_order.js:258
 #: templates/js/translated/sales_order.js:700
@@ -11097,10 +10953,8 @@ msgid "Invalid Customer"
 msgstr "Cliente non valido"
 
 #: templates/js/translated/return_order.js:501
-#, fuzzy
-#| msgid "Receive Purchase Order Items"
 msgid "Receive Return Order Items"
-msgstr "Ricevi Elementi Ordine D'Acquisto"
+msgstr ""
 
 #: templates/js/translated/return_order.js:632
 #: templates/js/translated/sales_order.js:2080
@@ -11108,10 +10962,8 @@ msgid "No matching line items"
 msgstr "Nessun elemento di riga corrispondente"
 
 #: templates/js/translated/return_order.js:728
-#, fuzzy
-#| msgid "Number of items received"
 msgid "Mark item as received"
-msgstr "Numero di elementi ricevuti"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:102
 msgid "Create Sales Order"
@@ -11639,16 +11491,12 @@ msgid "Purchase order no longer exists"
 msgstr "L'ordine di acquisto non esiste più"
 
 #: templates/js/translated/stock.js:2712
-#, fuzzy
-#| msgid "Purchase order no longer exists"
 msgid "Sales Order no longer exists"
-msgstr "L'ordine di acquisto non esiste più"
+msgstr ""
 
 #: templates/js/translated/stock.js:2729
-#, fuzzy
-#| msgid "Purchase order no longer exists"
 msgid "Return Order no longer exists"
-msgstr "L'ordine di acquisto non esiste più"
+msgstr ""
 
 #: templates/js/translated/stock.js:2748
 msgid "Customer no longer exists"
@@ -12129,11 +11977,9 @@ msgstr "Continua"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/stats.html:13
@@ -12312,86 +12158,3 @@ msgstr "Permessi per modificare gli elementi"
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
 
-#~ msgid "Printing Actions"
-#~ msgstr "Azioni di stampa"
-
-#~ msgid "Print labels"
-#~ msgstr "Stampa etichette"
-
-#~ msgid "Print Build Orders"
-#~ msgstr "Stampa gli Ordini di Produzione"
-
-#~ msgid "Target Delivery Date"
-#~ msgstr "Data di consegna programmata"
-
-#~ msgid "Target date for order completion. Order will be overdue after this date."
-#~ msgstr "Data di completamento dell'ordine. Dopo tale data l'ordine sarà in ritardo."
-
-#~ msgid "Receive selected items"
-#~ msgstr "Ricevi gli elementi selezionati"
-
-#~ msgid "Add Order Line"
-#~ msgstr "Aggiungi Linea all'Ordine"
-
-#~ msgid "Print Order Reports"
-#~ msgstr "Stampa i rapporti dell'ordine"
-
-#~ msgid "Print Labels"
-#~ msgstr "Stampa Etichette"
-
-#~ msgid "No labels found which match selected stock item(s)"
-#~ msgstr "Nessuna etichetta trovata che corrisponde agli elementi stock selezionati"
-
-#~ msgid "Select Stock Locations"
-#~ msgstr "Seleziona Posizioni Giacenza"
-
-#~ msgid "Stock location(s) must be selected before printing labels"
-#~ msgstr "Le allocazioni delle giacenze devono essere selezionate prima di stampare le etichette"
-
-#~ msgid "No labels found which match selected stock location(s)"
-#~ msgstr "Nessuna etichetta trovata che corrisponde alle posizioni di magazzino selezionate"
-
-#~ msgid "Part(s) must be selected before printing labels"
-#~ msgstr "Gli elementi disponibili devono essere selezionati prima di stampare le etichette"
-
-#~ msgid "No matching line"
-#~ msgstr "Nessuna linea corrispondente"
-
-#~ msgid "No matching lines"
-#~ msgstr "Nessuna linea corrispondente"
-
-#~ msgid "Stock item(s) must be selected before printing reports"
-#~ msgstr "Gli elementi(s) disponibili devono essere selezionati prima di stampare le etichette"
-
-#~ msgid "No report templates found which match selected stock item(s)"
-#~ msgstr "Nessun modello di report trovato che corrisponde agli elementi stock selezionati(s)"
-
-#~ msgid "Select Builds"
-#~ msgstr "Seleziona Produzioni"
-
-#~ msgid "Build(s) must be selected before printing reports"
-#~ msgstr "Le produzioni devono essere selezionate prima di stampare i report"
-
-#~ msgid "No report templates found which match selected build(s)"
-#~ msgstr "Nessun modello di report trovato che corrisponda alle produzioni selezionate(s)"
-
-#~ msgid "Part(s) must be selected before printing reports"
-#~ msgstr "L'Articolo deve essere selezionato prima di stampare i report"
-
-#~ msgid "No report templates found which match selected part(s)"
-#~ msgstr "Nessun modello di report trovato che corrisponda agli articoli selezionati(s)"
-
-#~ msgid "Select Purchase Orders"
-#~ msgstr "Seleziona Ordini D'Acquisto"
-
-#~ msgid "Purchase Order(s) must be selected before printing report"
-#~ msgstr "Gli Ordini di Acquisto devono essere selezionati prima di stampare il report"
-
-#~ msgid "Select Sales Orders"
-#~ msgstr "Seleziona Ordini Di Vendita"
-
-#~ msgid "Sales Order(s) must be selected before printing report"
-#~ msgstr "Gli ordini di vendita devono essere selezionati prima di stampare il report"
-
-#~ msgid "Print test reports"
-#~ msgstr "Stampa report di prova"
