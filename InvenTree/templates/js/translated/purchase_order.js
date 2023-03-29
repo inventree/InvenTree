@@ -252,34 +252,36 @@ function poLineItemFields(options={}) {
                     }
                 }).then(function() {
                     // Update pricing data (if available)
-                    inventreeGet(
-                        '{% url "api-part-supplier-price-list" %}',
-                        {
-                            part: supplier_part_id,
-                            ordering: 'quantity',
-                        },
-                        {
-                            success: function(response) {
-                                // Returned prices are in increasing order of quantity
-                                if (response.length > 0) {
-                                    var idx = 0;
-                                    var index = 0;
+                    if (options.update_pricing) {
+                        inventreeGet(
+                            '{% url "api-part-supplier-price-list" %}',
+                            {
+                                part: supplier_part_id,
+                                ordering: 'quantity',
+                            },
+                            {
+                                success: function(response) {
+                                    // Returned prices are in increasing order of quantity
+                                    if (response.length > 0) {
+                                        var idx = 0;
+                                        var index = 0;
 
-                                    for (var idx = 0; idx < response.length; idx++) {
-                                        if (response[idx].quantity > quantity) {
-                                            break;
+                                        for (var idx = 0; idx < response.length; idx++) {
+                                            if (response[idx].quantity > quantity) {
+                                                break;
+                                            }
+
+                                            index = idx;
                                         }
 
-                                        index = idx;
+                                        // Update price and currency data in the form
+                                        updateFieldValue('purchase_price', response[index].price, {}, opts);
+                                        updateFieldValue('purchase_price_currency', response[index].price_currency, {}, opts);
                                     }
-
-                                    // Update price and currency data in the form
-                                    updateFieldValue('purchase_price', response[index].price, {}, opts);
-                                    updateFieldValue('purchase_price_currency', response[index].price_currency, {}, opts);
                                 }
                             }
-                        }
-                    );
+                        );
+                    }
                 });
             },
             secondary: {
@@ -356,6 +358,7 @@ function createPurchaseOrderLineItem(order, options={}) {
         supplier: options.supplier,
         currency: options.currency,
         target_date: options.target_date,
+        update_pricing: true,
     });
 
     constructForm('{% url "api-po-line-list" %}', {
