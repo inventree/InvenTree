@@ -29,6 +29,20 @@ class ReportTagTest(TestCase):
         """Enable or disable debug mode for reports"""
         InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', value, change_user=None)
 
+    def test_getindex(self):
+        """Tests for the 'getindex' template tag"""
+
+        fn = report_tags.getindex
+        data = [1, 2, 3, 4, 5, 6]
+
+        # Out of bounds or invalid
+        self.assertEqual(fn(data, -1), None)
+        self.assertEqual(fn(data, 99), None)
+        self.assertEqual(fn(data, 'xx'), None)
+
+        for idx in range(len(data)):
+            self.assertEqual(fn(data, idx), data[idx])
+
     def test_getkey(self):
         """Tests for the 'getkey' template tag"""
 
@@ -419,7 +433,7 @@ class BOMReportTest(ReportTest):
 
 
 class PurchaseOrderReportTest(ReportTest):
-    """Unit test class fort he PurchaseOrderReport model"""
+    """Unit test class for the PurchaseOrderReport model"""
     model = report_models.PurchaseOrderReport
 
     list_url = 'api-po-report-list'
@@ -444,5 +458,20 @@ class SalesOrderReportTest(ReportTest):
     def setUp(self):
         """Setup function for the sales order Report"""
         self.copyReportTemplate('inventree_so_report.html', 'sales order report')
+
+        return super().setUp()
+
+
+class ReturnOrderReportTest(ReportTest):
+    """Unit tests for the ReturnOrderReport model"""
+
+    model = report_models.ReturnOrderReport
+    list_url = 'api-return-order-report-list'
+    detail_url = 'api-return-order-report-detail'
+    print_url = 'api-return-order-report-print'
+
+    def setUp(self):
+        """Setup function for the ReturnOrderReport tests"""
+        self.copyReportTemplate('inventree_return_order_report.html', 'return order report')
 
         return super().setUp()

@@ -155,29 +155,36 @@ function inventreeDocReady() {
 }
 
 
+/*
+ * Determine if a transfer (e.g. drag-and-drop) is a file transfer
+ */
 function isFileTransfer(transfer) {
-    /* Determine if a transfer (e.g. drag-and-drop) is a file transfer
-     */
-
     return transfer.files.length > 0;
 }
 
 
-function enableDragAndDrop(element, url, options) {
-    /* Enable drag-and-drop file uploading for a given element.
+/* Enable drag-and-drop file uploading for a given element.
 
-    Params:
-        element - HTML element lookup string e.g. "#drop-div"
-        url - URL to POST the file to
-        options - object with following possible values:
-            label - Label of the file to upload (default='file')
-            data - Other form data to upload
-            success - Callback function in case of success
-            error - Callback function in case of error
-            method - HTTP method
-    */
+Params:
+    element - HTML element lookup string e.g. "#drop-div"
+    url - URL to POST the file to
+    options - object with following possible values:
+        label - Label of the file to upload (default='file')
+        data - Other form data to upload
+        success - Callback function in case of success
+        error - Callback function in case of error
+        method - HTTP method
+*/
+function enableDragAndDrop(elementId, url, options={}) {
 
     var data = options.data || {};
+
+    let element = $(elementId);
+
+    if (!element.exists()) {
+        console.error(`enableDragAndDrop called with invalid target: '${elementId}'`);
+        return;
+    }
 
     $(element).on('drop', function(event) {
 
@@ -200,6 +207,11 @@ function enableDragAndDrop(element, url, options) {
                 formData,
                 {
                     success: function(data, status, xhr) {
+                        // Reload a table
+                        if (options.refreshTable) {
+                            reloadBootstrapTable(options.refreshTable);
+                        }
+
                         if (options.success) {
                             options.success(data, status, xhr);
                         }

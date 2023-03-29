@@ -1229,7 +1229,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'PRICING_DECIMAL_PLACES': {
             'name': _('Maximum Pricing Decimal Places'),
-            'description': _('Maximum umber of decimal places to display when rendering pricing data'),
+            'description': _('Maximum number of decimal places to display when rendering pricing data'),
             'default': 6,
             'validator': [
                 int,
@@ -1439,6 +1439,27 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Required pattern for generating Build Order reference field'),
             'default': 'BO-{ref:04d}',
             'validator': build.validators.validate_build_order_reference_pattern,
+        },
+
+        'RETURNORDER_ENABLED': {
+            'name': _('Enable Return Orders'),
+            'description': _('Enable return order functionality in the user interface'),
+            'validator': bool,
+            'default': False,
+        },
+
+        'RETURNORDER_REFERENCE_PATTERN': {
+            'name': _('Return Order Reference Pattern'),
+            'description': _('Required pattern for generating Return Order reference field'),
+            'default': 'RMA-{ref:04d}',
+            'validator': order.validators.validate_return_order_reference_pattern,
+        },
+
+        'RETURNORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Return Orders'),
+            'description': _('Allow editing of return orders after they have been completed'),
+            'default': False,
+            'validator': bool,
         },
 
         'SALESORDER_REFERENCE_PATTERN': {
@@ -1933,6 +1954,20 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS': {
             'name': _('Exclude Inactive Sales Orders'),
             'description': _('Exclude inactive sales orders from search preview window'),
+            'validator': bool,
+            'default': True,
+        },
+
+        'SEARCH_PREVIEW_SHOW_RETURN_ORDERS': {
+            'name': _('Search Return Orders'),
+            'description': _('Display return orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS': {
+            'name': _('Exclude Inactive Return Orders'),
+            'description': _('Exclude inactive return orders from search preview window'),
             'validator': bool,
             'default': True,
         },

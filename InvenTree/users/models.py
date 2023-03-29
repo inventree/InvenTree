@@ -42,6 +42,7 @@ class RuleSet(models.Model):
         ('build', _('Build Orders')),
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
+        ('return_order', _('Return Orders')),
     ]
 
     RULESET_NAMES = [
@@ -135,6 +136,7 @@ class RuleSet(models.Model):
         'purchase_order': [
             'company_company',
             'company_companyattachment',
+            'company_contact',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_supplierpart',
@@ -148,6 +150,7 @@ class RuleSet(models.Model):
         'sales_order': [
             'company_company',
             'company_companyattachment',
+            'company_contact',
             'order_salesorder',
             'order_salesorderallocation',
             'order_salesorderattachment',
@@ -155,6 +158,16 @@ class RuleSet(models.Model):
             'order_salesorderextraline',
             'order_salesordershipment',
             'report_salesorderreport',
+        ],
+        'return_order': [
+            'company_company',
+            'company_companyattachment',
+            'company_contact',
+            'order_returnorder',
+            'order_returnorderlineitem',
+            'order_returnorderextraline',
+            'order_returnorderattachment',
+            'report_returnorderreport',
         ]
     }
 
@@ -172,7 +185,6 @@ class RuleSet(models.Model):
         'common_webhookmessage',
         'common_notificationentry',
         'common_notificationmessage',
-        'company_contact',
         'users_owner',
 
         # Third-party tables
@@ -503,6 +515,26 @@ def clear_user_role_cache(user):
         for perm in ['add', 'change', 'view', 'delete']:
             key = f"role_{user}_{role}_{perm}"
             cache.delete(key)
+
+
+def get_user_roles(user):
+    """Return all roles available to a given user"""
+
+    roles = set()
+
+    for group in user.groups.all():
+        for rule in group.rule_sets.all():
+            name = rule.name
+            if rule.can_view:
+                roles.add(f'{name}.view')
+            if rule.can_add:
+                roles.add(f'{name}.add')
+            if rule.can_change:
+                roles.add(f'{name}.change')
+            if rule.can_delete:
+                roles.add(f'{name}.delete')
+
+    return roles
 
 
 def check_user_role(user, role, permission):

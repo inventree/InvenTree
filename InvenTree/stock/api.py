@@ -30,8 +30,10 @@ from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
-from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
-from order.serializers import PurchaseOrderSerializer
+from order.models import (PurchaseOrder, ReturnOrder, SalesOrder,
+                          SalesOrderAllocation)
+from order.serializers import (PurchaseOrderSerializer, ReturnOrderSerializer,
+                               SalesOrderSerializer)
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from plugin.serializers import MetadataSerializer
@@ -1262,12 +1264,30 @@ class StockTrackingList(ListAPI):
                 except Exception:
                     pass
 
-            # Add purchaseorder detail
+            # Add PurchaseOrder detail
             if 'purchaseorder' in deltas:
                 try:
                     order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
                     serializer = PurchaseOrderSerializer(order)
                     deltas['purchaseorder_detail'] = serializer.data
+                except Exception:
+                    pass
+
+            # Add SalesOrder detail
+            if 'salesorder' in deltas:
+                try:
+                    order = SalesOrder.objects.get(pk=deltas['salesorder'])
+                    serializer = SalesOrderSerializer(order)
+                    deltas['salesorder_detail'] = serializer.data
+                except Exception:
+                    pass
+
+            # Add ReturnOrder detail
+            if 'returnorder' in deltas:
+                try:
+                    order = ReturnOrder.objects.get(pk=deltas['returnorder'])
+                    serializer = ReturnOrderSerializer(order)
+                    deltas['returnorder_detail'] = serializer.data
                 except Exception:
                     pass
 
@@ -1368,7 +1388,7 @@ stock_api_urls = [
         re_path(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
 
         # Stock location detail endpoints
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
 
             re_path(r'^metadata/', LocationMetadata.as_view(), name='api-location-metadata'),
 
@@ -1388,24 +1408,24 @@ stock_api_urls = [
 
     # StockItemAttachment API endpoints
     re_path(r'^attachment/', include([
-        re_path(r'^(?P<pk>\d+)/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
+        path(r'<int:pk>/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
         path('', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
     ])),
 
     # StockItemTestResult API endpoints
     re_path(r'^test/', include([
-        re_path(r'^(?P<pk>\d+)/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        path(r'<int:pk>/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
         re_path(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 
     # StockItemTracking API endpoints
     re_path(r'^track/', include([
-        re_path(r'^(?P<pk>\d+)/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
+        path(r'<int:pk>/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
         re_path(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
     ])),
 
     # Detail views for a single stock item
-    re_path(r'^(?P<pk>\d+)/', include([
+    path(r'<int:pk>/', include([
         re_path(r'^convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
         re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
         re_path(r'^metadata/', StockMetadata.as_view(), name='api-stock-item-metadata'),

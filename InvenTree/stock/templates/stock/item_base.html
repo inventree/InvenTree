@@ -493,11 +493,19 @@ $('#stock-uninstall').click(function() {
 });
 
 $("#stock-test-report").click(function() {
-    printTestReports([{{ item.pk }}]);
+    printReports({
+        items: [{{ item.pk }}],
+        key: 'item',
+        url: '{% url "api-stockitem-testreport-list" %}',
+    });
 });
 
 $("#print-label").click(function() {
-    printStockItemLabels([{{ item.pk }}]);
+    printLabels({
+        items: [{{ item.pk }}],
+        url: '{% url "api-stockitem-label-list" %}',
+        key: 'item',
+    });
 });
 
 {% if roles.stock.change %}
