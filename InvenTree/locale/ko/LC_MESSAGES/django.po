@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 08:09+0000\n"
-"PO-Revision-Date: 2023-03-28 11:28\n"
+"POT-Creation-Date: 2023-03-29 05:06+0000\n"
+"PO-Revision-Date: 2023-03-29 11:40\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -3773,17 +3773,13 @@ msgid "New Return Order"
 msgstr ""
 
 #: company/templates/company/detail.html:236
-#, fuzzy
-#| msgid "Company name"
 msgid "Company Contacts"
-msgstr "회사명"
+msgstr ""
 
 #: company/templates/company/detail.html:240
 #: company/templates/company/detail.html:241
-#, fuzzy
-#| msgid "Add Attachment"
 msgid "Add Contact"
-msgstr "첨부파일 추가"
+msgstr ""
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -7234,10 +7230,8 @@ msgid "Fail"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:139
-#, fuzzy
-#| msgid "Restart required"
 msgid "No result (required)"
-msgstr "재시작 필요"
+msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:141
 msgid "No result"
@@ -8489,10 +8483,8 @@ msgid "Report Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/returns.html:7
-#, fuzzy
-#| msgid "Server Settings"
 msgid "Return Order Settings"
-msgstr "서버 설정"
+msgstr ""
 
 #: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
@@ -9917,10 +9909,8 @@ msgstr ""
 
 #: templates/js/translated/company.js:603
 #: templates/js/translated/company.js:725
-#, fuzzy
-#| msgid "Edit Company"
 msgid "Edit Contact"
-msgstr "회사 수정"
+msgstr ""
 
 #: templates/js/translated/company.js:639
 msgid "All selected contacts will be deleted"
@@ -9932,32 +9922,24 @@ msgid "Role"
 msgstr ""
 
 #: templates/js/translated/company.js:653
-#, fuzzy
-#| msgid "Delete Company"
 msgid "Delete Contacts"
-msgstr "회사 삭제"
+msgstr ""
 
 #: templates/js/translated/company.js:684
 msgid "No contacts found"
 msgstr ""
 
 #: templates/js/translated/company.js:697
-#, fuzzy
-#| msgid "Phone number"
 msgid "Phone Number"
-msgstr "전화번호"
+msgstr ""
 
 #: templates/js/translated/company.js:703
-#, fuzzy
-#| msgid "Add Email Address"
 msgid "Email Address"
-msgstr "이메일 주소 추가"
+msgstr ""
 
 #: templates/js/translated/company.js:729
-#, fuzzy
-#| msgid "Delete Company"
 msgid "Delete Contact"
-msgstr "회사 삭제"
+msgstr ""
 
 #: templates/js/translated/company.js:803
 msgid "All selected manufacturer parts will be deleted"
@@ -10076,10 +10058,8 @@ msgid "Print labels for selected items"
 msgstr ""
 
 #: templates/js/translated/filters.js:333
-#, fuzzy
-#| msgid "Download Image"
 msgid "Download table data"
-msgstr "이미지 다운로드"
+msgstr ""
 
 #: templates/js/translated/filters.js:340
 msgid "Reload table data"
@@ -10184,10 +10164,8 @@ msgid "Select Label Template"
 msgstr ""
 
 #: templates/js/translated/label.js:166 templates/js/translated/report.js:123
-#, fuzzy
-#| msgid "Select theme"
 msgid "Select Items"
-msgstr "테마 선택"
+msgstr ""
 
 #: templates/js/translated/label.js:167
 msgid "No items selected for printing"
@@ -10954,10 +10932,8 @@ msgid "Issue Return Order"
 msgstr ""
 
 #: templates/js/translated/return_order.js:141
-#, fuzzy
-#| msgid "Are you sure you want to sign out?"
 msgid "Are you sure you wish to cancel this Return Order?"
-msgstr "정말 로그아웃하시겠습니까?"
+msgstr ""
 
 #: templates/js/translated/return_order.js:148
 msgid "Cancel Return Order"
@@ -12001,8 +11977,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12181,3 +12156,4 @@ msgstr ""
 #: users/models.py:243
 msgid "Permission to delete items"
 msgstr ""
+
