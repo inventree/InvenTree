@@ -1905,15 +1905,15 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
                 formatter: function(value, row) {
-                    var units = '';
+                    let units = '';
 
-                    if (row.part_detail.units) {
+                    if (row.part_detail && row.part_detail.units) {
                         units = ` ${row.part_detail.units}`;
                     }
 
-                    var data = value;
+                    let data = value;
 
-                    if (row.supplier_part_detail.pack_size != 1.0) {
+                    if (row.supplier_part_detail && row.supplier_part_detail.pack_size != 1.0) {
                         var pack_size = row.supplier_part_detail.pack_size;
                         var total = value * pack_size;
                         data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size}${units} - {% trans "Total Quantity" %}: ${total}${units}'></span>`;
