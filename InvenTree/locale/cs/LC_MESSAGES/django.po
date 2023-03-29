@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 08:09+0000\n"
-"PO-Revision-Date: 2023-03-28 11:28\n"
+"POT-Creation-Date: 2023-03-29 05:06+0000\n"
+"PO-Revision-Date: 2023-03-29 11:40\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -725,10 +725,8 @@ msgid "Shipped against Sales Order"
 msgstr ""
 
 #: InvenTree/status_codes.py:298
-#, fuzzy
-#| msgid "Purchase Orders"
 msgid "Received against Purchase Order"
-msgstr "Zakoupené objednávky"
+msgstr ""
 
 #: InvenTree/status_codes.py:300
 msgid "Returned against Return Order"
@@ -743,10 +741,8 @@ msgid "In Progress"
 msgstr ""
 
 #: InvenTree/status_codes.py:386
-#, fuzzy
-#| msgid "Returned"
 msgid "Return"
-msgstr "Vráceno"
+msgstr ""
 
 #: InvenTree/status_codes.py:387
 msgid "Repair"
@@ -757,16 +753,12 @@ msgid "Refund"
 msgstr ""
 
 #: InvenTree/status_codes.py:389
-#, fuzzy
-#| msgid "Placed"
 msgid "Replace"
-msgstr "Umístěno"
+msgstr ""
 
 #: InvenTree/status_codes.py:390
-#, fuzzy
-#| msgid "Rejected"
 msgid "Reject"
-msgstr "Odmítnuto"
+msgstr ""
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
@@ -2984,10 +2976,8 @@ msgid "Exclude inactive sales orders from search preview window"
 msgstr ""
 
 #: common/models.py:1962
-#, fuzzy
-#| msgid "Purchase Orders"
 msgid "Search Return Orders"
-msgstr "Zakoupené objednávky"
+msgstr ""
 
 #: common/models.py:1963
 msgid "Display return orders in search preview window"
@@ -3769,17 +3759,13 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:260 templates/navbar.html:65
 #: users/models.py:45
-#, fuzzy
-#| msgid "Returned"
 msgid "Return Orders"
-msgstr "Vráceno"
+msgstr ""
 
 #: company/templates/company/detail.html:195
 #: order/templates/order/return_orders.html:21
-#, fuzzy
-#| msgid "Create new supplier part"
 msgid "Create new return order"
-msgstr "Vytvořit nového dodavatele dílu"
+msgstr ""
 
 #: company/templates/company/detail.html:196
 #: order/templates/order/return_orders.html:22
@@ -3787,17 +3773,13 @@ msgid "New Return Order"
 msgstr ""
 
 #: company/templates/company/detail.html:236
-#, fuzzy
-#| msgid "Company Notes"
 msgid "Company Contacts"
-msgstr "Poznámky ke společnosti"
+msgstr ""
 
 #: company/templates/company/detail.html:240
 #: company/templates/company/detail.html:241
-#, fuzzy
-#| msgid "Contact"
 msgid "Add Contact"
-msgstr "Kontakt"
+msgstr ""
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -3894,10 +3876,8 @@ msgid "Assigned Stock Items"
 msgstr ""
 
 #: company/templates/company/sidebar.html:33
-#, fuzzy
-#| msgid "Contact"
 msgid "Contacts"
-msgstr "Kontakt"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:676
@@ -4192,10 +4172,8 @@ msgid "User or group responsible for this order"
 msgstr ""
 
 #: order/models.py:232
-#, fuzzy
-#| msgid "Point of contact"
 msgid "Point of contact for this order"
-msgstr "Kontaktní místo"
+msgstr ""
 
 #: order/models.py:236
 msgid "Order notes"
@@ -4499,10 +4477,8 @@ msgstr ""
 #: report/templates/report/inventree_return_order_report_base.html:13
 #: templates/js/translated/return_order.js:239
 #: templates/js/translated/stock.js:2720
-#, fuzzy
-#| msgid "Returned"
 msgid "Return Order"
-msgstr "Vráceno"
+msgstr ""
 
 #: order/models.py:1830
 msgid "Select item to return from customer"
@@ -4650,10 +4626,8 @@ msgid "Return order line item"
 msgstr ""
 
 #: order/serializers.py:1514
-#, fuzzy
-#| msgid "Provided value does not match required pattern: "
 msgid "Line item does not match return order"
-msgstr "Poskytnutá hodnota neodpovídá požadovanému vzoru: "
+msgstr ""
 
 #: order/serializers.py:1517
 msgid "Line item has already been received"
@@ -4978,10 +4952,8 @@ msgid "Total Cost"
 msgstr ""
 
 #: order/templates/order/return_order_sidebar.html:5
-#, fuzzy
-#| msgid "Order parts"
 msgid "Order Details"
-msgstr "Objednávka dílů"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:43
 msgid "Print sales order report"
@@ -9932,17 +9904,13 @@ msgid "No company information found"
 msgstr ""
 
 #: templates/js/translated/company.js:587
-#, fuzzy
-#| msgid "Create new manufacturer part"
 msgid "Create New Contact"
-msgstr "Vytvořit nového výrobce dílu"
+msgstr ""
 
 #: templates/js/translated/company.js:603
 #: templates/js/translated/company.js:725
-#, fuzzy
-#| msgid "Contact"
 msgid "Edit Contact"
-msgstr "Kontakt"
+msgstr ""
 
 #: templates/js/translated/company.js:639
 msgid "All selected contacts will be deleted"
@@ -9954,34 +9922,24 @@ msgid "Role"
 msgstr ""
 
 #: templates/js/translated/company.js:653
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete Contacts"
-msgstr "Odstranit díly"
+msgstr ""
 
 #: templates/js/translated/company.js:684
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No contacts found"
-msgstr "Nebyla nalezena odpovídající činnost"
+msgstr ""
 
 #: templates/js/translated/company.js:697
-#, fuzzy
-#| msgid "Phone number"
 msgid "Phone Number"
-msgstr "Telefonní číslo"
+msgstr ""
 
 #: templates/js/translated/company.js:703
-#, fuzzy
-#| msgid "Address"
 msgid "Email Address"
-msgstr "Adresa"
+msgstr ""
 
 #: templates/js/translated/company.js:729
-#, fuzzy
-#| msgid "Delete Company"
 msgid "Delete Contact"
-msgstr "Odstranit společnost"
+msgstr ""
 
 #: templates/js/translated/company.js:803
 msgid "All selected manufacturer parts will be deleted"
@@ -10092,22 +10050,16 @@ msgid "Select filter"
 msgstr ""
 
 #: templates/js/translated/filters.js:315
-#, fuzzy
-#| msgid "Permission to delete items"
 msgid "Print reports for selected items"
-msgstr "Oprávnění k odstranění položek"
+msgstr ""
 
 #: templates/js/translated/filters.js:324
-#, fuzzy
-#| msgid "Permission to delete items"
 msgid "Print labels for selected items"
-msgstr "Oprávnění k odstranění položek"
+msgstr ""
 
 #: templates/js/translated/filters.js:333
-#, fuzzy
-#| msgid "Download Image"
 msgid "Download table data"
-msgstr "Stáhnout obrázek"
+msgstr ""
 
 #: templates/js/translated/filters.js:340
 msgid "Reload table data"
@@ -10212,10 +10164,8 @@ msgid "Select Label Template"
 msgstr ""
 
 #: templates/js/translated/label.js:166 templates/js/translated/report.js:123
-#, fuzzy
-#| msgid "Select Parts"
 msgid "Select Items"
-msgstr "Vybrané díly"
+msgstr ""
 
 #: templates/js/translated/label.js:167
 msgid "No items selected for printing"
@@ -10994,10 +10944,8 @@ msgid "Complete Return Order"
 msgstr ""
 
 #: templates/js/translated/return_order.js:221
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No return orders found"
-msgstr "Nenalezena žádná výrobní čísla"
+msgstr ""
 
 #: templates/js/translated/return_order.js:258
 #: templates/js/translated/sales_order.js:700
@@ -12029,8 +11977,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12209,3 +12156,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:243
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
