@@ -70,6 +70,42 @@ class StatusCode:
         return cls.options.values()
 
     @classmethod
+    def names(cls):
+        """Return a map of all 'names' of status codes in this class
+
+        Will return a dict object, with the attribute name indexed to the integer value.
+
+        e.g.
+        {
+            'PENDING': 10,
+            'IN_PROGRESS': 20,
+        }
+        """
+        keys = cls.keys()
+        status_names = {}
+
+        for d in dir(cls):
+            if d.startswith('_'):
+                continue
+            if d != d.upper():
+                continue
+
+            value = getattr(cls, d, None)
+
+            if value is None:
+                continue
+            if callable(value):
+                continue
+            if type(value) != int:
+                continue
+            if value not in keys:
+                continue
+
+            status_names[d] = value
+
+        return status_names
+
+    @classmethod
     def label(cls, value):
         """Return the status code label associated with the provided value."""
         return cls.options.get(value, value)

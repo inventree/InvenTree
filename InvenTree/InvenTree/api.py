@@ -350,17 +350,19 @@ class StatusView(APIView):
 
         values = {}
 
-        for key, label in status_class.items():
-            value = {
-                'key': key,
-                'label': label,
+        # Instead of using 'items' directly, we'll look for all 'uppercase' attributes
+
+        for name, value in status_class.names().items():
+            entry = {
+                'key': value,
+                'label': status_class.label(value),
             }
 
             if hasattr(status_class, 'colors'):
-                if color := status_class.colors.get(key, None):
-                    value['color'] = color
+                if color := status_class.colors.get(value, None):
+                    entry['color'] = color
 
-            values[key] = value
+            values[name] = entry
 
         data = {
             'class': status_class.__name__,
