@@ -20,12 +20,13 @@ from common.models import InvenTreeSetting
 from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView)
+                           ListCreateDestroyAPIView, StatusView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
+                                    ReturnOrderStatus, SalesOrderStatus)
 from order.admin import (PurchaseOrderExtraLineResource,
                          PurchaseOrderLineItemResource, PurchaseOrderResource,
                          ReturnOrderResource, SalesOrderExtraLineResource,
@@ -918,6 +919,8 @@ class SalesOrderExtraLineItemMetadata(RetrieveUpdateAPI):
 class SalesOrderContextMixin:
     """Mixin to add sales order object as serializer context variable."""
 
+    queryset = models.SalesOrder.objects.all()
+
     def get_serializer_context(self):
         """Add the 'order' reference to the serializer context for any classes which inherit this mixin"""
         ctx = super().get_serializer_context()
@@ -934,15 +937,17 @@ class SalesOrderContextMixin:
 
 class SalesOrderCancel(SalesOrderContextMixin, CreateAPI):
     """API endpoint to cancel a SalesOrder"""
-
-    queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderCancelSerializer
+
+
+class SalesOrderIssue(SalesOrderContextMixin, CreateAPI):
+    """API endpoint to issue a SalesOrder"""
+    serializer_class = serializers.SalesOrderIssueSerializer
 
 
 class SalesOrderComplete(SalesOrderContextMixin, CreateAPI):
     """API endpoint for manually marking a SalesOrder as "complete"."""
 
-    queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderCompleteSerializer
 
 
@@ -1606,6 +1611,9 @@ order_api_urls = [
             re_path(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
         ])),
 
+        # Purchase order status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: PurchaseOrderStatus}, name='api-po-status-codes'),
+
         # Purchase order list
         re_path(r'^.*$', PurchaseOrderList.as_view(), name='api-po-list'),
     ])),
@@ -1649,12 +1657,16 @@ order_api_urls = [
             re_path(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
             re_path(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),
             re_path(r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
+            re_path(r'^issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
             re_path(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
             re_path(r'^metadata/', SalesOrderMetadata.as_view(), name='api-so-metadata'),
 
             # SalesOrder detail endpoint
             re_path(r'^.*$', SalesOrderDetail.as_view(), name='api-so-detail'),
         ])),
+
+        # Sales order status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: SalesOrderStatus}, name='api-so-status-codes'),
 
         # Sales order list view
         re_path(r'^.*$', SalesOrderList.as_view(), name='api-so-list'),
@@ -1701,6 +1713,9 @@ order_api_urls = [
             re_path(r'.*$', ReturnOrderDetail.as_view(), name='api-return-order-detail'),
         ])),
 
+        # Return order status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: ReturnOrderStatus}, name='api-return-order-status-codes'),
+
         # Return Order list
         re_path(r'^.*$', ReturnOrderList.as_view(), name='api-return-order-list'),
     ])),
@@ -1708,6 +1723,10 @@ order_api_urls = [
     # API endpoints for reutrn order lines
     re_path(r'^ro-line/', include([
         path('<int:pk>/', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
+
+        # Return order line item status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: ReturnOrderLineStatus}, name='api-return-order-line-status-codes'),
+
         path('', ReturnOrderLineItemList.as_view(), name='api-return-order-line-list'),
     ])),
 

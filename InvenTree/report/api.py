@@ -502,7 +502,7 @@ report_api_urls = [
     ])),
 
     # Return order reports
-    re_path(r'return-order/', include([
+    re_path(r'ro/', include([
         path(r'<int:pk>/', include([
             path(r'print/', ReturnOrderReportPrint.as_view(), name='api-return-order-report-print'),
             path('', ReturnOrderReportDetail.as_view(), name='api-return-order-report-detail'),

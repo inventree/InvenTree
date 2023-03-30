@@ -10,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
-from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView
+from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
@@ -535,6 +535,9 @@ build_api_urls = [
         re_path(r'^metadata/', BuildOrderMetadata.as_view(), name='api-build-metadata'),
         re_path(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
     ])),
+
+    # Build order status code information
+    re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: BuildStatus}, name='api-build-status-codes'),
 
     # Build List
     re_path(r'^.*$', BuildList.as_view(), name='api-build-list'),

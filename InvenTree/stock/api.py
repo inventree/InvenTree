@@ -23,13 +23,14 @@ from build.models import Build
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView)
+                           ListCreateDestroyAPIView, StatusView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+from InvenTree.status_codes import StockHistoryCode, StockStatus
 from order.models import (PurchaseOrder, ReturnOrder, SalesOrder,
                           SalesOrderAllocation)
 from order.serializers import (PurchaseOrderSerializer, ReturnOrderSerializer,
@@ -1421,6 +1422,10 @@ stock_api_urls = [
     # StockItemTracking API endpoints
     re_path(r'^track/', include([
         path(r'<int:pk>/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
+
+        # Stock tracking status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: StockHistoryCode}, name='api-stock-tracking-status-codes'),
+
         re_path(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
     ])),
 
@@ -1434,6 +1439,9 @@ stock_api_urls = [
         re_path(r'^uninstall/', StockItemUninstall.as_view(), name='api-stock-item-uninstall'),
         re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
     ])),
+
+    # Stock item status code information
+    re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: StockStatus}, name='api-stock-status-codes'),
 
     # Anything else
     re_path(r'^.*$', StockList.as_view(), name='api-stock-list'),
