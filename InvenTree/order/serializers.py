@@ -731,6 +731,19 @@ class SalesOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTreeMo
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
 
 
+class SalesOrderIssueSerializer(serializers.Serializer):
+    """Serializer for issuing a SalesOrder"""
+
+    class Meta:
+        """Metaclass options"""
+        fields = []
+
+    def save(self):
+        """Save the serializer to 'issue' the order"""
+        order = self.context['order']
+        order.issue_order()
+
+
 class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     """Serializer for the SalesOrderAllocation model.
 
