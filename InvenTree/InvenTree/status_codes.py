@@ -31,23 +31,7 @@ class StatusCode:
     @classmethod
     def list(cls):
         """Return the StatusCode options as a list of mapped key / value items."""
-        codes = []
-
-        for key in cls.options.keys():
-
-            opt = {
-                'key': key,
-                'value': cls.options[key]
-            }
-
-            color = cls.colors.get(key, None)
-
-            if color:
-                opt['color'] = color
-
-            codes.append(opt)
-
-        return codes
+        return list(cls.dict().values())
 
     @classmethod
     def text(cls, key):
@@ -68,6 +52,62 @@ class StatusCode:
     def labels(cls):
         """All status code labels."""
         return cls.options.values()
+
+    @classmethod
+    def names(cls):
+        """Return a map of all 'names' of status codes in this class
+
+        Will return a dict object, with the attribute name indexed to the integer value.
+
+        e.g.
+        {
+            'PENDING': 10,
+            'IN_PROGRESS': 20,
+        }
+        """
+        keys = cls.keys()
+        status_names = {}
+
+        for d in dir(cls):
+            if d.startswith('_'):
+                continue
+            if d != d.upper():
+                continue
+
+            value = getattr(cls, d, None)
+
+            if value is None:
+                continue
+            if callable(value):
+                continue
+            if type(value) != int:
+                continue
+            if value not in keys:
+                continue
+
+            status_names[d] = value
+
+        return status_names
+
+    @classmethod
+    def dict(cls):
+        """Return a dict representation containing all required information"""
+        values = {}
+
+        for name, value, in cls.names().items():
+            entry = {
+                'key': value,
+                'name': name,
+                'label': cls.label(value),
+            }
+
+            if hasattr(cls, 'colors'):
+                if color := cls.colors.get(value, None):
+                    entry['color'] = color
+
+            values[name] = entry
+
+        return values
 
     @classmethod
     def label(cls, value):
