@@ -357,7 +357,7 @@ class StatusView(APIView):
             }
 
             if hasattr(status_class, 'colors'):
-                if color := status_class.colors[key]:
+                if color := status_class.colors.get(key, None):
                     value['color'] = color
 
             values[key] = value
