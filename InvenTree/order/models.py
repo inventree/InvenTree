@@ -868,14 +868,11 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def can_cancel(self):
         """Return True if this order can be cancelled."""
-        if self.status != SalesOrderStatus.PENDING:
-            return False
-
-        return True
+        return self.is_open
 
     @transaction.atomic
     def cancel_order(self):
-        """Cancel this order (only if it is "pending").
+        """Cancel this order (only if it is "open").
 
         Executes:
         - Mark the order as 'cancelled'
