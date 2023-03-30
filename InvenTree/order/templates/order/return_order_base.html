@@ -62,8 +62,8 @@ src="{% static 'img/blank_image.png' %}"
         {% endif %}
     </ul>
     {% if order.status == ReturnOrderStatus.PENDING %}
-    <button type='button' class='btn btn-primary' id='submit-order' title='{% trans "Submit Order" %}'>
-        <span class='fas fa-paper-plane'></span> {% trans "Submit Order" %}
+    <button type='button' class='btn btn-primary' id='issue-order' title='{% trans "Issue Order" %}'>
+        <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
     </button>
     {% elif order.status == ReturnOrderStatus.IN_PROGRESS %}
     <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
@@ -186,7 +186,7 @@ src="{% static 'img/blank_image.png' %}"
 {% if roles.return_order.change %}
 
 {% if order.status == ReturnOrderStatus.PENDING %}
-$('#submit-order').click(function() {
+$('#issue-order').click(function() {
     issueReturnOrder({{ order.pk }}, {
         reload: true,
     });
