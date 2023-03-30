@@ -1247,14 +1247,14 @@ function loadBomTable(table, options={}) {
 
                     var bDelt = makeDeleteButton('bom-delete-button', row.pk, '{% trans "Delete BOM Item" %}');
 
+                    let buttons = '';
 
                     if (!row.validated) {
-                        html += bValidate;
+                        buttons += bValidate;
                     } else {
-                        html += bValid;
+                        buttons += bValid;
                     }
 
-                    var buttons = '';
                     buttons += bEdit;
                     buttons += bSubs;
                     buttons += bDelt;

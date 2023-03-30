@@ -1745,6 +1745,9 @@ class ReturnOrder(TotalPriceMixin, Order):
 
         stock_item = line.item
 
+        # Remove any allocations against the returned StockItem
+        stock_item.clearAllocations()
+
         deltas = {
             'status': StockStatus.QUARANTINED,
             'returnorder': self.pk,
