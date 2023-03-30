@@ -1461,7 +1461,7 @@ class ReturnOrderIssueSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to 'issue' the order"""
         order = self.context['order']
-        order.place_order()
+        order.issue_order()
 
 
 class ReturnOrderCancelSerializer(serializers.Serializer):
