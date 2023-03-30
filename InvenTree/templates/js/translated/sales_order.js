@@ -1967,7 +1967,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 {
                     success: function(response) {
 
-                        constructForm(`{% url "api-so-line-list" %}${options.order}/allocate-serials/`, {
+                        constructForm(`{% url "api-so-list" %}${options.order}/allocate-serials/`, {
                             method: 'POST',
                             title: '{% trans "Allocate Serial Numbers" %}',
                             fields: {
