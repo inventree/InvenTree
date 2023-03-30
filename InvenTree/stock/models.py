@@ -961,11 +961,13 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
         item.save(add_note=False)
 
         code = StockHistoryCode.SENT_TO_CUSTOMER
-        deltas = {
-            'customer': customer.pk,
-            'customer_name': customer.pk,
-        }
+        deltas = {}
 
+        if customer is not None:
+            deltas['customer'] = customer.pk
+            deltas['customer_name'] = customer.name
+
+        # If an order is provided, we are shipping against a SalesOrder, not manually!
         if order:
             code = StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
             deltas['salesorder'] = order.pk
@@ -1031,7 +1033,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
                 notes=notes
             )
         else:
-            self.save()
+            self.save(add_note=False)
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""
