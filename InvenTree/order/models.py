@@ -868,7 +868,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def can_cancel(self):
         """Return True if this order can be cancelled."""
-        return self.is_open()
+        return self.is_open
 
     @transaction.atomic
     def cancel_order(self):
