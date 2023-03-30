@@ -20,7 +20,7 @@ from common.models import InvenTreeSetting
 from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView)
+                           ListCreateDestroyAPIView, StatusView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
@@ -1605,6 +1605,9 @@ order_api_urls = [
             # PurchaseOrder detail API endpoint
             re_path(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
         ])),
+
+        # Purchase order status information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: PurchaseOrderStatus}, name='api-po-status-codes'),
 
         # Purchase order list
         re_path(r'^.*$', PurchaseOrderList.as_view(), name='api-po-list'),
