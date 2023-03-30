@@ -1620,10 +1620,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     options.table = table;
 
-    if (!options.pending && !global_settings.SALESORDER_EDIT_COMPLETED_ORDERS) {
-        options.allow_edit = false;
-    }
-
     options.params = options.params || {};
 
     if (!options.order) {
@@ -1655,14 +1651,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         }
     );
 
-    // Is the order pending?
-    var pending = options.pending;
-
-    // Has the order shipped?
-    var shipped = options.status == {{ SalesOrderStatus.SHIPPED }};
-
-    // Show detail view if the PurchaseOrder is PENDING or SHIPPED
-    var show_detail = pending || shipped;
+    var show_detail = true;
 
     // Add callbacks for expand / collapse buttons
     $('#sales-lines-expand').click(function() {
@@ -1773,7 +1762,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         }
     ];
 
-    if (pending) {
+    if (options.open) {
         columns.push(
             {
                 field: 'stock',
@@ -1866,25 +1855,22 @@ function loadSalesOrderLineItemTable(table, options={}) {
         title: '{% trans "Notes" %}',
     });
 
-    if (pending) {
-        columns.push({
-            field: 'buttons',
-            switchable: false,
-            formatter: function(value, row, index, field) {
+    columns.push({
+        field: 'buttons',
+        switchable: false,
+        formatter: function(value, row, index, field) {
+            let pk = row.pk;
+            let buttons = '';
 
-                let buttons = '';
+            // Construct a set of buttons to display
+            if (row.part && row.part_detail) {
+                let part = row.part_detail;
 
-                var pk = row.pk;
-
-                if (row.part) {
-                    var part = row.part_detail;
-
+                if (options.allow_edit && !row.shipped) {
                     if (part.trackable) {
                         buttons += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% trans "Allocate serial numbers" %}');
                     }
-
                     buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Allocate stock" %}');
-
                     if (part.purchaseable) {
                         buttons += makeIconButton('fa-shopping-cart', 'button-buy', row.part, '{% trans "Purchase stock" %}');
                     }
@@ -1892,13 +1878,17 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     if (part.assembly) {
                         buttons += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build stock" %}');
                     }
-
-                    buttons += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
                 }
+            }
 
+            buttons += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
+
+            if (options.allow_edit) {
                 buttons += makeCopyButton('button-duplicate', pk, '{% trans "Duplicate line item" %}');
                 buttons += makeEditButton('button-edit', pk, '{% trans "Edit line item" %}');
+            }
 
+            if (options.allow_delete) {
                 var delete_disabled = false;
 
                 var title = '{% trans "Delete line item" %}';
@@ -1913,11 +1903,11 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                 // Prevent deletion of the line item if items have been allocated or shipped!
                 buttons += makeDeleteButton('button-delete', pk, title, {disabled: delete_disabled});
-
-                return wrapButtons(buttons);
             }
-        });
-    }
+
+            return wrapButtons(buttons);
+        }
+    });
 
     function reloadTable() {
         $(table).bootstrapTable('refresh');
@@ -2111,7 +2101,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         detailViewByClick: false,
         buttons: constructExpandCollapseButtons(table),
         detailFilter: function(index, row) {
-            if (pending) {
+            if (options.open) {
                 // Order is pending
                 return row.allocated > 0;
             } else {
@@ -2119,7 +2109,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             }
         },
         detailFormatter: function(index, row, element) {
-            if (pending) {
+            if (options.open) {
                 return showAllocationSubTable(index, row, element, options);
             } else {
                 return showFulfilledSubTable(index, row, element, options);
