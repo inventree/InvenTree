@@ -27,6 +27,7 @@
     createSalesOrderShipment,
     editSalesOrder,
     exportOrder,
+    issueSalesOrder,
     loadSalesOrderAllocationTable,
     loadSalesOrderLineItemTable,
     loadSalesOrderShipmentTable,
@@ -453,6 +454,28 @@ function completeSalesOrder(order_id, options={}) {
             }
         }
     );
+}
+
+
+/*
+ * Launches sa modal form to mark a SalesOrder as "issued"
+ */
+function issueSalesOrder(order_id, options={}) {
+
+    let html = `
+    <div class='alert alert-block alert-info'>
+    {% trans "Issue this Sales Order?" %}
+    </div>`;
+
+    constructForm(`{% url "api-so-list" %}${order_id}/issue/`, {
+        method: 'POST',
+        title: '{% trans "Issue Sales Order" %}',
+        confirm: true,
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
 }
 
 

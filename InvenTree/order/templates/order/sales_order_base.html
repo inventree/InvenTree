@@ -67,9 +67,11 @@ src="{% static 'img/blank_image.png' %}"
         <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
     </button>
     {% elif order.status == SalesOrderStatus.IN_PROGRESS %}
-    <button type='button' class='btn btn-success' id='complete-order-shipments' title='{% trans "Complete Shipments" %}'>
-        <span class='fas fa-truck'></span> {% trans "Complete Shipments" %}
+    {% if not order.is_completed %}
+    <button type='button' class='btn btn-success' id='complete-order-shipments' title='{% trans "Ship Items" %}'>
+        <span class='fas fa-truck'></span> {% trans "Ship Items" %}
     </button>
+    {% endif %}
     <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
         <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
     </button>
@@ -235,6 +237,15 @@ $("#complete-order-shipments").click(function() {
         {{ order.pk }},
         {
             reload: true,
+        }
+    );
+});
+
+$('#issue-order').click(function() {
+    issueSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true
         }
     );
 });
