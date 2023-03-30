@@ -8,12 +8,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
 import part.models
-from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView
+from InvenTree.api import (AttachmentMixin, ListCreateDestroyAPIView,
+                           MetadataView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
-from InvenTree.mixins import (ListCreateAPI, RetrieveUpdateAPI,
-                              RetrieveUpdateDestroyAPI)
-from plugin.serializers import MetadataSerializer
+from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 
 from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
                      ManufacturerPartAttachment, ManufacturerPartParameter,
@@ -85,16 +84,6 @@ class CompanyDetail(RetrieveUpdateDestroyAPI):
         queryset = CompanySerializer.annotate_queryset(queryset)
 
         return queryset
-
-
-class CompanyMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating Company metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance for a Company"""
-        return MetadataSerializer(Company, *args, **kwargs)
-
-    queryset = Company.objects.all()
 
 
 class CompanyAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
@@ -229,16 +218,6 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
 
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
-
-
-class ManufacturerPartMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating ManufacturerPart metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance for a Company"""
-        return MetadataSerializer(ManufacturerPart, *args, **kwargs)
-
-    queryset = ManufacturerPart.objects.all()
 
 
 class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
@@ -470,16 +449,6 @@ class SupplierPartDetail(RetrieveUpdateDestroyAPI):
     ]
 
 
-class SupplierPartMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating SupplierPart metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance for a Company"""
-        return MetadataSerializer(SupplierPart, *args, **kwargs)
-
-    queryset = SupplierPart.objects.all()
-
-
 class SupplierPriceBreakFilter(rest_filters.FilterSet):
     """Custom API filters for the SupplierPriceBreak list endpoint"""
 
@@ -567,7 +536,7 @@ manufacturer_part_api_urls = [
     ])),
 
     re_path(r'^(?P<pk>\d+)/?', include([
-        re_path('^metadata/', ManufacturerPartMetadata.as_view(), name='api-manufacturer-part-metadata'),
+        re_path('^metadata/', MetadataView.as_view(), {'model': ManufacturerPart}, name='api-manufacturer-part-metadata'),
         re_path('^.*$', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
     ])),
 
@@ -579,7 +548,7 @@ manufacturer_part_api_urls = [
 supplier_part_api_urls = [
 
     re_path(r'^(?P<pk>\d+)/?', include([
-        re_path('^metadata/', SupplierPartMetadata.as_view(), name='api-supplier-part-metadata'),
+        re_path('^metadata/', MetadataView.as_view(), {'model': SupplierPart}, name='api-supplier-part-metadata'),
         re_path('^.*$', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
     ])),
 
@@ -601,7 +570,7 @@ company_api_urls = [
     ])),
 
     re_path(r'^(?P<pk>\d+)/?', include([
-        re_path(r'^metadata/', CompanyMetadata.as_view(), name='api-company-metadata'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': Company}, name='api-company-metadata'),
         re_path(r'^.*$', CompanyDetail.as_view(), name='api-company-detail'),
     ])),
 
