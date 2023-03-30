@@ -131,6 +131,7 @@ class SalesOrderStatus(StatusCode):
     """Defines a set of status codes for a SalesOrder."""
 
     PENDING = 10  # Order is pending
+    IN_PROGRESS = 15  # Order has been issued, and is in progress
     SHIPPED = 20  # Order has been shipped to customer
     CANCELLED = 40  # Order has been cancelled
     LOST = 50  # Order was lost
@@ -138,6 +139,7 @@ class SalesOrderStatus(StatusCode):
 
     options = {
         PENDING: _("Pending"),
+        IN_PROGRESS: _("In Progress"),
         SHIPPED: _("Shipped"),
         CANCELLED: _("Cancelled"),
         LOST: _("Lost"),
@@ -146,6 +148,7 @@ class SalesOrderStatus(StatusCode):
 
     colors = {
         PENDING: 'secondary',
+        IN_PROGRESS: 'primary',
         SHIPPED: 'success',
         CANCELLED: 'danger',
         LOST: 'warning',
@@ -155,6 +158,7 @@ class SalesOrderStatus(StatusCode):
     # Open orders
     OPEN = [
         PENDING,
+        IN_PROGRESS,
     ]
 
     # Completed orders
