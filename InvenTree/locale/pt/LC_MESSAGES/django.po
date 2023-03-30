@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-29 05:06+0000\n"
-"PO-Revision-Date: 2023-03-29 11:40\n"
+"PO-Revision-Date: 2023-03-30 11:40\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -722,15 +722,15 @@ msgstr "Usado na ordem de produção"
 
 #: InvenTree/status_codes.py:296
 msgid "Shipped against Sales Order"
-msgstr ""
+msgstr "Enviado contra o Pedido de Venda"
 
 #: InvenTree/status_codes.py:298
 msgid "Received against Purchase Order"
-msgstr ""
+msgstr "Recebido referente ao Pedido de Compra"
 
 #: InvenTree/status_codes.py:300
 msgid "Returned against Return Order"
-msgstr ""
+msgstr "Devolvido contra Pedido de Retorno"
 
 #: InvenTree/status_codes.py:314
 msgid "Production"
@@ -738,27 +738,27 @@ msgstr "Produção"
 
 #: InvenTree/status_codes.py:351
 msgid "In Progress"
-msgstr ""
+msgstr "Em Progresso"
 
 #: InvenTree/status_codes.py:386
 msgid "Return"
-msgstr ""
+msgstr "Devolução"
 
 #: InvenTree/status_codes.py:387
 msgid "Repair"
-msgstr ""
+msgstr "Consertar"
 
 #: InvenTree/status_codes.py:388
 msgid "Refund"
-msgstr ""
+msgstr "Reembolsar"
 
 #: InvenTree/status_codes.py:389
 msgid "Replace"
-msgstr ""
+msgstr "Substituir"
 
 #: InvenTree/status_codes.py:390
 msgid "Reject"
-msgstr ""
+msgstr "Recusar"
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
@@ -2449,27 +2449,27 @@ msgstr "Modelo necessário para gerar campo de referência do Pedido de Produç�
 
 #: common/models.py:1445
 msgid "Enable Return Orders"
-msgstr ""
+msgstr "Ativar Pedidos de Devolução"
 
 #: common/models.py:1446
 msgid "Enable return order functionality in the user interface"
-msgstr ""
+msgstr "Ativar funcionalidade de pedido de retorno na interface do usuário"
 
 #: common/models.py:1452
 msgid "Return Order Reference Pattern"
-msgstr ""
+msgstr "Modelo de Referência de Pedidos de Devolução"
 
 #: common/models.py:1453
 msgid "Required pattern for generating Return Order reference field"
-msgstr ""
+msgstr "Modelo necessário para gerar campo de referência do Pedido de Devolução"
 
 #: common/models.py:1459
 msgid "Edit Completed Return Orders"
-msgstr ""
+msgstr "Editar os Pedidos de Devolução Concluídos"
 
 #: common/models.py:1460
 msgid "Allow editing of return orders after they have been completed"
-msgstr ""
+msgstr "Permitir a edição de pedidos de devolução após serem enviados ou concluídos"
 
 #: common/models.py:1466
 msgid "Sales Order Reference Pattern"
@@ -2977,19 +2977,19 @@ msgstr "Não incluir pedidos de vendas inativos na janela de visualização de p
 
 #: common/models.py:1962
 msgid "Search Return Orders"
-msgstr ""
+msgstr "Procurar Pedidos de Devolução"
 
 #: common/models.py:1963
 msgid "Display return orders in search preview window"
-msgstr ""
+msgstr "Mostrar pedidos de devolução na janela de visualização de pesquisa"
 
 #: common/models.py:1969
 msgid "Exclude Inactive Return Orders"
-msgstr ""
+msgstr "Não Incluir Pedidos de Devolução Inativas"
 
 #: common/models.py:1970
 msgid "Exclude inactive return orders from search preview window"
-msgstr ""
+msgstr "Não incluir pedidos de devolução inativos na janela de visualização de pesquisa"
 
 #: common/models.py:1976
 msgid "Search Preview Results"
@@ -3203,7 +3203,7 @@ msgstr "Os itens de um pedido de compra foram recebidos"
 
 #: common/notifications.py:311
 msgid "Items have been received against a return order"
-msgstr ""
+msgstr "Os itens de um pedido de devolução foram recebidos"
 
 #: common/notifications.py:423
 msgid "Error raised by plugin"
@@ -3760,26 +3760,26 @@ msgstr "Estoque Atribuído"
 #: templates/js/translated/search.js:260 templates/navbar.html:65
 #: users/models.py:45
 msgid "Return Orders"
-msgstr ""
+msgstr "Pedidos de Devolução"
 
 #: company/templates/company/detail.html:195
 #: order/templates/order/return_orders.html:21
 msgid "Create new return order"
-msgstr ""
+msgstr "Criar novo pedido de devolução"
 
 #: company/templates/company/detail.html:196
 #: order/templates/order/return_orders.html:22
 msgid "New Return Order"
-msgstr ""
+msgstr "Novo Pedido de Devolução"
 
 #: company/templates/company/detail.html:236
 msgid "Company Contacts"
-msgstr ""
+msgstr "Contato da Empresa"
 
 #: company/templates/company/detail.html:240
 #: company/templates/company/detail.html:241
 msgid "Add Contact"
-msgstr ""
+msgstr "Adicionar Contato"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -3877,7 +3877,7 @@ msgstr "Itens de Estoque atribuídos"
 
 #: company/templates/company/sidebar.html:33
 msgid "Contacts"
-msgstr ""
+msgstr "Contatos"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:676
