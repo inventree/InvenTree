@@ -31,23 +31,7 @@ class StatusCode:
     @classmethod
     def list(cls):
         """Return the StatusCode options as a list of mapped key / value items."""
-        codes = []
-
-        for key in cls.options.keys():
-
-            opt = {
-                'key': key,
-                'value': cls.options[key]
-            }
-
-            color = cls.colors.get(key, None)
-
-            if color:
-                opt['color'] = color
-
-            codes.append(opt)
-
-        return codes
+        return list(cls.dict().values())
 
     @classmethod
     def text(cls, key):
@@ -104,6 +88,26 @@ class StatusCode:
             status_names[d] = value
 
         return status_names
+
+    @classmethod
+    def dict(cls):
+        """Return a dict representation containing all required information"""
+        values = {}
+
+        for name, value, in cls.names().items():
+            entry = {
+                'key': value,
+                'name': name,
+                'label': cls.label(value),
+            }
+
+            if hasattr(cls, 'colors'):
+                if color := cls.colors.get(value, None):
+                    entry['color'] = color
+
+            values[name] = entry
+
+        return values
 
     @classmethod
     def label(cls, value):

@@ -348,25 +348,9 @@ class StatusView(APIView):
         if not status_class:
             raise NotImplementedError("status_class not defined for this endpoint")
 
-        values = {}
-
-        # Instead of using 'items' directly, we'll look for all 'uppercase' attributes
-
-        for name, value in status_class.names().items():
-            entry = {
-                'key': value,
-                'label': status_class.label(value),
-            }
-
-            if hasattr(status_class, 'colors'):
-                if color := status_class.colors.get(value, None):
-                    entry['color'] = color
-
-            values[name] = entry
-
         data = {
             'class': status_class.__name__,
-            'values': values,
+            'values': status_class.dict(),
         }
 
         return Response(data)
