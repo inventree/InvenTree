@@ -16,7 +16,9 @@ import users.models
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
+from plugin.serializers import MetadataSerializer
 
+from .mixins import RetrieveUpdateAPI
 from .status import is_worker_running
 from .version import (inventreeApiVersion, inventreeInstanceName,
                       inventreeVersion)
@@ -354,3 +356,26 @@ class StatusView(APIView):
         }
 
         return Response(data)
+
+
+class MetadataView(RetrieveUpdateAPI):
+    """Generic API endpoint for reading and editing metadata for a model"""
+
+    MODEL_REF = 'model'
+
+    def get_model_type(self):
+        """Return the model type associated with this API instance"""
+        model = self.kwargs.get(self.MODEL_REF, None)
+
+        if model is None:
+            raise ValidationError(f"MetadataView called without '{self.MODEL_REF}' parameter")
+
+        return model
+
+    def get_queryset(self):
+        """Return the queryset for this endpoint"""
+        return self.get_model_type().objects.all()
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance"""
+        return MetadataSerializer(self.get_model_type(), *args, **kwargs)

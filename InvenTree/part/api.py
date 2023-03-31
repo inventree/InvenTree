@@ -16,7 +16,7 @@ from rest_framework.response import Response
 import order.models
 from build.models import Build, BuildItem
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView)
+                           ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
                                str2bool, str2int)
@@ -28,7 +28,6 @@ from InvenTree.permissions import RolePermission
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from part.admin import PartCategoryResource, PartResource
-from plugin.serializers import MetadataSerializer
 
 from . import serializers as part_serializers
 from . import views
@@ -228,16 +227,6 @@ class CategoryTree(ListAPI):
 
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
-
-
-class CategoryMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating PartCategory metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return a MetadataSerializer pointing to the referenced PartCategory instance"""
-        return MetadataSerializer(PartCategory, *args, **kwargs)
-
-    queryset = PartCategory.objects.all()
 
 
 class CategoryParameterList(ListCreateAPI):
@@ -696,16 +685,6 @@ class PartRequirements(RetrieveAPI):
         data["required"] = data["required_build_order_quantity"] + data["required_sales_order_quantity"]
 
         return Response(data)
-
-
-class PartMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating Part metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Returns a MetadataSerializer instance pointing to the referenced Part"""
-        return MetadataSerializer(Part, *args, **kwargs)
-
-    queryset = Part.objects.all()
 
 
 class PartPricingDetail(RetrieveUpdateAPI):
@@ -1415,16 +1394,6 @@ class PartParameterTemplateDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
 
-class PartParameterTemplateMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating PartParameterTemplate metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return a MetadataSerializer pointing to the referenced PartParameterTemplate instance"""
-        return MetadataSerializer(PartParameterTemplate, *args, **kwargs)
-
-    queryset = PartParameterTemplate.objects.all()
-
-
 class PartParameterList(ListCreateAPI):
     """API endpoint for accessing a list of PartParameter objects.
 
@@ -1886,16 +1855,6 @@ class BomItemSubstituteDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.BomItemSubstituteSerializer
 
 
-class BomItemMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating PartBOM metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return a MetadataSerializer pointing to the referenced PartCategory instance"""
-        return MetadataSerializer(BomItem, *args, **kwargs)
-
-    queryset = BomItem.objects.all()
-
-
 part_api_urls = [
 
     # Base URL for PartCategory API endpoints
@@ -1910,7 +1869,7 @@ part_api_urls = [
         # Category detail endpoints
         path(r'<int:pk>/', include([
 
-            re_path(r'^metadata/', CategoryMetadata.as_view(), name='api-part-category-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': PartCategory}, name='api-part-category-metadata'),
 
             # PartCategory detail endpoint
             re_path(r'^.*$', CategoryDetail.as_view(), name='api-part-category-detail'),
@@ -1953,7 +1912,7 @@ part_api_urls = [
     re_path(r'^parameter/', include([
         path('template/', include([
             re_path(r'^(?P<pk>\d+)/', include([
-                re_path(r'^metadata/?', PartParameterTemplateMetadata.as_view(), name='api-part-parameter-template-metadata'),
+                re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameter}, name='api-part-parameter-template-metadata'),
                 re_path(r'^.*$', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
             ])),
             re_path(r'^.*$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
@@ -2000,7 +1959,7 @@ part_api_urls = [
         re_path(r'^bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'),
 
         # Part metadata
-        re_path(r'^metadata/', PartMetadata.as_view(), name='api-part-metadata'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': Part}, name='api-part-metadata'),
 
         # Part pricing
         re_path(r'^pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
@@ -2032,7 +1991,7 @@ bom_api_urls = [
     # BOM Item Detail
     path(r'<int:pk>/', include([
         re_path(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
-        re_path(r'^metadata/?', BomItemMetadata.as_view(), name='api-bom-item-metadata'),
+        re_path(r'^metadata/?', MetadataView.as_view(), {'model': BomItem}, name='api-bom-item-metadata'),
         re_path(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
 
