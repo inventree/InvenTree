@@ -145,7 +145,7 @@ wget -qO install.sh  https://get.inventree.org  && bash install.sh
 ## :wave: Contributing
 
 Contributions are welcomed and encouraged. Please help to make this project even better!
-Refer to the [contribution page in the docs ](https://docs.inventree.org/en/latest/contribute/) and check out [contributing.md](CONTRIBUTING.md).
+Refer to the [contribution page](CONTRIBUTING.md).
 
 <!-- Translation -->
 ## :scroll: Translation
