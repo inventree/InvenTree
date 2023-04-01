@@ -59,8 +59,8 @@ Powerful business logic works in the background to ensure that stock tracking hi
 
 InvenTree is designed to be **extensible**, and provides multiple options for **integration** with external applications or addition of custom plugins:
 
-* [InvenTree API](https://docs.inventree.org/en/latest/extend/api/)
-* [Python module](https://docs.inventree.org/en/latest/extend/python)
+* [InvenTree API](https://docs.inventree.org/en/latest/api/api/)
+* [Python module](https://docs.inventree.org/en/latest/api/python/python/)
 * [Plugin interface](https://docs.inventree.org/en/latest/extend/plugins)
 * [Third party tools](https://docs.inventree.org/en/latest/extend/integrate)
 
