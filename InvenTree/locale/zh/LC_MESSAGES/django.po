@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-31 00:00+0000\n"
-"PO-Revision-Date: 2023-03-31 11:39\n"
+"PO-Revision-Date: 2023-04-01 12:00\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -23,7 +23,7 @@ msgstr "未找到 API 端点"
 
 #: InvenTree/api.py:310
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "用户无权查看该模型"
 
 #: InvenTree/exceptions.py:79
 msgid "Error details can be found in the admin panel"
