@@ -138,7 +138,7 @@ There are several options to deploy InvenTree.
 
 Single line install - read [the docs](https://docs.inventree.org/en/latest/start/installer/) for supported distros and details about the function:
 ```bash
-wget -qO install.sh  https://get.inventree.org  && bash install.sh
+wget -qO install.sh https://get.inventree.org && bash install.sh
 ```
 
 <!-- Contributing -->
