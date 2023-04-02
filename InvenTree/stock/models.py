@@ -1013,7 +1013,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
             location=location
         )
 
-        self.clearAllocations()
         self.customer = None
         self.belongs_to = None
         self.sales_order = None
