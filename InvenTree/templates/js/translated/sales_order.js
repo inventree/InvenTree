@@ -1387,6 +1387,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
             },
             {
                 field: 'item',
+                switchable: false,
                 title: '{% trans "Stock Item" %}',
                 formatter: function(value, row) {
                     // Render a link to the particular stock item
@@ -1409,6 +1410,18 @@ function loadSalesOrderAllocationTable(table, options={}) {
                 title: '{% trans "Quantity" %}',
                 sortable: true,
             },
+            {
+                field: 'shipment_date',
+                title: '{% trans "Shipped" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    if (value) {
+                        return renderDate(value);
+                    } else {
+                        return `<em>{% trans "Not shipped" %}</em>`;
+                    }
+                }
+            }
         ]
     });
 }
