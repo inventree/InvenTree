@@ -266,6 +266,12 @@
 
 <div class='info-messages'>
 
+    {% if not item.in_stock %}
+    <div class='alert alert-block alert-danger'>
+        <span class='fas fa-info-circle'></span> {% trans "This stock item is unavailable" %}
+    </div>
+    {% endif %}
+
     {% if item.is_building %}
     <div class='alert alert-block alert-info'>
         {% trans "This stock item is in production and cannot be edited." %}<br>
@@ -281,12 +287,12 @@
     {% endif %}
 
     {% if item.hasRequiredTests and not item.passedAllRequiredTests %}
-    <div class='alert alert-block alert-danger'>
+    <div class='alert alert-block alert-warning'>
         {% trans "This stock item has not passed all required tests" %}
     </div>
     {% endif %}
 
-    {% for allocation in item.sales_order_allocations.all %}
+    {% for allocation in item.get_sales_order_allocations.all %}
     <div class='alert alert-block alert-info'>
         {% object_link 'so-detail' allocation.line.order.id allocation.line.order as link %}
         {% decimal allocation.quantity as qty %}
@@ -301,12 +307,6 @@
         {% trans "This stock item is allocated to Build Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
     </div>
     {% endfor %}
-
-    {% if item.serialized %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
-    </div>
-    {% endif %}
 </div>
 {% endblock details %}
 
@@ -320,7 +320,7 @@
             <h5><span class='fas fa-hashtag'></span></h5>
         </td>
         <td>
-            <h5>{% trans "Serial Number" %}</h5>
+            <h5 title='{% trans "This stock item is serialized. It has a unique serial number and the quantity cannot be adjusted" %}'>{% trans "Serial Number" %}</h5>
         </td>
         <td><h5>
             {{ item.serial }}
@@ -348,7 +348,11 @@
             <h5><div class='fas fa-boxes'></div></h5>
         </td>
         <td>
+            {% if item.in_stock %}
             <h5>{% trans "Available Quantity" %}</h5>
+            {% else %}
+            <h5>{% trans "Quantity" %}</h5>
+            {% endif %}
         </td>
         <td>
             <h5>{% if item.quantity != available %}{% decimal available %} / {% endif %}{% decimal item.quantity %} {% include "part/part_units.html" with part=item.part %}</h5>
@@ -367,7 +371,7 @@
     </tr>
     {% elif item.sales_order %}
     <tr>
-        <td><span class='fas fa-user-tie'></span></td>
+        <td><span class='fas fa-th-list'></span></td>
         <td>{% trans "Sales Order" %}</td>
         <td><a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a> - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a></td>
     </tr>
