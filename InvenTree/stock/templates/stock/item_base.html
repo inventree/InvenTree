@@ -348,7 +348,11 @@
             <h5><div class='fas fa-boxes'></div></h5>
         </td>
         <td>
+            {% if item.in_stock %}
             <h5>{% trans "Available Quantity" %}</h5>
+            {% else %}
+            <h5>{% trans "Quantity" %}</h5>
+            {% endif %}
         </td>
         <td>
             <h5>{% if item.quantity != available %}{% decimal available %} / {% endif %}{% decimal item.quantity %} {% include "part/part_units.html" with part=item.part %}</h5>
