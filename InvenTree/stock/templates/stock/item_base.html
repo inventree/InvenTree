@@ -266,6 +266,12 @@
 
 <div class='info-messages'>
 
+    {% if not item.in_stock %}
+    <div class='alert alert-block alert-danger'>
+        <span class='fas fa-info-circle'></span> {% trans "This stock item is unavailable" %}
+    </div>
+    {% endif %}
+
     {% if item.is_building %}
     <div class='alert alert-block alert-info'>
         {% trans "This stock item is in production and cannot be edited." %}<br>
@@ -281,7 +287,7 @@
     {% endif %}
 
     {% if item.hasRequiredTests and not item.passedAllRequiredTests %}
-    <div class='alert alert-block alert-danger'>
+    <div class='alert alert-block alert-warning'>
         {% trans "This stock item has not passed all required tests" %}
     </div>
     {% endif %}
