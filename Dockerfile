@@ -64,7 +64,7 @@ RUN apt-get install -y  --no-install-recommends \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
     poppler-utils libpango-1.0-0 libpangoft2-1.0-0 \
     # Image format support
-    libjpeg-dev webp \
+    libjpeg-dev webp libwebp-dev \
     # SQLite support
     sqlite3 \
     # PostgreSQL support

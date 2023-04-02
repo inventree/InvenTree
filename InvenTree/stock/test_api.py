@@ -50,9 +50,10 @@ class StockLocationTest(StockAPITestCase):
 
     list_url = reverse('api-location-list')
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
+        super().setUpTestData()
 
         # Add some stock locations
         StockLocation.objects.create(name='top', description='top category')
@@ -161,7 +162,7 @@ class StockLocationTest(StockAPITestCase):
             # Create stock items in the location to be deleted
             for jj in range(3):
                 stock_items.append(StockItem.objects.create(
-                    batch=f"Stock Item xyz {jj}",
+                    batch=f"Batch xyz {jj}",
                     location=stock_location_to_delete,
                     part=part
                 ))
@@ -180,7 +181,7 @@ class StockLocationTest(StockAPITestCase):
                 # Create stock items in the sub locations
                 for jj in range(3):
                     child_stock_locations_items.append(StockItem.objects.create(
-                        batch=f"Stock item in sub location xyz {jj}",
+                        batch=f"B xyz {jj}",
                         part=part,
                         location=child
                     ))
@@ -272,7 +273,7 @@ class StockLocationTest(StockAPITestCase):
 
         # Create the test stock item located to a non-structural category
         item = StockItem.objects.create(
-            batch="Item which will be tried to relocated to a structural location",
+            batch="BBB",
             location=non_structural_location,
             part=part
         )
@@ -305,6 +306,29 @@ class StockItemListTest(StockAPITestCase):
 
         # Return JSON-ified data
         return response.data
+
+    def test_top_level_filtering(self):
+        """Test filtering against "top level" stock location"""
+
+        # No filters, should return *all* items
+        response = self.get(self.list_url, {}, expected_code=200)
+        self.assertEqual(len(response.data), StockItem.objects.count())
+
+        # Filter with "cascade=False" (but no location specified)
+        # Should not result in any actual filtering
+        response = self.get(self.list_url, {'cascade': False}, expected_code=200)
+        self.assertEqual(len(response.data), StockItem.objects.count())
+
+        # Filter with "cascade=False" for the top-level location
+        response = self.get(self.list_url, {'location': 'null', 'cascade': False}, expected_code=200)
+        self.assertTrue(len(response.data) < StockItem.objects.count())
+
+        for result in response.data:
+            self.assertIsNone(result['location'])
+
+        # Filter with "cascade=True"
+        response = self.get(self.list_url, {'location': 'null', 'cascade': True}, expected_code=200)
+        self.assertEqual(len(response.data), StockItem.objects.count())
 
     def test_get_stock_list(self):
         """List *all* StockItem objects."""
@@ -928,7 +952,7 @@ class StockItemTest(StockAPITestCase):
 
         # First, construct a set of template / variant parts
         master_part = part.models.Part.objects.create(
-            name='Master', description='Master part',
+            name='Master', description='Master part which has variants',
             category=category,
             is_template=True,
         )
@@ -1390,30 +1414,32 @@ class StockMergeTest(StockAPITestCase):
 
     URL = reverse('api-stock-merge')
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
 
-        self.part = part.models.Part.objects.get(pk=25)
-        self.loc = StockLocation.objects.get(pk=1)
-        self.sp_1 = company.models.SupplierPart.objects.get(pk=100)
-        self.sp_2 = company.models.SupplierPart.objects.get(pk=101)
+        super().setUpTestData()
 
-        self.item_1 = StockItem.objects.create(
-            part=self.part,
-            supplier_part=self.sp_1,
+        cls.part = part.models.Part.objects.get(pk=25)
+        cls.loc = StockLocation.objects.get(pk=1)
+        cls.sp_1 = company.models.SupplierPart.objects.get(pk=100)
+        cls.sp_2 = company.models.SupplierPart.objects.get(pk=101)
+
+        cls.item_1 = StockItem.objects.create(
+            part=cls.part,
+            supplier_part=cls.sp_1,
             quantity=100,
         )
 
-        self.item_2 = StockItem.objects.create(
-            part=self.part,
-            supplier_part=self.sp_2,
+        cls.item_2 = StockItem.objects.create(
+            part=cls.part,
+            supplier_part=cls.sp_2,
             quantity=100,
         )
 
-        self.item_3 = StockItem.objects.create(
-            part=self.part,
-            supplier_part=self.sp_2,
+        cls.item_3 = StockItem.objects.create(
+            part=cls.part,
+            supplier_part=cls.sp_2,
             quantity=50,
         )
 

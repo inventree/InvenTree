@@ -49,6 +49,10 @@ class RolePermission(permissions.BasePermission):
 
         permission = rolemap[request.method]
 
+        # The required role may be defined for the view class
+        if role := getattr(view, 'role_required', None):
+            return users.models.check_user_role(user, role, permission)
+
         try:
             # Extract the model name associated with this request
             model = view.serializer_class.Meta.model
@@ -62,9 +66,7 @@ class RolePermission(permissions.BasePermission):
             # then we don't need a permission
             return True
 
-        result = users.models.RuleSet.check_table_permission(user, table, permission)
-
-        return result
+        return users.models.RuleSet.check_table_permission(user, table, permission)
 
 
 class IsSuperuser(permissions.IsAdminUser):

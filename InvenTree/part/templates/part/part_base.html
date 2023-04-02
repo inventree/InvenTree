@@ -144,7 +144,7 @@
                         {% if not part.active %}
                         &ensp;
                         <div class='badge rounded-pill bg-danger'>
-                            <span class='fas fa-skull-crossbones' title='{% trans "Part is virtual (not a physical part)" %}'></span>
+                            <span class='fas fa-skull-crossbones' title='{% trans "Part is not active" %}'></span>
                             {% trans 'Inactive' %}
                         </div>
                         {% endif %}
@@ -215,7 +215,7 @@
         </tr>
         {% endif %}
         {% if part.component %}
-        {% if required_build_order_quantity > 0 %}
+        {% if required_build_order_quantity > 0 or allocated_build_order_quantity > 0 %}
         <tr>
             <td><span class='fas fa-tools'></span></td>
             <td>{% trans "Allocated to Build Orders" %}</td>
@@ -224,7 +224,7 @@
         {% endif %}
         {% endif %}
         {% if part.salable %}
-        {% if required_sales_order_quantity > 0 %}
+        {% if required_sales_order_quantity > 0 or allocated_sales_order_quantity > 0 %}
         <tr>
             <td><span class='fas fa-truck'></span></td>
             <td>{% trans "Allocated to Sales Orders" %}</td>
@@ -273,7 +273,8 @@
                 <td>{{ part.IPN }}{% include "clip.html"%}</td>
             </tr>
             {% endif %}
-            {% if part.revision %}
+            {% settings_value "PART_ENABLE_REVISION" as show_revision %}
+            {% if show_revision and part.revision %}
             <tr>
                 <td><span class='fas fa-code-branch'></span></td>
                 <td>{% trans "Revision" %}</td>
@@ -334,6 +335,7 @@
                         {% else %}
                         {% render_currency pricing.overall_min %} - {% render_currency pricing.overall_max %}
                         {% endif %}
+                        {% if part.units %}&nbsp / {{ part.units }}{% endif %}
                     </td>
                 </tr>
                 {% endif %}
@@ -342,12 +344,12 @@
                 {% if stocktake %}
                 <tr>
                     <td><span class='fas fa-clipboard-check'></span></td>
-                    <td>{% trans "Last Stocktake" %}</td>
                     <td>
-                        {% decimal stocktake.quantity %} <span class='fas fa-calendar-alt' title='{% render_date stocktake.date %}'></span>
-                        <span class='badge bg-dark rounded-pill float-right'>
-                            {{ stocktake.user.username }}
-                        </span>
+                        {% trans "Last Stocktake" %}
+                    </td>
+                    <td>
+                        {% decimal stocktake.quantity %}
+                        <span class='badge bg-dark rounded-pill float-right'>{{ stocktake.user.username }}</span>
                     </td>
                 </tr>
                 {% endif %}
@@ -389,6 +391,13 @@
                     <td><span class='fas fa-link'></span></td>
                     <td>{% trans "External Link" %}</td>
                     <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
+                </tr>
+                {% endif %}
+                {% if part.responsible %}
+                <tr>
+                    <td><span class='fas fa-user'></span></td>
+                    <td>{% trans "Responsible" %}</td>
+                    <td> <span class='badge badge-right rounded-pill bg-dark'>{{ part.responsible }}</span></td>
                 </tr>
                 {% endif %}
             </table>
@@ -440,11 +449,9 @@
 
     {% if barcodes %}
     $("#show-qr-code").click(function() {
-        launchModalForm(
-            "{% url 'api-part-qr' part.id %}",
-            {
-                no_post: true,
-            }
+        showQRDialog(
+            '{% trans "Part QR Code" %}',
+            '{"part": {{ part.pk }}}',
         );
     });
 
@@ -468,7 +475,11 @@
 
     {% if labels_enabled %}
     $('#print-label').click(function() {
-        printPartLabels([{{ part.pk }}]);
+        printLabels({
+            items: [{{ part.pk }}],
+            key: 'part',
+            url: '{% url "api-part-label-list" %}',
+        });
     });
     {% endif %}
 

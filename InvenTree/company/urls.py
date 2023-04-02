@@ -1,13 +1,13 @@
 """URL lookup for Company app."""
 
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from . import views
 
 company_urls = [
 
     # Detail URLs for a specific Company instance
-    re_path(r'^(?P<pk>\d+)/', include([
+    path(r'<int:pk>/', include([
         re_path(r'^.*$', views.CompanyDetail.as_view(), name='company-detail'),
     ])),
 
@@ -21,12 +21,11 @@ company_urls = [
 
 manufacturer_part_urls = [
 
-    re_path(r'^(?P<pk>\d+)/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part.html'), name='manufacturer-part-detail'),
+    path(r'<int:pk>/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part.html'), name='manufacturer-part-detail'),
 ]
 
 supplier_part_urls = [
-    re_path(r'^(?P<pk>\d+)/', include([
-        re_path('^qr_code/?', views.SupplierPartQRCode.as_view(), name='supplier-part-qr'),
+    path(r'<int:pk>/', include([
         re_path('^.*$', views.SupplierPartDetail.as_view(template_name='company/supplier_part.html'), name='supplier-part-detail'),
     ]))
 

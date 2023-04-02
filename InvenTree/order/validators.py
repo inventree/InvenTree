@@ -17,6 +17,14 @@ def generate_next_purchase_order_reference():
     return PurchaseOrder.generate_reference()
 
 
+def generate_next_return_order_reference():
+    """Generate the next available ReturnOrder reference"""
+
+    from order.models import ReturnOrder
+
+    return ReturnOrder.generate_reference()
+
+
 def validate_sales_order_reference_pattern(pattern):
     """Validate the SalesOrder reference 'pattern' setting"""
 
@@ -33,6 +41,14 @@ def validate_purchase_order_reference_pattern(pattern):
     PurchaseOrder.validate_reference_pattern(pattern)
 
 
+def validate_return_order_reference_pattern(pattern):
+    """Validate the ReturnOrder reference 'pattern' setting"""
+
+    from order.models import ReturnOrder
+
+    ReturnOrder.validate_reference_pattern(pattern)
+
+
 def validate_sales_order_reference(value):
     """Validate that the SalesOrder reference field matches the required pattern"""
 
@@ -47,3 +63,11 @@ def validate_purchase_order_reference(value):
     from order.models import PurchaseOrder
 
     PurchaseOrder.validate_reference_field(value)
+
+
+def validate_return_order_reference(value):
+    """Validate that the ReturnOrder reference field matches the required pattern"""
+
+    from order.models import ReturnOrder
+
+    ReturnOrder.validate_reference_field(value)

@@ -270,10 +270,10 @@ src="{% static 'img/blank_image.png' %}"
 {% if barcodes %}
 
 $("#show-qr-code").click(function() {
-    launchModalForm("{% url 'supplier-part-qr' part.pk %}",
-    {
-        no_post: true,
-    });
+    showQRDialog(
+        '{% trans "Supplier Part QR Code" %}',
+        '{"supplierpart": {{ part.pk }}}'
+    );
 });
 
 $("#barcode-link").click(function() {
@@ -299,27 +299,12 @@ loadSupplierPriceBreakTable({
 });
 
 $('#new-price-break').click(function() {
-
-    constructForm(
-        '{% url "api-part-supplier-price-list" %}',
-        {
-            method: 'POST',
-            fields: {
-                quantity: {},
-                part: {
-                    value: {{ part.pk }},
-                    hidden: true,
-                },
-                price: {},
-                price_currency: {
-                },
-            },
-            title: '{% trans "Add Price Break" %}',
-            onSuccess: function() {
-                $("#price-break-table").bootstrapTable("refresh");
-            }
+    createSupplierPartPriceBreak({{ part.pk }}, {
+        onSuccess: function() {
+            $("#price-break-table").bootstrapTable('refresh');
         }
-    );
+    });
+
 });
 
 loadPurchaseOrderTable($("#purchase-order-table"), {

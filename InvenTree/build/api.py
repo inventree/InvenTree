@@ -1,7 +1,8 @@
 """JSON API for the Build app."""
 
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 
 from rest_framework import filters
 from rest_framework.exceptions import ValidationError
@@ -9,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
-from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView
+from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, MetadataView, StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
@@ -62,6 +63,20 @@ class BuildFilter(rest_filters.FilterSet):
             queryset = queryset.filter(responsible__in=owners)
         else:
             queryset = queryset.exclude(responsible__in=owners)
+
+        return queryset
+
+    assigned_to = rest_filters.NumberFilter(label='responsible', method='filter_responsible')
+
+    def filter_responsible(self, queryset, name, value):
+        """Filter by orders which are assigned to the specified owner."""
+        owners = list(Owner.objects.filter(pk=value))
+
+        # if we query by a user, also find all ownerships through group memberships
+        if len(owners) > 0 and owners[0].label() == 'user':
+            owners = Owner.get_owners_matching_user(User.objects.get(pk=owners[0].owner_id))
+
+        queryset = queryset.filter(responsible__in=owners)
 
         return queryset
 
@@ -472,18 +487,21 @@ build_api_urls = [
 
     # Attachments
     re_path(r'^attachment/', include([
-        re_path(r'^(?P<pk>\d+)/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
+        path(r'<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
         re_path(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
     ])),
 
     # Build Items
     re_path(r'^item/', include([
-        re_path(r'^(?P<pk>\d+)/', BuildItemDetail.as_view(), name='api-build-item-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': BuildItem}, name='api-build-item-metadata'),
+            re_path(r'^.*$', BuildItemDetail.as_view(), name='api-build-item-detail'),
+        ])),
         re_path(r'^.*$', BuildItemList.as_view(), name='api-build-item-list'),
     ])),
 
     # Build Detail
-    re_path(r'^(?P<pk>\d+)/', include([
+    path(r'<int:pk>/', include([
         re_path(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
         re_path(r'^auto-allocate/', BuildAutoAllocate.as_view(), name='api-build-auto-allocate'),
         re_path(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
@@ -492,8 +510,12 @@ build_api_urls = [
         re_path(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
         re_path(r'^cancel/', BuildCancel.as_view(), name='api-build-cancel'),
         re_path(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': Build}, name='api-build-metadata'),
         re_path(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
     ])),
+
+    # Build order status code information
+    re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: BuildStatus}, name='api-build-status-codes'),
 
     # Build List
     re_path(r'^.*$', BuildList.as_view(), name='api-build-list'),

@@ -1,6 +1,7 @@
 """Tests for mechanisms in common."""
 
 import json
+import time
 from datetime import timedelta
 from http import HTTPStatus
 
@@ -900,3 +901,37 @@ class ColorThemeTest(TestCase):
         # check valid theme
         self.assertFalse(ColorTheme.is_valid_choice(aa))
         self.assertTrue(ColorTheme.is_valid_choice(ab))
+
+
+class CurrencyAPITests(InvenTreeAPITestCase):
+    """Unit tests for the currency exchange API endpoints"""
+
+    def test_exchange_endpoint(self):
+        """Test that the currency exchange endpoint works as expected"""
+
+        response = self.get(reverse('api-currency-exchange'), expected_code=200)
+
+        self.assertIn('base_currency', response.data)
+        self.assertIn('exchange_rates', response.data)
+
+    def test_refresh_endpoint(self):
+        """Call the 'refresh currencies' endpoint"""
+
+        from djmoney.contrib.exchange.models import Rate
+
+        # Delete any existing exchange rate data
+        Rate.objects.all().delete()
+
+        # Updating via the external exchange may not work every time
+        for _idx in range(5):
+            self.post(reverse('api-currency-refresh'))
+
+            # There should be some new exchange rate objects now
+            if Rate.objects.all().exists():
+                # Exit early
+                return
+
+            # Delay and try again
+            time.sleep(10)
+
+        raise TimeoutError("Could not refresh currency exchange data after 5 attempts")

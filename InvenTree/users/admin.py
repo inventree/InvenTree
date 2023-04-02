@@ -84,8 +84,8 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
         RuleSetInline,
     ]
 
-    list_display = ('name', 'admin', 'part_category', 'part', 'stock_location',
-                    'stock_item', 'build', 'purchase_order', 'sales_order')
+    list_display = ('name', 'admin', 'part_category', 'part', 'stocktake', 'stock_location',
+                    'stock_item', 'build', 'purchase_order', 'sales_order', 'return_order')
 
     def get_rule_set(self, obj, rule_set_type):
         """Return list of permissions for the given ruleset."""
@@ -137,6 +137,10 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
         """Return the ruleset for the Part role"""
         return self.get_rule_set(obj, 'part')
 
+    def stocktake(self, obj):
+        """Return the ruleset for the Stocktake role"""
+        return self.get_rule_set(obj, 'stocktake')
+
     def stock_location(self, obj):
         """Return the ruleset for the StockLocation role"""
         return self.get_rule_set(obj, 'stock_location')
@@ -156,6 +160,10 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
     def sales_order(self, obj):
         """Return the ruleset for the SalesOrder role"""
         return self.get_rule_set(obj, 'sales_order')
+
+    def return_order(self, obj):
+        """Return the ruleset ofr the ReturnOrder role"""
+        return self.get_rule_set(obj, 'return_order')
 
     def get_formsets_with_inlines(self, request, obj=None):
         """Return all inline formsets"""

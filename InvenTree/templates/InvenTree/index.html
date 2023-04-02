@@ -109,7 +109,7 @@ addHeaderAction('latest-parts', '{% trans "Latest Parts" %}', 'fa-newspaper');
 loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
     params: {
         ordering: "-creation_date",
-        max_results: {% settings_value "PART_RECENT_COUNT" user=request.user %},
+        limit: {% settings_value "PART_RECENT_COUNT" user=request.user %},
     },
     name: 'latest_parts',
 });
@@ -147,7 +147,7 @@ loadStockTable($('#table-recently-updated-stock'), {
     params: {
         part_detail: true,
         ordering: "-updated",
-        max_results: {% settings_value "STOCK_RECENT_COUNT" user=request.user %},
+        limit: {% settings_value "STOCK_RECENT_COUNT" user=request.user %},
     },
     name: 'recently-updated-stock',
     grouping: false,

@@ -559,7 +559,7 @@ def test(c, disable_pty=False):
     pty = not disable_pty
 
     # Run coverage tests
-    manage(c, 'test', pty=pty)
+    manage(c, 'test --slowreport', pty=pty)
 
 
 @task(help={'dev': 'Set up development environment at the end'})
@@ -578,7 +578,7 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
 
     # Get test data
     print("Cloning demo dataset ...")
-    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v')
+    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v --depth=1')
     print("========================================")
 
     # Make sure migrations are done - might have just deleted sqlite database
@@ -620,4 +620,4 @@ def coverage(c):
     ))
 
     # Generate coverage report
-    c.run('coverage html')
+    c.run('coverage html -i')

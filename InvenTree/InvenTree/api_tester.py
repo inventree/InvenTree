@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.http.response import StreamingHttpResponse
 
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework.test import APITestCase
 
 from plugin import registry
@@ -32,48 +33,69 @@ class UserMixin:
     # Set list of roles automatically associated with the user
     roles = []
 
-    def setUp(self):
-        """Setup for all tests."""
-        super().setUp()
+    @classmethod
+    def setUpTestData(cls):
+        """Run setup for all tests in a given class"""
+        super().setUpTestData()
 
         # Create a user to log in with
-        self.user = get_user_model().objects.create_user(
-            username=self.username,
-            password=self.password,
-            email=self.email
+        cls.user = get_user_model().objects.create_user(
+            username=cls.username,
+            password=cls.password,
+            email=cls.email
         )
 
         # Create a group for the user
-        self.group = Group.objects.create(name='my_test_group')
-        self.user.groups.add(self.group)
+        cls.group = Group.objects.create(name='my_test_group')
+        cls.user.groups.add(cls.group)
 
-        if self.superuser:
-            self.user.is_superuser = True
+        if cls.superuser:
+            cls.user.is_superuser = True
 
-        if self.is_staff:
-            self.user.is_staff = True
+        if cls.is_staff:
+            cls.user.is_staff = True
 
-        self.user.save()
+        cls.user.save()
 
         # Assign all roles if set
-        if self.roles == 'all':
-            self.assignRole(assign_all=True)
+        if cls.roles == 'all':
+            cls.assignRole(group=cls.group, assign_all=True)
+
         # else filter the roles
         else:
-            for role in self.roles:
-                self.assignRole(role)
+            for role in cls.roles:
+                cls.assignRole(role=role, group=cls.group)
+
+    def setUp(self):
+        """Run setup for individual test methods"""
 
         if self.auto_login:
             self.client.login(username=self.username, password=self.password)
 
-    def assignRole(self, role=None, assign_all: bool = False):
-        """Set the user roles for the registered user."""
-        # role is of the format 'rule.permission' e.g. 'part.add'
+    @classmethod
+    def assignRole(cls, role=None, assign_all: bool = False, group=None):
+        """Set the user roles for the registered user.
+
+        Arguments:
+            role: Role of the format 'rule.permission' e.g. 'part.add'
+            assign_all: Set to True to assign *all* roles
+            group: The group to assign roles to (or leave None to use the group assigned to this class)
+        """
+
+        if group is None:
+            group = cls.group
+
+        if type(assign_all) is not bool:
+            # Raise exception if common mistake is made!
+            raise TypeError('assignRole: assign_all must be a boolean value')
+
+        if not role and not assign_all:
+            raise ValueError('assignRole: either role must be provided, or assign_all must be set')
 
         if not assign_all and role:
             rule, perm = role.split('.')
 
-        for ruleset in self.group.rule_sets.all():
+        for ruleset in group.rule_sets.all():
 
             if assign_all or ruleset.name == rule:
 
@@ -105,8 +127,63 @@ class PluginMixin:
             self.plugin_confs = PluginConfig.objects.all()
 
 
-class InvenTreeAPITestCase(UserMixin, APITestCase):
+class ExchangeRateMixin:
+    """Mixin class for generating exchange rate data"""
+
+    def generate_exchange_rates(self):
+        """Helper function which generates some exchange rates to work with"""
+
+        rates = {
+            'AUD': 1.5,
+            'CAD': 1.7,
+            'GBP': 0.9,
+            'USD': 1.0,
+        }
+
+        # Create a dummy backend
+        ExchangeBackend.objects.create(
+            name='InvenTreeExchange',
+            base_currency='USD',
+        )
+
+        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+
+        items = []
+
+        for currency, rate in rates.items():
+            items.append(
+                Rate(
+                    currency=currency,
+                    value=rate,
+                    backend=backend,
+                )
+            )
+
+        Rate.objects.bulk_create(items)
+
+
+class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
+
+    def checkResponse(self, url, method, expected_code, response):
+        """Debug output for an unexpected response"""
+
+        # No expected code, return
+        if expected_code is None:
+            return
+
+        if expected_code != response.status_code:
+
+            print(f"Unexpected {method} response at '{url}': status_code = {response.status_code}")
+
+            if hasattr(response, 'data'):
+                print('data:', response.data)
+            if hasattr(response, 'body'):
+                print('body:', response.body)
+            if hasattr(response, 'content'):
+                print('content:', response.content)
+
+        self.assertEqual(expected_code, response.status_code)
 
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.
@@ -131,13 +208,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
 
         response = self.client.get(url, data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                print(f"Unexpected response at '{url}': status_code = {response.status_code}")
-                print(response.data)
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'GET', expected_code, response)
 
         return response
 
@@ -150,17 +221,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
 
         response = self.client.post(url, data=data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                print(f"Unexpected response at '{url}': status code = {response.status_code}")
-
-                if hasattr(response, 'data'):
-                    print(response.data)
-                else:
-                    print(f"(response object {type(response)} has no 'data' attribute")
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'POST', expected_code, response)
 
         return response
 
@@ -172,8 +233,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
 
         response = self.client.delete(url, data=data, format=format)
 
-        if expected_code is not None:
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'DELETE', expected_code, response)
 
         return response
 
@@ -181,8 +241,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         """Issue a PATCH request."""
         response = self.client.patch(url, data=data, format=format)
 
-        if expected_code is not None:
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'PATCH', expected_code, response)
 
         return response
 
@@ -190,13 +249,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         """Issue a PUT request."""
         response = self.client.put(url, data=data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                print(f"Unexpected response at '{url}':")
-                print(response.data)
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'PUT', expected_code, response)
 
         return response
 
@@ -204,8 +257,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         """Issue an OPTIONS request."""
         response = self.client.options(url, format='json')
 
-        if expected_code is not None:
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'OPTIONS', expected_code, response)
 
         return response
 

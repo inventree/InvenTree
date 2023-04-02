@@ -247,7 +247,11 @@ src="{% static 'img/blank_image.png' %}"
 
     {% if report_enabled %}
     $('#print-build-report').click(function() {
-        printBuildReports([{{ build.pk }}]);
+        printReports({
+            items: [{{ build.pk }}],
+            key: 'build',
+            url: '{% url "api-build-report-list" %}',
+        });
     });
     {% endif %}
 
