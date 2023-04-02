@@ -195,6 +195,9 @@ urlpatterns = [
     re_path('', include(backendpatterns)),
 ]
 
+if settings.OIDC_PROVIDER_ENABLED:
+    urlpatterns.append(path('accounts/oidc-provider/', include('oidc_provider.urls', namespace='oidc_provider')))
+
 # Server running in "DEBUG" mode?
 if settings.DEBUG:
     # Static file access

@@ -842,6 +842,10 @@ ACCOUNT_FORMS = {
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 
+OIDC_PROVIDER_ENABLED = get_boolean_setting('INVENTREE_OIDC_PROVIDER_ENABLED', 'oidc_provider_enabled', False)
+if OIDC_PROVIDER_ENABLED:
+    INSTALLED_APPS.append('oidc_provider')
+
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
 
