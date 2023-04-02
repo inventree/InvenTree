@@ -10,13 +10,11 @@ from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
-from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView
+from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, MetadataView, StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
-from InvenTree.mixins import CreateAPI, RetrieveUpdateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
-
-from plugin.serializers import MetadataSerializer
+from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
 import build.admin
 import build.serializers
@@ -292,16 +290,6 @@ class BuildOrderContextMixin:
         return ctx
 
 
-class BuildOrderMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating BuildOrder metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance"""
-        return MetadataSerializer(Build, *args, **kwargs)
-
-    queryset = Build.objects.all()
-
-
 class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
     """API endpoint for creating new build output(s)."""
 
@@ -473,16 +461,6 @@ class BuildItemList(ListCreateAPI):
     ]
 
 
-class BuildItemMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating BuildItem metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance"""
-        return MetadataSerializer(BuildItem, *args, **kwargs)
-
-    queryset = BuildItem.objects.all()
-
-
 class BuildAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) BuildOrderAttachment objects."""
 
@@ -516,7 +494,7 @@ build_api_urls = [
     # Build Items
     re_path(r'^item/', include([
         path(r'<int:pk>/', include([
-            re_path(r'^metadata/', BuildItemMetadata.as_view(), name='api-build-item-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': BuildItem}, name='api-build-item-metadata'),
             re_path(r'^.*$', BuildItemDetail.as_view(), name='api-build-item-detail'),
         ])),
         re_path(r'^.*$', BuildItemList.as_view(), name='api-build-item-list'),
@@ -532,9 +510,12 @@ build_api_urls = [
         re_path(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
         re_path(r'^cancel/', BuildCancel.as_view(), name='api-build-cancel'),
         re_path(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
-        re_path(r'^metadata/', BuildOrderMetadata.as_view(), name='api-build-metadata'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': Build}, name='api-build-metadata'),
         re_path(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
     ])),
+
+    # Build order status code information
+    re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: BuildStatus}, name='api-build-status-codes'),
 
     # Build List
     re_path(r'^.*$', BuildList.as_view(), name='api-build-list'),

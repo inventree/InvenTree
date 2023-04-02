@@ -20,18 +20,18 @@ from common.models import InvenTreeSetting
 from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView)
+                           ListCreateDestroyAPIView, MetadataView, StatusView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
-                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+                              RetrieveUpdateDestroyAPI)
+from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
+                                    ReturnOrderStatus, SalesOrderStatus)
 from order.admin import (PurchaseOrderExtraLineResource,
                          PurchaseOrderLineItemResource, PurchaseOrderResource,
                          ReturnOrderResource, SalesOrderExtraLineResource,
                          SalesOrderLineItemResource, SalesOrderResource)
 from part.models import Part
-from plugin.serializers import MetadataSerializer
 from users.models import Owner
 
 
@@ -384,16 +384,6 @@ class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
     serializer_class = serializers.PurchaseOrderIssueSerializer
 
 
-class PurchaseOrderMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating PurchaseOrder metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance for a PurchaseOrder"""
-        return MetadataSerializer(models.PurchaseOrder, *args, **kwargs)
-
-    queryset = models.PurchaseOrder.objects.all()
-
-
 class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to receive stock items against a PurchaseOrder.
 
@@ -556,16 +546,6 @@ class PurchaseOrderLineItemDetail(PurchaseOrderLineItemMixin, RetrieveUpdateDest
     pass
 
 
-class PurchaseOrderLineItemMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating PurchaseOrderLineItem metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance for a Company"""
-        return MetadataSerializer(models.PurchaseOrderLineItem, *args, **kwargs)
-
-    queryset = models.PurchaseOrderLineItem.objects.all()
-
-
 class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
 
@@ -587,16 +567,6 @@ class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
-
-
-class PurchaseOrderExtraLineItemMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating PurchaseOrderExtraLineItem metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance"""
-        return MetadataSerializer(models.PurchaseOrderExtraLine, *args, **kwargs)
-
-    queryset = models.PurchaseOrderExtraLine.objects.all()
 
 
 class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
@@ -872,16 +842,6 @@ class SalesOrderLineItemDetail(SalesOrderLineItemMixin, RetrieveUpdateDestroyAPI
     pass
 
 
-class SalesOrderLineItemMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating SalesOrderLineItem metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance"""
-        return MetadataSerializer(models.SalesOrderLineItem, *args, **kwargs)
-
-    queryset = models.SalesOrderLineItem.objects.all()
-
-
 class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
@@ -905,18 +865,10 @@ class SalesOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.SalesOrderExtraLineSerializer
 
 
-class SalesOrderExtraLineItemMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating SalesOrderExtraLineItem metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance"""
-        return MetadataSerializer(models.SalesOrderExtraLine, *args, **kwargs)
-
-    queryset = models.SalesOrderExtraLine.objects.all()
-
-
 class SalesOrderContextMixin:
     """Mixin to add sales order object as serializer context variable."""
+
+    queryset = models.SalesOrder.objects.all()
 
     def get_serializer_context(self):
         """Add the 'order' reference to the serializer context for any classes which inherit this mixin"""
@@ -934,26 +886,18 @@ class SalesOrderContextMixin:
 
 class SalesOrderCancel(SalesOrderContextMixin, CreateAPI):
     """API endpoint to cancel a SalesOrder"""
-
-    queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderCancelSerializer
+
+
+class SalesOrderIssue(SalesOrderContextMixin, CreateAPI):
+    """API endpoint to issue a SalesOrder"""
+    serializer_class = serializers.SalesOrderIssueSerializer
 
 
 class SalesOrderComplete(SalesOrderContextMixin, CreateAPI):
     """API endpoint for manually marking a SalesOrder as "complete"."""
 
-    queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderCompleteSerializer
-
-
-class SalesOrderMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating SalesOrder metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return a metadata serializer for the SalesOrder model"""
-        return MetadataSerializer(models.SalesOrder, *args, **kwargs)
-
-    queryset = models.SalesOrder.objects.all()
 
 
 class SalesOrderAllocateSerials(SalesOrderContextMixin, CreateAPI):
@@ -1115,16 +1059,6 @@ class SalesOrderShipmentComplete(CreateAPI):
             pass
 
         return ctx
-
-
-class SalesOrderShipmentMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating SalesOrderShipment metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance"""
-        return MetadataSerializer(models.SalesOrderShipment, *args, **kwargs)
-
-    queryset = models.SalesOrderShipment.objects.all()
 
 
 class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
@@ -1599,12 +1533,15 @@ order_api_urls = [
             re_path(r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'),
             re_path(r'^complete/', PurchaseOrderComplete.as_view(), name='api-po-complete'),
             re_path(r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
-            re_path(r'^metadata/', PurchaseOrderMetadata.as_view(), name='api-po-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.PurchaseOrder}, name='api-po-metadata'),
             re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
 
             # PurchaseOrder detail API endpoint
             re_path(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
         ])),
+
+        # Purchase order status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: PurchaseOrderStatus}, name='api-po-status-codes'),
 
         # Purchase order list
         re_path(r'^.*$', PurchaseOrderList.as_view(), name='api-po-list'),
@@ -1613,7 +1550,7 @@ order_api_urls = [
     # API endpoints for purchase order line items
     re_path(r'^po-line/', include([
         path('<int:pk>/', include([
-            re_path(r'^metadata/', PurchaseOrderLineItemMetadata.as_view(), name='api-po-line-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.PurchaseOrderLineItem}, name='api-po-line-metadata'),
             re_path(r'^.*$', PurchaseOrderLineItemDetail.as_view(), name='api-po-line-detail'),
         ])),
         re_path(r'^.*$', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
@@ -1622,7 +1559,7 @@ order_api_urls = [
     # API endpoints for purchase order extra line
     re_path(r'^po-extra-line/', include([
         path('<int:pk>/', include([
-            re_path(r'^metadata/', PurchaseOrderExtraLineItemMetadata.as_view(), name='api-po-extra-line-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.PurchaseOrderExtraLine}, name='api-po-extra-line-metadata'),
             re_path(r'^.*$', PurchaseOrderExtraLineDetail.as_view(), name='api-po-extra-line-detail'),
         ])),
         path('', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'),
@@ -1638,7 +1575,7 @@ order_api_urls = [
         re_path(r'^shipment/', include([
             path(r'<int:pk>/', include([
                 path('ship/', SalesOrderShipmentComplete.as_view(), name='api-so-shipment-ship'),
-                re_path(r'^metadata/', SalesOrderShipmentMetadata.as_view(), name='api-so-shipment-metadata'),
+                re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrderShipment}, name='api-so-shipment-metadata'),
                 re_path(r'^.*$', SalesOrderShipmentDetail.as_view(), name='api-so-shipment-detail'),
             ])),
             re_path(r'^.*$', SalesOrderShipmentList.as_view(), name='api-so-shipment-list'),
@@ -1649,12 +1586,16 @@ order_api_urls = [
             re_path(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
             re_path(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),
             re_path(r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
+            re_path(r'^issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
             re_path(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
-            re_path(r'^metadata/', SalesOrderMetadata.as_view(), name='api-so-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrder}, name='api-so-metadata'),
 
             # SalesOrder detail endpoint
             re_path(r'^.*$', SalesOrderDetail.as_view(), name='api-so-detail'),
         ])),
+
+        # Sales order status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: SalesOrderStatus}, name='api-so-status-codes'),
 
         # Sales order list view
         re_path(r'^.*$', SalesOrderList.as_view(), name='api-so-list'),
@@ -1663,7 +1604,7 @@ order_api_urls = [
     # API endpoints for sales order line items
     re_path(r'^so-line/', include([
         path('<int:pk>/', include([
-            re_path(r'^metadata/', SalesOrderLineItemMetadata.as_view(), name='api-so-line-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrderLineItem}, name='api-so-line-metadata'),
             re_path(r'^.*$', SalesOrderLineItemDetail.as_view(), name='api-so-line-detail'),
         ])),
         path('', SalesOrderLineItemList.as_view(), name='api-so-line-list'),
@@ -1672,7 +1613,7 @@ order_api_urls = [
     # API endpoints for sales order extra line
     re_path(r'^so-extra-line/', include([
         path('<int:pk>/', include([
-            re_path(r'^metadata/', SalesOrderExtraLineItemMetadata.as_view(), name='api-so-extra-line-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrderExtraLine}, name='api-so-extra-line-metadata'),
             re_path(r'^.*$', SalesOrderExtraLineDetail.as_view(), name='api-so-extra-line-detail'),
         ])),
         path('', SalesOrderExtraLineList.as_view(), name='api-so-extra-line-list'),
@@ -1701,6 +1642,9 @@ order_api_urls = [
             re_path(r'.*$', ReturnOrderDetail.as_view(), name='api-return-order-detail'),
         ])),
 
+        # Return order status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: ReturnOrderStatus}, name='api-return-order-status-codes'),
+
         # Return Order list
         re_path(r'^.*$', ReturnOrderList.as_view(), name='api-return-order-list'),
     ])),
@@ -1708,6 +1652,10 @@ order_api_urls = [
     # API endpoints for reutrn order lines
     re_path(r'^ro-line/', include([
         path('<int:pk>/', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
+
+        # Return order line item status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: ReturnOrderLineStatus}, name='api-return-order-line-status-codes'),
+
         path('', ReturnOrderLineItemList.as_view(), name='api-return-order-line-list'),
     ])),
 

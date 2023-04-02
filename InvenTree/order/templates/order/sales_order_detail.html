@@ -19,7 +19,7 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.sales_order.add %}
-                {% if order.is_pending or allow_extra_editing %}
+                {% if order.is_open or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-so-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
@@ -44,7 +44,7 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.sales_order.change %}
-                {% if order.is_pending or allow_extra_editing %}
+                {% if order.is_open or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-so-extra-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
                 </button>
@@ -253,11 +253,18 @@
                 order: {{ order.pk }},
                 reference: '{{ order.reference }}',
                 status: {{ order.status }},
+                open: {% js_bool order.is_open %},
                 {% if roles.sales_order.change %}
+                {% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
+                {% if allow_edit or order.is_open %}
                 allow_edit: true,
                 {% endif %}
-                {% if order.is_pending %}
-                pending: true,
+                {% if order.status == SalesOrderStatus.IN_PROGRESS %}
+                allow_ship: true,
+                {% endif %}
+                {% endif %}
+                {% if roles.sales_order.delete %}
+                allow_delete: true,
                 {% endif %}
             }
         );
@@ -281,7 +288,7 @@
             name: 'salesorderextraline',
             filtertarget: '#filter-list-sales-order-extra-lines',
             {% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
-            {% if order.is_pending or allow_edit %}
+            {% if order.is_open or allow_edit %}
             allow_edit: {% js_bool roles.sales_order.change %},
             allow_delete: {% js_bool roles.sales_order.delete %},
             {% else %}

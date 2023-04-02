@@ -23,20 +23,20 @@ from build.models import Build
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView)
+                           ListCreateDestroyAPIView, MetadataView, StatusView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
-                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+                              RetrieveUpdateDestroyAPI)
+from InvenTree.status_codes import StockHistoryCode, StockStatus
 from order.models import (PurchaseOrder, ReturnOrder, SalesOrder,
                           SalesOrderAllocation)
 from order.serializers import (PurchaseOrderSerializer, ReturnOrderSerializer,
                                SalesOrderSerializer)
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
-from plugin.serializers import MetadataSerializer
 from stock.admin import LocationResource, StockItemResource
 from stock.models import (StockItem, StockItemAttachment, StockItemTestResult,
                           StockItemTracking, StockLocation)
@@ -80,16 +80,6 @@ class StockDetail(RetrieveUpdateDestroyAPI):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
-
-
-class StockMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating StockItem metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer."""
-        return MetadataSerializer(StockItem, *args, **kwargs)
-
-    queryset = StockItem.objects.all()
 
 
 class StockItemContextMixin:
@@ -1343,16 +1333,6 @@ class StockTrackingList(ListAPI):
     ]
 
 
-class LocationMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating StockLocation metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer."""
-        return MetadataSerializer(StockLocation, *args, **kwargs)
-
-    queryset = StockLocation.objects.all()
-
-
 class LocationDetail(CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of StockLocation object.
 
@@ -1390,7 +1370,7 @@ stock_api_urls = [
         # Stock location detail endpoints
         path(r'<int:pk>/', include([
 
-            re_path(r'^metadata/', LocationMetadata.as_view(), name='api-location-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': StockLocation}, name='api-location-metadata'),
 
             re_path(r'^.*$', LocationDetail.as_view(), name='api-location-detail'),
         ])),
@@ -1421,6 +1401,10 @@ stock_api_urls = [
     # StockItemTracking API endpoints
     re_path(r'^track/', include([
         path(r'<int:pk>/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
+
+        # Stock tracking status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: StockHistoryCode}, name='api-stock-tracking-status-codes'),
+
         re_path(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
     ])),
 
@@ -1428,12 +1412,15 @@ stock_api_urls = [
     path(r'<int:pk>/', include([
         re_path(r'^convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
         re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
-        re_path(r'^metadata/', StockMetadata.as_view(), name='api-stock-item-metadata'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': StockItem}, name='api-stock-item-metadata'),
         re_path(r'^return/', StockItemReturn.as_view(), name='api-stock-item-return'),
         re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
         re_path(r'^uninstall/', StockItemUninstall.as_view(), name='api-stock-item-uninstall'),
         re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
     ])),
+
+    # Stock item status code information
+    re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: StockStatus}, name='api-stock-status-codes'),
 
     # Anything else
     re_path(r'^.*$', StockList.as_view(), name='api-stock-list'),

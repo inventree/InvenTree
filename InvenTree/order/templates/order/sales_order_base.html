@@ -56,18 +56,27 @@ src="{% static 'img/blank_image.png' %}"
     </button>
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
-        {% if order.status == SalesOrderStatus.PENDING %}
-        <li><a class='dropdown-item' href='#' id='complete-order-shipments'><span class='fas fa-truck'></span> {% trans "Complete Shipments" %}</a></li>
+        {% if order.is_open %}
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
         {% endif %}
     </ul>
-
 </div>
-{% if order.status == SalesOrderStatus.PENDING %}
-<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
-    <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
-</button>
-{% endif %}
+<div class='btn-group' role='group'>
+    {% if order.is_pending %}
+    <button type='button' class='btn btn-primary' id='issue-order' title='{% trans "Issue Order" %}'>
+        <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
+    </button>
+    {% elif order.status == SalesOrderStatus.IN_PROGRESS %}
+    {% if not order.is_completed %}
+    <button type='button' class='btn btn-success' id='complete-order-shipments' title='{% trans "Ship Items" %}'>
+        <span class='fas fa-truck'></span> {% trans "Ship Items" %}
+    </button>
+    {% endif %}
+    <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
+        <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
+    </button>
+    {% endif %}
+</div>
 {% endif %}
 {% endblock actions %}
 
@@ -228,6 +237,15 @@ $("#complete-order-shipments").click(function() {
         {{ order.pk }},
         {
             reload: true,
+        }
+    );
+});
+
+$('#issue-order').click(function() {
+    issueSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true
         }
     );
 });

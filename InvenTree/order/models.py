@@ -771,6 +771,11 @@ class SalesOrder(TotalPriceMixin, Order):
         return self.status == SalesOrderStatus.PENDING
 
     @property
+    def is_open(self):
+        """Return True if this order is 'open' (either 'pending' or 'in_progress')"""
+        return self.status in SalesOrderStatus.OPEN
+
+    @property
     def stock_allocations(self):
         """Return a queryset containing all allocations for this order."""
         return SalesOrderAllocation.objects.filter(
@@ -827,6 +832,21 @@ class SalesOrder(TotalPriceMixin, Order):
 
         return True
 
+    def place_order(self):
+        """Deprecated version of 'issue_order'"""
+        self.issue_order()
+
+    @transaction.atomic
+    def issue_order(self):
+        """Change this order from 'PENDING' to 'IN_PROGRESS'"""
+
+        if self.status == SalesOrderStatus.PENDING:
+            self.status = SalesOrderStatus.IN_PROGRESS
+            self.issue_date = datetime.now().date()
+            self.save()
+
+            trigger_event('salesorder.issued', id=self.pk)
+
     def complete_order(self, user, **kwargs):
         """Mark this order as "complete."""
         if not self.can_complete(**kwargs):
@@ -848,14 +868,11 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def can_cancel(self):
         """Return True if this order can be cancelled."""
-        if self.status != SalesOrderStatus.PENDING:
-            return False
-
-        return True
+        return self.is_open
 
     @transaction.atomic
     def cancel_order(self):
-        """Cancel this order (only if it is "pending").
+        """Cancel this order (only if it is "open").
 
         Executes:
         - Mark the order as 'cancelled'
@@ -1717,8 +1734,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
             trigger_event('returnorder.completed', id=self.pk)
 
-    @transaction.atomic
     def place_order(self):
+        """Deprecated version of 'issue_order"""
+        self.issue_order()
+
+    @transaction.atomic
+    def issue_order(self):
         """Issue this ReturnOrder (if currently pending)"""
 
         if self.status == ReturnOrderStatus.PENDING:
@@ -1726,7 +1747,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             self.issue_date = datetime.now().date()
             self.save()
 
-            trigger_event('returnorder.placed', id=self.pk)
+            trigger_event('returnorder.issued', id=self.pk)
 
     @transaction.atomic
     def receive_line_item(self, line, location, user, note=''):
@@ -1744,9 +1765,6 @@ class ReturnOrder(TotalPriceMixin, Order):
             return
 
         stock_item = line.item
-
-        # Remove any allocations against the returned StockItem
-        stock_item.clearAllocations()
 
         deltas = {
             'status': StockStatus.QUARANTINED,
