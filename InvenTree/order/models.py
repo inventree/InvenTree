@@ -1050,6 +1050,12 @@ class OrderLineItem(MetadataMixin, models.Model):
 
     notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
 
+    link = InvenTreeURLField(
+        blank=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external page')
+    )
+
     target_date = models.DateField(
         blank=True, null=True,
         verbose_name=_('Target Date'),
@@ -1875,8 +1881,6 @@ class ReturnOrderLineItem(OrderLineItem):
         verbose_name=_('Price'),
         help_text=_('Cost associated with return or repair for this line item'),
     )
-
-    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 
 
 class ReturnOrderExtraLine(OrderExtraLine):

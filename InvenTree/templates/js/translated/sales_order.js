@@ -149,6 +149,9 @@ function soLineItemFields(options={}) {
         notes: {
             icon: 'fa-sticky-note',
         },
+        link: {
+            icon: 'fa-link',
+        }
     };
 
     if (options.order) {
@@ -1866,6 +1869,16 @@ function loadSalesOrderLineItemTable(table, options={}) {
     columns.push({
         field: 'notes',
         title: '{% trans "Notes" %}',
+    });
+
+    columns.push({
+        field: 'link',
+        title: '{% trans "Link" %}',
+        formatter: function(value) {
+            if (value) {
+                return renderLink(value, value);
+            }
+        }
     });
 
     columns.push({
