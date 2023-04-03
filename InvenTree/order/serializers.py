@@ -19,7 +19,8 @@ import stock.models
 import stock.serializers
 from company.serializers import (CompanyBriefSerializer, ContactSerializer,
                                  SupplierPartSerializer)
-from InvenTree.helpers import extract_serial_numbers, normalize, str2bool
+from InvenTree.helpers import (extract_serial_numbers, hash_barcode, normalize,
+                               str2bool)
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField,
@@ -502,8 +503,8 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     barcode = serializers.CharField(
-        label=_('Barcode Hash'),
-        help_text=_('Unique identifier field'),
+        label=_('Barcode'),
+        help_text=_('Scanned barcode'),
         default='',
         required=False,
         allow_null=True,
@@ -516,7 +517,9 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         if not barcode or barcode.strip() == '':
             return None
 
-        if stock.models.StockItem.objects.filter(barcode_hash=barcode).exists():
+        barcode_hash = hash_barcode(barcode)
+
+        if stock.models.StockItem.lookup_barcode(barcode_hash) is not None:
             raise ValidationError(_('Barcode is already in use'))
 
         return barcode
