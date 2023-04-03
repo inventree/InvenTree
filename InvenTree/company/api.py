@@ -10,7 +10,7 @@ from rest_framework import filters
 import part.models
 from InvenTree.api import (AttachmentMixin, ListCreateDestroyAPIView,
                            MetadataView)
-from InvenTree.filters import InvenTreeOrderingFilter
+from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 
@@ -46,7 +46,7 @@ class CompanyList(ListCreateAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 
@@ -116,7 +116,7 @@ class ContactList(ListCreateDestroyAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 
@@ -194,7 +194,7 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 
@@ -290,7 +290,7 @@ class ManufacturerPartParameterList(ListCreateDestroyAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 
@@ -398,7 +398,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         InvenTreeOrderingFilter,
     ]
 

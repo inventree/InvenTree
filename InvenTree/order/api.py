@@ -21,7 +21,7 @@ from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
-from InvenTree.filters import InvenTreeOrderingFilter
+from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
@@ -63,7 +63,7 @@ class GeneralExtraLineList(APIDownloadMixin):
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter
     ]
 
@@ -309,7 +309,7 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         InvenTreeOrderingFilter,
     ]
 
@@ -510,7 +510,7 @@ class PurchaseOrderLineItemList(PurchaseOrderLineItemMixin, APIDownloadMixin, Li
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         InvenTreeOrderingFilter
     ]
 
@@ -695,7 +695,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         InvenTreeOrderingFilter,
     ]
 
@@ -819,7 +819,7 @@ class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCrea
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter
     ]
 
@@ -1156,7 +1156,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         InvenTreeOrderingFilter,
     ]
 
@@ -1304,7 +1304,7 @@ class ReturnOrderLineItemList(ReturnOrderLineItemMixin, APIDownloadMixin, ListCr
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 

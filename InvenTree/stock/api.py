@@ -24,7 +24,7 @@ from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
-from InvenTree.filters import InvenTreeOrderingFilter
+from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
@@ -296,7 +296,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 
@@ -1009,7 +1009,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         InvenTreeOrderingFilter,
     ]
 
@@ -1057,7 +1057,7 @@ class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     filterset_fields = [
@@ -1087,7 +1087,7 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 
@@ -1312,7 +1312,7 @@ class StockTrackingList(ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 

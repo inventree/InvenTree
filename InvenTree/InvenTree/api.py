@@ -13,6 +13,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import users.models
+from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
@@ -203,8 +204,8 @@ class AttachmentMixin:
 
     filter_backends = [
         DjangoFilterBackend,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
-        filters.SearchFilter,
     ]
 
     def perform_create(self, serializer):

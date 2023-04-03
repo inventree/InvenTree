@@ -20,6 +20,7 @@ import common.models
 import common.serializers
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.config import CONFIG_LOOKUPS
+from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.helpers import inheritors
 from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
@@ -169,7 +170,7 @@ class SettingsList(ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 
@@ -341,7 +342,7 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 
