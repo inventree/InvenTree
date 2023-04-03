@@ -64,7 +64,7 @@
     </div>
 </div>
 
-{% if order.is_pending %}
+{% if order.is_open %}
 <div class='panel panel-hidden' id='panel-order-shipments'>
     <div class='panel-heading'>
         <div class='d-flex flex-row'>
@@ -166,7 +166,7 @@
     // Callback when the "shipments" panel is first loaded
     onPanelLoad('order-shipments', function() {
 
-        {% if order.is_pending %}
+        {% if order.is_open %}
         loadSalesOrderShipmentTable('#pending-shipments-table', {
             order: {{ order.pk }},
             shipped: false,

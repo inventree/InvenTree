@@ -479,6 +479,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Return True if the PurchaseOrder is 'pending'"""
         return self.status == PurchaseOrderStatus.PENDING
 
+    @property
+    def is_open(self):
+        """Return True if the PurchaseOrder is 'open'"""
+        return self.status in PurchaseOrderStatus.OPEN
+
     def can_cancel(self):
         """A PurchaseOrder can only be cancelled under the following circumstances.
 
@@ -813,9 +818,9 @@ class SalesOrder(TotalPriceMixin, Order):
             if self.lines.count() == 0:
                 raise ValidationError(_('Order cannot be completed as no parts have been assigned'))
 
-            # Only a PENDING order can be marked as SHIPPED
-            elif self.status != SalesOrderStatus.PENDING:
-                raise ValidationError(_('Only a pending order can be marked as complete'))
+            # Only an open order can be marked as shipped
+            elif not self.is_open:
+                raise ValidationError(_('Only an open order can be marked as complete'))
 
             elif self.pending_shipment_count > 0:
                 raise ValidationError(_("Order cannot be completed as there are incomplete shipments"))
