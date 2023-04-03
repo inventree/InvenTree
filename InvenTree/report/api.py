@@ -10,7 +10,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 from rest_framework.response import Response
 
 import build.models
@@ -19,6 +18,7 @@ import InvenTree.helpers
 import order.models
 import part.models
 from InvenTree.api import MetadataView
+from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from stock.models import StockItem, StockItemAttachment
 
@@ -35,7 +35,7 @@ class ReportListView(ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     filterset_fields = [

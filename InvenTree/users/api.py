@@ -5,11 +5,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions, status
+from rest_framework import permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI
 from InvenTree.serializers import UserSerializer
 from users.models import Owner, RuleSet, check_user_role
@@ -137,7 +138,7 @@ class UserList(ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     search_fields = [
@@ -168,7 +169,7 @@ class GroupList(ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     search_fields = [
