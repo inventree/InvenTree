@@ -262,6 +262,7 @@ class APISearchView(APIView):
         pass_through_params = {
             'search': '',
             'search_regex': False,
+            'search_whole': False,
             'limit': 1,
             'offset': 0,
         }

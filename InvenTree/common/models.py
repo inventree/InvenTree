@@ -1986,6 +1986,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_WHOLE': {
+            'name': _('Whole Word Search'),
+            'description': _('Search queries return results for whole word matches'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PART_SHOW_QUANTITY_IN_FORMS': {
             'name': _('Show Quantity in Forms'),
             'description': _('Display available part quantity in some forms'),

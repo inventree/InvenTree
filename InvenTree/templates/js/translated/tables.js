@@ -360,6 +360,11 @@ function convertQueryParameters(params, filters) {
         params['search_regex'] = true;
     }
 
+    // Enable whole word search
+    if (user_settings.SEARCH_WHOLE) {
+        params['search_whole'] = true;
+    }
+
     return params;
 }
 

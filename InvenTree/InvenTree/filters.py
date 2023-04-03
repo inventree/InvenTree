@@ -11,7 +11,7 @@ class InvenTreeSearchFilter(SearchFilter):
     def get_search_fields(self, view, request):
         """Return a set of search fields for the request, adjusted based on request params.
 
-        The following query params are available to 'augment' the search
+        The following query params are available to 'augment' the search (in decreasing order of priority)
         - search_regex: If True, search is perfomed on 'regex' comparison
         """
 
@@ -27,6 +27,31 @@ class InvenTreeSearchFilter(SearchFilter):
 
             fields.append(field)
         return fields
+
+    def get_search_terms(self, request):
+        """Return the search terms for this search request.
+
+        Depending on the request parameters, we may "augment" these somewhat
+        """
+
+        whole = str2bool(request.query_params.get('search_whole', False))
+
+        terms = []
+
+        for term in super().get_search_terms(request):
+            term = term.strip()
+
+            if not term:
+                # Ignore blank inputs
+                continue
+
+            if whole:
+                # Wrap the search term to enable word-boundary matching
+                term = r"\y" + term + r"\y"
+
+            terms.append(term)
+
+        return terms
 
 
 class InvenTreeOrderingFilter(OrderingFilter):
