@@ -355,6 +355,11 @@ function convertQueryParameters(params, filters) {
         delete params['original_search'];
     }
 
+    // Enable regex search
+    if (user_settings.SEARCH_REGEX) {
+        params['search_regex'] = true;
+    }
+
     return params;
 }
 
