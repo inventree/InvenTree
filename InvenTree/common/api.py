@@ -226,7 +226,10 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
         if key not in common.models.InvenTreeSetting.SETTINGS.keys():
             raise NotFound()
 
-        return common.models.InvenTreeSetting.get_setting_object(key)
+        return common.models.InvenTreeSetting.get_setting_object(
+            key,
+            cache=False, create=True
+        )
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -284,7 +287,11 @@ class UserSettingsDetail(RetrieveUpdateAPI):
         if key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
             raise NotFound()
 
-        return common.models.InvenTreeUserSetting.get_setting_object(key, user=self.request.user)
+        return common.models.InvenTreeUserSetting.get_setting_object(
+            key,
+            user=self.request.user,
+            cache=False, create=True
+        )
 
     permission_classes = [
         UserSettingsPermissions,
