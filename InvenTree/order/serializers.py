@@ -139,6 +139,7 @@ class AbstractExtraLineMeta:
         'order_detail',
         'price',
         'price_currency',
+        'link',
     ]
 
 
@@ -304,6 +305,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
             'destination_detail',
             'target_date',
             'total_price',
+            'link',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -840,6 +842,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
             'sale_price_currency',
             'shipped',
             'target_date',
+            'link',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -1614,6 +1617,7 @@ class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
             'reference',
             'notes',
             'target_date',
+            'link',
         ]
 
     def __init__(self, *args, **kwargs):
