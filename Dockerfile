@@ -19,9 +19,6 @@ ARG commit_tag=""
 
 ENV PYTHONUNBUFFERED 1
 
-# Ref: https://github.com/pyca/cryptography/issues/5776
-ENV CRYPTOGRAPHY_DONT_BUILD_RUST 1
-
 ENV INVENTREE_LOG_LEVEL="WARNING"
 ENV INVENTREE_DOCKER="true"
 
