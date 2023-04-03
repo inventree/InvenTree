@@ -21,11 +21,13 @@ class InvenTreeSearchFilter(SearchFilter):
 
         fields = []
 
-        for field in search_fields:
-            if regex:
-                field = '$' + field
+        if search_fields:
+            for field in search_fields:
+                if regex:
+                    field = '$' + field
 
-            fields.append(field)
+                fields.append(field)
+
         return fields
 
     def get_search_terms(self, request):
@@ -38,18 +40,21 @@ class InvenTreeSearchFilter(SearchFilter):
 
         terms = []
 
-        for term in super().get_search_terms(request):
-            term = term.strip()
+        search_terms = super().get_search_terms(request)
 
-            if not term:
-                # Ignore blank inputs
-                continue
+        if search_terms:
+            for term in search_terms:
+                term = term.strip()
 
-            if whole:
-                # Wrap the search term to enable word-boundary matching
-                term = r"\y" + term + r"\y"
+                if not term:
+                    # Ignore blank inputs
+                    continue
 
-            terms.append(term)
+                if whole:
+                    # Wrap the search term to enable word-boundary matching
+                    term = r"\y" + term + r"\y"
+
+                terms.append(term)
 
         return terms
 
