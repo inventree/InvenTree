@@ -1084,7 +1084,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
         for (var key in stockCodes) {
             choices.push({
-                value: key,
+                value: stockCodes[key].key,
                 display_name: stockCodes[key].value,
             });
         }
