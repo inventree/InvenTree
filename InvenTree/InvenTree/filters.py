@@ -1,6 +1,32 @@
 """General filters for InvenTree."""
 
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
+
+from InvenTree.helpers import str2bool
+
+
+class InvenTreeSearchFilter(SearchFilter):
+    """Custom search filter which allows adjusting of search terms dynamically"""
+
+    def get_search_fields(self, view, request):
+        """Return a set of search fields for the request, adjusted based on request params.
+
+        The following query params are available to 'augment' the search
+        - search_regex: If True, search is perfomed on 'regex' comparison
+        """
+
+        regex = str2bool(request.query_params.get('search_regex', False))
+
+        search_fields = super().get_search_fields(view, request)
+
+        fields = []
+
+        for field in search_fields:
+            if regex:
+                field = '$' + field
+
+            fields.append(field)
+        return fields
 
 
 class InvenTreeOrderingFilter(OrderingFilter):
