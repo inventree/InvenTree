@@ -4,8 +4,6 @@
 #
 #    pip-compile --output-file=requirements.txt requirements.in
 #
-ansicon==1.89.0
-    # via jinxed
 arrow==1.2.3
     # via django-q
 asgiref==3.6.0
@@ -28,8 +26,6 @@ cffi==1.15.1
     #   weasyprint
 charset-normalizer==3.1.0
     # via requests
-colorama==0.4.6
-    # via qrcode
 coreapi==2.3.3
     # via -r requirements.in
 coreschema==0.0.4
@@ -154,8 +150,6 @@ itypes==1.2.0
     # via coreapi
 jinja2==3.1.2
     # via coreschema
-jinxed==1.2.0
-    # via blessed
 markdown==3.4.3
     # via django-markdownify
 markuppy==1.14
