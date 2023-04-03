@@ -57,11 +57,11 @@
         {% endif %}
     </ul>
 </div>
-{% if order.status == PurchaseOrderStatus.PENDING %}
+{% if order.is_pending %}
 <button type='button' class='btn btn-primary' id='place-order' title='{% trans "Submit Order" %}'>
     <span class='fas fa-paper-plane'></span> {% trans "Submit Order" %}
 </button>
-{% elif order.status == PurchaseOrderStatus.PLACED %}
+{% elif order.is_open %}
 <button type='button' class='btn btn-primary' id='receive-order' title='{% trans "Receive items" %}'>
     <span class='fas fa-sign-in-alt'></span>
     {% trans "Receive Items" %}

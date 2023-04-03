@@ -479,6 +479,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Return True if the PurchaseOrder is 'pending'"""
         return self.status == PurchaseOrderStatus.PENDING
 
+    @property
+    def is_open(self):
+        """Return True if the PurchaseOrder is 'open'"""
+        return self.status in PurchaseOrderStatus.OPEN
+
     def can_cancel(self):
         """A PurchaseOrder can only be cancelled under the following circumstances.
 
