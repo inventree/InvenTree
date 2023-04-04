@@ -274,11 +274,10 @@ $("#barcode-link").click(function() {
 
 $("#barcode-unlink").click(function() {
     unlinkBarcode({
-        retturnorderr: {{ order.pk }},
+        returnorder: {{ order.pk }},
     });
 });
 {% endif %}
-
 {% endif %}
 
 <!-- TODO: Export order callback -->
