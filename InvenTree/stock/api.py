@@ -22,7 +22,7 @@ import stock.serializers as StockSerializers
 from build.models import Build
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
-from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
+from InvenTree.api import (APIDownloadMixin, AttachmentDetail, AttachmentList,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
@@ -1048,30 +1048,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
     ]
 
 
-class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a StockItemAttachment (file upload)."""
-
-    queryset = StockItemAttachment.objects.all()
-    serializer_class = StockSerializers.StockItemAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
-
-    filterset_fields = [
-        'stock_item',
-    ]
-
-
-class StockAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for StockItemAttachment."""
-
-    queryset = StockItemAttachment.objects.all()
-    serializer_class = StockSerializers.StockItemAttachmentSerializer
-
-
 class StockItemTestResultDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for StockItemTestResult."""
 
@@ -1388,8 +1364,8 @@ stock_api_urls = [
 
     # StockItemAttachment API endpoints
     re_path(r'^attachment/', include([
-        path(r'<int:pk>/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
-        path('', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
+        path(r'<int:pk>/', AttachmentDetail.as_view(), {'model': StockItemAttachment, 'filter': 'stock_item'}, name='api-stock-attachment-detail'),
+        path('', AttachmentList.as_view(), {'model': StockItemAttachment, 'filter': 'stock_item'}, name='api-stock-attachment-list'),
     ])),
 
     # StockItemTestResult API endpoints

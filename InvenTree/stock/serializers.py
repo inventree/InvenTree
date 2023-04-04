@@ -25,8 +25,8 @@ from InvenTree.serializers import (InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField)
 from part.serializers import PartBriefSerializer
 
-from .models import (StockItem, StockItemAttachment, StockItemTestResult,
-                     StockItemTracking, StockLocation)
+from .models import (StockItem, StockItemTestResult, StockItemTracking,
+                     StockLocation)
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -609,19 +609,6 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     items = serializers.IntegerField(read_only=True)
 
     level = serializers.IntegerField(read_only=True)
-
-
-class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
-    """Serializer for StockItemAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItemAttachment
-
-        fields = InvenTree.serializers.InvenTreeAttachmentSerializer.attachment_fields([
-            'stock_item',
-        ])
 
 
 class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
