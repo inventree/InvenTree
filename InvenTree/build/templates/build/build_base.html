@@ -98,13 +98,6 @@ src="{% static 'img/blank_image.png' %}"
         {% trans "No build outputs have been created for this build order" %}<br>
     </div>
     {% endif %}
-    {% if build.sales_order %}
-    <div class='alert alert-block alert-info'>
-        {% object_link 'so-detail' build.sales_order.id build.sales_order as link %}
-        {% blocktrans %}This Build Order is allocated to Sales Order {{link}}{% endblocktrans %}
-    </div>
-    {% endif %}
-
     {% if build.parent %}
     <div class='alert alert-block alert-info'>
         {% object_link 'build-detail' build.parent.id build.parent as link %}
@@ -162,7 +155,12 @@ src="{% static 'img/blank_image.png' %}"
     </tr>
     {% endif %}
     <tr>
-        <td><span class='fas fa-check-circle'></span></td>
+        <td>
+            {% if build.completed >= build.quantity %}
+            <span class='fas fa-check-circle icon-green'></span>
+            {% else %}
+            <span class='fa fa-times-circle icon-red'></span>
+            {% endif %}
         <td>{% trans "Completed" %}</td>
         <td>{% progress_bar build.completed build.quantity id='build-completed' max_width='150px' %}</td>
     </tr>
