@@ -12,7 +12,7 @@ git+https://github.com/matmair/django-error-report@0.3.0#egg=django-error-report
 django-filter                           # Extended filtering options
 django-formtools                        # Form wizard tools
 django-ical                             # iCal export for calendar views
-django-import-export==2.5.0             # Data import / export for admin interface
+django-import-export                    # Data import / export for admin interface
 django-maintenance-mode                 # Shut down application while reloading etc.
 django-markdownify                      # Markdown rendering
 django-money<3.0.0                      # Django app for currency management  # FIXED 2022-06-26 to make sure py-moneyed is not conflicting

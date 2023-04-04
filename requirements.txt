@@ -92,7 +92,7 @@ django-formtools==2.4
     # via -r requirements.in
 django-ical==1.9.0
     # via -r requirements.in
-django-import-export==2.5.0
+django-import-export==3.1.0
     # via -r requirements.in
 django-js-asset==2.0.0
     # via django-mptt
