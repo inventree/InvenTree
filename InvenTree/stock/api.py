@@ -23,8 +23,8 @@ from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
-from InvenTree.filters import (ORDER_FILTER, SEARCH_INVENTREEORDER_FILTER,
-                               SERACH_ORDER_FILTER)
+from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
+                               SEARCH_ORDER_FILTER_ALIAS)
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
@@ -294,7 +294,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -1000,7 +1000,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         return queryset
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
         'SKU': 'supplier_part__SKU',
@@ -1043,7 +1043,7 @@ class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'stock_item',
@@ -1070,7 +1070,7 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
     queryset = StockItemTestResult.objects.all()
     serializer_class = StockSerializers.StockItemTestResultSerializer
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'test',
@@ -1291,7 +1291,7 @@ class StockTrackingList(ListAPI):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'item',

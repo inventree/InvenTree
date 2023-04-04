@@ -9,8 +9,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 import part.models
 from InvenTree.api import (AttachmentMixin, ListCreateDestroyAPIView,
                            MetadataView)
-from InvenTree.filters import (ORDER_FILTER, SEARCH_INVENTREEORDER_FILTER,
-                               SERACH_ORDER_FILTER)
+from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
+                               SEARCH_ORDER_FILTER_ALIAS)
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 
@@ -44,7 +44,7 @@ class CompanyList(ListCreateAPI):
 
         return queryset
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'is_customer',
@@ -110,7 +110,7 @@ class ContactList(ListCreateDestroyAPIView):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'company',
@@ -184,7 +184,7 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
         'manufacturer__name',
@@ -275,7 +275,7 @@ class ManufacturerPartParameterList(ListCreateDestroyAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
         'name',
@@ -372,7 +372,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
 
     serializer_class = SupplierPartSerializer
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
         'SKU',

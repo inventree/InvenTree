@@ -21,7 +21,7 @@ from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
-from InvenTree.filters import SEARCH_INVENTREEORDER_FILTER, SERACH_ORDER_FILTER
+from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
@@ -61,7 +61,7 @@ class GeneralExtraLineList(APIDownloadMixin):
 
         return queryset
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'title',
@@ -303,7 +303,7 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -500,7 +500,7 @@ class PurchaseOrderLineItemList(PurchaseOrderLineItemMixin, APIDownloadMixin, Li
 
         return DownloadFile(filedata, filename)
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
         'MPN': 'part__manufacturer_part__MPN',
@@ -681,7 +681,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -801,7 +801,7 @@ class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCrea
 
         return DownloadFile(filedata, filename)
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'part__name',
@@ -1134,7 +1134,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         return DownloadFile(filedata, filename)
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -1278,7 +1278,7 @@ class ReturnOrderLineItemList(ReturnOrderLineItemMixin, APIDownloadMixin, ListCr
 
         raise NotImplementedError("download_queryset not yet implemented for this endpoint")
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'reference',

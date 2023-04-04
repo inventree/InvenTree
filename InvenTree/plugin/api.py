@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
-from InvenTree.filters import SERACH_ORDER_FILTER
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI, UpdateAPI)
 from InvenTree.permissions import IsSuperuser
@@ -57,7 +57,7 @@ class PluginList(ListAPI):
 
         return queryset
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'active',

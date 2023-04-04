@@ -12,7 +12,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import users.models
-from InvenTree.filters import SERACH_ORDER_FILTER
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
@@ -201,7 +201,7 @@ class AttachmentMixin:
         RolePermission,
     ]
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""

@@ -19,7 +19,7 @@ import common.models
 import common.serializers
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.config import CONFIG_LOOKUPS
-from InvenTree.filters import ORDER_FILTER, SERACH_ORDER_FILTER
+from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors
 from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
@@ -167,7 +167,7 @@ class SettingsList(ListAPI):
     This is inheritted by all list views for settings.
     """
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'pk',
@@ -335,7 +335,7 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
 
     permission_classes = [permissions.IsAuthenticated, ]
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'category',

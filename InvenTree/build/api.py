@@ -19,7 +19,7 @@ import build.serializers
 from build.models import Build, BuildItem, BuildOrderAttachment
 import part.models
 from users.models import Owner
-from InvenTree.filters import SEARCH_INVENTREEORDER_FILTER
+from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
 
 
 class BuildFilter(rest_filters.FilterSet):
@@ -99,7 +99,7 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
     serializer_class = build.serializers.BuildSerializer
     filterset_class = BuildFilter
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
         'reference',

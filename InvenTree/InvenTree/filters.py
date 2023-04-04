@@ -133,13 +133,13 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
         return ordering
 
 
-SERACH_ORDER_FILTER = [
+SEARCH_ORDER_FILTER = [
     rest_filters.DjangoFilterBackend,
     InvenTreeSearchFilter,
-    filters.OrderingFilter
+    filters.OrderingFilter,
 ]
 
-SEARCH_INVENTREEORDER_FILTER = [
+SEARCH_ORDER_FILTER_ALIAS = [
     rest_filters.DjangoFilterBackend,
     InvenTreeSearchFilter,
     InvenTreeOrderingFilter,
@@ -147,5 +147,5 @@ SEARCH_INVENTREEORDER_FILTER = [
 
 ORDER_FILTER = [
     rest_filters.DjangoFilterBackend,
-    filters.OrderingFilter
+    filters.OrderingFilter,
 ]

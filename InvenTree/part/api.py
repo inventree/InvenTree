@@ -17,8 +17,9 @@ import order.models
 from build.models import Build, BuildItem
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView)
-from InvenTree.filters import (ORDER_FILTER, SEARCH_INVENTREEORDER_FILTER,
-                               SERACH_ORDER_FILTER, InvenTreeSearchFilter)
+from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
+                               SEARCH_ORDER_FILTER_ALIAS,
+                               InvenTreeSearchFilter)
 from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
@@ -153,7 +154,7 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -378,7 +379,7 @@ class PartTestTemplateList(ListCreateAPI):
 
         return queryset
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
 
 class PartThumbs(ListAPI):
@@ -1214,7 +1215,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
         'name',
@@ -1323,7 +1324,7 @@ class PartParameterTemplateList(ListCreateAPI):
     queryset = PartParameterTemplate.objects.all()
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -1707,7 +1708,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
 
         return queryset
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     search_fields = [
         'reference',
@@ -1808,7 +1809,7 @@ class BomItemSubstituteList(ListCreateAPI):
     serializer_class = part_serializers.BomItemSubstituteSerializer
     queryset = BomItemSubstitute.objects.all()
 
-    filter_backends = SERACH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'part',
