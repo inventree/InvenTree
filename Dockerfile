@@ -57,7 +57,7 @@ RUN apt-get update
 
 # Install required system packages
 RUN apt-get install -y  --no-install-recommends \
-    git gcc g++ gettext gnupg libffi-dev \
+    git gcc g++ gettext gnupg libffi-dev libssl-dev cargo \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
     poppler-utils libpango-1.0-0 libpangoft2-1.0-0 \
     # Image format support

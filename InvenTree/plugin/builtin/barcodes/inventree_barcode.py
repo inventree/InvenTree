@@ -11,6 +11,7 @@ import json
 
 from django.utils.translation import gettext_lazy as _
 
+import build.models
 import company.models
 import order.models
 import part.models
@@ -34,6 +35,7 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
         """Returns a list of database models which support barcode functionality"""
 
         return [
+            build.models.Build,
             company.models.SupplierPart,
             order.models.PurchaseOrder,
             order.models.ReturnOrder,
