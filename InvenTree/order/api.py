@@ -303,7 +303,7 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER,
+    filter_backends = SEARCH_INVENTREEORDER_FILTER
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -681,7 +681,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER,
+    filter_backends = SEARCH_INVENTREEORDER_FILTER
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -1134,7 +1134,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         return DownloadFile(filedata, filename)
 
-    filter_backends = SEARCH_INVENTREEORDER_FILTER,
+    filter_backends = SEARCH_INVENTREEORDER_FILTER
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
