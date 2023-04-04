@@ -242,11 +242,30 @@ class ManufacturerPartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI
     serializer_class = ManufacturerPartAttachmentSerializer
 
 
+class ManufacturerPartParameterFilter(rest_filters.FilterSet):
+    """Custom filterset for the ManufacturerPartParameterList API endpoint"""
+
+    class Meta:
+        """Metaclass options"""
+        model = ManufacturerPartParameter
+        fields = [
+            'name',
+            'value',
+            'units',
+            'manufacturer_part',
+        ]
+
+    manufacturer = rest_filters.ModelChoiceFilter(queryset=Company.objects.all(), field_name='manufacturer_part__manufacturer')
+
+    part = rest_filters.ModelChoiceFilter(queryset=part.models.Part.objects.all(), field_name='manufacturer_part__part')
+
+
 class ManufacturerPartParameterList(ListCreateDestroyAPIView):
     """API endpoint for list view of ManufacturerPartParamater model."""
 
     queryset = ManufacturerPartParameter.objects.all()
     serializer_class = ManufacturerPartParameterSerializer
+    filterset_class = ManufacturerPartParameterFilter
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint"""
@@ -268,37 +287,10 @@ class ManufacturerPartParameterList(ListCreateDestroyAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
-    def filter_queryset(self, queryset):
-        """Custom filtering for the queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by manufacturer?
-        manufacturer = params.get('manufacturer', None)
-
-        if manufacturer is not None:
-            queryset = queryset.filter(manufacturer_part__manufacturer=manufacturer)
-
-        # Filter by part?
-        part = params.get('part', None)
-
-        if part is not None:
-            queryset = queryset.filter(manufacturer_part__part=part)
-
-        return queryset
-
     filter_backends = [
         DjangoFilterBackend,
         InvenTreeSearchFilter,
         filters.OrderingFilter,
-    ]
-
-    filterset_fields = [
-        'name',
-        'value',
-        'units',
-        'manufacturer_part',
     ]
 
     search_fields = [

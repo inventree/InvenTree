@@ -18,12 +18,21 @@ from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 import build.admin
 import build.serializers
 from build.models import Build, BuildItem, BuildOrderAttachment
-
+import part.models
 from users.models import Owner
 
 
 class BuildFilter(rest_filters.FilterSet):
     """Custom filterset for BuildList API endpoint."""
+
+    class Meta:
+        """Metaclass options"""
+        model = Build
+        fields = [
+            'parent',
+            'sales_order',
+            'part',
+        ]
 
     status = rest_filters.NumberFilter(label='Status')
 
@@ -32,22 +41,18 @@ class BuildFilter(rest_filters.FilterSet):
     def filter_active(self, queryset, name, value):
         """Filter the queryset to either include or exclude orders which are active."""
         if str2bool(value):
-            queryset = queryset.filter(status__in=BuildStatus.ACTIVE_CODES)
+            return queryset.filter(status__in=BuildStatus.ACTIVE_CODES)
         else:
-            queryset = queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
-
-        return queryset
+            return queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
 
     overdue = rest_filters.BooleanFilter(label='Build is overdue', method='filter_overdue')
 
     def filter_overdue(self, queryset, name, value):
         """Filter the queryset to either include or exclude orders which are overdue."""
         if str2bool(value):
-            queryset = queryset.filter(Build.OVERDUE_FILTER)
+            return queryset.filter(Build.OVERDUE_FILTER)
         else:
-            queryset = queryset.exclude(Build.OVERDUE_FILTER)
-
-        return queryset
+            return queryset.exclude(Build.OVERDUE_FILTER)
 
     assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
 
@@ -59,11 +64,9 @@ class BuildFilter(rest_filters.FilterSet):
         owners = Owner.get_owners_matching_user(self.request.user)
 
         if value:
-            queryset = queryset.filter(responsible__in=owners)
+            return queryset.filter(responsible__in=owners)
         else:
-            queryset = queryset.exclude(responsible__in=owners)
-
-        return queryset
+            return queryset.exclude(responsible__in=owners)
 
     assigned_to = rest_filters.NumberFilter(label='responsible', method='filter_responsible')
 
@@ -75,9 +78,7 @@ class BuildFilter(rest_filters.FilterSet):
         if len(owners) > 0 and owners[0].label() == 'user':
             owners = Owner.get_owners_matching_user(User.objects.get(pk=owners[0].owner_id))
 
-        queryset = queryset.filter(responsible__in=owners)
-
-        return queryset
+        return queryset.filter(responsible__in=owners)
 
     # Exact match for reference
     reference = rest_filters.CharFilter(
@@ -171,18 +172,6 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
             except (ValueError, Build.DoesNotExist):
                 pass
 
-        # Filter by "parent"
-        parent = params.get('parent', None)
-
-        if parent is not None:
-            queryset = queryset.filter(parent=parent)
-
-        # Filter by sales_order
-        sales_order = params.get('sales_order', None)
-
-        if sales_order is not None:
-            queryset = queryset.filter(sales_order=sales_order)
-
         # Filter by "ancestor" builds
         ancestor = params.get('ancestor', None)
 
@@ -198,12 +187,6 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
 
             except (ValueError, Build.DoesNotExist):
                 pass
-
-        # Filter by associated part?
-        part = params.get('part', None)
-
-        if part is not None:
-            queryset = queryset.filter(part=part)
 
         # Filter by 'date range'
         min_date = params.get('min_date', None)
@@ -373,6 +356,34 @@ class BuildItemDetail(RetrieveUpdateDestroyAPI):
     serializer_class = build.serializers.BuildItemSerializer
 
 
+class BuildItemFilter(rest_filters.FilterSet):
+    """Custom filterset for the BuildItemList API endpoint"""
+
+    class Meta:
+        """Metaclass option"""
+        model = BuildItem
+        fields = [
+            'build',
+            'stock_item',
+            'bom_item',
+            'install_into',
+        ]
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=part.models.Part.objects.all(),
+        field_name='stock_item__part',
+    )
+
+    tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
+
+    def filter_tracked(self, queryset, name, value):
+        """Filter the queryset based on whether build items are tracked"""
+        if str2bool(value):
+            return queryset.exclude(install_into=None)
+        else:
+            return queryset.filter(install_into=None)
+
+
 class BuildItemList(ListCreateAPI):
     """API endpoint for accessing a list of BuildItem objects.
 
@@ -381,6 +392,7 @@ class BuildItemList(ListCreateAPI):
     """
 
     serializer_class = build.serializers.BuildItemSerializer
+    filterset_class = BuildItemFilter
 
     def get_serializer(self, *args, **kwargs):
         """Returns a BuildItemSerializer instance based on the request."""
@@ -418,24 +430,6 @@ class BuildItemList(ListCreateAPI):
 
         params = self.request.query_params
 
-        # Does the user wish to filter by part?
-        part_pk = params.get('part', None)
-
-        if part_pk:
-            queryset = queryset.filter(stock_item__part=part_pk)
-
-        # Filter by "tracked" status
-        # Tracked means that the item is "installed" into a build output (stock item)
-        tracked = params.get('tracked', None)
-
-        if tracked is not None:
-            tracked = str2bool(tracked)
-
-            if tracked:
-                queryset = queryset.exclude(install_into=None)
-            else:
-                queryset = queryset.filter(install_into=None)
-
         # Filter by output target
         output = params.get('output', None)
 
@@ -450,13 +444,6 @@ class BuildItemList(ListCreateAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-    ]
-
-    filterset_fields = [
-        'build',
-        'stock_item',
-        'bom_item',
-        'install_into',
     ]
 
 
