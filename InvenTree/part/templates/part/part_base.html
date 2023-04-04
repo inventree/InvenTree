@@ -302,13 +302,7 @@
                 <td>{{ part.keywords }}{% include "clip.html"%}</td>
             </tr>
             {% endif %}
-            {% if part.barcode_hash %}
-            <tr>
-                <td><span class='fas fa-barcode'></span></td>
-                <td>{% trans "Barcode Identifier" %}</td>
-                <td {% if part.barcode_data %}title='{{ part.barcode_data }}'{% endif %}>{{ part.barcode_hash }}</td>
-            </tr>
-            {% endif %}
+            {% include "barcode_data.html" with instance=part %}
         </table>
         </div>
         <div class='col-sm-6'>

@@ -17,7 +17,7 @@ import order.models
 from build.models import Build, BuildItem
 from InvenTree.api import (APIDownloadMixin, AttachmentDetail, AttachmentList,
                            ListCreateDestroyAPIView, MetadataView)
-from InvenTree.filters import InvenTreeOrderingFilter
+from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
 from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
@@ -154,7 +154,7 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 
@@ -365,7 +365,7 @@ class PartTestTemplateList(ListCreateAPI):
     filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
 
@@ -399,7 +399,7 @@ class PartThumbs(ListAPI):
         return Response(data)
 
     filter_backends = [
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     search_fields = [
@@ -1204,7 +1204,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         InvenTreeOrderingFilter,
     ]
 
@@ -1318,7 +1318,7 @@ class PartParameterTemplateList(ListCreateAPI):
     filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     filterset_fields = [
@@ -1711,7 +1711,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         InvenTreeOrderingFilter,
     ]
 
@@ -1816,7 +1816,7 @@ class BomItemSubstituteList(ListCreateAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 

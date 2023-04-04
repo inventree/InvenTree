@@ -4,7 +4,6 @@ from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
-from rest_framework import filters
 from rest_framework.exceptions import ValidationError
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -12,7 +11,7 @@ from django_filters import rest_framework as rest_filters
 
 from InvenTree.api import AttachmentDetail, AttachmentList, APIDownloadMixin, MetadataView, StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
-from InvenTree.filters import InvenTreeOrderingFilter
+from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
 from InvenTree.status_codes import BuildStatus
 from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
@@ -101,7 +100,7 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         InvenTreeOrderingFilter,
     ]
 

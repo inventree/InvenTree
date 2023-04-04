@@ -20,6 +20,7 @@ import common.models
 import common.serializers
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.config import CONFIG_LOOKUPS
+from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.helpers import inheritors
 from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
@@ -169,7 +170,7 @@ class SettingsList(ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 
@@ -226,7 +227,10 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
         if key not in common.models.InvenTreeSetting.SETTINGS.keys():
             raise NotFound()
 
-        return common.models.InvenTreeSetting.get_setting_object(key)
+        return common.models.InvenTreeSetting.get_setting_object(
+            key,
+            cache=False, create=True
+        )
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -284,7 +288,11 @@ class UserSettingsDetail(RetrieveUpdateAPI):
         if key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
             raise NotFound()
 
-        return common.models.InvenTreeUserSetting.get_setting_object(key, user=self.request.user)
+        return common.models.InvenTreeUserSetting.get_setting_object(
+            key,
+            user=self.request.user,
+            cache=False, create=True
+        )
 
     permission_classes = [
         UserSettingsPermissions,
@@ -334,7 +342,7 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 

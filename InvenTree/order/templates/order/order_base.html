@@ -23,6 +23,24 @@
 {% url 'admin:order_purchaseorder_change' order.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
+{% if barcodes %}
+<!-- Barcode actions menu -->
+<div class='btn-group' role='group'>
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-qrcode'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if roles.purchase_order.change %}
+        {% if order.barcode_hash %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
 <!-- Printing options -->
 <div class='btn-group' role='group'>
     <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
@@ -97,6 +115,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Order Description" %}</td>
         <td>{{ order.description }}{% include "clip.html" %}</td>
     </tr>
+    {% include "barcode_data.html" with instance=order %}
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Order Status" %}</td>
@@ -304,5 +323,33 @@ $("#export-order").click(function() {
     exportOrder('{% url "po-export" order.id %}');
 });
 
+{% if barcodes %}
+<!-- Barcode functionality callbacks -->
+$('#show-qr-code').click(function() {
+    showQRDialog(
+        '{% trans "Purchase Order QR Code" %}',
+        '{"purchaseorder": {{ order.pk }}}'
+    );
+});
+
+{% if roles.purchase_order.change %}
+$("#barcode-link").click(function() {
+    linkBarcodeDialog(
+        {
+            purchaseorder: {{ order.pk }},
+        },
+        {
+            title: '{% trans "Link Barcode to Purchase Order" %}',
+        }
+    );
+});
+
+$("#barcode-unlink").click(function() {
+    unlinkBarcode({
+        purchaseorder: {{ order.pk }},
+    });
+});
+{% endif %}
+{% endif %}
 
 {% endblock js_ready %}

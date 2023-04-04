@@ -19,7 +19,8 @@ import stock.models
 import stock.serializers
 from company.serializers import (CompanyBriefSerializer, ContactSerializer,
                                  SupplierPartSerializer)
-from InvenTree.helpers import extract_serial_numbers, normalize, str2bool
+from InvenTree.helpers import (extract_serial_numbers, hash_barcode, normalize,
+                               str2bool)
 from InvenTree.serializers import (InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeModelSerializer,
@@ -65,6 +66,8 @@ class AbstractOrderSerializer(serializers.Serializer):
     # Boolean field indicating if this order is overdue (Note: must be annotated)
     overdue = serializers.BooleanField(required=False, read_only=True)
 
+    barcode_hash = serializers.CharField(read_only=True)
+
     def validate_reference(self, reference):
         """Custom validation for the reference field"""
 
@@ -100,6 +103,7 @@ class AbstractOrderSerializer(serializers.Serializer):
             'status',
             'status_text',
             'notes',
+            'barcode_hash',
             'overdue',
         ] + extra_fields
 
@@ -138,6 +142,7 @@ class AbstractExtraLineMeta:
         'order_detail',
         'price',
         'price_currency',
+        'link',
     ]
 
 
@@ -303,6 +308,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
             'destination_detail',
             'target_date',
             'total_price',
+            'link',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -499,8 +505,8 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     barcode = serializers.CharField(
-        label=_('Barcode Hash'),
-        help_text=_('Unique identifier field'),
+        label=_('Barcode'),
+        help_text=_('Scanned barcode'),
         default='',
         required=False,
         allow_null=True,
@@ -513,7 +519,9 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         if not barcode or barcode.strip() == '':
             return None
 
-        if stock.models.StockItem.objects.filter(barcode_hash=barcode).exists():
+        barcode_hash = hash_barcode(barcode)
+
+        if stock.models.StockItem.lookup_barcode(barcode_hash) is not None:
             raise ValidationError(_('Barcode is already in use'))
 
         return barcode
@@ -826,6 +834,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
             'sale_price_currency',
             'shipped',
             'target_date',
+            'link',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -1587,6 +1596,7 @@ class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
             'reference',
             'notes',
             'target_date',
+            'link',
         ]
 
     def __init__(self, *args, **kwargs):

@@ -210,7 +210,13 @@ function makeIconButton(icon, cls, pk, title, options={}) {
 
     var html = '';
 
-    var extraProps = '';
+    var extraProps = options.extra || '';
+
+    var style = '';
+
+    if (options.hidden) {
+        style += `display: none;`;
+    }
 
     if (options.disabled) {
         extraProps += `disabled='true' `;
@@ -220,7 +226,7 @@ function makeIconButton(icon, cls, pk, title, options={}) {
         extraProps += `data-bs-toggle='collapse' href='#${options.collapseTarget}'`;
     }
 
-    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
+    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps} style='${style}'>`;
     html += `<span class='fas ${icon}'></span>`;
     html += `</button>`;
 

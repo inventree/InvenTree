@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
+from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI, UpdateAPI)
 from InvenTree.permissions import IsSuperuser
@@ -58,7 +59,7 @@ class PluginList(ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
         filters.OrderingFilter,
     ]
 

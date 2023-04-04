@@ -388,10 +388,10 @@ class BaseInvenTreeSetting(models.Model):
         if not setting:
 
             # Unless otherwise specified, attempt to create the setting
-            create = kwargs.get('create', True)
+            create = kwargs.pop('create', True)
 
             # Prevent creation of new settings objects when importing data
-            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True, allow_shell=True):
                 create = False
 
             if create:
@@ -1977,6 +1977,20 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Number of results to show in each section of the search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
+        },
+
+        'SEARCH_REGEX': {
+            'name': _('Regex Search'),
+            'description': _('Enable regular expressions in search queries'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SEARCH_WHOLE': {
+            'name': _('Whole Word Search'),
+            'description': _('Search queries return results for whole word matches'),
+            'default': False,
+            'validator': bool,
         },
 
         'PART_SHOW_QUANTITY_IN_FORMS': {

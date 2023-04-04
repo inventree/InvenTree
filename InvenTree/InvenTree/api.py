@@ -13,6 +13,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import users.models
+from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
@@ -235,20 +236,16 @@ class APISearchView(APIView):
 
         data = request.data
 
-        search = data.get('search', '')
-
-        # Enforce a 'limit' parameter
-        try:
-            limit = int(data.get('limit', 1))
-        except ValueError:
-            limit = 1
-
-        try:
-            offset = int(data.get('offset', 0))
-        except ValueError:
-            offset = 0
-
         results = {}
+
+        # These parameters are passed through to the individual queries, with optional default values
+        pass_through_params = {
+            'search': '',
+            'search_regex': False,
+            'search_whole': False,
+            'limit': 1,
+            'offset': 0,
+        }
 
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested
@@ -256,11 +253,8 @@ class APISearchView(APIView):
 
                 params = data[key]
 
-                params['search'] = search
-
-                # Enforce limit
-                params['limit'] = limit
-                params['offset'] = offset
+                for k, v in pass_through_params.items():
+                    params[k] = request.data.get(k, v)
 
                 # Enforce json encoding
                 params['format'] = 'json'
@@ -403,7 +397,7 @@ class AttachmentMixin:
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.OrderingFilter,
+        InvenTreeSearchFilter,
         filters.SearchFilter,
     ]
 
