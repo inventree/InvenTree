@@ -173,17 +173,16 @@
         <td>{{ part.description }}{% include "clip.html"%}</td>
     </tr>
 
-</table>
-
-<!-- Part info messages -->
-<div class='info-messages'>
     {% if part.variant_of %}
-    <div class='alert alert-info alert-block' style='padding: 10px;'>
-        {% object_link 'part-detail' part.variant_of.id part.variant_of.full_name as link %}
-        {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
-    </div>
+    <tr>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Variant Of" %}</td>
+        <td>
+            <a href='{% url "part-detail" part.variant_of.pk %}'>{{ part.variant_of.full_name }}</a>
+        </td>
+    </tr>
     {% endif %}
-</div>
+</table>
 
 {% endblock details %}
 
@@ -302,13 +301,7 @@
                 <td>{{ part.keywords }}{% include "clip.html"%}</td>
             </tr>
             {% endif %}
-            {% if part.barcode_hash %}
-            <tr>
-                <td><span class='fas fa-barcode'></span></td>
-                <td>{% trans "Barcode Identifier" %}</td>
-                <td {% if part.barcode_data %}title='{{ part.barcode_data }}'{% endif %}>{{ part.barcode_hash }}</td>
-            </tr>
-            {% endif %}
+            {% include "barcode_data.html" with instance=part %}
         </table>
         </div>
         <div class='col-sm-6'>

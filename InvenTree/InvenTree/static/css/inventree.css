@@ -784,6 +784,12 @@ input[type="submit"] {
 
 .alert-block {
     display: block;
+    padding: 0.75rem;
+}
+
+.alert-small {
+    padding: 0.35rem;
+    font-size: 75%;
 }
 
 .navbar .btn {
