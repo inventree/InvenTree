@@ -8,8 +8,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
 import part.models
-from InvenTree.api import (AttachmentMixin, ListCreateDestroyAPIView,
-                           MetadataView)
+from InvenTree.api import (AttachmentDetail, AttachmentList,
+                           ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
@@ -17,9 +17,7 @@ from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
                      ManufacturerPartAttachment, ManufacturerPartParameter,
                      SupplierPart, SupplierPriceBreak)
-from .serializers import (CompanyAttachmentSerializer, CompanySerializer,
-                          ContactSerializer,
-                          ManufacturerPartAttachmentSerializer,
+from .serializers import (CompanySerializer, ContactSerializer,
                           ManufacturerPartParameterSerializer,
                           ManufacturerPartSerializer, SupplierPartSerializer,
                           SupplierPriceBreakSerializer)
@@ -84,28 +82,6 @@ class CompanyDetail(RetrieveUpdateDestroyAPI):
         queryset = CompanySerializer.annotate_queryset(queryset)
 
         return queryset
-
-
-class CompanyAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for the CompanyAttachment model"""
-
-    queryset = CompanyAttachment.objects.all()
-    serializer_class = CompanyAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-
-    filterset_fields = [
-        'company',
-    ]
-
-
-class CompanyAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for CompanyAttachment model."""
-
-    queryset = CompanyAttachment.objects.all()
-    serializer_class = CompanyAttachmentSerializer
 
 
 class ContactList(ListCreateDestroyAPIView):
@@ -218,28 +194,6 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
 
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
-
-
-class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a ManufacturerPartAttachment (file upload)."""
-
-    queryset = ManufacturerPartAttachment.objects.all()
-    serializer_class = ManufacturerPartAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-
-    filterset_fields = [
-        'manufacturer_part',
-    ]
-
-
-class ManufacturerPartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpooint for ManufacturerPartAttachment model."""
-
-    queryset = ManufacturerPartAttachment.objects.all()
-    serializer_class = ManufacturerPartAttachmentSerializer
 
 
 class ManufacturerPartParameterList(ListCreateDestroyAPIView):
@@ -524,8 +478,8 @@ manufacturer_part_api_urls = [
 
     # Base URL for ManufacturerPartAttachment API endpoints
     re_path(r'^attachment/', include([
-        path(r'<int:pk>/', ManufacturerPartAttachmentDetail.as_view(), name='api-manufacturer-part-attachment-detail'),
-        re_path(r'^$', ManufacturerPartAttachmentList.as_view(), name='api-manufacturer-part-attachment-list'),
+        path(r'<int:pk>/', AttachmentDetail.as_view(), {'model': ManufacturerPartAttachment, 'filter': 'manufacturer_part'}, name='api-manufacturer-part-attachment-detail'),
+        re_path(r'^$', AttachmentList.as_view(), {'model': ManufacturerPartAttachment, 'filter': 'manufacturer_part'}, name='api-manufacturer-part-attachment-list'),
     ])),
 
     re_path(r'^parameter/', include([
@@ -575,8 +529,8 @@ company_api_urls = [
     ])),
 
     re_path(r'^attachment/', include([
-        path(r'<int:pk>/', CompanyAttachmentDetail.as_view(), name='api-company-attachment-detail'),
-        re_path(r'^$', CompanyAttachmentList.as_view(), name='api-company-attachment-list'),
+        path(r'<int:pk>/', AttachmentDetail.as_view(), {'model': CompanyAttachment, 'filter': 'company'}, name='api-company-attachment-detail'),
+        re_path(r'^$', AttachmentList.as_view(), {'model': CompanyAttachment, 'filter': 'company'}, name='api-company-attachment-list'),
     ])),
 
     re_path(r'^contact/', include([
