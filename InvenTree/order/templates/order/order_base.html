@@ -332,7 +332,7 @@ $('#show-qr-code').click(function() {
     );
 });
 
-{% if roles.return_order.change %}
+{% if roles.purchase_order.change %}
 $("#barcode-link").click(function() {
     linkBarcodeDialog(
         {
