@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions, serializers, status
+from rest_framework import permissions, serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -17,7 +17,8 @@ import order.models
 from build.models import Build, BuildItem
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView)
-from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
+from InvenTree.filters import (ORDER_FILTER, SEARCH_INVENTREEORDER_FILTER,
+                               SERACH_ORDER_FILTER, InvenTreeSearchFilter)
 from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
@@ -152,11 +153,7 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SERACH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -220,10 +217,7 @@ class CategoryTree(ListAPI):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategoryTree
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
@@ -384,11 +378,7 @@ class PartTestTemplateList(ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        InvenTreeSearchFilter,
-    ]
+    filter_backends = SERACH_ORDER_FILTER
 
 
 class PartThumbs(ListAPI):
@@ -1224,11 +1214,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_INVENTREEORDER_FILTER
 
     ordering_fields = [
         'name',
@@ -1337,11 +1323,7 @@ class PartParameterTemplateList(ListCreateAPI):
     queryset = PartParameterTemplate.objects.all()
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        InvenTreeSearchFilter,
-    ]
+    filter_backends = SERACH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -1462,10 +1444,7 @@ class PartStocktakeList(ListCreateAPI):
 
         return context
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     ordering_fields = [
         'part',
@@ -1496,10 +1475,7 @@ class PartStocktakeReportList(ListAPI):
     queryset = PartStocktakeReport.objects.all()
     serializer_class = part_serializers.PartStocktakeReportSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     ordering_fields = [
         'date',
@@ -1731,11 +1707,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_INVENTREEORDER_FILTER
 
     search_fields = [
         'reference',
@@ -1836,11 +1808,7 @@ class BomItemSubstituteList(ListCreateAPI):
     serializer_class = part_serializers.BomItemSubstituteSerializer
     queryset = BomItemSubstitute.objects.all()
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SERACH_ORDER_FILTER
 
     filterset_fields = [
         'part',

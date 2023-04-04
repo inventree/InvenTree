@@ -1,11 +1,12 @@
 """General filters for InvenTree."""
 
-from rest_framework.filters import OrderingFilter, SearchFilter
+from django_filters import rest_framework as rest_filters
+from rest_framework import filters
 
 from InvenTree.helpers import str2bool
 
 
-class InvenTreeSearchFilter(SearchFilter):
+class InvenTreeSearchFilter(filters.SearchFilter):
     """Custom search filter which allows adjusting of search terms dynamically"""
 
     def get_search_fields(self, view, request):
@@ -59,7 +60,7 @@ class InvenTreeSearchFilter(SearchFilter):
         return terms
 
 
-class InvenTreeOrderingFilter(OrderingFilter):
+class InvenTreeOrderingFilter(filters.OrderingFilter):
     """Custom OrderingFilter class which allows aliased filtering of related fields.
 
     To use, simply specify this filter in the "filter_backends" section.
@@ -130,3 +131,21 @@ class InvenTreeOrderingFilter(OrderingFilter):
                     ordering.append(a)
 
         return ordering
+
+
+SERACH_ORDER_FILTER = [
+    rest_filters.DjangoFilterBackend,
+    InvenTreeSearchFilter,
+    filters.OrderingFilter
+]
+
+SEARCH_INVENTREEORDER_FILTER = [
+    rest_filters.DjangoFilterBackend,
+    InvenTreeSearchFilter,
+    InvenTreeOrderingFilter,
+]
+
+ORDER_FILTER = [
+    rest_filters.DjangoFilterBackend,
+    filters.OrderingFilter
+]

@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_ical.views import ICalFeed
-from rest_framework import filters, status
+from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -21,7 +21,7 @@ from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
-from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
+from InvenTree.filters import SEARCH_INVENTREEORDER_FILTER, SERACH_ORDER_FILTER
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
@@ -61,11 +61,7 @@ class GeneralExtraLineList(APIDownloadMixin):
 
         return queryset
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter
-    ]
+    filter_backends = SERACH_ORDER_FILTER
 
     ordering_fields = [
         'title',
@@ -307,11 +303,7 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_INVENTREEORDER_FILTER,
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -508,11 +500,7 @@ class PurchaseOrderLineItemList(PurchaseOrderLineItemMixin, APIDownloadMixin, Li
 
         return DownloadFile(filedata, filename)
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        InvenTreeOrderingFilter
-    ]
+    filter_backends = SEARCH_INVENTREEORDER_FILTER
 
     ordering_field_aliases = {
         'MPN': 'part__manufacturer_part__MPN',
@@ -693,11 +681,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_INVENTREEORDER_FILTER,
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -817,11 +801,7 @@ class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCrea
 
         return DownloadFile(filedata, filename)
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter
-    ]
+    filter_backends = SERACH_ORDER_FILTER
 
     ordering_fields = [
         'part__name',
@@ -1154,11 +1134,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         return DownloadFile(filedata, filename)
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_INVENTREEORDER_FILTER,
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -1302,11 +1278,7 @@ class ReturnOrderLineItemList(ReturnOrderLineItemMixin, APIDownloadMixin, ListCr
 
         raise NotImplementedError("download_queryset not yet implemented for this endpoint")
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SERACH_ORDER_FILTER
 
     ordering_fields = [
         'reference',
