@@ -61,7 +61,7 @@ def exception_handler(exc, context):
     """
     response = None
 
-    if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
+    if settings.SENTRY_ENABLED and settings.SENTRY_DSN and not settings.DEBUG:
         # Report this exception to sentry.io
         from sentry_sdk import capture_exception
         capture_exception(exc)
