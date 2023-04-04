@@ -19,7 +19,7 @@ import order.serializers as serializers
 from common.models import InvenTreeSetting
 from common.settings import settings
 from company.models import SupplierPart
-from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
+from InvenTree.api import (APIDownloadMixin, AttachmentDetail, AttachmentList,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import DownloadFile, str2bool
@@ -569,28 +569,6 @@ class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
-class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a SalesOrderAttachment (file upload)"""
-
-    queryset = models.SalesOrderAttachment.objects.all()
-    serializer_class = serializers.SalesOrderAttachmentSerializer
-
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
-
-    filterset_fields = [
-        'order',
-    ]
-
-
-class SalesOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for SalesOrderAttachment."""
-
-    queryset = models.SalesOrderAttachment.objects.all()
-    serializer_class = serializers.SalesOrderAttachmentSerializer
-
-
 class SalesOrderFilter(OrderFilter):
     """Custom API filters for the SalesOrderList endpoint."""
 
@@ -1061,28 +1039,6 @@ class SalesOrderShipmentComplete(CreateAPI):
         return ctx
 
 
-class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)"""
-
-    queryset = models.PurchaseOrderAttachment.objects.all()
-    serializer_class = serializers.PurchaseOrderAttachmentSerializer
-
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
-
-    filterset_fields = [
-        'order',
-    ]
-
-
-class PurchaseOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for a PurchaseOrderAttachment."""
-
-    queryset = models.PurchaseOrderAttachment.objects.all()
-    serializer_class = serializers.PurchaseOrderAttachmentSerializer
-
-
 class ReturnOrderFilter(OrderFilter):
     """Custom API filters for the ReturnOrderList endpoint"""
 
@@ -1346,28 +1302,6 @@ class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.ReturnOrderExtraLineSerializer
 
 
-class ReturnOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a ReturnOrderAttachment (file upload)"""
-
-    queryset = models.ReturnOrderAttachment.objects.all()
-    serializer_class = serializers.ReturnOrderAttachmentSerializer
-
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
-
-    filterset_fields = [
-        'order',
-    ]
-
-
-class ReturnOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for the ReturnOrderAttachment model"""
-
-    queryset = models.ReturnOrderAttachment.objects.all()
-    serializer_class = serializers.ReturnOrderAttachmentSerializer
-
-
 class OrderCalendarExport(ICalFeed):
     """Calendar export for Purchase/Sales Orders
 
@@ -1524,8 +1458,8 @@ order_api_urls = [
 
         # Purchase order attachments
         re_path(r'attachment/', include([
-            path('<int:pk>/', PurchaseOrderAttachmentDetail.as_view(), name='api-po-attachment-detail'),
-            re_path(r'^.*$', PurchaseOrderAttachmentList.as_view(), name='api-po-attachment-list'),
+            path('<int:pk>/', AttachmentDetail.as_view(), {'model': models.PurchaseOrderAttachment, 'filter': 'order'}, name='api-po-attachment-detail'),
+            re_path(r'^.*$', AttachmentList.as_view(), {'model': models.PurchaseOrderAttachment, 'filter': 'order'}, name='api-po-attachment-list'),
         ])),
 
         # Individual purchase order detail URLs
@@ -1568,8 +1502,8 @@ order_api_urls = [
     # API endpoints for sales ordesr
     re_path(r'^so/', include([
         re_path(r'attachment/', include([
-            path('<int:pk>/', SalesOrderAttachmentDetail.as_view(), name='api-so-attachment-detail'),
-            re_path(r'^.*$', SalesOrderAttachmentList.as_view(), name='api-so-attachment-list'),
+            path('<int:pk>/', AttachmentDetail.as_view(), {'model': models.SalesOrderAttachment, 'filter': 'order'}, name='api-so-attachment-detail'),
+            re_path(r'^.*$', AttachmentList.as_view(), {'model': models.SalesOrderAttachment, 'filter': 'order'}, name='api-so-attachment-list'),
         ])),
 
         re_path(r'^shipment/', include([
@@ -1629,8 +1563,8 @@ order_api_urls = [
     re_path(r'^ro/', include([
 
         re_path(r'^attachment/', include([
-            path('<int:pk>/', ReturnOrderAttachmentDetail.as_view(), name='api-return-order-attachment-detail'),
-            re_path(r'^.*$', ReturnOrderAttachmentList.as_view(), name='api-return-order-attachment-list'),
+            path('<int:pk>/', AttachmentDetail.as_view(), {'model': models.ReturnOrderAttachment, 'filter': 'order'}, name='api-return-order-attachment-detail'),
+            re_path(r'^.*$', AttachmentList.as_view(), {'model': models.ReturnOrderAttachment, 'filter': 'order'}, name='api-return-order-attachment-list'),
         ])),
 
         # Return Order detail endpoints
