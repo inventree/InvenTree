@@ -37,49 +37,50 @@ class TestBuildAPI(InvenTreeAPITestCase):
     def test_get_build_list(self):
         """Test that we can retrieve list of build objects."""
         url = reverse('api-build-list')
-        response = self.client.get(url, format='json')
+
+        response = self.get(url, expected_code=200)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(len(response.data), 5)
 
         # Filter query by build status
-        response = self.client.get(url, {'status': 40}, format='json')
+        response = self.get(url, {'status': 40}, expected_code=200)
 
         self.assertEqual(len(response.data), 4)
 
         # Filter by "active" status
-        response = self.client.get(url, {'active': True}, format='json')
+        response = self.get(url, {'active': True}, expected_code=200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], 1)
 
-        response = self.client.get(url, {'active': False}, format='json')
+        response = self.get(url, {'active': False}, expected_code=200)
         self.assertEqual(len(response.data), 4)
 
         # Filter by 'part' status
-        response = self.client.get(url, {'part': 25}, format='json')
+        response = self.get(url, {'part': 25}, expected_code=200)
         self.assertEqual(len(response.data), 1)
 
         # Filter by an invalid part
-        response = self.client.get(url, {'part': 99999}, format='json')
-        self.assertEqual(len(response.data), 0)
+        response = self.get(url, {'part': 99999}, expected_code=400)
+        self.assertIn('Select a valid choice', str(response.data))
 
         # Get a certain reference
-        response = self.client.get(url, {'reference': 'BO-0001'}, format='json')
+        response = self.get(url, {'reference': 'BO-0001'}, expected_code=200)
         self.assertEqual(len(response.data), 1)
 
         # Get a certain reference
-        response = self.client.get(url, {'reference': 'BO-9999XX'}, format='json')
+        response = self.get(url, {'reference': 'BO-9999XX'}, expected_code=200)
         self.assertEqual(len(response.data), 0)
 
     def test_get_build_item_list(self):
         """Test that we can retrieve list of BuildItem objects."""
         url = reverse('api-build-item-list')
 
-        response = self.client.get(url, format='json')
+        response = self.get(url, expected_code=200)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Test again, filtering by park ID
-        response = self.client.get(url, {'part': '1'}, format='json')
+        response = self.get(url, {'part': '1'}, expected_code=200)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
