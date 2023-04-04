@@ -100,6 +100,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
     def __init__(self, instance=None, data=empty, **kwargs):
         """Custom __init__ routine to ensure that *default* values (as specified in the ORM) are used by the DRF serializers, *if* the values are not provided by the user."""
         # If instance is None, we are creating a new instance
+
         if instance is None and data is not empty:
 
             if data is None:
@@ -297,11 +298,36 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         return os.path.join(str(settings.MEDIA_URL), str(value))
 
 
-class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
+class InvenTreeAttachmentSerializer(serializers.ModelSerializer):
     """Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
 
     The only real addition here is that we support "renaming" of the attachment file.
     """
+
+    class AttachmentSerializerMeta:
+        """Custom Meta class which allows us to define the model type dynamically"""
+
+        def __init__(self, model_type, field_name):
+            """Initialize the model and fields for this Metaclass"""
+            self.model = model_type
+            self.fields = [
+                'pk',
+                'attachment',
+                'filename',
+                'link',
+                'comment',
+                'upload_date',
+                'user',
+                'user_detail',
+                field_name,
+            ]
+
+    def __init__(self, *args, **kwargs):
+        """Initialize a particular InvenTreeAttachmentSerializer, based on the model type"""
+        model_type = kwargs.pop('model')
+        field_name = kwargs.pop('filter')
+        self.Meta = self._meta = self.AttachmentSerializerMeta(model_type, field_name)
+        super().__init__(*args, **kwargs)
 
     @staticmethod
     def attachment_fields(extra_fields=None):

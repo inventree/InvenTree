@@ -13,12 +13,13 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import users.models
-from InvenTree.mixins import ListCreateAPI
+from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
 from plugin.serializers import MetadataSerializer
 
 from .mixins import RetrieveUpdateAPI
+from .serializers import InvenTreeAttachmentSerializer
 from .status import is_worker_running
 from .version import (inventreeApiVersion, inventreeInstanceName,
                       inventreeVersion)
@@ -193,27 +194,6 @@ class APIDownloadMixin:
         raise NotImplementedError("download_queryset method not implemented!")
 
 
-class AttachmentMixin:
-    """Mixin for creating attachment objects, and ensuring the user information is saved correctly."""
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-        RolePermission,
-    ]
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
-
-    def perform_create(self, serializer):
-        """Save the user information when a file is uploaded."""
-        attachment = serializer.save()
-        attachment.user = self.request.user
-        attachment.save()
-
-
 class APISearchView(APIView):
     """A general-purpose 'search' API endpoint
 
@@ -379,3 +359,77 @@ class MetadataView(RetrieveUpdateAPI):
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance"""
         return MetadataSerializer(self.get_model_type(), *args, **kwargs)
+
+
+class AttachmentMixin:
+    """Mixin for creating attachment objects, and ensuring the user information is saved correctly."""
+
+    MODEL_REF = 'model'
+    FILTER_REF = 'filter'
+
+    def get_model_type(self):
+        """Return the model type associated with this API endpoint instance"""
+        model = self.kwargs.get(self.MODEL_REF, None)
+
+        if not model:
+            raise ValidationError(f"AttachmentMixin called without '{self.MODEL_REF}' parameter")
+
+        return model
+
+    def get_model_filter(self):
+        """Return the model label associated with this API endpoint instance"""
+        label = self.kwargs.get(self.FILTER_REF, None)
+
+        if not label:
+            raise ValidationError(f"AttachmentMixin called without '{self.FILTER_REF}' parameter")
+
+        return label
+
+    def get_queryset(self):
+        """Return the queryset for this endpoint"""
+        return self.get_model_type().objects.all()
+
+    def get_serializer(self, *args, **kwargs):
+        """Return an InvenTreeAttachmentSerializer instance"""
+        kwargs[self.MODEL_REF] = self.get_model_type()
+        kwargs[self.FILTER_REF] = self.get_model_filter()
+
+        return InvenTreeAttachmentSerializer(*args, **kwargs)
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+        RolePermission,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    ]
+
+    ordering_fields = [
+        'upload_date',
+    ]
+
+    @property
+    def filterset_fields(self):
+        """Return the fields we can 'filter' this type of attachment by"""
+        return [self.get_model_filter()]
+
+    def perform_create(self, serializer):
+        """Save the user information when a file is uploaded."""
+        attachment = serializer.save()
+        attachment.user = self.request.user
+        attachment.save()
+
+        return attachment
+
+
+class AttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
+    """Generic API endpoint for returning a list of attachment instances"""
+    pass
+
+
+class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
+    """Generic detail API endpoint for a single attachment instance"""
+    pass
