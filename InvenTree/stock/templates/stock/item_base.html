@@ -281,12 +281,6 @@
     </div>
     {% endif %}
 
-    {% if item.hasRequiredTests and not item.passedAllRequiredTests %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "This stock item has not passed all required tests" %}
-    </div>
-    {% endif %}
-
     {% for allocation in item.get_sales_order_allocations.all %}
     <div class='alert alert-block alert-info'>
         {% object_link 'so-detail' allocation.line.order.id allocation.line.order as link %}
@@ -412,7 +406,7 @@
             {% if item.passedAllRequiredTests %}
             <span class='fas fa-check-circle float-right icon-green'></span>
             {% else %}
-            <span class='fas fa-times-circle float-right icon-red'></span>
+            <span class='fas fa-times-circle float-right icon-red' title='{% trans "This stock item has not passed all required tests" %}'></span>
             {% endif %}
         </td>
     </tr>
