@@ -1161,3 +1161,8 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
         decimal_places=decimal_places,
         include_symbol=include_symbol,
     )
+
+
+def is_ajax(request):
+    """Check if the current request is an AJAX request."""
+    return request.headers.get('x-requested-with') == 'XMLHttpRequest'

@@ -25,8 +25,8 @@ from company.serializers import CompanySerializer, SupplierPartSerializer
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
 from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
-from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
-                               str2bool, str2int)
+from InvenTree.helpers import (DownloadFile, extract_serial_numbers, is_ajax,
+                               isNull, str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateDestroyAPI)
@@ -803,7 +803,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         if page is not None:
             return self.get_paginated_response(data)
-        elif request.is_ajax():
+        elif is_ajax(request):
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
@@ -1281,7 +1281,7 @@ class StockTrackingList(ListAPI):
                 except Exception:
                     pass
 
-        if request.is_ajax():
+        if is_ajax(request):
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
