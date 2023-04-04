@@ -14,7 +14,7 @@ def get_model_for_view(view, raise_error=True):
         return view.get_permission_model()
 
     if hasattr(view, 'get_serializer_class'):
-        return view.get_serializr_class().Meta.model
+        return view.get_serializer_class().Meta.model
 
     if hasattr(view, 'serializer_class'):
         return view.serializer_class.Meta.model
