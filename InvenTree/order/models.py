@@ -604,7 +604,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
                 # Assign the provided barcode
                 if barcode:
-                    item.assign_barcode(barcode, save=False)
+                    item.assign_barcode(
+                        barcode_data=barcode,
+                        save=False
+                    )
 
                 item.save(add_note=False)
 

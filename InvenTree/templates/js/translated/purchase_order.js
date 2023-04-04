@@ -1054,6 +1054,16 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             }
         );
 
+        // Hidden barcode input
+        var barcode_input = constructField(
+            `items_barcode_${pk}`,
+            {
+                type: 'string',
+                required: 'false',
+                hidden: 'true'
+            }
+        );
+
         var sn_input = constructField(
             `items_serial_numbers_${pk}`,
             {
@@ -1112,6 +1122,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
         if (global_settings.BARCODE_ENABLE) {
             buttons += makeIconButton('fa-qrcode', 'button-row-add-barcode', pk, '{% trans "Add barcode" %}');
+            buttons += makeIconButton('fa-unlink icon-red', 'button-row-remove-barcode', pk, '{% trans "Remove barcode" %}', {hidden: true});
         }
 
         buttons += makeIconButton('fa-sitemap', 'button-row-add-location', pk, '{% trans "Specify location" %}', {
@@ -1166,6 +1177,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 ${status_input}
             </td>
             <td id='actions_${pk}'>
+                ${barcode_input}
                 ${buttons}
             </td>
         </tr>
@@ -1295,6 +1307,44 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 }
             });
 
+            // Add callbacks to add barcode
+            if (global_settings.BARCODE_ENABLE) {
+                $(opts.modal).find('.button-row-add-barcode').click(function() {
+                    var btn = $(this);
+                    let pk = btn.attr('pk');
+
+                    // Scan to see if the barcode matches an existing StockItem
+                    barcodeDialog('{% trans "Scan Item Barcode" %}', {
+                        details: '{% trans "Scan barcode on incoming item (must not match any existing stock items)" %}',
+                        onScan: function(response, barcode_options) {
+                            // A 'success' result means that the barcode matches something existing in the database
+                            showBarcodeMessage(barcode_options.modal, '{% trans "Barcode matches existing item" %}');
+                        },
+                        onError400: function(response, barcode_options) {
+                            if (response.barcode_data && response.barcode_hash) {
+                                // Success! Hide the modal and update the value
+                                $(barcode_options.modal).modal('hide');
+
+                                btn.hide();
+                                $(opts.modal).find(`#button-row-remove-barcode-${pk}`).show();
+                                updateFieldValue(`items_barcode_${pk}`, response.barcode_data, {}, opts);
+                            } else {
+                                showBarcodeMessage(barcode_options.modal, '{% trans "Invalid barcode data" %}');
+                            }
+                        }
+                    });
+                });
+
+                $(opts.modal).find('.button-row-remove-barcode').click(function() {
+                    var btn = $(this);
+                    let pk = btn.attr('pk');
+
+                    btn.hide();
+                    $(opts.modal).find(`#button-row-add-barcode-${pk}`).show();
+                    updateFieldValue(`items_barcode_${pk}`, '', {}, opts);
+                });
+            }
+
             // Add callbacks to remove rows
             $(opts.modal).find('.button-row-remove').click(function() {
                 var pk = $(this).attr('pk');
@@ -1315,10 +1365,9 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
                 var pk = item.pk;
 
+                // Extract data for each line
                 var quantity = getFormFieldValue(`items_quantity_${pk}`, {}, opts);
-
                 var status = getFormFieldValue(`items_status_${pk}`, {}, opts);
-
                 var location = getFormFieldValue(`items_location_${pk}`, {}, opts);
 
                 if (quantity != null) {
@@ -1329,6 +1378,10 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                         status: status,
                         location: location,
                     };
+
+                    if (global_settings.BARCODE_ENABLE) {
+                        line.barcode = getFormFieldValue(`items_barcode_${pk}`, {}, opts);
+                    }
 
                     if (getFormFieldElement(`items_batch_code_${pk}`).exists()) {
                         line.batch_code = getFormFieldValue(`items_batch_code_${pk}`);
