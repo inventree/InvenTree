@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
+import InvenTree.permissions
+import InvenTree.views
 import users.models
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
@@ -24,10 +26,9 @@ from .serializers import InvenTreeAttachmentSerializer
 from .status import is_worker_running
 from .version import (inventreeApiVersion, inventreeInstanceName,
                       inventreeVersion)
-from .views import AjaxView
 
 
-class InfoView(AjaxView):
+class InfoView(InvenTree.views.AjaxView):
     """Simple JSON endpoint for InvenTree information.
 
     Use to confirm that the server is running, etc.
@@ -56,7 +57,7 @@ class InfoView(AjaxView):
         return JsonResponse(data)
 
 
-class NotFoundView(AjaxView):
+class NotFoundView(InvenTree.views.AjaxView):
     """Simple JSON view when accessing an invalid API view."""
 
     permission_classes = [permissions.AllowAny]
@@ -95,7 +96,7 @@ class BulkDeleteMixin:
         }
 
         """
-        model = self.serializer_class.Meta.model
+        model = InvenTree.permissions.get_model_for_view(self)
 
         # Extract the items from the request body
         try:
