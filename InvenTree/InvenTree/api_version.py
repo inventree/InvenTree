@@ -2,10 +2,15 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 106
+INVENTREE_API_VERSION = 107
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v107 -> 2023-04-04 : https://github.com/inventree/InvenTree/pull/4575
+    - Adds barcode support for PurchaseOrder model
+    - Adds barcode support for ReturnOrder model
+    - Adds barcode support for SalesOrder model
 
 v106 -> 2023-04-03 : https://github.com/inventree/InvenTree/pull/4566
     - Adds 'search_regex' parameter to all searchable API endpoints
