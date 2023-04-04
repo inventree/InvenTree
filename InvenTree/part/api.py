@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 import order.models
 from build.models import Build, BuildItem
-from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
+from InvenTree.api import (APIDownloadMixin, AttachmentDetail, AttachmentList,
                            ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
@@ -320,28 +320,6 @@ class PartInternalPriceList(ListCreateAPI):
     filterset_fields = [
         'part',
     ]
-
-
-class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a PartAttachment (file upload)."""
-
-    queryset = PartAttachment.objects.all()
-    serializer_class = part_serializers.PartAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-
-    filterset_fields = [
-        'part',
-    ]
-
-
-class PartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for PartAttachment model."""
-
-    queryset = PartAttachment.objects.all()
-    serializer_class = part_serializers.PartAttachmentSerializer
 
 
 class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
@@ -1886,8 +1864,8 @@ part_api_urls = [
 
     # Base URL for PartAttachment API endpoints
     re_path(r'^attachment/', include([
-        path(r'<int:pk>/', PartAttachmentDetail.as_view(), name='api-part-attachment-detail'),
-        path('', PartAttachmentList.as_view(), name='api-part-attachment-list'),
+        path(r'<int:pk>/', AttachmentDetail.as_view(), {'model': PartAttachment, 'filter': 'part'}, name='api-part-attachment-detail'),
+        path('', AttachmentList.as_view(), {'model': PartAttachment, 'filter': 'part'}, name='api-part-attachment-list'),
     ])),
 
     # Base URL for part sale pricing

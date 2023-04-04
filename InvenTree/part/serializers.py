@@ -25,7 +25,6 @@ import part.tasks
 import stock.models
 from InvenTree.serializers import (DataFileExtractSerializer,
                                    DataFileUploadSerializer,
-                                   InvenTreeAttachmentSerializer,
                                    InvenTreeAttachmentSerializerField,
                                    InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField,
@@ -36,11 +35,10 @@ from InvenTree.serializers import (DataFileExtractSerializer,
 from InvenTree.status_codes import BuildStatus
 from InvenTree.tasks import offload_task
 
-from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
-                     PartCategory, PartCategoryParameterTemplate,
-                     PartInternalPriceBreak, PartParameter,
-                     PartParameterTemplate, PartPricing, PartRelated,
-                     PartSellPriceBreak, PartStar, PartStocktake,
+from .models import (BomItem, BomItemSubstitute, Part, PartCategory,
+                     PartCategoryParameterTemplate, PartInternalPriceBreak,
+                     PartParameter, PartParameterTemplate, PartPricing,
+                     PartRelated, PartSellPriceBreak, PartStar, PartStocktake,
                      PartStocktakeReport, PartTestTemplate)
 
 logger = logging.getLogger("inventree")
@@ -104,18 +102,6 @@ class CategoryTree(InvenTreeModelSerializer):
             'parent',
             'icon',
         ]
-
-
-class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the PartAttachment class."""
-
-    class Meta:
-        """Metaclass defining serializer fields"""
-        model = PartAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields([
-            'part',
-        ])
 
 
 class PartTestTemplateSerializer(InvenTreeModelSerializer):
