@@ -29,6 +29,20 @@ class RolePermission(permissions.BasePermission):
     For example, a DELETE action will be rejected unless the user has the "part.remove" permission
     """
 
+    def get_permission_model(self, view):
+        """Return the 'model' to base permission access on"""
+
+        if hasattr(view, 'get_permission_model'):
+            return view.get_permission_model()
+
+        if hasattr(view, 'get_serializer_class'):
+            return view.get_serializr_class().Meta.model
+
+        if hasattr(view, 'serializer_class'):
+            return view.serializer_class.Meta.model
+
+        raise AttributeError(f"Serializer class not specified for {self.__name__}")
+
     def has_permission(self, request, view):
         """Determine if the current user has the specified permissions."""
         user = request.user
@@ -55,7 +69,7 @@ class RolePermission(permissions.BasePermission):
 
         try:
             # Extract the model name associated with this request
-            model = view.serializer_class.Meta.model
+            model = self.get_permission_model(view)
 
             app_label = model._meta.app_label
             model_name = model._meta.model_name
