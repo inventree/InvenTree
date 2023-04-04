@@ -141,6 +141,8 @@ function updateSearch() {
     // Construct base query
     searchQuery = {
         search: searchTextCurrent,
+        search_regex: user_settings.SEARCH_REGEX ? true : false,
+        search_whole: user_settings.SEARCH_WHOLE ? true : false,
         limit: user_settings.SEARCH_PREVIEW_RESULTS,
         offset: 0,
     };
@@ -222,7 +224,7 @@ function updateSearch() {
 
     if (checkPermission('purchase_order') && user_settings.SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS) {
 
-        var filters = {
+        let filters = {
             supplier_detail: true,
         };
 
@@ -235,7 +237,7 @@ function updateSearch() {
 
     if (checkPermission('sales_order') && user_settings.SEARCH_PREVIEW_SHOW_SALES_ORDERS) {
 
-        var filters = {
+        let filters = {
             customer_detail: true,
         };
 
@@ -245,6 +247,19 @@ function updateSearch() {
         }
 
         addSearchQuery('salesorder', '{% trans "Sales Orders" %}', filters);
+    }
+
+    if (checkPermission('return_order') && user_settings.SEARCH_PREVIEW_SHOW_RETURN_ORDERS) {
+        let filters = {
+            customer_detail: true,
+        };
+
+        // Hide inactive (not "outstanding" orders)
+        if (user_settings.SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS) {
+            filters.outstanding = true;
+        }
+
+        addSearchQuery('returnorder', '{% trans "Return Orders" %}', filters);
     }
 
     let ctx = $('#offcanvas-search').find('#search-context');

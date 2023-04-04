@@ -150,13 +150,7 @@
         </td>
     </tr>
     {% endif %}
-    {% if location and location.barcode_hash %}
-    <tr>
-        <td><span class='fas fa-barcode'></span></td>
-        <td>{% trans "Barcode Identifier" %}</td>
-        <td {% if location.barcode_data %}title='{{ location.barcode_data }}'{% endif %}>{{ location.barcode_hash }}</td>
-    </tr>
-    {% endif %}
+    {% include "barcode_data.html" with instance=location %}
 </table>
 {% endblock details_left %}
 
@@ -228,17 +222,6 @@
     <div class='panel-content'>
         <div id='sublocation-button-toolbar'>
             <div class='btn-group' role='group'>
-                <!-- Printing actions menu -->
-                {% if labels_enabled %}
-                <div class='btn-group' role='group'>
-                    <button id='location-print-options' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle="dropdown" title='{% trans "Printing Actions" %}'>
-                        <span class='fas fa-print'></span> <span class='caret'></span>
-                    </button>
-                    <ul class='dropdown-menu'>
-                        <li><a class='dropdown-item' href='#' id='multi-location-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
-                    </ul>
-                </div>
-                {% endif %}
                 {% include "filter_list.html" with id="location" %}
             </div>
         </div>
@@ -299,21 +282,11 @@
 
         var locs = [{{ location.pk }}];
 
-        printStockLocationLabels(locs);
-
-    });
-
-    $('#multi-location-print-label').click(function() {
-
-        var selections = getTableData('#sublocation-table');
-
-        var locations = [];
-
-        selections.forEach(function(loc) {
-            locations.push(loc.pk);
+        printLabels({
+            items: locs,
+            key: 'location',
+            url: '{% url "api-stocklocation-label-list" %}',
         });
-
-        printStockLocationLabels(locations);
     });
     {% endif %}
 

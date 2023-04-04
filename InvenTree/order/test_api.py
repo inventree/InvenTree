@@ -17,7 +17,9 @@ import order.models as models
 from common.settings import currency_codes
 from company.models import Company
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
+                                    ReturnOrderStatus, SalesOrderStatus,
+                                    StockStatus)
 from part.models import Part
 from stock.models import StockItem
 
@@ -835,8 +837,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         """
         # Set stock item barcode
         item = StockItem.objects.get(pk=1)
-        item.barcode_hash = 'MY-BARCODE-HASH'
-        item.save()
+        item.assign_barcode(barcode_data='MY-BARCODE-HASH')
 
         response = self.post(
             self.url,
@@ -954,8 +955,8 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(stock_2.last().location.pk, 2)
 
         # Barcodes should have been assigned to the stock items
-        self.assertTrue(StockItem.objects.filter(barcode_hash='MY-UNIQUE-BARCODE-123').exists())
-        self.assertTrue(StockItem.objects.filter(barcode_hash='MY-UNIQUE-BARCODE-456').exists())
+        self.assertTrue(StockItem.objects.filter(barcode_data='MY-UNIQUE-BARCODE-123').exists())
+        self.assertTrue(StockItem.objects.filter(barcode_data='MY-UNIQUE-BARCODE-456').exists())
 
     def test_batch_code(self):
         """Test that we can supply a 'batch code' when receiving items."""
@@ -1802,3 +1803,286 @@ class SalesOrderAllocateTest(OrderTest):
         response = self.get(url, expected_code=200)
 
         self.assertEqual(len(response.data), 1 + 3 * models.SalesOrder.objects.count())
+
+
+class ReturnOrderTests(InvenTreeAPITestCase):
+    """Unit tests for ReturnOrder API endpoints"""
+
+    fixtures = [
+        'category',
+        'company',
+        'return_order',
+        'part',
+        'location',
+        'supplier_part',
+        'stock',
+    ]
+
+    def test_options(self):
+        """Test the OPTIONS endpoint"""
+
+        self.assignRole('return_order.add')
+        data = self.options(reverse('api-return-order-list'), expected_code=200).data
+
+        self.assertEqual(data['name'], 'Return Order List')
+
+        # Some checks on the 'reference' field
+        post = data['actions']['POST']
+        reference = post['reference']
+
+        self.assertEqual(reference['default'], 'RMA-0007')
+        self.assertEqual(reference['label'], 'Reference')
+        self.assertEqual(reference['help_text'], 'Return Order reference')
+        self.assertEqual(reference['required'], True)
+        self.assertEqual(reference['type'], 'string')
+
+    def test_list(self):
+        """Tests for the list endpoint"""
+
+        url = reverse('api-return-order-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 6)
+
+        # Paginated query
+        data = self.get(
+            url,
+            {
+                'limit': 1,
+                'ordering': 'reference',
+                'customer_detail': True,
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['count'], 6)
+        self.assertEqual(len(data['results']), 1)
+        result = data['results'][0]
+        self.assertEqual(result['reference'], 'RMA-001')
+        self.assertEqual(result['customer_detail']['name'], 'A customer')
+
+        # Reverse ordering
+        data = self.get(
+            url,
+            {
+                'ordering': '-reference',
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data[0]['reference'], 'RMA-006')
+
+        # Filter by customer
+        for cmp_id in [4, 5]:
+            data = self.get(
+                url,
+                {
+                    'customer': cmp_id,
+                },
+                expected_code=200
+            ).data
+
+            self.assertEqual(len(data), 3)
+
+            for result in data:
+                self.assertEqual(result['customer'], cmp_id)
+
+        # Filter by status
+        data = self.get(
+            url,
+            {
+                'status': 20,
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(len(data), 2)
+
+        for result in data:
+            self.assertEqual(result['status'], 20)
+
+    def test_create(self):
+        """Test creation of ReturnOrder via the API"""
+
+        url = reverse('api-return-order-list')
+
+        # Do not have required permissions yet
+        self.post(
+            url,
+            {
+                'customer': 1,
+                'description': 'a return order',
+            },
+            expected_code=403
+        )
+
+        self.assignRole('return_order.add')
+
+        data = self.post(
+            url,
+            {
+                'customer': 4,
+                'customer_reference': 'cr',
+                'description': 'a return order',
+            },
+            expected_code=201
+        ).data
+
+        # Reference automatically generated
+        self.assertEqual(data['reference'], 'RMA-0007')
+        self.assertEqual(data['customer_reference'], 'cr')
+
+    def test_update(self):
+        """Test that we can update a ReturnOrder via the API"""
+
+        url = reverse('api-return-order-detail', kwargs={'pk': 1})
+
+        # Test detail endpoint
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['reference'], 'RMA-001')
+
+        # Attempt to update, incorrect permissions
+        self.patch(
+            url,
+            {
+                'customer_reference': 'My customer reference',
+            },
+            expected_code=403
+        )
+
+        self.assignRole('return_order.change')
+
+        self.patch(
+            url,
+            {
+                'customer_reference': 'customer ref',
+            },
+            expected_code=200
+        )
+
+        rma = models.ReturnOrder.objects.get(pk=1)
+        self.assertEqual(rma.customer_reference, 'customer ref')
+
+    def test_ro_issue(self):
+        """Test the 'issue' order for a ReturnOrder"""
+
+        order = models.ReturnOrder.objects.get(pk=1)
+        self.assertEqual(order.status, ReturnOrderStatus.PENDING)
+        self.assertIsNone(order.issue_date)
+
+        url = reverse('api-return-order-issue', kwargs={'pk': 1})
+
+        # POST without required permissions
+        self.post(url, expected_code=403)
+
+        self.assignRole('return_order.add')
+
+        self.post(url, expected_code=201)
+        order.refresh_from_db()
+        self.assertEqual(order.status, ReturnOrderStatus.IN_PROGRESS)
+        self.assertIsNotNone(order.issue_date)
+
+    def test_receive(self):
+        """Test that we can receive items against a ReturnOrder"""
+
+        customer = Company.objects.get(pk=4)
+
+        # Create an order
+        rma = models.ReturnOrder.objects.create(
+            customer=customer,
+            description='A return order',
+        )
+
+        self.assertEqual(rma.reference, 'RMA-0007')
+
+        # Create some line items
+        part = Part.objects.get(pk=25)
+        for idx in range(3):
+            stock_item = StockItem.objects.create(
+                part=part, customer=customer,
+                quantity=1, serial=idx
+            )
+
+            line_item = models.ReturnOrderLineItem.objects.create(
+                order=rma,
+                item=stock_item,
+            )
+
+            self.assertEqual(line_item.outcome, ReturnOrderLineStatus.PENDING)
+            self.assertIsNone(line_item.received_date)
+            self.assertFalse(line_item.received)
+
+        self.assertEqual(rma.lines.count(), 3)
+
+        def receive(items, location=None, expected_code=400):
+            """Helper function to receive items against this ReturnOrder"""
+            url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
+
+            response = self.post(
+                url,
+                {
+                    'items': items,
+                    'location': location,
+                },
+                expected_code=expected_code
+            )
+
+            return response.data
+
+        # Receive without required permissions
+        receive([], expected_code=403)
+
+        self.assignRole('return_order.add')
+
+        # Receive, without any location
+        data = receive([], expected_code=400)
+        self.assertIn('This field may not be null', str(data['location']))
+
+        # Receive, with incorrect order code
+        data = receive([], 1, expected_code=400)
+        self.assertIn('Items can only be received against orders which are in progress', str(data))
+
+        # Issue the order (via the API)
+        self.assertIsNone(rma.issue_date)
+        self.post(
+            reverse("api-return-order-issue", kwargs={"pk": rma.pk}),
+            expected_code=201,
+        )
+
+        rma.refresh_from_db()
+        self.assertIsNotNone(rma.issue_date)
+        self.assertEqual(rma.status, ReturnOrderStatus.IN_PROGRESS)
+
+        # Receive, without any items
+        data = receive([], 1, expected_code=400)
+        self.assertIn('Line items must be provided', str(data))
+
+        # Get a reference to one of the stock items
+        stock_item = rma.lines.first().item
+
+        n_tracking = stock_item.tracking_info.count()
+
+        # Receive items successfully
+        data = receive(
+            [{'item': line.pk} for line in rma.lines.all()],
+            1,
+            expected_code=201
+        )
+
+        # Check that all line items have been received
+        for line in rma.lines.all():
+            self.assertTrue(line.received)
+            self.assertIsNotNone(line.received_date)
+
+        # A single tracking entry should have been added to the item
+        self.assertEqual(stock_item.tracking_info.count(), n_tracking + 1)
+
+        tracking_entry = stock_item.tracking_info.last()
+        deltas = tracking_entry.deltas
+
+        self.assertEqual(deltas['status'], StockStatus.QUARANTINED)
+        self.assertEqual(deltas['customer'], customer.pk)
+        self.assertEqual(deltas['location'], 1)
+        self.assertEqual(deltas['returnorder'], rma.pk)

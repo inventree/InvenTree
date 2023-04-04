@@ -568,6 +568,9 @@ SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', INVENTREE_DSN)
 SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
 
 if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+
+    logger.info("Running with sentry.io integration enabled")
+
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration(), ],

@@ -10,11 +10,13 @@
     getModelRenderer,
     renderBuild,
     renderCompany,
+    renderContact,
     renderGroup,
     renderManufacturerPart,
     renderOwner,
     renderPart,
     renderPartCategory,
+    renderReturnOrder,
     renderStockItem,
     renderStockLocation,
     renderSupplierPart,
@@ -44,6 +46,8 @@ function getModelRenderer(model) {
     switch (model) {
     case 'company':
         return renderCompany;
+    case 'contact':
+        return renderContact;
     case 'stockitem':
         return renderStockItem;
     case 'stocklocation':
@@ -58,6 +62,8 @@ function getModelRenderer(model) {
         return renderPurchaseOrder;
     case 'salesorder':
         return renderSalesOrder;
+    case 'returnorder':
+        return renderReturnOrder;
     case 'salesordershipment':
         return renderSalesOrderShipment;
     case 'manufacturerpart':
@@ -150,6 +156,17 @@ function renderCompany(data, parameters={}) {
 }
 
 
+// Renderer for "Contact" model
+function renderContact(data, parameters={}) {
+    return renderModel(
+        {
+            text: data.name,
+        },
+        parameters
+    );
+}
+
+
 // Renderer for "StockItem" model
 function renderStockItem(data, parameters={}) {
 
@@ -157,9 +174,6 @@ function renderStockItem(data, parameters={}) {
     let render_part_detail = ('render_part_detail' in parameters) ? parameters.render_part_detail : true;
     let render_location_detail = ('render_location_detail' in parameters) ? parameters.render_location_detail : false;
     let render_available_quantity = ('render_available_quantity' in parameters) ? parameters.render_available_quantity : false;
-
-    if (render_part_detail) {
-    }
 
     let text = '';
     let stock_detail = '';
@@ -348,14 +362,40 @@ function renderSalesOrder(data, parameters={}) {
         image = data.customer_detail.thumbnail || data.customer_detail.image || blankImage();
     }
 
+    let text = data.reference;
+
+    if (data.customer_detail) {
+        text += ` - ${data.customer_detail.name}`;
+    }
+
+    return renderModel(
+        {
+            image: image,
+            text: text,
+            textSecondary: shortenString(data.description),
+            url: data.url || `/order/sales-order/${data.pk}/`,
+        },
+        parameters
+    );
+}
+
+
+// Renderer for "ReturnOrder" model
+function renderReturnOrder(data, parameters={}) {
+    let image = blankImage();
+
+    if (data.customer_detail) {
+        image = data.customer_detail.thumbnail || data.customer_detail.image || blankImage();
+    }
+
     return renderModel(
         {
             image: image,
             text: `${data.reference} - ${data.customer_detail.name}`,
             textSecondary: shortenString(data.description),
-            url: data.url || `/order/sales-order/${data.pk}/`,
+            url: data.url || `/order/return-order/${data.pk}/`,
         },
-        parameters
+        parameters,
     );
 }
 

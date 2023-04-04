@@ -308,7 +308,7 @@ function constructDeleteForm(fields, options) {
  * - confirmText: Text for confirm button (default = "Confirm")
  *
  */
-function constructForm(url, options) {
+function constructForm(url, options={}) {
 
     // An "empty" form will be defined locally
     if (url == null) {
@@ -1167,6 +1167,11 @@ function handleFormSuccess(response, options) {
         if (!options.preventClose) {
             // Note: The modal will be deleted automatically after closing
             $(options.modal).modal('hide');
+        }
+
+        // Refresh a table
+        if (options.refreshTable) {
+            reloadBootstrapTable(options.refreshTable);
         }
 
         if (options.onSuccess) {

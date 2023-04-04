@@ -1123,7 +1123,10 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
     """
 
-    if money is None or money.amount is None:
+    if money in [None, '']:
+        return '-'
+
+    if type(money) is not Money:
         return '-'
 
     if currency is not None:

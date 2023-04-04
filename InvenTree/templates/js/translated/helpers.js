@@ -6,9 +6,14 @@
     editButton,
     formatDecimal,
     imageHoverIcon,
+    makeCopyButton,
+    makeDeleteButton,
+    makeEditButton,
     makeIconBadge,
     makeIconButton,
+    makeInfoButton,
     makeProgressBar,
+    makeRemoveButton,
     renderLink,
     sanitizeInputString,
     select2Thumbnail,
@@ -17,7 +22,13 @@
     thumbnailImage
     yesNoLabel,
     withTitle,
+    wrapButtons,
 */
+
+/* exported
+    makeIcon,
+*/
+
 
 function yesNoLabel(value, options={}) {
     var text = '';
@@ -148,13 +159,43 @@ function select2Thumbnail(image) {
 
 
 /*
+ * Construct a simple FontAwesome icon span
+ */
+function makeIcon(icon, title='', options={}) {
+
+    let classes = options.classes || 'fas';
+
+    return `<span class='${classes} ${icon}' title='${title}'></span>`;
+}
+
+
+/*
  * Construct an 'icon badge' which floats to the right of an object
  */
-function makeIconBadge(icon, title) {
+function makeIconBadge(icon, title='', options={}) {
 
-    var html = `<span class='icon-badge fas ${icon} float-right' title='${title}'></span>`;
+    let content = options.content || '';
+
+    let html = `
+    <span class='icon-badge fas ${icon} float-right' title='${title}'>
+        ${content}
+    </span>`;
 
     return html;
+}
+
+
+/*
+ * Wrap list of buttons in a button group <div>
+ */
+function wrapButtons(buttons) {
+
+    if (!buttons) {
+        // Return empty element if no buttons are provided
+        return '';
+    }
+
+    return `<div class='btn-group float-right' role='group'>${buttons}</div>`;
 }
 
 
@@ -169,7 +210,13 @@ function makeIconButton(icon, cls, pk, title, options={}) {
 
     var html = '';
 
-    var extraProps = '';
+    var extraProps = options.extra || '';
+
+    var style = '';
+
+    if (options.hidden) {
+        style += `display: none;`;
+    }
 
     if (options.disabled) {
         extraProps += `disabled='true' `;
@@ -179,11 +226,51 @@ function makeIconButton(icon, cls, pk, title, options={}) {
         extraProps += `data-bs-toggle='collapse' href='#${options.collapseTarget}'`;
     }
 
-    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
+    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps} style='${style}'>`;
     html += `<span class='fas ${icon}'></span>`;
     html += `</button>`;
 
     return html;
+}
+
+
+/*
+ * Helper function for making a common 'info' button
+ */
+function makeInfoButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-info-circle', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'edit' button
+ */
+function makeEditButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-edit icon-blue', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'copy' button
+ */
+function makeCopyButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-clone', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'delete' button
+ */
+function makeDeleteButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-trash-alt icon-red', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'remove' button
+ */
+function makeRemoveButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-times-circle icon-red', cls, pk, title, options);
 }
 
 

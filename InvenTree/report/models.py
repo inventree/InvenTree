@@ -68,6 +68,11 @@ def validate_sales_order_filters(filters):
     return validateFilterString(filters, model=order.models.SalesOrder)
 
 
+def validate_return_order_filters(filters):
+    """Validate filter string against ReturnOrder model"""
+    return validateFilterString(filters, model=order.models.ReturnOrder)
+
+
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
     """Class for rendering a HTML template to a PDF."""
 
@@ -303,6 +308,30 @@ class TestReport(ReportTemplateBase):
 
         return items.exists()
 
+    def get_test_keys(self, stock_item):
+        """Construct a flattened list of test 'keys' for this StockItem:
+
+        - First, any 'required' tests
+        - Second, any 'non required' tests
+        - Finally, any test results which do not match a test
+        """
+
+        keys = []
+
+        for test in stock_item.part.getTestTemplates(required=True):
+            if test.key not in keys:
+                keys.append(test.key)
+
+        for test in stock_item.part.getTestTemplates(required=False):
+            if test.key not in keys:
+                keys.append(test.key)
+
+        for result in stock_item.testResultList(include_installed=self.include_installed):
+            if result.key not in keys:
+                keys.append(result.key)
+
+        return list(keys)
+
     def get_context_data(self, request):
         """Return custom context data for the TestReport template"""
         stock_item = self.object_to_print
@@ -312,6 +341,9 @@ class TestReport(ReportTemplateBase):
             'serial': stock_item.serial,
             'part': stock_item.part,
             'parameters': stock_item.part.parameters_map(),
+            'test_keys': self.get_test_keys(stock_item),
+            'test_template_list': stock_item.part.getTestTemplates(),
+            'test_template_map': stock_item.part.getTestTemplateMap(),
             'results': stock_item.testResultMap(include_installed=self.include_installed),
             'result_list': stock_item.testResultList(include_installed=self.include_installed),
             'installed_items': stock_item.get_installed_items(cascade=True),
@@ -464,6 +496,45 @@ class SalesOrderReport(ReportTemplateBase):
             'extra_lines': order.extra_lines,
             'order': order,
             'reference': order.reference,
+            'title': str(order),
+        }
+
+
+class ReturnOrderReport(ReportTemplateBase):
+    """Render a custom report against a ReturnOrder object"""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the ReturnOrderReport model"""
+        return reverse('api-return-order-report-list')
+
+    @classmethod
+    def getSubdir(cls):
+        """Return the directory where the ReturnOrderReport templates are stored"""
+        return 'returnorder'
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Filters'),
+        help_text=_('Return order query filters'),
+        validators=[
+            validate_return_order_filters,
+        ]
+    )
+
+    def get_context_data(self, request):
+        """Return custom context data for the ReturnOrderReport template"""
+
+        order = self.object_to_print
+
+        return {
+            'order': order,
+            'description': order.description,
+            'reference': order.reference,
+            'customer': order.customer,
+            'lines': order.lines,
+            'extra_lines': order.extra_lines,
             'title': str(order),
         }
 

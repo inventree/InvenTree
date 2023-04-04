@@ -1,0 +1,53 @@
+- model: order.returnorder
+  pk: 1
+  fields:
+    reference: 'RMA-001'
+    reference_int: 1
+    description: 'RMA from a customer'
+    customer: 4
+    status: 10  # Pending
+
+- model: order.returnorder
+  pk: 2
+  fields:
+    reference: 'RMA-002'
+    reference_int: 2
+    description: 'RMA from a customer'
+    customer: 4
+    status: 20  # In Progress
+
+- model: order.returnorder
+  pk: 3
+  fields:
+    reference: 'RMA-003'
+    reference_int: 3
+    description: 'RMA from a customer'
+    customer: 4
+    status: 30  # Complete
+
+- model: order.returnorder
+  pk: 4
+  fields:
+    reference: 'RMA-004'
+    reference_int: 4
+    description: 'RMA from a customer'
+    customer: 5
+    status: 40  # Cancelled
+
+- model: order.returnorder
+  pk: 5
+  fields:
+    reference: 'RMA-005'
+    reference_int: 5
+    description: 'RMA from a customer'
+    customer: 5
+    status: 20  # In progress
+
+- model: order.returnorder
+  pk: 6
+  fields:
+    reference: 'RMA-006'
+    reference_int: 6
+    description: 'RMA from a customer'
+    customer: 5
+    status: 10  # Pending

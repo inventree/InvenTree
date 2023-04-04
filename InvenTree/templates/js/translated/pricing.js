@@ -26,7 +26,7 @@
  * Returns the base currency used for conversion operations
  */
 function baseCurrency() {
-    return global_settings.INVENTREE_BASE_CURRENCY || 'USD';
+    return global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
 }
 
 
@@ -603,14 +603,14 @@ function loadPriceBreakTable(table, options={}) {
                 title: '{% trans "Price" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var html = formatCurrency(value, {currency: row.price_currency});
+                    let html = formatCurrency(value, {currency: row.price_currency});
 
-                    html += `<div class='btn-group float-right' role='group'>`;
+                    let buttons = '';
 
-                    html += makeIconButton('fa-edit icon-blue', `button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
-                    html += makeIconButton('fa-trash-alt icon-red', `button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
+                    buttons += makeEditButton(`button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
+                    buttons += makeDeleteButton(`button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
 
-                    html += `</div>`;
+                    html += wrapButtons(buttons);
 
                     return html;
                 }

@@ -22,18 +22,6 @@
                 </ul>
             </div>
             {% endif %}
-            <!-- Printing actions menu -->
-            <div class='btn-group'>
-                <button id='stock-print-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown" title='{% trans "Printing Actions" %}'>
-                    <span class='fas fa-print'></span> <span class='caret'></span>
-                </button>
-                <ul class='dropdown-menu'>
-                    <li><a class='dropdown-item' href='#' id='multi-item-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
-                    {% if test_report_enabled %}
-                    <li><a class='dropdown-item' href='#' id='multi-item-print-test-report' title='{% trans "Print test reports" %}'><span class='fas fa-file-pdf'></span> {% trans "Print test reports" %}</a></li>
-                    {% endif %}
-                </ul>
-            </div>
             {% if not read_only %}
             {% if roles.stock.change or roles.stock.delete %}
             <div class="btn-group" role="group">

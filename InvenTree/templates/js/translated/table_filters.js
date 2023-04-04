@@ -2,29 +2,57 @@
 {% load status_codes %}
 {% load inventree_extras %}
 
-{% include "status_codes.html" with label='stock' options=StockStatus.list %}
-{% include "status_codes.html" with label='stockHistory' options=StockHistoryCode.list %}
-{% include "status_codes.html" with label='build' options=BuildStatus.list %}
-{% include "status_codes.html" with label='purchaseOrder' options=PurchaseOrderStatus.list %}
-{% include "status_codes.html" with label='salesOrder' options=SalesOrderStatus.list %}
-
 /* globals
     global_settings
+    purchaseOrderCodes,
+    returnOrderCodes,
+    salesOrderCodes,
 */
 
 /* exported
-    buildStatusDisplay,
     getAvailableTableFilters,
-    purchaseOrderStatusDisplay,
-    salesOrderStatusDisplay,
-    stockHistoryStatusDisplay,
-    stockStatusDisplay,
 */
 
 
 function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
+
+    // Filters for "returnorder" table
+    if (tableKey == 'returnorder') {
+        return {
+            status: {
+                title: '{% trans "Order status" %}',
+                options: returnOrderCodes
+            },
+            outstanding: {
+                type: 'bool',
+                title: '{% trans "Outstanding" %}',
+            },
+            overdue: {
+                type: 'bool',
+                title: '{% trans "Overdue" %}',
+            },
+            assigned_to_me: {
+                type: 'bool',
+                title: '{% trans "Assigned to me" %}',
+            },
+        };
+    }
+
+    // Filters for "returnorderlineitem" table
+    if (tableKey == 'returnorderlineitem') {
+        return {
+            received: {
+                type: 'bool',
+                title: '{% trans "Received" %}',
+            },
+            outcome: {
+                title: '{% trans "Outcome" %}',
+                options: returnOrderLineItemCodes,
+            }
+        };
+    }
 
     // Filters for "variant" table
     if (tableKey == 'variants') {
@@ -363,7 +391,7 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Responsible" %}',
                 options: function() {
                     var ownersList = {};
-                    inventreeGet(`/api/user/owner/`, {}, {
+                    inventreeGet('{% url "api-owner-list" %}', {}, {
                         async: false,
                         success: function(response) {
                             for (key in response) {
@@ -444,6 +472,10 @@ function getAvailableTableFilters(tableKey) {
             overdue: {
                 type: 'bool',
                 title: '{% trans "Overdue" %}',
+            },
+            assigned_to_me: {
+                type: 'bool',
+                title: '{% trans "Assigned to me" %}',
             },
         };
     }

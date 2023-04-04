@@ -33,7 +33,8 @@ from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               InvenTreeURLField)
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeTree, extract_int)
-from InvenTree.status_codes import StockHistoryCode, StockStatus
+from InvenTree.status_codes import (SalesOrderStatus, StockHistoryCode,
+                                    StockStatus)
 from part import models as PartModels
 from plugin.events import trigger_event
 from plugin.models import MetadataMixin
@@ -456,8 +457,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
                 # Status changed?
                 if old.status != self.status:
                     deltas['status'] = self.status
-
-                # TODO - Other interesting changes we are interested in...
 
                 if add_note and len(deltas) > 0:
                     self.add_tracking_entry(
@@ -960,17 +959,24 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
         item.customer = customer
         item.location = None
 
-        item.save()
+        item.save(add_note=False)
 
-        # TODO - Remove any stock item allocations from this stock item
+        code = StockHistoryCode.SENT_TO_CUSTOMER
+        deltas = {}
+
+        if customer is not None:
+            deltas['customer'] = customer.pk
+            deltas['customer_name'] = customer.name
+
+        # If an order is provided, we are shipping against a SalesOrder, not manually!
+        if order:
+            code = StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
+            deltas['salesorder'] = order.pk
 
         item.add_tracking_entry(
-            StockHistoryCode.SENT_TO_CUSTOMER,
+            code,
             user,
-            {
-                'customer': customer.id,
-                'customer_name': customer.name,
-            },
+            deltas,
             notes=notes,
         )
 
@@ -992,7 +998,9 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
         """
         notes = kwargs.get('notes', '')
 
-        tracking_info = {}
+        tracking_info = {
+            'location': location.pk,
+        }
 
         if self.customer:
             tracking_info['customer'] = self.customer.id
@@ -1006,7 +1014,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
             location=location
         )
 
-        self.clearAllocations()
         self.customer = None
         self.belongs_to = None
         self.sales_order = None
@@ -1026,7 +1033,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
                 notes=notes
             )
         else:
-            self.save()
+            self.save(add_note=False)
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""
@@ -1052,9 +1059,33 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
 
         return total
 
-    def sales_order_allocation_count(self):
+    def get_sales_order_allocations(self, active=True):
+        """Return a queryset for SalesOrderAllocations against this StockItem, with optional filters.
+
+        Arguments:
+            active: Filter by 'active' status of the allocation
+        """
+        query = self.sales_order_allocations.all()
+
+        if active is True:
+            query = query.filter(
+                line__order__status__in=SalesOrderStatus.OPEN,
+                shipment__shipment_date=None
+            )
+        elif active is False:
+            query = query.exclude(
+                line__order__status__in=SalesOrderStatus.OPEN
+            ).exclude(
+                shipment__shipment_date=None
+            )
+
+        return query
+
+    def sales_order_allocation_count(self, active=True):
         """Return the total quantity allocated to SalesOrders."""
-        query = self.sales_order_allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        query = self.get_sales_order_allocations(active=active)
+        query = query.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
 
         total = query['q']
 
