@@ -10,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
-from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, MetadataView, StatusView
+from InvenTree.api import AttachmentDetail, AttachmentList, APIDownloadMixin, MetadataView, StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
@@ -461,34 +461,12 @@ class BuildItemList(ListCreateAPI):
     ]
 
 
-class BuildAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) BuildOrderAttachment objects."""
-
-    queryset = BuildOrderAttachment.objects.all()
-    serializer_class = build.serializers.BuildAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-
-    filterset_fields = [
-        'build',
-    ]
-
-
-class BuildAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for a BuildOrderAttachment object."""
-
-    queryset = BuildOrderAttachment.objects.all()
-    serializer_class = build.serializers.BuildAttachmentSerializer
-
-
 build_api_urls = [
 
     # Attachments
     re_path(r'^attachment/', include([
-        path(r'<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
-        re_path(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
+        path(r'<int:pk>/', AttachmentDetail.as_view(), {'model': BuildOrderAttachment, 'filter': 'build'}, name='api-build-attachment-detail'),
+        re_path(r'^.*$', AttachmentList.as_view(), {'model': BuildOrderAttachment, 'filter': 'build'}, name='api-build-attachment-list'),
     ])),
 
     # Build Items

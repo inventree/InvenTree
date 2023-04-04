@@ -10,7 +10,7 @@ from django.db.models import BooleanField
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
+from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import UserSerializer
 
 import InvenTree.helpers
@@ -24,7 +24,7 @@ from part.models import BomItem
 from part.serializers import PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
 
-from .models import Build, BuildItem, BuildOrderAttachment
+from .models import Build, BuildItem
 
 
 class BuildSerializer(InvenTreeModelSerializer):
@@ -921,15 +921,3 @@ class BuildItemSerializer(InvenTreeModelSerializer):
 
         if not stock_detail:
             self.fields.pop('stock_item_detail')
-
-
-class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for a BuildAttachment."""
-
-    class Meta:
-        """Serializer metaclass"""
-        model = BuildOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields([
-            'build',
-        ])
