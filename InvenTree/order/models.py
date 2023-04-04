@@ -549,11 +549,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         notes = kwargs.get('notes', '')
 
         # Extract optional barcode field
-        barcode_hash = kwargs.get('barcode', None)
+        barcode = kwargs.get('barcode', None)
 
         # Prevent null values for barcode
-        if barcode_hash is None:
-            barcode_hash = ''
+        if barcode is None:
+            barcode = ''
 
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
@@ -600,9 +600,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     status=status,
                     batch=batch_code,
                     serial=sn,
-                    purchase_price=unit_purchase_price,
-                    barcode_hash=barcode_hash
+                    purchase_price=unit_purchase_price
                 )
+
+                # Assign the provided barcode
+                if barcode:
+                    item.assign_barcode(
+                        barcode_data=barcode,
+                        save=False
+                    )
 
                 item.save(add_note=False)
 
