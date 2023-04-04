@@ -35,7 +35,8 @@ from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               InvenTreeURLField, RoundingDecimalField)
 from InvenTree.helpers import decimal2string, getSetting, notify_responsible
-from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
+from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
+                              ReferenceIndexingMixin)
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
@@ -130,7 +131,7 @@ class TotalPriceMixin(models.Model):
         return total
 
 
-class Order(MetadataMixin, ReferenceIndexingMixin):
+class Order(InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
     """Abstract model for an order.
 
     Instances of this class:

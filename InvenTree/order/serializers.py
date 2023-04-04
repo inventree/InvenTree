@@ -66,6 +66,8 @@ class AbstractOrderSerializer(serializers.Serializer):
     # Boolean field indicating if this order is overdue (Note: must be annotated)
     overdue = serializers.BooleanField(required=False, read_only=True)
 
+    barcode_hash = serializers.CharField(read_only=True)
+
     def validate_reference(self, reference):
         """Custom validation for the reference field"""
 
@@ -101,6 +103,7 @@ class AbstractOrderSerializer(serializers.Serializer):
             'status',
             'status_text',
             'notes',
+            'barcode_hash',
             'overdue',
         ] + extra_fields
 

@@ -155,13 +155,8 @@
         </td>
     </tr>
 
-    {% if item.barcode_hash %}
-    <tr>
-        <td><span class='fas fa-barcode'></span></td>
-        <td>{% trans "Barcode Identifier" %}</td>
-        <td {% if item.barcode_data %}title='{{ item.barcode_data }}'{% endif %}>{{ item.barcode_hash }}</td>
-    </tr>
-    {% endif %}
+    {% include "barcode_data.html" with instance=item %}
+
     {% if item.batch %}
     <tr>
         <td><span class='fas fa-layer-group'></span></td>
@@ -537,6 +532,7 @@ $('#stock-edit-status').click(function () {
 
 {% endif %}
 
+{% if barcodes %}
 $("#show-qr-code").click(function() {
     showQRDialog(
         '{% trans "Stock Item QR Code" %}',
@@ -544,7 +540,6 @@ $("#show-qr-code").click(function() {
     );
 });
 
-{% if barcodes %}
 $("#barcode-link").click(function() {
     linkBarcodeDialog(
         {
