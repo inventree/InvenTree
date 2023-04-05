@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-04 12:22+0000\n"
-"PO-Revision-Date: 2023-04-04 12:57\n"
+"POT-Creation-Date: 2023-04-04 22:47+0000\n"
+"PO-Revision-Date: 2023-04-05 13:32\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -17,13 +17,13 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
-#: InvenTree/api.py:66
+#: InvenTree/api.py:65
 msgid "API endpoint not found"
 msgstr "API eindpunt niet gevonden"
 
-#: InvenTree/api.py:304
+#: InvenTree/api.py:299
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "Gebruiker heeft geen rechten om dit model te bekijken"
 
 #: InvenTree/exceptions.py:86
 msgid "Error details can be found in the admin panel"
@@ -33,7 +33,7 @@ msgstr "Error details kunnen worden gevonden in het admin scherm"
 msgid "Enter date"
 msgstr "Voer datum in"
 
-#: InvenTree/fields.py:204 build/serializers.py:389
+#: InvenTree/fields.py:204 build/serializers.py:392
 #: build/templates/build/sidebar.html:21 company/models.py:554
 #: company/templates/company/sidebar.html:35 order/models.py:1058
 #: order/templates/order/po_sidebar.html:11
@@ -103,7 +103,7 @@ msgstr "Het opgegeven primaire e-mailadres is ongeldig."
 
 #: InvenTree/forms.py:242
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "Het ingevoerde e-maildomein is niet goedgekeurd."
 
 #: InvenTree/helpers.py:168
 msgid "Connection error"
@@ -805,7 +805,7 @@ msgstr "Systeeminformatie"
 msgid "About InvenTree"
 msgstr "Over InvenTree"
 
-#: build/api.py:242
+#: build/api.py:221
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Productie moet geannuleerd worden voordat het kan worden verwijderd"
 
@@ -857,7 +857,7 @@ msgstr "Referentie"
 msgid "Brief description of the build"
 msgstr "Korte beschrijving van de productie"
 
-#: build/models.py:177 build/templates/build/build_base.html:170
+#: build/models.py:177 build/templates/build/build_base.html:189
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
 msgstr "Bovenliggende Productie"
@@ -866,7 +866,7 @@ msgstr "Bovenliggende Productie"
 msgid "BuildOrder to which this build is allocated"
 msgstr "Productieorder waar deze productie aan is toegewezen"
 
-#: build/models.py:183 build/templates/build/build_base.html:80
+#: build/models.py:183 build/templates/build/build_base.html:98
 #: build/templates/build/detail.html:29 company/models.py:720
 #: order/models.py:1158 order/models.py:1274 order/models.py:1275
 #: part/models.py:382 part/models.py:2849 part/models.py:2963
@@ -928,7 +928,7 @@ msgstr "Verkooporder Referentie"
 msgid "SalesOrder to which this build is allocated"
 msgstr "Verkooporder waar deze productie aan is toegewezen"
 
-#: build/models.py:205 build/serializers.py:825
+#: build/models.py:205 build/serializers.py:828
 #: templates/js/translated/build.js:2201
 #: templates/js/translated/sales_order.js:1082
 msgid "Source Location"
@@ -970,12 +970,12 @@ msgstr "Productiestatus"
 msgid "Build status code"
 msgstr "Productiestatuscode"
 
-#: build/models.py:248 build/serializers.py:226 order/serializers.py:487
+#: build/models.py:248 build/serializers.py:229 order/serializers.py:487
 #: stock/models.py:732 templates/js/translated/purchase_order.js:1048
 msgid "Batch Code"
 msgstr "Batchcode"
 
-#: build/models.py:252 build/serializers.py:227
+#: build/models.py:252 build/serializers.py:230
 msgid "Batch code for this build output"
 msgstr "Batchcode voor deze productieuitvoer"
 
@@ -1011,7 +1011,7 @@ msgstr "Uitgegeven door"
 msgid "User who issued this build order"
 msgstr "Gebruiker die de productieorder heeft gegeven"
 
-#: build/models.py:286 build/templates/build/build_base.html:191
+#: build/models.py:286 build/templates/build/build_base.html:210
 #: build/templates/build/detail.html:122 order/models.py:224
 #: order/templates/order/order_base.html:213
 #: order/templates/order/return_order_base.html:183
@@ -1105,7 +1105,7 @@ msgstr "Product"
 msgid "Build to allocate parts"
 msgstr "Product om onderdelen toe te wijzen"
 
-#: build/models.py:1364 build/serializers.py:674 order/serializers.py:1035
+#: build/models.py:1364 build/serializers.py:677 order/serializers.py:1035
 #: order/serializers.py:1056 stock/serializers.py:388 stock/serializers.py:741
 #: stock/serializers.py:867 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1127,8 +1127,8 @@ msgstr "Voorraadartikel"
 msgid "Source stock item"
 msgstr "Bron voorraadartikel"
 
-#: build/models.py:1377 build/serializers.py:194
-#: build/templates/build/build_base.html:85
+#: build/models.py:1377 build/serializers.py:197
+#: build/templates/build/build_base.html:103
 #: build/templates/build/detail.html:34 common/models.py:2102
 #: order/models.py:1042 order/models.py:1594 order/serializers.py:1209
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:277
@@ -1186,73 +1186,73 @@ msgstr "Installeren in"
 msgid "Destination stock item"
 msgstr "Bestemming voorraadartikel"
 
-#: build/serializers.py:145 build/serializers.py:703
+#: build/serializers.py:148 build/serializers.py:706
 #: templates/js/translated/build.js:1240
 msgid "Build Output"
 msgstr "Productieuitvoer"
 
-#: build/serializers.py:157
+#: build/serializers.py:160
 msgid "Build output does not match the parent build"
 msgstr "Productieuitvoer komt niet overeen met de bovenliggende productie"
 
-#: build/serializers.py:161
+#: build/serializers.py:164
 msgid "Output part does not match BuildOrder part"
 msgstr "Uitvoeronderdeel komt niet overeen met productieorderonderdeel"
 
-#: build/serializers.py:165
+#: build/serializers.py:168
 msgid "This build output has already been completed"
 msgstr "Deze productieuitvoer is al voltooid"
 
-#: build/serializers.py:176
+#: build/serializers.py:179
 msgid "This build output is not fully allocated"
 msgstr "Deze productieuitvoer is niet volledig toegewezen"
 
-#: build/serializers.py:195
+#: build/serializers.py:198
 msgid "Enter quantity for build output"
 msgstr "Voer hoeveelheid in voor productie uitvoer"
 
-#: build/serializers.py:209 build/serializers.py:694 order/models.py:408
+#: build/serializers.py:212 build/serializers.py:697 order/models.py:408
 #: order/serializers.py:360 order/serializers.py:482 part/serializers.py:1088
 #: part/serializers.py:1409 stock/models.py:586 stock/models.py:1370
 #: stock/serializers.py:290
 msgid "Quantity must be greater than zero"
 msgstr "Hoeveelheid moet groter zijn dan nul"
 
-#: build/serializers.py:216
+#: build/serializers.py:219
 msgid "Integer quantity required for trackable parts"
 msgstr "Hoeveelheid als geheel getal vereist voor traceerbare onderdelen"
 
-#: build/serializers.py:219
+#: build/serializers.py:222
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Geheel getal vereist omdat de stuklijst traceerbare onderdelen bevat"
 
-#: build/serializers.py:233 order/serializers.py:495 order/serializers.py:1213
+#: build/serializers.py:236 order/serializers.py:495 order/serializers.py:1213
 #: stock/serializers.py:299 templates/js/translated/purchase_order.js:1072
 #: templates/js/translated/stock.js:301 templates/js/translated/stock.js:495
 msgid "Serial Numbers"
 msgstr "Serienummers"
 
-#: build/serializers.py:234
+#: build/serializers.py:237
 msgid "Enter serial numbers for build outputs"
 msgstr "Voer serienummers in voor productieuitvoeren"
 
-#: build/serializers.py:247
+#: build/serializers.py:250
 msgid "Auto Allocate Serial Numbers"
 msgstr "Serienummers automatisch toewijzen"
 
-#: build/serializers.py:248
+#: build/serializers.py:251
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Vereiste artikelen automatisch toewijzen met overeenkomende serienummers"
 
-#: build/serializers.py:283 stock/api.py:637
+#: build/serializers.py:286 stock/api.py:630
 msgid "The following serial numbers already exist or are invalid"
 msgstr "De volgende serienummers bestaan al of zijn ongeldig"
 
-#: build/serializers.py:332 build/serializers.py:401
+#: build/serializers.py:335 build/serializers.py:404
 msgid "A list of build outputs must be provided"
 msgstr "Een lijst van productieuitvoeren moet worden verstrekt"
 
-#: build/serializers.py:371 order/serializers.py:468 order/serializers.py:589
+#: build/serializers.py:374 order/serializers.py:468 order/serializers.py:589
 #: order/serializers.py:1562 part/serializers.py:855 stock/serializers.py:310
 #: stock/serializers.py:445 stock/serializers.py:526 stock/serializers.py:902
 #: stock/serializers.py:1144 stock/templates/stock/item_base.html:384
@@ -1271,11 +1271,11 @@ msgstr "Een lijst van productieuitvoeren moet worden verstrekt"
 msgid "Location"
 msgstr "Locatie"
 
-#: build/serializers.py:372
+#: build/serializers.py:375
 msgid "Location for completed build outputs"
 msgstr "Locatie van voltooide productieuitvoeren"
 
-#: build/serializers.py:378 build/templates/build/build_base.html:138
+#: build/serializers.py:381 build/templates/build/build_base.html:157
 #: build/templates/build/detail.html:62 order/models.py:760
 #: order/models.py:1699 order/serializers.py:505 stock/admin.py:106
 #: stock/templates/stock/item_base.html:417
@@ -1289,153 +1289,153 @@ msgstr "Locatie van voltooide productieuitvoeren"
 msgid "Status"
 msgstr "Status"
 
-#: build/serializers.py:384
+#: build/serializers.py:387
 msgid "Accept Incomplete Allocation"
 msgstr "Incomplete Toewijzing Accepteren"
 
-#: build/serializers.py:385
+#: build/serializers.py:388
 msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Voltooi de uitvoer als de voorraad niet volledig is toegewezen"
 
-#: build/serializers.py:454
+#: build/serializers.py:457
 msgid "Remove Allocated Stock"
 msgstr "Toegewezen Voorraad Verwijderen"
 
-#: build/serializers.py:455
+#: build/serializers.py:458
 msgid "Subtract any stock which has already been allocated to this build"
 msgstr "Verminder alle voorraad die al is toegewezen aan deze productie"
 
-#: build/serializers.py:461
+#: build/serializers.py:464
 msgid "Remove Incomplete Outputs"
 msgstr "Verwijder Incomplete Uitvoeren"
 
-#: build/serializers.py:462
+#: build/serializers.py:465
 msgid "Delete any build outputs which have not been completed"
 msgstr "Verwijder alle productieuitvoeren die niet zijn voltooid"
 
-#: build/serializers.py:490
+#: build/serializers.py:493
 msgid "Accept as consumed by this build order"
 msgstr ""
 
-#: build/serializers.py:491
+#: build/serializers.py:494
 msgid "Deallocate before completing this build order"
 msgstr ""
 
-#: build/serializers.py:514
+#: build/serializers.py:517
 msgid "Overallocated Stock"
 msgstr ""
 
-#: build/serializers.py:516
+#: build/serializers.py:519
 msgid "How do you want to handle extra stock items assigned to the build order"
 msgstr ""
 
-#: build/serializers.py:526
+#: build/serializers.py:529
 msgid "Some stock items have been overallocated"
 msgstr ""
 
-#: build/serializers.py:531
+#: build/serializers.py:534
 msgid "Accept Unallocated"
 msgstr "Accepteer Niet-toegewezen"
 
-#: build/serializers.py:532
+#: build/serializers.py:535
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr "Accepteer dat voorraadartikelen niet volledig zijn toegewezen aan deze productieorder"
 
-#: build/serializers.py:542 templates/js/translated/build.js:265
+#: build/serializers.py:545 templates/js/translated/build.js:265
 msgid "Required stock has not been fully allocated"
 msgstr "Vereiste voorraad is niet volledig toegewezen"
 
-#: build/serializers.py:547 order/serializers.py:242 order/serializers.py:1103
+#: build/serializers.py:550 order/serializers.py:242 order/serializers.py:1103
 msgid "Accept Incomplete"
 msgstr "Accepteer Onvolledig"
 
-#: build/serializers.py:548
+#: build/serializers.py:551
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr "Accepteer dat het vereist aantal productieuitvoeren niet is voltooid"
 
-#: build/serializers.py:558 templates/js/translated/build.js:269
+#: build/serializers.py:561 templates/js/translated/build.js:269
 msgid "Required build quantity has not been completed"
 msgstr "Vereiste productiehoeveelheid is voltooid"
 
-#: build/serializers.py:567 templates/js/translated/build.js:253
+#: build/serializers.py:570 templates/js/translated/build.js:253
 msgid "Build order has incomplete outputs"
 msgstr "Productieorder heeft onvolledige uitvoeren"
 
-#: build/serializers.py:597 build/serializers.py:651 part/models.py:3490
+#: build/serializers.py:600 build/serializers.py:654 part/models.py:3490
 #: part/models.py:3873
 msgid "BOM Item"
 msgstr "Stuklijstartikel"
 
-#: build/serializers.py:607
+#: build/serializers.py:610
 msgid "Build output"
 msgstr "Productieuitvoer"
 
-#: build/serializers.py:615
+#: build/serializers.py:618
 msgid "Build output must point to the same build"
 msgstr "Productieuitvoer moet naar dezelfde productie wijzen"
 
-#: build/serializers.py:665
+#: build/serializers.py:668
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part moet naar hetzelfde onderdeel wijzen als de productieorder"
 
-#: build/serializers.py:680 stock/serializers.py:754
+#: build/serializers.py:683 stock/serializers.py:754
 msgid "Item must be in stock"
 msgstr "Artikel moet op voorraad zijn"
 
-#: build/serializers.py:729 order/serializers.py:1093
+#: build/serializers.py:732 order/serializers.py:1093
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Beschikbare hoeveelheid ({q}) overschreden"
 
-#: build/serializers.py:735
+#: build/serializers.py:738
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr "Productieuitvoer moet worden opgegeven voor de toewijzing van gevolgde onderdelen"
 
-#: build/serializers.py:742
+#: build/serializers.py:745
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Productieuitvoer kan niet worden gespecificeerd voor de toewijzing van niet gevolgde onderdelen"
 
-#: build/serializers.py:747
+#: build/serializers.py:750
 msgid "This stock item has already been allocated to this build output"
 msgstr "Dit voorraadartikel is al toegewezen aan deze productieoutput"
 
-#: build/serializers.py:770 order/serializers.py:1377
+#: build/serializers.py:773 order/serializers.py:1377
 msgid "Allocation items must be provided"
 msgstr "Allocaties voor artikelen moeten worden opgegeven"
 
-#: build/serializers.py:826
+#: build/serializers.py:829
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr "Voorraadlocatie waar onderdelen afkomstig zijn (laat leeg om van elke locatie te nemen)"
 
-#: build/serializers.py:834
+#: build/serializers.py:837
 msgid "Exclude Location"
 msgstr "Locatie uitsluiten"
 
-#: build/serializers.py:835
+#: build/serializers.py:838
 msgid "Exclude stock items from this selected location"
 msgstr "Voorraadartikelen van deze geselecteerde locatie uitsluiten"
 
-#: build/serializers.py:840
+#: build/serializers.py:843
 msgid "Interchangeable Stock"
 msgstr "Uitwisselbare voorraad"
 
-#: build/serializers.py:841
+#: build/serializers.py:844
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr "Voorraadartikelen op meerdere locaties kunnen uitwisselbaar worden gebruikt"
 
-#: build/serializers.py:846
+#: build/serializers.py:849
 msgid "Substitute Stock"
 msgstr "Vervangende Voorraad"
 
-#: build/serializers.py:847
+#: build/serializers.py:850
 msgid "Allow allocation of substitute parts"
 msgstr "Toewijzing van vervangende onderdelen toestaan"
 
-#: build/serializers.py:852
+#: build/serializers.py:855
 msgid "Optional Items"
 msgstr "Optionele Items"
 
-#: build/serializers.py:853
+#: build/serializers.py:856
 msgid "Allocate optional BOM items to build order"
 msgstr ""
 
@@ -1453,71 +1453,116 @@ msgid "Build order {bo} is now overdue"
 msgstr "Productieorder {bo} is nu achterstallig"
 
 #: build/templates/build/build_base.html:39
+#: company/templates/company/supplier_part.html:36
+#: order/templates/order/order_base.html:29
+#: order/templates/order/return_order_base.html:39
+#: order/templates/order/sales_order_base.html:39
+#: part/templates/part/part_base.html:43
+#: stock/templates/stock/item_base.html:41
+#: stock/templates/stock/location.html:54
+msgid "Barcode actions"
+msgstr ""
+
+#: build/templates/build/build_base.html:43
+#: company/templates/company/supplier_part.html:40
+#: order/templates/order/order_base.html:33
+#: order/templates/order/return_order_base.html:43
+#: order/templates/order/sales_order_base.html:43
+#: part/templates/part/part_base.html:46
+#: stock/templates/stock/item_base.html:45
+#: stock/templates/stock/location.html:56 templates/qr_button.html:1
+msgid "Show QR Code"
+msgstr "QR-code weergeven"
+
+#: build/templates/build/build_base.html:46
+#: company/templates/company/supplier_part.html:42
+#: order/templates/order/order_base.html:36
+#: order/templates/order/return_order_base.html:46
+#: order/templates/order/sales_order_base.html:46
+#: stock/templates/stock/item_base.html:48
+#: stock/templates/stock/location.html:58
+#: templates/js/translated/barcode.js:466
+#: templates/js/translated/barcode.js:471
+msgid "Unlink Barcode"
+msgstr ""
+
+#: build/templates/build/build_base.html:48
+#: company/templates/company/supplier_part.html:44
+#: order/templates/order/order_base.html:38
+#: order/templates/order/return_order_base.html:48
+#: order/templates/order/sales_order_base.html:48
+#: part/templates/part/part_base.html:51
+#: stock/templates/stock/item_base.html:50
+#: stock/templates/stock/location.html:60
+msgid "Link Barcode"
+msgstr ""
+
+#: build/templates/build/build_base.html:57
 #: order/templates/order/order_base.html:46
 #: order/templates/order/return_order_base.html:56
 #: order/templates/order/sales_order_base.html:56
 msgid "Print actions"
 msgstr "Afdruk acties"
 
-#: build/templates/build/build_base.html:43
+#: build/templates/build/build_base.html:61
 msgid "Print build order report"
 msgstr "Print productieorderrapport"
 
-#: build/templates/build/build_base.html:50
+#: build/templates/build/build_base.html:68
 msgid "Build actions"
 msgstr "Productie acties"
 
-#: build/templates/build/build_base.html:54
+#: build/templates/build/build_base.html:72
 msgid "Edit Build"
 msgstr "Bewerk Productie"
 
-#: build/templates/build/build_base.html:56
+#: build/templates/build/build_base.html:74
 msgid "Cancel Build"
 msgstr "Annuleer Productie"
 
-#: build/templates/build/build_base.html:59
+#: build/templates/build/build_base.html:77
 msgid "Duplicate Build"
 msgstr ""
 
-#: build/templates/build/build_base.html:62
+#: build/templates/build/build_base.html:80
 msgid "Delete Build"
 msgstr "Verwijder Productie"
 
-#: build/templates/build/build_base.html:67
-#: build/templates/build/build_base.html:68
+#: build/templates/build/build_base.html:85
+#: build/templates/build/build_base.html:86
 msgid "Complete Build"
 msgstr "Voltooi Productie"
 
-#: build/templates/build/build_base.html:90
+#: build/templates/build/build_base.html:108
 msgid "Build Description"
 msgstr "Productiebeschrijving"
 
-#: build/templates/build/build_base.html:98
+#: build/templates/build/build_base.html:117
 msgid "No build outputs have been created for this build order"
 msgstr "Er zijn geen productuitvoeren aangemaakt voor deze productieorder"
 
-#: build/templates/build/build_base.html:104
+#: build/templates/build/build_base.html:123
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
 msgstr "Deze Productieorder is een onderdeel van Productieorder %(link)s"
 
-#: build/templates/build/build_base.html:111
+#: build/templates/build/build_base.html:130
 msgid "Build Order is ready to mark as completed"
 msgstr "Productieorder is gereed om te markeren als voltooid"
 
-#: build/templates/build/build_base.html:116
+#: build/templates/build/build_base.html:135
 msgid "Build Order cannot be completed as outstanding outputs remain"
 msgstr "Productieorder kan niet worden voltooid omdat er nog producties openstaan"
 
-#: build/templates/build/build_base.html:121
+#: build/templates/build/build_base.html:140
 msgid "Required build quantity has not yet been completed"
 msgstr "Vereiste Producthoeveelheid is nog niet bereikt"
 
-#: build/templates/build/build_base.html:126
+#: build/templates/build/build_base.html:145
 msgid "Stock has not been fully allocated to this Build Order"
 msgstr "Voorraad is niet volledig toegewezen aan deze productieorder"
 
-#: build/templates/build/build_base.html:147
+#: build/templates/build/build_base.html:166
 #: build/templates/build/detail.html:138 order/models.py:206
 #: order/models.py:1068 order/templates/order/order_base.html:189
 #: order/templates/order/return_order_base.html:166
@@ -1533,13 +1578,13 @@ msgstr "Voorraad is niet volledig toegewezen aan deze productieorder"
 msgid "Target Date"
 msgstr "Streefdatum"
 
-#: build/templates/build/build_base.html:152
+#: build/templates/build/build_base.html:171
 #, python-format
 msgid "This build was due on %(target)s"
 msgstr "Deze productie was verwacht op %(target)s"
 
-#: build/templates/build/build_base.html:152
-#: build/templates/build/build_base.html:209
+#: build/templates/build/build_base.html:171
+#: build/templates/build/build_base.html:228
 #: order/templates/order/order_base.html:125
 #: order/templates/order/return_order_base.html:119
 #: order/templates/order/sales_order_base.html:122
@@ -1550,15 +1595,15 @@ msgstr "Deze productie was verwacht op %(target)s"
 msgid "Overdue"
 msgstr "Achterstallig"
 
-#: build/templates/build/build_base.html:164
+#: build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:67 build/templates/build/detail.html:149
 #: order/templates/order/sales_order_base.html:202
 #: templates/js/translated/table_filters.js:487
 msgid "Completed"
 msgstr "Voltooid"
 
-#: build/templates/build/build_base.html:177
-#: build/templates/build/detail.html:101 order/api.py:1450 order/models.py:1267
+#: build/templates/build/build_base.html:196
+#: build/templates/build/detail.html:101 order/api.py:1422 order/models.py:1267
 #: order/models.py:1366 order/models.py:1500
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
@@ -1572,20 +1617,28 @@ msgstr "Voltooid"
 msgid "Sales Order"
 msgstr "Verkooporder"
 
-#: build/templates/build/build_base.html:184
+#: build/templates/build/build_base.html:203
 #: build/templates/build/detail.html:115
 #: report/templates/report/inventree_build_order_base.html:152
 msgid "Issued By"
 msgstr "Uitgegeven door"
 
-#: build/templates/build/build_base.html:198
+#: build/templates/build/build_base.html:217
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2609
 msgid "Priority"
 msgstr "Prioriteit"
 
-#: build/templates/build/build_base.html:261
+#: build/templates/build/build_base.html:280
 msgid "Delete Build Order"
 msgstr "Verwijder Productieorder"
+
+#: build/templates/build/build_base.html:290
+msgid "Build Order QR Code"
+msgstr ""
+
+#: build/templates/build/build_base.html:302
+msgid "Link Barcode to Build Order"
+msgstr ""
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -3906,47 +3959,6 @@ msgstr ""
 msgid "Supplier Part"
 msgstr "Leveranciersonderdeel"
 
-#: company/templates/company/supplier_part.html:36
-#: order/templates/order/order_base.html:29
-#: order/templates/order/return_order_base.html:39
-#: order/templates/order/sales_order_base.html:39
-#: part/templates/part/part_base.html:43
-#: stock/templates/stock/item_base.html:41
-#: stock/templates/stock/location.html:54
-msgid "Barcode actions"
-msgstr ""
-
-#: company/templates/company/supplier_part.html:40
-#: order/templates/order/order_base.html:33
-#: order/templates/order/return_order_base.html:43
-#: order/templates/order/sales_order_base.html:43
-#: part/templates/part/part_base.html:46
-#: stock/templates/stock/item_base.html:45
-#: stock/templates/stock/location.html:56 templates/qr_button.html:1
-msgid "Show QR Code"
-msgstr "QR-code weergeven"
-
-#: company/templates/company/supplier_part.html:42
-#: order/templates/order/order_base.html:36
-#: order/templates/order/return_order_base.html:46
-#: order/templates/order/sales_order_base.html:46
-#: stock/templates/stock/item_base.html:48
-#: stock/templates/stock/location.html:58
-#: templates/js/translated/barcode.js:466
-#: templates/js/translated/barcode.js:471
-msgid "Unlink Barcode"
-msgstr ""
-
-#: company/templates/company/supplier_part.html:44
-#: order/templates/order/order_base.html:38
-#: order/templates/order/return_order_base.html:48
-#: order/templates/order/sales_order_base.html:48
-#: part/templates/part/part_base.html:51
-#: stock/templates/stock/item_base.html:50
-#: stock/templates/stock/location.html:60
-msgid "Link Barcode"
-msgstr ""
-
 #: company/templates/company/supplier_part.html:51
 msgid "Supplier part actions"
 msgstr ""
@@ -4136,11 +4148,11 @@ msgstr ""
 msgid "Part query filters (comma-separated value of key=value pairs)"
 msgstr ""
 
-#: order/api.py:229
+#: order/api.py:225
 msgid "No matching purchase order found"
 msgstr ""
 
-#: order/api.py:1448 order/models.py:1141 order/models.py:1225
+#: order/api.py:1420 order/models.py:1141 order/models.py:1225
 #: order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:18
 #: report/templates/report/inventree_po_report_base.html:14
@@ -4154,7 +4166,7 @@ msgstr ""
 msgid "Purchase Order"
 msgstr "Inkooporder"
 
-#: order/api.py:1452
+#: order/api.py:1424
 msgid "Unknown"
 msgstr ""
 
@@ -5213,31 +5225,31 @@ msgstr ""
 msgid "Maximum Price"
 msgstr ""
 
-#: part/api.py:504
+#: part/api.py:495
 msgid "Incoming Purchase Order"
 msgstr "Binnenkomende Inkooporder"
 
-#: part/api.py:524
+#: part/api.py:515
 msgid "Outgoing Sales Order"
 msgstr "Uitgaande Verkooporder"
 
-#: part/api.py:542
+#: part/api.py:533
 msgid "Stock produced by Build Order"
 msgstr "Geproduceerde voorraad door Productieorder"
 
-#: part/api.py:628
+#: part/api.py:619
 msgid "Stock required for Build Order"
 msgstr "Voorraad vereist voor Productieorder"
 
-#: part/api.py:776
+#: part/api.py:767
 msgid "Valid"
 msgstr ""
 
-#: part/api.py:777
+#: part/api.py:768
 msgid "Validate entire Bill of Materials"
 msgstr ""
 
-#: part/api.py:783
+#: part/api.py:774
 msgid "This option must be selected"
 msgstr ""
 
@@ -6918,15 +6930,15 @@ msgstr ""
 msgid "Label printing failed"
 msgstr ""
 
-#: plugin/builtin/barcodes/inventree_barcode.py:27
+#: plugin/builtin/barcodes/inventree_barcode.py:28
 msgid "InvenTree Barcodes"
 msgstr ""
 
-#: plugin/builtin/barcodes/inventree_barcode.py:28
+#: plugin/builtin/barcodes/inventree_barcode.py:29
 msgid "Provides native support for barcodes"
 msgstr ""
 
-#: plugin/builtin/barcodes/inventree_barcode.py:30
+#: plugin/builtin/barcodes/inventree_barcode.py:31
 #: plugin/builtin/integration/core_notifications.py:33
 msgid "InvenTree contributors"
 msgstr ""
@@ -7371,19 +7383,19 @@ msgstr ""
 msgid "Expiry Date"
 msgstr ""
 
-#: stock/api.py:416 templates/js/translated/table_filters.js:325
+#: stock/api.py:409 templates/js/translated/table_filters.js:325
 msgid "External Location"
 msgstr ""
 
-#: stock/api.py:577
+#: stock/api.py:570
 msgid "Quantity is required"
 msgstr ""
 
-#: stock/api.py:584
+#: stock/api.py:577
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:609
+#: stock/api.py:602
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
