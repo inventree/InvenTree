@@ -3000,6 +3000,22 @@ msgid "Number of results to show in each section of the search preview window"
 msgstr "Anzahl der Ergebnisse, die in der Vorschau pro Sektion angezeigt werden sollen"
 
 #: common/models.py:1983
+msgid "Regex Search"
+msgstr "Regex Suche"
+
+#: common/models.py:1984
+msgid "Enable regular expressions in search queries"
+msgstr "Erlaube reguläre Ausdrücke (Regular Expressions) in der Suche"
+
+#: common/models.py:1992
+msgid "Whole Word Search"
+msgstr "Suche mit ganzen Wörtern"
+
+#: common/models.py:1993
+msgid "Search queries return results for whole word matches"
+msgstr "Suche zeigt nur Ergebnisse mit ganzen Wörtern"
+
+#: common/models.py:1983
 msgid "Show Quantity in Forms"
 msgstr "zeige Bestand in Eingabemasken"
 
