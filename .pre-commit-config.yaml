@@ -19,17 +19,16 @@ repos:
     hooks:
     -   id: flake8
         additional_dependencies: [
-                'flake8-bugbear',
                 'flake8-docstrings',
                 'flake8-string-format',
                 'pep8-naming ',
         ]
 -   repo: https://github.com/pycqa/isort
-    rev: '5.11.4'
+    rev: '5.12.0'
     hooks:
     -   id: isort
 -   repo: https://github.com/jazzband/pip-tools
-    rev: 6.12.1
+    rev: 6.12.3
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in

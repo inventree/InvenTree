@@ -33,15 +33,24 @@ INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
-# Note: The following fix is "required" for docker build workflow
-# Note: 2022-12-12 still unsure why...
-if TESTING and os.getenv('INVENTREE_DOCKER'):
-    # Ensure that sys.path includes global python libs
-    site_packages = '/usr/local/lib/python3.9/site-packages'
+if TESTING:
 
-    if site_packages not in sys.path:
-        print("Adding missing site-packages path:", site_packages)
-        sys.path.append(site_packages)
+    # Use a weaker password hasher for testing (improves testing speed)
+    PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher',]
+
+    # Enable slow-test-runner
+    TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
+    NUM_SLOW_TESTS = 25
+
+    # Note: The following fix is "required" for docker build workflow
+    # Note: 2022-12-12 still unsure why...
+    if os.getenv('INVENTREE_DOCKER'):
+        # Ensure that sys.path includes global python libs
+        site_packages = '/usr/local/lib/python3.9/site-packages'
+
+        if site_packages not in sys.path:
+            print("Adding missing site-packages path:", site_packages)
+            sys.path.append(site_packages)
 
 # Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
@@ -103,8 +112,10 @@ MEDIA_ROOT = config.get_media_dir()
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = get_setting(
+    "INVENTREE_ALLOWED_HOSTS",
     config_key='allowed_hosts',
-    default_value=['*']
+    default_value=['*'],
+    typecast=list,
 )
 
 # Cross Origin Resource Sharing (CORS) options
@@ -114,13 +125,16 @@ CORS_URLS_REGEX = r'^/api/.*$'
 
 # Extract CORS options from configuration file
 CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
+    "INVENTREE_CORS_ORIGIN_ALLOW_ALL",
     config_key='cors.allow_all',
     default_value=False,
 )
 
 CORS_ORIGIN_WHITELIST = get_setting(
+    "INVENTREE_CORS_ORIGIN_WHITELIST",
     config_key='cors.whitelist',
-    default_value=[]
+    default_value=[],
+    typecast=list,
 )
 
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
@@ -554,6 +568,36 @@ DATABASES = {
     'default': db_config
 }
 
+# login settings
+REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
+REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
+
+# sentry.io integration for error reporting
+SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
+# Default Sentry DSN (can be overriden if user wants custom sentry integration)
+INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
+SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', INVENTREE_DSN)
+SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
+
+if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+
+    logger.info("Running with sentry.io integration enabled")
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), ],
+        traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
+        send_default_pii=True
+    )
+    inventree_tags = {
+        'testing': TESTING,
+        'docker': DOCKER,
+        'debug': DEBUG,
+        'remote': REMOTE_LOGIN,
+    }
+    for key, val in inventree_tags.items():
+        sentry_sdk.set_tag(f'inventree_{key}', val)
+
 # Cache configuration
 cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)
 cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379', typecast=int)
@@ -600,14 +644,16 @@ else:
         },
     }
 
+_q_worker_timeout = int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90))
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'label': 'Background Tasks',
     'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
-    'timeout': int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)),
-    'retry': 120,
-    'max_attempts': 5,
+    'timeout': _q_worker_timeout,
+    'retry': min(120, _q_worker_timeout + 30),
+    'max_attempts': int(get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)),
     'queue_limit': 50,
     'catch_up': False,
     'bulk': 10,
@@ -615,6 +661,14 @@ Q_CLUSTER = {
     'cache': 'default',
     'sync': False,
 }
+
+# Configure django-q sentry integration
+if SENTRY_ENABLED and SENTRY_DSN:
+    Q_CLUSTER['error_reporter'] = {
+        'sentry': {
+            'dsn': SENTRY_DSN
+        }
+    }
 
 if cache_host:  # pragma: no cover
     # If using external redis cache, make the cache the broker for Django Q
@@ -688,7 +742,7 @@ LANGUAGES = [
     ('th', _('Thai')),
     ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
-    ('zh-cn', _('Chinese')),
+    ('zh-hans', _('Chinese')),
 ]
 
 # Testing interface translations
@@ -711,9 +765,11 @@ if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no 
     django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
-CURRENCIES = get_setting('INVENTREE_CURRENCIES', 'currencies', [
-    'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
-])
+CURRENCIES = get_setting(
+    'INVENTREE_CURRENCIES', 'currencies',
+    ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD'],
+    typecast=list,
+)
 
 # Maximum number of decimal places for currency rendering
 CURRENCY_DECIMAL_PLACES = 6
@@ -721,7 +777,7 @@ CURRENCY_DECIMAL_PLACES = 6
 # Check that each provided currency is supported
 for currency in CURRENCIES:
     if currency not in moneyed.CURRENCIES:  # pragma: no cover
-        print(f"Currency code '{currency}' is not supported")
+        logger.error(f"Currency code '{currency}' is not supported")
         sys.exit(1)
 
 # Custom currency exchange backend
@@ -770,15 +826,12 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 SITE_ID = 1
 
 # Load the allauth social backends
-SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [])
+SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list)
 
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None)
-
-if SOCIALACCOUNT_PROVIDERS is None:
-    SOCIALACCOUNT_PROVIDERS = {}
+SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict)
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
@@ -803,10 +856,6 @@ ACCOUNT_FORMS = {
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
-
-# login settings
-REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
-REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
@@ -846,29 +895,6 @@ MARKDOWNIFY = {
     }
 }
 
-# sentry.io integration for error reporting
-SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
-# Default Sentry DSN (can be overriden if user wants custom sentry integration)
-INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
-SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', INVENTREE_DSN)
-SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
-
-if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        integrations=[DjangoIntegration(), ],
-        traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
-        send_default_pii=True
-    )
-    inventree_tags = {
-        'testing': TESTING,
-        'docker': DOCKER,
-        'debug': DEBUG,
-        'remote': REMOTE_LOGIN,
-    }
-    for key, val in inventree_tags.items():
-        sentry_sdk.set_tag(f'inventree_{key}', val)
-
 # Ignore these error typeps for in-database error logging
 IGNORED_ERRORS = [
     Http404,
@@ -896,7 +922,6 @@ CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom
 CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
 
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
-
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 

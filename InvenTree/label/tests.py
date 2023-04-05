@@ -27,9 +27,10 @@ class LabelTest(InvenTreeAPITestCase):
         'stock'
     ]
 
-    def setUp(self) -> None:
+    @classmethod
+    def setUpTestData(cls):
         """Ensure that some label instances exist as part of init routine"""
-        super().setUp()
+        super().setUpTestData()
         apps.get_app_config('label').create_labels()
 
     def test_default_labels(self):
@@ -129,3 +130,21 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIn("http://testserver/part/1/", content)
         self.assertIn("image: /static/img/blank_image.png", content)
         self.assertIn("logo: /static/img/inventree.png", content)
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [StockItemLabel, StockLocationLabel, PartLabel]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)

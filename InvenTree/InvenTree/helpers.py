@@ -21,9 +21,11 @@ from django.http import StreamingHttpResponse
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 
+import moneyed.localization
 import regex
 import requests
 from bleach import clean
+from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
 
@@ -33,7 +35,7 @@ from common.notifications import (InvenTreeNotificationBodies,
                                   NotificationBody, trigger_notification)
 from common.settings import currency_code_default
 
-from .api_tester import UserMixin
+from .api_tester import ExchangeRateMixin, UserMixin
 from .settings import MEDIA_URL, STATIC_URL
 
 logger = logging.getLogger('inventree')
@@ -523,6 +525,7 @@ def DownloadFile(data, filename, content_type='application/text', inline=False) 
         A StreamingHttpResponse object wrapping the supplied data
     """
     filename = WrapWithQuotes(filename)
+    length = len(data)
 
     if type(data) == str:
         wrapper = FileWrapper(io.StringIO(data))
@@ -530,7 +533,9 @@ def DownloadFile(data, filename, content_type='application/text', inline=False) 
         wrapper = FileWrapper(io.BytesIO(data))
 
     response = StreamingHttpResponse(wrapper, content_type=content_type)
-    response['Content-Length'] = len(data)
+    if type(data) == str:
+        length = len(bytes(data, response.charset))
+    response['Content-Length'] = length
 
     disposition = "inline" if inline else "attachment"
 
@@ -1059,7 +1064,7 @@ def inheritors(cls):
     return subcls
 
 
-class InvenTreeTestCase(UserMixin, TestCase):
+class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
     """Testcase with user setup buildin."""
     pass
 
@@ -1105,3 +1110,54 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
             target_exclude=[exclude],
             context=context,
         )
+
+
+def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None):
+    """Render a currency / Money object to a formatted string (e.g. for reports)
+
+    Arguments:
+        money: The Money instance to be rendered
+        decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
+        currency: Optionally convert to the specified currency
+        include_symbol: Render with the appropriate currency symbol
+        min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
+    """
+
+    if money in [None, '']:
+        return '-'
+
+    if type(money) is not Money:
+        return '-'
+
+    if currency is not None:
+        # Attempt to convert to the provided currency
+        # If cannot be done, leave the original
+        try:
+            money = convert_money(money, currency)
+        except Exception:
+            pass
+
+    if decimal_places is None:
+        decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
+
+    if min_decimal_places is None:
+        min_decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN', 0)
+
+    value = Decimal(str(money.amount)).normalize()
+    value = str(value)
+
+    if '.' in value:
+        decimals = len(value.split('.')[-1])
+
+        decimals = max(decimals, min_decimal_places)
+        decimals = min(decimals, decimal_places)
+
+        decimal_places = decimals
+    else:
+        decimal_places = max(decimal_places, 2)
+
+    return moneyed.localization.format_money(
+        money,
+        decimal_places=decimal_places,
+        include_symbol=include_symbol,
+    )

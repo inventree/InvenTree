@@ -29,6 +29,12 @@
 {% url 'admin:part_partcategory_change' category.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
+{% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
+{% if stocktake_enable and roles.stocktake.add %}
+<button type='button' class='btn btn-outline-secondary' id='category-stocktake' title='{% trans "Perform stocktake for this part category" %}'>
+    <span class='fas fa-clipboard-check'></span>
+</button>
+{% endif %}
 {% if category %}
 {% if starred_directly %}
 <button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "You are subscribed to notifications for this category" %}'>
@@ -177,11 +183,6 @@
                     <li><a class='dropdown-item' href='#' id='multi-part-order' title='{% trans "Order parts" %}'>
                         <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
                     </a></li>
-                    {% if report_enabled %}
-                    <li><a class='dropdown-item' href='#' id='multi-part-print-label' title='{% trans "Print Labels" %}'>
-                        <span class='fas fa-tag'></span> {% trans "Print Labels" %}
-                    </a></li>
-                    {% endif %}
                 </ul>
             </div>
             {% include "filter_list.html" with id="parts" %}
@@ -252,6 +253,20 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    {% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
+    {% if stocktake_enable and roles.stocktake.add %}
+    $('#category-stocktake').click(function() {
+        generateStocktakeReport({
+            category: {
+                {% if category %}value: {{ category.pk }},{% endif %}
+            },
+            location: {},
+            generate_report: {},
+            update_parts: {},
+        });
+    });
+    {% endif %}
 
     {% if category %}
 
@@ -336,30 +351,9 @@
 
     {% if roles.part.add %}
     $("#part-create").click(function() {
-
-        var fields = partFields({
-            create: true,
+        createPart({
+            {% if category %}category: {{ category.pk }},{% endif %}
         });
-
-        {% if category %}
-        fields.category.value = {{ category.pk }};
-        {% endif %}
-
-        constructForm('{% url "api-part-list" %}', {
-            method: 'POST',
-            fields: fields,
-            groups: partGroups(),
-            title: '{% trans "Create Part" %}',
-            reloadFormAfterSuccess: true,
-            persist: true,
-            persistMessage: '{% trans "Create another part after this one" %}',
-            successMessage: '{% trans "Part created successfully" %}',
-            onSuccess: function(data) {
-                // Follow the new part
-                location.href = `/part/${data.pk}/`;
-            },
-        });
-
     });
     {% endif %}
 

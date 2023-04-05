@@ -26,8 +26,12 @@ class CompanySimpleTest(TestCase):
         'price_breaks',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Perform initialization for the tests in this class"""
+
+        super().setUpTestData()
+
         Company.objects.create(name='ABC Co.',
                                description='Seller of ABC products',
                                website='www.abc-sales.com',
@@ -35,10 +39,10 @@ class CompanySimpleTest(TestCase):
                                is_customer=False,
                                is_supplier=True)
 
-        self.acme0001 = SupplierPart.objects.get(SKU='ACME0001')
-        self.acme0002 = SupplierPart.objects.get(SKU='ACME0002')
-        self.zerglphs = SupplierPart.objects.get(SKU='ZERGLPHS')
-        self.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
+        cls.acme0001 = SupplierPart.objects.get(SKU='ACME0001')
+        cls.acme0002 = SupplierPart.objects.get(SKU='ACME0002')
+        cls.zerglphs = SupplierPart.objects.get(SKU='ZERGLPHS')
+        cls.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
 
     def test_company_model(self):
         """Tests for the company model data"""
@@ -128,6 +132,23 @@ class CompanySimpleTest(TestCase):
         with self.assertRaises(ValidationError):
             company.full_clean()
 
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        p = Company.objects.first()
+        self.assertIsNone(p.metadata)
+
+        self.assertIsNone(p.get_metadata('test'))
+        self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+        # Test update via the set_metadata() method
+        p.set_metadata('test', 3)
+        self.assertEqual(p.get_metadata('test'), 3)
+
+        for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+            p.set_metadata(k, k)
+
+        self.assertEqual(len(p.metadata.keys()), 4)
+
 
 class ContactSimpleTest(TestCase):
     """Unit tests for the Contact model"""
@@ -201,3 +222,21 @@ class ManufacturerPartSimpleTest(TestCase):
         Part.objects.get(pk=self.part.id).delete()
         # Check that ManufacturerPart was deleted
         self.assertEqual(ManufacturerPart.objects.count(), 3)
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [ManufacturerPart, SupplierPart]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)

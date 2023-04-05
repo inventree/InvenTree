@@ -11,12 +11,14 @@ import json
 
 from django.utils.translation import gettext_lazy as _
 
-from company.models import SupplierPart
+import build.models
+import company.models
+import order.models
+import part.models
+import stock.models
 from InvenTree.helpers import hash_barcode
-from part.models import Part
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
-from stock.models import StockItem, StockLocation
 
 
 class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
@@ -33,10 +35,14 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
         """Returns a list of database models which support barcode functionality"""
 
         return [
-            Part,
-            StockItem,
-            StockLocation,
-            SupplierPart,
+            build.models.Build,
+            company.models.SupplierPart,
+            order.models.PurchaseOrder,
+            order.models.ReturnOrder,
+            order.models.SalesOrder,
+            part.models.Part,
+            stock.models.StockItem,
+            stock.models.StockLocation,
         ]
 
     def format_matched_response(self, label, model, instance):

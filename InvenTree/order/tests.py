@@ -8,15 +8,18 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
 
+from djmoney.money import Money
+
 import common.models
 import order.tasks
 from company.models import Company, SupplierPart
 from InvenTree.status_codes import PurchaseOrderStatus
 from part.models import Part
-from stock.models import StockLocation
+from stock.models import StockItem, StockLocation
 from users.models import Owner
 
-from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import (PurchaseOrder, PurchaseOrderExtraLine,
+                     PurchaseOrderLineItem)
 
 
 class OrderTest(TestCase):
@@ -255,7 +258,8 @@ class OrderTest(TestCase):
         line_1 = PurchaseOrderLineItem.objects.create(
             order=po,
             part=sp_1,
-            quantity=3
+            quantity=3,
+            purchase_price=Money(1000, 'USD'),  # "Unit price" should be $100USD
         )
 
         # 13 x 0.1 = 1.3
@@ -263,6 +267,7 @@ class OrderTest(TestCase):
             order=po,
             part=sp_2,
             quantity=13,
+            purchase_price=Money(10, 'USD'),  # "Unit price" should be $100USD
         )
 
         po.place_order()
@@ -298,6 +303,23 @@ class OrderTest(TestCase):
             prt.total_stock,
             round(in_stock + Decimal(10.5), 1)
         )
+
+        # Check that the unit purchase price value has been updated correctly
+        si = StockItem.objects.filter(supplier_part=sp_1)
+        self.assertEqual(si.count(), 1)
+
+        # Ensure that received quantity and unit purchase price data are correct
+        si = si.first()
+        self.assertEqual(si.quantity, 10)
+        self.assertEqual(si.purchase_price, Money(100, 'USD'))
+
+        si = StockItem.objects.filter(supplier_part=sp_2)
+        self.assertEqual(si.count(), 1)
+
+        # Ensure that received quantity and unit purchase price data are correct
+        si = si.first()
+        self.assertEqual(si.quantity, 0.5)
+        self.assertEqual(si.purchase_price, Money(100, 'USD'))
 
     def test_overdue_notification(self):
         """Test overdue purchase order notification
@@ -363,3 +385,21 @@ class OrderTest(TestCase):
 
         # However *no* notification should have been generated for the creating user
         self.assertFalse(messages.filter(user__pk=3).exists())
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderExtraLine]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)

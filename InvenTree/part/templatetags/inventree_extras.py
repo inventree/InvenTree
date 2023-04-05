@@ -4,7 +4,6 @@ import logging
 import os
 import sys
 from datetime import date, datetime
-from decimal import Decimal
 
 from django import template
 from django.conf import settings as djangosettings
@@ -13,8 +12,6 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-
-import moneyed.localization
 
 import InvenTree.helpers
 from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
@@ -104,33 +101,10 @@ def render_date(context, date_object):
 
 
 @register.simple_tag
-def render_currency(money, decimal_places=None, include_symbol=True):
+def render_currency(money, **kwargs):
     """Render a currency / Money object"""
 
-    if money is None or money.amount is None:
-        return '-'
-
-    if decimal_places is None:
-        decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
-
-    value = Decimal(str(money.amount)).normalize()
-    value = str(value)
-
-    if '.' in value:
-        decimals = len(value.split('.')[-1])
-
-        decimals = max(decimals, 2)
-        decimals = min(decimals, decimal_places)
-
-        decimal_places = decimals
-    else:
-        decimal_places = 2
-
-    return moneyed.localization.format_money(
-        money,
-        decimal_places=decimal_places,
-        include_symbol=include_symbol,
-    )
+    return InvenTree.helpers.render_currency(money, **kwargs)
 
 
 @register.simple_tag()
@@ -322,13 +296,13 @@ def inventree_docs_url(*args, **kwargs):
     """Return URL for InvenTree documenation site."""
     tag = version.inventreeDocsVersion()
 
-    return f"https://inventree.readthedocs.io/en/{tag}"
+    return f"https://docs.inventree.org/en/{tag}"
 
 
 @register.simple_tag()
 def inventree_credits_url(*args, **kwargs):
     """Return URL for InvenTree credits site."""
-    return "https://inventree.readthedocs.io/en/latest/credits/"
+    return "https://docs.inventree.org/en/latest/credits/"
 
 
 @register.simple_tag()
@@ -344,20 +318,24 @@ def setting_object(key, *args, **kwargs):
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
     """
+
+    cache = kwargs.get('cache', True)
+
     if 'plugin' in kwargs:
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 
         plugin = kwargs['plugin']
 
-        return PluginSetting.get_setting_object(key, plugin=plugin)
+        return PluginSetting.get_setting_object(key, plugin=plugin, cache=cache)
 
-    if 'method' in kwargs:
-        return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'])
+    elif 'method' in kwargs:
+        return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'], cache=cache)
 
-    if 'user' in kwargs:
-        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+    elif 'user' in kwargs:
+        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'], cache=cache)
 
-    return InvenTreeSetting.get_setting_object(key)
+    else:
+        return InvenTreeSetting.get_setting_object(key, cache=cache)
 
 
 @register.simple_tag()
@@ -404,7 +382,10 @@ def progress_bar(val, max_val, *args, **kwargs):
     else:
         style = ''
 
-    percent = float(val / max_val) * 100
+    if max_val != 0:
+        percent = float(val / max_val) * 100
+    else:
+        percent = 0
 
     if percent > 100:
         percent = 100
@@ -570,7 +551,30 @@ class I18nStaticNode(StaticNode):
             self.original = self.path.var
 
         if hasattr(context, 'request'):
-            self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
+
+            # Convert the "requested" language code to a standard format
+            language_code = context.request.LANGUAGE_CODE.lower().strip()
+            language_code = language_code.replace('_', '-')
+
+            # Find the first "best" match:
+            # - First, try the original requested code, e.g. 'pt-br'
+            # - Next, try a simpler version of the code e.g. 'pt'
+            # - Finally, fall back to english
+            options = [
+                language_code,
+                language_code.split('-')[0],
+                'en',
+            ]
+
+            for lng in options:
+                lng_file = os.path.join(
+                    djangosettings.STATIC_ROOT,
+                    self.original.format(lng=lng)
+                )
+
+                if os.path.exists(lng_file):
+                    self.path.var = self.original.format(lng=lng)
+                    break
 
         ret = super().render(context)
 

@@ -12,7 +12,7 @@ import django
 from InvenTree.api_version import INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = "0.10.0 dev"
+INVENTREE_SW_VERSION = "0.11.0 dev"
 
 
 def inventreeInstanceName():
@@ -67,11 +67,10 @@ def inventreeDocsVersion():
 def isInvenTreeUpToDate():
     """Test if the InvenTree instance is "up to date" with the latest version.
 
-    A background task periodically queries GitHub for latest version, and stores it to the database as INVENTREE_LATEST_VERSION
+    A background task periodically queries GitHub for latest version, and stores it to the database as "_INVENTREE_LATEST_VERSION"
     """
     import common.models
-
-    latest = common.models.InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION', backup_value=None, create=False)
+    latest = common.models.InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION', backup_value=None, create=False)
 
     # No record for "latest" version - we must assume we are up to date!
     if not latest:

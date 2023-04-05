@@ -109,7 +109,7 @@ class PluginsRegistry:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
 
-        logger.info('Start loading plugins')
+        logger.info('Loading plugins')
 
         # Set maintanace mode
         _maintenance = bool(get_maintenance_mode())
@@ -162,8 +162,12 @@ class PluginsRegistry:
 
         logger.info('Finished loading plugins')
 
-    def unload_plugins(self):
-        """Unload and deactivate all IntegrationPlugins."""
+    def unload_plugins(self, force_reload: bool = False):
+        """Unload and deactivate all IntegrationPlugins.
+
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+        """
 
         logger.info('Start unloading plugins')
 
@@ -176,7 +180,7 @@ class PluginsRegistry:
         self._clean_registry()
 
         # deactivate all integrations
-        self._deactivate_plugins()
+        self._deactivate_plugins(force_reload=force_reload)
 
         # remove maintenance
         if not _maintenance:
@@ -184,11 +188,12 @@ class PluginsRegistry:
 
         logger.info('Finished unloading plugins')
 
-    def reload_plugins(self, full_reload: bool = False):
+    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False):
         """Safely reload.
 
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
         """
         # Do not reload whe currently loading
         if self.is_loading:
@@ -197,8 +202,8 @@ class PluginsRegistry:
         logger.info('Start reloading plugins')
 
         with maintenance_mode_on():
-            self.unload_plugins()
-            self.load_plugins(full_reload)
+            self.unload_plugins(force_reload=force_reload)
+            self.load_plugins(full_reload=full_reload)
 
         logger.info('Finished reloading plugins')
 
@@ -268,7 +273,7 @@ class PluginsRegistry:
         # Collect plugins from paths
         for plugin in self.plugin_dirs():
 
-            logger.info(f"Loading plugins from directory '{plugin}'")
+            logger.debug(f"Loading plugins from directory '{plugin}'")
 
             parent_path = None
             parent_obj = Path(plugin)
@@ -306,7 +311,7 @@ class PluginsRegistry:
 
         # Log collected plugins
         logger.info(f'Collected {len(collected_plugins)} plugins!')
-        logger.info(", ".join([a.__module__ for a in collected_plugins]))
+        logger.debug(", ".join([a.__module__ for a in collected_plugins]))
 
         return collected_plugins
 
@@ -383,7 +388,7 @@ class PluginsRegistry:
                 self.plugins_inactive[key] = plugin.db
             self.plugins_full[key] = plugin
 
-        logger.info('Starting plugin initialisation')
+        logger.debug('Starting plugin initialisation')
 
         # Initialize plugins
         for plg in self.plugin_modules:
@@ -408,6 +413,11 @@ class PluginsRegistry:
             # Check if this is a 'builtin' plugin
             builtin = plg.check_is_builtin()
 
+            # Auto-enable builtin plugins
+            if builtin and plg_db and not plg_db.active:
+                plg_db.active = True
+                plg_db.save()
+
             # Determine if this plugin should be loaded:
             # - If PLUGIN_TESTING is enabled
             # - If this is a 'builtin' plugin
@@ -420,9 +430,10 @@ class PluginsRegistry:
 
                 # Initialize package - we can be sure that an admin has activated the plugin
                 logger.info(f'Loading plugin `{plg_name}`')
+
                 try:
                     plg_i: InvenTreePlugin = plg()
-                    logger.info(f'Loaded plugin `{plg_name}`')
+                    logger.debug(f'Loaded plugin `{plg_name}`')
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
 
@@ -464,9 +475,13 @@ class PluginsRegistry:
         self.activate_plugin_app(plugins, force_reload=force_reload, full_reload=full_reload)
         self.activate_plugin_url(plugins, force_reload=force_reload, full_reload=full_reload)
 
-    def _deactivate_plugins(self):
-        """Run deactivation functions for all plugins."""
-        self.deactivate_plugin_app()
+    def _deactivate_plugins(self, force_reload: bool = False):
+        """Run deactivation functions for all plugins.
+
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+        """
+        self.deactivate_plugin_app(force_reload=force_reload)
         self.deactivate_plugin_schedule()
         self.deactivate_plugin_settings()
     # endregion
@@ -649,8 +664,12 @@ class PluginsRegistry:
             plugin_path = plugin.__module__.split('.')[0]
         return plugin_path
 
-    def deactivate_plugin_app(self):
-        """Deactivate AppMixin plugins - some magic required."""
+    def deactivate_plugin_app(self, force_reload: bool = False):
+        """Deactivate AppMixin plugins - some magic required.
+
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+        """
         # unregister models from admin
         for plugin_path in self.installed_apps:
             models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed
@@ -687,7 +706,7 @@ class PluginsRegistry:
 
         # reset load flag and reload apps
         settings.INTEGRATION_APPS_LOADED = False
-        self._reload_apps()
+        self._reload_apps(force_reload=force_reload)
 
         # update urls to remove the apps from the site admin
         self._update_urls()

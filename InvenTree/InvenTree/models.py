@@ -116,6 +116,11 @@ class ReferenceIndexingMixin(models.Model):
     # Name of the global setting which defines the required reference pattern for this model
     REFERENCE_PATTERN_SETTING = None
 
+    class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
+        abstract = True
+
     @classmethod
     def get_reference_pattern(cls):
         """Returns the reference pattern associated with this model.
@@ -233,9 +238,9 @@ class ReferenceIndexingMixin(models.Model):
 
         try:
             info = InvenTree.format.parse_format_string(pattern)
-        except Exception:
+        except Exception as exc:
             raise ValidationError({
-                "value": _("Improperly formatted pattern"),
+                "value": _("Improperly formatted pattern") + ": " + str(exc)
             })
 
         # Check that only 'allowed' keys are provided
@@ -271,11 +276,6 @@ class ReferenceIndexingMixin(models.Model):
 
         # Check that the reference field can be rebuild
         cls.rebuild_reference_field(value, validate=True)
-
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-
-        abstract = True
 
     @classmethod
     def rebuild_reference_field(cls, reference, validate=False):
@@ -368,6 +368,10 @@ class InvenTreeAttachment(models.Model):
         user: User associated with file upload
         upload_date: Date the file was uploaded
     """
+
+    class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+        abstract = True
 
     def getSubdir(self):
         """Return the subdirectory under which attachments should be stored.
@@ -483,11 +487,6 @@ class InvenTreeAttachment(models.Model):
         except Exception:
             raise ValidationError(_("Error renaming file"))
 
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-
-        abstract = True
-
 
 class InvenTreeTree(MPTTModel):
     """Provides an abstracted self-referencing tree model for data categories.
@@ -500,6 +499,33 @@ class InvenTreeTree(MPTTModel):
         description: longer form description
         parent: The item immediately above this one. An item with a null parent is a top-level item
     """
+
+    class Meta:
+        """Metaclass defines extra model properties."""
+        abstract = True
+
+    class MPTTMeta:
+        """Set insert order."""
+        order_insertion_by = ['name']
+
+    def validate_unique(self, exclude=None):
+        """Validate that this tree instance satisfies our uniqueness requirements.
+
+        Note that a 'unique_together' requirement for ('name', 'parent') is insufficient,
+        as it ignores cases where parent=None (i.e. top-level items)
+        """
+
+        super().validate_unique(exclude)
+
+        results = self.__class__.objects.filter(
+            name=self.name,
+            parent=self.parent
+        ).exclude(pk=self.pk)
+
+        if results.exists():
+            raise ValidationError({
+                'name': _('Duplicate names cannot exist under the same parent')
+            })
 
     def api_instance_filters(self):
         """Instance filters for InvenTreeTree models."""
@@ -538,18 +564,6 @@ class InvenTreeTree(MPTTModel):
             # Ensure that the pathstring changes are propagated down the tree also
             for child in self.get_children():
                 child.save(*args, **kwargs)
-
-    class Meta:
-        """Metaclass defines extra model properties."""
-
-        abstract = True
-
-        # Names must be unique at any given level in the tree
-        unique_together = ('name', 'parent')
-
-    class MPTTMeta:
-        """Set insert order."""
-        order_insertion_by = ['name']
 
     name = models.CharField(
         blank=False,
@@ -717,7 +731,7 @@ class InvenTreeBarcodeMixin(models.Model):
 
         return cls.objects.filter(barcode_hash=barcode_hash).first()
 
-    def assign_barcode(self, barcode_hash=None, barcode_data=None, raise_error=True):
+    def assign_barcode(self, barcode_hash=None, barcode_data=None, raise_error=True, save=True):
         """Assign an external (third-party) barcode to this object."""
 
         # Must provide either barcode_hash or barcode_data
@@ -740,7 +754,8 @@ class InvenTreeBarcodeMixin(models.Model):
 
         self.barcode_hash = barcode_hash
 
-        self.save()
+        if save:
+            self.save()
 
         return True
 
