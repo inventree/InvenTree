@@ -102,7 +102,6 @@ class InvenTreePluginTests(TestCase):
             LICENSE = 'MIT'
 
         cls.plugin_name = NameInvenTreePlugin()
-        cls.plugin_sample = SampleIntegrationPlugin()
 
         class VersionInvenTreePlugin(InvenTreePlugin):
             NAME = 'Version'
@@ -135,7 +134,7 @@ class InvenTreePluginTests(TestCase):
 
         # is_sampe
         self.assertEqual(self.plugin.is_sample, False)
-        self.assertEqual(self.plugin_sample.is_sample, True)
+        self.assertEqual(SampleIntegrationPlugin().is_sample, True)
 
         # slug
         self.assertEqual(self.plugin.slug, '')
