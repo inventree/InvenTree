@@ -3631,32 +3631,27 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         """Calculate the checksum hash of this BOM line item.
 
         The hash is calculated from the following fields:
-        - Part.full_name (if the part name changes, the BOM checksum is invalidated)
-        - Quantity
-        - Reference field
-        - Note field
-        - Optional field
-        - Inherited field
+        - part.pk
+        - sub_part.pk
+        - quantity
+        - reference
+        - optional
+        - inherited
+        - consumable
+        - allow_variants
         """
         # Seed the hash with the ID of this BOM item
-        result_hash = hashlib.md5(str(self.id).encode())
+        result_hash = hashlib.md5(str(self.part.pk).encode())
 
         # Update the hash based on line information
-        result_hash.update(str(self.sub_part.id).encode())
-        result_hash.update(str(self.sub_part.full_name).encode())
+        result_hash.update(str(self.sub_part.pk).encode())
         result_hash.update(str(self.quantity).encode())
-        result_hash.update(str(self.note).encode())
         result_hash.update(str(self.reference).encode())
         result_hash.update(str(self.optional).encode())
         result_hash.update(str(self.inherited).encode())
-
-        # Optionally encoded for backwards compatibility
-        if self.consumable:
-            result_hash.update(str(self.consumable).encode())
-
-        # Optionally encoded for backwards compatibility
-        if self.allow_variants:
-            result_hash.update(str(self.allow_variants).encode())
+        result_hash.update(str(self.consumable).encode())
+        result_hash.update(str(self.inherited).encode())
+        result_hash.update(str(self.allow_variants).encode())
 
         return str(result_hash.digest())
 
