@@ -346,6 +346,10 @@ class MetadataView(RetrieveUpdateAPI):
 
         return model
 
+    def get_permission_model(self):
+        """Return the 'permission model' associated with this view"""
+        return self.get_model_type()
+
     def get_queryset(self):
         """Return the queryset for this endpoint"""
         return self.get_model_type().objects.all()

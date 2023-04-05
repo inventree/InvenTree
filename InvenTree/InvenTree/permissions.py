@@ -13,11 +13,11 @@ def get_model_for_view(view, raise_error=True):
     if hasattr(view, 'get_permission_model'):
         return view.get_permission_model()
 
-    if hasattr(view, 'get_serializer_class'):
-        return view.get_serializer_class().Meta.model
-
     if hasattr(view, 'serializer_class'):
         return view.serializer_class.Meta.model
+
+    if hasattr(view, 'get_serializer_class'):
+        return view.get_serializer_class().Meta.model
 
     if raise_error:
         raise AttributeError(f"model class not specified for {view.__class__}")
