@@ -7,10 +7,9 @@ from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-from rest_framework import filters, permissions, serializers
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -20,7 +19,7 @@ import common.models
 import common.serializers
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.config import CONFIG_LOOKUPS
-from InvenTree.filters import InvenTreeSearchFilter
+from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors
 from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
@@ -168,11 +167,7 @@ class SettingsList(ListAPI):
     This is inheritted by all list views for settings.
     """
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'pk',
@@ -340,11 +335,7 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
 
     permission_classes = [permissions.IsAuthenticated, ]
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'category',
@@ -409,10 +400,7 @@ class NewsFeedMixin:
 
 class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
     """List view for all news items."""
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     ordering_fields = [
         'published',

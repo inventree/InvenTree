@@ -11,7 +11,6 @@ from django_filters import rest_framework as rest_filters
 
 from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, MetadataView, StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
-from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
 from InvenTree.status_codes import BuildStatus
 from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
@@ -20,6 +19,7 @@ import build.serializers
 from build.models import Build, BuildItem, BuildOrderAttachment
 import part.models
 from users.models import Owner
+from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
 
 
 class BuildFilter(rest_filters.FilterSet):
@@ -99,11 +99,7 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
     serializer_class = build.serializers.BuildSerializer
     filterset_class = BuildFilter
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
         'reference',

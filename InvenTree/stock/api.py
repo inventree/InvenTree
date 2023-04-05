@@ -11,8 +11,7 @@ from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -24,7 +23,8 @@ from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
-from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
+from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
+                               SEARCH_ORDER_FILTER_ALIAS)
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
@@ -294,11 +294,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -333,10 +329,7 @@ class StockLocationTree(ListAPI):
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationTreeSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
@@ -1007,11 +1000,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
         'SKU': 'supplier_part__SKU',
@@ -1054,11 +1043,7 @@ class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        InvenTreeSearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'stock_item',
@@ -1085,11 +1070,7 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
     queryset = StockItemTestResult.objects.all()
     serializer_class = StockSerializers.StockItemTestResultSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'test',
@@ -1310,11 +1291,7 @@ class StockTrackingList(ListAPI):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'item',

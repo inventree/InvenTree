@@ -5,15 +5,14 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
-from django_filters.rest_framework import DjangoFilterBackend
 from django_q.models import OrmQ
-from rest_framework import filters, permissions
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import users.models
-from InvenTree.filters import InvenTreeSearchFilter
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
@@ -202,11 +201,7 @@ class AttachmentMixin:
         RolePermission,
     ]
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
@@ -365,6 +360,10 @@ class MetadataView(RetrieveUpdateAPI):
             raise ValidationError(f"MetadataView called without '{self.MODEL_REF}' parameter")
 
         return model
+
+    def get_permission_model(self):
+        """Return the 'permission' model associated with this view"""
+        return self.get_model_type()
 
     def get_queryset(self):
         """Return the queryset for this endpoint"""
