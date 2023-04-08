@@ -4,7 +4,7 @@ from django.urls import include, re_path
 
 from plugin import registry
 
-PLUGIN_BASE = 'plugins'  # Constant for links
+PLUGIN_BASE = 'plugin'  # Constant for links
 
 
 def get_plugin_urls():
