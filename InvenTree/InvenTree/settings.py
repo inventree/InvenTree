@@ -373,7 +373,6 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventroy management system',
     'LICENSE': {'MIT': 'https://github.com/inventree/InvenTree/blob/master/LICENSE'},
-    # 'TAGS': ['inventree', 'api', 'inventree-plugins'],
     'EXTERNAL_DOCS': {'docs': 'https://docs.inventree.org', 'web': 'https://inventree.org'},
     'VERSION': inventreeApiVersion(),
     'SERVE_INCLUDE_SCHEMA': False,
