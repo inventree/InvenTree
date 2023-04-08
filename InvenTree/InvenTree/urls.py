@@ -66,7 +66,7 @@ apipatterns = [
     path('', include(common_api_urls)),
 
     # OpenAPI Schema
-    re_path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    re_path('schema/', SpectacularAPIView.as_view(custom_settings={'SCHEMA_PATH_PREFIX': '/api/'}), name='schema'),
 
     # InvenTree information endpoint
     path('', InfoView.as_view(), name='api-inventree-info'),
