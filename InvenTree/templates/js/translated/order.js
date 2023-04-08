@@ -40,6 +40,9 @@ function extraLineFields(options={}) {
         notes: {
             icon: 'fa-sticky-note',
         },
+        link: {
+            icon: 'fa-link',
+        }
     };
 
     if (options.order) {
@@ -317,6 +320,15 @@ function loadExtraLineTable(options={}) {
             {
                 field: 'notes',
                 title: '{% trans "Notes" %}',
+            },
+            {
+                field: 'link',
+                title: '{% trans "Link" %}',
+                formatter: function(value) {
+                    if (value) {
+                        return renderLink(value, value);
+                    }
+                }
             },
             {
                 field: 'buttons',

@@ -23,7 +23,7 @@ from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, normalize, notify_responsible
-from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
+from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin, ReferenceIndexingMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
@@ -42,7 +42,7 @@ import stock.models
 import users.models
 
 
-class Build(MPTTModel, MetadataMixin, ReferenceIndexingMixin):
+class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:

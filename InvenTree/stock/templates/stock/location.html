@@ -150,13 +150,7 @@
         </td>
     </tr>
     {% endif %}
-    {% if location and location.barcode_hash %}
-    <tr>
-        <td><span class='fas fa-barcode'></span></td>
-        <td>{% trans "Barcode Identifier" %}</td>
-        <td {% if location.barcode_data %}title='{{ location.barcode_data }}'{% endif %}>{{ location.barcode_hash }}</td>
-    </tr>
-    {% endif %}
+    {% include "barcode_data.html" with instance=location %}
 </table>
 {% endblock details_left %}
 

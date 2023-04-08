@@ -35,7 +35,8 @@ from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
                               InvenTreeURLField, RoundingDecimalField)
 from InvenTree.helpers import decimal2string, getSetting, notify_responsible
-from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
+from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
+                              ReferenceIndexingMixin)
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
@@ -130,7 +131,7 @@ class TotalPriceMixin(models.Model):
         return total
 
 
-class Order(MetadataMixin, ReferenceIndexingMixin):
+class Order(InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
     """Abstract model for an order.
 
     Instances of this class:
@@ -548,11 +549,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         notes = kwargs.get('notes', '')
 
         # Extract optional barcode field
-        barcode_hash = kwargs.get('barcode', None)
+        barcode = kwargs.get('barcode', None)
 
         # Prevent null values for barcode
-        if barcode_hash is None:
-            barcode_hash = ''
+        if barcode is None:
+            barcode = ''
 
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
@@ -599,9 +600,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     status=status,
                     batch=batch_code,
                     serial=sn,
-                    purchase_price=unit_purchase_price,
-                    barcode_hash=barcode_hash
+                    purchase_price=unit_purchase_price
                 )
+
+                # Assign the provided barcode
+                if barcode:
+                    item.assign_barcode(
+                        barcode_data=barcode,
+                        save=False
+                    )
 
                 item.save(add_note=False)
 
@@ -1049,6 +1056,12 @@ class OrderLineItem(MetadataMixin, models.Model):
     reference = models.CharField(max_length=100, blank=True, verbose_name=_('Reference'), help_text=_('Line item reference'))
 
     notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
+
+    link = InvenTreeURLField(
+        blank=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external page')
+    )
 
     target_date = models.DateField(
         blank=True, null=True,
@@ -1875,8 +1888,6 @@ class ReturnOrderLineItem(OrderLineItem):
         verbose_name=_('Price'),
         help_text=_('Cost associated with return or repair for this line item'),
     )
-
-    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 
 
 class ReturnOrderExtraLine(OrderExtraLine):
