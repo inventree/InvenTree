@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-04 22:47+0000\n"
-"PO-Revision-Date: 2023-04-05 13:32\n"
+"PO-Revision-Date: 2023-04-08 17:25\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -23,7 +23,7 @@ msgstr "API endpoint nebyl nalezen"
 
 #: InvenTree/api.py:299
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "Uživatel nemá právo zobrazit tento model"
 
 #: InvenTree/exceptions.py:86
 msgid "Error details can be found in the admin panel"
@@ -135,7 +135,7 @@ msgstr "Vzdálený server vrátil prázdnou odpověď"
 
 #: InvenTree/helpers.py:210
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "Zadaná URL adresa není platný soubor obrázku"
 
 #: InvenTree/helpers.py:602 order/models.py:410 order/models.py:571
 msgid "Invalid quantity provided"
@@ -147,7 +147,7 @@ msgstr "Nevyplněné výrobní číslo"
 
 #: InvenTree/helpers.py:640
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Duplicitní výrobní číslo"
 
 #: InvenTree/helpers.py:673 InvenTree/helpers.py:708
 #, python-brace-format
@@ -175,7 +175,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:960
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Odstranit HTML tagy z této hodnoty"
 
 #: InvenTree/models.py:243
 msgid "Improperly formatted pattern"
@@ -360,7 +360,7 @@ msgstr "Cesta"
 
 #: InvenTree/models.py:696
 msgid "Barcode Data"
-msgstr ""
+msgstr "Data čárového kódu"
 
 #: InvenTree/models.py:697
 msgid "Third party barcode data"
@@ -368,15 +368,15 @@ msgstr ""
 
 #: InvenTree/models.py:702
 msgid "Barcode Hash"
-msgstr ""
+msgstr "Hash čárového kódu"
 
 #: InvenTree/models.py:703
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Jedinečný hash dat čárového kódu"
 
 #: InvenTree/models.py:748
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Nalezen existující čárový kód"
 
 #: InvenTree/models.py:802
 msgid "Server Error"
@@ -384,7 +384,7 @@ msgstr "Chyba serveru"
 
 #: InvenTree/models.py:803
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Server zaznamenal chybu."
 
 #: InvenTree/serializers.py:59 part/models.py:3701
 msgid "Must be a valid number"
@@ -457,11 +457,11 @@ msgstr "URL"
 
 #: InvenTree/serializers.py:684
 msgid "URL of remote image file"
-msgstr ""
+msgstr "URL souboru vzdáleného obrázku"
 
 #: InvenTree/serializers.py:698
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "Stahování obrázků ze vzdálené URL není povoleno"
 
 #: InvenTree/settings.py:708
 msgid "Czech"
@@ -643,7 +643,7 @@ msgstr "Odmítnuto"
 
 #: InvenTree/status_codes.py:229
 msgid "Quarantined"
-msgstr ""
+msgstr "V karanténě"
 
 #: InvenTree/status_codes.py:307
 msgid "Legacy stock tracking entry"
@@ -795,7 +795,7 @@ msgstr "Hesla se musí shodovat"
 
 #: InvenTree/views.py:452
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Zadáno špatné heslo"
 
 #: InvenTree/views.py:651 templates/navbar.html:157
 msgid "System Information"
