@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-04 22:47+0000\n"
-"PO-Revision-Date: 2023-04-05 13:32\n"
+"POT-Creation-Date: 2023-04-10 14:27+0000\n"
+"PO-Revision-Date: 2023-04-10 17:58\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -25,7 +25,7 @@ msgstr "Nie znaleziono punktu końcowego API"
 msgid "User does not have permission to view this model"
 msgstr ""
 
-#: InvenTree/exceptions.py:86
+#: InvenTree/exceptions.py:94
 msgid "Error details can be found in the admin panel"
 msgstr "Szczegóły błędu można znaleźć w panelu administracyjnym"
 
