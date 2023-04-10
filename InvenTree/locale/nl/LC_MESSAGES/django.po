@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-04 22:47+0000\n"
-"PO-Revision-Date: 2023-04-05 13:32\n"
+"POT-Creation-Date: 2023-04-10 14:27+0000\n"
+"PO-Revision-Date: 2023-04-10 17:58\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -25,7 +25,7 @@ msgstr "API eindpunt niet gevonden"
 msgid "User does not have permission to view this model"
 msgstr "Gebruiker heeft geen rechten om dit model te bekijken"
 
-#: InvenTree/exceptions.py:86
+#: InvenTree/exceptions.py:94
 msgid "Error details can be found in the admin panel"
 msgstr "Error details kunnen worden gevonden in het admin scherm"
 
@@ -157,7 +157,7 @@ msgstr "Ongeldig groepsbereik: {g}"
 #: InvenTree/helpers.py:702
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
-msgstr ""
+msgstr "Groepsbereik {g} overschrijdt toegestane hoeveelheid ({q})"
 
 #: InvenTree/helpers.py:726 InvenTree/helpers.py:733 InvenTree/helpers.py:748
 #, python-brace-format
@@ -175,7 +175,7 @@ msgstr "Hoeveelheid van unieke serienummers ({s}) moet overeenkomen met de hoeve
 
 #: InvenTree/helpers.py:960
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Verwijder HTML tags van deze waarde"
 
 #: InvenTree/models.py:243
 msgid "Improperly formatted pattern"
@@ -290,7 +290,7 @@ msgstr "Fout bij hernoemen bestand"
 
 #: InvenTree/models.py:527
 msgid "Duplicate names cannot exist under the same parent"
-msgstr ""
+msgstr "Dubbele namen kunnen niet bestaan onder hetzelfde bovenliggende object"
 
 #: InvenTree/models.py:546
 msgid "Invalid choice"
@@ -398,7 +398,7 @@ msgstr "Valuta"
 
 #: InvenTree/serializers.py:85
 msgid "Select currency from available options"
-msgstr ""
+msgstr "Selecteer valuta uit beschikbare opties"
 
 #: InvenTree/serializers.py:334
 msgid "Filename"
@@ -545,7 +545,7 @@ msgstr "Russisch"
 
 #: InvenTree/settings.py:728
 msgid "Slovenian"
-msgstr ""
+msgstr "Sloveens"
 
 #: InvenTree/settings.py:729
 msgid "Swedish"
@@ -612,7 +612,7 @@ msgstr "Retour"
 
 #: InvenTree/status_codes.py:182 InvenTree/status_codes.py:395
 msgid "In Progress"
-msgstr ""
+msgstr "In Behandeling"
 
 #: InvenTree/status_codes.py:183 order/models.py:1295
 #: templates/js/translated/sales_order.js:1418
@@ -731,15 +731,15 @@ msgstr "Verbruikt door productieorder"
 
 #: InvenTree/status_codes.py:340
 msgid "Shipped against Sales Order"
-msgstr ""
+msgstr "Verzonden onder verkooporder"
 
 #: InvenTree/status_codes.py:342
 msgid "Received against Purchase Order"
-msgstr ""
+msgstr "Ontvangen onder verkooporder"
 
 #: InvenTree/status_codes.py:344
 msgid "Returned against Return Order"
-msgstr ""
+msgstr "Geretourneerd onder retourorder"
 
 #: InvenTree/status_codes.py:358
 msgid "Production"
@@ -747,23 +747,23 @@ msgstr "Productie"
 
 #: InvenTree/status_codes.py:430
 msgid "Return"
-msgstr ""
+msgstr "Retour"
 
 #: InvenTree/status_codes.py:431
 msgid "Repair"
-msgstr ""
+msgstr "Herstel"
 
 #: InvenTree/status_codes.py:432
 msgid "Refund"
-msgstr ""
+msgstr "Restitutie"
 
 #: InvenTree/status_codes.py:433
 msgid "Replace"
-msgstr ""
+msgstr "Vervangen"
 
 #: InvenTree/status_codes.py:434
 msgid "Reject"
-msgstr ""
+msgstr "Afwijzen"
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
@@ -1027,7 +1027,7 @@ msgstr "Verantwoordelijke"
 
 #: build/models.py:287
 msgid "User or group responsible for this build order"
-msgstr ""
+msgstr "Gebruiker of groep verantwoordelijk voor deze bouwopdracht"
 
 #: build/models.py:292 build/templates/build/detail.html:108
 #: company/templates/company/manufacturer_part.html:107
@@ -1315,23 +1315,23 @@ msgstr "Verwijder alle productieuitvoeren die niet zijn voltooid"
 
 #: build/serializers.py:493
 msgid "Accept as consumed by this build order"
-msgstr ""
+msgstr "Accepteer zoals geconsumeerd onder deze bouwopdracht"
 
 #: build/serializers.py:494
 msgid "Deallocate before completing this build order"
-msgstr ""
+msgstr "De-alloceren voordat deze bouwopdracht voltooid wordt"
 
 #: build/serializers.py:517
 msgid "Overallocated Stock"
-msgstr ""
+msgstr "Overgealloceerde voorraad"
 
 #: build/serializers.py:519
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr ""
+msgstr "Hoe wilt u omgaan met extra voorraaditems toegewezen aan de bouworder"
 
 #: build/serializers.py:529
 msgid "Some stock items have been overallocated"
-msgstr ""
+msgstr "Sommige voorraadartikelen zijn overalloceerd"
 
 #: build/serializers.py:534
 msgid "Accept Unallocated"
@@ -1437,7 +1437,7 @@ msgstr "Optionele Items"
 
 #: build/serializers.py:856
 msgid "Allocate optional BOM items to build order"
-msgstr ""
+msgstr "Alloceer optionele BOM items om bestelling te bouwen"
 
 #: build/tasks.py:100
 msgid "Stock required for build order"
@@ -1461,7 +1461,7 @@ msgstr "Productieorder {bo} is nu achterstallig"
 #: stock/templates/stock/item_base.html:41
 #: stock/templates/stock/location.html:54
 msgid "Barcode actions"
-msgstr ""
+msgstr "Barcode acties"
 
 #: build/templates/build/build_base.html:43
 #: company/templates/company/supplier_part.html:40
@@ -1484,7 +1484,7 @@ msgstr "QR-code weergeven"
 #: templates/js/translated/barcode.js:466
 #: templates/js/translated/barcode.js:471
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Barcode loskoppelen"
 
 #: build/templates/build/build_base.html:48
 #: company/templates/company/supplier_part.html:44
@@ -1495,7 +1495,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:50
 #: stock/templates/stock/location.html:60
 msgid "Link Barcode"
-msgstr ""
+msgstr "Koppel Barcode"
 
 #: build/templates/build/build_base.html:57
 #: order/templates/order/order_base.html:46
@@ -1522,7 +1522,7 @@ msgstr "Annuleer Productie"
 
 #: build/templates/build/build_base.html:77
 msgid "Duplicate Build"
-msgstr ""
+msgstr "Dupliceer Bouw"
 
 #: build/templates/build/build_base.html:80
 msgid "Delete Build"
@@ -1634,11 +1634,11 @@ msgstr "Verwijder Productieorder"
 
 #: build/templates/build/build_base.html:290
 msgid "Build Order QR Code"
-msgstr ""
+msgstr "Bouworder QR Code"
 
 #: build/templates/build/build_base.html:302
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Link Barcode aan bouwopdracht"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
