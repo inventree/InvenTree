@@ -197,7 +197,7 @@ class Order(InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
 
         return self.__class__.objects.filter(pk=self.pk).filter(self.__class__.overdue_filter()).exists()
 
-    description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
+    description = models.CharField(max_length=250, blank=True, verbose_name=_('Description'), help_text=_('Order description (optional)'))
 
     link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 
