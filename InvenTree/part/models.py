@@ -856,9 +856,9 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     )
 
     description = models.CharField(
-        max_length=250, blank=False,
+        max_length=250, blank=True,
         verbose_name=_('Description'),
-        help_text=_('Part description')
+        help_text=_('Part description (optional)')
     )
 
     keywords = models.CharField(
