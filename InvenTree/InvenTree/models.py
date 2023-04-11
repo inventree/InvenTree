@@ -731,7 +731,7 @@ class InvenTreeBarcodeMixin(models.Model):
 
         return cls.objects.filter(barcode_hash=barcode_hash).first()
 
-    def assign_barcode(self, barcode_hash=None, barcode_data=None, raise_error=True):
+    def assign_barcode(self, barcode_hash=None, barcode_data=None, raise_error=True, save=True):
         """Assign an external (third-party) barcode to this object."""
 
         # Must provide either barcode_hash or barcode_data
@@ -754,7 +754,8 @@ class InvenTreeBarcodeMixin(models.Model):
 
         self.barcode_hash = barcode_hash
 
-        self.save()
+        if save:
+            self.save()
 
         return True
 

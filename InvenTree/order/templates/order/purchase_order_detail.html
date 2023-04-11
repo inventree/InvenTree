@@ -20,7 +20,7 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.purchase_order.change %}
-                {% if order.is_pending or allow_extra_editing %}
+                {% if order.is_open or allow_extra_editing %}
                 <a class='btn btn-primary' href='{% url "po-upload" order.id %}' role='button'>
                     <span class='fas fa-file-upload side-icon'></span> {% trans "Upload File" %}
                 </a>
@@ -40,7 +40,7 @@
     <div class='panel-content'>
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
             {% if roles.purchase_order.change %}
-            {% if order.is_pending or allow_extra_editing %}
+            {% if order.is_open or allow_extra_editing %}
             <div class='btn-group' role='group'>
                 <!-- Multiple-select actions -->
                 <button id='multi-select-options' class='btn btn-primary dropdown-toggle' data-bs-toggle='dropdown'>
@@ -68,7 +68,7 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.purchase_order.change %}
-                {% if order.is_pending or allow_extra_editing %}
+                {% if order.is_open or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-po-extra-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
                 </button>
@@ -248,7 +248,7 @@ onPanelLoad('order-items', function() {
         name: 'purchaseorderextraline',
         filtertarget: '#filter-list-purchase-order-extra-lines',
         {% settings_value "PURCHASEORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
-        {% if order.is_pending or allow_edit %}
+        {% if order.is_open or allow_edit %}
         allow_edit: {% js_bool roles.purchase_order.change %},
         allow_delete: {% js_bool roles.purchase_order.delete %},
         {% else %}

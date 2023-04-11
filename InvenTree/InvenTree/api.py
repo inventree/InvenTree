@@ -5,18 +5,20 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
-from django_filters.rest_framework import DjangoFilterBackend
 from django_q.models import OrmQ
-from rest_framework import filters, permissions
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import users.models
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
+from plugin.serializers import MetadataSerializer
 
+from .mixins import RetrieveUpdateAPI
 from .status import is_worker_running
 from .version import (inventreeApiVersion, inventreeInstanceName,
                       inventreeVersion)
@@ -199,11 +201,7 @@ class AttachmentMixin:
         RolePermission,
     ]
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
@@ -253,20 +251,16 @@ class APISearchView(APIView):
 
         data = request.data
 
-        search = data.get('search', '')
-
-        # Enforce a 'limit' parameter
-        try:
-            limit = int(data.get('limit', 1))
-        except ValueError:
-            limit = 1
-
-        try:
-            offset = int(data.get('offset', 0))
-        except ValueError:
-            offset = 0
-
         results = {}
+
+        # These parameters are passed through to the individual queries, with optional default values
+        pass_through_params = {
+            'search': '',
+            'search_regex': False,
+            'search_whole': False,
+            'limit': 1,
+            'offset': 0,
+        }
 
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested
@@ -274,11 +268,8 @@ class APISearchView(APIView):
 
                 params = data[key]
 
-                params['search'] = search
-
-                # Enforce limit
-                params['limit'] = limit
-                params['offset'] = offset
+                for k, v in pass_through_params.items():
+                    params[k] = request.data.get(k, v)
 
                 # Enforce json encoding
                 params['format'] = 'json'
@@ -313,3 +304,71 @@ class APISearchView(APIView):
                     }
 
         return Response(results)
+
+
+class StatusView(APIView):
+    """Generic API endpoint for discovering information on 'status codes' for a particular model.
+
+    This class should be implemented as a subclass for each type of status.
+    For example, the API endpoint /stock/status/ will have information about
+    all available 'StockStatus' codes
+    """
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    # Override status_class for implementing subclass
+    MODEL_REF = 'statusmodel'
+
+    def get_status_model(self, *args, **kwargs):
+        """Return the StatusCode moedl based on extra parameters passed to the view"""
+
+        status_model = self.kwargs.get(self.MODEL_REF, None)
+
+        if status_model is None:
+            raise ValidationError(f"StatusView view called without '{self.MODEL_REF}' parameter")
+
+        return status_model
+
+    def get(self, request, *args, **kwargs):
+        """Perform a GET request to learn information about status codes"""
+
+        status_class = self.get_status_model()
+
+        if not status_class:
+            raise NotImplementedError("status_class not defined for this endpoint")
+
+        data = {
+            'class': status_class.__name__,
+            'values': status_class.dict(),
+        }
+
+        return Response(data)
+
+
+class MetadataView(RetrieveUpdateAPI):
+    """Generic API endpoint for reading and editing metadata for a model"""
+
+    MODEL_REF = 'model'
+
+    def get_model_type(self):
+        """Return the model type associated with this API instance"""
+        model = self.kwargs.get(self.MODEL_REF, None)
+
+        if model is None:
+            raise ValidationError(f"MetadataView called without '{self.MODEL_REF}' parameter")
+
+        return model
+
+    def get_permission_model(self):
+        """Return the 'permission' model associated with this view"""
+        return self.get_model_type()
+
+    def get_queryset(self):
+        """Return the queryset for this endpoint"""
+        return self.get_model_type().objects.all()
+
+    def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance"""
+        return MetadataSerializer(self.get_model_type(), *args, **kwargs)

@@ -9,15 +9,17 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions, serializers, status
+from rest_framework import permissions, serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 import order.models
 from build.models import Build, BuildItem
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView)
-from InvenTree.filters import InvenTreeOrderingFilter
+                           ListCreateDestroyAPIView, MetadataView)
+from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
+                               SEARCH_ORDER_FILTER_ALIAS,
+                               InvenTreeSearchFilter)
 from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
@@ -28,7 +30,6 @@ from InvenTree.permissions import RolePermission
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from part.admin import PartCategoryResource, PartResource
-from plugin.serializers import MetadataSerializer
 
 from . import serializers as part_serializers
 from . import views
@@ -153,11 +154,7 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -221,23 +218,10 @@ class CategoryTree(ListAPI):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategoryTree
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
-
-
-class CategoryMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating PartCategory metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return a MetadataSerializer pointing to the referenced PartCategory instance"""
-        return MetadataSerializer(PartCategory, *args, **kwargs)
-
-    queryset = PartCategory.objects.all()
 
 
 class CategoryParameterList(ListCreateAPI):
@@ -395,11 +379,7 @@ class PartTestTemplateList(ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
 
 class PartThumbs(ListAPI):
@@ -432,7 +412,7 @@ class PartThumbs(ListAPI):
         return Response(data)
 
     filter_backends = [
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     search_fields = [
@@ -696,16 +676,6 @@ class PartRequirements(RetrieveAPI):
         data["required"] = data["required_build_order_quantity"] + data["required_sales_order_quantity"]
 
         return Response(data)
-
-
-class PartMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating Part metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Returns a MetadataSerializer instance pointing to the referenced Part"""
-        return MetadataSerializer(Part, *args, **kwargs)
-
-    queryset = Part.objects.all()
 
 
 class PartPricingDetail(RetrieveUpdateAPI):
@@ -1245,11 +1215,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
         'name',
@@ -1358,11 +1324,7 @@ class PartParameterTemplateList(ListCreateAPI):
     queryset = PartParameterTemplate.objects.all()
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -1413,16 +1375,6 @@ class PartParameterTemplateDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PartParameterTemplate.objects.all()
     serializer_class = part_serializers.PartParameterTemplateSerializer
-
-
-class PartParameterTemplateMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating PartParameterTemplate metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return a MetadataSerializer pointing to the referenced PartParameterTemplate instance"""
-        return MetadataSerializer(PartParameterTemplate, *args, **kwargs)
-
-    queryset = PartParameterTemplate.objects.all()
 
 
 class PartParameterList(ListCreateAPI):
@@ -1493,10 +1445,7 @@ class PartStocktakeList(ListCreateAPI):
 
         return context
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     ordering_fields = [
         'part',
@@ -1527,10 +1476,7 @@ class PartStocktakeReportList(ListAPI):
     queryset = PartStocktakeReport.objects.all()
     serializer_class = part_serializers.PartStocktakeReportSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     ordering_fields = [
         'date',
@@ -1762,11 +1708,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     search_fields = [
         'reference',
@@ -1867,11 +1809,7 @@ class BomItemSubstituteList(ListCreateAPI):
     serializer_class = part_serializers.BomItemSubstituteSerializer
     queryset = BomItemSubstitute.objects.all()
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'part',
@@ -1884,16 +1822,6 @@ class BomItemSubstituteDetail(RetrieveUpdateDestroyAPI):
 
     queryset = BomItemSubstitute.objects.all()
     serializer_class = part_serializers.BomItemSubstituteSerializer
-
-
-class BomItemMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating PartBOM metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return a MetadataSerializer pointing to the referenced PartCategory instance"""
-        return MetadataSerializer(BomItem, *args, **kwargs)
-
-    queryset = BomItem.objects.all()
 
 
 part_api_urls = [
@@ -1910,7 +1838,7 @@ part_api_urls = [
         # Category detail endpoints
         path(r'<int:pk>/', include([
 
-            re_path(r'^metadata/', CategoryMetadata.as_view(), name='api-part-category-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': PartCategory}, name='api-part-category-metadata'),
 
             # PartCategory detail endpoint
             re_path(r'^.*$', CategoryDetail.as_view(), name='api-part-category-detail'),
@@ -1953,7 +1881,7 @@ part_api_urls = [
     re_path(r'^parameter/', include([
         path('template/', include([
             re_path(r'^(?P<pk>\d+)/', include([
-                re_path(r'^metadata/?', PartParameterTemplateMetadata.as_view(), name='api-part-parameter-template-metadata'),
+                re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameter}, name='api-part-parameter-template-metadata'),
                 re_path(r'^.*$', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
             ])),
             re_path(r'^.*$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
@@ -2000,7 +1928,7 @@ part_api_urls = [
         re_path(r'^bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'),
 
         # Part metadata
-        re_path(r'^metadata/', PartMetadata.as_view(), name='api-part-metadata'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': Part}, name='api-part-metadata'),
 
         # Part pricing
         re_path(r'^pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
@@ -2032,7 +1960,7 @@ bom_api_urls = [
     # BOM Item Detail
     path(r'<int:pk>/', include([
         re_path(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
-        re_path(r'^metadata/?', BomItemMetadata.as_view(), name='api-bom-item-metadata'),
+        re_path(r'^metadata/?', MetadataView.as_view(), {'model': BomItem}, name='api-bom-item-metadata'),
         re_path(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
 

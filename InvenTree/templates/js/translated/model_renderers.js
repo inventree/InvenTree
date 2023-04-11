@@ -362,10 +362,16 @@ function renderSalesOrder(data, parameters={}) {
         image = data.customer_detail.thumbnail || data.customer_detail.image || blankImage();
     }
 
+    let text = data.reference;
+
+    if (data.customer_detail) {
+        text += ` - ${data.customer_detail.name}`;
+    }
+
     return renderModel(
         {
             image: image,
-            text: `${data.reference} - ${data.customer_detail.name}`,
+            text: text,
             textSecondary: shortenString(data.description),
             url: data.url || `/order/sales-order/${data.pk}/`,
         },

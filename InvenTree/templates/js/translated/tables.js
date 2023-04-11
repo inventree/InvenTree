@@ -355,6 +355,16 @@ function convertQueryParameters(params, filters) {
         delete params['original_search'];
     }
 
+    // Enable regex search
+    if (user_settings.SEARCH_REGEX) {
+        params['search_regex'] = true;
+    }
+
+    // Enable whole word search
+    if (user_settings.SEARCH_WHOLE) {
+        params['search_whole'] = true;
+    }
+
     return params;
 }
 

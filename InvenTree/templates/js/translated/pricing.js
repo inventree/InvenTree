@@ -26,7 +26,7 @@
  * Returns the base currency used for conversion operations
  */
 function baseCurrency() {
-    return global_settings.INVENTREE_BASE_CURRENCY || 'USD';
+    return global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
 }
 
 

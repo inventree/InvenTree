@@ -10,7 +10,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 from rest_framework.response import Response
 
 import build.models
@@ -18,9 +17,9 @@ import common.models
 import InvenTree.helpers
 import order.models
 import part.models
-from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
-                              RetrieveUpdateDestroyAPI)
-from plugin.serializers import MetadataSerializer
+from InvenTree.api import MetadataView
+from InvenTree.filters import InvenTreeSearchFilter
+from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from stock.models import StockItem, StockItemAttachment
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
@@ -36,7 +35,7 @@ class ReportListView(ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     filterset_fields = [
@@ -449,31 +448,6 @@ class ReturnOrderReportPrint(ReturnOrderReportMixin, ReportPrintMixin, RetrieveA
     pass
 
 
-class ReportMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating Report metadata."""
-    MODEL_REF = 'reportmodel'
-
-    def _get_model(self, *args, **kwargs):
-        """Return model depending on which report type is requested in get_view constructor."""
-        reportmodel = self.kwargs.get(self.MODEL_REF, PurchaseOrderReport)
-
-        if reportmodel not in [PurchaseOrderReport, SalesOrderReport, BuildReport, BillOfMaterialsReport, TestReport]:
-            raise ValidationError("Invalid report model")
-        return reportmodel
-
-        # Return corresponding Serializer
-    def get_serializer(self, *args, **kwargs):
-        """Return correct MetadataSerializer instance depending on which model is requested"""
-        # Get type of report, make sure its one of the allowed values
-        UseModel = self._get_model(*args, **kwargs)
-        return MetadataSerializer(UseModel, *args, **kwargs)
-
-    def get_queryset(self, *args, **kwargs):
-        """Return correct queryset depending on which model is requested"""
-        UseModel = self._get_model(*args, **kwargs)
-        return UseModel.objects.all()
-
-
 report_api_urls = [
 
     # Purchase order reports
@@ -481,7 +455,7 @@ report_api_urls = [
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/', PurchaseOrderReportPrint.as_view(), name='api-po-report-print'),
-            re_path(r'metadata/', ReportMetadata.as_view(), {ReportMetadata.MODEL_REF: PurchaseOrderReport}, name='api-po-report-metadata'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': PurchaseOrderReport}, name='api-po-report-metadata'),
             path('', PurchaseOrderReportDetail.as_view(), name='api-po-report-detail'),
         ])),
 
@@ -494,7 +468,7 @@ report_api_urls = [
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/', SalesOrderReportPrint.as_view(), name='api-so-report-print'),
-            re_path(r'metadata/', ReportMetadata.as_view(), {ReportMetadata.MODEL_REF: SalesOrderReport}, name='api-so-report-metadata'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': SalesOrderReport}, name='api-so-report-metadata'),
             path('', SalesOrderReportDetail.as_view(), name='api-so-report-detail'),
         ])),
 
@@ -502,9 +476,10 @@ report_api_urls = [
     ])),
 
     # Return order reports
-    re_path(r'return-order/', include([
+    re_path(r'ro/', include([
         path(r'<int:pk>/', include([
             path(r'print/', ReturnOrderReportPrint.as_view(), name='api-return-order-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': ReturnOrderReport}, name='api-so-report-metadata'),
             path('', ReturnOrderReportDetail.as_view(), name='api-return-order-report-detail'),
         ])),
         path('', ReturnOrderReportList.as_view(), name='api-return-order-report-list'),
@@ -515,7 +490,7 @@ report_api_urls = [
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
-            re_path(r'metadata/', ReportMetadata.as_view(), {ReportMetadata.MODEL_REF: BuildReport}, name='api-build-report-metadata'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': BuildReport}, name='api-build-report-metadata'),
             re_path(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
         ])),
 
@@ -529,7 +504,7 @@ report_api_urls = [
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
-            re_path(r'metadata/', ReportMetadata.as_view(), {ReportMetadata.MODEL_REF: BillOfMaterialsReport}, name='api-bom-report-metadata'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': BillOfMaterialsReport}, name='api-bom-report-metadata'),
             re_path(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
         ])),
 
@@ -542,7 +517,7 @@ report_api_urls = [
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
-            re_path(r'metadata/', ReportMetadata.as_view(), {ReportMetadata.MODEL_REF: TestReport}, name='api-stockitem-testreport-metadata'),
+            re_path(r'metadata/', MetadataView.as_view(), {'report': TestReport}, name='api-stockitem-testreport-metadata'),
             re_path(r'^.*$', StockItemTestReportDetail.as_view(), name='api-stockitem-testreport-detail'),
         ])),
 

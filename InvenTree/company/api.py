@@ -5,15 +5,14 @@ from django.urls import include, path, re_path
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 
 import part.models
-from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView
-from InvenTree.filters import InvenTreeOrderingFilter
+from InvenTree.api import (AttachmentMixin, ListCreateDestroyAPIView,
+                           MetadataView)
+from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
+                               SEARCH_ORDER_FILTER_ALIAS)
 from InvenTree.helpers import str2bool
-from InvenTree.mixins import (ListCreateAPI, RetrieveUpdateAPI,
-                              RetrieveUpdateDestroyAPI)
-from plugin.serializers import MetadataSerializer
+from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 
 from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
                      ManufacturerPartAttachment, ManufacturerPartParameter,
@@ -45,11 +44,7 @@ class CompanyList(ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'is_customer',
@@ -87,16 +82,6 @@ class CompanyDetail(RetrieveUpdateDestroyAPI):
         return queryset
 
 
-class CompanyMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating Company metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance for a Company"""
-        return MetadataSerializer(Company, *args, **kwargs)
-
-    queryset = Company.objects.all()
-
-
 class CompanyAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for the CompanyAttachment model"""
 
@@ -125,11 +110,7 @@ class ContactList(ListCreateDestroyAPIView):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'company',
@@ -203,11 +184,7 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
         'manufacturer__name',
@@ -229,16 +206,6 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
 
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
-
-
-class ManufacturerPartMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating ManufacturerPart metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance for a Company"""
-        return MetadataSerializer(ManufacturerPart, *args, **kwargs)
-
-    queryset = ManufacturerPart.objects.all()
 
 
 class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
@@ -263,11 +230,30 @@ class ManufacturerPartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI
     serializer_class = ManufacturerPartAttachmentSerializer
 
 
+class ManufacturerPartParameterFilter(rest_filters.FilterSet):
+    """Custom filterset for the ManufacturerPartParameterList API endpoint"""
+
+    class Meta:
+        """Metaclass options"""
+        model = ManufacturerPartParameter
+        fields = [
+            'name',
+            'value',
+            'units',
+            'manufacturer_part',
+        ]
+
+    manufacturer = rest_filters.ModelChoiceFilter(queryset=Company.objects.all(), field_name='manufacturer_part__manufacturer')
+
+    part = rest_filters.ModelChoiceFilter(queryset=part.models.Part.objects.all(), field_name='manufacturer_part__part')
+
+
 class ManufacturerPartParameterList(ListCreateDestroyAPIView):
     """API endpoint for list view of ManufacturerPartParamater model."""
 
     queryset = ManufacturerPartParameter.objects.all()
     serializer_class = ManufacturerPartParameterSerializer
+    filterset_class = ManufacturerPartParameterFilter
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint"""
@@ -289,38 +275,7 @@ class ManufacturerPartParameterList(ListCreateDestroyAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
-    def filter_queryset(self, queryset):
-        """Custom filtering for the queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by manufacturer?
-        manufacturer = params.get('manufacturer', None)
-
-        if manufacturer is not None:
-            queryset = queryset.filter(manufacturer_part__manufacturer=manufacturer)
-
-        # Filter by part?
-        part = params.get('part', None)
-
-        if part is not None:
-            queryset = queryset.filter(manufacturer_part__part=part)
-
-        return queryset
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
-
-    filterset_fields = [
-        'name',
-        'value',
-        'units',
-        'manufacturer_part',
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
         'name',
@@ -417,11 +372,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
 
     serializer_class = SupplierPartSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
         'SKU',
@@ -468,16 +419,6 @@ class SupplierPartDetail(RetrieveUpdateDestroyAPI):
 
     read_only_fields = [
     ]
-
-
-class SupplierPartMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating SupplierPart metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance for a Company"""
-        return MetadataSerializer(SupplierPart, *args, **kwargs)
-
-    queryset = SupplierPart.objects.all()
 
 
 class SupplierPriceBreakFilter(rest_filters.FilterSet):
@@ -532,10 +473,7 @@ class SupplierPriceBreakList(ListCreateAPI):
 
         return self.serializer_class(*args, **kwargs)
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     ordering_fields = [
         'quantity',
@@ -567,7 +505,7 @@ manufacturer_part_api_urls = [
     ])),
 
     re_path(r'^(?P<pk>\d+)/?', include([
-        re_path('^metadata/', ManufacturerPartMetadata.as_view(), name='api-manufacturer-part-metadata'),
+        re_path('^metadata/', MetadataView.as_view(), {'model': ManufacturerPart}, name='api-manufacturer-part-metadata'),
         re_path('^.*$', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
     ])),
 
@@ -579,7 +517,7 @@ manufacturer_part_api_urls = [
 supplier_part_api_urls = [
 
     re_path(r'^(?P<pk>\d+)/?', include([
-        re_path('^metadata/', SupplierPartMetadata.as_view(), name='api-supplier-part-metadata'),
+        re_path('^metadata/', MetadataView.as_view(), {'model': SupplierPart}, name='api-supplier-part-metadata'),
         re_path('^.*$', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
     ])),
 
@@ -601,7 +539,7 @@ company_api_urls = [
     ])),
 
     re_path(r'^(?P<pk>\d+)/?', include([
-        re_path(r'^metadata/', CompanyMetadata.as_view(), name='api-company-metadata'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': Company}, name='api-company-metadata'),
         re_path(r'^.*$', CompanyDetail.as_view(), name='api-company-detail'),
     ])),
 

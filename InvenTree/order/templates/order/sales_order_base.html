@@ -33,6 +33,24 @@ src="{% static 'img/blank_image.png' %}"
 {% url 'admin:order_salesorder_change' order.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
+{% if barcodes %}
+<!-- Barcode actions menu -->
+<div class='btn-group' role='group'>
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-qrcode'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if roles.sales_order.change %}
+        {% if order.barcode_hash %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
 <!-- Printing actions -->
 <div class='btn-group' role='group'>
     <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
@@ -56,18 +74,27 @@ src="{% static 'img/blank_image.png' %}"
     </button>
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
-        {% if order.status == SalesOrderStatus.PENDING %}
-        <li><a class='dropdown-item' href='#' id='complete-order-shipments'><span class='fas fa-truck'></span> {% trans "Complete Shipments" %}</a></li>
+        {% if order.is_open %}
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
         {% endif %}
     </ul>
-
 </div>
-{% if order.status == SalesOrderStatus.PENDING %}
-<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
-    <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
-</button>
-{% endif %}
+<div class='btn-group' role='group'>
+    {% if order.is_pending %}
+    <button type='button' class='btn btn-primary' id='issue-order' title='{% trans "Issue Order" %}'>
+        <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
+    </button>
+    {% elif order.status == SalesOrderStatus.IN_PROGRESS %}
+    {% if not order.is_completed %}
+    <button type='button' class='btn btn-success' id='complete-order-shipments' title='{% trans "Ship Items" %}'>
+        <span class='fas fa-truck'></span> {% trans "Ship Items" %}
+    </button>
+    {% endif %}
+    <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
+        <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
+    </button>
+    {% endif %}
+</div>
 {% endif %}
 {% endblock actions %}
 
@@ -85,6 +112,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Order Description" %}</td>
         <td>{{ order.description }}{% include "clip.html" %}</td>
     </tr>
+    {% include "barcode_data.html" with instance=order %}
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Order Status" %}</td>
@@ -232,6 +260,15 @@ $("#complete-order-shipments").click(function() {
     );
 });
 
+$('#issue-order').click(function() {
+    issueSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true
+        }
+    );
+});
+
 $("#cancel-order").click(function() {
 
     cancelSalesOrder(
@@ -259,6 +296,35 @@ $('#print-order-report').click(function() {
         url: '{% url "api-so-report-list" %}',
     });
 });
+{% endif %}
+
+{% if barcodes %}
+<!-- Barcode functionality callbacks -->
+$('#show-qr-code').click(function() {
+    showQRDialog(
+        '{% trans "Sales Order QR Code" %}',
+        '{"salesorder": {{ order.pk }}}'
+    );
+});
+
+{% if roles.sales_order.change %}
+$("#barcode-link").click(function() {
+    linkBarcodeDialog(
+        {
+            salesorder: {{ order.pk }},
+        },
+        {
+            title: '{% trans "Link Barcode to Sales Order" %}',
+        }
+    );
+});
+
+$("#barcode-unlink").click(function() {
+    unlinkBarcode({
+        salesorder: {{ order.pk }},
+    });
+});
+{% endif %}
 {% endif %}
 
 $('#export-order').click(function() {
