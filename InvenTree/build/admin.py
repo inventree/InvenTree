@@ -28,8 +28,6 @@ class BuildResource(InvenTreeResource):
             'metadata',
         ]
 
-    id = Field(attribute='pk')
-
     reference = Field(attribute='reference')
 
     title = Field(attribute='title')

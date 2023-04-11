@@ -36,7 +36,7 @@ class LocationResource(InvenTreeResource):
             'owner', 'icon',
         ]
 
-    id = Field(attribute='pk', column_name=_('Location ID'))
+    id = Field(attribute='id', column_name=_('Location ID'), widget=widgets.IntegerWidget())
     name = Field(attribute='name', column_name=_('Location Name'))
     description = Field(attribute='description', column_name=_('Description'))
     parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(StockLocation))
