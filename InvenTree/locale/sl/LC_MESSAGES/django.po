@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-10 14:27+0000\n"
-"PO-Revision-Date: 2023-04-10 17:58\n"
+"POT-Creation-Date: 2023-04-11 13:38+0000\n"
+"PO-Revision-Date: 2023-04-11 18:00\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -4732,7 +4732,11 @@ msgstr ""
 
 #: order/templates/order/order_base.html:79
 #: order/templates/order/order_base.html:80
-msgid "Submit Order"
+#: order/templates/order/return_order_base.html:83
+#: order/templates/order/return_order_base.html:84
+#: order/templates/order/sales_order_base.html:84
+#: order/templates/order/sales_order_base.html:85
+msgid "Issue Order"
 msgstr ""
 
 #: order/templates/order/order_base.html:83
@@ -4974,13 +4978,6 @@ msgstr ""
 #: order/templates/order/return_order_base.html:65
 #: order/templates/order/sales_order_base.html:65
 msgid "Print packing list"
-msgstr ""
-
-#: order/templates/order/return_order_base.html:83
-#: order/templates/order/return_order_base.html:84
-#: order/templates/order/sales_order_base.html:84
-#: order/templates/order/sales_order_base.html:85
-msgid "Issue Order"
 msgstr ""
 
 #: order/templates/order/return_order_base.html:140
