@@ -9,8 +9,7 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-
-FROM python:3.9-slim as base
+FROM python:3.9-slim as inventree_base
 
 # Build arguments for this image
 ARG commit_hash=""
@@ -57,7 +56,7 @@ RUN apt-get update
 
 # Install required system packages
 RUN apt-get install -y  --no-install-recommends \
-    git gcc g++ gettext gnupg libffi-dev libssl-dev cargo \
+    git gcc g++ gettext gnupg libffi-dev libssl-dev \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
     poppler-utils libpango-1.0-0 libpangoft2-1.0-0 \
     # Image format support
@@ -73,6 +72,12 @@ RUN apt-get install -y  --no-install-recommends \
 # Update pip
 RUN pip install --upgrade pip
 
+# For ARMv7 architecture, add the pinwheels repo (for cryptography library)
+RUN \
+    if [ `dpkg --print-architecture` = "armhf" ]; then \
+    printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
+    fi
+
 # Install required base-level python packages
 COPY ./docker/requirements.txt base_requirements.txt
 RUN pip install --disable-pip-version-check -U -r base_requirements.txt
@@ -82,7 +87,7 @@ RUN pip install --disable-pip-version-check -U -r base_requirements.txt
 # - Installs required python packages from requirements.txt
 # - Starts a gunicorn webserver
 
-FROM base as production
+FROM inventree_base as production
 
 ENV INVENTREE_DEBUG=False
 
@@ -118,7 +123,7 @@ ENTRYPOINT ["/bin/bash", "./init.sh"]
 # TODO: e.g. -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} fails here
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
-FROM base as dev
+FROM inventree_base as dev
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
