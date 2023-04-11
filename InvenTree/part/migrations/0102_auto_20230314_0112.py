@@ -6,6 +6,8 @@ import logging
 from django.db import migrations
 from jinja2 import Template
 
+from InvenTree.helpers import normalize
+
 
 logger = logging.getLogger('inventree')
 
@@ -68,14 +70,22 @@ def update_bom_item(apps, schema_editor):
             """
 
             if item.validated:
-                new_hash = hashlib.md5(str(item.part.pk).encode())
-                new_hash.update(str(item.sub_part.pk).encode())
-                new_hash.update(str(item.quantity).encode())
-                new_hash.update(str(item.reference).encode())
-                new_hash.update(str(item.optional).encode())
-                new_hash.update(str(item.inherited).encode())
-                new_hash.update(str(item.consumable).encode())
-                new_hash.update(str(item.inherited).encode())
+
+                new_hash = hashlib.md5(''.encode())
+
+                components = [
+                    item.part.pk,
+                    item.sub_part.pk,
+                    normalize(item.quantity),
+                    item.reference,
+                    item.optional,
+                    item.inherited,
+                    item.consumable,
+                    item.allow_variants
+                ]
+
+                for component in components:
+                    new_hash.update(str(component).encode())
 
                 item.checksum = str(new_hash.digest())
 
