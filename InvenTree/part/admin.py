@@ -189,7 +189,7 @@ class PartCategoryResource(InvenTreeResource):
             'icon',
         ]
 
-    id = Field(attribute='pk', column_name=_('Category ID'))
+    id = Field(attribute='pk', column_name=_('Category ID'), widget=widgets.IntegerWidget())
     name = Field(attribute='name', column_name=_('Category Name'))
     description = Field(attribute='description', column_name=_('Description'))
     parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
@@ -264,7 +264,7 @@ class BomItemResource(InvenTreeResource):
 
     level = Field(attribute='level', column_name=_('BOM Level'), readonly=True)
 
-    bom_id = Field(attribute='pk', column_name=_('BOM Item ID'))
+    bom_id = Field(attribute='pk', column_name=_('BOM Item ID'), widget=widgets.IntegerWidget())
 
     # ID of the parent part
     parent_part_id = Field(attribute='part', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.Part))
