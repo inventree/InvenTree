@@ -44,7 +44,7 @@ class LocationResource(InvenTreeResource):
     pathstring = Field(attribute='pathstring', column_name=_('Location Path'))
 
     # Calculated fields
-    items = Field(attribute='item_count', column_name=_('Stock Items'), widget=widgets.IntegerWidget())
+    items = Field(attribute='item_count', column_name=_('Stock Items'), widget=widgets.IntegerWidget(), readonly=True)
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
         """Rebuild after import to keep tree intact."""
