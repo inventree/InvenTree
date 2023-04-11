@@ -73,10 +73,12 @@ RUN apt-get install -y  --no-install-recommends \
 RUN pip install --upgrade pip
 
 # For ARMv7 architecture, add the pinwheels repo (for cryptography library)
+# Otherwise, we have to build from source, which is difficult
+# Ref: https://github.com/inventree/InvenTree/pull/4598
 RUN \
-    if [ `dpkg --print-architecture` = "armhf" ]; then \
-    printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
-    fi
+   if [ `dpkg --print-architecture` = "armhf" ]; then \
+   printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
+   fi
 
 # Install required base-level python packages
 COPY ./docker/requirements.txt base_requirements.txt
