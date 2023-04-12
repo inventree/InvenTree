@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-11 13:38+0000\n"
-"PO-Revision-Date: 2023-04-11 18:00\n"
+"PO-Revision-Date: 2023-04-12 17:56\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -1638,7 +1638,7 @@ msgstr "QR Code do Pedido de Produção"
 
 #: build/templates/build/build_base.html:302
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Vincular código de barras ao Pedido de Produção"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -3056,19 +3056,19 @@ msgstr "Número de resultados mostrados em cada seção da janela de visualizaç
 
 #: common/models.py:1983
 msgid "Regex Search"
-msgstr ""
+msgstr "Pesquisa de Regex"
 
 #: common/models.py:1984
 msgid "Enable regular expressions in search queries"
-msgstr ""
+msgstr "Permitir expressôes comuns nas conultas de pesquisas ( Queries)"
 
 #: common/models.py:1990
 msgid "Whole Word Search"
-msgstr ""
+msgstr "Busca de Palavras Inteira"
 
 #: common/models.py:1991
 msgid "Search queries return results for whole word matches"
-msgstr ""
+msgstr "Pesquisa retorna que palavra inteira coincide"
 
 #: common/models.py:1997
 msgid "Show Quantity in Forms"
@@ -4504,7 +4504,7 @@ msgstr "Estado do pedido de retorno"
 
 #: order/models.py:1850
 msgid "Only serialized items can be assigned to a Return Order"
-msgstr ""
+msgstr "Somente itens da série podem ser devolvidos"
 
 #: order/models.py:1858 order/models.py:1904
 #: order/templates/order/return_order_base.html:9
@@ -4513,32 +4513,32 @@ msgstr ""
 #: templates/js/translated/return_order.js:239
 #: templates/js/translated/stock.js:2720
 msgid "Return Order"
-msgstr ""
+msgstr "Devolver pedido"
 
 #: order/models.py:1866
 msgid "Select item to return from customer"
-msgstr ""
+msgstr "Selecione o item a ser devolvido pelo cliente"
 
 #: order/models.py:1871
 msgid "Received Date"
-msgstr ""
+msgstr "Data de Recebimento"
 
 #: order/models.py:1872
 msgid "The date this this return item was received"
-msgstr ""
+msgstr "Data que o pedido a ser devolvido foi recebido"
 
 #: order/models.py:1883 templates/js/translated/return_order.js:675
 #: templates/js/translated/table_filters.js:51
 msgid "Outcome"
-msgstr ""
+msgstr "Despesa/gastos"
 
 #: order/models.py:1883
 msgid "Outcome for this line item"
-msgstr ""
+msgstr "Gastos com esta linha de itens"
 
 #: order/models.py:1889
 msgid "Cost associated with return or repair for this line item"
-msgstr ""
+msgstr "Gastos para reparar e/ou devolver esta linha de itens"
 
 #: order/serializers.py:228
 msgid "Order cannot be cancelled"
@@ -4598,11 +4598,11 @@ msgstr "Digite o número de série para itens de estoque recebidos"
 
 #: order/serializers.py:509 templates/js/translated/barcode.js:41
 msgid "Barcode"
-msgstr ""
+msgstr "Código de barras"
 
 #: order/serializers.py:510
 msgid "Scanned barcode"
-msgstr ""
+msgstr "Código de barras lido"
 
 #: order/serializers.py:526
 msgid "Barcode is already in use"
@@ -4662,11 +4662,11 @@ msgstr "Os seguintes números de série já estão alocados"
 
 #: order/serializers.py:1529
 msgid "Return order line item"
-msgstr ""
+msgstr "Devolver item do pedido"
 
 #: order/serializers.py:1536
 msgid "Line item does not match return order"
-msgstr ""
+msgstr "Item do pedido não bate com a ordem de devolução"
 
 #: order/serializers.py:1539
 msgid "Line item has already been received"
