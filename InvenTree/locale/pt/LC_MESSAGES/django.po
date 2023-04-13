@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-11 13:38+0000\n"
-"PO-Revision-Date: 2023-04-12 17:56\n"
+"PO-Revision-Date: 2023-04-13 18:02\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -4670,15 +4670,15 @@ msgstr "Item do pedido não bate com a ordem de devolução"
 
 #: order/serializers.py:1539
 msgid "Line item has already been received"
-msgstr ""
+msgstr "Item do pedido já foi recebido"
 
 #: order/serializers.py:1571
 msgid "Items can only be received against orders which are in progress"
-msgstr ""
+msgstr "Itens só podem ser recebidos de pedidos em processamento"
 
 #: order/serializers.py:1652
 msgid "Line price currency"
-msgstr ""
+msgstr "Tipo de moeda para o item do pedido"
 
 #: order/tasks.py:26
 msgid "Overdue Purchase Order"
@@ -4737,7 +4737,7 @@ msgstr "Duplicar pedido"
 #: order/templates/order/sales_order_base.html:84
 #: order/templates/order/sales_order_base.html:85
 msgid "Issue Order"
-msgstr ""
+msgstr "Emitir Pedido"
 
 #: order/templates/order/order_base.html:83
 msgid "Receive items"
@@ -4809,11 +4809,11 @@ msgstr "O custo total não pôde ser calculado"
 
 #: order/templates/order/order_base.html:330
 msgid "Purchase Order QR Code"
-msgstr ""
+msgstr "Código QR do pedido"
 
 #: order/templates/order/order_base.html:342
 msgid "Link Barcode to Purchase Order"
-msgstr ""
+msgstr "Vincular o código de barras ao pedido"
 
 #: order/templates/order/order_wizard/match_fields.html:9
 #: part/templates/part/import_wizard/ajax_match_fields.html:9
@@ -4942,7 +4942,7 @@ msgstr "Adicionar item de linha"
 #: order/templates/order/return_order_detail.html:28
 #: order/templates/order/return_order_detail.html:29
 msgid "Receive Line Items"
-msgstr ""
+msgstr "Receber os itens do pedido"
 
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/purchase_order_detail.html:51
@@ -4973,7 +4973,7 @@ msgstr "Notas do Pedido"
 
 #: order/templates/order/return_order_base.html:61
 msgid "Print return order report"
-msgstr ""
+msgstr "Imprimir guia de devolução"
 
 #: order/templates/order/return_order_base.html:65
 #: order/templates/order/sales_order_base.html:65
@@ -5002,15 +5002,15 @@ msgstr "Custo Total"
 
 #: order/templates/order/return_order_base.html:258
 msgid "Return Order QR Code"
-msgstr ""
+msgstr "Código QR da guia de devolução"
 
 #: order/templates/order/return_order_base.html:270
 msgid "Link Barcode to Return Order"
-msgstr ""
+msgstr "Vincular Código de Barras a Pedido de Devolução"
 
 #: order/templates/order/return_order_sidebar.html:5
 msgid "Order Details"
-msgstr ""
+msgstr "Detalhes do pedido"
 
 #: order/templates/order/sales_order_base.html:61
 msgid "Print sales order report"
@@ -5019,7 +5019,7 @@ msgstr "Imprimir Relatório do Pedido de Venda"
 #: order/templates/order/sales_order_base.html:89
 #: order/templates/order/sales_order_base.html:90
 msgid "Ship Items"
-msgstr ""
+msgstr "Enviar itens"
 
 #: order/templates/order/sales_order_base.html:93
 #: templates/js/translated/sales_order.js:419
@@ -5038,11 +5038,11 @@ msgstr "Envios concluídos"
 
 #: order/templates/order/sales_order_base.html:305
 msgid "Sales Order QR Code"
-msgstr ""
+msgstr "Código QR da venda"
 
 #: order/templates/order/sales_order_base.html:317
 msgid "Link Barcode to Sales Order"
-msgstr ""
+msgstr "Código de barras da venda"
 
 #: order/templates/order/sales_order_detail.html:18
 msgid "Sales Order Items"
@@ -6572,7 +6572,7 @@ msgstr "Peça pode ser vendida a clientes"
 
 #: part/templates/part/part_base.html:147
 msgid "Part is not active"
-msgstr ""
+msgstr "Item bloqueado"
 
 #: part/templates/part/part_base.html:148
 #: templates/js/translated/company.js:930
@@ -7191,7 +7191,7 @@ msgstr "Filtros de consultas de pedidos de venda"
 
 #: report/models.py:520
 msgid "Return order query filters"
-msgstr ""
+msgstr "Filtrar pesquisa de itens devolvidos"
 
 #: report/models.py:573
 msgid "Snippet"
@@ -7295,11 +7295,11 @@ msgstr "Não Aprovado"
 
 #: report/templates/report/inventree_test_report_base.html:139
 msgid "No result (required)"
-msgstr ""
+msgstr "Sem resultado (obrigatório)"
 
 #: report/templates/report/inventree_test_report_base.html:141
 msgid "No result"
-msgstr ""
+msgstr "Nenhum resultado"
 
 #: report/templates/report/inventree_test_report_base.html:154
 #: stock/templates/stock/stock_sidebar.html:16
@@ -7562,52 +7562,52 @@ msgstr "Quantidade não deve exceder a quantidade disponível em estoque ({n})"
 
 #: stock/models.py:1376
 msgid "Serial numbers must be a list of integers"
-msgstr ""
+msgstr "Números de série devem ser uma lista de números inteiros"
 
 #: stock/models.py:1379
 msgid "Quantity does not match serial numbers"
-msgstr ""
+msgstr "A quantidade não corresponde aos números de série"
 
 #: stock/models.py:1386
 #, python-brace-format
 msgid "Serial numbers already exist: {exists}"
-msgstr ""
+msgstr "Números de série já existem: {existe}"
 
 #: stock/models.py:1456
 msgid "Stock item has been assigned to a sales order"
-msgstr ""
+msgstr "Item em estoque foi reservado para um pedido"
 
 #: stock/models.py:1459
 msgid "Stock item is installed in another item"
-msgstr ""
+msgstr "Item em estoque está instalado em outro item"
 
 #: stock/models.py:1462
 msgid "Stock item contains other items"
-msgstr ""
+msgstr "item em estoque contem outro(s) items"
 
 #: stock/models.py:1465
 msgid "Stock item has been assigned to a customer"
-msgstr ""
+msgstr "Item em estoque foi reservado para outro cliente"
 
 #: stock/models.py:1468
 msgid "Stock item is currently in production"
-msgstr ""
+msgstr "Item no estoque está em produção no momento"
 
 #: stock/models.py:1471
 msgid "Serialized stock cannot be merged"
-msgstr ""
+msgstr "Itens de série não podem ser mesclados"
 
 #: stock/models.py:1478 stock/serializers.py:946
 msgid "Duplicate stock items"
-msgstr ""
+msgstr "Item de estoque duplicado"
 
 #: stock/models.py:1482
 msgid "Stock items must refer to the same part"
-msgstr ""
+msgstr "Itens de estoque devem se referir à mesma peça"
 
 #: stock/models.py:1486
 msgid "Stock items must refer to the same supplier part"
-msgstr ""
+msgstr "Itens de estoque devem se referir à mesma peça do fornecedor"
 
 #: stock/models.py:1490
 msgid "Stock status codes must match"
@@ -7615,23 +7615,23 @@ msgstr "Códigos de estado do estoque devem corresponder"
 
 #: stock/models.py:1659
 msgid "StockItem cannot be moved as it is not in stock"
-msgstr ""
+msgstr "Item do estoque não pode ser realocado se não houver estoque da mesma"
 
 #: stock/models.py:2127
 msgid "Entry notes"
-msgstr ""
+msgstr "Observações de entrada"
 
 #: stock/models.py:2185
 msgid "Value must be provided for this test"
-msgstr ""
+msgstr "Deve-se fornecer o valor desse teste"
 
 #: stock/models.py:2191
 msgid "Attachment must be uploaded for this test"
-msgstr ""
+msgstr "O anexo deve ser enviado para este teste"
 
 #: stock/models.py:2210
 msgid "Test name"
-msgstr ""
+msgstr "Nome de teste"
 
 #: stock/models.py:2216
 msgid "Test result"
@@ -7847,89 +7847,89 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:82 templates/stock_table.html:33
 msgid "Add stock"
-msgstr ""
+msgstr "Adicionar estoque"
 
 #: stock/templates/stock/item_base.html:83 templates/stock_table.html:34
 msgid "Remove stock"
-msgstr ""
+msgstr "Remover estoque"
 
 #: stock/templates/stock/item_base.html:86
 msgid "Serialize stock"
-msgstr ""
+msgstr "Serializar estoque"
 
 #: stock/templates/stock/item_base.html:89
 #: stock/templates/stock/location.html:94 templates/stock_table.html:36
 msgid "Transfer stock"
-msgstr ""
+msgstr "Transferir estoque"
 
 #: stock/templates/stock/item_base.html:92 templates/stock_table.html:39
 msgid "Assign to customer"
-msgstr ""
+msgstr "Disponibilizar para o cliente"
 
 #: stock/templates/stock/item_base.html:95
 msgid "Return to stock"
-msgstr ""
+msgstr "Devolver ao estoque"
 
 #: stock/templates/stock/item_base.html:98
 msgid "Uninstall stock item"
-msgstr ""
+msgstr "Desinstalar o item do estoque"
 
 #: stock/templates/stock/item_base.html:98
 msgid "Uninstall"
-msgstr ""
+msgstr "Desinstalar"
 
 #: stock/templates/stock/item_base.html:102
 msgid "Install stock item"
-msgstr ""
+msgstr "Instalar item do estoque"
 
 #: stock/templates/stock/item_base.html:102
 msgid "Install"
-msgstr ""
+msgstr "Instalar"
 
 #: stock/templates/stock/item_base.html:116
 msgid "Convert to variant"
-msgstr ""
+msgstr "Converter em variante"
 
 #: stock/templates/stock/item_base.html:119
 msgid "Duplicate stock item"
-msgstr ""
+msgstr "Duplicar item"
 
 #: stock/templates/stock/item_base.html:121
 msgid "Edit stock item"
-msgstr ""
+msgstr "Editar item de estoque"
 
 #: stock/templates/stock/item_base.html:124
 msgid "Delete stock item"
-msgstr ""
+msgstr "Excluir item de estoque"
 
 #: stock/templates/stock/item_base.html:194
 msgid "Parent Item"
-msgstr ""
+msgstr "Item Primário"
 
 #: stock/templates/stock/item_base.html:212
 msgid "No manufacturer set"
-msgstr ""
+msgstr "Nenhum fabricante definido"
 
 #: stock/templates/stock/item_base.html:252
 msgid "You are not in the list of owners of this item. This stock item cannot be edited."
-msgstr ""
+msgstr "Vc não está autorizado a editar esse item."
 
 #: stock/templates/stock/item_base.html:253
 #: stock/templates/stock/location.html:147
 msgid "Read only"
-msgstr ""
+msgstr "Somente leitura"
 
 #: stock/templates/stock/item_base.html:266
 msgid "This stock item is unavailable"
-msgstr ""
+msgstr "Este item não está disponível no estoque"
 
 #: stock/templates/stock/item_base.html:272
 msgid "This stock item is in production and cannot be edited."
-msgstr ""
+msgstr "Este item de estoque está em produção e não pode ser editado."
 
 #: stock/templates/stock/item_base.html:273
 msgid "Edit the stock item from the build view."
-msgstr ""
+msgstr "Edite este item usando o formulário de construçao."
 
 #: stock/templates/stock/item_base.html:288
 msgid "This stock item is allocated to Sales Order"
