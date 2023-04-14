@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-11 13:38+0000\n"
-"PO-Revision-Date: 2023-04-13 18:02\n"
+"PO-Revision-Date: 2023-04-14 18:11\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -4763,7 +4763,7 @@ msgstr "Rendelés befejezése"
 #: order/templates/order/return_order_base.html:102
 #: order/templates/order/sales_order_base.html:107
 msgid "Order Reference"
-msgstr "Rendelési azonosító"
+msgstr "Rendelés azonosítója"
 
 #: order/templates/order/order_base.html:115
 #: order/templates/order/return_order_base.html:107
