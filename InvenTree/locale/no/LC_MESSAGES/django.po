@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-11 13:38+0000\n"
-"PO-Revision-Date: 2023-04-11 18:00\n"
+"POT-Creation-Date: 2023-04-14 22:35+0000\n"
+"PO-Revision-Date: 2023-04-15 18:23\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -854,8 +854,8 @@ msgid "Reference"
 msgstr "Referanse"
 
 #: build/models.py:169
-msgid "Brief description of the build"
-msgstr "Kort beskrivelse av build"
+msgid "Brief description of the build (optional)"
+msgstr ""
 
 #: build/models.py:177 build/templates/build/build_base.html:189
 #: build/templates/build/detail.html:87
@@ -4187,7 +4187,7 @@ msgid "Contact does not match selected company"
 msgstr ""
 
 #: order/models.py:200
-msgid "Order description"
+msgid "Order description (optional)"
 msgstr ""
 
 #: order/models.py:202 order/models.py:1063 order/models.py:1413
@@ -5364,7 +5364,7 @@ msgid "Variant Of"
 msgstr ""
 
 #: part/models.py:861
-msgid "Part description"
+msgid "Part description (optional)"
 msgstr ""
 
 #: part/models.py:867
