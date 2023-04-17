@@ -670,7 +670,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
                 if a == b:
                     # Invalid group
-                    add_error(_("Invalid group range: {g}").format(g=group))
+                    add_error(_("Invalid group range") + f": {group}")
                     continue
 
                 group_items = []
@@ -705,7 +705,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                     for item in group_items:
                         add_serial(item)
                 else:
-                    add_error(_("Invalid group range: {g}").format(g=group))
+                    add_error(_("Invalid group range") + f": {group}")
 
             else:
                 # In the case of a different number of hyphens, simply add the entire group
