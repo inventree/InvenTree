@@ -371,7 +371,7 @@ if DEBUG:
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
-    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventroy management system',
+    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
     'LICENSE': {'MIT': 'https://github.com/inventree/InvenTree/blob/master/LICENSE'},
     'EXTERNAL_DOCS': {'docs': 'https://docs.inventree.org', 'web': 'https://inventree.org'},
     'VERSION': inventreeApiVersion(),
