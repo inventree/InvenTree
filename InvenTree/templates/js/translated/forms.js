@@ -9,18 +9,7 @@
     global_settings,
     modalEnable,
     modalShowSubmitButton,
-    renderBuild,
-    renderCompany,
-    renderGroup,
-    renderManufacturerPart,
-    renderOwner,
-    renderPart,
-    renderPartCategory,
-    renderPartParameterTemplate,
-    renderStockItem,
-    renderStockLocation,
-    renderSupplierPart,
-    renderUser,
+    getModelRenderer,
     showAlertOrCache,
     showApiError,
 */
@@ -319,7 +308,7 @@ function constructDeleteForm(fields, options) {
  * - confirmText: Text for confirm button (default = "Confirm")
  *
  */
-function constructForm(url, options) {
+function constructForm(url, options={}) {
 
     // An "empty" form will be defined locally
     if (url == null) {
@@ -486,6 +475,11 @@ function extractNestedField(field_name, fields) {
 function constructFormBody(fields, options) {
 
     var html = '';
+
+    // add additional content as a header on top (provided as html by the caller)
+    if (options.header_html) {
+        html += options.header_html;
+    }
 
     // Client must provide set of fields to be displayed,
     // otherwise *all* fields will be displayed
@@ -1173,6 +1167,11 @@ function handleFormSuccess(response, options) {
         if (!options.preventClose) {
             // Note: The modal will be deleted automatically after closing
             $(options.modal).modal('hide');
+        }
+
+        // Refresh a table
+        if (options.refreshTable) {
+            reloadBootstrapTable(options.refreshTable);
         }
 
         if (options.onSuccess) {
@@ -1881,7 +1880,7 @@ function initializeRelatedField(field, fields, options={}) {
             // Custom formatting for the search results
             if (field.model) {
                 // If the 'model' is specified, hand it off to the custom model render
-                var html = renderModelData(name, field.model, data, field, options);
+                var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
                 // Return a simple renderering
@@ -1911,7 +1910,7 @@ function initializeRelatedField(field, fields, options={}) {
             // Custom formatting for selected item
             if (field.model) {
                 // If the 'model' is specified, hand it off to the custom model render
-                var html = renderModelData(name, field.model, data, field, options);
+                var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
                 // Return a simple renderering
@@ -2022,71 +2021,18 @@ function searching() {
  * - parameters: The field definition (OPTIONS) request
  * - options: Other options provided at time of modal creation by the client
  */
-function renderModelData(name, model, data, parameters, options) {
+function renderModelData(name, model, data, parameters) {
 
     if (!data) {
         return parameters.placeholder || '';
     }
 
-    // TODO: Implement this function for various models
-
     var html = null;
 
-    var renderer = null;
-
-    // Find a custom renderer
-    switch (model) {
-    case 'company':
-        renderer = renderCompany;
-        break;
-    case 'stockitem':
-        renderer = renderStockItem;
-        break;
-    case 'stocklocation':
-        renderer = renderStockLocation;
-        break;
-    case 'part':
-        renderer = renderPart;
-        break;
-    case 'partcategory':
-        renderer = renderPartCategory;
-        break;
-    case 'partparametertemplate':
-        renderer = renderPartParameterTemplate;
-        break;
-    case 'purchaseorder':
-        renderer = renderPurchaseOrder;
-        break;
-    case 'salesorder':
-        renderer = renderSalesOrder;
-        break;
-    case 'salesordershipment':
-        renderer = renderSalesOrderShipment;
-        break;
-    case 'manufacturerpart':
-        renderer = renderManufacturerPart;
-        break;
-    case 'supplierpart':
-        renderer = renderSupplierPart;
-        break;
-    case 'build':
-        renderer = renderBuild;
-        break;
-    case 'owner':
-        renderer = renderOwner;
-        break;
-    case 'user':
-        renderer = renderUser;
-        break;
-    case 'group':
-        renderer = renderGroup;
-        break;
-    default:
-        break;
-    }
+    var renderer = getModelRenderer(model);
 
     if (renderer != null) {
-        html = renderer(name, data, parameters, options);
+        html = renderer(data, parameters);
     }
 
     if (html != null) {

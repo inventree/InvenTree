@@ -189,7 +189,7 @@ class PartCategoryResource(InvenTreeResource):
             'icon',
         ]
 
-    id = Field(attribute='pk', column_name=_('Category ID'))
+    id = Field(attribute='pk', column_name=_('Category ID'), widget=widgets.IntegerWidget())
     name = Field(attribute='name', column_name=_('Category Name'))
     description = Field(attribute='description', column_name=_('Description'))
     parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
@@ -259,11 +259,12 @@ class BomItemResource(InvenTreeResource):
             'id',
             'part',
             'sub_part',
+            'validated',
         ]
 
     level = Field(attribute='level', column_name=_('BOM Level'), readonly=True)
 
-    bom_id = Field(attribute='pk', column_name=_('BOM Item ID'))
+    bom_id = Field(attribute='pk', column_name=_('BOM Item ID'), widget=widgets.IntegerWidget())
 
     # ID of the parent part
     parent_part_id = Field(attribute='part', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.Part))
@@ -317,7 +318,7 @@ class BomItemResource(InvenTreeResource):
         is_importing = getattr(self, 'is_importing', False)
         include_pricing = getattr(self, 'include_pricing', False)
 
-        to_remove = []
+        to_remove = ['metadata']
 
         if is_importing or not include_pricing:
             # Remove pricing fields in this instance

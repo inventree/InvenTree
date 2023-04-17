@@ -548,7 +548,7 @@
 
             deleteManufacturerParts(selections, {
                 success: function() {
-                    $("#manufacturer-part-table").bootstrapTable("refresh");
+                    $("#manufacturer-part-table").bootstrapTable('refresh');
                 }
             });
         });
@@ -558,7 +558,7 @@
             createManufacturerPart({
                 part: {{ part.pk }},
                 onSuccess: function() {
-                    $("#manufacturer-part-table").bootstrapTable("refresh");
+                    $("#manufacturer-part-table").bootstrapTable('refresh');
                 }
             });
         });
@@ -677,7 +677,11 @@
 
         {% if report_enabled %}
         $("#print-bom-report").click(function() {
-            printBomReports([{{ part.pk }}]);
+            printReports({
+                items: [{{ part.pk }}],
+                key: 'part',
+                url: '{% url "api-bom-report-list" %}'
+            });
         });
         {% endif %}
     });
@@ -709,9 +713,7 @@
                 },
                 focus: 'part_2',
                 title: '{% trans "Add Related Part" %}',
-                onSuccess: function() {
-                    $('#related-parts-table').bootstrapTable('refresh');
-                }
+                refreshTable: '#related-parts-table',
             });
         });
 
@@ -797,9 +799,7 @@
                     part: {{ part.pk }}
                 }),
                 title: '{% trans "Add Test Result Template" %}',
-                onSuccess: function() {
-                    $("#test-template-table").bootstrapTable("refresh");
-                }
+                refreshTable: '#test-template-table',
             });
         });
     });
@@ -870,9 +870,7 @@
                     data: {},
                 },
                 title: '{% trans "Add Parameter" %}',
-                onSuccess: function() {
-                    $('#parameter-table').bootstrapTable('refresh');
-                }
+                refreshTable: '#parameter-table',
             });
         });
         {% endif %}
@@ -906,20 +904,6 @@
                 }
             }
         });
-
-        enableDragAndDrop(
-            '#attachment-dropzone',
-            '{% url "api-part-attachment-list" %}',
-            {
-                data: {
-                    part: {{ part.id }},
-                },
-                label: 'attachment',
-                success: function(data, status, xhr) {
-                    reloadAttachmentTable();
-                }
-            }
-        );
     });
 
     onPanelLoad('pricing', function() {

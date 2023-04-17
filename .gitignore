@@ -43,6 +43,7 @@ _tmp.csv
 inventree/label.pdf
 inventree/label.png
 inventree/my_special*
+_tests*.txt
 
 # Sphinx files
 docs/_build

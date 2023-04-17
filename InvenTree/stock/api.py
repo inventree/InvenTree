@@ -11,8 +11,7 @@ from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -23,18 +22,21 @@ from build.models import Build
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView)
-from InvenTree.filters import InvenTreeOrderingFilter
+                           ListCreateDestroyAPIView, MetadataView, StatusView)
+from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
+                               SEARCH_ORDER_FILTER_ALIAS)
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
-                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
-from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
-from order.serializers import PurchaseOrderSerializer
+                              RetrieveUpdateDestroyAPI)
+from InvenTree.status_codes import StockHistoryCode, StockStatus
+from order.models import (PurchaseOrder, ReturnOrder, SalesOrder,
+                          SalesOrderAllocation)
+from order.serializers import (PurchaseOrderSerializer, ReturnOrderSerializer,
+                               SalesOrderSerializer)
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
-from plugin.serializers import MetadataSerializer
 from stock.admin import LocationResource, StockItemResource
 from stock.models import (StockItem, StockItemAttachment, StockItemTestResult,
                           StockItemTracking, StockLocation)
@@ -78,16 +80,6 @@ class StockDetail(RetrieveUpdateDestroyAPI):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
-
-
-class StockMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating StockItem metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer."""
-        return MetadataSerializer(StockItem, *args, **kwargs)
-
-    queryset = StockItem.objects.all()
 
 
 class StockItemContextMixin:
@@ -302,11 +294,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -341,10 +329,7 @@ class StockLocationTree(ListAPI):
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationTreeSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
@@ -420,6 +405,16 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.filter(StockItem.EXPIRED_FILTER)
         else:
             return queryset.exclude(StockItem.EXPIRED_FILTER)
+
+    external = rest_filters.BooleanFilter(label=_('External Location'), method='filter_external')
+
+    def filter_external(self, queryset, name, value):
+        """Filter by whether or not the stock item is located in an external location"""
+
+        if str2bool(value):
+            return queryset.filter(location__external=True)
+        else:
+            return queryset.exclude(location__external=True)
 
     in_stock = rest_filters.BooleanFilter(label='In Stock', method='filter_in_stock')
 
@@ -1005,11 +1000,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
         'SKU': 'supplier_part__SKU',
@@ -1052,11 +1043,7 @@ class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'stock_item',
@@ -1083,11 +1070,7 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
     queryset = StockItemTestResult.objects.all()
     serializer_class = StockSerializers.StockItemTestResultSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'test',
@@ -1252,12 +1235,30 @@ class StockTrackingList(ListAPI):
                 except Exception:
                     pass
 
-            # Add purchaseorder detail
+            # Add PurchaseOrder detail
             if 'purchaseorder' in deltas:
                 try:
                     order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
                     serializer = PurchaseOrderSerializer(order)
                     deltas['purchaseorder_detail'] = serializer.data
+                except Exception:
+                    pass
+
+            # Add SalesOrder detail
+            if 'salesorder' in deltas:
+                try:
+                    order = SalesOrder.objects.get(pk=deltas['salesorder'])
+                    serializer = SalesOrderSerializer(order)
+                    deltas['salesorder_detail'] = serializer.data
+                except Exception:
+                    pass
+
+            # Add ReturnOrder detail
+            if 'returnorder' in deltas:
+                try:
+                    order = ReturnOrder.objects.get(pk=deltas['returnorder'])
+                    serializer = ReturnOrderSerializer(order)
+                    deltas['returnorder_detail'] = serializer.data
                 except Exception:
                     pass
 
@@ -1290,11 +1291,7 @@ class StockTrackingList(ListAPI):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'item',
@@ -1311,16 +1308,6 @@ class StockTrackingList(ListAPI):
         'title',
         'notes',
     ]
-
-
-class LocationMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating StockLocation metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer."""
-        return MetadataSerializer(StockLocation, *args, **kwargs)
-
-    queryset = StockLocation.objects.all()
 
 
 class LocationDetail(CustomRetrieveUpdateDestroyAPI):
@@ -1358,9 +1345,9 @@ stock_api_urls = [
         re_path(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
 
         # Stock location detail endpoints
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
 
-            re_path(r'^metadata/', LocationMetadata.as_view(), name='api-location-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': StockLocation}, name='api-location-metadata'),
 
             re_path(r'^.*$', LocationDetail.as_view(), name='api-location-detail'),
         ])),
@@ -1378,32 +1365,39 @@ stock_api_urls = [
 
     # StockItemAttachment API endpoints
     re_path(r'^attachment/', include([
-        re_path(r'^(?P<pk>\d+)/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
+        path(r'<int:pk>/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
         path('', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
     ])),
 
     # StockItemTestResult API endpoints
     re_path(r'^test/', include([
-        re_path(r'^(?P<pk>\d+)/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        path(r'<int:pk>/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
         re_path(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 
     # StockItemTracking API endpoints
     re_path(r'^track/', include([
-        re_path(r'^(?P<pk>\d+)/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
+        path(r'<int:pk>/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
+
+        # Stock tracking status code information
+        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: StockHistoryCode}, name='api-stock-tracking-status-codes'),
+
         re_path(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
     ])),
 
     # Detail views for a single stock item
-    re_path(r'^(?P<pk>\d+)/', include([
+    path(r'<int:pk>/', include([
         re_path(r'^convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
         re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
-        re_path(r'^metadata/', StockMetadata.as_view(), name='api-stock-item-metadata'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': StockItem}, name='api-stock-item-metadata'),
         re_path(r'^return/', StockItemReturn.as_view(), name='api-stock-item-return'),
         re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
         re_path(r'^uninstall/', StockItemUninstall.as_view(), name='api-stock-item-uninstall'),
         re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
     ])),
+
+    # Stock item status code information
+    re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: StockStatus}, name='api-stock-status-codes'),
 
     # Anything else
     re_path(r'^.*$', StockList.as_view(), name='api-stock-list'),

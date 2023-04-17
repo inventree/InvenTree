@@ -37,49 +37,50 @@ class TestBuildAPI(InvenTreeAPITestCase):
     def test_get_build_list(self):
         """Test that we can retrieve list of build objects."""
         url = reverse('api-build-list')
-        response = self.client.get(url, format='json')
+
+        response = self.get(url, expected_code=200)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(len(response.data), 5)
 
         # Filter query by build status
-        response = self.client.get(url, {'status': 40}, format='json')
+        response = self.get(url, {'status': 40}, expected_code=200)
 
         self.assertEqual(len(response.data), 4)
 
         # Filter by "active" status
-        response = self.client.get(url, {'active': True}, format='json')
+        response = self.get(url, {'active': True}, expected_code=200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], 1)
 
-        response = self.client.get(url, {'active': False}, format='json')
+        response = self.get(url, {'active': False}, expected_code=200)
         self.assertEqual(len(response.data), 4)
 
         # Filter by 'part' status
-        response = self.client.get(url, {'part': 25}, format='json')
+        response = self.get(url, {'part': 25}, expected_code=200)
         self.assertEqual(len(response.data), 1)
 
         # Filter by an invalid part
-        response = self.client.get(url, {'part': 99999}, format='json')
-        self.assertEqual(len(response.data), 0)
+        response = self.get(url, {'part': 99999}, expected_code=400)
+        self.assertIn('Select a valid choice', str(response.data))
 
         # Get a certain reference
-        response = self.client.get(url, {'reference': 'BO-0001'}, format='json')
+        response = self.get(url, {'reference': 'BO-0001'}, expected_code=200)
         self.assertEqual(len(response.data), 1)
 
         # Get a certain reference
-        response = self.client.get(url, {'reference': 'BO-9999XX'}, format='json')
+        response = self.get(url, {'reference': 'BO-9999XX'}, expected_code=200)
         self.assertEqual(len(response.data), 0)
 
     def test_get_build_item_list(self):
         """Test that we can retrieve list of BuildItem objects."""
         url = reverse('api-build-item-list')
 
-        response = self.client.get(url, format='json')
+        response = self.get(url, expected_code=200)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Test again, filtering by park ID
-        response = self.client.get(url, {'part': '1'}, format='json')
+        response = self.get(url, {'part': '1'}, expected_code=200)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -731,38 +732,42 @@ class BuildOverallocationTest(BuildAPITest):
     Using same Build ID=1 as allocation test above.
     """
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Basic operation as part of test suite setup"""
-        super().setUp()
+        super().setUpTestData()
 
-        self.assignRole('build.add')
-        self.assignRole('build.change')
+        cls.assignRole('build.add')
+        cls.assignRole('build.change')
 
-        self.build = Build.objects.get(pk=1)
-        self.url = reverse('api-build-finish', kwargs={'pk': self.build.pk})
+        cls.build = Build.objects.get(pk=1)
+        cls.url = reverse('api-build-finish', kwargs={'pk': cls.build.pk})
 
         StockItem.objects.create(part=Part.objects.get(pk=50), quantity=30)
 
         # Keep some state for use in later assertions, and then overallocate
-        self.state = {}
-        self.allocation = {}
-        for i, bi in enumerate(self.build.part.bom_items.all()):
-            rq = self.build.required_quantity(bi, None) + i + 1
+        cls.state = {}
+        cls.allocation = {}
+
+        for i, bi in enumerate(cls.build.part.bom_items.all()):
+            rq = cls.build.required_quantity(bi, None) + i + 1
             si = StockItem.objects.filter(part=bi.sub_part, quantity__gte=rq).first()
 
-            self.state[bi.sub_part] = (si, si.quantity, rq)
+            cls.state[bi.sub_part] = (si, si.quantity, rq)
             BuildItem.objects.create(
-                build=self.build,
+                build=cls.build,
                 stock_item=si,
                 quantity=rq,
             )
 
         # create and complete outputs
-        self.build.create_build_output(self.build.quantity)
-        outputs = self.build.build_outputs.all()
-        self.build.complete_build_output(outputs[0], self.user)
+        cls.build.create_build_output(cls.build.quantity)
+        outputs = cls.build.build_outputs.all()
+        cls.build.complete_build_output(outputs[0], cls.user)
 
-        # Validate expected state after set-up.
+    def test_setup(self):
+        """Validate expected state after set-up."""
+
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
         self.assertEqual(self.build.complete_outputs.count(), 1)
         self.assertEqual(self.build.completed, self.build.quantity)

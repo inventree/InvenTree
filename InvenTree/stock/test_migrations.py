@@ -67,3 +67,65 @@ class TestSerialNumberMigration(MigratorTestCase):
         # Check that the StockItem maximum serial number
         self.assertEqual(big_ref_item.serial, '9999999999999999999999999999999999999999999999999999999999999')
         self.assertEqual(big_ref_item.serial_int, 0x7fffffff)
+
+
+class TestScheduledForDeletionMigration(MigratorTestCase):
+    """Test data migration for removing 'scheduled_for_deletion' field"""
+
+    migrate_from = ('stock', '0066_stockitem_scheduled_for_deletion')
+    migrate_to = ('stock', helpers.getNewestMigrationFile('stock'))
+
+    def prepare(self):
+        """Create some initial stock items"""
+
+        Part = self.old_state.apps.get_model('part', 'part')
+        StockItem = self.old_state.apps.get_model('stock', 'stockitem')
+
+        for idx in range(5):
+            part = Part.objects.create(
+                name=f'Part_{idx}',
+                description='Just a part, nothing to see here',
+                active=True,
+                level=0, tree_id=0,
+                lft=0, rght=0,
+            )
+
+            for jj in range(5):
+                StockItem.objects.create(
+                    part=part,
+                    quantity=jj + 5,
+                    level=0, tree_id=0,
+                    lft=0, rght=0,
+                    scheduled_for_deletion=True
+                )
+
+        # For extra points, create some parent-child relationships between stock items
+        part = Part.objects.first()
+
+        item_1 = StockItem.objects.create(
+            part=part,
+            quantity=100,
+            level=0, tree_id=0,
+            lft=0, rght=0,
+            scheduled_for_deletion=True,
+        )
+
+        for ii in range(3):
+            StockItem.objects.create(
+                part=part,
+                quantity=200,
+                level=0, tree_id=0,
+                lft=0, rght=0,
+                scheduled_for_deletion=False,
+                parent=item_1,
+            )
+
+        self.assertEqual(StockItem.objects.count(), 29)
+
+    def test_migration(self):
+        """Test that all stock items were actually removed"""
+
+        StockItem = self.new_state.apps.get_model('stock', 'stockitem')
+
+        # All the "scheduled for deletion" items have been removed
+        self.assertEqual(StockItem.objects.count(), 3)

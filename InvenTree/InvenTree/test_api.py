@@ -8,7 +8,7 @@ from rest_framework import status
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import InvenTreeTestCase
-from users.models import RuleSet
+from users.models import RuleSet, update_group_roles
 
 
 class HTMLAPITests(InvenTreeTestCase):
@@ -125,6 +125,10 @@ class APITests(InvenTreeAPITestCase):
         Also tests that it is *not* accessible if the client is not logged in.
         """
         url = reverse('api-user-roles')
+
+        # Delete all rules
+        self.group.rule_sets.all().delete()
+        update_group_roles(self.group)
 
         response = self.client.get(url, format='json')
 
@@ -297,3 +301,133 @@ class BulkDeleteTests(InvenTreeAPITestCase):
         )
 
         self.assertIn("'filters' must be supplied as a dict object", str(response.data))
+
+
+class SearchTests(InvenTreeAPITestCase):
+    """Unit tests for global search endpoint"""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+    ]
+
+    def test_results(self):
+        """Test individual result types"""
+
+        response = self.post(
+            reverse('api-search'),
+            {
+                'search': 'chair',
+                'limit': 3,
+                'part': {},
+                'build': {},
+            },
+            expected_code=200
+        )
+
+        # No build results
+        self.assertEqual(response.data['build']['count'], 0)
+
+        # 3 (of 5) part results
+        self.assertEqual(response.data['part']['count'], 5)
+        self.assertEqual(len(response.data['part']['results']), 3)
+
+        # Other results not included
+        self.assertNotIn('purchaseorder', response.data)
+        self.assertNotIn('salesorder', response.data)
+
+        # Search for orders
+        response = self.post(
+            reverse('api-search'),
+            {
+                'search': '01',
+                'limit': 2,
+                'purchaseorder': {},
+                'salesorder': {},
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['purchaseorder']['count'], 1)
+        self.assertEqual(response.data['salesorder']['count'], 0)
+
+        self.assertNotIn('stockitem', response.data)
+        self.assertNotIn('build', response.data)
+
+    def test_permissions(self):
+        """Test that users with insufficient permissions are handled correctly"""
+
+        # First, remove all roles
+        for ruleset in self.group.rule_sets.all():
+            ruleset.can_view = False
+            ruleset.can_change = False
+            ruleset.can_delete = False
+            ruleset.can_add = False
+            ruleset.save()
+
+        models = [
+            'build',
+            'company',
+            'manufacturerpart',
+            'supplierpart',
+            'part',
+            'partcategory',
+            'purchaseorder',
+            'stockitem',
+            'stocklocation',
+            'salesorder',
+        ]
+
+        query = {
+            'search': 'c',
+            'limit': 3,
+        }
+
+        for mdl in models:
+            query[mdl] = {}
+
+        response = self.post(
+            reverse('api-search'),
+            query,
+            expected_code=200
+        )
+
+        # Check for 'permission denied' error
+        for mdl in models:
+            self.assertEqual(response.data[mdl]['error'], 'User does not have permission to view this model')
+
+        # Assign view roles for some parts
+        self.assignRole('build.view')
+        self.assignRole('part.view')
+
+        response = self.post(
+            reverse('api-search'),
+            query,
+            expected_code=200
+        )
+
+        # Check for expected results, based on permissions
+        # We expect results to be returned for the following model types
+        has_permission = [
+            'build',
+            'manufacturerpart',
+            'supplierpart',
+            'part',
+            'partcategory',
+            'stocklocation',
+            'stockitem',
+        ]
+
+        for mdl in models:
+            result = response.data[mdl]
+            if mdl in has_permission:
+                self.assertIn('count', result)
+            else:
+                self.assertIn('error', result)
+                self.assertEqual(result['error'], 'User does not have permission to view this model')

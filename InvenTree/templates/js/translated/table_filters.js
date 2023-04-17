@@ -2,29 +2,57 @@
 {% load status_codes %}
 {% load inventree_extras %}
 
-{% include "status_codes.html" with label='stock' options=StockStatus.list %}
-{% include "status_codes.html" with label='stockHistory' options=StockHistoryCode.list %}
-{% include "status_codes.html" with label='build' options=BuildStatus.list %}
-{% include "status_codes.html" with label='purchaseOrder' options=PurchaseOrderStatus.list %}
-{% include "status_codes.html" with label='salesOrder' options=SalesOrderStatus.list %}
-
 /* globals
     global_settings
+    purchaseOrderCodes,
+    returnOrderCodes,
+    salesOrderCodes,
 */
 
 /* exported
-    buildStatusDisplay,
     getAvailableTableFilters,
-    purchaseOrderStatusDisplay,
-    salesOrderStatusDisplay,
-    stockHistoryStatusDisplay,
-    stockStatusDisplay,
 */
 
 
 function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
+
+    // Filters for "returnorder" table
+    if (tableKey == 'returnorder') {
+        return {
+            status: {
+                title: '{% trans "Order status" %}',
+                options: returnOrderCodes
+            },
+            outstanding: {
+                type: 'bool',
+                title: '{% trans "Outstanding" %}',
+            },
+            overdue: {
+                type: 'bool',
+                title: '{% trans "Overdue" %}',
+            },
+            assigned_to_me: {
+                type: 'bool',
+                title: '{% trans "Assigned to me" %}',
+            },
+        };
+    }
+
+    // Filters for "returnorderlineitem" table
+    if (tableKey == 'returnorderlineitem') {
+        return {
+            received: {
+                type: 'bool',
+                title: '{% trans "Received" %}',
+            },
+            outcome: {
+                title: '{% trans "Outcome" %}',
+                options: returnOrderLineItemCodes,
+            }
+        };
+    }
 
     // Filters for "variant" table
     if (tableKey == 'variants') {
@@ -73,7 +101,7 @@ function getAvailableTableFilters(tableKey) {
             },
             inherited: {
                 type: 'bool',
-                title: '{% trans "Inherited" %}',
+                title: '{% trans "Gets inherited" %}',
             },
             allow_variants: {
                 type: 'bool',
@@ -105,7 +133,7 @@ function getAvailableTableFilters(tableKey) {
         return {
             'inherited': {
                 type: 'bool',
-                title: '{% trans "Inherited" %}',
+                title: '{% trans "Gets inherited" %}',
             },
             'optional': {
                 type: 'bool',
@@ -292,6 +320,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'date',
                 title: '{% trans "Expiry Date after" %}',
             },
+            external: {
+                type: 'bool',
+                title: '{% trans "External Location" %}',
+            }
         };
 
         // Optional filters if stock expiry functionality is enabled
@@ -354,6 +386,25 @@ function getAvailableTableFilters(tableKey) {
             assigned_to_me: {
                 type: 'bool',
                 title: '{% trans "Assigned to me" %}',
+            },
+            assigned_to: {
+                title: '{% trans "Responsible" %}',
+                options: function() {
+                    var ownersList = {};
+                    inventreeGet('{% url "api-owner-list" %}', {}, {
+                        async: false,
+                        success: function(response) {
+                            for (key in response) {
+                                var owner = response[key];
+                                ownersList[owner.pk] = {
+                                    key: owner.pk,
+                                    value: `${owner.name} (${owner.label})`,
+                                };
+                            }
+                        }
+                    });
+                    return ownersList;
+                },
             },
         };
     }
@@ -421,6 +472,10 @@ function getAvailableTableFilters(tableKey) {
             overdue: {
                 type: 'bool',
                 title: '{% trans "Overdue" %}',
+            },
+            assigned_to_me: {
+                type: 'bool',
+                title: '{% trans "Assigned to me" %}',
             },
         };
     }

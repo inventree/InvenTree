@@ -23,7 +23,7 @@ docker compose run inventree-dev-server invoke setup-test
 docker compose up -d
 ```
 
-Read the [InvenTree setup documentation](https://inventree.readthedocs.io/en/latest/start/intro/) for a complete installation reference guide.
+Read the [InvenTree setup documentation](https://docs.inventree.org/en/latest/start/intro/) for a complete installation reference guide.
 
 ### Setup Devtools
 
