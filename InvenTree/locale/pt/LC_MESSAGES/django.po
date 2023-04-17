@@ -7571,7 +7571,7 @@ msgstr "A quantidade não corresponde aos números de série"
 #: stock/models.py:1386
 #, python-brace-format
 msgid "Serial numbers already exist: {exists}"
-msgstr "Números de série já existem: {existe}"
+msgstr "Números de série já existem: {exists}"
 
 #: stock/models.py:1456
 msgid "Stock item has been assigned to a sales order"
