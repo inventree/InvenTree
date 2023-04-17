@@ -1472,6 +1472,13 @@ class PartDetailTests(PartAPITestBase):
 
         self.assertEqual(response.status_code, 200)
 
+        # Try to remove a tag
+        response = self.patch(url, {
+            'tags': ['tag1',],
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['tags'], ['tag1'])
+
         # Try to remove the part
         response = self.delete(url)
 
