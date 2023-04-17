@@ -562,6 +562,7 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'supplier_part',
         'order',
         'stock',
+        'tag',
     ]
 
     roles = [
@@ -1654,6 +1655,9 @@ class PartDetailTests(PartAPITestBase):
         # Some other checks
         self.assertEqual(data['in_stock'], 9000)
         self.assertEqual(data['unallocated_stock'], 9000)
+
+        # Check that tags are present
+        self.assertEqual(data['tags'], ['Tag 1', 'Another tag'])
 
     def test_part_metadata(self):
         """Tests for the part metadata endpoint."""

@@ -1,0 +1,34 @@
+# Create some fasteners
+
+- model: taggit.tag
+  pk: 1
+  fields:
+    name: 'Tag 1'
+    slug: "tag-1"
+
+- model: taggit.tag
+  pk: 2
+  fields:
+    name: 'Another tag'
+    slug: "another-tag"
+
+- model: taggit.taggeditem
+  pk: 1
+  fields:
+      tag: 1
+      content_type: 39
+      object_id: 1
+
+- model: taggit.taggeditem
+  pk: 2
+  fields:
+      tag: 2
+      content_type: 39
+      object_id: 1
+
+- model: taggit.taggeditem
+  pk: 3
+  fields:
+      tag: 2
+      content_type: 39
+      object_id: 2
