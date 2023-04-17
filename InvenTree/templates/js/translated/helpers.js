@@ -380,6 +380,10 @@ function renderLink(text, url, options={}) {
 }
 
 
+/*
+ * Configure an EasyMDE editor for the given element,
+ * allowing markdown editing of the notes field.
+ */
 function setupNotesField(element, url, options={}) {
 
     var editable = options.editable || false;
@@ -419,12 +423,25 @@ function setupNotesField(element, url, options={}) {
         element: document.getElementById(element),
         initialValue: initial,
         toolbar: toolbar_icons,
+        uploadImage: true,
+        imagePathAbsolute: true,
+        imageUploadFunction: function(imageFile, onSuccess, onError) {
+            // Attempt to upload the image to the InvenTree server
+            var form_data = new FormData();
+
+            form_data.append('image', imageFile);
+
+            inventreeFormDataUpload('{% url "api-notes-image-list" %}', form_data, {
+                success: function(response) {
+                    console.log("Uploading image:", response.image);
+                    onSuccess(response.image);
+                },
+                error: function(xhr, status, error) {
+                    onError(error);
+                }
+            });
+        },
         shortcuts: [],
-        renderingConfig: {
-            markedOptions: {
-                sanitize: true,
-            }
-        }
     });
 
 
