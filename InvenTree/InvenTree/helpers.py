@@ -722,15 +722,17 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             counter = 0
             sequence_count = max(0, expected_quantity - len(serials))
 
+            error_msg = _("Invalid group sequence") + f": {group}"
+
             if len(items) > 2 or len(items) == 0:
-                add_error(_("Invalid group sequence: {g}").format(g=group))
+                add_error(error_msg)
                 continue
             elif len(items) == 2:
                 try:
                     if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
-                    add_error(_("Invalid group sequence: {g}").format(g=group))
+                    add_error(error_msg)
                     continue
 
             value = items[0]
@@ -745,7 +747,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 for item in sequence_items:
                     add_serial(item)
             else:
-                add_error(_("Invalid group sequence: {g}").format(g=group))
+                add_error(error_msg)
 
         else:
             # At this point, we assume that the 'group' is just a single serial value
