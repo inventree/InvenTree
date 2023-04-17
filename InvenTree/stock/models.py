@@ -1370,7 +1370,8 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
             raise ValidationError({"quantity": _("Quantity must be greater than zero")})
 
         if quantity > self.quantity:
-            raise ValidationError({"quantity": _("Quantity must not exceed available stock quantity ({n})").format(n=self.quantity)})
+            msg = _("Quantity must not exceed available stock quantity") + f"({self.quantity})"
+            raise ValidationError({"quantity": msg})
 
         if type(serials) not in [list, tuple]:
             raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})

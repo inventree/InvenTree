@@ -290,8 +290,8 @@ class SerializeStockItemSerializer(serializers.Serializer):
             raise ValidationError(_("Quantity must be greater than zero"))
 
         if quantity > item.quantity:
-            q = item.quantity
-            raise ValidationError(_(f"Quantity must not exceed available stock quantity ({q})"))
+            msg = _("Quantity must not exceed available stock quantity") + f"({item.quantity})"
+            raise ValidationError(msg)
 
         return quantity
 
