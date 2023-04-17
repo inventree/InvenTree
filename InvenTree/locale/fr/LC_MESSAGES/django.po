@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 14:52+0000\n"
-"PO-Revision-Date: 2023-04-15 18:23\n"
+"POT-Creation-Date: 2023-04-17 14:13+0000\n"
+"PO-Revision-Date: 2023-04-17 18:25\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -23,7 +23,7 @@ msgstr "Point de terminaison de l'API introuvable"
 
 #: InvenTree/api.py:299
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "L'utilisateur n'a pas la permission de voir ce modèle"
 
 #: InvenTree/exceptions.py:94
 msgid "Error details can be found in the admin panel"
@@ -147,7 +147,7 @@ msgstr "Chaîne de numéro de série vide"
 
 #: InvenTree/helpers.py:640
 msgid "Duplicate serial"
-msgstr "Numéro de série dupliqué"
+msgstr "Numéro de série en doublon"
 
 #: InvenTree/helpers.py:673 InvenTree/helpers.py:708
 #, python-brace-format
@@ -612,7 +612,7 @@ msgstr "Retourné"
 
 #: InvenTree/status_codes.py:182 InvenTree/status_codes.py:395
 msgid "In Progress"
-msgstr ""
+msgstr "En Cours"
 
 #: InvenTree/status_codes.py:183 order/models.py:1295
 #: templates/js/translated/sales_order.js:1418
@@ -747,7 +747,7 @@ msgstr "Fabrication"
 
 #: InvenTree/status_codes.py:430
 msgid "Return"
-msgstr ""
+msgstr "Retour"
 
 #: InvenTree/status_codes.py:431
 msgid "Repair"
@@ -1834,10 +1834,9 @@ msgid "Completed Outputs"
 msgstr "Sorties de Construction terminées"
 
 #: common/files.py:63
-#, fuzzy, python-brace-format
-#| msgid "Unsupported file format: {ext.upper()}"
+#, python-brace-format
 msgid "Unsupported file format: {fmt}"
-msgstr "Format de fichier non pris en charge : {ext.upper()}"
+msgstr ""
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
@@ -3058,7 +3057,7 @@ msgstr "Nombre de résultats à afficher dans chaque section de la fenêtre de p
 
 #: common/models.py:1983
 msgid "Regex Search"
-msgstr ""
+msgstr "Recherche Regex"
 
 #: common/models.py:1984
 msgid "Enable regular expressions in search queries"
@@ -7039,10 +7038,9 @@ msgid "No date found"
 msgstr ""
 
 #: plugin/registry.py:452
-#, fuzzy, python-brace-format
-#| msgid "Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!"
+#, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
-msgstr "L'extension `{plg_name}` n'est pas compatible avec la version actuelle d'InvenTree {version.inventreeVersion()} !"
+msgstr ""
 
 #: plugin/registry.py:454
 #, python-brace-format
@@ -12067,8 +12065,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12248,6 +12245,3 @@ msgstr "Droit de modifier des élément"
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
 
-#, python-brace-format
-#~ msgid "Serial numbers already exist: {exists}"
-#~ msgstr "Les numéros de série existent déja : {exists}"
