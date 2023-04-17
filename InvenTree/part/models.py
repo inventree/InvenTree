@@ -335,6 +335,7 @@ class PartManager(TreeManager):
             'category__parent',
             'stock_items',
             'builds',
+            'tags',
         )
 
 

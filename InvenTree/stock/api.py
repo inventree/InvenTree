@@ -214,7 +214,9 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
     - POST: Create a new StockLocation
     """
 
-    queryset = StockLocation.objects.all()
+    queryset = StockLocation.objects.all().prefetch_related(
+        'tags',
+    )
     serializer_class = StockSerializers.LocationSerializer
 
     def download_queryset(self, queryset, export_format):
@@ -812,6 +814,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
             'part',
             'part__category',
             'location'
+            'tags',
         )
 
         return queryset

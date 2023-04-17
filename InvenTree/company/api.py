@@ -163,6 +163,7 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
         'part',
         'manufacturer',
         'supplier_parts',
+        'tags',
     )
 
     serializer_class = ManufacturerPartSerializer
@@ -323,7 +324,9 @@ class SupplierPartList(ListCreateDestroyAPIView):
     - POST: Create a new SupplierPart object
     """
 
-    queryset = SupplierPart.objects.all()
+    queryset = SupplierPart.objects.all().prefetch_related(
+        'tags',
+    )
     filterset_class = SupplierPartFilter
 
     def get_queryset(self, *args, **kwargs):
