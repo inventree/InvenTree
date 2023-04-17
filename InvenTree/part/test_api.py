@@ -1441,7 +1441,7 @@ class PartDetailTests(PartAPITestBase):
 
         self.assertEqual(part.name, 'my test api part')
         self.assertEqual(part.tags.count(), 2)
-        self.assertEqual([a.name for a in part.tags.all()], ['tag2', 'tag1'])
+        self.assertEqual([a.name for a in part.tags.order_by('slug')], ['tag1', 'tag2'])
 
         # Edit the part
         url = reverse('api-part-detail', kwargs={'pk': pk})
