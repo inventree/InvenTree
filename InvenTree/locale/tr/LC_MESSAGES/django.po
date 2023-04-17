@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-10 14:27+0000\n"
-"PO-Revision-Date: 2023-04-10 17:58\n"
+"POT-Creation-Date: 2023-04-14 22:35+0000\n"
+"PO-Revision-Date: 2023-04-15 18:23\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -23,7 +23,7 @@ msgstr "API uç noktası bulunamadı"
 
 #: InvenTree/api.py:299
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "Kullanıcının bu modeli görüntüleme izni yok"
 
 #: InvenTree/exceptions.py:94
 msgid "Error details can be found in the admin panel"
@@ -63,7 +63,7 @@ msgstr ""
 
 #: InvenTree/format.py:162
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "Sağlanan değer gerekli kalıpla eşleşmiyor: "
 
 #: InvenTree/forms.py:145
 msgid "Enter password"
@@ -99,11 +99,11 @@ msgstr "Her seferind eaynı e-posta adresini yazmalısınız."
 
 #: InvenTree/forms.py:230 InvenTree/forms.py:236
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "Sağlanan e-posta adresi geçerli değil."
 
 #: InvenTree/forms.py:242
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "Sağlanan e-posta alanı onaylanmadı."
 
 #: InvenTree/helpers.py:168
 msgid "Connection error"
@@ -119,7 +119,7 @@ msgstr "İstisna oluştu"
 
 #: InvenTree/helpers.py:182
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "Sunucu geçersiz Content-Length değeriyle yanıt verdi"
 
 #: InvenTree/helpers.py:185
 msgid "Image size is too large"
@@ -147,12 +147,12 @@ msgstr "Boş seri numarası dizesi"
 
 #: InvenTree/helpers.py:640
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Yinelenen seri"
 
 #: InvenTree/helpers.py:673 InvenTree/helpers.py:708
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "Geçersiz grup: {g}"
 
 #: InvenTree/helpers.py:702
 #, python-brace-format
@@ -854,8 +854,8 @@ msgid "Reference"
 msgstr "Referans"
 
 #: build/models.py:169
-msgid "Brief description of the build"
-msgstr "Yapım işinin kısa açıklaması"
+msgid "Brief description of the build (optional)"
+msgstr ""
 
 #: build/models.py:177 build/templates/build/build_base.html:189
 #: build/templates/build/detail.html:87
@@ -4187,8 +4187,8 @@ msgid "Contact does not match selected company"
 msgstr ""
 
 #: order/models.py:200
-msgid "Order description"
-msgstr "Sipariş açıklaması"
+msgid "Order description (optional)"
+msgstr ""
 
 #: order/models.py:202 order/models.py:1063 order/models.py:1413
 msgid "Link to external page"
@@ -4732,7 +4732,11 @@ msgstr ""
 
 #: order/templates/order/order_base.html:79
 #: order/templates/order/order_base.html:80
-msgid "Submit Order"
+#: order/templates/order/return_order_base.html:83
+#: order/templates/order/return_order_base.html:84
+#: order/templates/order/sales_order_base.html:84
+#: order/templates/order/sales_order_base.html:85
+msgid "Issue Order"
 msgstr ""
 
 #: order/templates/order/order_base.html:83
@@ -4974,13 +4978,6 @@ msgstr ""
 #: order/templates/order/return_order_base.html:65
 #: order/templates/order/sales_order_base.html:65
 msgid "Print packing list"
-msgstr ""
-
-#: order/templates/order/return_order_base.html:83
-#: order/templates/order/return_order_base.html:84
-#: order/templates/order/sales_order_base.html:84
-#: order/templates/order/sales_order_base.html:85
-msgid "Issue Order"
 msgstr ""
 
 #: order/templates/order/return_order_base.html:140
@@ -5367,8 +5364,8 @@ msgid "Variant Of"
 msgstr "Çeşidi"
 
 #: part/models.py:861
-msgid "Part description"
-msgstr "Parça açıklaması"
+msgid "Part description (optional)"
+msgstr ""
 
 #: part/models.py:867
 msgid "Part keywords to improve visibility in search results"
