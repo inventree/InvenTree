@@ -2658,7 +2658,7 @@ class NotesImage(models.Model):
     """
 
     image = models.ImageField(
-        upload_to='notes_images',
+        upload_to=rename_notes_image,
         verbose_name=_('Image'),
         help_text=_('Image file'),
     )

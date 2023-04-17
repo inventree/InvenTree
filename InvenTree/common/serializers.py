@@ -7,7 +7,7 @@ from rest_framework import serializers
 from common.models import (InvenTreeSetting, InvenTreeUserSetting,
                            NewsFeedEntry, NotesImage, NotificationMessage)
 from InvenTree.helpers import construct_absolute_url, get_objectreference
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+from InvenTree.serializers import (InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer)
 
 
@@ -252,4 +252,4 @@ class NotesImageSerializer(InvenTreeModelSerializer):
             'user',
         ]
 
-    image = InvenTreeAttachmentSerializerField(required=True)
+    image = InvenTreeImageSerializerField(required=True)
