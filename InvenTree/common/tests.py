@@ -1,5 +1,6 @@
 """Tests for mechanisms in common."""
 
+import io
 import json
 import time
 from datetime import timedelta
@@ -7,8 +8,11 @@ from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
+
+import PIL
 
 from InvenTree.api_tester import InvenTreeAPITestCase, PluginMixin
 from InvenTree.helpers import InvenTreeTestCase, str2bool
@@ -17,8 +21,8 @@ from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
-                     NotificationEntry, NotificationMessage, WebhookEndpoint,
-                     WebhookMessage)
+                     NotesImage, NotificationEntry, NotificationMessage,
+                     WebhookEndpoint, WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 
@@ -935,3 +939,65 @@ class CurrencyAPITests(InvenTreeAPITestCase):
             time.sleep(10)
 
         raise TimeoutError("Could not refresh currency exchange data after 5 attempts")
+
+
+class NotesImageTest(InvenTreeAPITestCase):
+    """Tests for uploading images to be used in markdown notes."""
+
+    def test_invalid_files(self):
+        """Test that invalid files are rejected."""
+
+        n = NotesImage.objects.count()
+
+        # Test upload of a simple text file
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={
+                'image': SimpleUploadedFile('test.txt', b"this is not an image file", content_type='text/plain'),
+            },
+            format='multipart',
+            expected_code=400
+        )
+
+        self.assertIn("Upload a valid image", str(response.data['image']))
+
+        # Test upload of an invalid image file
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={
+                'image': SimpleUploadedFile('test.png', b"this is not an image file", content_type='image/png'),
+            },
+            format='multipart',
+            expected_code=400,
+        )
+
+        self.assertIn("Upload a valid image", str(response.data['image']))
+
+        # Check that no extra database entries have been created
+        self.assertEqual(NotesImage.objects.count(), n)
+
+    def test_valid_image(self):
+        """Test upload of a valid image file"""
+
+        n = NotesImage.objects.count()
+
+        # Construct a simple image file
+        image = PIL.Image.new('RGB', (100, 100), color='red')
+
+        with io.BytesIO() as output:
+            image.save(output, format='PNG')
+            contents = output.getvalue()
+
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={
+                'image': SimpleUploadedFile('test.png', contents, content_type='image/png'),
+            },
+            format='multipart',
+            expected_code=201
+        )
+
+        print(response.data)
+
+        # Check that a new file has been created
+        self.assertEqual(NotesImage.objects.count(), n + 1)
