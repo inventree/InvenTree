@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
-from taggit.serializers import TaggitSerializer, TagListSerializerField
+from taggit.serializers import TagListSerializerField
 
 import common.models
 import company.models
@@ -20,6 +20,7 @@ import InvenTree.helpers
 import InvenTree.serializers
 import part.models as part_models
 import stock.filters
+from common.serializers import InvenTreeTaggitSerializer
 from company.serializers import SupplierPartSerializer
 from InvenTree.models import extract_int
 from InvenTree.serializers import (InvenTreeCurrencySerializer,
@@ -77,7 +78,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
         return value
 
 
-class StockItemSerializer(TaggitSerializer, InvenTree.serializers.InvenTreeModelSerializer):
+class StockItemSerializer(InvenTreeTaggitSerializer, InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a StockItem.
 
     - Includes serialization for the linked part
@@ -571,7 +572,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         ]
 
 
-class LocationSerializer(TaggitSerializer, InvenTree.serializers.InvenTreeModelSerializer):
+class LocationSerializer(InvenTreeTaggitSerializer, InvenTree.serializers.InvenTreeModelSerializer):
     """Detailed information about a stock location."""
 
     class Meta:

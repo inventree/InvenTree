@@ -7,9 +7,10 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
-from taggit.serializers import TaggitSerializer, TagListSerializerField
+from taggit.serializers import TagListSerializerField
 
 import part.filters
+from common.serializers import InvenTreeTaggitSerializer
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField,
@@ -150,7 +151,7 @@ class ContactSerializer(InvenTreeModelSerializer):
         ]
 
 
-class ManufacturerPartSerializer(TaggitSerializer, InvenTreeModelSerializer):
+class ManufacturerPartSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
     """Serializer for ManufacturerPart object."""
 
     class Meta:
@@ -241,7 +242,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
 
 
-class SupplierPartSerializer(TaggitSerializer, InvenTreeModelSerializer):
+class SupplierPartSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
     """Serializer for SupplierPart object."""
 
     class Meta:

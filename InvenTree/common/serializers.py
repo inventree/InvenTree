@@ -3,6 +3,7 @@
 from django.urls import reverse
 
 from rest_framework import serializers
+from taggit.serializers import TaggitSerializer
 
 from common.models import (InvenTreeSetting, InvenTreeUserSetting,
                            NewsFeedEntry, NotificationMessage)
@@ -230,3 +231,24 @@ class ConfigSerializer(serializers.Serializer):
         if not isinstance(instance, str):
             instance = list(instance.keys())[0]
         return {'key': instance, **self.instance[instance]}
+
+
+class InvenTreeTaggitSerializer(serializers.Serializer):
+    """Updated from https://github.com/glemmaPaul/django-taggit-serializer."""
+
+    create = TaggitSerializer.create
+    _save_tags = TaggitSerializer._save_tags
+    _pop_tags = TaggitSerializer._pop_tags
+
+    def update(self, instance, validated_data):
+        """Overriden update method to readd the tagmanager."""
+        to_be_tagged, validated_data = self._pop_tags(validated_data)
+
+        tag_object = super().update(instance, validated_data)
+
+        for key in to_be_tagged.keys():
+            # readd the tagmanager
+            new_tagobject = tag_object.__class__.objects.get(id=tag_object.id)
+            setattr(tag_object, key, getattr(new_tagobject, key))
+
+        return self._save_tags(tag_object, to_be_tagged)

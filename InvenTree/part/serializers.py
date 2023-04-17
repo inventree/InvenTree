@@ -15,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
-from taggit.serializers import TaggitSerializer, TagListSerializerField
+from taggit.serializers import TagListSerializerField
 
 import common.models
 import company.models
@@ -24,6 +24,7 @@ import InvenTree.status
 import part.filters
 import part.tasks
 import stock.models
+from common.serializers import InvenTreeTaggitSerializer
 from InvenTree.serializers import (DataFileExtractSerializer,
                                    DataFileUploadSerializer,
                                    InvenTreeAttachmentSerializer,
@@ -404,7 +405,7 @@ class InitialSupplierSerializer(serializers.Serializer):
         return data
 
 
-class PartSerializer(TaggitSerializer, RemoteImageMixin, InvenTreeModelSerializer):
+class PartSerializer(InvenTreeTaggitSerializer, RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for complete detail information of a part.
 
     Used when displaying all details of a single component.
