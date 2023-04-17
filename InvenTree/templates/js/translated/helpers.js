@@ -433,7 +433,6 @@ function setupNotesField(element, url, options={}) {
 
             inventreeFormDataUpload('{% url "api-notes-image-list" %}', form_data, {
                 success: function(response) {
-                    console.log("Uploading image:", response.image);
                     onSuccess(response.image);
                 },
                 error: function(xhr, status, error) {
