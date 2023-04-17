@@ -447,11 +447,13 @@ class PluginsRegistry:
                     # Disable plugin
                     safe_reference(plugin=plg_i, key=plg_key, active=False)
 
-                    _msg = _(f'Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!')
-                    if plg_i.MIN_VERSION:
-                        _msg += _(f'Plugin requires at least version {plg_i.MIN_VERSION}')
-                    if plg_i.MAX_VERSION:
-                        _msg += _(f'Plugin requires at most version {plg_i.MAX_VERSION}')
+                    p = plg_name
+                    v = version.inventreeVersion()
+                    _msg = _(f"Plugin '{p}' is not compatible with the current InvenTree version {v}")
+                    if v := plg_i.MIN_VERSION:
+                        _msg += _(f'Plugin requires at least version {v}')
+                    if v := plg_i.MAX_VERSION:
+                        _msg += _(f'Plugin requires at most version {v}')
                     # Log to error stack
                     log_error(_msg, reference='init')
                 else:
