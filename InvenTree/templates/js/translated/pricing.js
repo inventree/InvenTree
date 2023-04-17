@@ -607,8 +607,8 @@ function loadPriceBreakTable(table, options={}) {
 
                     let buttons = '';
 
-                    buttons += makeEditButton(`button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
-                    buttons += makeDeleteButton(`button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
+                    buttons += makeEditButton(`button-${name}-edit`, row.pk, `{% trans "Edit" %} ${human_name}`);
+                    buttons += makeDeleteButton(`button-${name}-delete`, row.pk, `{% trans "Delete" %} ${human_name}`);
 
                     html += wrapButtons(buttons);
 
