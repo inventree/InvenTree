@@ -1383,7 +1383,7 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
 
         if len(existing) > 0:
             exists = ','.join([str(x) for x in existing])
-            msg = _("Serial numbers already exist") + ":" + exists
+            msg = _("Serial numbers already exist") + f": {exists}"
             raise ValidationError({"serial_numbers": msg})
 
         # Create a new stock item for each unique serial number
