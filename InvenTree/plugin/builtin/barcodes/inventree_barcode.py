@@ -100,7 +100,8 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
                 if label in barcode_dict:
                     try:
-                        instance = model.objects.get(pk=barcode_dict[label])
+                        pk = int(barcode_dict[label])
+                        instance = model.objects.get(pk=pk)
                         return self.format_matched_response(label, model, instance)
                     except (ValueError, model.DoesNotExist):
                         pass
