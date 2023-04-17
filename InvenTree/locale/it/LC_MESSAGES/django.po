@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 14:52+0000\n"
-"PO-Revision-Date: 2023-04-15 18:23\n"
+"POT-Creation-Date: 2023-04-17 14:13+0000\n"
+"PO-Revision-Date: 2023-04-17 18:26\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1834,10 +1834,9 @@ msgid "Completed Outputs"
 msgstr "Outputs Completati"
 
 #: common/files.py:63
-#, fuzzy, python-brace-format
-#| msgid "Unsupported file format: {ext.upper()}"
+#, python-brace-format
 msgid "Unsupported file format: {fmt}"
-msgstr "Formato file non supportato: {ext.upper()}"
+msgstr ""
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
@@ -6193,10 +6192,8 @@ msgid "You do not have permission to edit the BOM."
 msgstr "Non hai il permesso di modificare la distinta base."
 
 #: part/templates/part/bom.html:15
-#, fuzzy
-#| msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
 msgid "The BOM this part has been changed, and must be validated"
-msgstr "La distinta base per <em>%(part)s</em> è cambiata e deve essere convalidata.<br>"
+msgstr ""
 
 #: part/templates/part/bom.html:17
 #, python-format
@@ -6855,10 +6852,8 @@ msgid "Create new part variant"
 msgstr "Crea nuove varianti dell'articolo"
 
 #: part/templates/part/variant_part.html:10
-#, fuzzy
-#| msgid "Create another part after this one"
 msgid "Create a new variant part from this template"
-msgstr "Crea un altro articolo dopo questo"
+msgstr ""
 
 #: part/templatetags/inventree_extras.py:187
 msgid "Unknown database"
@@ -7043,22 +7038,19 @@ msgid "No date found"
 msgstr "Nessuna data trovata"
 
 #: plugin/registry.py:452
-#, fuzzy, python-brace-format
-#| msgid "Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!"
+#, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
-msgstr "Il plugin `{plg_name}` non è compatibile con l'attuale versione di InvenTree {version.inventreeVersion()}!"
+msgstr ""
 
 #: plugin/registry.py:454
-#, fuzzy, python-brace-format
-#| msgid "Plugin requires at least version {plg_i.MIN_VERSION}"
+#, python-brace-format
 msgid "Plugin requires at least version {v}"
-msgstr "Il plugin richiede almeno la versione {plg_i.MIN_VERSION}"
+msgstr ""
 
 #: plugin/registry.py:456
-#, fuzzy, python-brace-format
-#| msgid "Plugin requires at most version {plg_i.MAX_VERSION}"
+#, python-brace-format
 msgid "Plugin requires at most version {v}"
-msgstr "Il plugin richiede al massimo la versione {plg_i.MAX_VERSION}"
+msgstr ""
 
 #: plugin/samples/integration/sample.py:39
 msgid "Enable PO"
@@ -12073,11 +12065,9 @@ msgstr "Continua"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/stats.html:13
@@ -12256,18 +12246,3 @@ msgstr "Permessi per modificare gli elementi"
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
 
-#, python-format
-#~ msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-#~ msgstr "Crea una nuova variante del modello <em>'%(full_name)s'</em>."
-
-#, python-brace-format
-#~ msgid "Serial numbers already exist: {exists}"
-#~ msgstr "Numeri di serie già esistenti: {exists}"
-
-#, python-brace-format
-#~ msgid "Edit ${human_name}"
-#~ msgstr "Modifica ${human_name}"
-
-#, python-brace-format
-#~ msgid "Delete ${human_name}"
-#~ msgstr "Elimina ${human_name}"
