@@ -476,12 +476,15 @@ function setupNotesField(element, url, options={}) {
 
             data[options.notes_field || 'notes'] = mde.value();
 
+            $('#save-notes').find('#save-icon').removeClass('fa-save').addClass('fa-spin fa-spinner');
+
             inventreePut(url, data, {
                 method: 'PATCH',
                 success: function(response) {
-                    showMessage('{% trans "Notes updated" %}', {style: 'success'});
+                    $('#save-notes').find('#save-icon').removeClass('fa-spin fa-spinner').addClass('fa-check-circle');
                 },
                 error: function(xhr) {
+                    $('#save-notes').find('#save-icon').removeClass('fa-spin fa-spinner').addClass('fa-times-circle icon-red');
                     showApiError(xhr, url);
                 }
             });
