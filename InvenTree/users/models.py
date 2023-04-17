@@ -185,7 +185,7 @@ class RuleSet(models.Model):
         'common_webhookmessage',
         'common_notificationentry',
         'common_notificationmessage',
-        'common_notesimage'
+        'common_notesimage',
         'users_owner',
 
         # Third-party tables
