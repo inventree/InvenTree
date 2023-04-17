@@ -164,9 +164,9 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
 
     title = models.CharField(
         verbose_name=_('Description'),
-        blank=False,
+        blank=True,
         max_length=100,
-        help_text=_('Brief description of the build')
+        help_text=_('Brief description of the build (optional)')
     )
 
     parent = TreeForeignKey(

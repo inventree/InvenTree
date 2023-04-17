@@ -76,8 +76,8 @@
     </ul>
 </div>
 {% if order.is_pending %}
-<button type='button' class='btn btn-primary' id='place-order' title='{% trans "Submit Order" %}'>
-    <span class='fas fa-paper-plane'></span> {% trans "Submit Order" %}
+<button type='button' class='btn btn-primary' id='place-order' title='{% trans "Issue Order" %}'>
+    <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
 </button>
 {% elif order.is_open %}
 <button type='button' class='btn btn-primary' id='receive-order' title='{% trans "Receive items" %}'>
