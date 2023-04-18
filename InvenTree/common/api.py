@@ -7,10 +7,9 @@ from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-from rest_framework import filters, permissions, serializers
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -20,6 +19,7 @@ import common.models
 import common.serializers
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.config import CONFIG_LOOKUPS
+from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors
 from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
@@ -167,11 +167,7 @@ class SettingsList(ListAPI):
     This is inheritted by all list views for settings.
     """
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'pk',
@@ -187,7 +183,7 @@ class SettingsList(ListAPI):
 class GlobalSettingsList(SettingsList):
     """API endpoint for accessing a list of global settings objects."""
 
-    queryset = common.models.InvenTreeSetting.objects.all()
+    queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith="_")
     serializer_class = common.serializers.GlobalSettingsSerializer
 
 
@@ -216,7 +212,7 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
     """
 
     lookup_field = 'key'
-    queryset = common.models.InvenTreeSetting.objects.all()
+    queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith="_")
     serializer_class = common.serializers.GlobalSettingsSerializer
 
     def get_object(self):
@@ -226,7 +222,10 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
         if key not in common.models.InvenTreeSetting.SETTINGS.keys():
             raise NotFound()
 
-        return common.models.InvenTreeSetting.get_setting_object(key)
+        return common.models.InvenTreeSetting.get_setting_object(
+            key,
+            cache=False, create=True
+        )
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -284,7 +283,11 @@ class UserSettingsDetail(RetrieveUpdateAPI):
         if key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
             raise NotFound()
 
-        return common.models.InvenTreeUserSetting.get_setting_object(key, user=self.request.user)
+        return common.models.InvenTreeUserSetting.get_setting_object(
+            key,
+            user=self.request.user,
+            cache=False, create=True
+        )
 
     permission_classes = [
         UserSettingsPermissions,
@@ -332,11 +335,7 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
 
     permission_classes = [permissions.IsAuthenticated, ]
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'category',
@@ -401,10 +400,7 @@ class NewsFeedMixin:
 
 class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
     """List view for all news items."""
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     ordering_fields = [
         'published',
@@ -457,7 +453,7 @@ settings_api_urls = [
     # Notification settings
     re_path(r'^notification/', include([
         # Notification Settings Detail
-        re_path(r'^(?P<pk>\d+)/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
+        path(r'<int:pk>/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
 
         # Notification Settings List
         re_path(r'^.*$', NotificationUserSettingsList.as_view(), name='api-notifcation-setting-list'),
@@ -486,7 +482,7 @@ common_api_urls = [
     # Notifications
     re_path(r'^notifications/', include([
         # Individual purchase order detail URLs
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
         ])),
         # Read all
@@ -498,7 +494,7 @@ common_api_urls = [
 
     # News
     re_path(r'^news/', include([
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'.*$', NewsFeedEntryDetail.as_view(), name='api-news-detail'),
         ])),
         re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),

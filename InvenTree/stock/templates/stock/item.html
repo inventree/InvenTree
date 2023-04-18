@@ -59,7 +59,7 @@
                 {% include "filter_list.html" with id="salesorderallocation" %}
             </div>
         </div>
-        <table class='table table-striped table-condensed' data-toolbar='#sales-order-allocation-toolbar' id='sales-order-allocation-table'></table>
+        <table class='table table-striped table-condensed' data-toolbar='#sales-order-allocations-toolbar' id='sales-order-allocation-table'></table>
     </div>
     {% endif %}
 </div>
@@ -222,30 +222,18 @@
         );
     });
 
-    enableDragAndDrop(
-            '#attachment-dropzone',
-            "{% url 'api-stock-attachment-list' %}",
-            {
-                data: {
-                    stock_item: {{ item.id }},
-                },
-                label: 'attachment',
-                success: function(data, status, xhr) {
-                    reloadAttachmentTable();
+    onPanelLoad('attachments', function() {
+        loadAttachmentTable('{% url "api-stock-attachment-list" %}', {
+            filters: {
+                stock_item: {{ item.pk }},
+            },
+            fields: {
+                stock_item: {
+                    value: {{ item.pk }},
+                    hidden: true,
                 }
             }
-        );
-
-    loadAttachmentTable('{% url "api-stock-attachment-list" %}', {
-        filters: {
-            stock_item: {{ item.pk }},
-        },
-        fields: {
-            stock_item: {
-                value: {{ item.pk }},
-                hidden: true,
-            }
-        }
+        });
     });
 
     loadStockTestResultsTable(
@@ -255,15 +243,13 @@
         }
     );
 
-    function reloadTable() {
-        $("#test-result-table").bootstrapTable("refresh");
-    }
-
-    {% if item.has_test_reports %}
     $("#test-report").click(function() {
-        printTestReports([{{ item.pk }}]);
+        printReports({
+            items: [{{ item.pk }}],
+            key: 'item',
+            url: '{% url "api-stockitem-testreport-list" %}',
+        });
     });
-    {% endif %}
 
     {% if user.is_staff %}
     $("#delete-test-results").click(function() {
@@ -301,7 +287,7 @@
                         method: 'DELETE',
                         title: '{% trans "Delete Test Data" %}',
                         preFormContent: html,
-                        onSuccess: reloadTable,
+                        refreshTable: '#test-result-table',
                     });
                 }
             }
@@ -313,19 +299,11 @@
 
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',
-            fields: {
-                test: {},
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {},
-                stock_item: {
-                    value: {{ item.pk }},
-                    hidden: true,
-                }
-            },
+            fields: stockItemTestResultFields({
+                stock_item: {{ item.pk }},
+            }),
             title: '{% trans "Add Test Result" %}',
-            onSuccess: reloadTable,
+            refreshTable: '#test-result-table',
         });
     });
 

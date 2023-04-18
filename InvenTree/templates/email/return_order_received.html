@@ -1,0 +1,11 @@
+{% extends "email/email.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block title %}
+{{ message }}
+{% if link %}
+<p>{% trans "Click on the following link to view this order" %}: <a href='{{ link }}'>{{ link }}</a></p>
+{% endif %}
+{% endblock title %}

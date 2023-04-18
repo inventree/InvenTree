@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
             name='Part',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(help_text='Part name', max_length=100, validators=[InvenTree.validators.validate_part_name])),
+                ('name', models.CharField(help_text='Part name', max_length=100)),
                 ('variant', models.CharField(blank=True, help_text='Part variant or revision code', max_length=32)),
                 ('description', models.CharField(help_text='Part description', max_length=250)),
                 ('keywords', models.CharField(blank=True, help_text='Part keywords to improve visibility in search results', max_length=250)),

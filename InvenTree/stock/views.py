@@ -2,11 +2,10 @@
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
 import common.settings
-from InvenTree.views import InvenTreeRoleMixin, QRCodeView
+from InvenTree.views import InvenTreeRoleMixin
 from plugin.views import InvenTreePluginViewMixin
 
 from .models import StockItem, StockLocation
@@ -101,34 +100,3 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
                 return HttpResponseRedirect(reverse('stock-index'))
 
         return super().get(request, *args, **kwargs)
-
-
-class StockLocationQRCode(QRCodeView):
-    """View for displaying a QR code for a StockLocation object."""
-
-    ajax_form_title = _("Stock Location QR code")
-
-    role_required = ['stock_location.view', 'stock.view']
-
-    def get_qr_data(self):
-        """Generate QR code data for the StockLocation."""
-        try:
-            loc = StockLocation.objects.get(id=self.pk)
-            return loc.format_barcode()
-        except StockLocation.DoesNotExist:
-            return None
-
-
-class StockItemQRCode(QRCodeView):
-    """View for displaying a QR code for a StockItem object."""
-
-    ajax_form_title = _("Stock Item QR Code")
-    role_required = 'stock.view'
-
-    def get_qr_data(self):
-        """Generate QR code data for the StockItem."""
-        try:
-            item = StockItem.objects.get(id=self.pk)
-            return item.format_barcode()
-        except StockItem.DoesNotExist:
-            return None

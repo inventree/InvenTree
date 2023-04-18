@@ -19,10 +19,10 @@ import InvenTree.helpers
 import InvenTree.serializers
 import part.models as part_models
 import stock.filters
-from common.settings import currency_code_default, currency_code_mappings
 from company.serializers import SupplierPartSerializer
 from InvenTree.models import extract_int
-from InvenTree.serializers import InvenTreeDecimalField
+from InvenTree.serializers import (InvenTreeCurrencySerializer,
+                                   InvenTreeDecimalField)
 from part.serializers import PartBriefSerializer
 
 from .models import (StockItem, StockItemAttachment, StockItemTestResult,
@@ -46,10 +46,6 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
     """Brief serializers for a StockItem."""
 
-    part_name = serializers.CharField(source='part.full_name', read_only=True)
-
-    quantity = InvenTreeDecimalField()
-
     class Meta:
         """Metaclass options."""
 
@@ -69,6 +65,10 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'barcode_hash',
         ]
 
+    part_name = serializers.CharField(source='part.full_name', read_only=True)
+
+    quantity = InvenTreeDecimalField()
+
     def validate_serial(self, value):
         """Make sure serial is not to big."""
         if abs(extract_int(value)) > 0x7fffffff:
@@ -82,6 +82,60 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     - Includes serialization for the linked part
     - Includes serialization for the item location
     """
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItem
+        fields = [
+            'allocated',
+            'batch',
+            'belongs_to',
+            'build',
+            'customer',
+            'delete_on_deplete',
+            'expired',
+            'expiry_date',
+            'is_building',
+            'link',
+            'location',
+            'location_detail',
+            'notes',
+            'owner',
+            'packaging',
+            'part',
+            'part_detail',
+            'purchase_order',
+            'purchase_order_reference',
+            'pk',
+            'quantity',
+            'sales_order',
+            'sales_order_reference',
+            'serial',
+            'stale',
+            'status',
+            'status_text',
+            'stocktake_date',
+            'supplier_part',
+            'supplier_part_detail',
+            'tracking_items',
+            'barcode_hash',
+            'updated',
+            'purchase_price',
+            'purchase_price_currency',
+        ]
+
+        """
+        These fields are read-only in this context.
+        They can be updated by accessing the appropriate API endpoints
+        """
+        read_only_fields = [
+            'allocated',
+            'barcode_hash',
+            'stocktake_date',
+            'stocktake_user',
+            'updated',
+        ]
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
@@ -111,6 +165,8 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         queryset = queryset.prefetch_related(
             'sales_order',
             'purchase_order',
+            'part',
+            'part__pricing_data',
         )
 
         # Annotate the queryset with the total allocated to sales orders
@@ -171,17 +227,11 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
-        max_digits=19, decimal_places=6,
         allow_null=True,
         help_text=_('Purchase price of this stock item'),
     )
 
-    purchase_price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        default=currency_code_default,
-        label=_('Currency'),
-        help_text=_('Purchase currency of this stock item'),
-    )
+    purchase_price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
@@ -202,60 +252,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         if supplier_part_detail is not True:
             self.fields.pop('supplier_part_detail')
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItem
-        fields = [
-            'allocated',
-            'batch',
-            'belongs_to',
-            'build',
-            'customer',
-            'delete_on_deplete',
-            'expired',
-            'expiry_date',
-            'is_building',
-            'link',
-            'location',
-            'location_detail',
-            'notes',
-            'owner',
-            'packaging',
-            'part',
-            'part_detail',
-            'purchase_order',
-            'purchase_order_reference',
-            'pk',
-            'quantity',
-            'sales_order',
-            'sales_order_reference',
-            'serial',
-            'stale',
-            'status',
-            'status_text',
-            'stocktake_date',
-            'supplier_part',
-            'supplier_part_detail',
-            'tracking_items',
-            'barcode_hash',
-            'updated',
-            'purchase_price',
-            'purchase_price_currency',
-        ]
-
-        """
-        These fields are read-only in this context.
-        They can be updated by accessing the appropriate API endpoints
-        """
-        read_only_fields = [
-            'allocated',
-            'barcode_hash',
-            'stocktake_date',
-            'stocktake_user',
-            'updated',
-        ]
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
@@ -573,23 +569,6 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Detailed information about a stock location."""
 
-    @staticmethod
-    def annotate_queryset(queryset):
-        """Annotate extra information to the queryset"""
-
-        # Annotate the number of stock items which exist in this category (including subcategories)
-        queryset = queryset.annotate(
-            items=stock.filters.annotate_location_items()
-        )
-
-        return queryset
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
-    items = serializers.IntegerField(read_only=True)
-
-    level = serializers.IntegerField(read_only=True)
-
     class Meta:
         """Metaclass options."""
 
@@ -607,11 +586,29 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'owner',
             'icon',
             'structural',
+            'external',
         ]
 
         read_only_fields = [
             'barcode_hash',
         ]
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate extra information to the queryset"""
+
+        # Annotate the number of stock items which exist in this category (including subcategories)
+        queryset = queryset.annotate(
+            items=stock.filters.annotate_location_items()
+        )
+
+        return queryset
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    items = serializers.IntegerField(read_only=True)
+
+    level = serializers.IntegerField(read_only=True)
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
@@ -622,42 +619,13 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
 
         model = StockItemAttachment
 
-        fields = [
-            'pk',
+        fields = InvenTree.serializers.InvenTreeAttachmentSerializer.attachment_fields([
             'stock_item',
-            'attachment',
-            'filename',
-            'link',
-            'comment',
-            'upload_date',
-            'user',
-            'user_detail',
-        ]
-
-        read_only_fields = [
-            'upload_date',
-            'user',
-            'user_detail'
-        ]
+        ])
 
 
 class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for the StockItemTestResult model."""
-
-    user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
-
-    key = serializers.CharField(read_only=True)
-
-    attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=False)
-
-    def __init__(self, *args, **kwargs):
-        """Add detail fields."""
-        user_detail = kwargs.pop('user_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if user_detail is not True:
-            self.fields.pop('user_detail')
 
     class Meta:
         """Metaclass options."""
@@ -684,30 +652,24 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
             'date',
         ]
 
-
-class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for StockItemTracking model."""
-
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
-        item_detail = kwargs.pop('item_detail', False)
         user_detail = kwargs.pop('user_detail', False)
 
         super().__init__(*args, **kwargs)
 
-        if item_detail is not True:
-            self.fields.pop('item_detail')
-
         if user_detail is not True:
             self.fields.pop('user_detail')
 
-    label = serializers.CharField(read_only=True)
+    user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
 
-    item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
+    key = serializers.CharField(read_only=True)
 
-    user_detail = InvenTree.serializers.UserSerializer(source='user', many=False, read_only=True)
+    attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=False)
 
-    deltas = serializers.JSONField(read_only=True)
+
+class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for StockItemTracking model."""
 
     class Meta:
         """Metaclass options."""
@@ -732,6 +694,27 @@ class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'label',
             'tracking_type',
         ]
+
+    def __init__(self, *args, **kwargs):
+        """Add detail fields."""
+        item_detail = kwargs.pop('item_detail', False)
+        user_detail = kwargs.pop('user_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if item_detail is not True:
+            self.fields.pop('item_detail')
+
+        if user_detail is not True:
+            self.fields.pop('user_detail')
+
+    label = serializers.CharField(read_only=True)
+
+    item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
+
+    user_detail = InvenTree.serializers.UserSerializer(source='user', many=False, read_only=True)
+
+    deltas = serializers.JSONField(read_only=True)
 
 
 class StockAssignmentItemSerializer(serializers.Serializer):
@@ -1144,15 +1127,6 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
 class StockTransferSerializer(StockAdjustmentSerializer):
     """Serializer for transferring (moving) stock item(s)."""
 
-    location = serializers.PrimaryKeyRelatedField(
-        queryset=StockLocation.objects.all(),
-        many=False,
-        required=True,
-        allow_null=False,
-        label=_('Location'),
-        help_text=_('Destination stock location'),
-    )
-
     class Meta:
         """Metaclass options."""
 
@@ -1161,6 +1135,15 @@ class StockTransferSerializer(StockAdjustmentSerializer):
             'notes',
             'location',
         ]
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination stock location'),
+    )
 
     def save(self):
         """Transfer stock."""

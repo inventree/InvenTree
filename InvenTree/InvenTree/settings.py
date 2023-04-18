@@ -26,21 +26,31 @@ from sentry_sdk.integrations.django import DjangoIntegration
 
 from . import config
 from .config import get_boolean_setting, get_custom_file, get_setting
+from .version import inventreeApiVersion
 
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
-# Note: The following fix is "required" for docker build workflow
-# Note: 2022-12-12 still unsure why...
-if TESTING and os.getenv('INVENTREE_DOCKER'):
-    # Ensure that sys.path includes global python libs
-    site_packages = '/usr/local/lib/python3.9/site-packages'
+if TESTING:
 
-    if site_packages not in sys.path:
-        print("Adding missing site-packages path:", site_packages)
-        sys.path.append(site_packages)
+    # Use a weaker password hasher for testing (improves testing speed)
+    PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher',]
+
+    # Enable slow-test-runner
+    TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
+    NUM_SLOW_TESTS = 25
+
+    # Note: The following fix is "required" for docker build workflow
+    # Note: 2022-12-12 still unsure why...
+    if os.getenv('INVENTREE_DOCKER'):
+        # Ensure that sys.path includes global python libs
+        site_packages = '/usr/local/lib/python3.9/site-packages'
+
+        if site_packages not in sys.path:
+            print("Adding missing site-packages path:", site_packages)
+            sys.path.append(site_packages)
 
 # Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
@@ -102,8 +112,10 @@ MEDIA_ROOT = config.get_media_dir()
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = get_setting(
+    "INVENTREE_ALLOWED_HOSTS",
     config_key='allowed_hosts',
-    default_value=['*']
+    default_value=['*'],
+    typecast=list,
 )
 
 # Cross Origin Resource Sharing (CORS) options
@@ -113,13 +125,16 @@ CORS_URLS_REGEX = r'^/api/.*$'
 
 # Extract CORS options from configuration file
 CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
+    "INVENTREE_CORS_ORIGIN_ALLOW_ALL",
     config_key='cors.allow_all',
     default_value=False,
 )
 
 CORS_ORIGIN_WHITELIST = get_setting(
+    "INVENTREE_CORS_ORIGIN_WHITELIST",
     config_key='cors.whitelist',
-    default_value=[]
+    default_value=[],
+    typecast=list,
 )
 
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
@@ -219,6 +234,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+    'drf_spectacular',                      # API documentation
 
     'django_ical',                          # For exporting calendars
 ]
@@ -342,7 +358,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissions',
         'InvenTree.permissions.RolePermission',
     ),
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -352,6 +368,15 @@ REST_FRAMEWORK = {
 if DEBUG:
     # Enable browsable API if in DEBUG mode
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'InvenTree API',
+    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
+    'LICENSE': {'MIT': 'https://github.com/inventree/InvenTree/blob/master/LICENSE'},
+    'EXTERNAL_DOCS': {'docs': 'https://docs.inventree.org', 'web': 'https://inventree.org'},
+    'VERSION': inventreeApiVersion(),
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
@@ -554,6 +579,9 @@ SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', INVENTREE_DSN)
 SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
 
 if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+
+    logger.info("Running with sentry.io integration enabled")
+
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration(), ],
@@ -713,7 +741,7 @@ LANGUAGES = [
     ('th', _('Thai')),
     ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
-    ('zh-cn', _('Chinese')),
+    ('zh-hans', _('Chinese')),
 ]
 
 # Testing interface translations
@@ -736,9 +764,11 @@ if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no 
     django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
-CURRENCIES = get_setting('INVENTREE_CURRENCIES', 'currencies', [
-    'AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
-])
+CURRENCIES = get_setting(
+    'INVENTREE_CURRENCIES', 'currencies',
+    ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD'],
+    typecast=list,
+)
 
 # Maximum number of decimal places for currency rendering
 CURRENCY_DECIMAL_PLACES = 6
@@ -746,7 +776,7 @@ CURRENCY_DECIMAL_PLACES = 6
 # Check that each provided currency is supported
 for currency in CURRENCIES:
     if currency not in moneyed.CURRENCIES:  # pragma: no cover
-        print(f"Currency code '{currency}' is not supported")
+        logger.error(f"Currency code '{currency}' is not supported")
         sys.exit(1)
 
 # Custom currency exchange backend
@@ -795,15 +825,12 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 SITE_ID = 1
 
 # Load the allauth social backends
-SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [])
+SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list)
 
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None)
-
-if SOCIALACCOUNT_PROVIDERS is None:
-    SOCIALACCOUNT_PROVIDERS = {}
+SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict)
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
@@ -894,7 +921,6 @@ CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom
 CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
 
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
-
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 

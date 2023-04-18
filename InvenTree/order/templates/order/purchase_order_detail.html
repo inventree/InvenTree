@@ -8,7 +8,7 @@
 
 {% block sidebar %}
 {% include 'order/po_sidebar.html' %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block page_content %}
 {% settings_value "PURCHASEORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
@@ -20,16 +20,17 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.purchase_order.change %}
-                {% if order.is_pending or allow_extra_editing %}
+                {% if order.is_open or allow_extra_editing %}
                 <a class='btn btn-primary' href='{% url "po-upload" order.id %}' role='button'>
                     <span class='fas fa-file-upload side-icon'></span> {% trans "Upload File" %}
                 </a>
                 <button type='button' class='btn btn-success' id='new-po-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
-                {% elif order.status == PurchaseOrderStatus.PLACED %}
-                <button type='button' class='btn btn-primary' id='receive-selected-items' title='{% trans "Receive selected items" %}'>
-                    <span class='fas fa-sign-in-alt'></span> {% trans "Receive Items" %}
+                {% endif %}
+                {% if order.status == PurchaseOrderStatus.PLACED %}
+                <button type='button' class='btn btn-primary' id='receive-selected-items' title='{% trans "Receive Line Items" %}'>
+                    <span class='fas fa-sign-in-alt'></span> {% trans "Receive Line Items" %}
                 </button>
                 {% endif %}
                 {% endif %}
@@ -38,6 +39,22 @@
     </div>
     <div class='panel-content'>
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
+            {% if roles.purchase_order.change %}
+            {% if order.is_open or allow_extra_editing %}
+            <div class='btn-group' role='group'>
+                <!-- Multiple-select actions -->
+                <button id='multi-select-options' class='btn btn-primary dropdown-toggle' data-bs-toggle='dropdown'>
+                    <span class='fas fa-tools'></span> <span class='caret'></span>
+                </button>
+                <ul class='dropdown-menu'>
+                    <li><a class='dropdown-item' href='#' id='po-lines-bulk-delete' title='{% trans "Delete Line Items" %}'>
+                        <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Line Items" %}
+                    </a></li>
+                </ul>
+            </div>
+            {% endif %}
+            {% endif %}
+
             {% include "filter_list.html" with id="purchase-order-lines" %}
         </div>
 
@@ -51,7 +68,7 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.purchase_order.change %}
-                {% if order.is_pending or allow_extra_editing %}
+                {% if order.is_open or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-po-extra-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
                 </button>
@@ -110,7 +127,7 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 
@@ -130,30 +147,18 @@
         );
     });
 
-    enableDragAndDrop(
-        '#attachment-dropzone',
-        '{% url "api-po-attachment-list" %}',
-        {
-            data: {
-                order: {{ order.id }},
+    onPanelLoad('order-attachments', function() {
+        loadAttachmentTable('{% url "api-po-attachment-list" %}', {
+            filters: {
+                order: {{ order.pk }},
             },
-            label: 'attachment',
-            success: function(data, status, xhr) {
-                $('#attachment-table').bootstrapTable('refresh');
+            fields: {
+                order: {
+                    value: {{ order.pk }},
+                    hidden: true,
+                }
             }
-        }
-    );
-
-    loadAttachmentTable('{% url "api-po-attachment-list" %}', {
-        filters: {
-            order: {{ order.pk }},
-        },
-        fields: {
-            order: {
-                value: {{ order.pk }},
-                hidden: true,
-            }
-        }
+        });
     });
 
     loadStockTable($("#stock-table"), {
@@ -188,7 +193,7 @@ $('#new-po-line').click(function() {
 {% elif order.status == PurchaseOrderStatus.PLACED %}
 
     $('#receive-selected-items').click(function() {
-        var items = getTableData('#po-line-table');
+        let items = getTableData('#po-line-table');
 
         receivePurchaseOrderItems(
             {{ order.id }},
@@ -203,59 +208,56 @@ $('#new-po-line').click(function() {
 
 {% endif %}
 
-loadPurchaseOrderLineItemTable('#po-line-table', {
-    order: {{ order.pk }},
-    {% if order.supplier %}
-    supplier: {{ order.supplier.pk }},
-    {% endif %}
-    {% if roles.purchase_order.change %}
-    allow_edit: true,
-    {% else %}
-    allow_edit: false,
-    {% endif %}
-    {% if order.status == PurchaseOrderStatus.PENDING %}
-    pending: true,
-    {% endif %}
-    {% if order.status == PurchaseOrderStatus.PLACED and roles.purchase_order.change %}
-    allow_receive: true,
-    {% else %}
-    allow_receive: false,
-    {% endif %}
-});
-
-$("#new-po-extra-line").click(function() {
-
-    var fields = extraLineFields({
+onPanelLoad('order-items', function() {
+    loadPurchaseOrderLineItemTable('#po-line-table', {
         order: {{ order.pk }},
-    });
-
-    {% if order.supplier.currency %}
-    fields.price_currency.value = '{{ order.supplier.currency }}';
-    {% endif %}
-
-    constructForm('{% url "api-po-extra-line-list" %}', {
-        fields: fields,
-        method: 'POST',
-        title: '{% trans "Add Order Line" %}',
-        onSuccess: function() {
-            $("#po-extra-lines-table").bootstrapTable("refresh");
-        },
-    });
-});
-
-loadPurchaseOrderExtraLineTable(
-    '#po-extra-lines-table',
-    {
-        order: {{ order.pk }},
-        status: {{ order.status }},
-        {% if order.is_pending %}
-        pending: true,
+        {% if order.supplier %}
+        supplier: {{ order.supplier.pk }},
         {% endif %}
         {% if roles.purchase_order.change %}
         allow_edit: true,
+        {% else %}
+        allow_edit: false,
         {% endif %}
-    }
-);
+        {% if order.status == PurchaseOrderStatus.PENDING %}
+        pending: true,
+        {% endif %}
+        {% if order.status == PurchaseOrderStatus.PLACED and roles.purchase_order.change %}
+        allow_receive: true,
+        {% else %}
+        allow_receive: false,
+        {% endif %}
+    });
+
+    $("#new-po-extra-line").click(function() {
+
+        createExtraLineItem({
+            order: {{ order.pk }},
+            table: '#po-extra-lines-table',
+            url: '{% url "api-po-extra-line-list" %}',
+            {% if order.supplier.currency %}
+            currency: '{{ order.supplier.currency }}',
+            {% endif %}
+        });
+    });
+
+    loadExtraLineTable({
+        table: '#po-extra-lines-table',
+        order: {{ order.pk }},
+        url: '{% url "api-po-extra-line-list" %}',
+        name: 'purchaseorderextraline',
+        filtertarget: '#filter-list-purchase-order-extra-lines',
+        {% settings_value "PURCHASEORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
+        {% if order.is_open or allow_edit %}
+        allow_edit: {% js_bool roles.purchase_order.change %},
+        allow_delete: {% js_bool roles.purchase_order.delete %},
+        {% else %}
+        allow_edit: false,
+        allow_delete: false,
+        {% endif %}
+        pricing: true,
+    });
+});
 
 loadOrderTotal(
     '#poTotalPrice',

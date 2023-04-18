@@ -9,9 +9,10 @@
     customGroupSorter,
     downloadTableData,
     getTableData,
-    reloadtable,
+    reloadBootstrapTable,
     renderLink,
     reloadTableFilters,
+    constructExpandCollapseButtons,
     constructOrderTableButtons,
 */
 
@@ -19,8 +20,23 @@
  * Reload a named table
  * @param table
  */
-function reloadtable(table) {
-    $(table).bootstrapTable('refresh');
+function reloadBootstrapTable(table) {
+
+    let tbl = table;
+
+    if (tbl) {
+        if (typeof tbl === 'string' || tbl instanceof String) {
+            tbl = $(tbl);
+        }
+
+        if (tbl.exists()) {
+            tbl.bootstrapTable('refresh');
+        } else {
+            console.error(`Invalid table name passed to reloadTable(): ${table}`);
+        }
+    } else {
+        console.error(`Null value passed to reloadTable()`);
+    }
 }
 
 
@@ -98,13 +114,35 @@ function constructOrderTableButtons(options={}) {
 }
 
 
+/*
+ * Construct buttons to expand / collapse all rows in a table
+ */
+function constructExpandCollapseButtons(table, idx=0) {
+
+    return [
+        {
+            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% trans "Expand all rows" %}'><span class='fas fa-expand'></span></button>`,
+            event: function() {
+                $(table).bootstrapTable('expandAllRows');
+            }
+        },
+        {
+            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% trans "Collapse all rows" %}'><span class='fas fa-compress'></span></button>`,
+            event: function() {
+                $(table).bootstrapTable('collapseAllRows');
+            }
+        }
+    ];
+}
+
+
 /* Return the 'selected' data rows from a bootstrap table.
  * If allowEmpty = false, and the returned dataset is empty,
  * then instead try to return *all* the data
  */
 function getTableData(table, allowEmpty=false) {
 
-    var data = $(table).bootstrapTable('getSelections');
+    let data = $(table).bootstrapTable('getSelections');
 
     if (data.length == 0 && !allowEmpty) {
         data = $(table).bootstrapTable('getData');
@@ -315,6 +353,16 @@ function convertQueryParameters(params, filters) {
         params['search'] = clean_search;
 
         delete params['original_search'];
+    }
+
+    // Enable regex search
+    if (user_settings.SEARCH_REGEX) {
+        params['search_regex'] = true;
+    }
+
+    // Enable whole word search
+    if (user_settings.SEARCH_WHOLE) {
+        params['search_whole'] = true;
     }
 
     return params;

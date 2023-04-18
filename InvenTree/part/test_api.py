@@ -5,6 +5,8 @@ from enum import IntEnum
 from random import randint
 
 from django.core.exceptions import ValidationError
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 import PIL
@@ -128,7 +130,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             for jj in range(10):
                 Part.objects.create(
                     name=f"Part xyz {jj}_{ii}",
-                    description="A test part",
+                    description="A test part with a description",
                     category=child
                 )
 
@@ -426,8 +428,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # Make sure that we get an error if we try to create part in the structural category
         with self.assertRaises(ValidationError):
             part = Part.objects.create(
-                name="Part which shall not be created",
-                description="-",
+                name="-",
+                description="Part which shall not be created",
                 category=structural_category
             )
 
@@ -444,8 +446,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         # Create the test part assigned to a non-structural category
         part = Part.objects.create(
-            name="Part which category will be changed to structural",
-            description="-",
+            name="-",
+            description="Part which category will be changed to structural",
             category=non_structural_category
         )
 
@@ -741,7 +743,7 @@ class PartAPITest(PartAPITestBase):
 
         # First, construct a set of template / variant parts
         master_part = Part.objects.create(
-            name='Master', description='Master part',
+            name='Master', description='Master part which has some variants',
             category=category,
             is_template=True,
         )
@@ -1321,7 +1323,7 @@ class PartCreationTests(PartAPITestBase):
         url = reverse('api-part-list')
 
         name = "KaltgerÃ¤testecker"
-        description = "Gerät"
+        description = "Gerät KaltgerÃ¤testecker strange chars should get through"
 
         data = {
             "name": name,
@@ -1345,7 +1347,7 @@ class PartCreationTests(PartAPITestBase):
                         reverse('api-part-list'),
                         {
                             'name': f'thing_{bom}{img}{params}',
-                            'description': 'Some description',
+                            'description': 'Some long description text for this part',
                             'category': 1,
                             'duplicate': {
                                 'part': 100,
@@ -1362,6 +1364,51 @@ class PartCreationTests(PartAPITestBase):
                     # Check new part
                     self.assertEqual(part.bom_items.count(), 4 if bom else 0)
                     self.assertEqual(part.parameters.count(), 2 if params else 0)
+
+    def test_category_parameters(self):
+        """Test that category parameters are correctly applied"""
+
+        cat = PartCategory.objects.get(pk=1)
+
+        # Add some parameter template to the parent category
+        for pk in [1, 2, 3]:
+            PartCategoryParameterTemplate.objects.create(
+                parameter_template=PartParameterTemplate.objects.get(pk=pk),
+                category=cat,
+                default_value=f"Value {pk}"
+            )
+
+        self.assertEqual(cat.parameter_templates.count(), 3)
+
+        # Creat a new Part, without copying category parameters
+        data = self.post(
+            reverse('api-part-list'),
+            {
+                'category': 1,
+                'name': 'Some new part',
+                'description': 'A new part without parameters',
+                'copy_category_parameters': False,
+            },
+            expected_code=201,
+        ).data
+
+        prt = Part.objects.get(pk=data['pk'])
+        self.assertEqual(prt.parameters.count(), 0)
+
+        # Create a new part, this time copying category parameters
+        data = self.post(
+            reverse('api-part-list'),
+            {
+                'category': 1,
+                'name': 'Another new part',
+                'description': 'A new part with parameters',
+                'copy_category_parameters': True,
+            },
+            expected_code=201,
+        ).data
+
+        prt = Part.objects.get(pk=data['pk'])
+        self.assertEqual(prt.parameters.count(), 3)
 
 
 class PartDetailTests(PartAPITestBase):
@@ -1659,6 +1706,60 @@ class PartDetailTests(PartAPITestBase):
         self.assertEqual(part.metadata['x'], 'y')
 
 
+class PartListTests(PartAPITestBase):
+    """Unit tests for the Part List API endpoint"""
+
+    def test_query_count(self):
+        """Test that the query count is unchanged, independent of query results"""
+
+        queries = [
+            {'limit': 1},
+            {'limit': 10},
+            {'limit': 50},
+            {'category': 1},
+            {},
+        ]
+
+        url = reverse('api-part-list')
+
+        # Create a bunch of extra parts (efficiently)
+        parts = []
+
+        for ii in range(100):
+            parts.append(Part(
+                name=f"Extra part {ii}",
+                description="A new part which will appear via the API",
+                level=0, tree_id=0,
+                lft=0, rght=0,
+            ))
+
+        Part.objects.bulk_create(parts)
+
+        for query in queries:
+
+            with CaptureQueriesContext(connection) as ctx:
+                self.get(url, query, expected_code=200)
+
+            # No more than 20 database queries
+            self.assertLess(len(ctx), 20)
+
+        # Test 'category_detail' annotation
+        for b in [False, True]:
+            with CaptureQueriesContext(connection) as ctx:
+                results = self.get(
+                    reverse('api-part-list'),
+                    {'category_detail': b},
+                    expected_code=200
+                )
+
+                for result in results.data:
+                    if b and result['category'] is not None:
+                        self.assertIn('category_detail', result)
+
+            # No more than 20 DB queries
+            self.assertLessEqual(len(ctx), 20)
+
+
 class PartNotesTests(InvenTreeAPITestCase):
     """Tests for the 'notes' field (markdown field)"""
 
@@ -1792,15 +1893,16 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         'part.change',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Create test data as part of setup routine"""
-        super().setUp()
+        super().setUpTestData()
 
         # Ensure the part "variant" tree is correctly structured
         Part.objects.rebuild()
 
         # Add a new part
-        self.part = Part.objects.create(
+        cls.part = Part.objects.create(
             name='Banana',
             description='This is a banana',
             category=PartCategory.objects.get(pk=1),
@@ -1809,12 +1911,12 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         # Create some stock items associated with the part
 
         # First create 600 units which are OK
-        StockItem.objects.create(part=self.part, quantity=100)
-        StockItem.objects.create(part=self.part, quantity=200)
-        StockItem.objects.create(part=self.part, quantity=300)
+        StockItem.objects.create(part=cls.part, quantity=100)
+        StockItem.objects.create(part=cls.part, quantity=200)
+        StockItem.objects.create(part=cls.part, quantity=300)
 
         # Now create another 400 units which are LOST
-        StockItem.objects.create(part=self.part, quantity=400, status=StockStatus.LOST)
+        StockItem.objects.create(part=cls.part, quantity=400, status=StockStatus.LOST)
 
     def get_part_data(self):
         """Helper function for retrieving part data"""
@@ -2373,7 +2475,7 @@ class BomItemTest(InvenTreeAPITestCase):
             # Create a variant part!
             variant = Part.objects.create(
                 name=f"Variant_{ii}",
-                description="A variant part",
+                description="A variant part, with a description",
                 component=True,
                 variant_of=sub_part
             )
@@ -2571,7 +2673,7 @@ class BomItemTest(InvenTreeAPITestCase):
             # Create a variant part
             vp = Part.objects.create(
                 name=f"Var {i}",
-                description="Variant part",
+                description="Variant part description field",
                 variant_of=bom_item.sub_part,
             )
 
@@ -2839,6 +2941,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         'category',
         'part',
         'location',
+        'stock',
     ]
 
     def test_list_endpoint(self):
@@ -2855,17 +2958,28 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
         total = 0
 
-        # Create some entries
-        for p in Part.objects.all():
+        # Iterate over (up to) 5 parts in the database
+        for p in Part.objects.all()[:5]:
 
-            for n in range(p.pk):
-                PartStocktake.objects.create(
-                    part=p,
-                    quantity=(n + 1) * 100,
+            # Create some entries
+            to_create = []
+
+            n = p.pk % 10
+
+            for idx in range(n):
+                to_create.append(
+                    PartStocktake(
+                        part=p,
+                        quantity=(idx + 1) * 100,
+                    )
                 )
 
-            total += p.pk
+                total += 1
 
+            # Create all entries in a single bulk-create
+            PartStocktake.objects.bulk_create(to_create)
+
+            # Query list endpoint
             response = self.get(
                 url,
                 {
@@ -2874,8 +2988,8 @@ class PartStocktakeTest(InvenTreeAPITestCase):
                 expected_code=200,
             )
 
-            # List by part ID
-            self.assertEqual(len(response.data), p.pk)
+            # Check that the expected number of PartStocktake instances has been created
+            self.assertEqual(len(response.data), n)
 
         # List all entries
         response = self.get(url, {}, expected_code=200)
@@ -2887,8 +3001,8 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
         url = reverse('api-part-stocktake-list')
 
-        self.assignRole('part.add')
-        self.assignRole('part.view')
+        self.assignRole('stocktake.add')
+        self.assignRole('stocktake.view')
 
         for p in Part.objects.all():
 
@@ -2930,12 +3044,6 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         self.assignRole('part.view')
 
         # Test we can retrieve via API
-        self.get(url, expected_code=403)
-
-        # Assign staff permission
-        self.user.is_staff = True
-        self.user.save()
-
         self.get(url, expected_code=200)
 
         # Try to edit data
@@ -2948,7 +3056,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         )
 
         # Assign 'edit' role permission
-        self.assignRole('part.change')
+        self.assignRole('stocktake.change')
 
         # Try again
         self.patch(
@@ -2962,6 +3070,59 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         # Try to delete
         self.delete(url, expected_code=403)
 
-        self.assignRole('part.delete')
+        self.assignRole('stocktake.delete')
 
         self.delete(url, expected_code=204)
+
+    def test_report_list(self):
+        """Test for PartStocktakeReport list endpoint"""
+
+        from part.tasks import generate_stocktake_report
+
+        n_parts = Part.objects.count()
+
+        # Initially, no stocktake records are available
+        self.assertEqual(PartStocktake.objects.count(), 0)
+
+        # Generate stocktake data for all parts (default configuration)
+        generate_stocktake_report()
+
+        # There should now be 1 stocktake entry for each part
+        self.assertEqual(PartStocktake.objects.count(), n_parts)
+
+        self.assignRole('stocktake.view')
+
+        response = self.get(reverse('api-part-stocktake-list'), expected_code=200)
+
+        self.assertEqual(len(response.data), n_parts)
+
+        # Stocktake report should be available via the API, also
+        response = self.get(reverse('api-part-stocktake-report-list'), expected_code=200)
+
+        self.assertEqual(len(response.data), 1)
+
+        data = response.data[0]
+
+        self.assertEqual(data['part_count'], 14)
+        self.assertEqual(data['user'], None)
+        self.assertTrue(data['report'].endswith('.csv'))
+
+    def test_report_generate(self):
+        """Test API functionality for generating a new stocktake report"""
+
+        url = reverse('api-part-stocktake-report-generate')
+
+        # Permission denied, initially
+        self.assignRole('stocktake.view')
+        response = self.post(url, data={}, expected_code=403)
+
+        # Stocktake functionality disabled
+        InvenTreeSetting.set_setting('STOCKTAKE_ENABLE', False, None)
+        self.assignRole('stocktake.add')
+        response = self.post(url, data={}, expected_code=400)
+
+        self.assertIn('Stocktake functionality is not enabled', str(response.data))
+
+        InvenTreeSetting.set_setting('STOCKTAKE_ENABLE', True, None)
+        response = self.post(url, data={}, expected_code=400)
+        self.assertIn('Background worker check failed', str(response.data))

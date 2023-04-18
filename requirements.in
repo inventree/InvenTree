@@ -1,12 +1,12 @@
 # Please keep this list sorted - if you pin a version provide a reason
 Django>=3.2.14,<4                       # Django package
 coreapi                                 # API documentation for djangorestframework
-cryptography==3.4.8                     # Core cryptographic functionality
+cryptography>=40.0.0                    # Core cryptographic functionality
 django-allauth                          # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
-django-crispy-forms                     # Form helpers
+django-crispy-forms<2.0                 # Form helpers # FIXED 2023-02-18 due to required updates in the new version
 django-dbbackup                         # Backup / restore of database and media files
 django-error-report                     # Error report viewer for the admin interface
 django-filter                           # Extended filtering options
@@ -27,6 +27,7 @@ django-user-sessions                    # user sessions in DB
 django-weasyprint                       # django weasyprint integration
 djangorestframework                     # DRF framework
 django-xforwardedfor-middleware         # IP forwarding metadata
+drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion

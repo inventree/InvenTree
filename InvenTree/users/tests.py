@@ -126,6 +126,7 @@ class RuleSetModelTest(TestCase):
 
         # Add some more rules
         for rule in rulesets:
+            rule.can_view = True
             rule.can_add = True
             rule.can_change = True
 

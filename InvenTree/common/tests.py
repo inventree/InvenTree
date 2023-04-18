@@ -1,6 +1,7 @@
 """Tests for mechanisms in common."""
 
 import json
+import time
 from datetime import timedelta
 from http import HTTPStatus
 
@@ -921,7 +922,16 @@ class CurrencyAPITests(InvenTreeAPITestCase):
         # Delete any existing exchange rate data
         Rate.objects.all().delete()
 
-        self.post(reverse('api-currency-refresh'))
+        # Updating via the external exchange may not work every time
+        for _idx in range(5):
+            self.post(reverse('api-currency-refresh'))
 
-        # There should be some new exchange rate objects now
-        self.assertTrue(Rate.objects.all().exists())
+            # There should be some new exchange rate objects now
+            if Rate.objects.all().exists():
+                # Exit early
+                return
+
+            # Delay and try again
+            time.sleep(10)
+
+        raise TimeoutError("Could not refresh currency exchange data after 5 attempts")

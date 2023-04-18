@@ -26,7 +26,7 @@
  * Returns the base currency used for conversion operations
  */
 function baseCurrency() {
-    return global_settings.INVENTREE_BASE_CURRENCY || 'USD';
+    return global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
 }
 
 
@@ -45,24 +45,22 @@ function formatCurrency(value, options={}) {
         return null;
     }
 
-    var digits = options.digits || global_settings.PRICING_DECIMAL_PLACES || 6;
-
-    // Strip out any trailing zeros, etc
-    value = formatDecimal(value, digits);
+    let maxDigits = options.digits || global_settings.PRICING_DECIMAL_PLACES || 6;
+    let minDigits = options.minDigits || global_settings.PRICING_DECIMAL_PLACES_MIN || 0;
 
     // Extract default currency information
-    var currency = options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
+    let currency = options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
 
     // Exctract locale information
-    var locale = options.locale || navigator.language || 'en-US';
+    let locale = options.locale || navigator.language || 'en-US';
 
-
-    var formatter = new Intl.NumberFormat(
+    let formatter = new Intl.NumberFormat(
         locale,
         {
             style: 'currency',
             currency: currency,
-            maximumSignificantDigits: digits,
+            maximumFractionDigits: maxDigits,
+            minimumFractionDigits: minDigits,
         }
     );
 
@@ -106,9 +104,9 @@ var cached_exchange_rates = null;
 /*
  * Retrieve currency conversion rate information from the server
  */
-function getCurrencyConversionRates() {
+function getCurrencyConversionRates(cache=true) {
 
-    if (cached_exchange_rates != null) {
+    if (cache && cached_exchange_rates != null) {
         return cached_exchange_rates;
     }
 
@@ -136,7 +134,7 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
 
     var currency = options.currency;
 
-    var rates = getCurrencyConversionRates();
+    var rates = options.rates || getCurrencyConversionRates();
 
     if (!rates) {
         console.error('Could not retrieve currency conversion information from the server');
@@ -205,6 +203,11 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
         total += value;
     }
 
+    // Return raw total instead of formatted value
+    if (options.raw) {
+        return total;
+    }
+
     return formatCurrency(total, {
         currency: currency,
     });
@@ -229,6 +232,11 @@ function convertCurrency(value, source_currency, target_currency, rate_data) {
     // Short circuit the case where the currencies are the same
     if (source_currency == target_currency) {
         return value;
+    }
+
+    if (rate_data == null) {
+        console.error('convertCurrency() called without rate_data');
+        return null;
     }
 
     if (!('base_currency' in rate_data)) {
@@ -595,14 +603,14 @@ function loadPriceBreakTable(table, options={}) {
                 title: '{% trans "Price" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var html = formatCurrency(value, {currency: row.price_currency});
+                    let html = formatCurrency(value, {currency: row.price_currency});
 
-                    html += `<div class='btn-group float-right' role='group'>`;
+                    let buttons = '';
 
-                    html += makeIconButton('fa-edit icon-blue', `button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
-                    html += makeIconButton('fa-trash-alt icon-red', `button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
+                    buttons += makeEditButton(`button-${name}-edit`, row.pk, `{% trans "Edit" %} ${human_name}`);
+                    buttons += makeDeleteButton(`button-${name}-delete`, row.pk, `{% trans "Delete" %} ${human_name}"`);
 
-                    html += `</div>`;
+                    html += wrapButtons(buttons);
 
                     return html;
                 }
@@ -647,8 +655,12 @@ function initPriceBreakSet(table, options) {
                     value: part_id,
                 },
                 quantity: {},
-                price: {},
-                price_currency: {},
+                price: {
+                    icon: 'fa-dollar-sign',
+                },
+                price_currency: {
+                    icon: 'fa-coins',
+                },
             },
             method: 'POST',
             title: '{% trans "Add Price Break" %}',
@@ -672,8 +684,12 @@ function initPriceBreakSet(table, options) {
         constructForm(`${pb_url}${pk}/`, {
             fields: {
                 quantity: {},
-                price: {},
-                price_currency: {},
+                price: {
+                    icon: 'fa-dollar-sign',
+                },
+                price_currency: {
+                    icon: 'fa-coins',
+                },
             },
             title: '{% trans "Edit Price Break" %}',
             onSuccess: reloadPriceBreakTable,
