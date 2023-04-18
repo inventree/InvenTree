@@ -371,7 +371,10 @@ function returnOrderLineItemFields(options={}) {
         },
         notes: {
             icon: 'fa-sticky-note',
-        }
+        },
+        link: {
+            icon: 'fa-link',
+        },
     };
 
     return fields;
@@ -713,6 +716,15 @@ function loadReturnOrderLineItemTable(options={}) {
             {
                 field: 'notes',
                 title: '{% trans "Notes" %}',
+            },
+            {
+                field: 'link',
+                title: '{% trans "Link" %}',
+                formatter: function(value, row) {
+                    if (value) {
+                        return renderLink(value, value);
+                    }
+                }
             },
             {
                 field: 'buttons',

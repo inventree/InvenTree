@@ -8,12 +8,12 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 from rest_framework.exceptions import NotFound
 
 import common.models
 import InvenTree.helpers
 from InvenTree.api import MetadataView
+from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from InvenTree.tasks import offload_task
 from part.models import Part
@@ -124,7 +124,7 @@ class LabelListView(LabelFilterMixin, ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter
+        InvenTreeSearchFilter
     ]
 
     filterset_fields = [

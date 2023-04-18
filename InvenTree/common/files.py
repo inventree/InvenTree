@@ -59,7 +59,8 @@ class FileManager:
                 # Reset stream position to beginning of file
                 file.seek(0)
             else:
-                raise ValidationError(_(f'Unsupported file format: {ext.upper()}'))
+                fmt = ext.upper()
+                raise ValidationError(_(f'Unsupported file format: {fmt}'))
         except UnicodeEncodeError:
             raise ValidationError(_('Error reading file (invalid encoding)'))
 

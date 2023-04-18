@@ -330,6 +330,9 @@ function poLineItemFields(options={}) {
         notes: {
             icon: 'fa-sticky-note',
         },
+        link: {
+            icon: 'fa-link',
+        }
     };
 
     if (options.order) {
@@ -1007,19 +1010,6 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             quantity = 0;
         }
 
-        // Prepend toggles to the quantity input
-        var toggle_batch = `
-            <span class='input-group-text' title='{% trans "Add batch code" %}' data-bs-toggle='collapse' href='#div-batch-${pk}'>
-                <span class='fas fa-layer-group'></span>
-            </span>
-        `;
-
-        var toggle_serials = `
-            <span class='input-group-text' title='{% trans "Add serial numbers" %}' data-bs-toggle='collapse' href='#div-serials-${pk}'>
-                <span class='fas fa-hashtag'></span>
-            </span>
-        `;
-
         var units = line_item.part_detail.units || '';
         var pack_size = line_item.supplier_part_detail.pack_size || 1;
         var pack_size_div = '';
@@ -1028,7 +1018,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
         if (pack_size != 1) {
             pack_size_div = `
-            <div class='alert alert-block alert-info'>
+            <div class='alert alert-small alert-block alert-info'>
                 {% trans "Pack Quantity" %}: ${pack_size} ${units}<br>
                 {% trans "Received Quantity" %}: <span class='pack_received_quantity' id='items_received_quantity_${pk}'>${received}</span> ${units}
             </div>`;
@@ -1057,7 +1047,20 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 required: false,
                 label: '{% trans "Batch Code" %}',
                 help_text: '{% trans "Enter batch code for incoming stock items" %}',
-                prefixRaw: toggle_batch,
+                icon: 'fa-layer-group',
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        // Hidden barcode input
+        var barcode_input = constructField(
+            `items_barcode_${pk}`,
+            {
+                type: 'string',
+                required: 'false',
+                hidden: 'true'
             }
         );
 
@@ -1068,23 +1071,21 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 required: false,
                 label: '{% trans "Serial Numbers" %}',
                 help_text: '{% trans "Enter serial numbers for incoming stock items" %}',
-                prefixRaw: toggle_serials,
+                icon: 'fa-hashtag',
+            },
+            {
+                hideLabels: true,
             }
         );
 
-        // Hidden inputs below the "quantity" field
-        var quantity_input_group = `${quantity_input}${pack_size_div}<div class='collapse' id='div-batch-${pk}'>${batch_input}</div>`;
-
-        if (line_item.part_detail.trackable) {
-            quantity_input_group += `<div class='collapse' id='div-serials-${pk}'>${sn_input}</div>`;
-        }
+        var quantity_input_group = `${quantity_input}${pack_size_div}`;
 
         // Construct list of StockItem status codes
         var choices = [];
 
         for (var key in stockCodes) {
             choices.push({
-                value: key,
+                value: stockCodes[key].key,
                 display_name: stockCodes[key].value,
             });
         }
@@ -1095,6 +1096,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 type: 'related field',
                 label: '{% trans "Location" %}',
                 required: false,
+                icon: 'fa-sitemap',
             },
             {
                 hideLabels: true,
@@ -1118,13 +1120,22 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         // Button to remove the row
         let buttons = '';
 
+        if (global_settings.BARCODE_ENABLE) {
+            buttons += makeIconButton('fa-qrcode', 'button-row-add-barcode', pk, '{% trans "Add barcode" %}');
+            buttons += makeIconButton('fa-unlink icon-red', 'button-row-remove-barcode', pk, '{% trans "Remove barcode" %}', {hidden: true});
+        }
+
+        buttons += makeIconButton('fa-sitemap', 'button-row-add-location', pk, '{% trans "Specify location" %}', {
+            collapseTarget: `row-destination-${pk}`
+        });
+
         buttons += makeIconButton(
             'fa-layer-group',
             'button-row-add-batch',
             pk,
             '{% trans "Add batch code" %}',
             {
-                collapseTarget: `div-batch-${pk}`
+                collapseTarget: `row-batch-${pk}`
             }
         );
 
@@ -1135,7 +1146,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 pk,
                 '{% trans "Add serial numbers" %}',
                 {
-                    collapseTarget: `div-serials-${pk}`,
+                    collapseTarget: `row-serials-${pk}`,
                 }
             );
         }
@@ -1146,6 +1157,8 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
         buttons = wrapButtons(buttons);
 
+        let progress = makeProgressBar(line_item.received, line_item.quantity);
+
         var html = `
         <tr id='receive_row_${pk}' class='stock-receive-row'>
             <td id='part_${pk}'>
@@ -1154,11 +1167,8 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             <td id='sku_${pk}'>
                 ${line_item.supplier_part_detail.SKU}
             </td>
-            <td id='on_order_${pk}'>
-                ${line_item.quantity}
-            </td>
             <td id='received_${pk}'>
-                ${line_item.received}
+                ${progress}
             </td>
             <td id='quantity_${pk}'>
                 ${quantity_input_group}
@@ -1166,13 +1176,31 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             <td id='status_${pk}'>
                 ${status_input}
             </td>
-            <td id='desination_${pk}'>
-                ${destination_input}
-            </td>
             <td id='actions_${pk}'>
+                ${barcode_input}
                 ${buttons}
             </td>
-        </tr>`;
+        </tr>
+        <!-- Hidden rows for extra data entry -->
+        <tr id='row-destination-${pk}' class='collapse'>
+            <td colspan='2'></td>
+            <th>{% trans "Location" %}</th>
+            <td colspan='2'>${destination_input}</td>
+            <td></td>
+        </tr>
+        <tr id='row-batch-${pk}' class='collapse'>
+            <td colspan='2'></td>
+            <th>{% trans "Batch" %}</th>
+            <td colspan='2'>${batch_input}</td>
+            <td></td>
+        </tr>
+        <tr id='row-serials-${pk}' class='collapse'>
+            <td colspan='2'></td>
+            <th>{% trans "Serials" %}</th>
+            <td colspan=2'>${sn_input}</td>
+            <td></td>
+        </tr>
+        `;
 
         return html;
     }
@@ -1189,16 +1217,14 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
     // Add table
     html += `
-    <table class='table table-striped table-condensed' id='order-receive-table'>
+    <table class='table table-condensed' id='order-receive-table'>
         <thead>
             <tr>
                 <th>{% trans "Part" %}</th>
                 <th>{% trans "Order Code" %}</th>
-                <th>{% trans "Ordered" %}</th>
                 <th>{% trans "Received" %}</th>
                 <th style='min-width: 50px;'>{% trans "Quantity to Receive" %}</th>
                 <th style='min-width: 150px;'>{% trans "Status" %}</th>
-                <th style='min-width: 300px;'>{% trans "Destination" %}</th>
                 <th></th>
             </tr>
         </thead>
@@ -1281,6 +1307,44 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 }
             });
 
+            // Add callbacks to add barcode
+            if (global_settings.BARCODE_ENABLE) {
+                $(opts.modal).find('.button-row-add-barcode').click(function() {
+                    var btn = $(this);
+                    let pk = btn.attr('pk');
+
+                    // Scan to see if the barcode matches an existing StockItem
+                    barcodeDialog('{% trans "Scan Item Barcode" %}', {
+                        details: '{% trans "Scan barcode on incoming item (must not match any existing stock items)" %}',
+                        onScan: function(response, barcode_options) {
+                            // A 'success' result means that the barcode matches something existing in the database
+                            showBarcodeMessage(barcode_options.modal, '{% trans "Barcode matches existing item" %}');
+                        },
+                        onError400: function(response, barcode_options) {
+                            if (response.barcode_data && response.barcode_hash) {
+                                // Success! Hide the modal and update the value
+                                $(barcode_options.modal).modal('hide');
+
+                                btn.hide();
+                                $(opts.modal).find(`#button-row-remove-barcode-${pk}`).show();
+                                updateFieldValue(`items_barcode_${pk}`, response.barcode_data, {}, opts);
+                            } else {
+                                showBarcodeMessage(barcode_options.modal, '{% trans "Invalid barcode data" %}');
+                            }
+                        }
+                    });
+                });
+
+                $(opts.modal).find('.button-row-remove-barcode').click(function() {
+                    var btn = $(this);
+                    let pk = btn.attr('pk');
+
+                    btn.hide();
+                    $(opts.modal).find(`#button-row-add-barcode-${pk}`).show();
+                    updateFieldValue(`items_barcode_${pk}`, '', {}, opts);
+                });
+            }
+
             // Add callbacks to remove rows
             $(opts.modal).find('.button-row-remove').click(function() {
                 var pk = $(this).attr('pk');
@@ -1301,10 +1365,9 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
                 var pk = item.pk;
 
+                // Extract data for each line
                 var quantity = getFormFieldValue(`items_quantity_${pk}`, {}, opts);
-
                 var status = getFormFieldValue(`items_status_${pk}`, {}, opts);
-
                 var location = getFormFieldValue(`items_location_${pk}`, {}, opts);
 
                 if (quantity != null) {
@@ -1315,6 +1378,10 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                         status: status,
                         location: location,
                     };
+
+                    if (global_settings.BARCODE_ENABLE) {
+                        line.barcode = getFormFieldValue(`items_barcode_${pk}`, {}, opts);
+                    }
 
                     if (getFormFieldElement(`items_batch_code_${pk}`).exists()) {
                         line.batch_code = getFormFieldValue(`items_batch_code_${pk}`);
@@ -2036,6 +2103,15 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             {
                 field: 'notes',
                 title: '{% trans "Notes" %}',
+            },
+            {
+                field: 'link',
+                title: '{% trans "Link" %}',
+                formatter: function(value) {
+                    if (value) {
+                        return renderLink(value, value);
+                    }
+                }
             },
             {
                 switchable: false,

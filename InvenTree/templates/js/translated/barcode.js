@@ -146,7 +146,7 @@ function makeNotesField(options={}) {
  */
 function postBarcodeData(barcode_data, options={}) {
 
-    var modal = options.modal || '#modal-form';
+    var modal = options.modal;
 
     var url = options.url || '{% url "api-barcode-scan" %}';
 
@@ -166,11 +166,14 @@ function postBarcodeData(barcode_data, options={}) {
                 switch (xhr.status || 0) {
                 case 400:
                     // No match for barcode, most likely
-                    console.log(xhr);
 
-                    data = xhr.responseJSON || {};
-                    showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
-
+                    if (options.onError400) {
+                        options.onError400(xhr.responseJSON, options);
+                    } else {
+                        console.log(xhr);
+                        data = xhr.responseJSON || {};
+                        showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
+                    }
                     break;
                 default:
                     // Any other error code means something went wrong
@@ -187,7 +190,7 @@ function postBarcodeData(barcode_data, options={}) {
 
                     if ('success' in response) {
                         if (options.onScan) {
-                            options.onScan(response);
+                            options.onScan(response, options);
                         }
                     } else if ('error' in response) {
                         showBarcodeMessage(
@@ -258,7 +261,7 @@ function enableBarcodeInput(modal, enabled=true) {
  */
 function getBarcodeData(modal) {
 
-    modal = modal || '#modal-form';
+    modal = modal || createNewModal();
 
     var el = $(modal + ' #barcode');
 
@@ -276,7 +279,9 @@ function getBarcodeData(modal) {
  */
 function barcodeDialog(title, options={}) {
 
-    var modal = '#modal-form';
+    var modal = createNewModal();
+
+    options.modal = modal;
 
     function sendBarcode() {
         var barcode = getBarcodeData(modal);
@@ -396,26 +401,33 @@ function barcodeDialog(title, options={}) {
 * Perform a barcode scan,
 * and (potentially) redirect the browser
 */
-function barcodeScanDialog() {
+function barcodeScanDialog(options={}) {
 
-    var modal = '#modal-form';
+    let modal = options.modal || createNewModal();
+    let title = options.title || '{% trans "Scan Barcode" %}';
 
     barcodeDialog(
-        '{% trans "Scan Barcode" %}',
+        title,
         {
             onScan: function(response) {
 
-                var url = response.url;
-
-                if (url) {
-                    $(modal).modal('hide');
-                    window.location.href = url;
+                // Pass the response to the calling function
+                if (options.onScan) {
+                    options.onScan(response);
                 } else {
-                    showBarcodeMessage(
-                        modal,
-                        '{% trans "No URL in response" %}',
-                        'warning'
-                    );
+
+                    let url = response.url;
+
+                    if (url) {
+                        $(modal).modal('hide');
+                        window.location.href = url;
+                    } else {
+                        showBarcodeMessage(
+                            modal,
+                            '{% trans "No URL in response" %}',
+                            'warning'
+                        );
+                    }
                 }
             }
         },
@@ -428,7 +440,8 @@ function barcodeScanDialog() {
  */
 function linkBarcodeDialog(data, options={}) {
 
-    var modal = '#modal-form';
+    var modal = options.modal || createNewModal();
+    options.modal = modal;
 
     barcodeDialog(
         options.title,
@@ -481,7 +494,8 @@ function unlinkBarcode(data, options={}) {
  */
 function barcodeCheckInStockItems(location_id, options={}) {
 
-    var modal = '#modal-form';
+    var modal = options.modal || createNewModal();
+    options.modal = modal;
 
     // List of items we are going to checkin
     var items = [];
@@ -672,7 +686,9 @@ function barcodeCheckInStockItems(location_id, options={}) {
  */
 function barcodeCheckInStockLocations(location_id, options={}) {
 
-    var modal = '#modal-form';
+    var modal = options.modal || createNewModal();
+    options.modal = modal;
+
     var header = '';
 
     barcodeDialog(
@@ -725,7 +741,8 @@ function barcodeCheckInStockLocations(location_id, options={}) {
  */
 function scanItemsIntoLocation(item_list, options={}) {
 
-    var modal = options.modal || '#modal-form';
+    var modal = options.modal || createNewModal();
+    options.modal = modal;
 
     var stock_location = null;
 
