@@ -6,7 +6,7 @@
 - Display / Create / Edit / Delete SupplierPart
 """
 
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from . import views
 
@@ -35,7 +35,7 @@ part_urls = [
     re_path(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
 
     # Individual part using pk
-    re_path(r'^(?P<pk>\d+)/', include(part_detail_urls)),
+    path(r'<int:pk>/', include(part_detail_urls)),
 
     # Part category
     re_path(r'^category/', include(category_urls)),

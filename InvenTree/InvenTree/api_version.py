@@ -2,17 +2,78 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 90
+INVENTREE_API_VERSION = 107
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v107 -> 2023-04-04 : https://github.com/inventree/InvenTree/pull/4575
+    - Adds barcode support for PurchaseOrder model
+    - Adds barcode support for ReturnOrder model
+    - Adds barcode support for SalesOrder model
+    - Adds barcode support for BuildOrder model
+
+v106 -> 2023-04-03 : https://github.com/inventree/InvenTree/pull/4566
+    - Adds 'search_regex' parameter to all searchable API endpoints
+
+v105 -> 2023-03-31 : https://github.com/inventree/InvenTree/pull/4543
+    - Adds API endpoints for status label information on various models
+
+v104 -> 2023-03-23 : https://github.com/inventree/InvenTree/pull/4488
+    - Adds various endpoints for new "ReturnOrder" models
+    - Adds various endpoints for new "ReturnOrderReport" templates
+    - Exposes API endpoints for "Contact" model
+
+v103 -> 2023-03-17 : https://github.com/inventree/InvenTree/pull/4410
+    - Add metadata to several more models
+
+v102 -> 2023-03-18 : https://github.com/inventree/InvenTree/pull/4505
+- Adds global search API endpoint for consolidated search results
+
+v101 -> 2023-03-07 : https://github.com/inventree/InvenTree/pull/4462
+    - Adds 'total_in_stock' to Part serializer, and supports API ordering
+
+v100 -> 2023-03-04 : https://github.com/inventree/InvenTree/pull/4452
+     - Adds bulk delete of PurchaseOrderLineItems to API
+
+v99 -> 2023-03-03 : https://github.com/inventree/InvenTree/pull/4445
+    - Adds sort by "responsible" to PurchaseOrderAPI
+
+v98 -> 2023-02-24 : https://github.com/inventree/InvenTree/pull/4408
+    - Adds "responsible" filter to Build API
+
+v97 -> 2023-02-20 : https://github.com/inventree/InvenTree/pull/4377
+    - Adds "external" attribute to StockLocation model
+
+v96 -> 2023-02-16 : https://github.com/inventree/InvenTree/pull/4345
+    - Adds stocktake report generation functionality
+
+v95 -> 2023-02-16 : https://github.com/inventree/InvenTree/pull/4346
+    - Adds "CompanyAttachment" model (and associated API endpoints)
+
+v94 -> 2023-02-10 : https://github.com/inventree/InvenTree/pull/4327
+    - Adds API endpoints for the "Group" auth model
+
+v93 -> 2023-02-03 : https://github.com/inventree/InvenTree/pull/4300
+    - Adds extra information to the currency exchange endpoint
+    - Adds API endpoint for manually updating exchange rates
+
+v92 -> 2023-02-02 : https://github.com/inventree/InvenTree/pull/4293
+    - Adds API endpoint for currency exchange information
+
+v91 -> 2023-01-31 : https://github.com/inventree/InvenTree/pull/4281
+    - Improves the API endpoint for creating new Part instances
+
 v90 -> 2023-01-25 : https://github.com/inventree/InvenTree/pull/4186/files
     - Adds a dedicated endpoint to activate a plugin
+
 v89 -> 2023-01-25 : https://github.com/inventree/InvenTree/pull/4214
     - Adds updated field to SupplierPart API
     - Adds API date orddering for supplier part list
+
 v88 -> 2023-01-17: https://github.com/inventree/InvenTree/pull/4225
     - Adds 'priority' field to Build model and api endpoints
+
 v87 -> 2023-01-04 : https://github.com/inventree/InvenTree/pull/4067
     - Add API date filter for stock table on Expiry date
 

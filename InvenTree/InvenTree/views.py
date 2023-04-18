@@ -320,44 +320,6 @@ class AjaxView(AjaxMixin, View):
         return self.renderJsonResponse(request)
 
 
-class QRCodeView(AjaxView):
-    """An 'AJAXified' view for displaying a QR code.
-
-    Subclasses should implement the get_qr_data(self) function.
-    """
-
-    ajax_template_name = "qr_code.html"
-
-    def get(self, request, *args, **kwargs):
-        """Return json with qr-code data."""
-        self.request = request
-        self.pk = self.kwargs['pk']
-        return self.renderJsonResponse(request, None, context=self.get_context_data())
-
-    def get_qr_data(self):
-        """Returns the text object to render to a QR code.
-
-        The actual rendering will be handled by the template
-        """
-        return None
-
-    def get_context_data(self):
-        """Get context data for passing to the rendering template.
-
-        Explicity passes the parameter 'qr_data'
-        """
-        context = {}
-
-        qr = self.get_qr_data()
-
-        if qr:
-            context['qr_data'] = qr
-        else:
-            context['error_msg'] = 'Error generating QR code'
-
-        return context
-
-
 class AjaxUpdateView(AjaxMixin, UpdateView):
     """An 'AJAXified' UpdateView for updating an object in the db.
 
@@ -650,20 +612,6 @@ class CustomLoginView(LoginView):
             return form.login(request)
 
         return super().get(request, *args, **kwargs)
-
-
-class CurrencyRefreshView(RedirectView):
-    """POST endpoint to refresh / update exchange rates."""
-
-    url = reverse_lazy("settings-currencies")
-
-    def post(self, request, *args, **kwargs):
-        """On a POST request we will attempt to refresh the exchange rates."""
-        from InvenTree.tasks import offload_task, update_exchange_rates
-
-        offload_task(update_exchange_rates, force_sync=True)
-
-        return redirect(reverse_lazy('settings'))
 
 
 class AppearanceSelectView(RedirectView):

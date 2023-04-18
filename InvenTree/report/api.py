@@ -5,10 +5,11 @@ from django.core.files.base import ContentFile
 from django.http import HttpResponse
 from django.template.exceptions import TemplateDoesNotExist
 from django.urls import include, path, re_path
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 from rest_framework.response import Response
 
 import build.models
@@ -16,13 +17,16 @@ import common.models
 import InvenTree.helpers
 import order.models
 import part.models
+from InvenTree.api import MetadataView
+from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from stock.models import StockItem, StockItemAttachment
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     SalesOrderReport, TestReport)
+                     ReturnOrderReport, SalesOrderReport, TestReport)
 from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           PurchaseOrderReportSerializer,
+                          ReturnOrderReportSerializer,
                           SalesOrderReportSerializer, TestReportSerializer)
 
 
@@ -31,7 +35,7 @@ class ReportListView(ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     filterset_fields = [
@@ -44,121 +48,108 @@ class ReportListView(ListAPI):
     ]
 
 
-class StockItemReportMixin:
-    """Mixin for extracting stock items from query params."""
+class ReportFilterMixin:
+    """Mixin for extracting multiple objects from query params.
 
-    def get_items(self):
-        """Return a list of requested stock items."""
-        items = []
+    Each subclass *must* have an attribute called 'ITEM_KEY',
+    which is used to determine what 'key' is used in the query parameters.
 
-        params = self.request.query_params
-
-        for key in ['item', 'item[]', 'items', 'items[]']:
-            if key in params:
-                items = params.getlist(key, [])
-                break
-
-        valid_ids = []
-
-        for item in items:
-            try:
-                valid_ids.append(int(item))
-            except (ValueError):
-                pass
-
-        # List of StockItems which match provided values
-        valid_items = StockItem.objects.filter(pk__in=valid_ids)
-
-        return valid_items
-
-
-class BuildReportMixin:
-    """Mixin for extracting Build items from query params."""
-
-    def get_builds(self):
-        """Return a list of requested Build objects."""
-        builds = []
-
-        params = self.request.query_params
-
-        for key in ['build', 'build[]', 'builds', 'builds[]']:
-
-            if key in params:
-                builds = params.getlist(key, [])
-
-                break
-
-        valid_ids = []
-
-        for b in builds:
-            try:
-                valid_ids.append(int(b))
-            except (ValueError):
-                continue
-
-        return build.models.Build.objects.filter(pk__in=valid_ids)
-
-
-class OrderReportMixin:
-    """Mixin for extracting order items from query params.
-
-    requires the OrderModel class attribute to be set!
+    This mixin defines a 'get_items' method which provides a generic implementation
+    to return a list of matching database model instances
     """
 
-    def get_orders(self):
-        """Return a list of order objects."""
-        orders = []
+    # Database model for instances to actually be "printed" against this report template
+    ITEM_MODEL = None
 
-        params = self.request.query_params
+    # Default key for looking up database model instances
+    ITEM_KEY = 'item'
 
-        for key in ['order', 'order[]', 'orders', 'orders[]']:
-            if key in params:
-                orders = params.getlist(key, [])
+    def get_items(self):
+        """Return a list of database objects from query parameters"""
+
+        if not self.ITEM_MODEL:
+            raise NotImplementedError(f"ITEM_MODEL attribute not defined for {__class__}")
+
+        ids = []
+
+        # Construct a list of possible query parameter value options
+        # e.g. if self.ITEM_KEY = 'order' -> ['order', 'order[]', 'orders', 'orders[]']
+        for k in [self.ITEM_KEY + x for x in ['', '[]', 's', 's[]']]:
+            if ids := self.request.query_params.getlist(k, []):
+                # Return the first list of matches
                 break
 
+        # Next we must validated each provided object ID
         valid_ids = []
 
-        for o in orders:
+        for id in ids:
             try:
-                valid_ids.append(int(o))
-            except (ValueError):
+                valid_ids.append(int(id))
+            except ValueError:
                 pass
 
-        valid_orders = self.OrderModel.objects.filter(pk__in=valid_ids)
+        # Filter queryset by matching ID values
+        return self.ITEM_MODEL.objects.filter(pk__in=valid_ids)
 
-        return valid_orders
+    def filter_queryset(self, queryset):
+        """Filter the queryset based on the provided report ID values.
+
+        As each 'report' instance may optionally define its own filters,
+        the resulting queryset is the 'union' of the two
+        """
+
+        queryset = super().filter_queryset(queryset)
+
+        items = self.get_items()
+
+        if len(items) > 0:
+            """At this point, we are basically forced to be inefficient:
+
+            We need to compare the 'filters' string of each report template,
+            and see if it matches against each of the requested items.
+
+            In practice, this is not too bad.
+            """
+
+            valid_report_ids = set()
+
+            for report in queryset.all():
+                matches = True
+
+                try:
+                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                except ValidationError:
+                    continue
+
+                for item in items:
+                    item_query = self.ITEM_MODEL.objects.filter(pk=item.pk)
+
+                    try:
+                        if not item_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
+                        matches = False
+                        break
+
+                # Matched all items
+                if matches:
+                    valid_report_ids.add(report.pk)
+
+            # Reduce queryset to only valid matches
+            queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
+
+        return queryset
 
 
-class PartReportMixin:
-    """Mixin for extracting part items from query params."""
-
-    def get_parts(self):
-        """Return a list of requested part objects."""
-        parts = []
-
-        params = self.request.query_params
-
-        for key in ['part', 'part[]', 'parts', 'parts[]']:
-
-            if key in params:
-                parts = params.getlist(key, [])
-
-        valid_ids = []
-
-        for p in parts:
-            try:
-                valid_ids.append(int(p))
-            except (ValueError):
-                continue
-
-        # Extract a valid set of Part objects
-        valid_parts = part.models.Part.objects.filter(pk__in=valid_ids)
-
-        return valid_parts
-
-
+@method_decorator(cache_page(5), name='dispatch')
 class ReportPrintMixin:
     """Mixin for printing reports."""
+
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        """Prevent caching when printing report templates"""
+        return super().dispatch(*args, **kwargs)
 
     def report_callback(self, object, report, request):
         """Callback function for each object/report combination.
@@ -185,7 +176,7 @@ class ReportPrintMixin:
         outputs = []
 
         # In debug mode, generate single HTML output, rather than PDF
-        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE', cache=False)
 
         # Start with a default report name
         report_name = "report.pdf"
@@ -254,7 +245,7 @@ class ReportPrintMixin:
                     status=400,
                 )
 
-            inline = common.models.InvenTreeUserSetting.get_setting('REPORT_INLINE', user=request.user)
+            inline = common.models.InvenTreeUserSetting.get_setting('REPORT_INLINE', user=request.user, cache=False)
 
             return InvenTree.helpers.DownloadFile(
                 pdf,
@@ -263,8 +254,25 @@ class ReportPrintMixin:
                 inline=inline,
             )
 
+    def get(self, request, *args, **kwargs):
+        """Default implementation of GET for a print endpoint.
 
-class StockItemTestReportList(ReportListView, StockItemReportMixin):
+        Note that it expects the class has defined a get_items() method
+        """
+        items = self.get_items()
+        return self.print(request, items)
+
+
+class StockItemTestReportMixin(ReportFilterMixin):
+    """Mixin for StockItemTestReport report template"""
+
+    ITEM_MODEL = StockItem
+    ITEM_KEY = 'item'
+    queryset = TestReport.objects.all()
+    serializer_class = TestReportSerializer
+
+
+class StockItemTestReportList(StockItemTestReportMixin, ReportListView):
     """API endpoint for viewing list of TestReport objects.
 
     Filterable by:
@@ -272,81 +280,28 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
     - enabled: Filter by enabled / disabled status
     - item: Filter by stock item(s)
     """
-
-    queryset = TestReport.objects.all()
-    serializer_class = TestReportSerializer
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering"""
-        queryset = super().filter_queryset(queryset)
-
-        # List of StockItem objects to match against
-        items = self.get_items()
-
-        if len(items) > 0:
-            """
-            We wish to filter by stock items.
-
-            We need to compare the 'filters' string of each report,
-            and see if it matches against each of the specified stock items.
-
-            TODO: In the future, perhaps there is a way to make this more efficient.
-            """
-
-            valid_report_ids = set()
-
-            for report in queryset.all():
-
-                matches = True
-
-                # Filter string defined for the report object
-                try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
-                except Exception:
-                    continue
-
-                for item in items:
-                    item_query = StockItem.objects.filter(pk=item.pk)
-
-                    try:
-                        if not item_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                if matches:
-                    valid_report_ids.add(report.pk)
-                else:
-                    continue
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
-        return queryset
+    pass
 
 
-class StockItemTestReportDetail(RetrieveUpdateDestroyAPI):
+class StockItemTestReportDetail(StockItemTestReportMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single TestReport object."""
-
-    queryset = TestReport.objects.all()
-    serializer_class = TestReportSerializer
+    pass
 
 
-class StockItemTestReportPrint(RetrieveAPI, StockItemReportMixin, ReportPrintMixin):
+class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, RetrieveAPI):
     """API endpoint for printing a TestReport object."""
-
-    queryset = TestReport.objects.all()
-    serializer_class = TestReportSerializer
 
     def report_callback(self, item, report, request):
         """Callback to (optionally) save a copy of the generated report"""
 
-        if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT'):
+        if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT', cache=False):
 
             # Construct a PDF file object
-            pdf = report.get_document().write_pdf()
-            pdf_content = ContentFile(pdf, "test_report.pdf")
+            try:
+                pdf = report.get_document().write_pdf()
+                pdf_content = ContentFile(pdf, "test_report.pdf")
+            except TemplateDoesNotExist:
+                return
 
             StockItemAttachment.objects.create(
                 attachment=pdf_content,
@@ -355,14 +310,18 @@ class StockItemTestReportPrint(RetrieveAPI, StockItemReportMixin, ReportPrintMix
                 comment=_("Test report")
             )
 
-    def get(self, request, *args, **kwargs):
-        """Check if valid stock item(s) have been provided."""
-        items = self.get_items()
 
-        return self.print(request, items)
+class BOMReportMixin(ReportFilterMixin):
+    """Mixin for BillOfMaterialsReport report template"""
+
+    ITEM_MODEL = part.models.Part
+    ITEM_KEY = 'part'
+
+    queryset = BillOfMaterialsReport.objects.all()
+    serializer_class = BOMReportSerializer
 
 
-class BOMReportList(ReportListView, PartReportMixin):
+class BOMReportList(BOMReportMixin, ReportListView):
     """API endpoint for viewing a list of BillOfMaterialReport objects.
 
     Filterably by:
@@ -370,80 +329,30 @@ class BOMReportList(ReportListView, PartReportMixin):
     - enabled: Filter by enabled / disabled status
     - part: Filter by part(s)
     """
-
-    queryset = BillOfMaterialsReport.objects.all()
-    serializer_class = BOMReportSerializer
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering"""
-        queryset = super().filter_queryset(queryset)
-
-        # List of Part objects to match against
-        parts = self.get_parts()
-
-        if len(parts) > 0:
-            """
-            We wish to filter by part(s).
-
-            We need to compare the 'filters' string of each report,
-            and see if it matches against each of the specified parts.
-            """
-
-            valid_report_ids = set()
-
-            for report in queryset.all():
-
-                matches = True
-
-                try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
-                except ValidationError:
-                    # Filters are ill-defined
-                    continue
-
-                for p in parts:
-                    part_query = part.models.Part.objects.filter(pk=p.pk)
-
-                    try:
-                        if not part_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                if matches:
-                    valid_report_ids.add(report.pk)
-                else:
-                    continue
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
-
-        return queryset
+    pass
 
 
-class BOMReportDetail(RetrieveUpdateDestroyAPI):
+class BOMReportDetail(BOMReportMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single BillOfMaterialReport object."""
-
-    queryset = BillOfMaterialsReport.objects.all()
-    serializer_class = BOMReportSerializer
+    pass
 
 
-class BOMReportPrint(RetrieveAPI, PartReportMixin, ReportPrintMixin):
+class BOMReportPrint(BOMReportMixin, ReportPrintMixin, RetrieveAPI):
     """API endpoint for printing a BillOfMaterialReport object."""
-
-    queryset = BillOfMaterialsReport.objects.all()
-    serializer_class = BOMReportSerializer
-
-    def get(self, request, *args, **kwargs):
-        """Check if valid part item(s) have been provided."""
-        parts = self.get_parts()
-
-        return self.print(request, parts)
+    pass
 
 
-class BuildReportList(ReportListView, BuildReportMixin):
+class BuildReportMixin(ReportFilterMixin):
+    """Mixin for the BuildReport report template"""
+
+    ITEM_MODEL = build.models.Build
+    ITEM_KEY = 'build'
+
+    queryset = BuildReport.objects.all()
+    serializer_class = BuildReportSerializer
+
+
+class BuildReportList(BuildReportMixin, ReportListView):
     """API endpoint for viewing a list of BuildReport objects.
 
     Can be filtered by:
@@ -451,236 +360,92 @@ class BuildReportList(ReportListView, BuildReportMixin):
     - enabled: Filter by enabled / disabled status
     - build: Filter by Build object
     """
-
-    queryset = BuildReport.objects.all()
-    serializer_class = BuildReportSerializer
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering"""
-        queryset = super().filter_queryset(queryset)
-
-        # List of Build objects to match against
-        builds = self.get_builds()
-
-        if len(builds) > 0:
-            """
-            We wish to filter by Build(s)
-
-            We need to compare the 'filters' string of each report,
-            and see if it matches against each of the specified parts
-
-            # TODO: This code needs some refactoring!
-            """
-
-            valid_build_ids = set()
-
-            for report in queryset.all():
-
-                matches = True
-
-                try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
-                except ValidationError:
-                    continue
-
-                for b in builds:
-                    build_query = build.models.Build.objects.filter(pk=b.pk)
-
-                    try:
-                        if not build_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                if matches:
-                    valid_build_ids.add(report.pk)
-                else:
-                    continue
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_build_ids])
-
-        return queryset
+    pass
 
 
-class BuildReportDetail(RetrieveUpdateDestroyAPI):
+class BuildReportDetail(BuildReportMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single BuildReport object."""
-
-    queryset = BuildReport.objects.all()
-    serializer_class = BuildReportSerializer
+    pass
 
 
-class BuildReportPrint(RetrieveAPI, BuildReportMixin, ReportPrintMixin):
+class BuildReportPrint(BuildReportMixin, ReportPrintMixin, RetrieveAPI):
     """API endpoint for printing a BuildReport."""
-
-    queryset = BuildReport.objects.all()
-    serializer_class = BuildReportSerializer
-
-    def get(self, request, *ars, **kwargs):
-        """Perform a GET action to print the report"""
-        builds = self.get_builds()
-
-        return self.print(request, builds)
+    pass
 
 
-class PurchaseOrderReportList(ReportListView, OrderReportMixin):
+class PurchaseOrderReportMixin(ReportFilterMixin):
+    """Mixin for the PurchaseOrderReport report template"""
+
+    ITEM_MODEL = order.models.PurchaseOrder
+    ITEM_KEY = 'order'
+
+    queryset = PurchaseOrderReport.objects.all()
+    serializer_class = PurchaseOrderReportSerializer
+
+
+class PurchaseOrderReportList(PurchaseOrderReportMixin, ReportListView):
     """API list endpoint for the PurchaseOrderReport model"""
-    OrderModel = order.models.PurchaseOrder
-
-    queryset = PurchaseOrderReport.objects.all()
-    serializer_class = PurchaseOrderReportSerializer
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filter for the PurchaseOrderReport list"""
-        queryset = super().filter_queryset(queryset)
-
-        orders = self.get_orders()
-
-        if len(orders) > 0:
-            """
-            We wish to filter by purchase orders.
-
-            We need to compare the 'filters' string of each report,
-            and see if it matches against each of the specified orders.
-
-            TODO: In the future, perhaps there is a way to make this more efficient.
-            """
-
-            valid_report_ids = set()
-
-            for report in queryset.all():
-
-                matches = True
-
-                # Filter string defined for the report object
-                try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
-                except Exception:
-                    continue
-
-                for o in orders:
-                    order_query = order.models.PurchaseOrder.objects.filter(pk=o.pk)
-
-                    try:
-                        if not order_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                if matches:
-                    valid_report_ids.add(report.pk)
-                else:
-                    continue
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
-
-        return queryset
+    pass
 
 
-class PurchaseOrderReportDetail(RetrieveUpdateDestroyAPI):
+class PurchaseOrderReportDetail(PurchaseOrderReportMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single PurchaseOrderReport object."""
-
-    queryset = PurchaseOrderReport.objects.all()
-    serializer_class = PurchaseOrderReportSerializer
+    pass
 
 
-class PurchaseOrderReportPrint(RetrieveAPI, OrderReportMixin, ReportPrintMixin):
+class PurchaseOrderReportPrint(PurchaseOrderReportMixin, ReportPrintMixin, RetrieveAPI):
     """API endpoint for printing a PurchaseOrderReport object."""
-
-    OrderModel = order.models.PurchaseOrder
-
-    queryset = PurchaseOrderReport.objects.all()
-    serializer_class = PurchaseOrderReportSerializer
-
-    def get(self, request, *args, **kwargs):
-        """Perform GET request to print the report"""
-        orders = self.get_orders()
-
-        return self.print(request, orders)
+    pass
 
 
-class SalesOrderReportList(ReportListView, OrderReportMixin):
+class SalesOrderReportMixin(ReportFilterMixin):
+    """Mixin for the SalesOrderReport report template"""
+
+    ITEM_MODEL = order.models.SalesOrder
+    ITEM_KEY = 'order'
+
+    queryset = SalesOrderReport.objects.all()
+    serializer_class = SalesOrderReportSerializer
+
+
+class SalesOrderReportList(SalesOrderReportMixin, ReportListView):
     """API list endpoint for the SalesOrderReport model"""
-    OrderModel = order.models.SalesOrder
-
-    queryset = SalesOrderReport.objects.all()
-    serializer_class = SalesOrderReportSerializer
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering for the SalesOrderReport API list"""
-        queryset = super().filter_queryset(queryset)
-
-        orders = self.get_orders()
-
-        if len(orders) > 0:
-            """
-            We wish to filter by purchase orders.
-
-            We need to compare the 'filters' string of each report,
-            and see if it matches against each of the specified orders.
-
-            TODO: In the future, perhaps there is a way to make this more efficient.
-            """
-
-            valid_report_ids = set()
-
-            for report in queryset.all():
-
-                matches = True
-
-                # Filter string defined for the report object
-                try:
-                    filters = InvenTree.helpers.validateFilterString(report.filters)
-                except Exception:
-                    continue
-
-                for o in orders:
-                    order_query = order.models.SalesOrder.objects.filter(pk=o.pk)
-
-                    try:
-                        if not order_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                if matches:
-                    valid_report_ids.add(report.pk)
-                else:
-                    continue
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
-
-        return queryset
+    pass
 
 
-class SalesOrderReportDetail(RetrieveUpdateDestroyAPI):
+class SalesOrderReportDetail(SalesOrderReportMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single SalesOrderReport object."""
-
-    queryset = SalesOrderReport.objects.all()
-    serializer_class = SalesOrderReportSerializer
+    pass
 
 
-class SalesOrderReportPrint(RetrieveAPI, OrderReportMixin, ReportPrintMixin):
+class SalesOrderReportPrint(SalesOrderReportMixin, ReportPrintMixin, RetrieveAPI):
     """API endpoint for printing a PurchaseOrderReport object."""
+    pass
 
-    OrderModel = order.models.SalesOrder
 
-    queryset = SalesOrderReport.objects.all()
-    serializer_class = SalesOrderReportSerializer
+class ReturnOrderReportMixin(ReportFilterMixin):
+    """Mixin for the ReturnOrderReport report template"""
 
-    def get(self, request, *args, **kwargs):
-        """Perform a GET request to print the report"""
-        orders = self.get_orders()
+    ITEM_MODEL = order.models.ReturnOrder
+    ITEM_KEY = 'order'
 
-        return self.print(request, orders)
+    queryset = ReturnOrderReport.objects.all()
+    serializer_class = ReturnOrderReportSerializer
+
+
+class ReturnOrderReportList(ReturnOrderReportMixin, ReportListView):
+    """API list endpoint for the ReturnOrderReport model"""
+    pass
+
+
+class ReturnOrderReportDetail(ReturnOrderReportMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single ReturnOrderReport object"""
+    pass
+
+
+class ReturnOrderReportPrint(ReturnOrderReportMixin, ReportPrintMixin, RetrieveAPI):
+    """API endpoint for printing a ReturnOrderReport object"""
+    pass
 
 
 report_api_urls = [
@@ -688,8 +453,9 @@ report_api_urls = [
     # Purchase order reports
     re_path(r'po/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/', PurchaseOrderReportPrint.as_view(), name='api-po-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': PurchaseOrderReport}, name='api-po-report-metadata'),
             path('', PurchaseOrderReportDetail.as_view(), name='api-po-report-detail'),
         ])),
 
@@ -700,19 +466,31 @@ report_api_urls = [
     # Sales order reports
     re_path(r'so/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/', SalesOrderReportPrint.as_view(), name='api-so-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': SalesOrderReport}, name='api-so-report-metadata'),
             path('', SalesOrderReportDetail.as_view(), name='api-so-report-detail'),
         ])),
 
         path('', SalesOrderReportList.as_view(), name='api-so-report-list'),
     ])),
 
+    # Return order reports
+    re_path(r'ro/', include([
+        path(r'<int:pk>/', include([
+            path(r'print/', ReturnOrderReportPrint.as_view(), name='api-return-order-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': ReturnOrderReport}, name='api-so-report-metadata'),
+            path('', ReturnOrderReportDetail.as_view(), name='api-return-order-report-detail'),
+        ])),
+        path('', ReturnOrderReportList.as_view(), name='api-return-order-report-list'),
+    ])),
+
     # Build reports
     re_path(r'build/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': BuildReport}, name='api-build-report-metadata'),
             re_path(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
         ])),
 
@@ -724,8 +502,9 @@ report_api_urls = [
     re_path(r'bom/', include([
 
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': BillOfMaterialsReport}, name='api-bom-report-metadata'),
             re_path(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
         ])),
 
@@ -736,8 +515,9 @@ report_api_urls = [
     # Stock item test reports
     re_path(r'test/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'report': TestReport}, name='api-stockitem-testreport-metadata'),
             re_path(r'^.*$', StockItemTestReportDetail.as_view(), name='api-stockitem-testreport-detail'),
         ])),
 
