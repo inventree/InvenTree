@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 14:13+0000\n"
+"POT-Creation-Date: 2023-04-18 13:10+0000\n"
 "PO-Revision-Date: 2023-04-17 18:25\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -463,107 +463,107 @@ msgstr "URL du fichier image distant"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Le téléchargement des images depuis une URL distante n'est pas activé"
 
-#: InvenTree/settings.py:708
+#: InvenTree/settings.py:719
 msgid "Czech"
 msgstr "Tchèque"
 
-#: InvenTree/settings.py:709
+#: InvenTree/settings.py:720
 msgid "Danish"
 msgstr "Danois"
 
-#: InvenTree/settings.py:710
+#: InvenTree/settings.py:721
 msgid "German"
 msgstr "Allemand"
 
-#: InvenTree/settings.py:711
+#: InvenTree/settings.py:722
 msgid "Greek"
 msgstr "Grec"
 
-#: InvenTree/settings.py:712
+#: InvenTree/settings.py:723
 msgid "English"
 msgstr "Anglais"
 
-#: InvenTree/settings.py:713
+#: InvenTree/settings.py:724
 msgid "Spanish"
 msgstr "Espagnol"
 
-#: InvenTree/settings.py:714
+#: InvenTree/settings.py:725
 msgid "Spanish (Mexican)"
 msgstr "Espagnol (Mexique)"
 
-#: InvenTree/settings.py:715
+#: InvenTree/settings.py:726
 msgid "Farsi / Persian"
 msgstr "Farsi / Perse"
 
-#: InvenTree/settings.py:716
+#: InvenTree/settings.py:727
 msgid "French"
 msgstr "Français"
 
-#: InvenTree/settings.py:717
+#: InvenTree/settings.py:728
 msgid "Hebrew"
 msgstr "Hébreu"
 
-#: InvenTree/settings.py:718
+#: InvenTree/settings.py:729
 msgid "Hungarian"
 msgstr "Hongrois"
 
-#: InvenTree/settings.py:719
+#: InvenTree/settings.py:730
 msgid "Italian"
 msgstr "Italien"
 
-#: InvenTree/settings.py:720
+#: InvenTree/settings.py:731
 msgid "Japanese"
 msgstr "Japonais"
 
-#: InvenTree/settings.py:721
+#: InvenTree/settings.py:732
 msgid "Korean"
 msgstr "Coréen"
 
-#: InvenTree/settings.py:722
+#: InvenTree/settings.py:733
 msgid "Dutch"
 msgstr "Néerlandais"
 
-#: InvenTree/settings.py:723
+#: InvenTree/settings.py:734
 msgid "Norwegian"
 msgstr "Norvégien"
 
-#: InvenTree/settings.py:724
+#: InvenTree/settings.py:735
 msgid "Polish"
 msgstr "Polonais"
 
-#: InvenTree/settings.py:725
+#: InvenTree/settings.py:736
 msgid "Portuguese"
 msgstr "Portugais"
 
-#: InvenTree/settings.py:726
+#: InvenTree/settings.py:737
 msgid "Portuguese (Brazilian)"
 msgstr "Portugais (Brésilien)"
 
-#: InvenTree/settings.py:727
+#: InvenTree/settings.py:738
 msgid "Russian"
 msgstr "Russe"
 
-#: InvenTree/settings.py:728
+#: InvenTree/settings.py:739
 msgid "Slovenian"
 msgstr "Slovénien"
 
-#: InvenTree/settings.py:729
+#: InvenTree/settings.py:740
 msgid "Swedish"
 msgstr "Suédois"
 
-#: InvenTree/settings.py:730
+#: InvenTree/settings.py:741
 msgid "Thai"
 msgstr "Thaïlandais"
 
-#: InvenTree/settings.py:731
+#: InvenTree/settings.py:742
 msgid "Turkish"
 msgstr "Turc"
 
-#: InvenTree/settings.py:732
+#: InvenTree/settings.py:743
 msgid "Vietnamese"
 msgstr "Vietnamien"
 
-#: InvenTree/settings.py:733
+#: InvenTree/settings.py:744
 msgid "Chinese"
 msgstr "Chinois"
 
@@ -12065,7 +12065,8 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12244,4 +12245,3 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:243
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
-
