@@ -185,6 +185,10 @@ class BaseInvenTreeSetting(models.Model):
         """
         results = cls.objects.all()
 
+        if exclude_hidden:
+            # Keys which start with an undersore are used for internal functionality
+            results = results.exclude(key__startswith='_')
+
         # Optionally filter by user
         if user is not None:
             results = results.filter(user=user)
@@ -401,10 +405,10 @@ class BaseInvenTreeSetting(models.Model):
         if not setting:
 
             # Unless otherwise specified, attempt to create the setting
-            create = kwargs.get('create', True)
+            create = kwargs.pop('create', True)
 
             # Prevent creation of new settings objects when importing data
-            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True, allow_shell=True):
                 create = False
 
             if create:
@@ -1005,6 +1009,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_UPDATE_CHECK_INTERVAL': {
+            'name': _('Update Check Inverval'),
+            'description': _('How often to check for updates (set to zero to disable)'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 7,
+            'units': _('days'),
+        },
+
         'INVENTREE_BACKUP_ENABLE': {
             'name': _('Automatic Backup'),
             'description': _('Enable automatic backup of database and media files'),
@@ -1013,20 +1028,21 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_BACKUP_DAYS': {
-            'name': _('Days Between Backup'),
+            'name': _('Auto Backup Interval'),
             'description': _('Specify number of days between automated backup events'),
             'validator': [
                 int,
                 MinValueValidator(1),
             ],
             'default': 1,
+            'units': _('days'),
         },
 
         'INVENTREE_DELETE_TASKS_DAYS': {
-            'name': _('Delete Old Tasks'),
+            'name': _('Task Deletion Interval'),
             'description': _('Background task results will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7),
@@ -1034,10 +1050,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_DELETE_ERRORS_DAYS': {
-            'name': _('Delete Error Logs'),
+            'name': _('Error Log Deletion Interval'),
             'description': _('Error logs will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7)
@@ -1045,10 +1061,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
-            'name': _('Delete Notifications'),
+            'name': _('Notification Deletion Interval'),
             'description': _('User notifications will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7),
@@ -1078,6 +1094,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Allow barcode scanning via webcam in browser'),
             'default': True,
             'validator': bool,
+        },
+
+        'PART_ENABLE_REVISION': {
+            'name': _('Part Revisions'),
+            'description': _('Enable revision field for Part'),
+            'validator': bool,
+            'default': True,
         },
 
         'PART_IPN_REGEX': {
@@ -1218,9 +1241,20 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'PRICING_DECIMAL_PLACES_MIN': {
+            'name': _('Minimum Pricing Decimal Places'),
+            'description': _('Minimum number of decimal places to display when rendering pricing data'),
+            'default': 0,
+            'validator': [
+                int,
+                MinValueValidator(0),
+                MaxValueValidator(4),
+            ]
+        },
+
         'PRICING_DECIMAL_PLACES': {
-            'name': _('Pricing Decimal Places'),
-            'description': _('Number of decimal places to display when rendering pricing data'),
+            'name': _('Maximum Pricing Decimal Places'),
+            'description': _('Maximum number of decimal places to display when rendering pricing data'),
             'default': 6,
             'validator': [
                 int,
@@ -1254,7 +1288,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Stock Item Pricing Age'),
             'description': _('Exclude stock items older than this number of days from pricing calculations'),
             'default': 0,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(0),
@@ -1276,7 +1310,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'PRICING_UPDATE_DAYS': {
-            'name': _('Pricing Rebuild Time'),
+            'name': _('Pricing Rebuild Interval'),
             'description': _('Number of days before part pricing is automatically updated'),
             'units': _('days'),
             'default': 30,
@@ -1430,6 +1464,27 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Required pattern for generating Build Order reference field'),
             'default': 'BO-{ref:04d}',
             'validator': build.validators.validate_build_order_reference_pattern,
+        },
+
+        'RETURNORDER_ENABLED': {
+            'name': _('Enable Return Orders'),
+            'description': _('Enable return order functionality in the user interface'),
+            'validator': bool,
+            'default': False,
+        },
+
+        'RETURNORDER_REFERENCE_PATTERN': {
+            'name': _('Return Order Reference Pattern'),
+            'description': _('Required pattern for generating Return Order reference field'),
+            'default': 'RMA-{ref:04d}',
+            'validator': order.validators.validate_return_order_reference_pattern,
+        },
+
+        'RETURNORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Return Orders'),
+            'description': _('Allow editing of return orders after they have been completed'),
+            'default': False,
+            'validator': bool,
         },
 
         'SALESORDER_REFERENCE_PATTERN': {
@@ -1619,10 +1674,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'STOCKTAKE_DELETE_REPORT_DAYS': {
-            'name': _('Delete Old Reports'),
+            'name': _('Report Deletion Interval'),
             'description': _('Stocktake reports will be deleted after specified number of days'),
             'default': 30,
-            'units': 'days',
+            'units': _('days'),
             'validator': [
                 int,
                 MinValueValidator(7),
@@ -1838,7 +1893,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         },
 
         'SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS': {
-            'name': _('Seach Supplier Parts'),
+            'name': _('Search Supplier Parts'),
             'description': _('Display supplier parts in search preview window'),
             'default': True,
             'validator': bool,
@@ -1928,11 +1983,39 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
         },
 
+        'SEARCH_PREVIEW_SHOW_RETURN_ORDERS': {
+            'name': _('Search Return Orders'),
+            'description': _('Display return orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS': {
+            'name': _('Exclude Inactive Return Orders'),
+            'description': _('Exclude inactive return orders from search preview window'),
+            'validator': bool,
+            'default': True,
+        },
+
         'SEARCH_PREVIEW_RESULTS': {
             'name': _('Search Preview Results'),
             'description': _('Number of results to show in each section of the search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
+        },
+
+        'SEARCH_REGEX': {
+            'name': _('Regex Search'),
+            'description': _('Enable regular expressions in search queries'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SEARCH_WHOLE': {
+            'name': _('Whole Word Search'),
+            'description': _('Search queries return results for whole word matches'),
+            'default': False,
+            'validator': bool,
         },
 
         'PART_SHOW_QUANTITY_IN_FORMS': {

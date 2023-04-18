@@ -165,6 +165,8 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         queryset = queryset.prefetch_related(
             'sales_order',
             'purchase_order',
+            'part',
+            'part__pricing_data',
         )
 
         # Annotate the queryset with the total allocated to sales orders

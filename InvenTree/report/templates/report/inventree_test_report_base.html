@@ -33,6 +33,15 @@ content: "{% trans 'Stock Item Test Report' %}";
     color: #F55;
 }
 
+.test-not-found {
+    color: #33A;
+}
+
+.required-test-not-found {
+    color: #EEE;
+    background-color: #F55;
+}
+
 .container {
     padding: 5px;
     border: 1px solid;
@@ -84,7 +93,7 @@ content: "{% trans 'Stock Item Test Report' %}";
     </div>
 </div>
 
-{% if resul_list|length > 0 %}
+{% if test_keys|length > 0 %}
 <h3>{% trans "Test Results" %}</h3>
 
 <table class='table test-table'>
@@ -101,22 +110,44 @@ content: "{% trans 'Stock Item Test Report' %}";
         <tr>
             <td colspan='5'><hr></td>
         </tr>
-        {% for test in result_list %}
+        {% for key in test_keys %}
+        <!-- test key = {{ key }} -->
+        {% getkey test_template_map key as test_template %}
+        {% getkey results key as test_result %}
         <tr class='test-row'>
-            <td>{{ test.test }}</td>
-            {% if test.result %}
+            <td>
+                {% if test_template %}
+                {% render_html_text test_template.test_name bold=test_template.required %}
+                {% elif test_result %}
+                {% render_html_text test_result.test italic=True %}
+                {% else %}
+                <!-- No matching test template or result for {{ key }} -->
+                <span style='color: red;'>{{ key }}</span>
+                {% endif %}
+            </td>
+            {% if test_result %}
+            {% if test_result.result %}
             <td class='test-pass'>{% trans "Pass" %}</td>
             {% else %}
             <td class='test-fail'>{% trans "Fail" %}</td>
             {% endif %}
-            <td>{{ test.value }}</td>
-            <td>{{ test.user.username }}</td>
-            <td>{{ test.date.date.isoformat }}</td>
+            <td>{{ test_result.value }}</td>
+            <td>{{ test_result.user.username }}</td>
+            <td>{{ test_result.date.date.isoformat }}</td>
+            {% else %}
+            {% if test_template.required %}
+            <td colspan='4' class='required-test-not-found'>{% trans "No result (required)" %}</td>
+            {% else %}
+            <td colspan='4' class='test-not-found'>{% trans "No result" %}</td>
+            {% endif %}
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
 
 </table>
+{% else %}
+<em>No tests defined for this stock item</em>
 {% endif %}
 
 {% if installed_items|length > 0 %}

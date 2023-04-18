@@ -74,25 +74,29 @@ class PluginTagTests(TestCase):
 class InvenTreePluginTests(TestCase):
     """Tests for InvenTreePlugin."""
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        self.plugin = InvenTreePlugin()
+
+        super().setUpTestData()
+
+        cls.plugin = InvenTreePlugin()
 
         class NamedPlugin(InvenTreePlugin):
             """a named plugin."""
             NAME = 'abc123'
 
-        self.named_plugin = NamedPlugin()
+        cls.named_plugin = NamedPlugin()
 
         class SimpleInvenTreePlugin(InvenTreePlugin):
             NAME = 'SimplePlugin'
 
-        self.plugin_simple = SimpleInvenTreePlugin()
+        cls.plugin_simple = SimpleInvenTreePlugin()
 
         class OldInvenTreePlugin(InvenTreePlugin):
             PLUGIN_SLUG = 'old'
 
-        self.plugin_old = OldInvenTreePlugin()
+        cls.plugin_old = OldInvenTreePlugin()
 
         class NameInvenTreePlugin(InvenTreePlugin):
             NAME = 'Aplugin'
@@ -105,8 +109,8 @@ class InvenTreePluginTests(TestCase):
             WEBSITE = 'https://aa.bb/cc'
             LICENSE = 'MIT'
 
-        self.plugin_name = NameInvenTreePlugin()
-        self.plugin_sample = SampleIntegrationPlugin()
+        cls.plugin_name = NameInvenTreePlugin()
+        cls.plugin_sample = SampleIntegrationPlugin()
 
         class VersionInvenTreePlugin(InvenTreePlugin):
             NAME = 'Version'
@@ -114,7 +118,7 @@ class InvenTreePluginTests(TestCase):
             MIN_VERSION = '0.1.0'
             MAX_VERSION = '0.1.3'
 
-        self.plugin_version = VersionInvenTreePlugin()
+        cls.plugin_version = VersionInvenTreePlugin()
 
     def test_basic_plugin_init(self):
         """Check if a basic plugin intis."""

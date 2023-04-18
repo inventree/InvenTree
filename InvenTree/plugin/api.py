@@ -1,15 +1,16 @@
 """API for the plugin app."""
 
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions, status
+from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import plugin.serializers as PluginSerializers
 from common.api import (GlobalSettingsPermissions, WebConnectionDetail,
                         WebConnectionList)
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI, UpdateAPI)
 from InvenTree.permissions import IsSuperuser
@@ -60,11 +61,7 @@ class PluginList(ListAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'active',
@@ -304,7 +301,7 @@ plugin_api_urls = [
         ])),
 
         # Detail views for a single PluginConfig item
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'^settings/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail-pk'),
             re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-detail-activate'),
             re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),

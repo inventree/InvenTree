@@ -6,7 +6,7 @@ from rest_framework import status
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 
-from .models import Company, SupplierPart
+from .models import Company, Contact, SupplierPart
 
 
 class CompanyTest(InvenTreeAPITestCase):
@@ -17,11 +17,14 @@ class CompanyTest(InvenTreeAPITestCase):
         'purchase_order.change',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Perform initialization for the unit test class"""
-        super().setUp()
 
-        self.acme = Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
+        super().setUpTestData()
+
+        # Create some company objects to work with
+        cls.acme = Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
         Company.objects.create(name='Drippy Cup Co.', description='Customer', is_customer=True, is_supplier=False)
         Company.objects.create(name='Sippy Cup Emporium', description='Another supplier')
 
@@ -135,6 +138,144 @@ class CompanyTest(InvenTreeAPITestCase):
         )
 
         self.assertTrue('currency' in response.data)
+
+
+class ContactTest(InvenTreeAPITestCase):
+    """Tests for the Contact models"""
+
+    roles = []
+
+    @classmethod
+    def setUpTestData(cls):
+        """Perform init for this test class"""
+
+        super().setUpTestData()
+
+        # Create some companies
+        companies = [
+            Company(
+                name=f"Company {idx}",
+                description="Some company"
+            ) for idx in range(3)
+        ]
+
+        Company.objects.bulk_create(companies)
+
+        contacts = []
+
+        # Create some contacts
+        for cmp in Company.objects.all():
+            contacts += [
+                Contact(
+                    company=cmp,
+                    name=f"My name {idx}",
+                ) for idx in range(3)
+            ]
+
+        Contact.objects.bulk_create(contacts)
+
+        cls.url = reverse('api-contact-list')
+
+    def test_list(self):
+        """Test company list API endpoint"""
+
+        # List all results
+        response = self.get(self.url, {}, expected_code=200)
+
+        self.assertEqual(len(response.data), 9)
+
+        for result in response.data:
+            for key in ['name', 'email', 'pk', 'company']:
+                self.assertIn(key, result)
+
+        # Filter by particular company
+        for cmp in Company.objects.all():
+            response = self.get(
+                self.url,
+                {
+                    'company': cmp.pk,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(len(response.data), 3)
+
+    def test_create(self):
+        """Test that we can create a new Contact object via the API"""
+
+        n = Contact.objects.count()
+
+        company = Company.objects.first()
+
+        # Without required permissions, creation should fail
+        self.post(
+            self.url,
+            {
+                'company': company.pk,
+                'name': 'Joe Bloggs',
+            },
+            expected_code=403
+        )
+
+        self.assignRole('return_order.add')
+
+        self.post(
+            self.url,
+            {
+                'company': company.pk,
+                'name': 'Joe Bloggs',
+            },
+            expected_code=201
+        )
+
+        self.assertEqual(Contact.objects.count(), n + 1)
+
+    def test_edit(self):
+        """Test that we can edit a Contact via the API"""
+
+        url = reverse('api-contact-detail', kwargs={'pk': 1})
+
+        # Retrieve detail view
+        data = self.get(url, expected_code=200).data
+
+        for key in ['pk', 'name', 'role']:
+            self.assertIn(key, data)
+
+        self.patch(
+            url,
+            {
+                'role': 'model',
+            },
+            expected_code=403
+        )
+
+        self.assignRole('purchase_order.change')
+
+        self.patch(
+            url,
+            {
+                'role': 'x',
+            },
+            expected_code=200
+        )
+
+        contact = Contact.objects.get(pk=1)
+        self.assertEqual(contact.role, 'x')
+
+    def test_delete(self):
+        """Tests that we can delete a Contact via the API"""
+
+        url = reverse('api-contact-detail', kwargs={'pk': 6})
+
+        # Delete (without required permissions)
+        self.delete(url, expected_code=403)
+
+        self.assignRole('sales_order.delete')
+
+        self.delete(url, expected_code=204)
+
+        # Try to access again (gone!)
+        self.get(url, expected_code=404)
 
 
 class ManufacturerTest(InvenTreeAPITestCase):

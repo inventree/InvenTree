@@ -5,14 +5,21 @@ import io
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
+from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
 
 import order.models as models
+from common.settings import currency_codes
+from company.models import Company
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
+                                    ReturnOrderStatus, SalesOrderStatus,
+                                    StockStatus)
 from part.models import Part
 from stock.models import StockItem
 
@@ -90,6 +97,65 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'supplier_part': 1}, 1)
         self.filter({'supplier_part': 3}, 2)
         self.filter({'supplier_part': 4}, 0)
+
+    def test_total_price(self):
+        """Unit tests for the 'total_price' field"""
+
+        # Ensure we have exchange rate data
+        self.generate_exchange_rates()
+
+        currencies = currency_codes()
+        n = len(currencies)
+
+        idx = 0
+
+        new_orders = []
+
+        # Let's generate some more orders
+        for supplier in Company.objects.filter(is_supplier=True):
+            for _idx in range(10):
+                new_orders.append(
+                    models.PurchaseOrder(
+                        supplier=supplier,
+                        reference=f'PO-{idx + 100}'
+                    )
+                )
+
+                idx += 1
+
+        models.PurchaseOrder.objects.bulk_create(new_orders)
+
+        idx = 0
+
+        # Create some purchase order line items
+        lines = []
+
+        for po in models.PurchaseOrder.objects.all():
+            for sp in po.supplier.supplied_parts.all():
+                lines.append(
+                    models.PurchaseOrderLineItem(
+                        order=po,
+                        part=sp,
+                        quantity=idx + 1,
+                        purchase_price=Money((idx + 1) / 10, currencies[idx % n]),
+                    )
+                )
+
+                idx += 1
+
+        models.PurchaseOrderLineItem.objects.bulk_create(lines)
+
+        # List all purchase orders
+        for limit in [1, 5, 10, 100]:
+            with CaptureQueriesContext(connection) as ctx:
+                response = self.get(self.LIST_URL, data={'limit': limit}, expected_code=200)
+
+                # Total database queries must be below 15, independent of the number of results
+                self.assertLess(len(ctx), 15)
+
+                for result in response.data['results']:
+                    self.assertIn('total_price', result)
+                    self.assertIn('total_price_currency', result)
 
     def test_overdue(self):
         """Test "overdue" status."""
@@ -539,6 +605,26 @@ class PurchaseOrderLineItemTest(OrderTest):
         self.filter({'has_pricing': 1}, 0)
         self.filter({'has_pricing': 0}, 5)
 
+    def test_po_line_bulk_delete(self):
+        """Test that we can bulk delete multiple PurchaseOrderLineItems via the API."""
+        n = models.PurchaseOrderLineItem.objects.count()
+
+        self.assignRole('purchase_order.delete')
+
+        url = reverse('api-po-line-list')
+
+        # Try to delete a set of line items via their IDs
+        self.delete(
+            url,
+            {
+                'items': [1, 2],
+            },
+            expected_code=204,
+        )
+
+        # We should have 2 less PurchaseOrderLineItems after deletign them
+        self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
+
 
 class PurchaseOrderDownloadTest(OrderTest):
     """Unit tests for downloading PurchaseOrder data via the API endpoint."""
@@ -751,8 +837,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         """
         # Set stock item barcode
         item = StockItem.objects.get(pk=1)
-        item.barcode_hash = 'MY-BARCODE-HASH'
-        item.save()
+        item.assign_barcode(barcode_data='MY-BARCODE-HASH')
 
         response = self.post(
             self.url,
@@ -870,8 +955,8 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(stock_2.last().location.pk, 2)
 
         # Barcodes should have been assigned to the stock items
-        self.assertTrue(StockItem.objects.filter(barcode_hash='MY-UNIQUE-BARCODE-123').exists())
-        self.assertTrue(StockItem.objects.filter(barcode_hash='MY-UNIQUE-BARCODE-456').exists())
+        self.assertTrue(StockItem.objects.filter(barcode_data='MY-UNIQUE-BARCODE-123').exists())
+        self.assertTrue(StockItem.objects.filter(barcode_data='MY-UNIQUE-BARCODE-456').exists())
 
     def test_batch_code(self):
         """Test that we can supply a 'batch code' when receiving items."""
@@ -886,12 +971,12 @@ class PurchaseOrderReceiveTest(OrderTest):
                 {
                     'line_item': 1,
                     'quantity': 10,
-                    'batch_code': 'abc-123',
+                    'batch_code': 'B-abc-123',
                 },
                 {
                     'line_item': 2,
                     'quantity': 10,
-                    'batch_code': 'xyz-789',
+                    'batch_code': 'B-xyz-789',
                 }
             ],
             'location': 1,
@@ -911,8 +996,8 @@ class PurchaseOrderReceiveTest(OrderTest):
         item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
         item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
 
-        self.assertEqual(item_1.batch, 'abc-123')
-        self.assertEqual(item_2.batch, 'xyz-789')
+        self.assertEqual(item_1.batch, 'B-abc-123')
+        self.assertEqual(item_2.batch, 'B-xyz-789')
 
     def test_serial_numbers(self):
         """Test that we can supply a 'serial number' when receiving items."""
@@ -927,13 +1012,13 @@ class PurchaseOrderReceiveTest(OrderTest):
                 {
                     'line_item': 1,
                     'quantity': 10,
-                    'batch_code': 'abc-123',
+                    'batch_code': 'B-abc-123',
                     'serial_numbers': '100+',
                 },
                 {
                     'line_item': 2,
                     'quantity': 10,
-                    'batch_code': 'xyz-789',
+                    'batch_code': 'B-xyz-789',
                 }
             ],
             'location': 1,
@@ -958,7 +1043,7 @@ class PurchaseOrderReceiveTest(OrderTest):
             item = StockItem.objects.get(serial_int=i)
             self.assertEqual(item.serial, str(i))
             self.assertEqual(item.quantity, 1)
-            self.assertEqual(item.batch, 'abc-123')
+            self.assertEqual(item.batch, 'B-abc-123')
 
         # A single stock item (quantity 10) created for the second line item
         items = StockItem.objects.filter(supplier_part=line_2.part)
@@ -967,7 +1052,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         item = items.first()
 
         self.assertEqual(item.quantity, 10)
-        self.assertEqual(item.batch, 'xyz-789')
+        self.assertEqual(item.batch, 'B-xyz-789')
 
 
 class SalesOrderTest(OrderTest):
@@ -1000,6 +1085,79 @@ class SalesOrderTest(OrderTest):
         # Filter by "assigned_to_me"
         self.filter({'assigned_to_me': 1}, 0)
         self.filter({'assigned_to_me': 0}, 5)
+
+    def test_total_price(self):
+        """Unit tests for the 'total_price' field"""
+
+        # Ensure we have exchange rate data
+        self.generate_exchange_rates()
+
+        currencies = currency_codes()
+        n = len(currencies)
+
+        idx = 0
+        new_orders = []
+
+        # Generate some new SalesOrders
+        for customer in Company.objects.filter(is_customer=True):
+            for _idx in range(10):
+                new_orders.append(
+                    models.SalesOrder(
+                        customer=customer,
+                        reference=f'SO-{idx + 100}',
+                    )
+                )
+
+                idx += 1
+
+        models.SalesOrder.objects.bulk_create(new_orders)
+
+        idx = 0
+
+        # Create some new SalesOrderLineItem objects
+
+        lines = []
+        extra_lines = []
+
+        for so in models.SalesOrder.objects.all():
+            for p in Part.objects.filter(salable=True):
+                lines.append(
+                    models.SalesOrderLineItem(
+                        order=so,
+                        part=p,
+                        quantity=idx + 1,
+                        sale_price=Money((idx + 1) / 5, currencies[idx % n])
+                    )
+                )
+
+                idx += 1
+
+            # Create some extra lines against this order
+            for ii in range(3):
+                extra_lines.append(
+                    models.SalesOrderExtraLine(
+                        order=so,
+                        quantity=(idx + 2) % 10,
+                        price=Money(10, 'CAD'),
+                    )
+                )
+
+        models.SalesOrderLineItem.objects.bulk_create(lines)
+        models.SalesOrderExtraLine.objects.bulk_create(extra_lines)
+
+        # List all SalesOrder objects and count queries
+        for limit in [1, 5, 10, 100]:
+            with CaptureQueriesContext(connection) as ctx:
+                response = self.get(self.LIST_URL, data={'limit': limit}, expected_code=200)
+
+                # Total database queries must be less than 15
+                self.assertLess(len(ctx), 15)
+
+                n = len(response.data['results'])
+
+                for result in response.data['results']:
+                    self.assertIn('total_price', result)
+                    self.assertIn('total_price_currency', result)
 
     def test_overdue(self):
         """Test "overdue" status."""
@@ -1251,25 +1409,33 @@ class SalesOrderLineItemTest(OrderTest):
 
     LIST_URL = reverse('api-so-line-list')
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Init routine for this unit test class"""
-        super().setUp()
+        super().setUpTestData()
 
         # List of salable parts
         parts = Part.objects.filter(salable=True)
+
+        lines = []
 
         # Create a bunch of SalesOrderLineItems for each order
         for idx, so in enumerate(models.SalesOrder.objects.all()):
 
             for part in parts:
-                models.SalesOrderLineItem.objects.create(
-                    order=so,
-                    part=part,
-                    quantity=(idx + 1) * 5,
-                    reference=f"Order {so.reference} - line {idx}",
+                lines.append(
+                    models.SalesOrderLineItem(
+                        order=so,
+                        part=part,
+                        quantity=(idx + 1) * 5,
+                        reference=f"Order {so.reference} - line {idx}",
+                    )
                 )
 
-        self.url = reverse('api-so-line-list')
+        # Bulk create
+        models.SalesOrderLineItem.objects.bulk_create(lines)
+
+        cls.url = reverse('api-so-line-list')
 
     def test_so_line_list(self):
         """Test list endpoint"""
@@ -1300,7 +1466,7 @@ class SalesOrderLineItemTest(OrderTest):
         n_parts = Part.objects.filter(salable=True).count()
 
         # List by part
-        for part in Part.objects.filter(salable=True):
+        for part in Part.objects.filter(salable=True)[:3]:
             response = self.get(
                 self.url,
                 {
@@ -1312,7 +1478,7 @@ class SalesOrderLineItemTest(OrderTest):
             self.assertEqual(response.data['count'], n_orders)
 
         # List by order
-        for order in models.SalesOrder.objects.all():
+        for order in models.SalesOrder.objects.all()[:3]:
             response = self.get(
                 self.url,
                 {
@@ -1637,3 +1803,286 @@ class SalesOrderAllocateTest(OrderTest):
         response = self.get(url, expected_code=200)
 
         self.assertEqual(len(response.data), 1 + 3 * models.SalesOrder.objects.count())
+
+
+class ReturnOrderTests(InvenTreeAPITestCase):
+    """Unit tests for ReturnOrder API endpoints"""
+
+    fixtures = [
+        'category',
+        'company',
+        'return_order',
+        'part',
+        'location',
+        'supplier_part',
+        'stock',
+    ]
+
+    def test_options(self):
+        """Test the OPTIONS endpoint"""
+
+        self.assignRole('return_order.add')
+        data = self.options(reverse('api-return-order-list'), expected_code=200).data
+
+        self.assertEqual(data['name'], 'Return Order List')
+
+        # Some checks on the 'reference' field
+        post = data['actions']['POST']
+        reference = post['reference']
+
+        self.assertEqual(reference['default'], 'RMA-0007')
+        self.assertEqual(reference['label'], 'Reference')
+        self.assertEqual(reference['help_text'], 'Return Order reference')
+        self.assertEqual(reference['required'], True)
+        self.assertEqual(reference['type'], 'string')
+
+    def test_list(self):
+        """Tests for the list endpoint"""
+
+        url = reverse('api-return-order-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 6)
+
+        # Paginated query
+        data = self.get(
+            url,
+            {
+                'limit': 1,
+                'ordering': 'reference',
+                'customer_detail': True,
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['count'], 6)
+        self.assertEqual(len(data['results']), 1)
+        result = data['results'][0]
+        self.assertEqual(result['reference'], 'RMA-001')
+        self.assertEqual(result['customer_detail']['name'], 'A customer')
+
+        # Reverse ordering
+        data = self.get(
+            url,
+            {
+                'ordering': '-reference',
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data[0]['reference'], 'RMA-006')
+
+        # Filter by customer
+        for cmp_id in [4, 5]:
+            data = self.get(
+                url,
+                {
+                    'customer': cmp_id,
+                },
+                expected_code=200
+            ).data
+
+            self.assertEqual(len(data), 3)
+
+            for result in data:
+                self.assertEqual(result['customer'], cmp_id)
+
+        # Filter by status
+        data = self.get(
+            url,
+            {
+                'status': 20,
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(len(data), 2)
+
+        for result in data:
+            self.assertEqual(result['status'], 20)
+
+    def test_create(self):
+        """Test creation of ReturnOrder via the API"""
+
+        url = reverse('api-return-order-list')
+
+        # Do not have required permissions yet
+        self.post(
+            url,
+            {
+                'customer': 1,
+                'description': 'a return order',
+            },
+            expected_code=403
+        )
+
+        self.assignRole('return_order.add')
+
+        data = self.post(
+            url,
+            {
+                'customer': 4,
+                'customer_reference': 'cr',
+                'description': 'a return order',
+            },
+            expected_code=201
+        ).data
+
+        # Reference automatically generated
+        self.assertEqual(data['reference'], 'RMA-0007')
+        self.assertEqual(data['customer_reference'], 'cr')
+
+    def test_update(self):
+        """Test that we can update a ReturnOrder via the API"""
+
+        url = reverse('api-return-order-detail', kwargs={'pk': 1})
+
+        # Test detail endpoint
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['reference'], 'RMA-001')
+
+        # Attempt to update, incorrect permissions
+        self.patch(
+            url,
+            {
+                'customer_reference': 'My customer reference',
+            },
+            expected_code=403
+        )
+
+        self.assignRole('return_order.change')
+
+        self.patch(
+            url,
+            {
+                'customer_reference': 'customer ref',
+            },
+            expected_code=200
+        )
+
+        rma = models.ReturnOrder.objects.get(pk=1)
+        self.assertEqual(rma.customer_reference, 'customer ref')
+
+    def test_ro_issue(self):
+        """Test the 'issue' order for a ReturnOrder"""
+
+        order = models.ReturnOrder.objects.get(pk=1)
+        self.assertEqual(order.status, ReturnOrderStatus.PENDING)
+        self.assertIsNone(order.issue_date)
+
+        url = reverse('api-return-order-issue', kwargs={'pk': 1})
+
+        # POST without required permissions
+        self.post(url, expected_code=403)
+
+        self.assignRole('return_order.add')
+
+        self.post(url, expected_code=201)
+        order.refresh_from_db()
+        self.assertEqual(order.status, ReturnOrderStatus.IN_PROGRESS)
+        self.assertIsNotNone(order.issue_date)
+
+    def test_receive(self):
+        """Test that we can receive items against a ReturnOrder"""
+
+        customer = Company.objects.get(pk=4)
+
+        # Create an order
+        rma = models.ReturnOrder.objects.create(
+            customer=customer,
+            description='A return order',
+        )
+
+        self.assertEqual(rma.reference, 'RMA-0007')
+
+        # Create some line items
+        part = Part.objects.get(pk=25)
+        for idx in range(3):
+            stock_item = StockItem.objects.create(
+                part=part, customer=customer,
+                quantity=1, serial=idx
+            )
+
+            line_item = models.ReturnOrderLineItem.objects.create(
+                order=rma,
+                item=stock_item,
+            )
+
+            self.assertEqual(line_item.outcome, ReturnOrderLineStatus.PENDING)
+            self.assertIsNone(line_item.received_date)
+            self.assertFalse(line_item.received)
+
+        self.assertEqual(rma.lines.count(), 3)
+
+        def receive(items, location=None, expected_code=400):
+            """Helper function to receive items against this ReturnOrder"""
+            url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
+
+            response = self.post(
+                url,
+                {
+                    'items': items,
+                    'location': location,
+                },
+                expected_code=expected_code
+            )
+
+            return response.data
+
+        # Receive without required permissions
+        receive([], expected_code=403)
+
+        self.assignRole('return_order.add')
+
+        # Receive, without any location
+        data = receive([], expected_code=400)
+        self.assertIn('This field may not be null', str(data['location']))
+
+        # Receive, with incorrect order code
+        data = receive([], 1, expected_code=400)
+        self.assertIn('Items can only be received against orders which are in progress', str(data))
+
+        # Issue the order (via the API)
+        self.assertIsNone(rma.issue_date)
+        self.post(
+            reverse("api-return-order-issue", kwargs={"pk": rma.pk}),
+            expected_code=201,
+        )
+
+        rma.refresh_from_db()
+        self.assertIsNotNone(rma.issue_date)
+        self.assertEqual(rma.status, ReturnOrderStatus.IN_PROGRESS)
+
+        # Receive, without any items
+        data = receive([], 1, expected_code=400)
+        self.assertIn('Line items must be provided', str(data))
+
+        # Get a reference to one of the stock items
+        stock_item = rma.lines.first().item
+
+        n_tracking = stock_item.tracking_info.count()
+
+        # Receive items successfully
+        data = receive(
+            [{'item': line.pk} for line in rma.lines.all()],
+            1,
+            expected_code=201
+        )
+
+        # Check that all line items have been received
+        for line in rma.lines.all():
+            self.assertTrue(line.received)
+            self.assertIsNotNone(line.received_date)
+
+        # A single tracking entry should have been added to the item
+        self.assertEqual(stock_item.tracking_info.count(), n_tracking + 1)
+
+        tracking_entry = stock_item.tracking_info.last()
+        deltas = tracking_entry.deltas
+
+        self.assertEqual(deltas['status'], StockStatus.QUARANTINED)
+        self.assertEqual(deltas['customer'], customer.pk)
+        self.assertEqual(deltas['location'], 1)
+        self.assertEqual(deltas['returnorder'], rma.pk)

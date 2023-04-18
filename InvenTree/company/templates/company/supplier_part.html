@@ -116,13 +116,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% decimal part.available %}<span class='badge bg-dark rounded-pill float-right'>{% render_date part.availability_updated %}</span></td>
     </tr>
     {% endif %}
-    {% if part.barcode_hash %}
-    <tr>
-        <td><span class='fas fa-barcode'></span></td>
-        <td>{% trans "Barcode Identifier" %}</td>
-        <td {% if part.barcode_data %}title='{{ part.barcode_data }}'{% endif %}>{{ part.barcode_hash }}</td>
-    </tr>
-    {% endif %}
+    {% include "barcode_data.html" with instance=part %}
 </table>
 
 {% endblock details %}
@@ -301,7 +295,7 @@ loadSupplierPriceBreakTable({
 $('#new-price-break').click(function() {
     createSupplierPartPriceBreak({{ part.pk }}, {
         onSuccess: function() {
-            $("#price-break-table").bootstrapTable("refresh");
+            $("#price-break-table").bootstrapTable('refresh');
         }
     });
 

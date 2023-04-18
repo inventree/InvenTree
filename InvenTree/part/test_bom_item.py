@@ -66,7 +66,7 @@ class BomItemTest(TestCase):
 
     def test_integer_quantity(self):
         """Test integer validation for BomItem."""
-        p = Part.objects.create(name="test", description="d", component=True, trackable=True)
+        p = Part.objects.create(name="test", description="part description", component=True, trackable=True)
 
         # Creation of a BOMItem with a non-integer quantity of a trackable Part should fail
         with self.assertRaises(django_exceptions.ValidationError):
@@ -210,10 +210,10 @@ class BomItemTest(TestCase):
         self.assertEqual(assembly.can_build, 0)
 
         # Create some component items
-        c1 = Part.objects.create(name="C1", description="C1")
-        c2 = Part.objects.create(name="C2", description="C2")
-        c3 = Part.objects.create(name="C3", description="C3")
-        c4 = Part.objects.create(name="C4", description="C4")
+        c1 = Part.objects.create(name="C1", description="Part C1 - this is just the part description")
+        c2 = Part.objects.create(name="C2", description="Part C2 - this is just the part description")
+        c3 = Part.objects.create(name="C3", description="Part C3 - this is just the part description")
+        c4 = Part.objects.create(name="C4", description="Part C4 - this is just the part description")
 
         for p in [c1, c2, c3, c4]:
             # Ensure we have stock
@@ -245,3 +245,21 @@ class BomItemTest(TestCase):
         )
 
         self.assertEqual(assembly.can_build, 20)
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [BomItem]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)

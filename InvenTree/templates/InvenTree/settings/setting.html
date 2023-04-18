@@ -2,15 +2,15 @@
 {% load i18n %}
 
 {% if connection_key %}
-{% setting_object key connection_key=connection_key connection=connection_ref plugin=plugin ref='true' as set_obj %}
+{% setting_object key cache=False connection_key=connection_key connection=connection_ref plugin=plugin ref='true' as set_obj %}
 {% elif plugin %}
-{% setting_object key plugin=plugin ref='true' as set_obj %}
+{% setting_object key cache=False plugin=plugin ref='true' as set_obj %}
 {% elif user_setting %}
-{% setting_object key user=request.user ref='true' as set_obj %}
+{% setting_object key cache=False user=request.user ref='true' as set_obj %}
 {% elif notification_setting %}
-{% setting_object key method=method user=request.user ref='true' as set_obj %}
+{% setting_object key cache=False method=method user=request.user ref='true' as set_obj %}
 {% else %}
-{% setting_object key ref='true' as set_obj %}
+{% setting_object key cache=False ref='true' as set_obj %}
 {% endif %}
 
 {% with setting=set_obj.setting reference=set_obj.reference %}

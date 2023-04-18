@@ -43,6 +43,24 @@ class TestParams(TestCase):
             t3.full_clean()
             t3.save()  # pragma: no cover
 
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [PartParameterTemplate]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)
+
 
 class TestCategoryTemplates(TransactionTestCase):
     """Test class for PartCategoryParameterTemplate model"""
