@@ -45,7 +45,7 @@ defusedxml==0.7.1
     #   python3-openid
 diff-match-patch==20200713
     # via django-import-export
-dj-rest-auth==2.2.6
+dj-rest-auth==3.0.0
     # via -r requirements.in
 django==3.2.18
     # via
