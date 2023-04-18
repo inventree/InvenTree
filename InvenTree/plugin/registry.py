@@ -490,9 +490,13 @@ class PluginsRegistry:
         Args:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
         """
-        self.deactivate_plugin_app(force_reload=force_reload)
-        self.deactivate_plugin_schedule()
-        self.deactivate_plugin_settings()
+        for mixin in self.mixin_order:
+            if hasattr(mixin, '_deactivate_mixin'):
+                mixin._deactivate_mixin(self)
+
+        logger.info('Done deactivating')
+
+        # self.deactivate_plugin_app(force_reload=force_reload)
     # endregion
 
     # region mixin specific loading ...
