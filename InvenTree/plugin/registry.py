@@ -490,7 +490,7 @@ class PluginsRegistry:
         Args:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
         """
-        for mixin in self.mixin_order:
+        for mixin in self.mixin_order.reverse():
             if hasattr(mixin, '_deactivate_mixin'):
                 mixin._deactivate_mixin(self, force_reload=force_reload)
 
