@@ -155,13 +155,8 @@
         </td>
     </tr>
 
-    {% if item.barcode_hash %}
-    <tr>
-        <td><span class='fas fa-barcode'></span></td>
-        <td>{% trans "Barcode Identifier" %}</td>
-        <td {% if item.barcode_data %}title='{{ item.barcode_data }}'{% endif %}>{{ item.barcode_hash }}</td>
-    </tr>
-    {% endif %}
+    {% include "barcode_data.html" with instance=item %}
+
     {% if item.batch %}
     <tr>
         <td><span class='fas fa-layer-group'></span></td>
@@ -283,12 +278,6 @@
         </a>
         {% endif %}
 
-    </div>
-    {% endif %}
-
-    {% if item.hasRequiredTests and not item.passedAllRequiredTests %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "This stock item has not passed all required tests" %}
     </div>
     {% endif %}
 
@@ -417,7 +406,7 @@
             {% if item.passedAllRequiredTests %}
             <span class='fas fa-check-circle float-right icon-green'></span>
             {% else %}
-            <span class='fas fa-times-circle float-right icon-red'></span>
+            <span class='fas fa-times-circle float-right icon-red' title='{% trans "This stock item has not passed all required tests" %}'></span>
             {% endif %}
         </td>
     </tr>
@@ -537,6 +526,7 @@ $('#stock-edit-status').click(function () {
 
 {% endif %}
 
+{% if barcodes %}
 $("#show-qr-code").click(function() {
     showQRDialog(
         '{% trans "Stock Item QR Code" %}',
@@ -544,7 +534,6 @@ $("#show-qr-code").click(function() {
     );
 });
 
-{% if barcodes %}
 $("#barcode-link").click(function() {
     linkBarcodeDialog(
         {

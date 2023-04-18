@@ -141,6 +141,8 @@ function updateSearch() {
     // Construct base query
     searchQuery = {
         search: searchTextCurrent,
+        search_regex: user_settings.SEARCH_REGEX ? true : false,
+        search_whole: user_settings.SEARCH_WHOLE ? true : false,
         limit: user_settings.SEARCH_PREVIEW_RESULTS,
         offset: 0,
     };

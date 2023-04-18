@@ -32,7 +32,7 @@ repos:
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [--generate-hashes, requirements-dev.in, -o, requirements-dev.txt]
+        args: [requirements-dev.in, -o, requirements-dev.txt]
         files: ^requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt

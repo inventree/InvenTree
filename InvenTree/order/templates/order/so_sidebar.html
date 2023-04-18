@@ -4,7 +4,7 @@
 
 {% trans "Line Items" as text %}
 {% include "sidebar_item.html" with label='order-items' text=text icon="fa-list-ol" %}
-{% if order.is_pending %}
+{% if order.is_open %}
 {% trans "Pending Shipments" as text %}
 {% include "sidebar_item.html" with label='order-shipments' text=text icon="fa-truck-loading" %}
 {% endif %}

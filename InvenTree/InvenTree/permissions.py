@@ -7,6 +7,21 @@ from rest_framework import permissions
 import users.models
 
 
+def get_model_for_view(view, raise_error=True):
+    """Attempt to introspect the 'model' type for an API view"""
+
+    if hasattr(view, 'get_permission_model'):
+        return view.get_permission_model()
+
+    if hasattr(view, 'serializer_class'):
+        return view.serializer_class.Meta.model
+
+    if hasattr(view, 'get_serializer_class'):
+        return view.get_serializr_class().Meta.model
+
+    raise AttributeError(f"Serializer class not specified for {view.__class__}")
+
+
 class RolePermission(permissions.BasePermission):
     """Role mixin for API endpoints, allowing us to specify the user "role" which is required for certain operations.
 
@@ -55,7 +70,7 @@ class RolePermission(permissions.BasePermission):
 
         try:
             # Extract the model name associated with this request
-            model = view.serializer_class.Meta.model
+            model = get_model_for_view(view)
 
             app_label = model._meta.app_label
             model_name = model._meta.model_name

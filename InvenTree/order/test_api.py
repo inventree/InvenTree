@@ -837,8 +837,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         """
         # Set stock item barcode
         item = StockItem.objects.get(pk=1)
-        item.barcode_hash = 'MY-BARCODE-HASH'
-        item.save()
+        item.assign_barcode(barcode_data='MY-BARCODE-HASH')
 
         response = self.post(
             self.url,
@@ -956,8 +955,8 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(stock_2.last().location.pk, 2)
 
         # Barcodes should have been assigned to the stock items
-        self.assertTrue(StockItem.objects.filter(barcode_hash='MY-UNIQUE-BARCODE-123').exists())
-        self.assertTrue(StockItem.objects.filter(barcode_hash='MY-UNIQUE-BARCODE-456').exists())
+        self.assertTrue(StockItem.objects.filter(barcode_data='MY-UNIQUE-BARCODE-123').exists())
+        self.assertTrue(StockItem.objects.filter(barcode_data='MY-UNIQUE-BARCODE-456').exists())
 
     def test_batch_code(self):
         """Test that we can supply a 'batch code' when receiving items."""
