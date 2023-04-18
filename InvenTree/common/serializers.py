@@ -233,12 +233,8 @@ class ConfigSerializer(serializers.Serializer):
         return {'key': instance, **self.instance[instance]}
 
 
-class InvenTreeTaggitSerializer(serializers.Serializer):
+class InvenTreeTaggitSerializer(TaggitSerializer):
     """Updated from https://github.com/glemmaPaul/django-taggit-serializer."""
-
-    create = TaggitSerializer.create
-    _save_tags = TaggitSerializer._save_tags
-    _pop_tags = TaggitSerializer._pop_tags
 
     def update(self, instance, validated_data):
         """Overriden update method to readd the tagmanager."""
