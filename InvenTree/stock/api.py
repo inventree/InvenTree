@@ -1188,7 +1188,12 @@ class StockTrackingList(ListAPI):
         """List all stock tracking entries."""
         queryset = self.filter_queryset(self.get_queryset())
 
-        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
@@ -1262,6 +1267,8 @@ class StockTrackingList(ListAPI):
                 except Exception:
                     pass
 
+        if page is not None:
+            return self.get_paginated_response(data)
         if request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
