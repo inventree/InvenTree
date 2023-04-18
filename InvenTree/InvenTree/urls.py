@@ -31,8 +31,8 @@ from stock.urls import stock_urls
 from users.api import user_urls
 
 from .api import APISearchView, InfoView, NotFoundView
-from .views import (AboutView, ApiDocView, AppearanceSelectView,
-                    CustomConnectionsView, CustomEmailView, CustomLoginView,
+from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
+                    CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
                     CustomSessionDeleteOtherView, CustomSessionDeleteView,
                     CustomTwoFactorRemove, DatabaseStatsView, DynamicJsView,
@@ -139,8 +139,7 @@ backendpatterns = [
     re_path(r'^auth/?', auth_request),
 
     re_path(r'^api/', include(apipatterns)),
-    path("api-doc2/", ApiDocView.as_view(url_name="schema"), name="api-doc2",),
-    re_path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
+    re_path(r'^api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
 
 frontendpatterns = [

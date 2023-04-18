@@ -29,13 +29,6 @@ from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
 from allauth_2fa.views import TwoFactorRemove
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-from drf_spectacular.plumbing import get_relative_url, set_query_parameters
-from drf_spectacular.settings import spectacular_settings
-from drf_spectacular.utils import extend_schema
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
-from rest_framework.views import APIView
 from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
 from common.models import ColorTheme, InvenTreeSetting
@@ -675,24 +668,3 @@ class NotificationsView(TemplateView):
 class CustomTwoFactorRemove(TwoFactorRemove):
     """Specify custom URL redirect."""
     success_url = reverse_lazy("settings")
-
-
-class ApiDocView(APIView):
-    """View to render the API schema with RapiDoc."""
-
-    renderer_classes = [TemplateHTMLRenderer]
-    permission_classes = spectacular_settings.SERVE_PERMISSIONS
-    url_name = "schema"
-
-    @extend_schema(exclude=True)
-    def get(self, request, *args, **kwargs):
-        """Expand rendering function to add language parameter to schema url."""
-        schema_url = get_relative_url(reverse(self.url_name, request=request))
-        schema_url = set_query_parameters(schema_url, lang=request.GET.get("lang"))
-        return Response(
-            data={
-                "title": spectacular_settings.TITLE + " - API docs",
-                "schema_url": schema_url,
-            },
-            template_name="rapidoc.html",
-        )
