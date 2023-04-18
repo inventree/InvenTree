@@ -105,7 +105,7 @@ class AppMixin:
 
         # reset load flag and reload apps
         settings.INTEGRATION_APPS_LOADED = False
-        cls._reload_apps(force_reload=force_reload)
+        registry._reload_apps(force_reload=force_reload)
 
         # update urls to remove the apps from the site admin
         registry._update_urls()
