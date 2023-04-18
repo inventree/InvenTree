@@ -200,7 +200,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:13
+        image: postgres:14
         env:
           POSTGRES_USER: inventree
           POSTGRES_PASSWORD: password
