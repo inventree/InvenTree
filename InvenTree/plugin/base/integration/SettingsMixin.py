@@ -36,7 +36,7 @@ class SettingsMixin:
                 registry.mixins_settings[slug] = plugin_setting
 
     @classmethod
-    def _deactivate_mixin(cls, registry):
+    def _deactivate_mixin(cls, registry, **kwargs):
         """Deactivate all plugin settings."""
         logger.info('Deactivating plugin settings')
         # clear settings cache

@@ -492,11 +492,9 @@ class PluginsRegistry:
         """
         for mixin in self.mixin_order:
             if hasattr(mixin, '_deactivate_mixin'):
-                mixin._deactivate_mixin(self)
+                mixin._deactivate_mixin(self, force_reload=force_reload)
 
         logger.info('Done deactivating')
-
-        # self.deactivate_plugin_app(force_reload=force_reload)
     # endregion
 
     # region mixin specific loading ...
@@ -530,53 +528,6 @@ class PluginsRegistry:
         else:
             self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
         self.is_loading = False
-
-    def deactivate_plugin_app(self, force_reload: bool = False):
-        """Deactivate AppMixin plugins - some magic required.
-
-        Args:
-            force_reload (bool, optional): Also reload base apps. Defaults to False.
-        """
-        # unregister models from admin
-        for plugin_path in self.installed_apps:
-            models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed
-            app_name = plugin_path.split('.')[-1]
-            try:
-                app_config = apps.get_app_config(app_name)
-
-                # check all models
-                for model in app_config.get_models():
-                    # remove model from admin site
-                    try:
-                        admin.site.unregister(model)
-                    except Exception:  # pragma: no cover
-                        pass
-                    models += [model._meta.model_name]
-            except LookupError:  # pragma: no cover
-                # if an error occurs the app was never loaded right -> so nothing to do anymore
-                logger.debug(f'{app_name} App was not found during deregistering')
-                break
-
-            # unregister the models (yes, models are just kept in multilevel dicts)
-            for model in models:
-                # remove model from general registry
-                apps.all_models[plugin_path].pop(model)
-
-            # clear the registry for that app
-            # so that the import trick will work on reloading the same plugin
-            # -> the registry is kept for the whole lifecycle
-            if models and app_name in apps.all_models:
-                apps.all_models.pop(app_name)
-
-        # remove plugin from installed_apps
-        self._clean_installed_apps()
-
-        # reset load flag and reload apps
-        settings.INTEGRATION_APPS_LOADED = False
-        self._reload_apps(force_reload=force_reload)
-
-        # update urls to remove the apps from the site admin
-        self._update_urls()
 
     def _clean_installed_apps(self):
         for plugin in self.installed_apps:

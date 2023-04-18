@@ -62,8 +62,13 @@ class AppMixin:
                 registry._update_urls()
 
     @classmethod
-    def _deactivate_mixin(cls, registry):
-        """Deactivate AppMixin plugins - some magic required."""
+    def _deactivate_mixin(cls, registry, force_reload: bool = False):
+        """Deactivate AppMixin plugins - some magic required.
+
+        Args:
+            registry (PluginRegistry): The registry that should be used
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+        """
         # unregister models from admin
         for plugin_path in registry.installed_apps:
             models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed
@@ -100,7 +105,7 @@ class AppMixin:
 
         # reset load flag and reload apps
         settings.INTEGRATION_APPS_LOADED = False
-        cls._reload_apps()
+        cls._reload_apps(force_reload=force_reload)
 
         # update urls to remove the apps from the site admin
         registry._update_urls()
