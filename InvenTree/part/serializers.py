@@ -24,7 +24,6 @@ import InvenTree.status
 import part.filters
 import part.tasks
 import stock.models
-from common.serializers import InvenTreeTaggitSerializer
 from InvenTree.serializers import (DataFileExtractSerializer,
                                    DataFileUploadSerializer,
                                    InvenTreeAttachmentSerializer,
@@ -33,8 +32,9 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer, RemoteImageMixin,
-                                   UserSerializer)
+                                   InvenTreeMoneySerializer,
+                                   InvenTreeTagModelSerializer,
+                                   RemoteImageMixin, UserSerializer)
 from InvenTree.status_codes import BuildStatus
 from InvenTree.tasks import offload_task
 
@@ -405,7 +405,7 @@ class InitialSupplierSerializer(serializers.Serializer):
         return data
 
 
-class PartSerializer(InvenTreeTaggitSerializer, RemoteImageMixin, InvenTreeModelSerializer):
+class PartSerializer(RemoteImageMixin, InvenTreeTagModelSerializer):
     """Serializer for complete detail information of a part.
 
     Used when displaying all details of a single component.

@@ -20,7 +20,6 @@ import InvenTree.helpers
 import InvenTree.serializers
 import part.models as part_models
 import stock.filters
-from common.serializers import InvenTreeTaggitSerializer
 from company.serializers import SupplierPartSerializer
 from InvenTree.models import extract_int
 from InvenTree.serializers import (InvenTreeCurrencySerializer,
@@ -78,7 +77,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
         return value
 
 
-class StockItemSerializer(InvenTreeTaggitSerializer, InvenTree.serializers.InvenTreeModelSerializer):
+class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     """Serializer for a StockItem.
 
     - Includes serialization for the linked part
@@ -572,7 +571,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         ]
 
 
-class LocationSerializer(InvenTreeTaggitSerializer, InvenTree.serializers.InvenTreeModelSerializer):
+class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     """Detailed information about a stock location."""
 
     class Meta:

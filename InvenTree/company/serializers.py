@@ -10,13 +10,14 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import part.filters
-from common.serializers import InvenTreeTaggitSerializer
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeCurrencySerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer, RemoteImageMixin)
+                                   InvenTreeMoneySerializer,
+                                   InvenTreeTagModelSerializer,
+                                   RemoteImageMixin)
 from part.serializers import PartBriefSerializer
 
 from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
@@ -151,7 +152,7 @@ class ContactSerializer(InvenTreeModelSerializer):
         ]
 
 
-class ManufacturerPartSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
+class ManufacturerPartSerializer(InvenTreeTagModelSerializer):
     """Serializer for ManufacturerPart object."""
 
     class Meta:
@@ -242,7 +243,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
 
 
-class SupplierPartSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
+class SupplierPartSerializer(InvenTreeTagModelSerializer):
     """Serializer for SupplierPart object."""
 
     class Meta:
