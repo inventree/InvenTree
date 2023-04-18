@@ -21,7 +21,7 @@ logger = logging.getLogger("inventree")
 
 
 class RuleSet(models.Model):
-    """A RuleSet is somewhat like a superset of the django permission  class, in that in encapsulates a bunch of permissions.
+    """A RuleSet is somewhat like a superset of the django permission class, in that in encapsulates a bunch of permissions.
 
     There are *many* apps models used within InvenTree,
     so it makes sense to group them into "roles".
@@ -36,11 +36,13 @@ class RuleSet(models.Model):
         ('admin', _('Admin')),
         ('part_category', _('Part Categories')),
         ('part', _('Parts')),
+        ('stocktake', _('Stocktake')),
         ('stock_location', _('Stock Locations')),
         ('stock', _('Stock Items')),
         ('build', _('Build Orders')),
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
+        ('return_order', _('Return Orders')),
     ]
 
     RULESET_NAMES = [
@@ -97,12 +99,15 @@ class RuleSet(models.Model):
             'part_partrelated',
             'part_partstar',
             'part_partcategorystar',
-            'part_partstocktake',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_manufacturerpartattachment',
             'label_partlabel',
+        ],
+        'stocktake': [
+            'part_partstocktake',
+            'part_partstocktakereport',
         ],
         'stock_location': [
             'stock_stocklocation',
@@ -130,6 +135,8 @@ class RuleSet(models.Model):
         ],
         'purchase_order': [
             'company_company',
+            'company_companyattachment',
+            'company_contact',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_supplierpart',
@@ -142,6 +149,8 @@ class RuleSet(models.Model):
         ],
         'sales_order': [
             'company_company',
+            'company_companyattachment',
+            'company_contact',
             'order_salesorder',
             'order_salesorderallocation',
             'order_salesorderattachment',
@@ -149,6 +158,16 @@ class RuleSet(models.Model):
             'order_salesorderextraline',
             'order_salesordershipment',
             'report_salesorderreport',
+        ],
+        'return_order': [
+            'company_company',
+            'company_companyattachment',
+            'company_contact',
+            'order_returnorder',
+            'order_returnorderlineitem',
+            'order_returnorderextraline',
+            'order_returnorderattachment',
+            'report_returnorderreport',
         ]
     }
 
@@ -166,7 +185,6 @@ class RuleSet(models.Model):
         'common_webhookmessage',
         'common_notificationentry',
         'common_notificationmessage',
-        'company_contact',
         'users_owner',
 
         # Third-party tables
@@ -255,8 +273,7 @@ class RuleSet(models.Model):
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
-
-        logger.info(f"User '{name}' failed permission check for {table}.{permission}")
+        logger.debug(f"User '{name}' failed permission check for {table}.{permission}")
 
         return False
 
@@ -445,7 +462,7 @@ def update_group_roles(group, debug=False):
             group.permissions.add(permission)
 
         if debug:  # pragma: no cover
-            logger.info(f"Adding permission {perm} to group {group.name}")
+            logger.debug(f"Adding permission {perm} to group {group.name}")
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -460,18 +477,18 @@ def update_group_roles(group, debug=False):
             group.permissions.remove(permission)
 
         if debug:  # pragma: no cover
-            logger.info(f"Removing permission {perm} from group {group.name}")
+            logger.debug(f"Removing permission {perm} from group {group.name}")
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
     for (parent, child) in RuleSet.RULESET_CHANGE_INHERIT:
-        parent_change_perm = f'{parent}.change_{parent}'
         parent_child_string = f'{parent}_{child}'
 
-        # Check if parent change permission exists
-        if parent_change_perm in group_permissions:
-            # Add child model permissions
-            for action in ['add', 'change', 'delete']:
+        # Check each type of permission
+        for action in ['view', 'change', 'add', 'delete']:
+            parent_perm = f'{parent}.{action}_{parent}'
+
+            if parent_perm in group_permissions:
                 child_perm = f'{parent}.{action}_{child}'
 
                 # Check if child permission not already in group
@@ -482,7 +499,7 @@ def update_group_roles(group, debug=False):
                     permission = get_permission_object(child_perm)
                     if permission:
                         group.permissions.add(permission)
-                        logger.info(f"Adding permission {child_perm} to group {group.name}")
+                        logger.debug(f"Adding permission {child_perm} to group {group.name}")
 
 
 def clear_user_role_cache(user):
@@ -498,6 +515,26 @@ def clear_user_role_cache(user):
         for perm in ['add', 'change', 'view', 'delete']:
             key = f"role_{user}_{role}_{perm}"
             cache.delete(key)
+
+
+def get_user_roles(user):
+    """Return all roles available to a given user"""
+
+    roles = set()
+
+    for group in user.groups.all():
+        for rule in group.rule_sets.all():
+            name = rule.name
+            if rule.can_view:
+                roles.add(f'{name}.view')
+            if rule.can_add:
+                roles.add(f'{name}.add')
+            if rule.can_change:
+                roles.add(f'{name}.change')
+            if rule.can_delete:
+                roles.add(f'{name}.delete')
+
+    return roles
 
 
 def check_user_role(user, role, permission):
@@ -556,6 +593,14 @@ class Owner(models.Model):
     owner: Returns the Group or User instance combining the owner_type and owner_id fields
     """
 
+    class Meta:
+        """Metaclass defines extra model properties"""
+        # Ensure all owners are unique
+        constraints = [
+            UniqueConstraint(fields=['owner_type', 'owner_id'],
+                             name='unique_owner')
+        ]
+
     @classmethod
     def get_owners_matching_user(cls, user):
         """Return all "owner" objects matching the provided user.
@@ -587,14 +632,6 @@ class Owner(models.Model):
     def get_api_url():  # pragma: no cover
         """Returns the API endpoint URL associated with the Owner model"""
         return reverse('api-owner-list')
-
-    class Meta:
-        """Metaclass defines extra model properties"""
-        # Ensure all owners are unique
-        constraints = [
-            UniqueConstraint(fields=['owner_type', 'owner_id'],
-                             name='unique_owner')
-        ]
 
     owner_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -639,9 +676,9 @@ class Owner(models.Model):
                                 ContentType.objects.get_for_model(user_model).id]
 
         # If instance type is obvious: set content type
-        if type(user_or_group) is Group:
+        if isinstance(user_or_group, Group):
             content_type_id = content_type_id_list[0]
-        elif type(user_or_group) is get_user_model():
+        elif isinstance(user_or_group, get_user_model()):
             content_type_id = content_type_id_list[1]
 
         if content_type_id:
@@ -677,6 +714,12 @@ class Owner(models.Model):
             related_owners = [self]
 
         return related_owners
+
+    def is_user_allowed(self, user, include_group: bool = False):
+        """Check if user is allowed to access something owned by this owner."""
+
+        user_owner = Owner.get_owner(user)
+        return user_owner in self.get_related_owners(include_group=include_group)
 
 
 @receiver(post_save, sender=Group, dispatch_uid='create_owner')

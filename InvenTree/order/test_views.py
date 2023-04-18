@@ -16,6 +16,8 @@ class OrderViewTestCase(InvenTreeTestCase):
         'supplier_part',
         'stock',
         'order',
+        'sales_order',
+        'return_order',
     ]
 
     roles = [
@@ -25,14 +27,17 @@ class OrderViewTestCase(InvenTreeTestCase):
         'sales_order.change',
         'sales_order.add',
         'sales_order.delete',
+        'return_order.change',
+        'return_order.add',
+        'return_order.delete',
     ]
 
 
-class OrderListTest(OrderViewTestCase):
+class PurchaseOrderListTest(OrderViewTestCase):
     """Unit tests for the PurchaseOrder index page"""
     def test_order_list(self):
         """Tests for the PurchaseOrder index page"""
-        response = self.client.get(reverse('po-index'))
+        response = self.client.get(reverse('purchase-order-index'))
 
         self.assertEqual(response.status_code, 200)
 
@@ -53,3 +58,31 @@ class PurchaseOrderTests(OrderViewTestCase):
 
         # Response should be streaming-content (file download)
         self.assertIn('streaming_content', dir(response))
+
+
+class SalesOrderViews(OrderViewTestCase):
+    """Unit tests for the SalesOrder pages"""
+
+    def test_index(self):
+        """Test the SalesOrder index page"""
+        response = self.client.get(reverse('sales-order-index'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_detail(self):
+        """Test SalesOrder detail view"""
+        response = self.client.get(reverse('so-detail', args=(1,)))
+        self.assertEqual(response.status_code, 200)
+
+
+class ReturnOrderVIews(OrderViewTestCase):
+    """Unit tests for the ReturnOrder pages"""
+
+    def test_index(self):
+        """Test the ReturnOrder index page"""
+        response = self.client.get(reverse('return-order-index'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_detail(self):
+        """Test ReturnOrder detail view"""
+        response = self.client.get(reverse('return-order-detail', args=(1,)))
+        self.assertEqual(response.status_code, 200)

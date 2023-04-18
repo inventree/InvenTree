@@ -17,7 +17,18 @@ class BuildResource(InvenTreeResource):
     # but we don't for other ones.
     # TODO: 2022-05-12 - Need to investigate why this is the case!
 
-    id = Field(attribute='pk')
+    class Meta:
+        """Metaclass options"""
+        models = Build
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+        exclude = [
+            'lft', 'rght', 'tree_id', 'level',
+            'metadata',
+        ]
+
+    id = Field(attribute='pk', widget=widgets.IntegerWidget())
 
     reference = Field(attribute='reference')
 
@@ -38,17 +49,6 @@ class BuildResource(InvenTreeResource):
     batch = Field(attribute='batch')
 
     notes = Field(attribute='notes')
-
-    class Meta:
-        """Metaclass options"""
-        models = Build
-        skip_unchanged = True
-        report_skipped = False
-        clean_model_instances = True
-        exclude = [
-            'lft', 'rght', 'tree_id', 'level',
-            'metadata',
-        ]
 
 
 class BuildAdmin(ImportExportModelAdmin):

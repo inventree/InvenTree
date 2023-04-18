@@ -29,7 +29,8 @@ class BuildTestBase(TestCase):
         'users',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Initialize data to use for these tests.
 
         The base Part 'assembly' has a BOM consisting of three parts:
@@ -45,27 +46,29 @@ class BuildTestBase(TestCase):
 
         """
 
+        super().setUpTestData()
+
         # Create a base "Part"
-        self.assembly = Part.objects.create(
+        cls.assembly = Part.objects.create(
             name="An assembled part",
             description="Why does it matter what my description is?",
             assembly=True,
             trackable=True,
         )
 
-        self.sub_part_1 = Part.objects.create(
+        cls.sub_part_1 = Part.objects.create(
             name="Widget A",
             description="A widget",
             component=True
         )
 
-        self.sub_part_2 = Part.objects.create(
+        cls.sub_part_2 = Part.objects.create(
             name="Widget B",
             description="A widget",
             component=True
         )
 
-        self.sub_part_3 = Part.objects.create(
+        cls.sub_part_3 = Part.objects.create(
             name="Widget C",
             description="A widget",
             component=True,
@@ -73,63 +76,63 @@ class BuildTestBase(TestCase):
         )
 
         # Create BOM item links for the parts
-        self.bom_item_1 = BomItem.objects.create(
-            part=self.assembly,
-            sub_part=self.sub_part_1,
+        cls.bom_item_1 = BomItem.objects.create(
+            part=cls.assembly,
+            sub_part=cls.sub_part_1,
             quantity=5
         )
 
-        self.bom_item_2 = BomItem.objects.create(
-            part=self.assembly,
-            sub_part=self.sub_part_2,
+        cls.bom_item_2 = BomItem.objects.create(
+            part=cls.assembly,
+            sub_part=cls.sub_part_2,
             quantity=3,
             optional=True
         )
 
         # sub_part_3 is trackable!
-        self.bom_item_3 = BomItem.objects.create(
-            part=self.assembly,
-            sub_part=self.sub_part_3,
+        cls.bom_item_3 = BomItem.objects.create(
+            part=cls.assembly,
+            sub_part=cls.sub_part_3,
             quantity=2
         )
 
         ref = generate_next_build_reference()
 
         # Create a "Build" object to make 10x objects
-        self.build = Build.objects.create(
+        cls.build = Build.objects.create(
             reference=ref,
             title="This is a build",
-            part=self.assembly,
+            part=cls.assembly,
             quantity=10,
             issued_by=get_user_model().objects.get(pk=1),
         )
 
         # Create some build output (StockItem) objects
-        self.output_1 = StockItem.objects.create(
-            part=self.assembly,
+        cls.output_1 = StockItem.objects.create(
+            part=cls.assembly,
             quantity=3,
             is_building=True,
-            build=self.build
+            build=cls.build
         )
 
-        self.output_2 = StockItem.objects.create(
-            part=self.assembly,
+        cls.output_2 = StockItem.objects.create(
+            part=cls.assembly,
             quantity=7,
             is_building=True,
-            build=self.build,
+            build=cls.build,
         )
 
         # Create some stock items to assign to the build
-        self.stock_1_1 = StockItem.objects.create(part=self.sub_part_1, quantity=3)
-        self.stock_1_2 = StockItem.objects.create(part=self.sub_part_1, quantity=100)
+        cls.stock_1_1 = StockItem.objects.create(part=cls.sub_part_1, quantity=3)
+        cls.stock_1_2 = StockItem.objects.create(part=cls.sub_part_1, quantity=100)
 
-        self.stock_2_1 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
-        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
-        self.stock_2_3 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
-        self.stock_2_4 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
-        self.stock_2_5 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        cls.stock_2_1 = StockItem.objects.create(part=cls.sub_part_2, quantity=5)
+        cls.stock_2_2 = StockItem.objects.create(part=cls.sub_part_2, quantity=5)
+        cls.stock_2_3 = StockItem.objects.create(part=cls.sub_part_2, quantity=5)
+        cls.stock_2_4 = StockItem.objects.create(part=cls.sub_part_2, quantity=5)
+        cls.stock_2_5 = StockItem.objects.create(part=cls.sub_part_2, quantity=5)
 
-        self.stock_3_1 = StockItem.objects.create(part=self.sub_part_3, quantity=1000)
+        cls.stock_3_1 = StockItem.objects.create(part=cls.sub_part_3, quantity=1000)
 
 
 class BuildTest(BuildTestBase):
@@ -566,6 +569,29 @@ class BuildTest(BuildTestBase):
         self.assertFalse(messages.filter(user__pk=3).exists())
 
         self.assertTrue(messages.filter(user__pk=4).exists())
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+
+        # Make sure a BuildItem exists before trying to run this test
+        b = BuildItem(stock_item=self.stock_1_2, build=self.build, install_into=self.output_1, quantity=10)
+        b.save()
+
+        for model in [Build, BuildItem]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)
 
 
 class AutoAllocationTests(BuildTestBase):

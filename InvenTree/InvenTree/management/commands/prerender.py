@@ -12,8 +12,15 @@ from django.utils.translation import override as lang_over
 
 def render_file(file_name, source, target, locales, ctx):
     """Renders a file into all provided locales."""
+
     for locale in locales:
+
+        # Enforce lower-case for locale names
+        locale = locale.lower()
+        locale = locale.replace('_', '-')
+
         target_file = os.path.join(target, locale + '.' + file_name)
+
         with open(target_file, 'w') as localised_file:
             with lang_over(locale):
                 renderd = render_to_string(os.path.join(source, file_name), ctx)

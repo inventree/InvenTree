@@ -271,6 +271,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertEqual(result['name'], 'morpheus')
 
+        # api_call with endpoint with leading slash
+        result = self.mixin.api_call('/orgs/inventree', simple_response=False)
+        self.assertTrue(result)
+        self.assertEqual(result.reason, 'OK')
+
         # api_call with filter
         result = self.mixin.api_call('repos/inventree/InvenTree/stargazers', url_args={'page': '2'})
         self.assertTrue(result)

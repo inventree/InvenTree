@@ -4,7 +4,7 @@
 #secret_key_file: '/etc/inventree/secret_key.txt'
 
 # Database backend selection - Configure backend database settings
-# Documentation: https://inventree.readthedocs.io/en/latest/start/config/
+# Documentation: https://docs.inventree.org/en/latest/start/config/
 
 # Note: Database configuration options can also be specified from environmental variables,
 #       with the prefix INVENTREE_DB_
@@ -32,7 +32,7 @@ database:
   #USER: sampleuser
   #PASSWORD: samplepassword
   #HOST: samplehost
-  #PORT: sampleport
+  #PORT: 123456
 
   # --- Example Configuration - MySQL ---
   #ENGINE: mysql
@@ -119,6 +119,10 @@ plugins_enabled: False
 #plugin_file: '/path/to/plugins.txt'
 #plugin_dir: '/path/to/plugins/'
 
+# Set this variable to True to enable auto-migrations
+# Alternatively, use the environment variable INVENTREE_AUTO_UPDATE
+auto_update: False
+
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
 # Default behaviour is to allow all hosts (THIS IS NOT SECURE!)
@@ -152,6 +156,7 @@ backup_storage: django.core.files.storage.FileSystemStorage
 background:
   workers: 4
   timeout: 90
+  max_attempts: 5
 
 # Optional URL schemes to allow in URL fields
 # By default, only the following schemes are allowed: ['http', 'https', 'ftp', 'ftps']
@@ -213,8 +218,8 @@ remote_login_header: HTTP_REMOTE_USER
 # Add custom messages to the login page or main interface navbar or exchange the logo
 # Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO
 # customize:
-#   login_message: InvenTree demo instance - <a href='https://inventree.readthedocs.io/en/latest/demo/'> Click here for login details</a>
-#   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.readthedocs.io/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
+#   login_message: InvenTree demo instance - <a href='https://docs.inventree.org/en/latest/demo/'> Click here for login details</a>
+#   navbar_message: <h6>InvenTree demo mode <a href='https://docs.inventree.org/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
 #   logo: logo.png
 #   splash: splash_screen.jpg
 #   hide_admin_link: true

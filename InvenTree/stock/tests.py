@@ -8,8 +8,10 @@ from django.test import override_settings
 
 from build.models import Build
 from common.models import InvenTreeSetting
+from company.models import Company
 from InvenTree.helpers import InvenTreeTestCase
 from InvenTree.status_codes import StockHistoryCode
+from order.models import SalesOrder
 from part.models import Part
 
 from .models import (StockItem, StockItemTestResult, StockItemTracking,
@@ -28,19 +30,20 @@ class StockTestBase(InvenTreeTestCase):
         'stock_tests',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
+        super().setUpTestData()
 
         # Extract some shortcuts from the fixtures
-        self.home = StockLocation.objects.get(name='Home')
-        self.bathroom = StockLocation.objects.get(name='Bathroom')
-        self.diningroom = StockLocation.objects.get(name='Dining Room')
+        cls.home = StockLocation.objects.get(name='Home')
+        cls.bathroom = StockLocation.objects.get(name='Bathroom')
+        cls.diningroom = StockLocation.objects.get(name='Dining Room')
 
-        self.office = StockLocation.objects.get(name='Office')
-        self.drawer1 = StockLocation.objects.get(name='Drawer_1')
-        self.drawer2 = StockLocation.objects.get(name='Drawer_2')
-        self.drawer3 = StockLocation.objects.get(name='Drawer_3')
+        cls.office = StockLocation.objects.get(name='Office')
+        cls.drawer1 = StockLocation.objects.get(name='Drawer_1')
+        cls.drawer2 = StockLocation.objects.get(name='Drawer_2')
+        cls.drawer3 = StockLocation.objects.get(name='Drawer_3')
 
         # Ensure the MPTT objects are correctly rebuild
         Part.objects.rebuild()
@@ -179,8 +182,8 @@ class StockTest(StockTestBase):
         # Ensure that 'global uniqueness' setting is enabled
         InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', True, self.user)
 
-        part_a = Part.objects.create(name='A', description='A', trackable=True)
-        part_b = Part.objects.create(name='B', description='B', trackable=True)
+        part_a = Part.objects.create(name='A', description='A part with a description', trackable=True)
+        part_b = Part.objects.create(name='B', description='B part with a description', trackable=True)
 
         # Create a StockItem for part_a
         StockItem.objects.create(
@@ -465,6 +468,75 @@ class StockTest(StockTestBase):
 
         self.assertFalse(it.add_stock(-10, None))
 
+    def test_allocate_to_customer(self):
+        """Test allocating stock to a customer"""
+        it = StockItem.objects.get(pk=2)
+        n = it.quantity
+        an = n - 10
+        customer = Company.objects.create(name="MyTestCompany")
+        order = SalesOrder.objects.create(description="Test order")
+        ait = it.allocateToCustomer(customer, quantity=an, order=order, user=None, notes='Allocated some stock')
+
+        # Check if new stockitem is created
+        self.assertTrue(ait)
+        # Check correct quantity of new allocated stock
+        self.assertEqual(ait.quantity, an)
+        # Check if new stock is assigned to correct customer
+        self.assertEqual(ait.customer, customer)
+        # Check if new stock is assigned to correct sales order
+        self.assertEqual(ait.sales_order, order)
+        # Check location is None because this stock is now allocated to a user
+        self.assertFalse(ait.location)
+
+        # Check that a tracking item was added
+        track = StockItemTracking.objects.filter(item=ait).latest('id')
+
+        self.assertEqual(track.tracking_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER)
+        self.assertIn('Allocated some stock', track.notes)
+
+    def test_return_from_customer(self):
+        """Test removing previous allocated stock from customer"""
+
+        it = StockItem.objects.get(pk=2)
+
+        # First establish total stock for this part
+        allstock_before = StockItem.objects.filter(part=it.part).aggregate(Sum("quantity"))["quantity__sum"]
+
+        n = it.quantity
+        an = n - 10
+        customer = Company.objects.create(name="MyTestCompany")
+        order = SalesOrder.objects.create(description="Test order")
+
+        ait = it.allocateToCustomer(customer, quantity=an, order=order, user=None, notes='Allocated some stock')
+        ait.return_from_customer(it.location, None, notes="Stock removed from customer")
+
+        # When returned stock is returned to its original (parent) location, check that the parent has correct quantity
+        self.assertEqual(it.quantity, n)
+
+        ait = it.allocateToCustomer(customer, quantity=an, order=order, user=None, notes='Allocated some stock')
+        ait.return_from_customer(self.drawer3, None, notes="Stock removed from customer")
+
+        # Check correct assignment of the new location
+        self.assertEqual(ait.location, self.drawer3)
+        # We should be un allocated
+        self.assertFalse(ait.is_allocated())
+        # No customer should be assigned
+        self.assertFalse(ait.customer)
+        # We dont belong to anyone
+        self.assertFalse(ait.belongs_to)
+        # Assigned sales order should be None
+        self.assertFalse(ait.sales_order)
+
+        # Check that a tracking item was added
+        track = StockItemTracking.objects.filter(item=ait).latest('id')
+
+        self.assertEqual(track.tracking_type, StockHistoryCode.RETURNED_FROM_CUSTOMER)
+        self.assertIn('Stock removed from customer', track.notes)
+
+        # Establish total stock for the part after remove from customer to check that we still have the correct quantity in stock
+        allstock_after = StockItem.objects.filter(part=it.part).aggregate(Sum("quantity"))["quantity__sum"]
+        self.assertEqual(allstock_before, allstock_after)
+
     def test_take_stock(self):
         """Test stock removal."""
         it = StockItem.objects.get(pk=2)
@@ -506,9 +578,12 @@ class StockTest(StockTestBase):
         """Tests for stock serialization."""
         p = Part.objects.create(
             name='trackable part',
-            description='trackable part',
+            description='A trackable part which can be tracked',
             trackable=True,
         )
+
+        # Ensure we do not have unique serials enabled
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, None)
 
         item = StockItem.objects.create(
             part=p,
@@ -537,7 +612,7 @@ class StockTest(StockTestBase):
         """Unit tests for "large" serial numbers which exceed integer encoding."""
         p = Part.objects.create(
             name='trackable part',
-            description='trackable part',
+            description='A trackable part with really big serial numbers',
             trackable=True,
         )
 
@@ -649,6 +724,9 @@ class StockTest(StockTestBase):
         n = StockItem.objects.filter(part=25).count()
 
         self.assertEqual(item.quantity, 10)
+
+        # Ensure we do not have unique serials enabled
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, None)
 
         item.serializeStock(3, [1, 2, 3], self.user)
 
@@ -840,6 +918,24 @@ class StockTest(StockTestBase):
         self.assertEqual(C21.get_ancestors().count(), 1)
         self.assertEqual(C22.get_ancestors().count(), 1)
 
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [StockItem, StockLocation]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)
+
 
 class StockBarcodeTest(StockTestBase):
     """Run barcode tests for the stock app"""
@@ -1016,8 +1112,14 @@ class TestResultTest(StockTestBase):
         item.pk = None
         item.serial = None
         item.quantity = 50
-        item.batch = "B344"
 
+        # Try with an invalid batch code (according to sample validatoin plugin)
+        item.batch = "X234"
+
+        with self.assertRaises(ValidationError):
+            item.save()
+
+        item.batch = "B123"
         item.save()
 
         # Do some tests!

@@ -4,21 +4,26 @@
     constructForm,
     imageHoverIcon,
     loadTableFilters,
-    makeIconButton,
     renderLink,
     setupFilterList,
 */
 
 /* exported
     createCompany,
+    createContact,
     createManufacturerPart,
     createSupplierPart,
+    createSupplierPartPriceBreak,
+    deleteContacts,
     deleteManufacturerParts,
     deleteManufacturerPartParameters,
     deleteSupplierParts,
     duplicateSupplierPart,
     editCompany,
+    editContact,
+    editSupplierPartPriceBreak,
     loadCompanyTable,
+    loadContactTable,
     loadManufacturerPartTable,
     loadManufacturerPartParameterTable,
     loadSupplierPartTable,
@@ -128,7 +133,7 @@ function supplierPartFields(options={}) {
             icon: 'fa-link',
         },
         note: {
-            icon: 'fa-pencil-alt',
+            icon: 'fa-sticky-note',
         },
         packaging: {
             icon: 'fa-box',
@@ -144,7 +149,7 @@ function supplierPartFields(options={}) {
 }
 
 /*
- * Launch a form to create a new ManufacturerPart
+ * Launch a form to create a new SupplierPart
  */
 function createSupplierPart(options={}) {
 
@@ -192,11 +197,26 @@ function createSupplierPart(options={}) {
         }
     };
 
+    var header = '';
+    if (options.part) {
+        var part_model = {};
+        inventreeGet(`{% url "api-part-list" %}${options.part}/.*`, {}, {
+            async: false,
+            success: function(response) {
+                part_model = response;
+            }
+        });
+        header = constructLabel('Base Part', {});
+        header += renderPart(part_model);
+        header += `<div>&nbsp;</div>`;
+    }
+
     constructForm('{% url "api-supplier-part-list" %}', {
         fields: fields,
         method: 'POST',
         title: '{% trans "Add Supplier Part" %}',
         onSuccess: options.onSuccess,
+        header_html: header,
     });
 }
 
@@ -209,7 +229,7 @@ function duplicateSupplierPart(part, options={}) {
     var fields = options.fields || supplierPartFields();
 
     // Retrieve information for the supplied part
-    inventreeGet(`/api/company/part/${part}/`, {}, {
+    inventreeGet(`{% url "api-supplier-part-list" %}${part}/`, {}, {
         success: function(data) {
 
             // Remove fields which we do not want to duplicate
@@ -217,7 +237,7 @@ function duplicateSupplierPart(part, options={}) {
             delete data['available'];
             delete data['availability_updated'];
 
-            constructForm(`/api/company/part/`, {
+            constructForm('{% url "api-supplier-part-list" %}', {
                 method: 'POST',
                 fields: fields,
                 title: '{% trans "Duplicate Supplier Part" %}',
@@ -243,7 +263,7 @@ function editSupplierPart(part, options={}) {
         fields.part.hidden = true;
     }
 
-    constructForm(`/api/company/part/${part}/`, {
+    constructForm(`{% url "api-supplier-part-list" %}${part}/`, {
         fields: fields,
         title: options.title || '{% trans "Edit Supplier Part" %}',
         onSuccess: options.onSuccess
@@ -262,7 +282,7 @@ function deleteSupplierParts(parts, options={}) {
         return;
     }
 
-    function renderPart(sup_part) {
+    function renderPartRow(sup_part) {
         var part = sup_part.part_detail;
         var thumb = thumbnailImage(part.thumbnail || part.image);
         var supplier = '-';
@@ -289,7 +309,7 @@ function deleteSupplierParts(parts, options={}) {
     var ids = [];
 
     parts.forEach(function(sup_part) {
-        rows += renderPart(sup_part);
+        rows += renderPartRow(sup_part);
         ids.push(sup_part.pk);
     });
 
@@ -317,6 +337,43 @@ function deleteSupplierParts(parts, options={}) {
             items: ids,
         },
         onSuccess: options.success,
+    });
+}
+
+
+/* Construct set of fields for SupplierPartPriceBreak form */
+function supplierPartPriceBreakFields(options={}) {
+    let fields = {
+        part: {
+            hidden: true,
+        },
+        quantity: {},
+        price: {
+            icon: 'fa-dollar-sign',
+        },
+        price_currency: {
+            icon: 'fa-coins',
+        },
+    };
+
+    return fields;
+}
+
+/* Create a new SupplierPartPriceBreak instance */
+function createSupplierPartPriceBreak(part_id, options={}) {
+
+    let fields = supplierPartPriceBreakFields(options);
+
+    fields.part.value = part_id;
+
+    constructForm('{% url "api-part-supplier-price-list" %}', {
+        fields: fields,
+        method: 'POST',
+        fields: fields,
+        title: '{% trans "Add Price Break" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
     });
 }
 
@@ -389,24 +446,18 @@ function createCompany(options={}) {
 }
 
 
+/*
+ * Load company listing data into specified table.
+ *
+ * Args:
+ * - table: Table element on the page
+ * - url: Base URL for the API query
+ * - options: table options.
+ */
 function loadCompanyTable(table, url, options={}) {
-    /*
-     * Load company listing data into specified table.
-     *
-     * Args:
-     * - table: Table element on the page
-     * - url: Base URL for the API query
-     * - options: table options.
-     */
 
-    // Query parameters
-    var params = options.params || {};
-
-    var filters = loadTableFilters('company');
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    let params = options.params || {};
+    let filters = loadTableFilters('company', params);
 
     setupFilterList('company', $(table));
 
@@ -493,6 +544,230 @@ function loadCompanyTable(table, url, options={}) {
 }
 
 
+/*
+ * Construct a set of form fields for the Contact model
+ */
+function contactFields(options={}) {
+
+    let fields = {
+        company: {
+            icon: 'fa-building',
+        },
+        name: {
+            icon: 'fa-user',
+        },
+        phone: {
+            icon: 'fa-phone'
+        },
+        email: {
+            icon: 'fa-at',
+        },
+        role: {
+            icon: 'fa-user-tag',
+        },
+    };
+
+    if (options.company) {
+        fields.company.value = options.company;
+    }
+
+    return fields;
+}
+
+
+/*
+ * Launches a form to create a new Contact
+ */
+function createContact(options={}) {
+    let fields = options.fields || contactFields(options);
+
+    constructForm('{% url "api-contact-list" %}', {
+        method: 'POST',
+        fields: fields,
+        title: '{% trans "Create New Contact" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * Launches a form to edit an existing Contact
+ */
+function editContact(pk, options={}) {
+    let fields = options.fields || contactFields(options);
+
+    constructForm(`{% url "api-contact-list" %}${pk}/`, {
+        fields: fields,
+        title: '{% trans "Edit Contact" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * Launches a form to delete one (or more) contacts
+ */
+function deleteContacts(contacts, options={}) {
+
+    if (contacts.length == 0) {
+        return;
+    }
+
+    function renderContact(contact) {
+        return `
+        <tr>
+            <td>${contact.name}</td>
+            <td>${contact.email}</td>
+            <td>${contact.role}</td>
+        </tr>`;
+    }
+
+    let rows = '';
+    let ids = [];
+
+    contacts.forEach(function(contact) {
+        rows += renderContact(contact);
+        ids.push(contact.pk);
+    });
+
+    let html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected contacts will be deleted" %}
+    </div>
+    <table class='table table-striped table-condensed'>
+    <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Email" %}</th>
+        <th>{% trans "Role" %}</th>
+    </tr>
+    ${rows}
+    </table>`;
+
+    constructForm('{% url "api-contact-list" %}', {
+        method: 'DELETE',
+        multi_delete: true,
+        title: '{% trans "Delete Contacts" %}',
+        preFormContent: html,
+        form_data: {
+            items: ids,
+        },
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * Load table listing company contacts
+ */
+function loadContactTable(table, options={}) {
+
+    var params = options.params || {};
+
+    var filters = loadTableFilters('contact', params);
+
+    setupFilterList('contact', $(table), '#filter-list-contacts');
+
+    $(table).inventreeTable({
+        url: '{% url "api-contact-list" %}',
+        queryParams: filters,
+        original: params,
+        idField: 'pk',
+        uniqueId: 'pk',
+        sidePagination: 'server',
+        formatNoMatches: function() {
+            return '{% trans "No contacts found" %}';
+        },
+        showColumns: true,
+        name: 'contacts',
+        columns: [
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                sortable: true,
+                switchable: false,
+            },
+            {
+                field: 'phone',
+                title: '{% trans "Phone Number" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                field: 'email',
+                title: '{% trans "Email Address" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                field: 'role',
+                title: '{% trans "Role" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'actions',
+                title: '',
+                sortable: false,
+                switchable: false,
+                visible: options.allow_edit || options.allow_delete,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    let html = '';
+
+                    if (options.allow_edit) {
+                        html += makeEditButton('btn-contact-edit', pk, '{% trans "Edit Contact" %}');
+                    }
+
+                    if (options.allow_delete) {
+                        html += makeDeleteButton('btn-contact-delete', pk, '{% trans "Delete Contact" %}');
+                    }
+
+                    return wrapButtons(html);
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Edit button callback
+            if (options.allow_edit) {
+                $(table).find('.btn-contact-edit').click(function() {
+                    var pk = $(this).attr('pk');
+                    editContact(pk, {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    });
+                });
+            }
+
+            // Delete button callback
+            if (options.allow_delete) {
+                $(table).find('.btn-contact-delete').click(function() {
+                    var pk = $(this).attr('pk');
+
+                    var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                    if (row && row.pk) {
+
+                        deleteContacts([row], {
+                            onSuccess: function() {
+                                $(table).bootstrapTable('refresh');
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+}
+
+
 /* Delete one or more ManufacturerPart objects from the database.
  * - User will be provided with a modal form, showing all the parts to be deleted.
  * - Delete operations are performed sequentialy, not simultaneously
@@ -503,7 +778,7 @@ function deleteManufacturerParts(selections, options={}) {
         return;
     }
 
-    function renderPart(man_part, opts={}) {
+    function renderPartRow(man_part, opts={}) {
         var part = man_part.part_detail;
         var thumb = thumbnailImage(part.thumbnail || part.image);
 
@@ -519,7 +794,7 @@ function deleteManufacturerParts(selections, options={}) {
     var ids = [];
 
     selections.forEach(function(man_part) {
-        rows += renderPart(man_part);
+        rows += renderPartRow(man_part);
         ids.push(man_part.pk);
     });
 
@@ -599,21 +874,16 @@ function deleteManufacturerPartParameters(selections, options={}) {
 }
 
 
+/*
+ * Load manufacturer part table
+ */
 function loadManufacturerPartTable(table, url, options) {
-    /*
-     * Load manufacturer part table
-     *
-     */
 
     // Query parameters
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters('manufacturer-part');
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('manufacturer-part', params);
 
     var filterTarget = options.filterTarget || '#filter-list-manufacturer-part';
 
@@ -649,11 +919,11 @@ function loadManufacturerPartTable(table, url, options) {
                     var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, url);
 
                     if (row.part_detail.is_template) {
-                        html += `<span class='fas fa-clone float-right' title='{% trans "Template part" %}'></span>`;
+                        html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
                     }
 
                     if (row.part_detail.assembly) {
-                        html += `<span class='fas fa-tools float-right' title='{% trans "Assembled part" %}'></span>`;
+                        html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
                     }
 
                     if (!row.part_detail.active) {
@@ -710,16 +980,13 @@ function loadManufacturerPartTable(table, url, options) {
                 sortable: false,
                 switchable: false,
                 formatter: function(value, row) {
-                    var pk = row.pk;
+                    let pk = row.pk;
+                    let html = '';
 
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    html += makeEditButton('button-manufacturer-part-edit', pk, '{% trans "Edit manufacturer part" %}');
+                    html += makeDeleteButton('button-manufacturer-part-delete', pk, '{% trans "Delete manufacturer part" %}');
 
-                    html += makeIconButton('fa-edit icon-blue', 'button-manufacturer-part-edit', pk, '{% trans "Edit manufacturer part" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-manufacturer-part-delete', pk, '{% trans "Delete manufacturer part" %}');
-
-                    html += '</div>';
-
-                    return html;
+                    return wrapButtons(html);
                 }
             }
         ],
@@ -756,20 +1023,15 @@ function loadManufacturerPartTable(table, url, options) {
 }
 
 
+/*
+ * Load table of ManufacturerPartParameter objects
+ */
 function loadManufacturerPartParameterTable(table, url, options) {
-    /*
-     * Load table of ManufacturerPartParameter objects
-     */
 
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters('manufacturer-part-parameters');
-
-    // Overwrite explicit parameters
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('manufacturer-part-parameters', params);
 
     setupFilterList('manufacturer-part-parameters', $(table));
 
@@ -813,17 +1075,13 @@ function loadManufacturerPartParameterTable(table, url, options) {
                 switchable: false,
                 sortable: false,
                 formatter: function(value, row) {
+                    let pk = row.pk;
+                    let html = '';
 
-                    var pk = row.pk;
+                    html += makeEditButton('button-parameter-edit', pk, '{% trans "Edit parameter" %}');
+                    html += makeDeleteButton('button-parameter-delete', pk, '{% trans "Delete parameter" %}');
 
-                    var html = `<div class='btn-group float-right' role='group'>`;
-
-                    html += makeIconButton('fa-edit icon-blue', 'button-parameter-edit', pk, '{% trans "Edit parameter" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-parameter-delete', pk, '{% trans "Delete parameter" %}');
-
-                    html += `</div>`;
-
-                    return html;
+                    return wrapButtons(html);
                 }
             }
         ],
@@ -832,27 +1090,23 @@ function loadManufacturerPartParameterTable(table, url, options) {
             $(table).find('.button-parameter-edit').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/company/part/manufacturer/parameter/${pk}/`, {
+                constructForm(`{% url "api-manufacturer-part-parameter-list" %}${pk}/`, {
                     fields: {
                         name: {},
                         value: {},
                         units: {},
                     },
                     title: '{% trans "Edit Parameter" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
             $(table).find('.button-parameter-delete').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/company/part/manufacturer/parameter/${pk}/`, {
+                constructForm(`{% url "api-manufacturer-part-parameter-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Parameter" %}',
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
-                    }
+                    refreshTable: table,
                 });
             });
         }
@@ -860,21 +1114,16 @@ function loadManufacturerPartParameterTable(table, url, options) {
 }
 
 
+/*
+ * Load supplier part table
+ */
 function loadSupplierPartTable(table, url, options) {
-    /*
-     * Load supplier part table
-     *
-     */
 
     // Query parameters
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters('supplier-part');
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('supplier-part', params);
 
     setupFilterList('supplier-part', $(table));
 
@@ -910,11 +1159,11 @@ function loadSupplierPartTable(table, url, options) {
                     var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, url);
 
                     if (row.part_detail.is_template) {
-                        html += `<span class='fas fa-clone float-right' title='{% trans "Template part" %}'></span>`;
+                        html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
                     }
 
                     if (row.part_detail.assembly) {
-                        html += `<span class='fas fa-tools float-right' title='{% trans "Assembled part" %}'></span>`;
+                        html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
                     }
 
                     if (!row.part_detail.active) {
@@ -1034,9 +1283,13 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 formatter: function(value, row) {
                     if (row.availability_updated) {
-                        var html = formatDecimal(value);
-                        var date = renderDate(row.availability_updated, {showTime: true});
-                        html += `<span class='fas fa-info-circle float-right' title='{% trans "Last Updated" %}: ${date}'></span>`;
+                        let html = formatDecimal(value);
+                        let date = renderDate(row.availability_updated, {showTime: true});
+
+                        html += makeIconBadge(
+                            'fa-info-circle',
+                            `{% trans "Last Updated" %}: ${date}`
+                        );
                         return html;
                     } else {
                         return '-';
@@ -1044,21 +1297,23 @@ function loadSupplierPartTable(table, url, options) {
                 }
             },
             {
+                field: 'updated',
+                title: '{% trans "Last Updated" %}',
+                sortable: true,
+            },
+            {
                 field: 'actions',
                 title: '',
                 sortable: false,
                 switchable: false,
                 formatter: function(value, row) {
-                    var pk = row.pk;
+                    let pk = row.pk;
+                    let html = '';
 
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    html += makeEditButton('button-supplier-part-edit', pk, '{% trans "Edit supplier part" %}');
+                    html += makeDeleteButton('button-supplier-part-delete', pk, '{% trans "Delete supplier part" %}');
 
-                    html += makeIconButton('fa-edit icon-blue', 'button-supplier-part-edit', pk, '{% trans "Edit supplier part" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-supplier-part-delete', pk, '{% trans "Delete supplier part" %}');
-
-                    html += '</div>';
-
-                    return html;
+                    return wrapButtons(html);
                 }
             }
         ],
@@ -1107,28 +1362,20 @@ function loadSupplierPriceBreakTable(options={}) {
         table.find('.button-price-break-delete').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/company/price-break/${pk}/`, {
+            constructForm(`{% url "api-part-supplier-price-list" %}${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Delete Price Break" %}',
-                onSuccess: function() {
-                    table.bootstrapTable('refresh');
-                },
+                refreshTable: table,
             });
         });
 
         table.find('.button-price-break-edit').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/company/price-break/${pk}/`, {
-                fields: {
-                    quantity: {},
-                    price: {},
-                    price_currency: {},
-                },
+            constructForm(`{% url "api-part-supplier-price-list" %}${pk}/`, {
+                fields: supplierPartPriceBreakFields(),
                 title: '{% trans "Edit Price Break" %}',
-                onSuccess: function() {
-                    table.bootstrapTable('refresh');
-                }
+                refreshTable: table,
             });
         });
     }
@@ -1176,10 +1423,12 @@ function loadSupplierPriceBreakTable(options={}) {
                 formatter: function(value, row) {
                     var html = renderDate(value);
 
-                    html += `<div class='btn-group float-right' role='group'>`;
-                    html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
-                    html += `</div>`;
+                    let buttons = '';
+
+                    buttons += makeEditButton('button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
+                    buttons += makeDeleteButton('button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
+
+                    html += wrapButtons(buttons);
 
                     return html;
                 }

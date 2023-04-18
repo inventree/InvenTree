@@ -1,6 +1,6 @@
 name: 'Setup Enviroment'
 description: 'Setup the enviroment for general InvenTree tests'
-author: 'inventree'
+author: 'InvenTree'
 inputs:
     python:
         required: false

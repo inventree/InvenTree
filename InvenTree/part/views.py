@@ -16,8 +16,7 @@ from common.models import InvenTreeSetting
 from common.views import FileManagementAjaxView, FileManagementFormView
 from company.models import SupplierPart
 from InvenTree.helpers import str2bool, str2int
-from InvenTree.views import (AjaxUpdateView, AjaxView, InvenTreeRoleMixin,
-                             QRCodeView)
+from InvenTree.views import AjaxUpdateView, AjaxView, InvenTreeRoleMixin
 from plugin.views import InvenTreePluginViewMixin
 from stock.models import StockItem, StockLocation
 
@@ -372,22 +371,6 @@ class PartDetailFromIPN(PartDetail):
         return super(PartDetailFromIPN, self).get(request, *args, **kwargs)
 
 
-class PartQRCode(QRCodeView):
-    """View for displaying a QR code for a Part object."""
-
-    ajax_form_title = _("Part QR Code")
-
-    role_required = 'part.view'
-
-    def get_qr_data(self):
-        """Generate QR code data for the Part."""
-        try:
-            part = Part.objects.get(id=self.pk)
-            return part.format_barcode()
-        except Part.DoesNotExist:
-            return None
-
-
 class PartImageSelect(AjaxUpdateView):
     """View for selecting Part image from existing images."""
 
@@ -468,6 +451,8 @@ class BomDownload(AjaxView):
 
         parameter_data = str2bool(request.GET.get('parameter_data', False))
 
+        substitute_part_data = str2bool(request.GET.get('substitute_part_data', False))
+
         stock_data = str2bool(request.GET.get('stock_data', False))
 
         supplier_data = str2bool(request.GET.get('supplier_data', False))
@@ -500,10 +485,11 @@ class BomDownload(AjaxView):
                          supplier_data=supplier_data,
                          manufacturer_data=manufacturer_data,
                          pricing_data=pricing_data,
+                         substitute_part_data=substitute_part_data,
                          )
 
     def get_data(self):
-        """Return a cutsom message"""
+        """Return a custom message"""
         return {
             'info': 'Exported BOM'
         }

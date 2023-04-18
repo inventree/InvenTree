@@ -128,6 +128,16 @@ class EditUserForm(HelperForm):
 class SetPasswordForm(HelperForm):
     """Form for setting user password."""
 
+    class Meta:
+        """Metaclass options."""
+
+        model = User
+        fields = [
+            'enter_password',
+            'confirm_password',
+            'old_password',
+        ]
+
     enter_password = forms.CharField(
         max_length=100,
         min_length=8,
@@ -153,16 +163,6 @@ class SetPasswordForm(HelperForm):
         strip=False,
         widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'autofocus': True}),
     )
-
-    class Meta:
-        """Metaclass options."""
-
-        model = User
-        fields = [
-            'enter_password',
-            'confirm_password',
-            'old_password',
-        ]
 
 
 # override allauth

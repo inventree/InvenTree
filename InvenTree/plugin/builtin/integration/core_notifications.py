@@ -22,13 +22,13 @@ class PlgMixin:
 
     def get_plugin(self):
         """Return plugin reference."""
-        return CoreNotificationsPlugin
+        return InvenTreeCoreNotificationsPlugin
 
 
-class CoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, InvenTreePlugin):
+class InvenTreeCoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, InvenTreePlugin):
     """Core notification methods for InvenTree."""
 
-    NAME = "CoreNotificationsPlugin"
+    NAME = "InvenTreeCoreNotificationsPlugin"
     TITLE = _("InvenTree Notifications")
     AUTHOR = _('InvenTree contributors')
     DESCRIPTION = _('Integrated outgoing notificaton methods')

@@ -17,25 +17,34 @@ class BomUploadTest(InvenTreeAPITestCase):
         'part.change',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Create BOM data as part of setup routine"""
-        super().setUp()
+        super().setUpTestData()
 
-        self.part = Part.objects.create(
+        cls.part = Part.objects.create(
             name='Assembly',
             description='An assembled part',
             assembly=True,
             component=False,
         )
 
+        parts = []
+
         for i in range(10):
-            Part.objects.create(
-                name=f"Component {i}",
-                IPN=f"CMP_{i}",
-                description="A subcomponent that can be used in a BOM",
-                component=True,
-                assembly=False,
+            parts.append(
+                Part(
+                    name=f"Component {i}",
+                    IPN=f"CMP_{i}",
+                    description="A subcomponent that can be used in a BOM",
+                    component=True,
+                    assembly=False,
+                    lft=0, rght=0,
+                    level=0, tree_id=0,
+                )
             )
+
+        Part.objects.bulk_create(parts)
 
     def post_bom(self, filename, file_data, clear_existing=None, expected_code=None, content_type='text/plain'):
         """Helper function for submitting a BOM file"""

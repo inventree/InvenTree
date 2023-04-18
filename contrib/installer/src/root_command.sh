@@ -63,11 +63,11 @@ case "$OS" in
             SUPPORTED=false
         fi
         ;;
-    "Debian GNU/Linux" | Raspbian)
+    "Debian GNU/Linux" | "debian gnu/linux" | Raspbian)
         if [[ $VER != "11" ]]; then
             SUPPORTED=false
         fi
-        OS=Debian
+        DIST_OS=debian
         ;;
     *)
         echo "### Distribution not supported"
@@ -76,8 +76,8 @@ case "$OS" in
 esac
 
 if [[ $SUPPORTED != "true" ]]; then
-    echo "This OS is currently not supported"
-    echo "please install manually using https://inventree.readthedocs.io/en/stable/start/install/"
+    echo "This OS is currently not supported."
+    echo "Please install manually using https://docs.inventree.org/en/stable/start/install/"
     echo "or check https://github.com/inventree/InvenTree/issues/3836 for packaging for your OS."
     echo "If you think this is a bug please file an issue at"
     echo "https://github.com/inventree/InvenTree/issues/new?template=install.yaml"
