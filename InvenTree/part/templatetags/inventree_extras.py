@@ -333,6 +333,7 @@ def setting_object(key, *args, **kwargs):
         return return_ref(ConnectionSetting.get_setting_object(key, connection_key=kwargs['connection_key'], connection_id=kwargs['connection'], plugin=kwargs['plugin'], cache=cache))
 
     if 'plugin' in kwargs:
+        # Note, 'plugin' is an instance of an InvenTreePlugin class
         return return_ref(PluginSetting.get_setting_object(key, plugin=kwargs['plugin'], cache=cache))
 
     if 'method' in kwargs:

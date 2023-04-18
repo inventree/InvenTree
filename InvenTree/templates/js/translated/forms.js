@@ -9,19 +9,6 @@
     global_settings,
     modalEnable,
     modalShowSubmitButton,
-    renderBuild,
-    renderCompany,
-    renderGroup,
-    renderWebconnection,
-    renderManufacturerPart,
-    renderOwner,
-    renderPart,
-    renderPartCategory,
-    renderPartParameterTemplate,
-    renderStockItem,
-    renderStockLocation,
-    renderSupplierPart,
-    renderUser,
     getModelRenderer,
     showAlertOrCache,
     showApiError,
@@ -2042,9 +2029,6 @@ function renderModelData(name, model, data, parameters) {
 
     var html = null;
 
-    var renderer = null;
-
-    // Find a custom renderer
     var renderer = getModelRenderer(model);
 
     if (renderer != null) {
