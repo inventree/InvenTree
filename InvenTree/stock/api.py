@@ -813,7 +813,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         queryset = queryset.prefetch_related(
             'part',
             'part__category',
-            'location'
+            'location',
             'tags',
         )
 
