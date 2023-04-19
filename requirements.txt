@@ -8,6 +8,8 @@ arrow==1.2.3
     # via django-q
 asgiref==3.6.0
     # via django
+attrs==22.2.0
+    # via jsonschema
 babel==2.12.1
     # via py-moneyed
 bleach[css]==6.0.0
@@ -70,6 +72,7 @@ django==3.2.18
     #   django-weasyprint
     #   django-xforwardedfor-middleware
     #   djangorestframework
+    #   drf-spectacular
 django-allauth==0.54.0
     # via
     #   -r requirements.in
@@ -129,6 +132,10 @@ django-weasyprint==2.2.0
 django-xforwardedfor-middleware==2.0
     # via -r requirements.in
 djangorestframework==3.14.0
+    # via
+    #   -r requirements.in
+    #   drf-spectacular
+drf-spectacular==0.25.1
     # via -r requirements.in
 et-xmlfile==1.1.0
     # via openpyxl
@@ -146,10 +153,14 @@ idna==3.4
     # via requests
 importlib-metadata==6.1.0
     # via markdown
+inflection==0.5.1
+    # via drf-spectacular
 itypes==1.2.0
     # via coreapi
 jinja2==3.1.2
     # via coreschema
+jsonschema==4.17.3
+    # via drf-spectacular
 markdown==3.4.3
     # via django-markdownify
 markuppy==1.14
@@ -186,6 +197,8 @@ pyphen==0.14.0
     # via weasyprint
 pypng==0.20220715.0
     # via qrcode
+pyrsistent==0.19.3
+    # via jsonschema
 python-barcode[images]==0.14.0
     # via -r requirements.in
 python-dateutil==2.8.2
@@ -204,7 +217,9 @@ pytz==2023.3
     #   djangorestframework
     #   icalendar
 pyyaml==6.0
-    # via tablib
+    # via
+    #   drf-spectacular
+    #   tablib
 qrcode[pil]==7.4.2
     # via
     #   -r requirements.in
@@ -252,7 +267,9 @@ tinycss2==1.1.1
 typing-extensions==4.5.0
     # via qrcode
 uritemplate==4.1.1
-    # via coreapi
+    # via
+    #   coreapi
+    #   drf-spectacular
 urllib3==1.26.15
     # via
     #   requests
