@@ -159,18 +159,18 @@ class InvenTreePluginTests(TestCase):
         self.assertEqual(self.plugin_name.pub_date, datetime(1111, 11, 11, 0, 0))
 
         # version
-        self.assertEqual(self.plugin.version, None)
-        self.assertEqual(self.plugin_simple.version, None)
+        self.assertEqual(self.plugin.version, '')
+        self.assertEqual(self.plugin_simple.version, '')
         self.assertEqual(self.plugin_name.version, '1.2.3a')
 
         # website
-        self.assertEqual(self.plugin.website, None)
-        self.assertEqual(self.plugin_simple.website, None)
+        self.assertEqual(self.plugin.website, '')
+        self.assertEqual(self.plugin_simple.website, '')
         self.assertEqual(self.plugin_name.website, 'https://aa.bb/cc')
 
         # license
-        self.assertEqual(self.plugin.license, None)
-        self.assertEqual(self.plugin_simple.license, None)
+        self.assertEqual(self.plugin.license, '')
+        self.assertEqual(self.plugin_simple.license, '')
         self.assertEqual(self.plugin_name.license, 'MIT')
 
     def test_depreciation(self):
