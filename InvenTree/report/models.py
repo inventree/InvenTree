@@ -21,7 +21,7 @@ import order.models
 import part.models
 import stock.models
 from InvenTree.helpers import validateFilterString
-from plugin.models import MetadataMixin
+from InvenTree.models import MetadataMixin
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin

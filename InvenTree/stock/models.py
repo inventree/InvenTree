@@ -31,12 +31,12 @@ import report.models
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
-                              InvenTreeNotesMixin, InvenTreeTree, extract_int)
+                              InvenTreeNotesMixin, InvenTreeTree,
+                              MetadataMixin, extract_int)
 from InvenTree.status_codes import (SalesOrderStatus, StockHistoryCode,
                                     StockStatus)
 from part import models as PartModels
 from plugin.events import trigger_event
-from plugin.models import MetadataMixin
 from users.models import Owner
 
 

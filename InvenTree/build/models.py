@@ -23,7 +23,7 @@ from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, normalize, notify_responsible
-from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin, InvenTreeNotesMixin, ReferenceIndexingMixin
+from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin, InvenTreeNotesMixin, ReferenceIndexingMixin, MetadataMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
@@ -33,7 +33,6 @@ import InvenTree.ready
 import InvenTree.tasks
 
 from plugin.events import trigger_event
-from plugin.models import MetadataMixin
 
 import common.notifications
 
