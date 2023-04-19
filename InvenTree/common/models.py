@@ -42,6 +42,7 @@ from rest_framework.exceptions import PermissionDenied
 import build.validators
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -84,7 +85,7 @@ class EmptyURLValidator(URLValidator):
             super().__call__(value)
 
 
-class ProjectCode(models.Model):
+class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
     """A ProjectCode is a unique identifier for a project."""
 
     @staticmethod

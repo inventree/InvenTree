@@ -21,10 +21,10 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
+import common.models
+import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
-from common.models import InvenTreeSetting
-from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
 from InvenTree.sanitizer import sanitize_svg
 
 logger = logging.getLogger('inventree')
@@ -186,7 +186,7 @@ class ReferenceIndexingMixin(models.Model):
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
 
-        return InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
+        return common.models.InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
 
     @classmethod
     def get_reference_context(cls):
@@ -465,7 +465,7 @@ class InvenTreeAttachment(models.Model):
                                   blank=True, null=True
                                   )
 
-    link = InvenTreeURLField(
+    link = InvenTree.fields.InvenTreeURLField(
         blank=True, null=True,
         verbose_name=_('Link'),
         help_text=_('Link to external URL')
@@ -739,7 +739,7 @@ class InvenTreeNotesMixin(models.Model):
         """
         abstract = True
 
-    notes = InvenTreeNotesField(
+    notes = InvenTree.fields.InvenTreeNotesField(
         verbose_name=_('Notes'),
         help_text=_('Markdown notes (optional)'),
     )
