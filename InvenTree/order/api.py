@@ -141,6 +141,16 @@ class OrderFilter(rest_filters.FilterSet):
         field_name='project_code'
     )
 
+    has_project_code = rest_filters.BooleanFilter(label='has_project_code', method='filter_has_project_code')
+
+    def filter_has_project_code(self, queryset, name, value):
+        """Filter by whether or not the order has a project code"""
+
+        if str2bool(value):
+            return queryset.exclude(project_code=None)
+        else:
+            return queryset.filter(project_code=None)
+
 
 class LineItemFilter(rest_filters.FilterSet):
     """Base class for custom API filters for order line item list(s)"""

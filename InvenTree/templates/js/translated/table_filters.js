@@ -39,6 +39,15 @@ function constructProjectCodeFilter() {
 }
 
 
+// Construct a filter for the "has project code" field
+function constructHasProjectCodeFilter() {
+    return {
+        type: 'bool',
+        title: '{% trans "Has project code" %}',
+    };
+}
+
+
 // Return a dictionary of filters for the return order table
 function getReturnOrderFilters() {
     var filters = {
@@ -61,6 +70,7 @@ function getReturnOrderFilters() {
     };
 
     if (global_settings.PROJECT_CODES_ENABLED) {
+        filters['has_project_code'] = constructHasProjectCodeFilter();
         filters['project_code'] = constructProjectCodeFilter();
     }
 
@@ -491,6 +501,7 @@ function getPurchaseOrderFilters() {
     };
 
     if (global_settings.PROJECT_CODES_ENABLED) {
+        filters['has_project_code'] = constructHasProjectCodeFilter();
         filters['project_code'] = constructProjectCodeFilter();
     }
 
@@ -531,6 +542,7 @@ function getSalesOrderFilters() {
     };
 
     if (global_settings.PROJECT_CODES_ENABLED) {
+        filters['has_project_code'] = constructHasProjectCodeFilter();
         filters['project_code'] = constructProjectCodeFilter();
     }
 
