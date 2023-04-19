@@ -743,6 +743,16 @@ function loadSalesOrderTable(table, options) {
                 title: '{% trans "Description" %}',
             },
             {
+                field: 'project_code',
+                title: '{% trans "Project Code" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    if (row.project_code_detail) {
+                        return `<span title='${row.project_code_detail.description}'>${row.project_code_detail.code}</span>`;
+                    }
+                }
+            },
+            {
                 sortable: true,
                 field: 'status',
                 title: '{% trans "Status" %}',

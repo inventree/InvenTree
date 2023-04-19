@@ -307,12 +307,14 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
     }
 
     search_fields = [
         'reference',
         'supplier__name',
         'supplier_reference',
+        'project_code__code',
         'description',
     ]
 
@@ -325,6 +327,7 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
         'status',
         'responsible',
         'total_price',
+        'project_code',
     ]
 
     ordering = '-reference'
@@ -685,6 +688,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
     }
 
     filterset_fields = [
@@ -701,6 +705,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
         'line_items',
         'shipment_date',
         'total_price',
+        'project_code',
     ]
 
     search_fields = [
@@ -708,6 +713,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
         'reference',
         'description',
         'customer_reference',
+        'project_code__code',
     ]
 
     ordering = '-reference'
@@ -1138,6 +1144,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
     }
 
     ordering_fields = [
@@ -1148,6 +1155,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
         'line_items',
         'status',
         'target_date',
+        'project_code',
     ]
 
     search_fields = [
@@ -1155,6 +1163,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
         'reference',
         'description',
         'customer_reference',
+        'project_code__code',
     ]
 
     ordering = '-reference'
