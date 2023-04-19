@@ -72,6 +72,10 @@ function returnOrderFields(options={}) {
         }
     };
 
+    if (!global_settings.PROJECT_CODES_ENABLED) {
+        delete fields.project_code;
+    }
+
     return fields;
 }
 
@@ -277,6 +281,8 @@ function loadReturnOrderTable(table, options={}) {
             {
                 field: 'project_code',
                 title: '{% trans "Project Code" %}',
+                switchable: global_settings.PROJECT_CODES_ENABLED,
+                visible: global_settings.PROJECT_CODES_ENABLED,
                 sortable: true,
                 formatter: function(value, row) {
                     if (row.project_code_detail) {

@@ -1654,6 +1654,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
 
+        "PROJECT_CODES_ENABLED": {
+            'name': _('Enable project codes'),
+            'description': _('Enable project codes for tracking projects'),
+            'default': False,
+            'validator': bool,
+        },
+
         'STOCKTAKE_ENABLE': {
             'name': _('Stocktake Functionality'),
             'description': _('Enable stocktake functionality for recording stock levels and calculating stock value'),
