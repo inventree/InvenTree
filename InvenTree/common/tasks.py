@@ -118,7 +118,11 @@ def delete_old_notes_images():
     # Finally, remove any images in the notes dir which are not linked to a note
     notes_dir = os.path.join(settings.MEDIA_ROOT, 'notes')
 
-    images = os.listdir(notes_dir)
+    try:
+        images = os.listdir(notes_dir)
+    except FileNotFoundError:
+        # Thrown if the directory does not exist
+        images = []
 
     all_notes = NotesImage.objects.all()
 
