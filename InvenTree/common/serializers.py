@@ -5,7 +5,8 @@ from django.urls import reverse
 from rest_framework import serializers
 
 from common.models import (InvenTreeSetting, InvenTreeUserSetting,
-                           NewsFeedEntry, NotesImage, NotificationMessage)
+                           NewsFeedEntry, NotesImage, NotificationMessage,
+                           ProjectCode)
 from InvenTree.helpers import construct_absolute_url, get_objectreference
 from InvenTree.serializers import (InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer)
@@ -253,3 +254,17 @@ class NotesImageSerializer(InvenTreeModelSerializer):
         ]
 
     image = InvenTreeImageSerializerField(required=True)
+
+
+class ProjectCodeSerializer(InvenTreeModelSerializer):
+    """Serializer for the ProjectCode model."""
+
+    class Meta:
+        """Meta options for ProjectCodeSerializer."""
+
+        model = ProjectCode
+        fields = [
+            'pk',
+            'code',
+            'description'
+        ]
