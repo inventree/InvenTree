@@ -1175,6 +1175,6 @@ def getModelsWithMixin(mixin_class) -> list:
 
     from django.contrib.contenttypes.models import ContentType
 
-    db_models = [x.model_class() for x in ContentType.objects.all()]
+    db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
 
-    return [x for x in db_models if issubclass(x, mixin_class)]
+    return [x for x in db_models if x is not None and issubclass(x, mixin_class)]
