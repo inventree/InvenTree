@@ -508,7 +508,7 @@ common_api_urls = [
 
     # Project codes
     re_path(r'^project-code/', include([
-        re_path(r'<int:pk>/', ProjectCodeDetail.as_view(), name='api-project-code-detail'),
+        path(r'<int:pk>/', ProjectCodeDetail.as_view(), name='api-project-code-detail'),
         re_path(r'^.*$', ProjectCodeList.as_view(), name='api-project-code-list'),
     ])),
 
