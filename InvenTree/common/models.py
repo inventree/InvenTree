@@ -84,6 +84,24 @@ class EmptyURLValidator(URLValidator):
             super().__call__(value)
 
 
+class ProjectCode(models.Model):
+    """A ProjectCode is a unique identifier for a project."""
+
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Unique project code'),
+    )
+
+    description = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Project description'),
+    )
+
+
 class BaseInvenTreeSetting(models.Model):
     """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values)."""
 
