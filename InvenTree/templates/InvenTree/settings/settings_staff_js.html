@@ -52,6 +52,45 @@ onPanelLoad('pricing', function() {
     });
 });
 
+// Javascript for project codes panel
+onPanelLoad('project-codes', function() {
+
+    // Construct the project code table
+    $('#project-code-table').bootstrapTable({
+        url: '{% url "api-project-code-list" %}',
+        search: true,
+        sortable: true,
+        formatNoMatches: function() {
+            return '{% trans "No project codes found" %}';
+        },
+        columns: [
+            {
+                field: 'code',
+                sortable: true,
+                title: '{% trans "Project Code" %}',
+            },
+            {
+                field: 'description',
+                sortable: false,
+                title: '{% trans "Description" %}',
+            }
+        ]
+    });
+
+    $('#new-project-code').click(function() {
+        // Construct a new project code
+        constructForm('{% url "api-project-code-list" %}', {
+            fields: {
+                code: {},
+                description: {},
+            },
+            title: '{% trans "New Project Code" %}',
+            method: 'POST',
+            refreshTable: '#project-code-table',
+        });
+    })
+});
+
 // Javascript for Part Category panel
 onPanelLoad('category', function() {
     $('#category-select').select2({
