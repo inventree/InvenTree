@@ -23,7 +23,7 @@ from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, normalize, notify_responsible
-from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin, ReferenceIndexingMixin
+from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin, InvenTreeNotesMixin, ReferenceIndexingMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
@@ -42,7 +42,7 @@ import stock.models
 import users.models
 
 
-class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
+class Build(MPTTModel, InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, ReferenceIndexingMixin):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -291,10 +291,6 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
     link = InvenTree.fields.InvenTreeURLField(
         verbose_name=_('External Link'),
         blank=True, help_text=_('Link to external URL')
-    )
-
-    notes = InvenTree.fields.InvenTreeNotesField(
-        help_text=_('Extra build notes')
     )
 
     priority = models.PositiveIntegerField(

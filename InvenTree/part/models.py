@@ -43,10 +43,11 @@ from common.models import InvenTreeSetting
 from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
-from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
+from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
-                              InvenTreeBarcodeMixin, InvenTreeTree)
+                              InvenTreeBarcodeMixin, InvenTreeNotesMixin,
+                              InvenTreeTree)
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from order import models as OrderModels
@@ -338,7 +339,7 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
+class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -1015,8 +1016,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         default=part_settings.part_virtual_default,
         verbose_name=_('Virtual'),
         help_text=_('Is this a virtual part, such as a software product or license?'))
-
-    notes = InvenTreeNotesField(help_text=_('Part notes'))
 
     bom_checksum = models.CharField(max_length=128, blank=True, verbose_name=_('BOM checksum'), help_text=_('Stored BOM checksum'))
 

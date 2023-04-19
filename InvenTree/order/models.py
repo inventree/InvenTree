@@ -32,11 +32,11 @@ from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Company, Contact, SupplierPart
 from InvenTree.exceptions import log_error
-from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
-                              InvenTreeURLField, RoundingDecimalField)
+from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeURLField,
+                              RoundingDecimalField)
 from InvenTree.helpers import decimal2string, getSetting, notify_responsible
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
-                              ReferenceIndexingMixin)
+                              InvenTreeNotesMixin, ReferenceIndexingMixin)
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
@@ -131,7 +131,7 @@ class TotalPriceMixin(models.Model):
         return total
 
 
-class Order(InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
+class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, ReferenceIndexingMixin):
     """Abstract model for an order.
 
     Instances of this class:
@@ -233,8 +233,6 @@ class Order(InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
         help_text=_('Point of contact for this order'),
         related_name='+',
     )
-
-    notes = InvenTreeNotesField(help_text=_('Order notes'))
 
     @classmethod
     def get_status_class(cls):
@@ -1330,7 +1328,7 @@ class SalesOrderLineItem(OrderLineItem):
         return self.shipped >= self.quantity
 
 
-class SalesOrderShipment(MetadataMixin, models.Model):
+class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 
     - Points to a single SalesOrder object
@@ -1388,8 +1386,6 @@ class SalesOrderShipment(MetadataMixin, models.Model):
         help_text=_('Shipment number'),
         default='1',
     )
-
-    notes = InvenTreeNotesField(help_text=_('Shipment notes'))
 
     tracking_number = models.CharField(
         max_length=100,
