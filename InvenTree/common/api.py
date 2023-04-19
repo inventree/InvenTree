@@ -21,8 +21,8 @@ from InvenTree.api import BulkDeleteMixin
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors
-from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
-                              RetrieveUpdateDestroyAPI)
+from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
+                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from InvenTree.permissions import IsSuperuser
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
@@ -440,6 +440,20 @@ class ConfigDetail(RetrieveAPI):
         return {key: value}
 
 
+class NotesImageList(ListCreateAPI):
+    """List view for all notes images."""
+
+    queryset = common.models.NotesImage.objects.all()
+    serializer_class = common.serializers.NotesImageSerializer
+    permission_classes = [permissions.IsAuthenticated, ]
+
+    def perform_create(self, serializer):
+        """Create (upload) a new notes image"""
+        image = serializer.save()
+        image.user = self.request.user
+        image.save()
+
+
 settings_api_urls = [
     # User settings
     re_path(r'^user/', include([
@@ -472,6 +486,9 @@ settings_api_urls = [
 common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
+
+    # Uploaded images for notes
+    re_path(r'^notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'),
 
     # Currencies
     re_path(r'^currency/', include([

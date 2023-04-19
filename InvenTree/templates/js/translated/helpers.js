@@ -380,6 +380,10 @@ function renderLink(text, url, options={}) {
 }
 
 
+/*
+ * Configure an EasyMDE editor for the given element,
+ * allowing markdown editing of the notes field.
+ */
 function setupNotesField(element, url, options={}) {
 
     var editable = options.editable || false;
@@ -419,12 +423,24 @@ function setupNotesField(element, url, options={}) {
         element: document.getElementById(element),
         initialValue: initial,
         toolbar: toolbar_icons,
+        uploadImage: true,
+        imagePathAbsolute: true,
+        imageUploadFunction: function(imageFile, onSuccess, onError) {
+            // Attempt to upload the image to the InvenTree server
+            var form_data = new FormData();
+
+            form_data.append('image', imageFile);
+
+            inventreeFormDataUpload('{% url "api-notes-image-list" %}', form_data, {
+                success: function(response) {
+                    onSuccess(response.image);
+                },
+                error: function(xhr, status, error) {
+                    onError(error);
+                }
+            });
+        },
         shortcuts: [],
-        renderingConfig: {
-            markedOptions: {
-                sanitize: true,
-            }
-        }
     });
 
 
@@ -460,12 +476,15 @@ function setupNotesField(element, url, options={}) {
 
             data[options.notes_field || 'notes'] = mde.value();
 
+            $('#save-notes').find('#save-icon').removeClass('fa-save').addClass('fa-spin fa-spinner');
+
             inventreePut(url, data, {
                 method: 'PATCH',
                 success: function(response) {
-                    showMessage('{% trans "Notes updated" %}', {style: 'success'});
+                    $('#save-notes').find('#save-icon').removeClass('fa-spin fa-spinner').addClass('fa-check-circle');
                 },
                 error: function(xhr) {
+                    $('#save-notes').find('#save-icon').removeClass('fa-spin fa-spinner').addClass('fa-times-circle icon-red');
                     showApiError(xhr, url);
                 }
             });

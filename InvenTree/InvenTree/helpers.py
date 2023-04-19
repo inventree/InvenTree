@@ -1161,3 +1161,20 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
         decimal_places=decimal_places,
         include_symbol=include_symbol,
     )
+
+
+def getModelsWithMixin(mixin_class) -> list:
+    """Return a list of models that inherit from the given mixin class.
+
+    Args:
+        mixin_class: The mixin class to search for
+
+    Returns:
+        List of models that inherit from the given mixin class
+    """
+
+    from django.contrib.contenttypes.models import ContentType
+
+    db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
+
+    return [x for x in db_models if x is not None and issubclass(x, mixin_class)]
