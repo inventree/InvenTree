@@ -42,6 +42,7 @@ from rest_framework.exceptions import PermissionDenied
 import build.validators
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -82,6 +83,33 @@ class EmptyURLValidator(URLValidator):
 
         else:
             super().__call__(value)
+
+
+class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+    """A ProjectCode is a unique identifier for a project."""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-project-code-list')
+
+    def __str__(self):
+        """String representation of a ProjectCode."""
+        return self.code
+
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Unique project code'),
+    )
+
+    description = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Project description'),
+    )
 
 
 class BaseInvenTreeSetting(models.Model):
@@ -1629,6 +1657,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
             'requires_restart': True,
+        },
+
+        "PROJECT_CODES_ENABLED": {
+            'name': _('Enable project codes'),
+            'description': _('Enable project codes for tracking projects'),
+            'default': False,
+            'validator': bool,
         },
 
         'STOCKTAKE_ENABLE': {

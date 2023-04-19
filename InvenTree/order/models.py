@@ -28,6 +28,7 @@ import InvenTree.tasks
 import order.validators
 import stock.models
 import users.models as UserModels
+from common.models import ProjectCode
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Company, Contact, SupplierPart
@@ -36,13 +37,13 @@ from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeURLField,
                               RoundingDecimalField)
 from InvenTree.helpers import decimal2string, getSetting, notify_responsible
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
-                              InvenTreeNotesMixin, ReferenceIndexingMixin)
+                              InvenTreeNotesMixin, MetadataMixin,
+                              ReferenceIndexingMixin)
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
 from part import models as PartModels
 from plugin.events import trigger_event
-from plugin.models import MetadataMixin
 
 logger = logging.getLogger('inventree')
 
@@ -198,6 +199,8 @@ class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, Reference
         return self.__class__.objects.filter(pk=self.pk).filter(self.__class__.overdue_filter()).exists()
 
     description = models.CharField(max_length=250, blank=True, verbose_name=_('Description'), help_text=_('Order description (optional)'))
+
+    project_code = models.ForeignKey(ProjectCode, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Project Code'), help_text=_('Select project code for this order'))
 
     link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 

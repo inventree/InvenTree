@@ -52,6 +52,78 @@ onPanelLoad('pricing', function() {
     });
 });
 
+// Javascript for project codes panel
+onPanelLoad('project-codes', function() {
+
+    // Construct the project code table
+    $('#project-code-table').bootstrapTable({
+        url: '{% url "api-project-code-list" %}',
+        search: true,
+        sortable: true,
+        formatNoMatches: function() {
+            return '{% trans "No project codes found" %}';
+        },
+        columns: [
+            {
+                field: 'code',
+                sortable: true,
+                title: '{% trans "Project Code" %}',
+            },
+            {
+                field: 'description',
+                sortable: false,
+                title: '{% trans "Description" %}',
+                formatter: function(value, row) {
+                    let html = value;
+                    let buttons = '';
+
+                    buttons += makeEditButton('button-project-code-edit', row.pk, '{% trans "Edit Project Code" %}');
+                    buttons += makeDeleteButton('button-project-code-delete', row.pk, '{% trans "Delete Project Code" %}');
+
+                    html += wrapButtons(buttons);
+                    return html;
+                }
+            }
+        ]
+    });
+
+    $('#project-code-table').on('click', '.button-project-code-edit', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(`{% url "api-project-code-list" %}${pk}/`, {
+            title: '{% trans "Edit Project Code" %}',
+            fields: {
+                code: {},
+                description: {},
+            },
+            refreshTable: '#project-code-table',
+        });
+    });
+
+    $('#project-code-table').on('click', '.button-project-code-delete', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(`{% url "api-project-code-list" %}${pk}/`, {
+            title: '{% trans "Delete Project Code" %}',
+            method: 'DELETE',
+            refreshTable: '#project-code-table',
+        });
+    });
+
+    $('#new-project-code').click(function() {
+        // Construct a new project code
+        constructForm('{% url "api-project-code-list" %}', {
+            fields: {
+                code: {},
+                description: {},
+            },
+            title: '{% trans "New Project Code" %}',
+            method: 'POST',
+            refreshTable: '#project-code-table',
+        });
+    })
+});
+
 // Javascript for Part Category panel
 onPanelLoad('category', function() {
     $('#category-select').select2({
@@ -136,11 +208,12 @@ onPanelLoad('category', function() {
                 title: '{% trans "Default Value" %}',
                 sortable: 'true',
                 formatter: function(value, row, index, field) {
-                    var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
-                    var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+                    let buttons = '';
+                    buttons += makeEditButton('template-edit', row.pk, '{% trans "Edit Template" %}');
+                    buttons += makeDeleteButton('template-delete', row.pk, '{% trans "Delete Template" %}');
 
-                    var html = value
-                    html += "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
+                    let html = value
+                    html += wrapButtons(buttons);
 
                     return html;
                 }
@@ -154,6 +227,7 @@ onPanelLoad('category', function() {
         var pk = $(this).attr('pk');
 
         constructForm(`/api/part/category/parameters/${pk}/`, {
+            title: '{% trans "Edit Category Parameter Template" %}',
             fields: {
                 parameter_template: {},
                 category: {

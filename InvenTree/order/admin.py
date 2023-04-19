@@ -1,6 +1,7 @@
 """Admin functionality for the 'order' app"""
 
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
@@ -8,6 +9,19 @@ from import_export.fields import Field
 
 import order.models as models
 from InvenTree.admin import InvenTreeResource
+
+
+class ProjectCodeResourceMixin:
+    """Mixin for exporting project code data"""
+
+    project_code = Field(attribute='project_code', column_name=_('Project Code'))
+
+    def dehydrate_project_code(self, order):
+        """Return the project code value, not the pk"""
+        if order.project_code:
+            return order.project_code.code
+        else:
+            return ''
 
 
 # region general classes
@@ -94,7 +108,7 @@ class SalesOrderAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('customer',)
 
 
-class PurchaseOrderResource(InvenTreeResource):
+class PurchaseOrderResource(ProjectCodeResourceMixin, InvenTreeResource):
     """Class for managing import / export of PurchaseOrder data."""
 
     class Meta:
@@ -141,7 +155,7 @@ class PurchaseOrderExtraLineResource(InvenTreeResource):
         model = models.PurchaseOrderExtraLine
 
 
-class SalesOrderResource(InvenTreeResource):
+class SalesOrderResource(ProjectCodeResourceMixin, InvenTreeResource):
     """Class for managing import / export of SalesOrder data."""
 
     class Meta:
@@ -276,7 +290,7 @@ class SalesOrderAllocationAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('line', 'shipment', 'item',)
 
 
-class ReturnOrderResource(InvenTreeResource):
+class ReturnOrderResource(ProjectCodeResourceMixin, InvenTreeResource):
     """Class for managing import / export of ReturnOrder data"""
 
     class Meta:

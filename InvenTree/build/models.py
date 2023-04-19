@@ -22,27 +22,24 @@ from mptt.exceptions import InvalidMove
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, normalize, notify_responsible
-from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin, InvenTreeNotesMixin, ReferenceIndexingMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 
 from plugin.events import trigger_event
-from plugin.models import MetadataMixin
 
 import common.notifications
-
 import part.models
 import stock.models
 import users.models
 
 
-class Build(MPTTModel, InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, ReferenceIndexingMixin):
+class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -464,7 +461,7 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin
         new_ref = ref
 
         while 1:
-            new_ref = increment(new_ref)
+            new_ref = InvenTree.helpers.increment(new_ref)
 
             if new_ref in tries:
                 # We are potentially stuck in a loop - simply return the original reference
@@ -1125,10 +1122,10 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
         # Notify the responsible users that the build order has been created
-        notify_responsible(instance, sender, exclude=instance.issued_by)
+        InvenTree.helpers.notify_responsible(instance, sender, exclude=instance.issued_by)
 
 
-class BuildOrderAttachment(InvenTreeAttachment):
+class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a BuildOrder object."""
 
     def getSubdir(self):
@@ -1138,7 +1135,7 @@ class BuildOrderAttachment(InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
-class BuildItem(MetadataMixin, models.Model):
+class BuildItem(InvenTree.models.MetadataMixin, models.Model):
     """A BuildItem links multiple StockItem objects to a Build.
 
     These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.
@@ -1188,8 +1185,8 @@ class BuildItem(MetadataMixin, models.Model):
             # Allocated quantity cannot exceed available stock quantity
             if self.quantity > self.stock_item.quantity:
 
-                q = normalize(self.quantity)
-                a = normalize(self.stock_item.quantity)
+                q = InvenTree.helpers.normalize(self.quantity)
+                a = InvenTree.helpers.normalize(self.stock_item.quantity)
 
                 raise ValidationError({
                     'quantity': _(f'Allocated quantity ({q}) must not exceed available stock quantity ({a})')

@@ -92,6 +92,14 @@ class IsSuperuser(permissions.IsAdminUser):
         return bool(request.user and request.user.is_superuser)
 
 
+class IsStaffOrReadOnly(permissions.IsAdminUser):
+    """Allows read-only access to any user, but write access is restricted to staff users."""
+
+    def has_permission(self, request, view):
+        """Check if the user is a superuser."""
+        return bool(request.user and request.user.is_staff or request.method in permissions.SAFE_METHODS)
+
+
 def auth_exempt(view_func):
     """Mark a view function as being exempt from auth requirements."""
     def wrapped_view(*args, **kwargs):

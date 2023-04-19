@@ -107,9 +107,8 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Order Description" %}</td>
         <td>{{ order.description }}{% include "clip.html" %}</td>
     </tr>
-
+    {% include "project_code_data.html" with instance=order %}
     {% include "barcode_data.html" with instance=order %}
-
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Order Status" %}</td>

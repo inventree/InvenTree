@@ -22,7 +22,7 @@ from plugin.models import NotificationUserSetting
 from .api import WebhookView
 from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
                      NotesImage, NotificationEntry, NotificationMessage,
-                     WebhookEndpoint, WebhookMessage)
+                     ProjectCode, WebhookEndpoint, WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 
@@ -1001,3 +1001,113 @@ class NotesImageTest(InvenTreeAPITestCase):
 
         # Check that a new file has been created
         self.assertEqual(NotesImage.objects.count(), n + 1)
+
+
+class ProjectCodesTest(InvenTreeAPITestCase):
+    """Units tests for the ProjectCodes model and API endpoints"""
+
+    @property
+    def url(self):
+        """Return the URL for the project code list endpoint"""
+        return reverse('api-project-code-list')
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create some initial project codes"""
+        super().setUpTestData()
+
+        codes = [
+            ProjectCode(code='PRJ-001', description='Test project code'),
+            ProjectCode(code='PRJ-002', description='Test project code'),
+            ProjectCode(code='PRJ-003', description='Test project code'),
+            ProjectCode(code='PRJ-004', description='Test project code'),
+        ]
+
+        ProjectCode.objects.bulk_create(codes)
+
+    def test_list(self):
+        """Test that the list endpoint works as expected"""
+
+        response = self.get(self.url, expected_code=200)
+        self.assertEqual(len(response.data), ProjectCode.objects.count())
+
+    def test_delete(self):
+        """Test we can delete a project code via the API"""
+
+        n = ProjectCode.objects.count()
+
+        # Get the first project code
+        code = ProjectCode.objects.first()
+
+        # Delete it
+        self.delete(
+            reverse('api-project-code-detail', kwargs={'pk': code.pk}),
+            expected_code=204
+        )
+
+        # Check it is gone
+        self.assertEqual(ProjectCode.objects.count(), n - 1)
+
+    def test_duplicate_code(self):
+        """Test that we cannot create two project codes with the same code"""
+
+        # Create a new project code
+        response = self.post(
+            self.url,
+            data={
+                'code': 'PRJ-001',
+                'description': 'Test project code',
+            },
+            expected_code=400
+        )
+
+        self.assertIn('project code with this Project Code already exists', str(response.data['code']))
+
+    def test_write_access(self):
+        """Test that non-staff users have read-only access"""
+
+        # By default user has staff access, can create a new project code
+        response = self.post(
+            self.url,
+            data={
+                'code': 'PRJ-xxx',
+                'description': 'Test project code',
+            },
+            expected_code=201
+        )
+
+        pk = response.data['pk']
+
+        # Test we can edit, also
+        response = self.patch(
+            reverse('api-project-code-detail', kwargs={'pk': pk}),
+            data={
+                'code': 'PRJ-999',
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(response.data['code'], 'PRJ-999')
+
+        # Restrict user access to non-staff
+        self.user.is_staff = False
+        self.user.save()
+
+        # As user does not have staff access, should return 403 for list endpoint
+        response = self.post(
+            self.url,
+            data={
+                'code': 'PRJ-123',
+                'description': 'Test project code'
+            },
+            expected_code=403
+        )
+
+        # Should also return 403 for detail endpoint
+        response = self.patch(
+            reverse('api-project-code-detail', kwargs={'pk': pk}),
+            data={
+                'code': 'PRJ-999',
+            },
+            expected_code=403
+        )
