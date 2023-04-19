@@ -1163,7 +1163,7 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
     )
 
 
-def getModelsWithMixin(self, mixin_class) -> list:
+def getModelsWithMixin(mixin_class) -> list:
     """Return a list of models that inherit from the given mixin class.
 
     Args:
