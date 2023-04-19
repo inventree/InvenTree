@@ -42,6 +42,7 @@ from rest_framework.exceptions import PermissionDenied
 import build.validators
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -82,6 +83,33 @@ class EmptyURLValidator(URLValidator):
 
         else:
             super().__call__(value)
+
+
+class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+    """A ProjectCode is a unique identifier for a project."""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-project-code-list')
+
+    def __str__(self):
+        """String representation of a ProjectCode."""
+        return self.code
+
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Unique project code'),
+    )
+
+    description = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Project description'),
+    )
 
 
 class BaseInvenTreeSetting(models.Model):
@@ -1631,6 +1659,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
 
+        "PROJECT_CODES_ENABLED": {
+            'name': _('Enable project codes'),
+            'description': _('Enable project codes for tracking projects'),
+            'default': False,
+            'validator': bool,
+        },
+
         'STOCKTAKE_ENABLE': {
             'name': _('Stocktake Functionality'),
             'description': _('Enable stocktake functionality for recording stock levels and calculating stock value'),
@@ -2642,3 +2677,27 @@ class NewsFeedEntry(models.Model):
         help_text=_('Was this news item read?'),
         default=False
     )
+
+
+def rename_notes_image(instance, filename):
+    """Function for renaming uploading image file. Will store in the 'notes' directory."""
+
+    fname = os.path.basename(filename)
+    return os.path.join('notes', fname)
+
+
+class NotesImage(models.Model):
+    """Model for storing uploading images for the 'notes' fields of various models.
+
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown)
+    """
+
+    image = models.ImageField(
+        upload_to=rename_notes_image,
+        verbose_name=_('Image'),
+        help_text=_('Image file'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    date = models.DateTimeField(auto_now_add=True)

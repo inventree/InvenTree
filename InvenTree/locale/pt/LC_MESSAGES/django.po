@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-10 14:27+0000\n"
-"PO-Revision-Date: 2023-04-10 17:58\n"
+"POT-Creation-Date: 2023-04-17 14:13+0000\n"
+"PO-Revision-Date: 2023-04-17 18:26\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -41,7 +41,7 @@ msgstr "Insira uma Data"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:41
 #: part/models.py:2989 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:121 stock/models.py:2126 stock/models.py:2234
+#: stock/admin.py:121 stock/models.py:2127 stock/models.py:2235
 #: stock/serializers.py:317 stock/serializers.py:450 stock/serializers.py:531
 #: stock/serializers.py:810 stock/serializers.py:909 stock/serializers.py:1041
 #: stock/templates/stock/stock_sidebar.html:25
@@ -209,7 +209,7 @@ msgstr "Arquivo nao encontrado"
 msgid "Missing external link"
 msgstr "Link externo nao encontrado"
 
-#: InvenTree/models.py:409 stock/models.py:2228
+#: InvenTree/models.py:409 stock/models.py:2229
 #: templates/js/translated/attachment.js:109
 #: templates/js/translated/attachment.js:296
 msgid "Attachment"
@@ -854,8 +854,8 @@ msgid "Reference"
 msgstr "Referência"
 
 #: build/models.py:169
-msgid "Brief description of the build"
-msgstr "Breve descrição da produção"
+msgid "Brief description of the build (optional)"
+msgstr ""
 
 #: build/models.py:177 build/templates/build/build_base.html:189
 #: build/templates/build/detail.html:87
@@ -1638,7 +1638,7 @@ msgstr "QR Code do Pedido de Produção"
 
 #: build/templates/build/build_base.html:302
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Vincular código de barras ao Pedido de Produção"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -1833,23 +1833,24 @@ msgstr "Saídas Incompletas"
 msgid "Completed Outputs"
 msgstr "Saídas Concluídas"
 
-#: common/files.py:62
-msgid "Unsupported file format: {ext.upper()}"
-msgstr "Formato de arquivo não suportado: {ext.upper()}"
+#: common/files.py:63
+#, python-brace-format
+msgid "Unsupported file format: {fmt}"
+msgstr ""
 
-#: common/files.py:64
+#: common/files.py:65
 msgid "Error reading file (invalid encoding)"
 msgstr "Erro ao ler arquivo (codificação inválida)"
 
-#: common/files.py:69
+#: common/files.py:70
 msgid "Error reading file (invalid format)"
 msgstr "Erro ao ler arquivo (formato inválido)"
 
-#: common/files.py:71
+#: common/files.py:72
 msgid "Error reading file (incorrect dimension)"
 msgstr "Erro ao ler o arquivo (dimensão incorreta)"
 
-#: common/files.py:73
+#: common/files.py:74
 msgid "Error reading file (data could be corrupted)"
 msgstr "Erro ao ler o arquivo (dados podem estar corrompidos)"
 
@@ -3056,19 +3057,19 @@ msgstr "Número de resultados mostrados em cada seção da janela de visualizaç
 
 #: common/models.py:1983
 msgid "Regex Search"
-msgstr ""
+msgstr "Pesquisa de Regex"
 
 #: common/models.py:1984
 msgid "Enable regular expressions in search queries"
-msgstr ""
+msgstr "Permitir expressôes comuns nas conultas de pesquisas"
 
 #: common/models.py:1990
 msgid "Whole Word Search"
-msgstr ""
+msgstr "Busca de Palavras Inteira"
 
 #: common/models.py:1991
 msgid "Search queries return results for whole word matches"
-msgstr ""
+msgstr "Pesquisa retorna que palavra inteira coincide"
 
 #: common/models.py:1997
 msgid "Show Quantity in Forms"
@@ -3481,7 +3482,7 @@ msgstr "Nome do parâmetro"
 
 #: company/models.py:394
 #: report/templates/report/inventree_test_report_base.html:104
-#: stock/models.py:2221 templates/js/translated/company.js:857
+#: stock/models.py:2222 templates/js/translated/company.js:857
 #: templates/js/translated/company.js:1062 templates/js/translated/part.js:1268
 #: templates/js/translated/stock.js:1425
 msgid "Value"
@@ -3902,8 +3903,8 @@ msgstr "Excluir peças do fornecedor"
 #: company/templates/company/manufacturer_part.html:183
 #: part/templates/part/detail.html:393 part/templates/part/detail.html:423
 #: templates/js/translated/forms.js:499 templates/js/translated/helpers.js:58
-#: templates/js/translated/part.js:313 templates/js/translated/stock.js:186
-#: users/models.py:243
+#: templates/js/translated/part.js:313 templates/js/translated/pricing.js:611
+#: templates/js/translated/stock.js:186 users/models.py:243
 msgid "Delete"
 msgstr "Excluir"
 
@@ -4187,8 +4188,8 @@ msgid "Contact does not match selected company"
 msgstr "O contato não corresponde à empresa selecionada"
 
 #: order/models.py:200
-msgid "Order description"
-msgstr "Descrição do pedido"
+msgid "Order description (optional)"
+msgstr ""
 
 #: order/models.py:202 order/models.py:1063 order/models.py:1413
 msgid "Link to external page"
@@ -4504,7 +4505,7 @@ msgstr "Estado do pedido de retorno"
 
 #: order/models.py:1850
 msgid "Only serialized items can be assigned to a Return Order"
-msgstr ""
+msgstr "Somente itens da série podem ser devolvidos"
 
 #: order/models.py:1858 order/models.py:1904
 #: order/templates/order/return_order_base.html:9
@@ -4513,32 +4514,32 @@ msgstr ""
 #: templates/js/translated/return_order.js:239
 #: templates/js/translated/stock.js:2720
 msgid "Return Order"
-msgstr ""
+msgstr "Devolver pedido"
 
 #: order/models.py:1866
 msgid "Select item to return from customer"
-msgstr ""
+msgstr "Selecione o item a ser devolvido pelo cliente"
 
 #: order/models.py:1871
 msgid "Received Date"
-msgstr ""
+msgstr "Data de Recebimento"
 
 #: order/models.py:1872
 msgid "The date this this return item was received"
-msgstr ""
+msgstr "Data que o pedido a ser devolvido foi recebido"
 
 #: order/models.py:1883 templates/js/translated/return_order.js:675
 #: templates/js/translated/table_filters.js:51
 msgid "Outcome"
-msgstr ""
+msgstr "Despesa/gastos"
 
 #: order/models.py:1883
 msgid "Outcome for this line item"
-msgstr ""
+msgstr "Gastos com esta linha de itens"
 
 #: order/models.py:1889
 msgid "Cost associated with return or repair for this line item"
-msgstr ""
+msgstr "Gastos para reparar e/ou devolver esta linha de itens"
 
 #: order/serializers.py:228
 msgid "Order cannot be cancelled"
@@ -4598,11 +4599,11 @@ msgstr "Digite o número de série para itens de estoque recebidos"
 
 #: order/serializers.py:509 templates/js/translated/barcode.js:41
 msgid "Barcode"
-msgstr ""
+msgstr "Código de barras"
 
 #: order/serializers.py:510
 msgid "Scanned barcode"
-msgstr ""
+msgstr "Código de barras lido"
 
 #: order/serializers.py:526
 msgid "Barcode is already in use"
@@ -4662,23 +4663,23 @@ msgstr "Os seguintes números de série já estão alocados"
 
 #: order/serializers.py:1529
 msgid "Return order line item"
-msgstr ""
+msgstr "Devolver item do pedido"
 
 #: order/serializers.py:1536
 msgid "Line item does not match return order"
-msgstr ""
+msgstr "Item do pedido não bate com a ordem de devolução"
 
 #: order/serializers.py:1539
 msgid "Line item has already been received"
-msgstr ""
+msgstr "Item do pedido já foi recebido"
 
 #: order/serializers.py:1571
 msgid "Items can only be received against orders which are in progress"
-msgstr ""
+msgstr "Itens só podem ser recebidos de pedidos em processamento"
 
 #: order/serializers.py:1652
 msgid "Line price currency"
-msgstr ""
+msgstr "Tipo de moeda para o item do pedido"
 
 #: order/tasks.py:26
 msgid "Overdue Purchase Order"
@@ -4732,8 +4733,12 @@ msgstr "Duplicar pedido"
 
 #: order/templates/order/order_base.html:79
 #: order/templates/order/order_base.html:80
-msgid "Submit Order"
-msgstr "Enviar pedido"
+#: order/templates/order/return_order_base.html:83
+#: order/templates/order/return_order_base.html:84
+#: order/templates/order/sales_order_base.html:84
+#: order/templates/order/sales_order_base.html:85
+msgid "Issue Order"
+msgstr "Emitir Pedido"
 
 #: order/templates/order/order_base.html:83
 msgid "Receive items"
@@ -4805,11 +4810,11 @@ msgstr "O custo total não pôde ser calculado"
 
 #: order/templates/order/order_base.html:330
 msgid "Purchase Order QR Code"
-msgstr ""
+msgstr "Código QR do pedido"
 
 #: order/templates/order/order_base.html:342
 msgid "Link Barcode to Purchase Order"
-msgstr ""
+msgstr "Vincular o código de barras ao pedido"
 
 #: order/templates/order/order_wizard/match_fields.html:9
 #: part/templates/part/import_wizard/ajax_match_fields.html:9
@@ -4938,7 +4943,7 @@ msgstr "Adicionar item de linha"
 #: order/templates/order/return_order_detail.html:28
 #: order/templates/order/return_order_detail.html:29
 msgid "Receive Line Items"
-msgstr ""
+msgstr "Receber os itens do pedido"
 
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/purchase_order_detail.html:51
@@ -4969,19 +4974,12 @@ msgstr "Notas do Pedido"
 
 #: order/templates/order/return_order_base.html:61
 msgid "Print return order report"
-msgstr ""
+msgstr "Imprimir guia de devolução"
 
 #: order/templates/order/return_order_base.html:65
 #: order/templates/order/sales_order_base.html:65
 msgid "Print packing list"
 msgstr "Imprimir lista de pacotes"
-
-#: order/templates/order/return_order_base.html:83
-#: order/templates/order/return_order_base.html:84
-#: order/templates/order/sales_order_base.html:84
-#: order/templates/order/sales_order_base.html:85
-msgid "Issue Order"
-msgstr ""
 
 #: order/templates/order/return_order_base.html:140
 #: order/templates/order/sales_order_base.html:151
@@ -5005,15 +5003,15 @@ msgstr "Custo Total"
 
 #: order/templates/order/return_order_base.html:258
 msgid "Return Order QR Code"
-msgstr ""
+msgstr "Código QR da guia de devolução"
 
 #: order/templates/order/return_order_base.html:270
 msgid "Link Barcode to Return Order"
-msgstr ""
+msgstr "Vincular Código de Barras a Pedido de Devolução"
 
 #: order/templates/order/return_order_sidebar.html:5
 msgid "Order Details"
-msgstr ""
+msgstr "Detalhes do pedido"
 
 #: order/templates/order/sales_order_base.html:61
 msgid "Print sales order report"
@@ -5022,7 +5020,7 @@ msgstr "Imprimir Relatório do Pedido de Venda"
 #: order/templates/order/sales_order_base.html:89
 #: order/templates/order/sales_order_base.html:90
 msgid "Ship Items"
-msgstr ""
+msgstr "Enviar itens"
 
 #: order/templates/order/sales_order_base.html:93
 #: templates/js/translated/sales_order.js:419
@@ -5041,11 +5039,11 @@ msgstr "Envios concluídos"
 
 #: order/templates/order/sales_order_base.html:305
 msgid "Sales Order QR Code"
-msgstr ""
+msgstr "Código QR da venda"
 
 #: order/templates/order/sales_order_base.html:317
 msgid "Link Barcode to Sales Order"
-msgstr ""
+msgstr "Código de barras da venda"
 
 #: order/templates/order/sales_order_detail.html:18
 msgid "Sales Order Items"
@@ -5367,8 +5365,8 @@ msgid "Variant Of"
 msgstr "Variante de"
 
 #: part/models.py:861
-msgid "Part description"
-msgstr "Descrição da Peça"
+msgid "Part description (optional)"
+msgstr ""
 
 #: part/models.py:867
 msgid "Part keywords to improve visibility in search results"
@@ -6194,9 +6192,8 @@ msgid "You do not have permission to edit the BOM."
 msgstr "Você não tem permissões para editar a LDM."
 
 #: part/templates/part/bom.html:15
-#, python-format
-msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
-msgstr "A LDM para <em>%(part)s</em> foi alterada e deve ser validada.<br>"
+msgid "The BOM this part has been changed, and must be validated"
+msgstr ""
 
 #: part/templates/part/bom.html:17
 #, python-format
@@ -6575,7 +6572,7 @@ msgstr "Peça pode ser vendida a clientes"
 
 #: part/templates/part/part_base.html:147
 msgid "Part is not active"
-msgstr ""
+msgstr "Item bloqueado"
 
 #: part/templates/part/part_base.html:148
 #: templates/js/translated/company.js:930
@@ -6855,9 +6852,8 @@ msgid "Create new part variant"
 msgstr "Criar variante de peça"
 
 #: part/templates/part/variant_part.html:10
-#, python-format
-msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-msgstr "Criar uma nova variante do modelo <em>'%(full_name)s'</em>."
+msgid "Create a new variant part from this template"
+msgstr ""
 
 #: part/templatetags/inventree_extras.py:187
 msgid "Unknown database"
@@ -7041,19 +7037,20 @@ msgstr "Nenhum autor encontrado"
 msgid "No date found"
 msgstr "Nenhum dado encontrado"
 
-#: plugin/registry.py:450
-msgid "Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!"
-msgstr "O plugin `{plg_name}` não é compatível com a versão atual do InvenTree {version.inventreeVersion()}!"
-
 #: plugin/registry.py:452
 #, python-brace-format
-msgid "Plugin requires at least version {plg_i.MIN_VERSION}"
-msgstr "Extensão requer pelo menos a versão {plg_i.MIN_VERSION}"
+msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
+msgstr ""
 
 #: plugin/registry.py:454
 #, python-brace-format
-msgid "Plugin requires at most version {plg_i.MAX_VERSION}"
-msgstr "Extensão requer no máximo a versão {plg_i.MAX_VERSION}"
+msgid "Plugin requires at least version {v}"
+msgstr ""
+
+#: plugin/registry.py:456
+#, python-brace-format
+msgid "Plugin requires at most version {v}"
+msgstr ""
 
 #: plugin/samples/integration/sample.py:39
 msgid "Enable PO"
@@ -7194,7 +7191,7 @@ msgstr "Filtros de consultas de pedidos de venda"
 
 #: report/models.py:520
 msgid "Return order query filters"
-msgstr ""
+msgstr "Filtrar pesquisa de itens devolvidos"
 
 #: report/models.py:573
 msgid "Snippet"
@@ -7279,12 +7276,12 @@ msgid "Test Results"
 msgstr "Resultados do teste"
 
 #: report/templates/report/inventree_test_report_base.html:102
-#: stock/models.py:2209 templates/js/translated/stock.js:1398
+#: stock/models.py:2210 templates/js/translated/stock.js:1398
 msgid "Test"
 msgstr "Teste"
 
 #: report/templates/report/inventree_test_report_base.html:103
-#: stock/models.py:2215
+#: stock/models.py:2216
 msgid "Result"
 msgstr "Resultado"
 
@@ -7298,11 +7295,11 @@ msgstr "Não Aprovado"
 
 #: report/templates/report/inventree_test_report_base.html:139
 msgid "No result (required)"
-msgstr ""
+msgstr "Sem resultado (obrigatório)"
 
 #: report/templates/report/inventree_test_report_base.html:141
 msgid "No result"
-msgstr ""
+msgstr "Nenhum resultado"
 
 #: report/templates/report/inventree_test_report_base.html:154
 #: stock/templates/stock/stock_sidebar.html:16
@@ -7565,90 +7562,89 @@ msgstr "Quantidade não deve exceder a quantidade disponível em estoque ({n})"
 
 #: stock/models.py:1376
 msgid "Serial numbers must be a list of integers"
-msgstr ""
+msgstr "Números de série devem ser uma lista de números inteiros"
 
 #: stock/models.py:1379
 msgid "Quantity does not match serial numbers"
+msgstr "A quantidade não corresponde aos números de série"
+
+#: stock/models.py:1386 stock/serializers.py:349
+msgid "Serial numbers already exist"
 msgstr ""
 
-#: stock/models.py:1386
-#, python-brace-format
-msgid "Serial numbers already exist: {exists}"
-msgstr ""
-
-#: stock/models.py:1456
+#: stock/models.py:1457
 msgid "Stock item has been assigned to a sales order"
-msgstr ""
+msgstr "Item em estoque foi reservado para um pedido"
 
-#: stock/models.py:1459
+#: stock/models.py:1460
 msgid "Stock item is installed in another item"
-msgstr ""
+msgstr "Item em estoque está instalado em outro item"
 
-#: stock/models.py:1462
+#: stock/models.py:1463
 msgid "Stock item contains other items"
-msgstr ""
+msgstr "item em estoque contem outro(s) items"
 
-#: stock/models.py:1465
+#: stock/models.py:1466
 msgid "Stock item has been assigned to a customer"
-msgstr ""
+msgstr "Item em estoque foi reservado para outro cliente"
 
-#: stock/models.py:1468
+#: stock/models.py:1469
 msgid "Stock item is currently in production"
-msgstr ""
+msgstr "Item no estoque está em produção no momento"
 
-#: stock/models.py:1471
+#: stock/models.py:1472
 msgid "Serialized stock cannot be merged"
-msgstr ""
+msgstr "Itens de série não podem ser mesclados"
 
-#: stock/models.py:1478 stock/serializers.py:946
+#: stock/models.py:1479 stock/serializers.py:946
 msgid "Duplicate stock items"
-msgstr ""
+msgstr "Item de estoque duplicado"
 
-#: stock/models.py:1482
+#: stock/models.py:1483
 msgid "Stock items must refer to the same part"
-msgstr ""
+msgstr "Itens de estoque devem se referir à mesma peça"
 
-#: stock/models.py:1486
+#: stock/models.py:1487
 msgid "Stock items must refer to the same supplier part"
-msgstr ""
+msgstr "Itens de estoque devem se referir à mesma peça do fornecedor"
 
-#: stock/models.py:1490
+#: stock/models.py:1491
 msgid "Stock status codes must match"
 msgstr "Códigos de estado do estoque devem corresponder"
 
-#: stock/models.py:1659
+#: stock/models.py:1660
 msgid "StockItem cannot be moved as it is not in stock"
-msgstr ""
+msgstr "Item do estoque não pode ser realocado se não houver estoque da mesma"
 
-#: stock/models.py:2127
+#: stock/models.py:2128
 msgid "Entry notes"
-msgstr ""
+msgstr "Observações de entrada"
 
-#: stock/models.py:2185
+#: stock/models.py:2186
 msgid "Value must be provided for this test"
-msgstr ""
+msgstr "Deve-se fornecer o valor desse teste"
 
-#: stock/models.py:2191
+#: stock/models.py:2192
 msgid "Attachment must be uploaded for this test"
-msgstr ""
+msgstr "O anexo deve ser enviado para este teste"
 
-#: stock/models.py:2210
+#: stock/models.py:2211
 msgid "Test name"
-msgstr ""
+msgstr "Nome de teste"
 
-#: stock/models.py:2216
+#: stock/models.py:2217
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:2222
+#: stock/models.py:2223
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:2229
+#: stock/models.py:2230
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:2235
+#: stock/models.py:2236
 msgid "Test notes"
 msgstr ""
 
@@ -7683,10 +7679,6 @@ msgstr ""
 
 #: stock/serializers.py:328
 msgid "Serial numbers cannot be assigned to this part"
-msgstr ""
-
-#: stock/serializers.py:349
-msgid "Serial numbers already exist"
 msgstr ""
 
 #: stock/serializers.py:389
@@ -7850,89 +7842,89 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:82 templates/stock_table.html:33
 msgid "Add stock"
-msgstr ""
+msgstr "Adicionar estoque"
 
 #: stock/templates/stock/item_base.html:83 templates/stock_table.html:34
 msgid "Remove stock"
-msgstr ""
+msgstr "Remover estoque"
 
 #: stock/templates/stock/item_base.html:86
 msgid "Serialize stock"
-msgstr ""
+msgstr "Serializar estoque"
 
 #: stock/templates/stock/item_base.html:89
 #: stock/templates/stock/location.html:94 templates/stock_table.html:36
 msgid "Transfer stock"
-msgstr ""
+msgstr "Transferir estoque"
 
 #: stock/templates/stock/item_base.html:92 templates/stock_table.html:39
 msgid "Assign to customer"
-msgstr ""
+msgstr "Disponibilizar para o cliente"
 
 #: stock/templates/stock/item_base.html:95
 msgid "Return to stock"
-msgstr ""
+msgstr "Devolver ao estoque"
 
 #: stock/templates/stock/item_base.html:98
 msgid "Uninstall stock item"
-msgstr ""
+msgstr "Desinstalar o item do estoque"
 
 #: stock/templates/stock/item_base.html:98
 msgid "Uninstall"
-msgstr ""
+msgstr "Desinstalar"
 
 #: stock/templates/stock/item_base.html:102
 msgid "Install stock item"
-msgstr ""
+msgstr "Instalar item do estoque"
 
 #: stock/templates/stock/item_base.html:102
 msgid "Install"
-msgstr ""
+msgstr "Instalar"
 
 #: stock/templates/stock/item_base.html:116
 msgid "Convert to variant"
-msgstr ""
+msgstr "Converter em variante"
 
 #: stock/templates/stock/item_base.html:119
 msgid "Duplicate stock item"
-msgstr ""
+msgstr "Duplicar item"
 
 #: stock/templates/stock/item_base.html:121
 msgid "Edit stock item"
-msgstr ""
+msgstr "Editar item de estoque"
 
 #: stock/templates/stock/item_base.html:124
 msgid "Delete stock item"
-msgstr ""
+msgstr "Excluir item de estoque"
 
 #: stock/templates/stock/item_base.html:194
 msgid "Parent Item"
-msgstr ""
+msgstr "Item Primário"
 
 #: stock/templates/stock/item_base.html:212
 msgid "No manufacturer set"
-msgstr ""
+msgstr "Nenhum fabricante definido"
 
 #: stock/templates/stock/item_base.html:252
 msgid "You are not in the list of owners of this item. This stock item cannot be edited."
-msgstr ""
+msgstr "Vc não está autorizado a editar esse item."
 
 #: stock/templates/stock/item_base.html:253
 #: stock/templates/stock/location.html:147
 msgid "Read only"
-msgstr ""
+msgstr "Somente leitura"
 
 #: stock/templates/stock/item_base.html:266
 msgid "This stock item is unavailable"
-msgstr ""
+msgstr "Este item não está disponível no estoque"
 
 #: stock/templates/stock/item_base.html:272
 msgid "This stock item is in production and cannot be edited."
-msgstr ""
+msgstr "Este item de estoque está em produção e não pode ser editado."
 
 #: stock/templates/stock/item_base.html:273
 msgid "Edit the stock item from the build view."
-msgstr ""
+msgstr "Edite este item usando o formulário de construçao."
 
 #: stock/templates/stock/item_base.html:288
 msgid "This stock item is allocated to Sales Order"
@@ -8697,8 +8689,8 @@ msgid "Change Password"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:23
-#: templates/js/translated/helpers.js:53 templates/notes_buttons.html:3
-#: templates/notes_buttons.html:4
+#: templates/js/translated/helpers.js:53 templates/js/translated/pricing.js:610
+#: templates/notes_buttons.html:3 templates/notes_buttons.html:4
 msgid "Edit"
 msgstr ""
 
@@ -10720,16 +10712,6 @@ msgstr ""
 
 #: templates/js/translated/pricing.js:554
 msgid "No price break data available"
-msgstr ""
-
-#: templates/js/translated/pricing.js:610
-#, python-brace-format
-msgid "Edit ${human_name}"
-msgstr ""
-
-#: templates/js/translated/pricing.js:611
-#, python-brace-format
-msgid "Delete ${human_name}"
 msgstr ""
 
 #: templates/js/translated/pricing.js:737

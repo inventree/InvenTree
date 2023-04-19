@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-10 14:27+0000\n"
-"PO-Revision-Date: 2023-04-10 17:58\n"
+"POT-Creation-Date: 2023-04-17 14:13+0000\n"
+"PO-Revision-Date: 2023-04-17 18:25\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -23,7 +23,7 @@ msgstr "Point de terminaison de l'API introuvable"
 
 #: InvenTree/api.py:299
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "L'utilisateur n'a pas la permission de voir ce modèle"
 
 #: InvenTree/exceptions.py:94
 msgid "Error details can be found in the admin panel"
@@ -41,7 +41,7 @@ msgstr "Entrer la date"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:41
 #: part/models.py:2989 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:121 stock/models.py:2126 stock/models.py:2234
+#: stock/admin.py:121 stock/models.py:2127 stock/models.py:2235
 #: stock/serializers.py:317 stock/serializers.py:450 stock/serializers.py:531
 #: stock/serializers.py:810 stock/serializers.py:909 stock/serializers.py:1041
 #: stock/templates/stock/stock_sidebar.html:25
@@ -147,7 +147,7 @@ msgstr "Chaîne de numéro de série vide"
 
 #: InvenTree/helpers.py:640
 msgid "Duplicate serial"
-msgstr "Numéro de série dupliqué"
+msgstr "Numéro de série en doublon"
 
 #: InvenTree/helpers.py:673 InvenTree/helpers.py:708
 #, python-brace-format
@@ -209,7 +209,7 @@ msgstr "Fichier manquant"
 msgid "Missing external link"
 msgstr "Lien externe manquant"
 
-#: InvenTree/models.py:409 stock/models.py:2228
+#: InvenTree/models.py:409 stock/models.py:2229
 #: templates/js/translated/attachment.js:109
 #: templates/js/translated/attachment.js:296
 msgid "Attachment"
@@ -612,7 +612,7 @@ msgstr "Retourné"
 
 #: InvenTree/status_codes.py:182 InvenTree/status_codes.py:395
 msgid "In Progress"
-msgstr ""
+msgstr "En Cours"
 
 #: InvenTree/status_codes.py:183 order/models.py:1295
 #: templates/js/translated/sales_order.js:1418
@@ -747,7 +747,7 @@ msgstr "Fabrication"
 
 #: InvenTree/status_codes.py:430
 msgid "Return"
-msgstr ""
+msgstr "Retour"
 
 #: InvenTree/status_codes.py:431
 msgid "Repair"
@@ -854,8 +854,8 @@ msgid "Reference"
 msgstr "Référence"
 
 #: build/models.py:169
-msgid "Brief description of the build"
-msgstr "Brève description de la fabrication"
+msgid "Brief description of the build (optional)"
+msgstr ""
 
 #: build/models.py:177 build/templates/build/build_base.html:189
 #: build/templates/build/detail.html:87
@@ -1833,23 +1833,24 @@ msgstr "Sorties incomplètes"
 msgid "Completed Outputs"
 msgstr "Sorties de Construction terminées"
 
-#: common/files.py:62
-msgid "Unsupported file format: {ext.upper()}"
-msgstr "Format de fichier non pris en charge : {ext.upper()}"
+#: common/files.py:63
+#, python-brace-format
+msgid "Unsupported file format: {fmt}"
+msgstr ""
 
-#: common/files.py:64
+#: common/files.py:65
 msgid "Error reading file (invalid encoding)"
 msgstr "Erreur de lecture du fichier (encodage invalide)"
 
-#: common/files.py:69
+#: common/files.py:70
 msgid "Error reading file (invalid format)"
 msgstr "Erreur de lecture du fichier (format invalide)"
 
-#: common/files.py:71
+#: common/files.py:72
 msgid "Error reading file (incorrect dimension)"
 msgstr "Erreur de lecture du fichier (dimension incorrecte)"
 
-#: common/files.py:73
+#: common/files.py:74
 msgid "Error reading file (data could be corrupted)"
 msgstr "Erreur de lecture du fichier (les données pourraient être corrompues)"
 
@@ -3056,7 +3057,7 @@ msgstr "Nombre de résultats à afficher dans chaque section de la fenêtre de p
 
 #: common/models.py:1983
 msgid "Regex Search"
-msgstr ""
+msgstr "Recherche Regex"
 
 #: common/models.py:1984
 msgid "Enable regular expressions in search queries"
@@ -3481,7 +3482,7 @@ msgstr "Nom du paramètre"
 
 #: company/models.py:394
 #: report/templates/report/inventree_test_report_base.html:104
-#: stock/models.py:2221 templates/js/translated/company.js:857
+#: stock/models.py:2222 templates/js/translated/company.js:857
 #: templates/js/translated/company.js:1062 templates/js/translated/part.js:1268
 #: templates/js/translated/stock.js:1425
 msgid "Value"
@@ -3902,8 +3903,8 @@ msgstr "Supprimer les pièces du fournisseur"
 #: company/templates/company/manufacturer_part.html:183
 #: part/templates/part/detail.html:393 part/templates/part/detail.html:423
 #: templates/js/translated/forms.js:499 templates/js/translated/helpers.js:58
-#: templates/js/translated/part.js:313 templates/js/translated/stock.js:186
-#: users/models.py:243
+#: templates/js/translated/part.js:313 templates/js/translated/pricing.js:611
+#: templates/js/translated/stock.js:186 users/models.py:243
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -4187,8 +4188,8 @@ msgid "Contact does not match selected company"
 msgstr ""
 
 #: order/models.py:200
-msgid "Order description"
-msgstr "Description de la commande"
+msgid "Order description (optional)"
+msgstr ""
 
 #: order/models.py:202 order/models.py:1063 order/models.py:1413
 msgid "Link to external page"
@@ -4732,7 +4733,11 @@ msgstr ""
 
 #: order/templates/order/order_base.html:79
 #: order/templates/order/order_base.html:80
-msgid "Submit Order"
+#: order/templates/order/return_order_base.html:83
+#: order/templates/order/return_order_base.html:84
+#: order/templates/order/sales_order_base.html:84
+#: order/templates/order/sales_order_base.html:85
+msgid "Issue Order"
 msgstr ""
 
 #: order/templates/order/order_base.html:83
@@ -4974,13 +4979,6 @@ msgstr ""
 #: order/templates/order/return_order_base.html:65
 #: order/templates/order/sales_order_base.html:65
 msgid "Print packing list"
-msgstr ""
-
-#: order/templates/order/return_order_base.html:83
-#: order/templates/order/return_order_base.html:84
-#: order/templates/order/sales_order_base.html:84
-#: order/templates/order/sales_order_base.html:85
-msgid "Issue Order"
 msgstr ""
 
 #: order/templates/order/return_order_base.html:140
@@ -5367,8 +5365,8 @@ msgid "Variant Of"
 msgstr ""
 
 #: part/models.py:861
-msgid "Part description"
-msgstr "Description du composant"
+msgid "Part description (optional)"
+msgstr ""
 
 #: part/models.py:867
 msgid "Part keywords to improve visibility in search results"
@@ -6194,8 +6192,7 @@ msgid "You do not have permission to edit the BOM."
 msgstr ""
 
 #: part/templates/part/bom.html:15
-#, python-format
-msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
+msgid "The BOM this part has been changed, and must be validated"
 msgstr ""
 
 #: part/templates/part/bom.html:17
@@ -6855,8 +6852,7 @@ msgid "Create new part variant"
 msgstr ""
 
 #: part/templates/part/variant_part.html:10
-#, python-format
-msgid "Create a new variant of template <em>'%(full_name)s'</em>."
+msgid "Create a new variant part from this template"
 msgstr ""
 
 #: part/templatetags/inventree_extras.py:187
@@ -7041,18 +7037,19 @@ msgstr ""
 msgid "No date found"
 msgstr ""
 
-#: plugin/registry.py:450
-msgid "Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!"
-msgstr "L'extension `{plg_name}` n'est pas compatible avec la version actuelle d'InvenTree {version.inventreeVersion()} !"
-
 #: plugin/registry.py:452
 #, python-brace-format
-msgid "Plugin requires at least version {plg_i.MIN_VERSION}"
+msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
 #: plugin/registry.py:454
 #, python-brace-format
-msgid "Plugin requires at most version {plg_i.MAX_VERSION}"
+msgid "Plugin requires at least version {v}"
+msgstr ""
+
+#: plugin/registry.py:456
+#, python-brace-format
+msgid "Plugin requires at most version {v}"
 msgstr ""
 
 #: plugin/samples/integration/sample.py:39
@@ -7279,12 +7276,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:102
-#: stock/models.py:2209 templates/js/translated/stock.js:1398
+#: stock/models.py:2210 templates/js/translated/stock.js:1398
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:103
-#: stock/models.py:2215
+#: stock/models.py:2216
 msgid "Result"
 msgstr "Résultat"
 
@@ -7571,84 +7568,83 @@ msgstr "Les numéros de série doivent être une liste de nombres entiers"
 msgid "Quantity does not match serial numbers"
 msgstr "La quantité ne correspond pas au nombre de numéros de série"
 
-#: stock/models.py:1386
-#, python-brace-format
-msgid "Serial numbers already exist: {exists}"
-msgstr "Les numéros de série existent déja : {exists}"
+#: stock/models.py:1386 stock/serializers.py:349
+msgid "Serial numbers already exist"
+msgstr "Les numéros de série existent déjà"
 
-#: stock/models.py:1456
+#: stock/models.py:1457
 msgid "Stock item has been assigned to a sales order"
 msgstr ""
 
-#: stock/models.py:1459
+#: stock/models.py:1460
 msgid "Stock item is installed in another item"
 msgstr ""
 
-#: stock/models.py:1462
+#: stock/models.py:1463
 msgid "Stock item contains other items"
 msgstr ""
 
-#: stock/models.py:1465
+#: stock/models.py:1466
 msgid "Stock item has been assigned to a customer"
 msgstr ""
 
-#: stock/models.py:1468
+#: stock/models.py:1469
 msgid "Stock item is currently in production"
 msgstr ""
 
-#: stock/models.py:1471
+#: stock/models.py:1472
 msgid "Serialized stock cannot be merged"
 msgstr ""
 
-#: stock/models.py:1478 stock/serializers.py:946
+#: stock/models.py:1479 stock/serializers.py:946
 msgid "Duplicate stock items"
 msgstr ""
 
-#: stock/models.py:1482
+#: stock/models.py:1483
 msgid "Stock items must refer to the same part"
 msgstr ""
 
-#: stock/models.py:1486
+#: stock/models.py:1487
 msgid "Stock items must refer to the same supplier part"
 msgstr ""
 
-#: stock/models.py:1490
+#: stock/models.py:1491
 msgid "Stock status codes must match"
 msgstr ""
 
-#: stock/models.py:1659
+#: stock/models.py:1660
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:2127
+#: stock/models.py:2128
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:2185
+#: stock/models.py:2186
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:2191
+#: stock/models.py:2192
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:2210
+#: stock/models.py:2211
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:2216
+#: stock/models.py:2217
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:2222
+#: stock/models.py:2223
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:2229
+#: stock/models.py:2230
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:2235
+#: stock/models.py:2236
 msgid "Test notes"
 msgstr ""
 
@@ -7684,10 +7680,6 @@ msgstr ""
 #: stock/serializers.py:328
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "Les numéros de série ne peuvent pas être assignés à cette pièce"
-
-#: stock/serializers.py:349
-msgid "Serial numbers already exist"
-msgstr "Les numéros de série existent déjà"
 
 #: stock/serializers.py:389
 msgid "Select stock item to install"
@@ -8697,8 +8689,8 @@ msgid "Change Password"
 msgstr "Changer le mot de passe"
 
 #: templates/InvenTree/settings/user.html:23
-#: templates/js/translated/helpers.js:53 templates/notes_buttons.html:3
-#: templates/notes_buttons.html:4
+#: templates/js/translated/helpers.js:53 templates/js/translated/pricing.js:610
+#: templates/notes_buttons.html:3 templates/notes_buttons.html:4
 msgid "Edit"
 msgstr "Modifier"
 
@@ -10720,16 +10712,6 @@ msgstr ""
 
 #: templates/js/translated/pricing.js:554
 msgid "No price break data available"
-msgstr ""
-
-#: templates/js/translated/pricing.js:610
-#, python-brace-format
-msgid "Edit ${human_name}"
-msgstr ""
-
-#: templates/js/translated/pricing.js:611
-#, python-brace-format
-msgid "Delete ${human_name}"
 msgstr ""
 
 #: templates/js/translated/pricing.js:737
