@@ -16,7 +16,7 @@ from rest_framework.response import Response
 
 import order.models as models
 import order.serializers as serializers
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, ProjectCode
 from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
@@ -135,6 +135,11 @@ class OrderFilter(rest_filters.FilterSet):
             return queryset.filter(status__in=self.Meta.model.get_status_class().OPEN)
         else:
             return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
+
+    project_code = rest_filters.ModelChoiceFilter(
+        queryset=ProjectCode.objects.all(),
+        field_name='project_code'
+    )
 
 
 class LineItemFilter(rest_filters.FilterSet):

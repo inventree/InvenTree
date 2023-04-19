@@ -92,6 +92,10 @@ class ProjectCode(models.Model):
         """Return the API URL for this model."""
         return reverse('api-project-code-list')
 
+    def __str__(self):
+        """String representation of a ProjectCode."""
+        return self.code
+
     code = models.CharField(
         max_length=50,
         unique=True,
