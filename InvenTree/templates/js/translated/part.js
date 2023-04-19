@@ -20,6 +20,7 @@
 
 /* exported
     createPart,
+    createPartCategory,
     deletePart,
     deletePartCategory,
     duplicateBom,
@@ -253,8 +254,8 @@ function partFields(options={}) {
 /*
  * Construct a set of fields for a PartCategory intance
  */
-function categoryFields() {
-    return {
+function categoryFields(options={}) {
+    let fields = {
         parent: {
             help_text: '{% trans "Parent part category" %}',
             required: false,
@@ -276,6 +277,28 @@ function categoryFields() {
             placeholder: 'fas fa-tag',
         },
     };
+
+    if (options.parent) {
+        fields.parent.value = options.parent;
+    }
+
+    return fields;
+}
+
+
+// Create a PartCategory via the API
+function createPartCategory(options={}) {
+    let fields = categoryFields(options);
+
+    constructForm('{% url "api-part-category-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Create Part Category" %}',
+        follow: true,
+        persist: true,
+        persistMessage: '{% trans "Create new category after this one" %}',
+        successMessage: '{% trans "Part category created" %}'
+    });
 }
 
 
@@ -349,7 +372,7 @@ function createPart(options={}) {
         fields: partFields(options),
         groups: partGroups(),
         title: '{% trans "Create Part" %}',
-        reloadFormAfterSuccess: true,
+        persist: true,
         persistMessage: '{% trans "Create another part after this one" %}',
         successMessage: '{% trans "Part created successfully" %}',
         onSuccess: function(data) {
