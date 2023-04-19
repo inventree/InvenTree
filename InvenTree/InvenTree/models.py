@@ -24,7 +24,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 import InvenTree.format
 import InvenTree.helpers
 from common.models import InvenTreeSetting
-from InvenTree.fields import InvenTreeURLField
+from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
 from InvenTree.sanitizer import sanitize_svg
 
 logger = logging.getLogger('inventree')
@@ -668,6 +668,27 @@ class InvenTreeTree(MPTTModel):
     def __str__(self):
         """String representation of a category is the full path to that category."""
         return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
+
+
+class InvenTreeNotesMixin(models.Model):
+    """A mixin class for adding notes functionality to a model class.
+
+    The following fields are added to any model which implements this mixin:
+
+    - notes : A text field for storing notes
+    """
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+        abstract = True
+
+    notes = InvenTreeNotesField(
+        verbose_name=_('Notes'),
+        help_text=_('Markdown notes (optional)'),
+    )
 
 
 class InvenTreeBarcodeMixin(models.Model):
