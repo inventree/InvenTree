@@ -87,6 +87,11 @@ class EmptyURLValidator(URLValidator):
 class ProjectCode(models.Model):
     """A ProjectCode is a unique identifier for a project."""
 
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-project-code-list')
+
     code = models.CharField(
         max_length=50,
         unique=True,

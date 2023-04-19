@@ -62,6 +62,9 @@ function purchaseOrderFields(options={}) {
             }
         },
         supplier_reference: {},
+        project_code: {
+            icon: 'fa-list',
+        },
         target_date: {
             icon: 'fa-calendar-alt',
         },

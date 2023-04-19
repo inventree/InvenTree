@@ -46,6 +46,9 @@ function returnOrderFields(options={}) {
             }
         },
         customer_reference: {},
+        project_code: {
+            icon: 'fa-list',
+        },
         target_date: {
             icon: 'fa-calendar-alt',
         },
