@@ -573,7 +573,7 @@ function getSupplierPartFilters() {
 
 
 // Return a dictionary of filters for the "part" table
-function getPartFilters() {
+function getPartTableFilters() {
     return {
         cascade: {
             type: 'bool',
