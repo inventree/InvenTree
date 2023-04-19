@@ -181,11 +181,12 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'common_inventreeusersetting',
-        'common_webhookendpoint',
-        'common_webhookmessage',
         'common_notificationentry',
         'common_notificationmessage',
         'common_notesimage',
+        'common_projectcode',
+        'common_webhookendpoint',
+        'common_webhookmessage',
         'users_owner',
 
         # Third-party tables
