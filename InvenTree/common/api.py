@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
-from InvenTree.api import BulkDeleteMixin
+from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors
@@ -508,7 +508,10 @@ common_api_urls = [
 
     # Project codes
     re_path(r'^project-code/', include([
-        path(r'<int:pk>/', ProjectCodeDetail.as_view(), name='api-project-code-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': common.models.ProjectCode}, name='api-project-code-metadata'),
+            re_path(r'^.*$', ProjectCodeDetail.as_view(), name='api-project-code-detail'),
+        ])),
         re_path(r'^.*$', ProjectCodeList.as_view(), name='api-project-code-list'),
     ])),
 
