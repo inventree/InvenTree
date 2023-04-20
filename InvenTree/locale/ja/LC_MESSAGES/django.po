@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-20 12:53+0000\n"
-"PO-Revision-Date: 2023-04-19 18:26\n"
+"POT-Creation-Date: 2023-04-20 12:41+0000\n"
+"PO-Revision-Date: 2023-04-20 18:33\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -10448,16 +10448,12 @@ msgid "Create Part Category"
 msgstr ""
 
 #: templates/js/translated/part.js:299
-#, fuzzy
-#| msgid "Create another part after this one"
 msgid "Create new category after this one"
-msgstr "続けて別のパーツを作る"
+msgstr ""
 
 #: templates/js/translated/part.js:300
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Part category created"
-msgstr "在庫商品を作成しました"
+msgstr ""
 
 #: templates/js/translated/part.js:314
 msgid "Edit Part Category"
@@ -11327,16 +11323,12 @@ msgid "New Stock Location"
 msgstr ""
 
 #: templates/js/translated/stock.js:163
-#, fuzzy
-#| msgid "Create another part after this one"
 msgid "Create another location after this one"
-msgstr "続けて別のパーツを作る"
+msgstr ""
 
 #: templates/js/translated/stock.js:164
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Stock location created"
-msgstr "在庫商品を作成しました"
+msgstr ""
 
 #: templates/js/translated/stock.js:178
 msgid "Are you sure you want to delete this stock location?"
@@ -11391,10 +11383,8 @@ msgid "Edit Stock Item"
 msgstr ""
 
 #: templates/js/translated/stock.js:480
-#, fuzzy
-#| msgid "Create another part after this one"
 msgid "Create another item after this one"
-msgstr "続けて別のパーツを作る"
+msgstr ""
 
 #: templates/js/translated/stock.js:492
 msgid "Created new stock item"
@@ -12152,8 +12142,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12332,3 +12321,4 @@ msgstr ""
 #: users/models.py:245
 msgid "Permission to delete items"
 msgstr ""
+
