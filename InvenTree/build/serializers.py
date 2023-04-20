@@ -13,6 +13,7 @@ from rest_framework.serializers import ValidationError
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
 from InvenTree.serializers import UserSerializer
 
+import common.serializers
 import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.status_codes import StockStatus
@@ -46,6 +47,8 @@ class BuildSerializer(InvenTreeModelSerializer):
             'parent',
             'part',
             'part_detail',
+            'project_code',
+            'project_code_detail',
             'overdue',
             'reference',
             'sales_order',
@@ -86,6 +89,9 @@ class BuildSerializer(InvenTreeModelSerializer):
     responsible_detail = OwnerSerializer(source='responsible', read_only=True)
 
     barcode_hash = serializers.CharField(read_only=True)
+
+    # Detail for project code field
+    project_code_detail = common.serializers.ProjectCodeSerializer(source='project_code', read_only=True, many=False)
 
     @staticmethod
     def annotate_queryset(queryset):
