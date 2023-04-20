@@ -10,6 +10,7 @@ from ..base.integration.AppMixin import AppMixin
 from ..base.integration.mixins import (APICallMixin, NavigationMixin,
                                        PanelMixin, SettingsContentMixin,
                                        ValidationMixin)
+from ..base.integration.ReportMixin import ReportMixin
 from ..base.integration.ScheduleMixin import ScheduleMixin
 from ..base.integration.SettingsMixin import SettingsMixin
 from ..base.integration.UrlsMixin import UrlsMixin
@@ -22,6 +23,7 @@ __all__ = [
     'EventMixin',
     'LabelPrintingMixin',
     'NavigationMixin',
+    'ReportMixin',
     'ScheduleMixin',
     'SettingsContentMixin',
     'SettingsMixin',
