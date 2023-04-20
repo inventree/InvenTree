@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-10 14:27+0000\n"
-"PO-Revision-Date: 2023-04-10 17:58\n"
+"POT-Creation-Date: 2023-04-17 14:13+0000\n"
+"PO-Revision-Date: 2023-04-17 18:26\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -23,7 +23,7 @@ msgstr "API funkciót nem találom"
 
 #: InvenTree/api.py:299
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "Nincs jogosultságod az adatok megtekintéséhez"
 
 #: InvenTree/exceptions.py:94
 msgid "Error details can be found in the admin panel"
@@ -41,7 +41,7 @@ msgstr "Dátum megadása"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:41
 #: part/models.py:2989 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:121 stock/models.py:2126 stock/models.py:2234
+#: stock/admin.py:121 stock/models.py:2127 stock/models.py:2235
 #: stock/serializers.py:317 stock/serializers.py:450 stock/serializers.py:531
 #: stock/serializers.py:810 stock/serializers.py:909 stock/serializers.py:1041
 #: stock/templates/stock/stock_sidebar.html:25
@@ -209,7 +209,7 @@ msgstr "Hiányzó fájl"
 msgid "Missing external link"
 msgstr "Hiányzó külső link"
 
-#: InvenTree/models.py:409 stock/models.py:2228
+#: InvenTree/models.py:409 stock/models.py:2229
 #: templates/js/translated/attachment.js:109
 #: templates/js/translated/attachment.js:296
 msgid "Attachment"
@@ -612,7 +612,7 @@ msgstr "Visszaküldve"
 
 #: InvenTree/status_codes.py:182 InvenTree/status_codes.py:395
 msgid "In Progress"
-msgstr ""
+msgstr "Folyamatban"
 
 #: InvenTree/status_codes.py:183 order/models.py:1295
 #: templates/js/translated/sales_order.js:1418
@@ -731,15 +731,15 @@ msgstr "Gyártásra felhasználva"
 
 #: InvenTree/status_codes.py:340
 msgid "Shipped against Sales Order"
-msgstr ""
+msgstr "Vevői rendelésre kiszállítva"
 
 #: InvenTree/status_codes.py:342
 msgid "Received against Purchase Order"
-msgstr ""
+msgstr "Megrendelésre érkezett"
 
 #: InvenTree/status_codes.py:344
 msgid "Returned against Return Order"
-msgstr ""
+msgstr "Visszavéve"
 
 #: InvenTree/status_codes.py:358
 msgid "Production"
@@ -747,23 +747,23 @@ msgstr "Folyamatban"
 
 #: InvenTree/status_codes.py:430
 msgid "Return"
-msgstr ""
+msgstr "Visszavétel"
 
 #: InvenTree/status_codes.py:431
 msgid "Repair"
-msgstr ""
+msgstr "Javítás"
 
 #: InvenTree/status_codes.py:432
 msgid "Refund"
-msgstr ""
+msgstr "Visszatérítés"
 
 #: InvenTree/status_codes.py:433
 msgid "Replace"
-msgstr ""
+msgstr "Csere"
 
 #: InvenTree/status_codes.py:434
 msgid "Reject"
-msgstr ""
+msgstr "Elutasított"
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
@@ -854,8 +854,8 @@ msgid "Reference"
 msgstr "Azonosító"
 
 #: build/models.py:169
-msgid "Brief description of the build"
-msgstr "Gyártás rövid leírása"
+msgid "Brief description of the build (optional)"
+msgstr ""
 
 #: build/models.py:177 build/templates/build/build_base.html:189
 #: build/templates/build/detail.html:87
@@ -1635,11 +1635,11 @@ msgstr "Gyártási utasítás törlése"
 
 #: build/templates/build/build_base.html:290
 msgid "Build Order QR Code"
-msgstr ""
+msgstr "Gyártási utasítás QR kódja"
 
 #: build/templates/build/build_base.html:302
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Vonalkód gyártáshoz rendelése"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -1834,23 +1834,24 @@ msgstr "Befejezetlen kimenetek"
 msgid "Completed Outputs"
 msgstr "Befejezett kimenetek"
 
-#: common/files.py:62
-msgid "Unsupported file format: {ext.upper()}"
-msgstr "Nem támogatott fájl formátum: {ext.upper()}"
+#: common/files.py:63
+#, python-brace-format
+msgid "Unsupported file format: {fmt}"
+msgstr ""
 
-#: common/files.py:64
+#: common/files.py:65
 msgid "Error reading file (invalid encoding)"
 msgstr "Fájl beolvasási hiba (hibás encoding)"
 
-#: common/files.py:69
+#: common/files.py:70
 msgid "Error reading file (invalid format)"
 msgstr "Fájl beolvasási hiba (hibás formátum)"
 
-#: common/files.py:71
+#: common/files.py:72
 msgid "Error reading file (incorrect dimension)"
 msgstr "Fájl beolvasási hiba (hibás dimenzió)"
 
-#: common/files.py:73
+#: common/files.py:74
 msgid "Error reading file (data could be corrupted)"
 msgstr "Fájl beolvasási hiba (sérült lehet)"
 
@@ -2273,19 +2274,19 @@ msgstr "Alkatrész kategória alapértelmezett ikon (üres ha nincs)"
 
 #: common/models.py:1220
 msgid "Minimum Pricing Decimal Places"
-msgstr ""
+msgstr "Áraknál használt tizedesjegyek min. száma"
 
 #: common/models.py:1221
 msgid "Minimum number of decimal places to display when rendering pricing data"
-msgstr ""
+msgstr "Tizedejegyek minimális száma az árak megjelenítésekor"
 
 #: common/models.py:1231
 msgid "Maximum Pricing Decimal Places"
-msgstr ""
+msgstr "Áraknál használt tizedesjegyek max. száma"
 
 #: common/models.py:1232
 msgid "Maximum number of decimal places to display when rendering pricing data"
-msgstr ""
+msgstr "Tizedejegyek maximális száma az árak megjelenítésekor"
 
 #: common/models.py:1242
 msgid "Use Supplier Pricing"
@@ -2505,27 +2506,27 @@ msgstr "Szükséges minta a gyártási utasítás azonosító mező előállít�
 
 #: common/models.py:1445
 msgid "Enable Return Orders"
-msgstr ""
+msgstr "Visszavétel engedélyezése"
 
 #: common/models.py:1446
 msgid "Enable return order functionality in the user interface"
-msgstr ""
+msgstr "Visszavételi utasítások engedélyezése a felületen"
 
 #: common/models.py:1452
 msgid "Return Order Reference Pattern"
-msgstr ""
+msgstr "Visszavételi utasítás azonosító minta"
 
 #: common/models.py:1453
 msgid "Required pattern for generating Return Order reference field"
-msgstr ""
+msgstr "Szükséges minta a visszavételi utasítás azonosító mező előállításához"
 
 #: common/models.py:1459
 msgid "Edit Completed Return Orders"
-msgstr ""
+msgstr "Befejezett visszavételi utasítás szerkesztése"
 
 #: common/models.py:1460
 msgid "Allow editing of return orders after they have been completed"
-msgstr ""
+msgstr "Visszavételi utasítások szerkesztésének engedélyezése befejezés után"
 
 #: common/models.py:1466
 msgid "Sales Order Reference Pattern"
@@ -3033,19 +3034,19 @@ msgstr "Inaktív vevői rendelések kihagyása a keresési előnézet találatai
 
 #: common/models.py:1962
 msgid "Search Return Orders"
-msgstr ""
+msgstr "Visszavételi utasítások keresése"
 
 #: common/models.py:1963
 msgid "Display return orders in search preview window"
-msgstr ""
+msgstr "Visszavételi utasítások megjelenítése a keresés előnézet ablakban"
 
 #: common/models.py:1969
 msgid "Exclude Inactive Return Orders"
-msgstr ""
+msgstr "Inaktív visszavételi utasítások kihagyása"
 
 #: common/models.py:1970
 msgid "Exclude inactive return orders from search preview window"
-msgstr ""
+msgstr "Inaktív visszavételi utasítások kihagyása a keresési előnézet találataiból"
 
 #: common/models.py:1976
 msgid "Search Preview Results"
@@ -3057,19 +3058,19 @@ msgstr "A keresési előnézetben megjelenítendő eredmények száma szekciónk
 
 #: common/models.py:1983
 msgid "Regex Search"
-msgstr ""
+msgstr "Regex keresés"
 
 #: common/models.py:1984
 msgid "Enable regular expressions in search queries"
-msgstr ""
+msgstr "Reguláris kifejezések engedélyezése a keresésekben"
 
 #: common/models.py:1990
 msgid "Whole Word Search"
-msgstr ""
+msgstr "Teljes szó keresés"
 
 #: common/models.py:1991
 msgid "Search queries return results for whole word matches"
-msgstr ""
+msgstr "A keresések csak teljes szóra egyező találatokat adjanak"
 
 #: common/models.py:1997
 msgid "Show Quantity in Forms"
@@ -3275,7 +3276,7 @@ msgstr "Készlet érkezett egy beszerzési megrendeléshez"
 
 #: common/notifications.py:311
 msgid "Items have been received against a return order"
-msgstr ""
+msgstr "Készlet érkezett vissza egy visszavételi utasításhoz"
 
 #: common/notifications.py:423
 msgid "Error raised by plugin"
@@ -3368,7 +3369,7 @@ msgstr "Kapcsolattartó email címe"
 #: order/templates/order/return_order_base.html:176
 #: order/templates/order/sales_order_base.html:214
 msgid "Contact"
-msgstr "Kapcsolattartó"
+msgstr "Névjegy"
 
 #: company/models.py:127
 msgid "Point of contact"
@@ -3482,7 +3483,7 @@ msgstr "Paraméter neve"
 
 #: company/models.py:394
 #: report/templates/report/inventree_test_report_base.html:104
-#: stock/models.py:2221 templates/js/translated/company.js:857
+#: stock/models.py:2222 templates/js/translated/company.js:857
 #: templates/js/translated/company.js:1062 templates/js/translated/part.js:1268
 #: templates/js/translated/stock.js:1425
 msgid "Value"
@@ -3832,26 +3833,26 @@ msgstr "Hozzárendelt készlet"
 #: templates/js/translated/search.js:262 templates/navbar.html:65
 #: users/models.py:45
 msgid "Return Orders"
-msgstr ""
+msgstr "Visszavételi utasítások"
 
 #: company/templates/company/detail.html:195
 #: order/templates/order/return_orders.html:21
 msgid "Create new return order"
-msgstr ""
+msgstr "Visszavételi utasítás létrehozása"
 
 #: company/templates/company/detail.html:196
 #: order/templates/order/return_orders.html:22
 msgid "New Return Order"
-msgstr ""
+msgstr "Új visszavételi utasítás"
 
 #: company/templates/company/detail.html:236
 msgid "Company Contacts"
-msgstr ""
+msgstr "Cég névjegyek"
 
 #: company/templates/company/detail.html:240
 #: company/templates/company/detail.html:241
 msgid "Add Contact"
-msgstr ""
+msgstr "Névjegy hozzáadása"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -3903,8 +3904,8 @@ msgstr "Beszállítói alkatrész törlése"
 #: company/templates/company/manufacturer_part.html:183
 #: part/templates/part/detail.html:393 part/templates/part/detail.html:423
 #: templates/js/translated/forms.js:499 templates/js/translated/helpers.js:58
-#: templates/js/translated/part.js:313 templates/js/translated/stock.js:186
-#: users/models.py:243
+#: templates/js/translated/part.js:313 templates/js/translated/pricing.js:611
+#: templates/js/translated/stock.js:186 users/models.py:243
 msgid "Delete"
 msgstr "Törlés"
 
@@ -3949,7 +3950,7 @@ msgstr "Hozzárendelt készlet tételek"
 
 #: company/templates/company/sidebar.html:33
 msgid "Contacts"
-msgstr ""
+msgstr "Névjegyek"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:677
@@ -4185,11 +4186,11 @@ msgstr "A rendelés teljes ára"
 
 #: order/models.py:178
 msgid "Contact does not match selected company"
-msgstr ""
+msgstr "A kapcsolattartó nem egyezik a kiválasztott céggel"
 
 #: order/models.py:200
-msgid "Order description"
-msgstr "Rendelés leírása"
+msgid "Order description (optional)"
+msgstr ""
 
 #: order/models.py:202 order/models.py:1063 order/models.py:1413
 msgid "Link to external page"
@@ -4209,7 +4210,7 @@ msgstr "Felhasználó vagy csoport aki felelőse ennek a rendelésnek"
 
 #: order/models.py:233
 msgid "Point of contact for this order"
-msgstr ""
+msgstr "Kapcsolattartó ehhez a rendeléshez"
 
 #: order/models.py:237
 msgid "Order notes"
@@ -4288,7 +4289,7 @@ msgstr "A rendelés nem teljesíthető mivel nincs hozzárendelve alkatrész"
 
 #: order/models.py:830
 msgid "Only an open order can be marked as complete"
-msgstr ""
+msgstr "Csak nyitott rendelés jelölhető késznek"
 
 #: order/models.py:833 templates/js/translated/sales_order.js:441
 msgid "Order cannot be completed as there are incomplete shipments"
@@ -4493,19 +4494,19 @@ msgstr "Készlet foglalási mennyiség megadása"
 
 #: order/models.py:1674
 msgid "Return Order reference"
-msgstr ""
+msgstr "Visszavételi utasítás azonosító"
 
 #: order/models.py:1688
 msgid "Company from which items are being returned"
-msgstr ""
+msgstr "Cég akitől a tételek visszavételre kerülnek"
 
 #: order/models.py:1699
 msgid "Return order status"
-msgstr ""
+msgstr "Visszavételi utasítás állapota"
 
 #: order/models.py:1850
 msgid "Only serialized items can be assigned to a Return Order"
-msgstr ""
+msgstr "Csak szériaszámos tételek rendelhetők visszaszállítási utasításhoz"
 
 #: order/models.py:1858 order/models.py:1904
 #: order/templates/order/return_order_base.html:9
@@ -4514,32 +4515,32 @@ msgstr ""
 #: templates/js/translated/return_order.js:239
 #: templates/js/translated/stock.js:2720
 msgid "Return Order"
-msgstr ""
+msgstr "Visszavételi utasítás"
 
 #: order/models.py:1866
 msgid "Select item to return from customer"
-msgstr ""
+msgstr "Válaszd ki a vevőtől visszavenni kívánt tételt"
 
 #: order/models.py:1871
 msgid "Received Date"
-msgstr ""
+msgstr "Visszavételi dátum"
 
 #: order/models.py:1872
 msgid "The date this this return item was received"
-msgstr ""
+msgstr "Mikor lett visszavéve a tétel"
 
 #: order/models.py:1883 templates/js/translated/return_order.js:675
 #: templates/js/translated/table_filters.js:51
 msgid "Outcome"
-msgstr ""
+msgstr "Kimenetel"
 
 #: order/models.py:1883
 msgid "Outcome for this line item"
-msgstr ""
+msgstr "Sortétel végső kimenetele"
 
 #: order/models.py:1889
 msgid "Cost associated with return or repair for this line item"
-msgstr ""
+msgstr "Sortétel visszaküldésének vagy javításának költsége"
 
 #: order/serializers.py:228
 msgid "Order cannot be cancelled"
@@ -4603,7 +4604,7 @@ msgstr "Vonalkód"
 
 #: order/serializers.py:510
 msgid "Scanned barcode"
-msgstr ""
+msgstr "Beolvasott vonalkód"
 
 #: order/serializers.py:526
 msgid "Barcode is already in use"
@@ -4663,23 +4664,23 @@ msgstr "A következő sorozatszámok már ki lettek osztva"
 
 #: order/serializers.py:1529
 msgid "Return order line item"
-msgstr ""
+msgstr "Visszavételi utasítás sortétel"
 
 #: order/serializers.py:1536
 msgid "Line item does not match return order"
-msgstr ""
+msgstr "Sortétel nem egyezik a visszavételi utasítással"
 
 #: order/serializers.py:1539
 msgid "Line item has already been received"
-msgstr ""
+msgstr "A sortétel már beérkezett"
 
 #: order/serializers.py:1571
 msgid "Items can only be received against orders which are in progress"
-msgstr ""
+msgstr "Csak folyamatban lévő megrendelés tételeit lehet bevételezni"
 
 #: order/serializers.py:1652
 msgid "Line price currency"
-msgstr ""
+msgstr "Sortétel pénzneme"
 
 #: order/tasks.py:26
 msgid "Overdue Purchase Order"
@@ -4733,8 +4734,12 @@ msgstr "Rendelés másolása"
 
 #: order/templates/order/order_base.html:79
 #: order/templates/order/order_base.html:80
-msgid "Submit Order"
-msgstr "Megrendelés elküldése"
+#: order/templates/order/return_order_base.html:83
+#: order/templates/order/return_order_base.html:84
+#: order/templates/order/sales_order_base.html:84
+#: order/templates/order/sales_order_base.html:85
+msgid "Issue Order"
+msgstr "Rendelés kiküldése"
 
 #: order/templates/order/order_base.html:83
 msgid "Receive items"
@@ -4759,7 +4764,7 @@ msgstr "Rendelés befejezése"
 #: order/templates/order/return_order_base.html:102
 #: order/templates/order/sales_order_base.html:107
 msgid "Order Reference"
-msgstr "Rendelési azonosító"
+msgstr "Rendelés azonosítója"
 
 #: order/templates/order/order_base.html:115
 #: order/templates/order/return_order_base.html:107
@@ -4806,11 +4811,11 @@ msgstr "A teljes költség nem számolható"
 
 #: order/templates/order/order_base.html:330
 msgid "Purchase Order QR Code"
-msgstr ""
+msgstr "Beszerzési rendelés QR kódja"
 
 #: order/templates/order/order_base.html:342
 msgid "Link Barcode to Purchase Order"
-msgstr ""
+msgstr "Vonalkód hozzáadása a beszerzési rendeléshez"
 
 #: order/templates/order/order_wizard/match_fields.html:9
 #: part/templates/part/import_wizard/ajax_match_fields.html:9
@@ -4939,7 +4944,7 @@ msgstr "Sortétel hozzáadása"
 #: order/templates/order/return_order_detail.html:28
 #: order/templates/order/return_order_detail.html:29
 msgid "Receive Line Items"
-msgstr ""
+msgstr "Sortételek bevételezése"
 
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/purchase_order_detail.html:51
@@ -4970,19 +4975,12 @@ msgstr "Rendelés megjegyzések"
 
 #: order/templates/order/return_order_base.html:61
 msgid "Print return order report"
-msgstr ""
+msgstr "Visszavételi riport nyomtatása"
 
 #: order/templates/order/return_order_base.html:65
 #: order/templates/order/sales_order_base.html:65
 msgid "Print packing list"
 msgstr "Csomagolási lista nyomtatása"
-
-#: order/templates/order/return_order_base.html:83
-#: order/templates/order/return_order_base.html:84
-#: order/templates/order/sales_order_base.html:84
-#: order/templates/order/sales_order_base.html:85
-msgid "Issue Order"
-msgstr ""
 
 #: order/templates/order/return_order_base.html:140
 #: order/templates/order/sales_order_base.html:151
@@ -5006,15 +5004,15 @@ msgstr "Teljes költség"
 
 #: order/templates/order/return_order_base.html:258
 msgid "Return Order QR Code"
-msgstr ""
+msgstr "Visszavételi utasítás QR kódja"
 
 #: order/templates/order/return_order_base.html:270
 msgid "Link Barcode to Return Order"
-msgstr ""
+msgstr "Vonalkód visszavételi utasításhoz rendelése"
 
 #: order/templates/order/return_order_sidebar.html:5
 msgid "Order Details"
-msgstr ""
+msgstr "Visszavétel részletei"
 
 #: order/templates/order/sales_order_base.html:61
 msgid "Print sales order report"
@@ -5023,7 +5021,7 @@ msgstr "Vevői rendelés nyomtatása"
 #: order/templates/order/sales_order_base.html:89
 #: order/templates/order/sales_order_base.html:90
 msgid "Ship Items"
-msgstr ""
+msgstr "Tételek kiszállítása"
 
 #: order/templates/order/sales_order_base.html:93
 #: templates/js/translated/sales_order.js:419
@@ -5042,11 +5040,11 @@ msgstr "Kész szállítmányok"
 
 #: order/templates/order/sales_order_base.html:305
 msgid "Sales Order QR Code"
-msgstr ""
+msgstr "Vevő rendelés QR kódja"
 
 #: order/templates/order/sales_order_base.html:317
 msgid "Link Barcode to Sales Order"
-msgstr ""
+msgstr "Vonalkód hozzáadása a vevői rendeléshez"
 
 #: order/templates/order/sales_order_detail.html:18
 msgid "Sales Order Items"
@@ -5368,8 +5366,8 @@ msgid "Variant Of"
 msgstr "Ebből a sablonból"
 
 #: part/models.py:861
-msgid "Part description"
-msgstr "Alkatrész leírása"
+msgid "Part description (optional)"
+msgstr ""
 
 #: part/models.py:867
 msgid "Part keywords to improve visibility in search results"
@@ -6195,9 +6193,8 @@ msgid "You do not have permission to edit the BOM."
 msgstr "Nincs jogosultságod az alkatrészjegyzék szerkesztéséhez."
 
 #: part/templates/part/bom.html:15
-#, python-format
-msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
-msgstr "A <em>%(part)s</em> alkatrészhez tartozó alkatrészjegyzék megváltozott és jóvá kell hagyni.<br>"
+msgid "The BOM this part has been changed, and must be validated"
+msgstr ""
 
 #: part/templates/part/bom.html:17
 #, python-format
@@ -6576,7 +6573,7 @@ msgstr "Vevő által rendelhető, eladható"
 
 #: part/templates/part/part_base.html:147
 msgid "Part is not active"
-msgstr ""
+msgstr "Az alkatrész nem aktív"
 
 #: part/templates/part/part_base.html:148
 #: templates/js/translated/company.js:930
@@ -6856,9 +6853,8 @@ msgid "Create new part variant"
 msgstr "Alkatrész változat létrehozása"
 
 #: part/templates/part/variant_part.html:10
-#, python-format
-msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-msgstr "Új változat létrehozása a <em>'%(full_name)s'</em> sablonból."
+msgid "Create a new variant part from this template"
+msgstr ""
 
 #: part/templatetags/inventree_extras.py:187
 msgid "Unknown database"
@@ -7042,19 +7038,20 @@ msgstr "Nincs szerző"
 msgid "No date found"
 msgstr "Nincs dátum"
 
-#: plugin/registry.py:450
-msgid "Plugin `{plg_name}` is not compatible with the current InvenTree version {version.inventreeVersion()}!"
-msgstr "A {plg_name} plugin nem kompatibilis az aktuális applikáció verzióval {version.inventreeVersion()}!"
-
 #: plugin/registry.py:452
 #, python-brace-format
-msgid "Plugin requires at least version {plg_i.MIN_VERSION}"
-msgstr "A pluginhoz minimum {plg_i.MIN_VERSION} verzió kell"
+msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
+msgstr ""
 
 #: plugin/registry.py:454
 #, python-brace-format
-msgid "Plugin requires at most version {plg_i.MAX_VERSION}"
-msgstr "A pluginhoz maximum {plg_i.MAX_VERSION} verzió kell"
+msgid "Plugin requires at least version {v}"
+msgstr ""
+
+#: plugin/registry.py:456
+#, python-brace-format
+msgid "Plugin requires at most version {v}"
+msgstr ""
 
 #: plugin/samples/integration/sample.py:39
 msgid "Enable PO"
@@ -7195,7 +7192,7 @@ msgstr "Vevő rendelés lekérdezés szűrők"
 
 #: report/models.py:520
 msgid "Return order query filters"
-msgstr ""
+msgstr "Visszavételi utasítás lekérdezés szűrők"
 
 #: report/models.py:573
 msgid "Snippet"
@@ -7280,12 +7277,12 @@ msgid "Test Results"
 msgstr "Teszt eredmények"
 
 #: report/templates/report/inventree_test_report_base.html:102
-#: stock/models.py:2209 templates/js/translated/stock.js:1398
+#: stock/models.py:2210 templates/js/translated/stock.js:1398
 msgid "Test"
 msgstr "Teszt"
 
 #: report/templates/report/inventree_test_report_base.html:103
-#: stock/models.py:2215
+#: stock/models.py:2216
 msgid "Result"
 msgstr "Eredmény"
 
@@ -7299,11 +7296,11 @@ msgstr "Sikertelen"
 
 #: report/templates/report/inventree_test_report_base.html:139
 msgid "No result (required)"
-msgstr ""
+msgstr "Nincs eredmény (szükséges)"
 
 #: report/templates/report/inventree_test_report_base.html:141
 msgid "No result"
-msgstr ""
+msgstr "Nincs eredmény"
 
 #: report/templates/report/inventree_test_report_base.html:154
 #: stock/templates/stock/stock_sidebar.html:16
@@ -7572,84 +7569,83 @@ msgstr "A sorozatszám egész számok listája kell legyen"
 msgid "Quantity does not match serial numbers"
 msgstr "A mennyiség nem egyezik a megadott sorozatszámok számával"
 
-#: stock/models.py:1386
-#, python-brace-format
-msgid "Serial numbers already exist: {exists}"
-msgstr "Ezek a sorozatszámok már léteznek: {exists}"
+#: stock/models.py:1386 stock/serializers.py:349
+msgid "Serial numbers already exist"
+msgstr "A sorozatszámok már léteznek"
 
-#: stock/models.py:1456
+#: stock/models.py:1457
 msgid "Stock item has been assigned to a sales order"
 msgstr "Készlet tétel hozzárendelve egy vevői rendeléshez"
 
-#: stock/models.py:1459
+#: stock/models.py:1460
 msgid "Stock item is installed in another item"
 msgstr "Készlet tétel beépül egy másikba"
 
-#: stock/models.py:1462
+#: stock/models.py:1463
 msgid "Stock item contains other items"
 msgstr "A készlet tétel más tételeket tartalmaz"
 
-#: stock/models.py:1465
+#: stock/models.py:1466
 msgid "Stock item has been assigned to a customer"
 msgstr "Készlet tétel hozzárendelve egy vevőhöz"
 
-#: stock/models.py:1468
+#: stock/models.py:1469
 msgid "Stock item is currently in production"
 msgstr "Készlet tétel gyártás alatt"
 
-#: stock/models.py:1471
+#: stock/models.py:1472
 msgid "Serialized stock cannot be merged"
 msgstr "Követésre kötelezett készlet nem vonható össze"
 
-#: stock/models.py:1478 stock/serializers.py:946
+#: stock/models.py:1479 stock/serializers.py:946
 msgid "Duplicate stock items"
 msgstr "Duplikált készlet tételek vannak"
 
-#: stock/models.py:1482
+#: stock/models.py:1483
 msgid "Stock items must refer to the same part"
 msgstr "A készlet tétel ugyanarra az alkatrészre kell vonatkozzon"
 
-#: stock/models.py:1486
+#: stock/models.py:1487
 msgid "Stock items must refer to the same supplier part"
 msgstr "A készlet tétel ugyanarra a beszállítói alkatrészre kell vonatkozzon"
 
-#: stock/models.py:1490
+#: stock/models.py:1491
 msgid "Stock status codes must match"
 msgstr "Készlet tételek állapotainak egyeznie kell"
 
-#: stock/models.py:1659
+#: stock/models.py:1660
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Készlet tétel nem mozgatható mivel nincs készleten"
 
-#: stock/models.py:2127
+#: stock/models.py:2128
 msgid "Entry notes"
 msgstr "Bejegyzés megjegyzései"
 
-#: stock/models.py:2185
+#: stock/models.py:2186
 msgid "Value must be provided for this test"
 msgstr "Ehhez a teszthez meg kell adni értéket"
 
-#: stock/models.py:2191
+#: stock/models.py:2192
 msgid "Attachment must be uploaded for this test"
 msgstr "Ehhez a teszthez fel kell tölteni mellékletet"
 
-#: stock/models.py:2210
+#: stock/models.py:2211
 msgid "Test name"
 msgstr "Teszt neve"
 
-#: stock/models.py:2216
+#: stock/models.py:2217
 msgid "Test result"
 msgstr "Teszt eredménye"
 
-#: stock/models.py:2222
+#: stock/models.py:2223
 msgid "Test output value"
 msgstr "Teszt kimeneti értéke"
 
-#: stock/models.py:2229
+#: stock/models.py:2230
 msgid "Test result attachment"
 msgstr "Teszt eredmény melléklet"
 
-#: stock/models.py:2235
+#: stock/models.py:2236
 msgid "Test notes"
 msgstr "Tesztek megjegyzései"
 
@@ -7685,10 +7681,6 @@ msgstr "Opcionális megjegyzés mező"
 #: stock/serializers.py:328
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "Sorozatszámokat nem lehet hozzárendelni ehhez az alkatrészhez"
-
-#: stock/serializers.py:349
-msgid "Serial numbers already exist"
-msgstr "A sorozatszámok már léteznek"
 
 #: stock/serializers.py:389
 msgid "Select stock item to install"
@@ -7925,7 +7917,7 @@ msgstr "Csak olvasható"
 
 #: stock/templates/stock/item_base.html:266
 msgid "This stock item is unavailable"
-msgstr ""
+msgstr "Ez a készlet tétel nem elérhető"
 
 #: stock/templates/stock/item_base.html:272
 msgid "This stock item is in production and cannot be edited."
@@ -7945,7 +7937,7 @@ msgstr "Foglalva ehhez a gyártási utasításhoz"
 
 #: stock/templates/stock/item_base.html:312
 msgid "This stock item is serialized. It has a unique serial number and the quantity cannot be adjusted"
-msgstr ""
+msgstr "Ez a készlet tétel egyedi követésre kötelezett. Egyedi sorozatszámmal rendelkezik így a mennyiség nem módosítható"
 
 #: stock/templates/stock/item_base.html:318
 msgid "previous page"
@@ -8556,7 +8548,7 @@ msgstr "Riport beállítások"
 
 #: templates/InvenTree/settings/returns.html:7
 msgid "Return Order Settings"
-msgstr ""
+msgstr "Visszavételi utasítás bellításai"
 
 #: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
@@ -8698,8 +8690,8 @@ msgid "Change Password"
 msgstr "Jelszó módosítása"
 
 #: templates/InvenTree/settings/user.html:23
-#: templates/js/translated/helpers.js:53 templates/notes_buttons.html:3
-#: templates/notes_buttons.html:4
+#: templates/js/translated/helpers.js:53 templates/js/translated/pricing.js:610
+#: templates/notes_buttons.html:3 templates/notes_buttons.html:4
 msgid "Edit"
 msgstr "Szerkesztés"
 
@@ -9977,41 +9969,41 @@ msgstr "Nem található céginformáció"
 
 #: templates/js/translated/company.js:587
 msgid "Create New Contact"
-msgstr ""
+msgstr "Új névjegy létrehozása"
 
 #: templates/js/translated/company.js:603
 #: templates/js/translated/company.js:725
 msgid "Edit Contact"
-msgstr ""
+msgstr "Névjegy szerkesztése"
 
 #: templates/js/translated/company.js:639
 msgid "All selected contacts will be deleted"
-msgstr ""
+msgstr "A kiválasztott névjegyek törlésre kerülnek"
 
 #: templates/js/translated/company.js:645
 #: templates/js/translated/company.js:709
 msgid "Role"
-msgstr ""
+msgstr "Szerepkör"
 
 #: templates/js/translated/company.js:653
 msgid "Delete Contacts"
-msgstr ""
+msgstr "Névjegyek törlése"
 
 #: templates/js/translated/company.js:684
 msgid "No contacts found"
-msgstr ""
+msgstr "Nem található névjegy"
 
 #: templates/js/translated/company.js:697
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefonszám"
 
 #: templates/js/translated/company.js:703
 msgid "Email Address"
-msgstr ""
+msgstr "E-mail cím"
 
 #: templates/js/translated/company.js:729
 msgid "Delete Contact"
-msgstr ""
+msgstr "Névjegy törlése"
 
 #: templates/js/translated/company.js:803
 msgid "All selected manufacturer parts will be deleted"
@@ -10123,19 +10115,19 @@ msgstr "Szűrők kiválasztása"
 
 #: templates/js/translated/filters.js:315
 msgid "Print reports for selected items"
-msgstr ""
+msgstr "Riport nyomtatása a kiválasztott tételekhez"
 
 #: templates/js/translated/filters.js:324
 msgid "Print labels for selected items"
-msgstr ""
+msgstr "Címkék nyomtatása a kiválasztott tételekhez"
 
 #: templates/js/translated/filters.js:333
 msgid "Download table data"
-msgstr ""
+msgstr "Táblázat letöltése"
 
 #: templates/js/translated/filters.js:340
 msgid "Reload table data"
-msgstr ""
+msgstr "Táblázat frissítése"
 
 #: templates/js/translated/filters.js:349
 msgid "Add new filter"
@@ -10237,11 +10229,11 @@ msgstr "Címke sablon kiválasztása"
 
 #: templates/js/translated/label.js:166 templates/js/translated/report.js:123
 msgid "Select Items"
-msgstr ""
+msgstr "Tételek kiválasztása"
 
 #: templates/js/translated/label.js:167
 msgid "No items selected for printing"
-msgstr ""
+msgstr "Nincs tétel kiválasztva a nyomtatáshoz"
 
 #: templates/js/translated/label.js:183
 msgid "No Labels Found"
@@ -10249,7 +10241,7 @@ msgstr "Nem található címke"
 
 #: templates/js/translated/label.js:184
 msgid "No label templates found which match the selected items"
-msgstr ""
+msgstr "Nem található címke sablon a kiválasztott tételekhez"
 
 #: templates/js/translated/label.js:203
 msgid "Labels sent to printer"
@@ -10344,7 +10336,7 @@ msgstr "Az értesítések itt fognak megjelenni"
 
 #: templates/js/translated/order.js:72
 msgid "Add Extra Line Item"
-msgstr ""
+msgstr "Egyéb tétel hozzáadása"
 
 #: templates/js/translated/order.js:109
 msgid "Export Order"
@@ -10723,16 +10715,6 @@ msgstr "Nincs beszállítói árinfomáció"
 msgid "No price break data available"
 msgstr "Nincsenek ársáv adatok"
 
-#: templates/js/translated/pricing.js:610
-#, python-brace-format
-msgid "Edit ${human_name}"
-msgstr "${human_name} szerkesztése"
-
-#: templates/js/translated/pricing.js:611
-#, python-brace-format
-msgid "Delete ${human_name}"
-msgstr "${human_name} törlése"
-
 #: templates/js/translated/pricing.js:737
 msgid "No purchase history data available"
 msgstr "Nincsenek beszerzési ár előzmények"
@@ -10823,7 +10805,7 @@ msgstr "Ezt a beszerzési rendelést nem lehet törölni"
 #: templates/js/translated/purchase_order.js:471
 #: templates/js/translated/return_order.js:119
 msgid "After placing this order, line items will no longer be editable."
-msgstr ""
+msgstr "A kiküldés után a sortételek már nem lesznek szerkeszthetők."
 
 #: templates/js/translated/purchase_order.js:476
 msgid "Issue Purchase Order"
@@ -10881,15 +10863,15 @@ msgstr "Készlet állapota"
 
 #: templates/js/translated/purchase_order.js:1124
 msgid "Add barcode"
-msgstr ""
+msgstr "Vonalkód hozzáadása"
 
 #: templates/js/translated/purchase_order.js:1125
 msgid "Remove barcode"
-msgstr ""
+msgstr "Vonalkód eltávolítása"
 
 #: templates/js/translated/purchase_order.js:1128
 msgid "Specify location"
-msgstr ""
+msgstr "Add meg a helyet"
 
 #: templates/js/translated/purchase_order.js:1136
 msgid "Add batch code"
@@ -10901,7 +10883,7 @@ msgstr "Sorozatszám hozzáadása"
 
 #: templates/js/translated/purchase_order.js:1199
 msgid "Serials"
-msgstr ""
+msgstr "Sorozatszámok"
 
 #: templates/js/translated/purchase_order.js:1224
 msgid "Order Code"
@@ -10922,15 +10904,15 @@ msgstr "Beszerzési rendelés tételeinek bevételezése"
 
 #: templates/js/translated/purchase_order.js:1317
 msgid "Scan Item Barcode"
-msgstr ""
+msgstr "Tétel vonalkód beolvasása"
 
 #: templates/js/translated/purchase_order.js:1318
 msgid "Scan barcode on incoming item (must not match any existing stock items)"
-msgstr ""
+msgstr "Beérkezett tétel vonalkódjának leolvasása (egyik meglévő készlet tétellel sem egyezhet)"
 
 #: templates/js/translated/purchase_order.js:1332
 msgid "Invalid barcode data"
-msgstr ""
+msgstr "Érvénytelen vonalkód adat"
 
 #: templates/js/translated/purchase_order.js:1594
 #: templates/js/translated/return_order.js:244
@@ -11006,7 +10988,7 @@ msgstr "Nem található riport"
 
 #: templates/js/translated/report.js:141
 msgid "No report templates found which match the selected items"
-msgstr ""
+msgstr "Nem található riport sablon a kiválasztott tételekhez"
 
 #: templates/js/translated/return_order.js:40
 #: templates/js/translated/sales_order.js:53
@@ -11015,31 +10997,31 @@ msgstr "Vevő hozzáadása"
 
 #: templates/js/translated/return_order.js:89
 msgid "Create Return Order"
-msgstr ""
+msgstr "Visszavételi utasítás létrehozása"
 
 #: templates/js/translated/return_order.js:104
 msgid "Edit Return Order"
-msgstr ""
+msgstr "Visszavételi utasítás szerkesztése"
 
 #: templates/js/translated/return_order.js:124
 msgid "Issue Return Order"
-msgstr ""
+msgstr "Visszavételi utasítás kiadása"
 
 #: templates/js/translated/return_order.js:141
 msgid "Are you sure you wish to cancel this Return Order?"
-msgstr ""
+msgstr "Biztosan törölni szeretnéd ezt a visszavételi utasítást?"
 
 #: templates/js/translated/return_order.js:148
 msgid "Cancel Return Order"
-msgstr ""
+msgstr "Visszavételi utasítás törlése"
 
 #: templates/js/translated/return_order.js:173
 msgid "Complete Return Order"
-msgstr ""
+msgstr "Visszavételi utasítás befejezése"
 
 #: templates/js/translated/return_order.js:221
 msgid "No return orders found"
-msgstr ""
+msgstr "Nem található visszavételi utasítás"
 
 #: templates/js/translated/return_order.js:258
 #: templates/js/translated/sales_order.js:726
@@ -11048,7 +11030,7 @@ msgstr "Érvénytelen vevő"
 
 #: templates/js/translated/return_order.js:504
 msgid "Receive Return Order Items"
-msgstr ""
+msgstr "Visszavételi utasítás tételeinek bevételezése"
 
 #: templates/js/translated/return_order.js:635
 #: templates/js/translated/sales_order.js:2119
@@ -11057,7 +11039,7 @@ msgstr "Nincs egyező sortétel"
 
 #: templates/js/translated/return_order.js:740
 msgid "Mark item as received"
-msgstr ""
+msgstr "Tétel bevételezve"
 
 #: templates/js/translated/sales_order.js:103
 msgid "Create Sales Order"
@@ -11105,11 +11087,11 @@ msgstr "Ez a rendelés olyan sortételeket tartalmaz amik még nem teljesítette
 
 #: templates/js/translated/sales_order.js:470
 msgid "Issue this Sales Order?"
-msgstr ""
+msgstr "Vissza lett igazolva ez a vevői rendelés?"
 
 #: templates/js/translated/sales_order.js:475
 msgid "Issue Sales Order"
-msgstr ""
+msgstr "Vevői rendelés visszaigazolása"
 
 #: templates/js/translated/sales_order.js:494
 msgid "Cancel Sales Order"
@@ -11238,19 +11220,19 @@ msgstr "Egységár módosítása"
 
 #: templates/js/translated/search.js:300
 msgid "No results"
-msgstr ""
+msgstr "Nincs találat"
 
 #: templates/js/translated/search.js:322 templates/search.html:25
 msgid "Enter search query"
-msgstr ""
+msgstr "Add meg a keresési lekérdezést"
 
 #: templates/js/translated/search.js:372
 msgid "result"
-msgstr ""
+msgstr "eredmény"
 
 #: templates/js/translated/search.js:372
 msgid "results"
-msgstr ""
+msgstr "eredmények"
 
 #: templates/js/translated/search.js:382
 msgid "Minimize results"
@@ -11599,11 +11581,11 @@ msgstr "Beszerzési megrendelés már nem létezik"
 
 #: templates/js/translated/stock.js:2712
 msgid "Sales Order no longer exists"
-msgstr ""
+msgstr "Vevői megrendelés már nem létezik"
 
 #: templates/js/translated/stock.js:2729
 msgid "Return Order no longer exists"
-msgstr ""
+msgstr "Visszavételi utasítás már nem létezik"
 
 #: templates/js/translated/stock.js:2748
 msgid "Customer no longer exists"

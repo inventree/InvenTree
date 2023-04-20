@@ -13,6 +13,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount
 
+import common.serializers
 import order.models
 import part.filters
 import stock.models
@@ -64,6 +65,9 @@ class AbstractOrderSerializer(serializers.Serializer):
     # Detail for responsible field
     responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
 
+    # Detail for project code field
+    project_code_detail = common.serializers.ProjectCodeSerializer(source='project_code', read_only=True, many=False)
+
     # Boolean field indicating if this order is overdue (Note: must be annotated)
     overdue = serializers.BooleanField(required=False, read_only=True)
 
@@ -96,6 +100,8 @@ class AbstractOrderSerializer(serializers.Serializer):
             'description',
             'line_items',
             'link',
+            'project_code',
+            'project_code_detail',
             'reference',
             'responsible',
             'responsible_detail',

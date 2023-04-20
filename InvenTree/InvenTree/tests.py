@@ -306,6 +306,20 @@ class TestHelpers(TestCase):
         # Download a valid image (should not throw an error)
         helpers.download_image_from_url(large_img, timeout=10)
 
+    def test_model_mixin(self):
+        """Test the getModelsWithMixin function"""
+
+        from InvenTree.models import InvenTreeBarcodeMixin
+
+        models = helpers.getModelsWithMixin(InvenTreeBarcodeMixin)
+
+        self.assertIn(Part, models)
+        self.assertIn(StockLocation, models)
+        self.assertIn(StockItem, models)
+
+        self.assertNotIn(PartCategory, models)
+        self.assertNotIn(InvenTreeSetting, models)
+
 
 class TestQuoteWrap(TestCase):
     """Tests for string wrapping."""

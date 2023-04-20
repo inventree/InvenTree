@@ -21,7 +21,8 @@ import order.models
 import part.models
 import stock.models
 from InvenTree.helpers import validateFilterString
-from plugin.models import MetadataMixin
+from InvenTree.models import MetadataMixin
+from plugin.registry import registry
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -211,6 +212,12 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         context['report_revision'] = self.revision
         context['request'] = request
         context['user'] = request.user
+
+        # Pass the context through to any active reporting plugins
+        plugins = registry.with_mixin('report')
+
+        for plugin in plugins:
+            plugin.add_report_context(self, request, context)
 
         return context
 

@@ -1921,7 +1921,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         if (available_stock <= 0) {
                             icons += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                         } else {
-                            var extra = '';
+                            let extra = '';
                             if ((substitute_stock > 0) && (variant_stock > 0)) {
                                 extra = '{% trans "Includes variant and substitute stock" %}';
                             } else if (variant_stock > 0) {
@@ -1931,7 +1931,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             }
 
                             if (extra) {
-                                icons += makeInfoButton('fa-info-circle icon-blue', extra);
+                                icons += makeIconBadge('fa-info-circle icon-blue', extra);
                             }
                         }
                     }

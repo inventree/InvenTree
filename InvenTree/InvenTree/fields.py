@@ -12,8 +12,6 @@ from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.models.validators import MinMoneyValidator
 from rest_framework.fields import URLField as RestURLField
 
-import InvenTree.helpers
-
 from .validators import AllowedURLValidator, allowable_url_schemes
 
 
@@ -149,6 +147,8 @@ class DatePickerFormField(forms.DateField):
 
 def round_decimal(value, places, normalize=False):
     """Round value to the specified number of places."""
+
+    import InvenTree.helpers
 
     if type(value) in [Decimal, float]:
         value = round(value, places)
