@@ -730,7 +730,7 @@ function insertPersistButton(options) {
     var html = `
     <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" id="modal-persist">
-        <label class="form-check-label" for="modal-persist">${message}</label>
+        <label class="form-check-label" for="modal-persist"><small>${message}</small></label>
     </div>
     `;
 

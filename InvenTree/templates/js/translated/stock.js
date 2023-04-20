@@ -159,6 +159,9 @@ function createStockLocation(options={}) {
     options.method = 'POST';
     options.fields = stockLocationFields(options);
     options.title = '{% trans "New Stock Location" %}';
+    options.persist = true;
+    options.persistMessage = '{% trans "Create another location after this one" %}';
+    options.successMessage = '{% trans "Stock location created" %}';
 
     constructForm(url, options);
 }
@@ -472,6 +475,10 @@ function createNewStockItem(options={}) {
     options.method = 'POST';
 
     options.create = true;
+
+    options.persist = true;
+    options.persistMessage = '{% trans "Create another item after this one" %}';
+    options.successMessage = '{% trans "Stock item created" %}';
 
     options.fields = stockItemFields(options);
     options.groups = stockItemGroups(options);
