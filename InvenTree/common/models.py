@@ -1013,7 +1013,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_UPDATE_CHECK_INTERVAL': {
-            'name': _('Update Check Inverval'),
+            'name': _('Update Check Interval'),
             'description': _('How often to check for updates (set to zero to disable)'),
             'validator': [
                 int,
