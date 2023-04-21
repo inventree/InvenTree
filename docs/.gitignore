@@ -1,0 +1,12 @@
+# Ignore python environment files
+env-inv-doc/
+env/
+
+# Compiled python files
+*.pyd
+*.pyc
+
+# Temp files
+releases.json
+
+.vscode/
