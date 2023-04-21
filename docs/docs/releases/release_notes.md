@@ -22,45 +22,24 @@ The head of the *master* code branch represents the "latest and greatest" workin
 
 ## Stable Releases
 
-!!! info "Release Notes"
+!!! warning "Release Notes"
     Starting from version 0.12.0, release notes are now available only on the [InvenTree GitHub Releases Page](https://github.com/inventree/InvenTree/releases). Release notes for versions prior to 0.12.0 are also tagged below.
 
-### 0.11.x
+{% include "release_table_head.html" %}
+
 {% with prefix="0.11" %}{% include "release_table.html" %}{% endwith %}
-
-### 0.10.x
 {% with prefix="0.10" %}{% include "release_table.html" %}{% endwith %}
-
-### 0.9.x
 {% with prefix="0.9" %}{% include "release_table.html" %}{% endwith %}
-
-### 0.8.x
 {% with prefix="0.8" %}{% include "release_table.html" %}{% endwith %}
-
-!!! info "Release Notes"
-    Starting from v0.7.2, release notes have been migrated to GitHub. Release notes for older versions are available at the links below.
-
-### 0.7.x
 {% with prefix="0.7" %}{% include "release_table.html" %}{% endwith %}
-
-
-### 0.6.x
 {% with prefix="0.6" %}{% include "release_table.html" %}{% endwith %}
-
-### 0.5.x
 {% with prefix="0.5" %}{% include "release_table.html" %}{% endwith %}
-
-### 0.4.x
 {% with prefix="0.4" %}{% include "release_table.html" %}{% endwith %}
-
-### 0.3.x
 {% with prefix="0.3" %}{% include "release_table.html" %}{% endwith %}
-
-### 0.2.x
 {% with prefix="0.2" %}{% include "release_table.html" %}{% endwith %}
-
-### 0.1.x
 {% with prefix="0.1" %}{% include "release_table.html" %}{% endwith %}
+
+{% include "release_table_tail.html" %}
 
 ## Upcoming Features
 
