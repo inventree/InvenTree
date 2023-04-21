@@ -460,6 +460,16 @@ class ProjectCodeList(ListCreateAPI):
     queryset = common.models.ProjectCode.objects.all()
     serializer_class = common.serializers.ProjectCodeSerializer
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = [
+        'code',
+    ]
+
+    search_fields = [
+        'code',
+        'description',
+    ]
 
 
 class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
