@@ -22,13 +22,14 @@ class ReportMixin:
         super().__init__()
         self.add_mixin('report', True, __class__)
 
-    def add_report_context(self, instance, request, context):
+    def add_report_context(self, report_instance, model_instance, request, context):
         """Add extra context to the provided report instance.
 
         By default, this method does nothing.
 
         Args:
-            instance: The report instance to add context to
+            report_instance: The report instance to add context to
+            model_instance: The model instance which initiated the report generation
             request: The request object which initiated the report generation
             context: The context dictionary to add to
         """
