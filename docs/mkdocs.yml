@@ -5,8 +5,8 @@ site_description: InvenTree - Open Source Inventory Management
 site_author: InvenTree
 
 # Repository
-repo_url: https://github.com/inventree/inventree-docs
-repo_name: inventree/inventree-docs
+repo_url: https://github.com/inventree/inventree
+repo_name: inventree/inventree
 
 # Theme
 theme:
