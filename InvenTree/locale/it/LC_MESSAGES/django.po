@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-20 12:41+0000\n"
-"PO-Revision-Date: 2023-04-20 18:33\n"
+"POT-Creation-Date: 2023-04-21 05:29+0000\n"
+"PO-Revision-Date: 2023-04-21 18:36\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -332,7 +332,7 @@ msgstr "Nome"
 #: part/models.py:3339 part/templates/part/category.html:81
 #: part/templates/part/part_base.html:172
 #: part/templates/part/part_scheduling.html:12 report/models.py:172
-#: report/models.py:585 report/models.py:629
+#: report/models.py:586 report/models.py:630
 #: report/templates/report/inventree_build_order_base.html:117
 #: stock/admin.py:41 stock/templates/stock/location.html:123
 #: templates/InvenTree/settings/notifications.html:19
@@ -4139,7 +4139,7 @@ msgstr "Etichetta"
 msgid "Label template file"
 msgstr "File modello etichetta"
 
-#: label/models.py:124 report/models.py:271
+#: label/models.py:124 report/models.py:272
 msgid "Enabled"
 msgstr "Abilitato"
 
@@ -4163,7 +4163,7 @@ msgstr "Altezza [mm]"
 msgid "Label height, specified in mm"
 msgstr "Larghezza dell'etichetta, specificata in mm"
 
-#: label/models.py:144 report/models.py:264
+#: label/models.py:144 report/models.py:265
 msgid "Filename Pattern"
 msgstr "Formato del nome file"
 
@@ -4176,8 +4176,8 @@ msgid "Query filters (comma-separated list of key=value pairs),"
 msgstr "Filtri di ricerca (elenco separato da virgole key=coppia di valori),"
 
 #: label/models.py:235 label/models.py:276 label/models.py:304
-#: report/models.py:292 report/models.py:450 report/models.py:488
-#: report/models.py:526
+#: report/models.py:293 report/models.py:451 report/models.py:489
+#: report/models.py:527
 msgid "Filters"
 msgstr "Filtri"
 
@@ -7165,75 +7165,75 @@ msgstr "Descrizione del modello report"
 msgid "Report revision number (auto-increments)"
 msgstr "Numero di revisione del rapporto (auto-incrementi)"
 
-#: report/models.py:265
+#: report/models.py:266
 msgid "Pattern for generating report filenames"
 msgstr "Sequenza per generare i nomi dei file report"
 
-#: report/models.py:272
+#: report/models.py:273
 msgid "Report template is enabled"
 msgstr "Modello report abilitato"
 
-#: report/models.py:293
+#: report/models.py:294
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
 msgstr "Filtri di ricerca elementi di stock (elenco separato da virgole key=coppia di valori)"
 
-#: report/models.py:301
+#: report/models.py:302
 msgid "Include Installed Tests"
 msgstr "Includi Test Installati"
 
-#: report/models.py:302
+#: report/models.py:303
 msgid "Include test results for stock items installed inside assembled item"
 msgstr "Includi i risultati dei test per gli elementi stock installati all'interno dell'elemento assemblato"
 
-#: report/models.py:376
+#: report/models.py:377
 msgid "Build Filters"
 msgstr "Filtri di produzione"
 
-#: report/models.py:377
+#: report/models.py:378
 msgid "Build query filters (comma-separated list of key=value pairs"
 msgstr "Filtri di ricerca produzione (elenco separato da virgole key=coppia di valori"
 
-#: report/models.py:416
+#: report/models.py:417
 msgid "Part Filters"
 msgstr "Filtri Articolo"
 
-#: report/models.py:417
+#: report/models.py:418
 msgid "Part query filters (comma-separated list of key=value pairs"
 msgstr "Filtri di ricerca articolo (elenco separato da virgole key=coppia di valori"
 
-#: report/models.py:451
+#: report/models.py:452
 msgid "Purchase order query filters"
 msgstr "Ordine di Acquisto filtra la ricerca"
 
-#: report/models.py:489
+#: report/models.py:490
 msgid "Sales order query filters"
 msgstr "Ordine di Vendita filtra la ricerca"
 
-#: report/models.py:527
+#: report/models.py:528
 msgid "Return order query filters"
 msgstr ""
 
-#: report/models.py:580
+#: report/models.py:581
 msgid "Snippet"
 msgstr "Snippet"
 
-#: report/models.py:581
+#: report/models.py:582
 msgid "Report snippet file"
 msgstr "Report file snippet"
 
-#: report/models.py:585
+#: report/models.py:586
 msgid "Snippet file description"
 msgstr "Descrizione file snippet"
 
-#: report/models.py:622
+#: report/models.py:623
 msgid "Asset"
 msgstr "Risorsa"
 
-#: report/models.py:623
+#: report/models.py:624
 msgid "Report asset file"
 msgstr "Report file risorsa"
 
-#: report/models.py:630
+#: report/models.py:631
 msgid "Asset file description"
 msgstr "File risorsa descrizione"
 
