@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-21 05:29+0000\n"
-"PO-Revision-Date: 2023-04-21 18:36\n"
+"POT-Creation-Date: 2023-04-22 13:48+0000\n"
+"PO-Revision-Date: 2023-04-22 18:49\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -305,7 +305,7 @@ msgid "Invalid choice"
 msgstr "Érvénytelen választás"
 
 #: InvenTree/models.py:625 InvenTree/models.py:626 common/models.py:2315
-#: company/models.py:385 label/models.py:102 part/models.py:838
+#: company/models.py:385 label/models.py:103 part/models.py:838
 #: part/models.py:3330 plugin/models.py:40 report/models.py:159
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
@@ -327,7 +327,7 @@ msgstr "Név"
 #: company/models.py:309 company/models.py:545
 #: company/templates/company/company_base.html:72
 #: company/templates/company/manufacturer_part.html:75
-#: company/templates/company/supplier_part.html:108 label/models.py:109
+#: company/templates/company/supplier_part.html:108 label/models.py:110
 #: order/models.py:201 part/admin.py:194 part/admin.py:276 part/models.py:860
 #: part/models.py:3339 part/templates/part/category.html:81
 #: part/templates/part/part_base.html:172
@@ -370,7 +370,7 @@ msgstr "Elérési út"
 
 #: InvenTree/models.py:744
 msgid "Markdown notes (optional)"
-msgstr ""
+msgstr "Markdown megjegyzések (opcionális)"
 
 #: InvenTree/models.py:771
 msgid "Barcode Data"
@@ -869,7 +869,7 @@ msgstr "Azonosító"
 
 #: build/models.py:166
 msgid "Brief description of the build (optional)"
-msgstr ""
+msgstr "Gyártás rövid leírása (opcionális)"
 
 #: build/models.py:174 build/templates/build/build_base.html:189
 #: build/templates/build/detail.html:87
@@ -1847,7 +1847,7 @@ msgstr "Befejezett kimenetek"
 #: common/files.py:63
 #, python-brace-format
 msgid "Unsupported file format: {fmt}"
-msgstr ""
+msgstr "Nem támogatott fájl formátum: {fmt}"
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
@@ -1898,15 +1898,15 @@ msgstr "Legutóbbi frissítés időpontja"
 #: templates/js/translated/table_filters.js:20
 #: templates/project_code_data.html:6
 msgid "Project Code"
-msgstr ""
+msgstr "Projektszám"
 
 #: common/models.py:104
 msgid "Unique project code"
-msgstr ""
+msgstr "Egyedi projektszám"
 
 #: common/models.py:111
 msgid "Project description"
-msgstr ""
+msgstr "Projekt leírása"
 
 #: common/models.py:528
 msgid "Settings key (must be unique - case insensitive)"
@@ -2043,7 +2043,7 @@ msgstr "Alapértelmezett mélység a fa nézetekben. A mélyebb szintek betölt�
 
 #: common/models.py:1016
 msgid "Update Check Interval"
-msgstr ""
+msgstr "Frissítés keresés gyakorisága"
 
 #: common/models.py:1017
 msgid "How often to check for updates (set to zero to disable)"
@@ -2742,11 +2742,11 @@ msgstr "Belső eseményekre reagálás engedélyezése a pluginok számára"
 
 #: common/models.py:1663
 msgid "Enable project codes"
-msgstr ""
+msgstr "Projektszámok engedélyezése"
 
 #: common/models.py:1664
 msgid "Enable project codes for tracking projects"
-msgstr ""
+msgstr "Projektszámok használatának engedélyezése a projektek követéséhez"
 
 #: common/models.py:1670
 msgid "Stocktake Functionality"
@@ -3299,7 +3299,7 @@ msgstr "Kép"
 
 #: common/models.py:2698
 msgid "Image file"
-msgstr ""
+msgstr "Képfájl"
 
 #: common/notifications.py:294
 #, python-brace-format
@@ -4124,69 +4124,69 @@ msgstr "Cégek"
 msgid "New Company"
 msgstr "Új cég"
 
-#: label/models.py:103
+#: label/models.py:104
 msgid "Label name"
 msgstr "Címke neve"
 
-#: label/models.py:110
+#: label/models.py:111
 msgid "Label description"
 msgstr "Címke leírása"
 
-#: label/models.py:117
+#: label/models.py:118
 msgid "Label"
 msgstr "Címke"
 
-#: label/models.py:118
+#: label/models.py:119
 msgid "Label template file"
 msgstr "Címke sablon fájl"
 
-#: label/models.py:124 report/models.py:272
+#: label/models.py:125 report/models.py:272
 msgid "Enabled"
 msgstr "Engedélyezve"
 
-#: label/models.py:125
+#: label/models.py:126
 msgid "Label template is enabled"
 msgstr "Címke sablon engedélyezve"
 
-#: label/models.py:130
+#: label/models.py:131
 msgid "Width [mm]"
 msgstr "Szélesség [mm]"
 
-#: label/models.py:131
+#: label/models.py:132
 msgid "Label width, specified in mm"
 msgstr "Címke szélessége, mm-ben"
 
-#: label/models.py:137
+#: label/models.py:138
 msgid "Height [mm]"
 msgstr "Magasság [mm]"
 
-#: label/models.py:138
+#: label/models.py:139
 msgid "Label height, specified in mm"
 msgstr "Címke magassága, mm-ben"
 
-#: label/models.py:144 report/models.py:265
+#: label/models.py:145 report/models.py:265
 msgid "Filename Pattern"
 msgstr "Fájlnév minta"
 
-#: label/models.py:145
+#: label/models.py:146
 msgid "Pattern for generating label filenames"
 msgstr "Minta a címke fájlnevek előállításához"
 
-#: label/models.py:234
+#: label/models.py:242
 msgid "Query filters (comma-separated list of key=value pairs),"
 msgstr "Lekérdezés szűrők (vesszővel elválasztott kulcs=érték párok),"
 
-#: label/models.py:235 label/models.py:276 label/models.py:304
+#: label/models.py:243 label/models.py:284 label/models.py:312
 #: report/models.py:293 report/models.py:451 report/models.py:489
 #: report/models.py:527
 msgid "Filters"
 msgstr "Szűrők"
 
-#: label/models.py:275
+#: label/models.py:283
 msgid "Query filters (comma-separated list of key=value pairs"
 msgstr "Lekérdezés szűrők (vesszővel elválasztott kulcs=érték párok"
 
-#: label/models.py:303
+#: label/models.py:311
 msgid "Part query filters (comma-separated value of key=value pairs)"
 msgstr "Alkatrész lekérdezés szűrők (vesszővel elválasztott kulcs=érték párok)"
 
@@ -4230,11 +4230,11 @@ msgstr "A kapcsolattartó nem egyezik a kiválasztott céggel"
 
 #: order/models.py:201
 msgid "Order description (optional)"
-msgstr ""
+msgstr "Rendelés leírása (opcionális)"
 
 #: order/models.py:203
 msgid "Select project code for this order"
-msgstr ""
+msgstr "Válassz projektszámot ehhez a rendeléshez"
 
 #: order/models.py:205 order/models.py:1064 order/models.py:1412
 msgid "Link to external page"
@@ -5403,7 +5403,7 @@ msgstr "Ebből a sablonból"
 
 #: part/models.py:861
 msgid "Part description (optional)"
-msgstr ""
+msgstr "Alkatrész leírása (opcionális)"
 
 #: part/models.py:867
 msgid "Part keywords to improve visibility in search results"
@@ -6226,7 +6226,7 @@ msgstr "Nincs jogosultságod az alkatrészjegyzék szerkesztéséhez."
 
 #: part/templates/part/bom.html:15
 msgid "The BOM this part has been changed, and must be validated"
-msgstr ""
+msgstr "A alkatrészhez tartozó alkatrészjegyzék megváltozott és jóvá kell hagyni"
 
 #: part/templates/part/bom.html:17
 #, python-format
@@ -6882,7 +6882,7 @@ msgstr "Alkatrész változat létrehozása"
 
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
-msgstr ""
+msgstr "Új alkatrészváltozat létrehozása ebből a sablonból"
 
 #: part/templatetags/inventree_extras.py:187
 msgid "Unknown database"
@@ -7061,17 +7061,17 @@ msgstr "Nincs dátum"
 #: plugin/registry.py:459
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
-msgstr ""
+msgstr "A '{p}' plugin nem kompatibilis az aktuális applikáció verzióval {v}"
 
 #: plugin/registry.py:461
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
-msgstr ""
+msgstr "A pluginhoz minimum {v} verzió kell"
 
 #: plugin/registry.py:463
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
-msgstr ""
+msgstr "A pluginhoz maximum {v} verzió kell"
 
 #: plugin/samples/integration/sample.py:39
 msgid "Enable PO"
@@ -8564,17 +8564,17 @@ msgstr "Soha"
 
 #: templates/InvenTree/settings/project_codes.html:8
 msgid "Project Code Settings"
-msgstr ""
+msgstr "Projektszám beállítások"
 
 #: templates/InvenTree/settings/project_codes.html:23
 #: templates/InvenTree/settings/sidebar.html:33
 msgid "Project Codes"
-msgstr ""
+msgstr "Projektszámok"
 
 #: templates/InvenTree/settings/project_codes.html:27
 #: templates/InvenTree/settings/settings_staff_js.html:120
 msgid "New Project Code"
-msgstr ""
+msgstr "Új projektszám"
 
 #: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reporting.html:9
@@ -8615,17 +8615,17 @@ msgstr "Arány"
 
 #: templates/InvenTree/settings/settings_staff_js.html:64
 msgid "No project codes found"
-msgstr ""
+msgstr "Nem találhatók projektszámok"
 
 #: templates/InvenTree/settings/settings_staff_js.html:80
 #: templates/InvenTree/settings/settings_staff_js.html:94
 msgid "Edit Project Code"
-msgstr ""
+msgstr "Projektszám szerkesztése"
 
 #: templates/InvenTree/settings/settings_staff_js.html:81
 #: templates/InvenTree/settings/settings_staff_js.html:107
 msgid "Delete Project Code"
-msgstr ""
+msgstr "Projektszám törlése"
 
 #: templates/InvenTree/settings/settings_staff_js.html:189
 msgid "No category parameter templates found"
@@ -8643,7 +8643,7 @@ msgstr "Sablon törlése"
 
 #: templates/InvenTree/settings/settings_staff_js.html:230
 msgid "Edit Category Parameter Template"
-msgstr ""
+msgstr "Kategória paraméter sablon szerkesztése"
 
 #: templates/InvenTree/settings/settings_staff_js.html:253
 msgid "Delete Category Parameter Template"
@@ -10168,11 +10168,11 @@ msgstr "Szűrők kiválasztása"
 
 #: templates/js/translated/filters.js:323
 msgid "Print Labels"
-msgstr ""
+msgstr "Címkék nyomtatása"
 
 #: templates/js/translated/filters.js:327
 msgid "Print Reports"
-msgstr ""
+msgstr "Riportok nyomtatása"
 
 #: templates/js/translated/filters.js:339
 msgid "Download table data"
@@ -10450,11 +10450,11 @@ msgstr "Alkatrész kategória létrehozása"
 
 #: templates/js/translated/part.js:299
 msgid "Create new category after this one"
-msgstr ""
+msgstr "Új kategória létrehozása ez után"
 
 #: templates/js/translated/part.js:300
 msgid "Part category created"
-msgstr ""
+msgstr "Alkatrész kategória létrehozva"
 
 #: templates/js/translated/part.js:314
 msgid "Edit Part Category"
@@ -11293,7 +11293,7 @@ msgstr "eredmény"
 
 #: templates/js/translated/search.js:372
 msgid "results"
-msgstr "eredmények"
+msgstr "találat"
 
 #: templates/js/translated/search.js:382
 msgid "Minimize results"
@@ -11325,11 +11325,11 @@ msgstr "Új készlet hely"
 
 #: templates/js/translated/stock.js:163
 msgid "Create another location after this one"
-msgstr ""
+msgstr "Új készlethely létrehozása ez után"
 
 #: templates/js/translated/stock.js:164
 msgid "Stock location created"
-msgstr ""
+msgstr "Készlet hely létrehozva"
 
 #: templates/js/translated/stock.js:178
 msgid "Are you sure you want to delete this stock location?"
@@ -11385,7 +11385,7 @@ msgstr "Készlet tétel szerkesztése"
 
 #: templates/js/translated/stock.js:480
 msgid "Create another item after this one"
-msgstr ""
+msgstr "Új tétel létrehozása ez után"
 
 #: templates/js/translated/stock.js:492
 msgid "Created new stock item"
@@ -11718,7 +11718,7 @@ msgstr "Válaszd ki a beépítendő alkatrészt"
 
 #: templates/js/translated/table_filters.js:46
 msgid "Has project code"
-msgstr ""
+msgstr "Van projektszáma"
 
 #: templates/js/translated/table_filters.js:55
 #: templates/js/translated/table_filters.js:474
