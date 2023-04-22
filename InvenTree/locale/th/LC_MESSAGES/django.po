@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-21 05:29+0000\n"
-"PO-Revision-Date: 2023-04-21 18:37\n"
+"POT-Creation-Date: 2023-04-22 13:48+0000\n"
+"PO-Revision-Date: 2023-04-22 18:50\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -305,7 +305,7 @@ msgid "Invalid choice"
 msgstr ""
 
 #: InvenTree/models.py:625 InvenTree/models.py:626 common/models.py:2315
-#: company/models.py:385 label/models.py:102 part/models.py:838
+#: company/models.py:385 label/models.py:103 part/models.py:838
 #: part/models.py:3330 plugin/models.py:40 report/models.py:159
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
@@ -327,7 +327,7 @@ msgstr "ชื่อ"
 #: company/models.py:309 company/models.py:545
 #: company/templates/company/company_base.html:72
 #: company/templates/company/manufacturer_part.html:75
-#: company/templates/company/supplier_part.html:108 label/models.py:109
+#: company/templates/company/supplier_part.html:108 label/models.py:110
 #: order/models.py:201 part/admin.py:194 part/admin.py:276 part/models.py:860
 #: part/models.py:3339 part/templates/part/category.html:81
 #: part/templates/part/part_base.html:172
@@ -4123,69 +4123,69 @@ msgstr ""
 msgid "New Company"
 msgstr ""
 
-#: label/models.py:103
+#: label/models.py:104
 msgid "Label name"
 msgstr ""
 
-#: label/models.py:110
+#: label/models.py:111
 msgid "Label description"
 msgstr ""
 
-#: label/models.py:117
+#: label/models.py:118
 msgid "Label"
 msgstr ""
 
-#: label/models.py:118
+#: label/models.py:119
 msgid "Label template file"
 msgstr ""
 
-#: label/models.py:124 report/models.py:272
+#: label/models.py:125 report/models.py:272
 msgid "Enabled"
 msgstr ""
 
-#: label/models.py:125
+#: label/models.py:126
 msgid "Label template is enabled"
 msgstr ""
 
-#: label/models.py:130
+#: label/models.py:131
 msgid "Width [mm]"
 msgstr ""
 
-#: label/models.py:131
+#: label/models.py:132
 msgid "Label width, specified in mm"
 msgstr ""
 
-#: label/models.py:137
+#: label/models.py:138
 msgid "Height [mm]"
 msgstr ""
 
-#: label/models.py:138
+#: label/models.py:139
 msgid "Label height, specified in mm"
 msgstr ""
 
-#: label/models.py:144 report/models.py:265
+#: label/models.py:145 report/models.py:265
 msgid "Filename Pattern"
 msgstr ""
 
-#: label/models.py:145
+#: label/models.py:146
 msgid "Pattern for generating label filenames"
 msgstr ""
 
-#: label/models.py:234
+#: label/models.py:242
 msgid "Query filters (comma-separated list of key=value pairs),"
 msgstr ""
 
-#: label/models.py:235 label/models.py:276 label/models.py:304
+#: label/models.py:243 label/models.py:284 label/models.py:312
 #: report/models.py:293 report/models.py:451 report/models.py:489
 #: report/models.py:527
 msgid "Filters"
 msgstr ""
 
-#: label/models.py:275
+#: label/models.py:283
 msgid "Query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: label/models.py:303
+#: label/models.py:311
 msgid "Part query filters (comma-separated value of key=value pairs)"
 msgstr ""
 
