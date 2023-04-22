@@ -18,6 +18,7 @@ import part.models
 import stock.models
 from InvenTree.helpers import normalize, validateFilterString
 from InvenTree.models import MetadataMixin
+from plugin.registry import registry
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -189,6 +190,13 @@ class LabelTemplate(MetadataMixin, models.Model):
         context['user'] = request.user
         context['width'] = self.width
         context['height'] = self.height
+
+        # Pass the context through to any registered plugins
+        plugins = registry.with_mixin('report')
+
+        for plugin in plugins:
+            # Let each plugin add its own context data
+            plugin.add_label_context(self, self.object_to_print, request, context)
 
         return context
 
