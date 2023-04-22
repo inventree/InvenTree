@@ -6,8 +6,9 @@ env/
 *.pyd
 *.pyc
 
-# Sphinx files
-_build
+# Documentation build files
+_build/
+site/
 
 # Temp files
 releases.json

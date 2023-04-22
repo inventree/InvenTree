@@ -193,9 +193,9 @@ plugins:
   - git-revision-date-localized
   - mkdocs-simple-hooks:
       hooks:
-        on_config: "docs.hooks:on_config"
+        on_config: "docs.docs.hooks:on_config"
   - macros:
-      include_dir: _includes
+      include_dir: docs/_includes
 
 # Extensions
 markdown_extensions:
