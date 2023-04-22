@@ -217,7 +217,8 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         plugins = registry.with_mixin('report')
 
         for plugin in plugins:
-            plugin.add_report_context(self, request, context)
+            # Let each plugin add its own context data
+            plugin.add_report_context(self, self.object_to_print, request, context)
 
         return context
 
