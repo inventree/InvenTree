@@ -12,7 +12,6 @@ repos:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
-    -   id: check-added-large-files
     -   id: mixed-line-ending
 -   repo: https://github.com/pycqa/flake8
     rev: '6.0.0'
@@ -28,7 +27,7 @@ repos:
     hooks:
     -   id: isort
 -   repo: https://github.com/jazzband/pip-tools
-    rev: 6.12.3
+    rev: 6.13.0
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
