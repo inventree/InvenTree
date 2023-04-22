@@ -43,7 +43,7 @@ class PartResource(InvenTreeResource):
     category_name = Field(attribute='category__name', column_name=_('Category Name'), readonly=True)
     default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
     default_supplier = Field(attribute='default_supplier', column_name=_('Default Supplier ID'), widget=widgets.ForeignKeyWidget(SupplierPart))
-    variant_of = Field(attribute='variant_of', column_name=('Variant Of'), widget=widgets.ForeignKeyWidget(models.Part))
+    variant_of = Field(attribute='variant_of', column_name=_('Variant Of'), widget=widgets.ForeignKeyWidget(models.Part))
     minimum_stock = Field(attribute='minimum_stock', column_name=_('Minimum Stock'))
 
     # Part Attributes
