@@ -231,7 +231,7 @@ class MethodStorageClass:
         return methods
 
 
-IGNORED_NOTIFICATION_CLS = set({SingleNotificationMethod, BulkNotificationMethod})
+IGNORED_NOTIFICATION_CLS = set([SingleNotificationMethod, BulkNotificationMethod,])  # noqa: C405
 storage = MethodStorageClass()
 
 
