@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-22 13:48+0000\n"
-"PO-Revision-Date: 2023-04-22 18:49\n"
+"PO-Revision-Date: 2023-04-23 19:00\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -23,7 +23,7 @@ msgstr "Endpoint API non trovato"
 
 #: InvenTree/api.py:299
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "L'utente non ha i permessi per vedere questo modello"
 
 #: InvenTree/exceptions.py:94
 msgid "Error details can be found in the admin panel"
@@ -370,7 +370,7 @@ msgstr "Percorso"
 
 #: InvenTree/models.py:744
 msgid "Markdown notes (optional)"
-msgstr ""
+msgstr "Note di Markdown (opzionale)"
 
 #: InvenTree/models.py:771
 msgid "Barcode Data"
@@ -626,7 +626,7 @@ msgstr "Reso"
 
 #: InvenTree/status_codes.py:182 InvenTree/status_codes.py:395
 msgid "In Progress"
-msgstr ""
+msgstr "In corso"
 
 #: InvenTree/status_codes.py:183 order/models.py:1296
 #: templates/js/translated/sales_order.js:1437
@@ -745,15 +745,15 @@ msgstr "Impegnato dall'ordine di costruzione"
 
 #: InvenTree/status_codes.py:340
 msgid "Shipped against Sales Order"
-msgstr ""
+msgstr "Spedito contro l'ordine di vendita"
 
 #: InvenTree/status_codes.py:342
 msgid "Received against Purchase Order"
-msgstr ""
+msgstr "Ricevuto contro l'ordine di acquisto"
 
 #: InvenTree/status_codes.py:344
 msgid "Returned against Return Order"
-msgstr ""
+msgstr "Restituito contro l'ordine di ritorno"
 
 #: InvenTree/status_codes.py:358
 msgid "Production"
@@ -761,23 +761,23 @@ msgstr "Produzione"
 
 #: InvenTree/status_codes.py:430
 msgid "Return"
-msgstr ""
+msgstr "Indietro"
 
 #: InvenTree/status_codes.py:431
 msgid "Repair"
-msgstr ""
+msgstr "Riparare"
 
 #: InvenTree/status_codes.py:432
 msgid "Refund"
-msgstr ""
+msgstr "Rimborso"
 
 #: InvenTree/status_codes.py:433
 msgid "Replace"
-msgstr ""
+msgstr "Sostituire"
 
 #: InvenTree/status_codes.py:434
 msgid "Reject"
-msgstr ""
+msgstr "Rifiuta"
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
@@ -869,7 +869,7 @@ msgstr "Riferimento"
 
 #: build/models.py:166
 msgid "Brief description of the build (optional)"
-msgstr ""
+msgstr "Breve descrizione della build (facoltativo)"
 
 #: build/models.py:174 build/templates/build/build_base.html:189
 #: build/templates/build/detail.html:87
@@ -1644,11 +1644,11 @@ msgstr "Elimina Ordine Build"
 
 #: build/templates/build/build_base.html:290
 msgid "Build Order QR Code"
-msgstr ""
+msgstr "Genera Codice QR Ordine"
 
 #: build/templates/build/build_base.html:302
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Collega il codice a barre all'ordine di build"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -1846,7 +1846,7 @@ msgstr "Outputs Completati"
 #: common/files.py:63
 #, python-brace-format
 msgid "Unsupported file format: {fmt}"
-msgstr ""
+msgstr "Formato di file non supportato: {fmt}"
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
@@ -1897,15 +1897,15 @@ msgstr "Orario dell'ultimo aggiornamento"
 #: templates/js/translated/table_filters.js:20
 #: templates/project_code_data.html:6
 msgid "Project Code"
-msgstr ""
+msgstr "Codice del progetto"
 
 #: common/models.py:104
 msgid "Unique project code"
-msgstr ""
+msgstr "Codice unico del progetto"
 
 #: common/models.py:111
 msgid "Project description"
-msgstr ""
+msgstr "Descrizione del progetto"
 
 #: common/models.py:528
 msgid "Settings key (must be unique - case insensitive)"
@@ -2042,11 +2042,11 @@ msgstr "Profondità predefinita per la visualizzazione ad albero. I livelli più
 
 #: common/models.py:1016
 msgid "Update Check Interval"
-msgstr ""
+msgstr "Aggiorna intervallo di controllo"
 
 #: common/models.py:1017
 msgid "How often to check for updates (set to zero to disable)"
-msgstr ""
+msgstr "Quanto spesso controllare gli aggiornamenti (impostare a zero per disabilitare)"
 
 #: common/models.py:1023 common/models.py:1041 common/models.py:1048
 #: common/models.py:1059 common/models.py:1070 common/models.py:1294
@@ -2064,7 +2064,7 @@ msgstr "Abilita il backup automatico di database e file multimediali"
 
 #: common/models.py:1034
 msgid "Auto Backup Interval"
-msgstr ""
+msgstr "Intervallo Di Backup Automatico"
 
 #: common/models.py:1035
 msgid "Specify number of days between automated backup events"
@@ -2124,7 +2124,7 @@ msgstr ""
 
 #: common/models.py:1104
 msgid "Enable revision field for Part"
-msgstr ""
+msgstr "Abilita il campo revisione per l'articolo"
 
 #: common/models.py:1110
 msgid "IPN Regex"
@@ -3069,7 +3069,7 @@ msgstr "Escludi ordini di vendita inattivi dalla finestra di anteprima di ricerc
 
 #: common/models.py:1997
 msgid "Search Return Orders"
-msgstr ""
+msgstr "Cerca Ordini Di Reso"
 
 #: common/models.py:1998
 msgid "Display return orders in search preview window"
@@ -3093,7 +3093,7 @@ msgstr "Numero di risultati da visualizzare in ciascuna sezione della finestra d
 
 #: common/models.py:2018
 msgid "Regex Search"
-msgstr ""
+msgstr "Ricerca con regex"
 
 #: common/models.py:2019
 msgid "Enable regular expressions in search queries"
@@ -3298,7 +3298,7 @@ msgstr "Immagine"
 
 #: common/models.py:2698
 msgid "Image file"
-msgstr ""
+msgstr "File immagine"
 
 #: common/notifications.py:294
 #, python-brace-format
@@ -3868,17 +3868,17 @@ msgstr "Assegna Giacenza"
 #: templates/js/translated/search.js:262 templates/navbar.html:65
 #: users/models.py:45
 msgid "Return Orders"
-msgstr ""
+msgstr "Ordini di reso"
 
 #: company/templates/company/detail.html:195
 #: order/templates/order/return_orders.html:21
 msgid "Create new return order"
-msgstr ""
+msgstr "Crea nuovo ordine di reso"
 
 #: company/templates/company/detail.html:196
 #: order/templates/order/return_orders.html:22
 msgid "New Return Order"
-msgstr ""
+msgstr "Nuovo Ordine Di Reso"
 
 #: company/templates/company/detail.html:221
 msgid "Company Notes"
@@ -3886,12 +3886,12 @@ msgstr "Note Dell'Azienda"
 
 #: company/templates/company/detail.html:236
 msgid "Company Contacts"
-msgstr ""
+msgstr "Contatti Azienda"
 
 #: company/templates/company/detail.html:240
 #: company/templates/company/detail.html:241
 msgid "Add Contact"
-msgstr ""
+msgstr "Aggiungi contatti"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -3989,7 +3989,7 @@ msgstr "Elementi in Giacenza Impegnati"
 
 #: company/templates/company/sidebar.html:33
 msgid "Contacts"
-msgstr ""
+msgstr "Contatti"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:676
@@ -4221,19 +4221,19 @@ msgstr "Prezzo Totale"
 
 #: order/models.py:69
 msgid "Total price for this order"
-msgstr ""
+msgstr "Prezzo totale dell'ordine"
 
 #: order/models.py:179
 msgid "Contact does not match selected company"
-msgstr ""
+msgstr "Il contatto non corrisponde all'azienda selezionata"
 
 #: order/models.py:201
 msgid "Order description (optional)"
-msgstr ""
+msgstr "Descrizione dell'ordine (opzionale)"
 
 #: order/models.py:203
 msgid "Select project code for this order"
-msgstr ""
+msgstr "Seleziona il codice del progetto per questo ordine"
 
 #: order/models.py:205 order/models.py:1064 order/models.py:1412
 msgid "Link to external page"
@@ -4253,7 +4253,7 @@ msgstr "Utente o gruppo responsabile di questo ordine"
 
 #: order/models.py:236
 msgid "Point of contact for this order"
-msgstr ""
+msgstr "Punto di contatto per questo ordine"
 
 #: order/models.py:329 order/models.py:736
 msgid "Order reference"
@@ -4328,7 +4328,7 @@ msgstr "L'ordine non può essere completato perché nessun articolo è stato ass
 
 #: order/models.py:831
 msgid "Only an open order can be marked as complete"
-msgstr ""
+msgstr "Solo un ordine aperto può essere contrassegnato come completo"
 
 #: order/models.py:834 templates/js/translated/sales_order.js:448
 msgid "Order cannot be completed as there are incomplete shipments"
@@ -4550,15 +4550,15 @@ msgstr ""
 #: templates/js/translated/return_order.js:246
 #: templates/js/translated/stock.js:2727
 msgid "Return Order"
-msgstr ""
+msgstr "Restituisci ordine"
 
 #: order/models.py:1865
 msgid "Select item to return from customer"
-msgstr ""
+msgstr "Seleziona l'elemento da restituire dal cliente"
 
 #: order/models.py:1870
 msgid "Received Date"
-msgstr ""
+msgstr "Data di ricezione"
 
 #: order/models.py:1871
 msgid "The date this this return item was received"
@@ -4567,7 +4567,7 @@ msgstr ""
 #: order/models.py:1882 templates/js/translated/return_order.js:694
 #: templates/js/translated/table_filters.js:89
 msgid "Outcome"
-msgstr ""
+msgstr "Risultati"
 
 #: order/models.py:1882
 msgid "Outcome for this line item"
@@ -4639,7 +4639,7 @@ msgstr "Codice a Barre"
 
 #: order/serializers.py:516
 msgid "Scanned barcode"
-msgstr ""
+msgstr "Codice a barre scansionato"
 
 #: order/serializers.py:532
 msgid "Barcode is already in use"
@@ -4850,7 +4850,7 @@ msgstr ""
 
 #: order/templates/order/order_base.html:343
 msgid "Link Barcode to Purchase Order"
-msgstr ""
+msgstr "Collega il codice a barre all'ordine d'acquisto"
 
 #: order/templates/order/order_wizard/match_fields.html:9
 #: part/templates/part/import_wizard/ajax_match_fields.html:9
@@ -4979,12 +4979,12 @@ msgstr "Aggiungi Elemento Riga"
 #: order/templates/order/return_order_detail.html:28
 #: order/templates/order/return_order_detail.html:29
 msgid "Receive Line Items"
-msgstr ""
+msgstr "Ricevi Oggetti Riga"
 
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/purchase_order_detail.html:51
 msgid "Delete Line Items"
-msgstr ""
+msgstr "Elimina Elementi Riga"
 
 #: order/templates/order/purchase_order_detail.html:67
 #: order/templates/order/return_order_detail.html:47
@@ -5010,7 +5010,7 @@ msgstr "Note dell'Ordine"
 
 #: order/templates/order/return_order_base.html:61
 msgid "Print return order report"
-msgstr ""
+msgstr "Stampa rapporto ordine di reso"
 
 #: order/templates/order/return_order_base.html:65
 #: order/templates/order/sales_order_base.html:65
@@ -5047,7 +5047,7 @@ msgstr ""
 
 #: order/templates/order/return_order_sidebar.html:5
 msgid "Order Details"
-msgstr ""
+msgstr "Dettagli dell'ordine"
 
 #: order/templates/order/sales_order_base.html:61
 msgid "Print sales order report"
@@ -5056,7 +5056,7 @@ msgstr "Stampa il rapporto dell'ordine delle vendite"
 #: order/templates/order/sales_order_base.html:89
 #: order/templates/order/sales_order_base.html:90
 msgid "Ship Items"
-msgstr ""
+msgstr "Spedisci oggetti"
 
 #: order/templates/order/sales_order_base.html:93
 #: templates/js/translated/sales_order.js:426
@@ -6600,7 +6600,7 @@ msgstr "La parte può essere venduta ai clienti"
 
 #: part/templates/part/part_base.html:147
 msgid "Part is not active"
-msgstr ""
+msgstr "L'articolo non è attivo"
 
 #: part/templates/part/part_base.html:148
 #: templates/js/translated/company.js:930
@@ -7315,11 +7315,11 @@ msgstr "Fallito"
 
 #: report/templates/report/inventree_test_report_base.html:139
 msgid "No result (required)"
-msgstr ""
+msgstr "Nessun risultato (richiesto)"
 
 #: report/templates/report/inventree_test_report_base.html:141
 msgid "No result"
-msgstr ""
+msgstr "Nessun risultato"
 
 #: report/templates/report/inventree_test_report_base.html:154
 #: stock/templates/stock/stock_sidebar.html:16
@@ -7351,7 +7351,7 @@ msgstr "ID Elemento Stock"
 
 #: stock/admin.py:107
 msgid "Status Code"
-msgstr ""
+msgstr "Codici di stato"
 
 #: stock/admin.py:110
 msgid "Supplier Part ID"
@@ -7388,11 +7388,11 @@ msgstr "ID Ordine D'acquisto"
 
 #: stock/admin.py:125
 msgid "Review Needed"
-msgstr ""
+msgstr "Revisione Necessaria"
 
 #: stock/admin.py:126
 msgid "Delete on Deplete"
-msgstr ""
+msgstr "Elimina al esaurimento"
 
 #: stock/admin.py:131 stock/models.py:773
 #: stock/templates/stock/item_base.html:423
@@ -7402,7 +7402,7 @@ msgstr "Data di Scadenza"
 
 #: stock/api.py:409 templates/js/translated/table_filters.js:369
 msgid "External Location"
-msgstr ""
+msgstr "Ubicazione Esterna"
 
 #: stock/api.py:570
 msgid "Quantity is required"
@@ -7937,7 +7937,7 @@ msgstr "Sola lettura"
 
 #: stock/templates/stock/item_base.html:266
 msgid "This stock item is unavailable"
-msgstr ""
+msgstr "Elemento di magazzino non disponibile"
 
 #: stock/templates/stock/item_base.html:272
 msgid "This stock item is in production and cannot be edited."
@@ -8568,12 +8568,12 @@ msgstr ""
 #: templates/InvenTree/settings/project_codes.html:23
 #: templates/InvenTree/settings/sidebar.html:33
 msgid "Project Codes"
-msgstr ""
+msgstr "Codice del progetto"
 
 #: templates/InvenTree/settings/project_codes.html:27
 #: templates/InvenTree/settings/settings_staff_js.html:120
 msgid "New Project Code"
-msgstr ""
+msgstr "Nuovo Codice Del Progetto"
 
 #: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reporting.html:9
@@ -8582,7 +8582,7 @@ msgstr "Impostazioni Report"
 
 #: templates/InvenTree/settings/returns.html:7
 msgid "Return Order Settings"
-msgstr ""
+msgstr "Impostazioni Ordine Di Reso"
 
 #: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
@@ -8614,17 +8614,17 @@ msgstr "Voto"
 
 #: templates/InvenTree/settings/settings_staff_js.html:64
 msgid "No project codes found"
-msgstr ""
+msgstr "Nessun codice progetto trovato"
 
 #: templates/InvenTree/settings/settings_staff_js.html:80
 #: templates/InvenTree/settings/settings_staff_js.html:94
 msgid "Edit Project Code"
-msgstr ""
+msgstr "Modifica Codice Progetto"
 
 #: templates/InvenTree/settings/settings_staff_js.html:81
 #: templates/InvenTree/settings/settings_staff_js.html:107
 msgid "Delete Project Code"
-msgstr ""
+msgstr "Elimina Codice Progetto"
 
 #: templates/InvenTree/settings/settings_staff_js.html:189
 msgid "No category parameter templates found"
@@ -8685,7 +8685,7 @@ msgstr "Impostazioni Utente"
 
 #: templates/InvenTree/settings/sidebar.html:9
 msgid "Account"
-msgstr ""
+msgstr "Profilo"
 
 #: templates/InvenTree/settings/sidebar.html:11
 msgid "Display"
@@ -9967,7 +9967,7 @@ msgstr "Nessuna informazione utente"
 
 #: templates/js/translated/build.js:2681
 msgid "group"
-msgstr ""
+msgstr "gruppo"
 
 #: templates/js/translated/build.js:2780
 msgid "No parts allocated for"
@@ -10021,12 +10021,12 @@ msgstr "Nessuna informazione azienda trovata"
 
 #: templates/js/translated/company.js:587
 msgid "Create New Contact"
-msgstr ""
+msgstr "Crea nuovo contatto"
 
 #: templates/js/translated/company.js:603
 #: templates/js/translated/company.js:725
 msgid "Edit Contact"
-msgstr ""
+msgstr "Modifica contatto"
 
 #: templates/js/translated/company.js:639
 msgid "All selected contacts will be deleted"
@@ -10035,7 +10035,7 @@ msgstr ""
 #: templates/js/translated/company.js:645
 #: templates/js/translated/company.js:709
 msgid "Role"
-msgstr ""
+msgstr "Ruolo"
 
 #: templates/js/translated/company.js:653
 msgid "Delete Contacts"
@@ -10043,19 +10043,19 @@ msgstr ""
 
 #: templates/js/translated/company.js:684
 msgid "No contacts found"
-msgstr ""
+msgstr "Nessun contatto trovato"
 
 #: templates/js/translated/company.js:697
 msgid "Phone Number"
-msgstr ""
+msgstr "Numero di telefono"
 
 #: templates/js/translated/company.js:703
 msgid "Email Address"
-msgstr ""
+msgstr "Indirizzo email"
 
 #: templates/js/translated/company.js:729
 msgid "Delete Contact"
-msgstr ""
+msgstr "Elimina contatto"
 
 #: templates/js/translated/company.js:803
 msgid "All selected manufacturer parts will be deleted"
@@ -10167,11 +10167,11 @@ msgstr "Seleziona filtro"
 
 #: templates/js/translated/filters.js:323
 msgid "Print Labels"
-msgstr ""
+msgstr "Stampa Etichette"
 
 #: templates/js/translated/filters.js:327
 msgid "Print Reports"
-msgstr ""
+msgstr "Stampa report"
 
 #: templates/js/translated/filters.js:339
 msgid "Download table data"
@@ -10384,7 +10384,7 @@ msgstr "Le notifiche verranno caricate qui"
 
 #: templates/js/translated/order.js:72
 msgid "Add Extra Line Item"
-msgstr ""
+msgstr "Aggiungi Linea Extra"
 
 #: templates/js/translated/order.js:109
 msgid "Export Order"
@@ -10449,7 +10449,7 @@ msgstr "Crea Categoria Articolo"
 
 #: templates/js/translated/part.js:299
 msgid "Create new category after this one"
-msgstr ""
+msgstr "Crea una nuvoa categoria dopo questa"
 
 #: templates/js/translated/part.js:300
 msgid "Part category created"
@@ -10574,7 +10574,7 @@ msgstr "Nessuno stock disponibile"
 
 #: templates/js/translated/part.js:692
 msgid "Demand"
-msgstr ""
+msgstr "Richieste"
 
 #: templates/js/translated/part.js:715
 msgid "Unit"
@@ -10865,7 +10865,7 @@ msgstr "Questo ordine d'acquisto non può essere cancellato"
 #: templates/js/translated/purchase_order.js:478
 #: templates/js/translated/return_order.js:126
 msgid "After placing this order, line items will no longer be editable."
-msgstr ""
+msgstr "Dopo aver effettuato questo ordine, gli elementi della riga non saranno più modificabili."
 
 #: templates/js/translated/purchase_order.js:483
 msgid "Issue Purchase Order"
@@ -10923,15 +10923,15 @@ msgstr "Stato giacenza"
 
 #: templates/js/translated/purchase_order.js:1131
 msgid "Add barcode"
-msgstr ""
+msgstr "Aggiungi codice a barre"
 
 #: templates/js/translated/purchase_order.js:1132
 msgid "Remove barcode"
-msgstr ""
+msgstr "Rimuovi il codice a barre"
 
 #: templates/js/translated/purchase_order.js:1135
 msgid "Specify location"
-msgstr ""
+msgstr "Specifica la posizione"
 
 #: templates/js/translated/purchase_order.js:1143
 msgid "Add batch code"
@@ -10943,7 +10943,7 @@ msgstr "Aggiungi numeri seriali"
 
 #: templates/js/translated/purchase_order.js:1206
 msgid "Serials"
-msgstr ""
+msgstr "Seriale"
 
 #: templates/js/translated/purchase_order.js:1231
 msgid "Order Code"
@@ -10964,15 +10964,15 @@ msgstr "Ricevi Elementi Ordine D'Acquisto"
 
 #: templates/js/translated/purchase_order.js:1324
 msgid "Scan Item Barcode"
-msgstr ""
+msgstr "Scansiona codice a barre"
 
 #: templates/js/translated/purchase_order.js:1325
 msgid "Scan barcode on incoming item (must not match any existing stock items)"
-msgstr ""
+msgstr "Scansiona il codice a barre sull'elemento in arrivo (non deve corrispondere a nessun articolo disponibile esistente)"
 
 #: templates/js/translated/purchase_order.js:1339
 msgid "Invalid barcode data"
-msgstr ""
+msgstr "Dati codice a barre non validi"
 
 #: templates/js/translated/purchase_order.js:1601
 #: templates/js/translated/return_order.js:251
@@ -11057,11 +11057,11 @@ msgstr "Aggiungi cliente"
 
 #: templates/js/translated/return_order.js:96
 msgid "Create Return Order"
-msgstr ""
+msgstr "Crea Ordine Di Reso"
 
 #: templates/js/translated/return_order.js:111
 msgid "Edit Return Order"
-msgstr ""
+msgstr "Modifica Ordine Di Reso"
 
 #: templates/js/translated/return_order.js:131
 msgid "Issue Return Order"
@@ -11280,7 +11280,7 @@ msgstr "Aggiorna Prezzo Unitario"
 
 #: templates/js/translated/search.js:300
 msgid "No results"
-msgstr ""
+msgstr "Nessun risultato"
 
 #: templates/js/translated/search.js:322 templates/search.html:25
 msgid "Enter search query"
@@ -11288,11 +11288,11 @@ msgstr ""
 
 #: templates/js/translated/search.js:372
 msgid "result"
-msgstr ""
+msgstr "risultato"
 
 #: templates/js/translated/search.js:372
 msgid "results"
-msgstr ""
+msgstr "risultati"
 
 #: templates/js/translated/search.js:382
 msgid "Minimize results"
@@ -11324,11 +11324,11 @@ msgstr "Nuova posizione giacenza"
 
 #: templates/js/translated/stock.js:163
 msgid "Create another location after this one"
-msgstr ""
+msgstr "Crea un'altra posizione dopo questa"
 
 #: templates/js/translated/stock.js:164
 msgid "Stock location created"
-msgstr ""
+msgstr "Posizione magazzino creata"
 
 #: templates/js/translated/stock.js:178
 msgid "Are you sure you want to delete this stock location?"
@@ -11384,7 +11384,7 @@ msgstr "Modifica elemento magazzino"
 
 #: templates/js/translated/stock.js:480
 msgid "Create another item after this one"
-msgstr ""
+msgstr "Crea un altro oggetto dopo questo"
 
 #: templates/js/translated/stock.js:492
 msgid "Created new stock item"
@@ -11613,7 +11613,7 @@ msgstr "Fornitore dell'articolo non specificato"
 
 #: templates/js/translated/stock.js:2059
 msgid "Stock Value"
-msgstr ""
+msgstr "Valore Scorte"
 
 #: templates/js/translated/stock.js:2147
 msgid "No stock items matching query"
@@ -11653,11 +11653,11 @@ msgstr "L'ordine di acquisto non esiste più"
 
 #: templates/js/translated/stock.js:2719
 msgid "Sales Order no longer exists"
-msgstr ""
+msgstr "L'ordine di vendita non esiste più"
 
 #: templates/js/translated/stock.js:2736
 msgid "Return Order no longer exists"
-msgstr ""
+msgstr "L'ordine di ritorno non esiste più"
 
 #: templates/js/translated/stock.js:2755
 msgid "Customer no longer exists"
@@ -11717,7 +11717,7 @@ msgstr "Selezionare la parte da installare"
 
 #: templates/js/translated/table_filters.js:46
 msgid "Has project code"
-msgstr ""
+msgstr "Ha il codice del progetto"
 
 #: templates/js/translated/table_filters.js:55
 #: templates/js/translated/table_filters.js:474
