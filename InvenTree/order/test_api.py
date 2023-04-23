@@ -1133,7 +1133,7 @@ class SalesOrderTest(OrderTest):
                 idx += 1
 
             # Create some extra lines against this order
-            for ii in range(3):
+            for _ in range(3):
                 extra_lines.append(
                     models.SalesOrderExtraLine(
                         order=so,

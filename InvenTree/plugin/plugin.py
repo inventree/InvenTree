@@ -46,7 +46,7 @@ class MetaBase:
 
             # Sound of a warning if old_key worked
             if value:
-                warnings.warn(f'Usage of {old_key} was depreciated in 0.7.0 in favour of {key}', DeprecationWarning)
+                warnings.warn(f'Usage of {old_key} was depreciated in 0.7.0 in favour of {key}', DeprecationWarning, stacklevel=2)
 
         # Use __default if still nothing set
         if (value is None) and __default:
