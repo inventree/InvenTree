@@ -71,7 +71,7 @@ def exception_handler(exc, context):
             DRFValidationError,
         ]
 
-        if not any([isinstance(exc, err) for err in do_not_report]):
+        if not any(isinstance(exc, err) for err in do_not_report):
             capture_exception(exc)
 
     # Catch any django validation error, and re-throw a DRF validation error

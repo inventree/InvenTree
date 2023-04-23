@@ -813,7 +813,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def is_completed(self):
         """Check if this order is "shipped" (all line items delivered)."""
-        return self.lines.count() > 0 and all([line.is_completed() for line in self.lines.all()])
+        return self.lines.count() > 0 and all(line.is_completed() for line in self.lines.all())
 
     def can_complete(self, raise_error=False, allow_incomplete_lines=False):
         """Test if this SalesOrder can be completed.

@@ -1340,7 +1340,7 @@ class BomImportExtractSerializer(DataFileExtractSerializer):
 
         part_columns = ['part', 'part_name', 'part_ipn', 'part_id']
 
-        if not any([col in self.columns for col in part_columns]):
+        if not any(col in self.columns for col in part_columns):
             # At least one part column is required!
             raise serializers.ValidationError(_("No part column specified"))
 
