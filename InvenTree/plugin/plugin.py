@@ -367,7 +367,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         try:
             website = meta['Project-URL'].split(', ')[1]
         except [ValueError, IndexError]:
-            website = None
+            website = meta['Project-URL']
 
         return {
             'author': meta['Author-email'],
