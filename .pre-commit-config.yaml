@@ -22,6 +22,7 @@ repos:
                 'flake8-comprehensions',
                 'flake8-docstrings',
                 'flake8-string-format',
+                'flake8-tidy-imports',
                 'pep8-naming'
         ]
 -   repo: https://github.com/pycqa/isort

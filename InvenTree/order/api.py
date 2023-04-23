@@ -14,8 +14,6 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-import order.models as models
-import order.serializers as serializers
 from common.models import InvenTreeSetting, ProjectCode
 from common.settings import settings
 from company.models import SupplierPart
@@ -27,6 +25,7 @@ from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus)
+from order import models, serializers
 from order.admin import (PurchaseOrderExtraLineResource,
                          PurchaseOrderLineItemResource, PurchaseOrderResource,
                          ReturnOrderResource, SalesOrderExtraLineResource,

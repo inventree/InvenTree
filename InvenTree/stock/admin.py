@@ -3,7 +3,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-import import_export.widgets as widgets
+from import_export import widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
