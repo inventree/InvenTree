@@ -1431,7 +1431,7 @@ class OrderCalendarExport(ICalFeed):
         # Help:
         # https://django.readthedocs.io/en/stable/ref/contrib/syndication.html
 
-        obj = dict()
+        obj = {}
         obj['ordertype'] = kwargs['ordertype']
         obj['include_completed'] = bool(request.GET.get('include_completed', False))
 

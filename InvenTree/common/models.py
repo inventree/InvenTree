@@ -2403,7 +2403,7 @@ class WebhookEndpoint(models.Model):
         """
         return WebhookMessage.objects.create(
             host=request.get_host(),
-            header=json.dumps({key: val for key, val in headers.items()}),
+            header=json.dumps(dict(headers.items())),
             body=payload,
             endpoint=self,
         )

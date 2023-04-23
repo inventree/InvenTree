@@ -231,10 +231,7 @@ class MethodStorageClass:
         return methods
 
 
-IGNORED_NOTIFICATION_CLS = set([
-    SingleNotificationMethod,
-    BulkNotificationMethod,
-])
+IGNORED_NOTIFICATION_CLS = set({SingleNotificationMethod, BulkNotificationMethod})
 storage = MethodStorageClass()
 
 
@@ -424,7 +421,7 @@ def trigger_superuser_notification(plugin: PluginConfig, msg: str):
             'message': msg,
         },
         targets=users,
-        delivery_methods=set([UIMessageNotification]),
+        delivery_methods=set(UIMessageNotification),
     )
 
 
