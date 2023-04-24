@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-22 13:48+0000\n"
-"PO-Revision-Date: 2023-04-22 18:49\n"
+"PO-Revision-Date: 2023-04-24 18:58\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -761,23 +761,23 @@ msgstr "Výroba"
 
 #: InvenTree/status_codes.py:430
 msgid "Return"
-msgstr ""
+msgstr "Vrátit zpět"
 
 #: InvenTree/status_codes.py:431
 msgid "Repair"
-msgstr ""
+msgstr "Oprava"
 
 #: InvenTree/status_codes.py:432
 msgid "Refund"
-msgstr ""
+msgstr "Vrácení peněz"
 
 #: InvenTree/status_codes.py:433
 msgid "Replace"
-msgstr ""
+msgstr "Náhrada"
 
 #: InvenTree/status_codes.py:434
 msgid "Reject"
-msgstr ""
+msgstr "Odmítnout"
 
 #: InvenTree/validators.py:18
 msgid "Not a valid currency code"
