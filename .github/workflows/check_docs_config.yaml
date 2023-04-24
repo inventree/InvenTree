@@ -28,4 +28,4 @@ jobs:
       - name: Check Links
         run: |
           pip install mkdocs-linkcheck
-          python -m mkdocs-linkcheck
+          mkdocs-linkcheck
