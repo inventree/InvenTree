@@ -26,6 +26,6 @@ jobs:
           pip install pyyaml
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
-        run:
+        run: |
           pip install mkdocs-linkcheck
           python -m mkdocs-linkcheck
