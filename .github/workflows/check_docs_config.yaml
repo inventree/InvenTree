@@ -27,5 +27,5 @@ jobs:
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
         run: |
-          pip install mkdocs-linkcheck
+          pip install mkdocs-linkcheck requests
           mkdocs-linkcheck
