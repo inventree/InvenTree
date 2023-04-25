@@ -28,4 +28,4 @@ jobs:
       - name: Check Links
         run: |
           pip install linkcheckmd
-          cd docs && python -m linkcheckmd docs --exclude README.md -r
+          cd docs && python -m linkcheckmd docs --sync -r
