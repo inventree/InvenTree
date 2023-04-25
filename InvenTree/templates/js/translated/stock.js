@@ -1780,7 +1780,7 @@ function loadStockTable(table, options) {
         formatter: function(value, row) {
             var ipn = row.part_detail.IPN;
             if (ipn) {
-                return withTitle(shortenString(ipn), ipn);
+                return renderClipboard(withTitle(shortenString(ipn), ipn));
             } else {
                 return '-';
             }
@@ -2012,7 +2012,7 @@ function loadStockTable(table, options) {
                 text = `<i>{% trans "Supplier part not specified" %}</i>`;
             }
 
-            return renderLink(text, link);
+            return renderClipboard(renderLink(text, link));
         }
     };
 
