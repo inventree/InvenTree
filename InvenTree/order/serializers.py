@@ -177,6 +177,10 @@ class PurchaseOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTre
             'creation_date',
         ]
 
+        extra_kwargs = {
+            'supplier': {'required': True}
+        }
+
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer"""
         supplier_detail = kwargs.pop('supplier_detail', False)
