@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-22 13:48+0000\n"
-"PO-Revision-Date: 2023-04-23 19:00\n"
+"POT-Creation-Date: 2023-04-25 12:43+0000\n"
+"PO-Revision-Date: 2023-04-25 19:14\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1322,6 +1322,10 @@ msgstr "Rimuovi Output Incompleti"
 #: build/serializers.py:465
 msgid "Delete any build outputs which have not been completed"
 msgstr "Elimina gli output di produzione che non sono stati completati"
+
+#: build/serializers.py:492
+msgid "Not permitted"
+msgstr ""
 
 #: build/serializers.py:493
 msgid "Accept as consumed by this build order"
@@ -5169,6 +5173,10 @@ msgstr "Posizione Predefinita ID"
 msgid "Default Supplier ID"
 msgstr "ID Fornitore Predefinito"
 
+#: part/admin.py:46 part/models.py:855 part/templates/part/part_base.html:179
+msgid "Variant Of"
+msgstr "Variante Di"
+
 #: part/admin.py:47 part/models.py:971 part/templates/part/part_base.html:205
 msgid "Minimum Stock"
 msgstr "Scorta Minima"
@@ -5395,10 +5403,6 @@ msgstr "Quest'articolo è un articolo di template?"
 #: part/models.py:854
 msgid "Is this part a variant of another part?"
 msgstr "Questa parte è una variante di un altro articolo?"
-
-#: part/models.py:855 part/templates/part/part_base.html:179
-msgid "Variant Of"
-msgstr "Variante Di"
 
 #: part/models.py:861
 msgid "Part description (optional)"
