@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-22 13:48+0000\n"
-"PO-Revision-Date: 2023-04-22 18:49\n"
+"POT-Creation-Date: 2023-04-25 12:43+0000\n"
+"PO-Revision-Date: 2023-04-25 19:14\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1321,6 +1321,10 @@ msgstr ""
 
 #: build/serializers.py:465
 msgid "Delete any build outputs which have not been completed"
+msgstr ""
+
+#: build/serializers.py:492
+msgid "Not permitted"
 msgstr ""
 
 #: build/serializers.py:493
@@ -5169,6 +5173,10 @@ msgstr ""
 msgid "Default Supplier ID"
 msgstr ""
 
+#: part/admin.py:46 part/models.py:855 part/templates/part/part_base.html:179
+msgid "Variant Of"
+msgstr "Çeşidi"
+
 #: part/admin.py:47 part/models.py:971 part/templates/part/part_base.html:205
 msgid "Minimum Stock"
 msgstr "Minimum Stok"
@@ -5395,10 +5403,6 @@ msgstr "Bu parça bir şablon parçası mı?"
 #: part/models.py:854
 msgid "Is this part a variant of another part?"
 msgstr "Bu parça başka bir parçanın çeşidi mi?"
-
-#: part/models.py:855 part/templates/part/part_base.html:179
-msgid "Variant Of"
-msgstr "Çeşidi"
 
 #: part/models.py:861
 msgid "Part description (optional)"
