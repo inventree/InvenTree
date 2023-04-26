@@ -41,8 +41,6 @@ class TotalPriceMixin(serializers.Serializer):
         read_only=True,
     )
 
-    total_price_currency = InvenTreeCurrencySerializer(read_only=True)
-
     order_currency = InvenTreeCurrencySerializer(
         allow_blank=True,
         label=_('Order Currency'),
@@ -174,7 +172,6 @@ class PurchaseOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTre
             'supplier_detail',
             'supplier_reference',
             'total_price',
-            'total_price_currency',
             'order_currency',
         ])
 
@@ -715,7 +712,6 @@ class SalesOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTreeMo
             'customer_reference',
             'shipment_date',
             'total_price',
-            'total_price_currency',
             'order_currency',
         ])
 
