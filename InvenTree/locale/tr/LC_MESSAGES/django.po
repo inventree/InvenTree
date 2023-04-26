@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-26 13:19+0000\n"
-"PO-Revision-Date: 2023-04-21 18:37\n"
+"POT-Creation-Date: 2023-04-26 07:37+0000\n"
+"PO-Revision-Date: 2023-04-26 19:59\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -2785,10 +2785,8 @@ msgid "No Printer (Export to PDF)"
 msgstr ""
 
 #: common/models.py:1746
-#, fuzzy
-#| msgid "Build to allocate parts"
 msgid "Hide inactive parts"
-msgstr "Yapım işi için tahsis edilen parçalar"
+msgstr ""
 
 #: common/models.py:1747
 msgid "Hide inactive parts in results displayed on the homepage"
@@ -4239,10 +4237,8 @@ msgid "Total price for this order"
 msgstr ""
 
 #: order/models.py:75 order/serializers.py:48
-#, fuzzy
-#| msgid "Order reference"
 msgid "Order Currency"
-msgstr "Sipariş referansı"
+msgstr ""
 
 #: order/models.py:77 order/serializers.py:49
 msgid "Currency for this order (leave blank to use company default)"
@@ -12167,8 +12163,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12347,3 +12342,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:245
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
