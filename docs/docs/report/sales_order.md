@@ -22,6 +22,7 @@ In addition to the default report context variables, the following variables are
 | customer | The [customer](../sell/customer.md) associated with the particular sales order |
 | lines | A list of available line items for this order |
 | extra_lines | A list of available *extra* line items for this order |
+| order.currency | The currency code associated with this order, e.g. 'CAD' |
 
 ### Default Report Template
 

@@ -21,7 +21,7 @@ $ pip install -r requirements.txt
 To serve the pages locally, run the following command (from the top-level project directory):
 
 ```
-$ mkdocs serve -a localhost:8080
+$ mkdocs serve -f docs/mkdocs.yml -a localhost:8080
 ```
 
 ## Edit Documentation Files
