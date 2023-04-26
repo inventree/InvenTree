@@ -140,7 +140,6 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.customer_reference }}{% include "clip.html"%}</td>
     </tr>
     {% endif %}
-    {% include "currency_data.html" with instance=order %}
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
@@ -184,7 +183,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.responsible }}</td>
     </tr>
     {% endif %}
-
+    {% include "currency_data.html" with instance=order %}
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Total Cost" %}</td>
@@ -193,7 +192,7 @@ src="{% static 'img/blank_image.png' %}"
             {% if tp == None %}
             <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
             {% else %}
-            {% render_currency tp currency=order.customer.currency %}
+            {% render_currency tp currency=order.currency %}
             {% endif %}
             {% endwith %}
         </td>

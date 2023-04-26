@@ -43,7 +43,11 @@ class TotalPriceMixin(serializers.Serializer):
 
     total_price_currency = InvenTreeCurrencySerializer(read_only=True)
 
-    order_currency = InvenTreeCurrencySerializer()
+    order_currency = InvenTreeCurrencySerializer(
+        allow_blank=True,
+        label=_('Order Currency'),
+        help_text=_('Currency for this order (leave blank to use company default)'),
+    )
 
 
 class AbstractOrderSerializer(serializers.Serializer):
@@ -171,6 +175,7 @@ class PurchaseOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTre
             'supplier_reference',
             'total_price',
             'total_price_currency',
+            'order_currency',
         ])
 
         read_only_fields = [
@@ -180,7 +185,8 @@ class PurchaseOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTre
         ]
 
         extra_kwargs = {
-            'supplier': {'required': True}
+            'supplier': {'required': True},
+            'order_currency': {'required': False},
         }
 
     def __init__(self, *args, **kwargs):
@@ -710,6 +716,7 @@ class SalesOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTreeMo
             'shipment_date',
             'total_price',
             'total_price_currency',
+            'order_currency',
         ])
 
         read_only_fields = [
@@ -717,6 +724,10 @@ class SalesOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTreeMo
             'creation_date',
             'shipment_date',
         ]
+
+        extra_kwargs = {
+            'order_currency': {'required': False},
+        }
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer"""
