@@ -1003,6 +1003,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
+        'location': 'location__pathstring',
         'SKU': 'supplier_part__SKU',
         'stock': ['quantity', 'serial_int', 'serial'],
     }

@@ -6,6 +6,7 @@
 <!-- Badges -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)
 ![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
 
 [![Coveralls](https://img.shields.io/coveralls/github/inventree/InvenTree)](https://coveralls.io/github/inventree/InvenTree)

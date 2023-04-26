@@ -34,3 +34,16 @@ class ReportMixin:
             context: The context dictionary to add to
         """
         pass
+
+    def add_label_context(self, label_instance, model_instance, request, context):
+        """Add extra context to the provided label instance.
+
+        By default, this method does nothing.
+
+        Args:
+            label_instance: The label instance to add context to
+            model_instance: The model instance which initiated the label generation
+            request: The request object which initiated the label generation
+            context: The context dictionary to add to
+        """
+        pass
