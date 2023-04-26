@@ -62,6 +62,9 @@ function salesOrderFields(options={}) {
         project_code: {
             icon: 'fa-list',
         },
+        order_currency: {
+            icon: 'fa-coins',
+        },
         target_date: {
             icon: 'fa-calendar-alt',
         },

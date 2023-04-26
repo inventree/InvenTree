@@ -43,6 +43,8 @@ class TotalPriceMixin(serializers.Serializer):
 
     total_price_currency = InvenTreeCurrencySerializer(read_only=True)
 
+    order_currency = InvenTreeCurrencySerializer()
+
 
 class AbstractOrderSerializer(serializers.Serializer):
     """Abstract serializer class which provides fields common to all order types"""
