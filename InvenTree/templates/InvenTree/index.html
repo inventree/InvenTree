@@ -75,6 +75,7 @@ function addHeaderAction(label, title, icon, options) {
     });
 }
 
+{% settings_value 'HOMEPAGE_HIDE_INACTIVE' user=request.user as hide_inactive %}
 {% settings_value 'HOMEPAGE_PART_STARRED' user=request.user as setting_part_starred %}
 {% settings_value 'HOMEPAGE_CATEGORY_STARRED' user=request.user as setting_category_starred %}
 {% settings_value 'HOMEPAGE_PART_LATEST' user=request.user as setting_part_latest %}
@@ -89,6 +90,9 @@ addHeaderAction('starred-parts', '{% trans "Subscribed Parts" %}', 'fa-bell');
 loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
     params: {
         starred: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
     name: 'starred_parts',
 });
@@ -110,6 +114,9 @@ loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
     params: {
         ordering: "-creation_date",
         limit: {% settings_value "PART_RECENT_COUNT" user=request.user %},
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
     name: 'latest_parts',
 });
@@ -120,6 +127,9 @@ addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-ti
 loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
     params: {
         "bom_valid": false,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
     name: 'bom_invalid_parts',
 });
@@ -159,6 +169,9 @@ addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-flag');
 loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
     params: {
         low_stock: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
     name: "low_stock_parts",
 });
@@ -169,6 +182,9 @@ addHeaderAction('depleted-stock', '{% trans "Depleted Stock" %}', 'fa-times');
 loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
     params: {
         depleted_stock: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
     name: "depleted_stock_parts",
 });
@@ -179,6 +195,9 @@ addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa
 loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
     params: {
         stock_to_build: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
     name: "to_build_parts",
 });
@@ -194,6 +213,9 @@ loadStockTable($("#table-expired-stock"), {
         expired: true,
         location_detail: true,
         part_detail: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
 });
 {% endif %}
@@ -206,6 +228,9 @@ loadStockTable($("#table-stale-stock"), {
         expired: false,
         location_detail: true,
         part_detail: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
 });
 {% endif %}
