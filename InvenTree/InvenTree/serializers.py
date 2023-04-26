@@ -75,7 +75,7 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
 
         choices = currency_code_mappings()
 
-        allow_blank = kwargs.pop('allow_blank', False)
+        allow_blank = kwargs.get('allow_blank', False) or kwargs.get('allow_null', False)
 
         if allow_blank:
             choices = [('', '---------')] + choices

@@ -43,6 +43,8 @@ class TotalPriceMixin(serializers.Serializer):
 
     order_currency = InvenTreeCurrencySerializer(
         allow_blank=True,
+        allow_null=True,
+        required=False,
         label=_('Order Currency'),
         help_text=_('Currency for this order (leave blank to use company default)'),
     )

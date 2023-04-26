@@ -60,6 +60,50 @@ class PurchaseOrderTest(OrderTest):
 
     LIST_URL = reverse('api-po-list')
 
+    def test_options(self):
+        """Test the PurchaseOrder OPTIONS endpoint."""
+
+        self.assignRole('purchase_order.add')
+
+        response = self.options(self.LIST_URL, expected_code=200)
+
+        data = response.data
+        self.assertEqual(data['name'], 'Purchase Order List')
+
+        post = data['actions']['POST']
+
+        def check_options(data, field_name, spec):
+            """Helper function to check that the options are configured correctly."""
+            field_data = data[field_name]
+
+            for k, v in spec.items():
+                self.assertIn(k, field_data)
+                self.assertEqual(field_data[k], v)
+
+        # Checks for the 'order_currency' field
+        check_options(post, 'order_currency', {
+            'type': 'choice',
+            'required': False,
+            'read_only': False,
+            'label': 'Order Currency',
+            'help_text': 'Currency for this order (leave blank to use company default)',
+        })
+
+        # Checks for the 'reference' field
+        check_options(post, 'reference', {
+            'type': 'string',
+            'required': True,
+            'read_only': False,
+            'label': 'Reference',
+        })
+
+        # Checks for the 'supplier' field
+        check_options(post, 'supplier', {
+            'type': 'related field',
+            'required': True,
+            'api_url': '/api/company/',
+        })
+
     def test_po_list(self):
         """Test the PurchaseOrder list API endpoint"""
         # List *ALL* PurchaseOrder items
@@ -323,13 +367,18 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertTrue(po.lines.count() > 0)
 
+        lines = []
+
         # Add some extra line items to this order
         for idx in range(5):
-            models.PurchaseOrderExtraLine.objects.create(
+            lines.append(models.PurchaseOrderExtraLine(
                 order=po,
                 quantity=idx + 10,
                 reference='some reference',
-            )
+            ))
+
+        # bulk create orders
+        models.PurchaseOrderExtraLine.objects.bulk_create(lines)
 
         data = self.get(reverse('api-po-detail', kwargs={'pk': 1})).data
 
