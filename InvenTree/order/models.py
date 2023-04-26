@@ -84,6 +84,7 @@ class TotalPriceMixin(models.Model):
 
         - If the order_currency field is set, return that
         - Otherwise, return the currency associated with the company
+        - Finally, return the default currency code
         """
 
         if self.order_currency:
@@ -92,7 +93,8 @@ class TotalPriceMixin(models.Model):
         if self.company:
             return self.company.currency_code
 
-        return None
+        # Return default currency code
+        return currency_code_default()
 
     def update_total_price(self, commit=True):
         """Recalculate and save the total_price for this order"""
