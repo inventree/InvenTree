@@ -155,7 +155,7 @@ class PurchaseOrderTest(OrderTest):
 
                 for result in response.data['results']:
                     self.assertIn('total_price', result)
-                    self.assertIn('total_price_currency', result)
+                    self.assertIn('order_currency', result)
 
     def test_overdue(self):
         """Test "overdue" status."""
@@ -1157,7 +1157,7 @@ class SalesOrderTest(OrderTest):
 
                 for result in response.data['results']:
                     self.assertIn('total_price', result)
-                    self.assertIn('total_price_currency', result)
+                    self.assertIn('order_currency', result)
 
     def test_overdue(self):
         """Test "overdue" status."""
