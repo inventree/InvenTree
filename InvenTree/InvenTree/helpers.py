@@ -30,12 +30,11 @@ from djmoney.money import Money
 from PIL import Image
 
 import common.models
+import common.notifications
+import common.settings
+import InvenTree.api_tester
 import InvenTree.version
-from common.notifications import (InvenTreeNotificationBodies,
-                                  NotificationBody, trigger_notification)
-from common.settings import currency_code_default
 
-from .api_tester import ExchangeRateMixin, UserMixin
 from .settings import MEDIA_URL, STATIC_URL
 
 logger = logging.getLogger('inventree')
@@ -443,7 +442,7 @@ def decimal2money(d, currency=None):
         A Money object from the input(s)
     """
     if not currency:
-        currency = currency_code_default()
+        currency = common.settings.currency_code_default()
     return Money(d, currency)
 
 
@@ -1064,12 +1063,12 @@ def inheritors(cls):
     return subcls
 
 
-class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
+class InvenTreeTestCase(InvenTree.api_tester.ExchangeRateMixin, InvenTree.api_tester.UserMixin, TestCase):
     """Testcase with user setup buildin."""
     pass
 
 
-def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
+def notify_responsible(instance, sender, content: common.notifications.NotificationBody = common.notifications.InvenTreeNotificationBodies.NewOrder, exclude=None):
     """Notify all responsible parties of a change in an instance.
 
     Parses the supplied content with the provided instance and sender and sends a notification to all responsible users,
@@ -1103,7 +1102,7 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
         }
 
         # Create notification
-        trigger_notification(
+        common.notifications.trigger_notification(
             instance,
             content.slug.format(**content_context),
             targets=[instance.responsible],
