@@ -140,6 +140,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.customer_reference }}{% include "clip.html"%}</td>
     </tr>
     {% endif %}
+    {% include "currency_data.html" with instance=order %}
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
