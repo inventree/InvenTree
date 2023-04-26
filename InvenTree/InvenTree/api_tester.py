@@ -11,8 +11,8 @@ from django.http.response import StreamingHttpResponse
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework.test import APITestCase
 
+import plugin.models
 from plugin import registry
-from plugin.models import PluginConfig
 
 
 class UserMixin:
@@ -120,11 +120,11 @@ class PluginMixin:
         super().setUp()
 
         # Load plugin configs
-        self.plugin_confs = PluginConfig.objects.all()
+        self.plugin_confs = plugin.models.PluginConfig.objects.all()
         # Reload if not present
         if not self.plugin_confs:
             registry.reload_plugins()
-            self.plugin_confs = PluginConfig.objects.all()
+            self.plugin_confs = plugin.models.PluginConfig.objects.all()
 
 
 class ExchangeRateMixin:
