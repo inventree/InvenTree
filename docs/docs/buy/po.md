@@ -23,6 +23,10 @@ Each Purchase Order has a specific status code which indicates the current state
 | Complete | The purchase order has been completed, and is now closed |
 | Cancelled | The purchase order was cancelled, and is now closed |
 
+### Purchase Order Currency
+
+The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./supplier.md) will be used.
+
 ## Create Purchase Order
 
 Once the purchase order page is loaded, click on <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Purchase Order</span> which opens the "Create Purchase Order" form.
