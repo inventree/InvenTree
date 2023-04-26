@@ -6,10 +6,10 @@ from django_test_migrations.contrib.unittest_case import MigratorTestCase
 class TestForwardMigrations(MigratorTestCase):
     """Unit testing class for testing 'company' app migrations"""
 
-    import InvenTree.helpers
+    import InvenTree.migrations
 
-    migrate_from = ('company', InvenTree.helpers.getOldestMigrationFile('company'))
-    migrate_to = ('company', InvenTree.helpers.getNewestMigrationFile('company'))
+    migrate_from = ('company', InvenTree.migrations.getOldestMigrationFile('company'))
+    migrate_to = ('company', InvenTree.migrations.getNewestMigrationFile('company'))
 
     def prepare(self):
         """Create some simple Company data, and ensure that it migrates OK."""

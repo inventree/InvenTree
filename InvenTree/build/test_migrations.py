@@ -6,10 +6,10 @@ from django_test_migrations.contrib.unittest_case import MigratorTestCase
 class TestForwardMigrations(MigratorTestCase):
     """Test entire schema migration sequence for the build app."""
 
-    import InvenTree.helpers
+    import InvenTree.migrations
 
-    migrate_from = ('build', InvenTree.helpers.getOldestMigrationFile('build'))
-    migrate_to = ('build', InvenTree.helpers.getNewestMigrationFile('build'))
+    migrate_from = ('build', InvenTree.migrations.getOldestMigrationFile('build'))
+    migrate_to = ('build', InvenTree.migrations.getNewestMigrationFile('build'))
 
     def prepare(self):
         """Create initial data!"""
@@ -58,9 +58,9 @@ class TestForwardMigrations(MigratorTestCase):
 class TestReferenceMigration(MigratorTestCase):
     """Test custom migration which adds 'reference' field to Build model."""
 
-    import InvenTree.helpers
+    import InvenTree.migrations
 
-    migrate_from = ('build', InvenTree.helpers.getOldestMigrationFile('build'))
+    migrate_from = ('build', InvenTree.migrations.getOldestMigrationFile('build'))
     migrate_to = ('build', '0018_build_reference')
 
     def prepare(self):
@@ -114,10 +114,10 @@ class TestReferencePatternMigration(MigratorTestCase):
     Ref: https://github.com/inventree/InvenTree/pull/3267
     """
 
-    import InvenTree.helpers
+    import InvenTree.migrations
 
     migrate_from = ('build', '0019_auto_20201019_1302')
-    migrate_to = ('build', InvenTree.helpers.getNewestMigrationFile('build'))
+    migrate_to = ('build', InvenTree.migrations.getNewestMigrationFile('build'))
 
     def prepare(self):
         """Create some initial data prior to migration"""
