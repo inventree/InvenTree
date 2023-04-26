@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-26 13:19+0000\n"
-"PO-Revision-Date: 2023-04-21 18:36\n"
+"POT-Creation-Date: 2023-04-26 07:37+0000\n"
+"PO-Revision-Date: 2023-04-26 19:59\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -115,7 +115,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:174
 msgid "Exception occurred"
-msgstr ""
+msgstr "Произошло исключение"
 
 #: InvenTree/helpers.py:182
 msgid "Server responded with invalid Content-Length value"
@@ -770,11 +770,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:432
 msgid "Refund"
-msgstr ""
+msgstr "Возврат"
 
 #: InvenTree/status_codes.py:433
 msgid "Replace"
-msgstr ""
+msgstr "Заменить"
 
 #: InvenTree/status_codes.py:434
 msgid "Reject"
@@ -4237,10 +4237,8 @@ msgid "Total price for this order"
 msgstr ""
 
 #: order/models.py:75 order/serializers.py:48
-#, fuzzy
-#| msgid "Currency"
 msgid "Order Currency"
-msgstr "Валюта"
+msgstr ""
 
 #: order/models.py:77 order/serializers.py:49
 msgid "Currency for this order (leave blank to use company default)"
@@ -12165,8 +12163,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12345,3 +12342,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:245
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
