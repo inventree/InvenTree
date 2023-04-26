@@ -65,6 +65,9 @@ function purchaseOrderFields(options={}) {
         project_code: {
             icon: 'fa-list',
         },
+        order_currency: {
+            icon: 'fa-coins',
+        },
         target_date: {
             icon: 'fa-calendar-alt',
         },
@@ -1670,7 +1673,7 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 formatter: function(value, row) {
                     return formatCurrency(value, {
-                        currency: row.total_price_currency,
+                        currency: row.order_currency,
                     });
                 },
             },
