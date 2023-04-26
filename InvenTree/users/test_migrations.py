@@ -2,14 +2,14 @@
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
-from InvenTree import helpers
-
 
 class TestForwardMigrations(MigratorTestCase):
     """Test entire schema migration sequence for the users app."""
 
-    migrate_from = ('users', helpers.getOldestMigrationFile('users'))
-    migrate_to = ('users', helpers.getNewestMigrationFile('users'))
+    import InvenTree.helpers
+
+    migrate_from = ('users', InvenTree.helpers.getOldestMigrationFile('users'))
+    migrate_to = ('users', InvenTree.helpers.getNewestMigrationFile('users'))
 
     def prepare(self):
         """Setup the initial state of the database before migrations"""
