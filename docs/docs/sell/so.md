@@ -23,6 +23,11 @@ Each Sales Order has a specific status code, which represents the state of the o
 | Complete | The sales order has been completed, and is now closed |
 | Cancelled | The sales order was cancelled, and is now closed |
 
+### Sales Order Currency
+
+The currency code can be specified for an individual sales order. If not specified, the default currency specified against the [customer](./customer.md) will be used.
+
+
 ## Create a Sales Order
 
 Once the sales order page is loaded, click on <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Sales Order</span> which opens the "Create Sales Order" form.
