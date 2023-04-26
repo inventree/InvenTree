@@ -1673,7 +1673,7 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 formatter: function(value, row) {
                     return formatCurrency(value, {
-                        currency: row.total_price_currency,
+                        currency: row.order_currency,
                     });
                 },
             },
