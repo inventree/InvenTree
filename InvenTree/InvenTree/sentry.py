@@ -7,6 +7,8 @@ from django.core.exceptions import Http404
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
+from InvenTree.version import INVENTREE_SW_VERSION
+
 logger = logging.getLogger('inventree')
 
 
@@ -16,23 +18,12 @@ def default_sentry_dsn():
     return 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
 
 
-def sentry_before_send(event, hint):
-    """Run before sending an event to Sentry.io"""
+def sentry_ignore_errors():
+    """Return a list of error types to ignore"""
 
-    # Ignore the following error types
-    ignore_errors = [
+    return [
         Http404,
     ]
-
-    if 'exc_info' in hint:
-        exc_type, exc_value, tb = hint['exc_info']
-        if exc_type in ignore_errors:
-            logger.debug("sentry_before_send: Ignoring error type '{exc_type}'")
-            return None
-
-    logger.info(f'Sending error to sentry.io: {event}')
-
-    return event
 
 
 def init_sentry(dsn, sample_rate, tags):
@@ -45,7 +36,8 @@ def init_sentry(dsn, sample_rate, tags):
         integrations=[DjangoIntegration()],
         traces_sample_rate=sample_rate,
         send_default_pii=True,
-        before_send=sentry_before_send,
+        ignore_errors=sentry_ignore_errors(),
+        release=INVENTREE_SW_VERSION,
     )
 
     for key, val in tags.items():
