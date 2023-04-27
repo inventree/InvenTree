@@ -8,7 +8,7 @@ Denoting a part as *Trackble* changes the way that [stock items](../../stock/sto
 
 For many parts in an InvenTree database, simply tracking current stock levels (and locations) is sufficient. However, some parts require more extensive tracking than simple stock level knowledge.
 
-Any stock item associated with a trackable part *must* have either a batch number or a serial number. This includes stock created manually or via an internal process (such as a [Purchase Order](../buy/po.md) or a [Build Order](../build/build.md)).
+Any stock item associated with a trackable part *must* have either a batch number or a serial number. This includes stock created manually or via an internal process (such as a [Purchase Order](../order/purchase_order.md) or a [Build Order](../build/build.md)).
 
 
 ## Assign Serial Numbers
