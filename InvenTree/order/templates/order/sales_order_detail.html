@@ -275,9 +275,7 @@
                 order: {{ order.pk }},
                 table: '#so-extra-lines-table',
                 url: '{% url "api-so-extra-line-list" %}',
-                {% if order.customer.currency %}
-                currency: '{{ order.customer.currency }}',
-                {% endif %}
+                currency: '{{ order.currency }}',
             });
         });
 

@@ -328,7 +328,7 @@ TEMPLATES = [
                 'InvenTree.context.user_roles',
             ],
             'loaders': [(
-                'django.template.loaders.cached.Loader', [
+                'InvenTree.template.InvenTreeTemplateLoader', [
                     'plugin.template.PluginTemplateLoader',
                     'django.template.loaders.filesystem.Loader',
                     'django.template.loaders.app_directories.Loader',

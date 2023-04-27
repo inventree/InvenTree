@@ -8,7 +8,7 @@ Purchase orders allow to track which parts are bought from suppliers and manufac
 
 To access the purchase order page, click on the <span class="badge inventree nav main"><span class='fas fa-shopping-cart'></span> Buy</span> navigation tab and click on <span class="badge inventree nav main"><span class='fas fa-list'></span> Purchase Orders</span> option in the dropdown list.
 
-{% with id="purchase_order_list", url="buy/po_list.png", description="Purchase Order List" %}
+{% with id="purchase_order_list", url="order/po_list.png", description="Purchase Order List" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -22,6 +22,10 @@ Each Purchase Order has a specific status code which indicates the current state
 | In Progress | The purchase order has been issued to the supplier, and is in progress |
 | Complete | The purchase order has been completed, and is now closed |
 | Cancelled | The purchase order was cancelled, and is now closed |
+
+### Purchase Order Currency
+
+The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./company.md#suppliers) will be used.
 
 ## Create Purchase Order
 
@@ -96,19 +100,19 @@ Duplicating a Purchase Order allows the user to quickly create a new *copy* of a
 
 To duplicate an existing order, select the *Duplicate Order* action from the menu in the top-right of the screen (as shown below):
 
-{% with id="purchase_order_duplicate", url="buy/po_duplicate.png", description="Duplicate Purchase Order" %}
+{% with id="purchase_order_duplicate", url="order/po_duplicate.png", description="Duplicate Purchase Order" %}
 {% include "img.html" %}
 {% endwith %}
 
 This opens the following dialog, where you can adjust the parameters of the new order before proceeding to actually create the new order. You can see in the screenshot below that some extra options are provided in this form, to control duplication of individual line items.
 
-{% with id="purchase_order_duplicate_2", url="buy/po_duplicate_2.png", description="Duplicate Purchase Order" %}
+{% with id="purchase_order_duplicate_2", url="order/po_duplicate_2.png", description="Duplicate Purchase Order" %}
 {% include "img.html" %}
 {% endwith %}
 
 A new purchase order is then created based on the currently selected order:
 
-{% with id="purchase_order_duplicate_3", url="buy/po_duplicate_3.png", description="Duplicate Purchase Order" %}
+{% with id="purchase_order_duplicate_3", url="order/po_duplicate_3.png", description="Duplicate Purchase Order" %}
 {% include "img.html" %}
 {% endwith %}
 

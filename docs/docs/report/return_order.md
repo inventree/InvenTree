@@ -4,7 +4,7 @@ title: Return Order Reports
 
 ## Return Order Reports
 
-Custom reports may be generated against any given [Return Order](../sell/return.md). For example, return order reports can be used to generate an RMA request to send to a customer.
+Custom reports may be generated against any given [Return Order](../order/return_order.md). For example, return order reports can be used to generate an RMA request to send to a customer.
 
 ### Context Variables
 

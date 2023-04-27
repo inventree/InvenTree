@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 109
+INVENTREE_API_VERSION = 110
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v110 -> 2023-04-26 : https://github.com/inventree/InvenTree/pull/4698
+    - Adds 'order_currency' field for PurchaseOrder / SalesOrder endpoints
 
 v109 -> 2023-04-19 : https://github.com/inventree/InvenTree/pull/4636
     - Adds API endpoints for the "ProjectCode" model
