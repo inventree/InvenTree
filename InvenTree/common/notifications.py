@@ -421,7 +421,7 @@ def trigger_superuser_notification(plugin: PluginConfig, msg: str):
             'message': msg,
         },
         targets=users,
-        delivery_methods=set(UIMessageNotification),
+        delivery_methods={UIMessageNotification, },
     )
 
 

@@ -71,7 +71,7 @@ def print_label(plugin_slug: str, pdf_data, filename=None, label_instance=None, 
             'label.printing_failed',
             targets=[user],
             context=ctx,
-            delivery_methods=set(common.notifications.UIMessageNotification)
+            delivery_methods={common.notifications.UIMessageNotification, },
         )
 
         if settings.TESTING:
