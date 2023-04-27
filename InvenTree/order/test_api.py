@@ -1452,6 +1452,28 @@ class SalesOrderTest(OrderTest):
         self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders_incl_complete, n_events)
 
+    def test_export(self):
+        """Test we can export the SalesOrder list"""
+
+        n = models.SalesOrder.objects.count()
+
+        # Check there are some sales orders
+        self.assertGreater(n, 0)
+
+        for order in models.SalesOrder.objects.all():
+            # Reconstruct the total price
+            order.save()
+
+        # Download file, check we get a 200 response
+        for fmt in ['csv', 'xls', 'xlsx']:
+            self.download_file(
+                reverse('api-so-list'),
+                {'export': fmt},
+                decode=True if fmt == 'csv' else False,
+                expected_code=200,
+                expected_fn=f"InvenTree_SalesOrders.{fmt}"
+            )
+
 
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
