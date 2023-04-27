@@ -3,11 +3,11 @@
 import logging
 
 from django.conf import settings
-from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.exceptions import ValidationError
 from django.http import Http404
 
+import rest_framework.exceptions
 import sentry_sdk
-from rest_framework.exceptions import ValidationError as DRFValidationError
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from InvenTree.version import INVENTREE_SW_VERSION
@@ -22,12 +22,17 @@ def default_sentry_dsn():
 
 
 def sentry_ignore_errors():
-    """Return a list of error types to ignore"""
+    """Return a list of error types to ignore.
+
+    These error types will *not* be reported to sentry.io.
+    """
 
     return [
         Http404,
-        DjangoValidationError,
-        DRFValidationError,
+        ValidationError,
+        rest_framework.exceptions.AuthenticationFailed,
+        rest_framework.exceptions.PermissionDenied,
+        rest_framework.exceptions.ValidationError,
     ]
 
 
