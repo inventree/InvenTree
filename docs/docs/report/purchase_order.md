@@ -27,9 +27,11 @@ In addition to the default report context variables, the following variables are
 | order.creation_date | The date when the order was created |
 | order.target_date | The date when the order should arrive |
 | order.if_overdue | Boolean value that tells if the target date has passed |
+| order.currency | The currency code associated with this order, e.g. 'AUD' |
 
 #### Lines
-The lines have sub variables.
+
+Each line item have sub variables, as follows:
 
 | Variable | Description |
 | --- | --- |
@@ -39,8 +41,19 @@ The lines have sub variables.
 | reference | The reference given in the part of the order |
 | notes | The notes given in the part of the order |
 | target_date | The date when the part should arrive. Each part can have an individual date |
-| price | The price the part supplierpart |
+| price | The unit price the line item |
+| total_line_price | The total price for this line item, calculated from the unit price and quantity |
 | destination | The stock location where the part will be stored |
+
+A simple example below shows how to use the context variables for line items:
+
+```html
+{% raw %}
+{% for line in order.lines %}
+Price: {% render_currency line.total_line_price %}
+{% endfor %}
+{% endraw %}
+```
 
 
 ### Default Report Template
