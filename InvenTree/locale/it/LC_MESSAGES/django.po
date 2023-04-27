@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-26 07:37+0000\n"
+"POT-Creation-Date: 2023-04-27 12:58+0000\n"
 "PO-Revision-Date: 2023-04-26 19:59\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -317,7 +317,7 @@ msgstr "Scelta non valida"
 #: templates/js/translated/company.js:691
 #: templates/js/translated/company.js:856
 #: templates/js/translated/company.js:1056 templates/js/translated/part.js:1126
-#: templates/js/translated/part.js:1282 templates/js/translated/part.js:2335
+#: templates/js/translated/part.js:1282 templates/js/translated/part.js:2338
 #: templates/js/translated/stock.js:2526
 msgid "Name"
 msgstr "Nome"
@@ -344,7 +344,7 @@ msgstr "Nome"
 #: templates/js/translated/company.js:973
 #: templates/js/translated/company.js:1236 templates/js/translated/part.js:1178
 #: templates/js/translated/part.js:1620 templates/js/translated/part.js:1892
-#: templates/js/translated/part.js:2371 templates/js/translated/part.js:2462
+#: templates/js/translated/part.js:2374 templates/js/translated/part.js:2465
 #: templates/js/translated/purchase_order.js:1625
 #: templates/js/translated/purchase_order.js:1771
 #: templates/js/translated/purchase_order.js:1949
@@ -364,7 +364,7 @@ msgid "parent"
 msgstr "genitore"
 
 #: InvenTree/models.py:648 InvenTree/models.py:649
-#: templates/js/translated/part.js:2380 templates/js/translated/stock.js:2567
+#: templates/js/translated/part.js:2383 templates/js/translated/stock.js:2567
 msgid "Path"
 msgstr "Percorso"
 
@@ -1165,7 +1165,7 @@ msgstr "Origine giacenza articolo"
 #: templates/js/translated/company.js:1406
 #: templates/js/translated/model_renderers.js:204
 #: templates/js/translated/order.js:279 templates/js/translated/part.js:901
-#: templates/js/translated/part.js:1469 templates/js/translated/part.js:2899
+#: templates/js/translated/part.js:1469 templates/js/translated/part.js:2902
 #: templates/js/translated/pricing.js:363
 #: templates/js/translated/pricing.js:456
 #: templates/js/translated/pricing.js:504
@@ -5253,7 +5253,7 @@ msgstr "Percorso Categoria"
 #: part/templates/part/category_sidebar.html:9
 #: templates/InvenTree/index.html:86 templates/InvenTree/search.html:84
 #: templates/InvenTree/settings/sidebar.html:45
-#: templates/js/translated/part.js:2390 templates/js/translated/search.js:160
+#: templates/js/translated/part.js:2393 templates/js/translated/search.js:160
 #: templates/navbar.html:24 users/models.py:38
 msgid "Parts"
 msgstr "Articoli"
@@ -5748,7 +5748,7 @@ msgstr "Il modello di prova può essere creato solo per gli articoli rintracciab
 msgid "Test with this name already exists for this part"
 msgstr "Una prova con questo nome esiste già per questo articolo"
 
-#: part/models.py:3257 templates/js/translated/part.js:2457
+#: part/models.py:3257 templates/js/translated/part.js:2460
 msgid "Test Name"
 msgstr "Nome Test"
 
@@ -5764,7 +5764,7 @@ msgstr "Descrizione Di Prova"
 msgid "Enter description for this test"
 msgstr "Inserisci descrizione per questa prova"
 
-#: part/models.py:3269 templates/js/translated/part.js:2466
+#: part/models.py:3269 templates/js/translated/part.js:2469
 #: templates/js/translated/table_filters.js:413
 msgid "Required"
 msgstr "Richiesto"
@@ -5773,7 +5773,7 @@ msgstr "Richiesto"
 msgid "Is this test required to pass?"
 msgstr "Questa prova è necessaria per passare?"
 
-#: part/models.py:3275 templates/js/translated/part.js:2474
+#: part/models.py:3275 templates/js/translated/part.js:2477
 msgid "Requires Value"
 msgstr "Valore richiesto"
 
@@ -5781,7 +5781,7 @@ msgstr "Valore richiesto"
 msgid "Does this test require a value when adding a test result?"
 msgstr "Questa prova richiede un valore quando si aggiunge un risultato di prova?"
 
-#: part/models.py:3281 templates/js/translated/part.js:2481
+#: part/models.py:3281 templates/js/translated/part.js:2484
 msgid "Requires Attachment"
 msgstr "Allegato Richiesto"
 
@@ -9295,7 +9295,7 @@ msgid "Click on the following link to view this part"
 msgstr "Clicca il seguente link per visualizzare questo articolo"
 
 #: templates/email/low_stock_notification.html:19
-#: templates/js/translated/part.js:2776
+#: templates/js/translated/part.js:2779
 msgid "Minimum Quantity"
 msgstr "Quantità minima"
 
@@ -9969,7 +9969,7 @@ msgid "No builds matching query"
 msgstr "Nessuna produzione corrispondente alla ricerca"
 
 #: templates/js/translated/build.js:2582 templates/js/translated/part.js:1853
-#: templates/js/translated/part.js:2328 templates/js/translated/stock.js:1740
+#: templates/js/translated/part.js:2331 templates/js/translated/stock.js:1740
 #: templates/js/translated/stock.js:2520
 msgid "Select"
 msgstr "Seleziona"
@@ -10682,7 +10682,7 @@ msgstr "Nessun articolo trovato"
 msgid "No category"
 msgstr "Nessuna categoria"
 
-#: templates/js/translated/part.js:2029 templates/js/translated/part.js:2247
+#: templates/js/translated/part.js:2029 templates/js/translated/part.js:2250
 #: templates/js/translated/stock.js:2479
 msgid "Display as list"
 msgstr "Visualizza come elenco"
@@ -10707,72 +10707,78 @@ msgstr "Seleziona Categoria Articolo"
 msgid "Category is required"
 msgstr "Carica Sotto Categorie"
 
-#: templates/js/translated/part.js:2267 templates/js/translated/stock.js:2499
+#: templates/js/translated/part.js:2234
+#, fuzzy
+#| msgid "No sales orders found"
+msgid "No subcategories found"
+msgstr "Non sono state trovati ordini di vendita"
+
+#: templates/js/translated/part.js:2270 templates/js/translated/stock.js:2499
 msgid "Display as tree"
 msgstr "Visualizza come struttura ad albero"
 
-#: templates/js/translated/part.js:2347
+#: templates/js/translated/part.js:2350
 msgid "Load Subcategories"
 msgstr "Carica Sotto Categorie"
 
-#: templates/js/translated/part.js:2363
+#: templates/js/translated/part.js:2366
 msgid "Subscribed category"
 msgstr "Categoria sottoscritta"
 
-#: templates/js/translated/part.js:2443
+#: templates/js/translated/part.js:2446
 msgid "No test templates matching query"
 msgstr "Nessun modello di test corrispondente"
 
-#: templates/js/translated/part.js:2494 templates/js/translated/stock.js:1366
+#: templates/js/translated/part.js:2497 templates/js/translated/stock.js:1366
 msgid "Edit test result"
 msgstr "Modificare il risultato del test"
 
-#: templates/js/translated/part.js:2495 templates/js/translated/stock.js:1367
+#: templates/js/translated/part.js:2498 templates/js/translated/stock.js:1367
 #: templates/js/translated/stock.js:1629
 msgid "Delete test result"
 msgstr "Cancellare il risultato del test"
 
-#: templates/js/translated/part.js:2499
+#: templates/js/translated/part.js:2502
 msgid "This test is defined for a parent part"
 msgstr "Questo test è definito per un articolo principale"
 
-#: templates/js/translated/part.js:2515
+#: templates/js/translated/part.js:2518
 msgid "Edit Test Result Template"
 msgstr "Modifica Modello Risultato Test"
 
-#: templates/js/translated/part.js:2529
+#: templates/js/translated/part.js:2532
 msgid "Delete Test Result Template"
 msgstr "Elimina Modello Risultato Test"
 
-#: templates/js/translated/part.js:2608 templates/js/translated/part.js:2609
+#: templates/js/translated/part.js:2611 templates/js/translated/part.js:2612
 msgid "No date specified"
 msgstr "Nessuna data specificata"
 
-#: templates/js/translated/part.js:2611
+#: templates/js/translated/part.js:2614
 msgid "Specified date is in the past"
 msgstr "La data specificata è nel passato"
 
-#: templates/js/translated/part.js:2617
+#: templates/js/translated/part.js:2620
 msgid "Speculative"
 msgstr "Speculativo"
 
-#: templates/js/translated/part.js:2667
+#: templates/js/translated/part.js:2670
 msgid "No scheduling information available for this part"
 msgstr "Nessuna informazione di pianificazione disponibile per questo prodotto"
 
-#: templates/js/translated/part.js:2673
+#: templates/js/translated/part.js:2676
 msgid "Error fetching scheduling information for this part"
 msgstr "Errore nel recupero delle informazioni di programmazione per questo articolo"
 
-#: templates/js/translated/part.js:2769
+#: templates/js/translated/part.js:2772
 msgid "Scheduled Stock Quantities"
 msgstr "Quantità Di Scorte Programmate"
 
-#: templates/js/translated/part.js:2785
+#: templates/js/translated/part.js:2788
 msgid "Maximum Quantity"
 msgstr "Quantità Massima"
 
-#: templates/js/translated/part.js:2830
+#: templates/js/translated/part.js:2833
 msgid "Minimum Stock Level"
 msgstr "Livello Minimo Stock"
 
@@ -12163,9 +12169,11 @@ msgstr "Continua"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr ""
+"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/stats.html:13
@@ -12343,4 +12351,3 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:245
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
-
