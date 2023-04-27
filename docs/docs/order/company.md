@@ -32,6 +32,10 @@ To delete a company, click on the <span class='fas fa-trash-alt'></span> icon un
 
 ### Contacts
 
+Each company can have multiple assigned *Contacts*. A contact identifies an individual who is associated with the company, including information such as name, email address, phone number, etc.
+
+A *contact* can be assigned to orders, (such as [purchase orders](./purchase_order.md) or [sales orders](./sales_order.md)).
+
 ## Customers
 
 A *customer* is an external client to whom parts or services are sold.
