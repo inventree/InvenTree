@@ -25,6 +25,7 @@ from mptt.models import TreeForeignKey
 import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.tasks
+import InvenTree.validators
 import order.validators
 import stock.models
 import users.models as UserModels
@@ -69,10 +70,36 @@ class TotalPriceMixin(models.Model):
         help_text=_('Total price for this order')
     )
 
+    order_currency = models.CharField(
+        max_length=3,
+        verbose_name=_('Order Currency'),
+        blank=True, null=True,
+        help_text=_('Currency for this order (leave blank to use company default)'),
+        validators=[InvenTree.validators.validate_currency_code]
+    )
+
+    @property
+    def currency(self):
+        """Return the currency associated with this order instance:
+
+        - If the order_currency field is set, return that
+        - Otherwise, return the currency associated with the company
+        - Finally, return the default currency code
+        """
+
+        if self.order_currency:
+            return self.order_currency
+
+        if self.company:
+            return self.company.currency_code
+
+        # Return default currency code
+        return currency_code_default()
+
     def update_total_price(self, commit=True):
         """Recalculate and save the total_price for this order"""
 
-        self.total_price = self.calculate_total_price()
+        self.total_price = self.calculate_total_price(target_currency=self.currency)
 
         if commit:
             self.save()

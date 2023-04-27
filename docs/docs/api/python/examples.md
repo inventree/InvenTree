@@ -188,6 +188,18 @@ loc = StockLocation(api, pk=12)
 item.transferStock(loc, quantity=50)
 ```
 
+### Delete a Part
+
+To delete a [Part instance](../../part/part.md), first in needs to be marked as *inactive* (otherwise it will throw an error):
+
+```python
+from inventree.part import Part
+
+part = Part(api, pk=10)
+part.save(data={'active': False})
+part.delete()
+```
+
 ### Bulk Delete
 
 Some database models support bulk delete operations, where multiple database entries can be deleted in a single API query.

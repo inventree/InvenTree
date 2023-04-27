@@ -1741,6 +1741,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         ]
 
     SETTINGS = {
+
+        'HOMEPAGE_HIDE_INACTIVE': {
+            'name': _('Hide inactive parts'),
+            'description': _('Hide inactive parts in results displayed on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+
         'HOMEPAGE_PART_STARRED': {
             'name': _('Show subscribed parts'),
             'description': _('Show subscribed parts on the homepage'),

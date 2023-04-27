@@ -73,10 +73,17 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
     def __init__(self, *args, **kwargs):
         """Initialize the currency serializer"""
 
-        kwargs['choices'] = currency_code_mappings()
+        choices = currency_code_mappings()
+
+        allow_blank = kwargs.get('allow_blank', False) or kwargs.get('allow_null', False)
+
+        if allow_blank:
+            choices = [('', '---------')] + choices
+
+        kwargs['choices'] = choices
 
         if 'default' not in kwargs and 'required' not in kwargs:
-            kwargs['default'] = currency_code_default
+            kwargs['default'] = '' if allow_blank else currency_code_default
 
         if 'label' not in kwargs:
             kwargs['label'] = _('Currency')

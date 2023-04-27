@@ -364,11 +364,16 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
                 # Not much information we can extract at this point
                 return {}
 
+        try:
+            website = meta['Project-URL'].split(', ')[1]
+        except [ValueError, IndexError]:
+            website = meta['Project-URL']
+
         return {
             'author': meta['Author-email'],
             'description': meta['Summary'],
             'version': meta['Version'],
-            'website': meta['Project-URL'],
+            'website': website,
             'license': meta['License']
         }
 

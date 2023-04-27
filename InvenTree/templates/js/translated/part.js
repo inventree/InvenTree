@@ -2230,6 +2230,9 @@ function loadPartCategoryTable(table, options) {
         treeShowField: 'name',
         parentIdField: tree_view ? 'parent' : null,
         method: 'get',
+        formatNoMatches: function() {
+            return '{% trans "No subcategories found" %}';
+        },
         url: options.url || '{% url "api-part-category-list" %}',
         queryParams: filters,
         disablePagination: tree_view,

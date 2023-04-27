@@ -4,11 +4,11 @@ title: Purchase Order Report
 
 ## Purchase Order Reports
 
-Custom purchase order reports may be generated against any given [Purchase Order](../buy/po.md). For example, purchase order reports could be used to generate a pdf of the order to send to a supplier.
+Custom purchase order reports may be generated against any given [Purchase Order](../order/purchase_order.md). For example, purchase order reports could be used to generate a pdf of the order to send to a supplier.
 
 ### Purchase Order Filters
 
-The report template can be filtered against available [Purchase Order](../buy/po.md) instances.
+The report template can be filtered against available [Purchase Order](../order/purchase_order.md) instances.
 
 ### Context Variables
 
@@ -19,7 +19,7 @@ In addition to the default report context variables, the following variables are
 | order | The specific Purchase Order object |
 | reference | The order reference field (can also be accessed as `{% raw %}{{ order.reference }}{% endraw %}`) |
 | description | The order description field |
-| supplier | The [supplier](../buy/supplier.md) associated with this purchase order |
+| supplier | The [supplier](../order/company.md#suppliers) associated with this purchase order |
 | lines | A list of available line items for this order |
 | extra_lines | A list of available *extra* line items for this order |
 | order.created_by | The user who created the order |
@@ -27,9 +27,11 @@ In addition to the default report context variables, the following variables are
 | order.creation_date | The date when the order was created |
 | order.target_date | The date when the order should arrive |
 | order.if_overdue | Boolean value that tells if the target date has passed |
+| order.currency | The currency code associated with this order, e.g. 'AUD' |
 
 #### Lines
-The lines have sub variables.
+
+Each line item have sub variables, as follows:
 
 | Variable | Description |
 | --- | --- |
@@ -39,8 +41,19 @@ The lines have sub variables.
 | reference | The reference given in the part of the order |
 | notes | The notes given in the part of the order |
 | target_date | The date when the part should arrive. Each part can have an individual date |
-| price | The price the part supplierpart |
+| price | The unit price the line item |
+| total_line_price | The total price for this line item, calculated from the unit price and quantity |
 | destination | The stock location where the part will be stored |
+
+A simple example below shows how to use the context variables for line items:
+
+```html
+{% raw %}
+{% for line in order.lines %}
+Price: {% render_currency line.total_line_price %}
+{% endfor %}
+{% endraw %}
+```
 
 
 ### Default Report Template
