@@ -419,6 +419,8 @@ function setupFilterList(tableKey, table, target, options={}) {
 
             printLabels({
                 items: items,
+                singular_name: options.singular_name,
+                plural_name: options.plural_name,
                 url: options.labels.url,
                 key: options.labels.key,
             });
