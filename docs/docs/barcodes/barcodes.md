@@ -20,7 +20,7 @@ Barcodes can be linked with the following data model types:
 - [Part](../part/part.md#part)
 - [Stock Item](../stock/stock.md#stock-item)
 - [Stock Location](../stock/stock.md#stock-location)
-- [Supplier Part](../buy/supplier.md#supplier-parts)
+- [Supplier Part](../order/company.md#supplier-parts)
 
 ## Web Integration
 

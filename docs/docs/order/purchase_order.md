@@ -25,7 +25,7 @@ Each Purchase Order has a specific status code which indicates the current state
 
 ### Purchase Order Currency
 
-The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./supplier.md) will be used.
+The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./company.md#suppliers) will be used.
 
 ## Create Purchase Order
 
