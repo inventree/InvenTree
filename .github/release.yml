@@ -4,6 +4,7 @@ changelog:
   exclude:
     labels:
       - translation
+      - documentation
   categories:
     - title: Breaking Changes
       labels:

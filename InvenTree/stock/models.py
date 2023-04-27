@@ -30,15 +30,14 @@ import InvenTree.tasks
 import label.models
 import report.models
 from company import models as CompanyModels
-from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
-                              InvenTreeURLField)
+from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
-                              InvenTreeTree, extract_int)
+                              InvenTreeNotesMixin, InvenTreeTree,
+                              MetadataMixin, extract_int)
 from InvenTree.status_codes import (SalesOrderStatus, StockHistoryCode,
                                     StockStatus)
 from part import models as PartModels
 from plugin.events import trigger_event
-from plugin.models import MetadataMixin
 from users.models import Owner
 
 
@@ -282,7 +281,7 @@ def default_delete_on_deplete():
         return True
 
 
-class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, MPTTModel):
+class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, common.models.MetaMixin, MPTTModel):
     """A StockItem object represents a quantity of physical instances of a part.
 
     Attributes:
@@ -804,8 +803,6 @@ class StockItem(InvenTreeBarcodeMixin, MetadataMixin, common.models.MetaMixin, M
     def status_text(self):
         """Return the text representation of the status field"""
         return StockStatus.text(self.status)
-
-    notes = InvenTreeNotesField(help_text=_('Stock Item Notes'))
 
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,

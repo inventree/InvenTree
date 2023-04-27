@@ -1123,9 +1123,9 @@ function loadSupplierPartTable(table, url, options) {
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters('supplier-part', params);
+    var filters = loadTableFilters('supplierpart', params);
 
-    setupFilterList('supplier-part', $(table));
+    setupFilterList('supplierpart', $(table));
 
     $(table).inventreeTable({
         url: url,
