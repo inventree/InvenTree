@@ -8,7 +8,7 @@ Sales orders allow tracking of which stock items are sold to customers, therefor
 
 To access the sales order page, click on the <span class="badge inventree nav main"><span class='fas fa-truck'></span> Sell</span> navigation tab and click on <span class="badge inventree nav main"><span class='fas fa-list'></span> Sales Orders</span> option in the dropdown list.
 
-{% with id="sales_order_list", url="sell/so_list.png", description="Sales Order List" %}
+{% with id="sales_order_list", url="order/so_list.png", description="Sales Order List" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -114,7 +114,7 @@ The *Pending Shipments* panel displays the shipments which have not yet been sen
 - Pending sales order items can be allocated to these shipments
 - New shipments can be created if the order is still open
 
-{% with id="pending-shipments", url="sell/pending_shipments.png", description="Pending shipments" %}
+{% with id="pending-shipments", url="order/pending_shipments.png", description="Pending shipments" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -126,19 +126,19 @@ To create a new shipment for a sales order, press the *New Shipment* button abov
 
 To complete a shipment, press the *Complete Shipment* button associated with the particular shipment:
 
-{% with id="complete-shipment", url="sell/complete_shipment.png", description="Complete shipment" %}
+{% with id="complete-shipment", url="order/complete_shipment.png", description="Complete shipment" %}
 {% include "img.html" %}
 {% endwith %}
 
 Alternatively, pending shipments can be completed by selecting the *Complete Shipments* action from the sales order actions menu:
 
-{% with id="complete-shipment-action", url="sell/complete_shipment_action.png", description="Complete shipment" %}
+{% with id="complete-shipment-action", url="order/complete_shipment_action.png", description="Complete shipment" %}
 {% include "img.html" %}
 {% endwith %}
 
 ### Completed Shipments
 
-{% with id="completed-shipments", url="sell/completed_shipments.png", description="Completed shipments" %}
+{% with id="completed-shipments", url="order/completed_shipments.png", description="Completed shipments" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -164,6 +164,6 @@ An optional URL field which can be used to provide a link to an external URL.
 
 All these fields can be edited by the user:
 
-{% with id="edit-shipment", url="sell/edit_shipment.png", description="Edit shipment" %}
+{% with id="edit-shipment", url="order/edit_shipment.png", description="Edit shipment" %}
 {% include "img.html" %}
 {% endwith %}

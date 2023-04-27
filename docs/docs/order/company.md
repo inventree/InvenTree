@@ -54,7 +54,7 @@ A manufacturer is an external **producer** of parts and raw materials.
 
 To access the list of manufacturers , click on the <span class="badge inventree nav main"><span class='fas fa-shopping-cart'></span> Buy</span> navigation tab and click on <span class="badge inventree nav main"><span class='fas fa-industry'></span> Manufacturers</span> option in the dropdown list.
 
-{% with id="manufacturer_list", url="buy/manufacturer_list.png", description="Manufacturer List" %}
+{% with id="manufacturer_list", url="order/manufacturer_list.png", description="Manufacturer List" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -103,7 +103,7 @@ A supplier is an external **vendor** of parts and raw materials.
 
 To access the supplier page, click on the <span class="badge inventree nav main"><span class='fas fa-shopping-cart'></span> Buy</span> navigation tab and click on <span class="badge inventree nav main"><span class='fas fa-building'></span> Suppliers</span> option in the dropdown list.
 
-{% with id="supplier_list", url="buy/supplier_list.png", description="Supplier List" %}
+{% with id="supplier_list", url="order/supplier_list.png", description="Supplier List" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -158,12 +158,12 @@ A custom can periodically request availability information (via a supplier API),
 
 If provided, availability information is displayed on the Supplier Part detail page.
 
-{% with id="supplier_part_availability", url="buy/supplier_part_availability.png", maxheight="240px", description="Supplier part availability" %}
+{% with id="supplier_part_availability", url="order/supplier_part_availability.png", maxheight="240px", description="Supplier part availability" %}
 {% include "img.html" %}
 {% endwith %}
 
 Availability information can be manually updated via the user interface:
 
-{% with id="update_availability", url="buy/update_availability.png", maxheight="240px", description="Update availability" %}
+{% with id="update_availability", url="order/update_availability.png", maxheight="240px", description="Update availability" %}
 {% include "img.html" %}
 {% endwith %}
