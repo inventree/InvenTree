@@ -18,6 +18,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 
+import InvenTree.sentry
+
 logger = logging.getLogger('inventree')
 
 
@@ -61,18 +63,12 @@ def exception_handler(exc, context):
     """
     response = None
 
-    if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
-        # Report this exception to sentry.io
-        from sentry_sdk import capture_exception
-
-        # The following types of errors are ignored, they are "expected"
-        do_not_report = [
-            DjangoValidationError,
-            DRFValidationError,
-        ]
-
-        if not any([isinstance(exc, err) for err in do_not_report]):
-            capture_exception(exc)
+    # Pass exception to sentry.io handler
+    try:
+        InvenTree.sentry.report_exception(exc)
+    except Exception:
+        # If sentry.io fails, we don't want to crash the server!
+        pass
 
     # Catch any django validation error, and re-throw a DRF validation error
     if isinstance(exc, DjangoValidationError):

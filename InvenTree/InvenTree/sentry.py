@@ -2,9 +2,12 @@
 
 import logging
 
-from django.core.exceptions import Http404
+from django.conf import settings
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.http import Http404
 
 import sentry_sdk
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from InvenTree.version import INVENTREE_SW_VERSION
@@ -23,6 +26,8 @@ def sentry_ignore_errors():
 
     return [
         Http404,
+        DjangoValidationError,
+        DRFValidationError,
     ]
 
 
@@ -42,3 +47,17 @@ def init_sentry(dsn, sample_rate, tags):
 
     for key, val in tags.items():
         sentry_sdk.set_tag(f'inventree_{key}', val)
+
+
+def report_exception(exc):
+    """Report an exception to sentry.io"""
+
+    if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
+
+        if not any([isinstance(exc, e) for e in sentry_ignore_errors()]):
+            logger.info(f"Reporting exception to sentry.io: {exc}")
+
+            try:
+                sentry_sdk.capture_exception(exc)
+            except Exception:
+                logger.warning("Failed to report exception to sentry.io")
