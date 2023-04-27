@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-27 12:58+0000\n"
-"PO-Revision-Date: 2023-04-26 19:59\n"
+"PO-Revision-Date: 2023-04-27 20:10\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -10708,10 +10708,8 @@ msgid "Category is required"
 msgstr ""
 
 #: templates/js/translated/part.js:2234
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No subcategories found"
-msgstr "Tidak ada nomor seri ditemukan"
+msgstr ""
 
 #: templates/js/translated/part.js:2270 templates/js/translated/stock.js:2499
 msgid "Display as tree"
@@ -12169,8 +12167,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12349,3 +12346,4 @@ msgstr ""
 #: users/models.py:245
 msgid "Permission to delete items"
 msgstr ""
+
