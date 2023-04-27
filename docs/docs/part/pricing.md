@@ -25,11 +25,11 @@ Pricing information can be determined from multiple sources:
 | Pricing Source | Description | Linked to |
 | --- | --- | ---|
 | Internal Price | How much a part costs to make | [Part](../part/part.md) |
-| Supplier Price | The price to theoretically purchase a part from a given supplier (with price-breaks) | [Supplier](../buy/supplier.md) |
-| Purchase Cost | Historical cost information for parts purchased | [Purchase Order](../buy/po.md) |
+| Supplier Price | The price to theoretically purchase a part from a given supplier (with price-breaks) | [Supplier](../order/company.md#suppliers) |
+| Purchase Cost | Historical cost information for parts purchased | [Purchase Order](../order/purchase_order.md) |
 | BOM Price | Total price for an assembly (total price of all component items) | [Part](../part/part.md) |
 | Sale Price | How much a salable item is sold for (with price-breaks) | [Part](../part/part.md) |
-| Sale Cost | How much an item was sold for | [Sales Order](../sell/so.md) |
+| Sale Cost | How much an item was sold for | [Sales Order](../order/sales_order.md) |
 
 ### Currency Support
 
@@ -97,7 +97,7 @@ If the **Internal Price Override** setting is enabled, then internal pricing dat
 
 ### Purchase History
 
-If the Part is designated as *purchaseable*, then historical purchase cost information is displayed (and used to calculate overall pricing). Purchase history data is collected from *completed* [purchase orders](../buy/po.md).
+If the Part is designated as *purchaseable*, then historical purchase cost information is displayed (and used to calculate overall pricing). Purchase history data is collected from *completed* [purchase orders](../order/purchase_order.md).
 
 {% with id="pricing_purchase_history", url="part/pricing_purchase_history.png", description="Purchase History" %}
 {% include 'img.html' %}
@@ -144,7 +144,7 @@ If the Part is designated as *Salable* then sale price breaks are made available
 
 ### Sale History
 
-If the Part is designated as *Salable* then historical sale cost information is available. Sale history data is collected from *completed* [sales orders](../sell/so.md).
+If the Part is designated as *Salable* then historical sale cost information is available. Sale history data is collected from *completed* [sales orders](../order/sales_order.md).
 
 {% with id="pricing_sale_history", url="part/pricing_sale_history.png", description="Sale History" %}
 {% include 'img.html' %}
