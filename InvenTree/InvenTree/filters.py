@@ -3,7 +3,7 @@
 from django_filters import rest_framework as rest_filters
 from rest_framework import filters
 
-from InvenTree.helpers import str2bool
+import InvenTree.helpers
 
 
 class InvenTreeSearchFilter(filters.SearchFilter):
@@ -16,7 +16,7 @@ class InvenTreeSearchFilter(filters.SearchFilter):
         - search_regex: If True, search is perfomed on 'regex' comparison
         """
 
-        regex = str2bool(request.query_params.get('search_regex', False))
+        regex = InvenTree.helpers.str2bool(request.query_params.get('search_regex', False))
 
         search_fields = super().get_search_fields(view, request)
 
@@ -37,7 +37,7 @@ class InvenTreeSearchFilter(filters.SearchFilter):
         Depending on the request parameters, we may "augment" these somewhat
         """
 
-        whole = str2bool(request.query_params.get('search_whole', False))
+        whole = InvenTree.helpers.str2bool(request.query_params.get('search_whole', False))
 
         terms = []
 

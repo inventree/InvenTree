@@ -29,8 +29,8 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
 
+import common.models
 import InvenTree.version
-from common.models import InvenTreeSetting
 from common.notifications import (InvenTreeNotificationBodies,
                                   NotificationBody, trigger_notification)
 from common.settings import currency_code_default
@@ -43,7 +43,7 @@ logger = logging.getLogger('inventree')
 
 def getSetting(key, backup_value=None):
     """Shortcut for reading a setting value from the database."""
-    return InvenTreeSetting.get_setting(key, backup_value=backup_value)
+    return common.models.InvenTreeSetting.get_setting(key, backup_value=backup_value)
 
 
 def generateTestKey(test_name):
@@ -96,7 +96,7 @@ def construct_absolute_url(*arg):
 
     This requires the BASE_URL configuration option to be set!
     """
-    base = str(InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
+    base = str(common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
 
     url = '/'.join(arg)
 
@@ -145,10 +145,10 @@ def download_image_from_url(remote_url, timeout=2.5):
     validator(remote_url)
 
     # Calculate maximum allowable image size (in bytes)
-    max_size = int(InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
+    max_size = int(common.models.InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
 
     # Add user specified user-agent to request (if specified)
-    user_agent = InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
+    user_agent = common.models.InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
     if user_agent:
         headers = {"User-Agent": user_agent}
     else:
@@ -1138,10 +1138,10 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
             pass
 
     if decimal_places is None:
-        decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
+        decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
 
     if min_decimal_places is None:
-        min_decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN', 0)
+        min_decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
@@ -1166,3 +1166,20 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
 def is_ajax(request):
     """Check if the current request is an AJAX request."""
     return request.headers.get('x-requested-with') == 'XMLHttpRequest'
+
+
+def getModelsWithMixin(mixin_class) -> list:
+    """Return a list of models that inherit from the given mixin class.
+
+    Args:
+        mixin_class: The mixin class to search for
+
+    Returns:
+        List of models that inherit from the given mixin class
+    """
+
+    from django.contrib.contenttypes.models import ContentType
+
+    db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
+
+    return [x for x in db_models if x is not None and issubclass(x, mixin_class)]

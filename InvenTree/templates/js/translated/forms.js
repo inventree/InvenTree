@@ -692,6 +692,21 @@ function constructFormBody(fields, options) {
 
     // Scroll to the top
     $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
+
+    // Focus on a particular field
+    let focus_field = options.focus;
+
+    if (focus_field == null && field_names.length > 0) {
+        // If no focus field is specified, focus on the first field
+        focus_field = field_names[0];
+    }
+
+    let el = $(options.modal + ` #id_${focus_field}`);
+
+    // Add a callback to focus on the first field
+    $(options.modal).on('shown.bs.modal', function() {
+        el.focus();
+    });
 }
 
 
@@ -730,7 +745,7 @@ function insertPersistButton(options) {
     var html = `
     <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" id="modal-persist">
-        <label class="form-check-label" for="modal-persist">${message}</label>
+        <label class="form-check-label" for="modal-persist"><small>${message}</small></label>
     </div>
     `;
 

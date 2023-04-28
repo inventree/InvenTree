@@ -1003,6 +1003,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
+        'location': 'location__pathstring',
         'SKU': 'supplier_part__SKU',
         'stock': ['quantity', 'serial_int', 'serial'],
     }
@@ -1188,7 +1189,12 @@ class StockTrackingList(ListAPI):
         """List all stock tracking entries."""
         queryset = self.filter_queryset(self.get_queryset())
 
-        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
@@ -1262,7 +1268,9 @@ class StockTrackingList(ListAPI):
                 except Exception:
                     pass
 
-        if is_ajax(request):
+        if page is not None:
+            return self.get_paginated_response(data)
+        if request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
             return Response(data)

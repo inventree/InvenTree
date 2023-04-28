@@ -21,11 +21,12 @@ from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
+
+from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
+from InvenTree.sentry import default_sentry_dsn, init_sentry
+from InvenTree.version import inventreeApiVersion
 
 from . import config
-from .config import get_boolean_setting, get_custom_file, get_setting
 
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
@@ -233,6 +234,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+    'drf_spectacular',                      # API documentation
 
     'django_ical',                          # For exporting calendars
 ]
@@ -326,7 +328,7 @@ TEMPLATES = [
                 'InvenTree.context.user_roles',
             ],
             'loaders': [(
-                'django.template.loaders.cached.Loader', [
+                'InvenTree.template.InvenTreeTemplateLoader', [
                     'plugin.template.PluginTemplateLoader',
                     'django.template.loaders.filesystem.Loader',
                     'django.template.loaders.app_directories.Loader',
@@ -356,7 +358,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissions',
         'InvenTree.permissions.RolePermission',
     ),
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -366,6 +368,15 @@ REST_FRAMEWORK = {
 if DEBUG:
     # Enable browsable API if in DEBUG mode
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'InvenTree API',
+    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
+    'LICENSE': {'MIT': 'https://github.com/inventree/InvenTree/blob/master/LICENSE'},
+    'EXTERNAL_DOCS': {'docs': 'https://docs.inventree.org', 'web': 'https://inventree.org'},
+    'VERSION': inventreeApiVersion(),
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
@@ -562,29 +573,21 @@ REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login
 
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
+
 # Default Sentry DSN (can be overriden if user wants custom sentry integration)
-INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
-SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', INVENTREE_DSN)
+SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', default_sentry_dsn())
 SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
 
 if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
 
-    logger.info("Running with sentry.io integration enabled")
-
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        integrations=[DjangoIntegration(), ],
-        traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
-        send_default_pii=True
-    )
     inventree_tags = {
         'testing': TESTING,
         'docker': DOCKER,
         'debug': DEBUG,
         'remote': REMOTE_LOGIN,
     }
-    for key, val in inventree_tags.items():
-        sentry_sdk.set_tag(f'inventree_{key}', val)
+
+    init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
 
 # Cache configuration
 cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)

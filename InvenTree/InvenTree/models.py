@@ -21,10 +21,10 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
+import common.models
+import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
-from common.models import InvenTreeSetting
-from InvenTree.fields import InvenTreeURLField
 from InvenTree.sanitizer import sanitize_svg
 
 logger = logging.getLogger('inventree')
@@ -42,6 +42,60 @@ def rename_attachment(instance, filename):
     """
     # Construct a path to store a file attachment for a given model type
     return os.path.join(instance.getSubdir(), filename)
+
+
+class MetadataMixin(models.Model):
+    """Model mixin class which adds a JSON metadata field to a model, for use by any (and all) plugins.
+
+    The intent of this mixin is to provide a metadata field on a model instance,
+    for plugins to read / modify as required, to store any extra information.
+
+    The assumptions for models implementing this mixin are:
+
+    - The internal InvenTree business logic will make no use of this field
+    - Multiple plugins may read / write to this metadata field, and not assume they have sole rights
+    """
+
+    class Meta:
+        """Meta for MetadataMixin."""
+        abstract = True
+
+    metadata = models.JSONField(
+        blank=True, null=True,
+        verbose_name=_('Plugin Metadata'),
+        help_text=_('JSON metadata field, for use by external plugins'),
+    )
+
+    def get_metadata(self, key: str, backup_value=None):
+        """Finds metadata for this model instance, using the provided key for lookup.
+
+        Args:
+            key: String key for requesting metadata. e.g. if a plugin is accessing the metadata, the plugin slug should be used
+
+        Returns:
+            Python dict object containing requested metadata. If no matching metadata is found, returns None
+        """
+        if self.metadata is None:
+            return backup_value
+
+        return self.metadata.get(key, backup_value)
+
+    def set_metadata(self, key: str, data, commit: bool = True):
+        """Save the provided metadata under the provided key.
+
+        Args:
+            key (str): Key for saving metadata
+            data (Any): Data object to save - must be able to be rendered as a JSON string
+            commit (bool, optional): If true, existing metadata with the provided key will be overwritten. If false, a merge will be attempted. Defaults to True.
+        """
+        if self.metadata is None:
+            # Handle a null field value
+            self.metadata = {}
+
+        self.metadata[key] = data
+
+        if commit:
+            self.save()
 
 
 class DataImportMixin(object):
@@ -132,7 +186,7 @@ class ReferenceIndexingMixin(models.Model):
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
 
-        return InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
+        return common.models.InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
 
     @classmethod
     def get_reference_context(cls):
@@ -411,7 +465,7 @@ class InvenTreeAttachment(models.Model):
                                   blank=True, null=True
                                   )
 
-    link = InvenTreeURLField(
+    link = InvenTree.fields.InvenTreeURLField(
         blank=True, null=True,
         verbose_name=_('Link'),
         help_text=_('Link to external URL')
@@ -668,6 +722,27 @@ class InvenTreeTree(MPTTModel):
     def __str__(self):
         """String representation of a category is the full path to that category."""
         return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
+
+
+class InvenTreeNotesMixin(models.Model):
+    """A mixin class for adding notes functionality to a model class.
+
+    The following fields are added to any model which implements this mixin:
+
+    - notes : A text field for storing notes
+    """
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+        abstract = True
+
+    notes = InvenTree.fields.InvenTreeNotesField(
+        verbose_name=_('Notes'),
+        help_text=_('Markdown notes (optional)'),
+    )
 
 
 class InvenTreeBarcodeMixin(models.Model):

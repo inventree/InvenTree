@@ -334,18 +334,8 @@
     });
 
     $("#cat-create").click(function() {
-
-        var fields = categoryFields();
-
-        {% if category %}
-        fields.parent.value = {{ category.pk }};
-        {% endif %}
-
-        constructForm('{% url "api-part-category-list" %}', {
-            fields: fields,
-            method: 'POST',
-            title: '{% trans "Create Part Category" %}',
-            follow: true,
+        createPartCategory({
+            {% if category %}parent: {{ category.pk }},{% endif %}
         });
     });
 

@@ -1,6 +1,7 @@
 """Admin functionality for the 'order' app"""
 
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
@@ -8,6 +9,45 @@ from import_export.fields import Field
 
 import order.models as models
 from InvenTree.admin import InvenTreeResource
+
+
+class ProjectCodeResourceMixin:
+    """Mixin for exporting project code data"""
+
+    project_code = Field(attribute='project_code', column_name=_('Project Code'))
+
+    def dehydrate_project_code(self, order):
+        """Return the project code value, not the pk"""
+        if order.project_code:
+            return order.project_code.code
+        else:
+            return ''
+
+
+class TotalPriceResourceMixin:
+    """Mixin for exporting total price data"""
+
+    total_price = Field(attribute='total_price', column_name=_('Total Price'))
+
+    def dehydrate_total_price(self, order):
+        """Return the total price amount, not the object itself"""
+        if order.total_price:
+            return order.total_price.amount
+        else:
+            return ''
+
+
+class PriceResourceMixin:
+    """Mixin for 'price' field"""
+
+    price = Field(attribute='price', column_name=_('Price'))
+
+    def dehydrate_price(self, line):
+        """Return the price amount, not the object itself"""
+        if line.price:
+            return line.price.amount
+        else:
+            return ''
 
 
 # region general classes
@@ -94,7 +134,7 @@ class SalesOrderAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('customer',)
 
 
-class PurchaseOrderResource(InvenTreeResource):
+class PurchaseOrderResource(ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of PurchaseOrder data."""
 
     class Meta:
@@ -113,7 +153,7 @@ class PurchaseOrderResource(InvenTreeResource):
     overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
 
 
-class PurchaseOrderLineItemResource(InvenTreeResource):
+class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of PurchaseOrderLineItem data."""
 
     class Meta:
@@ -132,7 +172,7 @@ class PurchaseOrderLineItemResource(InvenTreeResource):
     SKU = Field(attribute='part__SKU', readonly=True)
 
 
-class PurchaseOrderExtraLineResource(InvenTreeResource):
+class PurchaseOrderExtraLineResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of PurchaseOrderExtraLine data."""
 
     class Meta(GeneralExtraLineMeta):
@@ -141,7 +181,7 @@ class PurchaseOrderExtraLineResource(InvenTreeResource):
         model = models.PurchaseOrderExtraLine
 
 
-class SalesOrderResource(InvenTreeResource):
+class SalesOrderResource(ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of SalesOrder data."""
 
     class Meta:
@@ -160,7 +200,7 @@ class SalesOrderResource(InvenTreeResource):
     overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
 
 
-class SalesOrderLineItemResource(InvenTreeResource):
+class SalesOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of SalesOrderLineItem data."""
 
     class Meta:
@@ -189,7 +229,7 @@ class SalesOrderLineItemResource(InvenTreeResource):
             return ''
 
 
-class SalesOrderExtraLineResource(InvenTreeResource):
+class SalesOrderExtraLineResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of SalesOrderExtraLine data."""
 
     class Meta(GeneralExtraLineMeta):
@@ -276,7 +316,7 @@ class SalesOrderAllocationAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('line', 'shipment', 'item',)
 
 
-class ReturnOrderResource(InvenTreeResource):
+class ReturnOrderResource(ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of ReturnOrder data"""
 
     class Meta:
@@ -313,7 +353,7 @@ class ReturnOrderAdmin(ImportExportModelAdmin):
     ]
 
 
-class ReturnOrderLineItemResource(InvenTreeResource):
+class ReturnOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of ReturnOrderLineItem data"""
 
     class Meta:
@@ -336,7 +376,7 @@ class ReturnOrderLineItemAdmin(ImportExportModelAdmin):
     ]
 
 
-class ReturnOrderExtraLineClass(InvenTreeResource):
+class ReturnOrderExtraLineClass(PriceResourceMixin, InvenTreeResource):
     """Class for managing import/export of ReturnOrderExtraLine data"""
 
     class Meta(GeneralExtraLineMeta):

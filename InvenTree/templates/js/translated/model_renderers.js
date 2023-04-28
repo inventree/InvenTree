@@ -16,6 +16,7 @@
     renderOwner,
     renderPart,
     renderPartCategory,
+    renderProjectCode,
     renderReturnOrder,
     renderStockItem,
     renderStockLocation,
@@ -78,6 +79,8 @@ function getModelRenderer(model) {
         return renderUser;
     case 'group':
         return renderGroup;
+    case 'projectcode':
+        return renderProjectCode;
     default:
         // Un-handled model type
         console.error(`Rendering not implemented for model '${model}'`);
@@ -472,6 +475,19 @@ function renderSupplierPart(data, parameters={}) {
             text: `${data.supplier_detail.name} - ${data.SKU}`,
             textSecondary: data.part_detail.full_name,
             url: data.url || `/supplier-part/${data.pk}/`
+        },
+        parameters
+    );
+}
+
+
+// Renderer for "ProjectCode" model
+function renderProjectCode(data, parameters={}) {
+
+    return renderModel(
+        {
+            text: data.code,
+            textSecondary: data.description,
         },
         parameters
     );
