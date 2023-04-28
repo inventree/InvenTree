@@ -27,3 +27,7 @@ A list of error logs is presented.
 ## Reporting Errors
 
 Errors should be reported to the [InvenTree GitHub page](https://github.com/inventree/inventree/issues), and include the full error output as recorded to the error log.
+
+### Sentry Integration
+
+If [sentry.io integration](../start/config.md#sentry-integration) is enabled, some error logs are automatically reported to sentry.io
