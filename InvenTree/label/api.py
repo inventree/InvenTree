@@ -118,7 +118,7 @@ class LabelListView(LabelFilterMixin, ListAPI):
                     continue
 
             # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
+            queryset = queryset.filter(pk__in=list(valid_label_ids))
 
         return queryset
 

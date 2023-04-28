@@ -13,13 +13,13 @@ from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
 
-import order.models as models
 from common.settings import currency_codes
 from company.models import Company
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockStatus)
+from order import models
 from part.models import Part
 from stock.models import StockItem
 
@@ -1182,7 +1182,7 @@ class SalesOrderTest(OrderTest):
                 idx += 1
 
             # Create some extra lines against this order
-            for ii in range(3):
+            for _ in range(3):
                 extra_lines.append(
                     models.SalesOrderExtraLine(
                         order=so,
