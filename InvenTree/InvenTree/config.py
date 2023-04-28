@@ -277,6 +277,7 @@ def get_plugin_file():
 
         # If opening the file fails (no write permission, for example), then this will throw an error
         plugin_file.write_text("# InvenTree Plugins (uses PIP framework to install)\n\n")
+        plugin_file.write_text("\n# Add your required plugins here\n\n")
 
     return plugin_file
 
