@@ -8,7 +8,7 @@ A list of known third-party InvenTree extensions is provided below. If you have 
 
 ### Ki-nTree
 
-[Ki-nTree](https://github.com/sparkmicro/Ki-nTree/) is a fantastic tool for automated creation of [KiCad](https://kicad-pcb.org/) library parts, with direct integration with InvenTree.
+[Ki-nTree](https://github.com/sparkmicro/Ki-nTree/) is a fantastic tool for automated creation of [KiCad](https://www.kicad.org/) library parts, with direct integration with InvenTree.
 
 ### PK2InvenTree
 

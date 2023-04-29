@@ -112,7 +112,7 @@ class TestScheduledForDeletionMigration(MigratorTestCase):
             scheduled_for_deletion=True,
         )
 
-        for ii in range(3):
+        for _ in range(3):
             StockItem.objects.create(
                 part=part,
                 quantity=200,

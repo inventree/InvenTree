@@ -21,7 +21,7 @@ class RuleSetInline(admin.TabularInline):
     can_delete = False
     verbose_name = 'Ruleset'
     verbose_plural_name = 'Rulesets'
-    fields = ['name'] + [option for option in RuleSet.RULE_OPTIONS]
+    fields = ['name'] + list(RuleSet.RULE_OPTIONS)
     readonly_fields = ['name']
     max_num = len(RuleSet.RULESET_CHOICES)
     min_num = 1

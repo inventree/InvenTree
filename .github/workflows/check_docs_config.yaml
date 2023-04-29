@@ -1,4 +1,4 @@
-name: Documentation Config Checks
+name: Documentation Checks
 
 on:
   push:
@@ -21,7 +21,11 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-      - name: Run Checks
+      - name: Check Config
         run: |
           pip install pyyaml
           python docs/ci/check_mkdocs_config.py
+      - name: Check Links
+        run: |
+          pip install linkcheckmd requests
+          python -m linkcheckmd docs --recurse
