@@ -199,7 +199,7 @@
     <tr>
         <td><span class='fas fa-link'></span>
         <td>{% trans "External Link" %}</td>
-        <td><a href="{{ item.link }}" rel="noreferrer" target="_blank">{{ item.link }}</a></td>
+        <td>{% include 'clip_link.html' with link=item.link %}</td>
     </tr>
     {% endif %}
     {% if item.supplier_part.manufacturer_part %}
