@@ -18,3 +18,22 @@ This field is provided to allow any plugins to store and retrieve arbitrary data
 
 !!! tip "External Use Only"
     It is important to note that the `metadata` field of each model instance is not used for any internal functionality. Any data stored against this field is only for use by external plugins.
+
+### Accessing Metadata
+
+The `metadata` field can be accessed directly, for any given model instance:
+
+```python
+from part.models import Part
+
+# Show metadata value against a particular Part instance
+part = Part.objects.get(pk=123)
+print(part.metadata)
+
+> {'foo': 'bar'}
+
+part.metadata['hello'] = 'world'
+print(part.metadata)
+
+> {'foo': 'bar', 'hello': 'world'}
+```
