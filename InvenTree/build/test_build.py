@@ -579,7 +579,7 @@ class BuildTest(BuildTestBase):
 
         for model in [Build, BuildItem]:
             p = model.objects.first()
-            self.assertIsNone(p.metadata)
+            self.assertEqual(len(p.metadata.keys()), 0)
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

@@ -299,7 +299,7 @@ class ReportTest(InvenTreeAPITestCase):
         if self.model is not None:
             p = self.model.objects.first()
 
-            self.assertIsNone(p.metadata)
+            self.assertEqual(p.metadata, {})
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

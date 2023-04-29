@@ -922,7 +922,6 @@ class StockTest(StockTestBase):
         """Unit tests for the metadata field."""
         for model in [StockItem, StockLocation]:
             p = model.objects.first()
-            self.assertIsNone(p.metadata)
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)
