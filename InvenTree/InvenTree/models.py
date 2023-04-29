@@ -60,6 +60,17 @@ class MetadataMixin(models.Model):
         """Meta for MetadataMixin."""
         abstract = True
 
+    def clean(self, *args, **kwargs):
+        """Perform model validation on the metadata field."""
+        super().clean()
+
+        # Ensure that the 'metadata' field is a valid dict object
+        if self.metadata is None:
+            self.metadata = {}
+
+        if type(self.metadata) is not dict:
+            raise ValidationError({'metadata': _('Metadata must be a python dict object')})
+
     metadata = models.JSONField(
         blank=True, null=True,
         verbose_name=_('Plugin Metadata'),
