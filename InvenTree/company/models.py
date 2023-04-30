@@ -250,6 +250,78 @@ class Contact(models.Model):
     role = models.CharField(max_length=100, blank=True)
 
 
+class Address(models.Model):
+    """An address represents a physical location where the company is located. It is possible for a company to have multiple locations
+
+    Attributes:
+        company: Company link for this address
+        title: human readable name for the address
+        primary: True if this is the company's primary address
+        line1: First line of address
+        line2: Optional line two for address
+        postal_code: postal code, city and state
+        country: Location country
+        shipping_notes: Notes for couriers transporting shipments to this address
+        internal_shipping_notes: Internal notes regarding shipping to this address
+        link: External link to additional address information
+    """
+
+    class Meta:
+        """Metaclass defines extra model options"""
+        constraints = [
+            UniqueConstraint(fields=('company'), condition=Q(primary=True), name='one_primary_per_company')
+        ]
+
+    company = models.ForeignKey(Company, related_name='addresses',
+                                on_delete=models.CASCADE,
+                                verbose_name=_('Company'),
+                                help_text=_('Select company'))
+
+    title = models.CharField(max_length=100,
+                             verbose_name=_('Address title'),
+                             help_text=_('Title describing the address entry'),
+                             blank=False)
+
+    primary = models.BooleanField(default=False,
+                                  verbose_name=_('Primary address'),
+                                  help_text=_('Set as primary address'))
+
+    line1 = models.CharField(max_length=50,
+                             verbose_name=_('Line 1'),
+                             help_text=_('Address line 1'),
+                             blank=True)
+
+    line2 = models.CharField(max_length=50,
+                             verbose_name=_('Line 2'),
+                             help_text=_('Address line 2'),
+                             blank=True)
+
+    # Necessary to split into postal, city, province lines?
+    postal_code = models.CharField(max_length=50,
+                                   verbose_name=_('Postal code'),
+                                   help_text=_('Postal code, city, province'),
+                                   blank=True)
+
+    country = models.CharField(max_length=50,
+                               verbose_name=_('Country'),
+                               help_text=_('Address country'),
+                               blank=True)
+
+    shipping_notes = models.CharField(max_length=100,
+                                      verbose_name=_('Courier shipping notes'),
+                                      help_text=_('Notes for shipping courier'),
+                                      blank=True)
+
+    internal_shipping_notes = models.CharField(max_length=100,
+                                               verbose_name=_('Internal shipping notes'),
+                                               help_text=_('Shipping notes for internal use'),
+                                               blank=True)
+
+    link = InvenTreeURLField(blank=True,
+                             verbose_name=_('Link'),
+                             help_text=_('Link to address information (external)'))
+
+
 class ManufacturerPart(MetadataMixin, models.Model):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
