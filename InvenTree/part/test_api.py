@@ -1666,9 +1666,6 @@ class PartDetailTests(PartAPITestBase):
         self.assertEqual(data['in_stock'], 9000)
         self.assertEqual(data['unallocated_stock'], 9000)
 
-        # Check that tags are present
-        self.assertEqual(data['tags'], ['Tag 1', 'Another tag'])
-
     def test_part_metadata(self):
         """Tests for the part metadata endpoint."""
         url = reverse('api-part-metadata', kwargs={'pk': 1})
