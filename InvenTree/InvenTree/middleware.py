@@ -102,7 +102,7 @@ class AuthRequiredMiddleware(object):
                     '/static/',
                 ]
 
-                if path not in urls and not any([path.startswith(p) for p in paths_ignore]):
+                if path not in urls and not any(path.startswith(p) for p in paths_ignore):
                     # Save the 'next' parameter to pass through to the login view
 
                     return redirect(f'{reverse_lazy("account_login")}?next={request.path}')

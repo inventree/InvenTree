@@ -522,7 +522,7 @@ class DataFileUploadSerializer(serializers.Serializer):
                 pass
 
         # Extract a list of valid model field names
-        model_field_names = [key for key in model_fields.keys()]
+        model_field_names = list(model_fields.keys())
 
         # Provide a dict of available columns from the dataset
         file_columns = {}

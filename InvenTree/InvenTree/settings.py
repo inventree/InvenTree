@@ -21,12 +21,12 @@ from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
+
+from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
+from InvenTree.sentry import default_sentry_dsn, init_sentry
+from InvenTree.version import inventreeApiVersion
 
 from . import config
-from .config import get_boolean_setting, get_custom_file, get_setting
-from .version import inventreeApiVersion
 
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
@@ -574,29 +574,21 @@ REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login
 
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
+
 # Default Sentry DSN (can be overriden if user wants custom sentry integration)
-INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
-SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', INVENTREE_DSN)
+SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', default_sentry_dsn())
 SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
 
 if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
 
-    logger.info("Running with sentry.io integration enabled")
-
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        integrations=[DjangoIntegration(), ],
-        traces_sample_rate=1.0 if DEBUG else SENTRY_SAMPLE_RATE,
-        send_default_pii=True
-    )
     inventree_tags = {
         'testing': TESTING,
         'docker': DOCKER,
         'debug': DEBUG,
         'remote': REMOTE_LOGIN,
     }
-    for key, val in inventree_tags.items():
-        sentry_sdk.set_tag(f'inventree_{key}', val)
+
+    init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
 
 # Cache configuration
 cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)

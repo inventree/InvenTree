@@ -1121,7 +1121,7 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
                     # Note that this function is recursive!
                     installed_items = item.get_installed_items(cascade=True)
 
-                    items += [it for it in installed_items]
+                    items += list(installed_items)
 
                 queryset = queryset.filter(stock_item__in=items)
 
