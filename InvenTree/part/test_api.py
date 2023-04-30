@@ -562,7 +562,6 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'supplier_part',
         'order',
         'stock',
-        'tag',
     ]
 
     roles = [
