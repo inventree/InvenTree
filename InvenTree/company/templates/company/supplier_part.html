@@ -87,7 +87,7 @@ src='{{ part.part.image.preview.url }}'
 {% else %}
 src="{% static 'img/blank_image.png' %}"
 {% endif %}/>
-{% endblock %}
+{% endblock thumbnail %}
 
 {% block details %}
 
@@ -184,7 +184,7 @@ src="{% static 'img/blank_image.png' %}"
         </tr>
         {% endif %}
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 {% block page_content %}
 
@@ -256,7 +256,7 @@ src="{% static 'img/blank_image.png' %}"
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -397,4 +397,4 @@ $('#delete-part').click(function() {
 
 enableSidebar('supplierpart');
 
-{% endblock %}
+{% endblock js_ready %}
