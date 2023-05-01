@@ -29,7 +29,7 @@
 
 {% block content %}
 
-<img class='qr' src='{% qrcode qr_data %}'>
+<img class='qr' alt="{% trans 'QR code' %}" src='{% qrcode qr_data %}'>
 
 <div class='loc'>
     {{ location.name }}
