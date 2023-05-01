@@ -71,14 +71,15 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
 
         for child_location in self.children.all():
             if kwargs.get('delete_sub_locations', False):
-                child_location.delete_recursive(**dict(delete_sub_locations=True,
-                                                       delete_stock_items=delete_stock_items,
-                                                       parent_location=parent_location))
+                child_location.delete_recursive(**{
+                    "delete_sub_locations": True,
+                    "delete_stock_items": delete_stock_items,
+                    "parent_location": parent_location})
             else:
                 child_location.parent = parent_location
                 child_location.save()
 
-        super().delete(*args, **dict())
+        super().delete(*args, **{})
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child locations or items.
@@ -87,9 +88,10 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         """
         with transaction.atomic():
 
-            self.delete_recursive(**dict(delete_stock_items=kwargs.get('delete_stock_items', False),
-                                         delete_sub_locations=kwargs.get('delete_sub_locations', False),
-                                         parent_category=self.parent))
+            self.delete_recursive(**{
+                "delete_stock_items": kwargs.get('delete_stock_items', False),
+                "delete_sub_locations": kwargs.get('delete_sub_locations', False),
+                "parent_category": self.parent})
 
             if self.parent is not None:
                 # Partially rebuild the tree (cheaper than a complete rebuild)

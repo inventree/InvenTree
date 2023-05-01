@@ -706,7 +706,7 @@ class InvenTreeTree(MPTTModel):
         Returns:
             List of category names from the top level to the parent of this category
         """
-        return [a for a in self.get_ancestors()]
+        return list(self.get_ancestors())
 
     @property
     def path(self):
@@ -884,7 +884,7 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
                 'inventree.error_log',
                 context=context,
                 targets=users,
-                delivery_methods=set([common.notifications.UIMessageNotification]),
+                delivery_methods={common.notifications.UIMessageNotification, },
             )
 
         except Exception as exc:

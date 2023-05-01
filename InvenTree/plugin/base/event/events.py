@@ -116,7 +116,7 @@ def allow_table_event(table_name):
         'users_',
     ]
 
-    if any([table_name.startswith(prefix) for prefix in ignore_prefixes]):
+    if any(table_name.startswith(prefix) for prefix in ignore_prefixes):
         return False
 
     ignore_tables = [

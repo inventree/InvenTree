@@ -41,7 +41,7 @@ class LabelConfig(AppConfig):
                 self.create_labels()  # pragma: no cover
             except (AppRegistryNotReady, OperationalError):
                 # Database might not yet be ready
-                warnings.warn('Database was not ready for creating labels')
+                warnings.warn('Database was not ready for creating labels', stacklevel=2)
 
     def create_labels(self):
         """Create all default templates."""

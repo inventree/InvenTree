@@ -181,7 +181,7 @@ class FileManager:
 
         for i in range(self.row_count()):
 
-            data = [item for item in self.get_row_data(i)]
+            data = list(self.get_row_data(i))
 
             # Is the row completely empty? Skip!
             empty = True

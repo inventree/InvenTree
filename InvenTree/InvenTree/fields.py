@@ -4,7 +4,7 @@ import sys
 from decimal import Decimal
 
 from django import forms
-from django.db import models as models
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from djmoney.forms.fields import MoneyField
