@@ -777,6 +777,7 @@ function scanItemsIntoLocation(item_list, options={}) {
         {
             headerContent: header,
             extraFields: extra,
+            modal: modal,
             preShow: function() {
                 modalSetSubmitText(modal, '{% trans "Check In" %}');
                 modalEnable(modal, false);
