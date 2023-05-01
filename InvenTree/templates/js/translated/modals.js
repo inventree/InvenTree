@@ -490,8 +490,6 @@ function modalShowSubmitButton(modal, show=true) {
  */
 function modalEnable(modal, enable=true) {
 
-    console.log('modalenable:', modal, enable);
-
     // Enable or disable the submit button
     $(modal).find('#modal-form-submit').prop('disabled', !enable);
 }

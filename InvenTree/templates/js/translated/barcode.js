@@ -170,7 +170,7 @@ function postBarcodeData(barcode_data, options={}) {
                     if (options.onError400) {
                         options.onError400(xhr.responseJSON, options);
                     } else {
-                        console.log(xhr);
+                        console.error(xhr);
                         data = xhr.responseJSON || {};
                         showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
                     }
@@ -279,7 +279,7 @@ function getBarcodeData(modal) {
  */
 function barcodeDialog(title, options={}) {
 
-    var modal = createNewModal();
+    var modal = options.modal || createNewModal();
 
     options.modal = modal;
 
@@ -571,7 +571,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
         });
     }
 
-    var table = `<div class='container' id='items-table-div' style='width: 80%; float: left;'></div>`;
+    var table = `<div class='container' id='items-table-div' style='float: left;'></div>`;
 
     // Extra form fields
     var extra = makeNotesField();
@@ -589,6 +589,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
             onShow: function() {
             },
             extraFields: extra,
+            modal: modal,
             onSubmit: function() {
 
                 // Called when the 'check-in' button is pressed
