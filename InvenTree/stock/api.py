@@ -633,7 +633,8 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
-        data.pop('use_pack_size')
+        if 'use_pack_size' in data:
+            data.pop('use_pack_size')
 
         # Assign serial numbers for a trackable part
         if serial_numbers:
