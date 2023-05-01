@@ -284,6 +284,7 @@
 
         printLabels({
             items: locs,
+            singular_name: '{% trans "stock location" %}',
             key: 'location',
             url: '{% url "api-stocklocation-label-list" %}',
         });

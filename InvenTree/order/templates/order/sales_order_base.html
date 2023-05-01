@@ -178,8 +178,8 @@ src="{% static 'img/blank_image.png' %}"
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
-        <td>External Link</td>
-        <td><a href="{{ order.link }}">{{ order.link }}</a>{% include "clip.html" %}</td>
+        <td>{% trans "External Link" %}</td>
+        <td>{% include 'clip_link.html' with link=order.link %}</td>
     </tr>
     {% endif %}
     <tr>

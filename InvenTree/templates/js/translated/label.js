@@ -96,10 +96,10 @@ function selectLabel(labels, items, options={}) {
     var html = '';
 
     if (items.length > 0) {
-
+        name = items.length == 1 ? options.singular_name : options.plural_name;
         html += `
         <div class='alert alert-block alert-info'>
-        ${items.length} {% trans "stock items selected" %}
+        ${items.length} ${name} {% trans "selected" %}
         </div>`;
     }
 
@@ -208,7 +208,9 @@ function printLabels(options) {
                     } else {
                         window.open(href);
                     }
-                }
+                },
+                plural_name: options.plural_name,
+                singular_name: options.singular_name,
             });
         }
     });

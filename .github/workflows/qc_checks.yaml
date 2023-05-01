@@ -1,15 +1,12 @@
 # Checks for each PR / push
 
-name: QC checks
+name: QC
 
 on:
   push:
-    branches-ignore:
-      - l10*
-
+    branches-ignore: ['l10*']
   pull_request:
-    branches-ignore:
-      - l10*
+    branches-ignore: ['l10*']
 
 env:
   python_version: 3.9
@@ -25,9 +22,28 @@ env:
   INVENTREE_BACKUP_DIR: ../test_inventree_backup
 
 jobs:
+  paths-filter:
+    name: Filter
+    runs-on: ubuntu-latest
+
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+
+    steps:
+    - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          server:
+            - 'InvenTree/**'
+
   pep_style:
     name: Style [Python]
     runs-on: ubuntu-20.04
+
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true'
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
@@ -79,6 +95,28 @@ jobs:
         run: |
           pip install requests
           python3 ci/version_check.py
+
+  mkdocs:
+    name: Style [documentation]
+    runs-on: ubuntu-20.04
+
+    needs: paths-filter
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Set up Python ${{ env.python_version }}
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        with:
+          python-version: ${{ env.python_version }}
+      - name: Check Config
+        run: |
+          pip install pyyaml
+          python docs/ci/check_mkdocs_config.py
+      - name: Check Links
+        run: |
+          pip install linkcheckmd requests
+          python -m linkcheckmd docs --recurse
 
   python:
     name: Tests - inventree-python
@@ -147,6 +185,7 @@ jobs:
       INVENTREE_DB_NAME: ./inventree.sqlite
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_PLUGINS_ENABLED: true
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
@@ -156,16 +195,18 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
-      - name: Coverage Tests
-        run: invoke coverage
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
         run: python3 ci/check_migration_files.py
+      - name: Coverage Tests
+        run: invoke coverage
       - name: Upload Coverage Report
-        run: coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   postgres:
     name: Tests - DB [PostgreSQL]
