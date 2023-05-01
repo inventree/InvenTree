@@ -66,7 +66,6 @@ class PluginsRegistry:
 
         # mixins
         self.mixins_settings = {}
-        self.mixins_suppliers = {}
         self.mixin_order = mixin_order or self.DEFAULT_MIXIN_ORDER
 
     def get_plugin(self, slug: str) -> InvenTreePlugin:

@@ -200,16 +200,6 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
         return get_objectreference(obj, 'source_content_type', 'source_object_id')
 
 
-class NotificationReadSerializer(NotificationMessageSerializer):
-    """Serializer for reading a notification."""
-
-    def is_valid(self, raise_exception=False):
-        """Ensure instance data is available for view and let validation pass."""
-        self.instance = self.context['instance']  # set instance that should be returned
-        self._validated_data = True
-        return True
-
-
 class WebConnectionSerializer(InvenTreeModelSerializer):
     """Serializer for the WebConnection model."""
 
