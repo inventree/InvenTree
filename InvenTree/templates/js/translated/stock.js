@@ -330,6 +330,9 @@ function stockItemFields(options={}) {
             icon: 'fa-user',
         },
         delete_on_deplete: {},
+        use_pack_size: {
+            help_text: '{% trans "Add given quantity as packs instead of individual items" %}',
+        },
     };
 
     if (options.create) {
