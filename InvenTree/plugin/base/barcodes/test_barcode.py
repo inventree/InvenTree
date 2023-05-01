@@ -55,7 +55,8 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 400)
 
         data = response.data
-        self.assertIn('error', data)
+        self.assertIn('barcode', data)
+        self.assertIn('Missing barcode data', str(response.data['barcode']))
 
     def test_find_part(self):
         """Test that we can lookup a part based on ID."""

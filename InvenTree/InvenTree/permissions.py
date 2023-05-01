@@ -7,6 +7,21 @@ from rest_framework import permissions
 import users.models
 
 
+def get_model_for_view(view, raise_error=True):
+    """Attempt to introspect the 'model' type for an API view"""
+
+    if hasattr(view, 'get_permission_model'):
+        return view.get_permission_model()
+
+    if hasattr(view, 'serializer_class'):
+        return view.serializer_class.Meta.model
+
+    if hasattr(view, 'get_serializer_class'):
+        return view.get_serializr_class().Meta.model
+
+    raise AttributeError(f"Serializer class not specified for {view.__class__}")
+
+
 class RolePermission(permissions.BasePermission):
     """Role mixin for API endpoints, allowing us to specify the user "role" which is required for certain operations.
 
@@ -49,9 +64,13 @@ class RolePermission(permissions.BasePermission):
 
         permission = rolemap[request.method]
 
+        # The required role may be defined for the view class
+        if role := getattr(view, 'role_required', None):
+            return users.models.check_user_role(user, role, permission)
+
         try:
             # Extract the model name associated with this request
-            model = view.serializer_class.Meta.model
+            model = get_model_for_view(view)
 
             app_label = model._meta.app_label
             model_name = model._meta.model_name
@@ -62,9 +81,23 @@ class RolePermission(permissions.BasePermission):
             # then we don't need a permission
             return True
 
-        result = users.models.RuleSet.check_table_permission(user, table, permission)
+        return users.models.RuleSet.check_table_permission(user, table, permission)
 
-        return result
+
+class IsSuperuser(permissions.IsAdminUser):
+    """Allows access only to superuser users."""
+
+    def has_permission(self, request, view):
+        """Check if the user is a superuser."""
+        return bool(request.user and request.user.is_superuser)
+
+
+class IsStaffOrReadOnly(permissions.IsAdminUser):
+    """Allows read-only access to any user, but write access is restricted to staff users."""
+
+    def has_permission(self, request, view):
+        """Check if the user is a superuser."""
+        return bool(request.user and request.user.is_staff or request.method in permissions.SAFE_METHODS)
 
 
 def auth_exempt(view_func):

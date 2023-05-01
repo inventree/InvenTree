@@ -27,10 +27,8 @@
 {% trans "Used In" as text %}
 {% include "sidebar_item.html" with label="used-in" text=text icon="fa-layer-group" %}
 {% endif %}
-{% if part.purchaseable or part.salable %}
 {% trans "Pricing" as text %}
 {% include "sidebar_item.html" with label="pricing" text=text icon="fa-dollar-sign" %}
-{% endif %}
 {% if part.purchaseable and roles.purchase_order.view %}
 {% trans "Suppliers" as text %}
 {% include "sidebar_item.html" with label="suppliers" text=text icon="fa-building" %}
@@ -45,6 +43,12 @@
 {% if show_scheduling %}
 {% trans "Scheduling" as text %}
 {% include "sidebar_item.html" with label="scheduling" text=text icon="fa-calendar-alt" %}
+{% endif %}
+{% settings_value 'STOCKTAKE_ENABLE' as stocktake_enable %}
+{% settings_value 'DISPLAY_STOCKTAKE_TAB' user=request.user as show_stocktake %}
+{% if roles.stocktake.view and stocktake_enable and show_stocktake %}
+{% trans "Stocktake" as text %}
+{% include "sidebar_item.html" with label="stocktake" text=text icon="fa-clipboard-check" %}
 {% endif %}
 {% if part.trackable %}
 {% trans "Test Templates" as text %}

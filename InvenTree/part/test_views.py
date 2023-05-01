@@ -110,31 +110,6 @@ class PartDetailTest(PartViewTestCase):
 
     def test_bom_download(self):
         """Test downloading a BOM for a valid part."""
-        response = self.client.get(reverse('bom-download', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(reverse('api-bom-download', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertIn('streaming_content', dir(response))
-
-
-class PartQRTest(PartViewTestCase):
-    """Tests for the Part QR Code AJAX view."""
-
-    def test_html_redirect(self):
-        """A HTML request for a QR code should be redirected (use an AJAX request instead)"""
-        response = self.client.get(reverse('part-qr', args=(1,)))
-        self.assertEqual(response.status_code, 302)
-
-    def test_valid_part(self):
-        """Test QR code response for a Part"""
-        response = self.client.get(reverse('part-qr', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = str(response.content)
-
-        self.assertIn('Part QR Code', data)
-        self.assertIn('<img src=', data)
-
-    def test_invalid_part(self):
-        """Test response for an invalid Part ID value"""
-        response = self.client.get(reverse('part-qr', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        self.assertEqual(response.status_code, 200)

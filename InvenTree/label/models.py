@@ -17,6 +17,8 @@ import common.models
 import part.models
 import stock.models
 from InvenTree.helpers import normalize, validateFilterString
+from InvenTree.models import MetadataMixin
+from plugin.registry import registry
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -70,7 +72,7 @@ class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'label.pdf')
 
 
-class LabelTemplate(models.Model):
+class LabelTemplate(MetadataMixin, models.Model):
     """Base class for generic, filterable labels."""
 
     class Meta:
@@ -189,6 +191,13 @@ class LabelTemplate(models.Model):
         context['width'] = self.width
         context['height'] = self.height
 
+        # Pass the context through to any registered plugins
+        plugins = registry.with_mixin('report')
+
+        for plugin in plugins:
+            # Let each plugin add its own context data
+            plugin.add_label_context(self, self.object_to_print, request, context)
+
         return context
 
     def render_as_string(self, request, **kwargs):
@@ -252,7 +261,7 @@ class StockItemLabel(LabelTemplate):
             'barcode_data': stock_item.barcode_data,
             'barcode_hash': stock_item.barcode_hash,
             'qr_data': stock_item.format_barcode(brief=True),
-            'qr_url': stock_item.format_barcode(url=True, request=request),
+            'qr_url': request.build_absolute_uri(stock_item.get_absolute_url()),
             'tests': stock_item.testResultMap(),
             'parameters': stock_item.part.parameters_map(),
 
@@ -318,6 +327,6 @@ class PartLabel(LabelTemplate):
             'IPN': part.IPN,
             'revision': part.revision,
             'qr_data': part.format_barcode(brief=True),
-            'qr_url': part.format_barcode(url=True, request=request),
+            'qr_url': request.build_absolute_uri(part.get_absolute_url()),
             'parameters': part.parameters_map(),
         }

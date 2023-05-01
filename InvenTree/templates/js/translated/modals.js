@@ -15,6 +15,7 @@
     getFieldValue,
     reloadFieldOptions,
     showModalImage,
+    showQRDialog,
     showQuestionDialog,
     showModalSpinner,
 */
@@ -44,6 +45,18 @@ function createNewModal(options={}) {
     });
 
     var submitClass = options.submitClass || 'primary';
+
+    var buttons = '';
+
+    // Add in a "close" button
+    if (!options.hideCloseButton) {
+        buttons += `<button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Cancel" %}</button>`;
+    }
+
+    // Add in a "submit" button
+    if (!options.hideSubmitButton) {
+        buttons += `<button type='button' class='btn btn-${submitClass}' id='modal-form-submit'>{% trans "Submit" %}</button>`;
+    }
 
     var html = `
     <div class='modal fade modal-fixed-footer modal-primary inventree-modal' role='dialog' id='modal-form-${id}' tabindex='-1'>
@@ -79,8 +92,7 @@ function createNewModal(options={}) {
                     <div id='modal-footer-secondary-buttons'>
                         <!-- Extra secondary buttons can be inserted here -->
                     </div>
-                    <button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Cancel" %}</button>
-                    <button type='button' class='btn btn-${submitClass}' id='modal-form-submit'>{% trans "Submit" %}</button>
+                    ${buttons}
                 </div>
             </div>
         </div>
@@ -102,11 +114,7 @@ function createNewModal(options={}) {
         // Steal keyboard focus
         $(modal_name).focus();
 
-        if (options.hideCloseButton) {
-            $(modal_name).find('#modal-form-close').hide();
-        }
-
-        if (options.preventSubmit || options.hideSubmitButton) {
+        if (options.preventSubmit) {
             $(modal_name).find('#modal-form-submit').hide();
         }
 
@@ -583,18 +591,17 @@ function renderErrorMessage(xhr) {
 }
 
 
+/* Display a modal dialog message box.
+*
+* title - Title text
+* content - HTML content of the dialog window
+*/
 function showAlertDialog(title, content, options={}) {
-    /* Display a modal dialog message box.
-     *
-     * title - Title text
-     * content - HTML content of the dialog window
-     */
 
     if (options.alert_style) {
         // Wrap content in an alert block
         content = `<div class='alert alert-block alert-${options.alert_style}'>${content}</div>`;
     }
-
 
     var modal = createNewModal({
         title: title,
@@ -605,6 +612,36 @@ function showAlertDialog(title, content, options={}) {
     modalSetContent(modal, content);
 
     $(modal).modal('show');
+
+    if (options.after_render) {
+        options.after_render(modal);
+    }
+}
+
+
+/*
+ * Display a simple modal window with a QR code
+ */
+function showQRDialog(title, data, options={}) {
+
+    let content = `
+    <div id='qrcode-container' style='margin: auto; width: 256px; padding: 25px;'>
+        <div id='qrcode'></div>
+    </div>`;
+
+    options.after_render = function(modal) {
+        let qrcode = new QRCode('qrcode', {
+            width: 256,
+            height: 256,
+        });
+        qrcode.makeCode(data);
+    };
+
+    showAlertDialog(
+        title,
+        content,
+        options
+    );
 }
 
 
@@ -621,11 +658,11 @@ function showQuestionDialog(title, content, options={}) {
      *   cancel - Functino to run if the user presses 'Cancel'
      */
 
-    var modal = createNewModal({
-        title: title,
-        submitText: options.accept_text || '{% trans "Accept" %}',
-        closeText: options.cancel_text || '{% trans "Cancel" %}',
-    });
+    options.title = title;
+    options.submitText = options.accept_text || '{% trans "Accept" %}';
+    options.closeText = options.cancel_text || '{% trans "Cancel" %}';
+
+    var modal = createNewModal(options);
 
     modalSetContent(modal, content);
 

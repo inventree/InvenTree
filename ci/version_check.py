@@ -21,7 +21,16 @@ import requests
 def get_existing_release_tags():
     """Request information on existing releases via the GitHub API"""
 
-    response = requests.get('https://api.github.com/repos/inventree/inventree/releases')
+    # Check for github token
+    token = os.getenv('GITHUB_TOKEN', None)
+    headers = None
+
+    if token:
+        headers = {
+            "Authorization": f"Bearer {token}"
+        }
+
+    response = requests.get('https://api.github.com/repos/inventree/inventree/releases', headers=headers)
 
     if response.status_code != 200:
         raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')

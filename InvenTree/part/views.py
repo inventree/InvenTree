@@ -11,18 +11,12 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-from djmoney.contrib.exchange.exceptions import MissingRate
-from djmoney.contrib.exchange.models import convert_money
-
-import common.settings as inventree_settings
 from common.files import FileManager
 from common.models import InvenTreeSetting
 from common.views import FileManagementAjaxView, FileManagementFormView
 from company.models import SupplierPart
-from InvenTree.helpers import str2bool
-from InvenTree.views import (AjaxUpdateView, AjaxView, InvenTreeRoleMixin,
-                             QRCodeView)
-from order.models import PurchaseOrderLineItem
+from InvenTree.helpers import str2bool, str2int
+from InvenTree.views import AjaxUpdateView, AjaxView, InvenTreeRoleMixin
 from plugin.views import InvenTreePluginViewMixin
 from stock.models import StockItem, StockLocation
 
@@ -30,6 +24,7 @@ from . import forms as part_forms
 from . import settings as part_settings
 from .bom import ExportBom, IsValidBOMFormat, MakeBomTemplate
 from .models import Part, PartCategory
+from .part import MakePartTemplate
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
@@ -95,11 +90,12 @@ class PartImport(FileManagementFormView):
             'Assembly',
             'Component',
             'is_template',
-            'Purchaseable',
+            'Purchasable',
             'Salable',
             'Trackable',
             'Virtual',
             'Stock',
+            'Image',
         ]
 
     name = 'part'
@@ -140,6 +136,7 @@ class PartImport(FileManagementFormView):
         'trackable': 'trackable',
         'virtual': 'virtual',
         'stock': 'stock',
+        'image': 'image',
     }
     file_manager_class = PartFileManager
 
@@ -149,14 +146,14 @@ class PartImport(FileManagementFormView):
         self.allowed_items = {}
         self.matches = {}
 
-        self.allowed_items['Category'] = PartCategory.objects.all()
-        self.matches['Category'] = ['name__contains']
-        self.allowed_items['default_location'] = StockLocation.objects.all()
-        self.matches['default_location'] = ['name__contains']
+        self.allowed_items['Category'] = PartCategory.objects.all().exclude(structural=True)
+        self.matches['Category'] = ['name__icontains']
+        self.allowed_items['default_location'] = StockLocation.objects.all().exclude(structural=True)
+        self.matches['default_location'] = ['name__icontains']
         self.allowed_items['default_supplier'] = SupplierPart.objects.all()
-        self.matches['default_supplier'] = ['SKU__contains']
-        self.allowed_items['variant_of'] = Part.objects.all()
-        self.matches['variant_of'] = ['name__contains']
+        self.matches['default_supplier'] = ['SKU__icontains']
+        self.allowed_items['variant_of'] = Part.objects.all().exclude(is_template=False)
+        self.matches['variant_of'] = ['name__icontains']
 
         # setup
         self.file_manager.setup()
@@ -215,8 +212,8 @@ class PartImport(FileManagementFormView):
                 IPN=part_data.get('ipn', None),
                 revision=part_data.get('revision', None),
                 link=part_data.get('link', None),
-                default_expiry=part_data.get('default_expiry', 0),
-                minimum_stock=part_data.get('minimum_stock', 0),
+                default_expiry=str2int(part_data.get('default_expiry'), 0),
+                minimum_stock=str2int(part_data.get('minimum_stock'), 0),
                 units=part_data.get('units', None),
                 notes=part_data.get('notes', None),
                 category=optional_matches['Category'],
@@ -224,8 +221,8 @@ class PartImport(FileManagementFormView):
                 default_supplier=optional_matches['default_supplier'],
                 variant_of=optional_matches['variant_of'],
                 active=str2bool(part_data.get('active', True)),
-                base_cost=part_data.get('base_cost', 0),
-                multiple=part_data.get('multiple', 1),
+                base_cost=str2int(part_data.get('base_cost'), 0),
+                multiple=str2int(part_data.get('multiple'), 1),
                 assembly=str2bool(part_data.get('assembly', part_settings.part_assembly_default())),
                 component=str2bool(part_data.get('component', part_settings.part_component_default())),
                 is_template=str2bool(part_data.get('is_template', part_settings.part_template_default())),
@@ -233,7 +230,14 @@ class PartImport(FileManagementFormView):
                 salable=str2bool(part_data.get('salable', part_settings.part_salable_default())),
                 trackable=str2bool(part_data.get('trackable', part_settings.part_trackable_default())),
                 virtual=str2bool(part_data.get('virtual', part_settings.part_virtual_default())),
+                image=part_data.get('image', None),
             )
+
+            # check if theres a category assigned, if not skip this part or else bad things happen
+            if not optional_matches['Category']:
+                import_error.append(_("Can't import part {name} because there is no category assigned").format(name=new_part.name))
+                continue
+
             try:
                 new_part.save()
 
@@ -245,6 +249,7 @@ class PartImport(FileManagementFormView):
                         quantity=int(part_data.get('stock', 1)),
                     )
                     stock.save()
+
                 import_done += 1
             except ValidationError as _e:
                 import_error.append(', '.join(set(_e.messages)))
@@ -254,10 +259,23 @@ class PartImport(FileManagementFormView):
             alert = f"<strong>{_('Part-Import')}</strong><br>{_('Imported {n} parts').format(n=import_done)}"
             messages.success(self.request, alert)
         if import_error:
-            error_text = '\n'.join([f'<li><strong>x{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
+            error_text = '\n'.join([f'<li><strong>{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
             messages.error(self.request, f"<strong>{_('Some errors occured:')}</strong><br><ul>{error_text}</ul>")
 
         return HttpResponseRedirect(reverse('part-index'))
+
+
+class PartImportTemplate(AjaxView):
+    """Provide a part import template file for download.
+
+    - Generates a template file in the provided format e.g. ?format=csv
+    """
+
+    def get(self, request, *args, **kwargs):
+        """Perform a GET request to download the 'Part import' template"""
+        export_format = request.GET.get('format', 'csv')
+
+        return MakePartTemplate(export_format)
 
 
 class PartImportAjax(FileManagementAjaxView, PartImport):
@@ -292,17 +310,6 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
         context.update(**ctx)
 
-        show_price_history = InvenTreeSetting.get_setting('PART_SHOW_PRICE_HISTORY', False)
-
-        context['show_price_history'] = show_price_history
-
-        # Pricing information
-        if show_price_history:
-            ctx = self.get_pricing(self.get_quantity())
-            ctx['form'] = self.form_class(initial=self.get_initials())
-
-            context.update(ctx)
-
         return context
 
     def get_quantity(self):
@@ -312,113 +319,6 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     def get_part(self):
         """Return the Part instance associated with this view"""
         return self.get_object()
-
-    def get_pricing(self, quantity=1, currency=None):
-        """Returns context with pricing information."""
-        ctx = PartPricing.get_pricing(self, quantity, currency)
-        part = self.get_part()
-        default_currency = inventree_settings.currency_code_default()
-
-        # Stock history
-        if part.total_stock > 1:
-            price_history = []
-            stock = part.stock_entries(include_variants=False, in_stock=True).\
-                order_by('purchase_order__issue_date').prefetch_related('purchase_order', 'supplier_part')
-
-            for stock_item in stock:
-                if None in [stock_item.purchase_price, stock_item.quantity]:
-                    continue
-
-                # convert purchase price to current currency - only one currency in the graph
-                try:
-                    price = convert_money(stock_item.purchase_price, default_currency)
-                except MissingRate:
-                    continue
-
-                line = {
-                    'price': price.amount,
-                    'qty': stock_item.quantity
-                }
-                # Supplier Part Name  # TODO use in graph
-                if stock_item.supplier_part:
-                    line['name'] = stock_item.supplier_part.pretty_name
-
-                    if stock_item.supplier_part.unit_pricing and price:
-                        line['price_diff'] = price.amount - stock_item.supplier_part.unit_pricing
-                        line['price_part'] = stock_item.supplier_part.unit_pricing
-
-                # set date for graph labels
-                if stock_item.purchase_order and stock_item.purchase_order.issue_date:
-                    line['date'] = stock_item.purchase_order.issue_date.isoformat()
-                elif stock_item.tracking_info.count() > 0:
-                    line['date'] = stock_item.tracking_info.first().date.date().isoformat()
-                else:
-                    # Not enough information
-                    continue
-
-                price_history.append(line)
-
-            ctx['price_history'] = price_history
-
-        # BOM Information for Pie-Chart
-        if part.has_bom:
-            # get internal price setting
-            use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-            ctx_bom_parts = []
-            # iterate over all bom-items
-            for item in part.bom_items.all():
-                ctx_item = {'name': str(item.sub_part)}
-                price, qty = item.sub_part.get_price_range(quantity, internal=use_internal), item.quantity
-
-                price_min, price_max = 0, 0
-                if price:  # check if price available
-                    price_min = str((price[0] * qty) / quantity)
-                    if len(set(price)) == 2:  # min and max-price present
-                        price_max = str((price[1] * qty) / quantity)
-                        ctx['bom_pie_max'] = True  # enable showing max prices in bom
-
-                ctx_item['max_price'] = price_min
-                ctx_item['min_price'] = price_max if price_max else price_min
-                ctx_bom_parts.append(ctx_item)
-
-            # add to global context
-            ctx['bom_parts'] = ctx_bom_parts
-
-        # Sale price history
-        sale_items = PurchaseOrderLineItem.objects.filter(part__part=part).order_by('order__issue_date').\
-            prefetch_related('order', ).all()
-
-        if sale_items:
-            sale_history = []
-
-            for sale_item in sale_items:
-                # check for not fully defined elements
-                if None in [sale_item.purchase_price, sale_item.quantity]:
-                    continue
-
-                try:
-                    price = convert_money(sale_item.purchase_price, default_currency)
-                except MissingRate:
-                    continue
-
-                line = {
-                    'price': price.amount if price else 0,
-                    'qty': sale_item.quantity,
-                }
-
-                # set date for graph labels
-                if sale_item.order.issue_date:
-                    line['date'] = sale_item.order.issue_date.isoformat()
-                elif sale_item.order.creation_date:
-                    line['date'] = sale_item.order.creation_date.isoformat()
-                else:
-                    line['date'] = _('None')
-
-                sale_history.append(line)
-
-            ctx['sale_history'] = sale_history
-
-        return ctx
 
     def get_initials(self):
         """Returns initials for form."""
@@ -469,22 +369,6 @@ class PartDetailFromIPN(PartDetail):
             return HttpResponseRedirect(reverse('part-index'))
 
         return super(PartDetailFromIPN, self).get(request, *args, **kwargs)
-
-
-class PartQRCode(QRCodeView):
-    """View for displaying a QR code for a Part object."""
-
-    ajax_form_title = _("Part QR Code")
-
-    role_required = 'part.view'
-
-    def get_qr_data(self):
-        """Generate QR code data for the Part."""
-        try:
-            part = Part.objects.get(id=self.pk)
-            return part.format_barcode()
-        except Part.DoesNotExist:
-            return None
 
 
 class PartImageSelect(AjaxUpdateView):
@@ -567,11 +451,15 @@ class BomDownload(AjaxView):
 
         parameter_data = str2bool(request.GET.get('parameter_data', False))
 
+        substitute_part_data = str2bool(request.GET.get('substitute_part_data', False))
+
         stock_data = str2bool(request.GET.get('stock_data', False))
 
         supplier_data = str2bool(request.GET.get('supplier_data', False))
 
         manufacturer_data = str2bool(request.GET.get('manufacturer_data', False))
+
+        pricing_data = str2bool(request.GET.get('pricing_data', False))
 
         levels = request.GET.get('levels', None)
 
@@ -596,10 +484,12 @@ class BomDownload(AjaxView):
                          stock_data=stock_data,
                          supplier_data=supplier_data,
                          manufacturer_data=manufacturer_data,
+                         pricing_data=pricing_data,
+                         substitute_part_data=substitute_part_data,
                          )
 
     def get_data(self):
-        """Return a cutsom message"""
+        """Return a custom message"""
         return {
             'info': 'Exported BOM'
         }

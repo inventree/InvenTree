@@ -7,19 +7,23 @@ from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
-from rest_framework import filters, permissions, serializers
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import common.models
 import common.serializers
-from InvenTree.api import BulkDeleteMixin
+from InvenTree.api import BulkDeleteMixin, MetadataView
+from InvenTree.config import CONFIG_LOOKUPS
+from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors
-from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveAPI,
+from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+from InvenTree.permissions import IsStaffOrReadOnly, IsSuperuser
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 
@@ -99,17 +103,71 @@ class WebhookView(CsrfExemptMixin, APIView):
             raise NotFound()
 
 
+class CurrencyExchangeView(APIView):
+    """API endpoint for displaying currency information"""
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request, format=None):
+        """Return information on available currency conversions"""
+
+        # Extract a list of all available rates
+        try:
+            rates = Rate.objects.all()
+        except Exception:
+            rates = []
+
+        # Information on last update
+        try:
+            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            updated = backend.last_update
+        except Exception:
+            updated = None
+
+        response = {
+            'base_currency': common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', 'USD'),
+            'exchange_rates': {},
+            'updated': updated,
+        }
+
+        for rate in rates:
+            response['exchange_rates'][rate.currency] = rate.value
+
+        return Response(response)
+
+
+class CurrencyRefreshView(APIView):
+    """API endpoint for manually refreshing currency exchange rates.
+
+    User must be a 'staff' user to access this endpoint
+    """
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+        permissions.IsAdminUser,
+    ]
+
+    def post(self, request, *args, **kwargs):
+        """Performing a POST request will update currency exchange rates"""
+
+        from InvenTree.tasks import update_exchange_rates
+
+        update_exchange_rates()
+
+        return Response({
+            'success': 'Exchange rates updated',
+        })
+
+
 class SettingsList(ListAPI):
     """Generic ListView for settings.
 
     This is inheritted by all list views for settings.
     """
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'pk',
@@ -125,7 +183,7 @@ class SettingsList(ListAPI):
 class GlobalSettingsList(SettingsList):
     """API endpoint for accessing a list of global settings objects."""
 
-    queryset = common.models.InvenTreeSetting.objects.all()
+    queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith="_")
     serializer_class = common.serializers.GlobalSettingsSerializer
 
 
@@ -154,7 +212,7 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
     """
 
     lookup_field = 'key'
-    queryset = common.models.InvenTreeSetting.objects.all()
+    queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith="_")
     serializer_class = common.serializers.GlobalSettingsSerializer
 
     def get_object(self):
@@ -164,7 +222,10 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
         if key not in common.models.InvenTreeSetting.SETTINGS.keys():
             raise NotFound()
 
-        return common.models.InvenTreeSetting.get_setting_object(key)
+        return common.models.InvenTreeSetting.get_setting_object(
+            key,
+            cache=False, create=True
+        )
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -222,7 +283,11 @@ class UserSettingsDetail(RetrieveUpdateAPI):
         if key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
             raise NotFound()
 
-        return common.models.InvenTreeUserSetting.get_setting_object(key, user=self.request.user)
+        return common.models.InvenTreeUserSetting.get_setting_object(
+            key,
+            user=self.request.user,
+            cache=False, create=True
+        )
 
     permission_classes = [
         UserSettingsPermissions,
@@ -255,27 +320,22 @@ class NotificationUserSettingsDetail(RetrieveUpdateAPI):
 
     queryset = NotificationUserSetting.objects.all()
     serializer_class = NotificationUserSettingSerializer
-
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
+    permission_classes = [UserSettingsPermissions, ]
 
 
-class NotificationList(BulkDeleteMixin, ListAPI):
-    """List view for all notifications of the current user."""
-
+class NotificationMessageMixin:
+    """Generic mixin for NotificationMessage."""
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
+    permission_classes = [UserSettingsPermissions, ]
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
+    """List view for all notifications of the current user."""
+
+    permission_classes = [permissions.IsAuthenticated, ]
+
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
         'category',
@@ -312,64 +372,15 @@ class NotificationList(BulkDeleteMixin, ListAPI):
         return queryset
 
 
-class NotificationDetail(RetrieveUpdateDestroyAPI):
+class NotificationDetail(NotificationMessageMixin, RetrieveUpdateDestroyAPI):
     """Detail view for an individual notification object.
 
     - User can only view / delete their own notification objects
     """
 
-    queryset = common.models.NotificationMessage.objects.all()
-    serializer_class = common.serializers.NotificationMessageSerializer
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
 
-
-class NotificationReadEdit(CreateAPI):
-    """General API endpoint to manipulate read state of a notification."""
-
-    queryset = common.models.NotificationMessage.objects.all()
-    serializer_class = common.serializers.NotificationReadSerializer
-
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
-
-    def get_serializer_context(self):
-        """Add instance to context so it can be accessed in the serializer."""
-        context = super().get_serializer_context()
-        if self.request:
-            context['instance'] = self.get_object()
-        return context
-
-    def perform_create(self, serializer):
-        """Set the `read` status to the target value."""
-        message = self.get_object()
-        try:
-            message.read = self.target
-            message.save()
-        except Exception as exc:
-            raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
-
-
-class NotificationRead(NotificationReadEdit):
-    """API endpoint to mark a notification as read."""
-    target = True
-
-
-class NotificationUnread(NotificationReadEdit):
-    """API endpoint to mark a notification as unread."""
-    target = False
-
-
-class NotificationReadAll(RetrieveAPI):
+class NotificationReadAll(NotificationMessageMixin, RetrieveAPI):
     """API endpoint to mark all notifications as read."""
-
-    queryset = common.models.NotificationMessage.objects.all()
-
-    permission_classes = [
-        UserSettingsPermissions,
-    ]
 
     def get(self, request, *args, **kwargs):
         """Set all messages for the current user as read."""
@@ -378,6 +389,95 @@ class NotificationReadAll(RetrieveAPI):
             return Response({'status': 'ok'})
         except Exception as exc:
             raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
+
+
+class NewsFeedMixin:
+    """Generic mixin for NewsFeedEntry."""
+    queryset = common.models.NewsFeedEntry.objects.all()
+    serializer_class = common.serializers.NewsFeedEntrySerializer
+    permission_classes = [IsAdminUser, ]
+
+
+class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
+    """List view for all news items."""
+    filter_backends = ORDER_FILTER
+
+    ordering_fields = [
+        'published',
+        'author',
+        'read',
+    ]
+
+    filterset_fields = [
+        'read',
+    ]
+
+
+class NewsFeedEntryDetail(NewsFeedMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for an individual news feed object."""
+
+
+class ConfigList(ListAPI):
+    """List view for all accessed configurations."""
+
+    queryset = CONFIG_LOOKUPS
+    serializer_class = common.serializers.ConfigSerializer
+    permission_classes = [IsSuperuser, ]
+
+
+class ConfigDetail(RetrieveAPI):
+    """Detail view for an individual configuration."""
+
+    serializer_class = common.serializers.ConfigSerializer
+    permission_classes = [IsSuperuser, ]
+
+    def get_object(self):
+        """Attempt to find a config object with the provided key."""
+        key = self.kwargs['key']
+        value = CONFIG_LOOKUPS.get(key, None)
+        if not value:
+            raise NotFound()
+        return {key: value}
+
+
+class NotesImageList(ListCreateAPI):
+    """List view for all notes images."""
+
+    queryset = common.models.NotesImage.objects.all()
+    serializer_class = common.serializers.NotesImageSerializer
+    permission_classes = [permissions.IsAuthenticated, ]
+
+    def perform_create(self, serializer):
+        """Create (upload) a new notes image"""
+        image = serializer.save()
+        image.user = self.request.user
+        image.save()
+
+
+class ProjectCodeList(ListCreateAPI):
+    """List view for all project codes."""
+
+    queryset = common.models.ProjectCode.objects.all()
+    serializer_class = common.serializers.ProjectCodeSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = [
+        'code',
+    ]
+
+    search_fields = [
+        'code',
+        'description',
+    ]
+
+
+class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a particular project code"""
+
+    queryset = common.models.ProjectCode.objects.all()
+    serializer_class = common.serializers.ProjectCodeSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
 settings_api_urls = [
@@ -393,7 +493,7 @@ settings_api_urls = [
     # Notification settings
     re_path(r'^notification/', include([
         # Notification Settings Detail
-        re_path(r'^(?P<pk>\d+)/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
+        path(r'<int:pk>/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
 
         # Notification Settings List
         re_path(r'^.*$', NotificationUserSettingsList.as_view(), name='api-notifcation-setting-list'),
@@ -413,12 +513,28 @@ common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
 
+    # Uploaded images for notes
+    re_path(r'^notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'),
+
+    # Project codes
+    re_path(r'^project-code/', include([
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': common.models.ProjectCode}, name='api-project-code-metadata'),
+            re_path(r'^.*$', ProjectCodeDetail.as_view(), name='api-project-code-detail'),
+        ])),
+        re_path(r'^.*$', ProjectCodeList.as_view(), name='api-project-code-list'),
+    ])),
+
+    # Currencies
+    re_path(r'^currency/', include([
+        re_path(r'^exchange/', CurrencyExchangeView.as_view(), name='api-currency-exchange'),
+        re_path(r'^refresh/', CurrencyRefreshView.as_view(), name='api-currency-refresh'),
+    ])),
+
     # Notifications
     re_path(r'^notifications/', include([
         # Individual purchase order detail URLs
-        re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'^read/', NotificationRead.as_view(), name='api-notifications-read'),
-            re_path(r'^unread/', NotificationUnread.as_view(), name='api-notifications-unread'),
+        path(r'<int:pk>/', include([
             re_path(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
         ])),
         # Read all
@@ -428,4 +544,18 @@ common_api_urls = [
         re_path(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
     ])),
 
+    # News
+    re_path(r'^news/', include([
+        path(r'<int:pk>/', include([
+            re_path(r'.*$', NewsFeedEntryDetail.as_view(), name='api-news-detail'),
+        ])),
+        re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),
+    ])),
+
+]
+
+admin_api_urls = [
+    # Admin
+    path('config/', ConfigList.as_view(), name='api-config-list'),
+    path('config/<str:key>/', ConfigDetail.as_view(), name='api-config-detail'),
 ]

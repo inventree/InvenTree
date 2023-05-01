@@ -18,8 +18,7 @@ from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 from django.views.generic.base import RedirectView, TemplateView
 
 from allauth.account.forms import AddEmailForm
@@ -185,7 +184,6 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
             UpdateView: 'change',
             DeleteView: 'delete',
             AjaxUpdateView: 'change',
-            AjaxCreateView: 'add',
         }
 
         for view_class in permission_map.keys():
@@ -320,115 +318,6 @@ class AjaxView(AjaxMixin, View):
         This renderJsonResponse function must be supplied by your function.
         """
         return self.renderJsonResponse(request)
-
-
-class QRCodeView(AjaxView):
-    """An 'AJAXified' view for displaying a QR code.
-
-    Subclasses should implement the get_qr_data(self) function.
-    """
-
-    ajax_template_name = "qr_code.html"
-
-    def get(self, request, *args, **kwargs):
-        """Return json with qr-code data."""
-        self.request = request
-        self.pk = self.kwargs['pk']
-        return self.renderJsonResponse(request, None, context=self.get_context_data())
-
-    def get_qr_data(self):
-        """Returns the text object to render to a QR code.
-
-        The actual rendering will be handled by the template
-        """
-        return None
-
-    def get_context_data(self):
-        """Get context data for passing to the rendering template.
-
-        Explicity passes the parameter 'qr_data'
-        """
-        context = {}
-
-        qr = self.get_qr_data()
-
-        if qr:
-            context['qr_data'] = qr
-        else:
-            context['error_msg'] = 'Error generating QR code'
-
-        return context
-
-
-class AjaxCreateView(AjaxMixin, CreateView):
-    """An 'AJAXified' CreateView for creating a new object in the db.
-
-    - Returns a form in JSON format (for delivery to a modal window)
-    - Handles form validation via AJAX POST requests
-    """
-
-    def get(self, request, *args, **kwargs):
-        """Creates form with initial data, and renders JSON response."""
-        super(CreateView, self).get(request, *args, **kwargs)
-
-        self.request = request
-        form = self.get_form()
-        return self.renderJsonResponse(request, form)
-
-    def save(self, form):
-        """Method for actually saving the form to the database.
-
-        Default implementation is very simple, but can be overridden if required.
-        """
-        self.object = form.save()
-
-        return self.object
-
-    def post(self, request, *args, **kwargs):
-        """Responds to form POST. Validates POST data and returns status info.
-
-        - Validate POST form data
-        - If valid, save form
-        - Return status info (success / failure)
-        """
-        self.request = request
-        self.form = self.get_form()
-
-        # Perform initial form validation
-        self.form.is_valid()
-
-        # Perform custom validation (no object can be provided yet)
-        self.validate(None, self.form)
-
-        valid = self.form.is_valid()
-
-        # Extra JSON data sent alongside form
-        data = {
-            'form_valid': valid,
-            'form_errors': self.form.errors.as_json(),
-            'non_field_errors': self.form.non_field_errors().as_json(),
-        }
-
-        # Add in any extra class data
-        for value, key in enumerate(self.get_data()):
-            data[key] = value
-
-        if valid:
-
-            # Save the object to the database
-            self.object = self.save(self.form)
-
-            if self.object:
-                # Return the PK of the newly-created object
-                data['pk'] = self.object.pk
-                data['text'] = str(self.object)
-
-                try:
-                    data['url'] = self.object.get_absolute_url()
-                except AttributeError:
-                    pass
-
-        return self.renderJsonResponse(request, self.form, data)
 
 
 class AjaxUpdateView(AjaxMixin, UpdateView):
@@ -715,25 +604,14 @@ class CustomLoginView(LoginView):
             # Initiate form
             form = self.get_form_class()(request.GET.dict(), request=request)
 
+            # Validate form data
+            form.is_valid()
+
             # Try to login
             form.full_clean()
             return form.login(request)
 
         return super().get(request, *args, **kwargs)
-
-
-class CurrencyRefreshView(RedirectView):
-    """POST endpoint to refresh / update exchange rates."""
-
-    url = reverse_lazy("settings-currencies")
-
-    def post(self, request, *args, **kwargs):
-        """On a POST request we will attempt to refresh the exchange rates."""
-        from InvenTree.tasks import offload_task, update_exchange_rates
-
-        offload_task(update_exchange_rates, force_sync=True)
-
-        return redirect(reverse_lazy('settings'))
 
 
 class AppearanceSelectView(RedirectView):

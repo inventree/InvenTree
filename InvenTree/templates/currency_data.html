@@ -1,0 +1,12 @@
+{% load i18n %}
+{% if instance and instance.currency %}
+<tr>
+    <td><span class='fas fa-dollar-sign'></span></td>
+    <td>{% trans "Currency" %}</td>
+    {% if instance.order_currency %}
+    <td>{{ instance.currency }}</td>
+    {% else %}
+    <td><em>{{ instance.currency }}</em></td>
+    {% endif %}
+</tr>
+{% endif %}

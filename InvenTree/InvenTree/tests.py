@@ -3,6 +3,7 @@
 import json
 import os
 import time
+from datetime import datetime, timedelta
 from decimal import Decimal
 from unittest import mock
 
@@ -13,7 +14,6 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
-import requests
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -29,18 +29,11 @@ from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, status, version
 from .tasks import offload_task
-from .validators import validate_overage, validate_part_name
+from .validators import validate_overage
 
 
 class ValidatorTest(TestCase):
     """Simple tests for custom field validators."""
-
-    def test_part_name(self):
-        """Test part name validator."""
-        validate_part_name('hello world')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_part_name('This | name is not } valid')
 
     def test_overage(self):
         """Test overage validator."""
@@ -257,7 +250,7 @@ class TestHelpers(TestCase):
     def test_download_image(self):
         """Test function for downloading image from remote URL"""
 
-        # Run check with a sequency of bad URLs
+        # Run check with a sequence of bad URLs
         for url in [
             "blog",
             "htp://test.com/?",
@@ -267,17 +260,38 @@ class TestHelpers(TestCase):
             with self.assertRaises(django_exceptions.ValidationError):
                 helpers.download_image_from_url(url)
 
+        def dl_helper(url, expected_error, timeout=2.5, retries=3):
+            """Helper function for unit testing downloads.
+
+            As the httpstat.us service occassionaly refuses a connection,
+            we will simply try multiple times
+            """
+
+            tries = 0
+
+            with self.assertRaises(expected_error):
+                while tries < retries:
+
+                    try:
+                        helpers.download_image_from_url(url, timeout=timeout)
+                        break
+                    except Exception as exc:
+                        if type(exc) is expected_error:
+                            # Re-throw this error
+                            raise exc
+                        else:
+                            print("Unexpected error:", type(exc), exc)
+
+                    tries += 1
+                    time.sleep(10 * tries)
+
         # Attempt to download an image which throws a 404
-        with self.assertRaises(requests.exceptions.HTTPError):
-            helpers.download_image_from_url("https://httpstat.us/404", timeout=10)
+        # TODO: Re-implement this test when we are happier with the external service
+        # dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
 
         # Attempt to download, but timeout
-        with self.assertRaises(requests.exceptions.Timeout):
-            helpers.download_image_from_url("https://httpstat.us/200?sleep=5000")
-
-        # Attempt to download, but not a valid image
-        with self.assertRaises(TypeError):
-            helpers.download_image_from_url("https://httpstat.us/200", timeout=10)
+        # TODO: Re-implement this test when we are happier with the external service
+        # dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.ReadTimeout, timeout=1)
 
         large_img = "https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg"
 
@@ -292,6 +306,20 @@ class TestHelpers(TestCase):
 
         # Download a valid image (should not throw an error)
         helpers.download_image_from_url(large_img, timeout=10)
+
+    def test_model_mixin(self):
+        """Test the getModelsWithMixin function"""
+
+        from InvenTree.models import InvenTreeBarcodeMixin
+
+        models = helpers.getModelsWithMixin(InvenTreeBarcodeMixin)
+
+        self.assertIn(Part, models)
+        self.assertIn(StockLocation, models)
+        self.assertIn(StockItem, models)
+
+        self.assertNotIn(PartCategory, models)
+        self.assertNotIn(InvenTreeSetting, models)
 
 
 class TestQuoteWrap(TestCase):
@@ -309,7 +337,7 @@ class TestIncrement(TestCase):
     def tests(self):
         """Test 'intelligent' incrementing function."""
         tests = [
-            ("", ""),
+            ("", '1'),
             (1, "2"),
             ("001", "002"),
             ("1001", "1002"),
@@ -378,10 +406,10 @@ class TestMPTT(TestCase):
         'location',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
-
+        super().setUpTestData()
         StockLocation.objects.rebuild()
 
     def test_self_as_parent(self):
@@ -418,16 +446,24 @@ class TestMPTT(TestCase):
 
 
 class TestSerialNumberExtraction(TestCase):
-    """Tests for serial number extraction code."""
+    """Tests for serial number extraction code.
+
+    Note that while serial number extraction is made available to custom plugins,
+    only simple integer-based extraction is tested here.
+    """
 
     def test_simple(self):
         """Test simple serial numbers."""
         e = helpers.extract_serial_numbers
 
+        # Test a range of numbers
         sn = e("1-5", 5, 1)
-        self.assertEqual(len(sn), 5, 1)
+        self.assertEqual(len(sn), 5)
         for i in range(1, 6):
-            self.assertIn(i, sn)
+            self.assertIn(str(i), sn)
+
+        sn = e("11-30", 20, 1)
+        self.assertEqual(len(sn), 20)
 
         sn = e("1, 2, 3, 4, 5", 5, 1)
         self.assertEqual(len(sn), 5)
@@ -435,55 +471,50 @@ class TestSerialNumberExtraction(TestCase):
         # Test partially specifying serials
         sn = e("1, 2, 4+", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 4, 5, 6])
+        self.assertEqual(sn, ['1', '2', '4', '5', '6'])
 
         # Test groups are not interpolated if enough serials are supplied
         sn = e("1, 2, 3, AF5-69H, 5", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 3, "AF5-69H", 5])
+        self.assertEqual(sn, ['1', '2', '3', 'AF5-69H', '5'])
 
         # Test groups are not interpolated with more than one hyphen in a word
         sn = e("1, 2, TG-4SR-92, 4+", 5, 1)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, "TG-4SR-92", 4, 5])
-
-        # Test groups are not interpolated with alpha characters
-        sn = e("1, A-2, 3+", 5, 1)
-        self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, "A-2", 3, 4, 5])
+        self.assertEqual(sn, ['1', '2', "TG-4SR-92", '4', '5'])
 
         # Test multiple placeholders
-        sn = e("1 2 ~ ~ ~", 5, 3)
+        sn = e("1 2 ~ ~ ~", 5, 2)
         self.assertEqual(len(sn), 5)
-        self.assertEqual(sn, [1, 2, 3, 4, 5])
+        self.assertEqual(sn, ['1', '2', '3', '4', '5'])
 
         sn = e("1-5, 10-15", 11, 1)
-        self.assertIn(3, sn)
-        self.assertIn(13, sn)
+        self.assertIn('3', sn)
+        self.assertIn('13', sn)
 
         sn = e("1+", 10, 1)
         self.assertEqual(len(sn), 10)
-        self.assertEqual(sn, [_ for _ in range(1, 11)])
+        self.assertEqual(sn, [str(_) for _ in range(1, 11)])
 
         sn = e("4, 1+2", 4, 1)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, [4, 1, 2, 3])
+        self.assertEqual(sn, ['4', '1', '2', '3'])
 
         sn = e("~", 1, 1)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, [1])
+        self.assertEqual(sn, ['2'])
 
         sn = e("~", 1, 3)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, [3])
+        self.assertEqual(sn, ['4'])
 
-        sn = e("~+", 2, 5)
+        sn = e("~+", 2, 4)
         self.assertEqual(len(sn), 2)
-        self.assertEqual(sn, [5, 6])
+        self.assertEqual(sn, ['5', '6'])
 
-        sn = e("~+3", 4, 5)
+        sn = e("~+3", 4, 4)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, [5, 6, 7, 8])
+        self.assertEqual(sn, ['5', '6', '7', '8'])
 
     def test_failures(self):
         """Test wron serial numbers."""
@@ -516,25 +547,53 @@ class TestSerialNumberExtraction(TestCase):
         with self.assertRaises(ValidationError):
             e("1, 2, 3, E-5", 5, 1)
 
+        # Extract a range of values with a smaller range
+        with self.assertRaises(ValidationError) as exc:
+            e("11-50", 10, 1)
+            self.assertIn('Range quantity exceeds 10', str(exc))
+
+        # Test groups are not interpolated with alpha characters
+        with self.assertRaises(ValidationError) as exc:
+            e("1, A-2, 3+", 5, 1)
+            self.assertIn('Invalid group range: A-2', str(exc))
+
     def test_combinations(self):
         """Test complex serial number combinations."""
         e = helpers.extract_serial_numbers
 
         sn = e("1 3-5 9+2", 7, 1)
         self.assertEqual(len(sn), 7)
-        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+        self.assertEqual(sn, ['1', '3', '4', '5', '9', '10', '11'])
 
         sn = e("1,3-5,9+2", 7, 1)
         self.assertEqual(len(sn), 7)
-        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+        self.assertEqual(sn, ['1', '3', '4', '5', '9', '10', '11'])
 
-        sn = e("~+2", 3, 14)
+        sn = e("~+2", 3, 13)
         self.assertEqual(len(sn), 3)
-        self.assertEqual(sn, [14, 15, 16])
+        self.assertEqual(sn, ['14', '15', '16'])
 
-        sn = e("~+", 2, 14)
+        sn = e("~+", 2, 13)
         self.assertEqual(len(sn), 2)
-        self.assertEqual(sn, [14, 15])
+        self.assertEqual(sn, ['14', '15'])
+
+        # Test multiple increment groups
+        sn = e("~+4, 20+4, 30+4", 15, 10)
+        self.assertEqual(len(sn), 15)
+
+        for v in [14, 24, 34]:
+            self.assertIn(str(v), sn)
+
+        # Test multiple range groups
+        sn = e("11-20, 41-50, 91-100", 30, 1)
+        self.assertEqual(len(sn), 30)
+
+        for v in range(11, 21):
+            self.assertIn(str(v), sn)
+        for v in range(41, 51):
+            self.assertIn(str(v), sn)
+        for v in range(91, 101):
+            self.assertIn(str(v), sn)
 
 
 class TestVersionNumber(TestCase):
@@ -726,13 +785,14 @@ class TestSettings(helpers.InvenTreeTestCase):
         """Test if install of plugins on startup works."""
         from plugin import registry
 
-        # Check an install run
-        response = registry.install_plugin_file()
-        self.assertEqual(response, 'first_run')
+        if not settings.DOCKER:
+            # Check an install run
+            response = registry.install_plugin_file()
+            self.assertEqual(response, 'first_run')
 
-        # Set dynamic setting to True and rerun to launch install
-        InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-        registry.reload_plugins(full_reload=True)
+            # Set dynamic setting to True and rerun to launch install
+            InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
+            registry.reload_plugins(full_reload=True)
 
         # Check that there was anotehr run
         response = registry.install_plugin_file()
@@ -747,7 +807,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/config.yaml',
         ]
 
-        self.assertTrue(any([opt in str(config.get_config_file()).lower() for opt in valid]))
+        self.assertTrue(any(opt in str(config.get_config_file()).lower() for opt in valid))
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
@@ -762,7 +822,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/plugins.txt',
         ]
 
-        self.assertTrue(any([opt in str(config.get_plugin_file()).lower() for opt in valid]))
+        self.assertTrue(any(opt in str(config.get_plugin_file()).lower() for opt in valid))
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
@@ -777,6 +837,17 @@ class TestSettings(helpers.InvenTreeTestCase):
         # with env set
         with self.in_env_context({TEST_ENV_NAME: '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
+
+        # test typecasting to dict - None should be mapped to empty dict
+        self.assertEqual(config.get_setting(TEST_ENV_NAME, None, None, typecast=dict), {})
+
+        # test typecasting to dict - valid JSON string should be mapped to corresponding dict
+        with self.in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
+            self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {"a": 1})
+
+        # test typecasting to dict - invalid JSON string should be mapped to empty dict
+        with self.in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
+            self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
 
 
 class TestInstanceName(helpers.InvenTreeTestCase):
@@ -850,6 +921,58 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             1, 2, 3, 4, 5,
             force_async=True
         )
+
+    def test_daily_holdoff(self):
+        """Tests for daily task holdoff helper functions"""
+
+        import InvenTree.tasks
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            # With a non-positive interval, task will not run
+            result = InvenTree.tasks.check_daily_holdoff('some_task', 0)
+            self.assertFalse(result)
+            self.assertIn('Specified interval', str(cm.output))
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            # First call should run without issue
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task')
+            self.assertTrue(result)
+            self.assertIn("Logging task attempt for 'dummy_task'", str(cm.output))
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            # An attempt has been logged, but it is too recent
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task')
+            self.assertFalse(result)
+            self.assertIn("Last attempt for 'dummy_task' was too recent", str(cm.output))
+
+        # Mark last attempt a few days ago - should now return True
+        t_old = datetime.now() - timedelta(days=3)
+        t_old = t_old.isoformat()
+        InvenTreeSetting.set_setting('_dummy_task_ATTEMPT', t_old, None)
+
+        result = InvenTree.tasks.check_daily_holdoff('dummy_task', 5)
+        self.assertTrue(result)
+
+        # Last attempt should have been updated
+        self.assertNotEqual(t_old, InvenTreeSetting.get_setting('_dummy_task_ATTEMPT', '', cache=False))
+
+        # Last attempt should prevent us now
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task')
+            self.assertFalse(result)
+            self.assertIn("Last attempt for 'dummy_task' was too recent", str(cm.output))
+
+        # Configure so a task was successful too recently
+        InvenTreeSetting.set_setting('_dummy_task_ATTEMPT', t_old, None)
+        InvenTreeSetting.set_setting('_dummy_task_SUCCESS', t_old, None)
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task', 7)
+            self.assertFalse(result)
+            self.assertIn('Last successful run for', str(cm.output))
+
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task', 2)
+            self.assertTrue(result)
 
 
 class BarcodeMixinTest(helpers.InvenTreeTestCase):

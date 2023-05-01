@@ -17,7 +17,8 @@ from InvenTree import version
 from InvenTree.helpers import InvenTreeTestCase
 
 from .models import (Part, PartCategory, PartCategoryStar, PartRelated,
-                     PartStar, PartTestTemplate, rename_part_image)
+                     PartStar, PartStocktake, PartTestTemplate,
+                     rename_part_image)
 from .templatetags import inventree_extras
 
 
@@ -85,7 +86,7 @@ class TemplateTagTest(InvenTreeTestCase):
 
     def test_docs(self):
         """Test that the documentation URL template tag returns correctly"""
-        self.assertIn('inventree.readthedocs.io', inventree_extras.inventree_docs_url())
+        self.assertIn('docs.inventree.org', inventree_extras.inventree_docs_url())
 
     def test_keyvalue(self):
         """Test keyvalue template tag"""
@@ -133,14 +134,16 @@ class PartTest(TestCase):
         'part_pricebreaks'
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Create some Part instances as part of init routine"""
-        super().setUp()
 
-        self.r1 = Part.objects.get(name='R_2K2_0805')
-        self.r2 = Part.objects.get(name='R_4K7_0603')
+        super().setUpTestData()
 
-        self.c1 = Part.objects.get(name='C_22N_0805')
+        cls.r1 = Part.objects.get(name='R_2K2_0805')
+        cls.r2 = Part.objects.get(name='R_4K7_0603')
+
+        cls.c1 = Part.objects.get(name='C_22N_0805')
 
         Part.objects.rebuild()
 
@@ -168,7 +171,7 @@ class PartTest(TestCase):
     def test_str(self):
         """Test string representation of a Part"""
         p = Part.objects.get(pk=100)
-        self.assertEqual(str(p), "BOB | Bob | A2 - Can we build it?")
+        self.assertEqual(str(p), "BOB | Bob | A2 - Can we build it? Yes we can!")
 
     def test_duplicate(self):
         """Test that we cannot create a "duplicate" Part."""
@@ -254,10 +257,6 @@ class PartTest(TestCase):
         self.assertIn('InvenTree', barcode)
         self.assertIn('"part": {"id": 3}', barcode)
 
-    def test_copy(self):
-        """Test that we can 'deep copy' a Part instance"""
-        self.r2.deep_copy(self.r1, image=True, bom=True)
-
     def test_sell_pricing(self):
         """Check that the sell pricebreaks were loaded"""
         self.assertTrue(self.r1.has_price_breaks)
@@ -275,21 +274,22 @@ class PartTest(TestCase):
         self.assertEqual(float(self.r1.get_internal_price(10)), 0.5)
 
     def test_metadata(self):
-        """Unit tests for the Part metadata field."""
-        p = Part.objects.get(pk=1)
-        self.assertIsNone(p.metadata)
+        """Unit tests for the metadata field."""
+        for model in [Part]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
 
-        self.assertIsNone(p.get_metadata('test'))
-        self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
 
-        # Test update via the set_metadata() method
-        p.set_metadata('test', 3)
-        self.assertEqual(p.get_metadata('test'), 3)
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
 
-        for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
-            p.set_metadata(k, k)
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
 
-        self.assertEqual(len(p.metadata.keys()), 4)
+            self.assertEqual(len(p.metadata.keys()), 4)
 
     def test_related(self):
         """Unit tests for the PartRelated model"""
@@ -337,6 +337,19 @@ class PartTest(TestCase):
         # Deleting r2 should remove *all* relationships
         self.r2.delete()
         self.assertEqual(PartRelated.objects.count(), 0)
+
+    def test_stocktake(self):
+        """Test for adding stocktake data"""
+
+        # Grab a part
+        p = Part.objects.all().first()
+
+        self.assertIsNone(p.last_stocktake)
+
+        ps = PartStocktake.objects.create(part=p, quantity=100)
+
+        self.assertIsNotNone(p.last_stocktake)
+        self.assertEqual(p.last_stocktake, ps.date)
 
 
 class TestTemplateTest(TestCase):
@@ -519,15 +532,16 @@ class PartSubscriptionTests(InvenTreeTestCase):
         'part',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Create category and part data as part of setup routine"""
-        super().setUp()
+        super().setUpTestData()
 
-        # electronics / IC / MCU
-        self.category = PartCategory.objects.get(pk=4)
+        # Electronics / IC / MCU
+        cls.category = PartCategory.objects.get(pk=4)
 
-        self.part = Part.objects.create(
-            category=self.category,
+        cls.part = Part.objects.create(
+            category=cls.category,
             name='STM32F103',
             description='Currently worth a lot of money',
             is_template=True,
@@ -619,14 +633,16 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         'stock'
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Add an email address as part of initialization"""
-        super().setUp()
-        # Add Mailadress
-        EmailAddress.objects.create(user=self.user, email='test@testing.com')
+        super().setUpTestData()
+
+        # Add email address
+        EmailAddress.objects.create(user=cls.user, email='test@testing.com')
 
         # Define part that will be tested
-        self.part = Part.objects.get(name='R_2K2_0805')
+        cls.part = Part.objects.get(name='R_2K2_0805')
 
     def _notification_run(self, run_class=None):
         """Run a notification test suit through.

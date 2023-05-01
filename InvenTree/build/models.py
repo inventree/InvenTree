@@ -22,25 +22,24 @@ from mptt.exceptions import InvalidMove
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, normalize, notify_responsible
-from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 
 from plugin.events import trigger_event
 
 import common.notifications
-from part import models as PartModels
-from stock import models as StockModels
-from users import models as UserModels
+import part.models
+import stock.models
+import users.models
 
 
-class Build(MPTTModel, ReferenceIndexingMixin):
+class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -61,7 +60,13 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         completed_by: User that completed the build
         issued_by: User that issued the build
         responsible: User (or group) responsible for completing the build
+        priority: Priority of the build
     """
+
+    class Meta:
+        """Metaclass options for the BuildOrder model"""
+        verbose_name = _("Build Order")
+        verbose_name_plural = _("Build Orders")
 
     OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
@@ -104,11 +109,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             raise ValidationError({
                 'parent': _('Invalid choice for parent build'),
             })
-
-    class Meta:
-        """Metaclass options for the BuildOrder model"""
-        verbose_name = _("Build Order")
-        verbose_name_plural = _("Build Orders")
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -161,9 +161,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     title = models.CharField(
         verbose_name=_('Description'),
-        blank=False,
+        blank=True,
         max_length=100,
-        help_text=_('Brief description of the build')
+        help_text=_('Brief description of the build (optional)')
     )
 
     parent = TreeForeignKey(
@@ -277,11 +277,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     )
 
     responsible = models.ForeignKey(
-        UserModels.Owner,
+        users.models.Owner,
         on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('Responsible'),
-        help_text=_('User responsible for this build order'),
+        help_text=_('User or group responsible for this build order'),
         related_name='builds_responsible',
     )
 
@@ -290,8 +290,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         blank=True, help_text=_('Link to external URL')
     )
 
-    notes = InvenTree.fields.InvenTreeNotesField(
-        help_text=_('Extra build notes')
+    priority = models.PositiveIntegerField(
+        verbose_name=_('Build Priority'),
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text=_('Priority of this build order')
     )
 
     def sub_builds(self, cascade=True):
@@ -386,9 +389,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         if in_stock is not None:
             if in_stock:
-                outputs = outputs.filter(StockModels.StockItem.IN_STOCK_FILTER)
+                outputs = outputs.filter(stock.models.StockItem.IN_STOCK_FILTER)
             else:
-                outputs = outputs.exclude(StockModels.StockItem.IN_STOCK_FILTER)
+                outputs = outputs.exclude(stock.models.StockItem.IN_STOCK_FILTER)
 
         # Filter by 'complete' status
         complete = kwargs.get('complete', None)
@@ -458,7 +461,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         new_ref = ref
 
         while 1:
-            new_ref = increment(new_ref)
+            new_ref = InvenTree.helpers.increment(new_ref)
 
             if new_ref in tries:
                 # We are potentially stuck in a loop - simply return the original reference
@@ -650,7 +653,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                 else:
                     serial = None
 
-                output = StockModels.StockItem.objects.create(
+                output = stock.models.StockItem.objects.create(
                     quantity=1,
                     location=location,
                     part=self.part,
@@ -668,11 +671,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
                         parts = bom_item.get_valid_parts_for_allocation()
 
-                        items = StockModels.StockItem.objects.filter(
+                        items = stock.models.StockItem.objects.filter(
                             part__in=parts,
                             serial=str(serial),
                             quantity=1,
-                        ).filter(StockModels.StockItem.IN_STOCK_FILTER)
+                        ).filter(stock.models.StockItem.IN_STOCK_FILTER)
 
                         """
                         Test if there is a matching serial number!
@@ -692,7 +695,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         else:
             """Create a single build output of the given quantity."""
 
-            StockModels.StockItem.objects.create(
+            stock.models.StockItem.objects.create(
                 quantity=quantity,
                 location=location,
                 part=self.part,
@@ -832,6 +835,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         exclude_location = kwargs.get('exclude_location', None)
         interchangeable = kwargs.get('interchangeable', False)
         substitutes = kwargs.get('substitutes', True)
+        optional_items = kwargs.get('optional_items', False)
 
         def stock_sort(item, bom_item, variant_parts):
             if item.part == bom_item.sub_part:
@@ -846,6 +850,10 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
             if bom_item.consumable:
                 # Do not auto-allocate stock to consumable BOM items
+                continue
+
+            if bom_item.optional and not optional_items:
+                # User has specified that optional_items are to be ignored
                 continue
 
             variant_parts = bom_item.sub_part.get_descendants(include_self=False)
@@ -863,11 +871,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             )
 
             # Look for available stock items
-            available_stock = StockModels.StockItem.objects.filter(StockModels.StockItem.IN_STOCK_FILTER)
+            available_stock = stock.models.StockItem.objects.filter(stock.models.StockItem.IN_STOCK_FILTER)
 
             # Filter by list of available parts
             available_stock = available_stock.filter(
-                part__in=[p for p in available_parts],
+                part__in=list(available_parts),
             )
 
             # Filter out "serialized" stock items, these cannot be auto-allocated
@@ -876,12 +884,12 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             if location:
                 # Filter only stock items located "below" the specified location
                 sublocations = location.get_descendants(include_self=True)
-                available_stock = available_stock.filter(location__in=[loc for loc in sublocations])
+                available_stock = available_stock.filter(location__in=list(sublocations))
 
             if exclude_location:
                 # Exclude any stock items from the provided location
                 sublocations = exclude_location.get_descendants(include_self=True)
-                available_stock = available_stock.exclude(location__in=[loc for loc in sublocations])
+                available_stock = available_stock.exclude(location__in=list(sublocations))
 
             """
             Next, we sort the available stock items with the following priority:
@@ -1067,12 +1075,15 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def required_parts_to_complete_build(self):
-        """Returns a list of parts required to complete the full build."""
+        """Returns a list of parts required to complete the full build.
+
+        TODO: 2022-01-06 : This method needs to be improved, it is very inefficient in terms of DB hits!
+        """
         parts = []
 
         for bom_item in self.bom_items:
             # Get remaining quantity needed
-            required_quantity_to_complete_build = self.remaining * bom_item.quantity
+            required_quantity_to_complete_build = self.remaining * bom_item.quantity - self.allocated_quantity(bom_item)
             # Compare to net stock
             if bom_item.sub_part.net_stock < required_quantity_to_complete_build:
                 parts.append(bom_item.sub_part)
@@ -1111,10 +1122,10 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
         # Notify the responsible users that the build order has been created
-        notify_responsible(instance, sender, exclude=instance.issued_by)
+        InvenTree.helpers.notify_responsible(instance, sender, exclude=instance.issued_by)
 
 
-class BuildOrderAttachment(InvenTreeAttachment):
+class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a BuildOrder object."""
 
     def getSubdir(self):
@@ -1124,7 +1135,7 @@ class BuildOrderAttachment(InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
-class BuildItem(models.Model):
+class BuildItem(InvenTree.models.MetadataMixin, models.Model):
     """A BuildItem links multiple StockItem objects to a Build.
 
     These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.
@@ -1137,16 +1148,16 @@ class BuildItem(models.Model):
         install_into: Destination stock item (or None)
     """
 
-    @staticmethod
-    def get_api_url():
-        """Return the API URL used to access this model"""
-        return reverse('api-build-item-list')
-
     class Meta:
         """Serializer metaclass"""
         unique_together = [
             ('build', 'stock_item', 'install_into'),
         ]
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL used to access this model"""
+        return reverse('api-build-item-list')
 
     def save(self, *args, **kwargs):
         """Custom save method for the BuildItem model"""
@@ -1174,8 +1185,8 @@ class BuildItem(models.Model):
             # Allocated quantity cannot exceed available stock quantity
             if self.quantity > self.stock_item.quantity:
 
-                q = normalize(self.quantity)
-                a = normalize(self.stock_item.quantity)
+                q = InvenTree.helpers.normalize(self.quantity)
+                a = InvenTree.helpers.normalize(self.stock_item.quantity)
 
                 raise ValidationError({
                     'quantity': _(f'Allocated quantity ({q}) must not exceed available stock quantity ({a})')
@@ -1203,7 +1214,7 @@ class BuildItem(models.Model):
                     'quantity': _('Quantity must be 1 for serialized stock')
                 })
 
-        except (StockModels.StockItem.DoesNotExist, PartModels.Part.DoesNotExist):
+        except (stock.models.StockItem.DoesNotExist, part.models.Part.DoesNotExist):
             pass
 
         """
@@ -1242,8 +1253,8 @@ class BuildItem(models.Model):
                 for idx, ancestor in enumerate(ancestors):
 
                     try:
-                        bom_item = PartModels.BomItem.objects.get(part=self.build.part, sub_part=ancestor)
-                    except PartModels.BomItem.DoesNotExist:
+                        bom_item = part.models.BomItem.objects.get(part=self.build.part, sub_part=ancestor)
+                    except part.models.BomItem.DoesNotExist:
                         continue
 
                     # A matching BOM item has been found!
@@ -1333,7 +1344,7 @@ class BuildItem(models.Model):
     # Internal model which links part <-> sub_part
     # We need to track this separately, to allow for "variant' stock
     bom_item = models.ForeignKey(
-        PartModels.BomItem,
+        part.models.BomItem,
         on_delete=models.CASCADE,
         related_name='allocate_build_items',
         blank=True, null=True,

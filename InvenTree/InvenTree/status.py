@@ -26,15 +26,14 @@ def is_worker_running(**kwargs):
 
     """
     Sometimes Stat.get_all() returns [].
-    In this case we have the 'heartbeat' task running every 15 minutes.
-    Check to see if we have a result within the last 20 minutes
+    In this case we have the 'heartbeat' task running every 5 minutes.
+    Check to see if we have any successful result within the last 10 minutes
     """
 
     now = timezone.now()
-    past = now - timedelta(minutes=20)
+    past = now - timedelta(minutes=10)
 
     results = Success.objects.filter(
-        func='InvenTree.tasks.heartbeat',
         started__gte=past
     )
 
@@ -62,19 +61,13 @@ def is_email_configured():
         if not settings.TESTING:  # pragma: no cover
             logger.debug("EMAIL_HOST is not configured")
 
-    if not settings.EMAIL_HOST_USER:
-        configured = False
+    # Display warning unless in test mode
+    if not settings.TESTING:  # pragma: no cover
+        logger.debug("EMAIL_HOST_USER is not configured")
 
-        # Display warning unless in test mode
-        if not settings.TESTING:  # pragma: no cover
-            logger.debug("EMAIL_HOST_USER is not configured")
-
-    if not settings.EMAIL_HOST_PASSWORD:
-        configured = False
-
-        # Display warning unless in test mode
-        if not settings.TESTING:  # pragma: no cover
-            logger.debug("EMAIL_HOST_PASSWORD is not configured")
+    # Display warning unless in test mode
+    if not settings.TESTING:  # pragma: no cover
+        logger.debug("EMAIL_HOST_PASSWORD is not configured")
 
     return configured
 

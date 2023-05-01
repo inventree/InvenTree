@@ -5,9 +5,11 @@ from django.urls import reverse
 from rest_framework import serializers
 
 from common.models import (InvenTreeSetting, InvenTreeUserSetting,
-                           NotificationMessage)
+                           NewsFeedEntry, NotesImage, NotificationMessage,
+                           ProjectCode)
 from InvenTree.helpers import construct_absolute_url, get_objectreference
-from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import (InvenTreeImageSerializerField,
+                                   InvenTreeModelSerializer)
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
@@ -77,8 +79,6 @@ class GlobalSettingsSerializer(SettingsSerializer):
 class UserSettingsSerializer(SettingsSerializer):
     """Serializer for the InvenTreeUserSetting model."""
 
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-
     class Meta:
         """Meta options for UserSettingsSerializer."""
 
@@ -96,6 +96,8 @@ class UserSettingsSerializer(SettingsSerializer):
             'api_url',
             'typ',
         ]
+
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
 
 
 class GenericReferencedSettingSerializer(SettingsSerializer):
@@ -140,28 +142,41 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
 class NotificationMessageSerializer(InvenTreeModelSerializer):
     """Serializer for the InvenTreeUserSetting model."""
 
+    class Meta:
+        """Meta options for NotificationMessageSerializer."""
+
+        model = NotificationMessage
+        fields = [
+            'pk',
+            'target',
+            'source',
+            'user',
+            'category',
+            'name',
+            'message',
+            'creation',
+            'age',
+            'age_human',
+            'read',
+        ]
+
+        read_only_fields = [
+            'category',
+            'name',
+            'message',
+            'creation',
+            'age',
+            'age_human',
+        ]
+
     target = serializers.SerializerMethodField(read_only=True)
-
     source = serializers.SerializerMethodField(read_only=True)
-
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    category = serializers.CharField(read_only=True)
-
-    name = serializers.CharField(read_only=True)
-
-    message = serializers.CharField(read_only=True)
-
-    creation = serializers.CharField(read_only=True)
-
-    age = serializers.IntegerField(read_only=True)
-
-    age_human = serializers.CharField(read_only=True)
-
-    read = serializers.BooleanField(read_only=True)
+    read = serializers.BooleanField()
 
     def get_target(self, obj):
         """Function to resolve generic object reference to target."""
+
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
         if target and 'link' not in target:
@@ -184,30 +199,72 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
         """Function to resolve generic object reference to source."""
         return get_objectreference(obj, 'source_content_type', 'source_object_id')
 
-    class Meta:
-        """Meta options for NotificationMessageSerializer."""
 
-        model = NotificationMessage
+class NewsFeedEntrySerializer(InvenTreeModelSerializer):
+    """Serializer for the NewsFeedEntry model."""
+
+    class Meta:
+        """Meta options for NewsFeedEntrySerializer."""
+
+        model = NewsFeedEntry
         fields = [
             'pk',
-            'target',
-            'source',
-            'user',
-            'category',
-            'name',
-            'message',
-            'creation',
-            'age',
-            'age_human',
+            'feed_id',
+            'title',
+            'link',
+            'published',
+            'author',
+            'summary',
             'read',
         ]
 
+    read = serializers.BooleanField()
 
-class NotificationReadSerializer(NotificationMessageSerializer):
-    """Serializer for reading a notification."""
 
-    def is_valid(self, raise_exception=False):
-        """Ensure instance data is available for view and let validation pass."""
-        self.instance = self.context['instance']  # set instance that should be returned
-        self._validated_data = True
-        return True
+class ConfigSerializer(serializers.Serializer):
+    """Serializer for the InvenTree configuration.
+
+    This is a read-only serializer.
+    """
+
+    def to_representation(self, instance):
+        """Return the configuration data as a dictionary."""
+        if not isinstance(instance, str):
+            instance = list(instance.keys())[0]
+        return {'key': instance, **self.instance[instance]}
+
+
+class NotesImageSerializer(InvenTreeModelSerializer):
+    """Serializer for the NotesImage model."""
+
+    class Meta:
+        """Meta options for NotesImageSerializer."""
+
+        model = NotesImage
+        fields = [
+            'pk',
+            'image',
+            'user',
+            'date',
+        ]
+
+        read_only_fields = [
+            'date',
+            'user',
+        ]
+
+    image = InvenTreeImageSerializerField(required=True)
+
+
+class ProjectCodeSerializer(InvenTreeModelSerializer):
+    """Serializer for the ProjectCode model."""
+
+    class Meta:
+        """Meta options for ProjectCodeSerializer."""
+
+        model = ProjectCode
+        fields = [
+            'pk',
+            'code',
+            'description'
+        ]

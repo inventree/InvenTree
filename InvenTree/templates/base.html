@@ -5,6 +5,7 @@
 {% plugins_enabled as plugins_enabled %}
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
 {% settings_value 'REPORT_ENABLE_TEST_REPORT' as test_report_enabled %}
+{% settings_value 'RETURNORDER_ENABLED' as return_order_enabled %}
 {% settings_value "REPORT_ENABLE" as report_enabled %}
 {% settings_value "SERVER_RESTART_REQUIRED" as server_restart_required %}
 {% settings_value "LABEL_ENABLE" as labels_enabled %}
@@ -154,6 +155,7 @@
 <script defer type='text/javascript' src="{% i18n_static 'barcode.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'bom.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'build.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'charts.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'company.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'filters.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'forms.js' %}"></script>
@@ -163,10 +165,16 @@
 <script defer type='text/javascript' src="{% i18n_static 'model_renderers.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'order.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'part.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'purchase_order.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'return_order.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'report.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'sales_order.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'search.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'status_codes.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'stock.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'plugin.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'pricing.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'news.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'tables.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'table_filters.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'notification.js' %}"></script>

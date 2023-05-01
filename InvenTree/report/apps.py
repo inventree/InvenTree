@@ -8,8 +8,6 @@ from pathlib import Path
 from django.apps import AppConfig
 from django.conf import settings
 
-from InvenTree.ready import canAppAccessDatabase
-
 logger = logging.getLogger("inventree")
 
 
@@ -19,9 +17,21 @@ class ReportConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the report app is loaded."""
+
+        from InvenTree.ready import canAppAccessDatabase
+
+        # Configure logging for PDF generation (disable "info" messages)
+        logging.getLogger('fontTools').setLevel(logging.WARNING)
+        logging.getLogger('weasyprint').setLevel(logging.WARNING)
+
+        # Create entries for default report templates
         if canAppAccessDatabase(allow_test=True):
             self.create_default_test_reports()
             self.create_default_build_reports()
+            self.create_default_bill_of_materials_reports()
+            self.create_default_purchase_order_reports()
+            self.create_default_sales_order_reports()
+            self.create_default_return_order_reports()
 
     def create_default_reports(self, model, reports):
         """Copy defualt report files across to the media directory."""
@@ -96,6 +106,25 @@ class ReportConfig(AppConfig):
 
         self.create_default_reports(TestReport, reports)
 
+    def create_default_bill_of_materials_reports(self):
+        """Create database entries for the default Bill of Material templates (if they do not already exist)"""
+        try:
+            from .models import BillOfMaterialsReport
+        except Exception:  # pragma: no cover
+            # Database is not ready yet
+            return
+
+        # List of Build reports to copy across
+        reports = [
+            {
+                'file': 'inventree_bill_of_materials_report.html',
+                'name': 'Bill of Materials',
+                'description': 'Bill of Materials report',
+            }
+        ]
+
+        self.create_default_reports(BillOfMaterialsReport, reports)
+
     def create_default_build_reports(self):
         """Create database entries for the default BuildReport templates (if they do not already exist)"""
         try:
@@ -114,3 +143,61 @@ class ReportConfig(AppConfig):
         ]
 
         self.create_default_reports(BuildReport, reports)
+
+    def create_default_purchase_order_reports(self):
+        """Create database entries for the default SalesOrderReport templates (if they do not already exist)"""
+        try:
+            from .models import PurchaseOrderReport
+        except Exception:  # pragma: no cover
+            # Database is not ready yet
+            return
+
+        # List of Build reports to copy across
+        reports = [
+            {
+                'file': 'inventree_po_report.html',
+                'name': 'InvenTree Purchase Order',
+                'description': 'Purchase Order example report',
+            }
+        ]
+
+        self.create_default_reports(PurchaseOrderReport, reports)
+
+    def create_default_sales_order_reports(self):
+        """Create database entries for the default Sales Order report templates (if they do not already exist)"""
+        try:
+            from .models import SalesOrderReport
+        except Exception:  # pragma: no cover
+            # Database is not ready yet
+            return
+
+        # List of Build reports to copy across
+        reports = [
+            {
+                'file': 'inventree_so_report.html',
+                'name': 'InvenTree Sales Order',
+                'description': 'Sales Order example report',
+            }
+        ]
+
+        self.create_default_reports(SalesOrderReport, reports)
+
+    def create_default_return_order_reports(self):
+        """Create database entries for the default ReturnOrderReport templates"""
+
+        try:
+            from report.models import ReturnOrderReport
+        except Exception:  # pragma: no cover
+            # Database not yet ready
+            return
+
+        # List of templates to copy across
+        reports = [
+            {
+                'file': 'inventree_return_order_report.html',
+                'name': 'InvenTree Return Order',
+                'description': 'Return Order example report',
+            }
+        ]
+
+        self.create_default_reports(ReturnOrderReport, reports)

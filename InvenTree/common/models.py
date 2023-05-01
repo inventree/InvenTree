@@ -10,6 +10,8 @@ import hmac
 import json
 import logging
 import math
+import os
+import re
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
@@ -40,11 +42,33 @@ from rest_framework.exceptions import PermissionDenied
 import build.validators
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
+import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+from plugin import registry
 
 logger = logging.getLogger('inventree')
+
+
+class MetaMixin(models.Model):
+    """A base class for InvenTree models to include shared meta fields.
+
+    Attributes:
+    - updated: The last time this object was updated
+    """
+
+    class Meta:
+        """Meta options for MetaMixin."""
+        abstract = True
+
+    updated = models.DateTimeField(
+        verbose_name=_('Updated'),
+        help_text=_('Timestamp of last update'),
+        auto_now=True,
+        null=True,
+    )
 
 
 class EmptyURLValidator(URLValidator):
@@ -59,6 +83,33 @@ class EmptyURLValidator(URLValidator):
 
         else:
             super().__call__(value)
+
+
+class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+    """A ProjectCode is a unique identifier for a project."""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-project-code-list')
+
+    def __str__(self):
+        """String representation of a ProjectCode."""
+        return self.code
+
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Unique project code'),
+    )
+
+    description = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Project description'),
+    )
 
 
 class BaseInvenTreeSetting(models.Model):
@@ -80,19 +131,33 @@ class BaseInvenTreeSetting(models.Model):
         self.clean(**kwargs)
         self.validate_unique(**kwargs)
 
+        # Execute before_save action
+        self._call_settings_function('before_save', args, kwargs)
+
         # Update this setting in the cache
         if do_cache:
             self.save_to_cache()
 
         super().save()
 
-        # Get after_save action
+        # Execute after_save action
+        self._call_settings_function('after_save', args, kwargs)
+
+    def _call_settings_function(self, reference: str, args, kwargs):
+        """Call a function associated with a particular setting.
+
+        Args:
+            reference (str): The name of the function to call
+            args: Positional arguments to pass to the function
+            kwargs: Keyword arguments to pass to the function
+        """
+        # Get action
         setting = self.get_setting_definition(self.key, *args, **kwargs)
-        after_save = setting.get('after_save', None)
+        settings_fnc = setting.get(reference, None)
 
         # Execute if callable
-        if callable(after_save):
-            after_save(self)
+        if callable(settings_fnc):
+            settings_fnc(self)
 
     @property
     def cache_key(self):
@@ -142,6 +207,10 @@ class BaseInvenTreeSetting(models.Model):
         are assigned their default values
         """
         results = cls.objects.all()
+
+        if exclude_hidden:
+            # Keys which start with an undersore are used for internal functionality
+            results = results.exclude(key__startswith='_')
 
         # Optionally filter by user
         if user is not None:
@@ -258,7 +327,12 @@ class BaseInvenTreeSetting(models.Model):
         """
         setting = cls.get_setting_definition(key, **kwargs)
 
-        return setting.get('default', '')
+        default = setting.get('default', '')
+
+        if callable(default):
+            return default()
+        else:
+            return default
 
     @classmethod
     def get_setting_choices(cls, key, **kwargs):
@@ -342,17 +416,20 @@ class BaseInvenTreeSetting(models.Model):
         if not setting:
 
             # Unless otherwise specified, attempt to create the setting
-            create = kwargs.get('create', True)
+            create = kwargs.pop('create', True)
 
             # Prevent creation of new settings objects when importing data
-            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True, allow_shell=True):
                 create = False
 
             if create:
                 # Attempt to create a new settings object
+
+                default_value = cls.get_setting_default(key, **kwargs)
+
                 setting = cls(
                     key=key,
-                    value=cls.get_setting_default(key, **kwargs),
+                    value=default_value,
                     **kwargs
                 )
 
@@ -660,6 +737,17 @@ class BaseInvenTreeSetting(models.Model):
             except Exception:
                 pass
 
+            # Some other model types are hard-coded
+            hardcoded_models = {
+                'auth.user': 'api-user-list',
+                'auth.group': 'api-group-list',
+            }
+
+            model_table = f'{model_class._meta.app_label}.{model_class._meta.model_name}'
+
+            if url := hardcoded_models[model_table]:
+                return reverse(url)
+
         return None
 
     def is_bool(self):
@@ -765,12 +853,43 @@ def update_instance_name(setting):
     site_obj.save()
 
 
+def validate_email_domains(setting):
+    """Validate the email domains setting."""
+    if not setting.value:
+        return
+
+    domains = setting.value.split(',')
+    for domain in domains:
+        if not domain:
+            raise ValidationError(_('An empty domain is not allowed.'))
+        if not re.match(r'^@[a-zA-Z0-9\.\-_]+$', domain):
+            raise ValidationError(_(f'Invalid domain name: {domain}'))
+
+
+def update_exchange_rates(setting):
+    """Update exchange rates when base currency is changed"""
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    if not InvenTree.ready.canAppAccessDatabase():
+        return
+
+    InvenTree.tasks.update_exchange_rates()
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     The class provides a way of retrieving the value for a particular key,
     even if that key does not exist.
     """
+
+    class Meta:
+        """Meta options for InvenTreeSetting."""
+
+        verbose_name = "InvenTree Setting"
+        verbose_name_plural = "InvenTree Settings"
 
     def save(self, *args, **kwargs):
         """When saving a global setting, check to see if it requires a server restart.
@@ -845,9 +964,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'INVENTREE_DEFAULT_CURRENCY': {
             'name': _('Default Currency'),
-            'description': _('Default currency'),
+            'description': _('Select base currency for pricing caluclations'),
             'default': 'USD',
             'choices': CURRENCY_CHOICES,
+            'after_save': update_exchange_rates,
         },
 
         'INVENTREE_DOWNLOAD_FROM_URL': {
@@ -869,6 +989,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT': {
+            'name': _('User-agent used to download from URL'),
+            'description': _('Allow to override the user-agent used to download images and files from external URL (leave blank for the default)'),
+            'default': '',
+        },
+
         'INVENTREE_REQUIRE_CONFIRM': {
             'name': _('Require confirm'),
             'description': _('Require explicit user confirmation for certain action.'),
@@ -886,6 +1012,68 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'INVENTREE_UPDATE_CHECK_INTERVAL': {
+            'name': _('Update Check Interval'),
+            'description': _('How often to check for updates (set to zero to disable)'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 7,
+            'units': _('days'),
+        },
+
+        'INVENTREE_BACKUP_ENABLE': {
+            'name': _('Automatic Backup'),
+            'description': _('Enable automatic backup of database and media files'),
+            'validator': bool,
+            'default': False,
+        },
+
+        'INVENTREE_BACKUP_DAYS': {
+            'name': _('Auto Backup Interval'),
+            'description': _('Specify number of days between automated backup events'),
+            'validator': [
+                int,
+                MinValueValidator(1),
+            ],
+            'default': 1,
+            'units': _('days'),
+        },
+
+        'INVENTREE_DELETE_TASKS_DAYS': {
+            'name': _('Task Deletion Interval'),
+            'description': _('Background task results will be deleted after specified number of days'),
+            'default': 30,
+            'units': _('days'),
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
+        'INVENTREE_DELETE_ERRORS_DAYS': {
+            'name': _('Error Log Deletion Interval'),
+            'description': _('Error logs will be deleted after specified number of days'),
+            'default': 30,
+            'units': _('days'),
+            'validator': [
+                int,
+                MinValueValidator(7)
+            ]
+        },
+
+        'INVENTREE_DELETE_NOTIFICATIONS_DAYS': {
+            'name': _('Notification Deletion Interval'),
+            'description': _('User notifications will be deleted after specified number of days'),
+            'default': 30,
+            'units': _('days'),
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),
@@ -893,11 +1081,29 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'BARCODE_INPUT_DELAY': {
+            'name': _('Barcode Input Delay'),
+            'description': _('Barcode input processing delay time'),
+            'default': 50,
+            'validator': [
+                int,
+                MinValueValidator(1),
+            ],
+            'units': 'ms',
+        },
+
         'BARCODE_WEBCAM_SUPPORT': {
             'name': _('Barcode Webcam Support'),
             'description': _('Allow barcode scanning via webcam in browser'),
             'default': True,
             'validator': bool,
+        },
+
+        'PART_ENABLE_REVISION': {
+            'name': _('Part Revisions'),
+            'description': _('Enable revision field for Part'),
+            'validator': bool,
+            'default': True,
         },
 
         'PART_IPN_REGEX': {
@@ -1003,37 +1209,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'PART_SHOW_PRICE_IN_FORMS': {
-            'name': _('Show Price in Forms'),
-            'description': _('Display part price in some forms'),
-            'default': True,
-            'validator': bool,
-        },
-
-        # 2021-10-08
-        # This setting exists as an interim solution for https://github.com/inventree/InvenTree/issues/2042
-        # The BOM API can be extremely slow when calculating pricing information "on the fly"
-        # A future solution will solve this properly,
-        # but as an interim step we provide a global to enable / disable BOM pricing
-        'PART_SHOW_PRICE_IN_BOM': {
-            'name': _('Show Price in BOM'),
-            'description': _('Include pricing information in BOM tables'),
-            'default': True,
-            'validator': bool,
-        },
-
-        # 2022-02-03
-        # This setting exists as an interim solution for extremely slow part page load times when the part has a complex BOM
-        # In an upcoming release, pricing history (and BOM pricing) will be cached,
-        # rather than having to be re-calculated every time the page is loaded!
-        # For now, we will simply hide part pricing by default
-        'PART_SHOW_PRICE_HISTORY': {
-            'name': _('Show Price History'),
-            'description': _('Display historical pricing for Part'),
-            'default': False,
-            'validator': bool,
-        },
-
         'PART_SHOW_RELATED': {
             'name': _('Show related parts'),
             'description': _('Display related parts for a part'),
@@ -1042,24 +1217,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'PART_CREATE_INITIAL': {
-            'name': _('Create initial stock'),
-            'description': _('Create initial stock on part creation'),
+            'name': _('Initial Stock Data'),
+            'description': _('Allow creation of initial stock when adding a new part'),
             'default': False,
             'validator': bool,
         },
 
-        'PART_INTERNAL_PRICE': {
-            'name': _('Internal Prices'),
-            'description': _('Enable internal prices for parts'),
-            'default': False,
-            'validator': bool
-        },
-
-        'PART_BOM_USE_INTERNAL_PRICE': {
-            'name': _('Internal Price as BOM-Price'),
-            'description': _('Use the internal price (if set) in BOM-price calculations'),
-            'default': False,
-            'validator': bool
+        'PART_CREATE_SUPPLIER': {
+            'name': _('Initial Supplier Data'),
+            'description': _('Allow creation of initial supplier data when adding a new part'),
+            'default': True,
+            'validator': bool,
         },
 
         'PART_NAME_FORMAT': {
@@ -1074,6 +1242,99 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Part Category Default Icon'),
             'description': _('Part category default icon (empty means no icon)'),
             'default': '',
+        },
+
+        'PRICING_DECIMAL_PLACES_MIN': {
+            'name': _('Minimum Pricing Decimal Places'),
+            'description': _('Minimum number of decimal places to display when rendering pricing data'),
+            'default': 0,
+            'validator': [
+                int,
+                MinValueValidator(0),
+                MaxValueValidator(4),
+            ]
+        },
+
+        'PRICING_DECIMAL_PLACES': {
+            'name': _('Maximum Pricing Decimal Places'),
+            'description': _('Maximum number of decimal places to display when rendering pricing data'),
+            'default': 6,
+            'validator': [
+                int,
+                MinValueValidator(2),
+                MaxValueValidator(6)
+            ]
+        },
+
+        'PRICING_USE_SUPPLIER_PRICING': {
+            'name': _('Use Supplier Pricing'),
+            'description': _('Include supplier price breaks in overall pricing calculations'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER': {
+            'name': _('Purchase History Override'),
+            'description': _('Historical purchase order pricing overrides supplier price breaks'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PRICING_USE_STOCK_PRICING': {
+            'name': _('Use Stock Item Pricing'),
+            'description': _('Use pricing from manually entered stock data for pricing calculations'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PRICING_STOCK_ITEM_AGE_DAYS': {
+            'name': _('Stock Item Pricing Age'),
+            'description': _('Exclude stock items older than this number of days from pricing calculations'),
+            'default': 0,
+            'units': _('days'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ]
+        },
+
+        'PRICING_USE_VARIANT_PRICING': {
+            'name': _('Use Variant Pricing'),
+            'description': _('Include variant pricing in overall pricing calculations'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PRICING_ACTIVE_VARIANTS': {
+            'name': _('Active Variants Only'),
+            'description': _('Only use active variant parts for calculating variant pricing'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PRICING_UPDATE_DAYS': {
+            'name': _('Pricing Rebuild Interval'),
+            'description': _('Number of days before part pricing is automatically updated'),
+            'units': _('days'),
+            'default': 30,
+            'validator': [
+                int,
+                MinValueValidator(10),
+            ]
+        },
+
+        'PART_INTERNAL_PRICE': {
+            'name': _('Internal Prices'),
+            'description': _('Enable internal prices for parts'),
+            'default': False,
+            'validator': bool
+        },
+
+        'PART_BOM_USE_INTERNAL_PRICE': {
+            'name': _('Internal Price Override'),
+            'description': _('If available, internal prices override price range calculations'),
+            'default': False,
+            'validator': bool
         },
 
         'LABEL_ENABLE': {
@@ -1132,6 +1393,27 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
+            'name': _('Globally Unique Serials'),
+            'description': _('Serial numbers for stock items must be globally unique'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SERIAL_NUMBER_AUTOFILL': {
+            'name': _('Autofill Serial Numbers'),
+            'description': _('Autofill serial numbers in forms'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'STOCK_DELETE_DEPLETED_DEFAULT': {
+            'name': _('Delete Depleted Stock'),
+            'description': _('Determines default behaviour when a stock item is depleted'),
+            'default': True,
+            'validator': bool,
+        },
+
         'STOCK_BATCH_CODE_TEMPLATE': {
             'name': _('Batch Code Template'),
             'description': _('Template for generating default batch codes for stock items'),
@@ -1187,6 +1469,27 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': build.validators.validate_build_order_reference_pattern,
         },
 
+        'RETURNORDER_ENABLED': {
+            'name': _('Enable Return Orders'),
+            'description': _('Enable return order functionality in the user interface'),
+            'validator': bool,
+            'default': False,
+        },
+
+        'RETURNORDER_REFERENCE_PATTERN': {
+            'name': _('Return Order Reference Pattern'),
+            'description': _('Required pattern for generating Return Order reference field'),
+            'default': 'RMA-{ref:04d}',
+            'validator': order.validators.validate_return_order_reference_pattern,
+        },
+
+        'RETURNORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Return Orders'),
+            'description': _('Allow editing of return orders after they have been completed'),
+            'default': False,
+            'validator': bool,
+        },
+
         'SALESORDER_REFERENCE_PATTERN': {
             'name': _('Sales Order Reference Pattern'),
             'description': _('Required pattern for generating Sales Order reference field'),
@@ -1201,11 +1504,25 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SALESORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Sales Orders'),
+            'description': _('Allow editing of sales orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PURCHASEORDER_REFERENCE_PATTERN': {
             'name': _('Purchase Order Reference Pattern'),
             'description': _('Required pattern for generating Purchase Order reference field'),
             'default': 'PO-{ref:04d}',
             'validator': order.validators.validate_purchase_order_reference_pattern,
+        },
+
+        'PURCHASEORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Purchase Orders'),
+            'description': _('Allow editing of purchase orders after they have been shipped or completed'),
+            'default': False,
+            'validator': bool,
         },
 
         # login / SSO
@@ -1226,6 +1543,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'LOGIN_ENABLE_SSO': {
             'name': _('Enable SSO'),
             'description': _('Enable SSO on the login pages'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'LOGIN_ENABLE_SSO_REG': {
+            'name': _('Enable SSO registration'),
+            'description': _('Enable self-registration via SSO for users on the login pages'),
             'default': False,
             'validator': bool,
         },
@@ -1258,6 +1582,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'LOGIN_SIGNUP_MAIL_RESTRICTION': {
+            'name': _('Allowed domains'),
+            'description': _('Restrict signup to certain domains (comma-separated, strarting with @)'),
+            'default': '',
+            'before_save': validate_email_domains,
+        },
+
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
             'description': _('Group to which new users are assigned on registration'),
@@ -1274,8 +1605,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'PLUGIN_ON_STARTUP': {
             'name': _('Check plugins on startup'),
-            'description': _('Check that all plugins are installed on startup - enable in container enviroments'),
-            'default': False,
+            'description': _('Check that all plugins are installed on startup - enable in container environments'),
+            'default': str(os.getenv('INVENTREE_DOCKER', False)).lower() in ['1', 'true'],
             'validator': bool,
             'requires_restart': True,
         },
@@ -1327,15 +1658,45 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
+        "PROJECT_CODES_ENABLED": {
+            'name': _('Enable project codes'),
+            'description': _('Enable project codes for tracking projects'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'STOCKTAKE_ENABLE': {
+            'name': _('Stocktake Functionality'),
+            'description': _('Enable stocktake functionality for recording stock levels and calculating stock value'),
+            'validator': bool,
+            'default': False,
+        },
+
+        'STOCKTAKE_AUTO_DAYS': {
+            'name': _('Automatic Stocktake Period'),
+            'description': _('Number of days between automatic stocktake recording (set to zero to disable)'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+            'default': 0,
+        },
+
+        'STOCKTAKE_DELETE_REPORT_DAYS': {
+            'name': _('Report Deletion Interval'),
+            'description': _('Stocktake reports will be deleted after specified number of days'),
+            'default': 30,
+            'units': _('days'),
+            'validator': [
+                int,
+                MinValueValidator(7),
+            ]
+        },
+
     }
 
     typ = 'inventree'
-
-    class Meta:
-        """Meta options for InvenTreeSetting."""
-
-        verbose_name = "InvenTree Setting"
-        verbose_name_plural = "InvenTree Settings"
 
     key = models.CharField(
         max_length=50,
@@ -1358,10 +1719,36 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             return False
 
 
+def label_printer_options():
+    """Build a list of available label printer options."""
+    printers = [('', _('No Printer (Export to PDF)'))]
+    label_printer_plugins = registry.with_mixin('labels')
+    if label_printer_plugins:
+        printers.extend([(p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins])
+    return printers
+
+
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object with a usercontext."""
 
+    class Meta:
+        """Meta options for InvenTreeUserSetting."""
+
+        verbose_name = "InvenTree User Setting"
+        verbose_name_plural = "InvenTree User Settings"
+        constraints = [
+            models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
+        ]
+
     SETTINGS = {
+
+        'HOMEPAGE_HIDE_INACTIVE': {
+            'name': _('Hide inactive parts'),
+            'description': _('Hide inactive parts in results displayed on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+
         'HOMEPAGE_PART_STARRED': {
             'name': _('Show subscribed parts'),
             'description': _('Show subscribed parts on the homepage'),
@@ -1390,10 +1777,10 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(1)]
         },
 
-        'HOMEPAGE_BOM_VALIDATION': {
+        'HOMEPAGE_BOM_REQUIRES_VALIDATION': {
             'name': _('Show unvalidated BOMs'),
             'description': _('Show BOMs that await validation on the homepage'),
-            'default': True,
+            'default': False,
             'validator': bool,
         },
 
@@ -1418,17 +1805,17 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'HOMEPAGE_STOCK_DEPLETED': {
+        'HOMEPAGE_SHOW_STOCK_DEPLETED': {
             'name': _('Show depleted stock'),
             'description': _('Show depleted stock items on the homepage'),
-            'default': True,
+            'default': False,
             'validator': bool,
         },
 
-        'HOMEPAGE_STOCK_NEEDED': {
+        'HOMEPAGE_BUILD_STOCK_NEEDED': {
             'name': _('Show needed stock'),
             'description': _('Show stock items needed for builds on the homepage'),
-            'default': True,
+            'default': False,
             'validator': bool,
         },
 
@@ -1488,11 +1875,25 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'HOMEPAGE_NEWS': {
+            'name': _('Show News'),
+            'description': _('Show news on the homepage'),
+            'default': False,
+            'validator': bool,
+        },
+
         "LABEL_INLINE": {
             'name': _('Inline label display'),
             'description': _('Display PDF labels in the browser, instead of downloading as a file'),
             'default': True,
             'validator': bool,
+        },
+
+        "LABEL_DEFAULT_PRINTER": {
+            'name': _('Default label printer'),
+            'description': _('Configure which label printer should be selected by default'),
+            'default': '',
+            'choices': label_printer_options
         },
 
         "REPORT_INLINE": {
@@ -1510,7 +1911,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         },
 
         'SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS': {
-            'name': _('Seach Supplier Parts'),
+            'name': _('Search Supplier Parts'),
             'description': _('Display supplier parts in search preview window'),
             'default': True,
             'validator': bool,
@@ -1565,6 +1966,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_SHOW_BUILD_ORDERS': {
+            'name': _('Search Build Orders'),
+            'description': _('Display build orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS': {
             'name': _('Search Purchase Orders'),
             'description': _('Display purchase orders in search preview window'),
@@ -1593,11 +2001,39 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
         },
 
+        'SEARCH_PREVIEW_SHOW_RETURN_ORDERS': {
+            'name': _('Search Return Orders'),
+            'description': _('Display return orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS': {
+            'name': _('Exclude Inactive Return Orders'),
+            'description': _('Exclude inactive return orders from search preview window'),
+            'validator': bool,
+            'default': True,
+        },
+
         'SEARCH_PREVIEW_RESULTS': {
             'name': _('Search Preview Results'),
             'description': _('Number of results to show in each section of the search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
+        },
+
+        'SEARCH_REGEX': {
+            'name': _('Regex Search'),
+            'description': _('Enable regular expressions in search queries'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SEARCH_WHOLE': {
+            'name': _('Whole Word Search'),
+            'description': _('Search queries return results for whole word matches'),
+            'default': False,
+            'validator': bool,
         },
 
         'PART_SHOW_QUANTITY_IN_FORMS': {
@@ -1643,6 +2079,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'DISPLAY_STOCKTAKE_TAB': {
+            'name': _('Part Stocktake'),
+            'description': _('Display part stocktake information (if stocktake functionality is enabled)'),
+            'default': True,
+            'validator': bool,
+        },
+
         'TABLE_STRING_MAX_LENGTH': {
             'name': _('Table String Length'),
             'description': _('Maximimum length limit for strings displayed in table views'),
@@ -1655,15 +2098,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     }
 
     typ = 'user'
-
-    class Meta:
-        """Meta options for InvenTreeUserSetting."""
-
-        verbose_name = "InvenTree User Setting"
-        verbose_name_plural = "InvenTree User Settings"
-        constraints = [
-            models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
-        ]
 
     key = models.CharField(
         max_length=50,
@@ -1695,7 +2129,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         }
 
 
-class PriceBreak(models.Model):
+class PriceBreak(MetaMixin):
     """Represents a PriceBreak model."""
 
     class Meta:
@@ -1714,7 +2148,7 @@ class PriceBreak(models.Model):
 
     price = InvenTree.fields.InvenTreeModelMoneyField(
         max_digits=19,
-        decimal_places=4,
+        decimal_places=6,
         null=True,
         verbose_name=_('Price'),
         help_text=_('Unit price at specified quantity'),
@@ -1977,7 +2411,7 @@ class WebhookEndpoint(models.Model):
         """
         return WebhookMessage.objects.create(
             host=request.get_host(),
-            header=json.dumps({key: val for key, val in headers.items()}),
+            header=json.dumps(dict(headers.items())),
             body=payload,
             endpoint=self,
         )
@@ -2066,7 +2500,7 @@ class WebhookMessage(models.Model):
     )
 
 
-class NotificationEntry(models.Model):
+class NotificationEntry(MetaMixin):
     """A NotificationEntry records the last time a particular notifaction was sent out.
 
     It is recorded to ensure that notifications are not sent out "too often" to users.
@@ -2090,11 +2524,6 @@ class NotificationEntry(models.Model):
     )
 
     uid = models.IntegerField(
-    )
-
-    updated = models.DateTimeField(
-        auto_now=True,
-        null=False,
     )
 
     @classmethod
@@ -2122,14 +2551,13 @@ class NotificationEntry(models.Model):
 
 
 class NotificationMessage(models.Model):
-    """A NotificationEntry records the last time a particular notifaction was sent out.
+    """A NotificationMessage is a message sent to a particular user, notifying them of some *important information*
 
-    It is recorded to ensure that notifications are not sent out "too often" to users.
+    Notification messages can be generated by a variety of sources.
 
     Attributes:
-    - key: A text entry describing the notification e.g. 'part.notify_low_stock'
-    - uid: An (optional) numerical ID for a particular instance
-    - date: The last time this notification was sent
+        target_object: The 'target' of the notification message
+        source_object: The 'source' of the notification message
     """
 
     # generic link to target
@@ -2206,3 +2634,78 @@ class NotificationMessage(models.Model):
     def age_human(self):
         """Humanized age."""
         return naturaltime(self.creation)
+
+
+class NewsFeedEntry(models.Model):
+    """A NewsFeedEntry represents an entry on the RSS/Atom feed that is generated for InvenTree news.
+
+    Attributes:
+    - feed_id: Unique id for the news item
+    - title: Title for the news item
+    - link: Link to the news item
+    - published: Date of publishing of the news item
+    - author: Author of news item
+    - summary: Summary of the news items content
+    - read: Was this iteam already by a superuser?
+    """
+
+    feed_id = models.CharField(
+        verbose_name=_('Id'),
+        unique=True,
+        max_length=250,
+    )
+
+    title = models.CharField(
+        verbose_name=_('Title'),
+        max_length=250,
+    )
+
+    link = models.URLField(
+        verbose_name=_('Link'),
+        max_length=250,
+    )
+
+    published = models.DateTimeField(
+        verbose_name=_('Published'),
+        max_length=250,
+    )
+
+    author = models.CharField(
+        verbose_name=_('Author'),
+        max_length=250,
+    )
+
+    summary = models.CharField(
+        verbose_name=_('Summary'),
+        max_length=250,
+    )
+
+    read = models.BooleanField(
+        verbose_name=_('Read'),
+        help_text=_('Was this news item read?'),
+        default=False
+    )
+
+
+def rename_notes_image(instance, filename):
+    """Function for renaming uploading image file. Will store in the 'notes' directory."""
+
+    fname = os.path.basename(filename)
+    return os.path.join('notes', fname)
+
+
+class NotesImage(models.Model):
+    """Model for storing uploading images for the 'notes' fields of various models.
+
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown)
+    """
+
+    image = models.ImageField(
+        upload_to=rename_notes_image,
+        verbose_name=_('Image'),
+        help_text=_('Image file'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    date = models.DateTimeField(auto_now_add=True)

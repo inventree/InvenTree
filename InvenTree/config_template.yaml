@@ -4,7 +4,7 @@
 #secret_key_file: '/etc/inventree/secret_key.txt'
 
 # Database backend selection - Configure backend database settings
-# Documentation: https://inventree.readthedocs.io/en/latest/start/config/
+# Documentation: https://docs.inventree.org/en/latest/start/config/
 
 # Note: Database configuration options can also be specified from environmental variables,
 #       with the prefix INVENTREE_DB_
@@ -32,7 +32,7 @@ database:
   #USER: sampleuser
   #PASSWORD: samplepassword
   #HOST: samplehost
-  #PORT: sampleport
+  #PORT: 123456
 
   # --- Example Configuration - MySQL ---
   #ENGINE: mysql
@@ -119,6 +119,10 @@ plugins_enabled: False
 #plugin_file: '/path/to/plugins.txt'
 #plugin_dir: '/path/to/plugins/'
 
+# Set this variable to True to enable auto-migrations
+# Alternatively, use the environment variable INVENTREE_AUTO_UPDATE
+auto_update: False
+
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
 # Default behaviour is to allow all hosts (THIS IS NOT SECURE!)
@@ -142,13 +146,17 @@ cors:
 # STATIC_ROOT is the local filesystem location for storing static files
 #static_root: '/home/inventree/data/static'
 
-# BACKUP_DIR is the local filesystem location for storing backups
+### Backup configuration options ###
+# INVENTREE_BACKUP_DIR is the local filesystem location for storing backups
+backup_storage: django.core.files.storage.FileSystemStorage
 #backup_dir: '/home/inventree/data/backup'
+#backup_options:
 
 # Background worker options
 background:
   workers: 4
   timeout: 90
+  max_attempts: 5
 
 # Optional URL schemes to allow in URL fields
 # By default, only the following schemes are allowed: ['http', 'https', 'ftp', 'ftps']
@@ -161,12 +169,21 @@ background:
 # Login configuration
 login_confirm_days: 3
 login_attempts: 5
+login_default_protocol: http
 
 # Remote / proxy login
 # These settings can introduce security problems if configured incorrectly. Please read
 # https://docs.djangoproject.com/en/4.0/howto/auth-remote-user/ for more details
+# The header name should be prefixed by `HTTP`. Please read the docs for more details
+# https://docs.djangoproject.com/en/stable/ref/request-response/#django.http.HttpRequest.META
 remote_login_enabled: False
-remote_login_header: REMOTE_USER
+remote_login_header: HTTP_REMOTE_USER
+
+# Logout redirect configuration
+# This setting may be required if using remote / proxy login to redirect requests
+# during the logout process (default is 'index'). Please read the docs for more details
+# https://docs.djangoproject.com/en/stable/ref/settings/#logout-redirect-url
+#logout_redirect_url: 'index'
 
 # Permit custom authentication backends
 #authentication_backends:
@@ -185,11 +202,13 @@ remote_login_header: REMOTE_USER
 #  - 'django.middleware.clickjacking.XFrameOptionsMiddleware'
 #  - 'InvenTree.middleware.AuthRequiredMiddleware'
 
-# Add SSO login-backends
+# Add SSO login-backends (see examples below)
 # social_backends:
+#  - 'allauth.socialaccount.providers.google'
+#  - 'allauth.socialaccount.providers.github'
 #  - 'allauth.socialaccount.providers.keycloak'
 
-# Add specific settings
+# Add specific settings for social account providers (if required)
 # social_providers:
 #   keycloak:
 #     KEYCLOAK_URL: 'https://keycloak.custom/auth'
@@ -199,8 +218,8 @@ remote_login_header: REMOTE_USER
 # Add custom messages to the login page or main interface navbar or exchange the logo
 # Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO
 # customize:
-#   login_message: InvenTree demo instance - <a href='https://inventree.readthedocs.io/en/latest/demo/'> Click here for login details</a>
-#   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.readthedocs.io/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
+#   login_message: InvenTree demo instance - <a href='https://docs.inventree.org/en/latest/demo/'> Click here for login details</a>
+#   navbar_message: <h6>InvenTree demo mode <a href='https://docs.inventree.org/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
 #   logo: logo.png
 #   splash: splash_screen.jpg
 #   hide_admin_link: true

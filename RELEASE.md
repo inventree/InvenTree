@@ -14,13 +14,9 @@ If the API has changed, ensure that the API version number is incremented.
 
 Merge the crowdin translation updates into master branch
 
-### Documentation Release
-
-Create new release for the [inventree documentation](https://github.com/inventree/inventree-docs)
-
 ### Python Library Release
 
-Create new release for the [inventree python library](https://github.com/inventree/inventree-python)
+Create new release for the [InvenTree python library](https://github.com/inventree/inventree-python)
 
 ## App Release
 

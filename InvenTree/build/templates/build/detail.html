@@ -67,7 +67,7 @@
                     <td>{% trans "Completed" %}</td>
                     <td>{% progress_bar build.completed build.quantity id='build-completed-2' max_width='150px' %}</td>
                 </tr>
-                {% if build.active and build.has_untracked_bom_items %}
+                {% if build.active and has_untracked_bom_items %}
                 <tr>
                     <td><span class='fas fa-list'></span></td>
                     <td>{% trans "Allocated Parts" %}</td>
@@ -86,6 +86,13 @@
                     <td><span class='fas fa-sitemap'></span></td>
                     <td>{% trans "Parent Build" %}</td>
                     <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a>{% include "clip.html"%}</td>
+                </tr>
+                {% endif %}
+                {% if build.priority != 0 %}
+                <tr>
+                    <td><span class="fa-solid fa-arrow-up-9-1"></span></td>
+                    <td>{% trans "Priority" %}</td>
+                    <td>{{ build.priority }}</td>
                 </tr>
                 {% endif %}
                 {% if build.sales_order %}
@@ -172,7 +179,7 @@
             <h4>{% trans "Allocate Stock to Build" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.build.add and build.active and build.has_untracked_bom_items %}
+                {% if roles.build.add and build.active and has_untracked_bom_items %}
                 <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
                     <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
                 </button>
@@ -192,7 +199,7 @@
         </div>
     </div>
     <div class='panel-content'>
-        {% if build.has_untracked_bom_items %}
+        {% if has_untracked_bom_items %}
         {% if build.active %}
         {% if build.are_untracked_parts_allocated %}
         <div class='alert alert-block alert-success'>
@@ -261,24 +268,6 @@
                             {% endif %}
                         </ul>
                     </div>
-
-                    <!-- Label Printing Actions -->
-                    <div class='btn-group'>
-                        <button id='output-print-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Printing Actions" %}'>
-                            <span class='fas fa-print'></span> <span class='caret'></span>
-                        </button>
-                        <ul class='dropdown-menu'>
-                            <li><a class='dropdown-item' href='#' id='incomplete-output-print-label' title='{% trans "Print labels" %}'>
-                                <span class='fas fa-tags'></span> {% trans "Print labels" %}
-                            </a></li>
-                        </ul>
-                    </div>
-
-                    {% if build.has_tracked_bom_items %}
-                    {% include "expand_rows.html" with label="outputs" %}
-                    {% include "collapse_rows.html" with label="outputs" %}
-                    {% endif %}
-
                     {% include "filter_list.html" with id='incompletebuilditems' %}
                 </div>
                 {% endif %}
@@ -365,20 +354,6 @@ onPanelLoad('children', function() {
 
 onPanelLoad('attachments', function() {
 
-    enableDragAndDrop(
-        '#attachment-dropzone',
-        '{% url "api-build-attachment-list" %}',
-        {
-            data: {
-                build: {{ build.id }},
-            },
-            label: 'attachment',
-            success: function(data, status, xhr) {
-                $('#attachment-table').bootstrapTable('refresh');
-            }
-        }
-    );
-
     loadAttachmentTable('{% url "api-build-attachment-list" %}', {
         filters: {
             build: {{ build.pk }},
@@ -407,10 +382,6 @@ onPanelLoad('notes', function() {
     );
 });
 
-function reloadTable() {
-    $('#allocation-table-untracked').bootstrapTable('refresh');
-}
-
 onPanelLoad('outputs', function() {
     {% if build.active %}
 
@@ -429,7 +400,7 @@ onPanelLoad('outputs', function() {
     {% endif %}
 });
 
-{% if build.active and build.has_untracked_bom_items %}
+{% if build.active and has_untracked_bom_items %}
 
 function loadUntrackedStockTable() {
 
@@ -466,7 +437,7 @@ $('#btn-create-output').click(function() {
     createBuildOutput(
         {{ build.pk }},
         {
-            trackable_parts: {% if build.part.has_trackable_parts %}true{% else %}false{% endif%},
+            trackable_parts: {% js_bool build.part.has_trackable_parts %},
         }
     );
 });

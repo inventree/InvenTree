@@ -6,18 +6,12 @@
 - Display / Create / Edit / Delete SupplierPart
 """
 
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from . import views
 
 part_detail_urls = [
-    re_path(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
-
-    re_path(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
-
     re_path(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
-
-    re_path(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 
     # Normal thumbnail with form
     re_path(r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'),
@@ -36,14 +30,12 @@ category_urls = [
 part_urls = [
 
     # Upload a part
-    re_path(r'^import/', views.PartImport.as_view(), name='part-import'),
+    re_path(r'^import/$', views.PartImport.as_view(), name='part-import'),
+    re_path(r'^import/?', views.PartImportTemplate.as_view(), name='part-template-download'),
     re_path(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
 
-    # Download a BOM upload template
-    re_path(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='bom-upload-template'),
-
     # Individual part using pk
-    re_path(r'^(?P<pk>\d+)/', include(part_detail_urls)),
+    path(r'<int:pk>/', include(part_detail_urls)),
 
     # Part category
     re_path(r'^category/', include(category_urls)),

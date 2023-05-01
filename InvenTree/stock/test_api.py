@@ -3,8 +3,10 @@
 import io
 import os
 from datetime import datetime, timedelta
+from enum import IntEnum
 
 import django.http
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 import tablib
@@ -15,6 +17,7 @@ import part.models
 from common.models import InvenTreeSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import StockStatus
+from part.models import Part
 from stock.models import StockItem, StockItemTestResult, StockLocation
 
 
@@ -37,6 +40,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock.add',
         'stock_location.change',
         'stock_location.add',
+        'stock_location.delete',
         'stock.delete',
     ]
 
@@ -46,9 +50,10 @@ class StockLocationTest(StockAPITestCase):
 
     list_url = reverse('api-location-list')
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
+        super().setUpTestData()
 
         # Add some stock locations
         StockLocation.objects.create(name='top', description='top category')
@@ -107,6 +112,186 @@ class StockLocationTest(StockAPITestCase):
         response = self.client.post(self.list_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_stock_location_delete(self):
+        """Test stock location deletion with different parameters"""
+
+        class Target(IntEnum):
+            move_sub_locations_to_parent_move_stockitems_to_parent = 0,
+            move_sub_locations_to_parent_delete_stockitems = 1,
+            delete_sub_locations_move_stockitems_to_parent = 2,
+            delete_sub_locations_delete_stockitems = 3,
+
+        # First, construct a set of template / variant parts
+        part = Part.objects.create(
+            name='Part for stock item creation', description='Part for stock item creation',
+            category=None,
+            is_template=False,
+        )
+
+        for i in range(4):
+            delete_sub_locations: bool = False
+            delete_stock_items: bool = False
+
+            if i == Target.move_sub_locations_to_parent_delete_stockitems \
+                    or i == Target.delete_sub_locations_delete_stockitems:
+                delete_stock_items = True
+            if i == Target.delete_sub_locations_move_stockitems_to_parent \
+                    or i == Target.delete_sub_locations_delete_stockitems:
+                delete_sub_locations = True
+
+            # Create a parent stock location
+            parent_stock_location = StockLocation.objects.create(
+                name='Parent stock location',
+                description='This is the parent stock location where the sub categories and stock items are moved to',
+                parent=None
+            )
+
+            stocklocation_count_before = StockLocation.objects.count()
+            stock_location_count_before = StockItem.objects.count()
+
+            # Create a stock location to be deleted
+            stock_location_to_delete = StockLocation.objects.create(
+                name='Stock location to delete',
+                description='This is the stock location to be deleted',
+                parent=parent_stock_location
+            )
+
+            url = reverse('api-location-detail', kwargs={'pk': stock_location_to_delete.id})
+
+            stock_items = []
+            # Create stock items in the location to be deleted
+            for jj in range(3):
+                stock_items.append(StockItem.objects.create(
+                    batch=f"Batch xyz {jj}",
+                    location=stock_location_to_delete,
+                    part=part
+                ))
+
+            child_stock_locations = []
+            child_stock_locations_items = []
+            # Create sub location under the stock location to be deleted
+            for ii in range(3):
+                child = StockLocation.objects.create(
+                    name=f"Sub-location {ii}",
+                    description="A sub-location of the deleted stock location",
+                    parent=stock_location_to_delete
+                )
+                child_stock_locations.append(child)
+
+                # Create stock items in the sub locations
+                for jj in range(3):
+                    child_stock_locations_items.append(StockItem.objects.create(
+                        batch=f"B xyz {jj}",
+                        part=part,
+                        location=child
+                    ))
+
+            # Delete the created stock location
+            params = {}
+            if delete_stock_items:
+                params['delete_stock_items'] = '1'
+            if delete_sub_locations:
+                params['delete_sub_locations'] = '1'
+            response = self.delete(
+                url,
+                params,
+                expected_code=204,
+            )
+
+            self.assertEqual(response.status_code, 204)
+
+            if delete_stock_items:
+                if i == Target.delete_sub_locations_delete_stockitems:
+                    # Check if all sub-categories deleted
+                    self.assertEqual(StockItem.objects.count(), stock_location_count_before)
+                elif i == Target.move_sub_locations_to_parent_delete_stockitems:
+                    # Check if all stock locations deleted
+                    self.assertEqual(StockItem.objects.count(), stock_location_count_before + len(child_stock_locations_items))
+            else:
+                # Stock locations moved to the parent location
+                for stock_item in stock_items:
+                    stock_item.refresh_from_db()
+                    self.assertEqual(stock_item.location, parent_stock_location)
+
+                if delete_sub_locations:
+                    for child_stock_location_item in child_stock_locations_items:
+                        child_stock_location_item.refresh_from_db()
+                        self.assertEqual(child_stock_location_item.location, parent_stock_location)
+
+            if delete_sub_locations:
+                # Check if all sub-locations are deleted
+                self.assertEqual(StockLocation.objects.count(), stocklocation_count_before)
+            else:
+                #  Check if all sub-locations moved to the parent
+                for child in child_stock_locations:
+                    child.refresh_from_db()
+                    self.assertEqual(child.parent, parent_stock_location)
+
+    def test_stock_location_structural(self):
+        """Test the effectiveness of structural stock locations
+
+        Make sure:
+        - Stock items cannot be created in structural locations
+        - Stock items cannot be located to structural locations
+        - Check that stock location change to structural fails if items located into it
+        """
+
+        # Create our structural stock location
+        structural_location = StockLocation.objects.create(
+            name='Structural stock location',
+            description='This is the structural stock location',
+            parent=None,
+            structural=True
+        )
+
+        stock_item_count_before = StockItem.objects.count()
+
+        # Make sure that we get an error if we try to create a stock item in the structural location
+        with self.assertRaises(ValidationError):
+            item = StockItem.objects.create(
+                batch="Stock item which shall not be created",
+                location=structural_location
+            )
+
+        # Ensure that the stock item really did not get created in the structural location
+        self.assertEqual(stock_item_count_before, StockItem.objects.count())
+
+        # Create a non-structural location for test stock location change
+        non_structural_location = StockLocation.objects.create(
+            name='Non-structural category',
+            description='This is a non-structural category',
+            parent=None,
+            structural=False
+        )
+
+        # Construct a part for stock item creation
+        part = Part.objects.create(
+            name='Part for stock item creation', description='Part for stock item creation',
+            category=None,
+            is_template=False,
+        )
+
+        # Create the test stock item located to a non-structural category
+        item = StockItem.objects.create(
+            batch="BBB",
+            location=non_structural_location,
+            part=part
+        )
+
+        # Try to relocate it to a structural location
+        item.location = structural_location
+        with self.assertRaises(ValidationError):
+            item.save()
+
+        # Ensure that the item did not get saved to the DB
+        item.refresh_from_db()
+        self.assertEqual(item.location.pk, non_structural_location.pk)
+
+        # Try to change the non-structural location to structural while items located into it
+        non_structural_location.structural = True
+        with self.assertRaises(ValidationError):
+            non_structural_location.full_clean()
+
 
 class StockItemListTest(StockAPITestCase):
     """Tests for the StockItem API LIST endpoint."""
@@ -121,6 +306,29 @@ class StockItemListTest(StockAPITestCase):
 
         # Return JSON-ified data
         return response.data
+
+    def test_top_level_filtering(self):
+        """Test filtering against "top level" stock location"""
+
+        # No filters, should return *all* items
+        response = self.get(self.list_url, {}, expected_code=200)
+        self.assertEqual(len(response.data), StockItem.objects.count())
+
+        # Filter with "cascade=False" (but no location specified)
+        # Should not result in any actual filtering
+        response = self.get(self.list_url, {'cascade': False}, expected_code=200)
+        self.assertEqual(len(response.data), StockItem.objects.count())
+
+        # Filter with "cascade=False" for the top-level location
+        response = self.get(self.list_url, {'location': 'null', 'cascade': False}, expected_code=200)
+        self.assertTrue(len(response.data) < StockItem.objects.count())
+
+        for result in response.data:
+            self.assertIsNone(result['location'])
+
+        # Filter with "cascade=True"
+        response = self.get(self.list_url, {'location': 'null', 'cascade': True}, expected_code=200)
+        self.assertEqual(len(response.data), StockItem.objects.count())
 
     def test_get_stock_list(self):
         """List *all* StockItem objects."""
@@ -320,12 +528,13 @@ class StockItemListTest(StockAPITestCase):
 
         # Expected headers
         headers = [
-            'part',
-            'customer',
-            'location',
-            'parent',
-            'quantity',
-            'status',
+            'Part ID',
+            'Customer ID',
+            'Location ID',
+            'Location Name',
+            'Parent ID',
+            'Quantity',
+            'Status',
         ]
 
         for h in headers:
@@ -495,7 +704,7 @@ class StockItemTest(StockAPITestCase):
 
         # Check that each serial number was created
         for i in range(1, 11):
-            self.assertTrue(i in sn)
+            self.assertTrue(str(i) in sn)
 
             # Check the unique stock item has been created
 
@@ -567,9 +776,8 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url, expected_code=200).data
 
         # Check fixture values
-        self.assertEqual(data['purchase_price'], '123.0000')
+        self.assertEqual(data['purchase_price'], '123.000000')
         self.assertEqual(data['purchase_price_currency'], 'AUD')
-        self.assertEqual(data['purchase_price_string'], 'A$123.0000')
 
         # Update just the amount
         data = self.patch(
@@ -580,7 +788,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=200
         ).data
 
-        self.assertEqual(data['purchase_price'], '456.0000')
+        self.assertEqual(data['purchase_price'], '456.000000')
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update the currency
@@ -604,7 +812,6 @@ class StockItemTest(StockAPITestCase):
         ).data
 
         self.assertEqual(data['purchase_price'], None)
-        self.assertEqual(data['purchase_price_string'], '-')
 
         # Invalid currency code
         data = self.patch(
@@ -745,7 +952,7 @@ class StockItemTest(StockAPITestCase):
 
         # First, construct a set of template / variant parts
         master_part = part.models.Part.objects.create(
-            name='Master', description='Master part',
+            name='Master', description='Master part which has variants',
             category=category,
             is_template=True,
         )
@@ -1207,30 +1414,32 @@ class StockMergeTest(StockAPITestCase):
 
     URL = reverse('api-stock-merge')
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
 
-        self.part = part.models.Part.objects.get(pk=25)
-        self.loc = StockLocation.objects.get(pk=1)
-        self.sp_1 = company.models.SupplierPart.objects.get(pk=100)
-        self.sp_2 = company.models.SupplierPart.objects.get(pk=101)
+        super().setUpTestData()
 
-        self.item_1 = StockItem.objects.create(
-            part=self.part,
-            supplier_part=self.sp_1,
+        cls.part = part.models.Part.objects.get(pk=25)
+        cls.loc = StockLocation.objects.get(pk=1)
+        cls.sp_1 = company.models.SupplierPart.objects.get(pk=100)
+        cls.sp_2 = company.models.SupplierPart.objects.get(pk=101)
+
+        cls.item_1 = StockItem.objects.create(
+            part=cls.part,
+            supplier_part=cls.sp_1,
             quantity=100,
         )
 
-        self.item_2 = StockItem.objects.create(
-            part=self.part,
-            supplier_part=self.sp_2,
+        cls.item_2 = StockItem.objects.create(
+            part=cls.part,
+            supplier_part=cls.sp_2,
             quantity=100,
         )
 
-        self.item_3 = StockItem.objects.create(
-            part=self.part,
-            supplier_part=self.sp_2,
+        cls.item_3 = StockItem.objects.create(
+            part=cls.part,
+            supplier_part=cls.sp_2,
             quantity=50,
         )
 

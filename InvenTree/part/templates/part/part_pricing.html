@@ -76,14 +76,6 @@
     {% endif %}
     {% endif %}
 
-    {% if not part.has_complete_bom_pricing %}
-    <tr>
-        <td colspan='3'>
-            <span class='warning-msg'><em>{% trans 'Note: BOM pricing is incomplete for this part' %}</em></span>
-        </td>
-    </tr>
-    {% endif %}
-
     {% if min_total_bom_price or min_total_bom_purchase_price %}
     {% else %}
     <tr>

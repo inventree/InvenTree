@@ -1,5 +1,7 @@
 """Helper functions for loading InvenTree configuration options."""
 
+import datetime
+import json
 import logging
 import os
 import random
@@ -7,9 +9,50 @@ import shutil
 import string
 from pathlib import Path
 
-import yaml
-
 logger = logging.getLogger('inventree')
+CONFIG_DATA = None
+CONFIG_LOOKUPS = {}
+
+
+def to_list(value, delimiter=','):
+    """Take a configuration setting and make sure it is a list.
+
+    For example, we might have a configuration setting taken from the .config file,
+    which is already a list.
+
+    However, the same setting may be specified via an environment variable,
+    using a comma delimited string!
+    """
+
+    if type(value) in [list, tuple]:
+        return value
+
+    # Otherwise, force string value
+    value = str(value)
+
+    return [x.strip() for x in value.split(delimiter)]
+
+
+def to_dict(value):
+    """Take a configuration setting and make sure it is a dict.
+
+    For example, we might have a configuration setting taken from the .config file,
+    which is already an object/dict.
+
+    However, the same setting may be specified via an environment variable,
+    using a valid JSON string!
+    """
+    if value is None:
+        return {}
+
+    if type(value) == dict:
+        return value
+
+    try:
+        return json.loads(value)
+    except Exception as error:
+        logger.error(f"Failed to parse value '{value}' as JSON with error {error}. Ensure value is a valid JSON string.")
+    return {}
 
 
 def is_true(x):
@@ -58,13 +101,29 @@ def get_config_file(create=True) -> Path:
     return cfg_filename
 
 
-def load_config_data() -> map:
-    """Load configuration data from the config file."""
+def load_config_data(set_cache: bool = False) -> map:
+    """Load configuration data from the config file.
+
+    Arguments:
+        set_cache(bool): If True, the configuration data will be cached for future use after load.
+    """
+    global CONFIG_DATA
+
+    # use cache if populated
+    # skip cache if cache should be set
+    if CONFIG_DATA is not None and not set_cache:
+        return CONFIG_DATA
+
+    import yaml
 
     cfg_file = get_config_file()
 
     with open(cfg_file, 'r') as cfg:
         data = yaml.safe_load(cfg)
+
+    # Set the cache if requested
+    if set_cache:
+        CONFIG_DATA = data
 
     return data
 
@@ -82,22 +141,40 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
         default_value: Value to return if first two options are not provided
         typecast: Function to use for typecasting the value
     """
-    def try_typecasting(value):
+    def try_typecasting(value, source: str):
         """Attempt to typecast the value"""
-        if typecast is not None:
+
+        # Force 'list' of strings
+        if typecast is list:
+            value = to_list(value)
+
+        # Valid JSON string is required
+        elif typecast is dict:
+            value = to_dict(value)
+
+        elif typecast is not None:
             # Try to typecast the value
             try:
-                return typecast(value)
+                val = typecast(value)
+                set_metadata(source)
+                return val
             except Exception as error:
                 logger.error(f"Failed to typecast '{env_var}' with value '{value}' to type '{typecast}' with error {error}")
+
+        set_metadata(source)
         return value
+
+    def set_metadata(source: str):
+        """Set lookup metadata for the setting."""
+        key = env_var or config_key
+        CONFIG_LOOKUPS[key] = {'env_var': env_var, 'config_key': config_key, 'source': source, 'accessed': datetime.datetime.now()}
 
     # First, try to load from the environment variables
     if env_var is not None:
         val = os.getenv(env_var, None)
 
         if val is not None:
-            return try_typecasting(val)
+            return try_typecasting(val, 'env')
 
     # Next, try to load from configuration file
     if config_key is not None:
@@ -116,10 +193,10 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
             cfg_data = cfg_data[key]
 
         if result is not None:
-            return try_typecasting(result)
+            return try_typecasting(result, 'yaml')
 
     # Finally, return the default value
-    return try_typecasting(default_value)
+    return try_typecasting(default_value, 'default')
 
 
 def get_boolean_setting(env_var=None, config_key=None, default_value=False):

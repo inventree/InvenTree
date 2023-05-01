@@ -58,6 +58,7 @@
             {% if allow_download %}
             <button type='button' class='btn btn-outline-secondary' title="{% trans 'Download image from URL' %}" id='company-image-url'><span class='fas fa-cloud-download-alt'></span></button>
             {% endif %}
+            <button type='button' class='btn btn-outline-secondary' title='{% trans "Delete image" %}' id='company-image-delete'><span class='fas fa-trash-alt icon-red'></span></button>
         </div>
     </div>
 </div>
@@ -173,6 +174,7 @@
                 showModalImage(data.image);
             });
 
+            $('#company-image-delete').show();
         } else {
             location.reload();
         }
@@ -194,10 +196,38 @@
     $('#company-image').click(function() {
         showModalImage('{{ company.image.url }}');
     });
+    {% else %}
+    $('#company-image-delete').hide();
     {% endif %}
 
-    $("#company-image-upload").click(function() {
+    $('#company-image-delete').click(function(event) {
+        event.stopPropagation();
+        showQuestionDialog(
+            '{% trans "Remove Image" %}',
+            '{% trans "Remove associated image from this company" %}',
+            {
+                accept_text: '{% trans "Remove" %}',
+                submitClass: 'danger',
+                accept: function() {
+                    inventreePut(
+                        '{% url "api-company-detail" company.pk %}',
+                        {
+                            'image': null,
+                        },
+                        {
+                            method: 'PATCH',
+                            success: function() {
+                                location.reload();
+                            }
+                        }
+                    );
+                }
+            }
+        );
+    });
 
+    $("#company-image-upload").click(function(event) {
+        event.stopPropagation();
         constructForm(
             '{% url "api-company-detail" company.pk %}',
             {
@@ -214,8 +244,8 @@
     });
 
     if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
-
         $('#company-image-url').click(function() {
+            event.stopPropagation();
             constructForm(
                 '{% url "api-company-detail" company.pk %}',
                 {

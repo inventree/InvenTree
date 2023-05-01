@@ -37,6 +37,12 @@ def define(value, *args, **kwargs):
     return value
 
 
+@register.simple_tag()
+def decimal(x, *args, **kwargs):
+    """Simplified rendering of a decimal number."""
+    return InvenTree.helpers.decimal2string(x)
+
+
 @register.simple_tag(takes_context=True)
 def render_date(context, date_object):
     """Renders a date according to the preference of the provided user.
@@ -94,10 +100,11 @@ def render_date(context, date_object):
     return date_object
 
 
-@register.simple_tag()
-def decimal(x, *args, **kwargs):
-    """Simplified rendering of a decimal number."""
-    return InvenTree.helpers.decimal2string(x)
+@register.simple_tag
+def render_currency(money, **kwargs):
+    """Render a currency / Money object"""
+
+    return InvenTree.helpers.render_currency(money, **kwargs)
 
 
 @register.simple_tag()
@@ -133,8 +140,11 @@ def inventree_in_debug_mode(*args, **kwargs):
 @register.simple_tag()
 def inventree_show_about(user, *args, **kwargs):
     """Return True if the about modal should be shown."""
-    if InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT') and not user.is_superuser:
-        return False
+    if InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT'):
+        # Return False if the user is not a superuser, or no user information is provided
+        if not user or not user.is_superuser:
+            return False
+
     return True
 
 
@@ -286,13 +296,13 @@ def inventree_docs_url(*args, **kwargs):
     """Return URL for InvenTree documenation site."""
     tag = version.inventreeDocsVersion()
 
-    return f"https://inventree.readthedocs.io/en/{tag}"
+    return f"https://docs.inventree.org/en/{tag}"
 
 
 @register.simple_tag()
 def inventree_credits_url(*args, **kwargs):
     """Return URL for InvenTree credits site."""
-    return "https://inventree.readthedocs.io/en/latest/credits/"
+    return "https://docs.inventree.org/en/latest/credits/"
 
 
 @register.simple_tag()
@@ -308,20 +318,24 @@ def setting_object(key, *args, **kwargs):
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
     """
+
+    cache = kwargs.get('cache', True)
+
     if 'plugin' in kwargs:
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 
         plugin = kwargs['plugin']
 
-        return PluginSetting.get_setting_object(key, plugin=plugin)
+        return PluginSetting.get_setting_object(key, plugin=plugin, cache=cache)
 
-    if 'method' in kwargs:
-        return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'])
+    elif 'method' in kwargs:
+        return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'], cache=cache)
 
-    if 'user' in kwargs:
-        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+    elif 'user' in kwargs:
+        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'], cache=cache)
 
-    return InvenTreeSetting.get_setting_object(key)
+    else:
+        return InvenTreeSetting.get_setting_object(key, cache=cache)
 
 
 @register.simple_tag()
@@ -368,7 +382,10 @@ def progress_bar(val, max_val, *args, **kwargs):
     else:
         style = ''
 
-    percent = float(val / max_val) * 100
+    if max_val != 0:
+        percent = float(val / max_val) * 100
+    else:
+        percent = 0
 
     if percent > 100:
         percent = 100
@@ -451,6 +468,16 @@ def primitive_to_javascript(primitive):
         return format_html("'{}'", primitive)  # noqa: P103
 
 
+@register.simple_tag()
+def js_bool(val):
+    """Return a javascript boolean value (true or false)"""
+
+    if val:
+        return 'true'
+    else:
+        return 'false'
+
+
 @register.filter
 def keyvalue(dict, key):
     """Access to key of supplied dict.
@@ -524,7 +551,30 @@ class I18nStaticNode(StaticNode):
             self.original = self.path.var
 
         if hasattr(context, 'request'):
-            self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
+
+            # Convert the "requested" language code to a standard format
+            language_code = context.request.LANGUAGE_CODE.lower().strip()
+            language_code = language_code.replace('_', '-')
+
+            # Find the first "best" match:
+            # - First, try the original requested code, e.g. 'pt-br'
+            # - Next, try a simpler version of the code e.g. 'pt'
+            # - Finally, fall back to english
+            options = [
+                language_code,
+                language_code.split('-')[0],
+                'en',
+            ]
+
+            for lng in options:
+                lng_file = os.path.join(
+                    djangosettings.STATIC_ROOT,
+                    self.original.format(lng=lng)
+                )
+
+                if os.path.exists(lng_file):
+                    self.path.var = self.original.format(lng=lng)
+                    break
 
         ret = super().render(context)
 

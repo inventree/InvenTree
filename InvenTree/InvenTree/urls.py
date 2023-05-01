@@ -9,11 +9,11 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
-from rest_framework.documentation import include_docs_urls
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 
 from build.api import build_api_urls
 from build.urls import build_urls
-from common.api import common_api_urls, settings_api_urls
+from common.api import admin_api_urls, common_api_urls, settings_api_urls
 from common.urls import common_urls
 from company.api import company_api_urls
 from company.urls import (company_urls, manufacturer_part_urls,
@@ -32,9 +32,9 @@ from stock.api import stock_api_urls
 from stock.urls import stock_urls
 from users.api import user_urls
 
-from .api import InfoView, NotFoundView
-from .views import (AboutView, AppearanceSelectView, CurrencyRefreshView,
-                    CustomConnectionsView, CustomEmailView, CustomLoginView,
+from .api import APISearchView, InfoView, NotFoundView
+from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
+                    CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
                     CustomSessionDeleteOtherView, CustomSessionDeleteView,
                     CustomTwoFactorRemove, DatabaseStatsView, DynamicJsView,
@@ -45,6 +45,10 @@ admin.site.site_header = "InvenTree Admin"
 
 
 apipatterns = [
+
+    # Global search
+    path('search/', APISearchView.as_view(), name='api-search'),
+
     re_path(r'^settings/', include(settings_api_urls)),
     re_path(r'^part/', include(part_api_urls)),
     re_path(r'^bom/', include(bom_api_urls)),
@@ -58,12 +62,16 @@ apipatterns = [
 
     # User URLs
     re_path(r'^user/', include(user_urls)),
+    re_path(r'^admin/', include(admin_api_urls)),
 
     # Plugin endpoints
     path('', include(plugin_api_urls)),
 
-    # Webhook enpoint
+    # Common endpoints enpoint
     path('', include(common_api_urls)),
+
+    # OpenAPI Schema
+    re_path('schema/', SpectacularAPIView.as_view(custom_settings={'SCHEMA_PATH_PREFIX': '/api/'}), name='schema'),
 
     # InvenTree information endpoint
     path('', InfoView.as_view(), name='api-inventree-info'),
@@ -77,7 +85,6 @@ settings_urls = [
     re_path(r'^i18n/?', include('django.conf.urls.i18n')),
 
     re_path(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
-    re_path(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
     # Catch any other urls
     re_path(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),
@@ -103,6 +110,7 @@ translated_javascript_urls = [
     re_path(r'^barcode.js', DynamicJsView.as_view(template_name='js/translated/barcode.js'), name='barcode.js'),
     re_path(r'^bom.js', DynamicJsView.as_view(template_name='js/translated/bom.js'), name='bom.js'),
     re_path(r'^build.js', DynamicJsView.as_view(template_name='js/translated/build.js'), name='build.js'),
+    re_path(r'^charts.js', DynamicJsView.as_view(template_name='js/translated/charts.js'), name='charts.js'),
     re_path(r'^company.js', DynamicJsView.as_view(template_name='js/translated/company.js'), name='company.js'),
     re_path(r'^filters.js', DynamicJsView.as_view(template_name='js/translated/filters.js'), name='filters.js'),
     re_path(r'^forms.js', DynamicJsView.as_view(template_name='js/translated/forms.js'), name='forms.js'),
@@ -112,10 +120,16 @@ translated_javascript_urls = [
     re_path(r'^modals.js', DynamicJsView.as_view(template_name='js/translated/modals.js'), name='modals.js'),
     re_path(r'^order.js', DynamicJsView.as_view(template_name='js/translated/order.js'), name='order.js'),
     re_path(r'^part.js', DynamicJsView.as_view(template_name='js/translated/part.js'), name='part.js'),
+    re_path(r'^purchase_order.js', DynamicJsView.as_view(template_name='js/translated/purchase_order.js'), name='purchase_order.js'),
+    re_path(r'^return_order.js', DynamicJsView.as_view(template_name='js/translated/return_order.js'), name='return_order.js'),
     re_path(r'^report.js', DynamicJsView.as_view(template_name='js/translated/report.js'), name='report.js'),
+    re_path(r'^sales_order.js', DynamicJsView.as_view(template_name='js/translated/sales_order.js'), name='sales_order.js'),
     re_path(r'^search.js', DynamicJsView.as_view(template_name='js/translated/search.js'), name='search.js'),
     re_path(r'^stock.js', DynamicJsView.as_view(template_name='js/translated/stock.js'), name='stock.js'),
+    re_path(r'^status_codes.js', DynamicJsView.as_view(template_name='js/translated/status_codes.js'), name='status_codes.js'),
     re_path(r'^plugin.js', DynamicJsView.as_view(template_name='js/translated/plugin.js'), name='plugin.js'),
+    re_path(r'^pricing.js', DynamicJsView.as_view(template_name='js/translated/pricing.js'), name='pricing.js'),
+    re_path(r'^news.js', DynamicJsView.as_view(template_name='js/translated/news.js'), name='news.js'),
     re_path(r'^tables.js', DynamicJsView.as_view(template_name='js/translated/tables.js'), name='tables.js'),
     re_path(r'^table_filters.js', DynamicJsView.as_view(template_name='js/translated/table_filters.js'), name='table_filters.js'),
     re_path(r'^notification.js', DynamicJsView.as_view(template_name='js/translated/notification.js'), name='notification.js'),
@@ -130,7 +144,7 @@ backendpatterns = [
     re_path(r'^auth/?', auth_request),
 
     re_path(r'^api/', include(apipatterns)),
-    re_path(r'^api-doc/', include_docs_urls(title='InvenTree API')),
+    re_path(r'^api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
 
 frontendpatterns = [

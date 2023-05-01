@@ -88,6 +88,22 @@ def manage(c, cmd, pty: bool = False):
     ), pty=pty)
 
 
+def check_file_existance(filename: str, overwrite: bool = False):
+    """Checks if a file exists and asks the user if it should be overwritten.
+
+    Args:
+        filename (str): Name of the file to check.
+        overwrite (bool, optional): Overwrite the file without asking. Defaults to False.
+    """
+    if Path(filename).is_file() and overwrite is False:
+        response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
+        response = str(response).strip().lower()
+
+        if response not in ['y', 'yes']:
+            print("Cancelled export operation")
+            sys.exit(1)
+
+
 # Install tasks
 @task
 def plugins(c):
@@ -180,6 +196,14 @@ def translate_stats(c):
 
     The file generated from this is needed for the UI.
     """
+
+    # Recompile the translation files (.mo)
+    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
+    try:
+        manage(c, 'compilemessages', pty=True)
+    except Exception:
+        print("WARNING: Translation files could not be compiled:")
+
     path = Path('InvenTree', 'script', 'translation_stats.py')
     c.run(f'python3 {path}')
 
@@ -216,7 +240,7 @@ def restore(c):
     manage(c, "mediarestore --noinput --uncompress")
 
 
-@task(pre=[backup, ], post=[rebuild_models, rebuild_thumbnails])
+@task(post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
     """Performs database migrations.
 
@@ -234,8 +258,13 @@ def migrate(c):
     print("InvenTree database migrations completed!")
 
 
-@task(pre=[install, migrate, static, clean_settings, translate_stats])
-def update(c):
+@task(
+    post=[static, clean_settings, translate_stats],
+    help={
+        'skip_backup': 'Skip database backup step (advanced users)'
+    }
+)
+def update(c, skip_backup=False):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -244,17 +273,21 @@ def update(c):
     The following tasks are performed, in order:
 
     - install
+    - backup (optional)
     - migrate
     - static
     - clean_settings
     - translate_stats
     """
-    # Recompile the translation files (.mo)
-    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
-    try:
-        manage(c, 'compilemessages', pty=True)
-    except Exception:
-        print("WARNING: Translation files could not be compiled:")
+
+    # Ensure required components are installed
+    install(c)
+
+    if not skip_backup:
+        backup(c)
+
+    # Perform database migrations
+    migrate(c)
 
 
 # Data tasks
@@ -288,13 +321,7 @@ def export_records(c, filename='data.json', overwrite=False, include_permissions
 
     print(f"Exporting database records to file '{filename}'")
 
-    if Path(filename).is_file() and overwrite is False:
-        response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
-        response = str(response).strip().lower()
-
-        if response not in ['y', 'yes']:
-            print("Cancelled export operation")
-            sys.exit(1)
+    check_file_existance(filename, overwrite)
 
     tmpfile = f"{filename}.tmp"
 
@@ -534,16 +561,18 @@ def test_translations(c):
 
 
 @task
-def test(c, database=None):
+def test(c, disable_pty=False):
     """Run unit-tests for InvenTree codebase."""
     # Run sanity check on the django install
     manage(c, 'check')
 
+    pty = not disable_pty
+
     # Run coverage tests
-    manage(c, 'test', pty=True)
+    manage(c, 'test --slowreport', pty=pty)
 
 
-@task(help={'dev': 'Set up development enviroment at the end'})
+@task(help={'dev': 'Set up development environment at the end'})
 def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
     """Setup a testing enviroment."""
 
@@ -559,7 +588,7 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
 
     # Get test data
     print("Cloning demo dataset ...")
-    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v')
+    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v --depth=1')
     print("========================================")
 
     # Make sure migrations are done - might have just deleted sqlite database
@@ -577,7 +606,7 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
 
     shutil.copytree(src, dst, dirs_exist_ok=True)
 
-    print("Done setting up test enviroment...")
+    print("Done setting up test environment...")
     print("========================================")
 
     # Set up development setup if flag is set
@@ -601,4 +630,14 @@ def coverage(c):
     ))
 
     # Generate coverage report
-    c.run('coverage html')
+    c.run('coverage html -i')
+
+
+@task(help={
+    'filename': "Output filename (default = 'schema.yml')",
+    'overwrite': "Overwrite existing files without asking first (default = off/False)",
+})
+def schema(c, filename='schema.yml', overwrite=False):
+    """Export current API schema."""
+    check_file_existance(filename, overwrite)
+    manage(c, f'spectacular --file {filename}')

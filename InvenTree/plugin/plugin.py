@@ -46,7 +46,7 @@ class MetaBase:
 
             # Sound of a warning if old_key worked
             if value:
-                warnings.warn(f'Usage of {old_key} was depreciated in 0.7.0 in favour of {key}', DeprecationWarning)
+                warnings.warn(f'Usage of {old_key} was depreciated in 0.7.0 in favour of {key}', DeprecationWarning, stacklevel=2)
 
         # Use __default if still nothing set
         if (value is None) and __default:
@@ -106,10 +106,15 @@ class MetaBase:
 
     def is_active(self):
         """Return True if this plugin is currently active."""
-        cfg = self.plugin_config()
 
-        if cfg:
-            return cfg.active
+        # Builtin plugins are always considered "active"
+        if self.is_builtin:
+            return True
+
+        config = self.plugin_config()
+
+        if config:
+            return config.active
         else:
             return False  # pragma: no cover
 
@@ -167,7 +172,7 @@ class MixinBase:
             if not with_base and 'base' in mixins:
                 del mixins['base']
             # only return dict
-            mixins = [a for a in mixins.values()]
+            mixins = list(mixins.values())
         return mixins
 
 
@@ -301,6 +306,16 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return self.check_is_sample()
 
     @classmethod
+    def check_is_builtin(cls) -> bool:
+        """Determine if a particular plugin class is a 'builtin' plugin"""
+        return str(cls.check_package_path()).startswith('plugin/builtin')
+
+    @property
+    def is_builtin(self) -> bool:
+        """Is this plugin is builtin"""
+        return self.check_is_builtin()
+
+    @classmethod
     def check_package_path(cls):
         """Path to the plugin."""
         if cls.check_is_package():
@@ -349,11 +364,16 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
                 # Not much information we can extract at this point
                 return {}
 
+        try:
+            website = meta['Project-URL'].split(', ')[1]
+        except (ValueError, IndexError, ):
+            website = meta['Project-URL']
+
         return {
             'author': meta['Author-email'],
             'description': meta['Summary'],
             'version': meta['Version'],
-            'website': meta['Project-URL'],
+            'website': website,
             'license': meta['License']
         }
 

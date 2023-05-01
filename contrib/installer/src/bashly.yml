@@ -1,0 +1,28 @@
+name: install.sh
+help: Interactive installer for InvenTree
+version: 2.0
+
+args:
+- name: source
+  help: Package source that should be used
+  default: stable
+  allowed:
+    - stable
+    - master
+    - main
+- name: publisher
+  help: Publisher that should be used
+  default: inventree
+
+flags:
+- long: --no-call
+  short: -n
+  help: Do not call outside APIs (only functionally needed)
+- long: --dry-run
+  short: -d
+  help: Dry run (do not install anything)
+
+examples:
+- install
+- install master --no-call
+- install master matmair --dry-run

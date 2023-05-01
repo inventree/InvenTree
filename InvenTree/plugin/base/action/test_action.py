@@ -13,7 +13,7 @@ class ActionMixinTests(TestCase):
     ACTION_RETURN = 'a action was performed'
 
     def setUp(self):
-        """Setup enviroment for tests.
+        """Setup environment for tests.
 
         Contains multiple sample plugins that are used in the tests
         """

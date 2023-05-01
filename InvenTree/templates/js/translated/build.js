@@ -46,6 +46,7 @@ function buildFormFields() {
         },
         title: {},
         quantity: {},
+        priority: {},
         parent: {
             filters: {
                 part_detail: true,
@@ -60,9 +61,15 @@ function buildFormFields() {
         },
         take_from: {
             icon: 'fa-sitemap',
+            filters: {
+                structural: false,
+            }
         },
         destination: {
             icon: 'fa-sitemap',
+            filters: {
+                structural: false,
+            }
         },
         link: {
             icon: 'fa-link',
@@ -83,7 +90,7 @@ function editBuildOrder(pk) {
 
     var fields = buildFormFields();
 
-    constructForm(`/api/build/${pk}/`, {
+    constructForm(`{% url "api-build-list" %}${pk}/`, {
         fields: fields,
         reload: true,
         title: '{% trans "Edit Build Order" %}',
@@ -140,7 +147,7 @@ function newBuildOrder(options={}) {
  */
 function duplicateBuildOrder(build_id, options={}) {
 
-    inventreeGet(`/api/build/${build_id}/`, {}, {
+    inventreeGet(`{% url "api-build-list" %}${build_id}/`, {}, {
         success: function(data) {
             // Clear out data we do not want to be duplicated
             delete data['pk'];
@@ -159,7 +166,7 @@ function duplicateBuildOrder(build_id, options={}) {
 function cancelBuildOrder(build_id, options={}) {
 
     constructForm(
-        `/api/build/${build_id}/cancel/`,
+        `{% url "api-build-list" %}${build_id}/cancel/`,
         {
             method: 'POST',
             title: '{% trans "Cancel Build Order" %}',
@@ -201,7 +208,7 @@ function cancelBuildOrder(build_id, options={}) {
 /* Construct a form to "complete" (finish) a build order */
 function completeBuildOrder(build_id, options={}) {
 
-    constructForm(`/api/build/${build_id}/finish/`, {
+    constructForm(`{% url "api-build-list" %}${build_id}/finish/`, {
         fieldsFunction: function(opts) {
             var ctx = opts.context || {};
 
@@ -280,7 +287,7 @@ function createBuildOutput(build_id, options) {
 
     // Request build order information from the server
     inventreeGet(
-        `/api/build/${build_id}/`,
+        `{% url "api-build-list" %}${build_id}/`,
         {},
         {
             success: function(build) {
@@ -305,7 +312,7 @@ function createBuildOutput(build_id, options) {
                 };
 
                 // Work out the next available serial numbers
-                inventreeGet(`/api/part/${build.part}/serial-numbers/`, {}, {
+                inventreeGet(`{% url "api-part-list" %}${build.part}/serial-numbers/`, {}, {
                     success: function(data) {
                         if (data.next) {
                             fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
@@ -334,7 +341,7 @@ function createBuildOutput(build_id, options) {
                     `;
                 }
 
-                constructForm(`/api/build/${build_id}/create-output/`, {
+                constructForm(`{% url "api-build-list" %}${build_id}/create-output/`, {
                     method: 'POST',
                     title: '{% trans "Create Build Output" %}',
                     confirm: true,
@@ -357,7 +364,7 @@ function createBuildOutput(build_id, options) {
  */
 function makeBuildOutputButtons(output_id, build_info, options={}) {
 
-    var html = `<div class='btn-group float-right' role='group'>`;
+    var html = '';
 
     // Tracked parts? Must be individually allocated
     if (options.has_bom_items) {
@@ -391,17 +398,13 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
     );
 
     // Add a button to "delete" this build output
-    html += makeIconButton(
-        'fa-trash-alt icon-red',
+    html += makeDeleteButton(
         'button-output-delete',
         output_id,
         '{% trans "Delete build output" %}',
     );
 
-    html += `</div>`;
-
-    return html;
-
+    return wrapButtons(html);
 }
 
 
@@ -414,7 +417,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
  */
 function unallocateStock(build_id, options={}) {
 
-    var url = `/api/build/${build_id}/unallocate/`;
+    var url = `{% url "api-build-list" %}${build_id}/unallocate/`;
 
     var html = `
     <div class='alert alert-block alert-warning'>
@@ -472,11 +475,14 @@ function completeBuildOutputs(build_id, outputs, options={}) {
             output_html += `{% trans "Serial Number" %}: ${output.serial}`;
         } else {
             output_html += `{% trans "Quantity" %}: ${output.quantity}`;
+            if (output.part_detail && output.part_detail.units) {
+                output_html += ` ${output.part_detail.units}  `;
+            }
         }
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', pk, '{% trans "Remove row" %}');
+        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
 
         buttons += '</div>';
 
@@ -519,13 +525,19 @@ function completeBuildOutputs(build_id, outputs, options={}) {
         </tbody>
     </table>`;
 
-    constructForm(`/api/build/${build_id}/complete/`, {
+    constructForm(`{% url "api-build-list" %}${build_id}/complete/`, {
         method: 'POST',
         preFormContent: html,
         fields: {
             status: {},
-            location: {},
-            notes: {},
+            location: {
+                filters: {
+                    structural: false,
+                },
+            },
+            notes: {
+                icon: 'fa-sticky-note',
+            },
             accept_incomplete_allocation: {},
         },
         confirm: true,
@@ -624,11 +636,14 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
             output_html += `{% trans "Serial Number" %}: ${output.serial}`;
         } else {
             output_html += `{% trans "Quantity" %}: ${output.quantity}`;
+            if (output.part_detail && output.part_detail.units) {
+                output_html += ` ${output.part_detail.units}  `;
+            }
         }
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', pk, '{% trans "Remove row" %}');
+        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
 
         buttons += '</div>';
 
@@ -671,7 +686,7 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
         </tbody>
     </table>`;
 
-    constructForm(`/api/build/${build_id}/delete-outputs/`, {
+    constructForm(`{% url "api-build-list" %}${build_id}/delete-outputs/`, {
         method: 'POST',
         preFormContent: html,
         fields: {},
@@ -749,11 +764,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
     options.params['location_detail'] = true;
     options.params['stock_detail'] = true;
 
-    var filters = loadTableFilters('buildorderallocation');
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
+    var filters = loadTableFilters('buildorderallocation', options.params);
 
     setupFilterList('buildorderallocation', $(table));
 
@@ -874,7 +885,12 @@ function loadBuildOutputTable(build_info, options={}) {
         filters[key] = params[key];
     }
 
-    setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems');
+    setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems', {
+        labels: {
+            url: '{% url "api-stockitem-label-list" %}',
+            key: 'item',
+        }
+    });
 
     function setupBuildOutputButtonCallbacks() {
 
@@ -1036,9 +1052,12 @@ function loadBuildOutputTable(build_info, options={}) {
                     // Now that the allocations have been grouped by stock item,
                     // we can update each row in the table,
                     // using the pk value of each row (stock item)
+
+                    var data = [];
+
                     rows.forEach(function(row) {
                         row.allocations = allocations[row.pk] || [];
-                        $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+                        data.push(row);
 
                         var n_completed_lines = 0;
 
@@ -1066,6 +1085,9 @@ function loadBuildOutputTable(build_info, options={}) {
                             }
                         });
                     });
+
+                    // Reload table with updated data
+                    $(table).bootstrapTable('load', data);
                 }
             }
         );
@@ -1108,6 +1130,7 @@ function loadBuildOutputTable(build_info, options={}) {
             {
                 success: function(results) {
 
+                    var data = [];
                     // Iterate through each row and find matching test results
                     rows.forEach(function(row) {
                         var test_results = {};
@@ -1124,8 +1147,10 @@ function loadBuildOutputTable(build_info, options={}) {
 
                         row.passed_tests = test_results;
 
-                        $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+                        data.push(row);
                     });
+
+                    $(table).bootstrapTable('load', data);
                 }
             }
         );
@@ -1189,10 +1214,10 @@ function loadBuildOutputTable(build_info, options={}) {
             setupBuildOutputButtonCallbacks();
         },
         onLoadSuccess: function(rows) {
-
             updateAllocationData(rows);
             updateTestResultData(rows);
         },
+        buttons: constructExpandCollapseButtons(table),
         columns: [
             {
                 title: '',
@@ -1225,6 +1250,9 @@ function loadBuildOutputTable(build_info, options={}) {
                         text = `{% trans "Serial Number" %}: ${row.serial}`;
                     } else {
                         text = `{% trans "Quantity" %}: ${row.quantity}`;
+                        if (row.part_detail && row.part_detail.units) {
+                            text += ` <small>${row.part_detail.units}</small>`;
+                        }
                     }
 
                     if (row.batch) {
@@ -1376,19 +1404,6 @@ function loadBuildOutputTable(build_info, options={}) {
         );
     });
 
-    // Print stock item labels
-    $('#incomplete-output-print-label').click(function() {
-        var outputs = getTableData(table);
-
-        var stock_id_values = [];
-
-        outputs.forEach(function(output) {
-            stock_id_values.push(output.pk);
-        });
-
-        printStockItemLabels(stock_id_values);
-    });
-
     $('#outputs-expand').click(function() {
         $(table).bootstrapTable('expandAllRows');
     });
@@ -1451,13 +1466,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     }
 
     // Filters
-    var filters = loadTableFilters('builditems');
-
-    var params = options.params || {};
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    let filters = loadTableFilters('builditems', options.params);
 
     setupFilterList('builditems', $(table), options.filterTarget);
 
@@ -1466,18 +1475,20 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     function redrawAllocationData() {
         // Force a refresh of each row in the table
         // Note we cannot call 'refresh' because we are passing data from memory
-        // var rows = $(table).bootstrapTable('getData');
 
         // How many rows are fully allocated?
         var allocated_rows = 0;
 
-        bom_items.forEach(function(row) {
-            $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+        for (var idx = 0; idx < bom_items.length; idx++) {
+            var row = bom_items[idx];
 
             if (isRowFullyAllocated(row)) {
-                allocated_rows += 1;
+                allocated_rows++;
             }
-        });
+        }
+
+        // Reload table data
+        $(table).bootstrapTable('load', bom_items);
 
         // Find the top-level progess bar for this build output
         var output_progress_bar = $(`#output-progress-${outputId}`);
@@ -1670,20 +1681,23 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         name: 'build-allocation',
         uniqueId: 'sub_part',
         search: options.search || false,
+        queryParams: filters,
+        original: options.params,
         onPostBody: function(data) {
             // Setup button callbacks
             setupCallbacks();
         },
         sortable: true,
-        showColumns: false,
+        showColumns: true,
         detailView: true,
         detailFilter: function(index, row) {
             return allocatedQuantity(row) > 0;
         },
+        buttons: constructExpandCollapseButtons(table),
         detailFormatter: function(index, row, element) {
             // Contruct an 'inner table' which shows which stock items have been allocated
 
-            var subTableId = `allocation-table-${row.pk}`;
+            var subTableId = `allocation-table-${outputId}-${row.pk}`;
 
             var html = `<div class='sub-table'><table class='table table-condensed table-striped' id='${subTableId}'></table></div>`;
 
@@ -1724,6 +1738,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                                 text = `{% trans "Serial Number" %}: ${serial}`;
                             } else {
                                 text = `{% trans "Quantity" %}: ${row.quantity}`;
+                                if (row.part_detail && row.part_detail.units) {
+                                    text += ` <small>${row.part_detail.units}</small>`;
+                                }
                             }
 
                             var pk = row.stock_item || row.pk;
@@ -1759,15 +1776,13 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                             var pk = row.pk;
 
-                            var html = `<div class='btn-group float-right' role='group'>`;
+                            var html = '';
 
-                            html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+                            html += makeEditButton('button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
 
-                            html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
+                            html += makeDeleteButton('button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
 
-                            html += `</div>`;
-
-                            return html;
+                            return wrapButtons(html);
                         }
                     }
                 ]
@@ -1777,7 +1792,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             subTable.find('.button-allocation-edit').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/build/item/${pk}/`, {
+                constructForm(`{% url "api-build-item-list" %}${pk}/`, {
                     fields: {
                         quantity: {},
                     },
@@ -1789,7 +1804,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             subTable.find('.button-allocation-delete').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`/api/build/item/${pk}/`, {
+                constructForm(`{% url "api-build-item-list" %}${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Remove Allocation" %}',
                     onSuccess: reloadAllocationData,
@@ -1806,6 +1821,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 field: 'sub_part_detail.full_name',
                 title: '{% trans "Required Part" %}',
                 sortable: true,
+                switchable: false,
                 formatter: function(value, row) {
                     var url = `/part/${row.sub_part}/`;
                     var thumb = row.sub_part_detail.thumbnail;
@@ -1830,16 +1846,45 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 field: 'reference',
                 title: '{% trans "Reference" %}',
                 sortable: true,
+                switchable: true,
+            },
+            {
+                field: 'consumable',
+                title: '{% trans "Consumable" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
+            },
+            {
+                field: 'optional',
+                title: '{% trans "Optional" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
             },
             {
                 field: 'quantity',
                 title: '{% trans "Quantity Per" %}',
                 sortable: true,
+                switchable: false,
+                formatter: function(value, row) {
+                    var text = value;
+
+                    if (row.sub_part_detail && row.sub_part_detail.units) {
+                        text += ` <small>${row.sub_part_detail.units}</small>`;
+                    }
+                    return text;
+                }
             },
             {
                 field: 'available_stock',
                 title: '{% trans "Available" %}',
                 sortable: true,
+                switchable: true,
                 formatter: function(value, row) {
 
                     var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
@@ -1857,6 +1902,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                     if (available_stock > 0) {
                         text += `${available_stock}`;
+                        if (row.sub_part_detail && row.sub_part_detail.units) {
+                            text += ` <small>${row.sub_part_detail.units}</small>`;
+                        }
                     }
 
                     var icons = '';
@@ -1865,15 +1913,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         icons += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Consumable item" %}'></span>`;
                     } else {
                         if (available_stock < (required - allocated)) {
-                            icons += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                            icons += makeIconBadge('fa-times-circle icon-red', '{% trans "Insufficient stock available" %}');
                         } else {
-                            icons += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                            icons += makeIconBadge('fa-check-circle icon-green', '{% trans "Sufficient stock available" %}');
                         }
 
                         if (available_stock <= 0) {
                             icons += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                         } else {
-                            var extra = '';
+                            let extra = '';
                             if ((substitute_stock > 0) && (variant_stock > 0)) {
                                 extra = '{% trans "Includes variant and substitute stock" %}';
                             } else if (variant_stock > 0) {
@@ -1883,13 +1931,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             }
 
                             if (extra) {
-                                icons += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                                icons += makeIconBadge('fa-info-circle icon-blue', extra);
                             }
                         }
                     }
 
                     if (row.on_order && row.on_order > 0) {
-                        icons += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
+                        makeIconBadge('fa-shopping-cart', '{% trans "On Order" %}', {
+                            content: row.on_order,
+                        });
                     }
 
                     return renderLink(text, url) + icons;
@@ -1903,10 +1953,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 field: 'allocated',
                 title: '{% trans "Allocated" %}',
                 sortable: true,
+                switchable: false,
                 formatter: function(value, row) {
                     var required = requiredQuantity(row);
                     var allocated = row.consumable ? required : allocatedQuantity(row);
-                    return makeProgressBar(allocated, required);
+                    var progressbar_text = `${allocated} / ${required}`;
+                    if (row.sub_part_detail && row.sub_part_detail.units) {
+                        progressbar_text += ` ${row.sub_part_detail.units}`;
+                    }
+                    return makeProgressBar(allocated, required, {text: progressbar_text});
                 },
                 sorter: function(valA, valB, rowA, rowB) {
                     // Custom sorting function for progress bars
@@ -1943,6 +1998,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             {
                 field: 'actions',
                 title: '{% trans "Actions" %}',
+                switchable: false,
+                sortable: false,
                 formatter: function(value, row) {
 
                     if (row.consumable) {
@@ -1950,7 +2007,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     }
 
                     // Generate action buttons for this build output
-                    var html = `<div class='btn-group float-right' role='group'>`;
+                    let html = '';
 
                     if (allocatedQuantity(row) < requiredQuantity(row)) {
                         if (row.sub_part_detail.assembly) {
@@ -1964,17 +2021,16 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', row.sub_part, '{% trans "Allocate stock" %}');
                     }
 
-                    html += makeIconButton(
-                        'fa-minus-circle icon-red', 'button-unallocate', row.sub_part,
+                    html += makeRemoveButton(
+                        'button-unallocate',
+                        row.sub_part,
                         '{% trans "Unallocate stock" %}',
                         {
                             disabled: allocatedQuantity(row) == 0,
                         }
                     );
 
-                    html += '</div>';
-
-                    return html;
+                    return wrapButtons(html);
                 }
             },
         ]
@@ -2016,7 +2072,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
     if (output_id) {
         // Request information on the particular build output (stock item)
-        inventreeGet(`/api/stock/${output_id}/`, {}, {
+        inventreeGet(`{% url "api-stock-list" %}${output_id}/`, {}, {
             success: function(output) {
                 if (output.quantity == 1 && output.serial != null) {
                     auto_fill_filters.serial = output.serial;
@@ -2035,8 +2091,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
         var delete_button = `<div class='btn-group float-right' role='group'>`;
 
-        delete_button += makeIconButton(
-            'fa-times icon-red',
+        delete_button += makeRemoveButton(
             'button-row-remove',
             pk,
             '{% trans "Remove row" %}',
@@ -2168,7 +2223,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
     </table>
     `;
 
-    constructForm(`/api/build/${build_id}/allocate/`, {
+    constructForm(`{% url "api-build-list" %}${build_id}/allocate/`, {
         method: 'POST',
         fields: {},
         preFormContent: html,
@@ -2219,6 +2274,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         render_part_detail: true,
                         render_location_detail: true,
                         render_pk: false,
+                        render_available_quantity: true,
                         auto_fill: true,
                         auto_fill_filters: auto_fill_filters,
                         onSelect: function(data, field, opts) {
@@ -2355,7 +2411,7 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
     <strong>{% trans "Automatic Stock Allocation" %}</strong><br>
     {% trans "Stock items will be automatically allocated to this build order, according to the provided guidelines" %}:
     <ul>
-        <li>{% trans "If a location is specifed, stock will only be allocated from that location" %}</li>
+        <li>{% trans "If a location is specified, stock will only be allocated from that location" %}</li>
         <li>{% trans "If stock is considered interchangeable, it will be allocated from the first location it is found" %}</li>
         <li>{% trans "If substitute stock is allowed, it will be used where stock of the primary part cannot be found" %}</li>
     </ul>
@@ -2365,6 +2421,9 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
     var fields = {
         location: {
             value: options.location,
+            filters: {
+                structural: false,
+            }
         },
         exclude_location: {},
         interchangeable: {
@@ -2373,9 +2432,12 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
         substitutes: {
             value: true,
         },
+        optional_items: {
+            value: false,
+        },
     };
 
-    constructForm(`/api/build/${build_id}/auto-allocate/`, {
+    constructForm(`{% url "api-build-list" %}${build_id}/auto-allocate/`, {
         method: 'POST',
         fields: fields,
         title: '{% trans "Allocate Stock Items" %}',
@@ -2400,21 +2462,19 @@ function loadBuildTable(table, options) {
 
     var params = options.params || {};
 
-    var filters = {};
-
     params['part_detail'] = true;
 
-    if (!options.disableFilters) {
-        filters = loadTableFilters('build');
-    }
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('build', params);
 
     var filterTarget = options.filterTarget || null;
 
-    setupFilterList('build', table, filterTarget, {download: true});
+    setupFilterList('build', table, filterTarget, {
+        download: true,
+        report: {
+            url: '{% url "api-build-report-list" %}',
+            key: 'build',
+        }
+    });
 
     // Which display mode to use for the build table?
     var display_mode = inventreeLoad('build-table-display-mode', 'list');
@@ -2545,6 +2605,12 @@ function loadBuildTable(table, options) {
                 switchable: true,
             },
             {
+                field: 'priority',
+                title: '{% trans "Priority" %}',
+                switchable: true,
+                sortable: true,
+            },
+            {
                 field: 'part',
                 title: '{% trans "Part" %}',
                 sortable: true,
@@ -2606,11 +2672,19 @@ function loadBuildTable(table, options) {
                 title: '{% trans "Responsible" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    if (value) {
-                        return row.responsible_detail.name;
-                    } else {
+                    if (!row.responsible_detail) {
                         return '-';
                     }
+
+                    var html = row.responsible_detail.name;
+
+                    if (row.responsible_detail.label == '{% trans "group" %}') {
+                        html += `<span class='float-right fas fa-users'></span>`;
+                    } else {
+                        html += `<span class='float-right fas fa-user'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {
@@ -2643,7 +2717,7 @@ function loadBuildTable(table, options) {
                     treeColumn: 1,
                 });
 
-                table.treegrid('expandAll');
+                $(table).treegrid('expandAll');
             } else if (display_mode == 'calendar') {
 
                 if (!loaded_calendar) {

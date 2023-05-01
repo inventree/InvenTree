@@ -126,6 +126,7 @@ class RuleSetModelTest(TestCase):
 
         # Add some more rules
         for rule in rulesets:
+            rule.can_view = True
             rule.can_add = True
             rule.can_change = True
 
@@ -216,9 +217,26 @@ class OwnerModelTest(InvenTreeTestCase):
         self.do_request(reverse('api-owner-list'), {})
         # user list with search
         self.do_request(reverse('api-owner-list'), {'search': 'user'})
-        # user detail
-        # TODO fix this test
-        # self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {})
+
+        # # owner detail - user
+        # response = self.do_request(reverse('api-owner-detail', kwargs={'pk': 1}), {})
+        # self.assertEqual(response['name'], self.username)
+        # self.assertEqual(response['label'], 'user')
+        # self.assertEqual(response['owner_id'], self.user.id)
+
+        # # owner detail - group
+        # group = self.user.groups.first()
+        # response = self.do_request(reverse('api-owner-detail', kwargs={'pk': 2}), {})
+        # self.assertEqual(response['name'], group.name)
+        # self.assertEqual(response['label'], 'group')
+        # self.assertEqual(response['owner_id'], group.pk)
+
+        # own user detail
+        response_detail = self.do_request(reverse('api-user-detail', kwargs={'pk': self.user.id}), {}, 200)
+        self.assertEqual(response_detail['username'], self.username)
+
+        response_me = self.do_request(reverse('api-user-me'), {}, 200)
+        self.assertEqual(response_detail, response_me)
 
     def test_token(self):
         """Test token mechanisms."""
@@ -242,3 +260,7 @@ class OwnerModelTest(InvenTreeTestCase):
         # token second delete
         response = self.client.delete(reverse('api-token'), {}, format='json')
         self.assertEqual(response.status_code, 400)
+
+        # test user is associated with token
+        response = self.do_request(reverse('api-user-me'), {}, 200)
+        self.assertEqual(response['username'], self.username)

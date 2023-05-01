@@ -1,8 +1,10 @@
 """AppConfig for inventree app."""
 
 import logging
+from importlib import import_module
+from pathlib import Path
 
-from django.apps import AppConfig
+from django.apps import AppConfig, apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
@@ -10,9 +12,8 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 
 import InvenTree.tasks
+from InvenTree.config import get_setting
 from InvenTree.ready import canAppAccessDatabase, isInTestMode
-
-from .config import get_setting
 
 logger = logging.getLogger("inventree")
 
@@ -22,11 +23,22 @@ class InvenTreeConfig(AppConfig):
     name = 'InvenTree'
 
     def ready(self):
-        """Setup background tasks and update exchange rates."""
-        if canAppAccessDatabase():
+        """Run system wide setup init steps.
+
+        Like:
+        - Checking if migrations should be run
+        - Cleaning up tasks
+        - Starting regular tasks
+        - Updateing exchange rates
+        - Collecting notification mehods
+        - Adding users set in the current environment
+        """
+        if canAppAccessDatabase() or settings.TESTING_ENV:
+            InvenTree.tasks.check_for_migrations(worker=False)
 
             self.remove_obsolete_tasks()
 
+            self.collect_tasks()
             self.start_background_tasks()
 
             if not isInTestMode():  # pragma: no cover
@@ -56,20 +68,39 @@ class InvenTreeConfig(AppConfig):
         """Start all background tests for InvenTree."""
 
         logger.info("Starting background tasks...")
-        # Run through registered tasks
-        for task in InvenTree.tasks.tasks.task_list:
+
+        # List of collected tasks found with the @scheduled_task decorator
+        tasks = InvenTree.tasks.tasks.task_list
+
+        for task in tasks:
+            ref_name = f'{task.func.__module__}.{task.func.__name__}'
             InvenTree.tasks.schedule_task(
-                task.func,
+                ref_name,
                 schedule_type=task.interval,
                 minutes=task.minutes,
             )
-        logger.info("Started background tasks...")
 
-        # Make regular backups
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.run_backup',
-            schedule_type=Schedule.DAILY,
+        # Put at least one task onto the backround worker stack,
+        # which will be processed as soon as the worker comes online
+        InvenTree.tasks.offload_task(
+            InvenTree.tasks.heartbeat,
+            force_async=True,
         )
+
+        logger.info(f"Started {len(tasks)} scheduled background tasks...")
+
+    def collect_tasks(self):
+        """Collect all background tasks."""
+
+        for app_name, app in apps.app_configs.items():
+            if app_name == 'InvenTree':
+                continue
+
+            if Path(app.path).joinpath('tasks.py').exists():
+                try:
+                    import_module(f'{app.module.__package__}.tasks')
+                except Exception as e:  # pragma: no cover
+                    logger.error(f"Error loading tasks for {app_name}: {e}")
 
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.

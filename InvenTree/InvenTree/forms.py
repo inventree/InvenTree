@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.contrib.sites.models import Site
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -22,6 +23,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
 
 from common.models import InvenTreeSetting
+from InvenTree.exceptions import log_error
 
 logger = logging.getLogger('inventree')
 
@@ -124,6 +126,16 @@ class EditUserForm(HelperForm):
 class SetPasswordForm(HelperForm):
     """Form for setting user password."""
 
+    class Meta:
+        """Metaclass options."""
+
+        model = User
+        fields = [
+            'enter_password',
+            'confirm_password',
+            'old_password',
+        ]
+
     enter_password = forms.CharField(
         max_length=100,
         min_length=8,
@@ -149,16 +161,6 @@ class SetPasswordForm(HelperForm):
         strip=False,
         widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'autofocus': True}),
     )
-
-    class Meta:
-        """Metaclass options."""
-
-        model = User
-        fields = [
-            'enter_password',
-            'confirm_password',
-            'old_password',
-        ]
 
 
 # override allauth
@@ -208,14 +210,43 @@ class RegistratonMixin:
     """Mixin to check if registration should be enabled."""
 
     def is_open_for_signup(self, request, *args, **kwargs):
-        """Check if signup is enabled in settings."""
-        if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
+        """Check if signup is enabled in settings.
+
+        Configure the class variable `REGISTRATION_SETTING` to set which setting should be used, defualt: `LOGIN_ENABLE_REG`.
+        """
+        if settings.EMAIL_HOST and (InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG')):
             return super().is_open_for_signup(request, *args, **kwargs)
         return False
 
+    def clean_email(self, email):
+        """Check if the mail is valid to the pattern in LOGIN_SIGNUP_MAIL_RESTRICTION (if enabled in settings)."""
+        mail_restriction = InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_RESTRICTION', None)
+        if not mail_restriction:
+            return super().clean_email(email)
+
+        split_email = email.split('@')
+        if len(split_email) != 2:
+            logger.error(f'The user {email} has an invalid email address')
+            raise forms.ValidationError(_('The provided primary email address is not valid.'))
+
+        mailoptions = mail_restriction.split(',')
+        for option in mailoptions:
+            if not option.startswith('@'):
+                log_error('LOGIN_SIGNUP_MAIL_RESTRICTION is not configured correctly')
+                raise forms.ValidationError(_('The provided primary email address is not valid.'))
+            else:
+                if split_email[1] == option[1:]:
+                    return super().clean_email(email)
+
+        logger.info(f'The provided email domain for {email} is not approved')
+        raise forms.ValidationError(_('The provided email domain is not approved.'))
+
     def save_user(self, request, user, form, commit=True):
         """Check if a default group is set in settings."""
+        # Create the user
         user = super().save_user(request, user, form)
+
+        # Check if a default group is set in settings
         start_group = InvenTreeSetting.get_setting('SIGNUP_GROUP')
         if start_group:
             try:
@@ -227,16 +258,35 @@ class RegistratonMixin:
         return user
 
 
-class CustomAccountAdapter(RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
+class CustomUrlMixin:
+    """Mixin to set urls."""
+
+    def get_email_confirmation_url(self, request, emailconfirmation):
+        """Custom email confirmation (activation) url."""
+        url = reverse("account_confirm_email", args=[emailconfirmation.key])
+        return Site.objects.get_current().domain + url
+
+
+class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
     """Override of adapter to use dynamic settings."""
+
     def send_mail(self, template_prefix, email, context):
         """Only send mail if backend configured."""
         if settings.EMAIL_HOST:
-            return super().send_mail(template_prefix, email, context)
+            try:
+                result = super().send_mail(template_prefix, email, context)
+            except Exception:
+                # An exception ocurred while attempting to send email
+                # Log it (for admin users) and return silently
+                log_error('account email')
+                result = False
+
+            return result
+
         return False
 
 
-class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
+class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def is_auto_signup_allowed(self, request, sociallogin):

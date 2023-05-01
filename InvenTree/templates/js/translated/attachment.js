@@ -1,14 +1,14 @@
 {% load i18n %}
 
 /* globals
-    makeIconButton,
     renderLink,
+    wrapButtons,
 */
 
 /* exported
+    attachmentLink,
     addAttachmentButtonCallbacks,
-    loadAttachmentTable,
-    reloadAttachmentTable,
+    loadAttachmentTable
 */
 
 
@@ -24,7 +24,9 @@ function addAttachmentButtonCallbacks(url, fields={}) {
 
         var file_fields = {
             attachment: {},
-            comment: {},
+            comment: {
+                icon: 'fa-comment',
+            },
         };
 
         Object.assign(file_fields, fields);
@@ -32,7 +34,7 @@ function addAttachmentButtonCallbacks(url, fields={}) {
         constructForm(url, {
             fields: file_fields,
             method: 'POST',
-            onSuccess: reloadAttachmentTable,
+            refreshTable: '#attachment-table',
             title: '{% trans "Add Attachment" %}',
         });
     });
@@ -41,8 +43,12 @@ function addAttachmentButtonCallbacks(url, fields={}) {
     $('#new-attachment-link').click(function() {
 
         var link_fields = {
-            link: {},
-            comment: {},
+            link: {
+                icon: 'fa-link',
+            },
+            comment: {
+                icon: 'fa-comment',
+            },
         };
 
         Object.assign(link_fields, fields);
@@ -50,7 +56,7 @@ function addAttachmentButtonCallbacks(url, fields={}) {
         constructForm(url, {
             fields: link_fields,
             method: 'POST',
-            onSuccess: reloadAttachmentTable,
+            refreshTable: '#attachment-table',
             title: '{% trans "Add Link" %}',
         });
     });
@@ -72,9 +78,9 @@ function deleteAttachments(attachments, url, options={}) {
         var icon = '';
 
         if (attachment.filename) {
-            icon = `<span class='fas fa-file-alt'></span>`;
+            icon = makeIcon(attachmentIcon(attachment.filename), '');
         } else if (attachment.link) {
-            icon = `<span class='fas fa-link'></span>`;
+            icon = makeIcon('fa-link', '');
         }
 
         return `
@@ -116,17 +122,62 @@ function deleteAttachments(attachments, url, options={}) {
             items: ids,
             filters: options.filters,
         },
-        onSuccess: function() {
-            // Refresh the table once all attachments are deleted
-            $('#attachment-table').bootstrapTable('refresh');
-        }
+        refreshTable: '#attachment-table',
     });
 }
 
 
-function reloadAttachmentTable() {
+/*
+ * Return a particular icon based on filename extension
+ */
+function attachmentIcon(filename) {
+    // Default file icon (if no better choice is found)
+    let icon = 'fa-file-alt';
+    let fn = filename.toLowerCase();
 
-    $('#attachment-table').bootstrapTable('refresh');
+    // Look for some "known" file types
+    if (fn.endsWith('.csv')) {
+        icon = 'fa-file-csv';
+    } else if (fn.endsWith('.pdf')) {
+        icon = 'fa-file-pdf';
+    } else if (fn.endsWith('.xls') || fn.endsWith('.xlsx')) {
+        icon = 'fa-file-excel';
+    } else if (fn.endsWith('.doc') || fn.endsWith('.docx')) {
+        icon = 'fa-file-word';
+    } else if (fn.endsWith('.zip') || fn.endsWith('.7z')) {
+        icon = 'fa-file-archive';
+    } else {
+        let images = ['.png', '.jpg', '.bmp', '.gif', '.svg', '.tif'];
+
+        images.forEach(function(suffix) {
+            if (fn.endsWith(suffix)) {
+                icon = 'fa-file-image';
+            }
+        });
+    }
+
+    return icon;
+}
+
+
+/*
+ * Render a link (with icon) to an internal attachment (file)
+ */
+function attachmentLink(filename) {
+
+    if (!filename) {
+        return null;
+    }
+
+    let split = filename.split('/');
+    let fn = split[split.length - 1];
+
+    let icon = attachmentIcon(filename);
+
+    let html = makeIcon(icon) + ` ${fn}`;
+
+    return renderLink(html, filename, {download: true});
+
 }
 
 
@@ -207,8 +258,12 @@ function loadAttachmentTable(url, options) {
 
                     constructForm(`${url}${pk}/`, {
                         fields: {
-                            link: {},
-                            comment: {},
+                            link: {
+                                icon: 'fa-link',
+                            },
+                            comment: {
+                                icon: 'fa-comment',
+                            },
                         },
                         processResults: function(data, fields, opts) {
                             // Remove the "link" field if the attachment is a file!
@@ -216,7 +271,7 @@ function loadAttachmentTable(url, options) {
                                 delete opts.fields.link;
                             }
                         },
-                        onSuccess: reloadAttachmentTable,
+                        refreshTable: '#attachment-table',
                         title: '{% trans "Edit Attachment" %}',
                     });
                 });
@@ -242,38 +297,9 @@ function loadAttachmentTable(url, options) {
                 formatter: function(value, row) {
 
                     if (row.attachment) {
-                        var icon = 'fa-file-alt';
-
-                        var fn = value.toLowerCase();
-
-                        if (fn.endsWith('.csv')) {
-                            icon = 'fa-file-csv';
-                        } else if (fn.endsWith('.pdf')) {
-                            icon = 'fa-file-pdf';
-                        } else if (fn.endsWith('.xls') || fn.endsWith('.xlsx')) {
-                            icon = 'fa-file-excel';
-                        } else if (fn.endsWith('.doc') || fn.endsWith('.docx')) {
-                            icon = 'fa-file-word';
-                        } else if (fn.endsWith('.zip') || fn.endsWith('.7z')) {
-                            icon = 'fa-file-archive';
-                        } else {
-                            var images = ['.png', '.jpg', '.bmp', '.gif', '.svg', '.tif'];
-
-                            images.forEach(function(suffix) {
-                                if (fn.endsWith(suffix)) {
-                                    icon = 'fa-file-image';
-                                }
-                            });
-                        }
-
-                        var split = value.split('/');
-                        var filename = split[split.length - 1];
-
-                        var html = `<span class='fas ${icon}'></span> ${filename}`;
-
-                        return renderLink(html, value, {download: true});
+                        return attachmentLink(row.attachment);
                     } else if (row.link) {
-                        var html = `<span class='fas fa-link'></span> ${row.link}`;
+                        let html = makeIcon('fa-link') + ` ${row.link}`;
                         return renderLink(html, row.link);
                     } else {
                         return '-';
@@ -292,7 +318,7 @@ function loadAttachmentTable(url, options) {
                     var html = renderDate(value);
 
                     if (row.user_detail) {
-                        html += `<span class='badge bg-dark rounded-pill float-right'>${row.user_detail.username}</div>`;
+                        html += `<span class='badge bg-dark rounded-pill float-right'>${row.user_detail.username}</span>`;
                     }
 
                     return html;
@@ -301,13 +327,10 @@ function loadAttachmentTable(url, options) {
             {
                 field: 'actions',
                 formatter: function(value, row) {
-                    var html = '';
-
-                    html = `<div class='btn-group float-right' role='group'>`;
+                    let buttons = '';
 
                     if (permissions.change) {
-                        html += makeIconButton(
-                            'fa-edit icon-blue',
+                        buttons += makeEditButton(
                             'button-attachment-edit',
                             row.pk,
                             '{% trans "Edit attachment" %}',
@@ -315,19 +338,30 @@ function loadAttachmentTable(url, options) {
                     }
 
                     if (permissions.delete) {
-                        html += makeIconButton(
-                            'fa-trash-alt icon-red',
+                        buttons += makeDeleteButton(
                             'button-attachment-delete',
                             row.pk,
                             '{% trans "Delete attachment" %}',
                         );
                     }
 
-                    html += `</div>`;
-
-                    return html;
+                    return wrapButtons(buttons);
                 }
             }
         ]
     });
+
+    // Enable drag-and-drop functionality
+    enableDragAndDrop(
+        '#attachment-dropzone',
+        url,
+        {
+            data: options.filters,
+            label: 'attachment',
+            method: 'POST',
+            success: function() {
+                reloadBootstrapTable('#attachment-table');
+            }
+        }
+    );
 }

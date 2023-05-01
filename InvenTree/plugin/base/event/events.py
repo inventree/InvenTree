@@ -58,9 +58,8 @@ def register_event(event, *args, **kwargs):
 
                 if plugin.mixin_enabled('events'):
 
-                    config = plugin.plugin_config()
-
-                    if config and config.active:
+                    if plugin.is_active():
+                        # Only allow event registering for 'active' plugins
 
                         logger.debug(f"Registering callback for plugin '{slug}'")
 
@@ -117,13 +116,17 @@ def allow_table_event(table_name):
         'users_',
     ]
 
-    if any([table_name.startswith(prefix) for prefix in ignore_prefixes]):
+    if any(table_name.startswith(prefix) for prefix in ignore_prefixes):
         return False
 
     ignore_tables = [
         'common_notificationentry',
+        'common_notificationmessage',
         'common_webhookendpoint',
         'common_webhookmessage',
+        'part_partpricing',
+        'part_partstocktake',
+        'part_partstocktakereport',
     ]
 
     if table_name in ignore_tables:

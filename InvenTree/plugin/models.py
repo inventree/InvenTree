@@ -12,60 +12,6 @@ import common.models
 from plugin import InvenTreePlugin, registry
 
 
-class MetadataMixin(models.Model):
-    """Model mixin class which adds a JSON metadata field to a model, for use by any (and all) plugins.
-
-    The intent of this mixin is to provide a metadata field on a model instance,
-    for plugins to read / modify as required, to store any extra information.
-
-    The assumptions for models implementing this mixin are:
-
-    - The internal InvenTree business logic will make no use of this field
-    - Multiple plugins may read / write to this metadata field, and not assume they have sole rights
-    """
-
-    class Meta:
-        """Meta for MetadataMixin."""
-        abstract = True
-
-    metadata = models.JSONField(
-        blank=True, null=True,
-        verbose_name=_('Plugin Metadata'),
-        help_text=_('JSON metadata field, for use by external plugins'),
-    )
-
-    def get_metadata(self, key: str, backup_value=None):
-        """Finds metadata for this model instance, using the provided key for lookup.
-
-        Args:
-            key: String key for requesting metadata. e.g. if a plugin is accessing the metadata, the plugin slug should be used
-
-        Returns:
-            Python dict object containing requested metadata. If no matching metadata is found, returns None
-        """
-        if self.metadata is None:
-            return backup_value
-
-        return self.metadata.get(key, backup_value)
-
-    def set_metadata(self, key: str, data, commit: bool = True):
-        """Save the provided metadata under the provided key.
-
-        Args:
-            key (str): Key for saving metadata
-            data (Any): Data object to save - must be able to be rendered as a JSON string
-            commit (bool, optional): If true, existing metadata with the provided key will be overwritten. If false, a merge will be attempted. Defaults to True.
-        """
-        if self.metadata is None:
-            # Handle a null field value
-            self.metadata = {}
-
-        self.metadata[key] = data
-
-        if commit:
-            self.save()
-
-
 class PluginConfig(models.Model):
     """A PluginConfig object holds settings for plugins.
 
@@ -123,13 +69,15 @@ class PluginConfig(models.Model):
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
 
-        # append settings from registry
+        # Append settings from registry
         plugin = registry.plugins_full.get(self.key, None)
 
         def get_plugin_meta(name):
-            if plugin:
-                return str(getattr(plugin, name, None))
-            return None
+            if not plugin:
+                return None
+            if not self.active:
+                return _('Unvailable')
+            return str(getattr(plugin, name, None))
 
         self.meta = {
             key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author',
@@ -146,11 +94,15 @@ class PluginConfig(models.Model):
 
         ret = super().save(force_insert, force_update, *args, **kwargs)
 
+        if self.is_builtin():
+            # Force active if builtin
+            self.active = True
+
         if not reload:
             if (self.active is False and self.__org_active is True) or \
                (self.active is True and self.__org_active is False):
                 if settings.PLUGIN_TESTING:
-                    warnings.warn('A reload was triggered')
+                    warnings.warn('A reload was triggered', stacklevel=2)
                 registry.reload_plugins()
 
         return ret
@@ -158,16 +110,20 @@ class PluginConfig(models.Model):
     @admin.display(boolean=True, description=_('Sample plugin'))
     def is_sample(self) -> bool:
         """Is this plugin a sample app?"""
-        # Loaded and active plugin
-        if isinstance(self.plugin, InvenTreePlugin):
-            return self.plugin.check_is_sample()
 
-        # If no plugin_class is available it can not be a sample
         if not self.plugin:
             return False
 
-        # Not loaded plugin
-        return self.plugin.check_is_sample()  # pragma: no cover
+        return self.plugin.check_is_sample()
+
+    @admin.display(boolean=True, description=_('Builtin Plugin'))
+    def is_builtin(self) -> bool:
+        """Return True if this is a 'builtin' plugin"""
+
+        if not self.plugin:
+            return False
+
+        return self.plugin.check_is_builtin()
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):

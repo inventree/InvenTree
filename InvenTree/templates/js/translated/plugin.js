@@ -11,7 +11,7 @@
 */
 
 function installPlugin() {
-    constructForm(`/api/plugin/install/`, {
+    constructForm(`/api/plugins/install/`, {
         method: 'POST',
         title: '{% trans "Install Plugin" %}',
         fields: {
@@ -50,7 +50,7 @@ function locateItemOrLocation(options={}) {
 
     // Request the list of available 'locate' plugins
     inventreeGet(
-        `/api/plugin/`,
+        `/api/plugins/`,
         {
             mixin: 'locate',
         },

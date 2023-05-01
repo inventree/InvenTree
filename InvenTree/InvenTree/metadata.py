@@ -7,6 +7,7 @@ from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.utils import model_meta
 
+import InvenTree.permissions
 import users.models
 from InvenTree.helpers import str2bool
 
@@ -58,7 +59,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
         try:
             # Extract the model name associated with the view
-            self.model = view.serializer_class.Meta.model
+            self.model = InvenTree.permissions.get_model_for_view(view)
 
             # Construct the 'table name' from the model
             app_label = self.model._meta.app_label
@@ -93,11 +94,11 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Add a 'DELETE' action if we are allowed to delete
             if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
-                actions['DELETE'] = True
+                actions['DELETE'] = {}
 
             # Add a 'VIEW' action if we are allowed to view
             if 'GET' in view.allowed_methods and check(user, table, 'view'):
-                actions['GET'] = True
+                actions['GET'] = {}
 
             metadata['actions'] = actions
 
@@ -256,7 +257,7 @@ class InvenTreeMetadata(SimpleMetadata):
             if isinstance(field, serializers.PrimaryKeyRelatedField):
                 model = field.queryset.model
             else:
-                logger.debug("Could not extract model for:", field_info['label'], '->', field)
+                logger.debug("Could not extract model for:", field_info.get('label'), '->', field)
                 model = None
 
             if model:

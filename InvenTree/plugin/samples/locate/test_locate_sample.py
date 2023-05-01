@@ -51,9 +51,14 @@ class SampleLocatePlugintests(InvenTreeAPITestCase):
 
     def test_mixin(self):
         """Test that MixinNotImplementedError is raised."""
+        # Test location locator
         with self.assertRaises(MixinNotImplementedError):
             class Wrong(LocateMixin, InvenTreePlugin):
                 pass
 
             plugin = Wrong()
             plugin.locate_stock_location(1)
+
+        # Test item locator
+        with self.assertRaises(MixinNotImplementedError):
+            plugin.locate_stock_item(1)

@@ -9,17 +9,7 @@
     global_settings,
     modalEnable,
     modalShowSubmitButton,
-    renderBuild,
-    renderCompany,
-    renderManufacturerPart,
-    renderOwner,
-    renderPart,
-    renderPartCategory,
-    renderPartParameterTemplate,
-    renderStockItem,
-    renderStockLocation,
-    renderSupplierPart,
-    renderUser,
+    getModelRenderer,
     showAlertOrCache,
     showApiError,
 */
@@ -205,9 +195,6 @@ function constructChangeForm(fields, options) {
         },
         success: function(data) {
 
-            // Ensure the data are fully sanitized before we operate on it
-            data = sanitizeData(data);
-
             // An optional function can be provided to process the returned results,
             // before they are rendered to the form
             if (options.processResults) {
@@ -321,7 +308,7 @@ function constructDeleteForm(fields, options) {
  * - confirmText: Text for confirm button (default = "Confirm")
  *
  */
-function constructForm(url, options) {
+function constructForm(url, options={}) {
 
     // An "empty" form will be defined locally
     if (url == null) {
@@ -345,6 +332,9 @@ function constructForm(url, options) {
 
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
+
+        // Copy across entire actions struct
+        options.actions = OPTIONS.actions.POST || OPTIONS.actions.PUT || OPTIONS.actions.PATCH || OPTIONS.actions.DELETE || {};
 
         // Extract any custom 'context' information from the OPTIONS data
         options.context = OPTIONS.context || {};
@@ -430,6 +420,52 @@ function constructForm(url, options) {
 
 
 /*
+ * Extracted information about a 'nested field' from the API metadata:
+ *
+ * - Nested fields are designated using a '__' (double underscore) separator
+ * - Currently only single-depth nesting is supported
+ */
+function extractNestedField(field_name, fields) {
+
+    var field_path = field_name.split('__');
+    var parent_name = field_path[0];
+    var child_name = field_path[1];
+
+    var parent_field = fields[parent_name];
+    var child_field = null;
+
+    // Check that the parent field exists
+    if (!parent_field) {
+        console.warn(`Expected parent field '${parent_name}' missing from API metadata`);
+        return;
+    }
+
+    // Check that the parent field is a 'nested object'
+    if (parent_field.type != 'nested object') {
+        console.warn(`Parent field '${parent_name}' is not designated as a nested object`);
+        return;
+    }
+
+    // Check that the field has a 'children' attribute
+    if ('children' in parent_field) {
+        child_field = parent_field['children'][child_name];
+    } else {
+        console.warn(`Parent field '${parent_name}' missing 'children' field`);
+        return;
+    }
+
+    if (child_field) {
+        // Mark this as a nested child field
+        child_field['nested_child'] = true;
+        child_field['parent_name'] = parent_name;
+        child_field['child_name'] = child_name;
+    }
+
+    return child_field;
+}
+
+
+/*
  * Construct a modal form based on the provided options
  *
  * arguments:
@@ -439,6 +475,11 @@ function constructForm(url, options) {
 function constructFormBody(fields, options) {
 
     var html = '';
+
+    // add additional content as a header on top (provided as html by the caller)
+    if (options.header_html) {
+        html += options.header_html;
+    }
 
     // Client must provide set of fields to be displayed,
     // otherwise *all* fields will be displayed
@@ -476,9 +517,21 @@ function constructFormBody(fields, options) {
         }
     }
 
+
     // Provide each field object with its own name
     for (field in fields) {
         fields[field].name = field;
+
+        /* Handle metadata for 'nested' fields.
+         * - Nested fields are designated using a '__' (double underscore) separator
+         * - Currently only single depth nesting is supported
+         */
+        if (field.includes('__')) {
+            var nested_field_info = extractNestedField(field, fields);
+
+            // Update the field data
+            fields[field] = Object.assign(fields[field], nested_field_info);
+        }
 
         // If any "instance_filters" are defined for the endpoint, copy them across (overwrite)
         if (fields[field].instance_filters) {
@@ -639,6 +692,21 @@ function constructFormBody(fields, options) {
 
     // Scroll to the top
     $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
+
+    // Focus on a particular field
+    let focus_field = options.focus;
+
+    if (focus_field == null && field_names.length > 0) {
+        // If no focus field is specified, focus on the first field
+        focus_field = field_names[0];
+    }
+
+    let el = $(options.modal + ` #id_${focus_field}`);
+
+    // Add a callback to focus on the first field
+    $(options.modal).on('shown.bs.modal', function() {
+        el.focus();
+    });
 }
 
 
@@ -677,7 +745,7 @@ function insertPersistButton(options) {
     var html = `
     <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" id="modal-persist">
-        <label class="form-check-label" for="modal-persist">${message}</label>
+        <label class="form-check-label" for="modal-persist"><small>${message}</small></label>
     </div>
     `;
 
@@ -802,7 +870,16 @@ function submitFormData(fields, options) {
                 // Normal field (not a file or image)
                 form_data.append(name, value);
 
-                data[name] = value;
+                if (field.parent_name && field.child_name) {
+                    // "Nested" fields are handled a little differently
+                    if (!(field.parent_name in data)) {
+                        data[field.parent_name] = {};
+                    }
+
+                    data[field.parent_name][field.child_name] = value;
+                } else {
+                    data[name] = value;
+                }
             }
         } else {
             console.warn(`Could not find field matching '${name}'`);
@@ -906,6 +983,10 @@ function updateFieldValue(name, value, field, options) {
     }
 
     switch (field.type) {
+    case 'decimal':
+        // Strip trailing zeros
+        el.val(formatDecimal(value));
+        break;
     case 'boolean':
         if (value == true || value.toString().toLowerCase() == 'true') {
             el.prop('checked');
@@ -1103,6 +1184,11 @@ function handleFormSuccess(response, options) {
             $(options.modal).modal('hide');
         }
 
+        // Refresh a table
+        if (options.refreshTable) {
+            reloadBootstrapTable(options.refreshTable);
+        }
+
         if (options.onSuccess) {
             // Callback function
             options.onSuccess(response, options);
@@ -1171,7 +1257,7 @@ function clearFormErrors(options={}) {
  *
  */
 
-function handleNestedErrors(errors, field_name, options={}) {
+function handleNestedArrayErrors(errors, field_name, options={}) {
 
     var error_list = errors[field_name];
 
@@ -1184,7 +1270,7 @@ function handleNestedErrors(errors, field_name, options={}) {
 
     // Nest list must be provided!
     if (!nest_list) {
-        console.warn(`handleNestedErrors missing nesting options for field '${fieldName}'`);
+        console.warn(`handleNestedArrayErrors missing nesting options for field '${fieldName}'`);
         return;
     }
 
@@ -1193,7 +1279,7 @@ function handleNestedErrors(errors, field_name, options={}) {
         var error_item = error_list[idx];
 
         if (idx >= nest_list.length) {
-            console.warn(`handleNestedErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
+            console.warn(`handleNestedArrayErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
             break;
         }
 
@@ -1230,12 +1316,7 @@ function handleNestedErrors(errors, field_name, options={}) {
             // Find the target (nested) field
             var target = `${field_name}_${sub_field_name}_${nest_id}`;
 
-            for (var ii = errors.length-1; ii >= 0; ii--) {
-
-                var error_text = errors[ii];
-
-                addFieldErrorMessage(target, error_text, ii, options);
-            }
+            addFieldErrorMessage(target, errors, options);
         }
     }
 }
@@ -1299,34 +1380,45 @@ function handleFormErrors(errors, fields={}, options={}) {
     for (var field_name in errors) {
 
         var field = fields[field_name] || {};
+        var field_errors = errors[field_name];
 
-        if ((field.type == 'field') && ('child' in field)) {
-            // This is a "nested" field
-            handleNestedErrors(errors, field_name, options);
+        if ((field.type == 'nested object') && ('children' in field)) {
+            // Handle multi-level nested errors
+
+            for (var sub_field in field_errors) {
+                var sub_field_name = `${field_name}__${sub_field}`;
+                var sub_field_errors = field_errors[sub_field];
+
+                if (!first_error_field && sub_field_errors && isFieldVisible(sub_field_name, options)) {
+                    first_error_field = sub_field_name;
+                }
+
+                addFieldErrorMessage(sub_field_name, sub_field_errors, options);
+            }
+        } else if ((field.type == 'field') && ('child' in field)) {
+            // This is a "nested" array field
+            handleNestedArrayErrors(errors, field_name, options);
         } else {
             // This is a "simple" field
-
-            var field_errors = errors[field_name];
-
-            if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
+            if (!first_error_field && field_errors && isFieldVisible(field_name, options)) {
                 first_error_field = field_name;
             }
 
-            // Add an entry for each returned error message
-            for (var ii = field_errors.length-1; ii >= 0; ii--) {
-
-                var error_text = field_errors[ii];
-
-                addFieldErrorMessage(field_name, error_text, ii, options);
-            }
+            addFieldErrorMessage(field_name, field_errors, options);
         }
     }
 
     if (first_error_field) {
         // Ensure that the field in question is visible
-        document.querySelector(`#div_id_${field_name}`).scrollIntoView({
-            behavior: 'smooth',
-        });
+        var error_element = document.querySelector(`#div_id_${first_error_field}`);
+
+        if (error_element) {
+            error_element.scrollIntoView({
+                behavior: 'smooth',
+            });
+        } else {
+            console.warn(`Could not scroll to field '${first_error_field}' - element not found`);
+        }
     } else {
         // Scroll to the top of the form
         $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
@@ -1340,6 +1432,16 @@ function handleFormErrors(errors, fields={}, options={}) {
  * Add a rendered error message to the provided field
  */
 function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
+
+    // Handle a 'list' of error message recursively
+    if (typeof(error_text) == 'object') {
+        // Iterate backwards through the list
+        for (var ii = error_text.length - 1; ii >= 0; ii--) {
+            addFieldErrorMessage(name, error_text[ii], ii, options);
+        }
+
+        return;
+    }
 
     field_name = getFieldName(name, options);
 
@@ -1793,7 +1895,7 @@ function initializeRelatedField(field, fields, options={}) {
             // Custom formatting for the search results
             if (field.model) {
                 // If the 'model' is specified, hand it off to the custom model render
-                var html = renderModelData(name, field.model, data, field, options);
+                var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
                 // Return a simple renderering
@@ -1823,7 +1925,7 @@ function initializeRelatedField(field, fields, options={}) {
             // Custom formatting for selected item
             if (field.model) {
                 // If the 'model' is specified, hand it off to the custom model render
-                var html = renderModelData(name, field.model, data, field, options);
+                var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
                 // Return a simple renderering
@@ -1934,68 +2036,18 @@ function searching() {
  * - parameters: The field definition (OPTIONS) request
  * - options: Other options provided at time of modal creation by the client
  */
-function renderModelData(name, model, data, parameters, options) {
+function renderModelData(name, model, data, parameters) {
 
     if (!data) {
         return parameters.placeholder || '';
     }
 
-    // TODO: Implement this function for various models
-
     var html = null;
 
-    var renderer = null;
-
-    // Find a custom renderer
-    switch (model) {
-    case 'company':
-        renderer = renderCompany;
-        break;
-    case 'stockitem':
-        renderer = renderStockItem;
-        break;
-    case 'stocklocation':
-        renderer = renderStockLocation;
-        break;
-    case 'part':
-        renderer = renderPart;
-        break;
-    case 'partcategory':
-        renderer = renderPartCategory;
-        break;
-    case 'partparametertemplate':
-        renderer = renderPartParameterTemplate;
-        break;
-    case 'purchaseorder':
-        renderer = renderPurchaseOrder;
-        break;
-    case 'salesorder':
-        renderer = renderSalesOrder;
-        break;
-    case 'salesordershipment':
-        renderer = renderSalesOrderShipment;
-        break;
-    case 'manufacturerpart':
-        renderer = renderManufacturerPart;
-        break;
-    case 'supplierpart':
-        renderer = renderSupplierPart;
-        break;
-    case 'build':
-        renderer = renderBuild;
-        break;
-    case 'owner':
-        renderer = renderOwner;
-        break;
-    case 'user':
-        renderer = renderUser;
-        break;
-    default:
-        break;
-    }
+    var renderer = getModelRenderer(model);
 
     if (renderer != null) {
-        html = renderer(name, data, parameters, options);
+        html = renderer(data, parameters);
     }
 
     if (html != null) {
@@ -2059,8 +2111,10 @@ function constructField(name, parameters, options={}) {
         return constructHiddenInput(field_name, parameters, options);
     }
 
+    var group_name = parameters.group || parameters.parent_name;
+
     // Are we ending a group?
-    if (options.current_group && parameters.group != options.current_group) {
+    if (options.current_group && group_name != options.current_group) {
         html += `</div></div>`;
 
         // Null out the current "group" so we can start a new one
@@ -2068,9 +2122,9 @@ function constructField(name, parameters, options={}) {
     }
 
     // Are we starting a new group?
-    if (parameters.group) {
+    if (group_name) {
 
-        var group = parameters.group;
+        var group = group_name;
 
         var group_id = getFieldName(group, options);
 
@@ -2078,7 +2132,7 @@ function constructField(name, parameters, options={}) {
 
         // Are we starting a new group?
         // Add HTML for the start of a separate panel
-        if (parameters.group != options.current_group) {
+        if (group_name != options.current_group) {
 
             html += `
             <div class='panel form-panel' id='form-panel-${group_id}' group='${group}'>
@@ -2092,7 +2146,7 @@ function constructField(name, parameters, options={}) {
                 html += `<div>`;
             }
 
-            html += `<h4 style='display: inline;'>${group_options.title || group}</h4>`;
+            html += `<h5 style='display: inline;'>${group_options.title || group}</h5>`;
 
             if (group_options.collapsible) {
                 html += `</a>`;
@@ -2332,16 +2386,6 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
     } else if (parameters.default != null) {
         // Otherwise, a defualt value?
         opts.push(`value='${parameters.default}'`);
-    }
-
-    // Maximum input length
-    if (parameters.max_length != null) {
-        opts.push(`maxlength='${parameters.max_length}'`);
-    }
-
-    // Minimum input length
-    if (parameters.min_length != null) {
-        opts.push(`minlength='${parameters.min_length}'`);
     }
 
     // Maximum value

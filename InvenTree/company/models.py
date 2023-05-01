@@ -8,6 +8,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q, Sum, UniqueConstraint
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -18,10 +20,13 @@ import common.models
 import common.settings
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.ready
+import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
-from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin
+from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
+                              InvenTreeNotesMixin, MetadataMixin)
 from InvenTree.status_codes import PurchaseOrderStatus
 
 
@@ -50,7 +55,7 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-class Company(models.Model):
+class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     """A Company object represents an external company.
 
     It may be a supplier or a customer or a manufacturer (or a combination)
@@ -76,11 +81,6 @@ class Company(models.Model):
         currency_code: Specifies the default currency for the company
     """
 
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the Company model"""
-        return reverse('api-company-list')
-
     class Meta:
         """Metaclass defines extra model options"""
         ordering = ['name', ]
@@ -88,6 +88,11 @@ class Company(models.Model):
             UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
         ]
         verbose_name_plural = "Companies"
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the Company model"""
+        return reverse('api-company-list')
 
     name = models.CharField(max_length=100, blank=False,
                             help_text=_('Company name'),
@@ -100,7 +105,7 @@ class Company(models.Model):
         blank=True,
     )
 
-    website = models.URLField(
+    website = InvenTreeURLField(
         blank=True,
         verbose_name=_('Website'),
         help_text=_('Company website URL')
@@ -134,8 +139,6 @@ class Company(models.Model):
         delete_orphans=True,
         verbose_name=_('Image'),
     )
-
-    notes = InvenTree.fields.InvenTreeNotesField(help_text=_("Company Notes"))
 
     is_customer = models.BooleanField(default=False, verbose_name=_('is customer'), help_text=_('Do you sell items to this company?'))
 
@@ -200,6 +203,25 @@ class Company(models.Model):
         return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).all()
 
 
+class CompanyAttachment(InvenTreeAttachment):
+    """Model for storing file or URL attachments against a Company object"""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with this model"""
+        return reverse('api-company-attachment-list')
+
+    def getSubdir(self):
+        """Return the subdirectory where these attachments are uploaded"""
+        return os.path.join('company_files', str(self.company.pk))
+
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE,
+        verbose_name=_('Company'),
+        related_name='attachments',
+    )
+
+
 class Contact(models.Model):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
@@ -210,6 +232,11 @@ class Contact(models.Model):
         email: contact email
         role: position in company
     """
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the Contcat model"""
+        return reverse('api-contact-list')
 
     company = models.ForeignKey(Company, related_name='contacts',
                                 on_delete=models.CASCADE)
@@ -223,7 +250,7 @@ class Contact(models.Model):
     role = models.CharField(max_length=100, blank=True)
 
 
-class ManufacturerPart(models.Model):
+class ManufacturerPart(MetadataMixin, models.Model):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
     Attributes:
@@ -234,14 +261,14 @@ class ManufacturerPart(models.Model):
         description: Descriptive notes field
     """
 
+    class Meta:
+        """Metaclass defines extra model options"""
+        unique_together = ('part', 'manufacturer', 'MPN')
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the ManufacturerPart instance"""
         return reverse('api-manufacturer-part-list')
-
-    class Meta:
-        """Metaclass defines extra model options"""
-        unique_together = ('part', 'manufacturer', 'MPN')
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='manufacturer_parts',
@@ -336,14 +363,14 @@ class ManufacturerPartParameter(models.Model):
     Each parameter is a simple string (text) value.
     """
 
+    class Meta:
+        """Metaclass defines extra model options"""
+        unique_together = ('manufacturer_part', 'name')
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the ManufacturerPartParameter model"""
         return reverse('api-manufacturer-part-parameter-list')
-
-    class Meta:
-        """Metaclass defines extra model options"""
-        unique_together = ('manufacturer_part', 'name')
 
     manufacturer_part = models.ForeignKey(
         ManufacturerPart,
@@ -391,7 +418,7 @@ class SupplierPartManager(models.Manager):
         )
 
 
-class SupplierPart(InvenTreeBarcodeMixin, models.Model):
+class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 
     Attributes:
@@ -407,7 +434,15 @@ class SupplierPart(InvenTreeBarcodeMixin, models.Model):
         lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
         pack_size: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
+        updated: Date that the SupplierPart was last updated
     """
+
+    class Meta:
+        """Metaclass defines extra model options"""
+        unique_together = ('part', 'supplier', 'SKU')
+
+        # This model was moved from the 'Part' app
+        db_table = 'part_supplierpart'
 
     objects = SupplierPartManager()
 
@@ -427,13 +462,6 @@ class SupplierPart(InvenTreeBarcodeMixin, models.Model):
                 'part': self.part.pk
             }
         }
-
-    class Meta:
-        """Metaclass defines extra model options"""
-        unique_together = ('part', 'supplier', 'SKU')
-
-        # This model was moved from the 'Part' app
-        db_table = 'part_supplierpart'
 
     def clean(self):
         """Custom clean action for the SupplierPart model:
@@ -671,15 +699,6 @@ class SupplierPriceBreak(common.models.PriceBreak):
         currency: Reference to the currency of this pricebreak (leave empty for base currency)
     """
 
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the SupplierPriceBreak model"""
-        return reverse('api-part-supplier-price-list')
-
-    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
-
-    updated = models.DateTimeField(auto_now=True, null=True, verbose_name=_('last updated'))
-
     class Meta:
         """Metaclass defines extra model options"""
         unique_together = ("part", "quantity")
@@ -690,3 +709,30 @@ class SupplierPriceBreak(common.models.PriceBreak):
     def __str__(self):
         """Format a string representation of a SupplierPriceBreak instance"""
         return f'{self.part.SKU} - {self.price} @ {self.quantity}'
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the SupplierPriceBreak model"""
+        return reverse('api-part-supplier-price-list')
+
+    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
+
+
+@receiver(post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break')
+def after_save_supplier_price(sender, instance, created, **kwargs):
+    """Callback function when a SupplierPriceBreak is created or updated"""
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+
+        if instance.part and instance.part.part:
+            instance.part.part.schedule_pricing_update(create=True)
+
+
+@receiver(post_delete, sender=SupplierPriceBreak, dispatch_uid='post_delete_supplier_price_break')
+def after_delete_supplier_price(sender, instance, **kwargs):
+    """Callback function when a SupplierPriceBreak is deleted"""
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+
+        if instance.part and instance.part.part:
+            instance.part.part.schedule_pricing_update(create=False)

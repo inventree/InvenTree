@@ -32,6 +32,12 @@
 {% url 'admin:stock_stocklocation_change' location.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
+{% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
+{% if stocktake_enable and roles.stocktake.add %}
+<button type='button' class='btn btn-outline-secondary' id='location-stocktake' title='{% trans "Perform stocktake for this stock location" %}'>
+    <span class='fas fa-clipboard-check'></span>
+</button>
+{% endif %}
 
 {% mixin_available "locate" as locate_available %}
 {% if location and plugins_enabled and locate_available %}
@@ -53,12 +59,21 @@
         {% else %}
         <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
         {% endif %}
-        {% if labels_enabled %}
-        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
-        {% endif %}
-        <li><a class='dropdown-item' href='#' id='barcode-check-in'><span class='fas fa-arrow-right'></span> {% trans "Check-in Items" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='barcode-scan-in-items' title='{% trans "Scan stock items into this location" %}'><span class='fas fa-boxes'></span> {% trans "Scan In Stock Items" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='barcode-scan-in-containers' title='{% trans "Scan stock container into this location" %}'><span class='fas fa-sitemap'></span> {% trans "Scan In Container" %}</a></li>
     </ul>
 </div>
+<!-- Printing action -->
+{% if labels_enabled %}
+<div class='btn-group' role='group'>
+    <button id='printing-options' title='{% trans "Printing actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-print'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu'>
+        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a>
+    </ul>
+</div>
+{% endif %}
 <!-- Check permissions and owner -->
 {% if user_owns_location %}
 {% if roles.stock.change %}
@@ -95,11 +110,6 @@
 {% endif %}
 {% endif %}
 {% endif %}
-{% endif %}
-{% if user_owns_location and roles.stock_location.add %}
-<button class='btn btn-success' id='location-create' type='button' title='{% trans "Create new stock location" %}'>
-    <span class='fas fa-plus-circle'></span> {% trans "New Location" %}
-</button>
 {% endif %}
 {% endblock %}
 
@@ -140,13 +150,7 @@
         </td>
     </tr>
     {% endif %}
-    {% if location and location.barcode_hash %}
-    <tr>
-        <td><span class='fas fa-barcode'></span></td>
-        <td>{% trans "Barcode Identifier" %}</td>
-        <td {% if location.barcode_data %}title='{{ location.barcode_data }}'{% endif %}>{{ location.barcode_hash }}</td>
-    </tr>
-    {% endif %}
+    {% include "barcode_data.html" with instance=location %}
 </table>
 {% endblock details_left %}
 
@@ -203,22 +207,21 @@
 
 <div class='panel panel-hidden' id='panel-sublocations'>
     <div class='panel-heading'>
-        <h4>{% trans "Sublocations" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Sublocations" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if user_owns_location and roles.stock_location.add %}
+                <button class='btn btn-success' id='location-create' type='button' title='{% trans "Create new stock location" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Location" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='sublocation-button-toolbar'>
             <div class='btn-group' role='group'>
-                <!-- Printing actions menu -->
-                {% if labels_enabled %}
-                <div class='btn-group' role='group'>
-                    <button id='location-print-options' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle="dropdown" title='{% trans "Printing Actions" %}'>
-                        <span class='fas fa-print'></span> <span class='caret'></span>
-                    </button>
-                    <ul class='dropdown-menu'>
-                        <li><a class='dropdown-item' href='#' id='multi-location-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
-                    </ul>
-                </div>
-                {% endif %}
                 {% include "filter_list.html" with id="location" %}
             </div>
         </div>
@@ -231,6 +234,20 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    {% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
+    {% if stocktake_enable and roles.stocktake.add %}
+    $('#location-stocktake').click(function() {
+        generateStocktakeReport({
+            category: {},
+            location: {
+                {% if location %}value: {{ location.pk }},{% endif %}
+            },
+            generate_report: {},
+            update_parts: {},
+        });
+    });
+    {% endif %}
 
     {% if plugins_enabled and location %}
     $('#locate-location-button').click(function() {
@@ -265,32 +282,38 @@
 
         var locs = [{{ location.pk }}];
 
-        printStockLocationLabels(locs);
-
-    });
-
-    $('#multi-location-print-label').click(function() {
-
-        var selections = getTableData('#sublocation-table');
-
-        var locations = [];
-
-        selections.forEach(function(loc) {
-            locations.push(loc.pk);
+        printLabels({
+            items: locs,
+            key: 'location',
+            url: '{% url "api-stocklocation-label-list" %}',
         });
-
-        printStockLocationLabels(locations);
     });
     {% endif %}
 
     {% if location %}
-    $("#barcode-check-in").click(function() {
-        barcodeCheckIn({{ location.id }});
+    $("#barcode-scan-in-items").click(function() {
+        barcodeCheckInStockItems({{ location.id }});
+    });
+
+    $('#barcode-scan-in-containers').click(function() {
+        barcodeCheckInStockLocations({{ location.id }},
+            {
+                onSuccess: function() {
+                    showMessage(
+                        '{% trans "Scanned stock container into this location" %}',
+                        {
+                            style: 'success',
+                        }
+                    );
+
+                    $('#sublocation-table').bootstrapTable('refresh');
+                }
+            }
+        );
     });
     {% endif %}
 
     $('#location-create').click(function () {
-
         createStockLocation({
             {% if location %}
             parent: {{ location.pk }},
@@ -349,10 +372,10 @@
 
     {% if barcodes %}
     $('#show-qr-code').click(function() {
-        launchModalForm("{% url 'stock-location-qr' location.id %}",
-        {
-            no_post: true,
-        });
+        showQRDialog(
+            '{% trans "Stock Location QR Code" %}',
+            '{"stocklocation": {{ location.pk }}}'
+        );
     });
 
     $("#barcode-link").click(function() {

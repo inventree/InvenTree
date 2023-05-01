@@ -18,8 +18,9 @@ def validate_build_order_reference_pattern(pattern):
 
 
 def validate_build_order_reference(value):
-    """Validate that the BuildOrder reference field matches the required pattern"""
+    """Validate that the BuildOrder reference field matches the required pattern."""
 
     from build.models import Build
 
+    # If we get to here, run the "default" validation routine
     Build.validate_reference_field(value)

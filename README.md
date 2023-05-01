@@ -6,11 +6,11 @@
 <!-- Badges -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)
 ![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
 
 [![Coveralls](https://img.shields.io/coveralls/github/inventree/InvenTree)](https://coveralls.io/github/inventree/InvenTree)
 [![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
-![Lines of code](https://img.shields.io/tokei/lines/github/inventree/InvenTree)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/inventree/inventree)
 [![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/r/inventree/inventree)
 
@@ -22,7 +22,7 @@
 <h4>
     <a href="https://demo.inventree.org/">View Demo</a>
   <span> · </span>
-    <a href="https://inventree.readthedocs.io/en/latest/">Documentation</a>
+    <a href="https://docs.inventree.org/en/latest/">Documentation</a>
   <span> · </span>
     <a href="https://github.com/inventree/InvenTree/issues/new?template=bug_report.md&title=[BUG]">Report Bug</a>
   <span> · </span>
@@ -60,10 +60,10 @@ Powerful business logic works in the background to ensure that stock tracking hi
 
 InvenTree is designed to be **extensible**, and provides multiple options for **integration** with external applications or addition of custom plugins:
 
-* [InvenTree API](https://inventree.readthedocs.io/en/latest/extend/api/)
-* [Python module](https://inventree.readthedocs.io/en/latest/extend/python)
-* [Plugin interface](https://inventree.readthedocs.io/en/latest/extend/plugins)
-* [Third party tools](https://inventree.readthedocs.io/en/latest/extend/integrate)
+* [InvenTree API](https://docs.inventree.org/en/latest/api/api/)
+* [Python module](https://docs.inventree.org/en/latest/api/python/python/)
+* [Plugin interface](https://docs.inventree.org/en/latest/extend/plugins)
+* [Third party tools](https://docs.inventree.org/en/latest/extend/integrate)
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
@@ -104,18 +104,19 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
     <li><a href="https://hub.docker.com/r/inventree/inventree">Docker</a></li>
     <li><a href="https://crowdin.com/project/inventree">Crowdin</a></li>
     <li><a href="https://coveralls.io/github/inventree/InvenTree">Coveralls</a></li>
+    <li><a href="https://packager.io/gh/inventree/InvenTree">Packager.io</a></li>
   </ul>
 </details>
 
 <!-- Getting Started -->
 ## 	:toolbox: Getting Started
 
-Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/start/install/) for installation and setup instructions.
+Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/install/) for installation and setup instructions.
 
 <!-- Mobile App -->
 ## 	:iphone: Mobile App
 
-InvenTree is supported by a [companion mobile app](https://inventree.readthedocs.io/en/latest/app/app/) which allows users access to stock control information and functionality.
+InvenTree is supported by a [companion mobile app](https://docs.inventree.org/en/latest/app/app/) which allows users access to stock control information and functionality.
 
 <div align="center"><h4>
     <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>
@@ -129,23 +130,23 @@ InvenTree is supported by a [companion mobile app](https://inventree.readthedocs
 There are several options to deploy InvenTree.
 
 <div align="center"><h4>
-    <a href="https://inventree.readthedocs.io/en/latest/start/docker/">Docker</a>
+    <a href="https://docs.inventree.org/en/latest/start/docker/">Docker</a>
     <span> · </span>
     <a href="https://marketplace.digitalocean.com/apps/inventree?refcode=d6172576d014"><img src="https://www.deploytodo.com/do-btn-blue-ghost.svg" alt="Deploy to DO" width="auto" height="40" /></a>
     <span> · </span>
-    <a href="https://inventree.readthedocs.io/en/latest/start/install/">Bare Metal</a>
+    <a href="https://docs.inventree.org/en/latest/start/install/">Bare Metal</a>
 </h4></div>
 
-Single line install:
+Single line install - read [the docs](https://docs.inventree.org/en/latest/start/installer/) for supported distros and details about the function:
 ```bash
-curl https://raw.githubusercontent.com/InvenTree/InvenTree/master/contrib/install.sh | sh
+wget -qO install.sh https://get.inventree.org && bash install.sh
 ```
 
 <!-- Contributing -->
 ## :wave: Contributing
 
 Contributions are welcomed and encouraged. Please help to make this project even better!
-Refer to the [contribution page in the docs ](https://inventree.readthedocs.io/en/latest/contribute/) and check out [contributing.md](CONTRIBUTING.md).
+Refer to the [contribution page](CONTRIBUTING.md).
 
 <!-- Translation -->
 ## :scroll: Translation
@@ -168,7 +169,7 @@ We would like to acknowledge a few special projects:
  - [PartKeepr](https://github.com/partkeepr/PartKeepr) as a valuable predecessor and inspiration
  - [Readme Template](https://github.com/Louis3797/awesome-readme-template) for the template of this page
 
-Find a full list of used third-party libraries in [our documentation](https://inventree.readthedocs.io/en/latest/credits/).
+Find a full list of used third-party libraries in [our documentation](https://docs.inventree.org/en/latest/credits/).
 
 <!-- License -->
 ## :warning: License
