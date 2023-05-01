@@ -30,7 +30,7 @@ class InvenTreeTemplateLoader(CachedLoader):
         template_path = str(template.name)
 
         # If the template matches any of the skip patterns, reload it without cache
-        if any([template_path.startswith(d) for d in skip_cache_dirs]):
+        if any(template_path.startswith(d) for d in skip_cache_dirs):
             template = BaseLoader.get_template(self, template_name, skip)
 
         return template
