@@ -62,6 +62,12 @@ function purchaseOrderFields(options={}) {
             }
         },
         supplier_reference: {},
+        project_code: {
+            icon: 'fa-list',
+        },
+        order_currency: {
+            icon: 'fa-coins',
+        },
         target_date: {
             icon: 'fa-calendar-alt',
         },
@@ -124,6 +130,10 @@ function purchaseOrderFields(options={}) {
             label: '{% trans "Duplicate Extra Lines" %}',
             help_text: '{% trans "Duplicate extra line items from the selected order" %}',
         };
+    }
+
+    if (!global_settings.PROJECT_CODES_ENABLED) {
+        delete fields.project_code;
     }
 
     return fields;
@@ -1615,6 +1625,18 @@ function loadPurchaseOrderTable(table, options) {
                 title: '{% trans "Description" %}',
             },
             {
+                field: 'project_code',
+                title: '{% trans "Project Code" %}',
+                switchable: global_settings.PROJECT_CODES_ENABLED,
+                visible: global_settings.PROJECT_CODES_ENABLED,
+                sortable: true,
+                formatter: function(value, row) {
+                    if (row.project_code_detail) {
+                        return `<span title='${row.project_code_detail.description}'>${row.project_code_detail.code}</span>`;
+                    }
+                }
+            },
+            {
                 field: 'status',
                 title: '{% trans "Status" %}',
                 switchable: true,
@@ -1651,7 +1673,7 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 formatter: function(value, row) {
                     return formatCurrency(value, {
-                        currency: row.total_price_currency,
+                        currency: row.order_currency,
                     });
                 },
             },

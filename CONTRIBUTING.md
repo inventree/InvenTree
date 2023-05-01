@@ -101,7 +101,7 @@ django-upgrade --target-version 3.2 `find . -name "*.py"`
 ```
 
 ## Credits
-If you add any new dependencies / libraries, they need to be added to [the docs](https://github.com/inventree/inventree-docs/blob/master/docs/credits.md). Please try to do that as timely as possible.
+If you add any new dependencies / libraries, they need to be added to [the docs](https://github.com/inventree/inventree/blob/master/docs/docs/credits.md). Please try to do that as timely as possible.
 
 
 ## Migration Files
@@ -130,7 +130,7 @@ Please write docstrings for each function and class - we follow the [google doc-
 
 ## Documentation
 
-New features or updates to existing features should be accompanied by user documentation. A PR with associated documentation should link to the matching PR at https://github.com/inventree/inventree-docs/
+New features or updates to existing features should be accompanied by user documentation.
 
 ## Translations
 

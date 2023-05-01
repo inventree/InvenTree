@@ -14,9 +14,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-import order.models as models
-import order.serializers as serializers
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, ProjectCode
 from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
@@ -27,6 +25,7 @@ from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus)
+from order import models, serializers
 from order.admin import (PurchaseOrderExtraLineResource,
                          PurchaseOrderLineItemResource, PurchaseOrderResource,
                          ReturnOrderResource, SalesOrderExtraLineResource,
@@ -135,6 +134,21 @@ class OrderFilter(rest_filters.FilterSet):
             return queryset.filter(status__in=self.Meta.model.get_status_class().OPEN)
         else:
             return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
+
+    project_code = rest_filters.ModelChoiceFilter(
+        queryset=ProjectCode.objects.all(),
+        field_name='project_code'
+    )
+
+    has_project_code = rest_filters.BooleanFilter(label='has_project_code', method='filter_has_project_code')
+
+    def filter_has_project_code(self, queryset, name, value):
+        """Filter by whether or not the order has a project code"""
+
+        if str2bool(value):
+            return queryset.exclude(project_code=None)
+        else:
+            return queryset.filter(project_code=None)
 
 
 class LineItemFilter(rest_filters.FilterSet):
@@ -307,12 +321,14 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
     }
 
     search_fields = [
         'reference',
         'supplier__name',
         'supplier_reference',
+        'project_code__code',
         'description',
     ]
 
@@ -325,6 +341,7 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
         'status',
         'responsible',
         'total_price',
+        'project_code',
     ]
 
     ordering = '-reference'
@@ -685,6 +702,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
     }
 
     filterset_fields = [
@@ -701,6 +719,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
         'line_items',
         'shipment_date',
         'total_price',
+        'project_code',
     ]
 
     search_fields = [
@@ -708,6 +727,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
         'reference',
         'description',
         'customer_reference',
+        'project_code__code',
     ]
 
     ordering = '-reference'
@@ -1138,6 +1158,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
     }
 
     ordering_fields = [
@@ -1148,6 +1169,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
         'line_items',
         'status',
         'target_date',
+        'project_code',
     ]
 
     search_fields = [
@@ -1155,6 +1177,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
         'reference',
         'description',
         'customer_reference',
+        'project_code__code',
     ]
 
     ordering = '-reference'
@@ -1407,7 +1430,7 @@ class OrderCalendarExport(ICalFeed):
         # Help:
         # https://django.readthedocs.io/en/stable/ref/contrib/syndication.html
 
-        obj = dict()
+        obj = {}
         obj['ordertype'] = kwargs['ordertype']
         obj['include_completed'] = bool(request.GET.get('include_completed', False))
 

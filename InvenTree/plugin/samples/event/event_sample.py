@@ -23,4 +23,4 @@ class EventPluginSample(EventMixin, InvenTreePlugin):
 
         # Issue warning that we can test for
         if settings.PLUGIN_TESTING:
-            warnings.warn(f'Event `{event}` triggered')
+            warnings.warn(f'Event `{event}` triggered', stacklevel=2)

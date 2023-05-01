@@ -16,6 +16,7 @@
     renderOwner,
     renderPart,
     renderPartCategory,
+    renderProjectCode,
     renderReturnOrder,
     renderStockItem,
     renderStockLocation,
@@ -81,6 +82,8 @@ function getModelRenderer(model) {
         return renderGroup;
     case 'webconnection':
         return renderWebconnection;
+    case 'projectcode':
+        return renderProjectCode;
     default:
         // Un-handled model type
         console.error(`Rendering not implemented for model '${model}'`);
@@ -485,4 +488,15 @@ function renderSupplierPart(data, parameters={}) {
 function renderWebconnection(name, data, parameters={}, options={}) {
     var html = `<span>${data.connection_key} \\ ${data.name}</span>`;
     return html;
+
+// Renderer for "ProjectCode" model
+function renderProjectCode(data, parameters={}) {
+
+    return renderModel(
+        {
+            text: data.code,
+            textSecondary: data.description,
+        },
+        parameters
+    );
 }
