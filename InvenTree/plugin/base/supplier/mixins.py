@@ -47,6 +47,39 @@ class SupplierMixin:
         self.add_mixin('supplier', True, __class__)
         self.connections = self.setup_connections()
 
+    @classmethod
+    def _activate_mixin(cls, registry, plugins, force_reload=False, full_reload: bool = False):
+        """Activate SupplierMixin plugins.
+
+        Args:
+            registry (PluginRegistry): The registry that should be used
+            plugins (dict): List of IntegrationPlugins that should be installed
+            force_reload (bool, optional): Only reload base apps. Defaults to False.
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+        """
+        logger.info('Activating supplier plugins')
+
+        # Define registry for supplier plugins
+        registry.mixins_suppliers = {}
+
+        # Collect connections
+        for slug, plugin in plugins:
+            if plugin.mixin_enabled('supplier'):
+                registry.mixins_suppliers[slug] = plugin.connections
+
+    @classmethod
+    def _deactivate_mixin(cls, registry, force_reload: bool = False):
+        """Deactivate SupplierMixin plugins.
+
+        Args:
+            registry (PluginRegistry): The registry that should be used
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+        """
+        logger.info('Deactivating supplier plugins')
+
+        # Clear settings cache
+        registry.mixins_suppliers = {}
+
     def setup_connections(self):
         """Setup web connections for this plugin."""
         return getattr(self, 'CONNECTIONS', None)

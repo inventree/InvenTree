@@ -39,8 +39,9 @@ class PluginsRegistry:
     from .base.integration.ScheduleMixin import ScheduleMixin
     from .base.integration.SettingsMixin import SettingsMixin
     from .base.integration.UrlsMixin import UrlsMixin
+    from .base.supplier.mixins import SupplierMixin
 
-    DEFAULT_MIXIN_ORDER = [SettingsMixin, ScheduleMixin, AppMixin, UrlsMixin]
+    DEFAULT_MIXIN_ORDER = [SettingsMixin, ScheduleMixin, SupplierMixin, AppMixin, UrlsMixin]
 
     def __init__(self, mixin_order: list = None) -> None:
         """Initialize registry.
@@ -498,22 +499,6 @@ class PluginsRegistry:
 
         logger.info('Done deactivating')
     # endregion
-
-    def activate_plugin_supplier(self, plugins):
-        """Activate supplier plugins."""
-        logger.info('Activating supplier plugins')
-
-        self.mixins_suppliers = {}
-
-        for slug, plugin in plugins:
-            if plugin.mixin_enabled('supplier'):
-                self.mixins_suppliers[slug] = plugin.connections
-
-    def deactivate_plugin_supplier(self):
-        """Deactivate all supplier plugins."""
-        logger.info('Deactivating supplier plugins')
-        # clear settings cache
-        self.mixins_suppliers = {}
 
     # region mixin specific loading ...
     def _try_reload(self, cmd, *args, **kwargs):
