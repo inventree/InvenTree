@@ -6,7 +6,7 @@
 
 {% block sidebar %}
 {% include "stock/location_sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block breadcrumb_tree %}
 <div id="breadcrumb-tree"></div>
@@ -23,7 +23,7 @@
 {% else %}
 {% trans "Stock" %}
 {% endif %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 
@@ -111,7 +111,7 @@
 {% endif %}
 {% endif %}
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block details_left %}
 <table class='table table-striped table-condensed'>
@@ -230,7 +230,7 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock details_left %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -445,4 +445,4 @@
         defaultIcon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
     });
 
-{% endblock %}
+{% endblock js_ready %}
