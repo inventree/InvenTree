@@ -22,9 +22,25 @@ env:
   INVENTREE_BACKUP_DIR: ../test_inventree_backup
 
 jobs:
+  paths-filter:
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+    steps:
+    - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          server:
+            - 'InvenTree/**'
+
   pep_style:
     name: Style [Python]
     runs-on: ubuntu-20.04
+
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true'
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
@@ -97,7 +113,7 @@ jobs:
     name: Style [documentation]
     runs-on: ubuntu-20.04
 
-    needs: pep_style
+    needs: paths-filter
 
     steps:
       - name: Checkout Code
