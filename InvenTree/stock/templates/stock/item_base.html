@@ -496,6 +496,7 @@ $("#stock-test-report").click(function() {
 $("#print-label").click(function() {
     printLabels({
         items: [{{ item.pk }}],
+        singular_name: '{% trans "stock item" %}',
         url: '{% url "api-stockitem-label-list" %}',
         key: 'item',
     });

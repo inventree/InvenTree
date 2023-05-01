@@ -1834,7 +1834,9 @@ function loadPartTable(table, url, options={}) {
         labels: {
             url: '{% url "api-part-label-list" %}',
             key: 'part',
-        }
+        },
+        singular_name: '{% trans "part" %}',
+        plural_name: '{% trans "parts" %}',
     });
 
     var columns = [

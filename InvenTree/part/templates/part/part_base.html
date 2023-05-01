@@ -471,6 +471,7 @@
         printLabels({
             items: [{{ part.pk }}],
             key: 'part',
+            singular_name: '{% trans "part" %}',
             url: '{% url "api-part-label-list" %}',
         });
     });
