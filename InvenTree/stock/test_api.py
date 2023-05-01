@@ -664,6 +664,97 @@ class StockItemTest(StockAPITestCase):
             expected_code=201
         )
 
+    def test_stock_item_create_withsupplierpart(self):
+        """Test creation of a StockItem via the API, including SupplierPart data."""
+
+        # POST with non-existent supplier part
+        response = self.post(
+            self.list_url,
+            data={
+                'part': 1,
+                'location': 1,
+                'quantity': 4,
+                'supplier_part': 1000991
+            },
+            expected_code=400
+        )
+
+        self.assertIn('The given supplier part does not exist', str(response.data))
+
+        # POST with valid supplier part, no pack size defined
+        # Get current count of number of parts
+        part_4 = part.models.Part.objects.get(pk=4)
+        current_count = part_4.available_stock
+        response = self.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'location': 1,
+                'quantity': 3,
+                'supplier_part': 5,
+            },
+            expected_code=201
+        )
+        # Reload part, count stock again
+        part_4.reload()
+        self.assertEqual(part_4.available_stock == current_count + 3)
+
+        # POST with valid supplier part, no pack size defined
+        # Send use_pack_size along, make sure this doesn't break stuff
+        # Get current count of number of parts
+        part_4 = part.models.Part.objects.get(pk=4)
+        current_count = part_4.available_stock
+        response = self.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'location': 1,
+                'quantity': 12,
+                'supplier_part': 5,
+                'use_pack_size': True,
+            },
+            expected_code=201
+        )
+        # Reload part, count stock again
+        part_4 = part.models.Part.objects.get(pk=4)
+        self.assertEqual(part_4.available_stock == current_count + 12)
+
+        # POST with valid supplier part, WITH pack size defined - but ignore
+        # Supplier part 6 is a 100-pack, otherwise same as SP 5
+        current_count = part_4.available_stock
+        response = self.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'location': 1,
+                'quantity': 3,
+                'supplier_part': 6,
+                'use_pack_size': False,
+            },
+            expected_code=201
+        )
+        # Reload part, count stock again
+        part_4 = part.models.Part.objects.get(pk=4)
+        self.assertEqual(part_4.available_stock == current_count + 3)
+
+        # POST with valid supplier part, WITH pack size defined and used
+        # Supplier part 6 is a 100-pack, otherwise same as SP 5
+        current_count = part_4.available_stock
+        response = self.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'location': 1,
+                'quantity': 3,
+                'supplier_part': 6,
+                'use_pack_size': True,
+            },
+            expected_code=201
+        )
+        # Reload part, count stock again
+        part_4 = part.models.Part.objects.get(pk=4)
+        self.assertEqual(part_4.available_stock == current_count + 3 * 100)
+
     def test_creation_with_serials(self):
         """Test that serialized stock items can be created via the API."""
         trackable_part = part.models.Part.objects.create(
