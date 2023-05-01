@@ -25,24 +25,26 @@ from mptt.models import TreeForeignKey
 import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.tasks
+import InvenTree.validators
 import order.validators
 import stock.models
 import users.models as UserModels
+from common.models import ProjectCode
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Company, Contact, SupplierPart
 from InvenTree.exceptions import log_error
-from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
-                              InvenTreeURLField, RoundingDecimalField)
+from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeURLField,
+                              RoundingDecimalField)
 from InvenTree.helpers import decimal2string, getSetting, notify_responsible
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
+                              InvenTreeNotesMixin, MetadataMixin,
                               ReferenceIndexingMixin)
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
 from part import models as PartModels
 from plugin.events import trigger_event
-from plugin.models import MetadataMixin
 
 logger = logging.getLogger('inventree')
 
@@ -68,10 +70,36 @@ class TotalPriceMixin(models.Model):
         help_text=_('Total price for this order')
     )
 
+    order_currency = models.CharField(
+        max_length=3,
+        verbose_name=_('Order Currency'),
+        blank=True, null=True,
+        help_text=_('Currency for this order (leave blank to use company default)'),
+        validators=[InvenTree.validators.validate_currency_code]
+    )
+
+    @property
+    def currency(self):
+        """Return the currency associated with this order instance:
+
+        - If the order_currency field is set, return that
+        - Otherwise, return the currency associated with the company
+        - Finally, return the default currency code
+        """
+
+        if self.order_currency:
+            return self.order_currency
+
+        if self.company:
+            return self.company.currency_code
+
+        # Return default currency code
+        return currency_code_default()
+
     def update_total_price(self, commit=True):
         """Recalculate and save the total_price for this order"""
 
-        self.total_price = self.calculate_total_price()
+        self.total_price = self.calculate_total_price(target_currency=self.currency)
 
         if commit:
             self.save()
@@ -131,7 +159,7 @@ class TotalPriceMixin(models.Model):
         return total
 
 
-class Order(InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
+class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, ReferenceIndexingMixin):
     """Abstract model for an order.
 
     Instances of this class:
@@ -199,6 +227,8 @@ class Order(InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
 
     description = models.CharField(max_length=250, blank=True, verbose_name=_('Description'), help_text=_('Order description (optional)'))
 
+    project_code = models.ForeignKey(ProjectCode, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Project Code'), help_text=_('Select project code for this order'))
+
     link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 
     target_date = models.DateField(
@@ -233,8 +263,6 @@ class Order(InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
         help_text=_('Point of contact for this order'),
         related_name='+',
     )
-
-    notes = InvenTreeNotesField(help_text=_('Order notes'))
 
     @classmethod
     def get_status_class(cls):
@@ -812,7 +840,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def is_completed(self):
         """Check if this order is "shipped" (all line items delivered)."""
-        return self.lines.count() > 0 and all([line.is_completed() for line in self.lines.all()])
+        return self.lines.count() > 0 and all(line.is_completed() for line in self.lines.all())
 
     def can_complete(self, raise_error=False, allow_incomplete_lines=False):
         """Test if this SalesOrder can be completed.
@@ -1330,7 +1358,7 @@ class SalesOrderLineItem(OrderLineItem):
         return self.shipped >= self.quantity
 
 
-class SalesOrderShipment(MetadataMixin, models.Model):
+class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 
     - Points to a single SalesOrder object
@@ -1388,8 +1416,6 @@ class SalesOrderShipment(MetadataMixin, models.Model):
         help_text=_('Shipment number'),
         default='1',
     )
-
-    notes = InvenTreeNotesField(help_text=_('Shipment notes'))
 
     tracking_number = models.CharField(
         max_length=100,
