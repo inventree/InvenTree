@@ -24,7 +24,7 @@ Still under heavy development.
 
 ### DigitalOcean droplet
 
-[InvenTree droplet](https://marketplace.digitalocean.com/apps/inventree?refcode=d6172576d014) is a 1-click solution to deploy InvenTree in the cloud with DigitalOcean. You still have to administer and update your instance.
+[InvenTree droplet](https://inventree.org/digitalocean) is a 1-click solution to deploy InvenTree in the cloud with DigitalOcean. You still have to administer and update your instance.
 The source code for this droplet can be found in [inventree_droplet](https://github.com/invenhost/inventree_droplet).
 
 ### InvenTree zebra plugin

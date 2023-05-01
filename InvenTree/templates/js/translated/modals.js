@@ -187,19 +187,19 @@ function makeOption(text, value, title) {
     return html;
 }
 
+/*
+ * Programatically generate a list of <option> elements,
+ * from the (assumed array) of elements.
+ * For each element, we pass the element to the supplied functions,
+ * which (in turn) generate display / value / title values.
+ *
+ * Args:
+ * - elements: List of elements
+ * - textFunc: Function which takes an element and generates the text to be displayed
+ * - valueFunc: optional function which takes an element and generates the value
+ * - titleFunc: optional function which takes an element and generates a title
+ */
 function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
-    /*
-     * Programatically generate a list of <option> elements,
-     * from the (assumed array) of elements.
-     * For each element, we pass the element to the supplied functions,
-     * which (in turn) generate display / value / title values.
-     *
-     * Args:
-     * - elements: List of elements
-     * - textFunc: Function which takes an element and generates the text to be displayed
-     * - valueFunc: optional function which takes an element and generates the value
-     * - titleFunc: optional function which takes an element and generates a title
-     */
 
     var options = [];
 
@@ -226,15 +226,14 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
 }
 
 
+/* Set the options for a <select> field.
+ *
+ * Args:
+ * - fieldName: The name of the target field
+ * - Options: List of formatted <option> strings
+ * - append: If true, options will be appended, otherwise will replace existing options.
+ */
 function setFieldOptions(fieldName, optionList, options={}) {
-    /* Set the options for a <select> field.
-     *
-     * Args:
-     * - fieldName: The name of the target field
-     * - Options: List of formatted <option> strings
-     * - append: If true, options will be appended, otherwise will replace existing options.
-     */
-
 
     var append = options.append || false;
 
@@ -261,28 +260,28 @@ function setFieldOptions(fieldName, optionList, options={}) {
 }
 
 
+/**
+ * Clear (emtpy) the options list for a particular field
+ */
 function clearFieldOptions(fieldName) {
-    /**
-     * Clear (emtpy) the options list for a particular field
-     */
 
     setFieldOptions(fieldName, []);
 }
 
 
+/* Reload the options for a given field,
+ * using an AJAX request.
+ *
+ * Args:
+ * - fieldName: The name of the field
+ * - options:
+ * -- url: Query url
+ * -- params: Query params
+ * -- value: A function which takes a returned option and returns the 'value' (if not specified, the `pk` field is used)
+ * -- text: A function which takes a returned option and returns the 'text'
+ * -- title: A function which takes a returned option and returns the 'title' (optional!)
+ */
 function reloadFieldOptions(fieldName, options) {
-    /* Reload the options for a given field,
-     * using an AJAX request.
-     *
-     * Args:
-     * - fieldName: The name of the field
-     * - options:
-     * -- url: Query url
-     * -- params: Query params
-     * -- value: A function which takes a returned option and returns the 'value' (if not specified, the `pk` field is used)
-     * -- text: A function which takes a returned option and returns the 'text'
-     * -- title: A function which takes a returned option and returns the 'title' (optional!)
-     */
 
     inventreeGet(options.url, options.params, {
         success: function(response) {
@@ -317,14 +316,14 @@ function reloadFieldOptions(fieldName, options) {
 }
 
 
+/* Enable (or disable) a particular field in a modal.
+ *
+ * Args:
+ * - fieldName: The name of the field
+ * - enabled: boolean enabled / disabled status
+ * - options:
+ */
 function enableField(fieldName, enabled, options={}) {
-    /* Enable (or disable) a particular field in a modal.
-     *
-     * Args:
-     * - fieldName: The name of the field
-     * - enabled: boolean enabled / disabled status
-     * - options:
-     */
 
     var modal = options.modal || '#modal-form';
 
@@ -357,17 +356,17 @@ function getFieldValue(fieldName, options={}) {
 }
 
 
+/* Replacement function for the 'matcher' parameter for a select2 dropdown.
+
+Intead of performing an exact match search, a partial match search is performed.
+This splits the search term by the space ' ' character and matches each segment.
+Segments can appear out of order and are not case sensitive
+
+Args:
+    params.term : search query
+    data.text : text to match
+*/
 function partialMatcher(params, data) {
-    /* Replacement function for the 'matcher' parameter for a select2 dropdown.
-
-    Intead of performing an exact match search, a partial match search is performed.
-    This splits the search term by the space ' ' character and matches each segment.
-    Segments can appear out of order and are not case sensitive
-
-    Args:
-        params.term : search query
-        data.text : text to match
-    */
 
     // Quickly check for an empty search query
     if ($.trim(params.term) == '') {
@@ -395,10 +394,10 @@ function partialMatcher(params, data) {
 }
 
 
+/* Attach 'select2' functionality to any drop-down list in the modal.
+ * Provides search filtering for dropdown items
+ */
 function attachSelect(modal) {
-    /* Attach 'select2' functionality to any drop-down list in the modal.
-     * Provides search filtering for dropdown items
-     */
 
     $(modal + ' .select').select2({
         dropdownParent: $(modal),
@@ -412,34 +411,34 @@ function attachSelect(modal) {
 }
 
 
+/* Attach 'switch' functionality to any checkboxes on the form */
 function attachBootstrapCheckbox(modal) {
-    /* Attach 'switch' functionality to any checkboxes on the form */
 
     $(modal + ' .checkboxinput').addClass('form-check-input');
     $(modal + ' .checkboxinput').wrap(`<div class='form-check form-switch'></div>`);
 }
 
 
+/* Render a 'loading' message to display in a form
+ * when waiting for a response from the server
+ */
 function loadingMessageContent() {
-    /* Render a 'loading' message to display in a form
-     * when waiting for a response from the server
-     */
 
     // TODO - This can be made a lot better
     return `<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> {% trans 'Waiting for server...' %}`;
 }
 
 
+/* afterForm is called after a form is successfully submitted,
+ * and the form is dismissed.
+ * Used for general purpose functionality after form submission:
+ *
+ * - Display a bootstrap alert (success / info / warning / danger)
+ * - Run a supplied success callback function
+ * - Redirect the browser to a different URL
+ * - Reload the page
+ */
 function afterForm(response, options) {
-    /* afterForm is called after a form is successfully submitted,
-     * and the form is dismissed.
-     * Used for general purpose functionality after form submission:
-     *
-     * - Display a bootstrap alert (success / info / warning / danger)
-     * - Run a supplied success callback function
-     * - Redirect the browser to a different URL
-     * - Reload the page
-     */
 
     // Should we show alerts immediately or cache them?
     var cache = (options.follow && response.url) ||
@@ -475,9 +474,9 @@ function afterForm(response, options) {
     }
 }
 
+/* Show (or hide) the 'Submit' button for the given modal form
+ */
 function modalShowSubmitButton(modal, show=true) {
-    /* Show (or hide) the 'Submit' button for the given modal form
-     */
 
     if (show) {
         $(modal).find('#modal-form-submit').show();
@@ -487,29 +486,31 @@ function modalShowSubmitButton(modal, show=true) {
 }
 
 
+/* Enable (or disable) modal form elements to prevent user input
+ */
 function modalEnable(modal, enable=true) {
-    /* Enable (or disable) modal form elements to prevent user input
-     */
 
     // Enable or disable the submit button
     $(modal).find('#modal-form-submit').prop('disabled', !enable);
 }
 
 
+/* Update the title of a modal form
+ */
 function modalSetTitle(modal, title='') {
-    /* Update the title of a modal form
-     */
     $(modal + ' #modal-title').html(title);
 }
 
 
+/* Update the content panel of a modal form
+ */
 function modalSetContent(modal, content='') {
-    /* Update the content panel of a modal form
-     */
     $(modal).find('.modal-form-content').html(content);
 }
 
 
+/* Set the text of the "submit" button of a modal form
+ */
 function modalSetSubmitText(modal, text) {
     if (text) {
         $(modal).find('#modal-form-submit').html(text);
@@ -517,6 +518,8 @@ function modalSetSubmitText(modal, text) {
 }
 
 
+/* Set the text of the "close" button of a modal form
+ */
 function modalSetCloseText(modal, text) {
     if (text) {
         $(modal).find('#modal-form-close').html(text);
@@ -524,27 +527,27 @@ function modalSetCloseText(modal, text) {
 }
 
 
+/* Set the button text for a modal form
+ *
+ * submit_text - text for the form submit button
+ * close_text - text for the form dismiss button
+ */
 function modalSetButtonText(modal, submit_text, close_text) {
-    /* Set the button text for a modal form
-     *
-     * submit_text - text for the form submit button
-     * close_text - text for the form dismiss button
-     */
     modalSetSubmitText(modal, submit_text);
     modalSetCloseText(modal, close_text);
 }
 
 
+/* Dismiss (hide) a modal form
+ */
 function closeModal(modal='#modal-form') {
-    /* Dismiss (hide) a modal form
-     */
     $(modal).modal('hide');
 }
 
 
+/* Perform the submission action for the modal form
+ */
 function modalSubmit(modal, callback) {
-    /* Perform the submission action for the modal form
-     */
     $(modal).off('click', '#modal-form-submit');
 
     $(modal).on('click', '#modal-form-submit', function() {

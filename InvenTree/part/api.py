@@ -1140,10 +1140,10 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
                 if related is not None:
                     # Only return related results
-                    queryset = queryset.filter(pk__in=[pk for pk in part_ids])
+                    queryset = queryset.filter(pk__in=list(part_ids))
                 elif exclude_related is not None:
                     # Exclude related results
-                    queryset = queryset.exclude(pk__in=[pk for pk in part_ids])
+                    queryset = queryset.exclude(pk__in=list(part_ids))
 
             except (ValueError, Part.DoesNotExist):
                 pass

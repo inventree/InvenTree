@@ -46,7 +46,7 @@ class MetaBase:
 
             # Sound of a warning if old_key worked
             if value:
-                warnings.warn(f'Usage of {old_key} was depreciated in 0.7.0 in favour of {key}', DeprecationWarning)
+                warnings.warn(f'Usage of {old_key} was depreciated in 0.7.0 in favour of {key}', DeprecationWarning, stacklevel=2)
 
         # Use __default if still nothing set
         if (value is None) and __default:
@@ -172,7 +172,7 @@ class MixinBase:
             if not with_base and 'base' in mixins:
                 del mixins['base']
             # only return dict
-            mixins = [a for a in mixins.values()]
+            mixins = list(mixins.values())
         return mixins
 
 
@@ -366,7 +366,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         try:
             website = meta['Project-URL'].split(', ')[1]
-        except [ValueError, IndexError]:
+        except (ValueError, IndexError, ):
             website = meta['Project-URL']
 
         return {
