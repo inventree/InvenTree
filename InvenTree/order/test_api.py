@@ -13,13 +13,13 @@ from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
 
-import order.models as models
 from common.settings import currency_codes
 from company.models import Company
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockStatus)
+from order import models
 from part.models import Part
 from stock.models import StockItem
 
@@ -1182,7 +1182,7 @@ class SalesOrderTest(OrderTest):
                 idx += 1
 
             # Create some extra lines against this order
-            for ii in range(3):
+            for _ in range(3):
                 extra_lines.append(
                     models.SalesOrderExtraLine(
                         order=so,
@@ -1451,6 +1451,28 @@ class SalesOrderTest(OrderTest):
 
         self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders_incl_complete, n_events)
+
+    def test_export(self):
+        """Test we can export the SalesOrder list"""
+
+        n = models.SalesOrder.objects.count()
+
+        # Check there are some sales orders
+        self.assertGreater(n, 0)
+
+        for order in models.SalesOrder.objects.all():
+            # Reconstruct the total price
+            order.save()
+
+        # Download file, check we get a 200 response
+        for fmt in ['csv', 'xls', 'xlsx']:
+            self.download_file(
+                reverse('api-so-list'),
+                {'export': fmt},
+                decode=True if fmt == 'csv' else False,
+                expected_code=200,
+                expected_fn=f"InvenTree_SalesOrders.{fmt}"
+            )
 
 
 class SalesOrderLineItemTest(OrderTest):

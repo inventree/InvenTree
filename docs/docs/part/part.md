@@ -55,7 +55,7 @@ Trackable parts can be assigned batch numbers or serial numbers which uniquely i
 
 ### Purchaseable
 
-If a part is designated as *Purchaseable* it can be purchased from external suppliers. Setting this flag allows parts to be added to [purchase orders](../buy/po.md).
+If a part is designated as *Purchaseable* it can be purchased from external suppliers. Setting this flag allows parts to be added to [purchase orders](../order/purchase_order.md).
 
 ### Salable
 

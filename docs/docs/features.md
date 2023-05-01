@@ -22,7 +22,7 @@ Parts are the fundamental element of any inventory. InvenTree groups parts into 
 
 InvenTree allows you to easily create, modify or delete suppliers and supplier items linked to any part in your inventory.
 
-[Read more...](./buy/supplier.md)
+[Read more...](./order/company.md#suppliers)
 
 ## Instant Stock Knowledge
 
