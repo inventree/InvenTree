@@ -25,9 +25,9 @@ import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
-from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin
+from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
+                              InvenTreeNotesMixin, MetadataMixin)
 from InvenTree.status_codes import PurchaseOrderStatus
-from plugin.models import MetadataMixin
 
 
 def rename_company_image(instance, filename):
@@ -55,7 +55,7 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-class Company(MetadataMixin, models.Model):
+class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     """A Company object represents an external company.
 
     It may be a supplier or a customer or a manufacturer (or a combination)
@@ -139,8 +139,6 @@ class Company(MetadataMixin, models.Model):
         delete_orphans=True,
         verbose_name=_('Image'),
     )
-
-    notes = InvenTree.fields.InvenTreeNotesField(help_text=_("Company Notes"))
 
     is_customer = models.BooleanField(default=False, verbose_name=_('is customer'), help_text=_('Do you sell items to this company?'))
 

@@ -43,14 +43,14 @@ from common.models import InvenTreeSetting
 from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
-from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
+from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
-                              InvenTreeBarcodeMixin, InvenTreeTree)
+                              InvenTreeBarcodeMixin, InvenTreeNotesMixin,
+                              InvenTreeTree, MetadataMixin)
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from order import models as OrderModels
-from plugin.models import MetadataMixin
 from stock import models as StockModels
 
 logger = logging.getLogger("inventree")
@@ -89,14 +89,15 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
         for child_category in self.children.all():
             if kwargs.get('delete_child_categories', False):
-                child_category.delete_recursive(**dict(delete_child_categories=True,
-                                                       delete_parts=delete_parts,
-                                                       parent_category=parent_category))
+                child_category.delete_recursive(**{
+                    "delete_child_categories": True,
+                    "delete_parts": delete_parts,
+                    "parent_category": parent_category})
             else:
                 child_category.parent = parent_category
                 child_category.save()
 
-        super().delete(*args, **dict())
+        super().delete(*args, **{})
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
@@ -104,9 +105,10 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
         with transaction.atomic():
-            self.delete_recursive(**dict(delete_parts=kwargs.get('delete_parts', False),
-                                         delete_child_categories=kwargs.get('delete_child_categories', False),
-                                         parent_category=self.parent))
+            self.delete_recursive(**{
+                "delete_parts": kwargs.get('delete_parts', False),
+                "delete_child_categories": kwargs.get('delete_child_categories', False),
+                "parent_category": self.parent})
 
             if self.parent is not None:
                 # Partially rebuild the tree (cheaper than a complete rebuild)
@@ -275,7 +277,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         for result in queryset:
             subscribers.add(result.user)
 
-        return [s for s in subscribers]
+        return list(subscribers)
 
     def is_starred_by(self, user, **kwargs):
         """Returns True if the specified user subscribes to this category."""
@@ -338,7 +340,7 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
+class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -1016,8 +1018,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         verbose_name=_('Virtual'),
         help_text=_('Is this a virtual part, such as a software product or license?'))
 
-    notes = InvenTreeNotesField(help_text=_('Part notes'))
-
     bom_checksum = models.CharField(max_length=128, blank=True, verbose_name=_('BOM checksum'), help_text=_('Stored BOM checksum'))
 
     bom_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
@@ -1197,7 +1197,7 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             for sub in self.category.get_subscribers():
                 subscribers.add(sub)
 
-        return [s for s in subscribers]
+        return list(subscribers)
 
     def is_starred_by(self, user, **kwargs):
         """Return True if the specified user subscribes to this part."""

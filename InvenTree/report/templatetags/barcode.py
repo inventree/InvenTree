@@ -40,11 +40,11 @@ def qrcode(data, **kwargs):
 
     """
     # Construct "default" values
-    params = dict(
-        box_size=20,
-        border=1,
-        version=1,
-    )
+    params = {
+        "box_size": 20,
+        "border": 1,
+        "version": 1,
+    }
 
     fill_color = kwargs.pop('fill_color', 'black')
     back_color = kwargs.pop('back_color', 'white')

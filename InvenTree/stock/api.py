@@ -1003,6 +1003,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
+        'location': 'location__pathstring',
         'SKU': 'supplier_part__SKU',
         'stock': ['quantity', 'serial_int', 'serial'],
     }
@@ -1117,7 +1118,7 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
                     # Note that this function is recursive!
                     installed_items = item.get_installed_items(cascade=True)
 
-                    items += [it for it in installed_items]
+                    items += list(installed_items)
 
                 queryset = queryset.filter(stock_item__in=items)
 
