@@ -628,7 +628,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     })
                 else:
                     if bool(data.get('use_pack_size')):
-                        data['quantity'] = quantity * supplier_part.pack_size
+                        data['quantity'] = int(quantity) * float(supplier_part.pack_size)
                         quantity = data.get('quantity', None)
 
         # Now remove the flag from data, so that it doesn't interfere with saving
