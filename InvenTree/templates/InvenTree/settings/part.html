@@ -1,11 +1,11 @@
 {% extends "panel.html" %}
 {% load i18n %}
 
-{% block label %}parts{% endblock %}
+{% block label %}parts{% endblock label %}
 
 {% block heading %}
 {% trans "Part Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -70,4 +70,4 @@
 <table class='table table-striped table-condensed' id='param-table' data-toolbar='#param-buttons'>
 </table>
 
-{% endblock %}
+{% endblock content %}

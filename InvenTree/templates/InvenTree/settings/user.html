@@ -6,11 +6,11 @@
 {% load crispy_forms_tags %}
 {% load user_sessions i18n %}
 
-{% block label %}account{% endblock %}
+{% block label %}account{% endblock label %}
 
 {% block heading %}
 {% trans "Account Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% inventree_customize 'hide_password_reset' as hide_password_reset %}
@@ -22,7 +22,7 @@
 <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
     <span class='fas fa-user-cog'></span> {% trans "Edit" %}
 </div>
-{% endblock %}
+{% endblock actions %}
 
 {% block content %}
 {% mail_configured as mail_conf %}
@@ -265,7 +265,7 @@
         </table>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 (function() {
@@ -279,4 +279,4 @@ e.preventDefault();
 });
 }
 })();
-{% endblock %}
+{% endblock js_ready %}
